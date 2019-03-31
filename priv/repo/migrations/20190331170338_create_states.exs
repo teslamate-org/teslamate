@@ -12,8 +12,8 @@ defmodule TeslaMate.Repo.Migrations.CreateStates do
       add(:start_date, :utc_datetime, null: false)
       add(:end_date, :utc_datetime)
 
-      add(:start_pos, references(:positions))
-      add(:end_pos, references(:positions))
+      add(:start_position_id, references(:positions))
+      add(:end_position_id, references(:positions))
     end
   end
 
