@@ -30,6 +30,6 @@ defmodule TeslaMate.Log.Position do
       :outside_temp,
       :altitude
     ])
-    |> validate_required([:date, :lat, :lng])
+    |> validate_required([:date, :latitude, :longitude])
   end
 end

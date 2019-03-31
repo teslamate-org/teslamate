@@ -37,7 +37,7 @@ defmodule TeslaMate.MixProject do
       {:phoenix, "~> 1.4.3"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
-      {:ecto_sql, "~> 3.0"},
+      {:ecto_sql, "~> 3.0.5"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
@@ -45,7 +45,9 @@ defmodule TeslaMate.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       # Custom
-      {:tesla_api, git: "https://github.com/mgwidmann/tesla_api"}
+      {:tesla_api, git: "https://github.com/mgwidmann/tesla_api"},
+      {:gen_state_machine, "~> 2.0"},
+      {:ecto_enum, "~> 1.2"}
     ]
   end
 
