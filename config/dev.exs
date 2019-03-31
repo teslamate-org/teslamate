@@ -73,3 +73,7 @@ config :tesla_mate, TeslaMate.Repo,
   database: "tesla_mate_dev",
   hostname: "localhost",
   pool_size: 10
+
+config :tesla_mate, :tesla_auth,
+  username: System.get_env("USERNAME"),
+  password: System.get_env("PASSWOrD")

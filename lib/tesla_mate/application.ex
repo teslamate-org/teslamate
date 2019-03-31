@@ -6,20 +6,14 @@ defmodule TeslaMate.Application do
   use Application
 
   def start(_type, _args) do
-    # List all child processes to be supervised
     children = [
-      # Start the Ecto repository
       TeslaMate.Repo,
-      # Start the endpoint when the application starts
-      TeslaMateWeb.Endpoint
-      # Starts a worker by calling: TeslaMate.Worker.start_link(arg)
-      # {TeslaMate.Worker, arg},
+      TeslaMateWeb.Endpoint,
+      {TeslaMate.Api, auth()},
+      TeslaMate.Vehicles
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: TeslaMate.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children, strategy: :one_for_one, name: TeslaMate.Supervisor)
   end
 
   # Tell Phoenix to update the endpoint configuration
@@ -27,5 +21,9 @@ defmodule TeslaMate.Application do
   def config_change(changed, _new, removed) do
     TeslaMateWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp auth do
+    Application.get_env(:tesla_mate, :tesla_auth)
   end
 end

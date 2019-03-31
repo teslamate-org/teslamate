@@ -33,6 +33,7 @@ defmodule TeslaMate.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      # Default
       {:phoenix, "~> 1.4.3"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
@@ -43,6 +44,8 @@ defmodule TeslaMate.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
+      # Custom
+      {:tesla_api, git: "https://github.com/mgwidmann/tesla_api"}
     ]
   end
 
