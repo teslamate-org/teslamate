@@ -8,7 +8,7 @@ defmodule TeslaMate.Log do
 
   alias TeslaMate.Log.Position
 
-  def insert_position(attrs \\ %{}) do
+  def insert_position(attrs) do
     %Position{}
     |> Position.changeset(attrs)
     |> Repo.insert()
@@ -119,7 +119,7 @@ defmodule TeslaMate.Log do
       |> update(set: [end_date: ^end_date, end_position_id: ^last_position_id])
       |> Repo.update_all([])
       |> case do
-        {0, nil} -> {:erorr, :no_state_to_be_closed}
+        {0, nil} -> {:erorr, :no_drive_state_to_be_closed}
         {1, nil} -> :ok
         {n, nil} -> {:error, {:closed_multiple_states, n}}
       end
@@ -179,6 +179,72 @@ defmodule TeslaMate.Log do
   defp update_drive_state(%DriveState{} = drive_state, attrs) do
     drive_state
     |> DriveState.changeset(attrs)
+    |> Repo.update()
+  end
+
+  alias TeslaMate.Log.{ChargingState, Charge}
+
+  def insert_charge(attrs) do
+    %Charge{}
+    |> Charge.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_last_charge_id! do
+    Charge
+    |> select([p], max(p.id))
+    |> Repo.one!()
+  end
+
+  def start_charging_state do
+    # TODO combine with insert_charge && insert_position
+
+    last_position_id = get_last_position_id!()
+    last_charge_id = get_last_charge_id!()
+
+    attrs = %{
+      start_date: DateTime.utc_now(),
+      position: last_position_id,
+      charge_start_id: last_charge_id
+    }
+
+    with {:ok, _} <- create_charging_state(attrs) do
+      :ok
+    end
+  end
+
+  def close_charging_state do
+    last_charge_id = get_last_charge_id!()
+    end_date = DateTime.utc_now()
+
+    result =
+      ChargingState
+      |> where([c], is_nil(c.end_date))
+      |> update(set: [end_date: ^end_date, charge_end_id: ^last_charge_id])
+      |> Repo.update_all([])
+
+    case result do
+      {0, nil} -> {:erorr, :no_charging_state_to_be_closed}
+      {1, nil} -> :ok
+      {n, nil} -> {:error, {:closed_multiple_charging_states, n}}
+    end
+  end
+
+  defp create_charging_state(attrs \\ %{}) do
+    %ChargingState{}
+    |> ChargingState.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  defp update_charging_state(%ChargingState{} = charging_state, attrs) do
+    charging_state
+    |> ChargingState.changeset(attrs)
+    |> Repo.update()
+  end
+
+  defp update_charge(%Charge{} = charge, attrs) do
+    charge
+    |> Charge.changeset(attrs)
     |> Repo.update()
   end
 end

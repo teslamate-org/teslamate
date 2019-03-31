@@ -193,4 +193,140 @@ defmodule TeslaMate.LogTest do
       assert %Ecto.Changeset{} = Log.change_drive_state(drive_state)
     end
   end
+
+  describe "charging_states" do
+    alias TeslaMate.Log.ChargingState
+
+    @valid_attrs %{end_date: "2010-04-17T14:00:00Z", start_date: "2010-04-17T14:00:00Z"}
+    @update_attrs %{end_date: "2011-05-18T15:01:01Z", start_date: "2011-05-18T15:01:01Z"}
+    @invalid_attrs %{end_date: nil, start_date: nil}
+
+    def charging_state_fixture(attrs \\ %{}) do
+      {:ok, charging_state} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Log.create_charging_state()
+
+      charging_state
+    end
+
+    test "list_charging_states/0 returns all charging_states" do
+      charging_state = charging_state_fixture()
+      assert Log.list_charging_states() == [charging_state]
+    end
+
+    test "get_charging_state!/1 returns the charging_state with given id" do
+      charging_state = charging_state_fixture()
+      assert Log.get_charging_state!(charging_state.id) == charging_state
+    end
+
+    test "create_charging_state/1 with valid data creates a charging_state" do
+      assert {:ok, %ChargingState{} = charging_state} = Log.create_charging_state(@valid_attrs)
+      assert charging_state.end_date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
+      assert charging_state.start_date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
+    end
+
+    test "create_charging_state/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Log.create_charging_state(@invalid_attrs)
+    end
+
+    test "update_charging_state/2 with valid data updates the charging_state" do
+      charging_state = charging_state_fixture()
+      assert {:ok, %ChargingState{} = charging_state} = Log.update_charging_state(charging_state, @update_attrs)
+      assert charging_state.end_date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
+      assert charging_state.start_date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
+    end
+
+    test "update_charging_state/2 with invalid data returns error changeset" do
+      charging_state = charging_state_fixture()
+      assert {:error, %Ecto.Changeset{}} = Log.update_charging_state(charging_state, @invalid_attrs)
+      assert charging_state == Log.get_charging_state!(charging_state.id)
+    end
+
+    test "delete_charging_state/1 deletes the charging_state" do
+      charging_state = charging_state_fixture()
+      assert {:ok, %ChargingState{}} = Log.delete_charging_state(charging_state)
+      assert_raise Ecto.NoResultsError, fn -> Log.get_charging_state!(charging_state.id) end
+    end
+
+    test "change_charging_state/1 returns a charging_state changeset" do
+      charging_state = charging_state_fixture()
+      assert %Ecto.Changeset{} = Log.change_charging_state(charging_state)
+    end
+  end
+
+  describe "charges" do
+    alias TeslaMate.Log.Charge
+
+    @valid_attrs %{battery_level: 120.5, charge_energy_added: 120.5, charger_actual_current: 42, charger_phases: 42, charger_power: 120.5, charger_voltage: 42, date: "2010-04-17T14:00:00Z", ideal_battery_range: 120.5, outside_temp: 120.5}
+    @update_attrs %{battery_level: 456.7, charge_energy_added: 456.7, charger_actual_current: 43, charger_phases: 43, charger_power: 456.7, charger_voltage: 43, date: "2011-05-18T15:01:01Z", ideal_battery_range: 456.7, outside_temp: 456.7}
+    @invalid_attrs %{battery_level: nil, charge_energy_added: nil, charger_actual_current: nil, charger_phases: nil, charger_power: nil, charger_voltage: nil, date: nil, ideal_battery_range: nil, outside_temp: nil}
+
+    def charge_fixture(attrs \\ %{}) do
+      {:ok, charge} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Log.create_charge()
+
+      charge
+    end
+
+    test "list_charges/0 returns all charges" do
+      charge = charge_fixture()
+      assert Log.list_charges() == [charge]
+    end
+
+    test "get_charge!/1 returns the charge with given id" do
+      charge = charge_fixture()
+      assert Log.get_charge!(charge.id) == charge
+    end
+
+    test "create_charge/1 with valid data creates a charge" do
+      assert {:ok, %Charge{} = charge} = Log.create_charge(@valid_attrs)
+      assert charge.battery_level == 120.5
+      assert charge.charge_energy_added == 120.5
+      assert charge.charger_actual_current == 42
+      assert charge.charger_phases == 42
+      assert charge.charger_power == 120.5
+      assert charge.charger_voltage == 42
+      assert charge.date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
+      assert charge.ideal_battery_range == 120.5
+      assert charge.outside_temp == 120.5
+    end
+
+    test "create_charge/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Log.create_charge(@invalid_attrs)
+    end
+
+    test "update_charge/2 with valid data updates the charge" do
+      charge = charge_fixture()
+      assert {:ok, %Charge{} = charge} = Log.update_charge(charge, @update_attrs)
+      assert charge.battery_level == 456.7
+      assert charge.charge_energy_added == 456.7
+      assert charge.charger_actual_current == 43
+      assert charge.charger_phases == 43
+      assert charge.charger_power == 456.7
+      assert charge.charger_voltage == 43
+      assert charge.date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
+      assert charge.ideal_battery_range == 456.7
+      assert charge.outside_temp == 456.7
+    end
+
+    test "update_charge/2 with invalid data returns error changeset" do
+      charge = charge_fixture()
+      assert {:error, %Ecto.Changeset{}} = Log.update_charge(charge, @invalid_attrs)
+      assert charge == Log.get_charge!(charge.id)
+    end
+
+    test "delete_charge/1 deletes the charge" do
+      charge = charge_fixture()
+      assert {:ok, %Charge{}} = Log.delete_charge(charge)
+      assert_raise Ecto.NoResultsError, fn -> Log.get_charge!(charge.id) end
+    end
+
+    test "change_charge/1 returns a charge changeset" do
+      charge = charge_fixture()
+      assert %Ecto.Changeset{} = Log.change_charge(charge)
+    end
+  end
 end
