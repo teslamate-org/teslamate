@@ -1,7 +1,7 @@
 defmodule TeslaMate.LogTest do
   use TeslaMate.DataCase
 
-  # alias TeslaMate.Log
+  alias TeslaMate.Log
 
   # describe "positions" do
   #   alias TeslaMate.Log.Position
@@ -129,73 +129,73 @@ defmodule TeslaMate.LogTest do
   #   end
   # end
 
-  # describe "drive_states" do
-  #   alias TeslaMate.Log.DriveState
+  # describe "trips" do
+  #   alias TeslaMate.Log.Trip
 
   #   @valid_attrs %{end_date: "2010-04-17T14:00:00Z", end_position_id: 42, start_date: "2010-04-17T14:00:00Z", start_position_id: 42}
   #   @update_attrs %{end_date: "2011-05-18T15:01:01Z", end_position_id: 43, start_date: "2011-05-18T15:01:01Z", start_position_id: 43}
   #   @invalid_attrs %{end_date: nil, end_position_id: nil, start_date: nil, start_position_id: nil}
 
-  #   def drive_state_fixture(attrs \\ %{}) do
-  #     {:ok, drive_state} =
+  #   def trip_fixture(attrs \\ %{}) do
+  #     {:ok, trip} =
   #       attrs
   #       |> Enum.into(@valid_attrs)
-  #       |> Log.create_drive_state()
+  #       |> Log.create_trip()
 
-  #     drive_state
+  #     trip
   #   end
 
-  #   test "list_drive_states/0 returns all drive_states" do
-  #     drive_state = drive_state_fixture()
-  #     assert Log.list_drive_states() == [drive_state]
+  #   test "list_trips/0 returns all trips" do
+  #     trip = trip_fixture()
+  #     assert Log.list_trips() == [trip]
   #   end
 
-  #   test "get_drive_state!/1 returns the drive_state with given id" do
-  #     drive_state = drive_state_fixture()
-  #     assert Log.get_drive_state!(drive_state.id) == drive_state
+  #   test "get_trip!/1 returns the trip with given id" do
+  #     trip = trip_fixture()
+  #     assert Log.get_trip!(trip.id) == trip
   #   end
 
-  #   test "create_drive_state/1 with valid data creates a drive_state" do
-  #     assert {:ok, %DriveState{} = drive_state} = Log.create_drive_state(@valid_attrs)
-  #     assert drive_state.end_date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
-  #     assert drive_state.end_position_id == 42
-  #     assert drive_state.start_date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
-  #     assert drive_state.start_position_id == 42
+  #   test "create_trip/1 with valid data creates a trip" do
+  #     assert {:ok, %Trip{} = trip} = Log.create_trip(@valid_attrs)
+  #     assert trip.end_date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
+  #     assert trip.end_position_id == 42
+  #     assert trip.start_date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
+  #     assert trip.start_position_id == 42
   #   end
 
-  #   test "create_drive_state/1 with invalid data returns error changeset" do
-  #     assert {:error, %Ecto.Changeset{}} = Log.create_drive_state(@invalid_attrs)
+  #   test "create_trip/1 with invalid data returns error changeset" do
+  #     assert {:error, %Ecto.Changeset{}} = Log.create_trip(@invalid_attrs)
   #   end
 
-  #   test "update_drive_state/2 with valid data updates the drive_state" do
-  #     drive_state = drive_state_fixture()
-  #     assert {:ok, %DriveState{} = drive_state} = Log.update_drive_state(drive_state, @update_attrs)
-  #     assert drive_state.end_date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
-  #     assert drive_state.end_position_id == 43
-  #     assert drive_state.start_date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
-  #     assert drive_state.start_position_id == 43
+  #   test "update_trip/2 with valid data updates the trip" do
+  #     trip = trip_fixture()
+  #     assert {:ok, %Trip{} = trip} = Log.update_trip(trip, @update_attrs)
+  #     assert trip.end_date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
+  #     assert trip.end_position_id == 43
+  #     assert trip.start_date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
+  #     assert trip.start_position_id == 43
   #   end
 
-  #   test "update_drive_state/2 with invalid data returns error changeset" do
-  #     drive_state = drive_state_fixture()
-  #     assert {:error, %Ecto.Changeset{}} = Log.update_drive_state(drive_state, @invalid_attrs)
-  #     assert drive_state == Log.get_drive_state!(drive_state.id)
+  #   test "update_trip/2 with invalid data returns error changeset" do
+  #     trip = trip_fixture()
+  #     assert {:error, %Ecto.Changeset{}} = Log.update_trip(trip, @invalid_attrs)
+  #     assert trip == Log.get_trip!(trip.id)
   #   end
 
-  #   test "delete_drive_state/1 deletes the drive_state" do
-  #     drive_state = drive_state_fixture()
-  #     assert {:ok, %DriveState{}} = Log.delete_drive_state(drive_state)
-  #     assert_raise Ecto.NoResultsError, fn -> Log.get_drive_state!(drive_state.id) end
+  #   test "delete_trip/1 deletes the trip" do
+  #     trip = trip_fixture()
+  #     assert {:ok, %Trip{}} = Log.delete_trip(trip)
+  #     assert_raise Ecto.NoResultsError, fn -> Log.get_trip!(trip.id) end
   #   end
 
-  #   test "change_drive_state/1 returns a drive_state changeset" do
-  #     drive_state = drive_state_fixture()
-  #     assert %Ecto.Changeset{} = Log.change_drive_state(drive_state)
+  #   test "change_trip/1 returns a trip changeset" do
+  #     trip = trip_fixture()
+  #     assert %Ecto.Changeset{} = Log.change_trip(trip)
   #   end
   # end
 
   # describe "charging_states" do
-  #   alias TeslaMate.Log.ChargingState
+  #   alias TeslaMate.Log.ChargingProcess
 
   #   @valid_attrs %{end_date: "2010-04-17T14:00:00Z", start_date: "2010-04-17T14:00:00Z"}
   #   @update_attrs %{end_date: "2011-05-18T15:01:01Z", start_date: "2011-05-18T15:01:01Z"}
@@ -221,7 +221,7 @@ defmodule TeslaMate.LogTest do
   #   end
 
   #   test "create_charging_state/1 with valid data creates a charging_state" do
-  #     assert {:ok, %ChargingState{} = charging_state} = Log.create_charging_state(@valid_attrs)
+  #     assert {:ok, %ChargingProcess{} = charging_state} = Log.create_charging_state(@valid_attrs)
   #     assert charging_state.end_date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
   #     assert charging_state.start_date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
   #   end
@@ -232,7 +232,7 @@ defmodule TeslaMate.LogTest do
 
   #   test "update_charging_state/2 with valid data updates the charging_state" do
   #     charging_state = charging_state_fixture()
-  #     assert {:ok, %ChargingState{} = charging_state} = Log.update_charging_state(charging_state, @update_attrs)
+  #     assert {:ok, %ChargingProcess{} = charging_state} = Log.update_charging_state(charging_state, @update_attrs)
   #     assert charging_state.end_date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
   #     assert charging_state.start_date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
   #   end
@@ -245,7 +245,7 @@ defmodule TeslaMate.LogTest do
 
   #   test "delete_charging_state/1 deletes the charging_state" do
   #     charging_state = charging_state_fixture()
-  #     assert {:ok, %ChargingState{}} = Log.delete_charging_state(charging_state)
+  #     assert {:ok, %ChargingProcess{}} = Log.delete_charging_state(charging_state)
   #     assert_raise Ecto.NoResultsError, fn -> Log.get_charging_state!(charging_state.id) end
   #   end
 
@@ -258,9 +258,9 @@ defmodule TeslaMate.LogTest do
   # describe "charges" do
   #   alias TeslaMate.Log.Charge
 
-  #   @valid_attrs %{battery_level: 120.5, charge_energy_added: 120.5, charger_actual_current: 42, charger_phases: 42, charger_power: 120.5, charger_voltage: 42, date: "2010-04-17T14:00:00Z", ideal_battery_range: 120.5, outside_temp: 120.5}
-  #   @update_attrs %{battery_level: 456.7, charge_energy_added: 456.7, charger_actual_current: 43, charger_phases: 43, charger_power: 456.7, charger_voltage: 43, date: "2011-05-18T15:01:01Z", ideal_battery_range: 456.7, outside_temp: 456.7}
-  #   @invalid_attrs %{battery_level: nil, charge_energy_added: nil, charger_actual_current: nil, charger_phases: nil, charger_power: nil, charger_voltage: nil, date: nil, ideal_battery_range: nil, outside_temp: nil}
+  #   @valid_attrs %{battery_level: 120.5, charge_energy_added: 120.5, charger_actual_current: 42, charger_phases: 42, charger_power: 120.5, charger_voltage: 42, date: "2010-04-17T14:00:00Z", ideal_battery_range_km: 120.5, outside_temp: 120.5}
+  #   @update_attrs %{battery_level: 456.7, charge_energy_added: 456.7, charger_actual_current: 43, charger_phases: 43, charger_power: 456.7, charger_voltage: 43, date: "2011-05-18T15:01:01Z", ideal_battery_range_km: 456.7, outside_temp: 456.7}
+  #   @invalid_attrs %{battery_level: nil, charge_energy_added: nil, charger_actual_current: nil, charger_phases: nil, charger_power: nil, charger_voltage: nil, date: nil, ideal_battery_range_km: nil, outside_temp: nil}
 
   #   def charge_fixture(attrs \\ %{}) do
   #     {:ok, charge} =
@@ -290,7 +290,7 @@ defmodule TeslaMate.LogTest do
   #     assert charge.charger_power == 120.5
   #     assert charge.charger_voltage == 42
   #     assert charge.date == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
-  #     assert charge.ideal_battery_range == 120.5
+  #     assert charge.ideal_battery_range_km == 120.5
   #     assert charge.outside_temp == 120.5
   #   end
 
@@ -308,7 +308,7 @@ defmodule TeslaMate.LogTest do
   #     assert charge.charger_power == 456.7
   #     assert charge.charger_voltage == 43
   #     assert charge.date == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
-  #     assert charge.ideal_battery_range == 456.7
+  #     assert charge.ideal_battery_range_km == 456.7
   #     assert charge.outside_temp == 456.7
   #   end
 
@@ -329,4 +329,65 @@ defmodule TeslaMate.LogTest do
   #     assert %Ecto.Changeset{} = Log.change_charge(charge)
   #   end
   # end
+
+  describe "car" do
+    alias TeslaMate.Log.Car
+
+    @valid_attrs %{efficiency: 120.5, eid: 42, model: "some model", vid: 42}
+    @update_attrs %{
+      efficiency: 456.7,
+      model: "some updated model",
+      eid: 43,
+      vid: 43
+    }
+    @invalid_attrs %{efficiency: nil, eid: nil, model: nil, vid: nil}
+
+    def car_fixture(attrs \\ %{}) do
+      {:ok, car} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Log.create_car()
+
+      car
+    end
+
+    test "list_cars/0 returns all car" do
+      car = car_fixture()
+      assert Log.list_cars() == [car]
+    end
+
+    test "get_car!/1 returns the car with given id" do
+      car = car_fixture()
+      assert Log.get_car!(car.id) == car
+    end
+
+    test "create_car/1 with valid data creates a car" do
+      assert {:ok, %Car{} = car} = Log.create_car(@valid_attrs)
+      assert car.efficiency == 120.5
+      assert car.eid == 42
+      assert car.model == "some model"
+      assert car.vid == 42
+    end
+
+    test "create_car/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Log.create_car(@invalid_attrs)
+    end
+
+    test "update_car/2 with valid data updates the car" do
+      car = car_fixture()
+      assert {:ok, %Car{} = car} = Log.update_car(car, @update_attrs)
+
+      assert car.efficiency == 456.7
+      assert car.model == "some updated model"
+
+      assert car.eid == 42
+      assert car.vid == 42
+    end
+
+    test "update_car/2 with invalid data returns error changeset" do
+      car = car_fixture()
+      assert {:error, %Ecto.Changeset{}} = Log.update_car(car, @invalid_attrs)
+      assert car == Log.get_car!(car.id)
+    end
+  end
 end

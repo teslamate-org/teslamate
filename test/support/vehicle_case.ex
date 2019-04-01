@@ -24,9 +24,6 @@ defmodule TeslaMate.VehicleCase do
                opts}
           )
 
-        assert_receive :close_charging_state
-        assert_receive :close_drive_state
-
         :ok
       end
 

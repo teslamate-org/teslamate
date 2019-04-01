@@ -3,7 +3,7 @@ defmodule TeslaMate.Log.State do
   import Ecto.Changeset
 
   alias __MODULE__.State
-  alias TeslaMate.Log.Position
+  alias TeslaMate.Log.{Car}
 
   schema "states" do
     field :state, State
@@ -11,16 +11,13 @@ defmodule TeslaMate.Log.State do
     field :start_date, :utc_datetime
     field :end_date, :utc_datetime
 
-    belongs_to(:start_position, Position, foreign_key: :start_position_id)
-    belongs_to(:end_position, Position, foreign_key: :end_position_id)
+    belongs_to(:car, Car)
   end
 
   @doc false
   def changeset(state, attrs) do
     state
-    |> cast(attrs, [:state, :start_date, :end_date, :start_position_id, :end_position_id])
-    |> validate_required([:state, :start_date])
-    |> foreign_key_constraint(:start_position_id)
-    |> foreign_key_constraint(:end_position_id)
+    |> cast(attrs, [:state, :start_date, :end_date])
+    |> validate_required([:car_id, :state, :start_date])
   end
 end

@@ -6,245 +6,175 @@ defmodule TeslaMate.Log do
   import Ecto.Query, warn: false
   alias TeslaMate.Repo
 
-  alias TeslaMate.Log.Position
+  ## Car
 
-  def insert_position(attrs) do
-    with {:ok, _} <- %Position{} |> Position.changeset(attrs) |> Repo.insert() do
-      :ok
-    end
+  alias TeslaMate.Log.Car
+
+  def list_cars do
+    Repo.all(Car)
   end
 
-  def get_last_position_id! do
-    Position
-    |> select([p], max(p.id))
-    |> Repo.one!()
+  def get_car!(id) do
+    Repo.get!(Car, id)
   end
+
+  def get_car_by_eid(eid) do
+    Repo.get_by(Car, eid: eid)
+  end
+
+  def create_car(%{eid: eid, vid: vid} = attrs) do
+    %Car{eid: eid, vid: vid}
+    |> Car.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_car(%Car{} = car, attrs) do
+    car
+    |> Car.changeset(attrs)
+    |> Repo.update()
+  end
+
+  ## State
 
   alias TeslaMate.Log.State
 
-  def start_state(state) do
-    case get_current_state() do
-      %{state: ^state} ->
+  def start_state(car_id, state) do
+    case get_current_state(car_id) do
+      %State{state: ^state} ->
         :ok
 
-      %{state: _state} ->
-        last_position_id = get_last_position_id!()
-
-        attrs = %{
-          state: state,
-          start_date: DateTime.utc_now(),
-          start_position_id: last_position_id
-        }
-
-        with :ok <- close_state(last_position_id),
-             {:ok, _} <- create_state(attrs) do
+      %State{} = s ->
+        with {:ok, _} <- s |> State.changeset(%{end_date: DateTime.utc_now()}) |> Repo.update(),
+             {:ok, _} <- create_state(car_id, %{state: state, start_date: DateTime.utc_now()}) do
           :ok
         end
 
       nil ->
-        last_position_id = get_last_position_id!()
-
-        attrs = %{
-          state: state,
-          start_date: DateTime.utc_now(),
-          start_position_id: last_position_id
-        }
-
-        with {:ok, _} <- create_state(attrs) do
+        with {:ok, _} <- create_state(car_id, %{state: state, start_date: DateTime.utc_now()}) do
           :ok
         end
     end
   end
 
-  def close_state(position_id) do
-    end_date = DateTime.utc_now()
-
-    result =
-      State
-      |> where([s], is_nil(s.end_date))
-      |> update(set: [end_date: ^end_date, end_position_id: ^position_id])
-      |> Repo.update_all([])
-
-    case result do
-      {0, nil} -> {:erorr, :no_state_to_be_closed}
-      {1, nil} -> :ok
-      {n, nil} -> {:error, {:closed_multiple_states, n}}
-    end
-  end
-
-  def get_current_state do
+  defp get_current_state(car_id) do
     State
-    |> select([:state])
-    |> where([s], is_nil(s.end_date))
+    |> where([s], ^car_id == s.car_id and is_nil(s.end_date))
     |> Repo.one()
   end
 
-  defp create_state(attrs \\ %{}) do
-    %State{}
+  defp create_state(car_id, attrs) do
+    %State{car_id: car_id}
     |> State.changeset(attrs)
     |> Repo.insert()
   end
 
-  defp update_state(%State{} = state, attrs) do
-    state
-    |> State.changeset(attrs)
-    |> Repo.update()
-  end
+  ## Position
 
-  alias TeslaMate.Log.DriveState
+  alias TeslaMate.Log.Position
 
-  def start_drive_state do
-    last_position_id = get_last_position_id!()
-    attrs = %{start_date: DateTime.utc_now(), start_position_id: last_position_id}
-
-    with {:ok, _} <- create_drive_state(attrs) do
+  def insert_position(car_id, attrs) do
+    with {:ok, _} <-
+           %Position{car_id: car_id, trip_id: Map.get(attrs, :trip_id)}
+           |> Position.changeset(attrs)
+           |> Repo.insert() do
       :ok
     end
   end
 
-  def close_drive_state do
-    start_position_id =
-      case get_last_drive_state() do
-        %{start_position_id: start_position_id} -> start_position_id
-        # Assumption there is always one position with id 1
-        nil -> 1
-      end
+  ## Trip
 
-    end_date = DateTime.utc_now()
-    last_position_id = get_last_position_id!()
+  alias TeslaMate.Log.Trip
 
-    result =
-      DriveState
-      |> where([s], is_nil(s.end_date))
-      |> update(set: [end_date: ^end_date, end_position_id: ^last_position_id])
-      |> Repo.update_all([])
-      |> case do
-        {0, nil} -> {:erorr, :no_drive_state_to_be_closed}
-        {1, nil} -> :ok
-        {n, nil} -> {:error, {:closed_multiple_states, n}}
-      end
-
-    with :ok <- result do
-      if start_position_id != 1 do
-        :ok = update_drive_statistics(start_position_id, last_position_id)
-      end
-
-      :ok
+  def start_trip(car_id) do
+    with {:ok, %Trip{id: id}} <-
+           %Trip{car_id: car_id}
+           |> Trip.changeset(%{start_date: DateTime.utc_now()})
+           |> Repo.insert() do
+      {:ok, id}
     end
   end
 
-  def get_last_drive_state do
-    DriveState
-    |> select([:start_position_id])
-    |> where([d], is_nil(d.end_date))
-    |> Repo.one()
+  def close_trip(trip_id) do
+    # TODO statistics
+    attrs = %{}
+
+    with {:ok, _trip} <-
+           Trip
+           |> Repo.get!(trip_id)
+           |> Trip.changeset(attrs)
+           |> Repo.update() do
+      :ok
+    end
+
+    # statistics =
+    #   Position
+    #   |> select([p], %{
+    #     outside_temp_avg: fragment("?::float", avg(p.outside_temp)),
+    #     speed_max: max(p.speed),
+    #     speed_min: min(p.speed),
+    #     power_max: max(p.power),
+    #     power_min: min(p.power),
+    #     power_avg: fragment("?::float", avg(p.power))
+    #   })
+    #   |> where(
+    #     [p],
+    #     car_id == p.car_id and ^start_position_id <= p.id and p.id <= ^end_position_id
+    #   )
+    #   |> Repo.one!()
+    #   |> Map.to_list()
+
+    # result =
+    #   Trip
+    #   |> where(
+    #     [d],
+    #     car_id == d.car_id and d.start_position_id == ^start_position_id and
+    #       d.end_position_id == ^end_position_id
+    #   )
+    #   |> update(set: ^statistics)
+    #   |> Repo.update_all([])
+
+    # case result do
+    #   {0, nil} -> {:erorr, :no_trips_to_be_updated}
+    #   {1, nil} -> :ok
+    # end
   end
 
-  defp update_drive_statistics(start_position_id, end_position_id) do
-    statistics =
+  alias TeslaMate.Log.{ChargingProcess, Charge}
+
+  def start_charging_process(car_id) do
+    # TODO remove when combined with other actions
+    last_position_id =
       Position
-      |> select([p], %{
-        outside_temp_avg: fragment("?::float", avg(p.outside_temp)),
-        speed_max: max(p.speed),
-        speed_min: min(p.speed),
-        power_max: max(p.power),
-        power_min: min(p.power),
-        power_avg: fragment("?::float", avg(p.power))
-      })
-      |> where([p], ^start_position_id <= p.id and p.id <= ^end_position_id)
+      |> select([p], max(p.id))
+      |> where(car_id: ^car_id)
       |> Repo.one!()
-      |> Map.to_list()
 
-    result =
-      DriveState
-      |> where(
-        [d],
-        d.start_position_id == ^start_position_id and d.end_position_id == ^end_position_id
-      )
-      |> update(set: ^statistics)
-      |> Repo.update_all([])
-
-    case result do
-      {0, nil} -> {:erorr, :no_drive_states_to_be_updated}
-      {1, nil} -> :ok
+    with {:ok, %ChargingProcess{id: id}} <-
+           %ChargingProcess{car_id: car_id, position_id: last_position_id}
+           |> ChargingProcess.changeset(%{start_date: DateTime.utc_now()})
+           |> Repo.insert() do
+      {:ok, id}
     end
   end
 
-  defp create_drive_state(attrs \\ %{}) do
-    %DriveState{}
-    |> DriveState.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  defp update_drive_state(%DriveState{} = drive_state, attrs) do
-    drive_state
-    |> DriveState.changeset(attrs)
-    |> Repo.update()
-  end
-
-  alias TeslaMate.Log.{ChargingState, Charge}
-
-  def insert_charge(attrs) do
-    with {:ok, _} <- %Charge{} |> Charge.changeset(attrs) |> Repo.insert() do
+  def insert_charge(process_id, attrs) do
+    with {:ok, _} <-
+           %Charge{charging_process_id: process_id}
+           |> Charge.changeset(attrs)
+           |> Repo.insert() do
       :ok
     end
   end
 
-  def get_last_charge_id! do
-    Charge
-    |> select([p], max(p.id))
-    |> Repo.one!()
-  end
+  def close_charging_process(process_id) do
+    # TODO calculate statistics
 
-  def start_charging_state do
-    # TODO combine with insert_charge && insert_position
-
-    last_position_id = get_last_position_id!()
-    last_charge_id = get_last_charge_id!()
-
-    attrs = %{
-      start_date: DateTime.utc_now(),
-      position: last_position_id,
-      charge_start_id: last_charge_id
-    }
-
-    with {:ok, _} <- create_charging_state(attrs) do
+    with {:ok, _} <-
+           ChargingProcess
+           |> Repo.get!(process_id)
+           |> ChargingProcess.changeset(%{end_date: DateTime.utc_now()})
+           |> Repo.update() do
       :ok
     end
-  end
-
-  def close_charging_state do
-    last_charge_id = get_last_charge_id!()
-    end_date = DateTime.utc_now()
-
-    result =
-      ChargingState
-      |> where([c], is_nil(c.end_date))
-      |> update(set: [end_date: ^end_date, charge_end_id: ^last_charge_id])
-      |> Repo.update_all([])
-
-    case result do
-      {0, nil} -> {:erorr, :no_charging_state_to_be_closed}
-      {1, nil} -> :ok
-      {n, nil} -> {:error, {:closed_multiple_charging_states, n}}
-    end
-  end
-
-  defp create_charging_state(attrs \\ %{}) do
-    %ChargingState{}
-    |> ChargingState.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  defp update_charging_state(%ChargingState{} = charging_state, attrs) do
-    charging_state
-    |> ChargingState.changeset(attrs)
-    |> Repo.update()
-  end
-
-  defp update_charge(%Charge{} = charge, attrs) do
-    charge
-    |> Charge.changeset(attrs)
-    |> Repo.update()
   end
 end

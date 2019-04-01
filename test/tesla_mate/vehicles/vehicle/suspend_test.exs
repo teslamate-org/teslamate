@@ -3,7 +3,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
   test "suspends after idling", %{test: name} do
     now = DateTime.utc_now()
-    now_ts = DateTime.to_unix(now, :microsecond)
+    now_ts = DateTime.to_unix(now, :millisecond)
 
     suspendable =
       vehicle_full(
@@ -27,13 +27,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         suspend_min: suspend_ms
       )
 
-    assert_receive {:insert_position, %{date: ^now, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:start_state, :online}
-
-    assert_receive {:insert_position, %{date: _, latitude: 0.0, longitude: 0.0}}
+    assert_receive {:start_state, 999, :online}
     refute_receive _, sudpend_after_idle_ms + suspend_ms - 20
-
-    assert_receive {:start_state, :asleep}
+    assert_receive {:start_state, 999, :asleep}
 
     refute_receive _
   end
@@ -41,7 +37,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   @tag :capture_log
   test "does not suspend if preconditioning", %{test: name} do
     now = DateTime.utc_now()
-    now_ts = DateTime.to_unix(now, :microsecond)
+    now_ts = DateTime.to_unix(now, :millisecond)
 
     not_supendable =
       vehicle_full(
@@ -63,8 +59,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         suspend_min: suspend_ms
       )
 
-    assert_receive {:insert_position, %{date: ^now, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:start_state, :online}
+    assert_receive {:start_state, 999, :online}
 
     # Stays online
     refute_receive _, round(suspend_ms * 1.5)

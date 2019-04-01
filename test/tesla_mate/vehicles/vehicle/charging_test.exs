@@ -12,9 +12,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     )
   end
 
+  @tag :only
   test "logs a full charging cycle", %{test: name} do
     now = DateTime.utc_now()
-    now_ts = DateTime.to_unix(now, :microsecond)
+    now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
       {:ok, %TeslaApi.Vehicle{state: "online"}},
@@ -30,20 +31,16 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:insert_position, %{date: ^now, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:start_state, :online}
+    assert_receive {:start_state, 999, :online}
 
-    assert_receive :start_charging_state
-    assert_receive {:insert_position, %{date: _, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:insert_charge, %{date: _, charger_power: nil}}
-    assert_receive {:insert_charge, %{date: _, charger_power: 125}}
-    assert_receive {:insert_charge, %{date: _, charger_power: 120}}
-    assert_receive {:insert_charge, %{date: _, charger_power: 0}}
-    assert_receive :close_charging_state
+    assert_receive {:insert_position, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
+    assert_receive {:start_charging_process, 999}
+    assert_receive {:insert_charge, 99, %{date: _, charger_power: 125}}
+    assert_receive {:insert_charge, 99, %{date: _, charger_power: 120}}
+    assert_receive {:insert_charge, 99, %{date: _, charger_power: 0}}
+    assert_receive {:close_charging_process, 99}
 
-    assert_receive {:insert_position, %{date: _, latitude: 0.0, longitude: 0.0, speed: nil}}
-    assert_receive {:insert_position, %{date: _, latitude: 0.2, longitude: 0.2, speed: nil}}
-    assert_receive {:start_state, :online}
+    assert_receive {:start_state, 999, :online}
 
     refute_receive _
   end
@@ -51,7 +48,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
   @tag :capture_log
   test "handles a connection loss when charging", %{test: name} do
     now = DateTime.utc_now()
-    now_ts = DateTime.to_unix(now, :microsecond)
+    now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
       {:ok, %TeslaApi.Vehicle{state: "online"}},
@@ -71,27 +68,23 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:insert_position, %{date: ^now, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:start_state, :online}
+    assert_receive {:start_state, 999, :online}
 
-    assert_receive :start_charging_state
-    assert_receive {:insert_position, %{date: _, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:insert_charge, %{date: _, charger_power: nil}}
-    assert_receive {:insert_charge, %{date: _, charger_power: 125}}
-    assert_receive {:insert_charge, %{date: _, charger_power: 120}}
-    assert_receive {:insert_charge, %{date: _, charger_power: 0}}
-    assert_receive :close_charging_state
+    assert_receive {:insert_position, 999, %{date: _, latitude: 0.0, longitude: 0.0, speed: nil}}
+    assert_receive {:start_charging_process, 999}
+    assert_receive {:insert_charge, 99, %{date: _, charger_power: 125}}
+    assert_receive {:insert_charge, 99, %{date: _, charger_power: 120}}
+    assert_receive {:insert_charge, 99, %{date: _, charger_power: 0}}
+    assert_receive {:close_charging_process, 99}
 
-    assert_receive {:insert_position, %{date: _, latitude: 0.0, longitude: 0.0, speed: nil}}
-    assert_receive {:insert_position, %{date: _, latitude: 0.2, longitude: 0.2, speed: nil}}
-    assert_receive {:start_state, :online}
+    assert_receive {:start_state, 999, :online}
 
     refute_receive _
   end
 
   test "Transitions directly into charging state", %{test: name} do
     now = DateTime.utc_now()
-    now_ts = DateTime.to_unix(now, :microsecond)
+    now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
       {:ok, %TeslaApi.Vehicle{state: "online"}},
@@ -100,13 +93,13 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:insert_position, %{date: ^now, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:start_state, :online}
+    assert_receive {:start_state, 999, :online}
 
-    assert_receive :start_charging_state
-    assert_receive {:insert_position, %{date: _, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:insert_charge, %{date: _, charger_power: 22}}
-    assert_receive {:insert_charge, %{date: _, charger_power: 22}}
+    assert_receive {:insert_position, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
+    assert_receive {:start_charging_process, 999}
+
+    assert_receive {:insert_charge, 99, %{date: _, charger_power: 22}}
+    assert_receive {:insert_charge, 99, %{date: _, charger_power: 22}}
     # ...
 
     refute_received _

@@ -9,11 +9,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   alias TeslaApi.Vehicle.State
   alias TeslaApi.Vehicle
 
-  import Core.Dependency, only: [call: 3, call: 2]
+  import Core.Dependency, only: [call: 3]
 
   defstruct id: nil,
+            car_id: nil,
             vehicle_id: nil,
-            properties: nil,
             last_shift_state: nil,
             last_used: nil,
             sleep_between: %{from: nil, to: nil},
@@ -39,9 +39,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def init(opts) do
     %Vehicle{} = vehicle = Keyword.fetch!(opts, :vehicle)
 
-    properties = Identification.properties(vehicle)
-
-    Logger.info("Found Vehicle '#{vehicle.display_name}' [#{inspect(properties)}]")
+    Logger.info("Found Vehicle '#{vehicle.display_name}'")
 
     deps = %{
       log: Keyword.get(opts, :log, Log),
@@ -51,33 +49,36 @@ defmodule TeslaMate.Vehicles.Vehicle do
     data = %Data{
       id: vehicle.id,
       vehicle_id: vehicle.vehicle_id,
-      properties: properties,
       last_used: DateTime.utc_now(),
-      sudpend_after_idle_min: Keyword.get(opts, :sudpend_after_idle_min, 15),
+      sudpend_after_idle_min: Keyword.get(opts, :sudpend_after_idle_min, 10),
       suspend_min: Keyword.get(opts, :suspend_min, 21),
       deps: deps
     }
 
-    {:ok, :start, data, {:next_event, :internal, :init}}
+    {:ok, :start, data, {:next_event, :internal, {:init, vehicle}}}
   end
 
   @impl true
-  def handle_event(:internal, :init, :start, data) do
-    # create_car if not exists
+  def handle_event(:internal, {:init, vehicle}, :start, data) do
+    {:ok, %Log.Car{id: car_id}} =
+      case call(data.deps.log, :get_car_by_eid, [vehicle.id]) do
+        nil ->
+          properties = Identification.properties(vehicle)
 
-    # DBHelper.getLastTrip()
+          call(data.deps.log, :create_car, [
+            %{
+              eid: vehicle.id,
+              vid: vehicle.vehicle_id,
+              model: properties.model,
+              efficiency: properties.efficiency
+            }
+          ])
 
-    case call(data.deps.log, :close_charging_state) do
-      {:erorr, :no_charging_state_to_be_closed} -> :ok
-      :ok -> :ok
-    end
+        car ->
+          {:ok, car}
+      end
 
-    case call(data.deps.log, :close_drive_state) do
-      {:erorr, :no_drive_state_to_be_closed} -> :ok
-      :ok -> :ok
-    end
-
-    {:keep_state_and_data, {:next_event, :internal, :fetch}}
+    {:keep_state, %Data{data | car_id: car_id}, {:next_event, :internal, :fetch}}
   end
 
   # TODO
@@ -87,6 +88,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # - geofecnces
   # - mqtt
   # - indices
+  # - cron job which "closes" drives & charging_processes
 
   def handle_event(event, :fetch, state, data) when event in [:state_timeout, :internal] do
     case fetch(data, expected_state: state) do
@@ -118,7 +120,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, :asleep}, :start, data) do
     Logger.info("Start / :asleep")
 
-    :ok = call(data.deps.log, :start_state, [:asleep])
+    :ok = call(data.deps.log, :start_state, [data.car_id, :asleep])
 
     {:next_state, :asleep, data, schedule_fetch()}
   end
@@ -126,18 +128,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, :offline}, :start, data) do
     Logger.info("Start / :offline")
 
-    :ok = call(data.deps.log, :start_state, [:offline])
+    :ok = call(data.deps.log, :start_state, [data.car_id, :offline])
 
     {:keep_state_and_data, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle_state}}, :start, data) do
+  def handle_event(:internal, event, :start, data) do
     Logger.info("Start / :online")
 
-    :ok = insert_position(vehicle_state, data)
-    :ok = call(data.deps.log, :start_state, [:online])
+    :ok = call(data.deps.log, :start_state, [data.car_id, :online])
 
-    {:next_state, :online, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
+    {:next_state, :online, %Data{data | last_used: DateTime.utc_now()},
+     {:next_event, :internal, event}}
   end
 
   ### :online
@@ -154,23 +156,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
       when shift_state in ["D", "N", "R"] ->
         Logger.info("Start / :driving")
 
-        :ok = insert_position(vehicle_state, data)
-        :ok = call(data.deps.log, :start_drive_state)
-        # wh.StartStreamThread(); // for altitude
+        {:ok, trip_id} = call(data.deps.log, :start_trip, [data.car_id])
+        :ok = insert_position(vehicle_state, data, trip_id: trip_id)
 
-        {:next_state, {:driving, shift_state}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:driving, trip_id}, %Data{data | last_used: DateTime.utc_now()},
          schedule_fetch(5)}
 
       %{charge_state: %State.Charge{charging_state: charging_state}}
       when charging_state in ["Complete", "Charging"] ->
         Logger.info("Start / :charging")
 
-        :ok = insert_charge(vehicle_state, data)
         :ok = insert_position(vehicle_state, data)
-        :ok = call(data.deps.log, :start_charging_state)
+        {:ok, charging_process_id} = call(data.deps.log, :start_charging_process, [data.car_id])
 
-        {:next_state, {:charging, charging_state}, %Data{data | last_used: DateTime.utc_now()},
-         schedule_fetch(5)}
+        {:next_state, {:charging, charging_state, charging_process_id},
+         %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
 
       _ ->
         suspend? =
@@ -186,9 +186,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
           {true, %State.Climate{is_preconditioning: _}} ->
             Logger.info("Start / :suspend")
 
-            # Insert last position before sleep
-            :ok = insert_position(vehicle_state, data)
-
             {:next_state, :start, data, schedule_fetch(data.suspend_min, :minutes)}
 
           {false, _} ->
@@ -199,20 +196,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ### :charging
 
-  def handle_event(:internal, {:update, :offline}, {:charging, _}, _data) do
+  def handle_event(:internal, {:update, :offline}, {:charging, _, _}, _data) do
     Logger.warn("Vehicle went offline while charging")
 
     {:keep_state_and_data, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle_state}}, {:charging, last}, data) do
+  def handle_event(:internal, {:update, {:online, vehicle_state}}, {:charging, last, pid}, data) do
     case {vehicle_state.charge_state.charging_state, last} do
       {"Charging", _} ->
-        :ok = insert_charge(vehicle_state, data)
+        :ok = insert_charge(pid, vehicle_state, data)
 
         next_check_in = round(1000 / Map.get(vehicle_state.charge_state, :charge_power, 100))
 
-        {:next_state, {:charging, "Charging"}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:charging, "Charging", pid}, %Data{data | last_used: DateTime.utc_now()},
          schedule_fetch(next_check_in)}
 
       {"Complete", "Complete"} ->
@@ -221,9 +218,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {"Complete", _} ->
         Logger.info("Charging complete")
 
-        :ok = insert_charge(vehicle_state, data)
+        :ok = insert_charge(pid, vehicle_state, data)
 
-        {:next_state, {:charging, "Complete"}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:charging, "Complete", pid}, %Data{data | last_used: DateTime.utc_now()},
          schedule_fetch()}
 
       {charging_state, last_charging_state} ->
@@ -231,8 +228,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           "Charging ended (?): #{inspect(charging_state)} | Before: #{last_charging_state}"
         )
 
-        :ok = insert_position(vehicle_state, data)
-        :ok = call(data.deps.log, :close_charging_state)
+        :ok = call(data.deps.log, :close_charging_process, [pid])
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
     end
@@ -240,28 +236,26 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ### :driving
 
-  def handle_event(:internal, {:update, :offline}, {:driving, _}, _data) do
+  def handle_event(:internal, {:update, :offline}, {:driving, _trip_id}, _data) do
     Logger.warn("Vehicle went offline while driving")
 
     {:keep_state_and_data, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle_state}}, {:driving, _}, data) do
+  def handle_event(:internal, {:update, {:online, vehicle_state}}, {:driving, trip_id}, data) do
     case vehicle_state.drive_state.shift_state do
       shift_state when shift_state in ["D", "R", "N"] ->
-        :ok = insert_position(vehicle_state, data)
+        :ok = insert_position(vehicle_state, data, trip_id: trip_id)
 
-        {:next_state, {:driving, shift_state}, %Data{data | last_used: DateTime.utc_now()},
-         schedule_fetch(5)}
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
 
       "P" ->
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(10)}
 
       nil ->
-        Logger.info("Driving ended")
+        Logger.info("Trip ended")
 
-        # wh.StopStreaming();
-        :ok = call(data.deps.log, :close_drive_state)
+        :ok = call(data.deps.log, :close_trip, [trip_id])
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
     end
@@ -279,12 +273,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle_state}}, :asleep, data) do
+  def handle_event(:internal, {:update, {:online, _}} = event, :asleep, data) do
     Logger.info("Vehicle woke up")
 
-    :ok = insert_position(vehicle_state, data)
-
-    {:next_state, :start, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
+    {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+     {:next_event, :internal, event}}
   end
 
   # Private
@@ -294,7 +287,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       case expected_state do
         :online -> true
         {:driving, _} -> true
-        {:charging, _} -> true
+        {:charging, _, _} -> true
         :asleep -> false
         :start -> false
       end
@@ -321,8 +314,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp insert_position(%Vehicle{drive_state: %State.Drive{}} = state, data) do
+  defp insert_position(%Vehicle{drive_state: %State.Drive{}} = state, data, opts \\ []) do
+    trip_id = Keyword.get(opts, :trip_id)
+
     attrs = %{
+      trip_id: trip_id,
       date: DateTime.from_unix!(state.drive_state.timestamp, :microsecond),
       latitude: state.drive_state.latitude,
       longitude: state.drive_state.longitude,
@@ -331,14 +327,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
       battery_level: Map.get(state.charge_state, :battery_level),
       outside_temp: Map.get(state.climate_state, :outside_temp),
       odometer: Map.get(state.vehicle_state, :odometer),
-      ideal_battery_range: Map.get(state.charge_state, :ideal_battery_range),
+      # TODO convert
+      ideal_battery_range_km: Map.get(state.charge_state, :ideal_battery_range),
       altitude: nil
     }
 
-    :ok = call(data.deps.log, :insert_position, [attrs])
+    :ok = call(data.deps.log, :insert_position, [data.car_id, attrs])
   end
 
-  defp insert_charge(%Vehicle{charge_state: %State.Charge{}} = state, data) do
+  defp insert_charge(process_id, %Vehicle{charge_state: %State.Charge{}} = state, data) do
     attrs = %{
       date: DateTime.from_unix!(state.charge_state.timestamp, :microsecond),
       battery_level: state.charge_state.battery_level,
@@ -347,11 +344,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
       charger_phases: state.charge_state.charger_phases,
       charger_power: state.charge_state.charger_power,
       charger_voltage: state.charge_state.charger_voltage,
-      ideal_battery_range: state.charge_state.ideal_battery_range,
+      # TODO convert
+      ideal_battery_range_km: state.charge_state.ideal_battery_range,
       outside_temp: Map.get(state.climate_state, :outside_temp)
     }
 
-    :ok = call(data.deps.log, :insert_charge, [attrs])
+    :ok = call(data.deps.log, :insert_charge, [process_id, attrs])
   end
 
   defp schedule_fetch(n \\ 10, unit \\ :seconds)

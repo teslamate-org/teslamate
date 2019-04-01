@@ -117,12 +117,23 @@ defmodule TeslaMate.Api do
     end
 
     def get_vehicle_with_state(_id) do
+      # {:error, :unavailable}
+
       {:ok,
        %Vehicle{
          state: "online",
-         charge_state: %Vehicle.State.Charge{},
+         charge_state: %Vehicle.State.Charge{
+           # timestamp: DateTime.utc_now() |> DateTime.to_unix(:microsecond),
+           # charging_state: "Unplugged",
+           # charger_power: 22,
+           # battery_level: 16,
+           # charge_energy_added: 0.5,
+           # ideal_battery_range: 59.95
+         },
          drive_state: %Vehicle.State.Drive{
            timestamp: DateTime.utc_now() |> DateTime.to_unix(:microsecond),
+           # shift_state: "N",
+           # speed: 50,
            latitude: 0.0,
            longitude: 0.0
          },
@@ -133,9 +144,9 @@ defmodule TeslaMate.Api do
 
     def list_vehicles do
       m3 = %Vehicle{
-        id: 0,
+        id: 1000,
         state: "online",
-        vehicle_id: 0,
+        vehicle_id: 1010,
         display_name: "Tesla!M3",
         option_codes: ["MDL3", "BT37", "DV4W"]
       }
@@ -144,7 +155,7 @@ defmodule TeslaMate.Api do
     end
 
     @impl true
-    def init(opts) do
+    def init(_opts) do
       {:ok, nil}
     end
   end
