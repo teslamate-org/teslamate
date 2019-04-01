@@ -9,9 +9,9 @@ defmodule TeslaMate.Log do
   alias TeslaMate.Log.Position
 
   def insert_position(attrs) do
-    %Position{}
-    |> Position.changeset(attrs)
-    |> Repo.insert()
+    with {:ok, _} <- %Position{} |> Position.changeset(attrs) |> Repo.insert() do
+      :ok
+    end
   end
 
   def get_last_position_id! do
@@ -185,9 +185,9 @@ defmodule TeslaMate.Log do
   alias TeslaMate.Log.{ChargingState, Charge}
 
   def insert_charge(attrs) do
-    %Charge{}
-    |> Charge.changeset(attrs)
-    |> Repo.insert()
+    with {:ok, _} <- %Charge{} |> Charge.changeset(attrs) |> Repo.insert() do
+      :ok
+    end
   end
 
   def get_last_charge_id! do

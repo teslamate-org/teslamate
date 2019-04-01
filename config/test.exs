@@ -11,8 +11,12 @@ config :logger, level: :warn
 
 # Configure your database
 config :tesla_mate, TeslaMate.Repo,
-  username: "postgres",
+  username: "adrian",
   password: "postgres",
   database: "tesla_mate_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :tesla_mate, :tesla_auth,
+  username: "admin",
+  password: "admin"

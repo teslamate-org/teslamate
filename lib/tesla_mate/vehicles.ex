@@ -11,18 +11,16 @@ defmodule TeslaMate.Vehicles do
 
   @impl true
   def init(opts) do
-    vehicles =
-      Keyword.get_lazy(opts, :vehicles, fn ->
-        {:ok, vehicles} = TeslaMate.Api.list_vehicles()
-        vehicles
-      end)
-
     children =
-      vehicles
-      |> Enum.map(fn %TeslaApi.Vehicle{} = vehicle ->
-        {Vehicle, vehicle}
-      end)
+      opts
+      |> Keyword.get_lazy(:vehicles, &list_vehicles!/0)
+      |> Enum.map(&{Vehicle, vehicle: &1})
 
     Supervisor.init(children, strategy: :one_for_one, max_restarts: 5, max_seconds: 60)
+  end
+
+  defp list_vehicles! do
+    {:ok, vehicles} = TeslaMate.Api.list_vehicles()
+    vehicles
   end
 end

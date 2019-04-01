@@ -1,2 +1,3 @@
 ExUnit.start()
-Ecto.Adapters.SQL.Sandbox.mode(TeslaMate.Repo, :manual)
+
+# Ecto.Adapters.SQL.Sandbox.mode(TeslaMate.Repo, :manual)

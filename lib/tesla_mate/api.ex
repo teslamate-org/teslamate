@@ -23,8 +23,12 @@ defmodule TeslaMate.Api do
       GenServer.call(name, :list_vehicles)
     end
 
-    def charge_state(name \\ @name, vehicle_id) do
-      GenServer.call(name, {:charge_state, vehicle_id})
+    def get_vehicle(name \\ @name, id) do
+      GenServer.call(name, {:get_vehicle, id})
+    end
+
+    def get_vehicle_with_state(name \\ @name, id) do
+      GenServer.call(name, {:get_vehicle_with_state, id})
     end
 
     # Callbacks
@@ -46,18 +50,29 @@ defmodule TeslaMate.Api do
     end
 
     @impl true
-    def handle_call({:charge_state, vehicle_id}, _from, state) do
-      case Vehicle.State.charge_state(state.auth, vehicle_id) do
-        %Vehicle.State.Charge{} = charge_state -> {:reply, charge_state, state}
-        %Error{message: reason} -> {:reply, {:error, reason}, state}
-      end
+    def handle_call(:list_vehicles, _from, state) do
+      {:reply, do_list_vehicles(state.auth), state}
     end
 
-    def handle_call(:list_vehicles, _from, state) do
-      case Vehicle.list(state.auth) do
-        vehicles when is_list(vehicles) -> {:reply, {:ok, vehicles}, state}
-        %Error{message: reason} -> {:reply, {:error, reason}, state}
-      end
+    def handle_call({:get_vehicle, id}, _from, state) do
+      response =
+        with {:ok, vehicles} <- do_list_vehicles(state.auth),
+             {:ok, vehicle} <- find_vehicle(vehicles, id) do
+          {:ok, vehicle}
+        end
+
+      {:reply, response, state}
+    end
+
+    def handle_call({:get_vehicle_with_state, id}, _from, state) do
+      response =
+        case Vehicle.get_with_state(state.auth, id) do
+          %Error{error: :vehicle_unavailable} -> {:error, :unavailable}
+          %Error{message: reason} -> {:error, reason}
+          %Vehicle{} = vehicle -> {:ok, vehicle}
+        end
+
+      {:reply, response, state}
     end
 
     @impl true
@@ -73,6 +88,22 @@ defmodule TeslaMate.Api do
       Process.send_after(self(), :refresh_auth, :timer.hours(24 * 30))
       {:noreply, state}
     end
+
+    # Private
+
+    defp do_list_vehicles(auth) do
+      case Vehicle.list(auth) do
+        vehicles when is_list(vehicles) -> {:ok, vehicles}
+        %Error{message: reason} -> {:error, reason}
+      end
+    end
+
+    defp find_vehicle(vehicles, id) do
+      case Enum.find(vehicles, &match?(%Vehicle{id: ^id}, &1)) do
+        nil -> {:error, :vehicle_not_found}
+        vehicle -> {:ok, vehicle}
+      end
+    end
   else
     # API
 
@@ -80,13 +111,36 @@ defmodule TeslaMate.Api do
       GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
     end
 
-    def charge_state(vehicle_id) do
-      {:ok, %Vehicle.State.Charge{}}
+    def get_vehicle(_id) do
+      {:ok, vehicles} = list_vehicles()
+      {:ok, hd(vehicles)}
+    end
+
+    def get_vehicle_with_state(_id) do
+      {:ok,
+       %Vehicle{
+         state: "online",
+         charge_state: %Vehicle.State.Charge{},
+         drive_state: %Vehicle.State.Drive{
+           timestamp: DateTime.utc_now() |> DateTime.to_unix(:microsecond),
+           latitude: 0.0,
+           longitude: 0.0
+         },
+         climate_state: %Vehicle.State.Climate{},
+         vehicle_state: %Vehicle.State.VehicleState{}
+       }}
     end
 
     def list_vehicles do
-      {:ok,
-       [%Vehicle{vehicle_id: 0, display_name: "Tesla!M3", option_codes: ["MDL3", "BT37", "DV4W"]}]}
+      m3 = %Vehicle{
+        id: 0,
+        state: "online",
+        vehicle_id: 0,
+        display_name: "Tesla!M3",
+        option_codes: ["MDL3", "BT37", "DV4W"]
+      }
+
+      {:ok, [m3]}
     end
 
     @impl true
