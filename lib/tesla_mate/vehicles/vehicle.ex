@@ -164,11 +164,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, {:driving, trip_id}, %Data{data | last_used: DateTime.utc_now()},
          schedule_fetch(5)}
 
-      %{charge_state: %State.Charge{charging_state: charging_state}}
-      when charging_state in ["Complete", "Charging"] ->
-        Logger.info("Start / :charging")
+      %{charge_state: %State.Charge{charging_state: charging_state, time_to_full_charge: t}}
+      when charging_state in ["Charging", "Complete"] ->
+        Logger.info("Start / Charging / #{t}h left")
 
+        # TODO Combine
         :ok = insert_position(vehicle_state, data)
+        # charger_pilot_current
+        # fast_charger_type,
+        # fast_charger_brand,
         {:ok, charging_process_id} = call(data.deps.log, :start_charging_process, [data.car_id])
 
         {:next_state, {:charging, charging_state, charging_process_id},
@@ -209,16 +213,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {"Charging", _} ->
         :ok = insert_charge(pid, vehicle_state, data)
 
-        next_check_in = round(1000 / Map.get(vehicle_state.charge_state, :charge_power, 100))
+        interval =
+          vehicle_state.charge_state
+          |> Map.get(:charger_power)
+          |> determince_interval()
 
         {:next_state, {:charging, "Charging", pid}, %Data{data | last_used: DateTime.utc_now()},
-         schedule_fetch(next_check_in)}
+         schedule_fetch(interval)}
 
       {"Complete", "Complete"} ->
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15)}
 
-      {"Complete", _} ->
-        Logger.info("Charging complete")
+      {"Complete", "Charging"} ->
+        Logger.info(
+          "Charging complete / Added #{vehicle_state.charge_state.charge_energy_added} kWh"
+        )
 
         :ok = insert_charge(pid, vehicle_state, data)
 
@@ -226,7 +235,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          schedule_fetch()}
 
       {charging_state, last_charging_state} ->
-        Logger.info(
+        Logger.warn(
           "Charging ended (?): #{inspect(charging_state)} | Before: #{last_charging_state}"
         )
 
@@ -377,6 +386,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp miles_to_km(nil, _precision), do: nil
   defp miles_to_km(miles, precision), do: Float.round(miles / 0.62137, precision)
+
+  defp determince_interval(n) when not is_nil(n) and n > 0, do: round(1000 / n) |> min(60)
+  defp determince_interval(_), do: 15
 
   defp schedule_fetch(n \\ 10, unit \\ :seconds)
 
