@@ -74,7 +74,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     refute_receive _
   end
 
-  test "Transitions directly into driving state", %{test: name} do
+  test "transitions directly into driving state", %{test: name} do
     now = DateTime.utc_now()
     now_ts = DateTime.to_unix(now, :millisecond)
 
@@ -105,6 +105,34 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     ]
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+
+    assert_receive {:start_state, 999, :online}
+
+    refute_receive _
+  end
+
+  test "shift_state P does not trigger position inserts", %{test: name} do
+    now = DateTime.utc_now()
+    now_ts = DateTime.to_unix(now, :millisecond)
+
+    events = [
+      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, drive_event(now_ts, "D", 5)},
+      {:ok, drive_event(now_ts, "D", 15)},
+      {:ok, drive_event(now_ts, "P", 0)},
+      {:ok, drive_event(now_ts, "P", 0)},
+      {:ok, drive_event(now_ts, "P", 0)},
+      {:ok, drive_event(now_ts, nil, 0)}
+    ]
+
+    :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+
+    assert_receive {:start_state, 999, :online}
+
+    assert_receive {:start_trip, 999}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 8.0, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 24.0, trip_id: 111}}
+    assert_receive {:close_trip, 111}
 
     assert_receive {:start_state, 999, :online}
 
