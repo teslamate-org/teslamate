@@ -128,9 +128,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, :offline}, :start, data) do
     Logger.info("Start / :offline")
 
+    # TODO
+    # all states have a position; bring start and end positinos back
     :ok = call(data.deps.log, :start_state, [data.car_id, :offline])
 
-    {:keep_state_and_data, schedule_fetch()}
+    {:next_state, :offline, data, schedule_fetch()}
   end
 
   def handle_event(:internal, event, :start, data) do
@@ -280,6 +282,23 @@ defmodule TeslaMate.Vehicles.Vehicle do
      {:next_event, :internal, event}}
   end
 
+  ### :offline
+
+  def handle_event(:internal, {:update, :offline}, :offline, _data) do
+    {:keep_state_and_data, schedule_fetch()}
+  end
+
+  def handle_event(:internal, {:update, :asleep}, :offline, data) do
+    {:next_state, :start, data, schedule_fetch()}
+  end
+
+  def handle_event(:internal, {:update, {:online, _}} = event, :offline, data) do
+    Logger.info("Is available again")
+
+    {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+     {:next_event, :internal, event}}
+  end
+
   # Private
 
   defp fetch(%Data{id: id, deps: deps}, expected_state: expected_state) do
@@ -288,6 +307,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :online -> true
         {:driving, _} -> true
         {:charging, _, _} -> true
+        :offline -> false
         :asleep -> false
         :start -> false
       end
