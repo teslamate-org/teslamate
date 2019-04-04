@@ -20,15 +20,15 @@ defmodule TeslaMate.Api do
     end
 
     def list_vehicles(name \\ @name) do
-      GenServer.call(name, :list_vehicles)
+      GenServer.call(name, :list_vehicles, 35_000)
     end
 
     def get_vehicle(name \\ @name, id) do
-      GenServer.call(name, {:get_vehicle, id})
+      GenServer.call(name, {:get_vehicle, id}, 35_000)
     end
 
     def get_vehicle_with_state(name \\ @name, id) do
-      GenServer.call(name, {:get_vehicle_with_state, id})
+      GenServer.call(name, {:get_vehicle_with_state, id}, 35_000)
     end
 
     # Callbacks
@@ -40,7 +40,6 @@ defmodule TeslaMate.Api do
 
       case Auth.login(username, password) do
         %Error{error: error, message: reason, env: _env} ->
-          Logger.error("Login failed: #{inspect({error, reason})}")
           {:stop, {error, reason}}
 
         %Auth{} = auth ->
@@ -68,7 +67,7 @@ defmodule TeslaMate.Api do
       response =
         case Vehicle.get_with_state(state.auth, id) do
           %Error{error: :vehicle_unavailable} -> {:error, :unavailable}
-          %Error{message: reason} -> {:error, reason}
+          %Error{message: reason, env: env} -> {:error, {reason, env}}
           %Vehicle{} = vehicle -> {:ok, vehicle}
         end
 
@@ -83,6 +82,10 @@ defmodule TeslaMate.Api do
       end
     end
 
+    def handle_info({:ssl_closed, _}, state) do
+      {:noreply, state}
+    end
+
     @impl true
     def handle_continue(:schedule_refresh, state) do
       Process.send_after(self(), :refresh_auth, :timer.hours(24 * 30))
@@ -94,7 +97,7 @@ defmodule TeslaMate.Api do
     defp do_list_vehicles(auth) do
       case Vehicle.list(auth) do
         vehicles when is_list(vehicles) -> {:ok, vehicles}
-        %Error{message: reason} -> {:error, reason}
+        %Error{message: reason, env: env} -> {:error, {reason, env}}
       end
     end
 
