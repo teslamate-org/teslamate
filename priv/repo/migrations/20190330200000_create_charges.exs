@@ -11,6 +11,7 @@ defmodule TeslaMate.Repo.Migrations.CreateCharges do
       add(:charger_voltage, :integer)
       add(:charger_phases, :integer)
       add(:charger_actual_current, :integer)
+      add(:battery_heater_on, :boolean)
       add(:outside_temp, :float)
 
       add(:charging_process_id, references(:charging_processes), null: false)

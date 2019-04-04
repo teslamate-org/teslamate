@@ -7,7 +7,7 @@ defmodule TeslaMate.Repo.Migrations.CreatePositions do
       add(:latitude, :float, null: false)
       add(:longitude, :float, null: false)
       add(:speed, :integer)
-      add(:power, :integer)
+      add(:power, :float)
       add(:odometer, :float)
       add(:ideal_battery_range_km, :float)
       add(:battery_level, :float)

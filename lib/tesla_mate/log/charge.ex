@@ -11,6 +11,7 @@ defmodule TeslaMate.Log.Charge do
     field :charger_phases, :integer, default: 1
     field :charger_power, :float
     field :charger_voltage, :integer
+    field :battery_heater_on, :boolean
     field :date, :utc_datetime
     field :ideal_battery_range_km, :float
     field :outside_temp, :float
@@ -30,6 +31,7 @@ defmodule TeslaMate.Log.Charge do
       :charger_voltage,
       :charger_phases,
       :charger_actual_current,
+      :battery_heater_on,
       :outside_temp
     ])
     |> validate_required([

@@ -319,16 +319,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     attrs = %{
       trip_id: trip_id,
-      date: DateTime.from_unix!(state.drive_state.timestamp, :microsecond),
+      date: DateTime.from_unix!(state.drive_state.timestamp, :millisecond),
       latitude: state.drive_state.latitude,
       longitude: state.drive_state.longitude,
-      speed: state.drive_state.speed,
+      speed: mph_to_kmh(state.drive_state.speed),
       power: state.drive_state.power,
-      battery_level: Map.get(state.charge_state, :battery_level),
-      outside_temp: Map.get(state.climate_state, :outside_temp),
-      odometer: Map.get(state.vehicle_state, :odometer),
-      # TODO convert
-      ideal_battery_range_km: Map.get(state.charge_state, :ideal_battery_range),
+      battery_level: state.charge_state.battery_level,
+      outside_temp: state.climate_state.outside_temp,
+      odometer: miles_to_km(state.vehicle_state.odometer, 6),
+      ideal_battery_range_km: miles_to_km(state.charge_state.ideal_battery_range, 1),
       altitude: nil
     }
 
@@ -337,20 +336,27 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp insert_charge(process_id, %Vehicle{charge_state: %State.Charge{}} = state, data) do
     attrs = %{
-      date: DateTime.from_unix!(state.charge_state.timestamp, :microsecond),
+      date: DateTime.from_unix!(state.charge_state.timestamp, :millisecond),
       battery_level: state.charge_state.battery_level,
       charge_energy_added: state.charge_state.charge_energy_added,
       charger_actual_current: state.charge_state.charger_actual_current,
       charger_phases: state.charge_state.charger_phases,
       charger_power: state.charge_state.charger_power,
       charger_voltage: state.charge_state.charger_voltage,
-      # TODO convert
-      ideal_battery_range_km: state.charge_state.ideal_battery_range,
-      outside_temp: Map.get(state.climate_state, :outside_temp)
+      ideal_battery_range_km: miles_to_km(state.charge_state.ideal_battery_range, 1),
+      battery_heater_on: state.charge_state.battery_heater_on,
+      outside_temp: state.climate_state.outside_temp
     }
 
     :ok = call(data.deps.log, :insert_charge, [process_id, attrs])
   end
+
+  defp mph_to_kmh(mph, precision \\ 0)
+  defp mph_to_kmh(nil, _precision), do: nil
+  defp mph_to_kmh(mph, precision), do: Float.round(mph * 1.60934, precision)
+
+  defp miles_to_km(nil, _precision), do: nil
+  defp miles_to_km(miles, precision), do: Float.round(miles / 0.62137, precision)
 
   defp schedule_fetch(n \\ 10, unit \\ :seconds)
 

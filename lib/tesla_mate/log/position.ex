@@ -10,7 +10,7 @@ defmodule TeslaMate.Log.Position do
     field :longitude, :float
 
     field :speed, :integer
-    field :power, :integer
+    field :power, :float
     field :odometer, :float
     field :ideal_battery_range_km, :float
     field :battery_level, :float
