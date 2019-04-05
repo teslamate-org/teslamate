@@ -211,11 +211,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, {:charging, "Complete", pid}, %Data{data | last_used: DateTime.utc_now()},
          schedule_fetch()}
 
-      {charging_state, last_charging_state} ->
+      {charging_state, _} ->
         energy_added = vehicle_state.charge_state.charge_energy_added
-        Logger.info("Charging / Ended / Added #{energy_added}kWh")
-
-        IO.inspect({charging_state, last_charging_state}, label: :dbg_charging)
+        Logger.info("Charging / #{charging_state} / Added #{energy_added}kWh")
 
         :ok = call(data.deps.log, :close_charging_process, [pid])
 
@@ -334,7 +332,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
       outside_temp: state.climate_state.outside_temp,
       odometer: miles_to_km(state.vehicle_state.odometer, 6),
       ideal_battery_range_km: miles_to_km(state.charge_state.ideal_battery_range, 1),
-      altitude: nil
+      altitude: nil,
+      fan_status: state.climate_state.fan_status,
+      is_climate_on: state.climate_state.is_climate_on,
+      driver_temp_setting: state.climate_state.driver_temp_setting,
+      passenger_temp_setting: state.climate_state.passenger_temp_setting,
+      is_rear_defroster_on: state.climate_state.is_rear_defroster_on,
+      is_front_defroster_on: state.climate_state.is_front_defroster_on
     }
   end
 
@@ -368,17 +372,24 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp try_to_suspend(vehicle_state, data) do
+    alias State.{Climate, VehicleState}
+
     suspend? =
       diff(DateTime.utc_now(), data.last_used) / 60 >
         data.sudpend_after_idle_min
 
-    case {suspend?, vehicle_state.climate_state} do
-      {true, %State.Climate{is_preconditioning: true}} ->
+    case {suspend?, vehicle_state} do
+      {true, %Vehicle{vehicle_state: %VehicleState{is_user_present: true}}} ->
+        Logger.warn("Present user prevents car to go to sleep")
+
+        {:keep_state_and_data, schedule_fetch()}
+
+      {true, %Vehicle{climate_state: %Climate{is_preconditioning: true}}} ->
         Logger.warn("Preconditioning prevents car to go to sleep")
 
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
+        {:keep_state_and_data, schedule_fetch()}
 
-      {true, %State.Climate{is_preconditioning: _}} ->
+      {true, %Vehicle{climate_state: %Climate{is_preconditioning: _}}} ->
         Logger.info("Start / :suspend")
 
         {:next_state, :start, data, schedule_fetch(data.suspend_min, :minutes)}

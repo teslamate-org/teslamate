@@ -13,6 +13,12 @@ defmodule TeslaMate.Repo.Migrations.CreatePositions do
       add(:battery_level, :integer)
       add(:outside_temp, :float)
       add(:altitude, :float)
+      add(:fan_status, :integer)
+      add(:driver_temp_setting, :float)
+      add(:passenger_temp_setting, :float)
+      add(:is_climate_on, :boolean)
+      add(:is_rear_defroster_on, :boolean)
+      add(:is_front_defroster_on, :boolean)
 
       add(:car_id, references(:cars), null: false)
       add(:trip_id, references(:trips))

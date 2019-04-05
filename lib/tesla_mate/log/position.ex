@@ -16,6 +16,12 @@ defmodule TeslaMate.Log.Position do
     field :battery_level, :integer
     field :outside_temp, :float
     field :altitude, :float
+    field :fan_status, :integer
+    field :driver_temp_setting, :float
+    field :passenger_temp_setting, :float
+    field :is_climate_on, :boolean
+    field :is_rear_defroster_on, :boolean
+    field :is_front_defroster_on, :boolean
 
     belongs_to(:car, Car)
     belongs_to(:trip, Trip)
