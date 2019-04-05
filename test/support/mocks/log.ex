@@ -20,8 +20,8 @@ defmodule LogMock do
   def start_trip(name, car_id), do: GenServer.call(name, {:start_trip, car_id})
   def close_trip(name, trip_id), do: GenServer.call(name, {:close_trip, trip_id})
 
-  def start_charging_process(name, car_id) do
-    GenServer.call(name, {:start_charging_process, car_id})
+  def start_charging_process(name, car_id, position_attrs) do
+    GenServer.call(name, {:start_charging_process, car_id, position_attrs})
   end
 
   def close_charging_process(name, process_id) do
@@ -52,7 +52,7 @@ defmodule LogMock do
     {:reply, {:ok, struct(Car, Map.put(car, :id, 999))}, state}
   end
 
-  def handle_call({:start_charging_process, _car_id} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:start_charging_process, _cid, _pos} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, 99}, state}
   end

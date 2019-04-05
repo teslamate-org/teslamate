@@ -7,7 +7,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   alias TeslaMate.{Api, Log}
 
   alias TeslaApi.Vehicle.State
-  alias TeslaApi.Vehicle
+  alias TeslaApi.{Vehicle, Error}
 
   import Core.Dependency, only: [call: 3]
 
@@ -102,8 +102,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:keep_state_and_data, schedule_fetch()}
 
-      {:error, reason} ->
-        Logger.warn("Error / #{inspect(reason)}")
+      {:error, %Error{error: :timeout}} ->
+        {:keep_state_and_data, schedule_fetch(5)}
+
+      {:error, %Error{error: error, message: message}} ->
+        Logger.warn("Error / #{inspect(error)}: #{message}")
 
         {:keep_state_and_data, schedule_fetch()}
     end
@@ -124,14 +127,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, :offline}, :start, data) do
     Logger.info("Start / :offline")
 
-    # TODO
-    # all states have a position; bring start and end positinos back
     :ok = call(data.deps.log, :start_state, [data.car_id, :offline])
 
     {:next_state, :offline, data, schedule_fetch()}
   end
 
-  def handle_event(:internal, event, :start, data) do
+  def handle_event(:internal, {:update, {:online, _}} = event, :start, data) do
     Logger.info("Start / :online")
 
     :ok = call(data.deps.log, :start_state, [data.car_id, :online])
@@ -162,12 +163,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
       when charging_state in ["Charging", "Complete"] ->
         Logger.info("Charging / #{t}h left")
 
-        # TODO Combine
-        :ok = insert_position(vehicle_state, data)
-        # charger_pilot_current
-        # fast_charger_type,
-        # fast_charger_brand,
-        {:ok, charging_process_id} = call(data.deps.log, :start_charging_process, [data.car_id])
+        position = create_position(vehicle_state)
+
+        {:ok, charging_process_id} =
+          call(data.deps.log, :start_charging_process, [data.car_id, position])
 
         {:next_state, {:charging, charging_state, charging_process_id},
          %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
@@ -318,41 +317,54 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp insert_position(%Vehicle{drive_state: %State.Drive{}} = state, data, opts \\ []) do
-    trip_id = Keyword.get(opts, :trip_id)
+  defp insert_position(vehicle_state, data, opts) do
+    position = create_position(vehicle_state, opts)
+    call(data.deps.log, :insert_position, [data.car_id, position])
+  end
 
-    attrs = %{
-      trip_id: trip_id,
-      date: DateTime.from_unix!(state.drive_state.timestamp, :millisecond),
+  defp create_position(%Vehicle{drive_state: %State.Drive{}} = state, opts \\ []) do
+    %{
+      trip_id: Keyword.get(opts, :trip_id),
+      date: parse_timestamp(state.drive_state.timestamp),
       latitude: state.drive_state.latitude,
       longitude: state.drive_state.longitude,
       speed: mph_to_kmh(state.drive_state.speed),
-      power: state.drive_state.power,
+      power: with(n when is_number(n) <- state.drive_state.power, do: n * 1.0),
       battery_level: state.charge_state.battery_level,
       outside_temp: state.climate_state.outside_temp,
       odometer: miles_to_km(state.vehicle_state.odometer, 6),
       ideal_battery_range_km: miles_to_km(state.charge_state.ideal_battery_range, 1),
       altitude: nil
     }
-
-    :ok = call(data.deps.log, :insert_position, [data.car_id, attrs])
   end
 
   defp insert_charge(process_id, %Vehicle{charge_state: %State.Charge{}} = state, data) do
     attrs = %{
-      date: DateTime.from_unix!(state.charge_state.timestamp, :millisecond),
+      date: parse_timestamp(state.charge_state.timestamp),
+      battery_heater_on: state.charge_state.battery_heater_on,
       battery_level: state.charge_state.battery_level,
       charge_energy_added: state.charge_state.charge_energy_added,
       charger_actual_current: state.charge_state.charger_actual_current,
-      charger_phases: state.charge_state.charger_phases,
+      charger_phases: with(p when is_number(p) <- state.charge_state.charger_phases, do: p + 1),
+      charger_pilot_current: state.charge_state.charger_pilot_current,
       charger_power: state.charge_state.charger_power,
       charger_voltage: state.charge_state.charger_voltage,
+      conn_charge_cable: state.charge_state.conn_charge_cable,
+      fast_charger_present: state.charge_state.fast_charger_present,
+      fast_charger_brand: state.charge_state.fast_charger_brand,
+      fast_charger_type: state.charge_state.fast_charger_type,
       ideal_battery_range_km: miles_to_km(state.charge_state.ideal_battery_range, 1),
-      battery_heater_on: state.charge_state.battery_heater_on,
+      not_enough_power_to_heat: state.charge_state.not_enough_power_to_heat,
       outside_temp: state.climate_state.outside_temp
     }
 
     :ok = call(data.deps.log, :insert_charge, [process_id, attrs])
+  end
+
+  defp parse_timestamp(ts) do
+    ts
+    |> DateTime.from_unix!(:millisecond)
+    |> DateTime.truncate(:second)
   end
 
   defp try_to_suspend(vehicle_state, data) do
@@ -376,9 +388,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp mph_to_kmh(mph, precision \\ 0)
-  defp mph_to_kmh(nil, _precision), do: nil
-  defp mph_to_kmh(mph, precision), do: Float.round(mph * 1.60934, precision)
+  defp mph_to_kmh(nil), do: nil
+  defp mph_to_kmh(mph), do: round(mph * 1.60934)
 
   defp miles_to_km(nil, _precision), do: nil
   defp miles_to_km(miles, precision), do: Float.round(miles / 0.62137, precision)

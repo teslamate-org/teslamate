@@ -141,17 +141,12 @@ defmodule TeslaMate.Log do
 
   alias TeslaMate.Log.{ChargingProcess, Charge}
 
-  def start_charging_process(car_id) do
-    # TODO remove when combined with other actions
-    last_position_id =
-      Position
-      |> select([p], max(p.id))
-      |> where(car_id: ^car_id)
-      |> Repo.one!()
+  def start_charging_process(car_id, position_attrs) do
+    position = Map.put(position_attrs, :car_id, car_id)
 
     with {:ok, %ChargingProcess{id: id}} <-
-           %ChargingProcess{car_id: car_id, position_id: last_position_id}
-           |> ChargingProcess.changeset(%{start_date: DateTime.utc_now()})
+           %ChargingProcess{car_id: car_id}
+           |> ChargingProcess.changeset(%{start_date: DateTime.utc_now(), position: position})
            |> Repo.insert() do
       {:ok, id}
     end

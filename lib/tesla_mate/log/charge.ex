@@ -5,15 +5,21 @@ defmodule TeslaMate.Log.Charge do
   alias TeslaMate.Log.ChargingProcess
 
   schema "charges" do
+    field :date, :utc_datetime
+    field :battery_heater_on, :boolean
     field :battery_level, :integer
     field :charge_energy_added, :float
     field :charger_actual_current, :integer
     field :charger_phases, :integer, default: 1
+    field :charger_pilot_current, :integer
     field :charger_power, :float
     field :charger_voltage, :integer
-    field :battery_heater_on, :boolean
-    field :date, :utc_datetime
+    field :conn_charge_cable, :string
+    field :fast_charger_present, :boolean
+    field :fast_charger_brand, :string
+    field :fast_charger_type, :string
     field :ideal_battery_range_km, :float
+    field :not_enough_power_to_heat, :boolean
     field :outside_temp, :float
 
     belongs_to :charging_process, ChargingProcess
@@ -24,24 +30,30 @@ defmodule TeslaMate.Log.Charge do
     charge
     |> cast(attrs, [
       :date,
+      :battery_heater_on,
       :battery_level,
       :charge_energy_added,
-      :charger_power,
-      :ideal_battery_range_km,
-      :charger_voltage,
-      :charger_phases,
       :charger_actual_current,
-      :battery_heater_on,
+      :charger_phases,
+      :charger_pilot_current,
+      :charger_power,
+      :charger_voltage,
+      :conn_charge_cable,
+      :fast_charger_present,
+      :fast_charger_brand,
+      :fast_charger_type,
+      :ideal_battery_range_km,
+      :not_enough_power_to_heat,
       :outside_temp
     ])
     |> validate_required([
       :date,
       :charging_process_id,
-      :battery_level,
       :charge_energy_added,
       :charger_power,
       :ideal_battery_range_km
     ])
+    |> validate_number(:charger_phases, greater_than: 0)
     |> foreign_key_constraint(:charging_process_id)
   end
 end

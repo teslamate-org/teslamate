@@ -31,9 +31,9 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:start_state, 999, :online}
 
     assert_receive {:start_trip, 999}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 97.0, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 48.0, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: -8.0, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 97, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 48, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: -8, trip_id: 111}}
     assert_receive {:close_trip, 111}
 
     assert_receive {:start_state, 999, :online}
@@ -64,9 +64,9 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:start_state, 999, :online}
 
     assert_receive {:start_trip, 999}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 80.0, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 89.0, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 64.0, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 80, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 89, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 64, trip_id: 111}}
     assert_receive {:close_trip, 111}
 
     assert_receive {:start_state, 999, :online}
@@ -88,8 +88,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:start_state, 999, :online}
 
     assert_receive {:start_trip, 999}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 0.0, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 0.0, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 0, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 0, trip_id: 111}}
     # ...
 
     refute_received _
@@ -130,8 +130,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:start_state, 999, :online}
 
     assert_receive {:start_trip, 999}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 8.0, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 24.0, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 8, trip_id: 111}}
+    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 24, trip_id: 111}}
     assert_receive {:close_trip, 111}
 
     assert_receive {:start_state, 999, :online}

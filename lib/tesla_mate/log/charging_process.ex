@@ -18,17 +18,14 @@ defmodule TeslaMate.Log.ChargingProcess do
     has_many :charges, Charge
   end
 
+  # TODO position required?
   @doc false
   def changeset(charging_state, attrs) do
     charging_state
-    |> cast(attrs, [
-      :position_id,
-      :start_date,
-      :end_date,
-      :charge_energy_added
-    ])
+    |> cast(attrs, [:position_id, :start_date, :end_date, :charge_energy_added])
     |> validate_required([:car_id, :start_date])
     |> foreign_key_constraint(:car_id)
     |> foreign_key_constraint(:position_id)
+    |> cast_assoc(:position, with: &Position.changeset/2)
   end
 end

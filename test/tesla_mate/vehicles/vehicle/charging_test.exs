@@ -33,8 +33,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:start_state, 999, :online}
 
-    assert_receive {:insert_position, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:start_charging_process, 999}
+    assert_receive {:start_charging_process, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
     assert_receive {:insert_charge, 99, %{date: _, charger_power: 125}}
     assert_receive {:insert_charge, 99, %{date: _, charger_power: 120}}
     assert_receive {:insert_charge, 99, %{date: _, charger_power: 0}}
@@ -70,8 +69,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:start_state, 999, :online}
 
-    assert_receive {:insert_position, 999, %{date: _, latitude: 0.0, longitude: 0.0, speed: nil}}
-    assert_receive {:start_charging_process, 999}
+    assert_receive {:start_charging_process, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
     assert_receive {:insert_charge, 99, %{date: _, charger_power: 125}}
     assert_receive {:insert_charge, 99, %{date: _, charger_power: 120}}
     assert_receive {:insert_charge, 99, %{date: _, charger_power: 0}}
@@ -95,8 +93,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:start_state, 999, :online}
 
-    assert_receive {:insert_position, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:start_charging_process, 999}
+    assert_receive {:start_charging_process, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
 
     assert_receive {:insert_charge, 99, %{date: _, charger_power: 22}}
     assert_receive {:insert_charge, 99, %{date: _, charger_power: 22}}

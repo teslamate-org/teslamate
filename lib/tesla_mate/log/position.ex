@@ -13,7 +13,7 @@ defmodule TeslaMate.Log.Position do
     field :power, :float
     field :odometer, :float
     field :ideal_battery_range_km, :float
-    field :battery_level, :float
+    field :battery_level, :integer
     field :outside_temp, :float
     field :altitude, :float
 
@@ -25,6 +25,7 @@ defmodule TeslaMate.Log.Position do
   def changeset(position, attrs) do
     position
     |> cast(attrs, [
+      :car_id,
       :date,
       :latitude,
       :longitude,
