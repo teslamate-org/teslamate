@@ -137,8 +137,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     :ok = call(data.deps.log, :start_state, [data.car_id, :online])
 
-    {:next_state, :online, %Data{data | last_used: DateTime.utc_now()},
-     {:next_event, :internal, event}}
+    {:next_state, :online, data, {:next_event, :internal, event}}
   end
 
   ### :online
@@ -241,9 +240,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(10)}
 
       nil ->
-        Logger.info("Driving / Ended")
+        {:ok, %Log.Trip{distance: distance, duration_min: duration}} =
+          call(data.deps.log, :close_trip, [trip_id])
 
-        :ok = call(data.deps.log, :close_trip, [trip_id])
+        Logger.info("Driving / Ended / #{Float.round(distance, 1)} km – #{duration} min")
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, vehicle_state}}}}

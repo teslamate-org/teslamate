@@ -95,48 +95,55 @@ defmodule TeslaMate.Log do
   end
 
   def close_trip(trip_id) do
-    # TODO statistics
-    attrs = %{}
+    # TODO
+    # :start_address
+    # :end_address
 
-    with {:ok, _trip} <-
-           Trip
-           |> Repo.get!(trip_id)
-           |> Trip.changeset(attrs)
-           |> Repo.update() do
-      :ok
-    end
+    trip =
+      Trip
+      |> Repo.get!(trip_id)
+      |> Repo.preload([:car])
 
-    # statistics =
-    #   Position
-    #   |> select([p], %{
-    #     outside_temp_avg: fragment("?::float", avg(p.outside_temp)),
-    #     speed_max: max(p.speed),
-    #     speed_min: min(p.speed),
-    #     power_max: max(p.power),
-    #     power_min: min(p.power),
-    #     power_avg: fragment("?::float", avg(p.power))
-    #   })
-    #   |> where(
-    #     [p],
-    #     car_id == p.car_id and ^start_position_id <= p.id and p.id <= ^end_position_id
-    #   )
-    #   |> Repo.one!()
-    #   |> Map.to_list()
+    stats =
+      Position
+      |> where(trip_id: ^trip_id)
+      |> select([p, c], %{
+        end_date: max(p.date),
+        outside_temp_avg: avg(p.outside_temp),
+        speed_max: max(p.speed),
+        power_max: max(p.power),
+        power_min: min(p.power),
+        power_avg: avg(p.power),
+        start_km: min(p.odometer),
+        end_km: max(p.odometer),
+        distance: max(p.odometer) - min(p.odometer),
+        start_range_km: min(p.ideal_battery_range_km),
+        end_range_km: max(p.ideal_battery_range_km),
+        duration_min:
+          fragment(
+            "(EXTRACT(EPOCH FROM (?::timestamp - ?::timestamp)) / 60)::integer",
+            max(p.date),
+            min(p.date)
+          )
+      })
+      |> join(:left, [p], c in Car, on: c.id == p.car_id)
+      |> group_by(:car_id)
+      |> Repo.one()
 
-    # result =
-    #   Trip
-    #   |> where(
-    #     [d],
-    #     car_id == d.car_id and d.start_position_id == ^start_position_id and
-    #       d.end_position_id == ^end_position_id
-    #   )
-    #   |> update(set: ^statistics)
-    #   |> Repo.update_all([])
+    stats =
+      stats
+      |> Map.put(
+        :consumption_kWh,
+        (stats.end_range_km - stats.start_range_km) * trip.car.efficiency
+      )
+      |> Map.put(
+        :consumption_kWh_100km,
+        if(stats.distance > 0, do: stats.consumption_kWh / stats.distance * 100, else: nil)
+      )
 
-    # case result do
-    #   {0, nil} -> {:erorr, :no_trips_to_be_updated}
-    #   {1, nil} -> :ok
-    # end
+    trip
+    |> Trip.changeset(stats)
+    |> Repo.update()
   end
 
   alias TeslaMate.Log.{ChargingProcess, Charge}

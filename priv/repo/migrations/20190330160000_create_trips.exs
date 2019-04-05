@@ -7,7 +7,6 @@ defmodule TeslaMate.Repo.Migrations.CreateTrips do
       add(:end_date, :utc_datetime)
       add(:outside_temp_avg, :float)
       add(:speed_max, :integer)
-      add(:speed_min, :integer)
       add(:power_max, :float)
       add(:power_min, :float)
       add(:power_avg, :float)

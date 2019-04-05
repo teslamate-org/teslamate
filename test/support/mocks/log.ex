@@ -4,7 +4,7 @@ defmodule LogMock do
   defstruct [:pid]
   alias __MODULE__, as: State
 
-  alias TeslaMate.Log.Car
+  alias TeslaMate.Log.{Trip, Car}
 
   # API
 
@@ -60,6 +60,11 @@ defmodule LogMock do
   def handle_call({:start_trip, _car_id} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, 111}, state}
+  end
+
+  def handle_call({:close_trip, _trip_id} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %Trip{}}, state}
   end
 
   def handle_call(action, _from, %State{pid: pid} = state) do
