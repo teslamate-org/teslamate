@@ -40,7 +40,7 @@ defmodule TeslaMate.Log do
 
   alias TeslaMate.Log.State
 
-  def start_state(car_id, state) do
+  def start_state(car_id, state) when not is_nil(car_id) and not is_nil(state) do
     case get_current_state(car_id) do
       %State{state: ^state} ->
         :ok
@@ -75,12 +75,9 @@ defmodule TeslaMate.Log do
   alias TeslaMate.Log.Position
 
   def insert_position(car_id, attrs) do
-    with {:ok, _} <-
-           %Position{car_id: car_id, trip_id: Map.get(attrs, :trip_id)}
-           |> Position.changeset(attrs)
-           |> Repo.insert() do
-      :ok
-    end
+    %Position{car_id: car_id, trip_id: Map.get(attrs, :trip_id)}
+    |> Position.changeset(attrs)
+    |> Repo.insert()
   end
 
   ## Trip
@@ -125,23 +122,25 @@ defmodule TeslaMate.Log do
       })
       |> Repo.one()
 
-    ideal_distance = stats.end_range_km - stats.start_range_km
-    efficiency = if ideal_distance > 0, do: stats.distance / ideal_distance, else: nil
-    consumption = ideal_distance * trip.car.efficiency
-    consumption_100km = if stats.distance > 0, do: consumption / stats.distance * 100, else: nil
-
-    stats =
-      stats
-      |> Map.put(:efficiency, efficiency)
-      |> Map.put(:consumption_kWh, consumption)
-      |> Map.put(:consumption_kWh_100km, consumption_100km)
-
-    trip = Trip.changeset(trip, stats)
-
-    if stats.distance == 0 do
-      Repo.delete(trip)
+    if stats.distance in [nil, 0, 0.0] do
+      trip
+      |> Trip.changeset(stats)
+      |> Repo.delete()
     else
-      Repo.update(trip)
+      ideal_distance = stats.end_range_km - stats.start_range_km
+      efficiency = if ideal_distance > 0, do: stats.distance / ideal_distance, else: nil
+      consumption = ideal_distance * trip.car.efficiency
+      consumption_100km = if stats.distance > 0, do: consumption / stats.distance * 100, else: nil
+
+      stats =
+        stats
+        |> Map.put(:efficiency, efficiency)
+        |> Map.put(:consumption_kWh, consumption)
+        |> Map.put(:consumption_kWh_100km, consumption_100km)
+
+      trip
+      |> Trip.changeset(stats)
+      |> Repo.update()
     end
   end
 
@@ -159,12 +158,9 @@ defmodule TeslaMate.Log do
   end
 
   def insert_charge(process_id, attrs) do
-    with {:ok, _} <-
-           %Charge{charging_process_id: process_id}
-           |> Charge.changeset(attrs)
-           |> Repo.insert() do
-      :ok
-    end
+    %Charge{charging_process_id: process_id}
+    |> Charge.changeset(attrs)
+    |> Repo.insert()
   end
 
   def close_charging_process(process_id) do

@@ -19,5 +19,6 @@ defmodule TeslaMate.Log.State do
     state
     |> cast(attrs, [:state, :start_date, :end_date])
     |> validate_required([:car_id, :state, :start_date])
+    |> foreign_key_constraint(:car_id)
   end
 end

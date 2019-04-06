@@ -78,6 +78,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   # TODO
+  # - seperate suspend mode w/ previous state tuple to restore that state if suspending failed
   # - /wake_up & /sleep routes
   # - sleep time
   # - reverse adress lookup
@@ -318,7 +319,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp insert_position(vehicle_state, data, opts) do
     position = create_position(vehicle_state, opts)
-    call(data.deps.log, :insert_position, [data.car_id, position])
+
+    with {:ok, _pos} <- call(data.deps.log, :insert_position, [data.car_id, position]) do
+      :ok
+    end
   end
 
   defp create_position(%Vehicle{drive_state: %State.Drive{}} = state, opts \\ []) do
@@ -363,7 +367,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
       outside_temp: state.climate_state.outside_temp
     }
 
-    :ok = call(data.deps.log, :insert_charge, [process_id, attrs])
+    with {:ok, _} <- call(data.deps.log, :insert_charge, [process_id, attrs]) do
+      :ok
+    end
   end
 
   defp parse_timestamp(ts) do

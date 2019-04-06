@@ -27,20 +27,6 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       assert_receive {:start_state, 999, :online}
 
-      #       assert_receive {:insert_position,
-      #                       %{
-      #                         altitude: nil,
-      #                         battery_level: nil,
-      #                         date: ^now,
-      #                         ideal_battery_range_km: nil,
-      #                         latitude: 0.0,
-      #                         longitude: 0.0,
-      #                         odometer: nil,
-      #                         outside_temp: nil,
-      #                         power: nil,
-      #                         speed: nil
-      #                       }}
-
       refute_receive _
     end
 

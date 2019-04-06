@@ -33,7 +33,8 @@ defmodule TeslaMateWeb.ConnCase do
       Ecto.Adapters.SQL.Sandbox.mode(TeslaMate.Repo, {:shared, self()})
     end
 
-    {:ok, _} = TeslaMateWeb.Endpoint.start_link()
+    # TODO remove and fix
+    TeslaMateWeb.Endpoint.start_link()
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
