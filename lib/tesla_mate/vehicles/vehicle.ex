@@ -13,10 +13,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defstruct id: nil,
             car_id: nil,
-            vehicle_id: nil,
-            last_shift_state: nil,
             last_used: nil,
-            sleep_between: %{from: nil, to: nil},
             sudpend_after_idle_min: nil,
             suspend_min: nil,
             deps: %{}
@@ -67,7 +64,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
     data = %Data{
       id: vehicle.id,
       car_id: car_id,
-      vehicle_id: vehicle.vehicle_id,
       last_used: DateTime.utc_now(),
       sudpend_after_idle_min: Keyword.get(opts, :sudpend_after_idle_min, 5),
       suspend_min: Keyword.get(opts, :suspend_min, 21),
@@ -78,21 +74,27 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   # TODO
-  # - seperate suspend mode w/ previous state tuple to restore that state if suspending failed
-  # - /wake_up & /sleep routes
-  # - sleep time
+  # - /wake_up & /suspend routes
+  #   - allow suspend only when suspending would be possible anyway
+  # - deep sleep time with checks every 30min
+  # - Schedule Sleep Mode: time window where idle times is set to 0 / is bypassed
+  # - Deep Sleep Mode: time window where polling is limited to 30min
   # - reverse adress lookup
   # - geofecnces
   # - mqtt
   # - UI with LiveView
+  #   - make suspend settings configurable
+  #   - make cars configurable
+  #   - create geo fences
+  #   - check the vehicle state during sleep attempt - does it still work?
   # - indices
   # - cron job which "closes" drives & charging_processes (i.e there is no end_time)
 
   @impl true
   def handle_event(event, :fetch, state, data) when event in [:state_timeout, :internal] do
     case fetch(data, expected_state: state) do
-      {:ok, %Vehicle{} = vehicle_state} ->
-        {:keep_state_and_data, {:next_event, :internal, {:update, {:online, vehicle_state}}}}
+      {:ok, %Vehicle{} = vehicle} ->
+        {:keep_state_and_data, {:next_event, :internal, {:update, {:online, vehicle}}}}
 
       {:ok, :offline} ->
         {:keep_state_and_data, {:next_event, :internal, {:update, :offline}}}
@@ -101,7 +103,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state_and_data, {:next_event, :internal, {:update, :asleep}}}
 
       {:ok, :unknown} ->
-        Logger.warn("Error / vehicle_state: :unknown}")
+        Logger.warn("Error / vehicle state :unknown}")
 
         {:keep_state_and_data, schedule_fetch()}
 
@@ -124,7 +126,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     :ok = call(data.deps.log, :start_state, [data.car_id, :asleep])
 
-    {:next_state, :asleep, data, schedule_fetch()}
+    {:next_state, :asleep, data, schedule_fetch(30)}
   end
 
   def handle_event(:internal, {:update, :offline}, :start, data) do
@@ -149,14 +151,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:next_state, :start, data, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle_state}}, :online, data) do
-    case vehicle_state do
+  def handle_event(:internal, {:update, {:online, vehicle}}, :online, data) do
+    case vehicle do
       %{drive_state: %State.Drive{shift_state: shift_state}}
       when shift_state in ["D", "N", "R"] ->
         Logger.info("Driving / Start")
 
         {:ok, trip_id} = call(data.deps.log, :start_trip, [data.car_id])
-        :ok = insert_position(vehicle_state, data, trip_id: trip_id)
+        :ok = insert_position(vehicle, data, trip_id: trip_id)
 
         {:next_state, {:driving, trip_id}, %Data{data | last_used: DateTime.utc_now()},
          schedule_fetch(5)}
@@ -165,16 +167,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
       when charging_state in ["Charging", "Complete"] ->
         Logger.info("Charging / #{t}h left")
 
-        position = create_position(vehicle_state)
+        position = create_position(vehicle)
 
-        {:ok, charging_process_id} =
-          call(data.deps.log, :start_charging_process, [data.car_id, position])
+        {:ok, charging_id} = call(data.deps.log, :start_charging_process, [data.car_id, position])
+        :ok = insert_charge(charging_id, vehicle, data)
 
-        {:next_state, {:charging, charging_state, charging_process_id},
+        {:next_state, {:charging, charging_state, charging_id},
          %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
 
       _ ->
-        try_to_suspend(vehicle_state, data)
+        try_to_suspend(vehicle, :online, data)
     end
   end
 
@@ -186,15 +188,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle_state}}, {:charging, last, pid}, data) do
-    case {vehicle_state.charge_state.charging_state, last} do
+  def handle_event(:internal, {:update, {:online, vehicle}}, {:charging, last, pid} = s, data) do
+    case {vehicle.charge_state.charging_state, last} do
       {"Charging", last_state} ->
         if last_state == "Complete", do: Logger.info("Charging / Restart")
 
-        :ok = insert_charge(pid, vehicle_state, data)
+        :ok = insert_charge(pid, vehicle, data)
 
         interval =
-          vehicle_state.charge_state
+          vehicle.charge_state
           |> Map.get(:charger_power)
           |> determince_interval()
 
@@ -202,12 +204,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
          schedule_fetch(interval)}
 
       {"Complete", "Complete"} ->
-        try_to_suspend(vehicle_state, data)
+        try_to_suspend(vehicle, s, data)
 
       {"Complete", "Charging"} ->
         Logger.info("Charging / Complete")
 
-        :ok = insert_charge(pid, vehicle_state, data)
+        :ok = insert_charge(pid, vehicle, data)
 
         {:next_state, {:charging, "Complete", pid}, %Data{data | last_used: DateTime.utc_now()},
          schedule_fetch()}
@@ -219,7 +221,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("Charging / #{charging_state} / #{added} kWh – #{duration} min")
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
-         {:next_event, :internal, {:update, {:online, vehicle_state}}}}
+         {:next_event, :internal, {:update, {:online, vehicle}}}}
     end
   end
 
@@ -231,10 +233,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, schedule_fetch(5)}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle_state}}, {:driving, trip_id}, data) do
-    case vehicle_state.drive_state.shift_state do
+  def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, trip_id}, data) do
+    case vehicle.drive_state.shift_state do
       shift_state when shift_state in ["D", "R", "N"] ->
-        :ok = insert_position(vehicle_state, data, trip_id: trip_id)
+        :ok = insert_position(vehicle, data, trip_id: trip_id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
 
@@ -248,14 +250,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("Driving / Ended / #{Float.round(distance, 1)} km – #{duration} min")
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
-         {:next_event, :internal, {:update, {:online, vehicle_state}}}}
+         {:next_event, :internal, {:update, {:online, vehicle}}}}
     end
   end
 
   ### :asleep
 
   def handle_event(:internal, {:update, :asleep}, :asleep, _data) do
-    {:keep_state_and_data, schedule_fetch(30)}
+    {:keep_state_and_data, schedule_fetch(60)}
   end
 
   def handle_event(:internal, {:update, :offline}, :asleep, data) do
@@ -282,14 +284,26 @@ defmodule TeslaMate.Vehicles.Vehicle do
      {:next_event, :internal, event}}
   end
 
+  ### :suspend
+
+  def handle_event(:internal, {:update, {:online, _}} = event, {:suspend, prev_state}, data) do
+    {:next_state, prev_state, data, {:next_event, :internal, event}}
+  end
+
+  def handle_event(:internal, {:update, state}, {:suspend, _}, data)
+      when state in [:asleep, :offline] do
+    {:next_state, :start, data, schedule_fetch()}
+  end
+
   # Private
 
   defp fetch(%Data{id: id, deps: deps}, expected_state: expected_state) do
     reachable? =
       case expected_state do
-        :online -> true
         {:driving, _} -> true
         {:charging, _, _} -> true
+        {:suspend, _} -> false
+        :online -> true
         :offline -> false
         :asleep -> false
         :start -> false
@@ -317,57 +331,57 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp insert_position(vehicle_state, data, opts) do
-    position = create_position(vehicle_state, opts)
+  defp insert_position(vehicle, data, opts) do
+    position = create_position(vehicle, opts)
 
     with {:ok, _pos} <- call(data.deps.log, :insert_position, [data.car_id, position]) do
       :ok
     end
   end
 
-  defp create_position(%Vehicle{drive_state: %State.Drive{}} = state, opts \\ []) do
+  defp create_position(%Vehicle{} = vehicle, opts \\ []) do
     %{
       trip_id: Keyword.get(opts, :trip_id),
-      date: parse_timestamp(state.drive_state.timestamp),
-      latitude: state.drive_state.latitude,
-      longitude: state.drive_state.longitude,
-      speed: mph_to_kmh(state.drive_state.speed),
-      power: with(n when is_number(n) <- state.drive_state.power, do: n * 1.0),
-      battery_level: state.charge_state.battery_level,
-      outside_temp: state.climate_state.outside_temp,
-      odometer: miles_to_km(state.vehicle_state.odometer, 6),
-      ideal_battery_range_km: miles_to_km(state.charge_state.ideal_battery_range, 1),
+      date: parse_timestamp(vehicle.drive_state.timestamp),
+      latitude: vehicle.drive_state.latitude,
+      longitude: vehicle.drive_state.longitude,
+      speed: mph_to_kmh(vehicle.drive_state.speed),
+      power: with(n when is_number(n) <- vehicle.drive_state.power, do: n * 1.0),
+      battery_level: vehicle.charge_state.battery_level,
+      outside_temp: vehicle.climate_state.outside_temp,
+      odometer: miles_to_km(vehicle.vehicle_state.odometer, 6),
+      ideal_battery_range_km: miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
       altitude: nil,
-      fan_status: state.climate_state.fan_status,
-      is_climate_on: state.climate_state.is_climate_on,
-      driver_temp_setting: state.climate_state.driver_temp_setting,
-      passenger_temp_setting: state.climate_state.passenger_temp_setting,
-      is_rear_defroster_on: state.climate_state.is_rear_defroster_on,
-      is_front_defroster_on: state.climate_state.is_front_defroster_on
+      fan_status: vehicle.climate_state.fan_status,
+      is_climate_on: vehicle.climate_state.is_climate_on,
+      driver_temp_setting: vehicle.climate_state.driver_temp_setting,
+      passenger_temp_setting: vehicle.climate_state.passenger_temp_setting,
+      is_rear_defroster_on: vehicle.climate_state.is_rear_defroster_on,
+      is_front_defroster_on: vehicle.climate_state.is_front_defroster_on
     }
   end
 
-  defp insert_charge(process_id, %Vehicle{charge_state: %State.Charge{}} = state, data) do
+  defp insert_charge(charging_process_id, %Vehicle{} = vehicle, data) do
     attrs = %{
-      date: parse_timestamp(state.charge_state.timestamp),
-      battery_heater_on: state.charge_state.battery_heater_on,
-      battery_level: state.charge_state.battery_level,
-      charge_energy_added: state.charge_state.charge_energy_added,
-      charger_actual_current: state.charge_state.charger_actual_current,
-      charger_phases: with(p when is_number(p) <- state.charge_state.charger_phases, do: p + 1),
-      charger_pilot_current: state.charge_state.charger_pilot_current,
-      charger_power: state.charge_state.charger_power,
-      charger_voltage: state.charge_state.charger_voltage,
-      conn_charge_cable: state.charge_state.conn_charge_cable,
-      fast_charger_present: state.charge_state.fast_charger_present,
-      fast_charger_brand: state.charge_state.fast_charger_brand,
-      fast_charger_type: state.charge_state.fast_charger_type,
-      ideal_battery_range_km: miles_to_km(state.charge_state.ideal_battery_range, 1),
-      not_enough_power_to_heat: state.charge_state.not_enough_power_to_heat,
-      outside_temp: state.climate_state.outside_temp
+      date: parse_timestamp(vehicle.charge_state.timestamp),
+      battery_heater_on: vehicle.charge_state.battery_heater_on,
+      battery_level: vehicle.charge_state.battery_level,
+      charge_energy_added: vehicle.charge_state.charge_energy_added,
+      charger_actual_current: vehicle.charge_state.charger_actual_current,
+      charger_phases: with(p when is_number(p) <- vehicle.charge_state.charger_phases, do: p + 1),
+      charger_pilot_current: vehicle.charge_state.charger_pilot_current,
+      charger_power: vehicle.charge_state.charger_power,
+      charger_voltage: vehicle.charge_state.charger_voltage,
+      conn_charge_cable: vehicle.charge_state.conn_charge_cable,
+      fast_charger_present: vehicle.charge_state.fast_charger_present,
+      fast_charger_brand: vehicle.charge_state.fast_charger_brand,
+      fast_charger_type: vehicle.charge_state.fast_charger_type,
+      ideal_battery_range_km: miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
+      not_enough_power_to_heat: vehicle.charge_state.not_enough_power_to_heat,
+      outside_temp: vehicle.climate_state.outside_temp
     }
 
-    with {:ok, _} <- call(data.deps.log, :insert_charge, [process_id, attrs]) do
+    with {:ok, _} <- call(data.deps.log, :insert_charge, [charging_process_id, attrs]) do
       :ok
     end
   end
@@ -378,31 +392,37 @@ defmodule TeslaMate.Vehicles.Vehicle do
     |> DateTime.truncate(:second)
   end
 
-  defp try_to_suspend(vehicle_state, data) do
-    alias State.{Climate, VehicleState}
+  defp try_to_suspend(vehicle, current_state, data) do
+    alias State.{Climate, VehicleState, Drive}
 
     suspend? =
       diff(DateTime.utc_now(), data.last_used) / 60 >
         data.sudpend_after_idle_min
 
-    case {suspend?, vehicle_state} do
+    case {suspend?, vehicle} do
       {true, %Vehicle{vehicle_state: %VehicleState{is_user_present: true}}} ->
         Logger.warn("Present user prevents car to go to sleep")
 
-        {:keep_state_and_data, schedule_fetch()}
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
 
       {true, %Vehicle{climate_state: %Climate{is_preconditioning: true}}} ->
         Logger.warn("Preconditioning prevents car to go to sleep")
 
-        {:keep_state_and_data, schedule_fetch()}
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
 
-      {true, %Vehicle{climate_state: %Climate{is_preconditioning: _}}} ->
+      {true, %Vehicle{drive_state: %Drive{shift_state: shift_state}}}
+      when not is_nil(shift_state) ->
+        Logger.warn("Shift state #{shift_state} prevents car to go to sleep")
+
+        {:keep_state_and_data, schedule_fetch(30)}
+
+      {true, %Vehicle{}} ->
         Logger.info("Start / :suspend")
 
-        {:next_state, :start, data, schedule_fetch(data.suspend_min, :minutes)}
+        {:next_state, {:suspend, current_state}, data, schedule_fetch(data.suspend_min, :minutes)}
 
       {false, _} ->
-        {:keep_state, data, schedule_fetch()}
+        {:keep_state_and_data, schedule_fetch(30)}
     end
   end
 
