@@ -2,12 +2,10 @@ defmodule TeslaMate.Api do
   use GenServer
 
   require Logger
-  import Core.Dependency, only: [call: 3]
+
   alias TeslaApi.{Auth, Error, Vehicle}
 
-  defstruct auth: nil,
-            deps: %{}
-
+  defstruct auth: nil
   alias __MODULE__, as: State
 
   @name __MODULE__
