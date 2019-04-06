@@ -133,9 +133,13 @@ defmodule TeslaMate.Log do
       |> Map.put(:consumption_kWh, consumption)
       |> Map.put(:consumption_kWh_100km, consumption_100km)
 
-    trip
-    |> Trip.changeset(stats)
-    |> Repo.update()
+    trip = Trip.changeset(trip, stats)
+
+    if stats.distance == 0 do
+      Repo.delete(trip)
+    else
+      Repo.update(trip)
+    end
   end
 
   alias TeslaMate.Log.{ChargingProcess, Charge}

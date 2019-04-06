@@ -24,9 +24,9 @@ defmodule TeslaMate.Log.Trip do
     field :consumption_kWh, :float
     field :consumption_kWh_100km, :float
 
-    belongs_to(:car, Car)
+    belongs_to :car, Car
 
-    has_many :positions, Position
+    has_many :positions, Position, on_delete: :delete_all
   end
 
   @doc false
