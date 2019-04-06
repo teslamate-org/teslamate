@@ -23,6 +23,7 @@ defmodule TeslaMate.Log.Trip do
     field :end_address, :string
     field :consumption_kWh, :float
     field :consumption_kWh_100km, :float
+    field :efficiency, :float
 
     belongs_to :car, Car
 
@@ -49,7 +50,8 @@ defmodule TeslaMate.Log.Trip do
       :start_address,
       :end_address,
       :consumption_kWh,
-      :consumption_kWh_100km
+      :consumption_kWh_100km,
+      :efficiency
     ])
     |> validate_required([:car_id, :start_date])
     |> foreign_key_constraint(:car_id)

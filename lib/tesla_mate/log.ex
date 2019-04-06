@@ -125,11 +125,14 @@ defmodule TeslaMate.Log do
       })
       |> Repo.one()
 
-    consumption = (stats.end_range_km - stats.start_range_km) * trip.car.efficiency
-    consumption_100km = if(stats.distance > 0, do: consumption / stats.distance * 100, else: nil)
+    ideal_distance = stats.end_range_km - stats.start_range_km
+    efficiency = if ideal_distance > 0, do: stats.distance / ideal_distance, else: nil
+    consumption = ideal_distance * trip.car.efficiency
+    consumption_100km = if stats.distance > 0, do: consumption / stats.distance * 100, else: nil
 
     stats =
       stats
+      |> Map.put(:efficiency, efficiency)
       |> Map.put(:consumption_kWh, consumption)
       |> Map.put(:consumption_kWh_100km, consumption_100km)
 
@@ -185,15 +188,14 @@ defmodule TeslaMate.Log do
       |> Repo.one()
       |> Map.put(:end_date, DateTime.utc_now())
 
-    calculated_max_range =
-      if stats.end_battery_level > 0,
-        do: round(stats.end_soc / stats.end_battery_level * 100),
-        else: nil
-
-    stats = Map.put(stats, :calculated_max_range, calculated_max_range)
+    stats = Map.put(stats, :calculated_max_range, calculate_max_range(stats))
 
     charging_process
     |> ChargingProcess.changeset(stats)
     |> Repo.update()
   end
+
+  defp calculate_max_range(%{end_soc: nil}), do: nil
+  defp calculate_max_range(%{end_battery_level: nil}), do: nil
+  defp calculate_max_range(%{end_soc: soc, end_battery_level: lvl}), do: round(soc / lvl * 100)
 end

@@ -20,6 +20,7 @@ defmodule TeslaMate.Repo.Migrations.CreateTrips do
       add(:end_address, :string)
       add(:consumption_kWh, :float)
       add(:consumption_kWh_100km, :float)
+      add(:efficiency, :float)
 
       add(:car_id, references(:cars), null: false)
     end
