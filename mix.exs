@@ -49,7 +49,8 @@ defmodule TeslaMate.MixProject do
       {:tesla_api, path: "/Users/adrian/dev/projects/tesla_api"},
       {:gen_state_machine, "~> 2.0"},
       {:ecto_enum, "~> 1.2"},
-      {:distillery, "~> 2.0"}
+      {:distillery, "~> 2.0"},
+      {:logger_telegram_backend, "~> 1.0", only: :prod}
     ]
   end
 
