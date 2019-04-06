@@ -79,11 +79,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   # TODO
   # - /wake_up & /sleep routes
+  # - sleep time
   # - reverse adress lookup
   # - geofecnces
   # - mqtt
+  # - UI with LiveView
   # - indices
-  # - cron job which "closes" drives & charging_processes
+  # - cron job which "closes" drives & charging_processes (i.e there is no end_time)
 
   @impl true
   def handle_event(event, :fetch, state, data) when event in [:state_timeout, :internal] do
@@ -202,8 +204,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         try_to_suspend(vehicle_state, data)
 
       {"Complete", "Charging"} ->
-        energy_added = vehicle_state.charge_state.charge_energy_added
-        Logger.info("Charging / Complete / Added #{energy_added}kWh")
+        Logger.info("Charging / Complete")
 
         :ok = insert_charge(pid, vehicle_state, data)
 
@@ -211,10 +212,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
          schedule_fetch()}
 
       {charging_state, _} ->
-        energy_added = vehicle_state.charge_state.charge_energy_added
-        Logger.info("Charging / #{charging_state} / Added #{energy_added}kWh")
+        {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
+          call(data.deps.log, :close_charging_process, [pid])
 
-        :ok = call(data.deps.log, :close_charging_process, [pid])
+        Logger.info("Charging / #{charging_state} / #{added} kWh – #{duration} min")
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, vehicle_state}}}}

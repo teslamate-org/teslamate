@@ -7,27 +7,20 @@ defmodule TeslaMate.Log.Trip do
   schema "trips" do
     field :start_date, :utc_datetime
     field :end_date, :utc_datetime
-
     field :outside_temp_avg, :float
-
     field :speed_max, :integer
-
     field :power_max, :float
     field :power_min, :float
     field :power_avg, :float
-
     field :start_range_km, :float
     field :end_range_km, :float
-
     field :start_km, :float
     field :end_km, :float
     field :distance, :float
     field :duration_min, :integer
-
     # TODO Address ref
     field :start_address, :string
     field :end_address, :string
-
     field :consumption_kWh, :float
     field :consumption_kWh_100km, :float
 

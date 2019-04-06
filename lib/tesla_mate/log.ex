@@ -4,6 +4,8 @@ defmodule TeslaMate.Log do
   """
 
   import Ecto.Query, warn: false
+  import __MODULE__.Functions, only: [duration_min: 2]
+
   alias TeslaMate.Repo
 
   ## Car
@@ -101,13 +103,13 @@ defmodule TeslaMate.Log do
 
     trip =
       Trip
+      |> preload([:car])
       |> Repo.get!(trip_id)
-      |> Repo.preload([:car])
 
     stats =
       Position
       |> where(trip_id: ^trip_id)
-      |> select([p, c], %{
+      |> select([p], %{
         end_date: max(p.date),
         outside_temp_avg: avg(p.outside_temp),
         speed_max: max(p.speed),
@@ -119,27 +121,17 @@ defmodule TeslaMate.Log do
         distance: max(p.odometer) - min(p.odometer),
         start_range_km: min(p.ideal_battery_range_km),
         end_range_km: max(p.ideal_battery_range_km),
-        duration_min:
-          fragment(
-            "(EXTRACT(EPOCH FROM (?::timestamp - ?::timestamp)) / 60)::integer",
-            max(p.date),
-            min(p.date)
-          )
+        duration_min: duration_min(max(p.date), min(p.date))
       })
-      |> join(:left, [p], c in Car, on: c.id == p.car_id)
-      |> group_by(:car_id)
       |> Repo.one()
+
+    consumption = (stats.end_range_km - stats.start_range_km) * trip.car.efficiency
+    consumption_100km = if(stats.distance > 0, do: consumption / stats.distance * 100, else: nil)
 
     stats =
       stats
-      |> Map.put(
-        :consumption_kWh,
-        (stats.end_range_km - stats.start_range_km) * trip.car.efficiency
-      )
-      |> Map.put(
-        :consumption_kWh_100km,
-        if(stats.distance > 0, do: stats.consumption_kWh / stats.distance * 100, else: nil)
-      )
+      |> Map.put(:consumption_kWh, consumption)
+      |> Map.put(:consumption_kWh_100km, consumption_100km)
 
     trip
     |> Trip.changeset(stats)
@@ -169,14 +161,35 @@ defmodule TeslaMate.Log do
   end
 
   def close_charging_process(process_id) do
-    # TODO calculate statistics
+    charging_process =
+      ChargingProcess
+      |> preload([:car, :position])
+      |> Repo.get!(process_id)
 
-    with {:ok, _} <-
-           ChargingProcess
-           |> Repo.get!(process_id)
-           |> ChargingProcess.changeset(%{end_date: DateTime.utc_now()})
-           |> Repo.update() do
-      :ok
-    end
+    stats =
+      Charge
+      |> where(charging_process_id: ^process_id)
+      |> select([c], %{
+        charge_energy_added: max(c.charge_energy_added),
+        start_soc: min(c.ideal_battery_range_km),
+        end_soc: max(c.ideal_battery_range_km),
+        start_battery_level: min(c.battery_level),
+        end_battery_level: max(c.battery_level),
+        outside_temp_avg: avg(c.outside_temp),
+        duration_min: duration_min(max(c.date), min(c.date))
+      })
+      |> Repo.one()
+      |> Map.put(:end_date, DateTime.utc_now())
+
+    calculated_max_range =
+      if stats.end_battery_level > 0,
+        do: round(stats.end_soc / stats.end_battery_level * 100),
+        else: nil
+
+    stats = Map.put(stats, :calculated_max_range, calculated_max_range)
+
+    charging_process
+    |> ChargingProcess.changeset(stats)
+    |> Repo.update()
   end
 end
