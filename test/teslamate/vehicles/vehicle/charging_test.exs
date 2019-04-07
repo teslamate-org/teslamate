@@ -1,17 +1,6 @@
 defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
   use TeslaMate.VehicleCase, async: true
 
-  defp charging_event(ts, charging_state, charge_energy_added) do
-    vehicle_full(
-      charge_state: %{
-        timestamp: ts,
-        charging_state: charging_state,
-        charge_energy_added: charge_energy_added
-      },
-      drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
-    )
-  end
-
   test "logs a full charging cycle", %{test: name} do
     now = DateTime.utc_now()
     now_ts = DateTime.to_unix(now, :millisecond)

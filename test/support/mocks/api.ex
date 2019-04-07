@@ -13,6 +13,8 @@ defmodule ApiMock do
   def get_vehicle(name, id), do: GenServer.call(name, {:get_vehicle, id})
   def get_vehicle_with_state(name, id), do: GenServer.call(name, {:get_vehicle_with_state, id})
 
+  def wake_up(name, id), do: GenServer.call(name, {:wake_up, id})
+
   # Callbacks
 
   @impl true
@@ -29,5 +31,10 @@ defmodule ApiMock do
   def handle_call({action, _id}, _from, %State{events: [event | events]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
     {:reply, event, %State{state | events: events}}
+  end
+
+  def handle_call({:wake_up, _id} = event, _from, %State{pid: pid} = state) do
+    send(pid, {:api, event})
+    {:reply, :ok, state}
   end
 end

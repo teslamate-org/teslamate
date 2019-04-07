@@ -41,6 +41,29 @@ defmodule TeslaMate.VehicleCase do
           vehicle_state: struct(State.VehicleState, vehicle_state)
         }
       end
+
+      def drive_event(ts, shift_state, speed_mph) do
+        vehicle_full(
+          drive_state: %{
+            timestamp: ts,
+            latitude: 0.1,
+            longitude: 0.1,
+            shift_state: shift_state,
+            speed: speed_mph
+          }
+        )
+      end
+
+      def charging_event(ts, charging_state, charge_energy_added) do
+        vehicle_full(
+          charge_state: %{
+            timestamp: ts,
+            charging_state: charging_state,
+            charge_energy_added: charge_energy_added
+          },
+          drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
+        )
+      end
     end
   end
 end

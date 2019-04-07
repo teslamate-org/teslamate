@@ -16,6 +16,8 @@ defmodule TeslaMate.Api do
     GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
   end
 
+  ## State
+
   def list_vehicles(name \\ @name) do
     GenServer.call(name, :list_vehicles, 35_000)
   end
@@ -26,6 +28,12 @@ defmodule TeslaMate.Api do
 
   def get_vehicle_with_state(name \\ @name, id) do
     GenServer.call(name, {:get_vehicle_with_state, id}, 35_000)
+  end
+
+  ## Commands
+
+  def wake_up(name \\ @name, id) do
+    GenServer.call(name, {:wake_up, id}, 35_000)
   end
 
   # Callbacks
@@ -62,6 +70,18 @@ defmodule TeslaMate.Api do
         {:error, %Error{error: :vehicle_unavailable}} -> {:error, :unavailable}
         {:error, %Error{} = error} -> {:error, error}
         {:ok, %Vehicle{} = vehicle} -> {:ok, vehicle}
+      end
+
+    {:reply, response, state}
+  end
+
+  def handle_call({:wake_up, id}, _from, state) do
+    response =
+      case Vehicle.Command.wake_up(state.auth, id) do
+        {:ok, %Vehicle{state: "online"}} -> :ok
+        {:ok, %Vehicle{state: _other}} -> {:error, :unavailable}
+        {:error, %Error{error: :vehicle_unavailable}} -> {:error, :unavailable}
+        {:error, %Error{} = error} -> {:error, error}
       end
 
     {:reply, response, state}

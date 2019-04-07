@@ -1,18 +1,6 @@
 defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
   use TeslaMate.VehicleCase, async: true
 
-  defp drive_event(ts, shift_state, speed_mph) do
-    vehicle_full(
-      drive_state: %{
-        timestamp: ts,
-        latitude: 0.1,
-        longitude: 0.1,
-        shift_state: shift_state,
-        speed: speed_mph
-      }
-    )
-  end
-
   test "logs a full drive", %{test: name} do
     now = DateTime.utc_now()
     now_ts = DateTime.to_unix(now, :millisecond)
