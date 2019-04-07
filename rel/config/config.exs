@@ -14,23 +14,23 @@ defmodule Env do
   defp parse_integer(_, default), do: default
 end
 
-config :tesla_mate, TeslaMate.Repo,
+config :teslamate, TeslaMate.Repo,
   username: Env.get("DATABASE_USER"),
   password: Env.get("DATABASE_PASS"),
   database: Env.get("DATABASE_NAME"),
   hostname: Env.get("DATABASE_HOST"),
   pool_size: 15
 
-config :tesla_mate, TeslaMateWeb.Endpoint,
+config :teslamate, TeslaMateWeb.Endpoint,
   http: [:inet6, port: Env.get("PORT") || 4000],
   url: [host: Env.get("VIRTUAL_HOST"), port: 80],
   secret_key_base: Env.get("SECRET_KEY_BASE")
 
-config :tesla_mate, :tesla_auth,
+config :teslamate, :tesla_auth,
   username: Env.get("TESLA_USERNAME"),
   password: Env.get("TESLA_PASSWORD")
 
-config :tesla_mate, :mqtt,
+config :teslamate, :mqtt,
   host: Env.get("MQTT_HOST"),
   username: Env.get("MQTT_USERNAME"),
   password: Env.get("MQTT_PASSWORD")
@@ -50,5 +50,3 @@ config :logger, :telegram,
   level: :warn,
   chat_id: Env.get("CHAT_ID"),
   token: Env.get("TOKEN")
-
-IO.puts("Configured")

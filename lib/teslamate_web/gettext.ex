@@ -20,5 +20,5 @@ defmodule TeslaMateWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :tesla_mate
+  use Gettext, otp_app: :teslamate
 end

@@ -1,5 +1,5 @@
 defmodule TeslaMateWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :tesla_mate
+  use Phoenix.Endpoint, otp_app: :teslamate
 
   socket "/socket", TeslaMateWeb.UserSocket,
     websocket: true,
@@ -11,7 +11,7 @@ defmodule TeslaMateWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :tesla_mate,
+    from: :teslamate,
     gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
@@ -39,7 +39,7 @@ defmodule TeslaMateWeb.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   plug Plug.Session,
     store: :cookie,
-    key: "_tesla_mate_key",
+    key: "_teslamate_key",
     signing_salt: "yt5O3CAQ"
 
   plug TeslaMateWeb.Router

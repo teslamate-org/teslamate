@@ -1,6 +1,6 @@
-Application.load(:tesla_mate)
+Application.load(:teslamate)
 
-for app <- Application.spec(:tesla_mate, :applications) do
+for app <- Application.spec(:teslamate, :applications) do
   {:ok, _} = Application.ensure_all_started(app)
 end
 

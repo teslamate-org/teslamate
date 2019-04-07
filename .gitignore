@@ -41,3 +41,5 @@ npm-debug.log
 # variables.
 /config/*.secret.exs
 config/*.env
+
+/deploy/

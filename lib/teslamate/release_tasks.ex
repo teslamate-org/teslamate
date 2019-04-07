@@ -14,7 +14,7 @@ defmodule TeslaMate.ReleaseTasks do
     stop_services()
   end
 
-  defp repos, do: Application.get_env(:tesla_mate, :ecto_repos, [])
+  defp repos, do: Application.get_env(:teslamate, :ecto_repos, [])
 
   defp start_services do
     IO.puts("Starting dependencies..")

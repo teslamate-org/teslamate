@@ -7,11 +7,11 @@
 # General application configuration
 use Mix.Config
 
-config :tesla_mate,
+config :teslamate,
   ecto_repos: [TeslaMate.Repo]
 
 # Configures the endpoint
-config :tesla_mate, TeslaMateWeb.Endpoint,
+config :teslamate, TeslaMateWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "Kz7vmP1gPYv/sogke6P3RP9uipMjOLhneQdbokZVx5gpLsNaN44TD20vtOWkMFIT",
   render_errors: [view: TeslaMateWeb.ErrorView, accepts: ~w(html json)],

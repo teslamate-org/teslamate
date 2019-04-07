@@ -19,8 +19,8 @@ environment :prod do
   set(vm_args: "rel/vm.args")
 end
 
-release :tesla_mate do
-  set(version: current_version(:tesla_mate))
+release :teslamate do
+  set(version: current_version(:teslamate))
 
   set(
     applications: [

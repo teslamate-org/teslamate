@@ -30,7 +30,7 @@ defmodule TeslaMateWeb do
   def view do
     quote do
       use Phoenix.View,
-        root: "lib/tesla_mate_web/templates",
+        root: "lib/teslamate_web/templates",
         namespace: TeslaMateWeb
 
       # Import convenience functions from controllers

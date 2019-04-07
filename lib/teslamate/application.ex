@@ -24,6 +24,6 @@ defmodule TeslaMate.Application do
   end
 
   defp auth do
-    Application.get_env(:tesla_mate, :tesla_auth)
+    Application.get_env(:teslamate, :tesla_auth)
   end
 end

@@ -1,9 +1,9 @@
 use Mix.Config
 
-config :tesla_mate, TeslaMateWeb.Endpoint,
+config :teslamate, TeslaMateWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   root: ".",
   server: true,
-  version: Application.spec(:tesla_mate, :vsn)
+  version: Application.spec(:teslamate, :vsn)
 
 config :logger, level: :info
