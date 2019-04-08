@@ -136,6 +136,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:driving, _trip_id} -> :driving
         {:charging, "Charging", _process_id} -> :charging
         {:charging, "Complete", _process_id} -> :charging_complete
+        {:updating, _update_id} -> :updating
         {:suspended, _} -> :suspended
         state -> state
       end
@@ -228,6 +229,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {:online, vehicle}}, :online, data) do
     case vehicle do
+      %Vehicle{vehicle_state: %State.VehicleState{software_update: %{status: "installing"}}} ->
+        Logger.info("Update / Start")
+
+        {:ok, update_id} = call(data.deps.log, :start_update, [data.car_id])
+
+        {:next_state, {:updating, update_id}, %Data{data | last_used: DateTime.utc_now()},
+         schedule_fetch(30)}
+
       %{drive_state: %State.Drive{shift_state: shift_state}}
       when shift_state in ["D", "N", "R"] ->
         Logger.info("Driving / Start")
@@ -329,6 +338,31 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
+  ### :updating
+
+  def handle_event(:internal, {:update, :offline}, {:updating, _update_id}, data) do
+    Logger.warn("Vehicle went offline while updating")
+    {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
+  end
+
+  def handle_event(:internal, {:update, {:online, vehicle}}, {:updating, update_id}, data) do
+    case vehicle.vehicle_state.software_update do
+      %State.VehicleState.SoftwareUpdate{status: "installing"} ->
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
+
+      %State.VehicleState.SoftwareUpdate{status: status} = software_update ->
+        if status != "", do: Logger.warn("Update failed: #{status} | #{inspect(software_update)}")
+
+        car_version = vehicle.vehicle_state.car_version
+        {:ok, %Log.Update{}} = call(data.deps.log, :finish_update, [update_id, car_version])
+
+        Logger.info("Update / Installed / #{car_version}")
+
+        {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+         {:next_event, :internal, {:update, {:online, vehicle}}}}
+    end
+  end
+
   ### :asleep
 
   def handle_event(:internal, {:update, :asleep}, :asleep, _data) do
@@ -377,6 +411,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       case expected_state do
         {:driving, _} -> true
         {:charging, _, _} -> true
+        {:updating, _} -> true
         {:suspended, _} -> false
         :online -> true
         :offline -> false

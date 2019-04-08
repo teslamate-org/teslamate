@@ -1,4 +1,4 @@
-defmodule TeslaMate.LogTripChargingTest do
+defmodule TeslaMate.LogChargingTest do
   use TeslaMate.DataCase, async: true
 
   alias TeslaMate.Log.{Car, ChargingProcess, Charge}

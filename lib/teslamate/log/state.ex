@@ -3,7 +3,7 @@ defmodule TeslaMate.Log.State do
   import Ecto.Changeset
 
   alias __MODULE__.State
-  alias TeslaMate.Log.{Car}
+  alias TeslaMate.Log.Car
 
   schema "states" do
     field :state, State

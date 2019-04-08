@@ -194,4 +194,22 @@ defmodule TeslaMate.Log do
   defp calculate_max_range(%{end_soc: nil}), do: nil
   defp calculate_max_range(%{end_battery_level: nil}), do: nil
   defp calculate_max_range(%{end_soc: soc, end_battery_level: lvl}), do: round(soc / lvl * 100)
+
+  alias TeslaMate.Log.Update
+
+  def start_update(car_id) do
+    with {:ok, %Update{id: id}} <-
+           %Update{car_id: car_id}
+           |> Update.changeset(%{start_date: DateTime.utc_now()})
+           |> Repo.insert() do
+      {:ok, id}
+    end
+  end
+
+  def finish_update(update_id, version) do
+    Update
+    |> Repo.get!(update_id)
+    |> Update.changeset(%{end_date: DateTime.utc_now(), version: version})
+    |> Repo.update()
+  end
 end

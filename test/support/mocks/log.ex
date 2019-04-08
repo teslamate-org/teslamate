@@ -4,7 +4,7 @@ defmodule LogMock do
   defstruct [:pid]
   alias __MODULE__, as: State
 
-  alias TeslaMate.Log.{Trip, Car, ChargingProcess}
+  alias TeslaMate.Log.{Trip, Car, ChargingProcess, Update}
 
   # API
 
@@ -19,6 +19,11 @@ defmodule LogMock do
 
   def start_trip(name, car_id), do: GenServer.call(name, {:start_trip, car_id})
   def close_trip(name, trip_id), do: GenServer.call(name, {:close_trip, trip_id})
+
+  def start_update(name, car_id), do: GenServer.call(name, {:start_update, car_id})
+
+  def finish_update(name, update_id, version),
+    do: GenServer.call(name, {:finish_update, update_id, version})
 
   def start_charging_process(name, car_id, position_attrs) do
     GenServer.call(name, {:start_charging_process, car_id, position_attrs})
@@ -70,6 +75,16 @@ defmodule LogMock do
   def handle_call({:close_trip, _trip_id} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Trip{}}, state}
+  end
+
+  def handle_call({:start_update, _car_id} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, 111}, state}
+  end
+
+  def handle_call({:finish_update, _trip_id, _version} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %Update{}}, state}
   end
 
   def handle_call(action, _from, %State{pid: pid} = state) do
