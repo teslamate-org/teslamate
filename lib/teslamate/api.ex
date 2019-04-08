@@ -55,13 +55,7 @@ defmodule TeslaMate.Api do
   end
 
   def handle_call({:get_vehicle, id}, _from, state) do
-    response =
-      with {:ok, vehicles} <- do_list_vehicles(state.auth),
-           {:ok, vehicle} <- find_vehicle(vehicles, id) do
-        {:ok, vehicle}
-      end
-
-    {:reply, response, state}
+    {:reply, do_get_vehicle(state.auth, id), state}
   end
 
   def handle_call({:get_vehicle_with_state, id}, _from, state) do
@@ -78,13 +72,44 @@ defmodule TeslaMate.Api do
   def handle_call({:wake_up, id}, _from, state) do
     response =
       case Vehicle.Command.wake_up(state.auth, id) do
-        {:ok, %Vehicle{state: "online"}} -> :ok
-        {:ok, %Vehicle{state: _other}} -> {:error, :unavailable}
-        {:error, %Error{error: :vehicle_unavailable}} -> {:error, :unavailable}
-        {:error, %Error{} = error} -> {:error, error}
+        {:ok, %Vehicle{state: "online"}} ->
+          :ok
+
+        {:ok, %Vehicle{state: "asleep"}} ->
+          wait_until_awake(state.auth, id)
+
+        {:ok, %Vehicle{state: "offline"}} ->
+          {:error, :unavailable}
+
+        {:error, %Error{error: :vehicle_unavailable}} ->
+          {:error, :unavailable}
+
+        {:error, %Error{} = error} ->
+          {:error, error}
       end
 
     {:reply, response, state}
+  end
+
+  defp wait_until_awake(auth, id, retries \\ 5)
+
+  defp wait_until_awake(auth, id, retries) when retries > 0 do
+    case do_get_vehicle(auth, id) do
+      {:ok, %Vehicle{state: "online"}} ->
+        :ok
+
+      {:ok, %Vehicle{state: "offline"}} ->
+        {:error, :unavailable}
+
+      {:ok, %Vehicle{state: "asleep"}} ->
+        Logger.info("Waiting for vehicle to become awake ...")
+        :timer.sleep(:timer.seconds(5))
+        wait_until_awake(auth, id, retries - 1)
+    end
+  end
+
+  defp wait_until_awake(_auth, _id, _retries) do
+    {:error, :vehicle_still_asleep}
   end
 
   @impl true
@@ -116,6 +141,13 @@ defmodule TeslaMate.Api do
   end
 
   # Private
+
+  defp do_get_vehicle(auth, id) do
+    with {:ok, vehicles} <- do_list_vehicles(auth),
+         {:ok, vehicle} <- find_vehicle(vehicles, id) do
+      {:ok, vehicle}
+    end
+  end
 
   defp do_list_vehicles(auth) do
     with %Error{message: reason, env: env} <- Vehicle.list(auth) do
