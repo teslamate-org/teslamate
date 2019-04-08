@@ -10,8 +10,8 @@ defmodule TeslaMate.Vehicles do
   end
 
   defdelegate state(id), to: Vehicle
-  defdelegate wake_up(id), to: Vehicle
-  defdelegate suspend(id), to: Vehicle
+  defdelegate resume_logging(id), to: Vehicle
+  defdelegate suspend_logging(id), to: Vehicle
 
   @impl true
   def init(opts) do

@@ -118,7 +118,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert :charging_complete = Vehicle.state(name)
     end
 
-    test "returns the state :suspend", %{test: name} do
+    test "returns the state :suspended", %{test: name} do
       events = [
         {:ok, %TeslaApi.Vehicle{state: "online"}}
       ]
@@ -132,27 +132,14 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:start_state, 999, :online}
       refute_receive _, 50
 
-      assert :suspend = Vehicle.state(name)
+      assert :suspended = Vehicle.state(name)
     end
   end
 
-  describe "wake_up" do
+  describe "resume_logging/1" do
     alias TeslaMate.Vehicles.Vehicle
 
-    test "sends a wake up request to the API", %{test: name} do
-      events = [
-        {:ok, %TeslaApi.Vehicle{state: "asleep"}}
-      ]
-
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
-
-      assert_receive {:start_state, _, :asleep}
-
-      assert :ok = Vehicle.wake_up(name)
-      assert_receive {:api, {:wake_up, 0}}
-    end
-
-    test "leaves suspend and restores previous state", %{test: name} do
+    test "leaves suspended and restores previous state", %{test: name} do
       events = [
         {:ok, %TeslaApi.Vehicle{state: "online"}},
         {:ok, charging_event(0, "Complete", 5.0)},
@@ -171,10 +158,9 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:insert_charge, _, %{charge_energy_added: 5.0}}
 
       refute_receive _, 50
-      assert :suspend = Vehicle.state(name)
+      assert :suspended = Vehicle.state(name)
 
-      assert :ok = Vehicle.wake_up(name)
-      assert_receive {:api, {:wake_up, 0}}
+      assert :ok = Vehicle.resume_logging(name)
 
       assert :charging_complete = Vehicle.state(name)
       assert_receive {:close_charging_process, _}

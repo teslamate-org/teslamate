@@ -23,7 +23,7 @@ defmodule TeslaMateWeb.Router do
     pipe_through :api
 
     resources "/car", CarController, only: [:index, :show, :update]
-    put "/car/:id/suspend", CarController, :suspend
-    put "/car/:id/wake_up", CarController, :wake_up
+    put "/car/:id/logging/resume", CarController, :resume_logging
+    put "/car/:id/logging/suspend", CarController, :suspend_logging
   end
 end

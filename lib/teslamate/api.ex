@@ -91,27 +91,6 @@ defmodule TeslaMate.Api do
     {:reply, response, state}
   end
 
-  defp wait_until_awake(auth, id, retries \\ 5)
-
-  defp wait_until_awake(auth, id, retries) when retries > 0 do
-    case do_get_vehicle(auth, id) do
-      {:ok, %Vehicle{state: "online"}} ->
-        :ok
-
-      {:ok, %Vehicle{state: "offline"}} ->
-        {:error, :unavailable}
-
-      {:ok, %Vehicle{state: "asleep"}} ->
-        Logger.info("Waiting for vehicle to become awake ...")
-        :timer.sleep(:timer.seconds(5))
-        wait_until_awake(auth, id, retries - 1)
-    end
-  end
-
-  defp wait_until_awake(_auth, _id, _retries) do
-    {:error, :vehicle_still_asleep}
-  end
-
   @impl true
   def handle_info(:refresh_auth, %State{auth: auth} = state) do
     case Auth.refresh(auth) do
@@ -160,5 +139,26 @@ defmodule TeslaMate.Api do
       nil -> {:error, :vehicle_not_found}
       vehicle -> {:ok, vehicle}
     end
+  end
+
+  defp wait_until_awake(auth, id, retries \\ 5)
+
+  defp wait_until_awake(auth, id, retries) when retries > 0 do
+    case do_get_vehicle(auth, id) do
+      {:ok, %Vehicle{state: "online"}} ->
+        :ok
+
+      {:ok, %Vehicle{state: "offline"}} ->
+        {:error, :unavailable}
+
+      {:ok, %Vehicle{state: "asleep"}} ->
+        Logger.info("Waiting for vehicle to become awake ...")
+        :timer.sleep(:timer.seconds(5))
+        wait_until_awake(auth, id, retries - 1)
+    end
+  end
+
+  defp wait_until_awake(_auth, _id, _retries) do
+    {:error, :vehicle_still_asleep}
   end
 end

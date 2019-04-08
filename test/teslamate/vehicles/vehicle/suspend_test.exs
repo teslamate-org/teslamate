@@ -183,7 +183,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     refute_receive _, 200
   end
 
-  describe "suspend" do
+  describe "suspend_logging/1" do
     alias TeslaMate.Vehicles.Vehicle
 
     test "immediately returns :ok if asleep", %{test: name} do
@@ -194,7 +194,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
       assert_receive {:start_state, _, :asleep}
 
-      assert :ok = Vehicle.suspend(name)
+      assert :ok = Vehicle.suspend_logging(name)
       refute_receive _
     end
 
@@ -206,7 +206,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
       assert_receive {:start_state, _, :offline}
 
-      assert :ok = Vehicle.suspend(name)
+      assert :ok = Vehicle.suspend_logging(name)
       refute_receive _
     end
 
@@ -218,14 +218,14 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events, suspend_min: 1000)
       assert_receive {:start_state, _, :online}
 
-      assert :ok = Vehicle.suspend(name)
-      assert :suspend = Vehicle.state(name)
-      assert :ok = Vehicle.suspend(name)
+      assert :ok = Vehicle.suspend_logging(name)
+      assert :suspended = Vehicle.state(name)
+      assert :ok = Vehicle.suspend_logging(name)
 
       refute_receive _
     end
 
-    test "cannot suspend if vehicle is preconditioning", %{test: name} do
+    test "cannot be suspended if vehicle is preconditioning", %{test: name} do
       not_supendable =
         vehicle_full(
           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
@@ -240,10 +240,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
       assert_receive {:start_state, _, :online}
 
-      assert {:error, :preconditioning} = Vehicle.suspend(name)
+      assert {:error, :preconditioning} = Vehicle.suspend_logging(name)
     end
 
-    test "cannot suspend if user is present", %{test: name} do
+    test "cannot be suspended if user is present", %{test: name} do
       not_supendable =
         vehicle_full(
           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
@@ -258,10 +258,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
       assert_receive {:start_state, _, :online}
 
-      assert {:error, :user_present} = Vehicle.suspend(name)
+      assert {:error, :user_present} = Vehicle.suspend_logging(name)
     end
 
-    test "cannot suspend if shift_state is not nil", %{test: name} do
+    test "cannot be suspended if shift_state is not nil", %{test: name} do
       not_supendable =
         vehicle_full(
           drive_state: %{timestamp: 0, shift_state: "P", latitude: 0.0, longitude: 0.0}
@@ -275,10 +275,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
       assert_receive {:start_state, _, :online}
 
-      assert {:error, :shift_state} = Vehicle.suspend(name)
+      assert {:error, :shift_state} = Vehicle.suspend_logging(name)
     end
 
-    test "cannot suspend while driving", %{test: name} do
+    test "cannot be suspended while driving", %{test: name} do
       events = [
         {:ok, %TeslaApi.Vehicle{state: "online"}},
         {:ok, drive_event(0, "D", 0)}
@@ -287,10 +287,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
       assert_receive {:start_state, _, :online}
 
-      assert {:error, :vehicle_not_parked} = Vehicle.suspend(name)
+      assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
     end
 
-    test "cannot suspend while charing is not complete", %{test: name} do
+    test "cannot be suspended while charing is not complete", %{test: name} do
       events = [
         {:ok, %TeslaApi.Vehicle{state: "online"}},
         {:ok, charging_event(0, "Charging", 1.5)}
@@ -299,7 +299,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
       assert_receive {:start_state, _, :online}
 
-      assert {:error, :charging_in_progress} = Vehicle.suspend(name)
+      assert {:error, :charging_in_progress} = Vehicle.suspend_logging(name)
     end
 
     test "suspends when charging is complete", %{test: name} do
@@ -311,8 +311,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events, suspend_min: 1000)
       assert_receive {:start_state, _, :online}
 
-      assert :ok = Vehicle.suspend(name)
-      assert :suspend = Vehicle.state(name)
+      assert :ok = Vehicle.suspend_logging(name)
+      assert :suspended = Vehicle.state(name)
     end
 
     test "suspends when idling", %{test: name} do
@@ -329,8 +329,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       assert_receive {:start_state, _, :online}
 
       assert :online = Vehicle.state(name)
-      assert :ok = Vehicle.suspend(name)
-      assert :suspend = Vehicle.state(name)
+      assert :ok = Vehicle.suspend_logging(name)
+      assert :suspended = Vehicle.state(name)
     end
   end
 end

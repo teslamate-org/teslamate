@@ -30,12 +30,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
     GenStateMachine.call(:"#{car_id}", :get_state)
   end
 
-  def suspend(car_id) do
-    GenStateMachine.call(:"#{car_id}", :suspend)
+  def suspend_logging(car_id) do
+    GenStateMachine.call(:"#{car_id}", :suspend_logging)
   end
 
-  def wake_up(car_id) do
-    GenStateMachine.call(:"#{car_id}", :wake_up)
+  def resume_logging(car_id) do
+    GenStateMachine.call(:"#{car_id}", :resume_logging)
   end
 
   @impl true
@@ -136,55 +136,52 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:driving, _trip_id} -> :driving
         {:charging, "Charging", _process_id} -> :charging
         {:charging, "Complete", _process_id} -> :charging_complete
-        {:suspend, _} -> :suspend
+        {:suspended, _} -> :suspended
         state -> state
       end
 
     {:keep_state_and_data, {:reply, from, state}}
   end
 
-  ## Wake_up
+  ## resume_logging
 
-  def handle_event({:call, from}, :wake_up, {:suspend, prev_state}, data) do
-    case call(data.deps.api, :wake_up, [data.id]) do
-      {:error, reason} ->
-        {:keep_state_and_data, {:reply, from, {:error, reason}}}
+  def handle_event({:call, from}, :resume_logging, {:suspended, prev_state}, data) do
+    Logger.info("Resuming logging")
 
-      :ok ->
-        {:next_state, prev_state, data, [{:reply, from, :ok}, schedule_fetch()]}
-    end
+    {:next_state, prev_state, %Data{data | last_used: DateTime.utc_now()},
+     [{:reply, from, :ok}, schedule_fetch()]}
   end
 
-  def handle_event({:call, from}, :wake_up, _state, data) do
-    result = call(data.deps.api, :wake_up, [data.id])
-    {:keep_state_and_data, [{:reply, from, result}, schedule_fetch()]}
-  end
-
-  ## Suspend
-
-  def handle_event({:call, from}, :suspend, state, _data) when state in [:offline, :asleep] do
+  def handle_event({:call, from}, :resume_logging, _state, _data) do
     {:keep_state_and_data, {:reply, from, :ok}}
   end
 
-  def handle_event({:call, from}, :suspend, {:suspend, _}, _data) do
+  ## suspend_logging
+
+  def handle_event({:call, from}, :suspend_logging, state, _data)
+      when state in [:offline, :asleep] do
     {:keep_state_and_data, {:reply, from, :ok}}
   end
 
-  def handle_event({:call, from}, :suspend, {:driving, _}, _data) do
+  def handle_event({:call, from}, :suspend_logging, {:suspended, _}, _data) do
+    {:keep_state_and_data, {:reply, from, :ok}}
+  end
+
+  def handle_event({:call, from}, :suspend_logging, {:driving, _}, _data) do
     {:keep_state_and_data, {:reply, from, {:error, :vehicle_not_parked}}}
   end
 
-  def handle_event({:call, from}, :suspend, {:charging, state, _}, _data)
+  def handle_event({:call, from}, :suspend_logging, {:charging, state, _}, _data)
       when state != "Complete" do
     {:keep_state_and_data, {:reply, from, {:error, :charging_in_progress}}}
   end
 
-  def handle_event({:call, from}, :suspend, _online_or_charging_complete, data) do
+  def handle_event({:call, from}, :suspend_logging, _online_or_charging_complete, data) do
     with {:ok, %Vehicle{} = vehicle} <- fetch(data, expected_state: :online),
-         :ok <- can_suspend(vehicle) do
-      Logger.info("Start / :suspend / Manual")
+         :ok <- can_fall_asleep(vehicle) do
+      Logger.info("Suspending logging [Triggered manually]")
 
-      {:next_state, {:suspend, :online}, data,
+      {:next_state, {:suspended, :online}, data,
        [schedule_fetch(data.suspend_min, :minutes), {:reply, from, :ok}]}
     else
       {:error, reason} ->
@@ -362,13 +359,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
      {:next_event, :internal, event}}
   end
 
-  ### :suspend
+  ### :suspended
 
-  def handle_event(:internal, {:update, {:online, _}} = event, {:suspend, prev_state}, data) do
+  def handle_event(:internal, {:update, {:online, _}} = event, {:suspended, prev_state}, data) do
     {:next_state, prev_state, data, {:next_event, :internal, event}}
   end
 
-  def handle_event(:internal, {:update, state}, {:suspend, _}, data)
+  def handle_event(:internal, {:update, state}, {:suspended, _}, data)
       when state in [:asleep, :offline] do
     {:next_state, :start, data, schedule_fetch()}
   end
@@ -380,7 +377,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       case expected_state do
         {:driving, _} -> true
         {:charging, _, _} -> true
-        {:suspend, _} -> false
+        {:suspended, _} -> false
         :online -> true
         :offline -> false
         :asleep -> false
@@ -471,12 +468,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp try_to_suspend(vehicle, current_state, data) do
-    suspend? =
-      diff(DateTime.utc_now(), data.last_used) / 60 >
-        data.sudpend_after_idle_min
-
-    if suspend? do
-      case can_suspend(vehicle) do
+    if diff_seconds(DateTime.utc_now(), data.last_used) / 60 > data.sudpend_after_idle_min do
+      case can_fall_asleep(vehicle) do
         {:error, :user_present} ->
           Logger.warn("Present user prevents car to go to sleep")
 
@@ -493,9 +486,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
           {:keep_state_and_data, schedule_fetch(30)}
 
         :ok ->
-          Logger.info("Start / :suspend")
+          Logger.info("Suspending logging")
 
-          {:next_state, {:suspend, current_state}, data,
+          {:next_state, {:suspended, current_state}, data,
            schedule_fetch(data.suspend_min, :minutes)}
       end
     else
@@ -503,7 +496,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp can_suspend(vehicle) do
+  defp can_fall_asleep(vehicle) do
     alias State.{Climate, VehicleState, Drive}
 
     case vehicle do
@@ -538,7 +531,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   case(Mix.env()) do
-    :test -> defp diff(a, b), do: DateTime.diff(a, b, :millisecond)
-    _____ -> defp diff(a, b), do: DateTime.diff(a, b, :second)
+    :test -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :millisecond)
+    _____ -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :second)
   end
 end
