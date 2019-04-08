@@ -22,7 +22,7 @@ config :teslamate, TeslaMate.Repo,
   pool_size: 15
 
 config :teslamate, TeslaMateWeb.Endpoint,
-  http: [:inet6, port: Env.get("PORT") || 4000],
+  http: [:inet6, port: Env.get_integer("PORT", 4000)],
   url: [host: Env.get("VIRTUAL_HOST"), port: 80],
   secret_key_base: Env.get("SECRET_KEY_BASE")
 

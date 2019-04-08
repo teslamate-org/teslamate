@@ -151,5 +151,36 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert :ok = Vehicle.wake_up(name)
       assert_receive {:api, {:wake_up, 0}}
     end
+
+    test "leaves suspend and restores previous state", %{test: name} do
+      events = [
+        {:ok, %TeslaApi.Vehicle{state: "online"}},
+        {:ok, charging_event(0, "Complete", 5.0)},
+        {:ok, charging_event(0, "Complete", 5.0)},
+        {:ok, charging_event(0, "Unplugged", 5.0)}
+      ]
+
+      :ok =
+        start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+          sudpend_after_idle_min: round(1 / 60),
+          suspend_min: 10_000
+        )
+
+      assert_receive {:start_state, _, :online}
+      assert_receive {:start_charging_process, _, _}
+      assert_receive {:insert_charge, _, %{charge_energy_added: 5.0}}
+
+      refute_receive _, 50
+      assert :suspend = Vehicle.state(name)
+
+      assert :ok = Vehicle.wake_up(name)
+      assert_receive {:api, {:wake_up, 0}}
+
+      assert :charging_complete = Vehicle.state(name)
+      assert_receive {:close_charging_process, _}
+      assert_receive {:start_state, _, :online}
+
+      refute_receive _
+    end
   end
 end

@@ -71,7 +71,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       id: vehicle.id,
       car_id: car_id,
       last_used: DateTime.utc_now(),
-      sudpend_after_idle_min: Keyword.get(opts, :sudpend_after_idle_min, 5),
+      sudpend_after_idle_min: Keyword.get(opts, :sudpend_after_idle_min, 15),
       suspend_min: Keyword.get(opts, :suspend_min, 21),
       deps: deps
     }
@@ -94,6 +94,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # - indices
   # - cron job which "closes" drives & charging_processes (i.e there is no end_time)
 
+  ## Fetch
+
   @impl true
   def handle_event(event, :fetch, state, data) when event in [:state_timeout, :internal] do
     case fetch(data, expected_state: state) do
@@ -106,8 +108,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:ok, :asleep} ->
         {:keep_state_and_data, {:next_event, :internal, {:update, :asleep}}}
 
-      {:ok, :unknown} ->
-        Logger.warn("Error / vehicle state :unknown}")
+      {:ok, unknown} ->
+        Logger.warn("Error / vehicle state #{unknown}}")
 
         {:keep_state_and_data, schedule_fetch()}
 
@@ -118,8 +120,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.warn("Error / #{inspect(error)}: #{message}")
 
         {:keep_state_and_data, schedule_fetch()}
+
+      {:error, reason} ->
+        Logger.warn("Error / #{inspect(reason)}")
+
+        {:keep_state_and_data, schedule_fetch()}
     end
   end
+
+  ## Get_state
 
   def handle_event({:call, from}, :get_state, state, _data) do
     state =
@@ -134,13 +143,30 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:reply, from, state}}
   end
 
-  def handle_event({:call, from}, :wake_up, _state, data) do
-    result = call(data.deps.api, :wake_up, [data.id])
-    {:keep_state_and_data, {:reply, from, result}}
+  ## Wake_up
+
+  def handle_event({:call, from}, :wake_up, {:suspend, prev_state}, data) do
+    case call(data.deps.api, :wake_up, [data.id]) do
+      {:error, reason} ->
+        {:keep_state_and_data, {:reply, from, {:error, reason}}}
+
+      :ok ->
+        {:next_state, prev_state, data, [{:reply, from, :ok}, schedule_fetch()]}
+    end
   end
 
-  def handle_event({:call, from}, :suspend, state, _data)
-      when state in [:offline, :asleep, :suspend] do
+  def handle_event({:call, from}, :wake_up, _state, data) do
+    result = call(data.deps.api, :wake_up, [data.id])
+    {:keep_state_and_data, [{:reply, from, result}, schedule_fetch()]}
+  end
+
+  ## Suspend
+
+  def handle_event({:call, from}, :suspend, state, _data) when state in [:offline, :asleep] do
+    {:keep_state_and_data, {:reply, from, :ok}}
+  end
+
+  def handle_event({:call, from}, :suspend, {:suspend, _}, _data) do
     {:keep_state_and_data, {:reply, from, :ok}}
   end
 
