@@ -9,6 +9,10 @@ defmodule TeslaMate.Vehicles do
     Supervisor.start_link(__MODULE__, opts, name: @name)
   end
 
+  defdelegate state(id), to: Vehicle
+  defdelegate wake_up(id), to: Vehicle
+  defdelegate suspend(id), to: Vehicle
+
   @impl true
   def init(opts) do
     children =

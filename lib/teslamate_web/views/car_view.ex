@@ -19,4 +19,8 @@ defmodule TeslaMateWeb.CarView do
       efficiency: car.efficiency
     }
   end
+
+  def render("command_failed.json", %{reason: reason}) do
+    %{error: reason}
+  end
 end

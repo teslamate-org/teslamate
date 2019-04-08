@@ -80,8 +80,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   # TODO
-  # - /wake_up & /suspend routes
-  #   - allow suspend only when suspending would be possible anyway
   # - deep sleep time with checks every 30min
   # - Schedule Sleep Mode: time window where idle times is set to 0 / is bypassed
   # - Deep Sleep Mode: time window where polling is limited to 30min
