@@ -185,6 +185,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:next_state, {:suspended, :online}, data,
        [schedule_fetch(data.suspend_min, :minutes), {:reply, from, :ok}]}
     else
+      {:error, %Error{error: reason}} ->
+        {:keep_state_and_data, {:reply, from, {:error, reason}}}
+
       {:error, reason} ->
         {:keep_state_and_data, {:reply, from, {:error, reason}}}
 

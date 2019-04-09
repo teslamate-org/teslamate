@@ -129,9 +129,7 @@ defmodule TeslaMate.Api do
   end
 
   defp do_list_vehicles(auth) do
-    with %Error{message: reason, env: env} <- Vehicle.list(auth) do
-      {:error, {reason, env}}
-    end
+    Vehicle.list(auth)
   end
 
   defp find_vehicle(vehicles, id) do

@@ -1,6 +1,8 @@
 defmodule TeslaMateWeb.CarController do
   use TeslaMateWeb, :controller
 
+  require Logger
+
   alias TeslaMate.Log
   alias TeslaMate.Log.Car
   alias TeslaMate.Vehicles
@@ -33,6 +35,8 @@ defmodule TeslaMateWeb.CarController do
         send_resp(conn, :no_content, "")
 
       {:error, reason} ->
+        Logger.info("Could not suspend manually: #{inspect(reason)}")
+
         conn
         |> put_status(:precondition_failed)
         |> render("command_failed.json", reason: reason)
@@ -47,6 +51,8 @@ defmodule TeslaMateWeb.CarController do
         send_resp(conn, :no_content, "")
 
       {:error, reason} ->
+        Logger.info("Could not resume manually: #{inspect(reason)}")
+
         conn
         |> put_status(:bad_gateway)
         |> render("command_failed.json", reason: reason)
