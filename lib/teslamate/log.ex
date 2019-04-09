@@ -116,19 +116,19 @@ defmodule TeslaMate.Log do
         start_km: min(p.odometer),
         end_km: max(p.odometer),
         distance: max(p.odometer) - min(p.odometer),
-        start_range_km: min(p.ideal_battery_range_km),
-        end_range_km: max(p.ideal_battery_range_km),
+        start_range_km: max(p.ideal_battery_range_km),
+        end_range_km: min(p.ideal_battery_range_km),
         duration_min: duration_min(max(p.date), min(p.date))
       })
       |> Repo.one()
 
-    if stats.distance in [nil, 0, 0.0] do
+    if is_nil(stats.distance) or stats.distance < 0.1 do
       trip
       |> Trip.changeset(stats)
       |> Repo.delete()
     else
-      ideal_distance = stats.end_range_km - stats.start_range_km
-      efficiency = if ideal_distance > 0, do: stats.distance / ideal_distance, else: nil
+      ideal_distance = stats.start_range_km - stats.end_range_km
+      efficiency = if ideal_distance > 0, do: ideal_distance / stats.distance, else: nil
       consumption = ideal_distance * trip.car.efficiency
       consumption_100km = if stats.distance > 0, do: consumption / stats.distance * 100, else: nil
 

@@ -131,8 +131,8 @@ defmodule TeslaMate.LogTripTest do
       assert trip.start_km == 284.85156
       assert trip.end_km == 288.045561
       assert trip.distance == 3.1940010000000143
-      assert trip.start_range_km == 334.8
-      assert trip.end_range_km == 338.8
+      assert trip.start_range_km == 338.8
+      assert trip.end_range_km == 334.8
       assert trip.duration_min == 4
       assert trip.consumption_kWh == 0.612
       assert trip.consumption_kWh_100km == 19.160920738597053
