@@ -41,7 +41,13 @@ defmodule TeslaMate.Log.Position do
       :ideal_battery_range_km,
       :battery_level,
       :outside_temp,
-      :altitude
+      :altitude,
+      :fan_status,
+      :driver_temp_setting,
+      :passenger_temp_setting,
+      :is_climate_on,
+      :is_rear_defroster_on,
+      :is_front_defroster_on
     ])
     |> validate_required([:car_id, :date, :latitude, :longitude])
     |> foreign_key_constraint(:car_id)
