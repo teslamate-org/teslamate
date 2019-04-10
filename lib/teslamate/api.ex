@@ -61,8 +61,7 @@ defmodule TeslaMate.Api do
   def handle_call({:get_vehicle_with_state, id}, _from, state) do
     response =
       case Vehicle.get_with_state(state.auth, id) do
-        {:error, %Error{error: :vehicle_unavailable}} -> {:error, :unavailable}
-        {:error, %Error{} = error} -> {:error, error}
+        {:error, %Error{error: reason}} -> {:error, reason}
         {:ok, %Vehicle{} = vehicle} -> {:ok, vehicle}
       end
 
@@ -79,13 +78,10 @@ defmodule TeslaMate.Api do
           wait_until_awake(state.auth, id)
 
         {:ok, %Vehicle{state: "offline"}} ->
-          {:error, :unavailable}
+          {:error, :vehicle_unavailable}
 
-        {:error, %Error{error: :vehicle_unavailable}} ->
-          {:error, :unavailable}
-
-        {:error, %Error{} = error} ->
-          {:error, error}
+        {:error, %Error{error: reason}} ->
+          {:error, reason}
       end
 
     {:reply, response, state}
@@ -129,7 +125,9 @@ defmodule TeslaMate.Api do
   end
 
   defp do_list_vehicles(auth) do
-    Vehicle.list(auth)
+    with {:error, %Error{error: reason}} <- Vehicle.list(auth) do
+      {:error, reason}
+    end
   end
 
   defp find_vehicle(vehicles, id) do
@@ -146,13 +144,16 @@ defmodule TeslaMate.Api do
       {:ok, %Vehicle{state: "online"}} ->
         :ok
 
-      {:ok, %Vehicle{state: "offline"}} ->
-        {:error, :unavailable}
-
       {:ok, %Vehicle{state: "asleep"}} ->
         Logger.info("Waiting for vehicle to become awake ...")
         :timer.sleep(:timer.seconds(5))
         wait_until_awake(auth, id, retries - 1)
+
+      {:ok, %Vehicle{state: "offline"}} ->
+        {:error, :vehicle_unavailable}
+
+      {:error, %Error{error: reason}} ->
+        {:error, reason}
     end
   end
 

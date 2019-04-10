@@ -6,8 +6,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   alias __MODULE__.Identification
   alias TeslaMate.{Api, Log}
 
-  alias TeslaApi.Vehicle.State
-  alias TeslaApi.{Vehicle, Error}
+  alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge}
+  alias TeslaApi.Vehicle
 
   import Core.Dependency, only: [call: 3]
 
@@ -109,21 +109,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state_and_data, {:next_event, :internal, {:update, :asleep}}}
 
       {:ok, unknown} ->
-        Logger.warn("Error / vehicle state #{unknown}}")
-
+        Logger.warn("Error / unkown vehicle state: #{inspect(unknown)}}")
         {:keep_state_and_data, schedule_fetch()}
 
-      {:error, %Error{error: :timeout}} ->
+      {:error, :timeout} ->
         {:keep_state_and_data, schedule_fetch(5)}
-
-      {:error, %Error{error: error, message: message}} ->
-        Logger.warn("Error / #{inspect(error)}: #{message}")
-
-        {:keep_state_and_data, schedule_fetch()}
 
       {:error, reason} ->
         Logger.warn("Error / #{inspect(reason)}")
-
         {:keep_state_and_data, schedule_fetch()}
     end
   end
@@ -185,9 +178,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:next_state, {:suspended, :online}, data,
        [schedule_fetch(data.suspend_min, :minutes), {:reply, from, :ok}]}
     else
-      {:error, %Error{error: reason}} ->
-        {:keep_state_and_data, {:reply, from, {:error, reason}}}
-
       {:error, reason} ->
         {:keep_state_and_data, {:reply, from, {:error, reason}}}
 
@@ -232,7 +222,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {:online, vehicle}}, :online, data) do
     case vehicle do
-      %Vehicle{vehicle_state: %State.VehicleState{software_update: %{status: "installing"}}} ->
+      %Vehicle{vehicle_state: %VehicleState{software_update: %{status: "installing"}}} ->
         Logger.info("Update / Start")
 
         {:ok, update_id} = call(data.deps.log, :start_update, [data.car_id])
@@ -240,7 +230,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, {:updating, update_id}, %Data{data | last_used: DateTime.utc_now()},
          schedule_fetch(30)}
 
-      %{drive_state: %State.Drive{shift_state: shift_state}}
+      %{drive_state: %Drive{shift_state: shift_state}}
       when shift_state in ["D", "N", "R"] ->
         Logger.info("Driving / Start")
 
@@ -250,7 +240,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, {:driving, trip_id}, %Data{data | last_used: DateTime.utc_now()},
          schedule_fetch(5)}
 
-      %{charge_state: %State.Charge{charging_state: charging_state, time_to_full_charge: t}}
+      %{charge_state: %Charge{charging_state: charging_state, time_to_full_charge: t}}
       when charging_state in ["Charging", "Complete"] ->
         Logger.info("Charging / #{t}h left")
 
@@ -350,10 +340,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {:online, vehicle}}, {:updating, update_id}, data) do
     case vehicle.vehicle_state.software_update do
-      %State.VehicleState.SoftwareUpdate{status: "installing"} ->
+      %VehicleState.SoftwareUpdate{status: "installing"} ->
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
 
-      %State.VehicleState.SoftwareUpdate{status: status} = software_update ->
+      %VehicleState.SoftwareUpdate{status: status} = software_update ->
         if status != "", do: Logger.warn("Update failed: #{status} | #{inspect(software_update)}")
 
         car_version = vehicle.vehicle_state.car_version
@@ -430,7 +420,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp fetch_with_reachable_assumption(id, deps) do
-    with {:error, :unavailable} <- call(deps.api, :get_vehicle_with_state, [id]),
+    with {:error, :vehicle_unavailable} <- call(deps.api, :get_vehicle_with_state, [id]),
          {:ok, vehicle} <- call(deps.api, :get_vehicle, [id]) do
       {:ok, String.to_atom(vehicle.state)}
     end
@@ -535,8 +525,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp can_fall_asleep(vehicle) do
-    alias State.{Climate, VehicleState, Drive}
-
     case vehicle do
       %Vehicle{vehicle_state: %VehicleState{is_user_present: true}} ->
         {:error, :user_present}
