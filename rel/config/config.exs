@@ -44,7 +44,7 @@ config :logger,
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  metadata: []
 
 config :logger, :telegram,
   level: :warn,
