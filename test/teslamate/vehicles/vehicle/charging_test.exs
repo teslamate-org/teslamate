@@ -6,29 +6,31 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
-      {:ok, vehicle_full(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, online_event()},
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, charging_event(now_ts + 2, "Charging", 0.2)},
       {:ok, charging_event(now_ts + 3, "Charging", 0.3)},
       {:ok, charging_event(now_ts + 4, "Complete", 0.4)},
       {:ok, charging_event(now_ts + 5, "Complete", 0.4)},
       {:ok, charging_event(now_ts + 6, "Unplugged", 0.4)},
-      {:ok, vehicle_full(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
     ]
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
-    assert_receive {:start_charging_process, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 0.1}}
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 0.2}}
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 0.3}}
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 0.4}}
-    assert_receive {:close_charging_process, 99}
+    assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0}}
+    assert_receive {:insert_charge, charging_id, %{date: _, charge_energy_added: 0.1}}
+    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.2}}
+    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.3}}
+    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.4}}
+    assert_receive {:close_charging_process, ^charging_id}
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, ^car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
     refute_receive _
   end
@@ -39,8 +41,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
-      {:ok, vehicle_full(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, online_event()},
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, charging_event(now_ts + 2, "Charging", 0.2)},
       {:error, :vehicle_unavailable},
@@ -51,21 +53,23 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
       {:ok, charging_event(now_ts + 4, "Complete", 0.3)},
       {:ok, charging_event(now_ts + 5, "Complete", 0.3)},
       {:ok, charging_event(now_ts + 6, "Unplugged", 0.3)},
-      {:ok, vehicle_full(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
     ]
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
-    assert_receive {:start_charging_process, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 0.1}}
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 0.2}}
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 0.3}}
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 0.3}}
-    assert_receive {:close_charging_process, 99}
+    assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0}}
+    assert_receive {:insert_charge, charging_id, %{date: _, charge_energy_added: 0.1}}
+    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.2}}
+    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.3}}
+    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.3}}
+    assert_receive {:close_charging_process, ^charging_id}
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, ^car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
     refute_receive _
   end
@@ -75,18 +79,19 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, charging_event(now_ts, "Charging", 22)}
     ]
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
-    assert_receive {:start_charging_process, 999, %{date: _, latitude: 0.0, longitude: 0.0}}
+    assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0}}
 
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 22}}
-    assert_receive {:insert_charge, 99, %{date: _, charge_energy_added: 22}}
+    assert_receive {:insert_charge, charging_event, %{date: _, charge_energy_added: 22}}
+    assert_receive {:insert_charge, ^charging_event, %{date: _, charge_energy_added: 22}}
     # ...
 
     refute_received _

@@ -206,10 +206,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:next_state, :offline, data, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, _}} = event, :start, data) do
+  def handle_event(:internal, {:update, {:online, vehicle}} = event, :start, data) do
     Logger.info("Start / :online")
 
     :ok = call(data.deps.log, :start_state, [data.car_id, :online])
+    :ok = insert_position(vehicle, data)
 
     {:next_state, :online, data, {:next_event, :internal, event}}
   end
@@ -245,7 +246,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("Charging / #{t}h left")
 
         position = create_position(vehicle)
-
         {:ok, charging_id} = call(data.deps.log, :start_charging_process, [data.car_id, position])
         :ok = insert_charge(charging_id, vehicle, data)
 
@@ -434,7 +434,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp insert_position(vehicle, data, opts) do
+  defp insert_position(vehicle, data, opts \\ []) do
     position = create_position(vehicle, opts)
 
     with {:ok, _pos} <- call(data.deps.log, :insert_position, [data.car_id, position]) do

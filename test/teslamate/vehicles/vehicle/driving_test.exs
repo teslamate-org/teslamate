@@ -6,25 +6,26 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
-      {:ok, vehicle_full(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, online_event()},
       {:ok, drive_event(now_ts + 1, "D", 60)},
       {:ok, drive_event(now_ts + 2, "N", 30)},
       {:ok, drive_event(now_ts + 3, "R", -5)},
-      {:ok, vehicle_full(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
     ]
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
-    assert_receive {:start_trip, 999}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 97, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 48, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: -8, trip_id: 111}}
+    assert_receive {:start_trip, ^car_id}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 97, trip_id: 111}}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, trip_id: 111}}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: -8, trip_id: 111}}
     assert_receive {:close_trip, 111}
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, ^car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
     refute_receive _
   end
@@ -35,8 +36,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
-      {:ok, vehicle_full(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, online_event()},
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
       {:ok, drive_event(now_ts + 1, "D", 50)},
       {:error, :vehicle_unavailable},
       {:ok, %TeslaApi.Vehicle{state: "offline"}},
@@ -44,20 +45,22 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, %TeslaApi.Vehicle{state: "unknown"}},
       {:ok, drive_event(now_ts + 2, "D", 55)},
       {:ok, drive_event(now_ts + 3, "D", 40)},
-      {:ok, vehicle_full(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
     ]
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
-    assert_receive {:start_trip, 999}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 80, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 89, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 64, trip_id: 111}}
+    assert_receive {:start_trip, ^car_id}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 80, trip_id: 111}}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 89, trip_id: 111}}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 64, trip_id: 111}}
     assert_receive {:close_trip, 111}
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, ^car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
     refute_receive _
   end
@@ -67,17 +70,18 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, drive_event(now_ts, "N", 0)}
     ]
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
-    assert_receive {:start_trip, 999}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 0, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 0, trip_id: 111}}
+    assert_receive {:start_trip, ^car_id}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, trip_id: 111}}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, trip_id: 111}}
     # ...
 
     refute_received _
@@ -88,13 +92,14 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, drive_event(now_ts, "P", 0)}
     ]
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
     refute_receive _
   end
@@ -104,7 +109,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, drive_event(now_ts, "D", 5)},
       {:ok, drive_event(now_ts, "D", 15)},
       {:ok, drive_event(now_ts, "P", 0)},
@@ -115,14 +120,16 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
-    assert_receive {:start_trip, 999}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 8, trip_id: 111}}
-    assert_receive {:insert_position, 999, %{longitude: 0.1, speed: 24, trip_id: 111}}
+    assert_receive {:start_trip, ^car_id}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 8, trip_id: 111}}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 24, trip_id: 111}}
     assert_receive {:close_trip, 111}
 
-    assert_receive {:start_state, 999, :online}
+    assert_receive {:start_state, ^car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
 
     refute_receive _
   end

@@ -27,9 +27,15 @@ defmodule TeslaMate.VehicleCase do
         :ok
       end
 
-      def vehicle_full(opts) do
+      def online_event(opts \\ []) do
+        drive_state =
+          Keyword.get(opts, :drive_state, %{
+            timestamp: 0,
+            latitude: 0.0,
+            longitude: 0.0
+          })
+
         charge_state = Keyword.get(opts, :charge_state, %{})
-        drive_state = Keyword.get(opts, :drive_state, %{})
         climate_state = Keyword.get(opts, :climate_state, %{})
         vehicle_state = Keyword.get(opts, :vehicle_state, %{})
 
@@ -43,7 +49,7 @@ defmodule TeslaMate.VehicleCase do
       end
 
       def drive_event(ts, shift_state, speed_mph) do
-        vehicle_full(
+        online_event(
           drive_state: %{
             timestamp: ts,
             latitude: 0.1,
@@ -55,7 +61,7 @@ defmodule TeslaMate.VehicleCase do
       end
 
       def charging_event(ts, charging_state, charge_energy_added) do
-        vehicle_full(
+        online_event(
           charge_state: %{
             timestamp: ts,
             charging_state: charging_state,
