@@ -3424,6 +3424,9 @@ pbkdf2@^3.0.3:
 "phoenix_html@file:../deps/phoenix_html":
   version "2.13.2"
 
+"phoenix_live_view@file:../deps/phoenix_live_view":
+  version "0.1.0-dev"
+
 pify@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-3.0.0.tgz#e5a4acd2c101fdf3d9a4d07f0dbc4db49dd28176"

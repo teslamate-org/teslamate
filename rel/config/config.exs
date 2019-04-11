@@ -24,7 +24,10 @@ config :teslamate, TeslaMate.Repo,
 config :teslamate, TeslaMateWeb.Endpoint,
   http: [:inet6, port: Env.get_integer("PORT", 4000)],
   url: [host: Env.get("VIRTUAL_HOST"), port: 80],
-  secret_key_base: Env.get("SECRET_KEY_BASE")
+  secret_key_base: Env.get("SECRET_KEY_BASE"),
+  live_view: [
+    signing_salt: Env.get("SIGNING_SALT")
+  ]
 
 config :teslamate, :tesla_auth,
   username: Env.get("TESLA_USERNAME"),

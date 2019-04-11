@@ -511,7 +511,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:error, :shift_state} ->
           Logger.warn("Shift state prevents car to go to sleep")
 
-          {:keep_state_and_data, schedule_fetch(30)}
+          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
 
         :ok ->
           Logger.info("Suspending logging")

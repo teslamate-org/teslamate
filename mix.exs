@@ -49,7 +49,8 @@ defmodule TeslaMate.MixProject do
       {:gen_state_machine, "~> 2.0"},
       {:ecto_enum, "~> 1.2"},
       {:distillery, "~> 2.0"},
-      {:logger_telegram_backend, "~> 1.0", only: :prod}
+      {:logger_telegram_backend, "~> 1.0", only: :prod},
+      {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"}
     ]
   end
 
