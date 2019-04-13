@@ -1,0 +1,35 @@
+<div class="car card">
+  <header class="card-header">
+    <p class="card-header-title"><%= @vehicle.display_name %></p>
+  </header>
+  <div class="card-content">
+    <div class="content">
+      <table class="table is-narrow is-fullwidth">
+      <tbody>
+        <tr>
+          <th>Status</td>
+          <td><%= @state %></td>
+        </tr>
+        <%= if @vehicle.charge_state do %>
+        <tr>
+          <th>Ladestand</th>
+          <td><%= @vehicle.charge_state.battery_level %>%</td>
+        </tr>
+        <% end %>
+        <%= if not is_nil(@vehicle.drive_state) and not is_nil(@vehicle.drive_state.speed) do %>
+        <tr>
+          <th>Geschwindigkeit</th>
+          <td><%= round(@vehicle.drive_state.speed * 1.60934) %> km/h</td>
+        </tr>
+        <% end %>
+        <%= if @vehicle.charge_state do %>
+        <tr>
+          <th>Reichweite</th>
+          <td><%= round((@vehicle.charge_state.ideal_battery_range) / 0.62137) %> km<td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>

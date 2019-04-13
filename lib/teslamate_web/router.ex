@@ -17,7 +17,7 @@ defmodule TeslaMateWeb.Router do
   scope "/", TeslaMateWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", CarLive.Index
   end
 
   scope "/api", TeslaMateWeb do

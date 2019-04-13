@@ -1,0 +1,3 @@
+<%= for car <- @cars do %>
+  <%= live_render(@socket, TeslaMateWeb.CarLive.Summary, session: %{id: car.id}) %>
+<% end %>

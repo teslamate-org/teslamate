@@ -1,0 +1,28 @@
+@charset "utf-8";
+
+@import "~bulma/sass/utilities/_all";
+@import "~bulma/sass/base/_all";
+@import "~bulma/sass/components/card";
+@import "~bulma/sass/components/navbar";
+@import "~bulma/sass/elements/container";
+@import "~bulma/sass/elements/table";
+@import "~bulma/sass/layout/section";
+
+// @import "~bulma/bulma";
+
+@import "../../deps/phoenix_live_view/assets/css/live_view.css";
+
+.alert:empty {
+  display: none;
+}
+
+.car {
+  .card-content {
+    padding: 0.75rem;
+  }
+
+  .content table td,
+  .content table th {
+    border: none;
+  }
+}
