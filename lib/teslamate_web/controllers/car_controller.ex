@@ -30,7 +30,7 @@ defmodule TeslaMateWeb.CarController do
   def suspend_logging(conn, %{"id" => id}) do
     car = Log.get_car!(id)
 
-    case Vehicles.suspend_logging(car.eid) do
+    case Vehicles.suspend_logging(car.id) do
       :ok ->
         send_resp(conn, :no_content, "")
 
@@ -46,7 +46,7 @@ defmodule TeslaMateWeb.CarController do
   def resume_logging(conn, %{"id" => id}) do
     car = Log.get_car!(id)
 
-    case Vehicles.resume_logging(car.eid) do
+    case Vehicles.resume_logging(car.id) do
       :ok ->
         send_resp(conn, :no_content, "")
 
