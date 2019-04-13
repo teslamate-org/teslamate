@@ -2,8 +2,6 @@ defmodule TeslaMateWeb.CarLive.Index do
   use Phoenix.LiveView
 
   alias TeslaMateWeb.CarView
-
-  alias TeslaMate.Vehicles
   alias TeslaMate.Log
 
   @impl true

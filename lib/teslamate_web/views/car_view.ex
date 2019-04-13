@@ -2,7 +2,6 @@ defmodule TeslaMateWeb.CarView do
   use TeslaMateWeb, :view
 
   alias TeslaMateWeb.CarView
-  alias TeslaMateWeb.CarLive
 
   def render("index.json", %{car: car}) do
     %{data: render_many(car, CarView, "car.json")}

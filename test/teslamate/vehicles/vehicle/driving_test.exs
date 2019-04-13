@@ -122,7 +122,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     refute_receive _
   end
 
-  test "shift_state P does not trigger position inserts", %{test: name} do
+  test "shift_state P ends the trip", %{test: name} do
     now = DateTime.utc_now()
     now_ts = DateTime.to_unix(now, :millisecond)
 
@@ -130,10 +130,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, online_event()},
       {:ok, drive_event(now_ts, "D", 5)},
       {:ok, drive_event(now_ts, "D", 15)},
-      {:ok, drive_event(now_ts, "P", 0)},
-      {:ok, drive_event(now_ts, "P", 0)},
-      {:ok, drive_event(now_ts, "P", 0)},
-      {:ok, drive_event(now_ts, nil, 0)}
+      {:ok, drive_event(now_ts, "P", 0)}
     ]
 
     :ok = start_vehicle(name, events)
@@ -147,10 +144,6 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 8, trip_id: 111}}
     assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 24, trip_id: 111}}
-
-    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
 
     assert_receive {:close_trip, 111}
 

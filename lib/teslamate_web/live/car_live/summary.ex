@@ -2,9 +2,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
   use Phoenix.LiveView
 
   alias TeslaMateWeb.CarView
-
   alias TeslaMate.Vehicles
-  alias TeslaMate.Log
 
   @impl true
   def mount(%{id: id}, socket) do

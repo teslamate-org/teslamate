@@ -1,5 +1,5 @@
 defmodule TeslaMateWeb.UserSocket do
-  use Phoenix.Socket
+  use Phoenix.Socket, log: :debug
 
   ## Channels
   # channel "room:*", TeslaMateWeb.RoomChannel

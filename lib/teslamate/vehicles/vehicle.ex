@@ -65,7 +65,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   # TODO
-  # - close trip when shift_state == P
   # - deep sleep time with checks every 30min
   # - Schedule Sleep Mode: time window where idle times is set to 0 / is bypassed
   # - Deep Sleep Mode: time window where polling is limited to 30min
@@ -76,7 +75,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   #   - make suspend settings configurable
   #   - make cars configurable
   #   - create geo fences
-  #   - check the vehicle state during sleep attempt - does it still work?
+  # - check the vehicle state during sleep attempt - does it still work?
   # - indices
   # - cron job which "closes" drives & charging_processes (i.e there is no end_time)
 
@@ -323,11 +322,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(5)]}
 
-      "P" ->
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(10)]}
-
-      nil ->
+      shift_state when is_nil(shift_state) or shift_state == "P" ->
         {:ok, %Log.Trip{distance: distance, duration_min: duration}} =
           call(data.deps.log, :close_trip, [trip_id])
 
