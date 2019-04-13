@@ -9,6 +9,7 @@ defmodule TeslaMate.Application do
     children = [
       TeslaMate.Repo,
       TeslaMateWeb.Endpoint,
+      TeslamateWeb.Presence,
       {TeslaMate.Api, auth()},
       TeslaMate.Vehicles
     ]

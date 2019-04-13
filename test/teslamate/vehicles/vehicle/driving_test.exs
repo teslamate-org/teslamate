@@ -17,15 +17,22 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
 
     assert_receive {:start_trip, ^car_id}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 97, trip_id: 111}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
+
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, trip_id: 111}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
+
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: -8, trip_id: 111}}
     assert_receive {:close_trip, 111}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
 
     refute_receive _
   end
@@ -52,15 +59,20 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
 
     assert_receive {:start_trip, ^car_id}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 80, trip_id: 111}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 89, trip_id: 111}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 64, trip_id: 111}}
     assert_receive {:close_trip, 111}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
 
     refute_receive _
   end
@@ -78,9 +90,14 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
 
     assert_receive {:start_trip, ^car_id}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, trip_id: 111}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
+    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, trip_id: 111}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, trip_id: 111}}
     # ...
 
@@ -100,6 +117,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
 
     refute_receive _
   end
@@ -122,14 +140,23 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
 
     assert_receive {:start_trip, ^car_id}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 8, trip_id: 111}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 24, trip_id: 111}}
+
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, {:driving, %TeslaApi.Vehicle{}}}}
+
     assert_receive {:close_trip, 111}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
 
     refute_receive _
   end

@@ -23,6 +23,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       assert_receive {:start_state, car_id, :online}
       assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
 
       refute_receive _
     end
@@ -35,6 +36,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
       assert_receive {:start_state, car_id, :offline}
+      assert_receive {:pubsub, {:broadcast, _server, _topic, {:offline, %TeslaApi.Vehicle{}}}}
 
       refute_receive _
     end
@@ -47,6 +49,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
 
       assert_receive {:start_state, car_id, :asleep}
+      assert_receive {:pubsub, {:broadcast, _server, _topic, {:asleep, %TeslaApi.Vehicle{}}}}
 
       refute_receive _
     end
@@ -130,7 +133,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       assert_receive {:start_state, car_id, :online}
       assert_receive {:insert_position, ^car_id, %{}}
-      refute_receive _, 50
+
+      assert_receive {:pubsub, {:broadcast, _server, _topic, {:suspended, %TeslaApi.Vehicle{}}}}
 
       assert :suspended = Vehicle.state(name)
     end
@@ -153,20 +157,37 @@ defmodule TeslaMate.Vehicles.VehicleTest do
           suspend_min: 10_000
         )
 
+      # Online
       assert_receive {:start_state, car_id, :online}
       assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
+
+      # Charging (compliete)
       assert_receive {:start_charging_process, ^car_id, _}
       assert_receive {:insert_charge, _, %{charge_energy_added: 5.0}}
+      assert_receive {:pubsub, {:broadcast, _, _, {:charging_complete, vehicle}}}
 
-      refute_receive _, 50
+      # suspended
+      assert_receive {:pubsub, {:broadcast, _server, _topic, {:suspended, ^vehicle}}}
       assert :suspended = Vehicle.state(name)
 
+      # Resuming
       assert :ok = Vehicle.resume_logging(name)
 
+      # Charging continues
+      assert_receive {:pubsub, {:broadcast, _, _, {:charging_complete, ^vehicle}}}
       assert :charging_complete = Vehicle.state(name)
+
+      # Unplugging
       assert_receive {:close_charging_process, _}
+
+      # Online
       assert_receive {:start_state, ^car_id, :online}
       assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, {:online, %TeslaApi.Vehicle{}}}}
+
+      # Suspended, again
+      assert_receive {:pubsub, {:broadcast, _, _, {:suspended, %TeslaApi.Vehicle{}}}}
 
       refute_receive _
     end

@@ -13,15 +13,22 @@ defmodule TeslaMate.VehicleCase do
       def start_vehicle(name, vehicle, events, opts \\ []) when length(events) > 0 do
         log_name = :"log_#{name}"
         api_name = :"api_#{name}"
+        pubsub_name = :"pubsub_#{name}"
 
         {:ok, _pid} = start_supervised({LogMock, name: log_name, pid: self()})
         {:ok, _pid} = start_supervised({ApiMock, name: api_name, events: events, pid: self()})
+        {:ok, _pid} = start_supervised({PubSubMock, name: pubsub_name, pid: self()})
 
         {:ok, _pid} =
           start_supervised(
             {Vehicle,
-             [name: name, vehicle: vehicle, log: {LogMock, log_name}, api: {ApiMock, api_name}] ++
-               opts}
+             [
+               name: name,
+               vehicle: vehicle,
+               log: {LogMock, log_name},
+               api: {ApiMock, api_name},
+               pubsub: {PubSubMock, pubsub_name}
+             ] ++ opts}
           )
 
         :ok
