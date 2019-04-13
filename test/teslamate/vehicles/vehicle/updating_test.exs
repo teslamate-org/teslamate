@@ -25,7 +25,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
       {:ok, update_event("", "2019.8.5 3aaa23d")}
     ]
 
-    :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+    :ok = start_vehicle(name, events)
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}

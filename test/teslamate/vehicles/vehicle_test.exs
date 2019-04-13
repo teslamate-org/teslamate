@@ -9,7 +9,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:error, %TeslaApi.Error{message: "boom"}}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0, vehicle_id: 1001}, events)
+      :ok = start_vehicle(name, events)
 
       refute_receive _
     end
@@ -19,7 +19,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, online_event()}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
 
       assert_receive {:start_state, car_id, :online}
       assert_receive {:insert_position, ^car_id, %{}}
@@ -33,7 +33,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, %TeslaApi.Vehicle{state: "offline"}}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
 
       assert_receive {:start_state, car_id, :offline}
       assert_receive {:pubsub, {:broadcast, _server, _topic, {:offline, %TeslaApi.Vehicle{}}}}
@@ -46,7 +46,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, %TeslaApi.Vehicle{state: "asleep"}}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
 
       assert_receive {:start_state, car_id, :asleep}
       assert_receive {:pubsub, {:broadcast, _server, _topic, {:asleep, %TeslaApi.Vehicle{}}}}
@@ -61,7 +61,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     test "returns the state :asleep", %{test: name} do
       events = [{:ok, %TeslaApi.Vehicle{state: "asleep"}}]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
 
       assert :asleep = Vehicle.state(name)
     end
@@ -69,7 +69,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     test "returns the state :offline", %{test: name} do
       events = [{:ok, %TeslaApi.Vehicle{state: "offline"}}]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
 
       assert :offline = Vehicle.state(name)
     end
@@ -79,7 +79,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, online_event()}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
 
       assert :online = Vehicle.state(name)
     end
@@ -90,7 +90,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, drive_event(0, "R", 5)}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_trip, _}
 
       assert :driving = Vehicle.state(name)
@@ -102,7 +102,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, charging_event(0, "Charging", 0.1)}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_charging_process, _, _}
 
       assert :charging = Vehicle.state(name)
@@ -114,7 +114,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, charging_event(0 + 1, "Complete", 0.1)}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_charging_process, _, _}
 
       assert :charging_complete = Vehicle.state(name)
@@ -126,7 +126,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       ]
 
       :ok =
-        start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+        start_vehicle(name, events,
           sudpend_after_idle_min: round(1 / 60),
           suspend_min: 1000
         )
@@ -152,7 +152,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       ]
 
       :ok =
-        start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+        start_vehicle(name, events,
           sudpend_after_idle_min: round(1 / 60),
           suspend_min: 10_000
         )

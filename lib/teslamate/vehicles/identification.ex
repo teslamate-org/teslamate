@@ -1,4 +1,4 @@
-defmodule TeslaMate.Vehicles.Vehicle.Identification do
+defmodule TeslaMate.Vehicles.Identification do
   def properties(%TeslaApi.Vehicle{} = vehicle) do
     performance = vehicle.option_codes |> Enum.find(false, &is_performance/1)
     battery = vehicle.option_codes |> Enum.find_value(&which_battery/1)

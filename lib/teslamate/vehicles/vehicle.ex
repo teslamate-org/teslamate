@@ -3,7 +3,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   require Logger
 
-  alias __MODULE__.Identification
   alias TeslaMate.{Api, Log}
 
   alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge}
@@ -11,8 +10,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   import Core.Dependency, only: [call: 3]
 
-  defstruct id: nil,
-            car_id: nil,
+  defstruct car: nil,
             last_used: nil,
             last_response: nil,
             sudpend_after_idle_min: nil,
@@ -25,7 +23,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def start_link(opts) do
     GenStateMachine.start_link(__MODULE__, opts,
-      name: Keyword.get_lazy(opts, :name, fn -> :"#{Keyword.fetch!(opts, :vehicle).id}" end)
+      name: Keyword.get_lazy(opts, :name, fn -> :"#{Keyword.fetch!(opts, :car).id}" end)
     )
   end
 
@@ -47,9 +45,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   @impl true
   def init(opts) do
-    %Vehicle{} = vehicle = Keyword.fetch!(opts, :vehicle)
-
-    Logger.info("Found Vehicle '#{vehicle.display_name}'")
+    %Log.Car{} = car = Keyword.fetch!(opts, :car)
 
     deps = %{
       log: Keyword.get(opts, :log, Log),
@@ -57,27 +53,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       pubsub: Keyword.get(opts, :pubsub, Phoenix.PubSub)
     }
 
-    {:ok, %Log.Car{id: car_id}} =
-      case call(deps.log, :get_car_by_eid, [vehicle.id]) do
-        nil ->
-          properties = Identification.properties(vehicle)
-
-          call(deps.log, :create_car, [
-            %{
-              eid: vehicle.id,
-              vid: vehicle.vehicle_id,
-              model: properties.model,
-              efficiency: properties.efficiency
-            }
-          ])
-
-        car ->
-          {:ok, car}
-      end
-
     data = %Data{
-      id: vehicle.id,
-      car_id: car_id,
+      car: car,
       last_used: DateTime.utc_now(),
       sudpend_after_idle_min: Keyword.get(opts, :sudpend_after_idle_min, 15),
       suspend_min: Keyword.get(opts, :suspend_min, 21),
@@ -89,7 +66,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   # TODO
   # - close trip when shift_state == P
-  # - move create_car call into Vehicles; pass %Car{} to init
   # - deep sleep time with checks every 30min
   # - Schedule Sleep Mode: time window where idle times is set to 0 / is bypassed
   # - Deep Sleep Mode: time window where polling is limited to 30min
@@ -210,7 +186,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     payload = {format_state(state), vehicle}
 
     :ok =
-      call(data.deps.pubsub, :broadcast, [TeslaMate.PubSub, @topic <> "#{data.car_id}", payload])
+      call(data.deps.pubsub, :broadcast, [TeslaMate.PubSub, @topic <> "#{data.car.id}", payload])
 
     :keep_state_and_data
   end
@@ -222,7 +198,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, :asleep}, :start, data) do
     Logger.info("Start / :asleep")
 
-    :ok = call(data.deps.log, :start_state, [data.car_id, :asleep])
+    :ok = call(data.deps.log, :start_state, [data.car.id, :asleep])
 
     {:next_state, :asleep, data, [notify_subscribers(), schedule_fetch(30)]}
   end
@@ -230,7 +206,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, :offline}, :start, data) do
     Logger.info("Start / :offline")
 
-    :ok = call(data.deps.log, :start_state, [data.car_id, :offline])
+    :ok = call(data.deps.log, :start_state, [data.car.id, :offline])
 
     {:next_state, :offline, data, [notify_subscribers(), schedule_fetch()]}
   end
@@ -238,7 +214,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:online, vehicle}} = event, :start, data) do
     Logger.info("Start / :online")
 
-    :ok = call(data.deps.log, :start_state, [data.car_id, :online])
+    :ok = call(data.deps.log, :start_state, [data.car.id, :online])
     :ok = insert_position(vehicle, data)
 
     {:next_state, :online, data, [notify_subscribers(), {:next_event, :internal, event}]}
@@ -255,7 +231,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %Vehicle{vehicle_state: %VehicleState{software_update: %{status: "installing"}}} ->
         Logger.info("Update / Start")
 
-        {:ok, update_id} = call(data.deps.log, :start_update, [data.car_id])
+        {:ok, update_id} = call(data.deps.log, :start_update, [data.car.id])
 
         {:next_state, {:updating, update_id}, %Data{data | last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(30)]}
@@ -264,7 +240,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       when shift_state in ["D", "N", "R"] ->
         Logger.info("Driving / Start")
 
-        {:ok, trip_id} = call(data.deps.log, :start_trip, [data.car_id])
+        {:ok, trip_id} = call(data.deps.log, :start_trip, [data.car.id])
         :ok = insert_position(vehicle, data, trip_id: trip_id)
 
         {:next_state, {:driving, trip_id}, %Data{data | last_used: DateTime.utc_now()},
@@ -275,7 +251,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("Charging / #{t}h left")
 
         position = create_position(vehicle)
-        {:ok, charging_id} = call(data.deps.log, :start_charging_process, [data.car_id, position])
+        {:ok, charging_id} = call(data.deps.log, :start_charging_process, [data.car.id, position])
         :ok = insert_charge(charging_id, vehicle, data)
 
         {:next_state, {:charging, charging_state, charging_id},
@@ -430,7 +406,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   # Private
 
-  defp fetch(%Data{id: id, deps: deps}, expected_state: expected_state) do
+  defp fetch(%Data{car: car, deps: deps}, expected_state: expected_state) do
     reachable? =
       case expected_state do
         {:driving, _} -> true
@@ -444,9 +420,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
       end
 
     if reachable? do
-      fetch_with_reachable_assumption(id, deps)
+      fetch_with_reachable_assumption(car.eid, deps)
     else
-      fetch_with_unreachable_assumption(id, deps)
+      fetch_with_unreachable_assumption(car.eid, deps)
     end
   end
 
@@ -465,7 +441,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp insert_position(vehicle, data, opts \\ []) do
     position = create_position(vehicle, opts)
 
-    with {:ok, _pos} <- call(data.deps.log, :insert_position, [data.car_id, position]) do
+    with {:ok, _pos} <- call(data.deps.log, :insert_position, [data.car.id, position]) do
       :ok
     end
   end

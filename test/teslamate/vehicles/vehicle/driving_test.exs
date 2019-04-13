@@ -13,7 +13,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
     ]
 
-    :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+    :ok = start_vehicle(name, events)
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -55,7 +55,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
     ]
 
-    :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+    :ok = start_vehicle(name, events)
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -86,7 +86,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, drive_event(now_ts, "N", 0)}
     ]
 
-    :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+    :ok = start_vehicle(name, events)
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -113,7 +113,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, drive_event(now_ts, "P", 0)}
     ]
 
-    :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+    :ok = start_vehicle(name, events)
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -136,7 +136,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, drive_event(now_ts, nil, 0)}
     ]
 
-    :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+    :ok = start_vehicle(name, events)
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}

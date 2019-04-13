@@ -21,7 +21,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     suspend_ms = 200
 
     :ok =
-      start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+      start_vehicle(name, events,
         sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
@@ -56,7 +56,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     suspend_ms = 100
 
     :ok =
-      start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+      start_vehicle(name, events,
         sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
@@ -88,7 +88,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     suspend_ms = 100
 
     :ok =
-      start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+      start_vehicle(name, events,
         sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
@@ -117,7 +117,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     suspend_ms = 100
 
     :ok =
-      start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+      start_vehicle(name, events,
         sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
@@ -148,7 +148,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     suspend_ms = 200
 
     :ok =
-      start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+      start_vehicle(name, events,
         sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
@@ -190,7 +190,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     suspend_ms = 200
 
     :ok =
-      start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+      start_vehicle(name, events,
         sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
@@ -227,7 +227,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         {:ok, %TeslaApi.Vehicle{state: "asleep"}}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_state, _, :asleep}
       assert_receive {:pubsub, {:broadcast, _server, _topic, {:asleep, %TeslaApi.Vehicle{}}}}
 
@@ -240,7 +240,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         {:ok, %TeslaApi.Vehicle{state: "offline"}}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_state, _, :offline}
       assert_receive {:pubsub, {:broadcast, _server, _topic, {:offline, %TeslaApi.Vehicle{}}}}
 
@@ -253,7 +253,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         {:ok, online_event()}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events, suspend_min: 1000)
+      :ok = start_vehicle(name, events, suspend_min: 1000)
       assert_receive {:start_state, car_id, :online}
       assert_receive {:insert_position, ^car_id, %{}}
       assert_receive {:pubsub, {:broadcast, _server, _topic, {:online, vehicle}}}
@@ -278,7 +278,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         {:ok, not_supendable}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_state, _, :online}
 
       assert {:error, :preconditioning} = Vehicle.suspend_logging(name)
@@ -296,7 +296,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         {:ok, not_supendable}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_state, _, :online}
 
       assert {:error, :user_present} = Vehicle.suspend_logging(name)
@@ -313,7 +313,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         {:ok, not_supendable}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_state, _, :online}
 
       assert {:error, :shift_state} = Vehicle.suspend_logging(name)
@@ -325,7 +325,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         {:ok, drive_event(0, "D", 0)}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_state, _, :online}
 
       assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
@@ -337,7 +337,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         {:ok, charging_event(0, "Charging", 1.5)}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events)
+      :ok = start_vehicle(name, events)
       assert_receive {:start_state, _, :online}
 
       assert {:error, :charging_in_progress} = Vehicle.suspend_logging(name)
@@ -349,7 +349,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         {:ok, charging_event(0, "Complete", 1.5)}
       ]
 
-      :ok = start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events, suspend_min: 1000)
+      :ok = start_vehicle(name, events, suspend_min: 1000)
       assert_receive {:start_state, _, :online}
 
       assert :ok = Vehicle.suspend_logging(name)
@@ -362,7 +362,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       ]
 
       :ok =
-        start_vehicle(name, %TeslaApi.Vehicle{id: 0}, events,
+        start_vehicle(name, events,
           sudpend_after_idle_min: 100,
           suspend_min: 1000
         )

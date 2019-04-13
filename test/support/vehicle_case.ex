@@ -4,13 +4,14 @@ defmodule TeslaMate.VehicleCase do
   using do
     quote do
       alias TeslaMate.Vehicles.Vehicle
+      alias TeslaMate.Log.Car
       alias TeslaApi.Vehicle.State
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
 
-      def start_vehicle(name, vehicle, events, opts \\ []) when length(events) > 0 do
+      def start_vehicle(name, events, opts \\ []) when length(events) > 0 do
         log_name = :"log_#{name}"
         api_name = :"api_#{name}"
         pubsub_name = :"pubsub_#{name}"
@@ -19,12 +20,16 @@ defmodule TeslaMate.VehicleCase do
         {:ok, _pid} = start_supervised({ApiMock, name: api_name, events: events, pid: self()})
         {:ok, _pid} = start_supervised({PubSubMock, name: pubsub_name, pid: self()})
 
+        opts =
+          Keyword.put_new_lazy(opts, :car, fn ->
+            %Car{id: 0, eid: 0, vid: 1000}
+          end)
+
         {:ok, _pid} =
           start_supervised(
             {Vehicle,
              [
                name: name,
-               vehicle: vehicle,
                log: {LogMock, log_name},
                api: {ApiMock, api_name},
                pubsub: {PubSubMock, pubsub_name}
