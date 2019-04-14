@@ -1,0 +1,77 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: de\n"
+"Plural-Forms: nplurals=2\n"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:10
+msgid "Status"
+msgstr "Status"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:33
+msgid "Range"
+msgstr "Reichweite"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:27
+msgid "Speed"
+msgstr "Geschwindigkeit"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:21
+msgid "State of Charge"
+msgstr "Ladezustand"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:15
+msgid "Charged"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:40
+msgid "asleep"
+msgstr "schläft"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:34
+msgid "charging"
+msgstr "lädt"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:35
+msgid "charging_complete"
+msgstr "Ladevorgang abgeschlossen"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:33
+msgid "driving"
+msgstr "fährt"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:39
+msgid "offline"
+msgstr "offline"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:38
+msgid "online"
+msgstr "online"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:37
+msgid "suspended"
+msgstr "schläft ein"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:36
+msgid "updating"
+msgstr "installiert Update"

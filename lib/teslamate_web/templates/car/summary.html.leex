@@ -7,30 +7,30 @@
       <table class="table is-narrow is-fullwidth">
       <tbody>
         <tr>
-          <th>Status</td>
-          <td><%= @summary.state %></td>
+          <th><%= gettext "Status" %></td>
+          <td><%= @state_t %></td>
         </tr>
-        <%= unless is_nil(@summary.charge_energy_added) do %>
+        <%= if @summary.state in [:charging, :charging_complete] and not is_nil(@summary.charge_energy_added) do %>
         <tr>
-          <th>Geladen</th>
-          <td><%= @summary.charge_energy_added %> kWhtd>
+          <th><%= gettext "Charged" %></td>
+          <td><%= @summary.charge_energy_added %> kWh<td>
         </tr>
         <% end %>
         <%= unless is_nil(@summary.battery_level) do %>
         <tr>
-          <th>Ladestand</th>
+          <th><%= gettext "State of Charge" %></td>
           <td><%= @summary.battery_level %>%</td>
         </tr>
         <% end %>
         <%= unless is_nil(@summary.speed) do %>
         <tr>
-          <th>Geschwindigkeit</th>
+          <th><%= gettext "Speed" %></td>
           <td><%= @summary.speed %> km/h</td>
         </tr>
         <% end %>
         <%= unless is_nil(@summary.ideal_battery_range_km) do %>
         <tr>
-          <th>Reichweite</th>
+          <th><%= gettext "Range" %></td>
           <td><%= @summary.ideal_battery_range_km %> km<td>
         </tr>
         <% end %>
