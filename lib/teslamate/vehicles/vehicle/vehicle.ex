@@ -71,14 +71,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # - Deep Sleep Mode: time window where polling is limited to 30min
   # - reverse adress lookup
   # - geofecnces
-  # - mqtt
   # - UI with LiveView
   #   - make suspend settings configurable
-  #   - make cars configurable
   #   - create geo fences
   # - check the vehicle state during sleep attempt - does it still work?
-  # - indices
-  # - cron job which "closes" drives & charging_processes (i.e there is no end_time)
+  # - indices (e.g. on dates)
 
   ## Calls
 

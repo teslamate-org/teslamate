@@ -11,7 +11,8 @@ defmodule TeslaMate.Application do
       TeslaMateWeb.Endpoint,
       TeslamateWeb.Presence,
       {TeslaMate.Api, auth()},
-      TeslaMate.Vehicles
+      TeslaMate.Vehicles,
+      TeslaMate.Mqtt
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: TeslaMate.Supervisor)

@@ -53,3 +53,8 @@ config :logger, :telegram,
   level: :warn,
   chat_id: Env.get("CHAT_ID"),
   token: Env.get("TOKEN")
+
+config :teslamate, :mqtt,
+  host: Env.get("MQTT_HOST"),
+  username: Env.get("MQTT_USERNAME"),
+  password: Env.get("MQTT_PASSWORD")

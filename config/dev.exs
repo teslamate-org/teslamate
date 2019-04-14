@@ -41,3 +41,8 @@ config :teslamate, TeslaMate.Repo,
 config :teslamate, :tesla_auth,
   username: System.get_env("USERNAME"),
   password: System.get_env("PASSWORD")
+
+config :teslamate, :mqtt,
+  host: "localhost",
+  username: "dev",
+  password: "dev"

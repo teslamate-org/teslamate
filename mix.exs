@@ -50,7 +50,9 @@ defmodule TeslaMate.MixProject do
       {:ecto_enum, "~> 1.2"},
       {:distillery, "~> 2.0"},
       {:logger_telegram_backend, "~> 1.0", only: :prod},
-      {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"}
+      {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"},
+      {:tortoise, "~> 0.9"},
+      {:httpoison, "~> 1.5"}
     ]
   end
 
