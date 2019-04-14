@@ -1,6 +1,7 @@
 defmodule TeslaMateWeb.CarLive.Summary do
   use Phoenix.LiveView
 
+  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMateWeb.CarView
   alias TeslaMate.Vehicles
 
@@ -17,12 +18,11 @@ defmodule TeslaMateWeb.CarLive.Summary do
   end
 
   @impl true
-  def handle_info({state, vehicle}, socket) do
-    {:noreply, assign(socket, state: state, vehicle: vehicle)}
+  def handle_info(summary, socket) do
+    {:noreply, assign(socket, summary: summary)}
   end
 
   defp fetch(socket, id) do
-    {state, vehicle} = Vehicles.state(id, extended: true)
-    assign(socket, state: state, vehicle: vehicle)
+    assign(socket, summary: Vehicles.summary(id))
   end
 end

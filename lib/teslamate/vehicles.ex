@@ -12,8 +12,7 @@ defmodule TeslaMate.Vehicles do
     Supervisor.start_link(__MODULE__, opts, name: @name)
   end
 
-  defdelegate state(id), to: Vehicle
-  defdelegate state(id, opts), to: Vehicle
+  defdelegate summary(id), to: Vehicle
   defdelegate resume_logging(id), to: Vehicle
   defdelegate suspend_logging(id), to: Vehicle
   defdelegate subscribe(id), to: Vehicle

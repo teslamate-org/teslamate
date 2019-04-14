@@ -3,6 +3,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   require Logger
 
+  alias __MODULE__.{Convert, Summary}
   alias TeslaMate.{Api, Log}
 
   alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge}
@@ -31,8 +32,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Phoenix.PubSub.subscribe(TeslaMate.PubSub, @topic <> "#{car_id}")
   end
 
-  def state(car_id, opts \\ []) do
-    GenStateMachine.call(:"#{car_id}", {:get_state, opts})
+  def summary(car_id) do
+    GenStateMachine.call(:"#{car_id}", :summary)
   end
 
   def suspend_logging(car_id) do
@@ -81,19 +82,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ## Calls
 
-  ### Get_state
+  ### Summary
 
-  def handle_event({:call, from}, {:get_state, opts}, state, %Data{last_response: vehicle}) do
-    state = format_state(state)
-
-    response =
-      if Keyword.get(opts, :extended) do
-        {state, vehicle}
-      else
-        state
-      end
-
-    {:keep_state_and_data, {:reply, from, response}}
+  def handle_event({:call, from}, :summary, state, %Data{last_response: vehicle}) do
+    {:keep_state_and_data, {:reply, from, Summary.into(state, vehicle)}}
   end
 
   ### resume_logging
@@ -182,7 +174,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ## notify_subscribers
 
   def handle_event(:internal, :notify_subscribers, state, %Data{last_response: vehicle} = data) do
-    payload = {format_state(state), vehicle}
+    payload = Summary.into(state, vehicle)
 
     :ok =
       call(data.deps.pubsub, :broadcast, [TeslaMate.PubSub, @topic <> "#{data.car.id}", payload])
@@ -447,12 +439,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
       date: parse_timestamp(vehicle.drive_state.timestamp),
       latitude: vehicle.drive_state.latitude,
       longitude: vehicle.drive_state.longitude,
-      speed: mph_to_kmh(vehicle.drive_state.speed),
+      speed: Convert.mph_to_kmh(vehicle.drive_state.speed),
       power: with(n when is_number(n) <- vehicle.drive_state.power, do: n * 1.0),
       battery_level: vehicle.charge_state.battery_level,
       outside_temp: vehicle.climate_state.outside_temp,
-      odometer: miles_to_km(vehicle.vehicle_state.odometer, 6),
-      ideal_battery_range_km: miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
+      odometer: Convert.miles_to_km(vehicle.vehicle_state.odometer, 6),
+      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
       altitude: nil,
       fan_status: vehicle.climate_state.fan_status,
       is_climate_on: vehicle.climate_state.is_climate_on,
@@ -478,7 +470,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       fast_charger_present: vehicle.charge_state.fast_charger_present,
       fast_charger_brand: vehicle.charge_state.fast_charger_brand,
       fast_charger_type: vehicle.charge_state.fast_charger_type,
-      ideal_battery_range_km: miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
+      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
       not_enough_power_to_heat: vehicle.charge_state.not_enough_power_to_heat,
       outside_temp: vehicle.climate_state.outside_temp
     }
@@ -538,19 +530,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :ok
     end
   end
-
-  defp format_state({:driving, _trip_id}), do: :driving
-  defp format_state({:charging, "Charging", _process_id}), do: :charging
-  defp format_state({:charging, "Complete", _process_id}), do: :charging_complete
-  defp format_state({:updating, _update_id}), do: :updating
-  defp format_state({:suspended, _}), do: :suspended
-  defp format_state(state) when is_atom(state), do: state
-
-  defp mph_to_kmh(nil), do: nil
-  defp mph_to_kmh(mph), do: round(mph * 1.60934)
-
-  defp miles_to_km(nil, _precision), do: nil
-  defp miles_to_km(miles, precision), do: Float.round(miles / 0.62137, precision)
 
   defp determince_interval(n) when not is_nil(n) and n > 0, do: round(1000 / n) |> min(60)
   defp determince_interval(_), do: 15

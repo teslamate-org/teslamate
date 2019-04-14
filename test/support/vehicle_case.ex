@@ -3,6 +3,7 @@ defmodule TeslaMate.VehicleCase do
 
   using do
     quote do
+      alias TeslaMate.Vehicles.Vehicle.Summary
       alias TeslaMate.Vehicles.Vehicle
       alias TeslaMate.Log.Car
       alias TeslaApi.Vehicle.State
