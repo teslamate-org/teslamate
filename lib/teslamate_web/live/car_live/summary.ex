@@ -3,7 +3,6 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   import TeslaMateWeb.Gettext
 
-  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMateWeb.CarView
   alias TeslaMate.Vehicles
 
