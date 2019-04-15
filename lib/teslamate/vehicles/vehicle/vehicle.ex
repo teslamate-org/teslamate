@@ -543,7 +543,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   case(Mix.env()) do
     :test -> defp schedule_fetch(n, _unit), do: {:state_timeout, round(n), :fetch}
-    _____ -> defp schedule_fetch(n, unit), do: {:state_timeout, apply(:timer, unit, [n]), :fetch}
+    _____ -> defp schedule_fetch(n, u), do: {:state_timeout, round(apply(:timer, u, [n])), :fetch}
   end
 
   case(Mix.env()) do
