@@ -6,7 +6,9 @@ defmodule TeslaMate.Log.Charge do
 
   schema "charges" do
     field :date, :utc_datetime
+    field :battery_heater, :boolean
     field :battery_heater_on, :boolean
+    field :battery_heater_no_power, :boolean
     field :battery_level, :integer
     field :charge_energy_added, :float
     field :charger_actual_current, :integer
@@ -30,7 +32,9 @@ defmodule TeslaMate.Log.Charge do
     charge
     |> cast(attrs, [
       :date,
+      :battery_heater_no_power,
       :battery_heater_on,
+      :battery_heater,
       :battery_level,
       :charge_energy_added,
       :charger_actual_current,

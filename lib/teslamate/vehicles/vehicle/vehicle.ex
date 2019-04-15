@@ -449,7 +449,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
       driver_temp_setting: vehicle.climate_state.driver_temp_setting,
       passenger_temp_setting: vehicle.climate_state.passenger_temp_setting,
       is_rear_defroster_on: vehicle.climate_state.is_rear_defroster_on,
-      is_front_defroster_on: vehicle.climate_state.is_front_defroster_on
+      is_front_defroster_on: vehicle.climate_state.is_front_defroster_on,
+      battery_heater_on: vehicle.charge_state.battery_heater_on,
+      battery_heater: vehicle.climate_state.battery_heater,
+      battery_heater_no_power: vehicle.climate_state.battery_heater_no_power
     }
   end
 
@@ -457,6 +460,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     attrs = %{
       date: parse_timestamp(vehicle.charge_state.timestamp),
       battery_heater_on: vehicle.charge_state.battery_heater_on,
+      battery_heater: vehicle.climate_state.battery_heater,
+      battery_heater_no_power: vehicle.climate_state.battery_heater_no_power,
       battery_level: vehicle.charge_state.battery_level,
       charge_energy_added: vehicle.charge_state.charge_energy_added,
       charger_actual_current: vehicle.charge_state.charger_actual_current,

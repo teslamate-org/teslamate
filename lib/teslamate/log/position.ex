@@ -14,6 +14,9 @@ defmodule TeslaMate.Log.Position do
     field :odometer, :float
     field :ideal_battery_range_km, :float
     field :battery_level, :integer
+    field :battery_heater, :boolean
+    field :battery_heater_on, :boolean
+    field :battery_heater_no_power, :boolean
     field :outside_temp, :float
     field :inside_temp, :float
     field :altitude, :float
@@ -41,6 +44,9 @@ defmodule TeslaMate.Log.Position do
       :odometer,
       :ideal_battery_range_km,
       :battery_level,
+      :battery_heater_no_power,
+      :battery_heater_on,
+      :battery_heater,
       :inside_temp,
       :outside_temp,
       :altitude,
