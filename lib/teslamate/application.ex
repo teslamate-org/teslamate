@@ -9,7 +9,7 @@ defmodule TeslaMate.Application do
     children = [
       TeslaMate.Repo,
       TeslaMateWeb.Endpoint,
-      TeslamateWeb.Presence,
+      TeslaMateWeb.Presence,
       {TeslaMate.Api, auth()},
       TeslaMate.Vehicles,
       TeslaMate.Mqtt

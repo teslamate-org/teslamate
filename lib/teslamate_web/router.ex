@@ -26,5 +26,7 @@ defmodule TeslaMateWeb.Router do
     resources "/car", CarController, only: [:index, :show, :update]
     put "/car/:id/logging/resume", CarController, :resume_logging
     put "/car/:id/logging/suspend", CarController, :suspend_logging
+
+    resources "/addresses", AddressController
   end
 end

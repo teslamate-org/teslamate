@@ -1,4 +1,4 @@
-defmodule TeslamateWeb.Presence do
+defmodule TeslaMateWeb.Presence do
   @moduledoc """
   Provides presence tracking to channels and processes.
 
@@ -9,9 +9,9 @@ defmodule TeslamateWeb.Presence do
 
   Presences can be tracked in your channel after joining:
 
-      defmodule Teslamate.MyChannel do
-        use TeslamateWeb, :channel
-        alias TeslamateWeb.Presence
+      defmodule TeslaMate.MyChannel do
+        use TeslaMateWeb, :channel
+        alias TeslaMateWeb.Presence
 
         def join("some:topic", _params, socket) do
           send(self(), :after_join)
