@@ -185,11 +185,21 @@ defmodule TeslaMate.Log do
 
   alias TeslaMate.Log.{ChargingProcess, Charge}
 
-  def start_charging_process(car_id, position_attrs) do
+  def start_charging_process(car_id, %{latitude: _, longitude: _} = position_attrs) do
     position = Map.put(position_attrs, :car_id, car_id)
 
+    address_id =
+      case Addresses.find_address(position) do
+        {:ok, %Addresses.Address{id: id}} ->
+          id
+
+        {:error, reason} ->
+          Logger.warn("Address wasn't found: #{inspect(reason)}")
+          nil
+      end
+
     with {:ok, %ChargingProcess{id: id}} <-
-           %ChargingProcess{car_id: car_id}
+           %ChargingProcess{car_id: car_id, address_id: address_id}
            |> ChargingProcess.changeset(%{start_date: DateTime.utc_now(), position: position})
            |> Repo.insert() do
       {:ok, id}

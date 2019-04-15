@@ -1,5 +1,9 @@
 defmodule GeocoderMock do
-  def reverse_lookup(_lat, _lon) do
+  def reverse_lookup(99.9, 99.9) do
+    {:error, :induced_error}
+  end
+
+  def reverse_lookup(lat, lon) when is_number(lat) and is_number(lon) do
     {:ok,
      %{
        city: "Bielefeld",

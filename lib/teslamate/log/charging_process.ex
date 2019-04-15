@@ -3,6 +3,7 @@ defmodule TeslaMate.Log.ChargingProcess do
   import Ecto.Changeset
 
   alias TeslaMate.Log.{Charge, Car, Position}
+  alias TeslaMate.Addresses.Address
 
   schema "charging_processes" do
     field :start_date, :utc_datetime
@@ -18,6 +19,7 @@ defmodule TeslaMate.Log.ChargingProcess do
 
     belongs_to(:car, Car)
     belongs_to(:position, Position)
+    belongs_to(:address, Address)
 
     has_many :charges, Charge
   end
@@ -40,6 +42,7 @@ defmodule TeslaMate.Log.ChargingProcess do
     |> validate_required([:car_id, :start_date])
     |> foreign_key_constraint(:car_id)
     |> foreign_key_constraint(:position_id)
+    |> foreign_key_constraint(:address_id)
     |> cast_assoc(:position, with: &Position.changeset/2, required: true)
   end
 end

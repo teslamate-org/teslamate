@@ -32,7 +32,7 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc =
                %ChargingProcess{} =
                ChargingProcess
-               |> preload([:position])
+               |> preload([:position, :address])
                |> Repo.get(charging_process_id)
 
       assert cproc.car_id == car_id
@@ -40,20 +40,45 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.position.longitude == @valid_pos_attrs.longitude
       assert cproc.position.date == DateTime.truncate(@valid_pos_attrs.date, :second)
       assert %DateTime{} = cproc.start_date
+      assert cproc.address.city == "Bielefeld"
+      assert cproc.address.place_id == 103_619_766
     end
 
     test "with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{} = changeset} = Log.start_charging_process(nil, %{})
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Log.start_charging_process(nil, %{latitude: 0, longitude: 0})
 
       assert errors_on(changeset) == %{
                car_id: ["can't be blank"],
                position: %{
                  car_id: ["can't be blank"],
-                 date: ["can't be blank"],
-                 latitude: ["can't be blank"],
-                 longitude: ["can't be blank"]
+                 date: ["can't be blank"]
                }
              }
+    end
+
+    @tag :capture_log
+    test "leaves address blank if resolving failed" do
+      assert %Car{id: car_id} = car_fixture()
+
+      assert {:ok, charging_process_id} =
+               Log.start_charging_process(car_id, %{
+                 date: DateTime.utc_now(),
+                 latitude: 99.9,
+                 longitude: 99.9
+               })
+
+      assert cproc =
+               %ChargingProcess{} =
+               ChargingProcess
+               |> preload([:position, :address])
+               |> Repo.get(charging_process_id)
+
+      assert cproc.car_id == car_id
+      assert cproc.position.latitude == 99.9
+      assert cproc.position.longitude == 99.9
+      assert cproc.address_id == nil
+      assert cproc.address == nil
     end
   end
 
