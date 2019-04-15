@@ -235,7 +235,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [notify_subscribers(), schedule_fetch(5)]}
 
       %{charge_state: %Charge{charging_state: charging_state, time_to_full_charge: t}}
-      when charging_state in ["Charging", "Complete"] ->
+      when charging_state in ["Starting", "Charging", "Complete"] ->
         Logger.info("Charging / #{t}h left")
 
         position = create_position(vehicle)
@@ -260,7 +260,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {:online, vehicle}}, {:charging, last, pid} = s, data) do
     case {vehicle.charge_state.charging_state, last} do
-      {"Charging", last_state} ->
+      {charging_state, last_state} when charging_state in ["Starting", "Charging"] ->
         if last_state == "Complete", do: Logger.info("Charging / Restart")
 
         :ok = insert_charge(pid, vehicle, data)

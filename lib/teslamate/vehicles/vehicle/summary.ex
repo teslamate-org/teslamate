@@ -18,6 +18,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   end
 
   defp format_state({:driving, _trip_id}), do: :driving
+  defp format_state({:charging, "Starting", _process_id}), do: :charging
   defp format_state({:charging, "Charging", _process_id}), do: :charging
   defp format_state({:charging, "Complete", _process_id}), do: :charging_complete
   defp format_state({:updating, _update_id}), do: :updating
