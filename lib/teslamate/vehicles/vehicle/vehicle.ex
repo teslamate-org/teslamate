@@ -440,6 +440,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       power: with(n when is_number(n) <- vehicle.drive_state.power, do: n * 1.0),
       battery_level: vehicle.charge_state.battery_level,
       outside_temp: vehicle.climate_state.outside_temp,
+      inside_temp: vehicle.climate_state.inside_temp,
       odometer: Convert.miles_to_km(vehicle.vehicle_state.odometer, 6),
       ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
       altitude: nil,

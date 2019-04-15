@@ -8,6 +8,7 @@ defmodule TeslaMate.Log.Trip do
     field :start_date, :utc_datetime
     field :end_date, :utc_datetime
     field :outside_temp_avg, :float
+    field :inside_temp_avg, :float
     field :speed_max, :integer
     field :power_max, :float
     field :power_min, :float
@@ -37,6 +38,7 @@ defmodule TeslaMate.Log.Trip do
       :start_date,
       :end_date,
       :outside_temp_avg,
+      :inside_temp_avg,
       :speed_max,
       :power_max,
       :power_min,

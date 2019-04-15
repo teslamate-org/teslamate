@@ -109,6 +109,7 @@ defmodule TeslaMate.Log do
       |> select([p], %{
         end_date: max(p.date),
         outside_temp_avg: avg(p.outside_temp),
+        inside_temp_avg: avg(p.inside_temp),
         speed_max: max(p.speed),
         power_max: max(p.power),
         power_min: min(p.power),

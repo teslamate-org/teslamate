@@ -66,7 +66,8 @@ defmodule TeslaMate.LogTripTest do
           odometer: 284.85156,
           ideal_battery_range_km: 338.8,
           battery_level: 68,
-          outside_temp: 19.2
+          outside_temp: 19.2,
+          inside_temp: 21.0
         },
         %{
           date: "2019-04-06 10:20:08",
@@ -77,7 +78,8 @@ defmodule TeslaMate.LogTripTest do
           odometer: 285.90556,
           ideal_battery_range_km: 337.8,
           battery_level: 68,
-          outside_temp: 19.0
+          outside_temp: 19.0,
+          inside_temp: 21.1
         },
         %{
           date: "2019-04-06 10:21:14",
@@ -88,7 +90,8 @@ defmodule TeslaMate.LogTripTest do
           odometer: 286.969561,
           ideal_battery_range_km: 336.8,
           battery_level: 68,
-          outside_temp: 21.0
+          outside_temp: 21.0,
+          inside_temp: 21.2
         },
         %{
           date: "2019-04-06 10:22:20",
@@ -99,7 +102,8 @@ defmodule TeslaMate.LogTripTest do
           odometer: 287.00556,
           ideal_battery_range_km: 335.8,
           battery_level: 68,
-          outside_temp: 18
+          outside_temp: 18,
+          inside_temp: 20.9
         },
         %{
           date: "2019-04-06 10:23:25",
@@ -110,7 +114,8 @@ defmodule TeslaMate.LogTripTest do
           odometer: 288.045561,
           ideal_battery_range_km: 334.8,
           battery_level: 68,
-          outside_temp: 18.0
+          outside_temp: 18.0,
+          inside_temp: 21.0
         }
       ]
 
@@ -124,6 +129,7 @@ defmodule TeslaMate.LogTripTest do
 
       assert {:ok, trip.end_date, 0} == DateTime.from_iso8601("2019-04-06 10:23:25Z")
       assert trip.outside_temp_avg == 19.04
+      assert trip.inside_temp_avg == 21.04
       assert trip.speed_max == 42
       assert trip.power_max == 36.0
       assert trip.power_min == -7.0
