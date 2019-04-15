@@ -91,11 +91,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Logger.info("Resuming logging")
 
     {:next_state, prev_state, %Data{data | last_used: DateTime.utc_now()},
-     [{:reply, from, :ok}, notify_subscribers(), schedule_fetch()]}
+     [{:reply, from, :ok}, notify_subscribers(), schedule_fetch(5)]}
   end
 
   def handle_event({:call, from}, :resume_logging, _state, _data) do
-    {:keep_state_and_data, {:reply, from, :ok}}
+    {:keep_state_and_data, [{:reply, from, :ok}, schedule_fetch(5)]}
   end
 
   ### suspend_logging
@@ -232,7 +232,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :ok = insert_position(vehicle, data, trip_id: trip_id)
 
         {:next_state, {:driving, trip_id}, %Data{data | last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(5)]}
+         [notify_subscribers(), schedule_fetch(2.5)]}
 
       %{charge_state: %Charge{charging_state: charging_state, time_to_full_charge: t}}
       when charging_state in ["Starting", "Charging", "Complete"] ->
@@ -243,7 +243,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :ok = insert_charge(charging_id, vehicle, data)
 
         {:next_state, {:charging, charging_state, charging_id},
-         %Data{data | last_used: DateTime.utc_now()}, [notify_subscribers(), schedule_fetch(5)]}
+         %Data{data | last_used: DateTime.utc_now()}, [notify_subscribers(), schedule_fetch(2.5)]}
 
       _ ->
         try_to_suspend(vehicle, :online, data)
@@ -309,7 +309,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :ok = insert_position(vehicle, data, trip_id: trip_id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(5)]}
+         [notify_subscribers(), schedule_fetch(2.5)]}
 
       shift_state when is_nil(shift_state) or shift_state == "P" ->
         {:ok, %Log.Trip{distance: distance, duration_min: duration}} =
@@ -544,7 +544,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp schedule_fetch(n \\ 10, unit \\ :seconds)
 
   case(Mix.env()) do
-    :test -> defp schedule_fetch(n, _unit), do: {:state_timeout, n, :fetch}
+    :test -> defp schedule_fetch(n, _unit), do: {:state_timeout, round(n), :fetch}
     _____ -> defp schedule_fetch(n, unit), do: {:state_timeout, apply(:timer, unit, [n]), :fetch}
   end
 
