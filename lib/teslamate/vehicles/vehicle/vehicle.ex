@@ -158,7 +158,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state_and_data, schedule_fetch()}
 
       {:error, :timeout} ->
+        Logger.info("Error / :timeout")
         {:keep_state_and_data, schedule_fetch(5)}
+
+      {:error, :unknown} ->
+        Logger.info("Error / :unknown")
+        {:keep_state_and_data, schedule_fetch(30)}
 
       {:error, reason} ->
         Logger.warn("Error / #{inspect(reason)}")
