@@ -25,6 +25,7 @@ defmodule TeslaMate.Application do
     :ok
   end
 
+  # TODO move into Api (get_lazy)
   defp auth do
     Application.get_env(:teslamate, :tesla_auth)
   end

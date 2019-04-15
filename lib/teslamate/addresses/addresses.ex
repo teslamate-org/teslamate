@@ -12,12 +12,21 @@ defmodule TeslaMate.Addresses do
     Repo.all(Address)
   end
 
-  def get_address!(id), do: Repo.get!(Address, id)
+  def get_address!(id) do
+    Repo.get!(Address, id)
+  end
 
   def create_address(attrs \\ %{}) do
     %Address{}
     |> Address.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_address_if_not_exists(%{place_id: place_id} = attrs) do
+    case Repo.get_by(Address, place_id: place_id) do
+      %Address{} = address -> {:ok, address}
+      nil -> create_address(attrs)
+    end
   end
 
   def update_address(%Address{} = address, attrs) do
@@ -34,10 +43,14 @@ defmodule TeslaMate.Addresses do
     Address.changeset(address, %{})
   end
 
-  def get_address_by_place_id(place_id) do
-    case Address |> Repo.get_by(place_id: place_id) do
-      %Address{} = address -> {:ok, address}
-      nil -> {:error, :not_found}
+  @geocoder (case Mix.env() do
+               :test -> GeocoderMock
+               _____ -> Geocoder
+             end)
+
+  def find_address(%{latitude: latitude, longitude: longitude}) do
+    with {:ok, attrs} <- @geocoder.reverse_lookup(latitude, longitude) do
+      create_address_if_not_exists(attrs)
     end
   end
 end

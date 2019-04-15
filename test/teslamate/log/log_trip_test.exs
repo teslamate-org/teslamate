@@ -142,6 +142,9 @@ defmodule TeslaMate.LogTripTest do
       assert trip.duration_min == 4
       assert trip.consumption_kWh == 0.612
       assert trip.consumption_kWh_100km == 19.160920738597053
+      assert is_number(trip.start_address_id)
+      assert addr_id = trip.start_address_id
+      assert ^addr_id = trip.end_address_id
     end
 
     test "deletes a trip and if it has no positions" do
@@ -154,12 +157,41 @@ defmodule TeslaMate.LogTripTest do
       assert nil == Repo.get(Trip, trip_id)
     end
 
+    test "deletes a trip and its position if it has only one position" do
+      assert %car{id: car_id} = car_fixture()
+
+      positions = [
+        %{date: "2019-04-06 10:00:00", latitude: 0.0, longitude: 0.0, odometer: 100}
+      ]
+
+      assert {:ok, trip_id} = Log.start_trip(car_id)
+
+      for p <- positions do
+        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :trip_id, trip_id))
+      end
+
+      assert {:ok, %Trip{distance: nil}} = Log.close_trip(trip_id)
+      assert nil == Repo.get(Trip, trip_id)
+    end
+
     test "deletes a trip and its position if the distance driven is 0" do
       assert %car{id: car_id} = car_fixture()
 
       positions = [
-        %{date: "2019-04-06 10:00:00", latitude: 0.0, longitude: 0.0, odometer: 100},
-        %{date: "2019-04-06 10:00:00", latitude: 0.0, longitude: 0.0, odometer: 100}
+        %{
+          date: "2019-04-06 10:00:00",
+          latitude: 0.0,
+          longitude: 0.0,
+          odometer: 100,
+          ideal_battery_range_km: 300
+        },
+        %{
+          date: "2019-04-06 10:05:00",
+          latitude: 0.0,
+          longitude: 0.0,
+          odometer: 100,
+          ideal_battery_range_km: 300
+        }
       ]
 
       assert {:ok, trip_id} = Log.start_trip(car_id)

@@ -17,6 +17,7 @@ defmodule TeslaMate.Addresses.Address do
     field :raw, :map
     field :road, :string
     field :state, :string
+    field :state_district, :string
 
     timestamps()
   end
@@ -37,6 +38,7 @@ defmodule TeslaMate.Addresses.Address do
       :county,
       :postcode,
       :state,
+      :state_district,
       :country,
       :raw
     ])

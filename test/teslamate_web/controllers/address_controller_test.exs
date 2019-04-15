@@ -18,7 +18,8 @@ defmodule TeslaMateWeb.AddressControllerTest do
     postcode: "some postcode",
     raw: %{},
     road: "some road",
-    state: "some state"
+    state: "some state",
+    state_district: "some state_district"
   }
   @update_attrs %{
     city: "some updated city",
@@ -34,7 +35,8 @@ defmodule TeslaMateWeb.AddressControllerTest do
     postcode: "some updated postcode",
     raw: %{},
     road: "some updated road",
-    state: "some updated state"
+    state: "some updated state",
+    state_district: "some updated state_district"
   }
   @invalid_attrs %{
     city: nil,
@@ -50,7 +52,8 @@ defmodule TeslaMateWeb.AddressControllerTest do
     postcode: nil,
     raw: nil,
     road: nil,
-    state: nil
+    state: nil,
+    state_district: nil
   }
 
   def fixture(:address) do
@@ -91,7 +94,8 @@ defmodule TeslaMateWeb.AddressControllerTest do
                "postcode" => "some postcode",
                "raw" => %{},
                "road" => "some road",
-               "state" => "some state"
+               "state" => "some state",
+               "state_district" => "some state_district"
              } = json_response(conn, 200)["data"]
     end
 
@@ -125,7 +129,8 @@ defmodule TeslaMateWeb.AddressControllerTest do
                "postcode" => "some updated postcode",
                "raw" => %{},
                "road" => "some updated road",
-               "state" => "some updated state"
+               "state" => "some updated state",
+               "state_district" => "some updated state_district"
              } = json_response(conn, 200)["data"]
     end
 

@@ -11,7 +11,8 @@ defmodule TeslaMateWeb.AddressView do
   end
 
   def render("address.json", %{address: address}) do
-    %{id: address.id,
+    %{
+      id: address.id,
       display_name: address.display_name,
       place_id: address.place_id,
       latitude: address.latitude,
@@ -24,7 +25,9 @@ defmodule TeslaMateWeb.AddressView do
       county: address.county,
       postcode: address.postcode,
       state: address.state,
+      state_district: address.state_district,
       country: address.country,
-      raw: address.raw}
+      raw: address.raw
+    }
   end
 end

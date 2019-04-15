@@ -69,13 +69,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # - deep sleep time with checks every 30min
   # - Schedule Sleep Mode: time window where idle times is set to 0 / is bypassed
   # - Deep Sleep Mode: time window where polling is limited to 30min
-  # - reverse adress lookup
-  # - geofecnces
   # - UI with LiveView
   #   - make suspend settings configurable
-  #   - create geo fences
   # - check the vehicle state during sleep attempt - does it still work?
-  # - indices (e.g. on dates)
+  # - indices
+  #   - other: dates
 
   ## Calls
 

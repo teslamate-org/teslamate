@@ -15,6 +15,7 @@ defmodule TeslaMate.Repo.Migrations.CreateAddresses do
       add(:county, :string)
       add(:postcode, :string)
       add(:state, :string)
+      add(:state_district, :string)
       add(:country, :string)
       add(:raw, :map)
 

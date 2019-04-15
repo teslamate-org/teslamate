@@ -3,6 +3,7 @@ defmodule TeslaMate.Log.Trip do
   import Ecto.Changeset
 
   alias TeslaMate.Log.{Position, Car}
+  alias TeslaMate.Addresses.Address
 
   schema "trips" do
     field :start_date, :utc_datetime
@@ -19,13 +20,12 @@ defmodule TeslaMate.Log.Trip do
     field :end_km, :float
     field :distance, :float
     field :duration_min, :integer
-    # TODO Address ref
-    field :start_address, :string
-    field :end_address, :string
     field :consumption_kWh, :float
     field :consumption_kWh_100km, :float
     field :efficiency, :float
 
+    belongs_to :start_address, Address
+    belongs_to :end_address, Address
     belongs_to :car, Car
 
     has_many :positions, Position, on_delete: :delete_all
@@ -37,6 +37,8 @@ defmodule TeslaMate.Log.Trip do
     |> cast(attrs, [
       :start_date,
       :end_date,
+      :start_address_id,
+      :end_address_id,
       :outside_temp_avg,
       :inside_temp_avg,
       :speed_max,
@@ -49,13 +51,13 @@ defmodule TeslaMate.Log.Trip do
       :end_km,
       :distance,
       :duration_min,
-      :start_address,
-      :end_address,
       :consumption_kWh,
       :consumption_kWh_100km,
       :efficiency
     ])
     |> validate_required([:car_id, :start_date])
     |> foreign_key_constraint(:car_id)
+    |> foreign_key_constraint(:start_address)
+    |> foreign_key_constraint(:end_address)
   end
 end

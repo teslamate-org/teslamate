@@ -3,10 +3,12 @@ defmodule TeslaMate.Log do
   The Log context.
   """
 
+  require Logger
+
   import Ecto.Query, warn: false
   import __MODULE__.Functions, only: [duration_min: 2]
 
-  alias TeslaMate.Repo
+  alias TeslaMate.{Repo, Addresses}
 
   ## Car
 
@@ -94,54 +96,90 @@ defmodule TeslaMate.Log do
   end
 
   def close_trip(trip_id) do
-    # TODO
-    # :start_address
-    # :end_address
-
     trip =
       Trip
       |> preload([:car])
       |> Repo.get!(trip_id)
 
-    stats =
+    query =
       Position
-      |> where(trip_id: ^trip_id)
       |> select([p], %{
-        end_date: max(p.date),
-        outside_temp_avg: avg(p.outside_temp),
-        inside_temp_avg: avg(p.inside_temp),
-        speed_max: max(p.speed),
-        power_max: max(p.power),
-        power_min: min(p.power),
-        power_avg: avg(p.power),
-        start_km: min(p.odometer),
-        end_km: max(p.odometer),
-        distance: max(p.odometer) - min(p.odometer),
-        start_range_km: max(p.ideal_battery_range_km),
-        end_range_km: min(p.ideal_battery_range_km),
-        duration_min: duration_min(max(p.date), min(p.date))
+        date: p.date,
+        latitude: p.latitude,
+        longitude: p.longitude,
+        odometer: p.odometer,
+        ideal_battery_range_km: p.ideal_battery_range_km,
+        power_avg: avg(p.power) |> over(),
+        outside_temp_avg: avg(p.outside_temp) |> over(),
+        inside_temp_avg: avg(p.inside_temp) |> over(),
+        speed_max: max(p.speed) |> over(),
+        power_max: max(p.power) |> over(),
+        power_min: min(p.power) |> over(),
+        first_row: row_number() |> over(order_by: [asc: p.date]),
+        last_row: row_number() |> over(order_by: [desc: p.date])
       })
-      |> Repo.one()
+      |> where(trip_id: ^trip_id)
+      |> order_by(asc: :date)
 
-    if is_nil(stats.distance) or stats.distance < 0.1 do
-      trip
-      |> Trip.changeset(stats)
-      |> Repo.delete()
-    else
-      ideal_distance = stats.start_range_km - stats.end_range_km
-      efficiency = if ideal_distance > 0, do: ideal_distance / stats.distance, else: nil
-      consumption = ideal_distance * trip.car.efficiency
-      consumption_100km = if stats.distance > 0, do: consumption / stats.distance * 100, else: nil
+    positions =
+      subquery(query)
+      |> where([p], p.first_row == 1 or p.last_row == 1)
+      |> Repo.all()
 
-      stats =
-        stats
-        |> Map.put(:efficiency, efficiency)
-        |> Map.put(:consumption_kWh, consumption)
-        |> Map.put(:consumption_kWh_100km, consumption_100km)
+    case positions do
+      [] ->
+        Repo.delete(trip)
 
-      trip
-      |> Trip.changeset(stats)
-      |> Repo.update()
+      [_] ->
+        Repo.delete(trip)
+
+      [start_pos, end_pos] ->
+        distance = end_pos.odometer - start_pos.odometer
+        ideal_distance = start_pos.ideal_battery_range_km - end_pos.ideal_battery_range_km
+        efficiency = if ideal_distance > 0, do: ideal_distance / distance, else: nil
+        consumption = ideal_distance * trip.car.efficiency
+        consumption_100km = if distance > 0, do: consumption / distance * 100, else: nil
+
+        attrs = %{
+          outside_temp_avg: end_pos.outside_temp_avg,
+          inside_temp_avg: end_pos.inside_temp_avg,
+          speed_max: end_pos.speed_max,
+          power_max: end_pos.power_max,
+          power_min: end_pos.power_min,
+          power_avg: end_pos.power_avg,
+          end_date: end_pos.date,
+          start_km: start_pos.odometer,
+          end_km: end_pos.odometer,
+          start_range_km: start_pos.ideal_battery_range_km,
+          end_range_km: end_pos.ideal_battery_range_km,
+          duration_min: round(DateTime.diff(end_pos.date, start_pos.date) / 60),
+          distance: distance,
+          efficiency: efficiency,
+          consumption_kWh: consumption,
+          consumption_kWh_100km: consumption_100km
+        }
+
+        if distance < 0.1 do
+          trip |> Trip.changeset(attrs) |> Repo.delete()
+        else
+          attrs =
+            attrs
+            |> put_address(:start_address_id, start_pos)
+            |> put_address(:end_address_id, end_pos)
+
+          trip |> Trip.changeset(attrs) |> Repo.update()
+        end
+    end
+  end
+
+  defp put_address(attrs, key, position) do
+    case Addresses.find_address(position) do
+      {:ok, %Addresses.Address{id: id}} ->
+        Map.put(attrs, key, id)
+
+      {:error, reason} ->
+        Logger.warn("Address wasn't found: #{inspect(reason)}")
+        attrs
     end
   end
 

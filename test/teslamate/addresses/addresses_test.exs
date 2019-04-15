@@ -2,10 +2,9 @@ defmodule TeslaMate.AddressesTest do
   use TeslaMate.DataCase
 
   alias TeslaMate.Addresses
+  alias TeslaMate.Addresses.Address
 
   describe "addresses" do
-    alias TeslaMate.Addresses.Address
-
     @valid_attrs %{
       city: "some city",
       county: "some county",
@@ -20,7 +19,8 @@ defmodule TeslaMate.AddressesTest do
       postcode: "some postcode",
       raw: %{},
       road: "some road",
-      state: "some state"
+      state: "some state",
+      state_district: "some state_district"
     }
     @update_attrs %{
       city: "some updated city",
@@ -36,7 +36,8 @@ defmodule TeslaMate.AddressesTest do
       postcode: "some updated postcode",
       raw: %{},
       road: "some updated road",
-      state: "some updated state"
+      state: "some updated state",
+      state_district: "some updated state_district"
     }
     @invalid_attrs %{
       city: nil,
@@ -52,7 +53,8 @@ defmodule TeslaMate.AddressesTest do
       postcode: nil,
       raw: nil,
       road: nil,
-      state: nil
+      state: nil,
+      state_district: nil
     }
 
     def address_fixture(attrs \\ %{}) do
@@ -90,10 +92,19 @@ defmodule TeslaMate.AddressesTest do
       assert address.raw == %{}
       assert address.road == "some road"
       assert address.state == "some state"
+      assert address.state_district == "some state_district"
     end
 
     test "create_address/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Addresses.create_address(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{} = changeset} = Addresses.create_address(@invalid_attrs)
+
+      assert errors_on(changeset) == %{
+               display_name: ["can't be blank"],
+               latitude: ["can't be blank"],
+               longitude: ["can't be blank"],
+               place_id: ["can't be blank"],
+               raw: ["can't be blank"]
+             }
     end
 
     test "update_address/2 with valid data updates the address" do
@@ -113,6 +124,7 @@ defmodule TeslaMate.AddressesTest do
       assert address.raw == %{}
       assert address.road == "some updated road"
       assert address.state == "some updated state"
+      assert address.state_district == "some updated state_district"
     end
 
     test "update_address/2 with invalid data returns error changeset" do
@@ -130,6 +142,23 @@ defmodule TeslaMate.AddressesTest do
     test "change_address/1 returns a address changeset" do
       address = address_fixture()
       assert %Ecto.Changeset{} = Addresses.change_address(address)
+    end
+  end
+
+  describe "find_address/1 " do
+    test "looks up and creates a new address" do
+      assert {:ok, %Address{} = address} =
+               Addresses.find_address(%{latitude: 52.019596, longitude: 8.526318})
+
+      assert address.place_id == 103_619_766
+      assert address.city == "Bielefeld"
+
+      assert [^address] = Addresses.list_addresses()
+
+      assert {:ok, %Address{} = ^address} =
+               Addresses.find_address(%{latitude: 52.019687, longitude: 8.526041})
+
+      assert [^address] = Addresses.list_addresses()
     end
   end
 end
