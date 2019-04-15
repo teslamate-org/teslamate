@@ -34,6 +34,18 @@
           <td><%= @summary.ideal_battery_range_km %> km<td>
         </tr>
         <% end %>
+        <%= unless is_nil(@summary.outside_temp) do %>
+        <tr>
+          <th><%= gettext "Outside temperature" %></td>
+          <td><%= @summary.outside_temp %> °C<td>
+        </tr>
+        <% end %>
+        <%= unless is_nil(@summary.inside_temp) do %>
+        <tr>
+          <th><%= gettext "Inside temperature" %></td>
+          <td><%= @summary.inside_temp %> °C<td>
+        </tr>
+        <% end %>
       </tbody>
     </table>
     </div>

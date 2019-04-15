@@ -10,7 +10,9 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :battery_level,
     :ideal_battery_range_km,
     :charge_energy_added,
-    :speed
+    :speed,
+    :outside_temp,
+    :inside_temp
   ]
 
   def into(state, vehicle) do
@@ -29,21 +31,21 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     %__MODULE__{
       display_name: vehicle.display_name,
       speed: speed(vehicle),
-      battery_level: battery_level(vehicle),
       ideal_battery_range_km: range_km(vehicle),
-      charge_energy_added: energy_added(vehicle)
+      battery_level: get_in_struct(vehicle, [:charge_state, :battery_level]),
+      charge_energy_added: get_in_struct(vehicle, [:charge_state, :charge_energy_added]),
+      outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),
+      inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp])
     }
   end
-
-  defp energy_added(%Vehicle{charge_state: %Charge{charge_energy_added: kWh}}), do: kWh
-  defp energy_added(_vehicle), do: nil
-
-  defp battery_level(%Vehicle{charge_state: %Charge{battery_level: level}}), do: level
-  defp battery_level(_vehicle), do: nil
 
   defp range_km(%Vehicle{charge_state: %Charge{ideal_battery_range: r}}), do: miles_to_km(r, 1)
   defp range_km(_vehicle), do: nil
 
   defp speed(%Vehicle{drive_state: %Drive{speed: s}}) when not is_nil(s), do: mph_to_kmh(s)
   defp speed(_vehicle), do: nil
+
+  defp get_in_struct(struct, keys) do
+    Enum.reduce(keys, struct, fn key, acc -> if acc, do: Map.get(acc, key) end)
+  end
 end

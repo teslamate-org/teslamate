@@ -37,41 +37,51 @@ msgid "Charged"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:40
+#: lib/teslamate_web/live/car_live/summary.ex:41
 msgid "asleep"
 msgstr "schläft"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:34
+#: lib/teslamate_web/live/car_live/summary.ex:35
 msgid "charging"
 msgstr "lädt"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:35
+#: lib/teslamate_web/live/car_live/summary.ex:36
 msgid "charging_complete"
 msgstr "Ladevorgang abgeschlossen"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:33
+#: lib/teslamate_web/live/car_live/summary.ex:34
 msgid "driving"
 msgstr "fährt"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:39
+#: lib/teslamate_web/live/car_live/summary.ex:40
 msgid "offline"
 msgstr "offline"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:38
+#: lib/teslamate_web/live/car_live/summary.ex:39
 msgid "online"
 msgstr "online"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:37
+#: lib/teslamate_web/live/car_live/summary.ex:38
 msgid "suspended"
 msgstr "schläft ein"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:36
+#: lib/teslamate_web/live/car_live/summary.ex:37
 msgid "updating"
 msgstr "installiert Update"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:45
+msgid "Inside temperature"
+msgstr "Innentemperatur"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:39
+msgid "Outside temperature"
+msgstr "Außentemperatur"

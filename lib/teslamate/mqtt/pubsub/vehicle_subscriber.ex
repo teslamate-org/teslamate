@@ -6,7 +6,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   alias TeslaMate.Mqtt.Publisher
   alias TeslaMate.Vehicles
 
-  @retained [:state, :ideal_battery_range_km, :battery_level]
+  @retained [:state, :ideal_battery_range_km, :battery_level, :outside_temp, :inside_temp]
 
   # API
 
