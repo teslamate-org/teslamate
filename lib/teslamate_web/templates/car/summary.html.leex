@@ -22,6 +22,12 @@
           <td><%= @summary.battery_level %>%</td>
         </tr>
         <% end %>
+        <%= unless is_nil(@summary.locked) do %>
+        <tr>
+          <th><%= gettext "Locked" %></td>
+          <td><%= (if @summary.locked, do: gettext("Yes"), else: gettext("No"))  %></td>
+        </tr>
+        <% end %>
         <%= unless is_nil(@summary.speed) do %>
         <tr>
           <th><%= gettext "Speed" %></td>

@@ -12,7 +12,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :charge_energy_added,
     :speed,
     :outside_temp,
-    :inside_temp
+    :inside_temp,
+    :locked
   ]
 
   def into(state, vehicle) do
@@ -35,7 +36,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       battery_level: get_in_struct(vehicle, [:charge_state, :battery_level]),
       charge_energy_added: get_in_struct(vehicle, [:charge_state, :charge_energy_added]),
       outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),
-      inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp])
+      inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp]),
+      locked: get_in_struct(vehicle, [:vehicle_state, :locked])
     }
   end
 
