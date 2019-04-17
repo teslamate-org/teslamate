@@ -66,14 +66,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   # TODO
-  # - deep sleep time with checks every 30min
-  # - Schedule Sleep Mode: time window where idle times is set to 0 / is bypassed
-  # - Deep Sleep Mode: time window where polling is limited to 30min
-  # - UI with LiveView
-  #   - make suspend settings configurable
   # - check the vehicle state during sleep attempt - does it still work?
-  # - indices
-  #   - other: dates
 
   ## Calls
 
@@ -307,7 +300,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, trip_id}, data) do
-    case vehicle.drive_state.shift_state do
+    case get(vehicle, [:drive_state, :shift_state]) do
       shift_state when shift_state in ["D", "R", "N"] ->
         :ok = insert_position(vehicle, data, trip_id: trip_id)
 
@@ -543,6 +536,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp notify_subscribers do
     {:next_event, :internal, :notify_subscribers}
   end
+
+  defp get(struct, keys), do: get_in(struct, Enum.map(keys, &Access.key/1))
 
   defp schedule_fetch(n \\ 10, unit \\ :seconds)
 
