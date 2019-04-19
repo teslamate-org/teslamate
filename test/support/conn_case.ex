@@ -33,8 +33,8 @@ defmodule TeslaMateWeb.ConnCase do
       Ecto.Adapters.SQL.Sandbox.mode(TeslaMate.Repo, {:shared, self()})
     end
 
-    # TODO remove and fix
-    TeslaMateWeb.Endpoint.start_link()
+    # Start the Endpoint manually since tests run with '--no-start'
+    {:ok, _pid} = start_supervised(TeslaMateWeb.Endpoint)
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
