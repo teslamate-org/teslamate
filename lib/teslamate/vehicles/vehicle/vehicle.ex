@@ -159,7 +159,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state_and_data, schedule_fetch(30)}
 
       {:error, reason} ->
-        Logger.warn("Error / #{inspect(reason)}")
+        Logger.error("Error / #{inspect(reason)}")
         {:keep_state_and_data, schedule_fetch()}
     end
   end
@@ -331,7 +331,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
 
       %VehicleState.SoftwareUpdate{status: status} = software_update ->
-        if status != "", do: Logger.warn("Update failed: #{status} | #{inspect(software_update)}")
+        if status != "" do
+          Logger.error("Update failed: #{status} | #{inspect(software_update)}")
+        end
 
         car_version = vehicle.vehicle_state.car_version
         {:ok, %Log.Update{}} = call(data.deps.log, :finish_update, [update_id, car_version])

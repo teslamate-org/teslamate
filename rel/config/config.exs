@@ -50,7 +50,7 @@ config :logger, :console,
   metadata: []
 
 config :logger, :telegram,
-  level: :warn,
+  level: :error,
   chat_id: Env.get("CHAT_ID"),
   token: Env.get("TOKEN")
 
