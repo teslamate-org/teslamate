@@ -539,7 +539,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:next_event, :internal, :notify_subscribers}
   end
 
-  defp get(struct, keys), do: get_in(struct, Enum.map(keys, &Access.key/1))
+  defp get(struct, keys) do
+    Enum.reduce(keys, struct, fn key, acc -> if acc, do: Map.get(acc, key) end)
+  end
 
   defp schedule_fetch(n \\ 10, unit \\ :seconds)
 
