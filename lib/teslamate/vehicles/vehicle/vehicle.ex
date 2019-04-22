@@ -505,6 +505,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
           {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
 
+        {:error, :sentry_mode} ->
+          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
+
         :ok ->
           Logger.info("Suspending logging")
 
@@ -526,6 +529,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       %Vehicle{drive_state: %Drive{shift_state: shift_state}} when not is_nil(shift_state) ->
         {:error, :shift_state}
+
+      %Vehicle{vehicle_state: %VehicleState{sentry_mode: true}} ->
+        {:error, :sentry_mode}
 
       %Vehicle{} ->
         :ok

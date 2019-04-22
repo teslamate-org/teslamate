@@ -99,6 +99,36 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   end
 
   @tag :capture_log
+  test "does not suspend if sentry mode is active", %{test: name} do
+    not_supendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        vehicle_state: %{sentry_mode: true}
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, not_supendable}
+    ]
+
+    sudpend_after_idle_ms = 10
+    suspend_ms = 100
+
+    :ok =
+      start_vehicle(name, events,
+        sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
+        suspend_min: suspend_ms
+      )
+
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+    refute_receive _, round(suspend_ms * 0.5)
+
+    refute_receive _
+  end
+
+  @tag :capture_log
   test "does not suspend if shift_state is not nil", %{test: name} do
     not_supendable =
       online_event(drive_state: %{timestamp: 0, shift_state: "P", latitude: 0.0, longitude: 0.0})
@@ -291,6 +321,24 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       assert_receive {:start_state, _, :online}
 
       assert {:error, :user_present} = Vehicle.suspend_logging(name)
+    end
+
+    test "cannot be suspended if sentry mode is active", %{test: name} do
+      not_supendable =
+        online_event(
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+          vehicle_state: %{sentry_mode: true}
+        )
+
+      events = [
+        {:ok, %TeslaApi.Vehicle{state: "online"}},
+        {:ok, not_supendable}
+      ]
+
+      :ok = start_vehicle(name, events)
+      assert_receive {:start_state, _, :online}
+
+      assert {:error, :sentry_mode} = Vehicle.suspend_logging(name)
     end
 
     test "cannot be suspended if shift_state is not nil", %{test: name} do
