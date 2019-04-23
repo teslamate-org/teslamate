@@ -16,12 +16,12 @@ msgid "Status"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:39
+#: lib/teslamate_web/templates/car/summary.html.leex:45
 msgid "Range"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:33
+#: lib/teslamate_web/templates/car/summary.html.leex:39
 msgid "Speed"
 msgstr ""
 
@@ -76,12 +76,12 @@ msgid "updating"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:51
+#: lib/teslamate_web/templates/car/summary.html.leex:57
 msgid "Inside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:45
+#: lib/teslamate_web/templates/car/summary.html.leex:51
 msgid "Outside temperature"
 msgstr ""
 
@@ -92,10 +92,17 @@ msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:28
+#: lib/teslamate_web/templates/car/summary.html.leex:34
 msgid "No"
 msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:28
+#: lib/teslamate_web/templates/car/summary.html.leex:34
 msgid "Yes"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:33
+msgid "Sentry Mode"
 msgstr ""

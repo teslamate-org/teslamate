@@ -28,6 +28,12 @@
           <td><%= (if @summary.locked, do: gettext("Yes"), else: gettext("No"))  %></td>
         </tr>
         <% end %>
+        <%= unless is_nil(@summary.sentry_mode) do %>
+        <tr>
+          <th><%= gettext "Sentry Mode" %></td>
+          <td><%= (if @summary.sentry_mode, do: gettext("Yes"), else: gettext("No"))  %></td>
+        </tr>
+        <% end %>
         <%= unless is_nil(@summary.speed) do %>
         <tr>
           <th><%= gettext "Speed" %></td>
