@@ -151,15 +151,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state_and_data, schedule_fetch()}
 
       {:error, :timeout} ->
-        Logger.info("Error / :timeout")
+        Logger.warn("Error / :timeout")
         {:keep_state_and_data, schedule_fetch(5)}
 
       {:error, :unknown} ->
-        Logger.info("Error / :unknown")
+        Logger.warn("Error / :unknown")
         {:keep_state_and_data, schedule_fetch(30)}
 
       {:error, reason} ->
-        Logger.error("Error / #{inspect(reason)}")
+        Logger.warn("Error / #{inspect(reason)}")
         {:keep_state_and_data, schedule_fetch()}
     end
   end
@@ -488,7 +488,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp try_to_suspend(vehicle, current_state, data) do
-    if diff_seconds(DateTime.utc_now(), data.last_used) / 60 > data.sudpend_after_idle_min do
+    idle_min = diff_seconds(DateTime.utc_now(), data.last_used) / 60
+
+    if idle_min >= data.sudpend_after_idle_min do
       case can_fall_asleep(vehicle) do
         {:error, :user_present} ->
           Logger.warn("Present user prevents car to go to sleep")
@@ -509,6 +511,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
           {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
 
         {:error, :unlocked} ->
+          Logger.warn("Vehicle is unlocked and thus cannot to go to sleep")
+
           {:keep_state, data, schedule_fetch()}
 
         :ok ->
@@ -518,6 +522,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
            [notify_subscribers(), schedule_fetch(data.suspend_min, :minutes)]}
       end
     else
+      Logger.info("Suspending in #{Float.round(data.sudpend_after_idle_min - idle_min, 1)} min")
       {:keep_state_and_data, schedule_fetch(30)}
     end
   end
