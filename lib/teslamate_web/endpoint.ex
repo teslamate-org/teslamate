@@ -1,7 +1,7 @@
 defmodule TeslaMateWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :teslamate
 
-  socket "/live", Phoenix.LiveView.Socket
+  socket "/live", TeslaMateWeb.LiveViewSocket
 
   socket "/socket", TeslaMateWeb.UserSocket,
     websocket: true,
