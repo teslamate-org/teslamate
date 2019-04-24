@@ -508,6 +508,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:error, :sentry_mode} ->
           {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
 
+        {:error, :unlocked} ->
+          {:keep_state, data, schedule_fetch()}
+
         :ok ->
           Logger.info("Suspending logging")
 
@@ -532,6 +535,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       %Vehicle{vehicle_state: %VehicleState{sentry_mode: true}} ->
         {:error, :sentry_mode}
+
+      %Vehicle{vehicle_state: %VehicleState{locked: false}} ->
+        {:error, :unlocked}
 
       %Vehicle{} ->
         :ok
