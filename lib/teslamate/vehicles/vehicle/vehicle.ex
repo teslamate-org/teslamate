@@ -218,7 +218,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:ok, update_id} = call(data.deps.log, :start_update, [data.car.id])
 
         {:next_state, {:updating, update_id}, %Data{data | last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(30)]}
+         [notify_subscribers(), schedule_fetch(15)]}
 
       %{drive_state: %Drive{shift_state: shift_state}}
       when shift_state in ["D", "N", "R"] ->
@@ -328,7 +328,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:online, vehicle}}, {:updating, update_id}, data) do
     case vehicle.vehicle_state.software_update do
       %VehicleState.SoftwareUpdate{status: "installing"} ->
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15)}
 
       %VehicleState.SoftwareUpdate{status: status} = software_update ->
         if status != "" do
@@ -495,7 +495,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:error, :user_present} ->
           Logger.warn("Present user prevents car to go to sleep")
 
-          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
+          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15)}
 
         {:error, :preconditioning} ->
           Logger.warn("Preconditioning prevents car to go to sleep")
@@ -505,7 +505,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:error, :shift_state} ->
           Logger.warn("Shift state prevents car to go to sleep")
 
-          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
+          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15)}
 
         {:error, :sentry_mode} ->
           {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
@@ -523,7 +523,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       end
     else
       Logger.info("Suspending in #{Float.round(data.sudpend_after_idle_min - idle_min, 1)} min")
-      {:keep_state_and_data, schedule_fetch(30)}
+      {:keep_state_and_data, schedule_fetch(15)}
     end
   end
 
@@ -549,7 +549,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp determince_interval(n) when not is_nil(n) and n > 0, do: round(1000 / n) |> min(60)
+  defp determince_interval(n) when not is_nil(n) and n > 0, do: round(725 / n) |> min(30)
   defp determince_interval(_), do: 15
 
   defp notify_subscribers do
