@@ -153,7 +153,7 @@ defmodule TeslaMate.LogTripTest do
       assert {:ok, trip_id} = Log.start_trip(car_id)
       assert %Trip{} = Repo.get(Trip, trip_id)
 
-      assert {:ok, _trip} = Log.close_trip(trip_id)
+      assert {:ok, %Trip{distance: 0.0, duration_min: 0}} = Log.close_trip(trip_id)
       assert nil == Repo.get(Trip, trip_id)
     end
 
@@ -170,7 +170,7 @@ defmodule TeslaMate.LogTripTest do
         assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :trip_id, trip_id))
       end
 
-      assert {:ok, %Trip{distance: nil}} = Log.close_trip(trip_id)
+      assert {:ok, %Trip{distance: 0.0, duration_min: 0}} = Log.close_trip(trip_id)
       assert nil == Repo.get(Trip, trip_id)
     end
 
@@ -203,23 +203,5 @@ defmodule TeslaMate.LogTripTest do
       assert {:ok, %Trip{distance: 0.0}} = Log.close_trip(trip_id)
       assert nil == Repo.get(Trip, trip_id)
     end
-  end
-
-  test "deletes a trip and its position if the distance attributes are nil" do
-    assert %car{id: car_id} = car_fixture()
-
-    positions = [
-      %{date: "2019-04-06 10:00:00", latitude: 0.0, longitude: 0.0},
-      %{date: "2019-04-06 10:00:00", latitude: 0.0, longitude: 0.0}
-    ]
-
-    assert {:ok, trip_id} = Log.start_trip(car_id)
-
-    for p <- positions do
-      assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :trip_id, trip_id))
-    end
-
-    assert {:ok, %Trip{distance: nil}} = Log.close_trip(trip_id)
-    assert nil == Repo.get(Trip, trip_id)
   end
 end

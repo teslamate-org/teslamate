@@ -128,10 +128,10 @@ defmodule TeslaMate.Log do
 
     case positions do
       [] ->
-        Repo.delete(trip)
+        trip |> Trip.changeset(%{distance: 0, duration_min: 0}) |> Repo.delete()
 
       [_] ->
-        Repo.delete(trip)
+        trip |> Trip.changeset(%{distance: 0, duration_min: 0}) |> Repo.delete()
 
       [start_pos, end_pos] ->
         distance = end_pos.odometer - start_pos.odometer

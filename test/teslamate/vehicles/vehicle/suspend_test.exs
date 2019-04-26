@@ -127,6 +127,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     refute_receive _
   end
 
+  @tag :capture_log
   test "does not suspend if vehicle is unlocked", %{test: name} do
     not_supendable =
       online_event(

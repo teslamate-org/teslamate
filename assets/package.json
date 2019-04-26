@@ -15,7 +15,7 @@
     "@babel/preset-env": "^7.4.3",
     "babel-loader": "^8.0.0",
     "bulma": "^0.7.4",
-    "copy-webpack-plugin": "^5.0.2",
+    "copy-webpack-plugin": "^5.0.3",
     "css-loader": "^2.1.1",
     "mini-css-extract-plugin": "^0.6.0",
     "node-sass": "^4.11.0",
