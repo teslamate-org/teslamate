@@ -21,12 +21,10 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     %__MODULE__{format_vehicle(vehicle) | state: format_state(state)}
   end
 
-  defp format_state({:driving, _trip_id}), do: :driving
   defp format_state({:charging, "Starting", _process_id}), do: :charging
   defp format_state({:charging, "Charging", _process_id}), do: :charging
   defp format_state({:charging, "Complete", _process_id}), do: :charging_complete
-  defp format_state({:updating, _update_id}), do: :updating
-  defp format_state({:suspended, _}), do: :suspended
+  defp format_state({state, _}) when is_atom(state), do: state
   defp format_state(state) when is_atom(state), do: state
 
   defp format_vehicle(%Vehicle{} = vehicle) do

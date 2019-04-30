@@ -21,6 +21,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   alias __MODULE__, as: Data
 
   @topic inspect(__MODULE__)
+  @asleep_interval 60
 
   def start_link(opts) do
     GenStateMachine.start_link(__MODULE__, opts,
@@ -85,14 +86,23 @@ defmodule TeslaMate.Vehicles.Vehicle do
      [{:reply, from, :ok}, notify_subscribers(), schedule_fetch(5)]}
   end
 
+  def handle_event({:call, from}, :resume_logging, {:asleep, _interval}, data) do
+    Logger.info("Expecting imminent wakeup. Increasing polling frequency ...")
+
+    {:next_state, {:asleep, 1}, data, [{:reply, from, :ok}, {:next_event, :internal, :fetch}]}
+  end
+
   def handle_event({:call, from}, :resume_logging, _state, _data) do
-    {:keep_state_and_data, [{:reply, from, :ok}, schedule_fetch(5)]}
+    {:keep_state_and_data, {:reply, from, :ok}}
   end
 
   ### suspend_logging
 
-  def handle_event({:call, from}, :suspend_logging, state, _data)
-      when state in [:offline, :asleep] do
+  def handle_event({:call, from}, :suspend_logging, :offline, _data) do
+    {:keep_state_and_data, {:reply, from, :ok}}
+  end
+
+  def handle_event({:call, from}, :suspend_logging, {:asleep, _}, _data) do
     {:keep_state_and_data, {:reply, from, :ok}}
   end
 
@@ -184,7 +194,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     :ok = call(data.deps.log, :start_state, [data.car.id, :asleep])
 
-    {:next_state, :asleep, data, [notify_subscribers(), schedule_fetch(30)]}
+    {:next_state, {:asleep, @asleep_interval}, data, [notify_subscribers(), schedule_fetch(30)]}
   end
 
   def handle_event(:internal, {:update, :offline}, :start, data) do
@@ -347,15 +357,19 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   #### :asleep
 
-  def handle_event(:internal, {:update, :asleep}, :asleep, _data) do
-    {:keep_state_and_data, schedule_fetch(60)}
+  def handle_event(:internal, {:update, :asleep}, {:asleep, @asleep_interval}, _data) do
+    {:keep_state_and_data, schedule_fetch(@asleep_interval)}
   end
 
-  def handle_event(:internal, {:update, :offline}, :asleep, data) do
+  def handle_event(:internal, {:update, :asleep}, {:asleep, interval}, data) do
+    {:next_state, {:asleep, min(interval * 2, @asleep_interval)}, data, schedule_fetch(interval)}
+  end
+
+  def handle_event(:internal, {:update, :offline}, {:asleep, _interval}, data) do
     {:next_state, :start, data, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, _}} = event, :asleep, data) do
+  def handle_event(:internal, {:update, {:online, _}} = event, {:asleep, _interval}, data) do
     {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
      {:next_event, :internal, event}}
   end
@@ -381,8 +395,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:next_state, prev_state, data, {:next_event, :internal, event}}
   end
 
-  def handle_event(:internal, {:update, state}, {:suspended, _}, data)
-      when state in [:asleep, :offline] do
+  def handle_event(:internal, {:update, :offline}, {:suspended, _}, data) do
+    {:next_state, :start, data, schedule_fetch()}
+  end
+
+  def handle_event(:internal, {:update, :asleep}, {:suspended, _}, data) do
     {:next_state, :start, data, schedule_fetch()}
   end
 
@@ -391,14 +408,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp fetch(%Data{car: car, deps: deps}, expected_state: expected_state) do
     reachable? =
       case expected_state do
-        {:driving, _} -> true
-        {:charging, _, _} -> true
-        {:updating, _} -> true
-        {:suspended, _} -> false
         :online -> true
-        :offline -> false
-        :asleep -> false
+        {:driving, _} -> true
+        {:updating, _} -> true
+        {:charging, _, _} -> true
         :start -> false
+        :offline -> false
+        {:asleep, _} -> false
+        {:suspended, _} -> false
       end
 
     if reachable? do

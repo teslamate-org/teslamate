@@ -104,5 +104,31 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       refute_receive _
     end
+
+    test "increases polling frequency if asleep", %{test: name} do
+      events = [
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, online_event()}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car_id, :asleep}
+      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :asleep}}}
+
+      assert :ok = Vehicle.resume_logging(name)
+
+      assert_receive {:start_state, ^car_id, :online}, 100
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
   end
 end
