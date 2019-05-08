@@ -471,5 +471,40 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
       refute_receive _
     end
+
+    test "detects if vehicle was locked", %{
+      test: name
+    } do
+      unlocked =
+        online_event(
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+          vehicle_state: %{locked: false}
+        )
+
+      locked =
+        online_event(
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+          vehicle_state: %{locked: true}
+        )
+
+      events = [
+        {:ok, %TeslaApi.Vehicle{state: "online"}},
+        {:ok, unlocked},
+        {:ok, unlocked},
+        {:ok, locked}
+      ]
+
+      :ok = start_vehicle(name, events)
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+
+      assert {:error, :unlocked} = Vehicle.suspend_logging(name)
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{locked: false, state: :online}}}
+
+      assert :ok = Vehicle.suspend_logging(name)
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{locked: true, state: :suspended}}}
+
+      refute_receive _
+    end
   end
 end

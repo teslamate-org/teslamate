@@ -124,7 +124,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          :ok <- can_fall_asleep(vehicle) do
       Logger.info("Suspending logging [Triggered manually]")
 
-      {:next_state, {:suspended, :online}, data,
+      {:next_state, {:suspended, :online}, %Data{data | last_response: vehicle},
        [{:reply, from, :ok}, notify_subscribers(), schedule_fetch(data.suspend_min, :minutes)]}
     else
       {:error, reason} ->
