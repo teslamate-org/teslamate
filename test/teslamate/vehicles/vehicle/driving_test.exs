@@ -95,9 +95,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     assert_receive {:start_trip, ^car_id}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, trip_id: 111}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :driving}}}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, trip_id: 111}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :driving}}}
     assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, trip_id: 111}}
     # ...
 

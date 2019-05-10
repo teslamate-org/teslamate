@@ -1,7 +1,7 @@
 defmodule PubSubMock do
   use GenServer
 
-  defstruct [:pid]
+  defstruct [:pid, :last_event]
   alias __MODULE__, as: State
 
   # API
@@ -23,8 +23,12 @@ defmodule PubSubMock do
 
   @impl true
 
+  def handle_call({:broadcast, _, _, _} = event, _from, %State{last_event: event} = state) do
+    {:reply, :ok, state}
+  end
+
   def handle_call({:broadcast, _, _, _} = event, _from, %State{pid: pid} = state) do
     send(pid, {:pubsub, event})
-    {:reply, :ok, state}
+    {:reply, :ok, %State{state | last_event: event}}
   end
 end

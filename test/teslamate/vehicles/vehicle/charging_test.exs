@@ -42,6 +42,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car_id, %{}}
     assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
+    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+
     refute_receive _
   end
 
@@ -91,6 +93,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car_id, %{}}
     assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
+    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+
     refute_receive _
   end
 
@@ -110,11 +114,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
     assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :charging}}}
 
     assert_receive {:insert_charge, charging_event, %{date: _, charge_energy_added: 22}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :charging}}}
     assert_receive {:insert_charge, ^charging_event, %{date: _, charge_energy_added: 22}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :charging}}}
     # ...
 
     refute_received _

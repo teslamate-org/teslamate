@@ -506,41 +506,38 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp try_to_suspend(vehicle, current_state, data) do
     idle_min = diff_seconds(DateTime.utc_now(), data.last_used) / 60
+    suspend = idle_min >= data.sudpend_after_idle_min
 
-    if idle_min >= data.sudpend_after_idle_min do
-      case can_fall_asleep(vehicle) do
-        {:error, :user_present} ->
-          Logger.warn("Present user prevents car to go to sleep")
+    case can_fall_asleep(vehicle) do
+      {:error, :preconditioning} ->
+        if suspend, do: Logger.warn("Preconditioning prevents car to go to sleep")
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
 
-          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15)}
+      {:error, :user_present} ->
+        if suspend, do: Logger.warn("Present user prevents car to go to sleep")
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
 
-        {:error, :preconditioning} ->
-          Logger.warn("Preconditioning prevents car to go to sleep")
+      {:error, :shift_state} ->
+        if suspend, do: Logger.warn("Shift state prevents car to go to sleep")
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
 
-          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
+      {:error, :unlocked} ->
+        if suspend, do: Logger.warn("Vehicle cannot to go to sleep because it is unlocked")
+        {:keep_state_and_data, [notify_subscribers(), schedule_fetch()]}
 
-        {:error, :shift_state} ->
-          Logger.warn("Shift state prevents car to go to sleep")
+      {:error, :sentry_mode} ->
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         [notify_subscribers(), schedule_fetch(30)]}
 
-          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15)}
-
-        {:error, :sentry_mode} ->
-          {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
-
-        {:error, :unlocked} ->
-          Logger.warn("Vehicle is unlocked and thus cannot to go to sleep")
-
-          {:keep_state, data, schedule_fetch()}
-
-        :ok ->
+      :ok ->
+        if suspend do
           Logger.info("Suspending logging")
 
           {:next_state, {:suspended, current_state}, data,
            [notify_subscribers(), schedule_fetch(data.suspend_min, :minutes)]}
-      end
-    else
-      Logger.info("Suspending in #{Float.round(data.sudpend_after_idle_min - idle_min, 1)} min")
-      {:keep_state_and_data, schedule_fetch(15)}
+        else
+          {:keep_state_and_data, [notify_subscribers(), schedule_fetch(15)]}
+        end
     end
   end
 
