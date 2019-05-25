@@ -182,8 +182,8 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.duration_min == 4
       assert cproc.end_battery_level == 54
       assert cproc.start_battery_level == 50
-      assert cproc.start_soc == 266.6
-      assert cproc.end_soc == 268.6
+      assert cproc.start_range_km == 266.6
+      assert cproc.end_range_km == 268.6
       assert cproc.outside_temp_avg == 15.25
     end
 

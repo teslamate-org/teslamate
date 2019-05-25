@@ -223,8 +223,8 @@ defmodule TeslaMate.Log do
       |> where(charging_process_id: ^process_id)
       |> select([c], %{
         charge_energy_added: max(c.charge_energy_added),
-        start_soc: min(c.ideal_battery_range_km),
-        end_soc: max(c.ideal_battery_range_km),
+        start_range_km: min(c.ideal_battery_range_km),
+        end_range_km: max(c.ideal_battery_range_km),
         start_battery_level: min(c.battery_level),
         end_battery_level: max(c.battery_level),
         outside_temp_avg: avg(c.outside_temp),
@@ -233,16 +233,16 @@ defmodule TeslaMate.Log do
       |> Repo.one()
       |> Map.put(:end_date, DateTime.utc_now())
 
-    stats = Map.put(stats, :calculated_max_range, calculate_max_range(stats))
+    stats = Map.put(stats, :calculated_max_range, max_range(stats))
 
     charging_process
     |> ChargingProcess.changeset(stats)
     |> Repo.update()
   end
 
-  defp calculate_max_range(%{end_soc: nil}), do: nil
-  defp calculate_max_range(%{end_battery_level: nil}), do: nil
-  defp calculate_max_range(%{end_soc: soc, end_battery_level: lvl}), do: round(soc / lvl * 100)
+  defp max_range(%{end_range_km: nil}), do: nil
+  defp max_range(%{end_battery_level: nil}), do: nil
+  defp max_range(%{end_range_km: range, end_battery_level: lvl}), do: round(range / lvl * 100)
 
   alias TeslaMate.Log.Update
 
