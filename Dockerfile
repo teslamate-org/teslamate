@@ -1,21 +1,40 @@
-FROM elixir:1.8-alpine AS builder
+# FROM elixir:1.9-alpine AS builder
 
-ARG APP_NAME
-ARG APP_VSN
+# begin custom Elixir image
+FROM erlang:21-alpine as builder
 
-ENV APP_NAME=${APP_NAME} \
-    APP_VSN=${APP_VSN} \
-    MIX_ENV=prod
+# elixir expects utf8.
+ENV ELIXIR_VERSION="v1.9.0-rc.0" \
+    LANG=C.UTF-8
 
-WORKDIR /opt/app
+RUN set -xe \
+  && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" \
+  && ELIXIR_DOWNLOAD_SHA256="fa019ba18556f53bfb77840b0970afd116517764251704b55e419becb0b384cf" \
+  && buildDeps=' \
+    ca-certificates \
+    curl \
+    make \
+  ' \
+  && apk add --no-cache --virtual .build-deps $buildDeps \
+  && curl -fSL -o elixir-src.tar.gz $ELIXIR_DOWNLOAD_URL \
+  && echo "$ELIXIR_DOWNLOAD_SHA256  elixir-src.tar.gz" | sha256sum -c - \
+  && mkdir -p /usr/local/src/elixir \
+  && tar -xzC /usr/local/src/elixir --strip-components=1 -f elixir-src.tar.gz \
+  && rm elixir-src.tar.gz \
+  && cd /usr/local/src/elixir \
+  && make install clean \
+  && apk del .build-deps
+# end cusom Elixir image
 
-RUN apk update && \
-    apk upgrade --no-cache && \
-    apk add --no-cache nodejs yarn git build-base && \
+RUN apk add --update --no-cache nodejs yarn git build-base && \
     mix local.rebar --force && \
     mix local.hex --force
 
-COPY mix.* ./
+ENV MIX_ENV=prod
+
+WORKDIR /opt/app
+
+COPY mix.exs mix.lock ./
 RUN mix do deps.get --only $MIX_ENV, deps.compile
 
 COPY assets assets
@@ -27,38 +46,22 @@ RUN cd assets && \
 COPY . .
 RUN mix do phx.digest, compile
 
-RUN \
-  mkdir -p /opt/built && \
-  mix release && \
-  cp _build/${MIX_ENV}/rel/${APP_NAME}/releases/${APP_VSN}/${APP_NAME}.tar.gz /opt/built && \
-  cd /opt/built && \
-  tar -xzf ${APP_NAME}.tar.gz && \
-  rm ${APP_NAME}.tar.gz
+RUN mkdir -p /opt/built && mix release --path /opt/built
 
 ########################################################################
 
-FROM alpine:3.9
+FROM alpine:3.9 AS app
 
-ENV LANG=en_US.UTF-8 \
-    TZ=Europe/Berlin \
-    TERM=xterm
+ENV LANG=C.UTF-8 \
+    TZ=Europe/Berlin
 
-ARG APP_NAME
-
-RUN apk update && \
-    apk --no-cache upgrade && \
-    apk add --no-cache bash openssl-dev erlang-crypto
-
-ENV REPLACE_OS_VARS=true \
-    APP_NAME=${APP_NAME}
+RUN apk add --update --no-cache bash openssl
 
 WORKDIR /opt/app
 
-RUN addgroup -g 4005 $APP_NAME && \
-    adduser -u 4005 -D -h . -G $APP_NAME $APP_NAME
-
-USER $APP_NAME
-
 COPY --from=builder /opt/built .
+RUN chown -R nobody: .
 
-CMD trap 'exit' INT; /opt/app/bin/${APP_NAME} foreground
+USER nobody
+
+CMD trap 'exit' INT; /opt/app/bin/teslamate start

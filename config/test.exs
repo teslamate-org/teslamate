@@ -9,7 +9,7 @@ config :teslamate, TeslaMateWeb.Endpoint,
 config :logger, level: :warn
 
 config :teslamate, TeslaMate.Repo,
-  username: "adrian",
+  username: "postgres",
   password: "postgres",
   database: "teslamate_test",
   hostname: "localhost",

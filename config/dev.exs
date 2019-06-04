@@ -32,15 +32,15 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :teslamate, TeslaMate.Repo,
-  username: "adrian",
+  username: "postgres",
   password: "postgres",
   database: "teslamate_dev",
   hostname: "localhost",
   pool_size: 10
 
 config :teslamate, :tesla_auth,
-  username: System.get_env("USERNAME"),
-  password: System.get_env("PASSWORD")
+  username: System.fetch_env!("USERNAME"),
+  password: System.fetch_env!("PASSWORD")
 
 config :teslamate, :mqtt,
   host: "localhost",

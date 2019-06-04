@@ -1,6 +1,0 @@
-#!/bin/sh
-
-echo "Running migrations"
-release_ctl eval --mfa "TeslaMate.ReleaseTasks.migrate/1" --argv -- "$@"
-echo "Migrations run successfully"
-
