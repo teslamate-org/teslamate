@@ -1,0 +1,412 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "columns": [],
+      "datasource": "TeslaMate",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 26,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "links": [],
+      "options": {},
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 2,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Startdatum",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "link": true,
+          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&&var-charging_process_id=${__cell_12}",
+          "pattern": "start_date",
+          "type": "date"
+        },
+        {
+          "alias": "Enddatum",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "end_date",
+          "thresholds": [],
+          "type": "date",
+          "unit": "short"
+        },
+        {
+          "alias": "geladen",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "charge_energy_added",
+          "thresholds": [],
+          "type": "number",
+          "unit": "kwatth"
+        },
+        {
+          "alias": "TR Start",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "start_range_km",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthkm"
+        },
+        {
+          "alias": "TR End",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "end_range_km",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthkm"
+        },
+        {
+          "alias": "SOC Start",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "start_battery_level",
+          "thresholds": [],
+          "type": "number",
+          "unit": "percent"
+        },
+        {
+          "alias": "SOC End",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "end_battery_level",
+          "thresholds": [],
+          "type": "number",
+          "unit": "percent"
+        },
+        {
+          "alias": "TR 100%",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "calculated_max_range",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthkm"
+        },
+        {
+          "alias": "Dauer",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "duration_min",
+          "thresholds": [],
+          "type": "number",
+          "unit": "m"
+        },
+        {
+          "alias": "Temperatur",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "outside_temp_avg",
+          "thresholds": [],
+          "type": "number",
+          "unit": "celsius"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": ".*_ts",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "id",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "Ort",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "address",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        },
+        {
+          "alias": "gefahrene km",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": null,
+          "mappingType": 1,
+          "pattern": "distance",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthkm"
+        },
+        {
+          "alias": "verbraucht (s. l. L.)",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "consumption_kwh",
+          "thresholds": [],
+          "type": "number",
+          "unit": "kwatth"
+        },
+        {
+          "alias": "Verbrauch (brutto)",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "consumption_kwh_100km",
+          "thresholds": [],
+          "type": "number",
+          "unit": "kwatth"
+        },
+        {
+          "alias": "kWh / h (Ø)",
+          "colorMode": "value",
+          "colors": [
+            "#96D98D",
+            "#56A64B",
+            "#37872D"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "charge_energy_added_per_hour",
+          "thresholds": [
+            "20",
+            "55"
+          ],
+          "type": "number",
+          "unit": "kwatth"
+        },
+        {
+          "alias": "km / h (Ø)",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "range_added_per_hour",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthkm"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH data AS (\n\tSELECT\n\t\textract(epoch FROM start_date) * 1000 AS start_date_ts,\n\t\textract(epoch FROM end_date) * 1000 AS end_date_ts,\n\t\tstart_date,\n\t\tend_date,\n\t\tCONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n\t\tcharge_energy_added,\n\t\tduration_min,\n\t\tstart_battery_level,\n\t\tend_battery_level,\n\t\tstart_range_km,\n\t\tend_range_km,\n\t\tcalculated_max_range,\n\t\toutside_temp_avg,\n\t\tc.id,\n\t\tlag(end_range_km) OVER (ORDER BY start_date) - start_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n\t\tcars.efficiency\n\tFROM\n\t\tcharging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id\n\tLEFT JOIN cars ON cars.id = c.car_id\n\tLEFT JOIN addresses ON addresses.id = address_id\nWHERE\n\tc.car_id = 1\n\t/* where $__timeFilter(start_date) */\n\tORDER BY\n\t\tstart_date\n)\n\nSELECT\n\tstart_date_ts,\n\tend_date_ts,\n\tstart_date,\n\tend_date,\n\taddress,\n\tcharge_energy_added,\n\tcharge_energy_added * 60 / NULLIF(duration_min, 0) as charge_energy_added_per_hour,\n\t(end_range_km - start_range_km)  * 60 / NULLIF(duration_min, 0) as range_added_per_hour,\n\tduration_min,\n\tstart_battery_level,\n\tend_battery_level,\n\tstart_range_km,\n\tend_range_km,\n\tdistance,\n\trange_loss * efficiency AS consumption_kWh,\n\trange_loss * efficiency / NULLIF(distance, 0) * 100 AS consumption_kWh_100km,\n\tcalculated_max_range,\n\toutside_temp_avg,\n\tid\nFROM\n\tdata\nWHERE\n\tdistance >= 0;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Ladehistorie",
+      "transform": "table",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 18,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1y",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "Ladehistorie",
+  "uid": "TSmNYvRRk"
+}

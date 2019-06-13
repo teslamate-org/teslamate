@@ -43,3 +43,4 @@ npm-debug.log
 config/*.env
 
 /deploy/
+conf/wizzy.json
