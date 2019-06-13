@@ -13,9 +13,7 @@ config :teslamate, TeslaMateWeb.Endpoint,
       "--watch-stdin",
       cd: Path.expand("../assets", __DIR__)
     ]
-  ]
-
-config :teslamate, TeslaMateWeb.Endpoint,
+  ],
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
@@ -39,8 +37,8 @@ config :teslamate, TeslaMate.Repo,
   pool_size: 10
 
 config :teslamate, :tesla_auth,
-  username: System.fetch_env!("USERNAME"),
-  password: System.fetch_env!("PASSWORD")
+  username: System.get_env("USERNAME"),
+  password: System.get_env("PASSWORD")
 
 config :teslamate, :mqtt,
   host: "localhost",
