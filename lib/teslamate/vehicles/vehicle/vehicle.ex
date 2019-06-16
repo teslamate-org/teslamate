@@ -216,7 +216,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   #### :online
 
-  def handle_event(:internal, {:update, :offline}, :online, data) do
+  def handle_event(:internal, {:update, event}, :online, data)
+      when event in [:offline, :asleep] do
     {:next_state, :start, data, schedule_fetch()}
   end
 
