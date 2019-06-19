@@ -21,6 +21,7 @@ defmodule LogMock do
   def close_trip(name, trip_id), do: GenServer.call(name, {:close_trip, trip_id})
 
   def start_update(name, car_id), do: GenServer.call(name, {:start_update, car_id})
+  def cancel_update(name, update_id), do: GenServer.call(name, {:cancel_update, update_id})
 
   def finish_update(name, update_id, version),
     do: GenServer.call(name, {:finish_update, update_id, version})
@@ -82,7 +83,12 @@ defmodule LogMock do
     {:reply, {:ok, 111}, state}
   end
 
-  def handle_call({:finish_update, _trip_id, _version} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:cancel_update, _update_id} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %Update{}}, state}
+  end
+
+  def handle_call({:finish_update, _upd_id, _version} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Update{}}, state}
   end

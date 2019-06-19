@@ -341,6 +341,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %VehicleState.SoftwareUpdate{status: "installing"} ->
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15)}
 
+      %VehicleState.SoftwareUpdate{status: "available"} = software_update ->
+        {:ok, %Log.Update{}} = call(data.deps.log, :cancel_update, [update_id])
+
+        Logger.warn("Update canceled | #{inspect(software_update)}")
+
+        {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+         {:next_event, :internal, {:update, {:online, vehicle}}}}
+
       %VehicleState.SoftwareUpdate{status: status} = software_update ->
         if status != "" do
           Logger.error("Update failed: #{status} | #{inspect(software_update)}")

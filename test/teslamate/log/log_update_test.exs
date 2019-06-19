@@ -28,8 +28,19 @@ defmodule TeslaMate.LogUpdateTest do
     end
   end
 
+  describe "cancel_update/1" do
+    test "deletes an update" do
+      assert %Car{id: car_id} = car_fixture()
+      assert {:ok, update_id} = Log.start_update(car_id)
+
+      assert {:ok, %Update{} = update} = Log.cancel_update(update_id)
+
+      assert nil == Repo.get(Update, update_id)
+    end
+  end
+
   describe "finish_update/1" do
-    test "closes charging process with zero charges " do
+    test "logs an update including its version" do
       assert %Car{id: car_id} = car_fixture()
       assert {:ok, update_id} = Log.start_update(car_id)
 

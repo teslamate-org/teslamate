@@ -44,3 +44,5 @@ config/*.env
 
 /deploy/
 conf/wizzy.json
+
+.env

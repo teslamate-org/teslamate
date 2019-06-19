@@ -255,6 +255,12 @@ defmodule TeslaMate.Log do
     end
   end
 
+  def cancel_update(update_id) do
+    Update
+    |> Repo.get!(update_id)
+    |> Repo.delete()
+  end
+
   def finish_update(update_id, version) do
     Update
     |> Repo.get!(update_id)
