@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :teslamate, TeslaMateWeb.Endpoint,
   http: [port: 4000],

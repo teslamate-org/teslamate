@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :teslamate,
   ecto_repos: [TeslaMate.Repo]

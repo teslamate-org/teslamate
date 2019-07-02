@@ -1,30 +1,4 @@
-# FROM elixir:1.9-alpine AS builder
-
-# begin custom Elixir image
-FROM erlang:21-alpine as builder
-
-# elixir expects utf8.
-ENV ELIXIR_VERSION="v1.9.0-rc.0" \
-    LANG=C.UTF-8
-
-RUN set -xe \
-  && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" \
-  && ELIXIR_DOWNLOAD_SHA256="fa019ba18556f53bfb77840b0970afd116517764251704b55e419becb0b384cf" \
-  && buildDeps=' \
-    ca-certificates \
-    curl \
-    make \
-  ' \
-  && apk add --no-cache --virtual .build-deps $buildDeps \
-  && curl -fSL -o elixir-src.tar.gz $ELIXIR_DOWNLOAD_URL \
-  && echo "$ELIXIR_DOWNLOAD_SHA256  elixir-src.tar.gz" | sha256sum -c - \
-  && mkdir -p /usr/local/src/elixir \
-  && tar -xzC /usr/local/src/elixir --strip-components=1 -f elixir-src.tar.gz \
-  && rm elixir-src.tar.gz \
-  && cd /usr/local/src/elixir \
-  && make install clean \
-  && apk del .build-deps
-# end cusom Elixir image
+FROM elixir:1.9-alpine AS builder
 
 RUN apk add --update --no-cache nodejs yarn git build-base && \
     mix local.rebar --force && \
@@ -43,7 +17,10 @@ RUN cd assets && \
   yarn deploy && \
   cd ..
 
-COPY . .
+COPY config config
+COPY lib lib
+COPY priv priv
+
 RUN mix do phx.digest, compile
 
 RUN mkdir -p /opt/built && mix release --path /opt/built
