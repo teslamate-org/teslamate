@@ -21,7 +21,7 @@
       "columns": [],
       "fontSize": "100%",
       "gridPos": {
-        "h": 22,
+        "h": 40,
         "w": 24,
         "x": 0,
         "y": 0
@@ -29,8 +29,8 @@
       "id": 2,
       "links": [],
       "options": {},
-      "pageSize": null,
-      "scroll": true,
+      "pageSize": 15,
+      "scroll": false,
       "showHeader": true,
       "sort": {
         "col": 2,
@@ -481,7 +481,7 @@
     "list": []
   },
   "time": {
-    "from": "now-90d",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {
