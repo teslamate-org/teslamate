@@ -77,6 +77,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1563387681891,
   "links": [],
   "panels": [
     {
@@ -141,7 +142,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tspeed AS \"Geschwindigkeit [km/h]\",\n\tpower AS \"Leistung [kW]\",\n\tideal_battery_range_km AS \"Reichweite [km]\",\n\tbattery_level AS \"SOC [%]\",\n\toutside_temp AS \"Außentemperatur [°C]\",\n\tinside_temp AS \"Innentemperatur [°C]\",\n\tdriver_temp_setting,\n\tpassenger_temp_setting,\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tspeed AS \"Geschwindigkeit [km/h]\",\n\tpower AS \"Leistung [kW]\",\n\tideal_battery_range_km AS \"Reichweite [km]\",\n\tbattery_level AS \"SOC [%]\",\n\toutside_temp AS \"Außentemperatur [°C]\",\n\tinside_temp AS \"Innentemperatur [°C]\",\n\tdriver_temp_setting,\n\tpassenger_temp_setting,\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n trip_id = $trip_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -238,7 +239,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  $__time(date),\r\n   latitude,\r\n   longitude\r\n   FROM positions\r\nWHERE  $__timeFilter(date)\r\n\r\nORDER BY date ASC",
+          "rawSql": "SELECT\r\n  $__time(date),\r\n   latitude,\r\n   longitude\r\n   FROM positions\r\nWHERE \r\n  trip_id = $trip_id AND \r\n  $__timeFilter(date)\r\nORDER BY date ASC",
           "refId": "A",
           "select": [
             [
@@ -305,7 +306,26 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "hide": 2,
+        "label": null,
+        "name": "trip_id",
+        "options": [
+          {
+            "text": "459",
+            "value": "459"
+          }
+        ],
+        "query": "459",
+        "skipUrlSync": false,
+        "type": "textbox"
+      }
+    ]
   },
   "time": {
     "from": "now-12h",

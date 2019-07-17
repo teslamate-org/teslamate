@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1563387379498,
   "links": [],
   "panels": [
     {
@@ -49,7 +50,7 @@
           "decimals": 2,
           "link": true,
           "linkTooltip": "",
-          "linkUrl": "d/zm7wN6Zgz/verbrauch?orgId=1&from=${__cell_0}&to=${__cell_1}",
+          "linkUrl": "d/zm7wN6Zgz/verbrauch?orgId=1&from=${__cell_0}&to=${__cell_1}&var-trip_id=${__cell_27}",
           "mappingType": 1,
           "pattern": "start_date",
           "thresholds": [],
@@ -447,7 +448,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\textract(epoch from start_date) * 1000 as start_date_ts,\n  extract(epoch from end_date) * 1000 as end_date_ts,\n\tstart_date,\n  end_date,\n  start_address.latitude,\n  start_address.longitude,\n  end_address.latitude,\n  end_address.longitude,\n  CONCAT_WS(', ', COALESCE(start_address.name, CONCAT_WS(' ', start_address.road, start_address.house_number)), start_address.city) as start_address,\n  CONCAT_WS(', ', COALESCE(end_address.name, CONCAT_WS(' ', end_address.road, end_address.house_number)), end_address.city) as end_address,\n  duration_min,\n\tdistance,\n\tstart_range_km - end_range_km AS RangeDiff,\n\tdistance / duration_min * 60 as speed_avg,\n\t\"consumption_kWh_100km\",\n\t\"consumption_kWh\",\n\tefficiency,\n\toutside_temp_avg,\n\tinside_temp_avg,\n\tspeed_max,\n\tpower_max,\n\tpower_min,\n\tpower_avg,\n\tstart_range_km,\n\tend_range_km,\n\tstart_km,\n\tend_km\nFROM\n\ttrips\nLEFT JOIN addresses start_address on start_address_id = start_address.id\nLEFT JOIN addresses end_address on end_address_id = end_address.id\nWHERE\n\t$__timeFilter(start_date) \n\tAND (duration_min > 1 OR end_date IS NULL)\nORDER BY\n\tstart_date DESC",
+          "rawSql": "SELECT\n\textract(epoch from start_date) * 1000 as start_date_ts,\n  extract(epoch from end_date) * 1000 as end_date_ts,\n\tstart_date,\n  end_date,\n  start_address.latitude,\n  start_address.longitude,\n  end_address.latitude,\n  end_address.longitude,\n  CONCAT_WS(', ', COALESCE(start_address.name, CONCAT_WS(' ', start_address.road, start_address.house_number)), start_address.city) as start_address,\n  CONCAT_WS(', ', COALESCE(end_address.name, CONCAT_WS(' ', end_address.road, end_address.house_number)), end_address.city) as end_address,\n  duration_min,\n\tdistance,\n\tstart_range_km - end_range_km AS RangeDiff,\n\tdistance / duration_min * 60 as speed_avg,\n\t\"consumption_kWh_100km\",\n\t\"consumption_kWh\",\n\tefficiency,\n\toutside_temp_avg,\n\tinside_temp_avg,\n\tspeed_max,\n\tpower_max,\n\tpower_min,\n\tpower_avg,\n\tstart_range_km,\n\tend_range_km,\n\tstart_km,\n\tend_km,\n\ttrips.id\nFROM\n\ttrips\nLEFT JOIN addresses start_address on start_address_id = start_address.id\nLEFT JOIN addresses end_address on end_address_id = end_address.id\nWHERE\n\t$__timeFilter(start_date) \n\tAND (duration_min > 1 OR end_date IS NULL)\n\tAND car_id = $car\nORDER BY\n\tstart_date DESC",
           "refId": "A",
           "select": [
             [
@@ -474,11 +475,44 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select id from cars;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Auto",
+        "multi": false,
+        "name": "car",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "select id from cars;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-30d",

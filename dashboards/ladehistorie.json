@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1563386880819,
   "links": [],
   "panels": [
     {
@@ -42,7 +43,7 @@
           "alias": "Startdatum",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "link": true,
-          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&&var-charging_process_id=${__cell_12}",
+          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&&var-charging_process_id=${__cell_18}",
           "pattern": "start_date",
           "type": "date"
         },
@@ -342,7 +343,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n\tSELECT\n\t\textract(epoch FROM start_date) * 1000 AS start_date_ts,\n\t\textract(epoch FROM end_date) * 1000 AS end_date_ts,\n\t\tstart_date,\n\t\tend_date,\n\t\tCONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n\t\tcharge_energy_added,\n\t\tduration_min,\n\t\tstart_battery_level,\n\t\tend_battery_level,\n\t\tstart_range_km,\n\t\tend_range_km,\n\t\tcalculated_max_range,\n\t\toutside_temp_avg,\n\t\tc.id,\n\t\tlag(end_range_km) OVER (ORDER BY start_date) - start_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n\t\tcars.efficiency\n\tFROM\n\t\tcharging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id\n\tLEFT JOIN cars ON cars.id = c.car_id\n\tLEFT JOIN addresses ON addresses.id = address_id\nWHERE\n\tc.car_id = 1\n\t/* where $__timeFilter(start_date) */\n\tORDER BY\n\t\tstart_date\n)\n\nSELECT\n\tstart_date_ts,\n\tend_date_ts,\n\tstart_date,\n\tend_date,\n\taddress,\n\tcharge_energy_added,\n\tcharge_energy_added * 60 / NULLIF(duration_min, 0) as charge_energy_added_per_hour,\n\t(end_range_km - start_range_km)  * 60 / NULLIF(duration_min, 0) as range_added_per_hour,\n\tduration_min,\n\tstart_battery_level,\n\tend_battery_level,\n\tstart_range_km,\n\tend_range_km,\n\tdistance,\n\trange_loss * efficiency AS consumption_kWh,\n\trange_loss * efficiency / NULLIF(distance, 0) * 100 AS consumption_kWh_100km,\n\tcalculated_max_range,\n\toutside_temp_avg,\n\tid\nFROM\n\tdata\nWHERE\n\tdistance >= 0;",
+          "rawSql": "WITH data AS (\n\tSELECT\n\t\textract(epoch FROM start_date) * 1000 AS start_date_ts,\n\t\textract(epoch FROM end_date) * 1000 AS end_date_ts,\n\t\tstart_date,\n\t\tend_date,\n\t\tCONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n\t\tcharge_energy_added,\n\t\tduration_min,\n\t\tstart_battery_level,\n\t\tend_battery_level,\n\t\tstart_range_km,\n\t\tend_range_km,\n\t\tcalculated_max_range,\n\t\toutside_temp_avg,\n\t\tc.id,\n\t\tlag(end_range_km) OVER (ORDER BY start_date) - start_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n\t\tcars.efficiency\n\tFROM\n\t\tcharging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id\n\tLEFT JOIN cars ON cars.id = c.car_id\n\tLEFT JOIN addresses ON addresses.id = address_id\nWHERE\n\tc.car_id = $car\n\t/* where $__timeFilter(start_date) */\n\tORDER BY\n\t\tstart_date\n)\n\nSELECT\n\tstart_date_ts,\n\tend_date_ts,\n\tstart_date,\n\tend_date,\n\taddress,\n\tcharge_energy_added,\n\tcharge_energy_added * 60 / NULLIF(duration_min, 0) as charge_energy_added_per_hour,\n\t(end_range_km - start_range_km)  * 60 / NULLIF(duration_min, 0) as range_added_per_hour,\n\tduration_min,\n\tstart_battery_level,\n\tend_battery_level,\n\tstart_range_km,\n\tend_range_km,\n\tdistance,\n\trange_loss * efficiency AS consumption_kWh,\n\trange_loss * efficiency / NULLIF(distance, 0) * 100 AS consumption_kWh_100km,\n\tcalculated_max_range,\n\toutside_temp_avg,\n\tid\nFROM\n\tdata\nWHERE\n\tdistance >= 0;",
           "refId": "A",
           "select": [
             [
@@ -371,11 +372,44 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select id from cars;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Auto",
+        "multi": false,
+        "name": "car",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "select id from cars;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-1y",

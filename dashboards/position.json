@@ -29,6 +29,7 @@
       "lineColor": "red",
       "links": [],
       "maxDataPoints": 500,
+      "options": {},
       "pointColor": "royalblue",
       "targets": [
         {
@@ -36,7 +37,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select \n$__time(date),\nlatitude,\nlongitude\nfrom positions\norder by date desc\nlimit 1;",
+          "rawSql": "select \n$__time(date),\nlatitude,\nlongitude\nfrom positions\nwhere car_id = $car\norder by date desc\nlimit 1;",
           "refId": "A",
           "select": [
             [
@@ -67,11 +68,43 @@
       "type": "pr0ps-trackmap-panel"
     }
   ],
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select id from cars;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Auto",
+        "multi": false,
+        "name": "car",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "select id from cars;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-6h",

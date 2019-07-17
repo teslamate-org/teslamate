@@ -82,7 +82,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select $__time(start_date), state from states order by start_date desc limit 1;",
+          "rawSql": "select $__time(start_date), state from states where car_id = $car order by start_date desc limit 1;",
           "refId": "A",
           "select": [
             [
@@ -186,7 +186,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select $__time(start_date), state from states order by start_date desc limit 1;",
+          "rawSql": "select $__time(start_date), state from states where car_id = $car order by start_date desc limit 1;",
           "refId": "A",
           "select": [
             [
@@ -290,7 +290,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH FROM (max(end_date) - min(start_date))) / 60), 1 as time from trips",
+          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH FROM (max(end_date) - min(start_date))) / 60), 1 as time from trips where car_id = $car;",
           "refId": "A",
           "select": [
             [
@@ -376,7 +376,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select\n$__time(start_date),\ncase \n  when state = 'offline' then 0\n  when state = 'asleep'  then 1\n  when state = 'online'  then 2\nend as \"Zustand\"\nfrom states\nwhere $__timeFilter(start_date);",
+          "rawSql": "select\n$__time(start_date),\ncase \n  when state = 'offline' then 0\n  when state = 'asleep'  then 1\n  when state = 'online'  then 2\nend as \"Zustand\"\nfrom states\nwhere car_id = $car AND $__timeFilter(start_date);",
           "refId": "A",
           "select": [
             [
@@ -460,11 +460,43 @@
       "writeMetricNames": false
     }
   ],
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select id from cars;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Auto",
+        "multi": false,
+        "name": "car",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "select id from cars;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-2d",

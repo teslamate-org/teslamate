@@ -73,7 +73,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(start_date),\n\tcalculated_max_range as \"Maximalreichweite\",\n\tpositions.odometer as \"Kilometerstand\"\nFROM\n\tcharging_processes\n\tINNER JOIN positions ON positions.id = charging_processes.position_id\n\tWHERE\n\t\t$__timeFilter(start_date);",
+          "rawSql": "SELECT\n\t$__time(start_date),\n\tcalculated_max_range as \"Maximalreichweite\",\n\tpositions.odometer as \"Kilometerstand\"\nFROM\n\tcharging_processes \n\tINNER JOIN positions ON positions.id = charging_processes.position_id\n\tWHERE\n\t  charging_processes.car_id = $car AND\n\t\t$__timeFilter(start_date);",
           "refId": "A",
           "select": [
             [
@@ -143,7 +143,39 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select id from cars;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Auto",
+        "multi": false,
+        "name": "car",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "select id from cars;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-6M",

@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1563385994138,
   "links": [],
   "panels": [
     {
@@ -84,7 +85,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select \n  sum(\"consumption_kWh\") / sum(distance) * 100\nfrom trips \nwhere \n  distance is not null \n  and \"consumption_kWh\" is not null\n  and car_id = 1",
+          "rawSql": "select \n  sum(\"consumption_kWh\") / sum(distance) * 100\nfrom trips \nwhere \n  distance is not null \n  and \"consumption_kWh\" is not null\n  and car_id = $car",
           "refId": "A",
           "select": [
             [
@@ -189,7 +190,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH d1 AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_range_km) OVER (ORDER BY start_date) - start_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM\n\t\tcharging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL\n\tORDER BY\n\t\tstart_date\n),\nd2 AS (\nSELECT\n\tcar_id,\n\tsum(range_loss) AS range_loss,\n\tsum(distance) AS distance\nFROM\n\td1\nWHERE\n\tdistance >= 0 AND range_loss >= 0\nGROUP BY\n\tcar_id\n)\nSELECT\n\trange_loss * c.efficiency / distance * 100\nFROM\n\td2\n\tLEFT JOIN cars c ON c.id = car_id",
+          "rawSql": "WITH d1 AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_range_km) OVER (ORDER BY start_date) - start_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM\n\t\tcharging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car\n\tORDER BY\n\t\tstart_date\n),\nd2 AS (\nSELECT\n\tcar_id,\n\tsum(range_loss) AS range_loss,\n\tsum(distance) AS distance\nFROM\n\td1\nWHERE\n\tdistance >= 0 AND range_loss >= 0\nGROUP BY\n\tcar_id\n)\nSELECT\n\trange_loss * c.efficiency / distance * 100\nFROM\n\td2\n\tLEFT JOIN cars c ON c.id = car_id",
           "refId": "A",
           "select": [
             [
@@ -294,7 +295,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select sum(distance) from trips where car_id = 1;",
+          "rawSql": "select sum(distance) from trips where car_id = $car;",
           "refId": "A",
           "select": [
             [
@@ -448,7 +449,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH t AS (\n\tSELECT\n\t\tROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 AS outside_temp,\n\t\tsum(\"consumption_kWh\") AS total_consumption,\n\t\tsum(distance) AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\ttrips\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND \"consumption_kWh\" IS NOT NULL\n\t\tAND car_id = 1\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp,\n\ttotal_consumption / total_distance * 100 AS consumption,\n\t(total_consumption / total_distance) / c.efficiency AS efficiency,\n\ttotal_distance,\n\t(total_distance / duration) * 60 as avg_speed\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
+          "rawSql": "WITH t AS (\n\tSELECT\n\t\tROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 AS outside_temp,\n\t\tsum(\"consumption_kWh\") AS total_consumption,\n\t\tsum(distance) AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\ttrips\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND \"consumption_kWh\" IS NOT NULL\n\t\tAND car_id = $car\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp,\n\ttotal_consumption / total_distance * 100 AS consumption,\n\t(total_consumption / total_distance) / c.efficiency AS efficiency,\n\ttotal_distance,\n\t(total_distance / duration) * 60 as avg_speed\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
           "refId": "A",
           "select": [
             [
@@ -479,11 +480,49 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select id from cars;",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Auto",
+        "multi": false,
+        "name": "car",
+        "options": [
+          {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "select id from cars;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-6h",

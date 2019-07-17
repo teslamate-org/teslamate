@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1563387022190,
   "links": [],
   "panels": [
     {
@@ -79,7 +80,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  battery_level as \"SOC [%]\",\n  charger_power as \"Leistung [kW]\",\n  ideal_battery_range_km as \"Reichweite [km]\",\n  charger_voltage as \"Ladespannung [V]\",\n  charger_phases as \"Phasen\",\n  charger_actual_current as \"Stromstärke [A]\",\n  charger_pilot_current as \"Stromstärke (pilot) [A]\",\n  outside_temp as \"Außentemperatur [°C]\"\n  \nFROM\n  charges\nWHERE\n  $__timeFilter(date)\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n  battery_level as \"SOC [%]\",\n  charger_power as \"Leistung [kW]\",\n  ideal_battery_range_km as \"Reichweite [km]\",\n  charger_voltage as \"Ladespannung [V]\",\n  charger_phases as \"Phasen\",\n  charger_actual_current as \"Stromstärke [A]\",\n  charger_pilot_current as \"Stromstärke (pilot) [A]\",\n  outside_temp as \"Außentemperatur [°C]\"\nFROM\n  charges c\nWHERE\n  $__timeFilter(date) and c.charging_process_id = $charging_process_id\nORDER BY\n  date ASC",
           "refId": "A",
           "select": [
             [
@@ -164,7 +165,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(c.start_date),\n   p.latitude as lat,\n   p.longitude as lng\nFROM charging_processes c\nleft join positions p on p.id = c.position_id\nWHERE  $__timeFilter(c.start_date)\nORDER BY c.start_date ASC",
+          "rawSql": "SELECT\n  $__time(c.start_date),\n   p.latitude as lat,\n   p.longitude as lng\nFROM charging_processes c\nleft join positions p on p.id = c.position_id\nWHERE  $__timeFilter(c.start_date) and c.id = $charging_process_id\nORDER BY c.start_date ASC",
           "refId": "A",
           "select": [
             [
@@ -195,7 +196,27 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "hide": 2,
+        "label": "",
+        "name": "charging_process_id",
+        "options": [
+          {
+            "selected": false,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "28",
+        "skipUrlSync": false,
+        "type": "textbox"
+      }
+    ]
   },
   "time": {
     "from": "now/d",
