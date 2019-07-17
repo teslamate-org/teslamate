@@ -22,7 +22,7 @@
       "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
-        "h": 26,
+        "h": 39,
         "w": 24,
         "x": 0,
         "y": 0
@@ -30,8 +30,8 @@
       "id": 6,
       "links": [],
       "options": {},
-      "pageSize": null,
-      "scroll": true,
+      "pageSize": 15,
+      "scroll": false,
       "showHeader": true,
       "sort": {
         "col": 2,
@@ -303,7 +303,7 @@
             "55"
           ],
           "type": "number",
-          "unit": "kwatth"
+          "unit": "none"
         },
         {
           "alias": "km / h (Ø)",

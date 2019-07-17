@@ -24,6 +24,7 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "fill": 1,
+      "fillGradient": 4,
       "gridPos": {
         "h": 21,
         "w": 24,
@@ -46,6 +47,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -53,7 +57,7 @@
       "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
-      "steppedLine": false,
+      "steppedLine": true,
       "targets": [
         {
           "alias": "",
@@ -128,7 +132,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {

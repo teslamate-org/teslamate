@@ -86,6 +86,7 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "fill": 1,
+      "fillGradient": 1,
       "gridPos": {
         "h": 19,
         "w": 12,
@@ -108,6 +109,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -216,6 +220,7 @@
       "lineColor": "red",
       "links": [],
       "maxDataPoints": 50000,
+      "options": {},
       "pointColor": "royalblue",
       "targets": [
         {
@@ -296,7 +301,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {

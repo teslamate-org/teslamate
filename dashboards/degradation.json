@@ -25,6 +25,7 @@
       "datasource": "TeslaMate",
       "decimals": 2,
       "fill": 1,
+      "fillGradient": 3,
       "gridPos": {
         "h": 21,
         "w": 24,
@@ -47,7 +48,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -61,7 +64,7 @@
       ],
       "spaceLength": 10,
       "stack": false,
-      "steppedLine": false,
+      "steppedLine": true,
       "targets": [
         {
           "alias": "",
@@ -117,7 +120,7 @@
           "label": "",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": "0",
           "show": true
         },
         {
@@ -136,15 +139,15 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now/M",
-    "to": "now/M"
+    "from": "now-6M",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [

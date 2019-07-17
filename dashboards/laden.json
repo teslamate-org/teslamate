@@ -25,6 +25,7 @@
       "datasource": "TeslaMate",
       "decimals": 2,
       "fill": 1,
+      "fillGradient": 1,
       "gridPos": {
         "h": 20,
         "w": 16,
@@ -45,6 +46,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -151,6 +155,7 @@
       "lineColor": "red",
       "links": [],
       "maxDataPoints": 500,
+      "options": {},
       "pointColor": "royalblue",
       "targets": [
         {
@@ -185,8 +190,8 @@
       "type": "pr0ps-trackmap-panel"
     }
   ],
-  "refresh": "10s",
-  "schemaVersion": 18,
+  "refresh": false,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
