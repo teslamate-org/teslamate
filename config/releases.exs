@@ -8,8 +8,8 @@ config :teslamate, TeslaMate.Repo,
   pool_size: 15
 
 config :teslamate, TeslaMateWeb.Endpoint,
-  http: [:inet6, port: System.fetch_env!("PORT")],
-  url: [host: System.fetch_env!("VIRTUAL_HOST"), port: 80],
+  http: [:inet6, port: System.get_env("PORT", "4000")],
+  url: [host: System.get_env("VIRTUAL_HOST", "localhost"), port: 80],
   secret_key_base: System.fetch_env!("SECRET_KEY_BASE"),
   live_view: [
     signing_salt: System.fetch_env!("SIGNING_SALT")

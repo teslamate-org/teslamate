@@ -41,4 +41,6 @@ RUN chown -R nobody: .
 
 USER nobody
 
-CMD trap 'exit' INT; /opt/app/bin/teslamate start
+EXPOSE 4000
+
+CMD trap 'exit' INT; bin/teslamate start
