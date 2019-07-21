@@ -5,7 +5,7 @@ config :teslamate, TeslaMate.Repo,
   password: System.fetch_env!("DATABASE_PASS"),
   database: System.fetch_env!("DATABASE_NAME"),
   hostname: System.fetch_env!("DATABASE_HOST"),
-  pool_size: 15
+  pool_size: System.get_env("DATABASE_POOL_SIZE", "15") |> String.to_integer()
 
 config :teslamate, TeslaMateWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT", "4000")],
@@ -19,28 +19,27 @@ config :teslamate, :tesla_auth,
   username: System.fetch_env!("TESLA_USERNAME"),
   password: System.fetch_env!("TESLA_PASSWORD")
 
-config :teslamate, :mqtt,
-  host: System.fetch_env!("MQTT_HOST"),
-  username: System.fetch_env!("MQTT_USERNAME"),
-  password: System.fetch_env!("MQTT_PASSWORD")
+if System.get_env("DISABLE_MQTT") != "true" do
+  config :teslamate, :mqtt,
+    host: System.fetch_env!("MQTT_HOST"),
+    username: System.fetch_env!("MQTT_USERNAME"),
+    password: System.fetch_env!("MQTT_PASSWORD")
+end
 
 config :logger,
-  backends: [LoggerTelegramBackend, :console],
   level: :info,
-  handle_otp_reports: true,
-  handle_sasl_reports: false,
-  compile_time_purge_level: :info
+  compile_time_purge_matching: [[level_lower_than: :info]]
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: []
 
-config :logger, :telegram,
-  level: :error,
-  chat_id: System.fetch_env!("CHAT_ID"),
-  token: System.fetch_env!("TOKEN")
+if System.get_env("ENABLE_LOGGER_TELEGRAM") == "true" do
+  config :logger,
+    backends: [LoggerTelegramBackend, :console]
 
-config :teslamate, :mqtt,
-  host: System.fetch_env!("MQTT_HOST"),
-  username: System.fetch_env!("MQTT_USERNAME"),
-  password: System.fetch_env!("MQTT_PASSWORD")
+  config :logger, :telegram,
+    level: :error,
+    chat_id: System.fetch_env!("CHAT_ID"),
+    token: System.fetch_env!("TOKEN")
+end

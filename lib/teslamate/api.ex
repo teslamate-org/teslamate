@@ -39,7 +39,8 @@ defmodule TeslaMate.Api do
   # Callbacks
 
   @impl true
-  def init(opts) do
+  def init(_opts) do
+    opts = Application.fetch_env!(:teslamate, :tesla_auth)
     username = Keyword.fetch!(opts, :username)
     password = Keyword.fetch!(opts, :password)
 
