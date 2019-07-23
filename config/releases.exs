@@ -1,5 +1,13 @@
 import Config
 
+defmodule Util do
+  def random_encoded_bytes do
+    :crypto.strong_rand_bytes(6) |> Base.encode64()
+  end
+end
+
+config :gettext, :default_locale, System.get_env("LOCALE")
+
 config :teslamate, TeslaMate.Repo,
   username: System.fetch_env!("DATABASE_USER"),
   password: System.fetch_env!("DATABASE_PASS"),
@@ -10,10 +18,8 @@ config :teslamate, TeslaMate.Repo,
 config :teslamate, TeslaMateWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT", "4000")],
   url: [host: System.get_env("VIRTUAL_HOST", "localhost"), port: 80],
-  secret_key_base: System.fetch_env!("SECRET_KEY_BASE"),
-  live_view: [
-    signing_salt: System.fetch_env!("SIGNING_SALT")
-  ]
+  secret_key_base: System.get_env("SECRET_KEY_BASE", Util.random_encoded_bytes()),
+  live_view: [signing_salt: System.get_env("SIGNING_SALT", Util.random_encoded_bytes())]
 
 config :teslamate, :tesla_auth,
   username: System.fetch_env!("TESLA_USERNAME"),
@@ -22,8 +28,8 @@ config :teslamate, :tesla_auth,
 if System.get_env("DISABLE_MQTT") != "true" do
   config :teslamate, :mqtt,
     host: System.fetch_env!("MQTT_HOST"),
-    username: System.fetch_env!("MQTT_USERNAME"),
-    password: System.fetch_env!("MQTT_PASSWORD")
+    username: System.get_env("MQTT_USERNAME"),
+    password: System.get_env("MQTT_PASSWORD")
 end
 
 config :logger,

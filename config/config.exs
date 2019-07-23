@@ -18,6 +18,4 @@ config :logger, :console,
 
 config :phoenix, :json_library, Jason
 
-config :gettext, :default_locale, "de"
-
 import_config "#{Mix.env()}.exs"

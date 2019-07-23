@@ -2,7 +2,7 @@ defmodule TeslaMate.Release do
   @app :teslamate
 
   def migrate do
-    for repo <- repos() |> IO.inspect() do
+    for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
     end
   end
