@@ -6,10 +6,10 @@ defmodule TeslaMate.Application do
   def start(_type, _args) do
     [
       TeslaMate.Repo,
-      TeslaMateWeb.Endpoint,
       TeslaMate.Api,
       TeslaMate.Vehicles,
-      if(enable_mqtt, do: TeslaMate.Mqtt)
+      TeslaMateWeb.Endpoint,
+      if(enable_mqtt(), do: TeslaMate.Mqtt)
     ]
     |> Enum.reject(&is_nil/1)
     |> Supervisor.start_link(strategy: :one_for_one, name: TeslaMate.Supervisor)
