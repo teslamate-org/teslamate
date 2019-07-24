@@ -8,6 +8,6 @@ end
 
 TeslaMate.Repo.start_link()
 
-ExUnit.start()
+ExUnit.start(assert_receive_timeout: 200)
 
 # Ecto.Adapters.SQL.Sandbox.mode(TeslaMate.Repo, :manual)

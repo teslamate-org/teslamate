@@ -1,5 +1,7 @@
 # TeslaMate
 
+[![Build Status](https://travis-ci.org/adriankumpf/teslamate.svg?branch=master)](https://travis-ci.org/adriankumpf/teslamate)
+
 A a data logger for your Tesla.
 
 - Written in [Elixir](https://elixir-lang.org/)
