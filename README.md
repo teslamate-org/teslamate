@@ -4,10 +4,10 @@
 [![](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate 'Get your own version badge on microbadger.com')
 [![](https://images.microbadger.com/badges/image/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate 'Get your own image badge on microbadger.com')
 
-A a data logger for your Tesla.
+A data logger for your Tesla.
 
 - Written in [Elixir](https://elixir-lang.org/)
-- Data is stored in PostgeSQL
+- Data is stored in PostgreSQL
 - Visualization and data analysis with Grafana
 - Current vehicle data is published to a local MQTT Broker _(optional)_
 
@@ -53,7 +53,7 @@ A a data logger for your Tesla.
 
 ### Docker Installation (recommended)
 
-If you already have PostgeSQL and Grafana running elsewhere just pull the image
+If you already have PostgreSQL and Grafana running elsewhere just pull the image
 and run the container:
 
 ```bash
@@ -143,7 +143,7 @@ Finally, [import](#dashboards) the Grafana dashboards.
 
 ### Manual Installation
 
-1. Install PostgeSQL and create a database (e.g. `teslamate`)
+1. Install PostgreSQL and create a database (e.g. `teslamate`)
 2. Install Grafana with the following plugins: `pr0ps-trackmap-panel` and
    `natel-discrete-panel`. Then [import](#dashboards) the dashboard JSON files.
 3. _Optional:_ Install [mosquitto](https://mosquitto.org/) or another MQTT broker
@@ -340,7 +340,7 @@ those 21 minutes, nothing is logged.
 to start scraping again. In short, create a workflow with
 [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm&hl=en)
 (Android) or [Shortcuts](https://support.apple.com/guide/shortcuts/welcome/ios)
-(iOS) that listens for connected bluetooth devices. If a connection to your
+(iOS) that listens for connected Bluetooth devices. If a connection to your
 Tesla is established, send an HTTP PUT request to your publicly exposed
 TeslaMate instance.
 
