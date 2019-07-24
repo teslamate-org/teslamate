@@ -2,54 +2,39 @@
   "annotations": {
     "list": [
       {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "limit": 100,
-        "name": "Annotations & Alerts",
-        "showIn": 0,
-        "type": "dashboard"
-      },
-      {
-        "datasource": "TeslaMate",
         "enable": true,
         "hide": false,
         "iconColor": "rgba(255, 96, 96, 1)",
         "limit": 100,
-        "name": "Laden",
+        "name": "Charging",
         "rawQuery": "SELECT\n\t$__time(start_date),\n\tconcat('Laden: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
         "showIn": 0,
         "tags": [],
         "type": "tags"
       },
       {
-        "datasource": "TeslaMate",
         "enable": true,
         "hide": false,
         "iconColor": "#508642",
         "limit": 100,
-        "name": "Laden fertig",
+        "name": "Charging finished",
         "rawQuery": "SELECT\n\t$__time(end_date),\n\tconcat('Laden: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
         "showIn": 0,
         "tags": [],
         "type": "tags"
       },
       {
-        "datasource": "TeslaMate",
         "enable": true,
         "hide": false,
         "iconColor": "#64b0c8",
         "limit": 100,
-        "name": "Schlafen",
+        "name": "Asleep",
         "rawQuery": "SELECT $__time(start_date),\nstate as text \nFROM states\nWHERE $__timeFilter(start_date) and state = 'asleep'\norder by start_date desc\n",
         "showIn": 0,
         "tags": [],
         "type": "tags"
       },
       {
-        "datasource": "TeslaMate",
         "enable": true,
         "hide": false,
         "iconColor": "#ba43a9",
@@ -61,7 +46,6 @@
         "type": "tags"
       },
       {
-        "datasource": "TeslaMate",
         "enable": true,
         "hide": false,
         "iconColor": "rgb(158, 154, 154)",
@@ -77,7 +61,6 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1563387681891,
   "links": [],
   "panels": [
     {
@@ -85,7 +68,6 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "TeslaMate",
       "fill": 1,
       "fillGradient": 1,
       "gridPos": {
@@ -119,12 +101,12 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "Reichweite [km]",
+          "alias": "Range [km]",
           "fill": 0,
           "yaxis": 2
         },
         {
-          "alias": "Höhe [m]",
+          "alias": "Height [m]",
           "yaxis": 2
         },
         {
@@ -142,7 +124,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tspeed AS \"Geschwindigkeit [km/h]\",\n\tpower AS \"Leistung [kW]\",\n\tideal_battery_range_km AS \"Reichweite [km]\",\n\tbattery_level AS \"SOC [%]\",\n\toutside_temp AS \"Außentemperatur [°C]\",\n\tinside_temp AS \"Innentemperatur [°C]\",\n\tdriver_temp_setting,\n\tpassenger_temp_setting,\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n trip_id = $trip_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tspeed AS \"Range [km/h]\",\n\tpower AS \"Power [kW]\",\n\tideal_battery_range_km AS \"Range [km]\",\n\tbattery_level AS \"SOC [%]\",\n\toutside_temp AS \"Outdoor Temperature [°C]\",\n\tinside_temp AS \"Indoor Temperature [°C]\",\n\tdriver_temp_setting,\n\tpassenger_temp_setting,\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n trip_id = $trip_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -170,7 +152,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Verbrauch",
+      "title": "Consumption",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -357,6 +339,6 @@
     ]
   },
   "timezone": "",
-  "title": "Verbrauch",
+  "title": "Consumption",
   "uid": "zm7wN6Zgz"
 }

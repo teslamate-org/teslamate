@@ -1,17 +1,4 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
-  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
@@ -20,7 +7,7 @@
     {
       "autoZoom": true,
       "gridPos": {
-        "h": 21,
+        "h": 16,
         "w": 24,
         "x": 0,
         "y": 0
@@ -28,7 +15,7 @@
       "id": 2,
       "lineColor": "red",
       "links": [],
-      "maxDataPoints": 10000000,
+      "maxDataPoints": 500,
       "options": {},
       "pointColor": "royalblue",
       "targets": [
@@ -37,20 +24,20 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tto_timestamp(floor((extract('epoch' FROM date) / 30)) * 30) AT TIME ZONE 'UTC' AS time,\n\tavg(latitude) AS lat,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "rawSql": "select \n$__time(date),\nlatitude,\nlongitude\nfrom positions\nwhere car_id = $car\norder by date desc\nlimit 1;",
           "refId": "A",
           "select": [
             [
               {
                 "params": [
-                  "id"
+                  "latitude"
                 ],
                 "type": "column"
               }
             ]
           ],
-          "table": "charging",
-          "timeColumn": "Datum",
+          "table": "addresses",
+          "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
           "where": [
             {
@@ -61,11 +48,13 @@
           ]
         }
       ],
-      "title": "MAP",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Position",
+      "transparent": true,
       "type": "pr0ps-trackmap-panel"
     }
   ],
-  "refresh": false,
   "schemaVersion": 19,
   "style": "dark",
   "tags": [],
@@ -77,7 +66,6 @@
           "text": "1",
           "value": "1"
         },
-        "datasource": "TeslaMate",
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
@@ -105,7 +93,7 @@
     ]
   },
   "time": {
-    "from": "now-6M",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {
@@ -134,6 +122,6 @@
     ]
   },
   "timezone": "",
-  "title": "Visited",
-  "uid": "RG_DxSmgk"
+  "title": "Position",
+  "uid": "Dz6UUdzWk"
 }

@@ -1,17 +1,4 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
-  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
@@ -21,12 +8,12 @@
       "columns": [],
       "fontSize": "100%",
       "gridPos": {
-        "h": 14,
+        "h": 21,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 4,
+      "id": 2,
       "links": [],
       "options": {},
       "pageSize": null,
@@ -38,30 +25,185 @@
       },
       "styles": [
         {
-          "alias": "Name",
+          "alias": "Startdatum",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "pattern": "display_name",
-          "type": "string"
+          "decimals": 2,
+          "link": true,
+          "linkTooltip": "",
+          "linkUrl": "d/zm7wN6Zgz/verbrauch?orgId=1&from=${__cell_0}&to=${__cell_1}",
+          "mappingType": 1,
+          "pattern": "start_date",
+          "thresholds": [],
+          "type": "date",
+          "unit": "short"
         },
         {
-          "alias": "Besuche",
+          "alias": "Enddatum",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "end_date",
+          "thresholds": [],
+          "type": "date",
+          "unit": "short"
+        },
+        {
+          "alias": "TR Start",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "start_range",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthkm"
+        },
+        {
+          "alias": "TR Ende",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "end_range",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthkm"
+        },
+        {
+          "alias": "TR-Verlust",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "range_diff",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthkm"
+        },
+        {
+          "alias": "Zeitspanne",
           "colorMode": "value",
           "colors": [
-            "rgb(136, 138, 136)",
-            "#96D98D",
-            "#37872D"
+            "rgb(133, 142, 133)",
+            "#56A64B",
+            "#C4162A"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "duration",
+          "thresholds": [
+            "43200"
+          ],
+          "type": "number",
+          "unit": "s"
+        },
+        {
+          "alias": "TR-Verlust / h",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "range_lost_per_hour",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthkm"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": ".*_ts",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "Standby",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 0,
           "mappingType": 1,
-          "pattern": "visited",
-          "thresholds": [
-            "2",
-            "10",
-            "100000000000"
-          ],
+          "pattern": "standby",
+          "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "percentunit"
+        },
+        {
+          "alias": "Verbrauch",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "consumption",
+          "thresholds": [],
+          "type": "number",
+          "unit": "kwatth"
+        },
+        {
+          "alias": "Ø-Leistung",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "avg_power",
+          "thresholds": [],
+          "type": "number",
+          "unit": "watt"
         },
         {
           "alias": "",
@@ -80,11 +222,12 @@
       ],
       "targets": [
         {
+          "alias": "",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tcount(*) AS visited,\n\tdisplay_name\nFROM\n\ttrips t\nINNER JOIN addresses a ON end_address_id = a.id\nWHERE t.car_id = $car\nGROUP BY\n\tdisplay_name\nORDER BY\n\tvisited desc\nLIMIT 15",
+          "rawSql": "SELECT\n\textract(epoch FROM v.start_date) * 1000 AS start_date_ts,\n\textract(epoch FROM v.end_date) * 1000 AS end_date_ts,\n\tv.start_date,\n\tv.end_date,\n\tv.duration,\n\ts.sleep / v.duration as standby,\n\tv.start_range - v.end_range AS range_diff,\n\t(v.start_range - v.end_range) * c.efficiency AS consumption,\t\n\t((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 as avg_power,\n\t(v.start_range - v.end_range) / (v.duration / 3600) AS range_lost_per_hour,\n\tv.start_range,\n\tv.end_range\nFROM (\n\tSELECT\n\t\tlag(t.end_date)\n\t\tOVER (ORDER BY t.id ASC) AS start_date,\n\t\tt.start_date AS end_date,\n\t\tlag(t.end_range_km)\n\t\tOVER (ORDER BY t.id ASC) AS start_range,\n\t\tt.start_range_km AS end_range,\n\t\tlag(t.end_km) OVER (ORDER BY t.id ASC) AS start_km,\n\t\tt.start_km AS end_km,\n\t\tEXTRACT(EPOCH FROM age(t.start_date, lag(t.end_date) OVER (ORDER BY t.id ASC))) AS duration\n\tFROM\n\t\ttrips t\n\tWHERE\n\t\tcar_id = $car\n\tORDER BY\n\t\tid DESC) v,\n\t\tLATERAL (\n\t\t  SELECT \n\t\t    EXTRACT(EPOCH FROM sum(age(end_date, start_date))) as sleep\n\t\t  FROM \n        states s\n\t\t  WHERE \n        state = 'asleep' \n\t\t    AND v.start_date <= s.start_date \n\t\t    AND s.end_date <= v.end_date\n\t\t) s,\n\t\tLATERAL (select efficiency from cars where id = 1) c\nWHERE\n\tv.duration > ($duration * 60 * 60)\n\tAND v.start_range - v.end_range >= 0\n\tAND v.end_km - v.start_km < 1;\n",
           "refId": "A",
           "select": [
             [
@@ -106,201 +249,7 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 15",
-      "transform": "table",
-      "type": "table"
-    },
-    {
-      "columns": [],
-      "fontSize": "100%",
-      "gridPos": {
-        "h": 21,
-        "w": 24,
-        "x": 0,
-        "y": 14
-      },
-      "id": 2,
-      "links": [],
-      "options": {},
-      "pageSize": null,
-      "scroll": true,
-      "showHeader": true,
-      "sort": {
-        "col": 7,
-        "desc": true
-      },
-      "styles": [
-        {
-          "alias": "Aktualisiert",
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "pattern": "updated_at",
-          "type": "date"
-        },
-        {
-          "alias": "Name",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "link": true,
-          "linkTargetBlank": true,
-          "linkUrl": "https://www.google.com/maps/search/?api=1&query=${__cell_0},${__cell_1}",
-          "mappingType": 1,
-          "pattern": "name",
-          "thresholds": [],
-          "type": "string",
-          "unit": "short"
-        },
-        {
-          "alias": "Stadtteil",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "neighbourhood",
-          "thresholds": [],
-          "type": "string",
-          "unit": "short"
-        },
-        {
-          "alias": "Stadt",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "city",
-          "thresholds": [],
-          "type": "string",
-          "unit": "short"
-        },
-        {
-          "alias": "Bundesland",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "state",
-          "thresholds": [],
-          "type": "string",
-          "unit": "short"
-        },
-        {
-          "alias": "Land",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "country",
-          "thresholds": [],
-          "type": "number",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "latitude",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "longitude",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "decimals": 2,
-          "pattern": "/.*/",
-          "thresholds": [],
-          "type": "number",
-          "unit": "short"
-        }
-      ],
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "select\nlatitude,\nlongitude,\nCOALESCE(name, CONCAT(road, ' ', house_number)) as name,\nneighbourhood,\ncity,\nstate,\ncountry,\nupdated_at\nfrom addresses\nwhere $__timeFilter(updated_at)",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Destinationen",
+      "title": "Vampire Drain",
       "transform": "table",
       "type": "table"
     }
@@ -313,10 +262,62 @@
       {
         "allValue": null,
         "current": {
+          "tags": [],
+          "text": "6",
+          "value": "6"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "min. Standzeit (h)",
+        "multi": false,
+        "name": "duration",
+        "options": [
+          {
+            "selected": false,
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": true,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "12",
+            "value": "12"
+          },
+          {
+            "selected": false,
+            "text": "18",
+            "value": "18"
+          },
+          {
+            "selected": false,
+            "text": "24",
+            "value": "24"
+          }
+        ],
+        "query": "0,1,3,6,12,18,24",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
           "text": "1",
           "value": "1"
         },
-        "datasource": "TeslaMate",
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
@@ -344,7 +345,7 @@
     ]
   },
   "time": {
-    "from": "now-30d",
+    "from": "now-3M",
     "to": "now"
   },
   "timepicker": {
@@ -373,6 +374,6 @@
     ]
   },
   "timezone": "",
-  "title": "Adressen",
-  "uid": "ZzhF-aRWz"
+  "title": "Vampire Drain",
+  "uid": "zhHx2Fggk"
 }

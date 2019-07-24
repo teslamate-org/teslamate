@@ -1,21 +1,7 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
-  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1563387320678,
   "links": [],
   "panels": [
     {
@@ -39,7 +25,7 @@
       },
       "styles": [
         {
-          "alias": "Startdatum",
+          "alias": "Start Date",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -58,7 +44,7 @@
           "unit": "short"
         },
         {
-          "alias": "Enddatum",
+          "alias": "End Date",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -90,7 +76,7 @@
           "unit": "lengthkm"
         },
         {
-          "alias": "TR Ende",
+          "alias": "TR End",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -106,7 +92,7 @@
           "unit": "lengthkm"
         },
         {
-          "alias": "TR-Verlust",
+          "alias": "TR Loss",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -122,7 +108,7 @@
           "unit": "lengthkm"
         },
         {
-          "alias": "Zeitspanne",
+          "alias": "Period",
           "colorMode": "value",
           "colors": [
             "rgb(133, 142, 133)",
@@ -140,7 +126,7 @@
           "unit": "s"
         },
         {
-          "alias": "TR-Verlust / h",
+          "alias": "TR Loss / h",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -188,7 +174,7 @@
           "unit": "percentunit"
         },
         {
-          "alias": "Verbrauch",
+          "alias": "Consumption",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -204,7 +190,7 @@
           "unit": "kwatth"
         },
         {
-          "alias": "Ø-Leistung",
+          "alias": "Ø-Power",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -263,7 +249,7 @@
           ]
         }
       ],
-      "title": "Vampir Drain",
+      "title": "Vampire Drain",
       "transform": "table",
       "type": "table"
     }
@@ -282,7 +268,7 @@
         },
         "hide": 0,
         "includeAll": false,
-        "label": "min. Standzeit (h)",
+        "label": "min. Idle Time (h)",
         "multi": false,
         "name": "duration",
         "options": [
@@ -332,11 +318,10 @@
           "text": "1",
           "value": "1"
         },
-        "datasource": "TeslaMate",
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
-        "label": "Auto",
+        "label": "Car",
         "multi": false,
         "name": "car",
         "options": [

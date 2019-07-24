@@ -1,17 +1,4 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
-  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
@@ -38,13 +25,13 @@
       },
       "styles": [
         {
-          "alias": "Startdatum",
+          "alias": "Start Date",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "start_date",
           "type": "date"
         },
         {
-          "alias": "Enddatum",
+          "alias": "End Date",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -60,7 +47,7 @@
           "unit": "short"
         },
         {
-          "alias": "Installierte Version",
+          "alias": "Installed Version",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -138,11 +125,10 @@
           "text": "1",
           "value": "1"
         },
-        "datasource": "TeslaMate",
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
-        "label": "Auto",
+        "label": "Car",
         "multi": false,
         "name": "car",
         "options": [
