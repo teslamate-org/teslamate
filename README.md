@@ -1,6 +1,8 @@
 # TeslaMate
 
 [![Build Status](https://travis-ci.org/adriankumpf/teslamate.svg?branch=master)](https://travis-ci.org/adriankumpf/teslamate)
+[![](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate 'Get your own version badge on microbadger.com')
+[![](https://images.microbadger.com/badges/image/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate 'Get your own image badge on microbadger.com')
 
 A a data logger for your Tesla.
 
