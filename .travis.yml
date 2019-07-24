@@ -1,0 +1,26 @@
+language: elixir
+services:
+  - postgresql
+elixir:
+  - 1.9.1
+otp_release:
+  - 22.0
+env:
+  - MIX_ENV=test
+cache:
+  directories:
+    - deps
+    - _build/
+branches:
+  only:
+  - master
+before_script:
+  - psql -c 'create database teslamate_test;' -U postgres
+  - psql -c "ALTER USER postgres WITH PASSWORD 'postgres';" -U postgres
+install:
+  - mix local.rebar --force
+  - mix local.hex --force
+  - mix deps.get
+  - mix compile
+script:
+  - mix test
