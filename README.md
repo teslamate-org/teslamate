@@ -99,7 +99,7 @@ services:
       - teslamate-db:/var/lib/postgresql/data
 
   grafana:
-    image: grafana/grafana:6.3.0-beta1
+    image: grafana/grafana:6.3.0-beta2
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=FALSE
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -253,8 +253,8 @@ TeslaMate uses environment variables for runtime configuration.
 | MQTT_USERNAME          | Username _(optional)_                                                                                                                                                                                            | /                             |
 | MQTT_PASSWORD          | Password _(optional)_                                                                                                                                                                                            | /                             |
 | ENABLE_LOGGER_TELEGRAM | Enables a [logger backend](https://github.com/adriankumpf/logger-telegram-backend) for telegram. If `true` error and crash reports are forwarded to the configured chat. Usually not needed for stable releases. | false                         |
-| CHAT_ID                | Telegram chat id (**required** unless `ENABLE_LOGGER_TELEGRAM` is `true`). See [here](https://github.com/adriankumpf/logger-telegram-backend#configuration) for instructions.                                    | /                             |
-| TOKEN                  | Telegram bot token (**required** unless `ENABLE_LOGGER_TELEGRAM` is `true`). See [here](https://github.com/adriankumpf/logger-telegram-backend#configuration) for instructions.                                  | /                             |
+| CHAT_ID                | Telegram chat id (only **required** if `ENABLE_LOGGER_TELEGRAM` is `true`). See [here](https://github.com/adriankumpf/logger-telegram-backend#configuration) for instructions.                                   | /                             |
+| TOKEN                  | Telegram bot token (only **required** if `ENABLE_LOGGER_TELEGRAM` is `true`). See [here](https://github.com/adriankumpf/logger-telegram-backend#configuration) for instructions.                                 | /                             |
 | LOCALE                 | The default locale for the web interface. Currently available: `en` (default) and `de`                                                                                                                           | en                            |
 | SECRET_KEY_BASE        | Secret key used as a base to generate secrets for encrypting and signing data                                                                                                                                    | randomly generated at startup |
 | SIGNING_SALT           | A salt used with secret_key_base to generate a key for signing/verifying a cookie (required by LiveView; Sessions are not used otherwise)                                                                        | randomly generated at startup |
