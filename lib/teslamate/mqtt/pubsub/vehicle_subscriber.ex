@@ -9,6 +9,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   defstruct [:car_id, :last_summary]
   alias __MODULE__, as: State
 
+  def child_spec(arg) do
+    %{
+      id: :"#{__MODULE__}#{Keyword.fetch!(arg, :car_id)}",
+      start: {__MODULE__, :start_link, [arg]}
+    }
+  end
+
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts)
   end

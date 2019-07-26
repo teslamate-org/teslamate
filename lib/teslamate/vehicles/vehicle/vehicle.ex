@@ -23,6 +23,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
   @topic inspect(__MODULE__)
   @asleep_interval 60
 
+  def child_spec(arg) do
+    %{
+      id: :"#{__MODULE__}_#{Keyword.fetch!(arg, :car).id}",
+      start: {__MODULE__, :start_link, [arg]}
+    }
+  end
+
   def start_link(opts) do
     GenStateMachine.start_link(__MODULE__, opts,
       name: Keyword.get_lazy(opts, :name, fn -> :"#{Keyword.fetch!(opts, :car).id}" end)
