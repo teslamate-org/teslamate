@@ -2,7 +2,13 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Replace node-sass with sass to speed up compilation
+
 ## [1.0.1] - 2019-07-26
+
+### Changed
 
 - Set unique :id to support multiple vehicles
 - Reduce default pool size to 5

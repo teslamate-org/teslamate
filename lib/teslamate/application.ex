@@ -9,7 +9,7 @@ defmodule TeslaMate.Application do
       TeslaMate.Api,
       TeslaMate.Vehicles,
       TeslaMateWeb.Endpoint,
-      if(enable_mqtt(), do: TeslaMate.Mqtt)
+      if(mqtt_enabled?(), do: TeslaMate.Mqtt)
     ]
     |> Enum.reject(&is_nil/1)
     |> Supervisor.start_link(strategy: :one_for_one, name: TeslaMate.Supervisor)
@@ -22,5 +22,5 @@ defmodule TeslaMate.Application do
     :ok
   end
 
-  defp enable_mqtt, do: !is_nil(Application.get_env(:teslamate, :mqtt))
+  defp mqtt_enabled?, do: !is_nil(Application.get_env(:teslamate, :mqtt))
 end
