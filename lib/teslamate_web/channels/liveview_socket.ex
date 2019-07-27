@@ -10,12 +10,14 @@ defmodule TeslaMateWeb.LiveViewSocket do
 
   defstruct id: nil,
             endpoint: nil,
+            view: nil,
+            router: nil,
             parent_pid: nil,
             assigns: %{},
             changed: %{},
             fingerprints: {nil, %{}},
             private: %{},
-            stopped: nil,
+            redirected: nil,
             connected?: false
 
   channel "lv:*", Phoenix.LiveView.Channel
