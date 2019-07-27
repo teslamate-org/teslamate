@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [1.1.1] - 2019-07-27
+
+### Changed
+
+- Upgrade tesla_api
+- Upgrade Phoenix LiveView
+
+### Fixed
+
+- Fix a few english translations in the en dashboards
+- Remove `DATABASE_PORT` from docker-compose example
+- Remove port mapping from postgres in docker-compose example
+- Extend FAQ
+
 ## [1.1.0] - 2019-07-27
 
 ### Added
@@ -28,7 +42,8 @@
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.1.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/adriankumpf/teslamate/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/adriankumpf/teslamate/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/adriankumpf/teslamate/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/adriankumpf/teslamate/compare/3d95859...v1.0.0
