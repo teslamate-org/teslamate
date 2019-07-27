@@ -363,7 +363,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select\n$__time(start_date),\ncase \n  when state = 'offline' then 0\n  when state = 'asleep'  then 1\n  when state = 'online'  then 2\nend as \"Zustand\"\nfrom states\nwhere car_id = $car AND $__timeFilter(start_date);",
+          "rawSql": "select\n$__time(start_date),\ncase \n  when state = 'offline' then 0\n  when state = 'asleep'  then 1\n  when state = 'online'  then 2\nend as \"State\"\nfrom states\nwhere car_id = $car AND $__timeFilter(start_date);",
           "refId": "A",
           "select": [
             [
