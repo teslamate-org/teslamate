@@ -80,6 +80,7 @@ services:
       - DATABASE_PASS=secret
       - DATABASE_NAME=teslamate
       - DATABASE_HOST=db
+      - DATABASE_PORT=5432 # Optional, set if services.db.ports is remapped
       - TESLA_USERNAME=username@example.com
       - TESLA_PASSWORD=secret
       - MQTT_HOST=mosquitto
