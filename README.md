@@ -304,21 +304,21 @@ teslamate/cars/$car_id/sentry_mode
 
 ## FAQ
 
-**Sometimes, the first few minutes of a trip are not recorded even though the
+**Sometimes the first few minutes of a trip are not recorded even though the
 car was online. Why?**
 
 Ideally, TeslaMate would frequently scrape the Tesla API – 24/7. However, the
-vehicle cannot fall asleep as long as data is requested. Therefore, TeslaMate
+vehicle cannot fall asleep as long as data is requested. Therefore TeslaMate
 suspends scraping for 21 minutes if the vehicle idles for 15 minutes, so that
 it can go into sleep mode. Consequently, if you start driving again during
-those 21 minutes, nothing is logged.
+those 21 minutes nothing is logged.
 
-**Solution:** To get around this, you can use your smartphone to tell TeslaMate
+**Solution:** To get around this you can use your smartphone to tell TeslaMate
 to start scraping again. In short, create a workflow with
 [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm&hl=en)
 (Android) or [Shortcuts](https://support.apple.com/guide/shortcuts/welcome/ios)
 (iOS) that listens for connected Bluetooth devices. If a connection to your
-Tesla is established, send an HTTP PUT request to your publicly exposed
+Tesla is established send an HTTP PUT request to your publicly exposed
 TeslaMate instance.
 
 _(With iOS 12 and below workflows are quite limited but can be triggered
@@ -333,6 +333,12 @@ I strongly recommend to use a reverse-proxy with HTTPS and basic access
 authentication when exposing TeslaMate to the public internet. Additionally
 only permit access to `/api/car/$car_id/logging/resume` and/or
 `/api/car/$car_id/logging/suspend`.
+
+**Why is the "Consumption" / "Charging" dashboard not showing any data?**
+
+Both dashboards don't show any data by default. Instead, you need to choose a
+particular trip or charging process in the `Trips` / `Charging History`
+dashboard by clicking on its start date.
 
 ## Disclaimer
 
