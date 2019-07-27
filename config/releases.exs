@@ -13,6 +13,7 @@ config :teslamate, TeslaMate.Repo,
   password: System.fetch_env!("DATABASE_PASS"),
   database: System.fetch_env!("DATABASE_NAME"),
   hostname: System.fetch_env!("DATABASE_HOST"),
+  port: System.get_env("DATABASE_PORT", "5432"),
   pool_size: System.get_env("DATABASE_POOL_SIZE", "5") |> String.to_integer()
 
 config :teslamate, TeslaMateWeb.Endpoint,
