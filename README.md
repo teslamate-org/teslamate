@@ -57,9 +57,6 @@ If you already have PostgreSQL and Grafana running elsewhere just pull the image
 and run the container:
 
 ```bash
-# Run database migrations
-docker run --env-file .env teslamate/teslamate:latest bin/teslamate eval "TeslaMate.Release.migrate"
-
 # Run the container
 docker run -d --env-file .env -p 4000:4000 teslamate/teslamate:latest
 ```
@@ -131,14 +128,7 @@ volumes:
     mosquitto-data:
 ```
 
-Initially, Before the first application startup, start the database with
-`docker-compose up db` and run the database migrations:
-
-```bash
-docker-compose run teslamate bin/teslamate eval "TeslaMate.Release.migrate"
-```
-
-Afterwards start everything with `docker-compose up`.
+Start everything with `docker-compose up`.
 
 Finally, [import](#dashboards) the Grafana dashboards.
 
@@ -148,7 +138,7 @@ Finally, [import](#dashboards) the Grafana dashboards.
 2. Install Grafana with the following plugins: `pr0ps-trackmap-panel` and
    `natel-discrete-panel`. Then [import](#dashboards) the dashboard JSON files.
 3. _Optional:_ Install [mosquitto](https://mosquitto.org/) or another MQTT broker
-4. Install TeslaMate:
+4. Compile and build TeslaMate:
 
    **Requirements**
 
@@ -263,9 +253,8 @@ TeslaMate uses environment variables for runtime configuration.
 
 ## Upgrading
 
-> Before updating please check the [Changelog](CHANGELOG.md). Future releases may
-> require database migrations. Also, the dashboards will be updated from time
-> to time.
+> Before updating please check the [Changelog](CHANGELOG.md) to find out
+> whether the dashboards need to be updated / imported again.
 
 ### Docker
 
@@ -273,22 +262,8 @@ Pull the image with the new tag: `docker pull teslamate/teslamate:1.x.x`. Stop
 and remove the old container: `docker stop <container_name> && docker rm <container_name>`.
 Start a new container with the latest tag: `docker run -d -p 4000:4000 teslamate/teslamate:1.x.x`.
 
-If an upgrade requires to run new database migrations continue with the
-following command:
-
-```bash
-docker run --env-file .env teslamate/teslamate:latest bin/teslamate eval "TeslaMate.Release.migrate"
-```
-
 Alternatively, with Docker Compose, define the new tag in the
 `docker-compose.yml` file and restart the container.
-
-If an upgrade requires to run new database migrations continue with the
-following command:
-
-```bash
-docker-compose run teslamate bin/teslamate eval "TeslaMate.Release.migrate"
-```
 
 ### Manually
 
