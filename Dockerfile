@@ -36,11 +36,14 @@ RUN apk add --update --no-cache bash openssl
 
 WORKDIR /opt/app
 
-COPY --from=builder /opt/built .
-RUN chown -R nobody: .
+COPY --chown=nobody entrypoint.sh /
+COPY --from=builder --chown=nobody /opt/built .
+RUN chown nobody: .
 
 USER nobody
 
 EXPOSE 4000
+
+ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
 
 CMD trap 'exit' INT; bin/teslamate start
