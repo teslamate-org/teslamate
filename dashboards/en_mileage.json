@@ -52,7 +52,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT $__time(date), odometer as \"Kilometerstand\" from positions where $__timeFilter(date) AND car_id = $car order by date desc;\n",
+          "rawSql": "SELECT $__time(date), odometer as \"Mileage\" from positions where $__timeFilter(date) AND car_id = $car order by date desc;\n",
           "refId": "A",
           "select": [
             [
