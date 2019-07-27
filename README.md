@@ -90,8 +90,6 @@ services:
     environment:
       - POSTGRES_USER=teslamate
       - POSTGRES_PASSWORD=secret
-    ports:
-      - 5432:5432
     volumes:
       - teslamate-db:/var/lib/postgresql/data
 
