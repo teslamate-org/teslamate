@@ -348,14 +348,14 @@ _(With iOS 12 and below workflows are quite limited but can be triggered
 manually. iOS 13 will probably fix that.)_
 
 ```
-PUT https://teslamate.your-domain.com/car/$car_id/logging/resume
-PUT https://teslamate.your-domain.com/car/$car_id/logging/suspend
+PUT https://teslamate.your-domain.com/api/car/$car_id/logging/resume
+PUT https://teslamate.your-domain.com/api/car/$car_id/logging/suspend
 ```
 
 I strongly recommend to use a reverse-proxy with HTTPS and basic access
 authentication when exposing TeslaMate to the public internet. Additionally
-only permit access to `/car/$car_id/logging/resume` and/or
-`/car/$car_id/logging/suspend`.
+only permit access to `/api/car/$car_id/logging/resume` and/or
+`/api/car/$car_id/logging/suspend`.
 
 ## Disclaimer
 
