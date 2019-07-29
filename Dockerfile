@@ -29,8 +29,7 @@ RUN mkdir -p /opt/built && mix release --path /opt/built
 
 FROM alpine:3.9 AS app
 
-ENV LANG=C.UTF-8 \
-    TZ=Europe/Berlin
+ENV LANG=C.UTF-8
 
 RUN apk add --update --no-cache bash openssl
 
