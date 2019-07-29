@@ -2,6 +2,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1564400528351,
   "links": [],
   "panels": [
     {
@@ -59,7 +60,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(start_date),\n\tcalculated_max_range as \"Maximum Range\",\n\tpositions.odometer as \"Mileage\"\nFROM\n\tcharging_processes \n\tINNER JOIN positions ON positions.id = charging_processes.position_id\n\tWHERE\n\t  charging_processes.car_id = $car AND\n\t\t$__timeFilter(start_date);",
+          "rawSql": "SELECT\n\t$__time(start_date),\n\tconvert_km(calculated_max_range, '$length_unit') AS \"Projected Range\",\n\tconvert_km(positions.odometer, '$length_unit') AS \"Mileage\"\nFROM\n\tcharging_processes\n\tINNER JOIN positions ON positions.id = charging_processes.position_id\nWHERE\n\tcharging_processes.car_id = $car\n\tAND $__timeFilter(start_date);",
           "refId": "A",
           "select": [
             [
@@ -101,8 +102,8 @@
       },
       "yaxes": [
         {
-          "decimals": 1,
-          "format": "lengthkm",
+          "decimals": 0,
+          "format": "none",
           "label": "",
           "logBase": 1,
           "max": null,
@@ -110,7 +111,7 @@
           "show": true
         },
         {
-          "format": "lengthkm",
+          "format": "none",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -159,6 +160,34 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "km",
+          "value": "km"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "length unit",
+        "multi": false,
+        "name": "length_unit",
+        "options": [
+          {
+            "selected": true,
+            "text": "km",
+            "value": "km"
+          },
+          {
+            "selected": false,
+            "text": "mi",
+            "value": "mi"
+          }
+        ],
+        "query": "km,mi",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },

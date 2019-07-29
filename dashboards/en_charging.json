@@ -2,6 +2,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1564399881738,
   "links": [],
   "panels": [
     {
@@ -65,7 +66,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  battery_level as \"SOC [%]\",\n  charger_power as \"Power [kW]\",\n  ideal_battery_range_km as \"Range [km]\",\n  charger_voltage as \"Charging Voltage [V]\",\n  charger_phases as \"Phases\",\n  charger_actual_current as \"Current [A]\",\n  charger_pilot_current as \"Current (pilot) [A]\",\n  outside_temp as \"Outdoor Temperature [°C]\"\nFROM\n  charges c\nWHERE\n  $__timeFilter(date) and c.charging_process_id = $charging_process_id\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n  battery_level as \"SOC [%]\",\n  charger_power as \"Power [kW]\",\n  ideal_battery_range_km as \"Range [km]\",\n  charger_voltage as \"Charging Voltage [V]\",\n  charger_phases as \"Phases\",\n  charger_actual_current as \"Current [A]\",\n  charger_pilot_current as \"Current (pilot) [A]\",\n  convert_celsius(outside_temp, '$temp_unit') as \"Outdoor Temperature [°$temp_unit]\"\nFROM\n  charges c\nWHERE\n  $__timeFilter(date) and c.charging_process_id = $charging_process_id\nORDER BY\n  date ASC",
           "refId": "A",
           "select": [
             [
@@ -196,9 +197,36 @@
             "value": ""
           }
         ],
-        "query": "28",
+        "query": "33",
         "skipUrlSync": false,
         "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "C",
+          "value": "C"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "temperature unit",
+        "multi": false,
+        "name": "temp_unit",
+        "options": [
+          {
+            "selected": false,
+            "text": "C",
+            "value": "C"
+          },
+          {
+            "selected": true,
+            "text": "F",
+            "value": "F"
+          }
+        ],
+        "query": "C,F",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },

@@ -2,6 +2,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1564404944102,
   "links": [],
   "panels": [
     {
@@ -70,7 +71,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "consumption_kWh_100km",
+          "pattern": "consumption_kwh_100",
           "thresholds": [],
           "type": "number",
           "unit": "kwatth"
@@ -177,7 +178,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 0,
           "mappingType": 1,
-          "pattern": "speed_max",
+          "pattern": "speed_max_km",
           "thresholds": [
             "151",
             "200"
@@ -327,7 +328,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 1,
           "mappingType": 1,
-          "pattern": "inside_temp_avg",
+          "pattern": "inside_temp_c",
           "thresholds": [],
           "type": "number",
           "unit": "celsius"
@@ -429,6 +430,166 @@
           "unit": "short"
         },
         {
+          "alias": "mi",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "distance_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthmi"
+        },
+        {
+          "alias": "Ø Outdoor T.",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "outside_temp_f",
+          "thresholds": [],
+          "type": "number",
+          "unit": "farenheit"
+        },
+        {
+          "alias": "max Speed",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "speed_max_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "velocitymph"
+        },
+        {
+          "alias": "TR Loss",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "range_diff_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthmi"
+        },
+        {
+          "alias": "Ø Speed",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "speed_avg_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "velocitymph"
+        },
+        {
+          "alias": "Ø Indoor T.",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "inside_temp_f",
+          "thresholds": [],
+          "type": "number",
+          "unit": "farenheit"
+        },
+        {
+          "alias": "TR Start",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "start_range_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthmi"
+        },
+        {
+          "alias": "TR End",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "end_range_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "lengthmi"
+        },
+        {
+          "alias": "mi Start",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "start_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "none"
+        },
+        {
+          "alias": "mi End",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "end_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "none"
+        },
+        {
           "alias": "",
           "colorMode": null,
           "colors": [
@@ -450,7 +611,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\textract(epoch from start_date) * 1000 as start_date_ts,\n  extract(epoch from end_date) * 1000 as end_date_ts,\n\tstart_date,\n  end_date,\n  start_address.latitude,\n  start_address.longitude,\n  end_address.latitude,\n  end_address.longitude,\n  CONCAT_WS(', ', COALESCE(start_address.name, CONCAT_WS(' ', start_address.road, start_address.house_number)), start_address.city) as start_address,\n  CONCAT_WS(', ', COALESCE(end_address.name, CONCAT_WS(' ', end_address.road, end_address.house_number)), end_address.city) as end_address,\n  duration_min,\n\tdistance,\n\tstart_range_km - end_range_km AS RangeDiff,\n\tdistance / duration_min * 60 as speed_avg,\n\t\"consumption_kWh_100km\",\n\t\"consumption_kWh\",\n\tefficiency,\n\toutside_temp_avg,\n\tinside_temp_avg,\n\tspeed_max,\n\tpower_max,\n\tpower_min,\n\tpower_avg,\n\tstart_range_km,\n\tend_range_km,\n\tstart_km,\n\tend_km,\n\ttrips.id\nFROM\n\ttrips\nLEFT JOIN addresses start_address on start_address_id = start_address.id\nLEFT JOIN addresses end_address on end_address_id = end_address.id\nWHERE\n\t$__timeFilter(start_date) \n\tAND (duration_min > 1 OR end_date IS NULL)\n\tAND car_id = $car\nORDER BY\n\tstart_date DESC",
+          "rawSql": "SELECT\n    extract(epoch FROM start_date) * 1000 AS start_date_ts,\n    extract(epoch FROM end_date) * 1000 AS end_date_ts,\n    start_date,\n    end_date,\n    start_address.latitude,\n    start_address.longitude,\n    end_address.latitude,\n    end_address.longitude,\n    CONCAT_WS(', ', COALESCE(start_address.name, CONCAT_WS(' ', start_address.road, start_address.house_number)), start_address.city) AS start_address,\n    CONCAT_WS(', ', COALESCE(end_address.name, CONCAT_WS(' ', end_address.road, end_address.house_number)), end_address.city) AS end_address,\n    duration_min,\n    convert_km (distance, '$length_unit') AS distance_$length_unit,\n    convert_km (start_range_km - end_range_km, '$length_unit') AS range_diff_$length_unit,\n    convert_km (distance, '$length_unit') / duration_min * 60 AS speed_avg_$length_unit,\n    \"consumption_kWh_100km\" * \n      CASE WHEN '$length_unit' = 'km' THEN 1\n           WHEN '$length_unit' = 'mi' THEN 1.60934\n      END AS consumption_kWh_100,\n    \"consumption_kWh\",\n    efficiency,\n    convert_celsius (outside_temp_avg, '$temp_unit') AS outside_temp_$temp_unit,\n    convert_celsius (inside_temp_avg, '$temp_unit') AS inside_temp_$temp_unit,\n    convert_km (speed_max, '$length_unit') as speed_max_$length_unit,\n    power_max,\n    power_min,\n    power_avg,\n    convert_km (start_range_km, '$length_unit') as start_range_$length_unit,\n    convert_km (end_range_km, '$length_unit') as end_range_$length_unit,\n    convert_km (start_km, '$length_unit') as start_$length_unit,\n    convert_km (end_km, '$length_unit') as end_$length_unit,\n    trips.id\nFROM\n    trips\n    LEFT JOIN addresses start_address ON start_address_id = start_address.id\n    LEFT JOIN addresses end_address ON end_address_id = end_address.id\nWHERE\n    $__timeFilter(start_date)\n    AND (duration_min > 1\n        OR end_date IS NULL)\n    AND car_id = $car\nORDER BY\n    start_date DESC;",
           "refId": "A",
           "select": [
             [
@@ -512,6 +673,62 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "C",
+          "value": "C"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "temperature unit",
+        "multi": false,
+        "name": "temp_unit",
+        "options": [
+          {
+            "selected": true,
+            "text": "C",
+            "value": "C"
+          },
+          {
+            "selected": false,
+            "text": "F",
+            "value": "F"
+          }
+        ],
+        "query": "C,F",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "km",
+          "value": "km"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "length unit",
+        "multi": false,
+        "name": "length_unit",
+        "options": [
+          {
+            "selected": true,
+            "text": "km",
+            "value": "km"
+          },
+          {
+            "selected": false,
+            "text": "mi",
+            "value": "mi"
+          }
+        ],
+        "query": "km,mi",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },

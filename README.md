@@ -219,6 +219,10 @@ Finally, [import](#dashboards) the Grafana dashboards.
     for d in dashboards/de_*; do wizzy export dashboard $(basename $d .json); done
     ```
 
+4.  _Optional:_ To permanently switch a dashboard to **Miles and Fahrenheit** change the
+    variables via the respective dropdown menus, hit the save button and enable
+    the `Save current variables` switch.
+
 ## Configuration
 
 TeslaMate uses environment variables for runtime configuration.

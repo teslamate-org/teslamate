@@ -61,6 +61,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1564409302174,
   "links": [],
   "panels": [
     {
@@ -68,7 +69,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 1,
       "gridPos": {
         "h": 19,
@@ -101,16 +102,16 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "Range [km]",
-          "fill": 0,
+          "alias": "Range",
           "yaxis": 2
         },
         {
-          "alias": "Height [m]",
-          "yaxis": 2
+          "alias": "Speed",
+          "fill": 1
         },
         {
-          "alias": "SOC [%]"
+          "alias": "Power [kW]",
+          "fill": 1
         }
       ],
       "spaceLength": 10,
@@ -124,7 +125,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tspeed AS \"Range [km/h]\",\n\tpower AS \"Power [kW]\",\n\tideal_battery_range_km AS \"Range [km]\",\n\tbattery_level AS \"SOC [%]\",\n\toutside_temp AS \"Outdoor Temperature [°C]\",\n\tinside_temp AS \"Indoor Temperature [°C]\",\n\tdriver_temp_setting,\n\tpassenger_temp_setting,\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n trip_id = $trip_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed\",\n\tpower AS \"Power [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Range\",\n\tbattery_level AS \"SOC [%]\",\n\tconvert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature\",\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature\",\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature\",\n\tconvert_celsius(passenger_temp_setting, '$temp_unit') as \"Passenger Temperature\",\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n trip_id = $trip_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -299,13 +300,68 @@
         "name": "trip_id",
         "options": [
           {
-            "text": "459",
-            "value": "459"
+            "selected": false,
+            "text": "",
+            "value": ""
           }
         ],
-        "query": "459",
+        "query": "503",
         "skipUrlSync": false,
         "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "C",
+          "value": "C"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "temperature unit",
+        "multi": false,
+        "name": "temp_unit",
+        "options": [
+          {
+            "selected": true,
+            "text": "C",
+            "value": "C"
+          },
+          {
+            "selected": false,
+            "text": "F",
+            "value": "F"
+          }
+        ],
+        "query": "C,F",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "km",
+          "value": "km"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "length unit",
+        "multi": false,
+        "name": "length_unit",
+        "options": [
+          {
+            "selected": true,
+            "text": "km",
+            "value": "km"
+          },
+          {
+            "selected": false,
+            "text": "mi",
+            "value": "mi"
+          }
+        ],
+        "query": "km,mi",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },

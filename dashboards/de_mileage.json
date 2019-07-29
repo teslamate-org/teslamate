@@ -2,6 +2,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1564408678837,
   "links": [],
   "panels": [
     {
@@ -52,7 +53,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT $__time(date), odometer as \"Kilometerstand\" from positions where $__timeFilter(date) AND car_id = $car order by date desc;\n",
+          "rawSql": "WITH summary AS (\n\tSELECT\n\t\tdate,\n\t\todometer,\n\t\trank() OVER (PARTITION BY date_trunc('hour', date) ORDER BY date DESC) AS rk\n\t\tFROM\n\t\t\tpositions\n\t\tWHERE\n\t\t\tcar_id = 1 AND\n\t\t\t$__timeFilter(date)\n)\nSELECT\n date as time,\n convert_km(odometer, '$length_unit') as \"Kilometerstand\" \nFROM\n\tsummary\nWHERE\n\trk = 1\n\torder by date;",
           "refId": "A",
           "select": [
             [
@@ -152,6 +153,34 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "km",
+          "value": "km"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "length unit",
+        "multi": false,
+        "name": "length_unit",
+        "options": [
+          {
+            "selected": true,
+            "text": "km",
+            "value": "km"
+          },
+          {
+            "selected": false,
+            "text": "mi",
+            "value": "mi"
+          }
+        ],
+        "query": "km,mi",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
