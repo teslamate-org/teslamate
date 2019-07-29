@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2019-07-29
+
+### Added
+
+- Add psql conversion helper functions (**via database migration**)
+- Report imperial metrics
+
+  **Important: please re-import the Grafana Dashboards after restarting TeslaMate**
+
+### Fixed
+
+- Remove TZ environment variable from Dockerfile
+
 ## [1.1.1] - 2019-07-27
 
 ### Changed
@@ -42,7 +55,8 @@
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.1.1...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/adriankumpf/teslamate/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/adriankumpf/teslamate/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/adriankumpf/teslamate/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/adriankumpf/teslamate/compare/v1.0.0...v1.0.1
