@@ -2,7 +2,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564404944102,
+  "iteration": 1564425239057,
   "links": [],
   "panels": [
     {
@@ -270,17 +270,17 @@
           "alias": "Efficiency",
           "colorMode": "value",
           "colors": [
-            "#73BF69",
+            "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
+            "#73BF69"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 1,
           "mappingType": 1,
           "pattern": "efficiency",
           "thresholds": [
-            "1.05",
-            "1.5"
+            "0.65",
+            "0.99"
           ],
           "type": "number",
           "unit": "percentunit"

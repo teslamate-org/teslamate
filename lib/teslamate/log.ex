@@ -136,7 +136,7 @@ defmodule TeslaMate.Log do
       [start_pos, end_pos] ->
         distance = end_pos.odometer - start_pos.odometer
         ideal_distance = start_pos.ideal_battery_range_km - end_pos.ideal_battery_range_km
-        efficiency = if ideal_distance > 0, do: ideal_distance / distance, else: nil
+        efficiency = if ideal_distance > 0, do: distance / ideal_distance, else: nil
         consumption = ideal_distance * trip.car.efficiency
         consumption_100km = if distance > 0, do: consumption / distance * 100, else: nil
 

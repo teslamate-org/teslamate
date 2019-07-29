@@ -2,7 +2,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564408489453,
+  "iteration": 1564423515811,
   "links": [],
   "panels": [
     {
@@ -353,23 +353,23 @@
           "alias": "Ø Effizienz",
           "colorMode": "value",
           "colors": [
-            "rgba(50, 172, 45, 0.97)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
+            "rgba(245, 54, 54, 0.9)",
+            "#FFB357",
+            "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 1,
           "mappingType": 1,
           "pattern": "efficiency",
           "thresholds": [
-            "1.05",
-            "1.5"
+            "0.65",
+            "0.99"
           ],
           "type": "number",
           "unit": "percentunit"
         },
         {
-          "alias": "Distanz",
+          "alias": "Distanz [km]",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -382,7 +382,7 @@
           "pattern": "total_distance_km",
           "thresholds": [],
           "type": "number",
-          "unit": "lengthkm"
+          "unit": "none"
         },
         {
           "alias": "Ø Verbrauch/100km",
@@ -395,7 +395,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "consumption",
+          "pattern": "consumption_km",
           "thresholds": [],
           "type": "number",
           "unit": "kwatth"
@@ -487,7 +487,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(\"consumption_kWh\") AS total_consumption,\n\t\tconvert_km(sum(distance), '$length_unit') AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\ttrips\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND \"consumption_kWh\" IS NOT NULL\n\t\tAND car_id = $car\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n\ttotal_consumption / total_distance * 100 AS consumption_$length_unit,\n\t(total_consumption / total_distance) / (c.efficiency * CASE WHEN '$length_unit' = 'km' THEN 1 WHEN '$length_unit' = 'mi' THEN 1.60934 END) AS efficiency,\n\ttotal_distance as total_distance_$length_unit,\n\t(total_distance / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
+          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(\"consumption_kWh\") AS total_consumption,\n\t\tconvert_km(sum(distance), '$length_unit') AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\ttrips\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND \"consumption_kWh\" IS NOT NULL\n\t\tAND car_id = $car\n\t\tAND distance >= convert_km($min_distance, '$length_unit')\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n\ttotal_consumption / total_distance * 100 AS consumption_$length_unit,\n\t(c.efficiency * CASE WHEN '$length_unit' = 'km' THEN 1 WHEN '$length_unit' = 'mi' THEN 1.60934 END) / (total_consumption / total_distance) AS efficiency,\n\ttotal_distance as total_distance_$length_unit,\n\t(total_distance / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
           "refId": "A",
           "select": [
             [
@@ -526,7 +526,7 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
+          "selected": true,
           "text": "1",
           "value": "1"
         },
@@ -562,7 +562,7 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
+          "selected": true,
           "text": "C",
           "value": "C"
         },
@@ -590,6 +590,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": true,
           "tags": [],
           "text": "km",
           "value": "km"
@@ -612,6 +613,50 @@
           }
         ],
         "query": "km,mi",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "tags": [],
+          "text": "1",
+          "value": "1"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "min. distance per drive",
+        "multi": false,
+        "name": "min_distance",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          }
+        ],
+        "query": "1, 5, 10, 25, 50",
         "skipUrlSync": false,
         "type": "custom"
       }

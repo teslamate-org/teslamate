@@ -2,7 +2,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564404944102,
+  "iteration": 1564425239057,
   "links": [],
   "panels": [
     {
@@ -87,7 +87,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "distance",
+          "pattern": "distance_km",
           "thresholds": [],
           "type": "number",
           "unit": "lengthkm"
@@ -162,7 +162,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 1,
           "mappingType": 1,
-          "pattern": "outside_temp_avg",
+          "pattern": "outside_temp_c",
           "thresholds": [],
           "type": "number",
           "unit": "celsius"
@@ -261,7 +261,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 1,
           "mappingType": 1,
-          "pattern": "rangediff",
+          "pattern": "range_diff_km",
           "thresholds": [],
           "type": "number",
           "unit": "lengthkm"
@@ -270,17 +270,17 @@
           "alias": "Effizienz",
           "colorMode": "value",
           "colors": [
-            "#73BF69",
+            "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
+            "#73BF69"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 1,
           "mappingType": 1,
           "pattern": "efficiency",
           "thresholds": [
-            "1.05",
-            "1.5"
+            "0.65",
+            "0.99"
           ],
           "type": "number",
           "unit": "percentunit"
@@ -312,7 +312,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 0,
           "mappingType": 1,
-          "pattern": "speed_avg",
+          "pattern": "speed_avg_km",
           "thresholds": [],
           "type": "number",
           "unit": "velocitykmh"
@@ -762,6 +762,6 @@
     ]
   },
   "timezone": "",
-  "title": "Trips",
+  "title": "Fahrten",
   "uid": "Y8upc6ZRk"
 }
