@@ -29,6 +29,7 @@
         <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-end">
             <%# <%= link("Cars", to: "/", class: "navbar-item") %1> %>
+            <p class="navbar-item" >v<%= Application.spec(:teslamate, :vsn) %></p>
           </div>
         </div>
       </div>
