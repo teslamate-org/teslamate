@@ -1,15 +1,30 @@
 {
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": null,
+  "iteration": 1564529803858,
   "links": [],
   "panels": [
     {
       "columns": [],
       "fontSize": "100%",
       "gridPos": {
-        "h": 26,
-        "w": 24,
+        "h": 19,
+        "w": 7,
         "x": 0,
         "y": 0
       },
@@ -25,13 +40,26 @@
       },
       "styles": [
         {
-          "alias": "Startdatum",
+          "alias": "SOC",
+          "colorMode": "value",
+          "colors": [
+            "rgba(50, 172, 45, 0.97)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(245, 54, 54, 0.9)"
+          ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "pattern": "start_date",
-          "type": "date"
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "soc",
+          "thresholds": [
+            "80",
+            "91"
+          ],
+          "type": "number",
+          "unit": "percent"
         },
         {
-          "alias": "Enddatum",
+          "alias": "# Charges",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -39,27 +67,11 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
+          "decimals": 0,
           "mappingType": 1,
-          "pattern": "end_date",
+          "pattern": "n",
           "thresholds": [],
-          "type": "date",
-          "unit": "short"
-        },
-        {
-          "alias": "Installierte Version",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "version",
-          "thresholds": [],
-          "type": "string",
+          "type": "number",
           "unit": "short"
         },
         {
@@ -70,11 +82,11 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "decimals": 2,
+          "decimals": 0,
           "pattern": "/.*/",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "locale"
         }
       ],
       "targets": [
@@ -83,21 +95,19 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select start_date, end_date, version from updates where $__timeFilter(start_date) and car_id = $car;",
+          "rawSql": "SELECT\n\tROUND(end_battery_level / 5, 0) * 5 AS SOC,\n\tcount(*) AS n\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)\n\tAND duration_min > 3\n\tAND car_id = $car\nGROUP BY\n\tROUND(end_battery_level / 5, 0) * 5\nORDER BY\n\tSOC DESC",
           "refId": "A",
           "select": [
             [
               {
                 "params": [
-                  "efficiency"
+                  "value"
                 ],
                 "type": "column"
               }
             ]
           ],
-          "table": "cars",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
+          "timeColumn": "time",
           "where": [
             {
               "name": "$__timeFilter",
@@ -107,9 +117,7 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Updates",
+      "title": "SOC Charging Stats",
       "transform": "table",
       "type": "table"
     }
@@ -125,10 +133,11 @@
           "text": "1",
           "value": "1"
         },
+        "datasource": null,
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
-        "label": "Auto",
+        "label": "Car",
         "multi": false,
         "name": "car",
         "options": [
@@ -152,8 +161,8 @@
     ]
   },
   "time": {
-    "from": "now/y",
-    "to": "now/y"
+    "from": "now-6M",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -181,6 +190,7 @@
     ]
   },
   "timezone": "",
-  "title": "Updates",
-  "uid": "IiC07mgWz"
+  "title": "SOC Charging Stats",
+  "uid": "-pkIkhmRz",
+  "version": 1
 }

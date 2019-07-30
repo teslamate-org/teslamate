@@ -1,7 +1,21 @@
 {
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1564529803858,
   "links": [],
   "panels": [
     {
@@ -44,7 +58,7 @@
           "unit": "percent"
         },
         {
-          "alias": "Anzahl Ladungen",
+          "alias": "# Charges",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -102,7 +116,7 @@
           ]
         }
       ],
-      "title": "SOC Ladestatistik",
+      "title": "SOC Charging Stats",
       "transform": "table",
       "type": "table"
     }
@@ -115,24 +129,19 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
-          "text": "All",
-          "value": "$__all"
+          "text": "1",
+          "value": "1"
         },
+        "datasource": null,
         "definition": "select id from cars;",
         "hide": 0,
-        "includeAll": true,
-        "label": "Auto",
+        "includeAll": false,
+        "label": "Car",
         "multi": false,
         "name": "car",
         "options": [
           {
             "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "selected": false,
             "text": "1",
             "value": "1"
           }
@@ -180,6 +189,7 @@
     ]
   },
   "timezone": "",
-  "title": "SOC Ladestatistik",
-  "uid": "-pkIkhmRz"
+  "title": "SOC Charging Stats",
+  "uid": "-pkIkhmRz",
+  "version": 1
 }

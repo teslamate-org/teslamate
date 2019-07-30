@@ -1,7 +1,22 @@
 {
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": null,
+  "iteration": 1564529557143,
   "links": [],
   "panels": [
     {
@@ -31,7 +46,7 @@
           "type": "string"
         },
         {
-          "alias": "Besuche",
+          "alias": "Visits",
           "colorMode": "value",
           "colors": [
             "rgb(136, 138, 136)",
@@ -120,7 +135,7 @@
       },
       "styles": [
         {
-          "alias": "Aktualisiert",
+          "alias": "Updated at",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "updated_at",
           "type": "date"
@@ -145,7 +160,7 @@
           "unit": "short"
         },
         {
-          "alias": "Stadtteil",
+          "alias": "Neighbourhood",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -161,7 +176,7 @@
           "unit": "short"
         },
         {
-          "alias": "Stadt",
+          "alias": "City",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -177,7 +192,7 @@
           "unit": "short"
         },
         {
-          "alias": "Bundesland",
+          "alias": "State",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -193,7 +208,7 @@
           "unit": "short"
         },
         {
-          "alias": "Land",
+          "alias": "Country",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -287,7 +302,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Destinationen",
+      "title": "Destinations",
       "transform": "table",
       "type": "table"
     }
@@ -303,10 +318,11 @@
           "text": "1",
           "value": "1"
         },
+        "datasource": null,
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
-        "label": "Auto",
+        "label": "Car",
         "multi": false,
         "name": "car",
         "options": [
@@ -359,6 +375,7 @@
     ]
   },
   "timezone": "",
-  "title": "Adressen",
-  "uid": "ZzhF-aRWz"
+  "title": "Addresses",
+  "uid": "ZzhF-aRWz",
+  "version": 1
 }

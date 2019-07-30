@@ -1,7 +1,22 @@
 {
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": null,
+  "iteration": 1564529874005,
   "links": [],
   "panels": [
     {
@@ -96,7 +111,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Letzte Zustandsänderung",
+      "title": "Last state change",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -200,7 +215,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Aktueller Zustand",
+      "title": "Current State",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -304,7 +319,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Standzeit (%)",
+      "title": "Idle Time (%)",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -363,7 +378,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select\n$__time(start_date),\ncase \n  when state = 'offline' then 0\n  when state = 'asleep'  then 1\n  when state = 'online'  then 2\nend as \"Zustand\"\nfrom states\nwhere car_id = $car AND $__timeFilter(start_date);",
+          "rawSql": "select\n$__time(start_date),\ncase \n  when state = 'offline' then 0\n  when state = 'asleep'  then 1\n  when state = 'online'  then 2\nend as \"State\"\nfrom states\nwhere car_id = $car AND $__timeFilter(start_date);",
           "refId": "A",
           "select": [
             [
@@ -430,7 +445,7 @@
       },
       "timeShift": null,
       "timeTextColor": "#d8d9da",
-      "title": "Zustandsverlauf",
+      "title": "State History",
       "type": "natel-discrete-panel",
       "units": "short",
       "useTimePrecision": false,
@@ -458,10 +473,11 @@
           "text": "1",
           "value": "1"
         },
+        "datasource": null,
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
-        "label": "Auto",
+        "label": "Car",
         "multi": false,
         "name": "car",
         "options": [
@@ -514,6 +530,7 @@
     ]
   },
   "timezone": "",
-  "title": "Zustände",
-  "uid": "xo4BNRkZz"
+  "title": "States",
+  "uid": "xo4BNRkZz",
+  "version": 1
 }

@@ -1,8 +1,21 @@
 {
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564405441086,
+  "iteration": 1564529958864,
   "links": [],
   "panels": [
     {
@@ -37,7 +50,7 @@
           "decimals": 2,
           "link": true,
           "linkTooltip": "",
-          "linkUrl": "d/zm7wN6Zgz/verbrauch?orgId=1&from=${__cell_0}&to=${__cell_1}",
+          "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}",
           "mappingType": 1,
           "pattern": "start_date",
           "thresholds": [],
@@ -369,6 +382,7 @@
           "text": "1",
           "value": "1"
         },
+        "datasource": null,
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
@@ -454,5 +468,6 @@
   },
   "timezone": "",
   "title": "Vampire Drain",
-  "uid": "zhHx2Fggk"
+  "uid": "zhHx2Fggk",
+  "version": 1
 }

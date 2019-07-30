@@ -1,7 +1,22 @@
 {
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": null,
+  "iteration": 1564529791089,
   "links": [],
   "panels": [
     {
@@ -66,10 +81,11 @@
           "text": "1",
           "value": "1"
         },
+        "datasource": null,
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
-        "label": "Auto",
+        "label": "Car",
         "multi": false,
         "name": "car",
         "options": [
@@ -123,5 +139,6 @@
   },
   "timezone": "",
   "title": "Position",
-  "uid": "Dz6UUdzWk"
+  "uid": "Dz6UUdzWk",
+  "version": 1
 }

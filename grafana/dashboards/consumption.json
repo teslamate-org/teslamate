@@ -6,7 +6,7 @@
         "hide": false,
         "iconColor": "rgba(255, 96, 96, 1)",
         "limit": 100,
-        "name": "Laden",
+        "name": "Charging",
         "rawQuery": "SELECT\n\t$__time(start_date),\n\tconcat('Laden: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
         "showIn": 0,
         "tags": [],
@@ -17,7 +17,7 @@
         "hide": false,
         "iconColor": "#508642",
         "limit": 100,
-        "name": "Laden fertig",
+        "name": "Charging finished",
         "rawQuery": "SELECT\n\t$__time(end_date),\n\tconcat('Laden: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
         "showIn": 0,
         "tags": [],
@@ -28,7 +28,7 @@
         "hide": false,
         "iconColor": "#64b0c8",
         "limit": 100,
-        "name": "Schlafen",
+        "name": "Asleep",
         "rawQuery": "SELECT $__time(start_date),\nstate as text \nFROM states\nWHERE $__timeFilter(start_date) and state = 'asleep'\norder by start_date desc\n",
         "showIn": 0,
         "tags": [],
@@ -61,7 +61,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564409302174,
+  "id": null,
+  "iteration": 1564528054446,
   "links": [],
   "panels": [
     {
@@ -102,15 +103,15 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "Reichweite",
+          "alias": "Range",
           "yaxis": 2
         },
         {
-          "alias": "Geschwindigkeit",
+          "alias": "Speed",
           "fill": 1
         },
         {
-          "alias": "Leistung [kW]",
+          "alias": "Power [kW]",
           "fill": 1
         }
       ],
@@ -125,7 +126,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Geschwindigkeit\",\n\tpower AS \"Leistung [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Reichweite\",\n\tbattery_level AS \"SOC [%]\",\n\tconvert_celsius(outside_temp, '$temp_unit') AS \"Außentemperatur\",\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Innentemperatur\",\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Temperatur Fahrer\",\n\tconvert_celsius(passenger_temp_setting, '$temp_unit') as \"Temperatur Beifahrer\",\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n trip_id = $trip_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed\",\n\tpower AS \"Power [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Range\",\n\tbattery_level AS \"SOC [%]\",\n\tconvert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature\",\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature\",\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature\",\n\tconvert_celsius(passenger_temp_setting, '$temp_unit') as \"Passenger Temperature\",\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -153,7 +154,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Verbrauch",
+      "title": "Consumption",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -222,7 +223,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  $__time(date),\r\n   latitude,\r\n   longitude\r\n   FROM positions\r\nWHERE \r\n  trip_id = $trip_id AND \r\n  $__timeFilter(date)\r\nORDER BY date ASC",
+          "rawSql": "SELECT\r\n  $__time(date),\r\n   latitude,\r\n   longitude\r\n   FROM positions\r\nWHERE \r\n  car_id = $car_id AND \r\n  $__timeFilter(date)\r\nORDER BY date ASC",
           "refId": "A",
           "select": [
             [
@@ -362,6 +363,38 @@
         "query": "km,mi",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": null,
+        "definition": "select id from cars;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Car",
+        "multi": false,
+        "name": "car_id",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -395,6 +428,7 @@
     ]
   },
   "timezone": "",
-  "title": "Verbrauch",
-  "uid": "zm7wN6Zgz"
+  "title": "Consumption",
+  "uid": "zm7wN6Zgz",
+  "version": 1
 }
