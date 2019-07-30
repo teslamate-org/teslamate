@@ -73,9 +73,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:ok, :start, data, {:next_event, :internal, :fetch}}
   end
 
-  # TODO
-  # - check the vehicle state during sleep attempt - does it still work?
-
   ## Calls
 
   ### Summary

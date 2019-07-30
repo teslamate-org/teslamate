@@ -17,6 +17,10 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :sentry_mode
   ]
 
+  def into(:start, nil) do
+    %__MODULE__{state: :unavailable}
+  end
+
   def into(state, vehicle) do
     %__MODULE__{format_vehicle(vehicle) | state: format_state(state)}
   end

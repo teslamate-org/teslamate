@@ -24,12 +24,24 @@ defmodule TeslaMate.Vehicles do
       |> Keyword.get_lazy(:vehicles, &list_vehicles!/0)
       |> Enum.map(&{Vehicle, car: create_new!(&1)})
 
-    Supervisor.init(children, strategy: :one_for_one, max_restarts: 5, max_seconds: 60)
+    Supervisor.init(children,
+      strategy: :one_for_one,
+      max_restarts: 5,
+      max_seconds: 60
+    )
   end
 
   defp list_vehicles! do
-    {:ok, vehicles} = TeslaMate.Api.list_vehicles()
-    vehicles
+    case TeslaMate.Api.list_vehicles() do
+      {:error, :not_signed_in} -> fallback_vehicles()
+      {:ok, []} -> fallback_vehicles()
+      {:ok, vehicles} -> vehicles
+    end
+  end
+
+  defp fallback_vehicles do
+    Log.list_cars()
+    |> Enum.map(&%TeslaApi.Vehicle{id: &1.eid})
   end
 
   defp create_new!(%TeslaApi.Vehicle{} = vehicle) do

@@ -23,8 +23,8 @@ config :teslamate, TeslaMateWeb.Endpoint,
   live_view: [signing_salt: System.get_env("SIGNING_SALT", Util.random_encoded_bytes())]
 
 config :teslamate, :tesla_auth,
-  username: System.fetch_env!("TESLA_USERNAME"),
-  password: System.fetch_env!("TESLA_PASSWORD")
+  username: System.get_env("TESLA_USERNAME"),
+  password: System.get_env("TESLA_PASSWORD")
 
 if System.get_env("DISABLE_MQTT") != "true" do
   config :teslamate, :mqtt,
