@@ -80,6 +80,7 @@ services:
       - TESLA_USERNAME=username@example.com
       - TESLA_PASSWORD=secret
       - MQTT_HOST=mosquitto
+      - VIRTUAL_HOST=localhost # if you're going to access the UI from another machine replace "localhost" with the hostname / IP address of the docker host
     ports:
       - 4000:4000
     cap_drop:
