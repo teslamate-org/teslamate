@@ -192,8 +192,15 @@ Finally, [import](#dashboards) the Grafana dashboards.
     Version: 10
     ```
 
-3.  Import the Dashboard [JSON Files](dashboards) included in this repository
-    manually or setup `wizzy`:
+3.  Clone this repository and `cd` into it:
+
+    ```bash
+    git clone https://github.com/adriankumpf/teslamate.git
+    cd teslamate
+    ```
+
+4.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard)
+    the dashboard [files](dashboards) or setup `wizzy`:
 
     Download and install wizzy
 
@@ -220,7 +227,7 @@ Finally, [import](#dashboards) the Grafana dashboards.
     for d in dashboards/de_*; do wizzy export dashboard $(basename $d .json); done
     ```
 
-4.  _Optional:_ To permanently switch a dashboard to **Miles and Fahrenheit** change the
+5.  _Optional:_ To permanently switch a dashboard to **Miles and Fahrenheit** change the
     variables via the respective dropdown menus, hit the save button and enable
     the `Save current variables` switch.
 
