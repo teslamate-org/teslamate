@@ -3,7 +3,8 @@ defmodule TeslaMate.Api do
 
   require Logger
 
-  alias TeslaApi.{Auth, Error, Vehicle}
+  alias TeslaMate.Auth.{Tokens, Credentials}
+  alias TeslaMate.Auth
 
   defstruct auth: nil
   alias __MODULE__, as: State
@@ -30,27 +31,77 @@ defmodule TeslaMate.Api do
     GenServer.call(name, {:get_vehicle_with_state, id}, 35_000)
   end
 
-  ## Commands
+  ## Internals
 
-  def wake_up(name \\ @name, id) do
-    GenServer.call(name, {:wake_up, id}, 35_000)
+  def sign_in(name \\ @name, credentials) do
+    GenServer.call(name, {:sign_in, credentials})
+  end
+
+  def signed_in?(name \\ @name) do
+    GenServer.call(name, :signed_in?)
   end
 
   # Callbacks
 
   @impl true
   def init(_opts) do
-    opts = Application.fetch_env!(:teslamate, :tesla_auth)
-    username = Keyword.fetch!(opts, :username)
-    password = Keyword.fetch!(opts, :password)
+    case {Auth.get_tokens(), Auth.get_credentials()} do
+      {nil, nil} ->
+        {:ok, %State{auth: nil}}
 
-    case Auth.login(username, password) do
-      {:ok, %Auth{} = auth} -> {:ok, %State{auth: auth}, {:continue, :schedule_refresh}}
-      {:error, %Error{} = error} -> {:stop, error}
+      {%Tokens{access: access, refresh: refresh}, _credentials} ->
+        api_auth = %TeslaApi.Auth{token: access, refresh_token: refresh}
+
+        case TeslaApi.Auth.refresh(api_auth) do
+          {:ok, %TeslaApi.Auth{} = auth} ->
+            :ok = Auth.save(auth)
+
+            {:ok, %State{auth: auth}, {:continue, :schedule_refresh}}
+
+          {:error, %TeslaApi.Error{} = error} ->
+            {:stop, error}
+        end
+
+      # TODO remove with v2.0
+      {nil, %Credentials{email: email, password: password}} ->
+        case TeslaApi.Auth.login(email, password) do
+          {:ok, %TeslaApi.Auth{} = auth} ->
+            :ok = Auth.save(auth)
+
+            Logger.warn(
+              "Signing in with TESLA_USERNAME and TESLA_PASSWORD variables is deprecated. " <>
+                "An API token has already been stored in the database. " <>
+                "Both variables can be safely removed from the environment. "
+            )
+
+            {:ok, %State{auth: auth}, {:continue, :schedule_refresh}}
+
+          {:error, %TeslaApi.Error{} = error} ->
+            {:stop, error}
+        end
     end
   end
 
   @impl true
+  def handle_call({:sign_in, %Credentials{email: email, password: password}}, _from, state) do
+    case TeslaApi.Auth.login(email, password) do
+      {:ok, %TeslaApi.Auth{} = auth} ->
+        :ok = Auth.save(auth)
+        {:reply, :ok, %State{auth: auth}, {:continue, :schedule_refresh}}
+
+      {:error, %TeslaApi.Error{error: reason}} ->
+        {:reply, {:error, reason}, state}
+    end
+  end
+
+  def handle_call(:signed_in?, _from, %State{auth: auth} = state) do
+    {:reply, not is_nil(auth), state}
+  end
+
+  def handle_call(_command, _from, %State{auth: nil} = state) do
+    {:reply, {:error, :not_signed_in}, state}
+  end
+
   def handle_call(:list_vehicles, _from, state) do
     {:reply, do_list_vehicles(state.auth), state}
   end
@@ -61,28 +112,9 @@ defmodule TeslaMate.Api do
 
   def handle_call({:get_vehicle_with_state, id}, _from, state) do
     response =
-      case Vehicle.get_with_state(state.auth, id) do
-        {:error, %Error{error: reason}} -> {:error, reason}
-        {:ok, %Vehicle{} = vehicle} -> {:ok, vehicle}
-      end
-
-    {:reply, response, state}
-  end
-
-  def handle_call({:wake_up, id}, _from, state) do
-    response =
-      case Vehicle.Command.wake_up(state.auth, id) do
-        {:ok, %Vehicle{state: "online"}} ->
-          :ok
-
-        {:ok, %Vehicle{state: "asleep"}} ->
-          wait_until_awake(state.auth, id)
-
-        {:ok, %Vehicle{state: "offline"}} ->
-          {:error, :vehicle_unavailable}
-
-        {:error, %Error{error: reason}} ->
-          {:error, reason}
+      case TeslaApi.Vehicle.get_with_state(state.auth, id) do
+        {:error, %TeslaApi.Error{error: reason}} -> {:error, reason}
+        {:ok, %TeslaApi.Vehicle{} = vehicle} -> {:ok, vehicle}
       end
 
     {:reply, response, state}
@@ -90,11 +122,11 @@ defmodule TeslaMate.Api do
 
   @impl true
   def handle_info(:refresh_auth, %State{auth: auth} = state) do
-    case Auth.refresh(auth) do
-      {:ok, %Auth{} = auth} ->
+    case TeslaApi.Auth.refresh(auth) do
+      {:ok, %TeslaApi.Auth{} = auth} ->
         {:noreply, %State{state | auth: auth}, {:continue, :schedule_refresh}}
 
-      {:error, %Error{error: error, message: reason, env: _}} ->
+      {:error, %TeslaApi.Error{error: error, message: reason, env: _}} ->
         {:stop, {error, reason}}
     end
   end
@@ -126,39 +158,15 @@ defmodule TeslaMate.Api do
   end
 
   defp do_list_vehicles(auth) do
-    with {:error, %Error{error: reason}} <- Vehicle.list(auth) do
+    with {:error, %TeslaApi.Error{error: reason}} <- TeslaApi.Vehicle.list(auth) do
       {:error, reason}
     end
   end
 
   defp find_vehicle(vehicles, id) do
-    case Enum.find(vehicles, &match?(%Vehicle{id: ^id}, &1)) do
+    case Enum.find(vehicles, &match?(%TeslaApi.Vehicle{id: ^id}, &1)) do
       nil -> {:error, :vehicle_not_found}
       vehicle -> {:ok, vehicle}
     end
-  end
-
-  defp wait_until_awake(auth, id, retries \\ 5)
-
-  defp wait_until_awake(auth, id, retries) when retries > 0 do
-    case do_get_vehicle(auth, id) do
-      {:ok, %Vehicle{state: "online"}} ->
-        :ok
-
-      {:ok, %Vehicle{state: "asleep"}} ->
-        Logger.info("Waiting for vehicle to become awake ...")
-        :timer.sleep(:timer.seconds(5))
-        wait_until_awake(auth, id, retries - 1)
-
-      {:ok, %Vehicle{state: "offline"}} ->
-        {:error, :vehicle_unavailable}
-
-      {:error, %Error{error: reason}} ->
-        {:error, reason}
-    end
-  end
-
-  defp wait_until_awake(_auth, _id, _retries) do
-    {:error, :vehicle_still_asleep}
   end
 end
