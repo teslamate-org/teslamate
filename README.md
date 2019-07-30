@@ -271,8 +271,8 @@ Pull the image with the new tag: `docker pull teslamate/teslamate:1.x.x`. Stop
 and remove the old container: `docker stop <container_name> && docker rm <container_name>`.
 Start a new container with the latest tag: `docker run -d -p 4000:4000 teslamate/teslamate:1.x.x`.
 
-Alternatively, with Docker Compose, define the new tag in the
-`docker-compose.yml` file and restart the container.
+Alternatively, with Docker Compose, run `docker-compose pull` and restart the
+container with `docker-compose up`.
 
 ### Manually
 
