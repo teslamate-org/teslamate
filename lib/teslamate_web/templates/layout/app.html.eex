@@ -28,7 +28,6 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-end">
-            <%# <%= link("Cars", to: "/", class: "navbar-item") %1> %>
             <p class="navbar-item" >v<%= Application.spec(:teslamate, :vsn) %></p>
           </div>
         </div>
@@ -37,8 +36,10 @@
 
     <main role="main" class="section">
       <div class="container">
-        <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-        <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+        <%= Enum.map(get_flash(@conn), fn {flash_key, flash_message} -> %>
+          <p class="notification is-<%= flash_key %>"><%= flash_message %></p>
+        <% end) %>
+
         <%= render @view_module, @view_template, assigns %>
       </div>
     </main>

@@ -31,6 +31,26 @@ defmodule TeslaMate.Vehicles do
     )
   end
 
+  def restart do
+    with :ok <- Supervisor.stop(@name, :normal),
+         :ok <- block_until_started(250) do
+      :ok
+    end
+  end
+
+  defp block_until_started(0), do: {:error, :restart_failed}
+
+  defp block_until_started(retries) when retries > 0 do
+    case Process.whereis(@name) do
+      nil ->
+        :timer.sleep(10)
+        block_until_started(retries - 1)
+
+      _pid ->
+        :ok
+    end
+  end
+
   defp list_vehicles! do
     case TeslaMate.Api.list_vehicles() do
       {:error, :not_signed_in} -> fallback_vehicles()

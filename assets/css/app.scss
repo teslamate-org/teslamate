@@ -1,12 +1,19 @@
 @charset "utf-8";
 
+$notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
+
 @import "~bulma/sass/utilities/_all";
 @import "~bulma/sass/base/_all";
 @import "~bulma/sass/components/card";
 @import "~bulma/sass/components/navbar";
+@import "~bulma/sass/elements/button";
+@import "~bulma/sass/elements/box";
+@import "~bulma/sass/elements/notification";
 @import "~bulma/sass/elements/container";
 @import "~bulma/sass/elements/table";
+@import "~bulma/sass/form/_all";
 @import "~bulma/sass/layout/section";
+@import "~bulma/sass/grid/_all";
 
 // @import "~bulma/bulma";
 
@@ -26,5 +33,19 @@
   .content table td,
   .content table th {
     border: none;
+  }
+}
+
+$sizes: (0,10,15,20,25,30,50);
+$positions: ('top','left','bottom','right');
+
+@each $size in $sizes {
+  @each $position in $positions {
+    .m#{str-slice($position, 0, 1)}-#{$size} {
+      margin-#{$position}: $size + px;
+    }
+    .p#{str-slice($position, 0, 1)}-#{$size} {
+      padding-#{$position}: $size + px;
+    }
   }
 }

@@ -5,6 +5,7 @@ defmodule TeslaMate.Api do
 
   alias TeslaMate.Auth.{Tokens, Credentials}
   alias TeslaMate.Auth
+  alias TeslaMate.Vehicles
 
   defstruct auth: nil
   alias __MODULE__, as: State
@@ -87,6 +88,7 @@ defmodule TeslaMate.Api do
     case TeslaApi.Auth.login(email, password) do
       {:ok, %TeslaApi.Auth{} = auth} ->
         :ok = Auth.save(auth)
+        :ok = Vehicles.restart()
         {:reply, :ok, %State{auth: auth}, {:continue, :schedule_refresh}}
 
       {:error, %TeslaApi.Error{error: reason}} ->
