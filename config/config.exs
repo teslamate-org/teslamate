@@ -14,7 +14,7 @@ config :teslamate, TeslaMateWeb.Endpoint,
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  metadata: [:car_id]
 
 config :phoenix, :json_library, Jason
 

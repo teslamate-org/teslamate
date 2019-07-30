@@ -39,7 +39,7 @@ config :logger,
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: []
+  metadata: [:car_id]
 
 if System.get_env("ENABLE_LOGGER_TELEGRAM") == "true" do
   config :logger,
