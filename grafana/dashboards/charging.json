@@ -1,8 +1,22 @@
 {
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564399881738,
+  "id": null,
+  "iteration": 1564529060555,
   "links": [],
   "panels": [
     {
@@ -42,11 +56,11 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "Reichweite [km]",
+          "alias": "Range [km]",
           "yaxis": 2
         },
         {
-          "alias": "Ladespannung [V]",
+          "alias": "Charging Voltage  [V]",
           "fill": 0,
           "yaxis": 2
         },
@@ -66,7 +80,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  battery_level as \"SOC [%]\",\n  charger_power as \"Leistung [kW]\",\n  ideal_battery_range_km as \"Reichweite [km]\",\n  charger_voltage as \"Ladespannung [V]\",\n  charger_phases as \"Phasen\",\n  charger_actual_current as \"Stromstärke [A]\",\n  charger_pilot_current as \"Stromstärke (pilot) [A]\",\n  convert_celsius(outside_temp, '$temp_unit') as \"Außentemperatur [°$temp_unit]\"\nFROM\n  charges c\nWHERE\n  $__timeFilter(date) and c.charging_process_id = $charging_process_id\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n  battery_level as \"SOC [%]\",\n  charger_power as \"Power [kW]\",\n  ideal_battery_range_km as \"Range [km]\",\n  charger_voltage as \"Charging Voltage [V]\",\n  charger_phases as \"Phases\",\n  charger_actual_current as \"Current [A]\",\n  charger_pilot_current as \"Current (pilot) [A]\",\n  convert_celsius(outside_temp, '$temp_unit') as \"Outdoor Temperature [°$temp_unit]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id\nORDER BY\n  date ASC",
           "refId": "A",
           "select": [
             [
@@ -92,7 +106,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Laden",
+      "title": "Charging",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -150,7 +164,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(c.start_date),\n   p.latitude as lat,\n   p.longitude as lng\nFROM charging_processes c\nleft join positions p on p.id = c.position_id\nWHERE  $__timeFilter(c.start_date) and c.id = $charging_process_id\nORDER BY c.start_date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n   latitude as lat,\n   longitude as lng\nFROM positions\nWHERE\n  $__timeFilter(date) and \n  car_id = $car_id\nORDER BY \n  date ASC",
           "refId": "A",
           "select": [
             [
@@ -192,12 +206,11 @@
         "name": "charging_process_id",
         "options": [
           {
-            "selected": false,
             "text": "",
             "value": ""
           }
         ],
-        "query": "33",
+        "query": "",
         "skipUrlSync": false,
         "type": "textbox"
       },
@@ -227,6 +240,37 @@
         "query": "C,F",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": null,
+        "definition": "select id from cars;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Car",
+        "multi": false,
+        "name": "car_id",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "select id from cars;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -260,6 +304,7 @@
     ]
   },
   "timezone": "",
-  "title": "Laden",
-  "uid": "BHhxFeZRz"
+  "title": "Charging",
+  "uid": "BHhxFeZRz",
+  "version": 1
 }

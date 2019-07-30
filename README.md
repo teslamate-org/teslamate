@@ -80,7 +80,9 @@ services:
       - TESLA_USERNAME=username@example.com
       - TESLA_PASSWORD=secret
       - MQTT_HOST=mosquitto
-      - VIRTUAL_HOST=localhost # if you're going to access the UI from another machine replace "localhost" with the hostname / IP address of the docker host
+      - VIRTUAL_HOST=localhost # if you're going to access the UI from another
+                               # machine replace "localhost" with the hostname
+                               # / IP address of the docker host
     ports:
       - 4000:4000
     cap_drop:
@@ -95,20 +97,16 @@ services:
       - teslamate-db:/var/lib/postgresql/data
 
   grafana:
-    image: grafana/grafana:6.3.0-beta2
+    image: teslamate/grafana:latest
     environment:
-      - GF_ANALYTICS_REPORTING_ENABLED=FALSE
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ALLOW_EMBEDDING=true
-      - GF_SECURITY_DISABLE_GRAVATAR=true
-      - GF_USERS_ALLOW_SIGN_UP=false
-      - GF_INSTALL_PLUGINS=pr0ps-trackmap-panel,natel-discrete-panel
+      - DATABASE_USER=teslamate
+      - DATABASE_PASS=secret
+      - DATABASE_NAME=teslamate
+      - DATABASE_HOST=db
     ports:
       - 3000:3000
     volumes:
-      - grafana-data:/var/lib/grafana
+      - teslamate-grafana-data:/var/lib/grafana
 
   mosquitto:
     image: eclipse-mosquitto:1.6
@@ -121,20 +119,18 @@ services:
 
 volumes:
     teslamate-db:
-    grafana-data:
+    teslamate-grafana-data:
     mosquitto-conf:
     mosquitto-data:
 ```
 
 Start everything with `docker-compose up`.
 
-Finally, [import](#dashboards) the Grafana dashboards.
-
 ### Manual Installation
 
 1. Install PostgreSQL and create a database (e.g. `teslamate`)
 2. Install Grafana with the following plugins: `pr0ps-trackmap-panel` and
-   `natel-discrete-panel`. Then [import](#dashboards) the dashboard JSON files.
+   `natel-discrete-panel`. Then [import](#grafana/dashboards) the dashboard JSON files.
 3. _Optional:_ Install [mosquitto](https://mosquitto.org/) or another MQTT broker
 4. Compile and build TeslaMate:
 
@@ -171,9 +167,10 @@ Finally, [import](#dashboards) the Grafana dashboards.
     _build/prod/rel/teslamate/bin/teslamate start
    ```
 
-Finally, [import](#dashboards) the Grafana dashboards.
-
 ### Dashboards
+
+The recommended way to run Grafana is to use the custom Grafana image
+`teslmate/grafana`. If you prefer to setup Grafana yourself read on:
 
 1.  Visit [localhost:3000](http://localhost:3000) and log in.
 
@@ -220,11 +217,7 @@ Finally, [import](#dashboards) the Grafana dashboards.
     Export the dashboards to Grafana
 
     ```bash
-    # English Translations
-    for d in dashboards/en_*; do wizzy export dashboard $(basename $d .json); done
-
-    # German Translations
-    for d in dashboards/de_*; do wizzy export dashboard $(basename $d .json); done
+    for d in grafana/dashboards/*.json; do wizzy export dashboard $(basename $d .json); done
     ```
 
 5.  _Optional:_ To permanently switch a dashboard to **Miles and Fahrenheit** change the

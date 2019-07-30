@@ -1,8 +1,22 @@
 {
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564400528351,
+  "id": null,
+  "iteration": 1564529772784,
   "links": [],
   "panels": [
     {
@@ -10,9 +24,8 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "decimals": 2,
       "fill": 1,
-      "fillGradient": 3,
+      "fillGradient": 4,
       "gridPos": {
         "h": 21,
         "w": 24,
@@ -22,7 +35,7 @@
       "id": 2,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": false,
         "max": true,
         "min": true,
@@ -42,13 +55,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "Kilometerstand",
-          "fill": 0,
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": true,
@@ -60,7 +67,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(start_date),\n\tconvert_km(calculated_max_range, '$length_unit') AS \"Prognostiziert Reichweite\",\n\tconvert_km(positions.odometer, '$length_unit') AS \"Kilometerstand\"\nFROM\n\tcharging_processes\n\tINNER JOIN positions ON positions.id = charging_processes.position_id\nWHERE\n\tcharging_processes.car_id = $car\n\tAND $__timeFilter(start_date);",
+          "rawSql": "WITH summary AS (\n\tSELECT\n\t\tdate,\n\t\todometer,\n\t\trank() OVER (PARTITION BY date_trunc('hour', date) ORDER BY date DESC) AS rk\n\t\tFROM\n\t\t\tpositions\n\t\tWHERE\n\t\t\tcar_id = 1 AND\n\t\t\t$__timeFilter(date)\n)\nSELECT\n date as time,\n convert_km(odometer, '$length_unit') as mileage\nFROM\n\tsummary\nWHERE\n\trk = 1\n\torder by date;",
           "refId": "A",
           "select": [
             [
@@ -86,7 +93,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Degradation",
+      "title": "Mileage",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -102,21 +109,21 @@
       },
       "yaxes": [
         {
-          "decimals": 0,
-          "format": "none",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
+          "decimals": 1,
           "format": "none",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
           "show": true
+        },
+        {
+          "format": "locale",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
         }
       ],
       "yaxis": {
@@ -137,10 +144,11 @@
           "text": "1",
           "value": "1"
         },
+        "datasource": null,
         "definition": "select id from cars;",
         "hide": 0,
         "includeAll": false,
-        "label": "Auto",
+        "label": "Car",
         "multi": false,
         "name": "car",
         "options": [
@@ -221,6 +229,7 @@
     ]
   },
   "timezone": "",
-  "title": "Degradation",
-  "uid": "riqUfXgRz"
+  "title": "Mileage",
+  "uid": "NjtMTFggz",
+  "version": 1
 }
