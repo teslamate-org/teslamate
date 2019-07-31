@@ -30,8 +30,12 @@ defmodule TeslaMateWeb.SignInLive.Index do
     credentials = Ecto.Changeset.apply_changes(socket.assigns.changeset)
 
     case Api.sign_in(credentials) do
-      {:error, reason} -> {:noreply, assign(socket, error: reason)}
-      :ok -> {:stop, redirect_to_carlive(socket)}
+      {:error, reason} ->
+        {:noreply, assign(socket, error: reason)}
+
+      :ok ->
+        :timer.sleep(250)
+        {:stop, redirect_to_carlive(socket)}
     end
   end
 

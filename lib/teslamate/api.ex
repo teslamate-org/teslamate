@@ -7,7 +7,9 @@ defmodule TeslaMate.Api do
   alias TeslaMate.Auth
   alias TeslaMate.Vehicles
 
-  defstruct auth: nil
+  import Core.Dependency, only: [call: 3, call: 2]
+
+  defstruct auth: nil, deps: %{}
   alias __MODULE__, as: State
 
   @name __MODULE__
@@ -45,29 +47,42 @@ defmodule TeslaMate.Api do
   # Callbacks
 
   @impl true
-  def init(_opts) do
-    case {Auth.get_tokens(), Auth.get_credentials()} do
+  def init(opts) do
+    deps = %{
+      auth: Keyword.get(opts, :auth, Auth),
+      vehicles: Keyword.get(opts, :vehicles, Vehicles),
+      tesla_api_auth: Keyword.get(opts, :tesla_api_auth, TeslaApi.Auth),
+      tesla_api_vehicle: Keyword.get(opts, :tesla_api_vehicle, TeslaApi.Vehicle)
+    }
+
+    case {call(deps.auth, :get_tokens), call(deps.auth, :get_credentials)} do
       {nil, nil} ->
-        {:ok, %State{auth: nil}}
+        Logger.info("Please sign in.")
+        {:ok, %State{auth: nil, deps: deps}}
 
       {%Tokens{access: access, refresh: refresh}, _credentials} ->
         api_auth = %TeslaApi.Auth{token: access, refresh_token: refresh}
 
-        case TeslaApi.Auth.refresh(api_auth) do
+        case call(deps.tesla_api_auth, :refresh, [api_auth]) do
           {:ok, %TeslaApi.Auth{} = auth} ->
-            :ok = Auth.save(auth)
+            :ok = call(deps.auth, :save, [auth])
 
-            {:ok, %State{auth: auth}, {:continue, :schedule_refresh}}
+            {:ok, %State{auth: auth, deps: deps}, {:continue, :schedule_refresh}}
 
           {:error, %TeslaApi.Error{} = error} ->
-            {:stop, error}
+            Logger.warn(
+              "The persisted API tokens could not be refreshed. Please sign in again.\n" <>
+                inspect(error)
+            )
+
+            {:ok, %State{auth: nil, deps: deps}}
         end
 
       # TODO remove with v2.0
       {nil, %Credentials{email: email, password: password}} ->
-        case TeslaApi.Auth.login(email, password) do
+        case call(deps.tesla_api_auth, :login, [email, password]) do
           {:ok, %TeslaApi.Auth{} = auth} ->
-            :ok = Auth.save(auth)
+            :ok = call(deps.auth, :save, [auth])
 
             Logger.warn(
               "Signing in with TESLA_USERNAME and TESLA_PASSWORD variables is deprecated. " <>
@@ -75,7 +90,7 @@ defmodule TeslaMate.Api do
                 "Both variables can be safely removed from the environment. "
             )
 
-            {:ok, %State{auth: auth}, {:continue, :schedule_refresh}}
+            {:ok, %State{auth: auth, deps: deps}, {:continue, :schedule_refresh}}
 
           {:error, %TeslaApi.Error{} = error} ->
             {:stop, error}
@@ -84,12 +99,18 @@ defmodule TeslaMate.Api do
   end
 
   @impl true
+
+  def handle_call({:sign_in, %Credentials{}}, _from, %State{auth: auth} = state)
+      when not is_nil(auth) do
+    {:reply, {:error, :already_signed_in}, state}
+  end
+
   def handle_call({:sign_in, %Credentials{email: email, password: password}}, _from, state) do
-    case TeslaApi.Auth.login(email, password) do
+    case call(state.deps.tesla_api_auth, :login, [email, password]) do
       {:ok, %TeslaApi.Auth{} = auth} ->
-        :ok = Auth.save(auth)
-        :ok = Vehicles.restart()
-        {:reply, :ok, %State{auth: auth}, {:continue, :schedule_refresh}}
+        :ok = call(state.deps.auth, :save, [auth])
+        :ok = call(state.deps.vehicles, :restart)
+        {:reply, :ok, %State{state | auth: auth}, {:continue, :schedule_refresh}}
 
       {:error, %TeslaApi.Error{error: reason}} ->
         {:reply, {:error, reason}, state}
@@ -105,16 +126,16 @@ defmodule TeslaMate.Api do
   end
 
   def handle_call(:list_vehicles, _from, state) do
-    {:reply, do_list_vehicles(state.auth), state}
+    {:reply, do_list_vehicles(state), state}
   end
 
   def handle_call({:get_vehicle, id}, _from, state) do
-    {:reply, do_get_vehicle(state.auth, id), state}
+    {:reply, do_get_vehicle(id, state), state}
   end
 
   def handle_call({:get_vehicle_with_state, id}, _from, state) do
     response =
-      case TeslaApi.Vehicle.get_with_state(state.auth, id) do
+      case call(state.deps.tesla_api_vehicle, :get_with_state, [state.auth, id]) do
         {:error, %TeslaApi.Error{error: reason}} -> {:error, reason}
         {:ok, %TeslaApi.Vehicle{} = vehicle} -> {:ok, vehicle}
       end
@@ -123,8 +144,8 @@ defmodule TeslaMate.Api do
   end
 
   @impl true
-  def handle_info(:refresh_auth, %State{auth: auth} = state) do
-    case TeslaApi.Auth.refresh(auth) do
+  def handle_info(:refresh_auth, state) do
+    case call(state.deps.tesla_api_auth, :refresh, [state.auth]) do
       {:ok, %TeslaApi.Auth{} = auth} ->
         {:noreply, %State{state | auth: auth}, {:continue, :schedule_refresh}}
 
@@ -152,15 +173,15 @@ defmodule TeslaMate.Api do
 
   # Private
 
-  defp do_get_vehicle(auth, id) do
-    with {:ok, vehicles} <- do_list_vehicles(auth),
+  defp do_get_vehicle(id, state) do
+    with {:ok, vehicles} <- do_list_vehicles(state),
          {:ok, vehicle} <- find_vehicle(vehicles, id) do
       {:ok, vehicle}
     end
   end
 
-  defp do_list_vehicles(auth) do
-    with {:error, %TeslaApi.Error{error: reason}} <- TeslaApi.Vehicle.list(auth) do
+  defp do_list_vehicles(%State{auth: auth, deps: deps}) do
+    with {:error, %TeslaApi.Error{error: reason}} <- call(deps.tesla_api_vehicle, :list, [auth]) do
       {:error, reason}
     end
   end
