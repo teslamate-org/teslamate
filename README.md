@@ -51,20 +51,10 @@ A data logger for your Tesla.
 
 ## Installation
 
-### Docker Installation (recommended)
+### Docker (recommended)
 
-If you already have PostgreSQL and Grafana running elsewhere just pull the image
-and run the container:
-
-```bash
-# Run the container
-docker run -d --env-file .env -p 4000:4000 teslamate/teslamate:latest
-```
-
-You still need to set a few environment variables. See
-[Configuration](#configuration).
-
-Alternatively use a `docker-compose.yml` file:
+The recommended way to install an run TeslaMate is to use Docker. Create a
+`docker-compose.yml` file and replace the necessary `environment` variables:
 
 ```YAML
 version: '3'
@@ -124,105 +114,16 @@ volumes:
     mosquitto-data:
 ```
 
-Start everything with `docker-compose up`.
+Afterwards start everything with `docker-compose up`.
 
-### Manual Installation
+To access the web interface go to http://ip-of-your-machine:4000.
 
-1. Install PostgreSQL and create a database (e.g. `teslamate`)
-2. Install Grafana with the following plugins: `pr0ps-trackmap-panel` and
-   `natel-discrete-panel`. Then [import](#grafana/dashboards) the dashboard JSON files.
-3. _Optional:_ Install [mosquitto](https://mosquitto.org/) or another MQTT broker
-4. Compile and build TeslaMate:
+To access Grafana go to http://ip-of-your-machine:3000.
 
-   **Requirements**
+### Manual Installation (advanced)
 
-   - Elixir ([Installing Elixir](https://elixir-lang.org/install.html))
-   - Node.js with npm or yarn
-
-   Clone the repository and then build the release:
-
-   ```bash
-   mix deps.get --only prod
-   MIX_ENV=prod mix compile
-
-    # a) with yarn
-    (cd assets && yarn install && yarn deploy)
-
-    # b) with npm
-    npm install --prefix ./assets && npm run deploy --prefix ./assets
-
-    mix phx.digest
-    MIX_ENV=prod mix release
-   ```
-
-   Before the first application startup run the database migrations:
-
-   ```bash
-    _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
-   ```
-
-   Afterwards start the application regularly:
-
-   ```bash
-    _build/prod/rel/teslamate/bin/teslamate start
-   ```
-
-### Dashboards
-
-The recommended way to run Grafana is to use the custom Grafana image
-`teslmate/grafana`. If you prefer to setup Grafana yourself read on:
-
-1.  Visit [localhost:3000](http://localhost:3000) and log in.
-
-2.  Create a data source
-
-    With a `docker-compose.yml` like above the data source configuration would
-    look like this:
-
-    ```
-    Type: PostgreSQL
-    Name: TeslaMate
-    Host: db
-    Database: teslamate
-    User: teslamate  Password: secret
-    SSL-Mode: disable
-    Version: 10
-    ```
-
-3.  Clone this repository and `cd` into it:
-
-    ```bash
-    git clone https://github.com/adriankumpf/teslamate.git
-    cd teslamate
-    ```
-
-4.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard)
-    the dashboard [files](dashboards) or setup `wizzy`:
-
-    Download and install wizzy
-
-    ```bash
-    npm install -g wizzy
-    ```
-
-    Configure grafana properties
-
-    ```bash
-    wizzy init
-    wizzy set grafana url http://localhost:3000
-    wizzy set grafana username admin
-    wizzy set grafana password admin
-    ```
-
-    Export the dashboards to Grafana
-
-    ```bash
-    for d in grafana/dashboards/*.json; do wizzy export dashboard $(basename $d .json); done
-    ```
-
-5.  _Optional:_ To permanently switch a dashboard to **Miles and Fahrenheit** change the
-    variables via the respective dropdown menus, hit the save button and enable
-    the `Save current variables` switch.
+To run TeslaMate without Docker follow this guide: [Manual
+Installation](https://github.com/adriankumpf/teslamate/wiki/Manual-Installation)
 
 ## Configuration
 
@@ -255,29 +156,13 @@ TeslaMate uses environment variables for runtime configuration.
 
 ## Upgrading
 
-> Before updating please check the [Changelog](CHANGELOG.md) to find out
-> whether the dashboards need to be updated / imported again.
-
 ### Docker
 
-Pull the image with the new tag: `docker pull teslamate/teslamate:1.x.x`. Stop
-and remove the old container: `docker stop <container_name> && docker rm <container_name>`.
-Start a new container with the latest tag: `docker run -d -p 4000:4000 teslamate/teslamate:1.x.x`.
-
-Alternatively, with Docker Compose, run `docker-compose pull` and restart the
-container with `docker-compose up`.
+Run `docker-compose pull` and restart with `docker-compose up`.
 
 ### Manually
 
-Pull the new changes from the git repository then build the new release as
-described [here](#manual-installation).
-
-If an upgrade requires to run new database migrations continue with the
-following command:
-
-```bash
- _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
-```
+See [Manual Installation](https://github.com/adriankumpf/teslamate/wiki/Manual-Installation#upgrading)
 
 ## Web Interface
 
@@ -335,12 +220,6 @@ I strongly recommend to use a reverse-proxy with HTTPS and basic access
 authentication when exposing TeslaMate to the public internet. Additionally
 only permit access to `/api/car/$car_id/logging/resume` and/or
 `/api/car/$car_id/logging/suspend`.
-
-**Why is the "Consumption" / "Charging" dashboard not showing any data?**
-
-Both dashboards don't show any data by default. Instead, you need to choose a
-particular trip or charging process in the `Trips` / `Charging History`
-dashboard by clicking on its start date.
 
 ## Disclaimer
 
