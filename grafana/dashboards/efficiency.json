@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564529725089,
+  "iteration": 1564589825420,
   "links": [],
   "panels": [
     {
@@ -577,59 +576,52 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "text": "C",
-          "value": "C"
+          "text": "F",
+          "value": "F"
         },
-        "hide": 0,
+        "datasource": null,
+        "definition": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "hide": 2,
         "includeAll": false,
-        "label": "temperature unit",
+        "label": "",
         "multi": false,
         "name": "temp_unit",
-        "options": [
-          {
-            "selected": true,
-            "text": "C",
-            "value": "C"
-          },
-          {
-            "selected": false,
-            "text": "F",
-            "value": "F"
-          }
-        ],
-        "query": "C,F",
+        "options": [],
+        "query": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       },
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "tags": [],
-          "text": "km",
-          "value": "km"
+          "text": "mi",
+          "value": "mi"
         },
-        "hide": 0,
+        "datasource": null,
+        "definition": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "hide": 2,
         "includeAll": false,
-        "label": "length unit",
+        "label": "",
         "multi": false,
         "name": "length_unit",
-        "options": [
-          {
-            "selected": true,
-            "text": "km",
-            "value": "km"
-          },
-          {
-            "selected": false,
-            "text": "mi",
-            "value": "mi"
-          }
-        ],
-        "query": "km,mi",
+        "options": [],
+        "query": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       },
       {
         "allValue": null,

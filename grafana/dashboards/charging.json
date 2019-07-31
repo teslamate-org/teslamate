@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564529060555,
+  "iteration": 1564590298038,
   "links": [],
   "panels": [
     {
@@ -56,7 +55,7 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "Range [km]",
+          "alias": "/Range.*/",
           "yaxis": 2
         },
         {
@@ -80,7 +79,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  battery_level as \"SOC [%]\",\n  charger_power as \"Power [kW]\",\n  ideal_battery_range_km as \"Range [km]\",\n  charger_voltage as \"Charging Voltage [V]\",\n  charger_phases as \"Phases\",\n  charger_actual_current as \"Current [A]\",\n  charger_pilot_current as \"Current (pilot) [A]\",\n  convert_celsius(outside_temp, '$temp_unit') as \"Outdoor Temperature [°$temp_unit]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n  battery_level as \"SOC [%]\",\n  charger_power as \"Power [kW]\",\n  convert_km(ideal_battery_range_km, '$length_unit') as \"Range [$length_unit]\",\n  charger_voltage as \"Charging Voltage [V]\",\n  charger_phases as \"Phases\",\n  charger_actual_current as \"Current [A]\",\n  charger_pilot_current as \"Current (pilot) [A]\",\n  convert_celsius(outside_temp, '$temp_unit') as \"Outdoor Temperature [°$temp_unit]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id\nORDER BY\n  date ASC",
           "refId": "A",
           "select": [
             [
@@ -217,29 +216,28 @@
       {
         "allValue": null,
         "current": {
-          "text": "C",
-          "value": "C"
+          "selected": true,
+          "text": "F",
+          "value": "F"
         },
-        "hide": 0,
+        "datasource": null,
+        "definition": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "hide": 2,
         "includeAll": false,
-        "label": "temperature unit",
+        "label": "",
         "multi": false,
         "name": "temp_unit",
-        "options": [
-          {
-            "selected": false,
-            "text": "C",
-            "value": "C"
-          },
-          {
-            "selected": true,
-            "text": "F",
-            "value": "F"
-          }
-        ],
-        "query": "C,F",
+        "options": [],
+        "query": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       },
       {
         "allValue": null,
@@ -271,11 +269,36 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "mi",
+          "value": "mi"
+        },
+        "datasource": null,
+        "definition": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "length_unit",
+        "options": [],
+        "query": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
   "time": {
-    "from": "now/d",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
@@ -306,5 +329,5 @@
   "timezone": "",
   "title": "Charging",
   "uid": "BHhxFeZRz",
-  "version": 1
+  "version": 2
 }
