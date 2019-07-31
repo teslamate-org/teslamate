@@ -2,7 +2,7 @@ import Config
 
 defmodule Util do
   def random_encoded_bytes do
-    :crypto.strong_rand_bytes(6) |> Base.encode64()
+    :crypto.strong_rand_bytes(64) |> Base.encode64()
   end
 end
 

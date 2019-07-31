@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix generation of `secret_key_base`
+
 ## [1.3.0] - 2019-07-29
 
 ### Changed
