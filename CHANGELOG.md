@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.4.1] - 2019-07-31
+
+### Fixed
+
+- Convert to imperial measurements on status screen
+- Fix warnings
+
 ## [1.4.0] - 2019-07-31
 
 **1. New custom grafana image: `teslamate/grafana`**
@@ -155,7 +162,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.4.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/adriankumpf/teslamate/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/adriankumpf/teslamate/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/adriankumpf/teslamate/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/adriankumpf/teslamate/compare/v1.1.1...v1.2.0
