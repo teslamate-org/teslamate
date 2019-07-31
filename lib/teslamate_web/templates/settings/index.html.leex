@@ -1,0 +1,22 @@
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><%= link gettext("Home"), to: "/" %></li>
+    <li class="is-active"><%= link gettext("Settings"), to: "/settings" %></li>
+  </ul>
+</nav>
+
+<div class="columns is-tablet is-centered">
+  <div class="column">
+    <div class="message is-info">
+      <div class="message-header">
+        <p><%= gettext("Settings") %></p>
+      </div>
+      <%= f = form_for @changeset, "#", [phx_change: :change, class: "message-body"] %>
+        <label class="checkbox">
+          <%= checkbox(f, :use_imperial_units) %> <%= gettext("Use imperial units") %>
+        </label>
+          <%= error_tag(f, :use_imperial_units) %>
+      </form>
+    </div>
+  </div>
+</div>
