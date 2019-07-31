@@ -19,10 +19,10 @@ main() {
   grafana_dir=grafana
 
   pushd "$grafana_dir" > /dev/null || (echo "Couldn't change to $grafana_dir" && exit 1)
-
   build "$task" "teslamate/grafana:$version"
-
   popd > /dev/null
+
+  build "$task" "teslamate/teslamate:$version"
   echo "Done"
 
 }
