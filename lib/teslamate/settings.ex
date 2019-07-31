@@ -10,7 +10,7 @@ defmodule TeslaMate.Settings do
 
   def get_settings! do
     case Repo.all(Settings) do
-      [tokens] -> tokens
+      [settings] -> settings
       _ -> raise "settings table is corrupted"
     end
   end

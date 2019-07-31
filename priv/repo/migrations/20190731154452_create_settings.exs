@@ -1,8 +1,6 @@
 defmodule TeslaMate.Repo.Migrations.CreateSettings do
   use Ecto.Migration
 
-  import Ecto.Query
-
   alias TeslaMate.Settings.Settings
   alias TeslaMate.Repo
 
