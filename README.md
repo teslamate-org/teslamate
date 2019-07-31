@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/adriankumpf/teslamate.svg?branch=master)](https://travis-ci.org/adriankumpf/teslamate)
 [![](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate 'Get your own version badge on microbadger.com')
 [![](https://images.microbadger.com/badges/image/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate 'Get your own image badge on microbadger.com')
+![Docker Pulls](https://img.shields.io/docker/pulls/teslamate/teslamate)
 
 A data logger for your Tesla.
 
@@ -10,6 +11,8 @@ A data logger for your Tesla.
 - Data is stored in PostgreSQL
 - Visualization and data analysis with Grafana
 - Current vehicle data is published to a local MQTT Broker _(optional)_
+
+**⚡⚡ CHECK OUT THE [CHANGELOG](CHANGELOG.md) BEFORE UPGRADING TO V1.4 ⚡⚡**
 
 ## Features
 
@@ -67,8 +70,6 @@ services:
       - DATABASE_PASS=secret
       - DATABASE_NAME=teslamate
       - DATABASE_HOST=db
-      - TESLA_USERNAME=username@example.com
-      - TESLA_PASSWORD=secret
       - MQTT_HOST=mosquitto
       - VIRTUAL_HOST=localhost # if you're going to access the UI from another
                                # machine replace "localhost" with the hostname
@@ -116,7 +117,8 @@ volumes:
 
 Afterwards start everything with `docker-compose up`.
 
-To access the web interface go to http://ip-of-your-machine:4000.
+Open the web interface at http://ip-of-your-machine:4000 and sign in with your
+Tesla Account.
 
 To access Grafana go to http://ip-of-your-machine:3000.
 
@@ -139,8 +141,6 @@ TeslaMate uses environment variables for runtime configuration.
 | DATABASE_HOST          | Hostname of the database server (**required**)                                                                                                                                                                   | /                             |
 | DATABASE_PORT          | Port of the database server                                                                                                                                                                                      | 5432                          |
 | DATABASE_POOL_SIZE     | Size of the database connection pool                                                                                                                                                                             | 5                             |
-| TESLA_USERNAME         | Username / email of your Tesla account (**required**)                                                                                                                                                            | /                             |
-| TESLA_PASSWORD         | Password of your Tesla account (**required**)                                                                                                                                                                    | /                             |
 | VIRTUAL_HOST           | Host part used for generating URLs throughout the app                                                                                                                                                            | localhost                     |
 | PORT                   | Port where the web interface is exposed                                                                                                                                                                          | 4000                          |
 | DISABLE_MQTT           | Disables the MQTT feature if `true`                                                                                                                                                                              | false                         |
@@ -155,6 +155,8 @@ TeslaMate uses environment variables for runtime configuration.
 | SIGNING_SALT           | A salt used with secret_key_base to generate a key for signing/verifying a cookie (required by LiveView; Sessions are not used otherwise)                                                                        | randomly generated at startup |
 
 ## Upgrading
+
+> Check the [Changelog](CHANGELOG.md) before upgrading!
 
 ### Docker
 
