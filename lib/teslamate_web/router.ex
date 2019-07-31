@@ -32,6 +32,7 @@ defmodule TeslaMateWeb.Router do
     pipe_through :sign_in
 
     live "/", CarLive.Index
+    live "/settings", SettingsLive.Index
   end
 
   scope "/sign_in", TeslaMateWeb do

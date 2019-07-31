@@ -107,3 +107,20 @@ msgstr ""
 #: lib/teslamate_web/templates/car/summary.html.leex:33
 msgid "Sentry Mode"
 msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:3
+msgid "Home"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/app.html.eex:31
+#: lib/teslamate_web/templates/settings/index.html.leex:4
+#: lib/teslamate_web/templates/settings/index.html.leex:12
+msgid "Settings"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:16
+msgid "Use imperial units"
+msgstr ""
