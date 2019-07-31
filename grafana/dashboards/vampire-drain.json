@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564529958864,
+  "iteration": 1564590167246,
   "links": [],
   "panels": [
     {
@@ -327,6 +326,37 @@
       {
         "allValue": null,
         "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": null,
+        "definition": "select id from cars;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Car",
+        "multi": false,
+        "name": "car",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "select id from cars;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
           "tags": [],
           "text": "6",
           "value": "6"
@@ -380,25 +410,19 @@
       {
         "allValue": null,
         "current": {
-          "text": "1",
-          "value": "1"
+          "text": "mi",
+          "value": "mi"
         },
         "datasource": null,
-        "definition": "select id from cars;",
-        "hide": 0,
+        "definition": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "hide": 2,
         "includeAll": false,
-        "label": "Car",
+        "label": "",
         "multi": false,
-        "name": "car",
-        "options": [
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          }
-        ],
-        "query": "select id from cars;",
-        "refresh": 0,
+        "name": "length_unit",
+        "options": [],
+        "query": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
@@ -407,34 +431,6 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "tags": [],
-          "text": "km",
-          "value": "km"
-        },
-        "hide": 0,
-        "includeAll": false,
-        "label": "length unit",
-        "multi": false,
-        "name": "length_unit",
-        "options": [
-          {
-            "selected": true,
-            "text": "km",
-            "value": "km"
-          },
-          {
-            "selected": false,
-            "text": "mi",
-            "value": "mi"
-          }
-        ],
-        "query": "km,mi",
-        "skipUrlSync": false,
-        "type": "custom"
       }
     ]
   },
@@ -470,5 +466,5 @@
   "timezone": "",
   "title": "Vampire Drain",
   "uid": "zhHx2Fggk",
-  "version": 1
+  "version": 4
 }

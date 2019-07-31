@@ -2,6 +2,15 @@
   "annotations": {
     "list": [
       {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      },
+      {
         "enable": true,
         "hide": false,
         "iconColor": "rgba(255, 96, 96, 1)",
@@ -61,8 +70,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564528054446,
+  "iteration": 1564590801237,
   "links": [],
   "panels": [
     {
@@ -103,11 +111,11 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "Range",
+          "alias": "/Range.*/",
           "yaxis": 2
         },
         {
-          "alias": "Speed",
+          "alias": "/Speed.*/",
           "fill": 1
         },
         {
@@ -126,7 +134,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed\",\n\tpower AS \"Power [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Range\",\n\tbattery_level AS \"SOC [%]\",\n\tconvert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature\",\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature\",\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature\",\n\tconvert_celsius(passenger_temp_setting, '$temp_unit') as \"Passenger Temperature\",\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Range [$length_unit]\",\n\tbattery_level AS \"SOC [%]\",\n\tconvert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\",\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\",\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\",\n\tconvert_celsius(passenger_temp_setting, '$temp_unit') as \"Passenger Temperature [°$temp_unit]\",\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -301,68 +309,63 @@
         "name": "trip_id",
         "options": [
           {
-            "selected": false,
             "text": "",
             "value": ""
           }
         ],
-        "query": "503",
+        "query": "",
         "skipUrlSync": false,
         "type": "textbox"
       },
       {
         "allValue": null,
         "current": {
-          "text": "C",
-          "value": "C"
+          "text": "F",
+          "value": "F"
         },
-        "hide": 0,
+        "datasource": null,
+        "definition": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "hide": 2,
         "includeAll": false,
-        "label": "temperature unit",
+        "label": "",
         "multi": false,
         "name": "temp_unit",
-        "options": [
-          {
-            "selected": true,
-            "text": "C",
-            "value": "C"
-          },
-          {
-            "selected": false,
-            "text": "F",
-            "value": "F"
-          }
-        ],
-        "query": "C,F",
+        "options": [],
+        "query": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       },
       {
         "allValue": null,
         "current": {
-          "text": "km",
-          "value": "km"
+          "text": "mi",
+          "value": "mi"
         },
-        "hide": 0,
+        "datasource": null,
+        "definition": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "hide": 2,
         "includeAll": false,
-        "label": "length unit",
+        "label": "",
         "multi": false,
         "name": "length_unit",
-        "options": [
-          {
-            "selected": true,
-            "text": "km",
-            "value": "km"
-          },
-          {
-            "selected": false,
-            "text": "mi",
-            "value": "mi"
-          }
-        ],
-        "query": "km,mi",
+        "options": [],
+        "query": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       },
       {
         "allValue": null,
@@ -430,5 +433,5 @@
   "timezone": "",
   "title": "Consumption",
   "uid": "zm7wN6Zgz",
-  "version": 1
+  "version": 3
 }

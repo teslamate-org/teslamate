@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564529772784,
+  "iteration": 1564589965514,
   "links": [],
   "panels": [
     {
@@ -67,7 +66,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH summary AS (\n\tSELECT\n\t\tdate,\n\t\todometer,\n\t\trank() OVER (PARTITION BY date_trunc('hour', date) ORDER BY date DESC) AS rk\n\t\tFROM\n\t\t\tpositions\n\t\tWHERE\n\t\t\tcar_id = 1 AND\n\t\t\t$__timeFilter(date)\n)\nSELECT\n date as time,\n convert_km(odometer, '$length_unit') as mileage\nFROM\n\tsummary\nWHERE\n\trk = 1\n\torder by date;",
+          "rawSql": "WITH summary AS (\n\tSELECT\n\t\tdate,\n\t\todometer,\n\t\trank() OVER (PARTITION BY date_trunc('hour', date) ORDER BY date DESC) AS rk\n\t\tFROM\n\t\t\tpositions\n\t\tWHERE\n\t\t\tcar_id = 1 AND\n\t\t\t$__timeFilter(date)\n)\nSELECT\n date as time,\n convert_km(odometer, '$length_unit') as \"mileage [$length_unit]\"\nFROM\n\tsummary\nWHERE\n\trk = 1\n\torder by date;",
           "refId": "A",
           "select": [
             [
@@ -111,7 +110,7 @@
         {
           "decimals": 1,
           "format": "none",
-          "label": null,
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -172,30 +171,28 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
-          "text": "km",
-          "value": "km"
+          "selected": true,
+          "text": "mi",
+          "value": "mi"
         },
-        "hide": 0,
+        "datasource": null,
+        "definition": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "hide": 2,
         "includeAll": false,
-        "label": "length unit",
+        "label": "",
         "multi": false,
         "name": "length_unit",
-        "options": [
-          {
-            "selected": true,
-            "text": "km",
-            "value": "km"
-          },
-          {
-            "selected": false,
-            "text": "mi",
-            "value": "mi"
-          }
-        ],
-        "query": "km,mi",
+        "options": [],
+        "query": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },

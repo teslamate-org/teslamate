@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564529638348,
+  "iteration": 1564591545895,
   "links": [],
   "panels": [
     {
@@ -44,7 +43,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "link": true,
           "linkTooltip": "",
-          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&var-charging_process_id=${__cell_18}&var-temp_unit=$temp_unit",
+          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&var-charging_process_id=${__cell_18}",
           "pattern": "start_date",
           "type": "date"
         },
@@ -525,58 +524,52 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "km",
           "value": "km"
         },
-        "hide": 0,
+        "datasource": null,
+        "definition": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "hide": 2,
         "includeAll": false,
-        "label": "length unit",
+        "label": "",
         "multi": false,
         "name": "length_unit",
-        "options": [
-          {
-            "selected": true,
-            "text": "km",
-            "value": "km"
-          },
-          {
-            "selected": false,
-            "text": "mi",
-            "value": "mi"
-          }
-        ],
-        "query": "km,mi",
+        "options": [],
+        "query": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       },
       {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "C",
           "value": "C"
         },
-        "hide": 0,
+        "datasource": "TeslaMate",
+        "definition": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "hide": 2,
         "includeAll": false,
-        "label": "temperature unit",
+        "label": "",
         "multi": false,
         "name": "temp_unit",
-        "options": [
-          {
-            "selected": true,
-            "text": "C",
-            "value": "C"
-          },
-          {
-            "selected": false,
-            "text": "F",
-            "value": "F"
-          }
-        ],
-        "query": "C,F",
+        "options": [],
+        "query": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -612,5 +605,5 @@
   "timezone": "",
   "title": "Charging History",
   "uid": "TSmNYvRRk",
-  "version": 1
+  "version": 7
 }
