@@ -7,10 +7,10 @@ defmodule TeslaMateWeb.CarLive.Summary do
   alias TeslaMate.Vehicles
 
   @impl true
-  def mount(%{id: id}, socket) do
+  def mount(%{id: id, settings: settings}, socket) do
     if connected?(socket), do: Vehicles.subscribe(id)
 
-    {:ok, fetch(socket, id)}
+    {:ok, fetch(socket, id, settings)}
   end
 
   @impl true
@@ -23,9 +23,9 @@ defmodule TeslaMateWeb.CarLive.Summary do
     {:noreply, assign(socket, summary: summary, state_t: translate(summary.state))}
   end
 
-  defp fetch(socket, id) do
+  defp fetch(socket, id, settings) do
     summary = Vehicles.summary(id)
-    assign(socket, summary: summary, state_t: translate(summary.state))
+    assign(socket, summary: summary, state_t: translate(summary.state), settings: settings)
   end
 
   # needed for gettext to pick up msgids at compile time

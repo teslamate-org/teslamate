@@ -3,6 +3,7 @@ defmodule TeslaMateWeb.CarLive.Index do
 
   alias TeslaMateWeb.CarView
   alias TeslaMate.Log
+  alias TeslaMate.Settings
 
   @impl true
   def mount(_session, socket) do
@@ -15,6 +16,6 @@ defmodule TeslaMateWeb.CarLive.Index do
   end
 
   defp fetch(socket) do
-    assign(socket, cars: Log.list_cars())
+    assign(socket, cars: Log.list_cars(), settings: Settings.get_settings!())
   end
 end
