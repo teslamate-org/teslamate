@@ -2,13 +2,100 @@
 
 ## [Unreleased]
 
-### Fixed
+## [1.4.0] - 2019-07-31
+
+**1. New custom grafana image: `teslamate/grafana`**
+
+Starting with this release there is a customized Grafana docker image
+(`teslamate/grafana`) that auto provisions the datasource and dashboards which
+makes upgrading a breeze! I strongly recommend to use it instead of manually
+re-importing dashboards.
+
+Just replace the `grafana` service in your `docker-compose.yml`:
+
+```YAML
+  # ...
+
+  grafana:
+    image: teslamate/grafana:latest
+    environment:
+      - DATABASE_USER=teslamate
+      - DATABASE_PASS=secret
+      - DATABASE_NAME=teslamate
+      - DATABASE_HOST=db
+    ports:
+      - 3000:3000
+    volumes:
+      - teslamate-grafana-data:/var/lib/grafana
+
+  # ...
+```
+
+And add a new volume at the bottom of the file:
+
+```YAML
+volumes:
+    # ...
+    teslamate-grafana-data:
+    # ...
+```
+
+Find the full example in the updated README.
+
+**2. Switch to imperial units globally**
+
+![Settings](screenshots/settings.png)
+
+There is a new settings view in the web interface. To use imperial measurements
+in grafana and on the status screen just tick the checkbox it shows!
+
+**3. Deprecation of TESLA_USERNAME and TESLA_PASSWORD**
+
+With this release API tokens are stored in the database. After starting
+TeslaMate v1.4 once, you can safely remove both environment variables.
+
+New users need to sign in via the web interface.
+
+**Full Changelog:**
+
+### Dashboards
+
+#### Added
+
+- Introduce custom teslamate/grafana Docker image
+- Fetch unit variables from database
+
+#### Fixed
+
+- Fix syntax errors in consumption and charging dashboard
+- The consumption and charging dashboards can now be viewed without having to
+  select a trip / charging process first.
+
+#### Removed
+
+- The German dashboard translations have been removed. It was too time
+  consuming to keep everything up to date.
+
+### TeslaMate
+
+#### Added
+
+- Show version on web UI
+- Persist API tokens
+- Add sign in view
+- Add settings view
+
+#### Changed
+
+- Log :car_id
+
+#### Fixed
 
 - Fix generation of `secret_key_base`
 
 ## [1.3.0] - 2019-07-29
 
-### Changed
+#### Changed
 
 - Fix / inverse efficiency calculation: if distance traveled is less than the
   ideal rated distance the efficiency will now be lower than 100% and vice-versa.
@@ -17,25 +104,25 @@
 
 ## [1.2.0] - 2019-07-29
 
-### Added
+#### Added
 
 - Add psql conversion helper functions (**via database migration**)
 - Report imperial metrics
 
   **Important: please re-import the Grafana Dashboards after restarting TeslaMate**
 
-### Fixed
+#### Fixed
 
 - Remove TZ environment variable from Dockerfile
 
 ## [1.1.1] - 2019-07-27
 
-### Changed
+#### Changed
 
 - Upgrade tesla_api
 - Upgrade Phoenix LiveView
 
-### Fixed
+#### Fixed
 
 - Fix a few english translations in the en dashboards
 - Remove `DATABASE_PORT` from docker-compose example
@@ -44,22 +131,22 @@
 
 ## [1.1.0] - 2019-07-27
 
-### Added
+#### Added
 
 - Support custom database port through `DATABASE_PORT` environment variable
 - Add entrypoint to handle db migration
 
-### Changed
+#### Changed
 
 - Replace `node-sass` with `sass` to speed up compilation
 
-### Fixed
+#### Fixed
 
 - Update README.md to fix resume and suspend logging PUT requests.
 
 ## [1.0.1] - 2019-07-26
 
-### Changed
+#### Changed
 
 - Set unique :id to support multiple vehicles
 - Reduce default pool size to 5
@@ -68,7 +155,8 @@
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.3.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/adriankumpf/teslamate/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/adriankumpf/teslamate/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/adriankumpf/teslamate/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/adriankumpf/teslamate/compare/v1.1.0...v1.1.1
