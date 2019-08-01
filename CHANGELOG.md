@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.4.2] - 2019-08-01
+
+### Fixed
+
+- Persists tokens after auto refresh
+
 ## [1.4.1] - 2019-07-31
 
 ### Fixed
@@ -162,7 +168,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.4.1...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.4.2...HEAD
+[1.4.2]: https://github.com/adriankumpf/teslamate/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/adriankumpf/teslamate/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/adriankumpf/teslamate/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/adriankumpf/teslamate/compare/v1.2.0...v1.3.0
