@@ -4,16 +4,13 @@ defmodule LogMock do
   defstruct [:pid]
   alias __MODULE__, as: State
 
-  alias TeslaMate.Log.{Trip, Car, ChargingProcess, Update}
+  alias TeslaMate.Log.{Trip, ChargingProcess, Update}
 
   # API
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: Keyword.fetch!(opts, :name))
   end
-
-  def get_car_by_eid(name, eid), do: GenServer.call(name, {:get_car_by_eid, eid})
-  def create_car(name, car), do: GenServer.call(name, {:create_car, car})
 
   def start_state(name, car_id, state), do: GenServer.call(name, {:start_state, car_id, state})
 
@@ -50,14 +47,6 @@ defmodule LogMock do
   end
 
   @impl true
-  def handle_call({:get_car_by_eid, _eid}, _from, state) do
-    {:reply, nil, state}
-  end
-
-  def handle_call({:create_car, car}, _from, state) do
-    {:reply, {:ok, struct(Car, Map.put(car, :id, 999))}, state}
-  end
-
   def handle_call({:start_charging_process, _cid, _pos} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, 99}, state}

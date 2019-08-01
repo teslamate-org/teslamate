@@ -1,9 +1,10 @@
 # TeslaMate
 
 [![Build Status](https://travis-ci.org/adriankumpf/teslamate.svg?branch=master)](https://travis-ci.org/adriankumpf/teslamate)
-[![](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate 'Get your own version badge on microbadger.com')
-[![](https://images.microbadger.com/badges/image/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate 'Get your own image badge on microbadger.com')
-![Docker Pulls](https://img.shields.io/docker/pulls/teslamate/teslamate)
+[![Coverage Status](https://coveralls.io/repos/github/adriankumpf/teslamate/badge.svg)](https://coveralls.io/github/adriankumpf/teslamate)
+[![Docker Version](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate)
+[![Dokcer Image](https://images.microbadger.com/badges/image/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate)
+![Docker Pulls](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)
 
 A data logger for your Tesla.
 

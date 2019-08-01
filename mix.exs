@@ -11,7 +11,14 @@ defmodule TeslaMate.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       releases: releases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
     ]
   end
 
@@ -45,7 +52,8 @@ defmodule TeslaMate.MixProject do
       {:logger_telegram_backend, "~> 1.0", only: :prod},
       {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"},
       {:tortoise, "~> 0.9"},
-      {:httpoison, "~> 1.5"}
+      {:httpoison, "~> 1.5"},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 

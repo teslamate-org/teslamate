@@ -2,7 +2,7 @@ language: elixir
 services:
   - postgresql
 elixir:
-  - 1.9.1
+  - 1.9
 otp_release:
   - 22.0
 env:
@@ -23,4 +23,4 @@ install:
   - mix deps.get
   - mix compile
 script:
-  - mix test
+  - mix coveralls.travis
