@@ -2,20 +2,7 @@
 
 ## [Unreleased]
 
-## [1.4.2] - 2019-08-01
-
-### Fixed
-
-- Persists tokens after auto refresh
-
-## [1.4.1] - 2019-07-31
-
-### Fixed
-
-- Convert to imperial measurements on status screen
-- Fix warnings
-
-## [1.4.0] - 2019-07-31
+## 1.4
 
 **1. New custom grafana image: `teslamate/grafana`**
 
@@ -55,7 +42,7 @@ volumes:
 
 Find the full example in the updated README.
 
-**2. Switch to imperial units globally**
+**2. Switch to imperial units**
 
 ![Settings](screenshots/settings.png)
 
@@ -70,6 +57,21 @@ TeslaMate v1.4 once, you can safely remove both environment variables.
 New users need to sign in via the web interface.
 
 **Full Changelog:**
+
+## [1.4.2] - 2019-08-01
+
+### Fixed
+
+- Persists tokens after auto refresh
+
+## [1.4.1] - 2019-07-31
+
+### Fixed
+
+- Convert to imperial measurements on status screen
+- Fix warnings
+
+## [1.4.0] - 2019-07-31
 
 ### Dashboards
 
