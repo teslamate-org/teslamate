@@ -147,6 +147,7 @@ defmodule TeslaMate.Api do
   def handle_info(:refresh_auth, state) do
     case call(state.deps.tesla_api_auth, :refresh, [state.auth]) do
       {:ok, %TeslaApi.Auth{} = auth} ->
+        :ok = call(state.deps.auth, :save, [auth])
         {:noreply, %State{state | auth: auth}, {:continue, :schedule_refresh}}
 
       {:error, %TeslaApi.Error{error: error, message: reason, env: _}} ->
@@ -162,7 +163,7 @@ defmodule TeslaMate.Api do
   def handle_continue(:schedule_refresh, %State{auth: auth} = state) do
     ms =
       auth.expires_in
-      |> Kernel.*(0.9)
+      |> Kernel.*(0.8)
       |> round()
       |> :timer.seconds()
 
