@@ -247,7 +247,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       %{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
       when charging_state in ["Starting", "Charging", "Complete"] ->
-        Logger.info("Charging / #{lvl * 100}%", car_id: data.car.id)
+        Logger.info("Charging / SOC: #{lvl}%", car_id: data.car.id)
 
         position = create_position(vehicle)
         {:ok, charging_id} = call(data.deps.log, :start_charging_process, [data.car.id, position])

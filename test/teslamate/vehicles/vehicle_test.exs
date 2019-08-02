@@ -77,7 +77,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:insert_position, ^car_id, %{}}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
-      # Charging (compliete)
+      # Charging (complete)
       assert_receive {:start_charging_process, ^car_id, _}
       assert_receive {:insert_charge, _, %{charge_energy_added: 5.0}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
