@@ -22,7 +22,7 @@
     "sass": "^1.22.9",
     "sass-loader": "^7.1.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
-    "webpack": "4.38.0",
+    "webpack": "4.39.1",
     "webpack-cli": "^3.3.6"
   }
 }
