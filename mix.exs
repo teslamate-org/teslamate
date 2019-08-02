@@ -46,7 +46,7 @@ defmodule TeslaMate.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       # Custom
-      {:tesla_api, git: "https://github.com/adriankumpf/tesla_api", branch: "ak/error-handling"},
+      {:tesla_api, github: "adriankumpf/tesla_api", branch: "ak/error-handling"},
       {:gen_state_machine, "~> 2.0"},
       {:ecto_enum, "~> 1.2"},
       {:logger_telegram_backend, "~> 1.0", only: :prod},

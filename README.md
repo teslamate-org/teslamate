@@ -57,7 +57,7 @@ A data logger for your Tesla.
 
 ### Docker (recommended)
 
-The recommended way to install an run TeslaMate is to use Docker. Create a
+The recommended way to install and run TeslaMate is to use Docker. Create a
 `docker-compose.yml` file and replace the necessary `environment` variables:
 
 ```YAML
@@ -122,6 +122,9 @@ Open the web interface at http://ip-of-your-machine:4000 and sign in with your
 Tesla Account.
 
 To access Grafana go to http://ip-of-your-machine:3000.
+
+**Optional:** To switch to **imperial measurements** open the web interface,
+navigate to `Settings` and tick the checkbox.
 
 ### Manual Installation (advanced)
 
