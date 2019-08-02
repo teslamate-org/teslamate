@@ -23,8 +23,10 @@ readonly DASHBOARDS_DIRECTORY=${DASHBOARDS_DIRECTORY:-"./grafana/dashboards"}
 
 
 main() {
-  local dashboards=$(list_dashboards)
+  local dashboards
   local dashboard_json
+
+  dashboards=$(list_dashboards)
 
   show_config
 
@@ -38,7 +40,7 @@ main() {
       exit 1
     fi
 
-    echo "$dashboard_json" >$DASHBOARDS_DIRECTORY/$dashboard.json
+    echo "$dashboard_json" > "$DASHBOARDS_DIRECTORY/$dashboard".json
   done
 }
 
@@ -76,7 +78,7 @@ get_dashboard() {
   curl \
     --silent \
     --user "$LOGIN" \
-    $URL/api/dashboards/db/$dashboard |
+    "$URL/api/dashboards/db/$dashboard" |
     jq '.dashboard | .id = null'
 }
 
@@ -92,7 +94,7 @@ list_dashboards() {
   curl \
     --silent \
     --user "$LOGIN" \
-    $URL/api/search |
+    "$URL/api/search" |
     jq -r '.[] | select(.type == "dash-db") | .uri' |
     cut -d '/' -f2
 }
