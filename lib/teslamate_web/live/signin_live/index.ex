@@ -8,9 +8,17 @@ defmodule TeslaMateWeb.SignInLive.Index do
   alias TeslaMate.Auth
   alias TeslaMate.Api
 
+  import Core.Dependency, only: [call: 3]
+
   @impl true
   def mount(_session, socket) do
-    {:ok, assign(socket, %{changeset: Auth.change_credentials(), error: nil})}
+    assigns = %{
+      changeset: Auth.change_credentials(),
+      error: nil,
+      api: get_api(socket)
+    }
+
+    {:ok, assign(socket, assigns)}
   end
 
   @impl true
@@ -29,13 +37,20 @@ defmodule TeslaMateWeb.SignInLive.Index do
   def handle_event("save", _params, socket) do
     credentials = Ecto.Changeset.apply_changes(socket.assigns.changeset)
 
-    case Api.sign_in(credentials) do
+    case call(socket.assigns.api, :sign_in, [credentials]) do
       {:error, reason} ->
         {:noreply, assign(socket, error: reason)}
 
       :ok ->
         :timer.sleep(250)
         {:stop, redirect_to_carlive(socket)}
+    end
+  end
+
+  defp get_api(socket) do
+    case get_connect_params(socket) do
+      %{api: api} -> api
+      _ -> Api
     end
   end
 
