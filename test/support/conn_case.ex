@@ -20,6 +20,7 @@ defmodule TeslaMateWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       alias TeslaMateWeb.Router.Helpers, as: Routes
+      import Phoenix.LiveViewTest
 
       # The default endpoint for testing
       @endpoint TeslaMateWeb.Endpoint
@@ -36,6 +37,10 @@ defmodule TeslaMateWeb.ConnCase do
     # Start the Endpoint manually since tests run with '--no-start'
     {:ok, _pid} = start_supervised(TeslaMateWeb.Endpoint)
 
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+    conn =
+      Phoenix.ConnTest.build_conn()
+      |> Plug.Conn.assign(:signed_in?, !!tags[:signed_in])
+
+    {:ok, conn: conn}
   end
 end

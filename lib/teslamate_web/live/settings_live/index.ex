@@ -13,8 +13,8 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   def render(assigns), do: SettingsView.render("index.html", assigns)
 
   @impl true
-  def handle_event("change", %{"settings" => params}, socket) do
-    case Settings.update_settings(socket.assigns.settings, params) do
+  def handle_event("change", %{"settings" => params}, %{assigns: assigns} = socket) do
+    case Settings.update_settings(assigns.settings, params) do
       {:error, changeset} -> {:noreply, assign(socket, changeset: changeset)}
       {:ok, settings} -> {:noreply, put(socket, settings)}
     end

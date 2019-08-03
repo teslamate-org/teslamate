@@ -28,7 +28,7 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-end">
-              <%= if TeslaMate.Api.signed_in?() do %>
+              <%= if @conn.assigns.signed_in? do %>
                 <%= link(gettext("Settings"), to: "/settings", class: "navbar-item") %>
               <% end %>
             <p class="navbar-item" >v<%= Application.spec(:teslamate, :vsn) %></p>

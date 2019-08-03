@@ -10,15 +10,12 @@ defmodule TeslaMateWeb.Router do
     plug Phoenix.LiveView.Flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_signed_in
   end
 
-  pipeline :sign_in do
-    defp redirect_unless_signed_in(conn, _opts) do
-      case Api.signed_in?() do
-        false -> conn |> redirect(to: "/sign_in") |> halt()
-        true -> conn
-      end
-    end
+  pipeline :require_signed_in do
+    defp redirect_unless_signed_in(%Plug.Conn{assigns: %{signed_in?: true}} = conn, _), do: conn
+    defp redirect_unless_signed_in(conn, _opts), do: conn |> redirect(to: "/sign_in") |> halt()
 
     plug :redirect_unless_signed_in
   end
@@ -28,8 +25,7 @@ defmodule TeslaMateWeb.Router do
   end
 
   scope "/", TeslaMateWeb do
-    pipe_through :browser
-    pipe_through :sign_in
+    pipe_through [:browser, :require_signed_in]
 
     live "/", CarLive.Index
     live "/settings", SettingsLive.Index
@@ -49,5 +45,10 @@ defmodule TeslaMateWeb.Router do
     put "/car/:id/logging/suspend", CarController, :suspend_logging
 
     resources "/addresses", AddressController
+  end
+
+  case Mix.env() do
+    :test -> defp fetch_signed_in(conn, _opts), do: conn
+    _____ -> defp fetch_signed_in(conn, _opts), do: assign(conn, :signed_in?, Api.signed_in?())
   end
 end
