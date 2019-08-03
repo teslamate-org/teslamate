@@ -1,7 +1,7 @@
 defmodule TeslaMateWeb.Router do
   use TeslaMateWeb, :router
 
-  alias TeslaMate.Api
+  alias TeslaMate.Api, warn: false
 
   pipeline :browser do
     plug :accepts, ["html"]

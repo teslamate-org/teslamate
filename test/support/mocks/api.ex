@@ -13,11 +13,13 @@ defmodule ApiMock do
   def get_vehicle(name, id), do: GenServer.call(name, {:get_vehicle, id})
   def get_vehicle_with_state(name, id), do: GenServer.call(name, {:get_vehicle_with_state, id})
 
+  def sign_in(name, credentials), do: GenServer.call(name, {:sign_in, credentials})
+
   # Callbacks
 
   @impl true
   def init(opts) do
-    {:ok, %State{pid: Keyword.fetch!(opts, :pid), events: Keyword.fetch!(opts, :events)}}
+    {:ok, %State{pid: Keyword.fetch!(opts, :pid), events: Keyword.get(opts, :events, [])}}
   end
 
   @impl true
@@ -29,5 +31,10 @@ defmodule ApiMock do
   def handle_call({action, _id}, _from, %State{events: [event | events]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
     {:reply, event, %State{state | events: events}}
+  end
+
+  def handle_call({:sign_in, _} = event, _from, %State{pid: pid} = state) do
+    send(pid, {ApiMock, event})
+    {:reply, :ok, state}
   end
 end
