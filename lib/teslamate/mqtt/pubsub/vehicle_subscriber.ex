@@ -35,7 +35,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   def handle_info(summary, %State{car_id: car_id} = state) do
     summary
     |> Map.from_struct()
-    |> Stream.filter(fn {_key, value} -> not is_nil(value) end)
+    |> Stream.filter(fn {key, value} ->
+      key == :scheduled_charging_start_time or not is_nil(value)
+    end)
     |> Task.async_stream(
       fn {key, value} ->
         Publisher.publish("teslamate/cars/#{car_id}/#{key}", to_string(value),
