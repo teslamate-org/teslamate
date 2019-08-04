@@ -272,7 +272,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:online, vehicle}}, {:charging, last, pid} = s, data) do
     case {vehicle.charge_state.charging_state, last} do
       {charging_state, last_state} when charging_state in ["Starting", "Charging"] ->
-        if last_state == "Complete", do: Logger.info("Charging / Restart", car_id: data.car.id)
+        if last_state == "Complete" do
+          Logger.info("Charging / Restart", car_id: data.car.id)
+          {:ok, _cproc} = call(data.deps.log, :resume_charging_process, [pid])
+        end
 
         :ok = insert_charge(pid, vehicle, data)
 
@@ -288,16 +291,19 @@ defmodule TeslaMate.Vehicles.Vehicle do
         try_to_suspend(vehicle, s, data)
 
       {"Complete", "Charging"} ->
-        Logger.info("Charging / Complete", car_id: data.car.id)
-
         :ok = insert_charge(pid, vehicle, data)
+
+        {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
+          call(data.deps.log, :complete_charging_process, [pid])
+
+        Logger.info("Charging / Complete / #{added} kWh – #{duration} min", car_id: data.car.id)
 
         {:next_state, {:charging, "Complete", pid}, %Data{data | last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch()]}
 
       {charging_state, _} ->
         {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
-          call(data.deps.log, :close_charging_process, [pid])
+          call(data.deps.log, :complete_charging_process, [pid])
 
         Logger.info("Charging / #{charging_state} / #{added} kWh – #{duration} min",
           car_id: data.car.id

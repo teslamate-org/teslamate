@@ -27,8 +27,12 @@ defmodule LogMock do
     GenServer.call(name, {:start_charging_process, car_id, position_attrs})
   end
 
-  def close_charging_process(name, process_id) do
-    GenServer.call(name, {:close_charging_process, process_id})
+  def resume_charging_process(name, process_id) do
+    GenServer.call(name, {:resume_charging_process, process_id})
+  end
+
+  def complete_charging_process(name, process_id) do
+    GenServer.call(name, {:complete_charging_process, process_id})
   end
 
   def insert_position(name, car_id, attrs) do
@@ -52,7 +56,12 @@ defmodule LogMock do
     {:reply, {:ok, 99}, state}
   end
 
-  def handle_call({:close_charging_process, _pid} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:resume_charging_process, _pid} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %ChargingProcess{}}, state}
+  end
+
+  def handle_call({:complete_charging_process, _pid} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %ChargingProcess{}}, state}
   end

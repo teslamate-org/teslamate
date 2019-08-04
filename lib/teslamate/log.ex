@@ -212,7 +212,22 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
-  def close_charging_process(process_id) do
+  def resume_charging_process(process_id) do
+    ChargingProcess
+    |> preload([:car, :position])
+    |> Repo.get!(process_id)
+    |> ChargingProcess.changeset(%{
+      end_date: nil,
+      charge_energy_added: nil,
+      end_range_km: nil,
+      end_battery_level: nil,
+      duration_min: nil,
+      calculated_max_range: nil
+    })
+    |> Repo.update()
+  end
+
+  def complete_charging_process(process_id) do
     charging_process =
       ChargingProcess
       |> preload([:car, :position])

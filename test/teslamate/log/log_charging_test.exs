@@ -113,7 +113,7 @@ defmodule TeslaMate.LogChargingTest do
     end
   end
 
-  describe "close_charging_process/1" do
+  describe "complete_charging_process/1" do
     test "aggregates charging data" do
       assert %Car{id: car_id} = car_fixture()
       assert {:ok, charging_process_id} = Log.start_charging_process(car_id, @valid_pos_attrs)
@@ -173,7 +173,8 @@ defmodule TeslaMate.LogChargingTest do
         assert {:ok, %Charge{} = charge} = Log.insert_charge(charging_process_id, c)
       end
 
-      assert {:ok, %ChargingProcess{} = cproc} = Log.close_charging_process(charging_process_id)
+      assert {:ok, %ChargingProcess{} = cproc} =
+               Log.complete_charging_process(charging_process_id)
 
       assert %DateTime{} = cproc.start_date
       assert %DateTime{} = cproc.end_date
@@ -190,10 +191,113 @@ defmodule TeslaMate.LogChargingTest do
     test "closes charging process with zero charges " do
       assert %Car{id: car_id} = car_fixture()
       assert {:ok, charging_process_id} = Log.start_charging_process(car_id, @valid_pos_attrs)
-      assert {:ok, %ChargingProcess{} = cproc} = Log.close_charging_process(charging_process_id)
+
+      assert {:ok, %ChargingProcess{} = cproc} =
+               Log.complete_charging_process(charging_process_id)
 
       assert %DateTime{} = cproc.start_date
       assert %DateTime{} = cproc.end_date
+    end
+  end
+
+  describe "resume_charging_process/1" do
+    test "resets some fields" do
+      assert %Car{id: car_id} = car_fixture()
+      assert {:ok, charging_process_id} = Log.start_charging_process(car_id, @valid_pos_attrs)
+
+      charges = [
+        %{
+          date: "2019-04-05 16:01:27",
+          battery_level: 50,
+          charge_energy_added: 0.41,
+          charger_actual_current: 5,
+          charger_phases: 3,
+          charger_pilot_current: 16,
+          charger_power: 4,
+          charger_voltage: 234,
+          ideal_battery_range_km: 266.6,
+          outside_temp: 16
+        },
+        %{
+          date: "2019-04-05 16:05:40",
+          battery_level: 54,
+          charge_energy_added: 0.72,
+          charger_actual_current: 5,
+          charger_phases: 3,
+          charger_pilot_current: 16,
+          charger_power: 4,
+          charger_voltage: 234,
+          ideal_battery_range_km: 268.6,
+          outside_temp: 14.5
+        }
+      ]
+
+      for c <- charges do
+        assert {:ok, %Charge{} = charge} = Log.insert_charge(charging_process_id, c)
+      end
+
+      assert {:ok, %ChargingProcess{} = cproc} =
+               Log.complete_charging_process(charging_process_id)
+
+      assert %DateTime{} = start_date = cproc.start_date
+      assert %DateTime{} = cproc.end_date
+      assert cproc.calculated_max_range == 497
+      assert cproc.charge_energy_added == 0.72
+      assert cproc.duration_min == 4
+      assert cproc.end_battery_level == 54
+      assert cproc.start_battery_level == 50
+      assert cproc.start_range_km == 266.6
+      assert cproc.end_range_km == 268.6
+      assert cproc.outside_temp_avg == 15.25
+
+      # RESUME
+
+      assert {:ok, %ChargingProcess{} = cproc} = Log.resume_charging_process(charging_process_id)
+
+      assert ^start_date = cproc.start_date
+      assert cproc.start_battery_level == 50
+      assert cproc.start_range_km == 266.6
+      assert cproc.outside_temp_avg == 15.25
+
+      assert cproc.end_date == nil
+      assert cproc.calculated_max_range == nil
+      assert cproc.charge_energy_added == nil
+      assert cproc.duration_min == nil
+      assert cproc.end_battery_level == nil
+      assert cproc.end_range_km == nil
+
+      charges = [
+        %{
+          date: "2019-04-05 16:15:40",
+          battery_level: 55,
+          charge_energy_added: 1.12,
+          charger_actual_current: 5,
+          charger_phases: 3,
+          charger_pilot_current: 16,
+          charger_power: 4,
+          charger_voltage: 234,
+          ideal_battery_range_km: 278.6,
+          outside_temp: 15.01
+        }
+      ]
+
+      for c <- charges do
+        assert {:ok, %Charge{} = charge} = Log.insert_charge(charging_process_id, c)
+      end
+
+      assert {:ok, %ChargingProcess{} = cproc} =
+               Log.complete_charging_process(charging_process_id)
+
+      assert ^start_date = cproc.start_date
+      assert %DateTime{} = cproc.end_date
+      assert cproc.calculated_max_range == 507
+      assert cproc.charge_energy_added == 1.12
+      assert cproc.duration_min == 14
+      assert cproc.end_battery_level == 55
+      assert cproc.start_battery_level == 50
+      assert cproc.start_range_km == 266.6
+      assert cproc.end_range_km == 278.6
+      assert cproc.outside_temp_avg == 15.17
     end
   end
 end
