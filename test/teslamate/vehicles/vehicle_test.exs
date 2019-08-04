@@ -61,6 +61,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     test "leaves suspended and restores previous state", %{test: name} do
       events = [
         {:ok, online_event()},
+        {:ok, charging_event(0, "Charging", 5.0)},
         {:ok, charging_event(0, "Complete", 5.0)},
         {:ok, charging_event(0, "Complete", 5.0)},
         {:ok, charging_event(0, "Unplugged", 5.0)}
@@ -77,9 +78,14 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:insert_position, ^car_id, %{}}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
-      # Charging (complete)
+      # Charging (start)
       assert_receive {:start_charging_process, ^car_id, _}
-      assert_receive {:insert_charge, _, %{charge_energy_added: 5.0}}
+      assert_receive {:insert_charge, charging_id, %{charge_energy_added: 5.0}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
+
+      # Charging (complete)
+      assert_receive {:complete_charging_process, ^charging_id}
+      assert_receive {:insert_charge, ^charging_id, %{charge_energy_added: 5.0}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
 
       # suspended
@@ -92,7 +98,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
 
       # Unplugging
-      assert_receive {:complete_charging_process, _}
+      assert_receive {:complete_charging_process, ^charging_id}
 
       # Online
       assert_receive {:start_state, ^car_id, :online}

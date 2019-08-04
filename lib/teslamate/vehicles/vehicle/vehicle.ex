@@ -246,7 +246,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [notify_subscribers(), schedule_fetch(2.5)]}
 
       %{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
-      when charging_state in ["Starting", "Charging", "Complete"] ->
+      when charging_state in ["Starting", "Charging"] ->
         Logger.info("Charging / SOC: #{lvl}%", car_id: data.car.id)
 
         position = create_position(vehicle)

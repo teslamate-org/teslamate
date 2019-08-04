@@ -162,6 +162,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   test "suspends when charging is complete", %{test: name} do
     events = [
       {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, charging_event(0, "Charging", 1.5)},
       {:ok, charging_event(0, "Complete", 1.5)}
     ]
 
@@ -172,8 +173,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
     assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0}}
-    assert_receive {:insert_charge, _charging_id, %{date: _, charge_energy_added: 1.5}}
+    assert_receive {:insert_charge, charging_id, %{date: _, charge_energy_added: 1.5}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :charging}}}
+
+    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 1.5}}
     assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :charging_complete}}}
+    assert_receive {:complete_charging_process, ^charging_id}
 
     assert :ok = Vehicle.suspend_logging(name)
     assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
