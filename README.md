@@ -72,9 +72,9 @@ services:
       - DATABASE_NAME=teslamate
       - DATABASE_HOST=db
       - MQTT_HOST=mosquitto
-      - VIRTUAL_HOST=localhost # if you're going to access the UI from another
-                               # machine replace "localhost" with the hostname
-                               # / IP address of the docker host
+      - TZ=Europe/Berlin       # (optional) replace to use local time in debug logs. See "Configuration".
+      - VIRTUAL_HOST=localhost # if you're going to access the UI from another  machine replace
+                               # "localhost" with the hostname / IP address of the docker host.
     ports:
       - 4000:4000
     cap_drop:
@@ -155,6 +155,7 @@ TeslaMate uses environment variables for runtime configuration.
 | CHAT_ID                | Telegram chat id (only **required** if `ENABLE_LOGGER_TELEGRAM` is `true`). See [here](https://github.com/adriankumpf/logger-telegram-backend#configuration) for instructions.                                   | /                             |
 | TOKEN                  | Telegram bot token (only **required** if `ENABLE_LOGGER_TELEGRAM` is `true`). See [here](https://github.com/adriankumpf/logger-telegram-backend#configuration) for instructions.                                 | /                             |
 | LOCALE                 | The default locale for the web interface. Currently available: `en` (default) and `de`                                                                                                                           | en                            |
+| TZ                     | Used to establish the local time zone. See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).                                                                       | /                             |
 | SECRET_KEY_BASE        | Secret key used as a base to generate secrets for encrypting and signing data                                                                                                                                    | randomly generated at startup |
 | SIGNING_SALT           | A salt used with secret_key_base to generate a key for signing/verifying a cookie (required by LiveView; Sessions are not used otherwise)                                                                        | randomly generated at startup |
 

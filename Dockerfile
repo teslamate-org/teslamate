@@ -31,7 +31,7 @@ FROM alpine:3.9 AS app
 
 ENV LANG=C.UTF-8
 
-RUN apk add --update --no-cache bash openssl
+RUN apk add --update --no-cache bash openssl tzdata
 
 WORKDIR /opt/app
 
