@@ -10,7 +10,13 @@ defmodule TeslaMateWeb.CarLive.Summary do
   def mount(%{id: id, settings: settings}, socket) do
     if connected?(socket), do: Vehicles.subscribe(id)
 
-    {:ok, fetch(socket, id, settings)}
+    assigns = %{
+      summary: Vehicles.summary(id),
+      settings: settings,
+      translate_state: &translate_state/1
+    }
+
+    {:ok, assign(socket, assigns)}
   end
 
   @impl true
@@ -20,25 +26,16 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   @impl true
   def handle_info(summary, socket) do
-    {:noreply, assign(socket, summary: summary, state_t: translate(summary.state))}
+    {:noreply, assign(socket, summary: summary)}
   end
 
-  defp fetch(socket, id, settings) do
-    summary = Vehicles.summary(id)
-    assign(socket, summary: summary, state_t: translate(summary.state), settings: settings)
-  end
-
-  # needed for gettext to pick up msgids at compile time
-  [
-    gettext("driving"),
-    gettext("charging"),
-    gettext("charging_complete"),
-    gettext("updating"),
-    gettext("suspended"),
-    gettext("online"),
-    gettext("offline"),
-    gettext("asleep")
-  ]
-
-  defp translate(state), do: Gettext.gettext(TeslaMateWeb.Gettext, Atom.to_string(state))
+  defp translate_state(:driving), do: gettext("driving")
+  defp translate_state(:charging), do: gettext("charging")
+  defp translate_state(:charging_complete), do: gettext("charging complete")
+  defp translate_state(:updating), do: gettext("updating")
+  defp translate_state(:suspended), do: gettext("falling asleep")
+  defp translate_state(:online), do: gettext("online")
+  defp translate_state(:offline), do: gettext("offline")
+  defp translate_state(:asleep), do: gettext("asleep")
+  defp translate_state(:unavailable), do: gettext("unavailable")
 end

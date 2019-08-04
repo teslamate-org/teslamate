@@ -16,17 +16,17 @@ msgid "Status"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:45
+#: lib/teslamate_web/templates/car/summary.html.leex:73
 msgid "Range"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:39
+#: lib/teslamate_web/templates/car/summary.html.leex:61
 msgid "Speed"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:21
+#: lib/teslamate_web/templates/car/summary.html.leex:43
 msgid "State of Charge"
 msgstr ""
 
@@ -36,74 +36,66 @@ msgid "Charged"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:40
+#: lib/teslamate_web/live/car_live/summary.ex:39
 msgid "asleep"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:34
+#: lib/teslamate_web/live/car_live/summary.ex:33
 msgid "charging"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:35
-msgid "charging_complete"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:33
+#: lib/teslamate_web/live/car_live/summary.ex:32
 msgid "driving"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:39
+#: lib/teslamate_web/live/car_live/summary.ex:38
 msgid "offline"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:38
+#: lib/teslamate_web/live/car_live/summary.ex:37
 msgid "online"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:37
-msgid "suspended"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:36
+#: lib/teslamate_web/live/car_live/summary.ex:35
 msgid "updating"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:57
+#: lib/teslamate_web/templates/car/summary.html.leex:97
 msgid "Inside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:51
+#: lib/teslamate_web/templates/car/summary.html.leex:85
 msgid "Outside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:27
+#: lib/teslamate_web/templates/car/summary.html.leex:49
 msgid "Locked"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:28
-#: lib/teslamate_web/templates/car/summary.html.leex:34
-msgid "No"
+#: lib/teslamate_web/templates/car/summary.html.leex:22
+#: lib/teslamate_web/templates/car/summary.html.leex:50
+#: lib/teslamate_web/templates/car/summary.html.leex:56
+msgid "no"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:28
-#: lib/teslamate_web/templates/car/summary.html.leex:34
-msgid "Yes"
+#: lib/teslamate_web/templates/car/summary.html.leex:22
+#: lib/teslamate_web/templates/car/summary.html.leex:50
+#: lib/teslamate_web/templates/car/summary.html.leex:56
+msgid "yes"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:33
+#: lib/teslamate_web/templates/car/summary.html.leex:55
 msgid "Sentry Mode"
 msgstr ""
 
@@ -113,7 +105,7 @@ msgid "Home"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/app.html.eex:31
+#: lib/teslamate_web/templates/layout/app.html.eex:32
 #: lib/teslamate_web/templates/settings/index.html.leex:4
 #: lib/teslamate_web/templates/settings/index.html.leex:12
 msgid "Settings"
@@ -122,4 +114,34 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:16
 msgid "Use imperial units"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:28
+msgid "Scheduled charging"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:21
+msgid "Plugged in"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:36
+msgid "Charge limit"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:34
+msgid "charging complete"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:36
+msgid "falling asleep"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:40
+msgid "unavailable"
 msgstr ""
