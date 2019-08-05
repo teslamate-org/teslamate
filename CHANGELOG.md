@@ -58,6 +58,35 @@ New users need to sign in via the web interface.
 
 **Full Changelog:**
 
+## [1.4.3] - 2019-08-05
+
+### Added
+
+- Status screen: show additional charging related information
+- MQTT: add new topics
+
+  ```text
+  teslamate/cars/$car_id/plugged_in
+  teslamate/cars/$car_id/scheduled_charging_start_time
+  teslamate/cars/$car_id/charge_limit_soc
+  ```
+
+### Fixed
+
+- Fix an issue where charging processes were not completed and new charging
+  processes were created after waking up from sleep mode while still plugged in
+  to a charger.
+- Add migration to fix incomplete charging processes
+- Use local time in debug logs:
+
+  Add a `TZ` variable with your local timezone name to the environment of the
+  `teslamate` container. Otherwise timestamps use UTC.
+
+- Charging History: hide entries with 0kWh charge energy added
+- Charging History: include current `car-id` in links to `Charging` dashboard
+- Charging History: use slightly earlier start date in links to `Charging`
+  dashboard to always show the current position
+
 ## [1.4.2] - 2019-08-01
 
 ### Fixed
@@ -170,7 +199,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.4.2...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.4.3...HEA3
+[1.4.3]: https://github.com/adriankumpf/teslamate/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/adriankumpf/teslamate/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/adriankumpf/teslamate/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/adriankumpf/teslamate/compare/v1.3.0...v1.4.0
