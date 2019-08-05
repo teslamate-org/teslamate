@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564591460479,
+  "iteration": 1565012798850,
   "links": [],
   "panels": [
     {
@@ -73,7 +73,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(start_date),\n\tconvert_km(calculated_max_range, '$length_unit') AS \"Projected Range [$length_unit]\",\n\tconvert_km(positions.odometer, '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tcharging_processes\n\tINNER JOIN positions ON positions.id = charging_processes.position_id\nWHERE\n\tcharging_processes.car_id = $car\n\tAND $__timeFilter(start_date);",
+          "rawSql": "SELECT\n\t$__time(start_date),\n\tconvert_km(calculated_max_range, '$length_unit') AS \"Projected Range [$length_unit]\",\n\tconvert_km(positions.odometer, '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tcharging_processes\n\tINNER JOIN positions ON positions.id = charging_processes.position_id\nWHERE\n\tcharging_processes.car_id = $car\n\tAND $__timeFilter(start_date)\nORDER BY\n  start_date;",
           "refId": "A",
           "select": [
             [
@@ -234,5 +234,5 @@
   "timezone": "",
   "title": "Degradation",
   "uid": "riqUfXgRz",
-  "version": 4
+  "version": 2
 }
