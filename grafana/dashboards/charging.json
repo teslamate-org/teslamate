@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564590298038,
+  "iteration": 1565012918486,
   "links": [],
   "panels": [
     {
@@ -163,7 +163,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n   latitude as lat,\n   longitude as lng\nFROM positions\nWHERE\n  $__timeFilter(date) and \n  car_id = $car_id\nORDER BY \n  date ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tp.latitude AS lat,\n\tp.longitude AS lng\nFROM\n\tcharging_processes c\n\tJOIN positions p ON c.position_id = p.id\nWHERE\n\t$__timeFilter(date)\n\tAND c.car_id = $car_id;",
           "refId": "A",
           "select": [
             [
