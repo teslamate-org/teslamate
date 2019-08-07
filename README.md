@@ -53,6 +53,8 @@ A data logger for your Tesla.
 5. [MQTT](#mqtt)
 6. [FAQ](#faq)
 
+---
+
 ## Installation
 
 ### Docker (recommended)
@@ -72,9 +74,9 @@ services:
       - DATABASE_NAME=teslamate
       - DATABASE_HOST=db
       - MQTT_HOST=mosquitto
-      - TZ=Europe/Berlin       # (optional) replace to use local time in debug logs. See "Configuration".
       - VIRTUAL_HOST=localhost # if you're going to access the UI from another  machine replace
                                # "localhost" with the hostname / IP address of the docker host.
+      - TZ=Europe/Berlin       # (optional) replace to use local time in debug logs. See "Configuration".
     ports:
       - 4000:4000
     cap_drop:
@@ -206,9 +208,9 @@ car was online. Why?**
 
 Ideally, TeslaMate would frequently scrape the Tesla API – 24/7. However, the
 vehicle cannot fall asleep as long as data is requested. Therefore TeslaMate
-suspends scraping for 21 minutes if the vehicle idles for 15 minutes, so that
-it can go into sleep mode. Consequently, if you start driving again during
-those 21 minutes nothing is logged.
+suspends scraping for 21 minutes after the vehicle has been idling for 15 minutes,
+so that it can go into sleep mode. Consequently, if you start driving again
+during those 21 minutes nothing is logged.
 
 **Solution:** To get around this you can use your smartphone to tell TeslaMate
 to start scraping again. In short, create a workflow with
@@ -230,6 +232,10 @@ I strongly recommend to use a reverse-proxy with HTTPS and basic access
 authentication when exposing TeslaMate to the public internet. Additionally
 only permit access to `/api/car/$car_id/logging/resume` and/or
 `/api/car/$car_id/logging/suspend`.
+
+## Contributions
+
+All Contributions are welcome and greatly appreciated!
 
 ## Disclaimer
 
