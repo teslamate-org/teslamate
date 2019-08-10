@@ -137,4 +137,34 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       refute_receive _
     end
   end
+
+  describe "settings change" do
+    alias TeslaMate.Vehicles.Vehicle
+    alias TeslaMate.Settings.Settings
+
+    test "applies new sleep settings", %{test: name} do
+      events = [
+        {:ok, online_event()}
+      ]
+
+      :ok =
+        start_vehicle(name, events,
+          suspend_after_idle_min: 999_999_999,
+          suspend_min: 10_000
+        )
+
+      # Online
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+
+      refute_receive _, 500
+
+      # Reduce suspend_after_idle_min
+      send(name, %Settings{suspend_after_idle_min: 1, suspend_min: 10_000})
+      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
+
+      refute_receive _
+    end
+  end
 end
