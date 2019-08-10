@@ -17,22 +17,22 @@ msgid "Status"
 msgstr "Status"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:73
+#: lib/teslamate_web/templates/car/summary.html.leex:15
 msgid "Range"
 msgstr "Reichweite"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:61
+#: lib/teslamate_web/templates/car/summary.html.leex:73
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:43
+#: lib/teslamate_web/templates/car/summary.html.leex:55
 msgid "State of Charge"
 msgstr "Ladezustand"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:15
+#: lib/teslamate_web/templates/car/summary.html.leex:27
 msgid "Charged"
 msgstr "Geladen"
 
@@ -77,26 +77,26 @@ msgid "Outside temperature"
 msgstr "Außentemperatur"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:49
+#: lib/teslamate_web/templates/car/summary.html.leex:61
 msgid "Locked"
 msgstr "Verschlossen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:22
-#: lib/teslamate_web/templates/car/summary.html.leex:50
-#: lib/teslamate_web/templates/car/summary.html.leex:56
+#: lib/teslamate_web/templates/car/summary.html.leex:34
+#: lib/teslamate_web/templates/car/summary.html.leex:62
+#: lib/teslamate_web/templates/car/summary.html.leex:68
 msgid "no"
 msgstr "nein"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:22
-#: lib/teslamate_web/templates/car/summary.html.leex:50
-#: lib/teslamate_web/templates/car/summary.html.leex:56
+#: lib/teslamate_web/templates/car/summary.html.leex:34
+#: lib/teslamate_web/templates/car/summary.html.leex:62
+#: lib/teslamate_web/templates/car/summary.html.leex:68
 msgid "yes"
 msgstr "ja"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:55
+#: lib/teslamate_web/templates/car/summary.html.leex:67
 msgid "Sentry Mode"
 msgstr "Wächtermodus"
 
@@ -108,27 +108,21 @@ msgstr "Home"
 #, elixir-format
 #: lib/teslamate_web/templates/layout/app.html.eex:32
 #: lib/teslamate_web/templates/settings/index.html.leex:4
-#: lib/teslamate_web/templates/settings/index.html.leex:12
 msgid "Settings"
 msgstr "Einstellungen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:16
-msgid "Use imperial units"
-msgstr "Imperiales Einheitssystem verwenden"
-
-#, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:28
+#: lib/teslamate_web/templates/car/summary.html.leex:40
 msgid "Scheduled charging"
 msgstr "Ladezeitpunkt"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:21
+#: lib/teslamate_web/templates/car/summary.html.leex:33
 msgid "Plugged in"
 msgstr "Eingesteckt"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:36
+#: lib/teslamate_web/templates/car/summary.html.leex:48
 msgid "Charge limit"
 msgstr "Ladelimit"
 
@@ -146,3 +140,18 @@ msgstr "schläft ein"
 #: lib/teslamate_web/live/car_live/summary.ex:40
 msgid "unavailable"
 msgstr "nicht verfügbar"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:17
+msgid "Length"
+msgstr "Länge"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:32
+msgid "Temperature"
+msgstr "Temperatur"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:12
+msgid "Units"
+msgstr "Einheiten"
