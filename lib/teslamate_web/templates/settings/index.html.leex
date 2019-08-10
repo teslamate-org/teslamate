@@ -9,13 +9,39 @@
   <div class="column">
     <div class="message is-info">
       <div class="message-header">
-        <p><%= gettext("Settings") %></p>
+        <p><%= gettext("Units") %></p>
       </div>
       <%= f = form_for @changeset, "#", [phx_change: :change, class: "message-body"] %>
-        <label class="checkbox">
-          <%= checkbox(f, :use_imperial_units) %> <%= gettext("Use imperial units") %>
-        </label>
-          <%= error_tag(f, :use_imperial_units) %>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label"><%= gettext("Length") %></label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select(f, :unit_of_length, [:km, :mi]) %>
+                </div>
+              </div>
+              <p class="help is-danger"><%= error_tag(f, :unit_of_length) %></p>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label"><%= gettext("Temperature") %></label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select(f, :unit_of_temperature, ["°C": :C, "°F": :F]) %>
+                </div>
+              </div>
+              <p class="help is-danger"><%= error_tag(f, :unit_of_temperature) %></p>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>
