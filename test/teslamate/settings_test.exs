@@ -15,10 +15,24 @@ defmodule TeslaMate.SettingsTest do
     end
 
     test "update_settings/2 with valid data updates the settings" do
+      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
+
       settings = Settings.get_settings!()
       assert {:ok, %S{} = settings} = Settings.update_settings(settings, @update_attrs)
       assert settings.unit_of_length == :mi
       assert settings.unit_of_temperature == :F
+    end
+
+    test "update_settings/2 publishes the settings" do
+      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
+
+      :ok = Settings.subscribe_to_changes()
+
+      assert {:ok, %S{} = settings} =
+               Settings.get_settings!()
+               |> Settings.update_settings(@update_attrs)
+
+      assert_receive ^settings
     end
 
     test "update_settings/2 with invalid data returns error changeset" do

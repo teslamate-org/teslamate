@@ -69,7 +69,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok =
         start_vehicle(name, events,
-          sudpend_after_idle_min: round(1 / 60),
+          suspend_after_idle_min: round(1 / 60),
           suspend_min: 10_000
         )
 
