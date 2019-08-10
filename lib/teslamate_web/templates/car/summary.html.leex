@@ -14,7 +14,7 @@
         <tr>
           <th><%= gettext "Range" %></td>
           <td>
-            <%= if @settings.use_imperial_units do %>
+            <%= if @settings.unit_of_length == :mi do %>
               <%= Float.round(@summary.ideal_battery_range_km / 1.60934, 1)%> mi
             <% else %>
               <%= @summary.ideal_battery_range_km %> km
@@ -72,7 +72,7 @@
         <tr>
           <th><%= gettext "Speed" %></td>
           <td>
-            <%= if @settings.use_imperial_units do %>
+            <%= if @settings.unit_of_length == :mi do %>
               <%= round(@summary.speed / 1.60934)%> mph
             <% else %>
               <%= @summary.speed %> km/h
@@ -84,7 +84,7 @@
         <tr>
           <th><%= gettext "Outside temperature" %></td>
           <td>
-            <%= if @settings.use_imperial_units do %>
+            <%= if @settings.unit_of_temperature == :F do %>
               <%= Float.round((@summary.outside_temp * 9/5) + 32, 1)%> °F
             <% else %>
               <%= @summary.outside_temp %> °C
@@ -96,7 +96,7 @@
         <tr>
           <th><%= gettext "Inside temperature" %></td>
           <td>
-            <%= if @settings.use_imperial_units do %>
+            <%= if @settings.unit_of_temperature == :F do %>
               <%= Float.round((@summary.inside_temp * 9/5) + 32, 1)%> °F
             <% else %>
               <%= @summary.inside_temp %> °C
