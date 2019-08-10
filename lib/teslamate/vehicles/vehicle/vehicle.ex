@@ -4,17 +4,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
   require Logger
 
   alias __MODULE__.{Convert, Summary}
-  alias TeslaMate.{Api, Log}
+  alias TeslaMate.{Api, Log, Settings}
 
   alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge}
   alias TeslaApi.Vehicle
 
-  import Core.Dependency, only: [call: 3]
+  import Core.Dependency, only: [call: 3, call: 2]
 
   defstruct car: nil,
             last_used: nil,
             last_response: nil,
-            sudpend_after_idle_min: nil,
+            suspend_after_idle_min: nil,
             suspend_min: nil,
             deps: %{}
 
@@ -56,19 +56,34 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def init(opts) do
     %Log.Car{} = car = Keyword.fetch!(opts, :car)
 
+    suspend_after_idle_min =
+      Keyword.get_lazy(opts, :suspend_after_idle_min, fn ->
+        settings = Settings.get_settings!()
+        settings.suspend_after_idle_min
+      end)
+
+    suspend_min =
+      Keyword.get_lazy(opts, :suspend_min, fn ->
+        settings = Settings.get_settings!()
+        settings.suspend_min
+      end)
+
     deps = %{
       log: Keyword.get(opts, :log, Log),
       api: Keyword.get(opts, :api, Api),
+      settings: Keyword.get(opts, :settings, Settings),
       pubsub: Keyword.get(opts, :pubsub, Phoenix.PubSub)
     }
 
     data = %Data{
       car: car,
       last_used: DateTime.utc_now(),
-      sudpend_after_idle_min: Keyword.get(opts, :sudpend_after_idle_min, 15),
-      suspend_min: Keyword.get(opts, :suspend_min, 12),
+      suspend_after_idle_min: suspend_after_idle_min,
+      suspend_min: suspend_min,
       deps: deps
     }
+
+    :ok = call(deps.settings, :subscribe_to_changes)
 
     {:ok, :start, data, {:next_event, :internal, :fetch}}
   end
@@ -137,6 +152,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:ok, state} ->
         {:keep_state_and_data, {:reply, from, {:error, state}}}
     end
+  end
+
+  ## Info
+
+  def handle_event(:info, %Settings.Settings{} = settings, _state, data) do
+    %Settings.Settings{suspend_min: suspend, suspend_after_idle_min: after_idle} = settings
+    {:keep_state, %Data{data | suspend_min: suspend, suspend_after_idle_min: after_idle}}
   end
 
   ## Internal Events
@@ -531,7 +553,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
     idle_min = diff_seconds(DateTime.utc_now(), data.last_used) / 60
-    suspend = idle_min >= data.sudpend_after_idle_min
+    suspend = idle_min >= data.suspend_after_idle_min
 
     case can_fall_asleep(vehicle) do
       {:error, :preconditioning} ->

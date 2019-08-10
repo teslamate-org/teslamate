@@ -22,7 +22,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
+        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
 
@@ -56,7 +56,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
+        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
 
@@ -86,7 +86,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
+        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
 
@@ -115,7 +115,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
+        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
 
@@ -148,7 +148,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
+        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
 
@@ -178,7 +178,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
+        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
 
@@ -207,7 +207,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
+        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
 
@@ -249,7 +249,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: round(sudpend_after_idle_ms / 60),
+        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
         suspend_min: suspend_ms
       )
 
@@ -302,7 +302,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: 100_000,
+        suspend_after_idle_min: 100_000,
         suspend_min: 1000
       )
 
@@ -347,7 +347,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: 100_000,
+        suspend_after_idle_min: 100_000,
         suspend_min: 1000
       )
 

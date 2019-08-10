@@ -8,6 +8,8 @@ defmodule TeslaMate.Settings do
 
   alias TeslaMate.Settings.Settings
 
+  @topic inspect(__MODULE__)
+
   def get_settings! do
     case Repo.all(Settings) do
       [settings] -> settings
@@ -16,12 +18,21 @@ defmodule TeslaMate.Settings do
   end
 
   def update_settings(%Settings{} = settings, attrs) do
-    settings
-    |> Settings.changeset(attrs)
-    |> Repo.update()
+    with {:ok, settings} <- settings |> Settings.changeset(attrs) |> Repo.update(),
+         :ok <- broadcast(settings) do
+      {:ok, settings}
+    end
   end
 
   def change_settings(%Settings{} = settings, attrs \\ %{}) do
     Settings.changeset(settings, attrs)
+  end
+
+  def subscribe_to_changes do
+    Phoenix.PubSub.subscribe(TeslaMate.PubSub, @topic)
+  end
+
+  defp broadcast(settings) do
+    Phoenix.PubSub.broadcast(TeslaMate.PubSub, @topic, settings)
   end
 end

@@ -7,8 +7,8 @@ defmodule TeslaMate.Application do
     [
       TeslaMate.Repo,
       TeslaMate.Api,
-      TeslaMate.Vehicles,
       TeslaMateWeb.Endpoint,
+      TeslaMate.Vehicles,
       if(mqtt_enabled?(), do: TeslaMate.Mqtt)
     ]
     |> Enum.reject(&is_nil/1)

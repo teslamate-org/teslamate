@@ -193,7 +193,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: 100,
+        suspend_after_idle_min: 100,
         suspend_min: 1000
       )
 
@@ -231,7 +231,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok =
       start_vehicle(name, events,
-        sudpend_after_idle_min: 100_000,
+        suspend_after_idle_min: 100_000,
         suspend_min: 1000
       )
 
