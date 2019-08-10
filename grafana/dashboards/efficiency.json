@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564589825420,
+  "iteration": 1565439331323,
   "links": [],
   "panels": [
     {
@@ -382,7 +382,7 @@
           "unit": "percentunit"
         },
         {
-          "alias": "Distance",
+          "alias": "Distance [km]",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -390,12 +390,12 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
+          "decimals": 0,
           "mappingType": 1,
           "pattern": "total_distance_km",
           "thresholds": [],
           "type": "number",
-          "unit": "lengthkm"
+          "unit": "none"
         },
         {
           "alias": "Ø Consumption/100km",
@@ -446,7 +446,7 @@
           "unit": "farenheit"
         },
         {
-          "alias": "Distance",
+          "alias": "Distance [mi]",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -454,7 +454,7 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
+          "decimals": 0,
           "mappingType": 1,
           "pattern": "total_distance_mi",
           "thresholds": [],
@@ -576,18 +576,18 @@
       {
         "allValue": null,
         "current": {
-          "text": "F",
-          "value": "F"
+          "text": "C",
+          "value": "C"
         },
         "datasource": null,
-        "definition": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
         "label": "",
         "multi": false,
         "name": "temp_unit",
         "options": [],
-        "query": "select case when use_imperial_units then 'F' else 'C' end from settings limit 1;",
+        "query": "select unit_of_temperature from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -601,18 +601,18 @@
       {
         "allValue": null,
         "current": {
-          "text": "mi",
-          "value": "mi"
+          "text": "km",
+          "value": "km"
         },
         "datasource": null,
-        "definition": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
         "label": "",
         "multi": false,
         "name": "length_unit",
         "options": [],
-        "query": "select case when use_imperial_units then 'mi' else 'km' end from settings limit 1;",
+        "query": "select unit_of_length from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -702,5 +702,5 @@
   "timezone": "",
   "title": "Efficiency",
   "uid": "fu4SiQgWz",
-  "version": 1
+  "version": 2
 }
