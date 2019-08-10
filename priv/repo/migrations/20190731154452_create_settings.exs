@@ -13,9 +13,15 @@ defmodule TeslaMate.Repo.Migrations.CreateSettings do
 
     flush()
 
-    %Settings{}
-    |> Settings.changeset(%{use_imperial_units: false})
-    |> Repo.insert!()
+    Ecto.Adapters.SQL.query!(
+      Repo,
+      "INSERT INTO settings (use_imperial_units, inserted_at, updated_at) VALUES ($1, $2, $3)",
+      [
+        false,
+        DateTime.utc_now(),
+        DateTime.utc_now()
+      ]
+    )
   end
 
   def down do
