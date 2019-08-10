@@ -206,14 +206,20 @@ teslamate/cars/$car_id/sentry_mode
 **Sometimes the first few minutes of a trip are not recorded even though the
 car was online. Why?**
 
-Ideally, TeslaMate would frequently scrape the Tesla API – 24/7. However, the
-vehicle cannot fall asleep as long as data is requested. Therefore TeslaMate
-suspends scraping for 21 minutes after the vehicle has been idling for 15 minutes,
-so that it can go into sleep mode. Consequently, if you start driving again
-during those 21 minutes nothing is logged.
+TeslaMate polls the car every few seconds while driving or charging. After
+that, it keeps polling for about 15 minutes (to catch the following drive if
+you stopped for a drink, for example). After this period, TeslaMate will stop
+polling the car for about 12 minutes to let it go to sleep. This is repeated
+until the car is asleep or starts to drive/charge again. Once sleeping,
+TeslaMate will never wake the wake the car. It is only checked twice a minute to
+see if it is still sleeping.
 
-**Solution:** To get around this you can use your smartphone to tell TeslaMate
-to start scraping again. In short, create a workflow with
+This approach may sometimes lead to _small_ data gaps: if the car starts
+driving during the 12 minute period where TeslaMate is not polling, nothing can
+be logged.
+
+**Solution:** To get around this you can use your smartphone to inform TeslaMate
+when to start polling again. In short, create a workflow with
 [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm&hl=en)
 (Android) or [Shortcuts](https://support.apple.com/guide/shortcuts/welcome/ios)
 (iOS) that listens for connected Bluetooth devices. If a connection to your

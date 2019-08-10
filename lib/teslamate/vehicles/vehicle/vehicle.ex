@@ -66,7 +66,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       car: car,
       last_used: DateTime.utc_now(),
       sudpend_after_idle_min: Keyword.get(opts, :sudpend_after_idle_min, 15),
-      suspend_min: Keyword.get(opts, :suspend_min, 21),
+      suspend_min: Keyword.get(opts, :suspend_min, 12),
       deps: deps
     }
 
