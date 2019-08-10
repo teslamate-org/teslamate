@@ -7,11 +7,11 @@
 
 <div class="columns is-tablet is-centered">
   <div class="column">
-    <div class="message is-info">
-      <div class="message-header">
-        <p><%= gettext("Units") %></p>
+    <div class="card is-info">
+      <div class="card-header">
+        <p class="card-header-title"><%= gettext("Units") %></p>
       </div>
-      <%= f = form_for @changeset, "#", [phx_change: :change, class: "message-body"] %>
+      <%= f = form_for @changeset, "#", [phx_change: :change, class: "card-content"] %>
         <div class="field is-horizontal">
           <div class="field-label is-normal">
             <label class="label"><%= gettext("Length") %></label>
@@ -39,6 +39,56 @@
                 </div>
               </div>
               <p class="help is-danger"><%= error_tag(f, :unit_of_temperature) %></p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="columns is-tablet is-centered">
+  <div class="column">
+    <div class="card is-info">
+      <div class="card-header">
+        <p class="card-header-title"><%= gettext("Sleep") %></p>
+      </div>
+      <%= f = form_for @changeset, "#", [phx_change: :change, class: "card-content"] %>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label"><%= gettext("Time to Try Sleeping") %></label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select(f, :suspend_min,
+                                6..30
+                                |> Enum.filter(& rem(&1, 3) == 0)
+                                |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
+                  %>
+                </div>
+              </div>
+              <p class="help is-danger"><%= error_tag(f, :suspend_min) %></p>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label"><%= gettext("Idle Time Before Trying to Sleep") %></label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select(f, :suspend_after_idle_min,
+                                5..60
+                                |> Enum.filter(& rem(&1, 5) == 0)
+                                |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
+                  %>
+                </div>
+              </div>
+              <p class="help is-danger"><%= error_tag(f, :suspend_after_idle_min) %></p>
             </div>
           </div>
         </div>
