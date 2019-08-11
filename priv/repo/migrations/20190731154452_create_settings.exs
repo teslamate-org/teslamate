@@ -1,13 +1,11 @@
 defmodule TeslaMate.Repo.Migrations.CreateSettings do
   use Ecto.Migration
 
-  alias TeslaMate.Settings.Settings
   alias TeslaMate.Repo
 
   def up do
     create table(:settings) do
       add(:use_imperial_units, :boolean, default: false, null: false)
-
       timestamps()
     end
 

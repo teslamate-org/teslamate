@@ -1,13 +1,25 @@
 defmodule TeslaMateWeb.GeoFenceLive.Index do
   use Phoenix.LiveView
 
-  alias TeslaMate.Locations
+  alias TeslaMate.{Locations, Settings}
   alias TeslaMateWeb.GeoFenceView
 
   def render(assigns), do: GeoFenceView.render("index.html", assigns)
 
   def mount(_session, socket) do
-    {:ok, assign(socket, geofences: Locations.list_geofences(), flagged: nil)}
+    unit_of_length =
+      case Settings.get_settings!() do
+        %Settings.Settings{unit_of_length: :km} -> :m
+        %Settings.Settings{unit_of_length: :mi} -> :ft
+      end
+
+    assigns = %{
+      geofences: Locations.list_geofences(),
+      unit_of_length: unit_of_length,
+      flagged: nil
+    }
+
+    {:ok, assign(socket, assigns)}
   end
 
   def handle_event("flag", id, socket) do

@@ -3,8 +3,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   require Logger
 
-  alias __MODULE__.{Convert, Summary}
-  alias TeslaMate.{Api, Log, Settings}
+  alias __MODULE__.Summary
+  alias TeslaMate.{Api, Log, Settings, Convert}
 
   alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge}
   alias TeslaApi.Vehicle

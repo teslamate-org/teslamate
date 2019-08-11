@@ -5,16 +5,23 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
   alias TeslaMateWeb.GeoFenceLive
   alias TeslaMateWeb.GeoFenceView
 
+  alias TeslaMate.{Locations, Settings, Convert}
   alias TeslaMate.Locations.GeoFence
-  alias TeslaMate.Locations
 
   import TeslaMateWeb.Gettext
 
   def render(assigns), do: GeoFenceView.render("new.html", assigns)
 
   def mount(_session, socket) do
+    {unit_of_length, radius} =
+      case Settings.get_settings!() do
+        %Settings.Settings{unit_of_length: :km} -> {:m, 20}
+        %Settings.Settings{unit_of_length: :mi} -> {:ft, 65}
+      end
+
     assigns = %{
-      changeset: Locations.change_geofence(%GeoFence{}, %{radius: 20}),
+      changeset: Locations.change_geofence(%GeoFence{}, %{radius: radius}),
+      unit_of_length: unit_of_length,
       type: :create,
       show_errors: false
     }
@@ -32,6 +39,14 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
   end
 
   def handle_event("save", %{"geo_fence" => geofence_params}, socket) do
+    geofence_params =
+      Map.update(geofence_params, "radius", nil, fn radius ->
+        case socket.assigns.unit_of_length do
+          :ft -> with {radius, _} <- Float.parse(radius), do: Convert.ft_to_m(radius)
+          :m -> radius
+        end
+      end)
+
     case Locations.create_geofence(geofence_params) do
       {:ok, %GeoFence{name: name}} ->
         {:stop,
