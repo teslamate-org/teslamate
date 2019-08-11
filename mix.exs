@@ -53,7 +53,8 @@ defmodule TeslaMate.MixProject do
       {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"},
       {:tortoise, "~> 0.9"},
       {:httpoison, "~> 1.5"},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:geocalc, "~> 0.5"}
     ]
   end
 

@@ -7,9 +7,9 @@ defmodule TeslaMate.Locations do
 
   alias TeslaMate.Repo
 
-  ## Address
+  alias TeslaMate.Locations.{Address, Geocoder, GeoFence}
 
-  alias TeslaMate.Locations.{Address, Geocoder}
+  ## Address
 
   def create_address(attrs \\ %{}) do
     %Address{}
@@ -28,8 +28,15 @@ defmodule TeslaMate.Locations do
                _____ -> Geocoder
              end)
 
-  def find_address(%{latitude: latitude, longitude: longitude}) do
-    with {:ok, %{place_id: place_id} = attrs} <- @geocoder.reverse_lookup(latitude, longitude) do
+  def find_address(%{latitude: lat, longitude: lng}) do
+    case find_geofenced_address(lat, lng) do
+      nil -> reverse_geocode(lat, lng)
+      addr -> {:ok, addr}
+    end
+  end
+
+  defp reverse_geocode(lat, lng) do
+    with {:ok, %{place_id: place_id} = attrs} <- @geocoder.reverse_lookup(lat, lng) do
       case Repo.get_by(Address, place_id: place_id) do
         %Address{} = address -> {:ok, address}
         nil -> create_address(attrs)
@@ -37,9 +44,19 @@ defmodule TeslaMate.Locations do
     end
   end
 
-  ## GeoFence
+  defp find_geofenced_address(lat, lng) do
+    geofences = list_geofences()
 
-  alias TeslaMate.Locations.GeoFence
+    with %GeoFence{} = geofence <-
+           Enum.find(geofences, fn %GeoFence{radius: radius} = geofence ->
+             Geocalc.within?(radius, geofence, {lat, lng})
+           end),
+         %GeoFence{address: address} <- Repo.preload(geofence, :address) do
+      address
+    end
+  end
+
+  ## GeoFence
 
   def list_geofences do
     GeoFence
@@ -65,7 +82,6 @@ defmodule TeslaMate.Locations do
   end
 
   def update_geofence(%GeoFence{} = geofence, attrs) do
-    # Updating the coordinats would require to change the address.
     attrs = Map.drop(attrs, [:latitude, :longitude])
 
     geofence

@@ -1,8 +1,6 @@
 defmodule TeslaMate.Locations.Geocoder do
   alias HTTPoison.{Response, Error}
 
-  @lang Application.get_env(:gettext, :default_locale, "en")
-
   def reverse_lookup(lat, lon) do
     with {:ok, address_raw} <-
            fetch("https://nominatim.openstreetmap.org/reverse",
@@ -30,7 +28,7 @@ defmodule TeslaMate.Locations.Geocoder do
     [
       {"User-Agent", "TeslaMate"},
       {"Content-Type", "application/json"},
-      {"Accept-Language", @lang},
+      {"Accept-Language", "en"},
       {"Accept", "Application/json; Charset=utf-8"}
     ]
   end
