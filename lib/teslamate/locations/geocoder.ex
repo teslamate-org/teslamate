@@ -28,9 +28,13 @@ defmodule TeslaMate.Locations.Geocoder do
     [
       {"User-Agent", "TeslaMate"},
       {"Content-Type", "application/json"},
-      {"Accept-Language", "en"},
+      {"Accept-Language", lang()},
       {"Accept", "Application/json; Charset=utf-8"}
     ]
+  end
+
+  defp lang do
+    Application.get_env(:gettext, :default_locale, "en")
   end
 
   # Address Formatting
