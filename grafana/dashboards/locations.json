@@ -86,7 +86,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tcount(*) AS visited,\n\tdisplay_name\nFROM\n\ttrips t\nINNER JOIN addresses a ON end_address_id = a.id\nWHERE t.car_id = $car\nGROUP BY\n\tdisplay_name\nORDER BY\n\tvisited desc\nLIMIT 15",
+          "rawSql": "SELECT\n\tcount(*) AS visited,\n\tCOALESCE(g.name, a.display_name) as name\nFROM\n\ttrips t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_address_id = g.address_id\nWHERE t.car_id = $car\nGROUP BY\n\t2\nORDER BY\n\tvisited desc\nLIMIT 15",
           "refId": "A",
           "select": [
             [
@@ -375,7 +375,7 @@
     ]
   },
   "timezone": "",
-  "title": "Addresses",
+  "title": "Locations",
   "uid": "ZzhF-aRWz",
   "version": 1
 }
