@@ -12,22 +12,22 @@ msgstr ""
 "Plural-Forms: nplurals=2\n"
 
 msgid "can't be blank"
-msgstr ""
+msgstr "darf nicht leer sein"
 
 msgid "has already been taken"
-msgstr ""
+msgstr "ist bereits vergeben"
 
 msgid "is invalid"
-msgstr ""
+msgstr "ist ungültig"
 
 msgid "must be accepted"
 msgstr ""
 
 msgid "has invalid format"
-msgstr ""
+msgstr "hat ein ungültiges Format"
 
 msgid "has an invalid entry"
-msgstr ""
+msgstr "hat einen ungültigen Eintrag"
 
 msgid "is reserved"
 msgstr ""
@@ -72,16 +72,16 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "muss kleiner als %{number} sein"
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "muss größer als %{number} sein"
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "muss kleiner oder gleich %{number} sein"
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "muss größer oder gleich %{number} sein"
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "muss gleich %{number} sein"

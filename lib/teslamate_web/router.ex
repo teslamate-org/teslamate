@@ -29,6 +29,10 @@ defmodule TeslaMateWeb.Router do
 
     live "/", CarLive.Index
     live "/settings", SettingsLive.Index
+
+    live "/geo-fences", GeoFenceLive.Index
+    live "/geo-fences/new", GeoFenceLive.New
+    live "/geo-fences/:id/edit", GeoFenceLive.Edit
   end
 
   scope "/sign_in", TeslaMateWeb do

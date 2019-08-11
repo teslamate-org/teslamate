@@ -9,6 +9,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
   alias TeslaMate.Api
 
   import Core.Dependency, only: [call: 3]
+  import TeslaMateWeb.Gettext
 
   @impl true
   def mount(_session, socket) do
@@ -56,7 +57,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
 
   defp redirect_to_carlive(socket) do
     socket
-    |> put_flash(:success, "Signed in successfully.")
+    |> put_flash(:success, gettext("Signed in successfully"))
     |> redirect(to: Routes.live_path(socket, CarLive.Index, %{}))
   end
 end

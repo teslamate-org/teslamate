@@ -7,92 +7,88 @@
 
 <div class="columns is-tablet is-centered">
   <div class="column">
-    <div class="card is-info">
-      <div class="card-header">
-        <p class="card-header-title"><%= gettext("Units") %></p>
+    <h2 class="title is-4">
+      <%= gettext("Units") %>
+    </h2>
+    <%= f = form_for @changeset, "#", [phx_change: :change] %>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label"><%= gettext("Length") %></label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :unit_of_length, [:km, :mi]) %>
+              </div>
+            </div>
+            <p class="help is-danger"><%= error_tag(f, :unit_of_length) %></p>
+          </div>
+        </div>
       </div>
-      <%= f = form_for @changeset, "#", [phx_change: :change, class: "card-content"] %>
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label"><%= gettext("Length") %></label>
-          </div>
-          <div class="field-body">
-            <div class="field">
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <%= select(f, :unit_of_length, [:km, :mi]) %>
-                </div>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label"><%= gettext("Temperature") %></label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :unit_of_temperature, ["°C": :C, "°F": :F]) %>
               </div>
-              <p class="help is-danger"><%= error_tag(f, :unit_of_length) %></p>
             </div>
+            <p class="help is-danger"><%= error_tag(f, :unit_of_temperature) %></p>
           </div>
         </div>
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label"><%= gettext("Temperature") %></label>
-          </div>
-          <div class="field-body">
-            <div class="field">
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <%= select(f, :unit_of_temperature, ["°C": :C, "°F": :F]) %>
-                </div>
-              </div>
-              <p class="help is-danger"><%= error_tag(f, :unit_of_temperature) %></p>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
 </div>
 
 <div class="columns is-tablet is-centered">
   <div class="column">
-    <div class="card is-info">
-      <div class="card-header">
-        <p class="card-header-title"><%= gettext("Sleep") %></p>
+    <h2 class="title is-4">
+      <%= gettext("Sleep") %>
+    </h2>
+    <%= f = form_for @changeset, "#", [phx_change: :change] %>
+      <div class="field is-horizontal center-vertically">
+        <div class="field-label is-normal">
+          <label class="label"><%= gettext("Time to Try Sleeping") %></label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :suspend_min,
+                              6..30
+                              |> Enum.filter(& rem(&1, 3) == 0)
+                              |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
+                %>
+              </div>
+            </div>
+            <p class="help is-danger"><%= error_tag(f, :suspend_min) %></p>
+          </div>
+        </div>
       </div>
-      <%= f = form_for @changeset, "#", [phx_change: :change, class: "card-content"] %>
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label"><%= gettext("Time to Try Sleeping") %></label>
-          </div>
-          <div class="field-body">
-            <div class="field">
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <%= select(f, :suspend_min,
-                                6..30
-                                |> Enum.filter(& rem(&1, 3) == 0)
-                                |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
-                  %>
-                </div>
+      <div class="field is-horizontal center-vertically">
+        <div class="field-label is-normal">
+          <label class="label"><%= gettext("Idle Time Before Trying to Sleep") %></label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :suspend_after_idle_min,
+                              5..60
+                              |> Enum.filter(& rem(&1, 5) == 0)
+                              |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
+                %>
               </div>
-              <p class="help is-danger"><%= error_tag(f, :suspend_min) %></p>
             </div>
+            <p class="help is-danger"><%= error_tag(f, :suspend_after_idle_min) %></p>
           </div>
         </div>
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label"><%= gettext("Idle Time Before Trying to Sleep") %></label>
-          </div>
-          <div class="field-body">
-            <div class="field">
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <%= select(f, :suspend_after_idle_min,
-                                5..60
-                                |> Enum.filter(& rem(&1, 5) == 0)
-                                |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
-                  %>
-                </div>
-              </div>
-              <p class="help is-danger"><%= error_tag(f, :suspend_after_idle_min) %></p>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
 </div>
