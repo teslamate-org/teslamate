@@ -1,0 +1,89 @@
+<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save] %>
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label f, :name, gettext("Name"), class: "label" %>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <%= text_input f, :name, class: "input", placeholder: gettext("Name") %>
+        </div>
+  <%= if @show_errors do %>
+        <p class="help is-danger"><%= error_tag(f, :name) %></p>
+  <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label f, :position, gettext("Position"), class: "label" %>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control is-expanded">
+          <%= text_input f, :latitude, class: "input",
+                                       placeholder: gettext("Latitude"),
+                                       disabled: @type == :edit
+          %>
+        </div>
+  <%= if @show_errors do %>
+        <p class="help is-danger">
+          <%= error_tag(f, :address_id) %>
+          <%= error_tag(f, :latitude) %>
+        </p>
+  <% end %>
+      </div>
+      <div class="field">
+        <div class="control is-expanded">
+          <%= text_input f, :longitude, class: "input",
+                                        placeholder: gettext("Longitude"),
+                                        disabled: @type == :edit
+          %>
+        </div>
+  <%= if @show_errors do %>
+        <p class="help is-danger">
+          <%= error_tag(f, :address_id) %>
+          <%= error_tag(f, :longitude) %>
+        </p>
+  <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label f, :radius, gettext("Radius"), class: "label" %>
+    </div>
+    <div class="field-body">
+      <div class="field has-addons">
+        <div class="control is-expanded">
+          <%= text_input f, :radius, class: "input", type: :number, min: 0 %>
+        </div>
+        <div class="control addon">
+          <a class="button is-static">m</a>
+        </div>
+  <%= if @show_errors do %>
+        <p class="help is-danger"><%= error_tag(f, :radius) %></p>
+  <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal mt-25">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field is-grouped">
+
+        <div class="control">
+          <%= link gettext("Back"), to: Routes.live_path(@socket, GeoFenceLive.Index),
+                                    class: "button"
+          %>
+        </div>
+        <div class="control">
+          <%= submit gettext("Save"), phx_disable_with: gettext("Saving..."), class: "button is-info" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
