@@ -61,7 +61,7 @@
           <%= text_input f, :radius, class: "input", type: :number, min: 0 %>
         </div>
         <div class="control addon">
-          <a class="button is-static">m</a>
+          <a class="button is-static"><%= @unit_of_length %></a>
         </div>
   <%= if @show_errors do %>
         <p class="help is-danger"><%= error_tag(f, :radius) %></p>

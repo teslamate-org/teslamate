@@ -1,5 +1,5 @@
 defmodule TeslaMate.Vehicles.Vehicle.Summary do
-  import TeslaMate.Vehicles.Vehicle.Convert, only: [miles_to_km: 2, mph_to_kmh: 1]
+  import TeslaMate.Convert, only: [miles_to_km: 2, mph_to_kmh: 1]
 
   alias TeslaApi.Vehicle.State.{Drive, Charge}
   alias TeslaApi.Vehicle

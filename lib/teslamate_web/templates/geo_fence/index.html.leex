@@ -24,7 +24,14 @@
     <tr>
       <td><strong><%= geofence.name %></strong></td>
       <td class="is-hidden-mobile"><%= geofence.latitude %>, <%= geofence.longitude %></td>
-      <td class="is-hidden-mobile"><%= geofence.radius %> m</td>
+      <td class="is-hidden-mobile">
+        <%=
+          case @unit_of_length do
+            :ft -> geofence.radius |> m_to_ft() |> round()
+            :m -> geofence.radius |> round()
+          end
+        %> <%= @unit_of_length %>
+      </td>
       <td style="min-width: 160px;">
         <div class="field is-grouped is-pulled-right">
           <p class="control">

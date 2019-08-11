@@ -2,7 +2,6 @@ defmodule TeslaMate.Repo.Migrations.UnitOfLegnthAndTemperature do
   use Ecto.Migration
 
   alias TeslaMate.Settings.Units
-  alias TeslaMate.Settings
   alias TeslaMate.Repo
 
   import Ecto.Query
