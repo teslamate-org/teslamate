@@ -1,4 +1,4 @@
-defmodule TeslaMate.Addresses.Address do
+defmodule TeslaMate.Locations.Address do
   use Ecto.Schema
   import Ecto.Changeset
 

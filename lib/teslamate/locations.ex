@@ -1,6 +1,6 @@
-defmodule TeslaMate.Addresses do
+defmodule TeslaMate.Locations do
   @moduledoc """
-  The Addresses context.
+  The Locations context.
   """
 
   import Ecto.Query, warn: false
@@ -9,7 +9,7 @@ defmodule TeslaMate.Addresses do
 
   ## Address
 
-  alias TeslaMate.Addresses.{Address, Geocoder}
+  alias TeslaMate.Locations.{Address, Geocoder}
 
   def create_address(attrs \\ %{}) do
     %Address{}
@@ -39,7 +39,7 @@ defmodule TeslaMate.Addresses do
 
   ## GeoFence
 
-  alias TeslaMate.Addresses.GeoFence
+  alias TeslaMate.Locations.GeoFence
 
   def list_geofences do
     GeoFence

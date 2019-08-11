@@ -5,19 +5,19 @@ defmodule TeslaMateWeb.GeoFenceLive.Edit do
   alias TeslaMateWeb.GeoFenceLive
   alias TeslaMateWeb.GeoFenceView
 
-  alias TeslaMate.Addresses.GeoFence
-  alias TeslaMate.Addresses
+  alias TeslaMate.Locations.GeoFence
+  alias TeslaMate.Locations
 
   import TeslaMateWeb.Gettext
 
   def render(assigns), do: GeoFenceView.render("edit.html", assigns)
 
   def mount(%{path_params: %{"id" => id}}, socket) do
-    geofence = Addresses.get_geofence!(id)
+    geofence = Locations.get_geofence!(id)
 
     assigns = %{
       geofence: geofence,
-      changeset: Addresses.change_geofence(geofence),
+      changeset: Locations.change_geofence(geofence),
       type: :edit,
       show_errors: false
     }
@@ -28,14 +28,14 @@ defmodule TeslaMateWeb.GeoFenceLive.Edit do
   def handle_event("validate", %{"geo_fence" => params}, socket) do
     changeset =
       socket.assigns.geofence
-      |> Addresses.change_geofence(params)
+      |> Locations.change_geofence(params)
       |> Map.put(:action, :update)
 
     {:noreply, assign(socket, changeset: changeset, show_errors: false)}
   end
 
   def handle_event("save", %{"geo_fence" => geofence_params}, socket) do
-    case Addresses.update_geofence(socket.assigns.geofence, geofence_params) do
+    case Locations.update_geofence(socket.assigns.geofence, geofence_params) do
       {:ok, %GeoFence{name: name}} ->
         {:stop,
          socket

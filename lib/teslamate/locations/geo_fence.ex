@@ -1,8 +1,8 @@
-defmodule TeslaMate.Addresses.GeoFence do
+defmodule TeslaMate.Locations.GeoFence do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias TeslaMate.Addresses.Address
+  alias TeslaMate.Locations.Address
 
   schema "geofences" do
     field :name, :string
