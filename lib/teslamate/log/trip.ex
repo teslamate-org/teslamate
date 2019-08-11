@@ -3,7 +3,7 @@ defmodule TeslaMate.Log.Trip do
   import Ecto.Changeset
 
   alias TeslaMate.Log.{Position, Car}
-  alias TeslaMate.Addresses.Address
+  alias TeslaMate.Locations.Address
 
   schema "trips" do
     field :start_date, :utc_datetime

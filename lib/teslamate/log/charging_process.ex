@@ -3,7 +3,7 @@ defmodule TeslaMate.Log.ChargingProcess do
   import Ecto.Changeset
 
   alias TeslaMate.Log.{Charge, Car, Position}
-  alias TeslaMate.Addresses.Address
+  alias TeslaMate.Locations.Address
 
   schema "charging_processes" do
     field :start_date, :utc_datetime

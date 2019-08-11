@@ -8,7 +8,7 @@ defmodule TeslaMate.Log do
   import Ecto.Query, warn: false
   import __MODULE__.Functions, only: [duration_min: 2]
 
-  alias TeslaMate.{Repo, Addresses}
+  alias TeslaMate.{Repo, Locations}
 
   ## Car
 
@@ -173,8 +173,8 @@ defmodule TeslaMate.Log do
   end
 
   defp put_address(attrs, key, position) do
-    case Addresses.find_address(position) do
-      {:ok, %Addresses.Address{id: id}} ->
+    case Locations.find_address(position) do
+      {:ok, %Locations.Address{id: id}} ->
         Map.put(attrs, key, id)
 
       {:error, reason} ->
@@ -189,8 +189,8 @@ defmodule TeslaMate.Log do
     position = Map.put(position_attrs, :car_id, car_id)
 
     address_id =
-      case Addresses.find_address(position) do
-        {:ok, %Addresses.Address{id: id}} ->
+      case Locations.find_address(position) do
+        {:ok, %Locations.Address{id: id}} ->
           id
 
         {:error, reason} ->

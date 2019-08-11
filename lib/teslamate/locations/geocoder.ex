@@ -1,4 +1,4 @@
-defmodule TeslaMate.Addresses.Geocoder do
+defmodule TeslaMate.Locations.Geocoder do
   alias HTTPoison.{Response, Error}
 
   @lang Application.get_env(:gettext, :default_locale, "en")
