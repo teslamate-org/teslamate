@@ -2,7 +2,7 @@ defmodule TeslaMate.LocationsTest do
   use TeslaMate.DataCase
 
   alias TeslaMate.{Locations, Repo}
-  alias TeslaMate.Locations.Address
+  alias TeslaMate.Locations.{Address, GeoFence}
 
   describe "addresses" do
     @valid_attrs %{
@@ -138,70 +138,107 @@ defmodule TeslaMate.LocationsTest do
 
       assert [^address] = Repo.all(Address)
     end
+
+    test "checks if the address matches an existing geo-fence" do
+      assert {:ok, %GeoFence{address_id: id} = geofence} =
+               Locations.create_geofence(%{
+                 name: "Home",
+                 latitude: 52.514521,
+                 longitude: 13.350144,
+                 radius: 100
+               })
+
+      assert {:ok, %Address{id: ^id}} =
+               Locations.find_address(%{latitude: 52.515, longitude: 13.351})
+    end
   end
 
-  #   alias TeslaMate.Locations
+  describe "geofences" do
+    @valid_attrs %{name: "foo", latitude: 52.514521, longitude: 13.350144, radius: 42}
+    @update_attrs %{name: "bar", latitude: nil, longitude: nil, radius: 43}
+    @invalid_attrs %{name: nil, latitude: nil, longitude: nil, radius: nil}
 
-  #   describe "geofences" do
-  #     alias TeslaMate.Locations.GeoFence
+    def geofence_fixture(attrs \\ %{}) do
+      {:ok, geofence} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Locations.create_geofence()
 
-  #     @valid_attrs %{latitude: 120.5, longitude: 120.5, radius: 42}
-  #     @update_attrs %{latitude: 456.7, longitude: 456.7, radius: 43}
-  #     @invalid_attrs %{latitude: nil, longitude: nil, radius: nil}
+      geofence
+    end
 
-  #     def geofence_fixture(attrs \\ %{}) do
-  #       {:ok, geofence} =
-  #         attrs
-  #         |> Enum.into(@valid_attrs)
-  #         |> Locations.create_geofence()
+    test "list_geofences/0 returns all geofences" do
+      geofence = geofence_fixture()
+      assert Locations.list_geofences() == [geofence]
+    end
 
-  #       geofence
-  #     end
+    test "get_geofence!/1 returns the geofence with given id" do
+      geofence = geofence_fixture()
+      assert Locations.get_geofence!(geofence.id) == geofence
+    end
 
-  #     test "list_geofences/0 returns all geofences" do
-  #       geofence = geofence_fixture()
-  #       assert Locations.list_geofences() == [geofence]
-  #     end
+    test "create_geofence/1 with valid data creates a geofence" do
+      assert {:ok, %GeoFence{} = geofence} = Locations.create_geofence(@valid_attrs)
+      assert geofence.name == "foo"
+      assert geofence.latitude == 52.514521
+      assert geofence.longitude == 13.350144
+      assert geofence.radius == 42
+    end
 
-  #     test "get_geofence!/1 returns the geofence with given id" do
-  #       geofence = geofence_fixture()
-  #       assert Locations.get_geofence!(geofence.id) == geofence
-  #     end
+    test "create_geofence/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{} = changeset} = Locations.create_geofence(@invalid_attrs)
 
-  #     test "create_geofence/1 with valid data creates a geofence" do
-  #       assert {:ok, %GeoFence{} = geofence} = Locations.create_geofence(@valid_attrs)
-  #       assert geofence.latitude == 120.5
-  #       assert geofence.longitude == 120.5
-  #       assert geofence.radius == 42
-  #     end
+      assert errors_on(changeset) == %{
+               latitude: ["can't be blank"],
+               longitude: ["can't be blank"],
+               name: ["can't be blank"],
+               radius: ["can't be blank"]
+             }
 
-  #     test "create_geofence/1 with invalid data returns error changeset" do
-  #       assert {:error, %Ecto.Changeset{}} = Locations.create_geofence(@invalid_attrs)
-  #     end
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Locations.create_geofence(%{latitude: "wat", longitude: "wat"})
 
-  #     test "update_geofence/2 with valid data updates the geofence" do
-  #       geofence = geofence_fixture()
-  #       assert {:ok, %GeoFence{} = geofence} = Locations.update_geofence(geofence, @update_attrs)
-  #       assert geofence.latitude == 456.7
-  #       assert geofence.longitude == 456.7
-  #       assert geofence.radius == 43
-  #     end
+      assert %{latitude: ["is invalid"], longitude: ["is invalid"]} = errors_on(changeset)
+    end
 
-  #     test "update_geofence/2 with invalid data returns error changeset" do
-  #       geofence = geofence_fixture()
-  #       assert {:error, %Ecto.Changeset{}} = Locations.update_geofence(geofence, @invalid_attrs)
-  #       assert geofence == Locations.get_geofence!(geofence.id)
-  #     end
+    test "create_geofence/1 fails if there is already a  geo-fence with the same address" do
+      _geofence = geofence_fixture(%{latitude: 52.514521, longitude: 13.350144})
 
-  #     test "delete_geofence/1 deletes the geofence" do
-  #       geofence = geofence_fixture()
-  #       assert {:ok, %GeoFence{}} = Locations.delete_geofence(geofence)
-  #       assert_raise Ecto.NoResultsError, fn -> Locations.get_geofence!(geofence.id) end
-  #     end
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Locations.create_geofence(%{
+                 name: "bar",
+                 latitude: 52.514521,
+                 longitude: 13.350144,
+                 radius: 20
+               })
 
-  #     test "change_geofence/1 returns a geofence changeset" do
-  #       geofence = geofence_fixture()
-  #       assert %Ecto.Changeset{} = Locations.change_geofence(geofence)
-  #     end
-  #   end
+      assert errors_on(changeset) == %{address_id: ["has already been taken"]}
+    end
+
+    test "update_geofence/2 with valid data updates the geofence" do
+      geofence = geofence_fixture()
+      assert {:ok, %GeoFence{} = geofence} = Locations.update_geofence(geofence, @update_attrs)
+      assert geofence.name == "bar"
+      assert geofence.latitude == 52.514521
+      assert geofence.longitude == 13.350144
+      assert geofence.radius == 43
+    end
+
+    test "update_geofence/2 with invalid data returns error changeset" do
+      geofence = geofence_fixture()
+      assert {:error, %Ecto.Changeset{}} = Locations.update_geofence(geofence, @invalid_attrs)
+      assert geofence == Locations.get_geofence!(geofence.id)
+    end
+
+    test "delete_geofence/1 deletes the geofence" do
+      geofence = geofence_fixture()
+      assert {:ok, %GeoFence{}} = Locations.delete_geofence(geofence)
+      assert_raise Ecto.NoResultsError, fn -> Locations.get_geofence!(geofence.id) end
+    end
+
+    test "change_geofence/1 returns a geofence changeset" do
+      geofence = geofence_fixture()
+      assert %Ecto.Changeset{} = Locations.change_geofence(geofence)
+    end
+  end
 end
