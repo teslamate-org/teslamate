@@ -28,11 +28,11 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-end">
-              <%= if @conn.assigns.signed_in? do %>
-                <%= link(gettext("Geo-Fences"), to: "/geo-fences", class: "navbar-item") %>
-                <%= link(gettext("Settings"), to: "/settings", class: "navbar-item") %>
-              <% end %>
-            <p class="navbar-item" >v<%= Application.spec(:teslamate, :vsn) %></p>
+            <%= link(gettext("Geo-Fences"), to: "/geo-fences", class: "navbar-item") %>
+            <%= link(gettext("Settings"), to: "/settings", class: "navbar-item  mr-5") %>
+            <div class="tags has-addons ml-10">
+              <span class="tag is-primary">v<%= Application.spec(:teslamate, :vsn) %></span>
+            </div>
           </div>
         </div>
       </div>
