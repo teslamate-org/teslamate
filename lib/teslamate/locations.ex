@@ -82,7 +82,7 @@ defmodule TeslaMate.Locations do
   end
 
   def update_geofence(%GeoFence{} = geofence, attrs) do
-    attrs = Map.drop(attrs, [:latitude, :longitude])
+    attrs = Map.drop(attrs, [:latitude, :longitude, "latitude", "longitude"])
 
     geofence
     |> GeoFence.changeset(attrs)
