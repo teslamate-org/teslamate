@@ -1,10 +1,33 @@
 <div class="car card">
   <header class="card-header">
     <p class="card-header-title"><%= @summary.display_name %></p>
+    <div class="card-header-icon">
+      <%=
+        cond do
+          not is_nil(@error) ->
+            link @error, to: "#", class: "button is-danger is-small is-outlined", disabled: true
+
+          @summary.state == :online and !@summary.sentry_mode and @summary.locked->
+            link gettext("try to sleep"), to: "#", phx_click: "suspend_logging", class: "button is-info is-small is-outlined"
+
+          @summary.state == :suspended ->
+            link gettext("abort sleep attempt"), to: "#", phx_click: "resume_logging", class: "button is-info is-small is-outlined"
+
+          true ->
+            nil
+        end
+      %>
+    </div>
   </header>
   <div class="card-content">
     <div class="content">
       <table class="table is-narrow is-fullwidth">
+        <thead>
+          <tr>
+            <th></th>
+            <th style="max-width: 40%; width: 40%"></th>
+          </tr>
+        </thead>
       <tbody>
         <tr>
           <td><%= gettext "Status" %></td>
