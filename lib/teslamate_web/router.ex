@@ -13,32 +13,19 @@ defmodule TeslaMateWeb.Router do
     plug :fetch_signed_in
   end
 
-  pipeline :require_signed_in do
-    defp redirect_unless_signed_in(%Plug.Conn{assigns: %{signed_in?: true}} = conn, _), do: conn
-    defp redirect_unless_signed_in(conn, _opts), do: conn |> redirect(to: "/sign_in") |> halt()
-
-    plug :redirect_unless_signed_in
-  end
-
   pipeline :api do
     plug :accepts, ["json"]
   end
 
   scope "/", TeslaMateWeb do
-    pipe_through [:browser, :require_signed_in]
+    pipe_through :browser
 
-    live "/", CarLive.Index
+    get "/", CarController, :index
+    live "/sign_in", SignInLive.Index
     live "/settings", SettingsLive.Index
-
     live "/geo-fences", GeoFenceLive.Index
     live "/geo-fences/new", GeoFenceLive.New
     live "/geo-fences/:id/edit", GeoFenceLive.Edit
-  end
-
-  scope "/sign_in", TeslaMateWeb do
-    pipe_through :browser
-
-    live "/", SignInLive.Index
   end
 
   scope "/api", TeslaMateWeb do

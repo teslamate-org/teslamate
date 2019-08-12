@@ -3,11 +3,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
   alias TeslaMate.Settings
 
-  test "redirects if not signed in", %{conn: conn} do
-    assert {:error, %{redirect: %{to: "/sign_in"}}} = live(conn, "/settings")
-  end
-
-  @tag :signed_in
   test "shows km and C by default", %{conn: conn} do
     assert {:ok, _view, html} = live(conn, "/settings")
 
@@ -18,7 +13,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              ~r(<select id="settings_unit_of_temperature" .+><option value="C" selected>°C</option><option value="F">°F</option></select>)
   end
 
-  @tag :signed_in
   test "shows 12 and 15 minutes by default", %{conn: conn} do
     assert {:ok, _view, html} = live(conn, "/settings")
 
@@ -29,7 +23,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              ~r(<select id="settings_suspend_after_idle_min" .+>.*<option value="15" selected>15 min</option>.*</select>)
   end
 
-  @tag :signed_in
   test "reacts to change events", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/settings")
 

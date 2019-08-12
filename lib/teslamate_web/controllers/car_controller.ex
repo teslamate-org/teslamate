@@ -5,7 +5,13 @@ defmodule TeslaMateWeb.CarController do
 
   alias TeslaMate.{Log, Vehicles}
 
+  plug :redirect_unless_signed_in when action in [:index]
+
   action_fallback TeslaMateWeb.FallbackController
+
+  def index(conn, _) do
+    live_render(conn, TeslaMateWeb.CarLive.Index, session: %{})
+  end
 
   def suspend_logging(conn, %{"id" => id}) do
     car = Log.get_car!(id)
@@ -38,4 +44,7 @@ defmodule TeslaMateWeb.CarController do
         |> render("command_failed.json", reason: reason)
     end
   end
+
+  defp redirect_unless_signed_in(%Plug.Conn{assigns: %{signed_in?: true}} = conn, _), do: conn
+  defp redirect_unless_signed_in(conn, _opts), do: conn |> redirect(to: "/sign_in") |> halt()
 end
