@@ -305,7 +305,7 @@ msgstr "Benutzer anwesend"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:14
-msgid "abort sleep attempt"
+msgid "cancel sleep attempt"
 msgstr "Schlafversuch abbrechen"
 
 #, elixir-format
