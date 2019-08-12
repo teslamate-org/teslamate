@@ -1,7 +1,3 @@
-import EctoEnum
-
-defenum(TeslaMate.Log.State.State, :states_status, [
-  :online,
-  :offline,
-  :asleep
-])
+defmodule TeslaMate.Log.State.State do
+  use EctoEnum.Postgres, type: :states_status, enums: [:online, :offline, :asleep]
+end
