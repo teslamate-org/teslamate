@@ -77,29 +77,29 @@ defmodule TeslaMate.Log do
   alias TeslaMate.Log.Position
 
   def insert_position(car_id, attrs) do
-    %Position{car_id: car_id, trip_id: Map.get(attrs, :trip_id)}
+    %Position{car_id: car_id, drive_id: Map.get(attrs, :drive_id)}
     |> Position.changeset(attrs)
     |> Repo.insert()
   end
 
-  ## Trip
+  ## Drive
 
-  alias TeslaMate.Log.Trip
+  alias TeslaMate.Log.Drive
 
-  def start_trip(car_id) do
-    with {:ok, %Trip{id: id}} <-
-           %Trip{car_id: car_id}
-           |> Trip.changeset(%{start_date: DateTime.utc_now()})
+  def start_drive(car_id) do
+    with {:ok, %Drive{id: id}} <-
+           %Drive{car_id: car_id}
+           |> Drive.changeset(%{start_date: DateTime.utc_now()})
            |> Repo.insert() do
       {:ok, id}
     end
   end
 
-  def close_trip(trip_id) do
-    trip =
-      Trip
+  def close_drive(drive_id) do
+    drive =
+      Drive
       |> preload([:car])
-      |> Repo.get!(trip_id)
+      |> Repo.get!(drive_id)
 
     query =
       Position
@@ -118,7 +118,7 @@ defmodule TeslaMate.Log do
         first_row: row_number() |> over(order_by: [asc: p.date]),
         last_row: row_number() |> over(order_by: [desc: p.date])
       })
-      |> where(trip_id: ^trip_id)
+      |> where(drive_id: ^drive_id)
       |> order_by(asc: :date)
 
     positions =
@@ -128,16 +128,16 @@ defmodule TeslaMate.Log do
 
     case positions do
       [] ->
-        trip |> Trip.changeset(%{distance: 0, duration_min: 0}) |> Repo.delete()
+        drive |> Drive.changeset(%{distance: 0, duration_min: 0}) |> Repo.delete()
 
       [_] ->
-        trip |> Trip.changeset(%{distance: 0, duration_min: 0}) |> Repo.delete()
+        drive |> Drive.changeset(%{distance: 0, duration_min: 0}) |> Repo.delete()
 
       [start_pos, end_pos] ->
         distance = end_pos.odometer - start_pos.odometer
         ideal_distance = start_pos.ideal_battery_range_km - end_pos.ideal_battery_range_km
         efficiency = if ideal_distance > 0, do: distance / ideal_distance, else: nil
-        consumption = ideal_distance * trip.car.efficiency
+        consumption = ideal_distance * drive.car.efficiency
         consumption_100km = if distance > 0, do: consumption / distance * 100, else: nil
 
         attrs = %{
@@ -160,14 +160,14 @@ defmodule TeslaMate.Log do
         }
 
         if distance < 0.1 do
-          trip |> Trip.changeset(attrs) |> Repo.delete()
+          drive |> Drive.changeset(attrs) |> Repo.delete()
         else
           attrs =
             attrs
             |> put_address(:start_address_id, start_pos)
             |> put_address(:end_address_id, end_pos)
 
-          trip |> Trip.changeset(attrs) |> Repo.update()
+          drive |> Drive.changeset(attrs) |> Repo.update()
         end
     end
   end

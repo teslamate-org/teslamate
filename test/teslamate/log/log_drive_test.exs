@@ -1,7 +1,7 @@
-defmodule TeslaMate.LogTripTest do
+defmodule TeslaMate.LogDriveTest do
   use TeslaMate.DataCase, async: true
 
-  alias TeslaMate.Log.{Car, Position, Trip}
+  alias TeslaMate.Log.{Car, Position, Drive}
   alias TeslaMate.Log
 
   @valid_attrs %{date: DateTime.utc_now(), latitude: 0.0, longitude: 0.0}
@@ -15,10 +15,10 @@ defmodule TeslaMate.LogTripTest do
     car
   end
 
-  test "start_trip/1 returns the trip_id" do
+  test "start_drive/1 returns the drive_id" do
     assert %car{id: car_id} = car_fixture()
-    assert {:ok, trip_id} = Log.start_trip(car_id)
-    assert is_number(trip_id)
+    assert {:ok, drive_id} = Log.start_drive(car_id)
+    assert is_number(drive_id)
   end
 
   describe "insert_position/1" do
@@ -32,12 +32,12 @@ defmodule TeslaMate.LogTripTest do
       assert position.latitude == 0.0
     end
 
-    test "cannot insert positions for trips which don't exist" do
+    test "cannot insert positions for drives which don't exist" do
       assert %Car{id: car_id} = car_fixture()
 
-      attrs = Map.put(@valid_attrs, :trip_id, 404)
+      attrs = Map.put(@valid_attrs, :drive_id, 404)
       assert {:error, %Ecto.Changeset{} = changeset} = Log.insert_position(car_id, attrs)
-      assert errors_on(changeset) == %{trip_id: ["does not exist"]}
+      assert errors_on(changeset) == %{drive_id: ["does not exist"]}
     end
 
     test "with invalid data returns error changeset" do
@@ -52,8 +52,8 @@ defmodule TeslaMate.LogTripTest do
     end
   end
 
-  describe "close_trip/2" do
-    test "aggregates trip data" do
+  describe "close_drive/2" do
+    test "aggregates drive data" do
       assert %car{id: car_id} = car_fixture()
 
       positions = [
@@ -119,62 +119,62 @@ defmodule TeslaMate.LogTripTest do
         }
       ]
 
-      assert {:ok, trip_id} = Log.start_trip(car_id)
+      assert {:ok, drive_id} = Log.start_drive(car_id)
 
       for p <- positions do
-        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :trip_id, trip_id))
+        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :drive_id, drive_id))
       end
 
-      assert {:ok, trip} = Log.close_trip(trip_id)
+      assert {:ok, drive} = Log.close_drive(drive_id)
 
-      assert {:ok, trip.end_date, 0} == DateTime.from_iso8601("2019-04-06 10:23:25Z")
-      assert trip.outside_temp_avg == 19.04
-      assert trip.inside_temp_avg == 21.04
-      assert trip.speed_max == 42
-      assert trip.power_max == 36.0
-      assert trip.power_min == -7.0
-      assert trip.power_avg == 8.2
-      assert trip.start_km == 284.85156
-      assert trip.end_km == 288.045561
-      assert trip.distance == 3.1940010000000143
-      assert trip.start_range_km == 338.8
-      assert trip.end_range_km == 334.8
-      assert trip.duration_min == 4
-      assert trip.consumption_kWh == 0.612
-      assert trip.consumption_kWh_100km == 19.160920738597053
-      assert is_number(trip.start_address_id)
-      assert addr_id = trip.start_address_id
-      assert ^addr_id = trip.end_address_id
+      assert {:ok, drive.end_date, 0} == DateTime.from_iso8601("2019-04-06 10:23:25Z")
+      assert drive.outside_temp_avg == 19.04
+      assert drive.inside_temp_avg == 21.04
+      assert drive.speed_max == 42
+      assert drive.power_max == 36.0
+      assert drive.power_min == -7.0
+      assert drive.power_avg == 8.2
+      assert drive.start_km == 284.85156
+      assert drive.end_km == 288.045561
+      assert drive.distance == 3.1940010000000143
+      assert drive.start_range_km == 338.8
+      assert drive.end_range_km == 334.8
+      assert drive.duration_min == 4
+      assert drive.consumption_kWh == 0.612
+      assert drive.consumption_kWh_100km == 19.160920738597053
+      assert is_number(drive.start_address_id)
+      assert addr_id = drive.start_address_id
+      assert ^addr_id = drive.end_address_id
     end
 
-    test "deletes a trip and if it has no positions" do
+    test "deletes a drive and if it has no positions" do
       assert %car{id: car_id} = car_fixture()
 
-      assert {:ok, trip_id} = Log.start_trip(car_id)
-      assert %Trip{} = Repo.get(Trip, trip_id)
+      assert {:ok, drive_id} = Log.start_drive(car_id)
+      assert %Drive{} = Repo.get(Drive, drive_id)
 
-      assert {:ok, %Trip{distance: 0.0, duration_min: 0}} = Log.close_trip(trip_id)
-      assert nil == Repo.get(Trip, trip_id)
+      assert {:ok, %Drive{distance: 0.0, duration_min: 0}} = Log.close_drive(drive_id)
+      assert nil == Repo.get(Drive, drive_id)
     end
 
-    test "deletes a trip and its position if it has only one position" do
+    test "deletes a drive and its position if it has only one position" do
       assert %car{id: car_id} = car_fixture()
 
       positions = [
         %{date: "2019-04-06 10:00:00", latitude: 0.0, longitude: 0.0, odometer: 100}
       ]
 
-      assert {:ok, trip_id} = Log.start_trip(car_id)
+      assert {:ok, drive_id} = Log.start_drive(car_id)
 
       for p <- positions do
-        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :trip_id, trip_id))
+        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :drive_id, drive_id))
       end
 
-      assert {:ok, %Trip{distance: 0.0, duration_min: 0}} = Log.close_trip(trip_id)
-      assert nil == Repo.get(Trip, trip_id)
+      assert {:ok, %Drive{distance: 0.0, duration_min: 0}} = Log.close_drive(drive_id)
+      assert nil == Repo.get(Drive, drive_id)
     end
 
-    test "deletes a trip and its position if the distance driven is 0" do
+    test "deletes a drive and its position if the distance driven is 0" do
       assert %car{id: car_id} = car_fixture()
 
       positions = [
@@ -194,14 +194,14 @@ defmodule TeslaMate.LogTripTest do
         }
       ]
 
-      assert {:ok, trip_id} = Log.start_trip(car_id)
+      assert {:ok, drive_id} = Log.start_drive(car_id)
 
       for p <- positions do
-        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :trip_id, trip_id))
+        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :drive_id, drive_id))
       end
 
-      assert {:ok, %Trip{distance: 0.0}} = Log.close_trip(trip_id)
-      assert nil == Repo.get(Trip, trip_id)
+      assert {:ok, %Drive{distance: 0.0}} = Log.close_drive(drive_id)
+      assert nil == Repo.get(Drive, drive_id)
     end
   end
 end

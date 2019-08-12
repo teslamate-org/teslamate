@@ -1,11 +1,11 @@
-defmodule TeslaMate.Log.Trip do
+defmodule TeslaMate.Log.Drive do
   use Ecto.Schema
   import Ecto.Changeset
 
   alias TeslaMate.Log.{Position, Car}
   alias TeslaMate.Locations.Address
 
-  schema "trips" do
+  schema "drives" do
     field :start_date, :utc_datetime
     field :end_date, :utc_datetime
     field :outside_temp_avg, :float
@@ -32,8 +32,8 @@ defmodule TeslaMate.Log.Trip do
   end
 
   @doc false
-  def changeset(trip, attrs) do
-    trip
+  def changeset(drive, attrs) do
+    drive
     |> cast(attrs, [
       :start_date,
       :end_date,

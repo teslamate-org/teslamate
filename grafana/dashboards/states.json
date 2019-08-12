@@ -292,7 +292,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH FROM (max(end_date) - min(start_date))) / 60), 1 as time from trips where car_id = $car;",
+          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH FROM (max(end_date) - min(start_date))) / 60), 1 as time from drives where car_id = $car;",
           "refId": "A",
           "select": [
             [

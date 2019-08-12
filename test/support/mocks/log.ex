@@ -4,7 +4,7 @@ defmodule LogMock do
   defstruct [:pid]
   alias __MODULE__, as: State
 
-  alias TeslaMate.Log.{Trip, ChargingProcess, Update}
+  alias TeslaMate.Log.{Drive, ChargingProcess, Update}
 
   # API
 
@@ -14,8 +14,8 @@ defmodule LogMock do
 
   def start_state(name, car_id, state), do: GenServer.call(name, {:start_state, car_id, state})
 
-  def start_trip(name, car_id), do: GenServer.call(name, {:start_trip, car_id})
-  def close_trip(name, trip_id), do: GenServer.call(name, {:close_trip, trip_id})
+  def start_drive(name, car_id), do: GenServer.call(name, {:start_drive, car_id})
+  def close_drive(name, drive_id), do: GenServer.call(name, {:close_drive, drive_id})
 
   def start_update(name, car_id), do: GenServer.call(name, {:start_update, car_id})
   def cancel_update(name, update_id), do: GenServer.call(name, {:cancel_update, update_id})
@@ -66,14 +66,14 @@ defmodule LogMock do
     {:reply, {:ok, %ChargingProcess{}}, state}
   end
 
-  def handle_call({:start_trip, _car_id} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:start_drive, _car_id} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, 111}, state}
   end
 
-  def handle_call({:close_trip, _trip_id} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:close_drive, _drive_id} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %Trip{}}, state}
+    {:reply, {:ok, %Drive{}}, state}
   end
 
   def handle_call({:start_update, _car_id} = action, _from, %State{pid: pid} = state) do

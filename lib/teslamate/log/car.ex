@@ -2,7 +2,7 @@ defmodule TeslaMate.Log.Car do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias TeslaMate.Log.{ChargingProcess, Position, Trip}
+  alias TeslaMate.Log.{ChargingProcess, Position, Drive}
 
   schema "cars" do
     field :efficiency, :float
@@ -12,7 +12,7 @@ defmodule TeslaMate.Log.Car do
 
     has_many :charging_processes, ChargingProcess
     has_many :positions, Position
-    has_many :trips, Trip
+    has_many :drives, Drive
 
     timestamps()
   end

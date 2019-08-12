@@ -162,7 +162,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Consumption",
+      "title": "Drive",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -306,7 +306,7 @@
         },
         "hide": 2,
         "label": null,
-        "name": "trip_id",
+        "name": "drive_id",
         "options": [
           {
             "text": "",
@@ -431,7 +431,7 @@
     ]
   },
   "timezone": "",
-  "title": "Consumption",
+  "title": "Drive Details",
   "uid": "zm7wN6Zgz",
   "version": 3
 }

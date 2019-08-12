@@ -20,7 +20,7 @@ A data logger for your Tesla.
 **Dashboards**
 
 - Lifetime driving map
-- Trip and charging reports
+- Drive and charging reports
 - Driving efficiency report
 - Consumption (net / gross)
 - Vampire drain
@@ -39,8 +39,8 @@ A data logger for your Tesla.
 
 ## Screenshots
 
-![Trip](screenshots/trip.png)
-![Trips](screenshots/trips.png)
+![Drive](screenshots/drive.png)
+![Drives](screenshots/drives.png)
 ![States](screenshots/states.png)
 ![Charging](screenshots/charging.png)
 ![Charging History](screenshots/charging_history.png)
@@ -203,7 +203,7 @@ teslamate/cars/$car_id/sentry_mode
 
 ## FAQ
 
-**Sometimes the first few minutes of a trip are not recorded even though the
+**Sometimes the first few minutes of a drive are not recorded even though the
 car was online. Why?**
 
 TeslaMate polls the car every few seconds while driving or charging. After
