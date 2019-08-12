@@ -3,7 +3,6 @@ defmodule TeslaMateWeb.SignInLive.Index do
 
   alias TeslaMateWeb.Router.Helpers, as: Routes
   alias TeslaMateWeb.SigninView
-  alias TeslaMateWeb.CarLive
 
   alias TeslaMate.Auth
   alias TeslaMate.Api
@@ -58,6 +57,6 @@ defmodule TeslaMateWeb.SignInLive.Index do
   defp redirect_to_carlive(socket) do
     socket
     |> put_flash(:success, gettext("Signed in successfully"))
-    |> redirect(to: Routes.live_path(socket, CarLive.Index, %{}))
+    |> redirect(to: Routes.car_path(socket, :index))
   end
 end

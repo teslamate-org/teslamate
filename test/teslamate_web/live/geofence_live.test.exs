@@ -14,7 +14,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   end
 
   describe "Index" do
-    @tag :signed_in
     test "renders all geo-fences", %{conn: conn} do
       _gf1 =
         geofence_fixture(%{name: "Post office", latitude: -25.066188, longitude: -130.100502})
@@ -37,7 +36,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                ~r/<tr>\n\s*<td><strong>Victory Column<\/strong><\/td>\n\s*<td.*?>52.514521, 13.350144<\/td>\n\s*<td.*?>\n\s*100 m\n\s*<\/td>\n\s*<td.*?>(?s).*<\/td>\n\s*<\/tr>/
     end
 
-    @tag :signed_in
     test "displays radius in ft", %{conn: conn} do
       {:ok, _settings} =
         Settings.get_settings!() |> Settings.update_settings(%{unit_of_length: :mi})
@@ -56,7 +54,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                ~r/<tr>\n\s*<td><strong>Post office<\/strong><\/td>\n\s*<td.*?>-25.066188, -130.100502<\/td>\n\s*<td.*?>\n\s*328 ft\n\s*<\/td>\n\s*<td.*?>(?s).*<\/td>\n\s*<\/tr>/
     end
 
-    @tag :signed_in
     test "allows deletion of a geo-fence", %{conn: conn} do
       %GeoFence{id: id} =
         geofence_fixture(%{name: "Victory Column", latitude: 52.514521, longitude: 13.350144})
@@ -77,7 +74,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   end
 
   describe "Edit" do
-    @tag :signed_in
     test "validates changes when editing of a geo-fence", %{conn: conn} do
       %GeoFence{id: id} =
         geofence_fixture(%{name: "Post office", latitude: -25.066188, longitude: -130.100502})
@@ -98,7 +94,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                ~r/<div.*?>\n\s*<input .*? id="geo_fence_radius" .*? value="">\s*<\/div>(?s).*?<p .*?><span class="help is-danger pl-15">can&#39;t be blank<\/span><\/p>\n\s*<\/div>/
     end
 
-    @tag :signed_in
     test "allows editing of a geo-fence", %{conn: conn} do
       %GeoFence{id: id} =
         geofence_fixture(%{name: "Post office", latitude: -25.066188, longitude: -130.100502})
@@ -121,7 +116,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                ~r/<tr>\n\s*<td><strong>Adamstown<\/strong><\/td>\n\s*<td.*?>-25.066188, -130.100502<\/td>\n\s*<td.*?>\n\s*20 m\n\s*<\/td>\n\s*<td.*?>(?s).*<\/td>\n\s*<\/tr>/
     end
 
-    @tag :signed_in
     test "allows editing of a geo-fence with radius being displayed in ft", %{conn: conn} do
       {:ok, _settings} =
         Settings.get_settings!() |> Settings.update_settings(%{unit_of_length: :mi})
@@ -157,7 +151,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   end
 
   describe "New" do
-    @tag :signed_in
     test "validates cahnges when creating a new geo-fence", %{conn: conn} do
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
 
@@ -190,7 +183,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                ~r/<div.*?>\n\s*<input .*? id="geo_fence_longitude" .*? value="wat">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">is invalid<\/span>\s*<\/p>\n\s*<\/div>/
     end
 
-    @tag :signed_in
     test "creates a new geo-fence", %{conn: conn} do
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
 
@@ -213,7 +205,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                ~r/<tr>\n\s*<td><strong>post office<\/strong><\/td>\n\s*<td.*?>-25.066188, -130.100502<\/td>\n\s*<td.*?>\n\s*25 m\n\s*<\/td>\n\s*<td.*?>(?s).*<\/td>\n\s*<\/tr>/
     end
 
-    @tag :signed_in
     test "warn if a geo-fence already exists for a location", %{conn: conn} do
       %GeoFence{} =
         geofence_fixture(%{name: "Post office", latitude: -25.066188, longitude: -130.100502})
@@ -237,7 +228,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                ~r/<div.*?>\n\s*<input .*? id="geo_fence_longitude" .*? value="-130.100502">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">has already been taken<\/span>\s*<\/p>\n\s*<\/div>/
     end
 
-    @tag :signed_in
     test "allows creating of a geo-fence with radius being displayed in ft", %{conn: conn} do
       {:ok, _settings} =
         Settings.get_settings!() |> Settings.update_settings(%{unit_of_length: :mi})
