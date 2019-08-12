@@ -15,15 +15,14 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564529557143,
+  "iteration": 1565635763548,
   "links": [],
   "panels": [
     {
       "columns": [],
       "fontSize": "100%",
       "gridPos": {
-        "h": 14,
+        "h": 11,
         "w": 24,
         "x": 0,
         "y": 0
@@ -46,7 +45,7 @@
           "type": "string"
         },
         {
-          "alias": "Visits",
+          "alias": "#",
           "colorMode": "value",
           "colors": [
             "rgb(136, 138, 136)",
@@ -63,6 +62,22 @@
             "100000000000"
           ],
           "type": "number",
+          "unit": "short"
+        },
+        {
+          "alias": "Name",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "name",
+          "thresholds": [],
+          "type": "string",
           "unit": "short"
         },
         {
@@ -86,7 +101,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tcount(*) AS visited,\n\tCOALESCE(g.name, a.display_name) as name\nFROM\n\ttrips t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_address_id = g.address_id\nWHERE t.car_id = $car\nGROUP BY\n\t2\nORDER BY\n\tvisited desc\nLIMIT 15",
+          "rawSql": "SELECT\n\tcount(*) AS visited,\n\tCOALESCE(g.name, a.display_name) as name\nFROM\n\ttrips t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_address_id = g.address_id\nWHERE t.car_id = $car\nGROUP BY\n\t2\nORDER BY\n\tvisited desc\nLIMIT 10",
           "refId": "A",
           "select": [
             [
@@ -110,7 +125,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top 15",
+      "title": "Top Destinations",
       "transform": "table",
       "type": "table"
     },
@@ -118,16 +133,16 @@
       "columns": [],
       "fontSize": "100%",
       "gridPos": {
-        "h": 21,
-        "w": 24,
+        "h": 11,
+        "w": 18,
         "x": 0,
-        "y": 14
+        "y": 11
       },
       "id": 2,
       "links": [],
       "options": {},
-      "pageSize": null,
-      "scroll": true,
+      "pageSize": 10,
+      "scroll": false,
       "showHeader": true,
       "sort": {
         "col": 7,
@@ -276,7 +291,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select\nlatitude,\nlongitude,\nCOALESCE(name, CONCAT(road, ' ', house_number)) as name,\nneighbourhood,\ncity,\nstate,\ncountry,\nupdated_at\nfrom addresses\nwhere $__timeFilter(updated_at)",
+          "rawSql": "SELECT\n\tlatitude,\n\tlongitude,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry,\n\tupdated_at\nFROM\n\taddresses\nWHERE\n\t$__timeFilter(inserted_at);",
           "refId": "A",
           "select": [
             [
@@ -302,7 +317,117 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Destinations",
+      "title": "Addresses",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 11,
+        "w": 6,
+        "x": 18,
+        "y": 11
+      },
+      "id": 6,
+      "options": {},
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "Name",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "link": true,
+          "linkTargetBlank": true,
+          "linkTooltip": "",
+          "linkUrl": "https://www.google.com/maps/search/?api=1&query=${__cell_0},${__cell_1}",
+          "mappingType": 1,
+          "pattern": "name",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "/(longitude|latitude)/",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tlatitude,\n\tlongitude,\n\tname\nFROM\n\tgeofences\nORDER BY\n\tinserted_at DESC;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Geo-fences",
       "transform": "table",
       "type": "table"
     }
