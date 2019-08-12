@@ -261,10 +261,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
       when shift_state in ["D", "N", "R"] ->
         Logger.info("Driving / Start", car_id: data.car.id)
 
-        {:ok, trip_id} = call(data.deps.log, :start_trip, [data.car.id])
-        :ok = insert_position(vehicle, data, trip_id: trip_id)
+        {:ok, drive_id} = call(data.deps.log, :start_drive, [data.car.id])
+        :ok = insert_position(vehicle, data, drive_id: drive_id)
 
-        {:next_state, {:driving, trip_id}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:driving, drive_id}, %Data{data | last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(2.5)]}
 
       %{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
@@ -338,23 +338,23 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   #### :driving
 
-  def handle_event(:internal, {:update, :offline}, {:driving, _trip_id}, data) do
+  def handle_event(:internal, {:update, :offline}, {:driving, _drive_id}, data) do
     Logger.warn("Vehicle went offline while driving", car_id: data.car.id)
 
     {:keep_state_and_data, schedule_fetch(5)}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, trip_id}, data) do
+  def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, drive_id}, data) do
     case get(vehicle, [:drive_state, :shift_state]) do
       shift_state when shift_state in ["D", "R", "N"] ->
-        :ok = insert_position(vehicle, data, trip_id: trip_id)
+        :ok = insert_position(vehicle, data, drive_id: drive_id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(2.5)]}
 
       shift_state when is_nil(shift_state) or shift_state == "P" ->
-        {:ok, %Log.Trip{distance: distance, duration_min: duration}} =
-          call(data.deps.log, :close_trip, [trip_id])
+        {:ok, %Log.Drive{distance: distance, duration_min: duration}} =
+          call(data.deps.log, :close_drive, [drive_id])
 
         Logger.info("Driving / Ended / #{Float.round(distance, 1)} km – #{duration} min",
           car_id: data.car.id
@@ -494,7 +494,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp create_position(%Vehicle{} = vehicle, opts \\ []) do
     %{
-      trip_id: Keyword.get(opts, :trip_id),
+      drive_id: Keyword.get(opts, :drive_id),
       date: parse_timestamp(vehicle.drive_state.timestamp),
       latitude: vehicle.drive_state.latitude,
       longitude: vehicle.drive_state.longitude,

@@ -2,7 +2,7 @@ defmodule TeslaMate.Log.Position do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias TeslaMate.Log.{Car, Trip}
+  alias TeslaMate.Log.{Car, Drive}
 
   schema "positions" do
     field :date, :utc_datetime
@@ -28,7 +28,7 @@ defmodule TeslaMate.Log.Position do
     field :is_front_defroster_on, :boolean
 
     belongs_to(:car, Car)
-    belongs_to(:trip, Trip)
+    belongs_to(:drive, Drive)
   end
 
   @doc false
@@ -59,6 +59,6 @@ defmodule TeslaMate.Log.Position do
     ])
     |> validate_required([:car_id, :date, :latitude, :longitude])
     |> foreign_key_constraint(:car_id)
-    |> foreign_key_constraint(:trip_id)
+    |> foreign_key_constraint(:drive_id)
   end
 end

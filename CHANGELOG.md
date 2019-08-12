@@ -113,7 +113,7 @@ New users need to sign in via the web interface.
 
 - Fix syntax errors in consumption and charging dashboard
 - The consumption and charging dashboards can now be viewed without having to
-  select a trip / charging process first.
+  select a drive / charging process first.
 
 #### Removed
 
