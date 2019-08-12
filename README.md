@@ -35,6 +35,7 @@ A data logger for your Tesla.
   certain idle time
 - Built-in API to manually suspend / resume sending requests to the Tesla API
 - Automatic address lookup
+- Option to create custom geo-fences
 - Supports multiple vehicles per Tesla Account
 
 ## Screenshots

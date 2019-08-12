@@ -1,6 +1,25 @@
 # Changelog
 
-## [Unreleased]
+## [1.5.0] - 2019-08-12
+
+### Added
+
+- Add geo-fence feature
+- Make units of length and temperature separately configurable
+- Make `time to try sleeping` and `idle time before trying to sleep` configurable
+- Show buttons `try to sleep` and `cancel sleep attempt` on status screen if possible
+- Add charging stats: charged in total, total number of charges, top charging stations
+
+### Changed
+
+- Reduce time to try sleeping from 21 to 12 minutes
+- Increase test coverage
+- Rename some dashboards / panels
+
+### Fixed
+
+- Add order by clause to degradation query
+- Read `LOCALE` at runtime
 
 ## 1.4
 
@@ -199,7 +218,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.4.3...HEA3
+[1.5.0]: https://github.com/adriankumpf/teslamate/compare/v1.4.3...v1.5.0
 [1.4.3]: https://github.com/adriankumpf/teslamate/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/adriankumpf/teslamate/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/adriankumpf/teslamate/compare/v1.4.0...v1.4.1
