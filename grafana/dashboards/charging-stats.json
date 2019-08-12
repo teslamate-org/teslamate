@@ -116,7 +116,7 @@
           ]
         }
       ],
-      "title": "SOC Charging Stats",
+      "title": "SOC Stats",
       "transform": "table",
       "type": "table"
     },

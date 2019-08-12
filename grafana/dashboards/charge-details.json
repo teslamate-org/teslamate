@@ -105,7 +105,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Charging",
+      "title": "Charge Details",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -327,7 +327,7 @@
     ]
   },
   "timezone": "",
-  "title": "Charging",
+  "title": "Charge Details",
   "uid": "BHhxFeZRz",
   "version": 2
 }

@@ -479,7 +479,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Charging History",
+      "title": "Charges",
       "transform": "table",
       "type": "table"
     }
@@ -603,7 +603,7 @@
     ]
   },
   "timezone": "",
-  "title": "Charging History",
+  "title": "Charges",
   "uid": "TSmNYvRRk",
   "version": 2
 }
