@@ -22,7 +22,7 @@ defmodule TeslaMate.Vehicles do
     children =
       opts
       |> Keyword.get_lazy(:vehicles, &list_vehicles!/0)
-      |> Enum.map(&{Vehicle, car: create_new!(&1)})
+      |> Enum.map(&{Keyword.get(opts, :vehicle, Vehicle), car: create_new!(&1)})
 
     Supervisor.init(children,
       strategy: :one_for_one,
