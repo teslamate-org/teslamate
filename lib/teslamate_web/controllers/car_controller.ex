@@ -31,20 +31,12 @@ defmodule TeslaMateWeb.CarController do
 
   def resume_logging(conn, %{"id" => id}) do
     car = Log.get_car!(id)
-
-    case Vehicles.resume_logging(car.id) do
-      :ok ->
-        send_resp(conn, :no_content, "")
-
-      {:error, reason} ->
-        Logger.info("Could not resume manually: #{inspect(reason)}")
-
-        conn
-        |> put_status(:bad_gateway)
-        |> render("command_failed.json", reason: reason)
-    end
+    :ok = Vehicles.resume_logging(car.id)
+    send_resp(conn, :no_content, "")
   end
 
   defp redirect_unless_signed_in(%Plug.Conn{assigns: %{signed_in?: true}} = conn, _), do: conn
-  defp redirect_unless_signed_in(conn, _opts), do: conn |> redirect(to: "/sign_in") |> halt()
+  defp redirect_unless_signed_in(conn, _opts), do: conn |> redirect(to: sign_in(conn)) |> halt()
+
+  defp sign_in(conn), do: Routes.live_path(conn, TeslaMateWeb.SignInLive.Index)
 end

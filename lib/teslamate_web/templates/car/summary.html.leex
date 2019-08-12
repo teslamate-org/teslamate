@@ -7,70 +7,70 @@
       <table class="table is-narrow is-fullwidth">
       <tbody>
         <tr>
-          <th><%= gettext "Status" %></td>
-          <td><%= @translate_state.(@summary.state) %><td>
+          <td><%= gettext "Status" %></td>
+          <td><%= @translate_state.(@summary.state) %></td>
         </tr>
         <%= unless is_nil(@summary.ideal_battery_range_km) do %>
         <tr>
-          <th><%= gettext "Range" %></td>
+          <td><%= gettext "Range" %></td>
           <td>
             <%= if @settings.unit_of_length == :mi do %>
               <%= Float.round(@summary.ideal_battery_range_km / 1.60934, 1)%> mi
             <% else %>
               <%= @summary.ideal_battery_range_km %> km
             <% end %>
-          <td>
+          </td>
         </tr>
         <% end %>
         <%= if @summary.state in [:charging, :charging_complete] and not is_nil(@summary.charge_energy_added) do %>
         <tr>
-          <th><%= gettext "Charged" %></td>
-          <td><%= @summary.charge_energy_added %> kWh<td>
+          <td><%= gettext "Charged" %></td>
+          <td><%= @summary.charge_energy_added %> kWh</td>
         </tr>
         <% end %>
         <%= unless is_nil(@summary.plugged_in) do %>
         <tr>
-          <th><%= gettext "Plugged in" %></td>
+          <td><%= gettext "Plugged in" %></td>
           <td><%= (if @summary.plugged_in, do: gettext("yes"), else: gettext("no"))  %></td>
         </tr>
         <% end %>
         <%= if @summary.plugged_in do %>
           <%= if not is_nil(@summary.scheduled_charging_start_time) do %>
           <tr>
-            <th><%= gettext "Scheduled charging" %></td>
+            <td><%= gettext "Scheduled charging" %></td>
             <td class="convert-date">
               <%= @summary.scheduled_charging_start_time %>
-            <td>
+            </td>
           </tr>
           <% end %>
           <%= if not is_nil(@summary.charge_limit_soc) do %>
           <tr>
-            <th><%= gettext "Charge limit" %></td>
-            <td><%= @summary.charge_limit_soc %>%<td>
+            <td><%= gettext "Charge limit" %></td>
+            <td><%= @summary.charge_limit_soc %>%</td>
           </tr>
           <% end %>
         <% end %>
         <%= unless is_nil(@summary.battery_level) do %>
         <tr>
-          <th><%= gettext "State of Charge" %></td>
+          <td><%= gettext "State of Charge" %></td>
           <td><%= @summary.battery_level %>%</td>
         </tr>
         <% end %>
         <%= unless is_nil(@summary.locked) do %>
         <tr>
-          <th><%= gettext "Locked" %></td>
+          <td><%= gettext "Locked" %></td>
           <td><%= (if @summary.locked, do: gettext("yes"), else: gettext("no"))  %></td>
         </tr>
         <% end %>
         <%= unless is_nil(@summary.sentry_mode) do %>
         <tr>
-          <th><%= gettext "Sentry Mode" %></td>
+          <td><%= gettext "Sentry Mode" %></td>
           <td><%= (if @summary.sentry_mode, do: gettext("yes"), else: gettext("no"))  %></td>
         </tr>
         <% end %>
         <%= unless is_nil(@summary.speed) do %>
         <tr>
-          <th><%= gettext "Speed" %></td>
+          <td><%= gettext "Speed" %></td>
           <td>
             <%= if @settings.unit_of_length == :mi do %>
               <%= round(@summary.speed / 1.60934)%> mph
@@ -82,26 +82,26 @@
         <% end %>
         <%= unless is_nil(@summary.outside_temp) do %>
         <tr>
-          <th><%= gettext "Outside temperature" %></td>
+          <td><%= gettext "Outside temperature" %></td>
           <td>
             <%= if @settings.unit_of_temperature == :F do %>
               <%= Float.round((@summary.outside_temp * 9/5) + 32, 1)%> °F
             <% else %>
               <%= @summary.outside_temp %> °C
             <% end %>
-          <td>
+          </td>
         </tr>
         <% end %>
         <%= unless is_nil(@summary.inside_temp) do %>
         <tr>
-          <th><%= gettext "Inside temperature" %></td>
+          <td><%= gettext "Inside temperature" %></td>
           <td>
             <%= if @settings.unit_of_temperature == :F do %>
               <%= Float.round((@summary.inside_temp * 9/5) + 32, 1)%> °F
             <% else %>
               <%= @summary.inside_temp %> °C
             <% end %>
-          <td>
+          </td>
         </tr>
         <% end %>
       </tbody>

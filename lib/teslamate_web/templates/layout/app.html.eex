@@ -28,8 +28,8 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-end">
-            <%= link(gettext("Geo-Fences"), to: "/geo-fences", class: "navbar-item") %>
-            <%= link(gettext("Settings"), to: "/settings", class: "navbar-item  mr-5") %>
+            <%= link(gettext("Geo-Fences"), to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item") %>
+            <%= link(gettext("Settings"), to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5") %>
             <div class="tags has-addons ml-10">
               <span class="tag is-primary">v<%= Application.spec(:teslamate, :vsn) %></span>
             </div>

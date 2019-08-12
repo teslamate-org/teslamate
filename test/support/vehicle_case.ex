@@ -59,6 +59,7 @@ defmodule TeslaMate.VehicleCase do
 
         %TeslaApi.Vehicle{
           state: "online",
+          display_name: Keyword.get(opts, :display_name),
           charge_state: struct(State.Charge, charge_state),
           drive_state: struct(State.Drive, drive_state),
           climate_state: struct(State.Climate, climate_state),
