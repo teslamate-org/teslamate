@@ -99,7 +99,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert html =~ table_row("Status", "falling asleep")
 
       assert html =~
-               ~r/a class="button is-info .*?" .*? phx-click="resume_logging">abort sleep attempt<\/a>/
+               ~r/a class="button is-info .*?" .*? phx-click="resume_logging">cancel sleep attempt<\/a>/
 
       render_click(view, :resume_logging)
 
