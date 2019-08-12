@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/adriankumpf/teslamate.svg?branch=master)](https://travis-ci.org/adriankumpf/teslamate)
 [![Coverage Status](https://coveralls.io/repos/github/adriankumpf/teslamate/badge.svg?branch=master)](https://coveralls.io/github/adriankumpf/teslamate?branch=master)
-[![Docker Version](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate)
+[![Docker Version](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://hub.docker.com/r/teslamate/teslamate)
 [![Dokcer Image](https://images.microbadger.com/badges/image/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate)
-![Docker Pulls](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)
+[![Docker Pulls](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)](https://hub.docker.com/r/teslamate/teslamate)
 
 A data logger for your Tesla.
 
@@ -126,8 +126,8 @@ Tesla Account.
 
 To access Grafana go to http://ip-of-your-machine:3000.
 
-**Optional:** To switch to **imperial measurements** open the web interface,
-navigate to `Settings` and tick the checkbox.
+**Optional:** To switch to **imperial measurements** open the web interface and
+navigate to `Settings`.
 
 ### Manual Installation (advanced)
 
