@@ -288,7 +288,7 @@
           "unit": "kwatth"
         },
         {
-          "alias": "kWh / h (Ø)",
+          "alias": "kW (Ø)",
           "colorMode": "value",
           "colors": [
             "#96D98D",
