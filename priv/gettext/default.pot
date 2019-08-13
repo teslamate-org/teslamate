@@ -273,11 +273,6 @@ msgid "Signed in successfully"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:75
-msgid "Car is not parked"
-msgstr ""
-
-#, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:73
 msgid "Car is unlocked"
 msgstr ""
@@ -288,7 +283,7 @@ msgid "Create"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:76
+#: lib/teslamate_web/live/car_live/summary.ex:75
 msgid "Preconditioning"
 msgstr ""
 
@@ -298,7 +293,7 @@ msgid "Sentry mode is enabled"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:77
+#: lib/teslamate_web/live/car_live/summary.ex:76
 msgid "User present"
 msgstr ""
 

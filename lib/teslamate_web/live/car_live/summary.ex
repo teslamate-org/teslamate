@@ -72,7 +72,6 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   defp translate_error(:unlocked), do: gettext("Car is unlocked")
   defp translate_error(:sentry_mode), do: gettext("Sentry mode is enabled")
-  defp translate_error(:shift_state), do: gettext("Car is not parked")
   defp translate_error(:preconditioning), do: gettext("Preconditioning")
   defp translate_error(:user_present), do: gettext("User present")
 

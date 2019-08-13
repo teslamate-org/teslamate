@@ -566,11 +566,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
 
-      {:error, :shift_state} ->
-        if suspend, do: Logger.warn("Shift state prevents car to go to sleep", car_id: car.id)
-
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
-
       {:error, :unlocked} ->
         if suspend,
           do: Logger.warn("Vehicle cannot to go to sleep because it is unlocked", car_id: car.id)
@@ -600,9 +595,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       %Vehicle{climate_state: %Climate{is_preconditioning: true}} ->
         {:error, :preconditioning}
-
-      %Vehicle{drive_state: %Drive{shift_state: shift_state}} when not is_nil(shift_state) ->
-        {:error, :shift_state}
 
       %Vehicle{vehicle_state: %VehicleState{sentry_mode: true}} ->
         {:error, :sentry_mode}

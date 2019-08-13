@@ -120,9 +120,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert {:error, :unlocked} = Vehicle.suspend_logging(name)
   end
 
-  test "cannot be suspended if shift_state is not nil", %{test: name} do
+  test "cannot be suspended if shift_state is D", %{test: name} do
     not_supendable =
-      online_event(drive_state: %{timestamp: 0, shift_state: "P", latitude: 0.0, longitude: 0.0})
+      online_event(drive_state: %{timestamp: 0, shift_state: "D", latitude: 0.0, longitude: 0.0})
 
     events = [
       {:ok, %TeslaApi.Vehicle{state: "online"}},
@@ -132,7 +132,37 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     :ok = start_vehicle(name, events)
     assert_receive {:start_state, _, :online}
 
-    assert {:error, :shift_state} = Vehicle.suspend_logging(name)
+    assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
+  end
+
+  test "cannot be suspended if shift_state is R", %{test: name} do
+    not_supendable =
+      online_event(drive_state: %{timestamp: 0, shift_state: "R", latitude: 0.0, longitude: 0.0})
+
+    events = [
+      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, not_supendable}
+    ]
+
+    :ok = start_vehicle(name, events)
+    assert_receive {:start_state, _, :online}
+
+    assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
+  end
+
+  test "cannot be suspended if shift_state is N", %{test: name} do
+    not_supendable =
+      online_event(drive_state: %{timestamp: 0, shift_state: "N", latitude: 0.0, longitude: 0.0})
+
+    events = [
+      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, not_supendable}
+    ]
+
+    :ok = start_vehicle(name, events)
+    assert_receive {:start_state, _, :online}
+
+    assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
   end
 
   test "cannot be suspended while driving", %{test: name} do
