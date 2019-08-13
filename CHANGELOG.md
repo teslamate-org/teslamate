@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.1] - 2019-08-13
+
+### Fixed
+
+- Remove `shift_state` condition which could prevent some cars from falling asleep
+
 ## [1.5.0] - 2019-08-12
 
 ### Added
