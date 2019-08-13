@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- Fix migration that could panic if upgrading from \v1.4.3 to v1.5
+- Fix migration that could panic if upgrading from &lt;v1.4.3 to v1.5
 
 ## [1.5.1] - 2019-08-13
 
