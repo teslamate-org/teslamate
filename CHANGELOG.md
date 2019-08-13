@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.2] - 2019-08-13
+
+### Fixed
+
+- Fix migration that could panic if upgrading from \v1.4.3 to v1.5
+
 ## [1.5.1] - 2019-08-13
 
 ### Fixed
@@ -224,6 +230,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.5.2]: https://github.com/adriankumpf/teslamate/compare/v1.5.1...v1.5.2
+[1.5.1]: https://github.com/adriankumpf/teslamate/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/adriankumpf/teslamate/compare/v1.4.3...v1.5.0
 [1.4.3]: https://github.com/adriankumpf/teslamate/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/adriankumpf/teslamate/compare/v1.4.1...v1.4.2
