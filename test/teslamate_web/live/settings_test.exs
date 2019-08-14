@@ -13,11 +13,11 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              ~r(<select id="settings_unit_of_temperature" .+><option value="C" selected>°C</option><option value="F">°F</option></select>)
   end
 
-  test "shows 12 and 15 minutes by default", %{conn: conn} do
+  test "shows 21 and 15 minutes by default", %{conn: conn} do
     assert {:ok, _view, html} = live(conn, "/settings")
 
     assert html =~
-             ~r(<select id="settings_suspend_min" .+>.*<option value="12" selected>12 min</option>.*</select>)
+             ~r(<select id="settings_suspend_min" .+>.*<option value="21" selected>21 min</option>.*</select>)
 
     assert html =~
              ~r(<select id="settings_suspend_after_idle_min" .+>.*<option value="15" selected>15 min</option>.*</select>)
@@ -38,11 +38,11 @@ defmodule TeslaMateWeb.SettingsLiveTest do
     assert settings = Settings.get_settings!()
     assert settings.unit_of_temperature == :F
 
-    assert render_change(view, :change, %{settings: %{suspend_min: 21}}) =~
-             ~r(<select id="settings_suspend_min" .+>.*<option value="21" selected>21 min</option>.*</select>)
+    assert render_change(view, :change, %{settings: %{suspend_min: 90}}) =~
+             ~r(<select id="settings_suspend_min" .+>.*<option value="90" selected>90 min</option>.*</select>)
 
     assert settings = Settings.get_settings!()
-    assert settings.suspend_min == 21
+    assert settings.suspend_min == 90
 
     assert render_change(view, :change, %{settings: %{suspend_after_idle_min: 30}}) =~
              ~r(<select id="settings_suspend_after_idle_min" .+>.*<option value="30" selected>30 min</option>.*</select>)
