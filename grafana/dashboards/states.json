@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564529874005,
+  "iteration": 1565806750887,
   "links": [],
   "panels": [
     {
@@ -28,6 +27,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "description": "Only distinguishes betwen online, offline and asleep.",
       "format": "dateTimeAsIso",
       "gauge": {
         "maxValue": 100,
@@ -132,6 +132,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "description": "Only distinguishes between online, offline and asleep.",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -236,6 +237,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "description": "based on any data ever recorded.",
       "format": "percentunit",
       "gauge": {
         "maxValue": 100,
@@ -292,7 +294,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH FROM (max(end_date) - min(start_date))) / 60), 1 as time from drives where car_id = $car;",
+          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH  FROM (max(end_date) - min(start_date))) / 60), 1 as time from drives where car_id = $car;",
           "refId": "A",
           "select": [
             [
@@ -319,7 +321,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Idle Time (%)",
+      "title": "parked (%)",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -335,8 +337,24 @@
       "backgroundColor": "rgba(128,128,128,0.1)",
       "colorMaps": [
         {
-          "color": "#CCC",
-          "text": "N/A"
+          "color": "#F2CC0C",
+          "text": "charging"
+        },
+        {
+          "color": "#8F3BB8",
+          "text": "driving"
+        },
+        {
+          "color": "#56A64B",
+          "text": "asleep"
+        },
+        {
+          "color": "#6ED0E0",
+          "text": "online"
+        },
+        {
+          "color": "#FFB357",
+          "text": "offline"
         }
       ],
       "crosshairColor": "#8F070C",
@@ -344,16 +362,15 @@
       "expandFromQueryS": 0,
       "extendLastValue": true,
       "gridPos": {
-        "h": 4,
+        "h": 7,
         "w": 24,
         "x": 0,
         "y": 3
       },
       "highlightOnMouseover": true,
-      "id": 4,
+      "id": 14,
       "legendSortBy": "-ms",
       "lineColor": "rgba(0,0,0,0.1)",
-      "links": [],
       "metricNameColor": "#000000",
       "options": {},
       "rangeMaps": [
@@ -363,10 +380,11 @@
           "to": "null"
         }
       ],
-      "rowHeight": 50,
+      "rowHeight": 150,
+      "showDistinctCount": false,
       "showLegend": true,
-      "showLegendCounts": false,
-      "showLegendNames": true,
+      "showLegendCounts": true,
+      "showLegendNames": false,
       "showLegendPercent": true,
       "showLegendTime": true,
       "showLegendValues": true,
@@ -378,7 +396,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select\n$__time(start_date),\ncase \n  when state = 'offline' then 0\n  when state = 'asleep'  then 1\n  when state = 'online'  then 2\nend as \"State\"\nfrom states\nwhere car_id = $car AND $__timeFilter(start_date);",
+          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nORDER BY\n\tdate DESC;",
           "refId": "A",
           "select": [
             [
@@ -402,8 +420,8 @@
           ]
         }
       ],
-      "textSize": 24,
-      "textSizeTime": 12,
+      "textSize": 26,
+      "textSizeTime": 14,
       "timeFrom": null,
       "timeOptions": [
         {
@@ -445,7 +463,7 @@
       },
       "timeShift": null,
       "timeTextColor": "#d8d9da",
-      "title": "State History",
+      "title": "States",
       "type": "natel-discrete-panel",
       "units": "short",
       "useTimePrecision": false,
@@ -454,6 +472,36 @@
           "op": "=",
           "text": "N/A",
           "value": "null"
+        },
+        {
+          "op": "=",
+          "text": "online",
+          "value": "0"
+        },
+        {
+          "op": "=",
+          "text": "driving",
+          "value": "1"
+        },
+        {
+          "op": "=",
+          "text": "charging",
+          "value": "2"
+        },
+        {
+          "op": "=",
+          "text": "offline",
+          "value": "3"
+        },
+        {
+          "op": "=",
+          "text": "asleep",
+          "value": "4"
+        },
+        {
+          "op": "=",
+          "text": "online",
+          "value": "5"
         }
       ],
       "valueTextColor": "#000000",
@@ -462,6 +510,7 @@
       "writeMetricNames": false
     }
   ],
+  "refresh": false,
   "schemaVersion": 19,
   "style": "dark",
   "tags": [],
@@ -532,5 +581,5 @@
   "timezone": "",
   "title": "States",
   "uid": "xo4BNRkZz",
-  "version": 1
+  "version": 2
 }
