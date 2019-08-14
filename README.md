@@ -224,21 +224,28 @@ when to start polling again. In short, create a workflow with
 [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm&hl=en)
 (Android) or [Shortcuts](https://support.apple.com/guide/shortcuts/welcome/ios)
 (iOS) that listens for connected Bluetooth devices. If a connection to your
-Tesla is established send an HTTP PUT request to your publicly exposed
-TeslaMate instance.
+Tesla is established send an HTTP PUT `resume` request to your publicly exposed
+TeslaMate instance. See the available commands below.
 
 _(With iOS 12 and below workflows are quite limited but can be triggered
-manually. iOS 13 will probably fix that.)_
+manually. iOS 13 will fix that.)_
+
+**Alternatively** / additionally, you can experiment with the sleep settings.
+Some cars, especially Model 3, seem to handle a `Time to Try Sleeping` value of
+12 min just fine. Doing so reduces the likelihood of potential data gaps. Just
+keep an eye on your car afterwards to see if if still goes info sleep mode.
+
+###### Available Commands
 
 ```
 PUT https://teslamate.your-domain.com/api/car/$car_id/logging/resume
 PUT https://teslamate.your-domain.com/api/car/$car_id/logging/suspend
 ```
 
-I strongly recommend to use a reverse-proxy with HTTPS and basic access
+_I strongly recommend to use a reverse-proxy with HTTPS and basic access
 authentication when exposing TeslaMate to the public internet. Additionally
 only permit access to `/api/car/$car_id/logging/resume` and/or
-`/api/car/$car_id/logging/suspend`.
+`/api/car/$car_id/logging/suspend`._
 
 ## Contributions
 
