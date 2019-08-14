@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.5.3] - 2019-08-14
+
+### Fixed
+
+- Add extra values to the "Time to Try Sleeping" dropdown
+- Rollback the "Time to Try Sleeping" setting to previous pre v1.5 value (21 min) to play it safe
+
+  **Note to Model 3 owners and everyone who likes to tweak things a bit**: most
+  cars seem to handle a value to 12min (or maybe even less?) just fine. Doing
+  so reduces the likelihood of potential data gaps. Just keep an eye on your
+  car afterwards to see if if still goes info sleep mode.
+
+- Enable filtering of charges by date
+- Fix charges query to include the very first charge
+
 ## [1.5.2] - 2019-08-13
 
 ### Fixed
@@ -230,6 +245,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.5.3]: https://github.com/adriankumpf/teslamate/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/adriankumpf/teslamate/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/adriankumpf/teslamate/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/adriankumpf/teslamate/compare/v1.4.3...v1.5.0
