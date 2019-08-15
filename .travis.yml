@@ -20,7 +20,6 @@ before_script:
 install:
   - mix local.rebar --force
   - mix local.hex --force
-  - mix deps.get
-  - mix compile
+  - mix do deps.get, compile
 script:
-  - mix coveralls.travis
+  - mix do format --check-formatted, coveralls.travis
