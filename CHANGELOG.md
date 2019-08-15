@@ -8,9 +8,9 @@
 - Rollback the "Time to Try Sleeping" setting to previous pre v1.5 value (21 min) to play it safe
 
   **Note to Model 3 owners and everyone who likes to tweak things a bit**: most
-  cars seem to handle a value to 12min (or maybe even less?) just fine. Doing
-  so reduces the likelihood of potential data gaps. Just keep an eye on your
-  car afterwards to see if if still goes info sleep mode.
+  cars seem to handle a value of 12min just fine. Doing so reduces the
+  likelihood of potential data gaps. Just keep an eye on your car afterwards to
+  see if it still goes into sleep mode.
 
 - Enable filtering of charges by date
 - Fix charges query to include the very first charge
