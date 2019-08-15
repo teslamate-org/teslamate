@@ -230,7 +230,7 @@ manually. iOS 13 will fix that.)_
 **Alternatively** / additionally, you can experiment with the sleep settings.
 Some cars, especially Model 3, seem to handle a `Time to Try Sleeping` value of
 12 min just fine. Doing so reduces the likelihood of potential data gaps. Just
-keep an eye on your car afterwards to see if if still goes info sleep mode.
+keep an eye on your car afterwards to see if it still goes into sleep mode.
 
 ##### Available Commands
 
