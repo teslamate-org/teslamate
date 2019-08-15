@@ -12,10 +12,7 @@ COPY mix.exs mix.lock ./
 RUN mix do deps.get --only $MIX_ENV, deps.compile
 
 COPY assets assets
-RUN cd assets && \
-  yarn install && \
-  yarn deploy && \
-  cd ..
+RUN (cd assets && yarn install && yarn deploy)
 
 COPY config config
 COPY lib lib
@@ -45,4 +42,4 @@ EXPOSE 4000
 
 ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
 
-CMD trap 'exit' INT; bin/teslamate start
+CMD ["bin/teslamate", "start"]
