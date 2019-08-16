@@ -201,17 +201,20 @@
         },
         {
           "alias": "Standby",
-          "colorMode": null,
+          "colorMode": "value",
           "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
+            "#FF7383",
+            "#FFB357",
+            "#56A64B"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 0,
           "mappingType": 1,
           "pattern": "standby",
-          "thresholds": [],
+          "thresholds": [
+            "0.3",
+            "0.85"
+          ],
           "type": "number",
           "unit": "percentunit"
         },
@@ -319,7 +322,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\textract(epoch FROM v.start_date) * 1000 AS start_date_ts,\n\textract(epoch FROM v.end_date) * 1000 AS end_date_ts,\n\tv.start_date,\n\tv.end_date,\n\tv.duration,\n\ts.sleep / v.duration as standby,\n\tconvert_km(v.start_range - v.end_range, '$length_unit') AS range_diff_$length_unit,\n\t(v.start_range - v.end_range) * c.efficiency AS consumption,\n\t((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 as avg_power,\n\tconvert_km(v.start_range - v.end_range, '$length_unit') / (v.duration / 3600) AS range_lost_per_hour_$length_unit,\n\tconvert_km(v.start_range, '$length_unit') AS start_range_$length_unit,\n\tconvert_km(v.end_range, '$length_unit') AS end_range_$length_unit\nFROM (\n\tSELECT\n\t\tlag(t.end_date) OVER (ORDER BY t.id ASC) AS start_date,\n\t\tt.start_date AS end_date,\n\t\tlag(t.end_range_km) OVER (ORDER BY t.id ASC) AS start_range,\n\t\tt.start_range_km AS end_range,\n\t\tlag(t.end_km) OVER (ORDER BY t.id ASC) AS start_km,\n\t\tt.start_km AS end_km,\n\t\tEXTRACT(EPOCH FROM age(t.start_date, lag(t.end_date) OVER (ORDER BY t.id ASC))) AS duration\n\tFROM\n\t\tdrives t\n\tWHERE\n\t\tcar_id = $car_id\n\tORDER BY\n\t\tid DESC) v,\n\t\tLATERAL (\n\t\t  SELECT\n\t\t    EXTRACT(EPOCH FROM sum(age(end_date, start_date))) as sleep\n\t\t  FROM\n\t\t\tstates s\n\t\t  WHERE\n\t\t\tstate = 'asleep' AND\n\t\t\tv.start_date <= s.start_date AND\n\t\t\ts.end_date <= v.end_date\n\t\t) s,\n\t\tLATERAL (select efficiency from cars where id = 1) c\nWHERE\n\tv.duration > ($duration * 60 * 60)\n\tAND v.start_range - v.end_range >= 0\n\tAND v.end_km - v.start_km < 1;",
+          "rawSql": "SELECT\n\textract(epoch FROM v.start_date) * 1000 AS start_date_ts,\n\textract(epoch FROM v.end_date) * 1000 AS end_date_ts,\n\tv.start_date,\n\tv.end_date,\n\tv.duration,\n\t(coalesce(s_asleep.sleep, 0) + coalesce(s_offline.sleep, 0)) / v.duration as standby,\n\tconvert_km(v.start_range - v.end_range, '$length_unit') AS range_diff_$length_unit,\n\t(v.start_range - v.end_range) * c.efficiency AS consumption,\n\t((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 as avg_power,\n\tconvert_km(v.start_range - v.end_range, '$length_unit') / (v.duration / 3600) AS range_lost_per_hour_$length_unit,\n\tconvert_km(v.start_range, '$length_unit') AS start_range_$length_unit,\n\tconvert_km(v.end_range, '$length_unit') AS end_range_$length_unit\nFROM (\n\tSELECT\n\t\tlag(t.end_date) OVER (ORDER BY t.id ASC) AS start_date,\n\t\tt.start_date AS end_date,\n\t\tlag(t.end_range_km) OVER (ORDER BY t.id ASC) AS start_range,\n\t\tt.start_range_km AS end_range,\n\t\tlag(t.end_km) OVER (ORDER BY t.id ASC) AS start_km,\n\t\tt.start_km AS end_km,\n\t\tEXTRACT(EPOCH FROM age(t.start_date, lag(t.end_date) OVER (ORDER BY t.id ASC))) AS duration\n\tFROM\n\t\tdrives t\n\tWHERE\n\t\tcar_id = $car_id\n\tORDER BY\n\t\tid DESC) v,\n\t\tLATERAL (\n\t\t  SELECT\n\t\t    EXTRACT(EPOCH FROM sum(age(end_date, start_date))) as sleep\n\t\t  FROM\n\t\t\tstates s\n\t\t  WHERE\n\t\t\tstate = 'asleep' AND\n\t\t\tv.start_date <= s.start_date AND\n\t\t\ts.end_date <= v.end_date\n\t\t) s_asleep,\n\t\tLATERAL (\n\t\t  SELECT\n\t\t    EXTRACT(EPOCH FROM sum(age(end_date, start_date))) as sleep\n\t\t  FROM\n\t\t\tstates s\n\t\t  WHERE\n\t\t\tstate = 'offline' AND\n\t\t\tv.start_date <= s.start_date AND\n\t\t\ts.end_date <= v.end_date\n\t\t) s_offline,\n\t\tLATERAL (select efficiency from cars where id = $car_id) c\nWHERE\n\tv.duration > ($duration * 60 * 60)\n\tAND v.start_range - v.end_range >= 0\n\tAND v.end_km - v.start_km < 1;",
           "refId": "A",
           "select": [
             [
