@@ -498,6 +498,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       inside_temp: vehicle.climate_state.inside_temp,
       odometer: Convert.miles_to_km(vehicle.vehicle_state.odometer, 6),
       ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
+      est_battery_range_km: Convert.miles_to_km(vehicle.charge_state.est_battery_range, 1),
       altitude: nil,
       fan_status: vehicle.climate_state.fan_status,
       is_climate_on: vehicle.climate_state.is_climate_on,
