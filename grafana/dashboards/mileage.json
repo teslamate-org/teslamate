@@ -66,7 +66,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH summary AS (\n\tSELECT\n\t\tdate,\n\t\todometer,\n\t\trank() OVER (PARTITION BY date_trunc('hour', date) ORDER BY date DESC) AS rk\n\t\tFROM\n\t\t\tpositions\n\t\tWHERE\n\t\t\tcar_id = 1 AND\n\t\t\t$__timeFilter(date)\n)\nSELECT\n date as time,\n convert_km(odometer, '$length_unit') as \"mileage [$length_unit]\"\nFROM\n\tsummary\nWHERE\n\trk = 1\n\torder by date;",
+          "rawSql": "WITH summary AS (\n\tSELECT\n\t\tdate,\n\t\todometer,\n\t\trank() OVER (PARTITION BY date_trunc('hour', date) ORDER BY date DESC) AS rk\n\t\tFROM\n\t\t\tpositions\n\t\tWHERE\n\t\t\tcar_id = $car_id AND\n\t\t\t$__timeFilter(date)\n)\nSELECT\n date as time,\n convert_km(odometer, '$length_unit') as \"mileage [$length_unit]\"\nFROM\n\tsummary\nWHERE\n\trk = 1\n\torder by date;",
           "refId": "A",
           "select": [
             [
@@ -144,12 +144,12 @@
           "value": "1"
         },
         "datasource": null,
-        "definition": "select id from cars;",
+        "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 0,
         "includeAll": false,
         "label": "Car",
         "multi": false,
-        "name": "car",
+        "name": "car_id",
         "options": [
           {
             "selected": true,
@@ -157,8 +157,8 @@
             "value": "1"
           }
         ],
-        "query": "select id from cars;",
-        "refresh": 0,
+        "query": "SELECT name AS __text, id AS __value FROM cars;",
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,

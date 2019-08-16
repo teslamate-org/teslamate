@@ -84,7 +84,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select $__time(start_date), state from states where car_id = $car order by start_date desc limit 1;",
+          "rawSql": "select $__time(start_date), state from states where car_id = $car_id order by start_date desc limit 1;",
           "refId": "A",
           "select": [
             [
@@ -189,7 +189,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select $__time(start_date), state from states where car_id = $car order by start_date desc limit 1;",
+          "rawSql": "select $__time(start_date), state from states where car_id = $car_id order by start_date desc limit 1;",
           "refId": "A",
           "select": [
             [
@@ -294,7 +294,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH  FROM (max(end_date) - min(start_date))) / 60), 1 as time from drives where car_id = $car;",
+          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH  FROM (max(end_date) - min(start_date))) / 60), 1 as time from drives where car_id = $car_id;",
           "refId": "A",
           "select": [
             [
@@ -396,7 +396,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nORDER BY\n\tdate DESC;",
+          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car_id\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nORDER BY\n\tdate DESC;",
           "refId": "A",
           "select": [
             [
@@ -523,12 +523,12 @@
           "value": "1"
         },
         "datasource": null,
-        "definition": "select id from cars;",
+        "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 0,
         "includeAll": false,
         "label": "Car",
         "multi": false,
-        "name": "car",
+        "name": "car_id",
         "options": [
           {
             "selected": true,
@@ -536,8 +536,8 @@
             "value": "1"
           }
         ],
-        "query": "select id from cars;",
-        "refresh": 0,
+        "query": "SELECT name AS __text, id AS __value FROM cars;",
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,

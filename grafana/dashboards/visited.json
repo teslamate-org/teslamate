@@ -39,7 +39,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tto_timestamp(floor((extract('epoch' FROM date) / 30)) * 30) AT TIME ZONE 'UTC' AS time,\n\tavg(latitude) AS lat,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "rawSql": "SELECT\n\tto_timestamp(floor((extract('epoch' FROM date) / 30)) * 30) AT TIME ZONE 'UTC' AS time,\n\tavg(latitude) AS lat,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
           "refId": "A",
           "select": [
             [
@@ -80,12 +80,12 @@
           "value": "1"
         },
         "datasource": null,
-        "definition": "select id from cars;",
+        "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 0,
         "includeAll": false,
         "label": "Car",
         "multi": false,
-        "name": "car",
+        "name": "car_id",
         "options": [
           {
             "selected": true,
@@ -93,8 +93,8 @@
             "value": "1"
           }
         ],
-        "query": "select id from cars;",
-        "refresh": 0,
+        "query": "SELECT name AS __text, id AS __value FROM cars;",
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,

@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565439331323,
+  "iteration": 1565978020166,
   "links": [],
   "panels": [
     {
@@ -85,7 +85,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select \n  sum(\"consumption_kWh\") / sum(distance) * 100 * \n    CASE WHEN '$length_unit' = 'km' THEN 1\n         WHEN '$length_unit' = 'mi' THEN 1.60934\n    END AS consumption\nfrom drives \nwhere \n  distance is not null \n  and \"consumption_kWh\" is not null\n  and car_id = $car",
+          "rawSql": "select \n  sum(\"consumption_kWh\") / sum(distance) * 100 * \n    CASE WHEN '$length_unit' = 'km' THEN 1\n         WHEN '$length_unit' = 'mi' THEN 1.60934\n    END AS consumption\nfrom drives \nwhere \n  distance is not null \n  and \"consumption_kWh\" is not null\n  and car_id = $car_id",
           "refId": "A",
           "select": [
             [
@@ -190,7 +190,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH d1 AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_range_km) OVER (ORDER BY start_date) - start_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM\n\t\tcharging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car\n\tORDER BY\n\t\tstart_date\n),\nd2 AS (\nSELECT\n\tcar_id,\n\tsum(range_loss) AS range_loss,\n\tsum(distance) AS distance\nFROM\n\td1\nWHERE\n\tdistance >= 0 AND range_loss >= 0\nGROUP BY\n\tcar_id\n)\nSELECT\nrange_loss * c.efficiency / distance * 100 *\n  CASE WHEN '$length_unit' = 'km' THEN 1\n       WHEN '$length_unit' = 'mi' THEN 1.60934\n  END AS consumption\nFROM\n\td2\n\tLEFT JOIN cars c ON c.id = car_id",
+          "rawSql": "WITH d1 AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_range_km) OVER (ORDER BY start_date) - start_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM\n\t\tcharging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id\n\tORDER BY\n\t\tstart_date\n),\nd2 AS (\nSELECT\n\tcar_id,\n\tsum(range_loss) AS range_loss,\n\tsum(distance) AS distance\nFROM\n\td1\nWHERE\n\tdistance >= 0 AND range_loss >= 0\nGROUP BY\n\tcar_id\n)\nSELECT\nrange_loss * c.efficiency / distance * 100 *\n  CASE WHEN '$length_unit' = 'km' THEN 1\n       WHEN '$length_unit' = 'mi' THEN 1.60934\n  END AS consumption\nFROM\n\td2\n\tLEFT JOIN cars c ON c.id = car_id",
           "refId": "A",
           "select": [
             [
@@ -295,7 +295,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select convert_km(sum(distance), '$length_unit') from drives where car_id = $car;",
+          "rawSql": "select convert_km(sum(distance), '$length_unit') from drives where car_id = $car_id;",
           "refId": "A",
           "select": [
             [
@@ -500,7 +500,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(\"consumption_kWh\") AS total_consumption,\n\t\tconvert_km(sum(distance), '$length_unit') AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND \"consumption_kWh\" IS NOT NULL\n\t\tAND car_id = $car\n\t\tAND distance >= convert_km($min_distance, '$length_unit')\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n\ttotal_consumption / total_distance * 100 AS consumption_$length_unit,\n\t(c.efficiency * CASE WHEN '$length_unit' = 'km' THEN 1 WHEN '$length_unit' = 'mi' THEN 1.60934 END) / (total_consumption / total_distance) AS efficiency,\n\ttotal_distance as total_distance_$length_unit,\n\t(total_distance / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
+          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(\"consumption_kWh\") AS total_consumption,\n\t\tconvert_km(sum(distance), '$length_unit') AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND \"consumption_kWh\" IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND distance >= convert_km($min_distance, '$length_unit')\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n\ttotal_consumption / total_distance * 100 AS consumption_$length_unit,\n\t(c.efficiency * CASE WHEN '$length_unit' = 'km' THEN 1 WHEN '$length_unit' = 'mi' THEN 1.60934 END) / (total_consumption / total_distance) AS efficiency,\n\ttotal_distance as total_distance_$length_unit,\n\t(total_distance / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
           "refId": "A",
           "select": [
             [
@@ -539,31 +539,19 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "1",
           "value": "1"
         },
-        "datasource": null,
-        "definition": "select id from cars;",
+        "datasource": "TeslaMate",
+        "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 0,
-        "includeAll": true,
+        "includeAll": false,
         "label": "Car",
         "multi": false,
-        "name": "car",
-        "options": [
-          {
-            "selected": false,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          }
-        ],
-        "query": "select id from cars;",
-        "refresh": 0,
+        "name": "car_id",
+        "options": [],
+        "query": "SELECT name AS __text, id AS __value FROM cars;",
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
