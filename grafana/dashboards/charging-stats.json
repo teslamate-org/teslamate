@@ -15,9 +15,30 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565641333722,
+  "iteration": 1565978550044,
   "links": [],
   "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 12,
+      "panels": [],
+      "repeat": "car_id",
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "title": "$car_id",
+      "type": "row"
+    },
     {
       "cacheTimeout": null,
       "colorBackground": false,
@@ -39,7 +60,7 @@
         "h": 3,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 8,
       "interval": null,
@@ -70,6 +91,13 @@
           "to": "null"
         }
       ],
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
@@ -145,7 +173,7 @@
         "h": 3,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 1
       },
       "id": 10,
       "interval": null,
@@ -176,6 +204,13 @@
           "to": "null"
         }
       ],
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
@@ -237,12 +272,19 @@
         "h": 14,
         "w": 7,
         "x": 0,
-        "y": 3
+        "y": 4
       },
       "id": 2,
       "links": [],
       "options": {},
       "pageSize": null,
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "scroll": true,
       "showHeader": true,
       "sort": {
@@ -339,11 +381,18 @@
         "h": 14,
         "w": 9,
         "x": 7,
-        "y": 3
+        "y": 4
       },
       "id": 4,
       "options": {},
       "pageSize": null,
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "scroll": true,
       "showHeader": true,
       "sort": {
@@ -432,11 +481,18 @@
         "h": 14,
         "w": 8,
         "x": 16,
-        "y": 3
+        "y": 4
       },
       "id": 6,
       "options": {},
       "pageSize": null,
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "scroll": true,
       "showHeader": true,
       "sort": {
@@ -542,28 +598,22 @@
       {
         "allValue": null,
         "current": {
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": null,
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
-        "hide": 0,
-        "includeAll": false,
+        "hide": 2,
+        "includeAll": true,
         "label": "Car",
-        "multi": false,
+        "multi": true,
         "name": "car_id",
-        "options": [
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          }
-        ],
+        "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 5,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",

@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565635763548,
+  "iteration": 1565981214551,
   "links": [],
   "panels": [
     {
@@ -23,120 +23,9 @@
       "fontSize": "100%",
       "gridPos": {
         "h": 11,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 4,
-      "links": [],
-      "options": {},
-      "pageSize": null,
-      "scroll": true,
-      "showHeader": true,
-      "sort": {
-        "col": 0,
-        "desc": true
-      },
-      "styles": [
-        {
-          "alias": "Name",
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "pattern": "display_name",
-          "type": "string"
-        },
-        {
-          "alias": "#",
-          "colorMode": "value",
-          "colors": [
-            "rgb(136, 138, 136)",
-            "#96D98D",
-            "#37872D"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "visited",
-          "thresholds": [
-            "2",
-            "10",
-            "100000000000"
-          ],
-          "type": "number",
-          "unit": "short"
-        },
-        {
-          "alias": "Name",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "name",
-          "thresholds": [],
-          "type": "string",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "decimals": 2,
-          "pattern": "/.*/",
-          "thresholds": [],
-          "type": "number",
-          "unit": "short"
-        }
-      ],
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\tcount(*) AS visited,\n\tCOALESCE(g.name, a.display_name) as name\nFROM\n\tdrives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_address_id = g.address_id\nWHERE t.car_id = $car_id\nGROUP BY\n\t2\nORDER BY\n\tvisited desc\nLIMIT 10",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top Destinations",
-      "transform": "table",
-      "type": "table"
-    },
-    {
-      "columns": [],
-      "fontSize": "100%",
-      "gridPos": {
-        "h": 11,
         "w": 18,
         "x": 0,
-        "y": 11
+        "y": 0
       },
       "id": 2,
       "links": [],
@@ -328,7 +217,7 @@
         "h": 11,
         "w": 6,
         "x": 18,
-        "y": 11
+        "y": 0
       },
       "id": 6,
       "options": {},
@@ -430,6 +319,137 @@
       "title": "Geo-fences",
       "transform": "table",
       "type": "table"
+    },
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 8,
+      "panels": [],
+      "repeat": "car_id",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "title": "$car_id",
+      "type": "row"
+    },
+    {
+      "columns": [],
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 4,
+      "links": [],
+      "options": {},
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Name",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "display_name",
+          "type": "string"
+        },
+        {
+          "alias": "#",
+          "colorMode": "value",
+          "colors": [
+            "rgb(136, 138, 136)",
+            "#96D98D",
+            "#37872D"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "visited",
+          "thresholds": [
+            "2",
+            "10",
+            "100000000000"
+          ],
+          "type": "number",
+          "unit": "short"
+        },
+        {
+          "alias": "Name",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "name",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tcount(*) AS visited,\n\tCOALESCE(g.name, a.display_name) as name\nFROM\n\tdrives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_address_id = g.address_id\nWHERE t.car_id = $car_id\nGROUP BY\n\t2\nORDER BY\n\tvisited desc\nLIMIT 10",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top Destinations",
+      "transform": "table",
+      "type": "table"
     }
   ],
   "schemaVersion": 19,
@@ -440,28 +460,22 @@
       {
         "allValue": null,
         "current": {
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": null,
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
-        "hide": 0,
-        "includeAll": false,
+        "hide": 2,
+        "includeAll": true,
         "label": "Car",
-        "multi": false,
+        "multi": true,
         "name": "car_id",
-        "options": [
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          }
-        ],
+        "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 5,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",
@@ -502,5 +516,5 @@
   "timezone": "",
   "title": "Locations",
   "uid": "ZzhF-aRWz",
-  "version": 1
+  "version": 2
 }
