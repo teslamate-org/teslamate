@@ -111,8 +111,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:next_state, {:asleep, 1}, data, [{:reply, from, :ok}, {:next_event, :internal, :fetch}]}
   end
 
-  def handle_event({:call, from}, :resume_logging, _state, _data) do
-    {:keep_state_and_data, {:reply, from, :ok}}
+  def handle_event({:call, from}, :resume_logging, _state, data) do
+    {:keep_state, %Data{data | last_used: DateTime.utc_now()}, {:reply, from, :ok}}
   end
 
   ### suspend_logging
