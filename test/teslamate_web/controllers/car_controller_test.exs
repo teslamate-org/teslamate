@@ -31,7 +31,7 @@ defmodule TeslaMateWeb.CarControllerTest do
          online_event(
            display_name: "FooCar",
            drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-           charge_state: %{ideal_battery_range: 200, battery_level: 69},
+           charge_state: %{ideal_battery_range: 200, est_battery_range: 180, battery_level: 69},
            climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2},
            vehicle_state: %{locked: true, sentry_mode: true}
          )}
@@ -45,7 +45,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
       assert html =~ table_row("Status", "online")
       assert html =~ table_row("Plugged in", "no")
-      assert html =~ table_row("Range", "321.9 km")
+      assert html =~ table_row("Range \\(ideal\\)", "321.9 km")
+      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
       assert html =~ table_row("State of Charge", "69%")
       assert html =~ table_row("Locked", "yes")
       assert html =~ table_row("Sentry Mode", "yes")
@@ -64,6 +65,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              timestamp: 0,
              charger_power: 50,
              ideal_battery_range: 200,
+             est_battery_range: 180,
              charging_state: "Charging",
              charge_energy_added: "4.32",
              charge_port_latch: "Engaged",
@@ -82,7 +84,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
       assert html =~ table_row("Status", "charging")
       assert html =~ table_row("Plugged in", "yes")
-      assert html =~ table_row("Range", "321.9 km")
+      assert html =~ table_row("Range \\(ideal\\)", "321.9 km")
+      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
       assert html =~ table_row("Charged", "4.32 kWh")
       assert html =~ table_row("Scheduled charging", "2019-08-12 14:38:27Z")
       assert html =~ table_row("Charge limit", "85%")
@@ -99,6 +102,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              timestamp: 0,
              charger_power: 50,
              ideal_battery_range: 200,
+             est_battery_range: 180,
              charging_state: "Charging",
              charge_energy_added: "4.32",
              charge_port_latch: "Engaged",
@@ -115,6 +119,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              timestamp: 0,
              charger_power: 50,
              ideal_battery_range: 200,
+             est_battery_range: 180,
              charging_state: "Charging",
              charge_energy_added: "4.32",
              charge_port_latch: "Engaged",
@@ -130,6 +135,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              timestamp: 0,
              charger_power: 50,
              ideal_battery_range: 200,
+             est_battery_range: 180,
              charging_state: "Complete",
              charge_energy_added: "4.32",
              charge_port_latch: "Engaged",
@@ -288,7 +294,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              shift_state: "D",
              speed: 30
            },
-           charge_state: %{ideal_battery_range: 200},
+           charge_state: %{ideal_battery_range: 200, est_battery_range: 180},
            climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2}
          )}
       ]
@@ -300,7 +306,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
       assert html =~ table_row("Status", "driving")
-      assert html =~ table_row("Range", "200.0 mi")
+      assert html =~ table_row("Range \\(ideal\\)", "200.0 mi")
+      assert html =~ table_row("Range \\(est.\\)", "180.0 mi")
       assert html =~ table_row("Speed", "30 mph")
       assert html =~ table_row("Outside temperature", "75.2 °F")
       assert html =~ table_row("Inside temperature", "73.8 °F")

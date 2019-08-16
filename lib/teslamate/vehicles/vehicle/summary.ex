@@ -9,6 +9,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :state,
     :battery_level,
     :ideal_battery_range_km,
+    :est_battery_range_km,
     :charge_energy_added,
     :speed,
     :outside_temp,
@@ -38,7 +39,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     %__MODULE__{
       display_name: vehicle.display_name,
       speed: speed(vehicle),
-      ideal_battery_range_km: range_km(vehicle),
+      ideal_battery_range_km: ideal_range_km(vehicle),
+      est_battery_range_km: est_range_km(vehicle),
       battery_level: get_in_struct(vehicle, [:charge_state, :battery_level]),
       charge_energy_added: get_in_struct(vehicle, [:charge_state, :charge_energy_added]),
       plugged_in: plugged_in(vehicle),
@@ -52,8 +54,13 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     }
   end
 
-  defp range_km(%Vehicle{charge_state: %Charge{ideal_battery_range: r}}), do: miles_to_km(r, 1)
-  defp range_km(_vehicle), do: nil
+  defp ideal_range_km(%Vehicle{charge_state: %Charge{ideal_battery_range: r}}),
+    do: miles_to_km(r, 1)
+
+  defp ideal_range_km(_vehicle), do: nil
+
+  defp est_range_km(%Vehicle{charge_state: %Charge{est_battery_range: r}}), do: miles_to_km(r, 1)
+  defp est_range_km(_vehicle), do: nil
 
   defp speed(%Vehicle{drive_state: %Drive{speed: s}}) when not is_nil(s), do: mph_to_kmh(s)
   defp speed(_vehicle), do: nil
