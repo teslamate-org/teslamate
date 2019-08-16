@@ -100,7 +100,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(start_date),\n\tconvert_km(calculated_max_range, '$length_unit') AS \"Projected Range [$length_unit]\",\n\tconvert_km(positions.odometer, '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tcharging_processes\n\tINNER JOIN positions ON positions.id = charging_processes.position_id\nWHERE\n\tcharging_processes.car_id = $car_id\n\tAND $__timeFilter(start_date)\nORDER BY\n  start_date;",
+          "rawSql": "SELECT\n\t$__timeGroup(date, '6h') AS time,\n\tconvert_km(sum(ideal_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "A",
           "select": [
             [
@@ -113,6 +113,34 @@
             ]
           ],
           "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__timeGroup(date, '1h', previous) AS time,\n\tconvert_km(avg(odometer), '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "efficiency"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cars",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
           "where": [
             {
               "name": "$__timeFilter",
@@ -147,10 +175,11 @@
           "label": "",
           "logBase": 1,
           "max": null,
-          "min": "0",
+          "min": "200",
           "show": true
         },
         {
+          "decimals": null,
           "format": "none",
           "label": null,
           "logBase": 1,
