@@ -5,10 +5,10 @@ defmodule TeslaMate.Vehicles.Identification do
     model = vehicle.option_codes |> Enum.find_value(&which_model/1)
     awd = vehicle.option_codes |> Enum.member?("DV4W")
 
-    {name, efficiency} = get_efficiency(model, battery, performance, awd)
+    {version, efficiency} = get_efficiency(model, battery, performance, awd)
 
     %{
-      name: name,
+      version: version,
       model: model,
       battery: battery,
       awd: awd,
@@ -21,6 +21,7 @@ defmodule TeslaMate.Vehicles.Identification do
   defp which_model("MS01"), do: "MS"
   defp which_model("MS02"), do: "MS"
   defp which_model("MS03"), do: "MS"
+  defp which_model("MS04"), do: "MS"
   defp which_model("MDLX"), do: "MX"
   defp which_model("MDL3"), do: "M3"
   defp which_model(______), do: false
@@ -55,8 +56,8 @@ defmodule TeslaMate.Vehicles.Identification do
   defp get_efficiency("MX", "BTX6", false, _), do: {"X 100D", 0.208}
   defp get_efficiency("MX", _, _, _), do: {"X ???", 0.208}
 
-  defp get_efficiency("M3", "BT37", _, _), do: {"M3 LR", 0.153}
-  defp get_efficiency("M3", _, _, _), do: {"M3 ???", 0.153}
+  defp get_efficiency("M3", "BT37", _, _), do: {"3 LR", 0.153}
+  defp get_efficiency("M3", _, _, _), do: {"3 ???", 0.153}
 
   defp get_efficiency(_, _, _, _), do: {"???", nil}
 end
