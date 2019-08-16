@@ -101,7 +101,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tcount(*) AS visited,\n\tCOALESCE(g.name, a.display_name) as name\nFROM\n\tdrives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_address_id = g.address_id\nWHERE t.car_id = $car\nGROUP BY\n\t2\nORDER BY\n\tvisited desc\nLIMIT 10",
+          "rawSql": "SELECT\n\tcount(*) AS visited,\n\tCOALESCE(g.name, a.display_name) as name\nFROM\n\tdrives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_address_id = g.address_id\nWHERE t.car_id = $car_id\nGROUP BY\n\t2\nORDER BY\n\tvisited desc\nLIMIT 10",
           "refId": "A",
           "select": [
             [
@@ -444,12 +444,12 @@
           "value": "1"
         },
         "datasource": null,
-        "definition": "select id from cars;",
+        "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 0,
         "includeAll": false,
         "label": "Car",
         "multi": false,
-        "name": "car",
+        "name": "car_id",
         "options": [
           {
             "selected": true,
@@ -457,8 +457,8 @@
             "value": "1"
           }
         ],
-        "query": "select id from cars;",
-        "refresh": 0,
+        "query": "SELECT name AS __text, id AS __value FROM cars;",
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
