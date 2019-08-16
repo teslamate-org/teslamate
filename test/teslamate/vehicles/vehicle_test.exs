@@ -136,6 +136,32 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       refute_receive _
     end
+
+    test "increases polling frequency if offline", %{test: name} do
+      events = [
+        {:ok, %TeslaApi.Vehicle{state: "offline"}},
+        {:ok, %TeslaApi.Vehicle{state: "offline"}},
+        {:ok, %TeslaApi.Vehicle{state: "offline"}},
+        {:ok, %TeslaApi.Vehicle{state: "offline"}},
+        {:ok, %TeslaApi.Vehicle{state: "offline"}},
+        {:ok, %TeslaApi.Vehicle{state: "offline"}},
+        {:ok, %TeslaApi.Vehicle{state: "offline"}},
+        {:ok, online_event()}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car_id, :offline}
+      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :offline}}}
+
+      assert :ok = Vehicle.resume_logging(name)
+
+      assert_receive {:start_state, ^car_id, :online}, 100
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
   end
 
   describe "settings change" do
