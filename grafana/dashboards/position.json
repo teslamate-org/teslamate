@@ -15,17 +15,36 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564529791089,
+  "iteration": 1565979239654,
   "links": [],
   "panels": [
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "panels": [],
+      "repeat": "car_id",
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "title": "$car_id",
+      "type": "row"
+    },
     {
       "autoZoom": true,
       "gridPos": {
         "h": 16,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 2,
       "lineColor": "red",
@@ -33,13 +52,20 @@
       "maxDataPoints": 500,
       "options": {},
       "pointColor": "royalblue",
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "targets": [
         {
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select \n$__time(date),\nlatitude,\nlongitude\nfrom positions\nwhere car_id = $car_id\norder by date desc\nlimit 1;",
+          "rawSql": "SELECT\n\t$__time(date),\n\tunnest(ARRAY[latitude, latitude]) AS latitude,\n\tunnest(ARRAY[longitude, longitude]) AS longitude\nFROM\n\tpositions\nWHERE\n\tcar_id = $car_id\nORDER BY\n\tdate DESC\nLIMIT 2;",
           "refId": "A",
           "select": [
             [
@@ -75,31 +101,25 @@
   "tags": [],
   "templating": {
     "list": [
-      {
+     {
         "allValue": null,
         "current": {
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": null,
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
-        "hide": 0,
-        "includeAll": false,
+        "hide": 2,
+        "includeAll": true,
         "label": "Car",
-        "multi": false,
+        "multi": true,
         "name": "car_id",
-        "options": [
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          }
-        ],
+        "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 5,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",
@@ -140,5 +160,5 @@
   "timezone": "",
   "title": "Position",
   "uid": "Dz6UUdzWk",
-  "version": 1
+  "version": 2
 }

@@ -15,10 +15,29 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1564529896029,
+  "iteration": 1565979469442,
   "links": [],
   "panels": [
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "panels": [],
+      "repeat": "car_id",
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "title": "$car_id",
+      "type": "row"
+    },
     {
       "columns": [],
       "fontSize": "100%",
@@ -26,12 +45,19 @@
         "h": 26,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 2,
       "links": [],
       "options": {},
       "pageSize": null,
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "scroll": true,
       "showHeader": true,
       "sort": {
@@ -134,31 +160,25 @@
   "tags": [],
   "templating": {
     "list": [
-      {
+     {
         "allValue": null,
         "current": {
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": null,
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
-        "hide": 0,
-        "includeAll": false,
+        "hide": 2,
+        "includeAll": true,
         "label": "Car",
-        "multi": false,
+        "multi": true,
         "name": "car_id",
-        "options": [
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          }
-        ],
+        "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 5,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",
@@ -199,5 +219,5 @@
   "timezone": "",
   "title": "Updates",
   "uid": "IiC07mgWz",
-  "version": 1
+  "version": 2
 }

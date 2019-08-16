@@ -15,9 +15,30 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565796246739,
+  "iteration": 1565978355332,
   "links": [],
   "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "panels": [],
+      "repeat": "car_id",
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "title": "$car_id",
+      "type": "row"
+    },
     {
       "columns": [],
       "fontSize": "100%",
@@ -25,12 +46,19 @@
         "h": 39,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 6,
       "links": [],
       "options": {},
       "pageSize": 15,
+      "scopedVars": {
+        "car_id": {
+          "selected": true,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "scroll": false,
       "showHeader": true,
       "sort": {
@@ -492,29 +520,22 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": null,
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
-        "hide": 0,
-        "includeAll": false,
+        "hide": 2,
+        "includeAll": true,
         "label": "Car",
-        "multi": false,
+        "multi": true,
         "name": "car_id",
-        "options": [
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          }
-        ],
+        "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 5,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",
@@ -552,7 +573,7 @@
           "text": "C",
           "value": "C"
         },
-        "datasource": "TeslaMate",
+        "datasource": null,
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
