@@ -70,7 +70,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564590801237,
+  "iteration": 1565986888458,
   "links": [],
   "panels": [
     {
@@ -134,7 +134,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Range [$length_unit]\",\n\tbattery_level AS \"SOC [%]\",\n\tconvert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\",\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\",\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\",\n\tconvert_celsius(passenger_temp_setting, '$temp_unit') as \"Passenger Temperature [°$temp_unit]\",\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Range [$length_unit]\",\n\tconvert_km(est_battery_range_km, '$length_unit') AS \"Range (est.) [$length_unit]\",\n\tbattery_level AS \"SOC [%]\",\n\tconvert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\",\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\",\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\",\n\tconvert_celsius(passenger_temp_setting, '$temp_unit') as \"Passenger Temperature [°$temp_unit]\",\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -320,8 +320,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "F",
-          "value": "F"
+          "text": "C",
+          "value": "C"
         },
         "datasource": null,
         "definition": "select unit_of_temperature from settings limit 1;",
@@ -345,8 +345,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "mi",
-          "value": "mi"
+          "text": "km",
+          "value": "km"
         },
         "datasource": null,
         "definition": "select unit_of_length from settings limit 1;",
@@ -381,13 +381,7 @@
         "label": "Car",
         "multi": false,
         "name": "car_id",
-        "options": [
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          }
-        ],
+        "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
         "refresh": 1,
         "regex": "",
