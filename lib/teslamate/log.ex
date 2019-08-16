@@ -32,10 +32,8 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
-  def update_car(%Car{} = car, attrs) do
-    car
-    |> Car.changeset(attrs)
-    |> Repo.update()
+  def create_or_update_car(%Ecto.Changeset{} = changeset) do
+    Repo.insert_or_update(changeset)
   end
 
   ## State

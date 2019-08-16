@@ -3,8 +3,9 @@ defmodule TeslaMate.Vehicles do
 
   require Logger
 
-  alias TeslaMate.Log
   alias __MODULE__.{Vehicle, Identification}
+  alias TeslaMate.Log.Car
+  alias TeslaMate.Log
 
   @name __MODULE__
 
@@ -22,7 +23,7 @@ defmodule TeslaMate.Vehicles do
     children =
       opts
       |> Keyword.get_lazy(:vehicles, &list_vehicles!/0)
-      |> Enum.map(&{Keyword.get(opts, :vehicle, Vehicle), car: create_new!(&1)})
+      |> Enum.map(&{Keyword.get(opts, :vehicle, Vehicle), car: create_or_update!(&1)})
 
     Supervisor.init(children,
       strategy: :one_for_one,
@@ -64,24 +65,23 @@ defmodule TeslaMate.Vehicles do
     |> Enum.map(&%TeslaApi.Vehicle{id: &1.eid})
   end
 
-  defp create_new!(%TeslaApi.Vehicle{} = vehicle) do
-    Logger.info("Found car '#{vehicle.display_name}'")
+  defp create_or_update!(%TeslaApi.Vehicle{} = vehicle) do
+    %{model: model, version: version, efficiency: efficiency} = Identification.properties(vehicle)
+
+    Logger.info("Found Model #{version}: '#{vehicle.display_name}'")
 
     {:ok, car} =
-      case Log.get_car_by_eid(vehicle.id) do
-        nil ->
-          properties = Identification.properties(vehicle)
-
-          Log.create_car(%{
-            eid: vehicle.id,
-            vid: vehicle.vehicle_id,
-            model: properties.model,
-            efficiency: properties.efficiency
-          })
-
-        car ->
-          {:ok, car}
+      with nil <- Log.get_car_by_eid(vehicle.id) do
+        %Car{eid: vehicle.id, vid: vehicle.vehicle_id}
       end
+      |> Car.changeset(%{
+        name: vehicle.display_name,
+        model: model,
+        efficiency: efficiency,
+        version: version,
+        vin: vehicle.vin
+      })
+      |> Log.create_or_update_car()
 
     car
   end

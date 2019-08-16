@@ -5,10 +5,13 @@ defmodule TeslaMate.Log.Car do
   alias TeslaMate.Log.{ChargingProcess, Position, Drive}
 
   schema "cars" do
+    field :name, :string
     field :efficiency, :float
     field :eid, :integer
     field :model, :string
+    field :version, :string
     field :vid, :integer
+    field :vin, :string
 
     has_many :charging_processes, ChargingProcess
     has_many :positions, Position
@@ -20,7 +23,7 @@ defmodule TeslaMate.Log.Car do
   @doc false
   def changeset(car, attrs) do
     car
-    |> cast(attrs, [:model, :efficiency])
+    |> cast(attrs, [:name, :model, :efficiency, :version, :vin])
     |> validate_required([:eid, :vid, :model, :efficiency])
     |> unique_constraint(:eid)
     |> unique_constraint(:vid)
