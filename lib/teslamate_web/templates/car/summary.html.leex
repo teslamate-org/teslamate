@@ -31,7 +31,10 @@
       <tbody>
         <tr>
           <td><%= gettext "Status" %></td>
-          <td><%= @translate_state.(@summary.state) %></td>
+          <td>
+            <%= @translate_state.(@summary.state) %>
+            <%= unless is_nil(@duration), do: " #{gettext("for")} #{@duration}" %>
+          </td>
         </tr>
         <%= unless is_nil(@summary.ideal_battery_range_km) do %>
         <tr>
@@ -73,7 +76,7 @@
           <%= if not is_nil(@summary.scheduled_charging_start_time) do %>
           <tr>
             <td><%= gettext "Scheduled charging" %></td>
-            <td class="convert-date">
+            <td class="convert-time">
               <%= @summary.scheduled_charging_start_time %>
             </td>
           </tr>

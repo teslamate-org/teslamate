@@ -5,6 +5,7 @@ defmodule LogMock do
   alias __MODULE__, as: State
 
   alias TeslaMate.Log.{Drive, ChargingProcess, Update}
+  alias TeslaMate.Log
 
   # API
 
@@ -13,6 +14,7 @@ defmodule LogMock do
   end
 
   def start_state(name, car_id, state), do: GenServer.call(name, {:start_state, car_id, state})
+  def get_current_state(name, car_id), do: GenServer.call(name, {:get_current_state, car_id})
 
   def start_drive(name, car_id), do: GenServer.call(name, {:start_drive, car_id})
   def close_drive(name, drive_id), do: GenServer.call(name, {:close_drive, drive_id})
@@ -51,6 +53,15 @@ defmodule LogMock do
   end
 
   @impl true
+  def handle_call({:start_state, _car_id, s} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %Log.State{state: s, start_date: DateTime.utc_now()}}, state}
+  end
+
+  def handle_call({:get_current_state, _}, _from, state) do
+    {:reply, {:ok, %Log.State{state: :online, start_date: DateTime.from_unix!(0)}}, state}
+  end
+
   def handle_call({:start_charging_process, _, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, 99}, state}

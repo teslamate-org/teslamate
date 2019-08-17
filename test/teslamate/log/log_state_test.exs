@@ -16,9 +16,7 @@ defmodule TeslaMate.LogStateTest do
   describe "create_state/1 " do
     test "with valid data creates a state" do
       assert %Car{id: car_id} = car_fixture()
-      assert :ok = Log.start_state(car_id, :online)
-
-      assert [%State{} = state] = Repo.all(State)
+      assert {:ok, %State{} = state} = Log.start_state(car_id, :online)
       assert state.car_id == car_id
       assert %DateTime{} = state.start_date
       assert state.end_date == nil
@@ -28,26 +26,27 @@ defmodule TeslaMate.LogStateTest do
     test "does not create a new state if the state is already open" do
       assert %Car{id: car_id} = car_fixture()
 
-      assert :ok = Log.start_state(car_id, :online)
-      assert [%State{state: :online, start_date: start_date, end_date: nil}] = Repo.all(State)
+      assert {:ok, %State{state: :online, start_date: start_date, end_date: nil}} =
+               Log.start_state(car_id, :online)
 
-      assert :ok = Log.start_state(car_id, :online)
-      assert [%State{state: :online, start_date: start_date, end_date: nil}] = Repo.all(State)
+      assert {:ok, %State{state: :online, start_date: ^start_date, end_date: nil}} =
+               Log.start_state(car_id, :online)
     end
 
     test "closes the previous state if the state changed" do
       assert %Car{id: car_id} = car_fixture()
 
-      assert :ok = Log.start_state(car_id, :online)
-      assert [%State{state: :online, start_date: start_date, end_date: nil}] = Repo.all(State)
+      assert {:ok, %State{state: :online, start_date: start_date, end_date: nil}} =
+               Log.start_state(car_id, :online)
 
       :timer.sleep(10)
 
-      assert :ok = Log.start_state(car_id, :offline)
+      assert {:ok, %State{state: :offline, start_date: end_date, end_date: nil}} =
+               Log.start_state(car_id, :offline)
 
       assert [
-               %State{state: :online, start_date: ^start_date, end_date: end_date},
-               %State{state: :offline, start_date: end_date, end_date: nil}
+               %State{state: :online, start_date: ^start_date, end_date: ^end_date},
+               %State{state: :offline, start_date: ^end_date, end_date: nil}
              ] = Repo.all(State)
     end
 

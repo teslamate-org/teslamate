@@ -12,7 +12,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok = start_vehicle(name, events)
     assert_receive {:start_state, _, :asleep}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :asleep}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
     assert :ok = Vehicle.suspend_logging(name)
     refute_receive _
@@ -25,7 +25,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok = start_vehicle(name, events)
     assert_receive {:start_state, _, :offline}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :offline}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
 
     assert :ok = Vehicle.suspend_logging(name)
     refute_receive _
@@ -39,10 +39,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     :ok = start_vehicle(name, events, suspend_min: 1000)
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
     assert :ok = Vehicle.suspend_logging(name)
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended}}}
     assert :ok = Vehicle.suspend_logging(name)
 
     refute_receive _
@@ -200,20 +200,23 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
     assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0},
                     []}
 
     assert_receive {:insert_charge, charging_id, %{date: _, charge_energy_added: 1.5}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :charging}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: s1}}}
+    assert DateTime.diff(s0, s1, :nanosecond) < 0
 
     assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 1.5}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :charging_complete}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete, since: s2}}}
     assert_receive {:complete_charging_process, ^charging_id, []}
+    assert DateTime.diff(s1, s2, :nanosecond) < 0
 
     assert :ok = Vehicle.suspend_logging(name)
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, since: s3}}}
+    assert DateTime.diff(s2, s3, :nanosecond) < 0
 
     refute_receive _
   end
@@ -231,10 +234,11 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
     assert :ok = Vehicle.suspend_logging(name)
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, since: s1}}}
+    assert DateTime.diff(s0, s1, :nanosecond) < 0
 
     refute_receive _
   end
