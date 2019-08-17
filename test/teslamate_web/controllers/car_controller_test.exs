@@ -51,7 +51,6 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
       assert html =~ table_row("Status", "asleep")
-      assert html =~ table_row("Plugged in", "no")
       assert html =~ table_row("Range \\(ideal\\)", "380.1 km")
       assert html =~ table_row("Range \\(est.\\)", "401.5 km")
       assert html =~ table_row("State of Charge", "80%")

@@ -68,6 +68,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp speed(_vehicle), do: nil
 
   defp plugged_in(%Vehicle{charge_state: nil}), do: nil
+  defp plugged_in(%Vehicle{vehicle_state: nil}), do: nil
 
   defp plugged_in(%Vehicle{
          charge_state: %Charge{charge_port_latch: "Engaged", charge_port_door_open: true}
