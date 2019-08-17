@@ -39,6 +39,10 @@ $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
   }
 }
 
+.navbar-brand a.navbar-item:hover {
+  background-color: transparent !important;
+}
+
 .field.is-horizontal.center-vertically .field {
   display: flex;
   align-items: center;
