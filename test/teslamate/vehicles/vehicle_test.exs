@@ -79,12 +79,12 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
       # Charging (start)
-      assert_receive {:start_charging_process, ^car_id, _}
+      assert_receive {:start_charging_process, ^car_id, _, []}
       assert_receive {:insert_charge, charging_id, %{charge_energy_added: 5.0}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
       # Charging (complete)
-      assert_receive {:complete_charging_process, ^charging_id}
+      assert_receive {:complete_charging_process, ^charging_id, []}
       assert_receive {:insert_charge, ^charging_id, %{charge_energy_added: 5.0}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
 
@@ -98,7 +98,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
 
       # Unplugging
-      assert_receive {:complete_charging_process, ^charging_id}
+      assert_receive {:complete_charging_process, ^charging_id, []}
 
       # Online
       assert_receive {:start_state, ^car_id, :online}
@@ -107,6 +107,22 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       # Suspended, again
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
+
+      refute_receive _
+    end
+
+    test "does nothing of already online", %{test: name} do
+      events = [
+        {:ok, online_event()}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car_id, :online}, 100
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      assert :ok = Vehicle.resume_logging(name)
 
       refute_receive _
     end

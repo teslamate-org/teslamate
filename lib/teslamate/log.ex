@@ -183,7 +183,7 @@ defmodule TeslaMate.Log do
 
   alias TeslaMate.Log.{ChargingProcess, Charge}
 
-  def start_charging_process(car_id, %{latitude: _, longitude: _} = position_attrs) do
+  def start_charging_process(car_id, %{latitude: _, longitude: _} = position_attrs, opts \\ []) do
     position = Map.put(position_attrs, :car_id, car_id)
 
     address_id =
@@ -196,9 +196,11 @@ defmodule TeslaMate.Log do
           nil
       end
 
+    start_date = Keyword.get_lazy(opts, :date, &DateTime.utc_now/0)
+
     with {:ok, %ChargingProcess{id: id}} <-
            %ChargingProcess{car_id: car_id, address_id: address_id}
-           |> ChargingProcess.changeset(%{start_date: DateTime.utc_now(), position: position})
+           |> ChargingProcess.changeset(%{start_date: start_date, position: position})
            |> Repo.insert() do
       {:ok, id}
     end
@@ -225,7 +227,7 @@ defmodule TeslaMate.Log do
     |> Repo.update()
   end
 
-  def complete_charging_process(process_id) do
+  def complete_charging_process(process_id, opts \\ []) do
     charging_process =
       ChargingProcess
       |> preload([:car, :position])
@@ -244,7 +246,7 @@ defmodule TeslaMate.Log do
         duration_min: duration_min(max(c.date), min(c.date))
       })
       |> Repo.one()
-      |> Map.put(:end_date, DateTime.utc_now())
+      |> Map.put(:end_date, Keyword.get_lazy(opts, :date, &DateTime.utc_now/0))
 
     stats = Map.put(stats, :calculated_max_range, max_range(stats))
 

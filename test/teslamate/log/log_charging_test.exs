@@ -57,6 +57,20 @@ defmodule TeslaMate.LogChargingTest do
              }
     end
 
+    test "accepts a custom start date" do
+      assert %Car{id: car_id} = car_fixture()
+
+      custom_date = DateTime.from_unix!(1_566_059_683)
+
+      assert {:ok, charging_process_id} =
+               Log.start_charging_process(car_id, @valid_pos_attrs, date: custom_date)
+
+      assert %ChargingProcess{start_date: ^custom_date} =
+               ChargingProcess
+               |> preload([:position, :address])
+               |> Repo.get(charging_process_id)
+    end
+
     @tag :capture_log
     test "leaves address blank if resolving failed" do
       assert %Car{id: car_id} = car_fixture()
@@ -186,6 +200,17 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.start_range_km == 266.6
       assert cproc.end_range_km == 268.6
       assert cproc.outside_temp_avg == 15.25
+    end
+
+    test "accepts a custom end date" do
+      assert %Car{id: car_id} = car_fixture()
+
+      custom_date = DateTime.from_unix!(1_566_059_683)
+
+      assert {:ok, charging_process_id} = Log.start_charging_process(car_id, @valid_pos_attrs)
+
+      assert {:ok, %ChargingProcess{end_date: ^custom_date}} =
+               Log.complete_charging_process(charging_process_id, date: custom_date)
     end
 
     test "closes charging process with zero charges " do

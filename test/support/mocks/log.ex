@@ -23,16 +23,16 @@ defmodule LogMock do
   def finish_update(name, update_id, version),
     do: GenServer.call(name, {:finish_update, update_id, version})
 
-  def start_charging_process(name, car_id, position_attrs) do
-    GenServer.call(name, {:start_charging_process, car_id, position_attrs})
+  def start_charging_process(name, car_id, position_attrs, opts \\ []) do
+    GenServer.call(name, {:start_charging_process, car_id, position_attrs, opts})
   end
 
   def resume_charging_process(name, process_id) do
     GenServer.call(name, {:resume_charging_process, process_id})
   end
 
-  def complete_charging_process(name, process_id) do
-    GenServer.call(name, {:complete_charging_process, process_id})
+  def complete_charging_process(name, process_id, opts \\ []) do
+    GenServer.call(name, {:complete_charging_process, process_id, opts})
   end
 
   def insert_position(name, car_id, attrs) do
@@ -51,7 +51,7 @@ defmodule LogMock do
   end
 
   @impl true
-  def handle_call({:start_charging_process, _cid, _pos} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:start_charging_process, _, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, 99}, state}
   end
@@ -61,9 +61,9 @@ defmodule LogMock do
     {:reply, {:ok, %ChargingProcess{}}, state}
   end
 
-  def handle_call({:complete_charging_process, _pid} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:complete_charging_process, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %ChargingProcess{}}, state}
+    {:reply, {:ok, %ChargingProcess{charge_energy_added: 45}}, state}
   end
 
   def handle_call({:start_drive, _car_id} = action, _from, %State{pid: pid} = state) do
@@ -73,7 +73,7 @@ defmodule LogMock do
 
   def handle_call({:close_drive, _drive_id} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %Drive{}}, state}
+    {:reply, {:ok, %Drive{duration_min: 10, distance: 20.0}}, state}
   end
 
   def handle_call({:start_update, _car_id} = action, _from, %State{pid: pid} = state) do
