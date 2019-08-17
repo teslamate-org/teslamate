@@ -35,7 +35,7 @@ A data logger for your Tesla.
   certain idle time
 - Built-in API to manually suspend / resume sending requests to the Tesla API
 - Automatic address lookup
-- Option to create custom geo-fences
+- Geo-fencing feature to create custom locations
 - Supports multiple vehicles per Tesla Account
 
 ## Screenshots
@@ -53,6 +53,7 @@ A data logger for your Tesla.
 4. [Web Interface](#web-interface)
 5. [MQTT](#mqtt)
 6. [FAQ](#faq)
+7. [Contributions](#contributions)
 
 ---
 
@@ -140,27 +141,22 @@ TeslaMate uses environment variables for runtime configuration.
 
 ### Environment Variables
 
-| Variable Name          | Description                                                                                                                                                                                                      | Default Value                 |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| DATABASE_USER          | Username (**required**)                                                                                                                                                                                          | /                             |
-| DATABASE_PASS          | User password (**required**)                                                                                                                                                                                     | /                             |
-| DATABASE_NAME          | The database to connect to (**required**)                                                                                                                                                                        | /                             |
-| DATABASE_HOST          | Hostname of the database server (**required**)                                                                                                                                                                   | /                             |
-| DATABASE_PORT          | Port of the database server                                                                                                                                                                                      | 5432                          |
-| DATABASE_POOL_SIZE     | Size of the database connection pool                                                                                                                                                                             | 5                             |
-| VIRTUAL_HOST           | Host part used for generating URLs throughout the app                                                                                                                                                            | localhost                     |
-| PORT                   | Port where the web interface is exposed                                                                                                                                                                          | 4000                          |
-| DISABLE_MQTT           | Disables the MQTT feature if `true`                                                                                                                                                                              | false                         |
-| MQTT_HOST              | Hostname of the broker (**required** unless DISABLE_MQTT is `true`)                                                                                                                                              | /                             |
-| MQTT_USERNAME          | Username _(optional)_                                                                                                                                                                                            | /                             |
-| MQTT_PASSWORD          | Password _(optional)_                                                                                                                                                                                            | /                             |
-| ENABLE_LOGGER_TELEGRAM | Enables a [logger backend](https://github.com/adriankumpf/logger-telegram-backend) for telegram. If `true` error and crash reports are forwarded to the configured chat. Usually not needed for stable releases. | false                         |
-| CHAT_ID                | Telegram chat id (only **required** if `ENABLE_LOGGER_TELEGRAM` is `true`). See [here](https://github.com/adriankumpf/logger-telegram-backend#configuration) for instructions.                                   | /                             |
-| TOKEN                  | Telegram bot token (only **required** if `ENABLE_LOGGER_TELEGRAM` is `true`). See [here](https://github.com/adriankumpf/logger-telegram-backend#configuration) for instructions.                                 | /                             |
-| LOCALE                 | The default locale for the web interface and addresses. Currently available: `en` (default) and `de`                                                                                                             | en                            |
-| TZ                     | Used to establish the local time zone. See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).                                                                       | /                             |
-| SECRET_KEY_BASE        | Secret key used as a base to generate secrets for encrypting and signing data                                                                                                                                    | randomly generated at startup |
-| SIGNING_SALT           | A salt used with secret_key_base to generate a key for signing/verifying a cookie (required by LiveView; Sessions are not used otherwise)                                                                        | randomly generated at startup |
+| Variable Name      | Description                                                                                                                                | Default Value |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| DATABASE_USER      | Username (**required**)                                                                                                                    | /             |
+| DATABASE_PASS      | User password (**required**)                                                                                                               | /             |
+| DATABASE_NAME      | The database to connect to (**required**)                                                                                                  | /             |
+| DATABASE_HOST      | Hostname of the database server (**required**)                                                                                             | /             |
+| DATABASE_PORT      | Port of the database server                                                                                                                | 5432          |
+| DATABASE_POOL_SIZE | Size of the database connection pool                                                                                                       | 5             |
+| VIRTUAL_HOST       | Host part used for generating URLs throughout the app                                                                                      | localhost     |
+| PORT               | Port where the web interface is exposed                                                                                                    | 4000          |
+| DISABLE_MQTT       | Disables the MQTT feature if `true`                                                                                                        | false         |
+| MQTT_HOST          | Hostname of the broker (**required** unless DISABLE_MQTT is `true`)                                                                        | /             |
+| MQTT_USERNAME      | Username _(optional)_                                                                                                                      | /             |
+| MQTT_PASSWORD      | Password _(optional)_                                                                                                                      | /             |
+| LOCALE             | The default locale for the web interface and addresses. Currently available: `en` (default) and `de`                                       | en            |
+| TZ                 | Used to establish the local time zone. See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). | /             |
 
 ## Upgrading
 
@@ -204,23 +200,24 @@ teslamate/cars/$car_id/sentry_mode
 
 ## FAQ
 
-**Sometimes the first few minutes of a drive are not recorded even though the
-car was online. Why?**
+#### Sometimes the first few minutes of a drive are not recorded even though the car was online. Why?
 
 TeslaMate polls the car every few seconds while driving or charging. After
 that, it keeps polling for about 15 minutes (to catch the following drive if
 you stopped for a drink, for example). After this period, TeslaMate will stop
-polling the car for about 12 minutes to let it go to sleep. This is repeated
+polling the car for about 21 minutes to let it go to sleep. This is repeated
 until the car is asleep or starts to drive/charge again. Once sleeping,
 TeslaMate will never wake the wake the car. It is only checked twice a minute to
 see if it is still sleeping.
 
 This approach may sometimes lead to _small_ data gaps: if the car starts
-driving during the 12 minute period where TeslaMate is not polling, nothing can
+driving during the 21 minute period where TeslaMate is not polling, nothing can
 be logged.
 
-**Solution:** To get around this you can use your smartphone to inform TeslaMate
-when to start polling again. In short, create a workflow with
+##### Solution
+
+To get around this you can use your smartphone to inform TeslaMate when to
+start polling again. In short, create a workflow with
 [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm&hl=en)
 (Android) or [Shortcuts](https://support.apple.com/guide/shortcuts/welcome/ios)
 (iOS) that listens for connected Bluetooth devices. If a connection to your
@@ -235,17 +232,17 @@ Some cars, especially Model 3, seem to handle a `Time to Try Sleeping` value of
 12 min just fine. Doing so reduces the likelihood of potential data gaps. Just
 keep an eye on your car afterwards to see if if still goes info sleep mode.
 
-###### Available Commands
+##### Available Commands
 
 ```
 PUT https://teslamate.your-domain.com/api/car/$car_id/logging/resume
 PUT https://teslamate.your-domain.com/api/car/$car_id/logging/suspend
 ```
 
-_I strongly recommend to use a reverse-proxy with HTTPS and basic access
+⚠️ I strongly recommend to use a reverse-proxy with HTTPS and basic access
 authentication when exposing TeslaMate to the public internet. Additionally
 only permit access to `/api/car/$car_id/logging/resume` and/or
-`/api/car/$car_id/logging/suspend`._
+`/api/car/$car_id/logging/suspend`.
 
 ## Contributions
 
