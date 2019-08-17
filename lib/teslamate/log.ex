@@ -80,6 +80,14 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
+  def get_latest_position(car_id) do
+    Position
+    |> where(car_id: ^car_id)
+    |> order_by(desc: :date)
+    |> limit(1)
+    |> Repo.one()
+  end
+
   ## Drive
 
   alias TeslaMate.Log.Drive
