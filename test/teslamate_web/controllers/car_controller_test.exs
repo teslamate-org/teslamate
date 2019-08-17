@@ -25,6 +25,41 @@ defmodule TeslaMateWeb.CarControllerTest do
     # end
 
     @tag :signed_in
+    test "renders last knwon vehicle stats", %{conn: conn} do
+      events = [
+        {:ok, %TeslaApi.Vehicle{state: "asleep", display_name: "FooCar"}}
+      ]
+
+      :ok = start_vehicles(events)
+
+      %Car{id: id} = Log.get_car_by_eid(4242)
+
+      {:ok, _position} =
+        Log.insert_position(id, %{
+          date: DateTime.utc_now(),
+          longitude: 0,
+          latitude: 0,
+          ideal_battery_range_km: 380.1,
+          est_battery_range_km: 401.5,
+          battery_level: 80,
+          outside_temp: 20.1,
+          inside_temp: 21.0
+        })
+
+      conn = get(conn, Routes.car_path(conn, :index))
+
+      assert html = response(conn, 200)
+      assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
+      assert html =~ table_row("Status", "asleep")
+      assert html =~ table_row("Plugged in", "no")
+      assert html =~ table_row("Range \\(ideal\\)", "380.1 km")
+      assert html =~ table_row("Range \\(est.\\)", "401.5 km")
+      assert html =~ table_row("State of Charge", "80%")
+      assert html =~ table_row("Outside temperature", "20.1 °C")
+      assert html =~ table_row("Inside temperature", "21.0 °C")
+    end
+
+    @tag :signed_in
     test "renders current vehicle stats [:online]", %{conn: conn} do
       events = [
         {:ok,
