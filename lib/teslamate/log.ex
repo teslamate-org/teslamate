@@ -42,23 +42,20 @@ defmodule TeslaMate.Log do
 
   def start_state(car_id, state) when not is_nil(car_id) and not is_nil(state) do
     case get_current_state(car_id) do
-      %State{state: ^state} ->
-        :ok
+      %State{state: ^state} = state ->
+        {:ok, state}
 
       %State{} = s ->
-        with {:ok, _} <- s |> State.changeset(%{end_date: DateTime.utc_now()}) |> Repo.update(),
-             {:ok, _} <- create_state(car_id, %{state: state, start_date: DateTime.utc_now()}) do
-          :ok
+        with {:ok, _} <- s |> State.changeset(%{end_date: DateTime.utc_now()}) |> Repo.update() do
+          create_state(car_id, %{state: state, start_date: DateTime.utc_now()})
         end
 
       nil ->
-        with {:ok, _} <- create_state(car_id, %{state: state, start_date: DateTime.utc_now()}) do
-          :ok
-        end
+        create_state(car_id, %{state: state, start_date: DateTime.utc_now()})
     end
   end
 
-  defp get_current_state(car_id) do
+  def get_current_state(car_id) do
     State
     |> where([s], ^car_id == s.car_id and is_nil(s.end_date))
     |> Repo.one()

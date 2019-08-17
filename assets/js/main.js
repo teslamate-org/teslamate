@@ -7,13 +7,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  for (const el of document.querySelectorAll(".convert-date")) {
-    el.innerText = dateToLocal(el.innerText);
+  for (const el of document.querySelectorAll(".convert-time")) {
+    el.innerText = dateToLocalTime(el.innerText);
 
     const observer = new MutationObserver(mutationList => {
       for (const mutation of mutationList) {
         if (mutation.type === "characterData")
-          el.innerText = dateToLocal(el.innerText);
+          el.innerText = dateToLocalTime(el.innerText);
       }
     });
 
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function dateToLocal(date) {
+  function dateToLocalTime(date) {
     return new Date(date).toLocaleTimeString();
   }
 });

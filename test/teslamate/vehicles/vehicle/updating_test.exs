@@ -29,15 +29,17 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online, since: s0}}}
 
     assert_receive {:start_update, ^car_id}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :updating}}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :updating, since: s1}}}
+    assert DateTime.diff(s0, s1, :nanosecond) < 0
     assert_receive {:finish_update, _upate_id, "2019.8.5 3aaa23d"}, 200
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online, since: s2}}}
+    assert DateTime.diff(s1, s2, :nanosecond) < 0
 
     refute_receive _
   end

@@ -14,6 +14,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defstruct car: nil,
             last_used: nil,
             last_response: nil,
+            last_state_change: nil,
             suspend_after_idle_min: nil,
             suspend_min: nil,
             deps: %{}
@@ -75,9 +76,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
       pubsub: Keyword.get(opts, :pubsub, Phoenix.PubSub)
     }
 
+    last_state_change =
+      with %Log.State{start_date: date} <- call(deps.log, :get_current_state, [car.id]) do
+        date
+      end
+
     data = %Data{
       car: car,
       last_used: DateTime.utc_now(),
+      last_state_change: last_state_change,
       suspend_after_idle_min: suspend_after_idle_min,
       suspend_min: suspend_min,
       deps: deps
@@ -112,7 +119,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         _ -> vehicle
       end
 
-    {:keep_state_and_data, {:reply, from, Summary.into(state, vehicle)}}
+    {:keep_state_and_data, {:reply, from, Summary.into(state, data.last_state_change, vehicle)}}
   end
 
   ### resume_logging
@@ -120,7 +127,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event({:call, from}, :resume_logging, {:suspended, prev_state}, data) do
     Logger.info("Resuming logging", car_id: data.car.id)
 
-    {:next_state, prev_state, %Data{data | last_used: DateTime.utc_now()},
+    {:next_state, prev_state,
+     %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
      [{:reply, from, :ok}, notify_subscribers(), schedule_fetch(5)]}
   end
 
@@ -163,7 +171,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          :ok <- can_fall_asleep(vehicle) do
       Logger.info("Suspending logging [Triggered manually]", car_id: data.car.id)
 
-      {:next_state, {:suspended, :online}, %Data{data | last_response: vehicle},
+      {:next_state, {:suspended, :online},
+       %Data{data | last_state_change: DateTime.utc_now(), last_response: vehicle},
        [{:reply, from, :ok}, notify_subscribers(), schedule_fetch(data.suspend_min, :minutes)]}
     else
       {:error, reason} ->
@@ -223,7 +232,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ## notify_subscribers
 
   def handle_event(:internal, :notify_subscribers, state, %Data{last_response: vehicle} = data) do
-    payload = Summary.into(state, vehicle)
+    payload = Summary.into(state, data.last_state_change, vehicle)
 
     :ok =
       call(data.deps.pubsub, :broadcast, [TeslaMate.PubSub, @topic <> "#{data.car.id}", payload])
@@ -238,26 +247,33 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, :asleep}, :start, data) do
     Logger.info("Start / :asleep", car_id: data.car.id)
 
-    :ok = call(data.deps.log, :start_state, [data.car.id, :asleep])
+    {:ok, %Log.State{start_date: last_state_change}} =
+      call(data.deps.log, :start_state, [data.car.id, :asleep])
 
-    {:next_state, {:asleep, @asleep_interval}, data, [notify_subscribers(), schedule_fetch(30)]}
+    {:next_state, {:asleep, @asleep_interval}, %Data{data | last_state_change: last_state_change},
+     [notify_subscribers(), schedule_fetch(30)]}
   end
 
   def handle_event(:internal, {:update, :offline}, :start, data) do
     Logger.info("Start / :offline", car_id: data.car.id)
 
-    :ok = call(data.deps.log, :start_state, [data.car.id, :offline])
+    {:ok, %Log.State{start_date: last_state_change}} =
+      call(data.deps.log, :start_state, [data.car.id, :offline])
 
-    {:next_state, {:offline, @asleep_interval}, data, [notify_subscribers(), schedule_fetch()]}
+    {:next_state, {:offline, @asleep_interval},
+     %Data{data | last_state_change: last_state_change}, [notify_subscribers(), schedule_fetch()]}
   end
 
   def handle_event(:internal, {:update, {:online, vehicle}} = event, :start, data) do
     Logger.info("Start / :online", car_id: data.car.id)
 
-    :ok = call(data.deps.log, :start_state, [data.car.id, :online])
+    {:ok, %Log.State{start_date: last_state_change}} =
+      call(data.deps.log, :start_state, [data.car.id, :online])
+
     :ok = insert_position(vehicle, data)
 
-    {:next_state, :online, data, [notify_subscribers(), {:next_event, :internal, event}]}
+    {:next_state, :online, %Data{data | last_state_change: last_state_change},
+     [notify_subscribers(), {:next_event, :internal, event}]}
   end
 
   #### :online
@@ -274,7 +290,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:ok, update_id} = call(data.deps.log, :start_update, [data.car.id])
 
-        {:next_state, {:updating, update_id}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:updating, update_id},
+         %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(15)]}
 
       %{drive_state: %Drive{shift_state: shift_state}}
@@ -285,7 +302,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :ok = insert_position(vehicle, data, drive_id: drive_id)
 
         {:next_state, {:driving, :available, drive_id},
-         %Data{data | last_used: DateTime.utc_now()}, [notify_subscribers(), schedule_fetch(2.5)]}
+         %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
+         [notify_subscribers(), schedule_fetch(2.5)]}
 
       %{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
       when charging_state in ["Starting", "Charging"] ->
@@ -296,7 +314,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :ok = insert_charge(charge_id, vehicle, data)
 
         {:next_state, {:charging, charging_state, charge_id},
-         %Data{data | last_used: DateTime.utc_now()}, [notify_subscribers(), schedule_fetch(2.5)]}
+         %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
+         [notify_subscribers(), schedule_fetch(2.5)]}
 
       _ ->
         try_to_suspend(vehicle, :online, data)
@@ -340,7 +359,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         Logger.info("Charging / Complete / #{added} kWh – #{duration} min", car_id: data.car.id)
 
-        {:next_state, {:charging, "Complete", pid}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:charging, "Complete", pid},
+         %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch()]}
 
       {state, _} ->
@@ -672,7 +692,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         if suspend do
           Logger.info("Suspending logging", car_id: car.id)
 
-          {:next_state, {:suspended, current_state}, data,
+          {:next_state, {:suspended, current_state},
+           %Data{data | last_state_change: DateTime.utc_now()},
            [notify_subscribers(), schedule_fetch(data.suspend_min, :minutes)]}
         else
           {:keep_state_and_data, [notify_subscribers(), schedule_fetch(15)]}

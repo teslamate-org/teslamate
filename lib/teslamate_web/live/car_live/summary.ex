@@ -8,13 +8,19 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   @impl true
   def mount(%{id: id, settings: settings}, socket) do
-    if connected?(socket), do: Vehicles.subscribe(id)
+    if connected?(socket) do
+      send(self(), :update_duration)
+      Vehicles.subscribe(id)
+    end
+
+    summary = Vehicles.summary(id)
 
     assigns = %{
       id: id,
-      summary: Vehicles.summary(id),
+      summary: summary,
       settings: settings,
       translate_state: &translate_state/1,
+      duration: duration_str(summary.since),
       error: nil,
       error_timeout: nil
     }
@@ -52,12 +58,17 @@ defmodule TeslaMateWeb.CarLive.Summary do
   end
 
   @impl true
+  def handle_info(:update_duration, socket) do
+    Process.send_after(self(), :update_duration, :timer.seconds(1))
+    {:noreply, assign(socket, duration: duration_str(socket.assigns.summary.since))}
+  end
+
   def handle_info(:hide_error, socket) do
     {:noreply, assign(socket, error: nil, error_timeout: nil)}
   end
 
   def handle_info(summary, socket) do
-    {:noreply, assign(socket, summary: summary)}
+    {:noreply, assign(socket, summary: summary, duration: duration_str(summary.since))}
   end
 
   defp translate_state(:driving), do: gettext("driving")
@@ -77,4 +88,27 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   defp cancel_timer(nil), do: :ok
   defp cancel_timer(ref) when is_reference(ref), do: Process.cancel_timer(ref)
+
+  defp duration_str(nil), do: nil
+  defp duration_str(date), do: DateTime.utc_now() |> DateTime.diff(date, :second) |> sec_to_str()
+
+  @minute 60
+  @hour @minute * 60
+  @day @hour * 24
+  @week @day * 7
+  @divisor [@week, @day, @hour, @minute, 1]
+
+  def sec_to_str(sec) when sec < 5, do: nil
+
+  def sec_to_str(sec) do
+    {_, [s, m, h, d, w]} =
+      Enum.reduce(@divisor, {sec, []}, fn divisor, {n, acc} ->
+        {rem(n, divisor), [div(n, divisor) | acc]}
+      end)
+
+    ["#{w} wk", "#{d} d", "#{h} hr", "#{m} min", "#{s} sec"]
+    |> Enum.reject(&String.starts_with?(&1, "0"))
+    |> Enum.take(2)
+    |> Enum.join(", ")
+  end
 end

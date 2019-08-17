@@ -7,6 +7,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defstruct [
     :display_name,
     :state,
+    :since,
     :battery_level,
     :ideal_battery_range_km,
     :est_battery_range_km,
@@ -21,12 +22,12 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :charge_limit_soc
   ]
 
-  def into(:start, nil) do
+  def into(:start, _since, nil) do
     %__MODULE__{state: :unavailable}
   end
 
-  def into(state, vehicle) do
-    %__MODULE__{format_vehicle(vehicle) | state: format_state(state)}
+  def into(state, since, vehicle) do
+    %__MODULE__{format_vehicle(vehicle) | state: format_state(state), since: since}
   end
 
   defp format_state({:charging, "Complete", _process_id}), do: :charging_complete
