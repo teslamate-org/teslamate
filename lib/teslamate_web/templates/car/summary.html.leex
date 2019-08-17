@@ -118,7 +118,8 @@
           </td>
         </tr>
         <% end %>
-        <%= unless is_nil(@summary.outside_temp) do %>
+        <%= if @summary.state not in [:asleep, :offline] or DateTime.diff(DateTime.utc_now(), @summary.since) < 30*60 do %>
+          <%= unless is_nil(@summary.outside_temp) do %>
         <tr>
           <td><%= gettext "Outside temperature" %></td>
           <td>
@@ -129,8 +130,8 @@
             <% end %>
           </td>
         </tr>
-        <% end %>
-        <%= unless is_nil(@summary.inside_temp) do %>
+          <% end %>
+          <%= unless is_nil(@summary.inside_temp) do %>
         <tr>
           <td><%= gettext "Inside temperature" %></td>
           <td>
@@ -141,6 +142,7 @@
             <% end %>
           </td>
         </tr>
+          <% end %>
         <% end %>
       </tbody>
     </table>
