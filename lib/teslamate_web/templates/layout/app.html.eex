@@ -4,21 +4,31 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TeslaMate · Home</title>
+    <title>TeslaMate</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5AB53N3ALo">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=5AB53N3ALo">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=5AB53N3ALo">
+    <link rel="manifest" href="/site.webmanifest?v=5AB53N3ALo">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg?v=5AB53N3ALo" color="#363636">
+    <link rel="shortcut icon" href="/favicon.ico?v=5AB53N3ALo">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
   </head>
   <body>
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
-          <a class="navbar-item" href="/">TeslaMate</a>
+          <a class="navbar-item" href="/">
+            <%= img_tag Routes.static_path(@conn, "/images/logo.svg"), alt: "TeslaMate", width: "90px" %>
+          </a>
 
           <a
             role="button"
             class="navbar-burger burger"
             aria-label="menu"
             aria-expanded="false"
-            data-target="navbarBasicExample"
+            data-target="navbar"
           >
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -26,7 +36,7 @@
           </a>
         </div>
 
-        <div id="navbarBasicExample" class="navbar-menu">
+        <div id="navbar" class="navbar-menu">
           <div class="navbar-end">
             <%= link(gettext("Geo-Fences"), to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item") %>
             <%= link(gettext("Settings"), to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5") %>
