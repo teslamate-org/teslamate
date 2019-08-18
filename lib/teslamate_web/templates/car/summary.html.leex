@@ -66,7 +66,7 @@
           <td><%= @summary.charge_energy_added %> kWh</td>
         </tr>
         <% end %>
-        <%= unless is_nil(@summary.plugged_in) do %>
+        <%= if @summary.state != :driving and not is_nil(@summary.plugged_in) do %>
         <tr>
           <td><%= gettext "Plugged in" %></td>
           <td><%= (if @summary.plugged_in, do: gettext("yes"), else: gettext("no"))  %></td>
@@ -100,7 +100,7 @@
           <td><%= (if @summary.locked, do: gettext("yes"), else: gettext("no"))  %></td>
         </tr>
         <% end %>
-        <%= unless is_nil(@summary.sentry_mode) do %>
+        <%= if @summary.sentry_mode do %>
         <tr>
           <td><%= gettext "Sentry Mode" %></td>
           <td><%= (if @summary.sentry_mode, do: gettext("yes"), else: gettext("no"))  %></td>
@@ -118,7 +118,7 @@
           </td>
         </tr>
         <% end %>
-        <%= if @summary.state not in [:asleep, :offline] or DateTime.diff(DateTime.utc_now(), @summary.since) < 30*60 do %>
+        <%= if @summary.state not in [:asleep, :offline, :suspended] or DateTime.diff(DateTime.utc_now(), @summary.since) < 30*60 do %>
           <%= unless is_nil(@summary.outside_temp) do %>
         <tr>
           <td><%= gettext "Outside temperature" %></td>
