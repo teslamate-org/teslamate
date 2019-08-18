@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.6.0] - 2019-08-18
+
+### Added / Changed
+
+**Dashboards**
+
+- Display car name instead of its id and replace dropdown with separate row for each car
+- Improve States dashboard:
+  - show state names instead of arbitrary numbers
+  - include drives and charge sessions
+- Vampire Drain: include offline state when calculating the standby value
+- Drive Details: add estimated range graph
+- Degradation: Increase resolution of projected 100% range
+
+**Web UI**
+
+- Add favicons
+- Fetch last known values from database after (re)starting TeslaMate
+- Show duration of current state
+- Show estimated range
+- Hide stale temperature data
+- Hide some metrics when they're not needed
+
+### Fixed
+
+- Interpret a significant offline period with SOC gains as a charge session
+- Timeout drive after being offline for too long
+- Dashboards: Dynamically calculate consumption values based on stored `car.efficiency`
+
 ## [1.5.3] - 2019-08-14
 
 ### Fixed
@@ -245,6 +274,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.6.0]: https://github.com/adriankumpf/teslamate/compare/v1.5.3...v1.6.0
 [1.5.3]: https://github.com/adriankumpf/teslamate/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/adriankumpf/teslamate/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/adriankumpf/teslamate/compare/v1.5.0...v1.5.1
