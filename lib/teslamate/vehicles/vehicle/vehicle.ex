@@ -396,8 +396,25 @@ defmodule TeslaMate.Vehicles.Vehicle do
      %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
   end
 
-  def handle_event(:internal, {:update, :offline}, {:driving, {:offline, _}, _drive_id}, data) do
+  def handle_event(:internal, {:update, :offline}, {:driving, {:offline, _last}, nil}, data) do
     {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
+  end
+
+  @drive_timout_min 15
+
+  def handle_event(:internal, {:update, :offline}, {:driving, {:offline, last}, drive_id}, data) do
+    offline_since = parse_timestamp(last.drive_state.timestamp)
+
+    case diff_seconds(DateTime.utc_now(), offline_since) / 60 do
+      min when min >= @drive_timout_min ->
+        timeout_drive(drive_id, data)
+
+        {:next_state, {:driving, {:offline, last}, nil},
+         %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
+
+      _min ->
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
+    end
   end
 
   def handle_event(:internal, {:update, {:online, now}}, {:driving, {:offline, last}, id}, data) do
@@ -413,22 +430,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     cond do
       has_gained_range? and offline_min >= 5 ->
-        {:ok, %Log.Drive{distance: km, duration_min: min}} =
-          call(data.deps.log, :close_drive, [id])
-
-        Logger.info("Logged previous drive: #{round(km)} km – #{min} min", car_id: data.car.id)
-
-        position = create_position(last)
+        unless is_nil(id), do: timeout_drive(id, data)
 
         {:ok, charge_id} =
           call(data.deps.log, :start_charging_process, [
             data.car.id,
-            position,
+            create_position(last),
             [date: DateTime.add(offline_start, 1, :second)]
           ])
 
-        :ok = insert_charge(charge_id, last, data)
-        :ok = insert_charge(charge_id, now, data)
+        :ok = insert_charge(charge_id, put_charge_defaults(last), data)
+        :ok = insert_charge(charge_id, put_charge_defaults(now), data)
 
         {:ok, %Log.ChargingProcess{charge_energy_added: added}} =
           call(data.deps.log, :complete_charging_process, [
@@ -441,16 +453,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, now}}}}
 
-      not has_gained_range? and offline_min >= 15 ->
-        {:ok, %Log.Drive{distance: km, duration_min: min}} =
-          call(data.deps.log, :close_drive, [id])
-
-        Logger.info("Logged previous drive: #{round(km)} km – #{min} min", car_id: data.car.id)
+      not has_gained_range? and offline_min >= @drive_timout_min ->
+        unless is_nil(id), do: timeout_drive(id, data)
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, now}}}}
 
-      true ->
+      not is_nil(id) ->
         {:next_state, {:driving, :available, id}, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, now}}}}
     end
@@ -718,6 +727,28 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %Vehicle{} ->
         :ok
     end
+  end
+
+  defp timeout_drive(drive_id, %Data{} = data) do
+    {:ok, %Log.Drive{distance: km, duration_min: min}} =
+      call(data.deps.log, :close_drive, [drive_id])
+
+    Logger.info("Driving / Timeout / #{round(km)} km – #{min} min", car_id: data.car.id)
+  end
+
+  defp put_charge_defaults(vehicle) do
+    charge_state =
+      vehicle.charge_state
+      |> Map.update!(:charge_energy_added, fn
+        nil -> 0
+        val -> val
+      end)
+      |> Map.update!(:charger_power, fn
+        nil -> 0
+        val -> val
+      end)
+
+    Map.put(vehicle, :charge_state, charge_state)
   end
 
   defp determince_interval(n) when not is_nil(n) and n > 0, do: round(725 / n) |> min(30)
