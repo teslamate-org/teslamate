@@ -1,742 +1,742 @@
 {
-"annotations": {
-  "list": [
-    {
-      "builtIn": 1,
-      "datasource": "-- Grafana --",
-      "enable": true,
-      "hide": true,
-      "iconColor": "rgba(0, 211, 255, 1)",
-      "name": "Annotations & Alerts",
-      "type": "dashboard"
-    }
-  ]
-},
-"editable": true,
-"gnetId": null,
-"graphTooltip": 0,
-"iteration": 1565978835669,
-"links": [],
-"panels": [
-  {
-    "gridPos": {
-      "h": 1,
-      "w": 24,
-      "x": 0,
-      "y": 0
-    },
-    "id": 10,
-    "panels": [],
-    "repeat": "car_id",
-    "scopedVars": {
-      "car_id": {
-        "selected": true,
-        "text": "1",
-        "value": "1"
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
       }
-    },
-    "title": "$car_id",
-    "type": "row"
+    ]
   },
-  {
-    "cacheTimeout": null,
-    "colorBackground": false,
-    "colorValue": false,
-    "colors": [
-      "#299c46",
-      "rgba(237, 129, 40, 0.89)",
-      "#d44a3a"
-    ],
-    "decimals": 2,
-    "format": "kwatth",
-    "gauge": {
-      "maxValue": 100,
-      "minValue": 0,
-      "show": false,
-      "thresholdLabels": false,
-      "thresholdMarkers": true
-    },
-    "gridPos": {
-      "h": 3,
-      "w": 8,
-      "x": 0,
-      "y": 1
-    },
-    "id": 4,
-    "interval": null,
-    "links": [],
-    "mappingType": 1,
-    "mappingTypes": [
-      {
-        "name": "value to text",
-        "value": 1
-      },
-      {
-        "name": "range to text",
-        "value": 2
-      }
-    ],
-    "maxDataPoints": 100,
-    "nullPointMode": "connected",
-    "nullText": null,
-    "options": {},
-    "pluginVersion": "6.1.1",
-    "postfix": "   / 100$length_unit",
-    "postfixFontSize": "50%",
-    "prefix": "",
-    "prefixFontSize": "50%",
-    "rangeMaps": [
-      {
-        "from": "null",
-        "text": "N/A",
-        "to": "null"
-      }
-    ],
-    "scopedVars": {
-      "car_id": {
-        "selected": true,
-        "text": "1",
-        "value": "1"
-      }
-    },
-    "sparkline": {
-      "fillColor": "rgba(31, 118, 189, 0.18)",
-      "full": false,
-      "lineColor": "rgb(31, 120, 193)",
-      "show": false
-    },
-    "tableColumn": "consumption",
-    "targets": [
-      {
-        "format": "table",
-        "group": [],
-        "metricColumn": "none",
-        "rawQuery": true,
-        "rawSql": "select \n  sum(\"consumption_kWh\") / sum(distance) * 100 * \n    CASE WHEN '$length_unit' = 'km' THEN 1\n         WHEN '$length_unit' = 'mi' THEN 1.60934\n    END AS consumption\nfrom drives \nwhere \n  distance is not null \n  and \"consumption_kWh\" is not null\n  and car_id = $car_id",
-        "refId": "A",
-        "select": [
-          [
-            {
-              "params": [
-                "latitude"
-              ],
-              "type": "column"
-            }
-          ]
-        ],
-        "table": "addresses",
-        "timeColumn": "inserted_at",
-        "timeColumnType": "timestamp",
-        "where": [
-          {
-            "name": "$__timeFilter",
-            "params": [],
-            "type": "macro"
-          }
-        ]
-      }
-    ],
-    "thresholds": "",
-    "timeFrom": null,
-    "timeShift": null,
-    "title": "Ø-Consumption (net)",
-    "type": "singlestat",
-    "valueFontSize": "80%",
-    "valueMaps": [
-      {
-        "op": "=",
-        "text": "N/A",
-        "value": "null"
-      }
-    ],
-    "valueName": "avg"
-  },
-  {
-    "cacheTimeout": null,
-    "colorBackground": false,
-    "colorValue": false,
-    "colors": [
-      "#299c46",
-      "rgba(237, 129, 40, 0.89)",
-      "#d44a3a"
-    ],
-    "decimals": 2,
-    "format": "kwatth",
-    "gauge": {
-      "maxValue": 100,
-      "minValue": 0,
-      "show": false,
-      "thresholdLabels": false,
-      "thresholdMarkers": true
-    },
-    "gridPos": {
-      "h": 3,
-      "w": 8,
-      "x": 8,
-      "y": 1
-    },
-    "id": 8,
-    "interval": null,
-    "links": [],
-    "mappingType": 1,
-    "mappingTypes": [
-      {
-        "name": "value to text",
-        "value": 1
-      },
-      {
-        "name": "range to text",
-        "value": 2
-      }
-    ],
-    "maxDataPoints": 100,
-    "nullPointMode": "connected",
-    "nullText": null,
-    "options": {},
-    "postfix": "   / 100$length_unit",
-    "postfixFontSize": "50%",
-    "prefix": "",
-    "prefixFontSize": "50%",
-    "rangeMaps": [
-      {
-        "from": "null",
-        "text": "N/A",
-        "to": "null"
-      }
-    ],
-    "scopedVars": {
-      "car_id": {
-        "selected": true,
-        "text": "1",
-        "value": "1"
-      }
-    },
-    "sparkline": {
-      "fillColor": "rgba(31, 118, 189, 0.18)",
-      "full": false,
-      "lineColor": "rgb(31, 120, 193)",
-      "show": false
-    },
-    "tableColumn": "consumption",
-    "targets": [
-      {
-        "format": "table",
-        "group": [],
-        "metricColumn": "none",
-        "rawQuery": true,
-        "rawSql": "WITH d1 AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_range_km) OVER (ORDER BY start_date) - start_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM\n\t\tcharging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id\n\tORDER BY\n\t\tstart_date\n),\nd2 AS (\nSELECT\n\tcar_id,\n\tsum(range_loss) AS range_loss,\n\tsum(distance) AS distance\nFROM\n\td1\nWHERE\n\tdistance >= 0 AND range_loss >= 0\nGROUP BY\n\tcar_id\n)\nSELECT\nrange_loss * c.efficiency / distance * 100 *\n  CASE WHEN '$length_unit' = 'km' THEN 1\n       WHEN '$length_unit' = 'mi' THEN 1.60934\n  END AS consumption\nFROM\n\td2\n\tLEFT JOIN cars c ON c.id = car_id",
-        "refId": "A",
-        "select": [
-          [
-            {
-              "params": [
-                "latitude"
-              ],
-              "type": "column"
-            }
-          ]
-        ],
-        "table": "addresses",
-        "timeColumn": "inserted_at",
-        "timeColumnType": "timestamp",
-        "where": [
-          {
-            "name": "$__timeFilter",
-            "params": [],
-            "type": "macro"
-          }
-        ]
-      }
-    ],
-    "thresholds": "",
-    "timeFrom": null,
-    "timeShift": null,
-    "title": "Ø-Consumption (gross) ",
-    "type": "singlestat",
-    "valueFontSize": "80%",
-    "valueMaps": [
-      {
-        "op": "=",
-        "text": "N/A",
-        "value": "null"
-      }
-    ],
-    "valueName": "avg"
-  },
-  {
-    "cacheTimeout": null,
-    "colorBackground": false,
-    "colorValue": false,
-    "colors": [
-      "#299c46",
-      "rgba(237, 129, 40, 0.89)",
-      "#d44a3a"
-    ],
-    "decimals": 1,
-    "format": "none",
-    "gauge": {
-      "maxValue": 100,
-      "minValue": 0,
-      "show": false,
-      "thresholdLabels": false,
-      "thresholdMarkers": true
-    },
-    "gridPos": {
-      "h": 3,
-      "w": 8,
-      "x": 16,
-      "y": 1
-    },
-    "id": 6,
-    "interval": null,
-    "links": [],
-    "mappingType": 1,
-    "mappingTypes": [
-      {
-        "name": "value to text",
-        "value": 1
-      },
-      {
-        "name": "range to text",
-        "value": 2
-      }
-    ],
-    "maxDataPoints": 100,
-    "nullPointMode": "connected",
-    "nullText": null,
-    "options": {},
-    "postfix": " $length_unit",
-    "postfixFontSize": "50%",
-    "prefix": "",
-    "prefixFontSize": "50%",
-    "rangeMaps": [
-      {
-        "from": "null",
-        "text": "N/A",
-        "to": "null"
-      }
-    ],
-    "scopedVars": {
-      "car_id": {
-        "selected": true,
-        "text": "1",
-        "value": "1"
-      }
-    },
-    "sparkline": {
-      "fillColor": "rgba(31, 118, 189, 0.18)",
-      "full": false,
-      "lineColor": "rgb(31, 120, 193)",
-      "show": false
-    },
-    "tableColumn": "convert_km",
-    "targets": [
-      {
-        "format": "table",
-        "group": [],
-        "metricColumn": "none",
-        "rawQuery": true,
-        "rawSql": "select convert_km(sum(distance), '$length_unit') from drives where car_id = $car_id;",
-        "refId": "A",
-        "select": [
-          [
-            {
-              "params": [
-                "latitude"
-              ],
-              "type": "column"
-            }
-          ]
-        ],
-        "table": "addresses",
-        "timeColumn": "inserted_at",
-        "timeColumnType": "timestamp",
-        "where": [
-          {
-            "name": "$__timeFilter",
-            "params": [],
-            "type": "macro"
-          }
-        ]
-      }
-    ],
-    "thresholds": "",
-    "timeFrom": null,
-    "timeShift": null,
-    "title": "Logged Distance",
-    "type": "singlestat",
-    "valueFontSize": "80%",
-    "valueMaps": [
-      {
-        "op": "=",
-        "text": "N/A",
-        "value": "null"
-      }
-    ],
-    "valueName": "avg"
-  },
-  {
-    "columns": [],
-    "fontSize": "100%",
-    "gridPos": {
-      "h": 9,
-      "w": 24,
-      "x": 0,
-      "y": 4
-    },
-    "id": 2,
-    "links": [],
-    "options": {},
-    "pageSize": null,
-    "scopedVars": {
-      "car_id": {
-        "selected": true,
-        "text": "1",
-        "value": "1"
-      }
-    },
-    "scroll": true,
-    "showHeader": true,
-    "sort": {
-      "col": 0,
-      "desc": true
-    },
-    "styles": [
-      {
-        "alias": "Temperature",
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "decimals": 0,
-        "pattern": "outside_temp_c",
-        "type": "number",
-        "unit": "celsius"
-      },
-      {
-        "alias": "Ø Efficiency",
-        "colorMode": "value",
-        "colors": [
-          "rgba(245, 54, 54, 0.9)",
-          "#FFB357",
-          "rgba(50, 172, 45, 0.97)"
-        ],
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "decimals": 1,
-        "mappingType": 1,
-        "pattern": "efficiency",
-        "thresholds": [
-          "0.65",
-          "0.99"
-        ],
-        "type": "number",
-        "unit": "percentunit"
-      },
-      {
-        "alias": "Distance [km]",
-        "colorMode": null,
-        "colors": [
-          "rgba(245, 54, 54, 0.9)",
-          "rgba(237, 129, 40, 0.89)",
-          "rgba(50, 172, 45, 0.97)"
-        ],
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "decimals": 0,
-        "mappingType": 1,
-        "pattern": "total_distance_km",
-        "thresholds": [],
-        "type": "number",
-        "unit": "none"
-      },
-      {
-        "alias": "Ø Consumption/100km",
-        "colorMode": null,
-        "colors": [
-          "rgba(245, 54, 54, 0.9)",
-          "rgba(237, 129, 40, 0.89)",
-          "rgba(50, 172, 45, 0.97)"
-        ],
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "decimals": 2,
-        "mappingType": 1,
-        "pattern": "consumption_km",
-        "thresholds": [],
-        "type": "number",
-        "unit": "kwatth"
-      },
-      {
-        "alias": "Ø Speed",
-        "colorMode": null,
-        "colors": [
-          "rgba(245, 54, 54, 0.9)",
-          "rgba(237, 129, 40, 0.89)",
-          "rgba(50, 172, 45, 0.97)"
-        ],
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "decimals": 0,
-        "mappingType": 1,
-        "pattern": "avg_speed_km",
-        "thresholds": [],
-        "type": "number",
-        "unit": "velocitykmh"
-      },
-      {
-        "alias": "Temperature",
-        "colorMode": null,
-        "colors": [
-          "rgba(245, 54, 54, 0.9)",
-          "rgba(237, 129, 40, 0.89)",
-          "rgba(50, 172, 45, 0.97)"
-        ],
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "decimals": 0,
-        "mappingType": 1,
-        "pattern": "outside_temp_f",
-        "thresholds": [],
-        "type": "number",
-        "unit": "farenheit"
-      },
-      {
-        "alias": "Distance [mi]",
-        "colorMode": null,
-        "colors": [
-          "rgba(245, 54, 54, 0.9)",
-          "rgba(237, 129, 40, 0.89)",
-          "rgba(50, 172, 45, 0.97)"
-        ],
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "decimals": 0,
-        "mappingType": 1,
-        "pattern": "total_distance_mi",
-        "thresholds": [],
-        "type": "number",
-        "unit": "none"
-      },
-      {
-        "alias": "Ø Consumption/100mi",
-        "colorMode": null,
-        "colors": [
-          "rgba(245, 54, 54, 0.9)",
-          "rgba(237, 129, 40, 0.89)",
-          "rgba(50, 172, 45, 0.97)"
-        ],
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "decimals": 2,
-        "mappingType": 1,
-        "pattern": "consumption_mi",
-        "thresholds": [],
-        "type": "number",
-        "unit": "kwatth"
-      },
-      {
-        "alias": "Ø Speed",
-        "colorMode": null,
-        "colors": [
-          "rgba(245, 54, 54, 0.9)",
-          "rgba(237, 129, 40, 0.89)",
-          "rgba(50, 172, 45, 0.97)"
-        ],
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "decimals": 0,
-        "mappingType": 1,
-        "pattern": "avg_speed_mi",
-        "thresholds": [],
-        "type": "number",
-        "unit": "velocitymph"
-      }
-    ],
-    "targets": [
-      {
-        "format": "table",
-        "group": [],
-        "metricColumn": "none",
-        "rawQuery": true,
-        "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(\"consumption_kWh\") AS total_consumption,\n\t\tconvert_km(sum(distance), '$length_unit') AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND \"consumption_kWh\" IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND distance >= convert_km($min_distance, '$length_unit')\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n\ttotal_consumption / total_distance * 100 AS consumption_$length_unit,\n\t(c.efficiency * CASE WHEN '$length_unit' = 'km' THEN 1 WHEN '$length_unit' = 'mi' THEN 1.60934 END) / (total_consumption / total_distance) AS efficiency,\n\ttotal_distance as total_distance_$length_unit,\n\t(total_distance / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
-        "refId": "A",
-        "select": [
-          [
-            {
-              "params": [
-                "latitude"
-              ],
-              "type": "column"
-            }
-          ]
-        ],
-        "table": "addresses",
-        "timeColumn": "inserted_at",
-        "timeColumnType": "timestamp",
-        "where": [
-          {
-            "name": "$__timeFilter",
-            "params": [],
-            "type": "macro"
-          }
-        ]
-      }
-    ],
-    "timeFrom": null,
-    "timeShift": null,
-    "title": "Temperature – Efficiency",
-    "transform": "table",
-    "type": "table"
-  }
-],
-"schemaVersion": 19,
-"style": "dark",
-"tags": [],
-"templating": {
-  "list": [
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "iteration": 1566149170993,
+  "links": [],
+  "panels": [
     {
-      "allValue": null,
-      "current": {
-        "text": "All",
-        "value": "$__all"
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
       },
-      "datasource": null,
-      "definition": "SELECT name AS __text, id AS __value FROM cars;",
-      "hide": 2,
-      "includeAll": true,
-      "label": "Car",
-      "multi": true,
-      "name": "car_id",
-      "options": [],
-      "query": "SELECT name AS __text, id AS __value FROM cars;",
-      "refresh": 1,
-      "regex": "",
-      "skipUrlSync": false,
-      "sort": 5,
-      "tagValuesQuery": "",
-      "tags": [],
-      "tagsQuery": "",
-      "type": "query",
-      "useTags": false
+      "id": 10,
+      "panels": [],
+      "repeat": "car_id",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "title": "$car_id",
+      "type": "row"
     },
     {
-      "allValue": null,
-      "current": {
-        "text": "C",
-        "value": "C"
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "decimals": 2,
+      "format": "kwatth",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
       },
-      "datasource": null,
-      "definition": "select unit_of_temperature from settings limit 1;",
-      "hide": 2,
-      "includeAll": false,
-      "label": "",
-      "multi": false,
-      "name": "temp_unit",
-      "options": [],
-      "query": "select unit_of_temperature from settings limit 1;",
-      "refresh": 1,
-      "regex": "",
-      "skipUrlSync": false,
-      "sort": 0,
-      "tagValuesQuery": "",
-      "tags": [],
-      "tagsQuery": "",
-      "type": "query",
-      "useTags": false
-    },
-    {
-      "allValue": null,
-      "current": {
-        "text": "km",
-        "value": "km"
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 0,
+        "y": 1
       },
-      "datasource": null,
-      "definition": "select unit_of_length from settings limit 1;",
-      "hide": 2,
-      "includeAll": false,
-      "label": "",
-      "multi": false,
-      "name": "length_unit",
-      "options": [],
-      "query": "select unit_of_length from settings limit 1;",
-      "refresh": 1,
-      "regex": "",
-      "skipUrlSync": false,
-      "sort": 0,
-      "tagValuesQuery": "",
-      "tags": [],
-      "tagsQuery": "",
-      "type": "query",
-      "useTags": false
-    },
-    {
-      "allValue": null,
-      "current": {
-        "selected": true,
-        "tags": [],
-        "text": "1",
-        "value": "1"
-      },
-      "hide": 0,
-      "includeAll": false,
-      "label": "min. distance per drive",
-      "multi": false,
-      "name": "min_distance",
-      "options": [
+      "id": 4,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
         {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "pluginVersion": "6.1.1",
+      "postfix": "   / 100$length_unit",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "consumption",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select \n  sum((start_range_km - end_range_km) * cars.efficiency) / sum(distance) * 100 * \n    CASE WHEN '$length_unit' = 'km' THEN 1\n         WHEN '$length_unit' = 'mi' THEN 1.60934\n    END AS consumption\nfrom drives \ninner join cars on cars.id = car_id\nwhere \n  distance is not null \n  and \"consumption_kWh\" is not null\n  and car_id = $car_id",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Ø-Consumption (net)",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "decimals": 2,
+      "format": "kwatth",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 8,
+        "y": 1
+      },
+      "id": 8,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "   / 100$length_unit",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "consumption",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH d1 AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_range_km) OVER (ORDER BY start_date) - start_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM\n\t\tcharging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id\n\tORDER BY\n\t\tstart_date\n),\nd2 AS (\nSELECT\n\tcar_id,\n\tsum(range_loss) AS range_loss,\n\tsum(distance) AS distance\nFROM\n\td1\nWHERE\n\tdistance >= 0 AND range_loss >= 0\nGROUP BY\n\tcar_id\n)\nSELECT\nrange_loss * c.efficiency / distance * 100 *\n  CASE WHEN '$length_unit' = 'km' THEN 1\n       WHEN '$length_unit' = 'mi' THEN 1.60934\n  END AS consumption\nFROM\n\td2\n\tLEFT JOIN cars c ON c.id = car_id",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Ø-Consumption (gross) ",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "decimals": 1,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 16,
+        "y": 1
+      },
+      "id": 6,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": " $length_unit",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "convert_km",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select convert_km(sum(distance), '$length_unit') from drives where car_id = $car_id;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Logged Distance",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "columns": [],
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 2,
+      "links": [],
+      "options": {},
+      "pageSize": null,
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Temperature",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "pattern": "outside_temp_c",
+          "type": "number",
+          "unit": "celsius"
+        },
+        {
+          "alias": "Ø Efficiency",
+          "colorMode": "value",
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "#FFB357",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 1,
+          "mappingType": 1,
+          "pattern": "efficiency",
+          "thresholds": [
+            "0.65",
+            "0.99"
+          ],
+          "type": "number",
+          "unit": "percentunit"
+        },
+        {
+          "alias": "Distance [km]",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "total_distance_km",
+          "thresholds": [],
+          "type": "number",
+          "unit": "none"
+        },
+        {
+          "alias": "Ø Consumption/100km",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "consumption_km",
+          "thresholds": [],
+          "type": "number",
+          "unit": "kwatth"
+        },
+        {
+          "alias": "Ø Speed",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "avg_speed_km",
+          "thresholds": [],
+          "type": "number",
+          "unit": "velocitykmh"
+        },
+        {
+          "alias": "Temperature",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "outside_temp_f",
+          "thresholds": [],
+          "type": "number",
+          "unit": "farenheit"
+        },
+        {
+          "alias": "Distance [mi]",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "total_distance_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "none"
+        },
+        {
+          "alias": "Ø Consumption/100mi",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "consumption_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "kwatth"
+        },
+        {
+          "alias": "Ø Speed",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "avg_speed_mi",
+          "thresholds": [],
+          "type": "number",
+          "unit": "velocitymph"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(\"consumption_kWh\") AS total_consumption,\n\t\tconvert_km(sum(distance), '$length_unit') AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND \"consumption_kWh\" IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND distance >= convert_km($min_distance, '$length_unit')\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n\ttotal_consumption / total_distance * 100 AS consumption_$length_unit,\n\t(c.efficiency * CASE WHEN '$length_unit' = 'km' THEN 1 WHEN '$length_unit' = 'mi' THEN 1.60934 END) / (total_consumption / total_distance) AS efficiency,\n\ttotal_distance as total_distance_$length_unit,\n\t(total_distance / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Temperature – Efficiency",
+      "transform": "table",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 19,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": null,
+        "definition": "SELECT name AS __text, id AS __value FROM cars;",
+        "hide": 2,
+        "includeAll": true,
+        "label": "Car",
+        "multi": true,
+        "name": "car_id",
+        "options": [],
+        "query": "SELECT name AS __text, id AS __value FROM cars;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "C",
+          "value": "C"
+        },
+        "datasource": null,
+        "definition": "select unit_of_temperature from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "temp_unit",
+        "options": [],
+        "query": "select unit_of_temperature from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "km",
+          "value": "km"
+        },
+        "datasource": null,
+        "definition": "select unit_of_length from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "length_unit",
+        "options": [],
+        "query": "select unit_of_length from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
           "selected": true,
+          "tags": [],
           "text": "1",
           "value": "1"
         },
-        {
-          "selected": false,
-          "text": "5",
-          "value": "5"
-        },
-        {
-          "selected": false,
-          "text": "10",
-          "value": "10"
-        },
-        {
-          "selected": false,
-          "text": "25",
-          "value": "25"
-        },
-        {
-          "selected": false,
-          "text": "50",
-          "value": "50"
-        }
-      ],
-      "query": "1, 5, 10, 25, 50",
-      "skipUrlSync": false,
-      "type": "custom"
-    }
-  ]
-},
-"time": {
-  "from": "now-6h",
-  "to": "now"
-},
-"timepicker": {
-  "hidden": true,
-  "refresh_intervals": [
-    "5s",
-    "10s",
-    "30s",
-    "1m",
-    "5m",
-    "15m",
-    "30m",
-    "1h",
-    "2h",
-    "1d"
-  ],
-  "time_options": [
-    "5m",
-    "15m",
-    "1h",
-    "6h",
-    "12h",
-    "24h",
-    "2d",
-    "7d",
-    "30d"
-  ]
-},
-"timezone": "",
-"title": "Efficiency",
-"uid": "fu4SiQgWz",
-"version": 2
+        "hide": 0,
+        "includeAll": false,
+        "label": "min. distance per drive",
+        "multi": false,
+        "name": "min_distance",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          }
+        ],
+        "query": "1, 5, 10, 25, 50",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true,
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "Efficiency",
+  "uid": "fu4SiQgWz",
+  "version": 2
 }
