@@ -77,7 +77,10 @@
           <tr>
             <td><%= gettext "Scheduled charging" %></td>
             <td>
-              <%= tag :span, data: [date: @summary.scheduled_charging_start_time], phx_hook: "LocalTime" %>
+              <%=
+                tag :span, data: [date: @summary.scheduled_charging_start_time |> DateTime.to_iso8601()],
+                           phx_hook: "LocalTime"
+              %>
             </td>
           </tr>
           <% end %>

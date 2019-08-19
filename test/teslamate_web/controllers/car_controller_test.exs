@@ -125,7 +125,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~
                table_row(
                  "Scheduled charging",
-                 "<span data-date=\"2019-08-12 14:38:27Z\" phx-hook=\"LocalTime\">"
+                 "<span data-date=\"2019-08-12T14:38:27Z\" phx-hook=\"LocalTime\">"
                )
 
       assert html =~ table_row("Charge limit", "85%")
