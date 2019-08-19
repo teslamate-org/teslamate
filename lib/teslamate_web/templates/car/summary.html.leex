@@ -76,8 +76,8 @@
           <%= if not is_nil(@summary.scheduled_charging_start_time) do %>
           <tr>
             <td><%= gettext "Scheduled charging" %></td>
-            <td class="convert-time">
-              <%= @summary.scheduled_charging_start_time %>
+            <td>
+              <%= tag :span, data: [date: @summary.scheduled_charging_start_time], phx_hook: "LocalTime" %>
             </td>
           </tr>
           <% end %>
