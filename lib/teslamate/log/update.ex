@@ -18,5 +18,9 @@ defmodule TeslaMate.Log.Update do
     |> cast(attrs, [:start_date, :end_date, :version])
     |> validate_required([:car_id, :start_date])
     |> foreign_key_constraint(:car_id)
+    |> check_constraint(:end_date,
+      name: :positive_duration,
+      message: "end date must be after start date"
+    )
   end
 end
