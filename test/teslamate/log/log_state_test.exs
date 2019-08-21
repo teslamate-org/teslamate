@@ -33,7 +33,7 @@ defmodule TeslaMate.LogStateTest do
                Log.start_state(car_id, :online)
     end
 
-    test "closes the previous state if the state changed" do
+    test "completes the previous state if the state changed" do
       assert %Car{id: car_id} = car_fixture()
 
       assert {:ok, %State{state: :online, start_date: start_date, end_date: nil}} =
@@ -48,6 +48,30 @@ defmodule TeslaMate.LogStateTest do
                %State{state: :online, start_date: ^start_date, end_date: ^end_date},
                %State{state: :offline, start_date: ^end_date, end_date: nil}
              ] = Repo.all(State)
+    end
+
+    test "handles multiple cars" do
+      assert %Car{id: car_id} = car_fixture()
+      assert %Car{id: another_car_id} = car_fixture(eid: 43, vid: 43)
+
+      assert {:ok, %State{state: :online, start_date: s0, end_date: nil}} =
+               Log.start_state(car_id, :online)
+
+      assert {:ok, %State{state: :online, start_date: s1, end_date: nil}} =
+               Log.start_state(another_car_id, :online)
+
+      assert {:ok, %State{state: :asleep, start_date: e1, end_date: nil}} =
+               Log.start_state(another_car_id, :asleep)
+
+      assert {:ok, %State{state: :offline, start_date: e0, end_date: nil}} =
+               Log.start_state(car_id, :offline)
+
+      assert [
+               %State{state: :online, start_date: ^s0, end_date: ^e0},
+               %State{state: :online, start_date: ^e1, end_date: ^e1},
+               %State{state: :asleep, start_date: ^s1, end_date: nil},
+               %State{state: :offline, start_date: ^s0, end_date: nil}
+             ] = State |> order_by(asc: :id) |> Repo.all()
     end
 
     test "with invalid data returns error changeset" do
