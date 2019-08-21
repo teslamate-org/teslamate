@@ -20,8 +20,6 @@ defmodule TeslaMate.Log.Drive do
     field :end_km, :float
     field :distance, :float
     field :duration_min, :integer
-    field :consumption_kWh, :float
-    field :consumption_kWh_100km, :float
     field :efficiency, :float
 
     belongs_to :start_address, Address
@@ -51,8 +49,6 @@ defmodule TeslaMate.Log.Drive do
       :end_km,
       :distance,
       :duration_min,
-      :consumption_kWh,
-      :consumption_kWh_100km,
       :efficiency
     ])
     |> validate_required([:car_id, :start_date])

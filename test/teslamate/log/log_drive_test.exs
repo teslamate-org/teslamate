@@ -140,8 +140,6 @@ defmodule TeslaMate.LogDriveTest do
       assert drive.start_range_km == 338.8
       assert drive.end_range_km == 334.8
       assert drive.duration_min == 4
-      assert drive.consumption_kWh == 0.612
-      assert drive.consumption_kWh_100km == 19.160920738597053
       assert is_number(drive.start_address_id)
       assert addr_id = drive.start_address_id
       assert ^addr_id = drive.end_address_id

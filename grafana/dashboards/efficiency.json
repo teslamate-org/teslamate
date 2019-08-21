@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1566149170993,
+  "iteration": 1566411057124,
   "links": [],
   "panels": [
     {
@@ -112,7 +112,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select \n  sum((start_range_km - end_range_km) * cars.efficiency) / sum(distance) * 100 * \n    CASE WHEN '$length_unit' = 'km' THEN 1\n         WHEN '$length_unit' = 'mi' THEN 1.60934\n    END AS consumption\nfrom drives \ninner join cars on cars.id = car_id\nwhere \n  distance is not null \n  and \"consumption_kWh\" is not null\n  and car_id = $car_id",
+          "rawSql": "select \n  sum((start_range_km - end_range_km) * cars.efficiency) / sum(distance) * 100 * \n    CASE WHEN '$length_unit' = 'km' THEN 1\n         WHEN '$length_unit' = 'mi' THEN 1.60934\n    END AS consumption\nfrom drives \ninner join cars on cars.id = car_id\nwhere \n  distance is not null \n  and car_id = $car_id",
           "refId": "A",
           "select": [
             [
@@ -548,7 +548,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(\"consumption_kWh\") AS total_consumption,\n\t\tconvert_km(sum(distance), '$length_unit') AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND \"consumption_kWh\" IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND distance >= convert_km($min_distance, '$length_unit')\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n\ttotal_consumption / total_distance * 100 AS consumption_$length_unit,\n\t(c.efficiency * CASE WHEN '$length_unit' = 'km' THEN 1 WHEN '$length_unit' = 'mi' THEN 1.60934 END) / (total_consumption / total_distance) AS efficiency,\n\ttotal_distance as total_distance_$length_unit,\n\t(total_distance / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
+          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(start_range_km - end_range_km) AS total_ideal_range,\n\t\tconvert_km(sum(distance), '$length_unit') AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND distance >= convert_km($min_distance, '$length_unit')\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n\ttotal_ideal_range / total_distance * c.efficiency * 100 AS consumption_$length_unit,\n  total_ideal_range / total_distance * \n  CASE \n    WHEN '$length_unit' = 'km' THEN 1 \n    WHEN '$length_unit' = 'mi' THEN 1.60934 END\n  AS efficiency,\n\ttotal_distance as total_distance_$length_unit,\n\t(total_distance / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id",
           "refId": "A",
           "select": [
             [
