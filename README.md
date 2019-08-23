@@ -250,6 +250,13 @@ only permit access to `/api/car/$car_id/logging/resume` and/or
 Please follow the steps applicable to TeslaMate mentioned in [this
 article](https://support.teslafi.com/knowledge-bases/2/articles/161-my-vehicle-is-not-sleeping).
 
+#### What is the geo-fence feature for?
+
+At the moment geo-fences are a way to create custom locations like `🏡 Home` or
+`🛠️ Work`.That may be particularly useful if the addresses (which are provided
+by [OSM](https://www.openstreetmap.org)) in your region are inaccurate or if
+you street-park at locations where the exact address may vary.
+
 ## Contributions
 
 All Contributions are welcome and greatly appreciated!
