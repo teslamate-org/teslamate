@@ -33,10 +33,10 @@ defmodule TeslaMate.VehicleCase do
             {Vehicle,
              [
                name: name,
-               log: {LogMock, log_name},
-               api: {ApiMock, api_name},
-               settings: {SettingsMock, settings_name},
-               pubsub: {PubSubMock, pubsub_name}
+               deps_log: {LogMock, log_name},
+               deps_api: {ApiMock, api_name},
+               deps_settings: {SettingsMock, settings_name},
+               deps_pubsub: {PubSubMock, pubsub_name}
              ] ++ opts}
           )
 

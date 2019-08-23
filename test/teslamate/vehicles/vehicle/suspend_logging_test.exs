@@ -4,6 +4,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   alias TeslaMate.Vehicles.Vehicle
 
   alias TeslaMate.Vehicles.Vehicle
+  alias TeslaMate.Settings.Settings
 
   test "immediately returns :ok if asleep", %{test: name} do
     events = [
@@ -36,7 +37,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, online_event()}
     ]
 
-    :ok = start_vehicle(name, events, suspend_min: 1000)
+    :ok = start_vehicle(name, events, settings: %Settings{suspend_min: 1000})
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -196,7 +197,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, charging_event(0, "Complete", 1.5)}
     ]
 
-    :ok = start_vehicle(name, events, suspend_min: 1_000_000)
+    :ok = start_vehicle(name, events, settings: %Settings{suspend_min: 1_000_000})
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -228,8 +229,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: 100,
-        suspend_min: 1000
+        settings: %Settings{
+          suspend_after_idle_min: 100,
+          suspend_min: 1000
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
@@ -267,8 +270,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: 100_000,
-        suspend_min: 1000
+        settings: %Settings{
+          suspend_after_idle_min: 100_000,
+          suspend_min: 1000
+        }
       )
 
     assert_receive {:start_state, car_id, :online}

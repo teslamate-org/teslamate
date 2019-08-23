@@ -2,6 +2,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   use TeslaMate.VehicleCase, async: true
 
   alias TeslaMate.Vehicles.Vehicle
+  alias TeslaMate.Settings.Settings
 
   test "suspends when idling", %{test: name} do
     suspendable =
@@ -22,8 +23,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
-        suspend_min: suspend_ms
+        settings: %Settings{
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
@@ -58,8 +61,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
-        suspend_min: suspend_ms
+        settings: %Settings{
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
@@ -88,8 +93,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
-        suspend_min: suspend_ms
+        settings: %Settings{
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
@@ -117,8 +124,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
-        suspend_min: suspend_ms
+        settings: %Settings{
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
@@ -149,8 +158,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
-        suspend_min: suspend_ms
+        settings: %Settings{
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
@@ -180,8 +191,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
-        suspend_min: suspend_ms
+        settings: %Settings{
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
@@ -224,8 +237,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
-        suspend_min: suspend_ms
+        settings: %Settings{
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
@@ -279,8 +294,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: 100_000,
-        suspend_min: 1000
+        settings: %Settings{
+          suspend_after_idle_min: 100_000,
+          suspend_min: 1000
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
@@ -317,8 +334,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        suspend_after_idle_min: 100_000,
-        suspend_min: 1000
+        settings: %Settings{
+          suspend_after_idle_min: 100_000,
+          suspend_min: 1000
+        }
       )
 
     assert_receive {:start_state, car_id, :online}
