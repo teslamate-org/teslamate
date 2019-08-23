@@ -72,11 +72,12 @@ defmodule TeslaMate.Vehicles do
 
     {:ok, car} =
       with nil <- Log.get_car_by_eid(vehicle.id) do
-        %Car{eid: vehicle.id, vid: vehicle.vehicle_id, efficiency: efficiency}
+        %Car{eid: vehicle.id, vid: vehicle.vehicle_id}
       end
       |> Car.changeset(%{
         name: vehicle.display_name,
         model: model,
+        efficiency: efficiency,
         version: version,
         vin: vehicle.vin
       })
