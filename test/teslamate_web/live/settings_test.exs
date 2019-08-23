@@ -23,6 +23,19 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              ~r(<select id="settings_suspend_after_idle_min" .+>.*<option value="15" selected>15 min</option>.*</select>)
   end
 
+  test "shows false, false, true y default", %{conn: conn} do
+    assert {:ok, _view, html} = live(conn, "/settings")
+
+    assert html =~
+             ~r(<input id="settings_req_no_shift_state_reading" .* type="checkbox" value="true">)
+
+    assert html =~
+             ~r(<input id="settings_req_no_temp_reading" .* type="checkbox" value="true">)
+
+    assert html =~
+             ~r(<input id="settings_req_not_unlocked" .* type="checkbox" value="true" checked>)
+  end
+
   test "reacts to change events", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/settings")
 
@@ -49,5 +62,23 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
     assert settings = Settings.get_settings!()
     assert settings.suspend_after_idle_min == 30
+
+    assert render_change(view, :change, %{settings: %{req_no_shift_state_reading: true}}) =~
+             ~r(<input id="settings_req_no_shift_state_reading" .* type="checkbox" value="true" checked>)
+
+    assert settings = Settings.get_settings!()
+    assert settings.req_no_shift_state_reading == true
+
+    assert render_change(view, :change, %{settings: %{req_no_temp_reading: true}}) =~
+             ~r(<input id="settings_req_no_temp_reading" .* type="checkbox" value="true" checked>)
+
+    assert settings = Settings.get_settings!()
+    assert settings.req_no_temp_reading == true
+
+    assert render_change(view, :change, %{settings: %{req_not_unlocked: false}}) =~
+             ~r(<input id="settings_req_not_unlocked" .* type="checkbox" value="true">)
+
+    assert settings = Settings.get_settings!()
+    assert settings.req_not_unlocked == false
   end
 end

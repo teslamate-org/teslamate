@@ -17,12 +17,12 @@ msgid "Status"
 msgstr "Status"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:111
+#: lib/teslamate_web/templates/car/summary.html.leex:114
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:93
+#: lib/teslamate_web/templates/car/summary.html.leex:96
 msgid "State of Charge"
 msgstr "Ladezustand"
 
@@ -62,36 +62,36 @@ msgid "updating"
 msgstr "installiert Update"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:135
+#: lib/teslamate_web/templates/car/summary.html.leex:139
 msgid "Inside temperature"
 msgstr "Innentemperatur"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:123
+#: lib/teslamate_web/templates/car/summary.html.leex:127
 msgid "Outside temperature"
 msgstr "Außentemperatur"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:99
+#: lib/teslamate_web/templates/car/summary.html.leex:102
 msgid "Locked"
 msgstr "Verschlossen"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:72
-#: lib/teslamate_web/templates/car/summary.html.leex:100
-#: lib/teslamate_web/templates/car/summary.html.leex:106
+#: lib/teslamate_web/templates/car/summary.html.leex:103
+#: lib/teslamate_web/templates/car/summary.html.leex:109
 msgid "no"
 msgstr "nein"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:72
-#: lib/teslamate_web/templates/car/summary.html.leex:100
-#: lib/teslamate_web/templates/car/summary.html.leex:106
+#: lib/teslamate_web/templates/car/summary.html.leex:103
+#: lib/teslamate_web/templates/car/summary.html.leex:109
 msgid "yes"
 msgstr "ja"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:105
+#: lib/teslamate_web/templates/car/summary.html.leex:108
 msgid "Sentry Mode"
 msgstr "Wächtermodus"
 
@@ -120,7 +120,7 @@ msgid "Plugged in"
 msgstr "Eingesteckt"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:86
+#: lib/teslamate_web/templates/car/summary.html.leex:89
 msgid "Charge limit"
 msgstr "Ladelimit"
 
@@ -279,7 +279,7 @@ msgid "Create"
 msgstr "Neu erstellen"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:86
+#: lib/teslamate_web/live/car_live/summary.ex:88
 msgid "Preconditioning"
 msgstr ""
 
@@ -289,7 +289,7 @@ msgid "Sentry mode is enabled"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:87
+#: lib/teslamate_web/live/car_live/summary.ex:89
 msgid "User present"
 msgstr "Benutzer anwesend"
 
@@ -318,3 +318,38 @@ msgstr "Reichweite (ideal)"
 #: lib/teslamate_web/templates/car/summary.html.leex:36
 msgid "for"
 msgstr "seit"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:103
+msgid "No shift state reading"
+msgstr "Kein Schaltzustand"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:109
+msgid "No temperature readings"
+msgstr "Keine Temperaturmesswerte"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:94
+msgid "Requirements"
+msgstr "Voraussetzungen"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:86
+msgid "Shift state present"
+msgstr "Schaltzustand vorhanden"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:122
+msgid "Some firmware versions stop reporting temperatures or the shift state before the car is ready to sleep. Enabling these options will wait for the readings to stop."
+msgstr "Einige Firmware-Versionen hören auf, Temperaturen oder den Schaltzustand zu melden, bevor das Fahrzeug bereit ist einzuschlafen. Wenn diese Optionen aktiviert sind, wird gewartet, bis die Messwerte nicht mehr gemeldet werden."
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:115
+msgid "Vehicle must be locked"
+msgstr "Fahrzeug muss verschlossen sein"
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/live/car_live/summary.ex:87
+msgid "Temperature readings"
+msgstr "Temperaturmesswerte"
