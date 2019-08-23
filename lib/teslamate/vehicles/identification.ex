@@ -39,6 +39,9 @@ defmodule TeslaMate.Vehicles.Identification do
   defp which_battery("BT" <> _ = battery), do: battery
   defp which_battery(_), do: nil
 
+  # Source of efficiency values:
+  # https://github.com/bassmaster187/TeslaLogger/blob/master/TeslaLogger/WebHelper.cs#L414
+
   defp get_efficiency("MS", "BTX5", _perf, true), do: {"S 75D", 0.186}
   defp get_efficiency("MS", "BTX5", _perf, false), do: {"S 75", 0.185}
   defp get_efficiency("MS", "BTX4", true, _awd), do: {"S P90D", 0.200}
