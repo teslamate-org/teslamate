@@ -245,6 +245,11 @@ authentication when exposing TeslaMate to the public internet. Additionally
 only permit access to `/api/car/$car_id/logging/resume` and/or
 `/api/car/$car_id/logging/suspend`.
 
+#### My car is not sleeping!
+
+Please follow the steps applicable to TeslaMate mentioned in [this
+article](https://support.teslafi.com/knowledge-bases/2/articles/161-my-vehicle-is-not-sleeping).
+
 ## Contributions
 
 All Contributions are welcome and greatly appreciated!
