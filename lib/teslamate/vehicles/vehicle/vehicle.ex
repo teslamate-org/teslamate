@@ -156,7 +156,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event({:call, from}, :suspend_logging, _online_or_charging_complete, data) do
     with {:ok, %Vehicle{} = vehicle} <- fetch(data, expected_state: :online),
-         :ok <- can_fall_asleep(vehicle) do
+         :ok <- can_fall_asleep(vehicle, data.settings) do
       Logger.info("Suspending logging [Triggered manually]", car_id: data.car.id)
 
       {:next_state, {:suspended, :online},
@@ -663,11 +663,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
     |> DateTime.truncate(:second)
   end
 
-  defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
+  defp try_to_suspend(vehicle, current_state, %Data{car: car, settings: settings} = data) do
     idle_min = diff_seconds(DateTime.utc_now(), data.last_used) / 60
-    suspend = idle_min >= data.settings.suspend_after_idle_min
+    suspend = idle_min >= settings.suspend_after_idle_min
 
-    case can_fall_asleep(vehicle) do
+    case can_fall_asleep(vehicle, settings) do
+      {:error, :sentry_mode} ->
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         [notify_subscribers(), schedule_fetch(30)]}
+
       {:error, :preconditioning} ->
         if suspend, do: Logger.warn("Preconditioning prevents car to go to sleep", car_id: car.id)
 
@@ -684,9 +688,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:keep_state_and_data, [notify_subscribers(), schedule_fetch()]}
 
-      {:error, :sentry_mode} ->
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(30)]}
+      {:error, :shift_state} ->
+        if suspend,
+          do: Logger.warn("Shift state reading prevents car to go to sleep", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
+
+      {:error, :temp_reading} ->
+        if suspend,
+          do: Logger.warn("Temperature readings prevents car to go to sleep", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
 
       :ok ->
         if suspend do
@@ -694,28 +706,40 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
           {:next_state, {:suspended, current_state},
            %Data{data | last_state_change: DateTime.utc_now()},
-           [notify_subscribers(), schedule_fetch(data.settings.suspend_min, :minutes)]}
+           [notify_subscribers(), schedule_fetch(settings.suspend_min, :minutes)]}
         else
           {:keep_state_and_data, [notify_subscribers(), schedule_fetch(15)]}
         end
     end
   end
 
-  defp can_fall_asleep(vehicle) do
-    case vehicle do
-      %Vehicle{vehicle_state: %VehicleState{is_user_present: true}} ->
+  defp can_fall_asleep(vehicle, settings) do
+    alias Settings.Settings
+
+    case {vehicle, settings} do
+      {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _} ->
         {:error, :user_present}
 
-      %Vehicle{climate_state: %Climate{is_preconditioning: true}} ->
+      {%Vehicle{climate_state: %Climate{is_preconditioning: true}}, _} ->
         {:error, :preconditioning}
 
-      %Vehicle{vehicle_state: %VehicleState{sentry_mode: true}} ->
+      {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _} ->
         {:error, :sentry_mode}
 
-      %Vehicle{vehicle_state: %VehicleState{locked: false}} ->
+      {%Vehicle{vehicle_state: %VehicleState{locked: false}}, %Settings{req_not_unlocked: true}} ->
         {:error, :unlocked}
 
-      %Vehicle{} ->
+      {%Vehicle{drive_state: %Drive{shift_state: shift_state}},
+       %Settings{req_no_shift_state_reading: true}}
+      when not is_nil(shift_state) ->
+        {:error, :shift_state}
+
+      {%Vehicle{climate_state: %Climate{outside_temp: out_t, inside_temp: in_t}},
+       %Settings{req_no_temp_reading: true}}
+      when not is_nil(out_t) or not is_nil(in_t) ->
+        {:error, :temp_reading}
+
+      {%Vehicle{}, %Settings{}} ->
         :ok
     end
   end

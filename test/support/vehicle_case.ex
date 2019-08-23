@@ -5,6 +5,7 @@ defmodule TeslaMate.VehicleCase do
     quote do
       alias TeslaMate.Vehicles.Vehicle.Summary
       alias TeslaMate.Vehicles.Vehicle
+      alias TeslaMate.Settings.Settings
       alias TeslaMate.Log.Car
       alias TeslaApi.Vehicle.State
 
@@ -28,16 +29,31 @@ defmodule TeslaMate.VehicleCase do
             %Car{id: 0, eid: 0, vid: 1000}
           end)
 
+        opts =
+          case Keyword.pop(opts, :settings) do
+            {nil, opts} ->
+              opts
+
+            {settings, opts} ->
+              settings =
+                settings
+                |> Map.put_new(:req_no_shift_state_reading, false)
+                |> Map.put_new(:req_no_temp_reading, false)
+                |> Map.put_new(:req_not_unlocked, true)
+
+              [{:settings, struct(Settings, settings)} | opts]
+          end
+
         {:ok, _pid} =
           start_supervised(
             {Vehicle,
-             [
+             Keyword.merge(opts,
                name: name,
                deps_log: {LogMock, log_name},
                deps_api: {ApiMock, api_name},
                deps_settings: {SettingsMock, settings_name},
                deps_pubsub: {PubSubMock, pubsub_name}
-             ] ++ opts}
+             )}
           )
 
         assert_receive {SettingsMock, :subscribe_to_changes}

@@ -2,7 +2,6 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   use TeslaMate.VehicleCase, async: true
 
   alias TeslaMate.Vehicles.Vehicle
-  alias TeslaMate.Settings.Settings
 
   test "suspends when idling", %{test: name} do
     suspendable =
@@ -23,7 +22,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
@@ -61,7 +60,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
@@ -93,7 +92,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
@@ -124,7 +123,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
@@ -134,40 +133,6 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:insert_position, ^car_id, %{}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, sentry_mode: true}}}
-
-    refute_receive _, round(suspend_ms * 0.5)
-
-    refute_receive _
-  end
-
-  @tag :capture_log
-  test "does not suspend if vehicle is unlocked", %{test: name} do
-    not_supendable =
-      online_event(
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-        vehicle_state: %{locked: false}
-      )
-
-    events = [
-      {:ok, online_event()},
-      {:ok, not_supendable}
-    ]
-
-    sudpend_after_idle_ms = 10
-    suspend_ms = 100
-
-    :ok =
-      start_vehicle(name, events,
-        settings: %Settings{
-          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
-          suspend_min: suspend_ms
-        }
-      )
-
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
-
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, locked: false}}}
 
     refute_receive _, round(suspend_ms * 0.5)
 
@@ -191,7 +156,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
@@ -237,7 +202,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
@@ -294,7 +259,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: 100_000,
           suspend_min: 1000
         }
@@ -334,7 +299,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: 100_000,
           suspend_min: 1000
         }
@@ -349,5 +314,180 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, sentry_mode: false}}}
 
     refute_receive _
+  end
+
+  describe "req_not_unlocked" do
+    @tag :capture_log
+    test "does not suspend if vehicle is unlocked", %{test: name} do
+      not_supendable =
+        online_event(
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+          vehicle_state: %{locked: false}
+        )
+
+      events = [
+        {:ok, online_event()},
+        {:ok, not_supendable}
+      ]
+
+      sudpend_after_idle_ms = 10
+      suspend_ms = 100
+
+      :ok =
+        start_vehicle(name, events,
+          settings: %{
+            req_not_unlocked: true,
+            suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+            suspend_min: suspend_ms
+          }
+        )
+
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, locked: false}}}
+
+      refute_receive _, round(suspend_ms * 0.5)
+
+      refute_receive _
+    end
+
+    @tag :capture_log
+    test "w/o does suspend if vehicle is unlocked", %{test: name} do
+      not_supendable =
+        online_event(
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+          vehicle_state: %{locked: false}
+        )
+
+      events = [
+        {:ok, online_event()},
+        {:ok, not_supendable}
+      ]
+
+      sudpend_after_idle_ms = 10
+      suspend_ms = 100
+
+      :ok =
+        start_vehicle(name, events,
+          settings: %{
+            req_not_unlocked: false,
+            suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+            suspend_min: suspend_ms
+          }
+        )
+
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, locked: false}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, locked: false}}}
+
+      refute_receive _
+    end
+  end
+
+  describe "req_no_shift_state_reading" do
+    @tag :capture_log
+    test "does not suspend if shift_state is not nil", %{test: name} do
+      not_supendable =
+        online_event(
+          drive_state: %{timestamp: 0, shift_state: "P", latitude: 0.0, longitude: 0.0}
+        )
+
+      events = [
+        {:ok, online_event()},
+        {:ok, not_supendable}
+      ]
+
+      sudpend_after_idle_ms = 10
+      suspend_ms = 100
+
+      :ok =
+        start_vehicle(name, events,
+          req_no_shift_state_reading: true,
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        )
+
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+      refute_receive _, round(suspend_ms * 0.5)
+
+      refute_receive _
+    end
+  end
+
+  describe "req_no_temp_reading" do
+    @tag :capture_log
+    test "does not suspend if outside_temp is not nil", %{test: name} do
+      not_supendable =
+        online_event(
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+          climate_state: %{outside_temp: 20.0}
+        )
+
+      events = [
+        {:ok, online_event()},
+        {:ok, not_supendable}
+      ]
+
+      sudpend_after_idle_ms = 10
+      suspend_ms = 100
+
+      :ok =
+        start_vehicle(name, events,
+          settings: %{
+            req_no_temp_reading: true,
+            suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+            suspend_min: suspend_ms
+          }
+        )
+
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, outside_temp: 20.0}}}
+
+      refute_receive _, round(suspend_ms * 0.5)
+
+      refute_receive _
+    end
+
+    @tag :capture_log
+    test "does not suspend if inside_temp is not nil", %{test: name} do
+      not_supendable =
+        online_event(
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+          climate_state: %{inside_temp: 20.0}
+        )
+
+      events = [
+        {:ok, online_event()},
+        {:ok, not_supendable}
+      ]
+
+      sudpend_after_idle_ms = 10
+      suspend_ms = 100
+
+      :ok =
+        start_vehicle(name, events,
+          settings: %{
+            req_no_temp_reading: true,
+            suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+            suspend_min: suspend_ms
+          }
+        )
+
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, inside_temp: 20.0}}}
+
+      refute_receive _, round(suspend_ms * 0.5)
+
+      refute_receive _
+    end
   end
 end

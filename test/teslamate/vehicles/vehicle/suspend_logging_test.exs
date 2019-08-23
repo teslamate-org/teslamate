@@ -4,7 +4,6 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   alias TeslaMate.Vehicles.Vehicle
 
   alias TeslaMate.Vehicles.Vehicle
-  alias TeslaMate.Settings.Settings
 
   test "immediately returns :ok if asleep", %{test: name} do
     events = [
@@ -37,7 +36,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, online_event()}
     ]
 
-    :ok = start_vehicle(name, events, settings: %Settings{suspend_min: 1000})
+    :ok = start_vehicle(name, events, settings: %{suspend_min: 1000})
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -115,7 +114,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_supendable}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
     assert_receive {:start_state, _, :online}
 
     assert {:error, :unlocked} = Vehicle.suspend_logging(name)
@@ -190,6 +189,42 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert {:error, :charging_in_progress} = Vehicle.suspend_logging(name)
   end
 
+  test "cannot be suspended if outside_temp is not nil", %{test: name} do
+    not_supendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        climate_state: %{outside_temp: 20.0}
+      )
+
+    events = [
+      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, not_supendable}
+    ]
+
+    :ok = start_vehicle(name, events, settings: %{req_no_temp_reading: true})
+    assert_receive {:start_state, _, :online}
+
+    assert {:error, :temp_reading} = Vehicle.suspend_logging(name)
+  end
+
+  test "cannot be suspended if inside_temp is not nil", %{test: name} do
+    not_supendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        climate_state: %{inside_temp: 20.0}
+      )
+
+    events = [
+      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, not_supendable}
+    ]
+
+    :ok = start_vehicle(name, events, settings: %{req_no_temp_reading: true})
+    assert_receive {:start_state, _, :online}
+
+    assert {:error, :temp_reading} = Vehicle.suspend_logging(name)
+  end
+
   test "suspends when charging is complete", %{test: name} do
     events = [
       {:ok, %TeslaApi.Vehicle{state: "online"}},
@@ -197,7 +232,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, charging_event(0, "Complete", 1.5)}
     ]
 
-    :ok = start_vehicle(name, events, settings: %Settings{suspend_min: 1_000_000})
+    :ok = start_vehicle(name, events, settings: %{suspend_min: 1_000_000})
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -229,7 +264,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: 100,
           suspend_min: 1000
         }
@@ -270,7 +305,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok =
       start_vehicle(name, events,
-        settings: %Settings{
+        settings: %{
           suspend_after_idle_min: 100_000,
           suspend_min: 1000
         }

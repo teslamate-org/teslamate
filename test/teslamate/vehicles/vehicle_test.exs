@@ -1,8 +1,6 @@
 defmodule TeslaMate.Vehicles.VehicleTest do
   use TeslaMate.VehicleCase, async: true
 
-  alias TeslaMate.Settings.Settings
-
   describe "starting" do
     @tag :capture_log
     test "handles unkown and faulty states", %{test: name} do
@@ -71,7 +69,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok =
         start_vehicle(name, events,
-          settings: %Settings{
+          settings: %{
             suspend_after_idle_min: round(1 / 60),
             suspend_min: 10_000
           }
