@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.6.1] - 2019-08-25
+
+### Added
+
+- Add separately configurable sleep requirements
+
+### Fixed
+
+- Improve identification of performance models
+- Fix Model X identification
+- Improve browser compatibility of the web interface
+- Disable basic auth in Grafana
+- Remove pre-calculated consumption columns and instead calculate consumption
+  values dynamically based on the given efficiency factor
+- Add various database constraints to keep data in a consistent state
+
 ## [1.6.0] - 2019-08-18
 
 ### Added / Changed
@@ -274,6 +290,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.6.1]: https://github.com/adriankumpf/teslamate/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/adriankumpf/teslamate/compare/v1.5.3...v1.6.0
 [1.5.3]: https://github.com/adriankumpf/teslamate/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/adriankumpf/teslamate/compare/v1.5.1...v1.5.2
