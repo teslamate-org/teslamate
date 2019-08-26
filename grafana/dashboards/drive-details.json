@@ -70,7 +70,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565986888458,
+  "iteration": 1566827327713,
   "links": [],
   "panels": [
     {
@@ -78,10 +78,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "fill": 0,
+      "fill": 1,
       "fillGradient": 1,
       "gridPos": {
-        "h": 19,
+        "h": 16,
         "w": 12,
         "x": 0,
         "y": 0
@@ -134,7 +134,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Range [$length_unit]\",\n\tconvert_km(est_battery_range_km, '$length_unit') AS \"Range (est.) [$length_unit]\",\n\tbattery_level AS \"SOC [%]\",\n\tconvert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\",\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\",\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\",\n\tconvert_celsius(passenger_temp_setting, '$temp_unit') as \"Passenger Temperature [°$temp_unit]\",\n\tis_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Range [$length_unit]\",\n\tconvert_km(est_battery_range_km, '$length_unit') AS \"Range (est.) [$length_unit]\",\n\tbattery_level AS \"SOC [%]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -197,14 +197,14 @@
         }
       ],
       "yaxis": {
-        "align": false,
+        "align": true,
         "alignLevel": null
       }
     },
     {
       "autoZoom": true,
       "gridPos": {
-        "h": 19,
+        "h": 28,
         "w": 12,
         "x": 12,
         "y": 0
@@ -291,6 +291,262 @@
       "timeShift": null,
       "title": "Map",
       "type": "pr0ps-trackmap-panel"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 8,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/Elevation.*/",
+          "color": "#3274D9"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__time(date),\n\televation AS \"Elevation [m]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "charge_energy_added"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "charges",
+          "timeColumn": "date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Elevation",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "fill": 0,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/.*Temperature.*/",
+          "fill": 1
+        },
+        {
+          "alias": "/.*Driver Temperature.*/",
+          "zindex": 3
+        },
+        {
+          "alias": "/Passenger Temperature.*/",
+          "zindex": 2
+        },
+        {
+          "alias": "is_climate_on",
+          "color": "rgb(210, 203, 203)",
+          "yaxis": 2,
+          "zindex": -3
+        },
+        {
+          "alias": "fan_status",
+          "color": "#96D98D",
+          "yaxis": 2
+        },
+        {
+          "alias": "/Outside Temperature.*/",
+          "color": "#8AB8FF"
+        },
+        {
+          "alias": "/Inside Temperature.*/",
+          "color": "#F2CC0C"
+        },
+        {
+          "alias": "Outside Temperature [°C]"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\",\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\",\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\",\n\tconvert_celsius(passenger_temp_setting, '$temp_unit') as \"Passenger Temperature [°$temp_unit]\",\n  is_climate_on::integer,\n\tfan_status\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "charge_energy_added"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "charges",
+          "timeColumn": "date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Temperatures",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": false,
