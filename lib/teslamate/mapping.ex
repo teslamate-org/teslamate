@@ -2,12 +2,15 @@ defmodule TeslaMate.Mapping do
   use GenServer
 
   require Logger
+  import Core.Dependency, only: [call: 3]
+  alias TeslaMate.Log.Position
+  alias TeslaMate.Log
+
+  defstruct [:client, :blocked_on, :deps]
+  alias __MODULE__, as: State
 
   @name __MODULE__
-
-  defstruct [:client, :blocked_on, :get_elevation]
-
-  alias __MODULE__, as: State
+  @pos_limit 100
 
   # API
 
@@ -16,27 +19,61 @@ defmodule TeslaMate.Mapping do
   end
 
   def get_elevation(name \\ @name, coordinates) do
-    GenServer.call(name, {:get_elevation, coordinates}, 5000)
+    GenServer.call(name, {:get_elevation, coordinates}, 1000)
   end
 
   # Callbacks
 
   @impl true
   def init(opts) do
-    get_elevation = Keyword.get(opts, :get_elevation, &SRTM.get_elevation/3)
     client = SRTM.Client.new(cache_path())
 
-    {:ok, %State{client: client, get_elevation: get_elevation}}
+    deps = %{
+      srtm: Keyword.get(opts, :deps_srtm, SRTM),
+      log: Keyword.get(opts, :deps_log, Log)
+    }
+
+    {:ok, %State{client: client, deps: deps}, {:continue, :add_elevation_to_positions}}
   end
 
   @impl true
-  def handle_call({:get_elevation, {_, _}}, _from, %State{blocked_on: task} = state)
-      when is_reference(task) do
+  def handle_continue(:add_elevation_to_positions, state) do
+    case call(state.deps.log, :get_positions_without_elevation, [@pos_limit]) do
+      [_ | _] = positions ->
+        {:noreply, %State{state | blocked_on: :update_positions},
+         {:continue, {:update_positions, positions}}}
+
+      [] ->
+        {:noreply, state}
+    end
+  end
+
+  def handle_continue({:update_positions, positions}, %State{client: client} = state) do
+    client =
+      Enum.reduce(positions, client, fn %Position{latitude: lat, longitude: lng} = pos, client ->
+        with {:ok, el, client} <- call(state.deps.srtm, :get_elevation, [client, lat, lng]),
+             {:ok, _pos} <- call(state.deps.log, :update_position, [pos, %{elevation: el}]) do
+          Logger.debug("#{lat},#{lng}: #{el}m")
+          client
+        else
+          {:error, reason} ->
+            Logger.warn("Failed to query elevation: #{inspect(reason)}")
+            client
+        end
+      end)
+
+    {:noreply, %State{state | client: client, blocked_on: nil},
+     {:continue, :add_elevation_to_positions}}
+  end
+
+  @impl true
+  def handle_call({:get_elevation, {_, _}}, _from, %State{blocked_on: blocker} = state)
+      when is_reference(blocker) or blocker == :update_positions do
     {:reply, {:ok, nil}, state}
   end
 
   def handle_call({:get_elevation, {lat, lng}}, _from, %State{client: client} = state) do
-    task = Task.async(fn -> state.get_elevation.(client, lat, lng) end)
+    task = Task.async(fn -> call(state.deps.srtm, :get_elevation, [client, lat, lng]) end)
 
     case Task.yield(task, 100) do
       {:ok, {:ok, elevation, client}} ->

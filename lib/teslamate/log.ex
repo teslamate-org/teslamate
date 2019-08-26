@@ -92,6 +92,20 @@ defmodule TeslaMate.Log do
     |> Repo.one()
   end
 
+  def get_positions_without_elevation(limit) do
+    Position
+    |> where([p], is_nil(p.elevation))
+    |> order_by(asc: :date)
+    |> limit(^limit)
+    |> Repo.all()
+  end
+
+  def update_position(%Position{} = position, attrs) do
+    position
+    |> Position.changeset(attrs)
+    |> Repo.update()
+  end
+
   ## Drive
 
   alias TeslaMate.Log.Drive
