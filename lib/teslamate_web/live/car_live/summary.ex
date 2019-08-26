@@ -71,6 +71,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
     {:noreply, assign(socket, summary: summary, duration: duration_str(summary.since))}
   end
 
+  defp translate_state(:start), do: nil
   defp translate_state(:driving), do: gettext("driving")
   defp translate_state(:charging), do: gettext("charging")
   defp translate_state(:charging_complete), do: gettext("charging complete")
