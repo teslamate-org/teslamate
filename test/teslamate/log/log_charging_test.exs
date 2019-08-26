@@ -193,7 +193,7 @@ defmodule TeslaMate.LogChargingTest do
       assert %DateTime{} = cproc.start_date
       assert %DateTime{} = cproc.end_date
       assert cproc.calculated_max_range == 497
-      assert cproc.charge_energy_added == 0.72
+      assert cproc.charge_energy_added == 0.31
       assert cproc.duration_min == 4
       assert cproc.end_battery_level == 54
       assert cproc.start_battery_level == 50
@@ -267,7 +267,7 @@ defmodule TeslaMate.LogChargingTest do
       assert %DateTime{} = start_date = cproc.start_date
       assert %DateTime{} = cproc.end_date
       assert cproc.calculated_max_range == 497
-      assert cproc.charge_energy_added == 0.72
+      assert cproc.charge_energy_added == 0.31
       assert cproc.duration_min == 4
       assert cproc.end_battery_level == 54
       assert cproc.start_battery_level == 50
@@ -295,7 +295,7 @@ defmodule TeslaMate.LogChargingTest do
         %{
           date: "2019-04-05 16:15:40",
           battery_level: 55,
-          charge_energy_added: 1.12,
+          charge_energy_added: 1.14,
           charger_actual_current: 5,
           charger_phases: 3,
           charger_pilot_current: 16,
@@ -316,7 +316,7 @@ defmodule TeslaMate.LogChargingTest do
       assert ^start_date = cproc.start_date
       assert %DateTime{} = cproc.end_date
       assert cproc.calculated_max_range == 507
-      assert cproc.charge_energy_added == 1.12
+      assert cproc.charge_energy_added == 0.73
       assert cproc.duration_min == 14
       assert cproc.end_battery_level == 55
       assert cproc.start_battery_level == 50

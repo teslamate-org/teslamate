@@ -245,7 +245,7 @@ defmodule TeslaMate.Log do
       Charge
       |> where(charging_process_id: ^process_id)
       |> select([c], %{
-        charge_energy_added: max(c.charge_energy_added),
+        charge_energy_added: max(c.charge_energy_added) - min(c.charge_energy_added),
         start_range_km: min(c.ideal_battery_range_km),
         end_range_km: max(c.ideal_battery_range_km),
         start_battery_level: min(c.battery_level),
