@@ -50,11 +50,12 @@ defmodule TeslaMate.MixProject do
       {:gen_state_machine, "~> 2.0"},
       {:ecto_enum, "~> 1.2"},
       {:logger_telegram_backend, "~> 1.0", only: :prod},
-      {:phoenix_live_view, "~> 0.1.0"},
+      {:phoenix_live_view, "~> 0.1"},
       {:tortoise, "~> 0.9"},
       {:httpoison, "~> 1.5"},
       {:excoveralls, "~> 0.10", only: :test},
-      {:geocalc, "~> 0.5"}
+      {:geocalc, "~> 0.5"},
+      {:srtm, github: "adriankumpf/srtm"}
     ]
   end
 

@@ -46,3 +46,4 @@ config/*.env
 conf/wizzy.json
 
 .env
+.srtm_cache/

@@ -44,3 +44,5 @@ config :teslamate, :mqtt,
   host: "localhost",
   username: "dev",
   password: "dev"
+
+config :teslamate, :srtm_cache, "./.srtm_cache"
