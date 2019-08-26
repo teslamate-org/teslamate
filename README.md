@@ -13,8 +13,6 @@ A data logger for your Tesla.
 - Visualization and data analysis with Grafana
 - Current vehicle data is published to a local MQTT Broker _(optional)_
 
-**⚡⚡ CHECK OUT THE [CHANGELOG](CHANGELOG.md) BEFORE UPGRADING TO V1.4 ⚡⚡**
-
 ## Features
 
 **Dashboards**

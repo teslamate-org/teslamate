@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2] - 2019-08-26
+
+### Fixed
+
+- Fix migration that could panic when upgrading from v1.4 to v1.6
+- Fix efficiency calculation
+
 ## [1.6.1] - 2019-08-25
 
 ### Added
@@ -290,6 +297,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.6.2]: https://github.com/adriankumpf/teslamate/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/adriankumpf/teslamate/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/adriankumpf/teslamate/compare/v1.5.3...v1.6.0
 [1.5.3]: https://github.com/adriankumpf/teslamate/compare/v1.5.2...v1.5.3
