@@ -8,6 +8,7 @@ defmodule TeslaMate.Log.Position do
     field :date, :utc_datetime
     field :latitude, :float
     field :longitude, :float
+    field :elevation, :float
 
     field :speed, :integer
     field :power, :float
@@ -21,7 +22,6 @@ defmodule TeslaMate.Log.Position do
     field :battery_heater_no_power, :boolean
     field :outside_temp, :float
     field :inside_temp, :float
-    field :altitude, :float
     field :fan_status, :integer
     field :driver_temp_setting, :float
     field :passenger_temp_setting, :float
@@ -41,6 +41,7 @@ defmodule TeslaMate.Log.Position do
       :date,
       :latitude,
       :longitude,
+      :elevation,
       :speed,
       :power,
       :odometer,
@@ -53,7 +54,6 @@ defmodule TeslaMate.Log.Position do
       :battery_heater,
       :inside_temp,
       :outside_temp,
-      :altitude,
       :fan_status,
       :driver_temp_setting,
       :passenger_temp_setting,
