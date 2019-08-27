@@ -10,7 +10,6 @@ defmodule TeslaMate.Mapping do
   alias __MODULE__, as: State
 
   @name __MODULE__
-  @pos_limit 100
 
   # API
 
@@ -21,6 +20,14 @@ defmodule TeslaMate.Mapping do
   def get_elevation(name \\ @name, coordinates) do
     GenServer.call(name, {:get_elevation, coordinates}, 1000)
   end
+
+  # TODO
+  # * add_elevation_to_positions every X hours
+  # * circuit breaker
+  # * call get_elevation from Logs
+  # * Add Docker Volume for caches
+  # * remove / rename altitude field
+  # * Grafana: m to ft
 
   # Callbacks
 
@@ -33,27 +40,26 @@ defmodule TeslaMate.Mapping do
       log: Keyword.get(opts, :deps_log, Log)
     }
 
-    {:ok, %State{client: client, deps: deps}, {:continue, :add_elevation_to_positions}}
+    {:ok, %State{client: client, deps: deps}, {:continue, {:add_elevation_to_positions, 0}}}
   end
 
   @impl true
-  def handle_continue(:add_elevation_to_positions, state) do
-    case call(state.deps.log, :get_positions_without_elevation, [@pos_limit]) do
-      [_ | _] = positions ->
+  def handle_continue({:add_elevation_to_positions, min_id}, state) do
+    case call(state.deps.log, :get_positions_without_elevation, [min_id]) |> Enum.reverse() do
+      [%Position{id: next_min_id} | _] = positions ->
         {:noreply, %State{state | blocked_on: :update_positions},
-         {:continue, {:update_positions, positions}}}
+         {:continue, {:update_positions, positions, next_min_id}}}
 
       [] ->
         {:noreply, state}
     end
   end
 
-  def handle_continue({:update_positions, positions}, %State{client: client} = state) do
+  def handle_continue({:update_positions, positions, next_min_id}, %State{client: client} = state) do
     client =
       Enum.reduce(positions, client, fn %Position{latitude: lat, longitude: lng} = pos, client ->
         with {:ok, el, client} <- call(state.deps.srtm, :get_elevation, [client, lat, lng]),
              {:ok, _pos} <- call(state.deps.log, :update_position, [pos, %{elevation: el}]) do
-          Logger.debug("#{lat},#{lng}: #{el}m")
           client
         else
           {:error, reason} ->
@@ -63,7 +69,7 @@ defmodule TeslaMate.Mapping do
       end)
 
     {:noreply, %State{state | client: client, blocked_on: nil},
-     {:continue, :add_elevation_to_positions}}
+     {:continue, {:add_elevation_to_positions, next_min_id}}}
   end
 
   @impl true

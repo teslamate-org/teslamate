@@ -92,11 +92,11 @@ defmodule TeslaMate.Log do
     |> Repo.one()
   end
 
-  def get_positions_without_elevation(limit) do
+  def get_positions_without_elevation(min_id \\ 0) do
     Position
-    |> where([p], is_nil(p.elevation))
-    |> order_by(asc: :date)
-    |> limit(^limit)
+    |> where([p], p.id > ^min_id and is_nil(p.elevation))
+    |> order_by(asc: :id)
+    |> limit(100)
     |> Repo.all()
   end
 
