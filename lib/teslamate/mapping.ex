@@ -22,11 +22,9 @@ defmodule TeslaMate.Mapping do
   end
 
   # TODO
-  # * add_elevation_to_positions every X hours
   # * circuit breaker
   # * call get_elevation from Logs
   # * Add Docker Volume for caches
-  # * remove / rename altitude field
   # * Grafana: m to ft
 
   # Callbacks
@@ -51,6 +49,7 @@ defmodule TeslaMate.Mapping do
          {:continue, {:update_positions, positions, next_min_id}}}
 
       [] ->
+        Process.send_after(self(), :add_elevation_to_positions, :timer.hours(6))
         {:noreply, state}
     end
   end
@@ -81,7 +80,7 @@ defmodule TeslaMate.Mapping do
   def handle_call({:get_elevation, {lat, lng}}, _from, %State{client: client} = state) do
     task = Task.async(fn -> call(state.deps.srtm, :get_elevation, [client, lat, lng]) end)
 
-    case Task.yield(task, 100) do
+    case Task.yield(task, 50) do
       {:ok, {:ok, elevation, client}} ->
         {:reply, {:ok, elevation}, %State{state | client: client}}
 
@@ -107,6 +106,10 @@ defmodule TeslaMate.Mapping do
 
   def handle_info({:DOWN, _ref, :process, _pid, :normal}, state) do
     {:noreply, state}
+  end
+
+  def handle_info(:add_elevation_to_positions, state) do
+    {:noreply, state, {:continue, {:add_elevation_to_positions, 0}}}
   end
 
   defp cache_path, do: Application.fetch_env!(:teslamate, :srtm_cache)
