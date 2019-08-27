@@ -100,12 +100,22 @@ defmodule TeslaMate.Log do
     |> Repo.one()
   end
 
-  def get_positions_without_elevation(min_id \\ 0) do
+  def get_positions_without_elevation(min_id \\ 0, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 100)
+
     Position
     |> where([p], p.id > ^min_id and is_nil(p.elevation))
     |> order_by(asc: :id)
-    |> limit(100)
+    |> limit(^limit)
     |> Repo.all()
+    |> Enum.reverse()
+    |> case do
+      [%Position{id: next} | _] = positions ->
+        {Enum.reverse(positions), next}
+
+      [] ->
+        {[], nil}
+    end
   end
 
   def update_position(%Position{} = position, attrs) do

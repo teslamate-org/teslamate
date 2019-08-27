@@ -9,7 +9,8 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
 
     {:ok, _pid} = start_supervised({SRTMMock, name: srtm_name, pid: self(), responses: responses})
 
-    {:ok, _} = start_supervised({Mapping, name: name, deps_srtm: {SRTMMock, srtm_name}})
+    {:ok, _} =
+      start_supervised({Mapping, name: name, timeout: 100, deps_srtm: {SRTMMock, srtm_name}})
 
     :ok
   end
@@ -20,31 +21,56 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
     positions =
       %{date: DateTime.utc_now(), latitude: 0, longitude: 0}
       |> List.duplicate(201)
+      |> List.replace_at(50, %{date: DateTime.utc_now(), latitude: 1, longitude: 1})
+      |> List.replace_at(150, %{date: DateTime.utc_now(), latitude: 1, longitude: 1})
       |> Enum.map(fn position ->
         {:ok, pos} = Log.insert_position(car_id, position)
         pos
       end)
 
-    :ok = start_mapping(name, %{{0.0, 0.0} => fn -> {:ok, 42} end})
+    :ok =
+      start_mapping(name, %{
+        {0.0, 0.0} => fn -> {:ok, 42} end,
+        {1.0, 1.0} => fn ->
+          :timer.sleep(100)
+          {:ok, 420}
+        end
+      })
 
-    for _ <- positions do
-      assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 0.0, 0.0}}
+    # blocked
+    assert Mapping.get_elevation(name, {0, 0}) == nil
+    assert Mapping.get_elevation(name, {0, 0}) == nil
+    assert Mapping.get_elevation(name, {0, 0}) == nil
+
+    for {_, i} <- Enum.with_index(positions) do
+      if i in [50, 150] do
+        assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 1.0, 1.0}}
+      else
+        assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 0.0, 0.0}}
+      end
     end
 
-    for position <- positions do
-      assert %Position{elevation: 42.0} = TeslaMate.Repo.get(Position, position.id)
+    for {position, i} <- Enum.with_index(positions) do
+      if i in [50, 150] do
+        assert %Position{elevation: 420.0} = TeslaMate.Repo.get(Position, position.id)
+      else
+        assert %Position{elevation: 42.0} = TeslaMate.Repo.get(Position, position.id)
+      end
     end
 
     refute_receive _
   end
 
   @tag :capture_log
-  test "handles errors during update", %{test: name} do
+  test "handles errors during update!", %{test: name} do
     assert %Car{id: car_id} = car_fixture()
 
-    [p0, p1, p2] =
+    [p0, p1, p2, p3, p4, p5] =
       [
         %{date: DateTime.utc_now(), latitude: 0, longitude: 0},
+        %{date: DateTime.utc_now(), latitude: 1, longitude: 1},
+        %{date: DateTime.utc_now(), latitude: 99, longitude: 99},
+        %{date: DateTime.utc_now(), latitude: 99, longitude: 99},
         %{date: DateTime.utc_now(), latitude: 99, longitude: 99},
         %{date: DateTime.utc_now(), latitude: 0, longitude: 0}
       ]
@@ -56,46 +82,27 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
     :ok =
       start_mapping(name, %{
         {0.0, 0.0} => fn -> {:ok, 42} end,
-        {99.0, 99.0} => fn -> {:error, :kaputt} end
+        {1.0, 1.0} => fn -> {:error, :boom} end,
+        {99.0, 99.0} => fn ->
+          :timer.sleep(100)
+          {:error, :kaputt}
+        end
       })
 
     assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 0.0, 0.0}}
+    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 1.0, 1.0}}
     assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 99.0, 99.0}}
-    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 0.0, 0.0}}
+    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 99.0, 99.0}}
+    # 4th and 5th are :unavailable
 
-    :timer.sleep(10)
+    :timer.sleep(300)
 
     assert %Position{elevation: 42.0} = TeslaMate.Repo.get(Position, p0.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p1.id)
-    assert %Position{elevation: 42.0} = TeslaMate.Repo.get(Position, p2.id)
-
-    refute_receive _
-  end
-
-  test "reacts to :add_elevation_to_positions messages", %{test: name} do
-    assert %Car{id: car_id} = car_fixture()
-
-    :ok = start_mapping(name, %{{0.0, 0.0} => fn -> {:ok, 42} end})
-
-    refute_receive _, 40
-
-    positions =
-      %{date: DateTime.utc_now(), latitude: 0, longitude: 0}
-      |> List.duplicate(5)
-      |> Enum.map(fn position ->
-        {:ok, pos} = Log.insert_position(car_id, position)
-        pos
-      end)
-
-    send(name, :add_elevation_to_positions)
-
-    for _ <- positions do
-      assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 0.0, 0.0}}
-    end
-
-    for position <- positions do
-      assert %Position{elevation: 42.0} = TeslaMate.Repo.get(Position, position.id)
-    end
+    assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p2.id)
+    assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p3.id)
+    assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p4.id)
+    assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p5.id)
 
     refute_receive _
   end

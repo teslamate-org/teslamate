@@ -50,3 +50,5 @@ if System.get_env("ENABLE_LOGGER_TELEGRAM") == "true" do
     chat_id: System.fetch_env!("CHAT_ID"),
     token: System.fetch_env!("TOKEN")
 end
+
+config :teslamate, :srtm_cache, System.get_env("SRTM_CACHE", "/tmp/srtm_cache")

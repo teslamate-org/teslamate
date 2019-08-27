@@ -1,5 +1,5 @@
 defmodule TeslaMate.Mapping do
-  use GenServer
+  use GenStateMachine
 
   require Logger
   import Core.Dependency, only: [call: 3]
@@ -7,23 +7,25 @@ defmodule TeslaMate.Mapping do
   alias TeslaMate.Log
 
   defstruct [:client, :timeout, :blocked_on, :deps, :name]
-  alias __MODULE__, as: State
+  alias __MODULE__, as: Data
 
   @name __MODULE__
 
   # API
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
+    GenStateMachine.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
   end
 
   def get_elevation(name \\ @name, coordinates) do
-    GenServer.call(name, {:get_elevation, coordinates}, 1000)
+    GenStateMachine.call(name, {:get_elevation, coordinates}, 2000)
   end
 
   # TODO
   # * Add Docker Volume for caches
   # * Grafana: m to ft
+  # * Test get_positions_without_elevation
+  # * Test update_position
 
   # Callbacks
 
@@ -39,90 +41,115 @@ defmodule TeslaMate.Mapping do
       log: Keyword.get(opts, :deps_log, Log)
     }
 
-    {:ok, %State{client: client, timeout: timeout, deps: deps, name: name},
-     {:continue, {:add_elevation_to_positions, 0}}}
+    {:ok, :ready, %Data{client: client, timeout: timeout, deps: deps, name: name},
+     {:next_event, :internal, {:fetch_positions, 0}}}
   end
+
+  ## Calls
 
   @impl true
-  def handle_continue({:add_elevation_to_positions, min_id}, state) do
-    case call(state.deps.log, :get_positions_without_elevation, [min_id]) |> Enum.reverse() do
-      [%Position{id: next_min_id} | _] = positions ->
-        {:noreply, %State{state | blocked_on: :update_positions},
-         {:continue, {:update_positions, positions, next_min_id}}}
+  def handle_event({:call, from}, {:get_elevation, {lat, lng}}, :ready, %Data{} = data) do
+    task = Task.async(fn -> do_get_elevation({lat, lng}, data) end)
 
-      [] ->
-        Process.send_after(self(), :add_elevation_to_positions, :timer.hours(6))
-        {:noreply, state}
-    end
-  end
-
-  def handle_continue({:update_positions, positions, next_min_id}, %State{} = state) do
-    state =
-      Enum.reduce(positions, state, fn %Position{latitude: lat, longitude: lng} = pos, state ->
-        with {:ok, el, client} <- do_get_elevation({lat, lng}, state),
-             {:ok, _pos} <- call(state.deps.log, :update_position, [pos, %{elevation: el}]) do
-          %State{state | client: client}
-        else
-          {:error, reason} ->
-            log_warning(reason)
-            state
-        end
-      end)
-
-    {:noreply, %State{state | blocked_on: nil},
-     {:continue, {:add_elevation_to_positions, next_min_id}}}
-  end
-
-  @impl true
-  def handle_call({:get_elevation, {_, _}}, _from, %State{blocked_on: blocker} = state)
-      when is_reference(blocker) or blocker == :update_positions do
-    {:reply, nil, state}
-  end
-
-  def handle_call({:get_elevation, {lat, lng}}, _from, %State{} = state) do
-    task = Task.async(fn -> do_get_elevation({lat, lng}, state) end)
-
-    case Task.yield(task, state.timeout) do
+    case Task.yield(task, data.timeout) do
       {:ok, {:ok, elevation, client}} ->
-        {:reply, elevation, %State{state | client: client}}
+        {:keep_state, %Data{data | client: client}, {:reply, from, elevation}}
 
       {:ok, {:error, :unavailable}} ->
-        {:reply, nil, state}
+        {:keep_state_and_data, {:reply, from, nil}}
 
       {:ok, {:error, reason}} ->
         log_warning(reason)
-        {:reply, nil, state}
+        {:keep_state_and_data, {:reply, from, nil}}
 
       nil ->
-        {:reply, nil, %State{state | blocked_on: task.ref}}
+        {:next_state, {:waiting, task.ref}, data, {:reply, from, nil}}
     end
   end
 
-  @impl true
-  def handle_info({task, result}, %State{blocked_on: task} = state) when is_reference(task) do
+  def handle_event({:call, from}, {:get_elevation, _coords}, _state, _data) do
+    {:keep_state_and_data, {:reply, from, nil}}
+  end
+
+  ## Internal
+
+  def handle_event(event, {:fetch_positions, min_id}, :ready, %Data{} = data)
+      when event in [:internal, :state_timeout] do
+    Logger.info("Updating positions ...")
+
+    case call(data.deps.log, :get_positions_without_elevation, [min_id, [limit: 100]]) do
+      {[], nil} ->
+        {:keep_state_and_data, schedule_fetch()}
+
+      {positions, next} ->
+        :ok = GenStateMachine.cast(self(), :process)
+        {:next_state, {:update, positions, next, nil}, data}
+    end
+  end
+
+  ## Cast
+
+  def handle_event(:cast, :process, {:update, [], next, nil}, data) do
+    {:next_state, :ready, data, {:next_event, :internal, {:fetch_positions, next}}}
+  end
+
+  def handle_event(:cast, :process, {:update, [%Position{} = p | rest], next, nil}, data) do
+    task = Task.async(fn -> do_get_elevation({p.latitude, p.longitude}, data) end)
+
+    case Task.yield(task, data.timeout) do
+      {:ok, {:ok, elevation, client}} ->
+        {:ok, _pos} = call(data.deps.log, :update_position, [p, %{elevation: elevation}])
+        :ok = GenStateMachine.cast(self(), :process)
+        {:next_state, {:update, rest, next, nil}, %Data{data | client: client}}
+
+      {:ok, {:error, :unavailable}} ->
+        :ok = GenStateMachine.cast(self(), :process)
+        {:next_state, {:update, rest, next, nil}, data}
+
+      {:ok, {:error, reason}} ->
+        log_warning(reason)
+        :ok = GenStateMachine.cast(self(), :process)
+        {:next_state, {:update, rest, next, nil}, data}
+
+      nil ->
+        {:next_state, {:update, [p | rest], next, task.ref}, data}
+    end
+  end
+
+  ## Info
+
+  def handle_event(:info, {ref, result}, {:waiting, ref}, data) do
     case result do
       {:ok, _elevation, %SRTM.Client{} = client} ->
-        {:noreply, %State{state | client: client, blocked_on: nil}}
+        {:next_state, :ready, %Data{data | client: client}, schedule_fetch()}
 
       {:error, reason} ->
         log_warning(reason)
-        {:noreply, %State{state | blocked_on: nil}}
+        {:next_state, :ready, data, schedule_fetch()}
     end
   end
 
-  def handle_info({:DOWN, _ref, :process, _pid, :normal}, state) do
-    {:noreply, state}
+  def handle_event(:info, {ref, result}, {:update, [%Position{} = p | rest], next, ref}, data) do
+    case result do
+      {:ok, elevation, %SRTM.Client{} = client} ->
+        {:ok, _pos} = call(data.deps.log, :update_position, [p, %{elevation: elevation}])
+        :ok = GenStateMachine.cast(self(), :process)
+        {:next_state, {:update, rest, next, nil}, %Data{data | client: client}}
+
+      {:error, reason} ->
+        log_warning(reason)
+        :ok = GenStateMachine.cast(self(), :process)
+        {:next_state, {:update, rest, next, nil}, data}
+    end
   end
 
-  def handle_info(:add_elevation_to_positions, state) do
-    {:noreply, state, {:continue, {:add_elevation_to_positions, 0}}}
+  def handle_event(:info, {:DOWN, _ref, :process, _pid, :normal}, _state, _data) do
+    :keep_state_and_data
   end
 
   # Private
 
-  defp do_get_elevation({lat, lng}, %State{} = state) do
-    %State{client: client, deps: %{srtm: srtm}, name: name} = state
-
+  defp do_get_elevation({lat, lng}, %Data{client: client, deps: %{srtm: srtm}, name: name} = data) do
     case :fuse.ask(name, :sync) do
       :ok ->
         with {:error, reason} <- call(srtm, :get_elevation, [client, lat, lng]) do
@@ -135,11 +162,19 @@ defmodule TeslaMate.Mapping do
 
       {:error, :not_found} ->
         :fuse.install(name, {{:standard, 2, :timer.minutes(2)}, {:reset, :timer.minutes(5)}})
-        do_get_elevation({lat, lng}, state)
+        do_get_elevation({lat, lng}, data)
     end
   end
 
-  defp log_warning(reason), do: Logger.warn("Elevation query failed: #{inspect(reason)}")
+  defp schedule_fetch do
+    {:state_timeout, :timer.hours(6), {:fetch_positions, 0}}
+  end
 
-  defp cache_path, do: Application.fetch_env!(:teslamate, :srtm_cache)
+  defp log_warning(reason) do
+    Logger.warn("Elevation query failed: #{inspect(reason)}")
+  end
+
+  defp cache_path do
+    Application.fetch_env!(:teslamate, :srtm_cache)
+  end
 end
