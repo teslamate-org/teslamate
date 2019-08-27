@@ -23,7 +23,6 @@ defmodule TeslaMate.Mapping do
 
   # TODO
   # * circuit breaker
-  # * call get_elevation from Logs
   # * Add Docker Volume for caches
   # * Grafana: m to ft
 
@@ -82,13 +81,14 @@ defmodule TeslaMate.Mapping do
 
     case Task.yield(task, 50) do
       {:ok, {:ok, elevation, client}} ->
-        {:reply, {:ok, elevation}, %State{state | client: client}}
+        {:reply, elevation, %State{state | client: client}}
 
       {:ok, {:error, reason}} ->
-        {:reply, {:error, reason}, state}
+        Logger.warn("Failed to get elevation: #{inspect(reason)}")
+        {:reply, nil, state}
 
       nil ->
-        {:reply, {:ok, nil}, %State{state | blocked_on: task.ref}}
+        {:reply, nil, %State{state | blocked_on: task.ref}}
     end
   end
 

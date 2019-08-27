@@ -41,7 +41,8 @@ defmodule TeslaMate.LogDriveTest do
     end
 
     test "with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{} = changeset} = Log.insert_position(nil, %{})
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Log.insert_position(nil, %{latitude: nil, longitude: nil})
 
       assert errors_on(changeset) == %{
                car_id: ["can't be blank"],
