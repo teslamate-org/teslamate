@@ -6,7 +6,7 @@ defmodule TeslaMate.Mapping do
   alias TeslaMate.Log.Position
   alias TeslaMate.Log
 
-  defstruct [:client, :timeout, :blocked_on, :deps, :name]
+  defstruct [:client, :timeout, :deps, :name]
   alias __MODULE__, as: Data
 
   @name __MODULE__
@@ -22,10 +22,7 @@ defmodule TeslaMate.Mapping do
   end
 
   # TODO
-  # * Add Docker Volume for caches
   # * Grafana: m to ft
-  # * Test get_positions_without_elevation
-  # * Test update_position
 
   # Callbacks
 
@@ -75,8 +72,6 @@ defmodule TeslaMate.Mapping do
 
   def handle_event(event, {:fetch_positions, min_id}, :ready, %Data{} = data)
       when event in [:internal, :state_timeout] do
-    Logger.info("Updating positions ...")
-
     case call(data.deps.log, :get_positions_without_elevation, [min_id, [limit: 100]]) do
       {[], nil} ->
         {:keep_state_and_data, schedule_fetch()}

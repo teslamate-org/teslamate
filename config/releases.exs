@@ -51,4 +51,4 @@ if System.get_env("ENABLE_LOGGER_TELEGRAM") == "true" do
     token: System.fetch_env!("TOKEN")
 end
 
-config :teslamate, :srtm_cache, System.get_env("SRTM_CACHE", "/tmp/srtm_cache")
+config :teslamate, :srtm_cache, System.get_env("SRTM_CACHE", ".srtm_cache")
