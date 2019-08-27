@@ -45,6 +45,10 @@ defmodule LogMock do
     GenServer.call(name, {:insert_charge, car_id, attrs})
   end
 
+  def get_positions_without_elevation(name, min_id) do
+    GenServer.call(name, {:get_positions_without_elevation, min_id})
+  end
+
   # Callbacks
 
   @impl true
@@ -100,6 +104,11 @@ defmodule LogMock do
   def handle_call({:finish_update, _upd_id, _version} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Update{}}, state}
+  end
+
+  def handle_call({:get_positions_without_elevation, _} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, [], state}
   end
 
   def handle_call(action, _from, %State{pid: pid} = state) do

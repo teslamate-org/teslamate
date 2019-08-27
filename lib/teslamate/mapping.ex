@@ -6,7 +6,7 @@ defmodule TeslaMate.Mapping do
   alias TeslaMate.Log.Position
   alias TeslaMate.Log
 
-  defstruct [:client, :blocked_on, :deps]
+  defstruct [:client, :timeout, :blocked_on, :deps, :name]
   alias __MODULE__, as: State
 
   @name __MODULE__
@@ -31,12 +31,16 @@ defmodule TeslaMate.Mapping do
   def init(opts) do
     client = SRTM.Client.new(cache_path())
 
+    timeout = Keyword.get(opts, :timeout, 50)
+    name = Keyword.get(opts, :name, @name)
+
     deps = %{
       srtm: Keyword.get(opts, :deps_srtm, SRTM),
       log: Keyword.get(opts, :deps_log, Log)
     }
 
-    {:ok, %State{client: client, deps: deps}, {:continue, {:add_elevation_to_positions, 0}}}
+    {:ok, %State{client: client, timeout: timeout, deps: deps, name: name},
+     {:continue, {:add_elevation_to_positions, 0}}}
   end
 
   @impl true
@@ -72,13 +76,13 @@ defmodule TeslaMate.Mapping do
   @impl true
   def handle_call({:get_elevation, {_, _}}, _from, %State{blocked_on: blocker} = state)
       when is_reference(blocker) or blocker == :update_positions do
-    {:reply, {:ok, nil}, state}
+    {:reply, nil, state}
   end
 
   def handle_call({:get_elevation, {lat, lng}}, _from, %State{} = state) do
     task = Task.async(fn -> do_get_elevation({lat, lng}, state) end)
 
-    case Task.yield(task, 50) do
+    case Task.yield(task, state.timeout) do
       {:ok, {:ok, elevation, client}} ->
         {:reply, elevation, %State{state | client: client}}
 
@@ -116,11 +120,13 @@ defmodule TeslaMate.Mapping do
 
   # Private
 
-  defp do_get_elevation({lat, lng}, %State{client: client, deps: %{srtm: srtm}} = state) do
-    case :fuse.ask(@name, :sync) do
+  defp do_get_elevation({lat, lng}, %State{} = state) do
+    %State{client: client, deps: %{srtm: srtm}, name: name} = state
+
+    case :fuse.ask(name, :sync) do
       :ok ->
         with {:error, reason} <- call(srtm, :get_elevation, [client, lat, lng]) do
-          :fuse.melt(@name)
+          :fuse.melt(name)
           {:error, reason}
         end
 
@@ -128,7 +134,7 @@ defmodule TeslaMate.Mapping do
         {:error, :unavailable}
 
       {:error, :not_found} ->
-        :fuse.install(@name, {{:standard, 2, :timer.minutes(2)}, {:reset, :timer.minutes(5)}})
+        :fuse.install(name, {{:standard, 2, :timer.minutes(2)}, {:reset, :timer.minutes(5)}})
         do_get_elevation({lat, lng}, state)
     end
   end

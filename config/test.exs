@@ -18,3 +18,5 @@ config :teslamate, TeslaMate.Repo,
 config :teslamate, :tesla_auth,
   username: "admin",
   password: "admin"
+
+config :teslamate, :srtm_cache, "./.srtm_cache"
