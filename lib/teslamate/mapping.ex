@@ -21,10 +21,6 @@ defmodule TeslaMate.Mapping do
     GenStateMachine.call(name, {:get_elevation, coordinates}, 2000)
   end
 
-  # TODO
-  # * Grafana: m to ft
-  # * remove HGT Files from cache after 3 hours
-
   # Callbacks
 
   @impl true
