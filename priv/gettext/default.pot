@@ -16,81 +16,81 @@ msgid "Status"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:114
+#: lib/teslamate_web/templates/car/summary.html.leex:126
 msgid "Speed"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:96
+#: lib/teslamate_web/templates/car/summary.html.leex:108
 msgid "State of Charge"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:65
+#: lib/teslamate_web/templates/car/summary.html.leex:77
 msgid "Charged"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:81
+#: lib/teslamate_web/live/car_live/summary.ex:82
 msgid "asleep"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:75
+#: lib/teslamate_web/live/car_live/summary.ex:76
 msgid "charging"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:74
+#: lib/teslamate_web/live/car_live/summary.ex:75
 msgid "driving"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:80
+#: lib/teslamate_web/live/car_live/summary.ex:81
 msgid "offline"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:79
+#: lib/teslamate_web/live/car_live/summary.ex:80
 msgid "online"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:77
+#: lib/teslamate_web/live/car_live/summary.ex:78
 msgid "updating"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:139
+#: lib/teslamate_web/templates/car/summary.html.leex:151
 msgid "Inside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:127
+#: lib/teslamate_web/templates/car/summary.html.leex:139
 msgid "Outside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:102
+#: lib/teslamate_web/templates/car/summary.html.leex:114
 msgid "Locked"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:72
-#: lib/teslamate_web/templates/car/summary.html.leex:103
-#: lib/teslamate_web/templates/car/summary.html.leex:109
+#: lib/teslamate_web/templates/car/summary.html.leex:84
+#: lib/teslamate_web/templates/car/summary.html.leex:115
+#: lib/teslamate_web/templates/car/summary.html.leex:121
 msgid "no"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:72
-#: lib/teslamate_web/templates/car/summary.html.leex:103
-#: lib/teslamate_web/templates/car/summary.html.leex:109
+#: lib/teslamate_web/templates/car/summary.html.leex:84
+#: lib/teslamate_web/templates/car/summary.html.leex:115
+#: lib/teslamate_web/templates/car/summary.html.leex:121
 msgid "yes"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:108
+#: lib/teslamate_web/templates/car/summary.html.leex:120
 msgid "Sentry Mode"
 msgstr ""
 
@@ -109,32 +109,32 @@ msgid "Settings"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:78
+#: lib/teslamate_web/templates/car/summary.html.leex:90
 msgid "Scheduled charging"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:71
+#: lib/teslamate_web/templates/car/summary.html.leex:83
 msgid "Plugged in"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:89
+#: lib/teslamate_web/templates/car/summary.html.leex:101
 msgid "Charge limit"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:76
+#: lib/teslamate_web/live/car_live/summary.ex:77
 msgid "charging complete"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:78
+#: lib/teslamate_web/live/car_live/summary.ex:79
 msgid "falling asleep"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:82
+#: lib/teslamate_web/live/car_live/summary.ex:83
 msgid "unavailable"
 msgstr ""
 
@@ -268,7 +268,7 @@ msgid "Signed in successfully"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:84
+#: lib/teslamate_web/live/car_live/summary.ex:85
 msgid "Car is unlocked"
 msgstr ""
 
@@ -278,17 +278,17 @@ msgid "Create"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:88
+#: lib/teslamate_web/live/car_live/summary.ex:89
 msgid "Preconditioning"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:85
+#: lib/teslamate_web/live/car_live/summary.ex:86
 msgid "Sentry mode is enabled"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:89
+#: lib/teslamate_web/live/car_live/summary.ex:90
 msgid "User present"
 msgstr ""
 
@@ -305,11 +305,6 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:53
 msgid "Range (est.)"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:41
-msgid "Range (ideal)"
 msgstr ""
 
 #, elixir-format
@@ -334,7 +329,7 @@ msgid "Requirements"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:86
+#: lib/teslamate_web/live/car_live/summary.ex:87
 msgid "Shift state present"
 msgstr ""
 
@@ -349,6 +344,16 @@ msgid "Vehicle must be locked"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:87
+#: lib/teslamate_web/live/car_live/summary.ex:88
 msgid "Temperature readings"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:65
+msgid "Range (rated)"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:41
+msgid "Range (typical)"
 msgstr ""
