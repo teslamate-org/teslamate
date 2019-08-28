@@ -9,7 +9,7 @@ defmodule TeslaMate.Log.Car do
     field :efficiency, :float
     field :eid, :integer
     field :model, :string
-    field :version, :string
+    field :trim_badging, :string
     field :vid, :integer
     field :vin, :string
 
@@ -23,8 +23,8 @@ defmodule TeslaMate.Log.Car do
   @doc false
   def changeset(car, attrs) do
     car
-    |> cast(attrs, [:name, :model, :efficiency, :version, :vin])
-    |> validate_required([:eid, :vid, :model, :efficiency])
+    |> cast(attrs, [:name, :model, :efficiency, :trim_badging, :vin])
+    |> validate_required([:eid, :vid])
     |> unique_constraint(:eid)
     |> unique_constraint(:vid)
   end

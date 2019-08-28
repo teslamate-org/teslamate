@@ -79,7 +79,8 @@ defmodule TeslaMate.VehicleCase do
           charge_state: struct(State.Charge, charge_state),
           drive_state: struct(State.Drive, drive_state),
           climate_state: struct(State.Climate, climate_state),
-          vehicle_state: struct(State.VehicleState, vehicle_state)
+          vehicle_state: struct(State.VehicleState, vehicle_state),
+          vehicle_config: %State.VehicleConfig{car_type: "model3"}
         }
       end
 

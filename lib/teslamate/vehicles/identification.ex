@@ -1,73 +1,54 @@
 defmodule TeslaMate.Vehicles.Identification do
-  def properties(%TeslaApi.Vehicle{} = vehicle) do
-    performance = vehicle.option_codes |> Enum.find(false, &is_performance/1)
-    battery = vehicle.option_codes |> Enum.find_value(&which_battery/1)
-    model = vehicle.option_codes |> Enum.find_value(&which_model/1)
-    awd = vehicle.option_codes |> Enum.member?("DV4W")
+  alias TeslaApi.Vehicle.State.VehicleConfig, as: Config
+  alias TeslaApi.Vehicle
 
-    {version, efficiency} = get_efficiency(model, battery, performance, awd)
+  def properties(%Vehicle{vehicle_config: %Config{car_type: car_type, trim_badging: badging}}) do
+    model = car_type |> String.downcase() |> which_model()
+    trim_badging = badging |> upcase()
+    efficiency = get_efficiency(model, trim_badging)
 
-    %{
-      version: version,
-      model: model,
-      battery: battery,
-      awd: awd,
-      performance: performance,
-      efficiency: efficiency
-    }
+    %{model: model, efficiency: efficiency, trim_badging: trim_badging}
   end
 
-  defp which_model("MDLS"), do: "MS"
-  defp which_model("MS01"), do: "MS"
-  defp which_model("MS02"), do: "MS"
-  defp which_model("MS03"), do: "MS"
-  defp which_model("MS04"), do: "MS"
-  defp which_model("MDLX"), do: "MX"
-  defp which_model("MDL3"), do: "M3"
-  defp which_model(______), do: false
+  defp upcase(nil), do: nil
+  defp upcase(str) when is_binary(str), do: String.upcase(str)
 
-  defp is_performance("P85D"), do: true
-  defp is_performance("PBT8"), do: true
-  defp is_performance("PF01"), do: true
-  defp is_performance("PX01"), do: true
-  defp is_performance("PX6D"), do: true
-  defp is_performance("SPT31"), do: true
-  defp is_performance("MT304"), do: true
-  defp is_performance("X024"), do: true
-  defp is_performance(______), do: false
-
-  defp which_battery("BT" <> _ = battery), do: battery
-  defp which_battery(_), do: nil
+  defp which_model("models" <> _), do: "S"
+  defp which_model("modelx" <> _), do: "X"
+  defp which_model("model3" <> _), do: "3"
+  defp which_model(_____________), do: nil
 
   # Source of efficiency values:
   # https://github.com/bassmaster187/TeslaLogger/blob/master/TeslaLogger/WebHelper.cs#L414
 
-  defp get_efficiency("MS", "BTX5", _perf, true), do: {"S 75D", 0.186}
-  defp get_efficiency("MS", "BTX5", _perf, false), do: {"S 75", 0.185}
-  defp get_efficiency("MS", "BTX4", true, _awd), do: {"S P90D", 0.200}
-  defp get_efficiency("MS", "BTX4", false, _awd), do: {"S 90D", 0.189}
-  defp get_efficiency("MS", "BTX6", true, _awd), do: {"S P100D", 0.200}
-  defp get_efficiency("MS", "BTX6", false, _awd), do: {"S 100D", 0.189}
-  defp get_efficiency("MS", "BTX8", _perf, true), do: {"S 75D (85kWh)", 0.186}
-  defp get_efficiency("MS", "BTX8", _perf, false), do: {"S 75 (85kWh)", 0.185}
-  defp get_efficiency("MS", "BT85", true, true), do: {"S P85D", 0.201}
-  defp get_efficiency("MS", "BT85", false, true), do: {"S 85D", 0.186}
-  defp get_efficiency("MS", "BT85", true, false), do: {"S P85", 0.210}
-  defp get_efficiency("MS", "BT85", false, false), do: {"S 85", 0.201}
-  defp get_efficiency("MS", "BT70", _perf, _awd), do: {"S 70 ?", 0.200}
-  defp get_efficiency("MS", "BT60", _perf, _awd), do: {"S 60 ?", 0.200}
-  defp get_efficiency("MS", ______, _perf, _awd), do: {"S ???", 0.200}
+  defp get_efficiency("S", "40"), do: nil
+  defp get_efficiency("S", "60"), do: 0.200
+  defp get_efficiency("S", "60D"), do: nil
+  defp get_efficiency("S", "70"), do: 0.200
+  defp get_efficiency("S", "70D"), do: nil
+  defp get_efficiency("S", "75"), do: 0.185
+  defp get_efficiency("S", "75D"), do: 0.186
+  defp get_efficiency("S", "85"), do: 0.185
+  defp get_efficiency("S", "P85"), do: 0.210
+  defp get_efficiency("S", "P85+"), do: nil
+  defp get_efficiency("S", "85D"), do: 0.186
+  defp get_efficiency("S", "P85D"), do: 0.201
+  defp get_efficiency("S", "90"), do: nil
+  defp get_efficiency("S", "90D"), do: 0.189
+  defp get_efficiency("S", "P90D"), do: 0.200
+  defp get_efficiency("S", "100D"), do: 0.189
+  defp get_efficiency("S", "P100D"), do: 0.200
+  defp get_efficiency("S", _____), do: nil
 
-  defp get_efficiency("MX", "BTX5", _perf, _awd), do: {"X 75D", 0.208}
-  defp get_efficiency("MX", "BTX4", false, _awd), do: {"X 90D", 0.208}
-  defp get_efficiency("MX", "BTX4", true, _awd), do: {"X P90D", 0.217}
-  defp get_efficiency("MX", "BTX6", false, _awd), do: {"X 100D", 0.208}
-  defp get_efficiency("MX", "BTX6", true, _awd), do: {"X P100D", 0.226}
-  defp get_efficiency("MX", ______, _perf, _awd), do: {"X ???", 0.208}
+  defp get_efficiency("X", "60D"), do: nil
+  defp get_efficiency("X", "75D"), do: 0.208
+  defp get_efficiency("X", "90D"), do: 0.208
+  defp get_efficiency("X", "P90D"), do: 0.217
+  defp get_efficiency("X", "100D"), do: 0.208
+  defp get_efficiency("X", "P100D"), do: 0.226
+  defp get_efficiency("X", ______), do: nil
 
-  defp get_efficiency("M3", "BT37", false, _awd), do: {"3", 0.153}
-  defp get_efficiency("M3", "BT37", true, _awd), do: {"3P", 0.153}
-  defp get_efficiency("M3", ______, _perf, _awd), do: {"3 ???", 0.153}
+  defp get_efficiency("3", nil), do: 0.153
 
-  defp get_efficiency(_, _, _, _), do: {"???", nil}
+  defp get_efficiency(____, ___), do: nil
 end

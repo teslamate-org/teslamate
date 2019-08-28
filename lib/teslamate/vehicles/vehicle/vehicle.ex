@@ -5,6 +5,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   alias __MODULE__.Summary
   alias TeslaMate.{Api, Log, Settings, Convert}
+  alias TeslaMate.Vehicles.Identification
 
   alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge}
   alias TeslaApi.Vehicle
@@ -259,12 +260,25 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:online, vehicle}} = event, :start, data) do
     Logger.info("Start / :online", car_id: data.car.id)
 
+    %{model: model, trim_badging: trim_badging, efficiency: efficiency} =
+      Identification.properties(vehicle)
+
+    {:ok, car} =
+      data.car
+      |> Log.Car.changeset(%{
+        name: vehicle.display_name,
+        model: model,
+        trim_badging: trim_badging,
+        efficiency: efficiency
+      })
+      |> (fn attrs -> call(data.deps.log, :create_or_update_car, [attrs]) end).()
+
     {:ok, %Log.State{start_date: last_state_change}} =
       call(data.deps.log, :start_state, [data.car.id, :online])
 
     :ok = insert_position(vehicle, data)
 
-    {:next_state, :online, %Data{data | last_state_change: last_state_change},
+    {:next_state, :online, %Data{data | car: car, last_state_change: last_state_change},
      [notify_subscribers(), {:next_event, :internal, event}]}
   end
 

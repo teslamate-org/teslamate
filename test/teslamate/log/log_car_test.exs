@@ -7,22 +7,30 @@ defmodule TeslaMate.LogCarTest do
   @valid_attrs %{
     efficiency: 0.153,
     eid: 42,
-    model: "M3",
+    model: "S",
     vid: 42,
     name: "foo",
-    version: "3 LR",
+    trim_badging: "P100D",
     vin: "12345F"
   }
   @update_attrs %{
     efficiency: 0.190,
-    model: "MS",
+    model: "S",
     eid: 43,
     vid: 43,
     name: "bar",
-    version: "S P100D",
+    trim_badging: "100D",
     vin: "6789R"
   }
-  @invalid_attrs %{efficiency: nil, eid: nil, model: nil, vid: nil, name: 1, version: 2, vin: 3}
+  @invalid_attrs %{
+    efficiency: nil,
+    eid: nil,
+    model: nil,
+    vid: nil,
+    name: 1,
+    trim_badging: 2,
+    vin: 3
+  }
 
   def car_fixture(attrs \\ %{}) do
     {:ok, car} =
@@ -50,10 +58,10 @@ defmodule TeslaMate.LogCarTest do
 
     assert car.efficiency == 0.153
     assert car.eid == 42
-    assert car.model == "M3"
+    assert car.model == "S"
     assert car.vid == 42
     assert car.name == "foo"
-    assert car.version == "3 LR"
+    assert car.trim_badging == "P100D"
     assert car.vin == "12345F"
   end
 
@@ -62,11 +70,9 @@ defmodule TeslaMate.LogCarTest do
              Car.changeset(%Car{}, @invalid_attrs) |> Log.create_or_update_car()
 
     assert %{
-             efficiency: ["can't be blank"],
              eid: ["can't be blank"],
-             model: ["can't be blank"],
              name: ["is invalid"],
-             version: ["is invalid"],
+             trim_badging: ["is invalid"],
              vid: ["can't be blank"],
              vin: ["is invalid"]
            } == errors_on(changeset)
@@ -78,11 +84,11 @@ defmodule TeslaMate.LogCarTest do
     assert {:ok, %Car{} = car} = Car.changeset(car, @update_attrs) |> Log.create_or_update_car()
 
     assert car.efficiency == 0.190
-    assert car.model == "MS"
+    assert car.model == "S"
     assert car.eid == 42
     assert car.vid == 42
     assert car.name == "bar"
-    assert car.version == "S P100D"
+    assert car.trim_badging == "100D"
     assert car.vin == "6789R"
   end
 

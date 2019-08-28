@@ -3,7 +3,7 @@ defmodule TeslaMate.Vehicles do
 
   require Logger
 
-  alias __MODULE__.{Vehicle, Identification}
+  alias __MODULE__.Vehicle
   alias TeslaMate.Log.Car
   alias TeslaMate.Log
 
@@ -66,21 +66,13 @@ defmodule TeslaMate.Vehicles do
   end
 
   defp create_or_update!(%TeslaApi.Vehicle{} = vehicle) do
-    %{model: model, version: version, efficiency: efficiency} = Identification.properties(vehicle)
-
-    Logger.info("Found Model #{version}: '#{vehicle.display_name}'")
+    Logger.info("Found '#{vehicle.display_name}'")
 
     {:ok, car} =
       with nil <- Log.get_car_by_eid(vehicle.id) do
         %Car{eid: vehicle.id, vid: vehicle.vehicle_id}
       end
-      |> Car.changeset(%{
-        name: vehicle.display_name,
-        model: model,
-        efficiency: efficiency,
-        version: version,
-        vin: vehicle.vin
-      })
+      |> Car.changeset(%{name: vehicle.display_name, vin: vehicle.vin})
       |> Log.create_or_update_car()
 
     car
