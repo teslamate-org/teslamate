@@ -98,4 +98,14 @@ defmodule TeslaMate.MappingTest do
       refute_receive _
     end
   end
+
+  describe "handle_info/2" do
+    test "handles :purge_srtm_in_memory_cache message", %{test: name} do
+      :ok = start_mapping(name)
+
+      send(name, :purge_srtm_in_memory_cache)
+
+      refute_receive _
+    end
+  end
 end

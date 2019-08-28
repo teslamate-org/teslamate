@@ -23,12 +23,13 @@ defmodule TeslaMate.Mapping do
 
   # TODO
   # * Grafana: m to ft
+  # * remove HGT Files from cache after 3 hours
 
   # Callbacks
 
   @impl true
   def init(opts) do
-    client = SRTM.Client.new(cache_path())
+    {:ok, client} = SRTM.Client.new(cache_path())
 
     timeout = Keyword.get(opts, :timeout, 50)
     name = Keyword.get(opts, :name, @name)
@@ -38,11 +39,13 @@ defmodule TeslaMate.Mapping do
       log: Keyword.get(opts, :deps_log, Log)
     }
 
+    {:ok, _ref} = :timer.send_interval(:timer.hours(3), self(), :purge_srtm_in_memory_cache)
+
     {:ok, :ready, %Data{client: client, timeout: timeout, deps: deps, name: name},
      {:next_event, :internal, {:fetch_positions, 0}}}
   end
 
-  ## Calls
+  ## Call
 
   @impl true
   def handle_event({:call, from}, {:get_elevation, {lat, lng}}, :ready, %Data{} = data) do
@@ -140,6 +143,11 @@ defmodule TeslaMate.Mapping do
 
   def handle_event(:info, {:DOWN, _ref, :process, _pid, :normal}, _state, _data) do
     :keep_state_and_data
+  end
+
+  def handle_event(:info, :purge_srtm_in_memory_cache, _state, %Data{client: client} = data) do
+    {:ok, client} = SRTM.Client.purge_in_memory_cache(client, keep: 2)
+    {:keep_state, %Data{data | client: client}}
   end
 
   # Private
