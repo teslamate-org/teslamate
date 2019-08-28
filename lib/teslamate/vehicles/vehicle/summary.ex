@@ -20,7 +20,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :sentry_mode,
     :plugged_in,
     :scheduled_charging_start_time,
-    :charge_limit_soc
+    :charge_limit_soc,
+    :charger_power
   ]
 
   def into(:start, _since, nil) do
@@ -49,6 +50,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       battery_range_km: get_in_struct(vehicle, [:charge_state, :battery_range]) |> miles_to_km(1),
       battery_level: get_in_struct(vehicle, [:charge_state, :battery_level]),
       charge_energy_added: get_in_struct(vehicle, [:charge_state, :charge_energy_added]),
+      charger_power: get_in_struct(vehicle, [:charge_state, :charger_power]),
       plugged_in: plugged_in(vehicle),
       scheduled_charging_start_time:
         get_in_struct(vehicle, [:charge_state, :scheduled_charging_start_time]) |> to_datetime(),

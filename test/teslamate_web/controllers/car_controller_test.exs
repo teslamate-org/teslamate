@@ -52,12 +52,12 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
       assert html =~ table_row("Status", "asleep")
-      assert html =~ table_row("Range \\(typical\\)", "380.1 km")
-      assert html =~ table_row("Range \\(est.\\)", "401.5 km")
-      assert html =~ table_row("Range \\(rated\\)", "175.1 km")
+      assert html =~ table_row("Range \\(typical\\)", "380.1 km")
+      assert html =~ table_row("Range \\(est.\\)", "401.5 km")
+      assert html =~ table_row("Range \\(rated\\)", "175.1 km")
       assert html =~ table_row("State of Charge", "80%")
-      assert html =~ table_row("Outside temperature", "20.1 °C")
-      assert html =~ table_row("Inside temperature", "21.0 °C")
+      assert html =~ table_row("Outside temperature", "20.1 °C")
+      assert html =~ table_row("Inside temperature", "21.0 °C")
     end
 
     @tag :signed_in
@@ -86,14 +86,14 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
       assert html =~ table_row("Status", "online")
       assert html =~ table_row("Plugged in", "no")
-      assert html =~ table_row("Range \\(typical\\)", "321.9 km")
-      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
-      assert html =~ table_row("Range \\(rated\\)", "281.6 km")
+      assert html =~ table_row("Range \\(typical\\)", "321.9 km")
+      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
+      assert html =~ table_row("Range \\(rated\\)", "281.6 km")
       assert html =~ table_row("State of Charge", "69%")
       assert html =~ table_row("Locked", "yes")
       assert html =~ table_row("Sentry Mode", "yes")
-      assert html =~ table_row("Outside temperature", "24 °C")
-      assert html =~ table_row("Inside temperature", "23.2 °C")
+      assert html =~ table_row("Outside temperature", "24 °C")
+      assert html =~ table_row("Inside temperature", "23.2 °C")
     end
 
     @tag :signed_in
@@ -127,10 +127,11 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
       assert html =~ table_row("Status", "charging")
       assert html =~ table_row("Plugged in", "yes")
-      assert html =~ table_row("Range \\(typical\\)", "321.9 km")
-      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
-      assert html =~ table_row("Range \\(rated\\)", "281.6 km")
-      assert html =~ table_row("Charged", "4.32 kWh")
+      assert html =~ table_row("Range \\(typical\\)", "321.9 km")
+      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
+      assert html =~ table_row("Range \\(rated\\)", "281.6 km")
+      assert html =~ table_row("Charged", "4.32 kWh")
+      assert html =~ table_row("Charger Power", "50 kW")
 
       assert html =~
                table_row(
@@ -228,7 +229,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
       assert html =~ table_row("Status", "driving")
-      assert html =~ table_row("Speed", "48 km/h")
+      assert html =~ table_row("Speed", "48 km/h")
     end
 
     @tag :signed_in
@@ -356,12 +357,12 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="card-header-title">FooCar<\/p>/
       assert html =~ table_row("Status", "driving")
-      assert html =~ table_row("Range \\(typical\\)", "200.0 mi")
-      assert html =~ table_row("Range \\(est.\\)", "180.0 mi")
-      assert html =~ table_row("Range \\(rated\\)", "175.0 mi")
-      assert html =~ table_row("Speed", "30 mph")
-      assert html =~ table_row("Outside temperature", "75.2 °F")
-      assert html =~ table_row("Inside temperature", "73.8 °F")
+      assert html =~ table_row("Range \\(typical\\)", "200.0 mi")
+      assert html =~ table_row("Range \\(est.\\)", "180.0 mi")
+      assert html =~ table_row("Range \\(rated\\)", "175.0 mi")
+      assert html =~ table_row("Speed", "30 mph")
+      assert html =~ table_row("Outside temperature", "75.2 °F")
+      assert html =~ table_row("Inside temperature", "73.8 °F")
     end
   end
 
