@@ -2,10 +2,17 @@ defmodule TeslaMate.Vehicles.Identification do
   alias TeslaApi.Vehicle.State.VehicleConfig, as: Config
   alias TeslaApi.Vehicle
 
-  def properties(%Vehicle{vehicle_config: %Config{car_type: car_type, trim_badging: badging}}) do
-    model = car_type |> String.downcase() |> which_model()
+  require Logger
+
+  def properties(%Vehicle{vehicle_config: %Config{car_type: type, trim_badging: badging} = conf}) do
+    model = type |> String.downcase() |> get_model()
     trim_badging = badging |> upcase()
-    efficiency = get_efficiency(model, trim_badging)
+
+    efficiency =
+      with :unkown <- get_efficiency(model, trim_badging) do
+        Logger.warn("Vehicle could not be identified!\n\n#{inspect(conf, pretty: true)}")
+        nil
+      end
 
     %{model: model, efficiency: efficiency, trim_badging: trim_badging}
   end
@@ -13,10 +20,10 @@ defmodule TeslaMate.Vehicles.Identification do
   defp upcase(nil), do: nil
   defp upcase(str) when is_binary(str), do: String.upcase(str)
 
-  defp which_model("models" <> _), do: "S"
-  defp which_model("modelx" <> _), do: "X"
-  defp which_model("model3" <> _), do: "3"
-  defp which_model(_____________), do: nil
+  defp get_model("models" <> _), do: "S"
+  defp get_model("modelx" <> _), do: "X"
+  defp get_model("model3" <> _), do: "3"
+  defp get_model(_____________), do: nil
 
   # Source of efficiency values:
   # https://github.com/bassmaster187/TeslaLogger/blob/master/TeslaLogger/WebHelper.cs#L414
@@ -38,7 +45,7 @@ defmodule TeslaMate.Vehicles.Identification do
   defp get_efficiency("S", "P90D"), do: 0.200
   defp get_efficiency("S", "100D"), do: 0.189
   defp get_efficiency("S", "P100D"), do: 0.200
-  defp get_efficiency("S", _____), do: nil
+  defp get_efficiency("S", _______), do: :unkown
 
   defp get_efficiency("X", "60D"), do: nil
   defp get_efficiency("X", "75D"), do: 0.208
@@ -46,9 +53,10 @@ defmodule TeslaMate.Vehicles.Identification do
   defp get_efficiency("X", "P90D"), do: 0.217
   defp get_efficiency("X", "100D"), do: 0.208
   defp get_efficiency("X", "P100D"), do: 0.226
-  defp get_efficiency("X", ______), do: nil
+  defp get_efficiency("X", _______), do: :unkown
 
   defp get_efficiency("3", nil), do: 0.153
+  defp get_efficiency("3", ___), do: :unkown
 
-  defp get_efficiency(____, ___), do: nil
+  defp get_efficiency(____, ___), do: :unkown
 end
