@@ -55,7 +55,7 @@ defmodule TeslaMate.MixProject do
       {:httpoison, "~> 1.5"},
       {:excoveralls, "~> 0.10", only: :test},
       {:geocalc, "~> 0.5"},
-      {:srtm, github: "adriankumpf/srtm"},
+      {:srtm, "~> 0.1"},
       {:fuse, "~> 2.4"}
     ]
   end
