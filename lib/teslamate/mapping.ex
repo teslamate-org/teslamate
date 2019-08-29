@@ -59,6 +59,7 @@ defmodule TeslaMate.Mapping do
         {:keep_state_and_data, {:reply, from, nil}}
 
       nil ->
+        Logger.info("Querying location for elevation takes longer than #{data.timeout}ms ...")
         {:next_state, {:waiting, task.ref}, data, {:reply, from, nil}}
     end
   end
@@ -71,11 +72,12 @@ defmodule TeslaMate.Mapping do
 
   def handle_event(event, {:fetch_positions, min_id}, :ready, %Data{} = data)
       when event in [:internal, :state_timeout] do
-    case call(data.deps.log, :get_positions_without_elevation, [min_id, [limit: 100]]) do
+    case call(data.deps.log, :get_positions_without_elevation, [min_id, [limit: 1000]]) do
       {[], nil} ->
         {:keep_state_and_data, schedule_fetch()}
 
       {positions, next} ->
+        Logger.info("Adding elevation to #{length(positions)} positions ...")
         :ok = GenStateMachine.cast(self(), :process)
         {:next_state, {:update, positions, next, nil}, data}
     end
@@ -106,6 +108,7 @@ defmodule TeslaMate.Mapping do
         {:next_state, {:update, rest, next, nil}, data}
 
       nil ->
+        Logger.info("Querying location for elevation takes longer than #{data.timeout}ms ...")
         {:next_state, {:update, [p | rest], next, task.ref}, data}
     end
   end
@@ -114,7 +117,8 @@ defmodule TeslaMate.Mapping do
 
   def handle_event(:info, {ref, result}, {:waiting, ref}, data) do
     case result do
-      {:ok, _elevation, %SRTM.Client{} = client} ->
+      {:ok, elevation, %SRTM.Client{} = client} ->
+        Logger.debug("Received delayed SRTM message: #{elevation}m")
         {:next_state, :ready, %Data{data | client: client}, schedule_fetch()}
 
       {:error, reason} ->
@@ -126,6 +130,7 @@ defmodule TeslaMate.Mapping do
   def handle_event(:info, {ref, result}, {:update, [%Position{} = p | rest], next, ref}, data) do
     case result do
       {:ok, elevation, %SRTM.Client{} = client} ->
+        Logger.debug("Received delayed SRTM message: #{elevation}m")
         {:ok, _pos} = call(data.deps.log, :update_position, [p, %{elevation: elevation}])
         :ok = GenStateMachine.cast(self(), :process)
         {:next_state, {:update, rest, next, nil}, %Data{data | client: client}}
@@ -142,6 +147,7 @@ defmodule TeslaMate.Mapping do
   end
 
   def handle_event(:info, :purge_srtm_in_memory_cache, _state, %Data{client: client} = data) do
+    Logger.debug("Puring SRTM in-memory cache ...")
     {:ok, client} = SRTM.Client.purge_in_memory_cache(client, keep: 2)
     {:keep_state, %Data{data | client: client}}
   end
@@ -160,6 +166,7 @@ defmodule TeslaMate.Mapping do
         {:error, :unavailable}
 
       {:error, :not_found} ->
+        Logger.debug("Installing circuit-breaker ...")
         :fuse.install(name, {{:standard, 2, :timer.minutes(2)}, {:reset, :timer.minutes(5)}})
         do_get_elevation({lat, lng}, data)
     end
