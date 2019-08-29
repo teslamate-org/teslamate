@@ -39,11 +39,12 @@ A data logger for your Tesla.
 
 ## Screenshots
 
-![Drive](screenshots/drive.png)
+![Drive Details](screenshots/drive.png)
 ![Drives](screenshots/drives.png)
+![Efficiency](screenshots/efficiency.png)
 ![States](screenshots/states.png)
-![Charging](screenshots/charging.png)
-![Charging History](screenshots/charging_history.png)
+![Charge Details](screenshots/charging.png)
+![Charges](screenshots/charging_history.png)
 ![Vampire Drain](screenshots/vampire_drain.png)
 
 1. [Installation](#installation)
