@@ -5,6 +5,7 @@
 [![](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://hub.docker.com/r/teslamate/teslamate)
 [![](https://images.microbadger.com/badges/image/teslamate/teslamate.svg)](https://microbadger.com/images/teslamate/teslamate)
 [![](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)](https://hub.docker.com/r/teslamate/teslamate)
+[![](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YE4CPXRAV9CVL&source=url)
 
 A data logger for your Tesla.
 
@@ -260,6 +261,18 @@ you street-park at locations where the exact address may vary.
 ## Contributions
 
 All Contributions are welcome and greatly appreciated!
+
+## Donations
+
+Maintaining this project isn't effortless, or free. If you would like to kick
+in and help me cover those costs, that would be awesome. If you don't, no
+problem; just share your love and show your support.
+
+<p align="center">
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YE4CPXRAV9CVL&source=url">
+    <img src="screenshots/paypal-donate-button.png" alt="Donate with PayPal" />
+  </a>
+</p>
 
 ## Disclaimer
 

@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.7.0] - UNRELEASED
+
+### Added
+
+- Locally (!) query all locations for elevation data from the NASA Shuttle
+  Radar Topography Mission (SRTM)
+- Add elevation graph to the `Drive Details` dashboard
+- Display rated range on the web interface and on the `Drive Details` dashboard
+- Switch to the `vehicle_config` API endpoint to identify vehicles
+- Display the default and derived efficiency factor on the `Efficiency` dashboard
+  to detect inaccuracies and to **crowdsource** the correct factors:
+
+  **Note:** If there is no default efficiency factor or you think the default factor for
+  your vehicle might be wrong, please open an issue and attach a screenshot of
+  the table showing the efficiency factor(s) for your vehicle.
+
+- Display charger power on the web interface
+
+### Fixed
+
+- Fix calculation of `charge_energy_added` if a previously stopped charge
+  session is resumed
+
 ## [1.6.2] - 2019-08-26
 
 ### Fixed
@@ -297,6 +320,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.7.0]: https://github.com/adriankumpf/teslamate/compare/v1.6.2...v1.7.0
 [1.6.2]: https://github.com/adriankumpf/teslamate/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/adriankumpf/teslamate/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/adriankumpf/teslamate/compare/v1.5.3...v1.6.0
