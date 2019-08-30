@@ -41,14 +41,4 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:car_id]
 
-if System.get_env("ENABLE_LOGGER_TELEGRAM") == "true" do
-  config :logger,
-    backends: [LoggerTelegramBackend, :console]
-
-  config :logger, :telegram,
-    level: :error,
-    chat_id: System.fetch_env!("CHAT_ID"),
-    token: System.fetch_env!("TOKEN")
-end
-
 config :teslamate, :srtm_cache, System.get_env("SRTM_CACHE", ".srtm_cache")
