@@ -72,6 +72,7 @@ defmodule TeslaMate.VehicleCase do
         charge_state = Keyword.get(opts, :charge_state, %{})
         climate_state = Keyword.get(opts, :climate_state, %{})
         vehicle_state = Keyword.get(opts, :vehicle_state, %{})
+        vehicle_config = Keyword.get(opts, :vehicle_config, %{car_type: "model3"})
 
         %TeslaApi.Vehicle{
           state: "online",
@@ -80,7 +81,7 @@ defmodule TeslaMate.VehicleCase do
           drive_state: struct(State.Drive, drive_state),
           climate_state: struct(State.Climate, climate_state),
           vehicle_state: struct(State.VehicleState, vehicle_state),
-          vehicle_config: %State.VehicleConfig{car_type: "model3"}
+          vehicle_config: struct(State.VehicleConfig, vehicle_config)
         }
       end
 

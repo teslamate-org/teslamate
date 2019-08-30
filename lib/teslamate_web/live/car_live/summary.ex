@@ -5,9 +5,10 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   alias TeslaMateWeb.CarView
   alias TeslaMate.Vehicles
+  alias TeslaMate.Log.Car
 
   @impl true
-  def mount(%{id: id, settings: settings}, socket) do
+  def mount(%{car: %Car{id: id} = car, settings: settings}, socket) do
     if connected?(socket) do
       send(self(), :update_duration)
       Vehicles.subscribe(id)
@@ -17,6 +18,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
     assigns = %{
       id: id,
+      car: car,
       summary: summary,
       settings: settings,
       translate_state: &translate_state/1,
@@ -112,6 +114,6 @@ defmodule TeslaMateWeb.CarLive.Summary do
     ["#{w} wk", "#{d} d", "#{h} hr", "#{m} min", "#{s} sec"]
     |> Enum.reject(&String.starts_with?(&1, "0"))
     |> Enum.take(2)
-    |> Enum.join(", ")
+    |> Enum.join(", ")
   end
 end

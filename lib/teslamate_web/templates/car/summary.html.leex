@@ -1,6 +1,13 @@
 <div class="car card">
   <header class="card-header">
-    <p class="card-header-title"><%= @summary.display_name %></p>
+     <div class="media card-header-title mb-0">
+      <div class="media-content">
+        <p class="title is-6"><%= @summary.display_name %></p>
+        <%= unless is_nil(@car.model) do %>
+        <p class="subtitle is-6">Model <%= @car.model %> <%= @car.trim_badging %></p>
+        <% end %>
+      </div>
+    </div>
     <div class="card-header-icon">
       <%=
         cond do
