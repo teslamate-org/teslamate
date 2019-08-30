@@ -76,6 +76,8 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
+      :timer.sleep(250)
+
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
