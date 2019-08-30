@@ -1,5 +1,5 @@
 defmodule TeslaMate.Locations.Geocoder do
-  alias HTTPoison.{Response, Error}
+  alias Mojito.{Response, Error}
 
   def reverse_lookup(lat, lon) do
     with {:ok, address_raw} <-
@@ -17,11 +17,20 @@ defmodule TeslaMate.Locations.Geocoder do
   end
 
   defp fetch(url, params) do
-    case HTTPoison.get(url, headers(), params: params) do
+    url = assemble_url(url, params)
+
+    case Mojito.get(url, headers()) do
       {:ok, %Response{status_code: 200, body: body}} -> {:ok, Jason.decode!(body)}
       {:ok, %Response{body: body}} -> {:error, Jason.decode!(body) |> Map.get("error")}
       {:error, %Error{reason: reason}} -> {:error, reason}
     end
+  end
+
+  defp assemble_url(url, params) do
+    url
+    |> URI.parse()
+    |> Map.put(:query, URI.encode_query(params))
+    |> URI.to_string()
   end
 
   defp headers do

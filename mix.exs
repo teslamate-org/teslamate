@@ -51,8 +51,8 @@ defmodule TeslaMate.MixProject do
       {:ecto_enum, "~> 1.2"},
       {:phoenix_live_view, "~> 0.1"},
       {:tortoise, "~> 0.9"},
-      {:httpoison, "~> 1.5"},
       {:excoveralls, "~> 0.10", only: :test},
+      {:mojito, "~> 0.5"},
       {:geocalc, "~> 0.5"},
       {:srtm, "~> 0.1"},
       {:fuse, "~> 2.4"}
