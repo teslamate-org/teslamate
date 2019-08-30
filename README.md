@@ -34,6 +34,7 @@ A data logger for your Tesla.
   certain idle time
 - Built-in API to manually suspend / resume sending requests to the Tesla API
 - Automatic address lookup
+- Locally enriches positions with elevation data
 - Geo-fencing feature to create custom locations
 - Supports multiple vehicles per Tesla Account
 
@@ -47,13 +48,18 @@ A data logger for your Tesla.
 ![Charges](screenshots/charging_history.png)
 ![Vampire Drain](screenshots/vampire_drain.png)
 
-1. [Installation](#installation)
-2. [Configuration](#configuration)
-3. [Upgrading](#upgrading)
-4. [Web Interface](#web-interface)
-5. [MQTT](#mqtt)
-6. [FAQ](#faq)
-7. [Contributions](#contributions)
+## Table of contents
+
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Upgrading](#upgrading)
+- [Web Interface](#web-interface)
+- [MQTT](#mqtt)
+- [FAQ](#faq)
+- [Contributions](#contributions)
+- [Donations](#donations)
+- [Disclaimer](#disclaimer)
+- [Credits](#credits)
 
 ---
 
