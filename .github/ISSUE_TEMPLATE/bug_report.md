@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to improve TeslaMate
+about: Create a report to improve this project
 title: ''
 labels: ''
 assignees: ''
@@ -21,12 +21,10 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **Relevant entries from the logs**
-You **have to** provide the logs of the `teslamate` container / application unless the bug is limited to Grafana only.
+_You **have to** provide the logs of the teslamate container / application unless the bug is limited to Grafana only. To fetch the logs of the teslamte container run the following command:_ `docker-compose logs teslamate`
 
-_To fetch the logs of the teslamte container run the following command:_
-
-```bash
-docker-compose logs teslamate
+```
+paste logs here
 ```
 
 **Screenshots**
