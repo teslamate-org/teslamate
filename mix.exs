@@ -55,7 +55,8 @@ defmodule TeslaMate.MixProject do
       {:mojito, "~> 0.5"},
       {:geocalc, "~> 0.5"},
       {:srtm, "~> 0.1"},
-      {:fuse, "~> 2.4"}
+      {:fuse, "~> 2.4"},
+      {:mock, "~> 0.3", only: :test}
     ]
   end
 

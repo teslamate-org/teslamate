@@ -1,7 +1,7 @@
 defmodule TeslaMateWeb.GeoFenceLiveTest do
   use TeslaMateWeb.ConnCase
 
-  alias TeslaMate.{Locations, Settings}
+  alias TeslaMate.{Locations, Settings, Log}
   alias TeslaMate.Locations.GeoFence
 
   def geofence_fixture(attrs \\ %{}) do
@@ -151,6 +151,22 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   end
 
   describe "New" do
+    test "pre-fills the coordinates with the most recent position", %{conn: conn} do
+      assert {:ok, car} = Log.create_car(%{efficiency: 0.153, eid: 42, model: "3", vid: 42})
+
+      assert {:ok, _} =
+               Log.insert_position(car.id, %{
+                 date: DateTime.utc_now(),
+                 latitude: 48.067612,
+                 longitude: 12.862226
+               })
+
+      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+
+      assert html =~ ~r/<input .*? id="geo_fence_latitude" .*? value="48.067612">/
+      assert html =~ ~r/<input .*? id="geo_fence_longitude" .*? value="12.862226">/
+    end
+
     test "validates cahnges when creating a new geo-fence", %{conn: conn} do
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
 
