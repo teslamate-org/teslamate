@@ -162,11 +162,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert html =~
                ~r/<div.*?>\n\s*<input .*? id="geo_fence_name" .*? value="">\s*<\/div>\n\s*<p .*?><span class="help is-danger pl-15">can&#39;t be blank<\/span><\/p>\n\s*<\/div>/
 
-      assert html =~
-               ~r/<div.*?>\n\s*<input .*? id="geo_fence_latitude" .*? value="">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">can&#39;t be blank<\/span>\s*<\/p>\n\s*<\/div>/
+      assert html =~ ~r/<input .*? id="geo_fence_latitude" .*? value="">/
 
       assert html =~
-               ~r/<div.*?>\n\s*<input .*? id="geo_fence_longitude" .*? value="">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">can&#39;t be blank<\/span>\s*<\/p>\n\s*<\/div>/
+               ~r/<input .*? id="geo_fence_longitude" .*? value="">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">can&#39;t be blank<\/span>/
 
       assert html =~
                ~r/<div.*?>\n\s*<input .*? id="geo_fence_radius" .*? value="">\s*<\/div>(?s).*?<p .*?><span class="help is-danger pl-15">can&#39;t be blank<\/span><\/p>\n\s*<\/div>/
@@ -176,11 +175,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           geo_fence: %{name: "foo", longitude: "wat", latitude: "wat", radius: "40"}
         })
 
-      assert html =~
-               ~r/<div.*?>\n\s*<input .*? id="geo_fence_latitude" .*? value="wat">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">is invalid<\/span>\s*<\/p>\n\s*<\/div>/
+      assert html =~ ~r/<input .*? id="geo_fence_latitude" .*? value="wat">/
 
       assert html =~
-               ~r/<div.*?>\n\s*<input .*? id="geo_fence_longitude" .*? value="wat">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">is invalid<\/span>\s*<\/p>\n\s*<\/div>/
+               ~r/<input .*? id="geo_fence_longitude" .*? value="wat">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">is invalid<\/span>/
     end
 
     test "creates a new geo-fence", %{conn: conn} do
@@ -221,11 +219,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           }
         })
 
-      assert html =~
-               ~r/<div.*?>\n\s*<input .*? id="geo_fence_latitude" .*? value="-25.066188">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">has already been taken<\/span>\s*<\/p>\n\s*<\/div>/
-
-      assert html =~
-               ~r/<div.*?>\n\s*<input .*? id="geo_fence_longitude" .*? value="-130.100502">\s*<\/div>\n\s*<p .*?>\n\s*<span class="help is-danger pl-15">has already been taken<\/span>\s*<\/p>\n\s*<\/div>/
+      assert html =~ ~r/<input .*? id="geo_fence_latitude" .*? value="-25.066188">/
+      assert html =~ ~r/<input .*? id="geo_fence_longitude" .*? value="-130.100502">/
+      assert html =~ ~r/<span class="help is-danger pl-15">has already been taken<\/span>/
     end
 
     test "allows creating of a geo-fence with radius being displayed in ft", %{conn: conn} do

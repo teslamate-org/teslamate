@@ -12,5 +12,5 @@ defmodule TeslaMate.Convert do
   def m_to_ft(m), do: m * 3.28084
 
   def ft_to_m(nil), do: nil
-  def ft_to_m(m), do: m / 3.28084
+  def ft_to_m(ft), do: ft / 3.28084
 end

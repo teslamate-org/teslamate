@@ -1,5 +1,8 @@
 @charset "utf-8";
 
+@import "~leaflet/dist/leaflet.css";
+@import "~leaflet-control-geocoder/dist/Control.Geocoder.css";
+
 $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
 
 @import "~bulma/sass/utilities/_all";

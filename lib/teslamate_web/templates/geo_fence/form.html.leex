@@ -21,32 +21,22 @@
     </div>
     <div class="field-body">
       <div class="field">
-        <div class="control is-expanded">
-          <%= text_input f, :latitude, class: "input",
-                                       placeholder: gettext("Latitude"),
-                                       disabled: @type == :edit
-          %>
+        <div class="control">
+          <div id="map" data-editable="<%= @type == :create %>" style="height: 400px; position: relative;"
+               phx-update="ignore"
+               phx-hook="Map"
+          ></div>
+
+          <%= text_input f, :latitude, class: "is-hidden", disabled: @type == :edit %>
+          <%= text_input f, :longitude, class: "is-hidden", disabled: @type == :edit %>
         </div>
-  <%= if @show_errors do %>
+      <%= if @show_errors do %>
         <p class="help is-danger">
           <%= error_tag(f, :address_id) %>
           <%= error_tag(f, :latitude) %>
-        </p>
-  <% end %>
-      </div>
-      <div class="field">
-        <div class="control is-expanded">
-          <%= text_input f, :longitude, class: "input",
-                                        placeholder: gettext("Longitude"),
-                                        disabled: @type == :edit
-          %>
-        </div>
-  <%= if @show_errors do %>
-        <p class="help is-danger">
-          <%= error_tag(f, :address_id) %>
           <%= error_tag(f, :longitude) %>
         </p>
-  <% end %>
+      <% end %>
       </div>
     </div>
   </div>
@@ -58,7 +48,7 @@
     <div class="field-body">
       <div class="field has-addons">
         <div class="control is-expanded">
-          <%= text_input f, :radius, class: "input", type: :number, min: 0 %>
+          <%= text_input f, :radius, class: "input", type: :number, min: 0, data: [unit: @unit_of_length] %>
         </div>
         <div class="control addon">
           <a class="button is-static"><%= @unit_of_length %></a>

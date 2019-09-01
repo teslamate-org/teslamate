@@ -7,6 +7,8 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
 
   alias TeslaMate.{Locations, Settings, Convert}
   alias TeslaMate.Locations.GeoFence
+  alias TeslaMate.Log.Position
+  alias TeslaMate.Log
 
   import TeslaMateWeb.Gettext
 
@@ -19,8 +21,14 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
         %Settings.Settings{unit_of_length: :mi} -> {:ft, 65}
       end
 
+    geo_fence =
+      case Log.get_latest_position() do
+        %Position{latitude: lat, longitude: lng} -> %GeoFence{latitude: lat, longitude: lng}
+        nil -> %GeoFence{}
+      end
+
     assigns = %{
-      changeset: Locations.change_geofence(%GeoFence{}, %{radius: radius}),
+      changeset: Locations.change_geofence(geo_fence, %{radius: radius}),
       unit_of_length: unit_of_length,
       type: :create,
       show_errors: false
