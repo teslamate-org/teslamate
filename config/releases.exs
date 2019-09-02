@@ -4,9 +4,15 @@ defmodule Util do
   def random_encoded_bytes do
     :crypto.strong_rand_bytes(64) |> Base.encode64()
   end
+
+  def validate_locale!("en"), do: "en"
+  def validate_locale!("de"), do: "de"
+  def validate_locale!(lang), do: raise("Unsopported locale #{inspect(lang)}")
 end
 
-config :gettext, :default_locale, System.get_env("LOCALE")
+config :gettext,
+       :default_locale,
+       System.get_env("LOCALE", "en") |> Util.validate_locale!()
 
 config :teslamate, TeslaMate.Repo,
   username: System.fetch_env!("DATABASE_USER"),

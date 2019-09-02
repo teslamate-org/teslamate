@@ -43,7 +43,7 @@ defmodule TeslaMate.Locations.Geocoder do
   end
 
   defp lang do
-    Application.get_env(:gettext, :default_locale, "en")
+    Application.fetch_env!(:gettext, :default_locale)
   end
 
   # Address Formatting
