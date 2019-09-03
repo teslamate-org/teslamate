@@ -62,7 +62,7 @@ defmodule TeslaMate.Vehicles do
 
   defp fallback_vehicles do
     Log.list_cars()
-    |> Enum.map(&%TeslaApi.Vehicle{id: &1.eid})
+    |> Enum.map(&%TeslaApi.Vehicle{id: &1.eid, vin: &1.vin, vehicle_id: &1.vid})
   end
 
   defp create_or_update!(%TeslaApi.Vehicle{} = vehicle) do
