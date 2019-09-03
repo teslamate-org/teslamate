@@ -12,7 +12,7 @@ defmodule TeslaMate.Log.Car do
     field :trim_badging, :string
     field :vid, :integer
 
-    # TODO: with v2.0 mark is non nullable
+    # TODO: with v2.0 mark as non nullable
     field :vin, :string
 
     has_many :charging_processes, ChargingProcess
