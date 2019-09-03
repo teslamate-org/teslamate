@@ -143,7 +143,8 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
            %TeslaApi.Vehicle{
              display_name: "foo",
              id: 4242,
-             vehicle_id: 404
+             vehicle_id: 404,
+             vin: "xxxxx"
            }
          ]}
       )

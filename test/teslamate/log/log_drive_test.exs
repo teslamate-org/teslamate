@@ -9,7 +9,7 @@ defmodule TeslaMate.LogDriveTest do
   def car_fixture(attrs \\ %{}) do
     {:ok, car} =
       attrs
-      |> Enum.into(%{efficiency: 0.153, eid: 42, model: "M3", vid: 42})
+      |> Enum.into(%{efficiency: 0.153, eid: 42, model: "M3", vid: 42, vin: "xxxxx"})
       |> Log.create_car()
 
     car

@@ -152,7 +152,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
   describe "New" do
     test "pre-fills the coordinates with the most recent position", %{conn: conn} do
-      assert {:ok, car} = Log.create_car(%{efficiency: 0.153, eid: 42, model: "3", vid: 42})
+      assert {:ok, car} =
+               Log.create_car(%{efficiency: 0.153, eid: 42, model: "3", vid: 42, vin: "xxxxx"})
 
       assert {:ok, _} =
                Log.insert_position(car.id, %{

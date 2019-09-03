@@ -22,12 +22,12 @@ defmodule TeslaMate.Log do
     Repo.get!(Car, id)
   end
 
-  def get_car_by_eid(eid) do
-    Repo.get_by(Car, eid: eid)
+  def get_car_by(opts) do
+    Repo.get_by(Car, opts)
   end
 
-  def create_car(%{eid: eid, vid: vid} = attrs) do
-    %Car{eid: eid, vid: vid}
+  def create_car(attrs) do
+    %Car{}
     |> Car.changeset(attrs)
     |> Repo.insert()
   end
