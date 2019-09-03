@@ -111,7 +111,10 @@ defmodule TeslaMate.Log do
     limit = Keyword.get(opts, :limit, 100)
 
     Position
-    |> where([p], p.id > ^min_id and is_nil(p.elevation))
+    |> where(
+      [p],
+      p.id > ^min_id and -56.0 < p.latitude and p.latitude < 61.0 and is_nil(p.elevation)
+    )
     |> order_by(asc: :id)
     |> limit(^limit)
     |> Repo.all()

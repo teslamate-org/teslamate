@@ -99,7 +99,6 @@ defmodule TeslaMate.Api do
   end
 
   @impl true
-
   def handle_call({:sign_in, %Credentials{}}, _from, %State{auth: auth} = state)
       when not is_nil(auth) do
     {:reply, {:error, :already_signed_in}, state}

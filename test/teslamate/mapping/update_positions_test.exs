@@ -69,9 +69,9 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
       [
         %{date: DateTime.utc_now(), latitude: 0, longitude: 0},
         %{date: DateTime.utc_now(), latitude: 1, longitude: 1},
-        %{date: DateTime.utc_now(), latitude: 99, longitude: 99},
-        %{date: DateTime.utc_now(), latitude: 99, longitude: 99},
-        %{date: DateTime.utc_now(), latitude: 99, longitude: 99},
+        %{date: DateTime.utc_now(), latitude: 42, longitude: 42},
+        %{date: DateTime.utc_now(), latitude: 42, longitude: 42},
+        %{date: DateTime.utc_now(), latitude: 42, longitude: 42},
         %{date: DateTime.utc_now(), latitude: 0, longitude: 0}
       ]
       |> Enum.map(fn position ->
@@ -83,7 +83,7 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
       start_mapping(name, %{
         {0.0, 0.0} => fn -> {:ok, 42} end,
         {1.0, 1.0} => fn -> {:error, :boom} end,
-        {99.0, 99.0} => fn ->
+        {42.0, 42.0} => fn ->
           :timer.sleep(100)
           {:error, :kaputt}
         end
@@ -91,8 +91,8 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
 
     assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 0.0, 0.0}}
     assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 1.0, 1.0}}
-    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 99.0, 99.0}}
-    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 99.0, 99.0}}
+    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 42.0, 42.0}}
+    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 42.0, 42.0}}
     # 4th and 5th are :unavailable
 
     :timer.sleep(300)
@@ -103,6 +103,29 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p3.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p4.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p5.id)
+
+    refute_receive _
+  end
+
+  test "only fetches positions that are within bounds", %{test: name} do
+    assert %Car{id: car_id} = car_fixture()
+
+    [
+      %{date: DateTime.utc_now(), latitude: 60.9, longitude: 0},
+      %{date: DateTime.utc_now(), latitude: 61, longitude: 0},
+      %{date: DateTime.utc_now(), latitude: -55.9, longitude: 0},
+      %{date: DateTime.utc_now(), latitude: -56, longitude: 0}
+    ]
+    |> Enum.map(fn position -> {:ok, _pos} = Log.insert_position(car_id, position) end)
+
+    :ok =
+      start_mapping(name, %{
+        {-55.9, 0.0} => fn -> {:ok, 42} end,
+        {60.9, 0.0} => fn -> {:ok, 42} end
+      })
+
+    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 60.9, 0.0}}
+    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, -55.9, 0.0}}
 
     refute_receive _
   end
