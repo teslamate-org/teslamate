@@ -216,6 +216,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.warn("Error / :unknown", car_id: data.car.id)
         {:keep_state_and_data, schedule_fetch(30)}
 
+      {:error, :vehicle_not_found} ->
+        raise ":vehicle_not_found"
+
       {:error, reason} ->
         Logger.warn("Error / #{inspect(reason)}", car_id: data.car.id)
         {:keep_state_and_data, schedule_fetch()}

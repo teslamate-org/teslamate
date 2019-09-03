@@ -7,7 +7,7 @@ defmodule TeslaMate.LogStateTest do
   def car_fixture(attrs \\ %{}) do
     {:ok, car} =
       attrs
-      |> Enum.into(%{efficiency: 0.153, eid: 42, model: "M3", vid: 42})
+      |> Enum.into(%{efficiency: 0.153, eid: 42, model: "M3", vid: 42, vin: "xxxxx"})
       |> Log.create_car()
 
     car
@@ -52,7 +52,7 @@ defmodule TeslaMate.LogStateTest do
 
     test "handles multiple cars" do
       assert %Car{id: car_id} = car_fixture()
-      assert %Car{id: another_car_id} = car_fixture(eid: 43, vid: 43)
+      assert %Car{id: another_car_id} = car_fixture(eid: 43, vid: 43, vin: "yyyyy")
 
       assert {:ok, %State{state: :online, start_date: s0, end_date: nil}} =
                Log.start_state(car_id, :online)

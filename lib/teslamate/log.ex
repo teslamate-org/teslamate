@@ -22,12 +22,12 @@ defmodule TeslaMate.Log do
     Repo.get!(Car, id)
   end
 
-  def get_car_by_eid(eid) do
-    Repo.get_by(Car, eid: eid)
+  def get_car_by(opts) do
+    Repo.get_by(Car, opts)
   end
 
-  def create_car(%{eid: eid, vid: vid} = attrs) do
-    %Car{eid: eid, vid: vid}
+  def create_car(attrs) do
+    %Car{}
     |> Car.changeset(attrs)
     |> Repo.insert()
   end
@@ -111,7 +111,10 @@ defmodule TeslaMate.Log do
     limit = Keyword.get(opts, :limit, 100)
 
     Position
-    |> where([p], p.id > ^min_id and is_nil(p.elevation))
+    |> where(
+      [p],
+      p.id > ^min_id and -56.0 < p.latitude and p.latitude < 61.0 and is_nil(p.elevation)
+    )
     |> order_by(asc: :id)
     |> limit(^limit)
     |> Repo.all()

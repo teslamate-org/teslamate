@@ -69,10 +69,17 @@ defmodule TeslaMate.Vehicles do
     Logger.info("Found '#{vehicle.display_name}'")
 
     {:ok, car} =
-      with nil <- Log.get_car_by_eid(vehicle.id) do
-        %Car{eid: vehicle.id, vid: vehicle.vehicle_id}
+      with nil <- Log.get_car_by(vin: vehicle.vin),
+           nil <- Log.get_car_by(vid: vehicle.vehicle_id),
+           nil <- Log.get_car_by(eid: vehicle.id) do
+        %Car{}
       end
-      |> Car.changeset(%{name: vehicle.display_name, vin: vehicle.vin})
+      |> Car.changeset(%{
+        name: vehicle.display_name,
+        eid: vehicle.id,
+        vid: vehicle.vehicle_id,
+        vin: vehicle.vin
+      })
       |> Log.create_or_update_car()
 
     car

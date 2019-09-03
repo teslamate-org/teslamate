@@ -27,7 +27,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      %Car{id: id} = Log.get_car_by_eid(4242)
+      %Car{id: id} = Log.get_car_by(vin: "xxxxx")
 
       {:ok, _position} =
         Log.insert_position(id, %{
@@ -386,7 +386,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      %Car{id: id} = Log.get_car_by_eid(4242)
+      %Car{id: id} = Log.get_car_by(vin: "xxxxx")
 
       conn = put(conn, Routes.car_path(conn, :suspend_logging, id))
 
@@ -409,7 +409,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      %Car{id: id} = Log.get_car_by_eid(4242)
+      %Car{id: id} = Log.get_car_by(vin: "xxxxx")
 
       conn = put(conn, Routes.car_path(conn, :suspend_logging, id))
       assert "preconditioning" == json_response(conn, 412)["error"]
@@ -436,7 +436,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       :ok = start_vehicles(events)
       :timer.sleep(100)
 
-      %Car{id: id} = Log.get_car_by_eid(4242)
+      %Car{id: id} = Log.get_car_by(vin: "xxxxx")
       %Summary{state: :suspended} = TeslaMate.Vehicles.summary(id)
 
       conn = put(conn, Routes.car_path(conn, :resume_logging, id))
@@ -455,7 +455,8 @@ defmodule TeslaMateWeb.CarControllerTest do
            %TeslaApi.Vehicle{
              display_name: "foo",
              id: 4242,
-             vehicle_id: 404
+             vehicle_id: 404,
+             vin: "xxxxx"
            }
          ]}
       )

@@ -85,8 +85,8 @@ defmodule TeslaMate.LogCarTest do
 
     assert car.efficiency == 0.190
     assert car.model == "S"
-    assert car.eid == 42
-    assert car.vid == 42
+    assert car.eid == 43
+    assert car.vid == 43
     assert car.name == "bar"
     assert car.trim_badging == "100D"
     assert car.vin == "6789R"

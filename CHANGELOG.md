@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.8.0] - 2019-09-03
+
+### Added
+
+- Identify cars by VIN: This hopefully eliminates any upcoming problems when
+  Tesla decides yet again to change the IDs of their cars ...
+- Pick geo-fences from a map and show their radius
+
+### Fixed
+
+- Only add elevation to positions for which SRTM elevation data is available
+- [Security] Bump Grafana version
+
 ## [1.7.0] - 2019-08-29
 
 ### Added
@@ -320,6 +333,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.8.0]: https://github.com/adriankumpf/teslamate/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/adriankumpf/teslamate/compare/v1.6.2...v1.7.0
 [1.6.2]: https://github.com/adriankumpf/teslamate/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/adriankumpf/teslamate/compare/v1.6.0...v1.6.1
