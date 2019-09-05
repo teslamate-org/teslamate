@@ -39,6 +39,7 @@
       "type": "row"
     },
     {
+      "datasource": "$Datasource",
       "columns": [],
       "fontSize": "100%",
       "gridPos": {
@@ -687,12 +688,25 @@
   "templating": {
     "list": [
       {
+        "hide": 0,
+        "includeAll": false,
+        "label": "Teslamate DB",
+        "multi": false,
+        "name": "Datasource",
+        "options": [],
+        "query": "postgres",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
         "allValue": null,
         "current": {
           "text": "All",
           "value": "$__all"
         },
-        "datasource": null,
+        "datasource": "$Datasource",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
@@ -717,7 +731,7 @@
           "text": "C",
           "value": "C"
         },
-        "datasource": null,
+        "datasource": "$Datasource",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -742,7 +756,7 @@
           "text": "km",
           "value": "km"
         },
-        "datasource": null,
+        "datasource": "$Datasource",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,

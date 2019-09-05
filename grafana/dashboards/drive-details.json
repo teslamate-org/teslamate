@@ -11,6 +11,7 @@
         "type": "dashboard"
       },
       {
+        "datasource": "$Datasource",
         "enable": true,
         "hide": false,
         "iconColor": "rgba(255, 96, 96, 1)",
@@ -22,6 +23,7 @@
         "type": "tags"
       },
       {
+        "datasource": "$Datasource",
         "enable": true,
         "hide": false,
         "iconColor": "#508642",
@@ -33,6 +35,7 @@
         "type": "tags"
       },
       {
+        "datasource": "$Datasource",
         "enable": true,
         "hide": false,
         "iconColor": "#64b0c8",
@@ -44,6 +47,7 @@
         "type": "tags"
       },
       {
+        "datasource": "$Datasource",
         "enable": true,
         "hide": false,
         "iconColor": "#ba43a9",
@@ -55,6 +59,7 @@
         "type": "tags"
       },
       {
+        "datasource": "$Datasource",
         "enable": true,
         "hide": false,
         "iconColor": "rgb(158, 154, 154)",
@@ -74,6 +79,7 @@
   "links": [],
   "panels": [
     {
+      "datasource": "$Datasource",
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -206,6 +212,7 @@
       }
     },
     {
+      "datasource": "$Datasource",
       "autoZoom": true,
       "gridPos": {
         "h": 28,
@@ -297,6 +304,7 @@
       "type": "pr0ps-trackmap-panel"
     },
     {
+      "datasource": "$Datasource",
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -411,6 +419,7 @@
       }
     },
     {
+      "datasource": "$Datasource",
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -561,6 +570,19 @@
   "templating": {
     "list": [
       {
+        "hide": 0,
+        "includeAll": false,
+        "label": "Teslamate DB",
+        "multi": false,
+        "name": "Datasource",
+        "options": [],
+        "query": "postgres",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
         "current": {
           "text": "",
           "value": ""
@@ -584,7 +606,7 @@
           "text": "C",
           "value": "C"
         },
-        "datasource": null,
+        "datasource": "$Datasource",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -609,7 +631,7 @@
           "text": "km",
           "value": "km"
         },
-        "datasource": null,
+        "datasource": "$Datasource",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -635,7 +657,7 @@
           "text": "1",
           "value": "1"
         },
-        "datasource": null,
+        "datasource": "$Datasource",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 0,
         "includeAll": false,
@@ -660,7 +682,7 @@
           "text": "m",
           "value": "m"
         },
-        "datasource": null,
+        "datasource": "$Datasource",
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
