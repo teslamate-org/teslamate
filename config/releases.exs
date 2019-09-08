@@ -36,7 +36,8 @@ if System.get_env("DISABLE_MQTT") != "true" do
   config :teslamate, :mqtt,
     host: System.fetch_env!("MQTT_HOST"),
     username: System.get_env("MQTT_USERNAME"),
-    password: System.get_env("MQTT_PASSWORD")
+    password: System.get_env("MQTT_PASSWORD"),
+    ssl: System.get_env("MQTT_SSL")
 end
 
 config :logger,

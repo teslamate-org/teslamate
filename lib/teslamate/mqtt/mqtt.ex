@@ -27,13 +27,25 @@ defmodule TeslaMate.Mqtt do
   defp config do
     auth = Application.get_env(:teslamate, :mqtt)
 
-    [
-      user_name: Keyword.get(auth, :username),
-      password: Keyword.get(auth, :password),
-      server: {Tortoise.Transport.Tcp, host: Keyword.get(auth, :host), port: 1883},
-      handler: {Tortoise.Handler.Logger, []},
-      subscriptions: []
-    ]
+    if(Keyword.get(auth, :ssl) == "false") do
+      [
+        user_name: Keyword.get(auth, :username),
+        password: Keyword.get(auth, :password),
+        server: {Tortoise.Transport.Tcp, host: Keyword.get(auth, :host), port: 1883},
+        handler: {Tortoise.Handler.Logger, []},
+        subscriptions: []
+      ]
+    else
+      [
+        user_name: Keyword.get(auth, :username),
+        password: Keyword.get(auth, :password),
+        server:
+          {Tortoise.Transport.SSL,
+           host: Keyword.get(auth, :host), port: 8883, verify: :verify_none},
+        handler: {Tortoise.Handler.Logger, []},
+        subscriptions: []
+      ]
+    end
   end
 
   defp generate_client_id do
