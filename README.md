@@ -135,6 +135,9 @@ To access Grafana go to http://ip-of-your-machine:3000.
 **Optional:** To switch to **imperial measurements** open the web interface and
 navigate to `Settings`.
 
+_For a more advanced setup check out the wiki: [Advanved Setup (SSL, FQDN, pw
+protected)](<https://github.com/adriankumpf/teslamate/wiki/Advanved-Setup-(SSL,-FQDN,-pw-protected)>)_
+
 ### Manual Installation (advanced)
 
 To run TeslaMate without Docker follow this guide: [Manual
@@ -252,7 +255,8 @@ PUT https://teslamate.your-domain.com/api/car/$car_id/logging/suspend
 ⚠️ I strongly recommend to use a reverse-proxy with HTTPS and basic access
 authentication when exposing TeslaMate to the public internet. Additionally
 only permit access to `/api/car/$car_id/logging/resume` and/or
-`/api/car/$car_id/logging/suspend`.
+`/api/car/$car_id/logging/suspend`. See [Advanved Setup (SSL, FQDN, pw
+protected)](<https://github.com/adriankumpf/teslamate/wiki/Advanved-Setup-(SSL,-FQDN,-pw-protected)>).
 
 #### My car is not sleeping!
 
