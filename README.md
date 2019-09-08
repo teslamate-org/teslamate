@@ -114,7 +114,6 @@ services:
     image: eclipse-mosquitto:1.6
     ports:
       - 1883:1883
-      - 9001:9001
     volumes:
       - mosquitto-conf:/mosquitto/config
       - mosquitto-data:/mosquitto/data
@@ -147,22 +146,24 @@ TeslaMate uses environment variables for runtime configuration.
 
 ### Environment Variables
 
-| Variable Name      | Description                                                                                                                                | Default Value |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| DATABASE_USER      | Username (**required**)                                                                                                                    | /             |
-| DATABASE_PASS      | User password (**required**)                                                                                                               | /             |
-| DATABASE_NAME      | The database to connect to (**required**)                                                                                                  | /             |
-| DATABASE_HOST      | Hostname of the database server (**required**)                                                                                             | /             |
-| DATABASE_PORT      | Port of the database server                                                                                                                | 5432          |
-| DATABASE_POOL_SIZE | Size of the database connection pool                                                                                                       | 5             |
-| VIRTUAL_HOST       | Host part used for generating URLs throughout the app                                                                                      | localhost     |
-| PORT               | Port where the web interface is exposed                                                                                                    | 4000          |
-| DISABLE_MQTT       | Disables the MQTT feature if `true`                                                                                                        | false         |
-| MQTT_HOST          | Hostname of the broker (**required** unless DISABLE_MQTT is `true`)                                                                        | /             |
-| MQTT_USERNAME      | Username _(optional)_                                                                                                                      | /             |
-| MQTT_PASSWORD      | Password _(optional)_                                                                                                                      | /             |
-| LOCALE             | The default locale for the web interface and addresses. Currently available: `en` (default) and `de`                                       | en            |
-| TZ                 | Used to establish the local time zone. See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). | /             |
+| Variable Name                 | Description                                                                                                                                | Default Value |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| DATABASE_USER                 | Username (**required**)                                                                                                                    | /             |
+| DATABASE_PASS                 | User password (**required**)                                                                                                               | /             |
+| DATABASE_NAME                 | The database to connect to (**required**)                                                                                                  | /             |
+| DATABASE_HOST                 | Hostname of the database server (**required**)                                                                                             | /             |
+| DATABASE_PORT                 | Port of the database server                                                                                                                | 5432          |
+| DATABASE_POOL_SIZE            | Size of the database connection pool                                                                                                       | 5             |
+| VIRTUAL_HOST                  | Host part used for generating URLs throughout the app                                                                                      | localhost     |
+| PORT                          | Port where the web interface is exposed                                                                                                    | 4000          |
+| DISABLE_MQTT                  | Disables the MQTT feature if `true`                                                                                                        | false         |
+| MQTT_HOST                     | Hostname of the broker (**required** unless DISABLE_MQTT is `true`)                                                                        | /             |
+| MQTT_USERNAME                 | Username _(optional)_                                                                                                                      | /             |
+| MQTT_PASSWORD                 | Password _(optional)_                                                                                                                      | /             |
+| MQTT_TLS                      | Enables TLS if `true` _(optional)_                                                                                                         | false         |
+| MQTT_TLS_ACCEPT_INVALID_CERTS | Accepts invalid certificates if `true` _(optional)_                                                                                        | false         |
+| LOCALE                        | The default locale for the web interface and addresses. Currently available: `en` (default) and `de`                                       | en            |
+| TZ                            | Used to establish the local time zone. See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). | /             |
 
 ## Upgrading
 

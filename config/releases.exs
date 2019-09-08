@@ -37,7 +37,8 @@ if System.get_env("DISABLE_MQTT") != "true" do
     host: System.fetch_env!("MQTT_HOST"),
     username: System.get_env("MQTT_USERNAME"),
     password: System.get_env("MQTT_PASSWORD"),
-    ssl: System.get_env("MQTT_SSL")
+    tls: System.get_env("MQTT_TLS"),
+    accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS")
 end
 
 config :logger,

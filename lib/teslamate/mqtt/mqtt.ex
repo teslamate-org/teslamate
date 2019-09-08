@@ -24,28 +24,33 @@ defmodule TeslaMate.Mqtt do
 
   # Private
 
+  alias Tortoise.Transport
+
   defp config do
     auth = Application.get_env(:teslamate, :mqtt)
+    host = Keyword.get(auth, :host)
 
-    if(Keyword.get(auth, :ssl) == "false") do
-      [
-        user_name: Keyword.get(auth, :username),
-        password: Keyword.get(auth, :password),
-        server: {Tortoise.Transport.Tcp, host: Keyword.get(auth, :host), port: 1883},
-        handler: {Tortoise.Handler.Logger, []},
-        subscriptions: []
-      ]
-    else
-      [
-        user_name: Keyword.get(auth, :username),
-        password: Keyword.get(auth, :password),
-        server:
-          {Tortoise.Transport.SSL,
-           host: Keyword.get(auth, :host), port: 8883, verify: :verify_none},
-        handler: {Tortoise.Handler.Logger, []},
-        subscriptions: []
-      ]
-    end
+    server =
+      if Keyword.get(auth, :tls) == "true" do
+        verify =
+          if Keyword.get(auth, :accept_invalid_certs) == "true" do
+            :verify_none
+          else
+            :verify_peer
+          end
+
+        {Transport.SSL, host: host, port: 8883, cacertfile: CAStore.file_path(), verify: verify}
+      else
+        {Transport.Tcp, host: host, port: 1883}
+      end
+
+    [
+      user_name: Keyword.get(auth, :username),
+      password: Keyword.get(auth, :password),
+      server: server,
+      handler: {Tortoise.Handler.Logger, []},
+      subscriptions: []
+    ]
   end
 
   defp generate_client_id do
