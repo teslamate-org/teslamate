@@ -9,13 +9,25 @@
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
         "type": "dashboard"
+      },
+      {
+        "datasource": "TeslaMate",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#8AB8FF",
+        "limit": 100,
+        "name": "Charged",
+        "rawQuery": "SELECT\n\t$__time(start_date),\n\tconcat('Laden: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
+        "showIn": 0,
+        "tags": [],
+        "type": "tags"
       }
     ]
   },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565978635161,
+  "iteration": 1568232437333,
   "links": [],
   "panels": [
     {
