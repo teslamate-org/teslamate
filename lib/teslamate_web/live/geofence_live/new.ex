@@ -12,8 +12,10 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
 
   import TeslaMateWeb.Gettext
 
+  @impl true
   def render(assigns), do: GeoFenceView.render("new.html", assigns)
 
+  @impl true
   def mount(_session, socket) do
     {unit_of_length, radius} =
       case Settings.get_settings!() do
@@ -37,6 +39,7 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
     {:ok, assign(socket, assigns)}
   end
 
+  @impl true
   def handle_event("validate", %{"geo_fence" => params}, socket) do
     changeset =
       %GeoFence{}

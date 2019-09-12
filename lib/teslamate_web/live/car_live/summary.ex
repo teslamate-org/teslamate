@@ -8,16 +8,15 @@ defmodule TeslaMateWeb.CarLive.Summary do
   alias TeslaMate.Log.Car
 
   @impl true
-  def mount(%{car: %Car{id: id} = car, settings: settings}, socket) do
+  def mount(%{car: %Car{} = car, settings: settings}, socket) do
     if connected?(socket) do
       send(self(), :update_duration)
-      Vehicles.subscribe(id)
+      Vehicles.subscribe(car.id)
     end
 
-    summary = Vehicles.summary(id)
+    summary = Vehicles.summary(car.id)
 
     assigns = %{
-      id: id,
       car: car,
       summary: summary,
       settings: settings,
@@ -40,7 +39,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
     cancel_timer(socket.assigns.error_timeout)
 
     assigns =
-      case Vehicles.suspend_logging(socket.assigns.id) do
+      case Vehicles.suspend_logging(socket.assigns.car.id) do
         :ok ->
           %{error: nil, error_timeout: nil}
 
@@ -55,7 +54,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
   end
 
   def handle_event("resume_logging", _val, socket) do
-    :ok = Vehicles.resume_logging(socket.assigns.id)
+    :ok = Vehicles.resume_logging(socket.assigns.car.id)
     {:noreply, socket}
   end
 

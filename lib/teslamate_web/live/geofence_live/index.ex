@@ -4,8 +4,10 @@ defmodule TeslaMateWeb.GeoFenceLive.Index do
   alias TeslaMate.{Locations, Settings}
   alias TeslaMateWeb.GeoFenceView
 
+  @impl true
   def render(assigns), do: GeoFenceView.render("index.html", assigns)
 
+  @impl true
   def mount(_session, socket) do
     unit_of_length =
       case Settings.get_settings!() do
@@ -22,6 +24,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Index do
     {:ok, assign(socket, assigns)}
   end
 
+  @impl true
   def handle_event("flag", id, socket) do
     {:noreply, assign(socket, flagged: id)}
   end

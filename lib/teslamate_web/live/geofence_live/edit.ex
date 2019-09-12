@@ -10,9 +10,16 @@ defmodule TeslaMateWeb.GeoFenceLive.Edit do
 
   import TeslaMateWeb.Gettext
 
+  @impl true
   def render(assigns), do: GeoFenceView.render("edit.html", assigns)
 
-  def mount(%{path_params: %{"id" => id}}, socket) do
+  @impl true
+  def mount(_session, socket) do
+    {:ok, assign(socket, type: :edit, show_errors: false)}
+  end
+
+  @impl true
+  def handle_params(%{"id" => id}, _uri, socket) do
     %GeoFence{radius: radius} = geofence = Locations.get_geofence!(id)
 
     {unit_of_length, radius} =
@@ -24,14 +31,13 @@ defmodule TeslaMateWeb.GeoFenceLive.Edit do
     assigns = %{
       geofence: geofence,
       changeset: Locations.change_geofence(geofence, %{radius: round(radius)}),
-      unit_of_length: unit_of_length,
-      type: :edit,
-      show_errors: false
+      unit_of_length: unit_of_length
     }
 
-    {:ok, assign(socket, assigns)}
+    {:noreply, assign(socket, assigns)}
   end
 
+  @impl true
   def handle_event("validate", %{"geo_fence" => params}, socket) do
     changeset =
       socket.assigns.geofence

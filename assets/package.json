@@ -21,11 +21,11 @@
     "css-loader": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "sass": "^1.22.0",
+    "sass": "^1.22.12",
     "sass-loader": "^8.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^2.1.0",
-    "webpack": "4.39.3",
+    "webpack": "4.40.1",
     "webpack-cli": "^3.3.8"
   }
 }
