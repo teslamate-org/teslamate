@@ -90,8 +90,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event({:call, from}, :summary, state, %Data{last_response: vehicle} = data) do
     vehicle =
-      with %Vehicle{charge_state: nil, climate_state: nil} <- vehicle,
+      with %Vehicle{drive_state: nil, charge_state: nil, climate_state: nil} <- vehicle,
            %Log.Position{} = position <- call(data.deps.log, :get_latest_position, [data.car.id]) do
+        drive = %Drive{
+          latitude: position.latitude,
+          longitude: position.longitude
+        }
+
         charge = %Charge{
           ideal_battery_range: position.ideal_battery_range_km |> Convert.km_to_miles(1),
           est_battery_range: position.est_battery_range_km |> Convert.km_to_miles(1),
@@ -104,7 +109,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           inside_temp: position.inside_temp
         }
 
-        %Vehicle{vehicle | charge_state: charge, climate_state: climate}
+        %Vehicle{vehicle | drive_state: drive, charge_state: charge, climate_state: climate}
       else
         _ -> vehicle
       end

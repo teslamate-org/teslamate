@@ -5,7 +5,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   alias TeslaMate.Settings
 
   defp table_row(key, value) do
-    ~r/<tr>\n?\s*<td>#{key}<\/td>\n?\s*<td.*?>\n?\s*#{value}\n?\s*<\/td>\n?\s*<\/tr>/
+    ~r/<tr>\n?\s*<td class=\"has-text-weight-medium\">#{key}<\/td>\n?\s*<td.*?>\n?\s*#{value}\n?\s*<\/td>\n?\s*<\/tr>/
   end
 
   describe "suspend" do

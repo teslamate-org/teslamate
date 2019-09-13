@@ -34,12 +34,28 @@ $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
   margin-bottom: 25px;
 
   .card-content {
-    padding: 0.75rem;
+    padding: 0.8rem;
   }
 
   .content table td,
   .content table th {
     border: none;
+  }
+
+  #map {
+    .leaflet-control-attribution.leaflet-control {
+      display: none;
+    }
+  }
+
+  .card-content {
+    .media {
+      justify-content: space-between;
+    }
+
+    .table.is-narrow td {
+      padding: 0.1em 0em;
+    }
   }
 }
 

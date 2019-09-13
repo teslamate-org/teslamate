@@ -1,32 +1,45 @@
 <div class="car card">
-  <header class="card-header">
-     <div class="media card-header-title mb-0">
+   <div class="card-image">
+    <figure class="<%= if false, do: 'is-hidden' %>">
+        <div
+          id="map"
+          style="height: 150px; position: relative;"
+          phx-update="ignore"
+          phx-hook="SimpleMap"
+        />
+        <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude}",
+                                                phx_hook: "TriggerChange",
+                                                class: "position is-hidden",
+                                                disabled: true
+        %>
+    </figure>
+  </div>
+  <div class="card-content">
+    <div class="media is-flex mb-5">
       <div class="media-content">
-        <p class="title is-6"><%= @summary.display_name %></p>
+        <p class="title is-5"><%= @summary.display_name %></p>
         <%= unless is_nil(@car.model) do %>
-        <p class="subtitle is-6">Model <%= @car.model %> <%= @car.trim_badging %></p>
+        <p class="subtitle is-6 has-text-weight-light">Model <%= @car.model %> <%= @car.trim_badging %></p>
         <% end %>
       </div>
+       <div class="ml-5">
+        <%=
+          cond do
+            not is_nil(@error) ->
+              link @error, to: "#", class: "button is-danger is-small is-outlined", disabled: true
+
+            @summary.state == :online and !@summary.sentry_mode and @summary.locked->
+              link gettext("try to sleep"), to: "#", phx_click: "suspend_logging", class: "button is-info is-small is-outlined"
+
+            @summary.state == :suspended ->
+              link gettext("cancel sleep attempt"), to: "#", phx_click: "resume_logging", class: "button is-info is-small is-outlined"
+
+            true ->
+              nil
+          end
+        %>
+      </div>
     </div>
-    <div class="card-header-icon">
-      <%=
-        cond do
-          not is_nil(@error) ->
-            link @error, to: "#", class: "button is-danger is-small is-outlined", disabled: true
-
-          @summary.state == :online and !@summary.sentry_mode and @summary.locked->
-            link gettext("try to sleep"), to: "#", phx_click: "suspend_logging", class: "button is-info is-small is-outlined"
-
-          @summary.state == :suspended ->
-            link gettext("cancel sleep attempt"), to: "#", phx_click: "resume_logging", class: "button is-info is-small is-outlined"
-
-          true ->
-            nil
-        end
-      %>
-    </div>
-  </header>
-  <div class="card-content">
     <div class="content">
       <table class="table is-narrow is-fullwidth">
         <thead>
@@ -35,147 +48,148 @@
             <th style="max-width: 40%; width: 40%"></th>
           </tr>
         </thead>
-      <tbody>
-        <tr>
-          <td><%= gettext "Status" %></td>
-          <td>
-            <%= @translate_state.(@summary.state) %>
-            <%= unless is_nil(@duration), do: " #{gettext("for")} #{@duration}" %>
-          </td>
-        </tr>
-        <%= unless is_nil(@summary.ideal_battery_range_km) do %>
-        <tr>
-          <td><%=
-          case @settings.preferred_range do
-            :ideal -> gettext "Range (ideal)"
-            :rated -> gettext "Range (rated)"
-          end
-          %></td>
-          <td>
-            <%
-              range = case @settings.preferred_range do
-                :ideal -> @summary.ideal_battery_range_km
-                :rated -> @summary.rated_battery_range_km
-              end
-            %>
-            <%= if @settings.unit_of_length == :mi do %>
-              <%= Float.round(range / 1.60934, 1)%> mi
-            <% else %>
-              <%= range %> km
-            <% end %>
-          </td>
-        </tr>
-        <% end %>
-        <%= unless is_nil(@summary.est_battery_range_km) do %>
-        <tr>
-          <td><%= gettext "Range (est.)" %></td>
-          <td>
-            <%= if @settings.unit_of_length == :mi do %>
-              <%= Float.round(@summary.est_battery_range_km / 1.60934, 1)%> mi
-            <% else %>
-              <%= @summary.est_battery_range_km %> km
-            <% end %>
-          </td>
-        </tr>
-        <% end %>
-        <%= if @summary.state in [:charging, :charging_complete] do %>
-          <%= unless is_nil(@summary.charge_energy_added) do %>
-        <tr>
-          <td><%= gettext "Charged" %></td>
-          <td><%= @summary.charge_energy_added %> kWh</td>
-        </tr>
-          <% end %>
-          <%= unless is_nil(@summary.charger_power) do %>
-        <tr>
-          <td><%= gettext "Charger Power" %></td>
-          <td><%= @summary.charger_power %> kW</td>
-        </tr>
-          <% end %>
-        <% end %>
-
-        <%= if @summary.state != :driving and not is_nil(@summary.plugged_in) do %>
-        <tr>
-          <td><%= gettext "Plugged in" %></td>
-          <td><%= (if @summary.plugged_in, do: gettext("yes"), else: gettext("no"))  %></td>
-        </tr>
-        <% end %>
-        <%= if @summary.plugged_in do %>
-          <%= if not is_nil(@summary.scheduled_charging_start_time) do %>
+        <tbody>
           <tr>
-            <td><%= gettext "Scheduled charging" %></td>
+            <td class="has-text-weight-medium"><%= gettext "Status" %></td>
             <td>
-              <%=
-                tag :span, data: [date: @summary.scheduled_charging_start_time |> DateTime.to_iso8601()],
-                           phx_hook: "LocalTime"
+              <%= @translate_state.(@summary.state) %>
+              <%= unless is_nil(@duration), do: " #{gettext("for")} #{@duration}" %>
+            </td>
+          </tr>
+          <%= unless is_nil(@summary.ideal_battery_range_km) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%=
+            case @settings.preferred_range do
+              :ideal -> gettext "Range (ideal)"
+              :rated -> gettext "Range (rated)"
+            end
+            %></td>
+            <td>
+              <%
+                range = case @settings.preferred_range do
+                  :ideal -> @summary.ideal_battery_range_km
+                  :rated -> @summary.rated_battery_range_km
+                end
               %>
+              <%= if @settings.unit_of_length == :mi do %>
+                <%= Float.round(range / 1.60934, 1)%> mi
+              <% else %>
+                <%= range %> km
+              <% end %>
             </td>
           </tr>
           <% end %>
-          <%= if not is_nil(@summary.charge_limit_soc) do %>
+          <%= unless is_nil(@summary.est_battery_range_km) do %>
           <tr>
-            <td><%= gettext "Charge limit" %></td>
-            <td><%= @summary.charge_limit_soc %>%</td>
+            <td class="has-text-weight-medium"><%= gettext "Range (est.)" %></td>
+            <td>
+              <%= if @settings.unit_of_length == :mi do %>
+                <%= Float.round(@summary.est_battery_range_km / 1.60934, 1)%> mi
+              <% else %>
+                <%= @summary.est_battery_range_km %> km
+              <% end %>
+            </td>
           </tr>
           <% end %>
-        <% end %>
-        <%= unless is_nil(@summary.battery_level) do %>
-        <tr>
-          <td><%= gettext "State of Charge" %></td>
-          <td><%= @summary.battery_level %>%</td>
-        </tr>
-        <% end %>
-        <%= unless is_nil(@summary.locked) do %>
-        <tr>
-          <td><%= gettext "Locked" %></td>
-          <td><%= (if @summary.locked, do: gettext("yes"), else: gettext("no"))  %></td>
-        </tr>
-        <% end %>
-        <%= if @summary.sentry_mode do %>
-        <tr>
-          <td><%= gettext "Sentry Mode" %></td>
-          <td><%= (if @summary.sentry_mode, do: gettext("yes"), else: gettext("no"))  %></td>
-        </tr>
-        <% end %>
-        <%= unless is_nil(@summary.speed) do %>
-        <tr>
-          <td><%= gettext "Speed" %></td>
-          <td>
-            <%= if @settings.unit_of_length == :mi do %>
-              <%= round(@summary.speed / 1.60934)%> mph
-            <% else %>
-              <%= @summary.speed %> km/h
+          <%= if @summary.state in [:charging, :charging_complete] do %>
+            <%= unless is_nil(@summary.charge_energy_added) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Charged" %></td>
+            <td><%= @summary.charge_energy_added %> kWh</td>
+          </tr>
             <% end %>
-          </td>
-        </tr>
-        <% end %>
-        <%= if @summary.state not in [:asleep, :offline, :suspended] or DateTime.diff(DateTime.utc_now(), @summary.since) < 30*60 do %>
-          <%= unless is_nil(@summary.outside_temp) do %>
-        <tr>
-          <td><%= gettext "Outside temperature" %></td>
-          <td>
-            <%= if @settings.unit_of_temperature == :F do %>
-              <%= Float.round((@summary.outside_temp * 9/5) + 32, 1)%> °F
-            <% else %>
-              <%= @summary.outside_temp %> °C
+            <%= unless is_nil(@summary.charger_power) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Charger Power" %></td>
+            <td><%= @summary.charger_power %> kW</td>
+          </tr>
             <% end %>
-          </td>
-        </tr>
           <% end %>
-          <%= unless is_nil(@summary.inside_temp) do %>
-        <tr>
-          <td><%= gettext "Inside temperature" %></td>
-          <td>
-            <%= if @settings.unit_of_temperature == :F do %>
-              <%= Float.round((@summary.inside_temp * 9/5) + 32, 1)%> °F
-            <% else %>
-              <%= @summary.inside_temp %> °C
-            <% end %>
-          </td>
-        </tr>
+
+          <%= if @summary.state != :driving and not is_nil(@summary.plugged_in) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Plugged in" %></td>
+            <td><%= (if @summary.plugged_in, do: gettext("yes"), else: gettext("no"))  %></td>
+          </tr>
           <% end %>
-        <% end %>
-      </tbody>
-    </table>
+          <%= if @summary.plugged_in do %>
+            <%= if not is_nil(@summary.scheduled_charging_start_time) do %>
+            <tr>
+              <td class="has-text-weight-medium"><%= gettext "Scheduled charging" %></td>
+              <td>
+                <%=
+                  tag :span, data: [date: @summary.scheduled_charging_start_time |> DateTime.to_iso8601()],
+                             phx_hook: "LocalTime"
+                %>
+              </td>
+            </tr>
+            <% end %>
+            <%= if not is_nil(@summary.charge_limit_soc) do %>
+            <tr>
+              <td class="has-text-weight-medium"><%= gettext "Charge limit" %></td>
+              <td><%= @summary.charge_limit_soc %>%</td>
+            </tr>
+            <% end %>
+          <% end %>
+          <%= unless is_nil(@summary.battery_level) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "State of Charge" %></td>
+            <td><%= @summary.battery_level %>%</td>
+          </tr>
+          <% end %>
+          <%= unless is_nil(@summary.locked) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Locked" %></td>
+            <td><%= (if @summary.locked, do: gettext("yes"), else: gettext("no"))  %></td>
+          </tr>
+          <% end %>
+          <%= if @summary.sentry_mode do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Sentry Mode" %></td>
+            <td><%= (if @summary.sentry_mode, do: gettext("yes"), else: gettext("no"))  %></td>
+          </tr>
+          <% end %>
+          <%= unless is_nil(@summary.speed) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Speed" %></td>
+            <td>
+              <%= if @settings.unit_of_length == :mi do %>
+                <%= round(@summary.speed / 1.60934)%> mph
+              <% else %>
+                <%= @summary.speed %> km/h
+              <% end %>
+            </td>
+          </tr>
+          <% end %>
+          <%= if @summary.state not in [:asleep, :offline, :suspended] or DateTime.diff(DateTime.utc_now(), @summary.since) < 30*60 do %>
+            <%= unless is_nil(@summary.outside_temp) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Outside temperature" %></td>
+            <td>
+              <%= if @settings.unit_of_temperature == :F do %>
+                <%= Float.round((@summary.outside_temp * 9/5) + 32, 1)%> °F
+              <% else %>
+                <%= @summary.outside_temp %> °C
+              <% end %>
+            </td>
+          </tr>
+            <% end %>
+            <%= unless is_nil(@summary.inside_temp) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Inside temperature" %></td>
+            <td>
+              <%= if @settings.unit_of_temperature == :F do %>
+                <%= Float.round((@summary.inside_temp * 9/5) + 32, 1)%> °F
+              <% else %>
+                <%= @summary.inside_temp %> °C
+              <% end %>
+            </td>
+          </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+
     </div>
   </div>
 </div>

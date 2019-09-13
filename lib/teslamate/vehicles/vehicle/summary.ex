@@ -8,6 +8,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :display_name,
     :state,
     :since,
+    :latitude,
+    :longitude,
     :battery_level,
     :ideal_battery_range_km,
     :est_battery_range_km,
@@ -42,6 +44,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp format_vehicle(%Vehicle{} = vehicle) do
     %__MODULE__{
       display_name: vehicle.display_name,
+      latitude: get_in_struct(vehicle, [:drive_state, :latitude]),
+      longitude: get_in_struct(vehicle, [:drive_state, :longitude]),
       speed: speed(vehicle),
       ideal_battery_range_km:
         get_in_struct(vehicle, [:charge_state, :ideal_battery_range]) |> miles_to_km(1),

@@ -6,7 +6,7 @@ defmodule TeslaMateWeb.CarControllerTest do
   alias TeslaMate.Log.Car
 
   defp table_row(key, value) do
-    ~r/<tr>\n?\s*<td>#{key}<\/td>\n?\s*<td.*?>\n?\s*#{value}\n?\s*<\/td>\n?\s*<\/tr>/
+    ~r/<tr>\n?\s*<td class=\"has-text-weight-medium\">#{key}<\/td>\n?\s*<td.*?>\n?\s*#{value}\n?\s*<\/td>\n?\s*<\/tr>/
   end
 
   describe "index" do
@@ -45,7 +45,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Status", "asleep")
       assert html =~ table_row("Range \\(ideal\\)", "380.1 km")
       assert html =~ table_row("Range \\(est.\\)", "401.5 km")
@@ -80,8 +80,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
-      assert html =~ ~r/<p class="subtitle is-6">Model S P90D<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert html =~ ~r/<p class="subtitle is-6 has-text-weight-light">Model S P90D<\/p>/
       assert html =~ table_row("Status", "online")
       assert html =~ table_row("Plugged in", "no")
       assert html =~ table_row("Range \\(ideal\\)", "321.9 km")
@@ -121,7 +121,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Status", "charging")
       assert html =~ table_row("Plugged in", "yes")
       assert html =~ table_row("Range \\(ideal\\)", "321.9 km")
@@ -198,7 +198,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Status", "charging complete")
     end
 
@@ -223,7 +223,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Status", "driving")
       assert html =~ table_row("Speed", "48 km/h")
     end
@@ -248,7 +248,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Status", "updating")
     end
 
@@ -263,7 +263,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Status", "asleep")
     end
 
@@ -278,7 +278,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Status", "offline")
     end
 
@@ -304,7 +304,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Status", "falling asleep")
     end
 
@@ -320,7 +320,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6"><\/p>/
+      assert html =~ ~r/<p class="title is-5"><\/p>/
       assert html =~ table_row("Status", "unavailable")
     end
 
@@ -354,7 +354,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Range \\(rated\\)", "281.6 km")
       assert html =~ table_row("Range \\(est.\\)", "289.7 km")
     end
@@ -386,7 +386,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ table_row("Status", "driving")
       assert html =~ table_row("Range \\(ideal\\)", "200.0 mi")
       assert html =~ table_row("Range \\(est.\\)", "180.0 mi")

@@ -27,18 +27,67 @@ import {
   Circle
 } from "leaflet";
 
-function createMap() {
-  const map = new M("map");
+const icon = new Icon({
+  iconUrl: require("leaflet/dist/images/marker-icon.png"),
+  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+  iconAnchor: [12, 40],
+  popupAnchor: [0, -25]
+});
+
+function createMap(opts) {
+  const map = new M("map", opts);
 
   const osm = new TileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    { maxZoom: 19, attribution: "OSM" }
+    { maxZoom: 19 }
   );
+
+  if (opts.enableHybridLayer) {
+    const hybrid = new TileLayer(
+      "http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
+      { maxZoom: 20, subdomains: ["mt0", "mt1", "mt2", "mt3"] }
+    );
+
+    new Control.Layers({ OSM: osm, Hybrid: hybrid }).addTo(map);
+  }
 
   map.addLayer(osm);
 
   return map;
 }
+
+export const SimpleMap = {
+  mounted() {
+    const $position = this.el.parentElement.querySelector(".position");
+
+    let marker;
+    const setView = () => {
+      if (marker) map.removeLayer(marker);
+      const [lat, lng] = $position.value.split(",");
+      const location = new LatLng(lat, lng);
+      map.setView(location, 17);
+      marker = new Marker(location, { icon }).addTo(map);
+    };
+
+    const map = createMap({
+      zoomControl: false,
+      dragging: false,
+      boxZoom: false,
+      doubleClickZoom: false,
+      keyboard: false,
+      scrollWheelZoom: false,
+      tap: false
+    });
+    $position.addEventListener("change", setView);
+    setView();
+  }
+};
+
+export const TriggerChange = {
+  updated() {
+    this.el.dispatchEvent(new CustomEvent("change", {}));
+  }
+};
 
 export const Map = {
   mounted() {
@@ -49,7 +98,7 @@ export const Map = {
     let radius = $radius.value;
     const location = new LatLng($latitude.value, $longitude.value);
 
-    const map = createMap();
+    const map = createMap({ enableHybridLayer: true });
     map.setView(location, 17);
 
     $radius.addEventListener("input", e => {
@@ -61,13 +110,6 @@ export const Map = {
       circle.setRadius(radius);
 
       return true;
-    });
-
-    const icon = new Icon({
-      iconUrl: require("leaflet/dist/images/marker-icon.png"),
-      shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-      iconAnchor: [12, 40],
-      popupAnchor: [0, -25]
     });
 
     const circle = new Circle(location, { radius }).addTo(map);
