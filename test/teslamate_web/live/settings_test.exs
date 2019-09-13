@@ -13,6 +13,13 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              ~r(<select id="settings_unit_of_temperature" .+><option value="C" selected>°C</option><option value="F">°F</option></select>)
   end
 
+  test "shows :ideal by default", %{conn: conn} do
+    assert {:ok, _view, html} = live(conn, "/settings")
+
+    assert html =~
+             ~r(<select id="settings_preferred_range" .+><option value="ideal" selected>ideal</option><option value="rated">rated</option></select>)
+  end
+
   test "shows 21 and 15 minutes by default", %{conn: conn} do
     assert {:ok, _view, html} = live(conn, "/settings")
 
@@ -23,7 +30,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              ~r(<select id="settings_suspend_after_idle_min" .+>.*<option value="15" selected>15 min</option>.*</select>)
   end
 
-  test "shows false, false, true y default", %{conn: conn} do
+  test "shows false, false, true by default", %{conn: conn} do
     assert {:ok, _view, html} = live(conn, "/settings")
 
     assert html =~

@@ -12,7 +12,8 @@ defmodule TeslaMate.SettingsTest do
       suspend_after_idle_min: 60,
       req_no_shift_state_reading: false,
       req_no_temp_reading: false,
-      req_not_unlocked: true
+      req_not_unlocked: true,
+      preferred_range: :rated
     }
     @invalid_attrs %{
       unit_of_length: nil,
@@ -21,7 +22,8 @@ defmodule TeslaMate.SettingsTest do
       suspend_after_idle_min: nil,
       req_no_shift_state_reading: nil,
       req_no_temp_reading: nil,
-      req_not_unlocked: nil
+      req_not_unlocked: nil,
+      preferred_range: nil
     }
 
     test "get_settings!/0 returns the settings" do
@@ -32,6 +34,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_no_shift_state_reading == false
       assert settings.req_no_temp_reading == false
       assert settings.req_not_unlocked == true
+      assert settings.preferred_range == :ideal
     end
 
     test "update_settings/2 with valid data updates the settings" do
@@ -46,6 +49,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_no_shift_state_reading == false
       assert settings.req_no_temp_reading == false
       assert settings.req_not_unlocked == true
+      assert settings.preferred_range == :rated
     end
 
     test "update_settings/2 publishes the settings" do
@@ -73,7 +77,8 @@ defmodule TeslaMate.SettingsTest do
                suspend_after_idle_min: ["can't be blank"],
                suspend_min: ["can't be blank"],
                unit_of_length: ["can't be blank"],
-               unit_of_temperature: ["can't be blank"]
+               unit_of_temperature: ["can't be blank"],
+               preferred_range: ["can't be blank"]
              }
 
       assert ^settings = Settings.get_settings!()
