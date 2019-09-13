@@ -14,13 +14,14 @@ defmodule TeslaMate.Log.Drive do
     field :power_max, :float
     field :power_min, :float
     field :power_avg, :float
-    field :start_range_km, :float
-    field :end_range_km, :float
+    field :start_ideal_range_km, :float
+    field :end_ideal_range_km, :float
+    field :start_rated_range_km, :float
+    field :end_rated_range_km, :float
     field :start_km, :float
     field :end_km, :float
     field :distance, :float
     field :duration_min, :integer
-    field :efficiency, :float
 
     belongs_to :start_address, Address
     belongs_to :end_address, Address
@@ -43,13 +44,14 @@ defmodule TeslaMate.Log.Drive do
       :power_max,
       :power_min,
       :power_avg,
-      :start_range_km,
-      :end_range_km,
+      :start_ideal_range_km,
+      :end_ideal_range_km,
+      :start_rated_range_km,
+      :end_rated_range_km,
       :start_km,
       :end_km,
       :distance,
-      :duration_min,
-      :efficiency
+      :duration_min
     ])
     |> validate_required([:car_id, :start_date])
     |> foreign_key_constraint(:car_id)
