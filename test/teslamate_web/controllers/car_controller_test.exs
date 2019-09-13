@@ -47,9 +47,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
       assert html =~ table_row("Status", "asleep")
-      assert html =~ table_row("Range \\(typical\\)", "380.1 km")
+      assert html =~ table_row("Range \\(ideal\\)", "380.1 km")
       assert html =~ table_row("Range \\(est.\\)", "401.5 km")
-      assert html =~ table_row("Range \\(rated\\)", "175.1 km")
       assert html =~ table_row("State of Charge", "80%")
       assert html =~ table_row("Outside temperature", "20.1 °C")
       assert html =~ table_row("Inside temperature", "21.0 °C")
@@ -85,9 +84,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="subtitle is-6">Model S P90D<\/p>/
       assert html =~ table_row("Status", "online")
       assert html =~ table_row("Plugged in", "no")
-      assert html =~ table_row("Range \\(typical\\)", "321.9 km")
+      assert html =~ table_row("Range \\(ideal\\)", "321.9 km")
       assert html =~ table_row("Range \\(est.\\)", "289.7 km")
-      assert html =~ table_row("Range \\(rated\\)", "281.6 km")
       assert html =~ table_row("State of Charge", "69%")
       assert html =~ table_row("Locked", "yes")
       assert html =~ table_row("Sentry Mode", "yes")
@@ -126,9 +124,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
       assert html =~ table_row("Status", "charging")
       assert html =~ table_row("Plugged in", "yes")
-      assert html =~ table_row("Range \\(typical\\)", "321.9 km")
+      assert html =~ table_row("Range \\(ideal\\)", "321.9 km")
       assert html =~ table_row("Range \\(est.\\)", "289.7 km")
-      assert html =~ table_row("Range \\(rated\\)", "281.6 km")
       assert html =~ table_row("Charged", "4.32 kWh")
       assert html =~ table_row("Charger Power", "50 kW")
 
@@ -328,6 +325,41 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     @tag :signed_in
+    test "displays the rated range if preferred", %{conn: conn} do
+      {:ok, _} =
+        Settings.get_settings!()
+        |> Settings.update_settings(%{preferred_range: :rated})
+
+      events = [
+        {:ok,
+         online_event(
+           display_name: "FooCar",
+           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           charge_state: %{
+             ideal_battery_range: 200,
+             est_battery_range: 180,
+             battery_range: 175,
+             battery_level: 69
+           },
+           climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2},
+           vehicle_state: %{locked: true, sentry_mode: true},
+           vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
+         )}
+      ]
+
+      :ok = start_vehicles(events)
+
+      :timer.sleep(250)
+
+      conn = get(conn, Routes.car_path(conn, :index))
+
+      assert html = response(conn, 200)
+      assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
+      assert html =~ table_row("Range \\(rated\\)", "281.6 km")
+      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
+    end
+
+    @tag :signed_in
     test "displays imperial units", %{conn: conn} do
       {:ok, _} =
         Settings.get_settings!()
@@ -356,9 +388,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-6">FooCar<\/p>/
       assert html =~ table_row("Status", "driving")
-      assert html =~ table_row("Range \\(typical\\)", "200.0 mi")
+      assert html =~ table_row("Range \\(ideal\\)", "200.0 mi")
       assert html =~ table_row("Range \\(est.\\)", "180.0 mi")
-      assert html =~ table_row("Range \\(rated\\)", "175.0 mi")
       assert html =~ table_row("Speed", "30 mph")
       assert html =~ table_row("Outside temperature", "75.2 °F")
       assert html =~ table_row("Inside temperature", "73.8 °F")

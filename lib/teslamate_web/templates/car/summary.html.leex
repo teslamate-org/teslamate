@@ -45,24 +45,23 @@
         </tr>
         <%= unless is_nil(@summary.ideal_battery_range_km) do %>
         <tr>
-          <td><%= gettext "Range (typical)" %></td>
+          <td><%=
+          case @settings.preferred_range do
+            :ideal -> gettext "Range (ideal)"
+            :rated -> gettext "Range (rated)"
+          end
+          %></td>
           <td>
+            <%
+              range = case @settings.preferred_range do
+                :ideal -> @summary.ideal_battery_range_km
+                :rated -> @summary.rated_battery_range_km
+              end
+            %>
             <%= if @settings.unit_of_length == :mi do %>
-              <%= Float.round(@summary.ideal_battery_range_km / 1.60934, 1)%> mi
+              <%= Float.round(range / 1.60934, 1)%> mi
             <% else %>
-              <%= @summary.ideal_battery_range_km %> km
-            <% end %>
-          </td>
-        </tr>
-        <% end %>
-        <%= if not is_nil(@summary.rated_battery_range_km) and @summary.rated_battery_range_km != @summary.ideal_battery_range_km  do %>
-        <tr>
-          <td><%= gettext "Range (rated)" %></td>
-          <td>
-            <%= if @settings.unit_of_length == :mi do %>
-              <%= Float.round(@summary.rated_battery_range_km / 1.60934, 1)%> mi
-            <% else %>
-              <%= @summary.rated_battery_range_km %> km
+              <%= range %> km
             <% end %>
           </td>
         </tr>

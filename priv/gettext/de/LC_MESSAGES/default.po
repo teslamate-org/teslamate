@@ -17,17 +17,17 @@ msgid "Status"
 msgstr "Status"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:142
+#: lib/teslamate_web/templates/car/summary.html.leex:141
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:124
+#: lib/teslamate_web/templates/car/summary.html.leex:123
 msgid "State of Charge"
 msgstr "Ladezustand"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:85
+#: lib/teslamate_web/templates/car/summary.html.leex:84
 msgid "Charged"
 msgstr "Geladen"
 
@@ -62,36 +62,36 @@ msgid "updating"
 msgstr "installiert Update"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:167
+#: lib/teslamate_web/templates/car/summary.html.leex:166
 msgid "Inside temperature"
 msgstr "Innentemperatur"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:155
+#: lib/teslamate_web/templates/car/summary.html.leex:154
 msgid "Outside temperature"
 msgstr "Außentemperatur"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:130
+#: lib/teslamate_web/templates/car/summary.html.leex:129
 msgid "Locked"
 msgstr "Verschlossen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:100
-#: lib/teslamate_web/templates/car/summary.html.leex:131
-#: lib/teslamate_web/templates/car/summary.html.leex:137
+#: lib/teslamate_web/templates/car/summary.html.leex:99
+#: lib/teslamate_web/templates/car/summary.html.leex:130
+#: lib/teslamate_web/templates/car/summary.html.leex:136
 msgid "no"
 msgstr "nein"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:100
-#: lib/teslamate_web/templates/car/summary.html.leex:131
-#: lib/teslamate_web/templates/car/summary.html.leex:137
+#: lib/teslamate_web/templates/car/summary.html.leex:99
+#: lib/teslamate_web/templates/car/summary.html.leex:130
+#: lib/teslamate_web/templates/car/summary.html.leex:136
 msgid "yes"
 msgstr "ja"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:136
+#: lib/teslamate_web/templates/car/summary.html.leex:135
 msgid "Sentry Mode"
 msgstr "Wächtermodus"
 
@@ -110,17 +110,17 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:106
+#: lib/teslamate_web/templates/car/summary.html.leex:105
 msgid "Scheduled charging"
 msgstr "Ladezeitpunkt"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:99
+#: lib/teslamate_web/templates/car/summary.html.leex:98
 msgid "Plugged in"
 msgstr "Eingesteckt"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:117
+#: lib/teslamate_web/templates/car/summary.html.leex:116
 msgid "Charge limit"
 msgstr "Ladelimit"
 
@@ -294,7 +294,7 @@ msgid "try to sleep"
 msgstr "versuchen zu schlafen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:72
+#: lib/teslamate_web/templates/car/summary.html.leex:71
 msgid "Range (est.)"
 msgstr "Reichweite (gesch.)"
 
@@ -340,17 +340,12 @@ msgid "Temperature readings"
 msgstr "Temperaturmesswerte"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:60
+#: lib/teslamate_web/templates/car/summary.html.leex:51
 msgid "Range (rated)"
 msgstr "Reichweite (rated)"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:48
-msgid "Range (typical)"
-msgstr "Reichweite (typical)"
-
-#, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:91
+#: lib/teslamate_web/templates/car/summary.html.leex:90
 msgid "Charger Power"
 msgstr "Ladeleistung"
 
@@ -359,15 +354,10 @@ msgstr "Ladeleistung"
 msgid "Preferred range"
 msgstr "Bevorzugte Reichweite"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:52
 msgid "Range"
 msgstr "Reichweite"
-
-#, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:68
-msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The ideal range is a figure determined by Tesla and is not country specific whereas the rated range is in different markets based on the regulatory test for that vehicle in that market."
-msgstr "Die Schätzung der verbleibenden Reichweite basiert auf einem fixen Energieverbrauch in Wh/km. Die ideale Reichweite ist eine von Tesla bestimmte Kennzahl, die nicht länderspezifisch ist, während die 'rated' Reichweite in verschiedenen Märkten auf der Grundlage des aufsichtsrechtlichen Tests für dieses Fahrzeug in diesem Markt ermittelt wird."
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:63
@@ -378,3 +368,13 @@ msgstr "ideal"
 #: lib/teslamate_web/templates/settings/index.html.leex:63
 msgid "rated"
 msgstr "rated"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:50
+msgid "Range (ideal)"
+msgstr "Reichweite (ideal)"
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/templates/settings/index.html.leex:68
+msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
+msgstr "Die Schätzung der verbleibenden Reichweite basiert auf einem fixen Energieverbrauch in Wh/km. Der Wh/km-Faktor wird von Tesla bestimmt und ist nicht länderspezifisch, wohingegen die 'rated' Reichweite auf regulatorischen Tests in den verschiedenen Märkten für dieses Fahrzeug basiert."
