@@ -5,10 +5,10 @@ defmodule Drive do
   import Ecto.Changeset
 
   schema "drives" do
-    field :start_ideal_range_km, :float
-    field :end_ideal_range_km, :float
-    field :start_rated_range_km, :float
-    field :end_rated_range_km, :float
+    field(:start_ideal_range_km, :float)
+    field(:end_ideal_range_km, :float)
+    field(:start_rated_range_km, :float)
+    field(:end_rated_range_km, :float)
   end
 
   @doc false
@@ -28,9 +28,9 @@ defmodule Position do
   import Ecto.Changeset
 
   schema "positions" do
-    field :date, :utc_datetime
-    field :ideal_battery_range_km, :float
-    field :rated_battery_range_km, :float
+    field(:date, :utc_datetime)
+    field(:ideal_battery_range_km, :float)
+    field(:rated_battery_range_km, :float)
 
     belongs_to(:drive, Drive)
   end
