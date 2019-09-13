@@ -70,7 +70,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1567073836966,
+  "iteration": 1568403819008,
   "links": [],
   "panels": [
     {
@@ -121,10 +121,6 @@
         {
           "alias": "Power [kW]",
           "fill": 1
-        },
-        {
-          "alias": "/Range \\(rated\\).*/",
-          "zindex": -3
         }
       ],
       "spaceLength": 10,
@@ -138,7 +134,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tconvert_km(ideal_battery_range_km, '$length_unit') AS \"Range [$length_unit]\",\n\tconvert_km(est_battery_range_km, '$length_unit') AS \"Range (est.) [$length_unit]\",\n\tconvert_km(battery_range_km, '$length_unit') AS \"Range (rated) [$length_unit]\",\n\tbattery_level AS \"SOC [%]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tconvert_km([[preferred_range]]_battery_range_km, '$length_unit') AS \"Range ($preferred_range) [$length_unit]\",\n\tconvert_km(est_battery_range_km, '$length_unit') AS \"Range (est.) [$length_unit]\",\n\tbattery_level AS \"SOC [%]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -669,6 +665,31 @@
         "name": "alternative_length_unit",
         "options": [],
         "query": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "ideal",
+          "value": "ideal"
+        },
+        "datasource": null,
+        "definition": "select preferred_range from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "preferred_range",
+        "options": [],
+        "query": "select preferred_range from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

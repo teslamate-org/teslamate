@@ -27,7 +27,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1568232437333,
+  "iteration": 1568403631266,
   "links": [],
   "panels": [
     {
@@ -112,7 +112,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, '6h') AS time,\n\tconvert_km(sum(ideal_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, '6h') AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "A",
           "select": [
             [
@@ -252,6 +252,31 @@
         "name": "length_unit",
         "options": [],
         "query": "select unit_of_length from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "ideal",
+          "value": "ideal"
+        },
+        "datasource": null,
+        "definition": "select preferred_range from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "preferred_range",
+        "options": [],
+        "query": "select preferred_range from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
