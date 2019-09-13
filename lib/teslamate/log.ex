@@ -161,7 +161,7 @@ defmodule TeslaMate.Log do
         longitude: p.longitude,
         odometer: p.odometer,
         ideal_battery_range_km: p.ideal_battery_range_km,
-        rated_battery_range_km: p.battery_range_km,
+        rated_battery_range_km: p.rated_battery_range_km,
         power_avg: avg(p.power) |> over(),
         outside_temp_avg: avg(p.outside_temp) |> over(),
         inside_temp_avg: avg(p.inside_temp) |> over(),
@@ -269,10 +269,10 @@ defmodule TeslaMate.Log do
     |> ChargingProcess.changeset(%{
       end_date: nil,
       charge_energy_added: nil,
-      end_range_km: nil,
+      end_ideal_range_km: nil,
+      end_rated_range_km: nil,
       end_battery_level: nil,
-      duration_min: nil,
-      calculated_max_range: nil
+      duration_min: nil
     })
     |> Repo.update()
   end
@@ -288,8 +288,10 @@ defmodule TeslaMate.Log do
       |> where(charging_process_id: ^process_id)
       |> select([c], %{
         charge_energy_added: max(c.charge_energy_added) - min(c.charge_energy_added),
-        start_range_km: min(c.ideal_battery_range_km),
-        end_range_km: max(c.ideal_battery_range_km),
+        start_ideal_range_km: min(c.ideal_battery_range_km),
+        end_ideal_range_km: max(c.ideal_battery_range_km),
+        start_rated_range_km: min(c.rated_battery_range_km),
+        end_rated_range_km: max(c.rated_battery_range_km),
         start_battery_level: min(c.battery_level),
         end_battery_level: max(c.battery_level),
         outside_temp_avg: avg(c.outside_temp),
@@ -298,16 +300,10 @@ defmodule TeslaMate.Log do
       |> Repo.one()
       |> Map.put(:end_date, Keyword.get_lazy(opts, :date, &DateTime.utc_now/0))
 
-    stats = Map.put(stats, :calculated_max_range, max_range(stats))
-
     charging_process
     |> ChargingProcess.changeset(stats)
     |> Repo.update()
   end
-
-  defp max_range(%{end_range_km: nil}), do: nil
-  defp max_range(%{end_battery_level: nil}), do: nil
-  defp max_range(%{end_range_km: range, end_battery_level: lvl}), do: round(range / lvl * 100)
 
   alias TeslaMate.Log.Update
 

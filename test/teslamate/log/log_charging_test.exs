@@ -143,6 +143,7 @@ defmodule TeslaMate.LogChargingTest do
           charger_power: 4,
           charger_voltage: 234,
           ideal_battery_range_km: 266.6,
+          rated_battery_range_km: 206.6,
           outside_temp: 16
         },
         %{
@@ -155,6 +156,7 @@ defmodule TeslaMate.LogChargingTest do
           charger_power: 4,
           charger_voltage: 234,
           ideal_battery_range_km: 267.3,
+          rated_battery_range_km: 207.6,
           outside_temp: 15.5
         },
         %{
@@ -167,6 +169,7 @@ defmodule TeslaMate.LogChargingTest do
           charger_power: 4,
           charger_voltage: 234,
           ideal_battery_range_km: 268.6,
+          rated_battery_range_km: 208.6,
           outside_temp: 15
         },
         %{
@@ -179,6 +182,7 @@ defmodule TeslaMate.LogChargingTest do
           charger_power: 4,
           charger_voltage: 234,
           ideal_battery_range_km: 268.6,
+          rated_battery_range_km: 208.6,
           outside_temp: 14.5
         }
       ]
@@ -192,13 +196,14 @@ defmodule TeslaMate.LogChargingTest do
 
       assert %DateTime{} = cproc.start_date
       assert %DateTime{} = cproc.end_date
-      assert cproc.calculated_max_range == 497
       assert cproc.charge_energy_added == 0.31
       assert cproc.duration_min == 4
       assert cproc.end_battery_level == 54
       assert cproc.start_battery_level == 50
-      assert cproc.start_range_km == 266.6
-      assert cproc.end_range_km == 268.6
+      assert cproc.start_ideal_range_km == 266.6
+      assert cproc.end_ideal_range_km == 268.6
+      assert cproc.start_rated_range_km == 206.6
+      assert cproc.end_rated_range_km == 208.6
       assert cproc.outside_temp_avg == 15.25
     end
 
@@ -241,6 +246,7 @@ defmodule TeslaMate.LogChargingTest do
           charger_power: 4,
           charger_voltage: 234,
           ideal_battery_range_km: 266.6,
+          rated_battery_range_km: 206.6,
           outside_temp: 16
         },
         %{
@@ -253,6 +259,7 @@ defmodule TeslaMate.LogChargingTest do
           charger_power: 4,
           charger_voltage: 234,
           ideal_battery_range_km: 268.6,
+          rated_battery_range_km: 208.6,
           outside_temp: 14.5
         }
       ]
@@ -266,13 +273,14 @@ defmodule TeslaMate.LogChargingTest do
 
       assert %DateTime{} = start_date = cproc.start_date
       assert %DateTime{} = cproc.end_date
-      assert cproc.calculated_max_range == 497
       assert cproc.charge_energy_added == 0.31
       assert cproc.duration_min == 4
       assert cproc.end_battery_level == 54
       assert cproc.start_battery_level == 50
-      assert cproc.start_range_km == 266.6
-      assert cproc.end_range_km == 268.6
+      assert cproc.start_ideal_range_km == 266.6
+      assert cproc.end_ideal_range_km == 268.6
+      assert cproc.start_rated_range_km == 206.6
+      assert cproc.end_rated_range_km == 208.6
       assert cproc.outside_temp_avg == 15.25
 
       # RESUME
@@ -281,15 +289,15 @@ defmodule TeslaMate.LogChargingTest do
 
       assert ^start_date = cproc.start_date
       assert cproc.start_battery_level == 50
-      assert cproc.start_range_km == 266.6
+      assert cproc.start_ideal_range_km == 266.6
       assert cproc.outside_temp_avg == 15.25
 
       assert cproc.end_date == nil
-      assert cproc.calculated_max_range == nil
       assert cproc.charge_energy_added == nil
       assert cproc.duration_min == nil
       assert cproc.end_battery_level == nil
-      assert cproc.end_range_km == nil
+      assert cproc.end_ideal_range_km == nil
+      assert cproc.end_rated_range_km == nil
 
       charges = [
         %{
@@ -302,6 +310,7 @@ defmodule TeslaMate.LogChargingTest do
           charger_power: 4,
           charger_voltage: 234,
           ideal_battery_range_km: 278.6,
+          rated_battery_range_km: 218.6,
           outside_temp: 15.01
         }
       ]
@@ -315,13 +324,14 @@ defmodule TeslaMate.LogChargingTest do
 
       assert ^start_date = cproc.start_date
       assert %DateTime{} = cproc.end_date
-      assert cproc.calculated_max_range == 507
       assert cproc.charge_energy_added == 0.73
       assert cproc.duration_min == 14
       assert cproc.end_battery_level == 55
       assert cproc.start_battery_level == 50
-      assert cproc.start_range_km == 266.6
-      assert cproc.end_range_km == 278.6
+      assert cproc.start_ideal_range_km == 266.6
+      assert cproc.end_ideal_range_km == 278.6
+      assert cproc.start_rated_range_km == 206.6
+      assert cproc.end_rated_range_km == 218.6
       assert cproc.outside_temp_avg == 15.17
     end
   end

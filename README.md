@@ -198,7 +198,7 @@ teslamate/cars/$car_id/state
 teslamate/cars/$car_id/battery_level
 teslamate/cars/$car_id/ideal_battery_range_km
 teslamate/cars/$car_id/est_battery_range_km
-teslamate/cars/$car_id/battery_range_km
+teslamate/cars/$car_id/rated_battery_range_km
 teslamate/cars/$car_id/charge_energy_added
 teslamate/cars/$car_id/charger_power
 teslamate/cars/$car_id/plugged_in

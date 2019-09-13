@@ -36,7 +36,7 @@ defmodule TeslaMateWeb.CarControllerTest do
           latitude: 0,
           ideal_battery_range_km: 380.1,
           est_battery_range_km: 401.5,
-          battery_range_km: 175.1,
+          rated_battery_range_km: 175.1,
           battery_level: 80,
           outside_temp: 20.1,
           inside_temp: 21.0

@@ -34,7 +34,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       battery_level: 60.0,
       ideal_battery_range_km: 230.5,
       est_battery_range_km: 220.0,
-      battery_range_km: 230.5,
+      rated_battery_range_km: 230.5,
       charge_energy_added: 25,
       speed: 40,
       outside_temp: 15,
@@ -86,7 +86,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                     {:publish, "teslamate/cars/0/battery_level", "60.0", [retain: true, qos: 1]}}
 
     assert_receive {MqttPublisherMock,
-                    {:publish, "teslamate/cars/0/battery_range_km", "230.5",
+                    {:publish, "teslamate/cars/0/rated_battery_range_km", "230.5",
                      [retain: true, qos: 1]}}
 
     assert_receive {MqttPublisherMock,

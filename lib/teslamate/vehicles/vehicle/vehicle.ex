@@ -95,7 +95,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         charge = %Charge{
           ideal_battery_range: position.ideal_battery_range_km |> Convert.km_to_miles(1),
           est_battery_range: position.est_battery_range_km |> Convert.km_to_miles(1),
-          battery_range: position.battery_range_km |> Convert.km_to_miles(1),
+          battery_range: position.rated_battery_range_km |> Convert.km_to_miles(1),
           battery_level: position.battery_level
         }
 
@@ -635,7 +635,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       odometer: Convert.miles_to_km(vehicle.vehicle_state.odometer, 6),
       ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
       est_battery_range_km: Convert.miles_to_km(vehicle.charge_state.est_battery_range, 1),
-      battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 1),
+      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 1),
       altitude: nil,
       fan_status: vehicle.climate_state.fan_status,
       is_climate_on: vehicle.climate_state.is_climate_on,

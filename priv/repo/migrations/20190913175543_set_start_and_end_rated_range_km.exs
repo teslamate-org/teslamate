@@ -30,7 +30,7 @@ defmodule Position do
   schema "positions" do
     field :date, :utc_datetime
     field :ideal_battery_range_km, :float
-    field :battery_range_km, :float
+    field :rated_battery_range_km, :float
 
     belongs_to(:drive, Drive)
   end
@@ -38,7 +38,7 @@ defmodule Position do
   @doc false
   def changeset(position, attrs) do
     position
-    |> cast(attrs, [:date, :ideal_battery_range_km, :battery_range_km])
+    |> cast(attrs, [:date, :ideal_battery_range_km, :rated_battery_range_km])
     |> validate_required([:date])
     |> foreign_key_constraint(:drive_id)
   end
@@ -56,7 +56,7 @@ defmodule TeslaMate.Repo.Migrations.SetStartAndEndRatedRangeKm do
     query =
       Position
       |> select([p], %{
-        rated_battery_range_km: p.battery_range_km,
+        rated_battery_range_km: p.rated_battery_range_km,
         first_row: row_number() |> over(order_by: [asc: p.date]),
         last_row: row_number() |> over(order_by: [desc: p.date])
       })

@@ -21,6 +21,7 @@ defmodule TeslaMate.Log.Charge do
     field :fast_charger_brand, :string
     field :fast_charger_type, :string
     field :ideal_battery_range_km, :float
+    field :rated_battery_range_km, :float
     field :not_enough_power_to_heat, :boolean
     field :outside_temp, :float
 
@@ -47,6 +48,7 @@ defmodule TeslaMate.Log.Charge do
       :fast_charger_brand,
       :fast_charger_type,
       :ideal_battery_range_km,
+      :rated_battery_range_km,
       :not_enough_power_to_heat,
       :outside_temp
     ])

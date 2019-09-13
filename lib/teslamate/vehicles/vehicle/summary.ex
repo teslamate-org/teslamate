@@ -11,7 +11,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :battery_level,
     :ideal_battery_range_km,
     :est_battery_range_km,
-    :battery_range_km,
+    :rated_battery_range_km,
     :charge_energy_added,
     :speed,
     :outside_temp,
@@ -47,7 +47,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         get_in_struct(vehicle, [:charge_state, :ideal_battery_range]) |> miles_to_km(1),
       est_battery_range_km:
         get_in_struct(vehicle, [:charge_state, :est_battery_range]) |> miles_to_km(1),
-      battery_range_km: get_in_struct(vehicle, [:charge_state, :battery_range]) |> miles_to_km(1),
+      rated_battery_range_km:
+        get_in_struct(vehicle, [:charge_state, :battery_range]) |> miles_to_km(1),
       battery_level: get_in_struct(vehicle, [:charge_state, :battery_level]),
       charge_energy_added: get_in_struct(vehicle, [:charge_state, :charge_energy_added]),
       charger_power: get_in_struct(vehicle, [:charge_state, :charger_power]),

@@ -66,7 +66,7 @@ defmodule TeslaMate.LogDriveTest do
           power: 15,
           odometer: 284.85156,
           ideal_battery_range_km: 338.8,
-          battery_range_km: 308.8,
+          rated_battery_range_km: 308.8,
           battery_level: 68,
           outside_temp: 19.2,
           inside_temp: 21.0
@@ -79,7 +79,7 @@ defmodule TeslaMate.LogDriveTest do
           power: -4,
           odometer: 285.90556,
           ideal_battery_range_km: 337.8,
-          battery_range_km: 307.8,
+          rated_battery_range_km: 307.8,
           battery_level: 68,
           outside_temp: 19.0,
           inside_temp: 21.1
@@ -92,7 +92,7 @@ defmodule TeslaMate.LogDriveTest do
           power: -7,
           odometer: 286.969561,
           ideal_battery_range_km: 336.8,
-          battery_range_km: 306.8,
+          rated_battery_range_km: 306.8,
           battery_level: 68,
           outside_temp: 21.0,
           inside_temp: 21.2
@@ -105,7 +105,7 @@ defmodule TeslaMate.LogDriveTest do
           power: 1,
           odometer: 287.00556,
           ideal_battery_range_km: 335.8,
-          battery_range_km: 305.8,
+          rated_battery_range_km: 305.8,
           battery_level: 68,
           outside_temp: 18,
           inside_temp: 20.9
@@ -118,7 +118,7 @@ defmodule TeslaMate.LogDriveTest do
           power: 36,
           odometer: 288.045561,
           ideal_battery_range_km: 334.8,
-          battery_range_km: 304.8,
+          rated_battery_range_km: 304.8,
           battery_level: 68,
           outside_temp: 18.0,
           inside_temp: 21.0
