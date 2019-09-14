@@ -1,18 +1,19 @@
 <div class="car card">
    <div class="card-image">
-    <figure class="<%= if false, do: 'is-hidden' %>">
+    <figure>
         <div
           id="map"
           style="height: 150px; position: relative;"
+          data-id="<%= @car.id %>"
           phx-update="ignore"
           phx-hook="SimpleMap"
         />
-        <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude}",
-                                                phx_hook: "TriggerChange",
-                                                class: "position is-hidden",
-                                                disabled: true
-        %>
     </figure>
+    <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude}",
+                                            phx_hook: "TriggerChange",
+                                            class: "is-hidden",
+                                            disabled: true
+    %>
   </div>
   <div class="card-content">
     <div class="media is-flex mb-5">

@@ -58,16 +58,7 @@ function createMap(opts) {
 
 export const SimpleMap = {
   mounted() {
-    const $position = this.el.parentElement.querySelector(".position");
-
-    let marker;
-    const setView = () => {
-      if (marker) map.removeLayer(marker);
-      const [lat, lng] = $position.value.split(",");
-      const location = new LatLng(lat, lng);
-      map.setView(location, 17);
-      marker = new Marker(location, { icon }).addTo(map);
-    };
+    const $position = document.querySelector(`#position_${this.el.dataset.id}`);
 
     const map = createMap({
       zoomControl: false,
@@ -78,14 +69,25 @@ export const SimpleMap = {
       scrollWheelZoom: false,
       tap: false
     });
-    $position.addEventListener("change", setView);
+
+    let marker;
+    const setView = () => {
+      if (marker) map.removeLayer(marker);
+      const [lat, lng] = $position.value.split(",");
+      const location = new LatLng(lat, lng);
+      map.setView(location, 17);
+      marker = new Marker(location, { icon }).addTo(map);
+    };
+
     setView();
+
+    $position.addEventListener("change", setView);
   }
 };
 
 export const TriggerChange = {
   updated() {
-    this.el.dispatchEvent(new CustomEvent("change", {}));
+    this.el.dispatchEvent(new CustomEvent("change"));
   }
 };
 
