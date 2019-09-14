@@ -10,17 +10,6 @@ defmodule TeslaMate.Auth do
 
   alias TeslaMate.Auth.Credentials
 
-  def get_credentials do
-    opts = Application.fetch_env!(:teslamate, :tesla_auth)
-
-    with username when not is_nil(username) <- Keyword.get(opts, :username),
-         password when not is_nil(password) <- Keyword.get(opts, :password) do
-      %Credentials{email: username, password: password}
-    else
-      _ -> nil
-    end
-  end
-
   def change_credentials(attrs \\ %{}) do
     %Credentials{} |> Credentials.changeset(attrs)
   end

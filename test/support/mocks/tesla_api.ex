@@ -30,11 +30,6 @@ defmodule TeslaApi.AuthMock do
     {:reply, {:error, %TeslaApi.Error{error: :induced_error}}, state}
   end
 
-  def handle_call({:login, nil, nil} = event, _from, %State{pid: pid} = state) do
-    send(pid, {TeslaApi.AuthMock, event})
-    {:reply, {:error, %TeslaApi.Error{error: :induced_error}}, state}
-  end
-
   def handle_call(event, _from, %State{pid: pid} = state) do
     send(pid, {TeslaApi.AuthMock, event})
     {:reply, {:ok, %TeslaApi.Auth{token: "$token", expires_in: 10_000_000}}, state}

@@ -1,7 +1,7 @@
 defmodule AuthMock do
   use GenServer
 
-  defstruct [:pid, :credentials, :tokens]
+  defstruct [:pid, :tokens]
   alias __MODULE__, as: State
 
   # API
@@ -10,7 +10,6 @@ defmodule AuthMock do
     GenServer.start_link(__MODULE__, opts, name: Keyword.fetch!(opts, :name))
   end
 
-  def get_credentials(name), do: GenServer.call(name, :get_credentials)
   def get_tokens(name), do: GenServer.call(name, :get_tokens)
   def save(name, auth), do: GenServer.call(name, {:save, auth})
 
@@ -21,16 +20,11 @@ defmodule AuthMock do
     {:ok,
      %State{
        pid: Keyword.fetch!(opts, :pid),
-       credentials: Keyword.fetch!(opts, :credentials),
        tokens: Keyword.fetch!(opts, :tokens)
      }}
   end
 
   @impl true
-  def handle_call(:get_credentials, _from, state) do
-    {:reply, state.credentials, state}
-  end
-
   def handle_call(:get_tokens, _from, state) do
     {:reply, state.tokens, state}
   end

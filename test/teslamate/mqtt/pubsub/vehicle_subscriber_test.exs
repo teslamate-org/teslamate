@@ -31,6 +31,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       display_name: "Foo",
       state: :online,
       since: DateTime.utc_now(),
+      latitude: 37.889602,
+      longitude: 41.129182,
       battery_level: 60.0,
       ideal_battery_range_km: 230.5,
       est_battery_range_km: 220.0,

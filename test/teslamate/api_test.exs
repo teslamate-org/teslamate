@@ -11,12 +11,8 @@ defmodule TeslaMate.ApiTest do
     tesla_api_vehicle_name = :"tesla_api_vehicle_#{name}"
 
     tokens = Keyword.get(opts, :tokens)
-    credentials = Keyword.get(opts, :credentials)
 
-    {:ok, _pid} =
-      start_supervised(
-        {AuthMock, name: auth_name, tokens: tokens, credentials: credentials, pid: self()}
-      )
+    {:ok, _pid} = start_supervised({AuthMock, name: auth_name, tokens: tokens, pid: self()})
 
     {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
     {:ok, _pid} = start_supervised({TeslaApi.AuthMock, name: tesla_api_auth_name, pid: self()})
@@ -42,11 +38,10 @@ defmodule TeslaMate.ApiTest do
   @valid_tokens %Tokens{access: "$access", refresh: "$refresh"}
   @invalid_tokens %Tokens{access: nil, refresh: nil}
   @valid_credentials %Credentials{email: "teslamate", password: "foo"}
-  @invalid_credentials %Credentials{email: nil, password: nil}
 
   describe "sign in" do
-    test "starts without tokens and credentials", %{test: name} do
-      :ok = start_api(name, tokens: nil, credentials: nil)
+    test "starts without tokens ", %{test: name} do
+      :ok = start_api(name, tokens: nil)
 
       assert false == Api.signed_in?(name)
       assert {:error, :not_signed_in} = Api.list_vehicles(name)
@@ -57,36 +52,7 @@ defmodule TeslaMate.ApiTest do
     end
 
     test "starts if tokens are valid", %{test: name} do
-      :ok = start_api(name, tokens: @valid_tokens, credentials: nil)
-
-      assert_receive {TeslaApi.AuthMock,
-                      {:refresh, %TeslaApi.Auth{refresh_token: "$refresh", token: "$access"}}}
-
-      assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
-
-      assert true == Api.signed_in?(name)
-
-      refute_receive _
-    end
-
-    @tag :capture_log
-    test "starts if credentials are valid", %{test: name} do
-      :ok =
-        start_api(name,
-          tokens: nil,
-          credentials: @valid_credentials
-        )
-
-      assert_receive {TeslaApi.AuthMock, {:login, "teslamate", "foo"}}
-      assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
-
-      assert true == Api.signed_in?(name)
-
-      refute_receive _
-    end
-
-    test "prioritizes tokens over credentials", %{test: name} do
-      :ok = start_api(name, tokens: @valid_tokens, credentials: @valid_credentials)
+      :ok = start_api(name, tokens: @valid_tokens)
 
       assert_receive {TeslaApi.AuthMock,
                       {:refresh, %TeslaApi.Auth{refresh_token: "$refresh", token: "$access"}}}
@@ -100,7 +66,7 @@ defmodule TeslaMate.ApiTest do
 
     @tag :capture_log
     test "starts anyway if tokens are invalid ", %{test: name} do
-      :ok = start_api(name, tokens: @invalid_tokens, credentials: nil)
+      :ok = start_api(name, tokens: @invalid_tokens)
 
       assert_receive {TeslaApi.AuthMock,
                       {:refresh, %TeslaApi.Auth{refresh_token: nil, token: nil}}}
@@ -109,20 +75,11 @@ defmodule TeslaMate.ApiTest do
 
       refute_receive _
     end
-
-    test "does not start if credentials are invalid", %{test: name} do
-      assert {:error, {%TeslaApi.Error{env: nil, error: :induced_error, message: nil}, _}} =
-               start_api(name, tokens: nil, credentials: @invalid_credentials)
-
-      assert_receive {TeslaApi.AuthMock, {:login, nil, nil}}
-
-      refute_receive _
-    end
   end
 
   describe "sign_in/1" do
     test "allows delayed sign in", %{test: name} do
-      :ok = start_api(name, tokens: nil, credentials: nil)
+      :ok = start_api(name, tokens: nil)
 
       assert false == Api.signed_in?(name)
 
@@ -137,7 +94,7 @@ defmodule TeslaMate.ApiTest do
     end
 
     test "fails if already signed in", %{test: name} do
-      :ok = start_api(name, tokens: @valid_tokens, credentials: nil)
+      :ok = start_api(name, tokens: @valid_tokens)
 
       assert_receive {TeslaApi.AuthMock, {:refresh, %TeslaApi.Auth{}}}
       assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
@@ -147,23 +104,11 @@ defmodule TeslaMate.ApiTest do
 
       refute_receive _
     end
-
-    test "fails if the credentials are invalid", %{test: name} do
-      :ok = start_api(name, tokens: nil, credentials: nil)
-
-      assert false == Api.signed_in?(name)
-
-      assert {:error, :induced_error} = Api.sign_in(name, @invalid_credentials)
-
-      assert_receive {TeslaApi.AuthMock, {:login, nil, nil}}
-
-      refute_receive _
-    end
   end
 
   describe "refresh" do
     test "refreshes tokens", %{test: name} do
-      :ok = start_api(name, tokens: @valid_tokens, credentials: nil)
+      :ok = start_api(name, tokens: @valid_tokens)
 
       assert_receive {TeslaApi.AuthMock, {:refresh, %TeslaApi.Auth{}}}
       assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
@@ -180,7 +125,7 @@ defmodule TeslaMate.ApiTest do
 
   describe "Vehicle API" do
     test "get_vehicle/1", %{test: name} do
-      :ok = start_api(name, tokens: @valid_tokens, credentials: nil)
+      :ok = start_api(name, tokens: @valid_tokens)
       assert_receive {TeslaApi.AuthMock, {:refresh, _}}
       assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
 
@@ -191,7 +136,7 @@ defmodule TeslaMate.ApiTest do
     end
 
     test "get_vehicle_with_state/1", %{test: name} do
-      :ok = start_api(name, tokens: @valid_tokens, credentials: nil)
+      :ok = start_api(name, tokens: @valid_tokens)
       assert_receive {TeslaApi.AuthMock, {:refresh, _}}
       assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
 
@@ -202,7 +147,7 @@ defmodule TeslaMate.ApiTest do
     end
 
     test "list_vehicles/0", %{test: name} do
-      :ok = start_api(name, tokens: @valid_tokens, credentials: nil)
+      :ok = start_api(name, tokens: @valid_tokens)
       assert_receive {TeslaApi.AuthMock, {:refresh, _}}
       assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
 

@@ -55,47 +55,7 @@ defmodule TeslaMate.Api do
       tesla_api_vehicle: Keyword.get(opts, :tesla_api_vehicle, TeslaApi.Vehicle)
     }
 
-    case {call(deps.auth, :get_tokens), call(deps.auth, :get_credentials)} do
-      {nil, nil} ->
-        Logger.info("Please sign in.")
-        {:ok, %State{auth: nil, deps: deps}}
-
-      {%Tokens{access: access, refresh: refresh}, _credentials} ->
-        api_auth = %TeslaApi.Auth{token: access, refresh_token: refresh}
-
-        case call(deps.tesla_api_auth, :refresh, [api_auth]) do
-          {:ok, %TeslaApi.Auth{} = auth} ->
-            :ok = call(deps.auth, :save, [auth])
-
-            {:ok, %State{auth: auth, deps: deps}, {:continue, :schedule_refresh}}
-
-          {:error, %TeslaApi.Error{} = error} ->
-            Logger.warn(
-              "The persisted API tokens could not be refreshed. Please sign in again.\n" <>
-                inspect(error)
-            )
-
-            {:ok, %State{auth: nil, deps: deps}}
-        end
-
-      # TODO remove with v2.0
-      {nil, %Credentials{email: email, password: password}} ->
-        case call(deps.tesla_api_auth, :login, [email, password]) do
-          {:ok, %TeslaApi.Auth{} = auth} ->
-            :ok = call(deps.auth, :save, [auth])
-
-            Logger.warn(
-              "Signing in with TESLA_USERNAME and TESLA_PASSWORD variables is deprecated. " <>
-                "An API token has already been stored in the database. " <>
-                "Both variables can be safely removed from the environment. "
-            )
-
-            {:ok, %State{auth: auth, deps: deps}, {:continue, :schedule_refresh}}
-
-          {:error, %TeslaApi.Error{} = error} ->
-            {:stop, error}
-        end
-    end
+    {:ok, %State{deps: deps}, {:continue, :sign_in}}
   end
 
   @impl true
@@ -159,6 +119,23 @@ defmodule TeslaMate.Api do
   end
 
   @impl true
+  def handle_continue(:sign_in, %State{} = state) do
+    with %Tokens{access: access, refresh: refresh} <- call(state.deps.auth, :get_tokens),
+         api_auth = %TeslaApi.Auth{token: access, refresh_token: refresh},
+         {:ok, %TeslaApi.Auth{} = auth} <- call(state.deps.tesla_api_auth, :refresh, [api_auth]) do
+      :ok = call(state.deps.auth, :save, [auth])
+      {:noreply, %State{state | auth: auth}, {:continue, :schedule_refresh}}
+    else
+      nil ->
+        Logger.info("Please sign in.")
+        {:noreply, state}
+
+      {:error, %TeslaApi.Error{} = error} ->
+        Logger.warn("Please sign in again.\n\n" <> inspect(error, pretty: true))
+        {:noreply, state}
+    end
+  end
+
   def handle_continue(:schedule_refresh, %State{auth: auth} = state) do
     ms =
       auth.expires_in
