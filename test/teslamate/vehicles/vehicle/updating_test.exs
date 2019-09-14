@@ -1,17 +1,6 @@
 defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
   use TeslaMate.VehicleCase, async: true
 
-  defp update_event(state, version) do
-    alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
-
-    online_event(
-      vehicle_state: %{
-        car_version: version,
-        software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: state}
-      }
-    )
-  end
-
   @tag :capture_log
   test "logs an update cycle", %{test: name} do
     events = [

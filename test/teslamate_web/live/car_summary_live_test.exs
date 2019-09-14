@@ -2,6 +2,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   use TeslaMateWeb.ConnCase
   use TeslaMate.VehicleCase
 
+  alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
   alias TeslaMate.Settings
 
   defp table_row(key, value) do
@@ -42,18 +43,23 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert html =~ table_row("Status", "falling asleep")
     end
 
-    for {msg, id, settings, attrs} <- [
-          {"Car is unlocked", 0, %{}, vehicle_state: %{locked: false}},
-          {"Sentry mode is enabled", 0, %{req_not_unlocked: true},
+    for {msg, id, status, settings, attrs} <- [
+          {"Car is unlocked", 0, "online", %{}, vehicle_state: %{locked: false}},
+          {"Sentry mode is enabled", 0, "online", %{req_not_unlocked: true},
            vehicle_state: %{sentry_mode: true, locked: true}},
-          {"Shift state present", 0, %{req_no_shift_state_reading: true},
+          {"Shift state present", 0, "online", %{req_no_shift_state_reading: true},
            drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0, shift_state: "P"}},
-          {"Temperature readings", 0, %{req_no_temp_reading: true},
+          {"Temperature readings", 0, "online", %{req_no_temp_reading: true},
            climate_state: %{outside_temp: 10.0}},
-          {"Temperature readings", 1, %{req_no_temp_reading: true},
+          {"Temperature readings", 1, "online", %{req_no_temp_reading: true},
            climate_state: %{inside_temp: 10.0}},
-          {"Preconditioning", 0, %{}, climate_state: %{is_preconditioning: true}},
-          {"User present", 0, %{}, vehicle_state: %{is_user_present: true}}
+          {"Preconditioning", 0, "online", %{}, climate_state: %{is_preconditioning: true}},
+          {"User present", 0, "online", %{}, vehicle_state: %{is_user_present: true}},
+          {"Update in progress", 0, "updating", %{},
+           vehicle_state: %{
+             car_version: "v9",
+             software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: "installing"}
+           }}
         ] do
       @tag :signed_in
       test "shows warning if suspending is not possible [#{msg}#{id}]", %{conn: conn} do
@@ -88,10 +94,8 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
         render_click(view, :suspend_logging)
 
         assert html = render(view)
-        assert html =~ table_row("Status", "online")
-
-        assert html =~
-                 ~r/a class="button is-danger .*? disabled>#{unquote(msg)}<\/a>/
+        assert html =~ table_row("Status", unquote(Macro.escape(status)))
+        assert html =~ ~r/a class="button is-danger .*? disabled>#{unquote(msg)}<\/a>/
       end
     end
   end

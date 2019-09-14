@@ -177,6 +177,19 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
   end
 
+  test "cannot be suspended while updating", %{test: name} do
+    events = [
+      {:ok, online_event()},
+      {:ok, update_event("installing", "2019.8.4 530d1d3")}
+    ]
+
+    :ok = start_vehicle(name, events)
+    assert_receive {:start_state, _, :online}
+    assert_receive {:start_update, 0}
+
+    assert {:error, :update_in_progress} = Vehicle.suspend_logging(name)
+  end
+
   test "cannot be suspended while charing is not complete", %{test: name} do
     events = [
       {:ok, %TeslaApi.Vehicle{state: "online"}},

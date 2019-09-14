@@ -89,6 +89,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp translate_error(:temp_reading), do: gettext("Temperature readings")
   defp translate_error(:preconditioning), do: gettext("Preconditioning")
   defp translate_error(:user_present), do: gettext("User present")
+  defp translate_error(:update_in_progress), do: gettext("Update in progress")
 
   defp cancel_timer(nil), do: :ok
   defp cancel_timer(ref) when is_reference(ref), do: Process.cancel_timer(ref)

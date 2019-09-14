@@ -156,6 +156,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:reply, from, {:error, :vehicle_not_parked}}}
   end
 
+  def handle_event({:call, from}, :suspend_logging, {:updating, _}, _data) do
+    {:keep_state_and_data, {:reply, from, {:error, :update_in_progress}}}
+  end
+
   def handle_event({:call, from}, :suspend_logging, {:charging, state, _}, _data)
       when state != "Complete" do
     {:keep_state_and_data, {:reply, from, {:error, :charging_in_progress}}}
@@ -371,7 +375,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
           call(data.deps.log, :complete_charging_process, [pid])
 
-        Logger.info("Charging / Complete / #{added} kWh – #{duration} min", car_id: data.car.id)
+        Logger.info("Charging / Complete / #{Float.round(added, 2)} kWh – #{duration} min",
+          car_id: data.car.id
+        )
 
         {:next_state, {:charging, "Complete", pid},
          %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},

@@ -107,6 +107,17 @@ defmodule TeslaMate.VehicleCase do
           drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
         )
       end
+
+      defp update_event(state, version) do
+        alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
+
+        online_event(
+          vehicle_state: %{
+            car_version: version,
+            software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: state}
+          }
+        )
+      end
     end
   end
 end
