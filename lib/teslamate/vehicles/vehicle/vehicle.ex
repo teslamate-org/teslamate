@@ -226,7 +226,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state_and_data, schedule_fetch(30)}
 
       {:error, :vehicle_not_found} ->
-        raise ":vehicle_not_found"
+        Logger.error("Error / :vehicle_not_found", car_id: data.car.id)
+        {:keep_state_and_data, schedule_fetch(60)}
 
       {:error, reason} ->
         Logger.warn("Error / #{inspect(reason)}", car_id: data.car.id)
