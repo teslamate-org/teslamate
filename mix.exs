@@ -17,7 +17,8 @@ defmodule TeslaMate.MixProject do
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
-        "coveralls.html": :test
+        "coveralls.html": :test,
+        ci: :test
       ]
     ]
   end
@@ -66,7 +67,8 @@ defmodule TeslaMate.MixProject do
       setup: ["deps.get", "ecto.setup", &setup_yarn/1],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test --no-start"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test --no-start"],
+      ci: ["format --check-formatted", "test --raise"]
     ]
   end
 

@@ -270,9 +270,104 @@ At the moment geo-fences are a way to create custom locations like `🏡 Home` o
 by [OSM](https://www.openstreetmap.org)) in your region are inaccurate or if
 you street-park at locations where the exact address may vary.
 
-## Contributions
+## Contributing
 
-All Contributions are welcome and greatly appreciated!
+All contributions are welcome and greatly appreciated!
+
+### Initial Setup
+
+To run the TeslaMate test suite you need PostgreSQL 10+ running locally with a
+database named `teslamate_test`. Follow these steps to create the database and
+run all migrations:
+
+```bash
+# download dependencies
+mix deps.get
+
+# create the dev database and run migrations
+mix ecto.setup
+
+# create the test database
+MIX_ENV=test mix ecto.setup
+
+# download JavaScript dependencies
+npm install --prefix ./assets
+```
+
+A local MQTT broker like `mosquitto` is not required but recommend.
+
+### Development
+
+Start an iex session in another terminal window:
+
+```elixir
+iex -S mix phx.server
+```
+
+Then sign in with a Tesla account.
+
+**Hot reloading**
+
+To immediately apply your local changes open or reload
+[http://localhost:4000](http://localhost:4000). You can also reload specific
+modules via `iex`, for example:
+
+```elixir
+iex> r TeslaMate.Vehicles.Vehicle
+```
+
+To only compile the changes:
+
+```bash
+mix compile
+```
+
+**Code formatting**
+
+```bash
+mix format
+```
+
+### Testing
+
+To ensure a commit passes CI you should run `mix ci` locally, which executes the following commands:
+
+- Check formatting (`mix format --check-formatted`)
+- Run all tests (`mix test`)
+
+### Making Changes to Grafana Dashboards
+
+To update dashboards you need Grafana running locally. Create the following
+_docker-compose.yml_:
+
+```YAML
+version: '3'
+services:
+  grafana:
+    image: teslamate-grafana:latest
+    environment:
+      - DATABASE_USER=postgres
+      - DATABASE_PASS=postgres
+      - DATABASE_NAME=teslamate_dev
+      - DATABASE_HOST=host.docker.internal
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+    grafana-data:
+```
+
+Then build the image with `make grafana` and run the container via
+`docker-compose up grafana`.
+
+Access the Grafana at [http://localhost:3000](http://localhost:3000) and sign
+in with the default user `admin` and password `admin`.
+
+Then edit the respective dashboard(s) locally. To export a dashboard hit the
+'Save' button and select `Save JSON to file`. The final JSON file belongs in the
+directory `./grafana/dashboards/`.
 
 ## Donations
 
