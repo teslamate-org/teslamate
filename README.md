@@ -56,7 +56,7 @@ A data logger for your Tesla.
 - [Web Interface](#web-interface)
 - [MQTT](#mqtt)
 - [FAQ](#faq)
-- [Contributions](#contributions)
+- [Contributing](#contributing)
 - [Donations](#donations)
 - [Disclaimer](#disclaimer)
 - [Credits](#credits)

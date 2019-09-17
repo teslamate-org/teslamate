@@ -1,5 +1,29 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Show a map with the current vehicle position on the web interface
+- Add a satellite/hybrid layer to the geo-fence map
+- Use elevation data with 1 arc second (~30m) accuracy everywhere not just in
+  the US
+- Add support for MQTT SSL (#140)
+- Add "Charged" annotation to the degradation dashboard
+- Add preferred range setting: you can now choose between "ideal" and "rated"
+  range to use as the basis for efficiency and other metrics
+
+### Fixed
+
+- Prevent suspending when an update is in progress
+
+### Removed
+
+- Drop support for the deprecated env variables `TESLA_USERNAME` and
+  `TESLA_PASSWORD`
+
+### Fixed
+
 ## [1.8.0] - 2019-09-03
 
 ### Added
@@ -333,6 +357,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.8.0...HEAD
 [1.8.0]: https://github.com/adriankumpf/teslamate/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/adriankumpf/teslamate/compare/v1.6.2...v1.7.0
 [1.6.2]: https://github.com/adriankumpf/teslamate/compare/v1.6.1...v1.6.2
