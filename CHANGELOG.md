@@ -13,6 +13,14 @@
 - Add preferred range setting: you can now choose between "ideal" and "rated"
   range to use as the basis for efficiency and other metrics
 
+### Changed
+
+- Require a data source named "TeslaMate":
+
+  If you don't run the `teslamate/grafana` docker container the Grafana data
+  source has to have the name "TeslaMate". Prior to this change the default
+  data source was used.
+
 ### Fixed
 
 - Prevent suspending when an update is in progress

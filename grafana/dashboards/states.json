@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1566116346496,
+  "iteration": 1568831189585,
   "links": [],
   "panels": [
     {
@@ -47,6 +47,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "description": "Only distinguishes betwen online, offline and asleep.",
       "format": "dateTimeAsIso",
       "gauge": {
@@ -159,6 +160,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "description": "Only distinguishes between online, offline and asleep.",
       "format": "none",
       "gauge": {
@@ -271,6 +273,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "description": "based on any data ever recorded.",
       "format": "percentunit",
       "gauge": {
@@ -399,6 +402,7 @@
         }
       ],
       "crosshairColor": "#8F070C",
+      "datasource": "TeslaMate",
       "display": "timeline",
       "expandFromQueryS": 0,
       "extendLastValue": true,
@@ -570,7 +574,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,

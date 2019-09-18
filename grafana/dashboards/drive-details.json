@@ -70,7 +70,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1568403819008,
+  "iteration": 1568831185754,
   "links": [],
   "panels": [
     {
@@ -78,6 +78,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "TeslaMate",
       "fill": 1,
       "fillGradient": 1,
       "gridPos": {
@@ -203,6 +204,7 @@
     },
     {
       "autoZoom": true,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 28,
         "w": 12,
@@ -297,6 +299,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "TeslaMate",
       "fill": 1,
       "fillGradient": 3,
       "gridPos": {
@@ -411,6 +414,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "TeslaMate",
       "fill": 0,
       "fillGradient": 1,
       "gridPos": {
@@ -580,7 +584,7 @@
           "text": "C",
           "value": "C"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -605,7 +609,7 @@
           "text": "km",
           "value": "km"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -631,7 +635,7 @@
           "text": "1",
           "value": "1"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 0,
         "includeAll": false,
@@ -656,7 +660,7 @@
           "text": "m",
           "value": "m"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -681,7 +685,7 @@
           "text": "ideal",
           "value": "ideal"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,

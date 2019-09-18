@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565979239654,
+  "iteration": 1568831188763,
   "links": [],
   "panels": [
     {
@@ -40,6 +40,7 @@
     },
     {
       "autoZoom": true,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 16,
         "w": 24,
@@ -101,13 +102,13 @@
   "tags": [],
   "templating": {
     "list": [
-     {
+      {
         "allValue": null,
         "current": {
           "text": "All",
           "value": "$__all"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,

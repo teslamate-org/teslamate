@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565978550044,
+  "iteration": 1568831185373,
   "links": [],
   "panels": [
     {
@@ -48,6 +48,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -161,6 +162,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "format": "kwatth",
       "gauge": {
         "maxValue": 100,
@@ -267,6 +269,7 @@
     },
     {
       "columns": [],
+      "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
         "h": 14,
@@ -376,6 +379,7 @@
     },
     {
       "columns": [],
+      "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
         "h": 14,
@@ -476,6 +480,7 @@
     },
     {
       "columns": [],
+      "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
         "h": 14,
@@ -601,7 +606,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,

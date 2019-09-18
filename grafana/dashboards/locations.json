@@ -15,11 +15,12 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565981214551,
+  "iteration": 1568831187603,
   "links": [],
   "panels": [
     {
       "columns": [],
+      "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
         "h": 11,
@@ -212,6 +213,7 @@
     },
     {
       "columns": [],
+      "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
         "h": 11,
@@ -342,6 +344,7 @@
     },
     {
       "columns": [],
+      "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
         "h": 11,
@@ -463,7 +466,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,

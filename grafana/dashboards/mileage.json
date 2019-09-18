@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1565978989852,
+  "iteration": 1568831188317,
   "links": [],
   "panels": [
     {
@@ -43,6 +43,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "TeslaMate",
       "fill": 1,
       "fillGradient": 4,
       "gridPos": {
@@ -170,7 +171,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
@@ -195,7 +196,7 @@
           "text": "km",
           "value": "km"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,

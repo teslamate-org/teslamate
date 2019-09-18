@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1568403042181,
+  "iteration": 1568831183157,
   "links": [],
   "panels": [
     {
@@ -23,6 +23,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "TeslaMate",
       "decimals": 2,
       "fill": 1,
       "fillGradient": 1,
@@ -144,6 +145,7 @@
     },
     {
       "autoZoom": true,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 20,
         "w": 8,
@@ -220,7 +222,7 @@
           "text": "F",
           "value": "F"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -245,20 +247,14 @@
           "text": "1",
           "value": "1"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 0,
         "includeAll": false,
         "label": "Car",
         "multi": false,
         "name": "car_id",
-        "options": [
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          }
-        ],
+        "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
         "refresh": 1,
         "regex": "",
@@ -276,7 +272,7 @@
           "text": "mi",
           "value": "mi"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -301,7 +297,7 @@
           "text": "ideal",
           "value": "ideal"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,

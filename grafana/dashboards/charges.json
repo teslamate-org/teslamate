@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1568403376052,
+  "iteration": 1568831183652,
   "links": [],
   "panels": [
     {
@@ -41,6 +41,7 @@
     },
     {
       "columns": [],
+      "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
         "h": 39,
@@ -491,7 +492,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
@@ -516,7 +517,7 @@
           "text": "km",
           "value": "km"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -541,7 +542,7 @@
           "text": "C",
           "value": "C"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -566,7 +567,7 @@
           "text": "ideal",
           "value": "ideal"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
