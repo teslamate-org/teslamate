@@ -21,6 +21,9 @@
   source has to have the name "TeslaMate". Prior to this change the default
   data source was used.
 
+- Renamed the MQTT topic `teslamate/cars/$car_id/battery_range_km` to
+  `teslamate/cars/$car_id/rated_battery_range_km`.
+
 ### Fixed
 
 - Prevent suspending when an update is in progress

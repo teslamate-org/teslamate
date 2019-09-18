@@ -213,7 +213,7 @@ teslamate/cars/$car_id/sentry_mode
 
 ## FAQ
 
-#### Sometimes the first few minutes of a drive are not recorded even though the car was online. Why?
+### Sometimes the first few minutes of a drive are not recorded even though the car was online. Why?
 
 TeslaMate polls the car every few seconds while driving or charging. After
 that, it keeps polling for about 15 minutes (to catch the following drive if
@@ -237,9 +237,6 @@ start polling again. In short, create a workflow with
 Tesla is established send an HTTP PUT `resume` request to your publicly exposed
 TeslaMate instance. See the available commands below.
 
-_(With iOS 12 and below workflows are quite limited but can be triggered
-manually. iOS 13 will fix that.)_
-
 **Alternatively** / additionally, you can experiment with the sleep settings.
 Some cars, especially Model 3, seem to handle a `Time to Try Sleeping` value of
 12 min just fine. Doing so reduces the likelihood of potential data gaps. Just
@@ -258,12 +255,16 @@ only permit access to `/api/car/$car_id/logging/resume` and/or
 `/api/car/$car_id/logging/suspend`. See [Advanved Setup (SSL, FQDN, pw
 protected)](<https://github.com/adriankumpf/teslamate/wiki/Advanved-Setup-(SSL,-FQDN,-pw-protected)>).
 
-#### My car is not sleeping!
+### My car is not sleeping!
 
 Please follow the steps applicable to TeslaMate mentioned in [this
 article](https://support.teslafi.com/knowledge-bases/2/articles/161-my-vehicle-is-not-sleeping).
 
-#### What is the geo-fence feature for?
+Most importantly, if you have a Model S or X built prior to March 2018 make
+sure 'Always Connected' is turned off and 'Energy Savings' is turned on in the
+vehicle.
+
+### What is the geo-fence feature for?
 
 At the moment geo-fences are a way to create custom locations like `🏡 Home` or
 `🛠️ Work` That may be particularly useful if the addresses (which are provided
@@ -367,7 +368,8 @@ in with the default user `admin` and password `admin`.
 
 Then edit the respective dashboard(s) locally. To export a dashboard hit the
 'Save' button and select `Save JSON to file`. The final JSON file belongs in the
-directory `./grafana/dashboards/`.
+directory `./grafana/dashboards/`. To apply the changes rebuild the image and
+start the container.
 
 ## Donations
 
@@ -388,5 +390,5 @@ particular is not endorsed by Tesla. Use at your own risk.
 
 ## Credits
 
-- [TeslaLogger](https://github.com/bassmaster187/TeslaLogger) was a big
-  inspiration especially during early development. Thanks!
+[TeslaLogger](https://github.com/bassmaster187/TeslaLogger) was a big
+inspiration especially during early development. Thanks!
