@@ -114,7 +114,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tcount(*)\nFROM\n\tcharging_processes\nWHERE\n\tcharge_energy_added > 0.01",
+          "rawSql": "SELECT\n\tcount(*)\nFROM\n\tcharging_processes\nWHERE\n\tcharge_energy_added > 0.01 AND \tcar_id = $car_id;",
           "refId": "A",
           "select": [
             [
@@ -228,7 +228,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tsum(charge_energy_added)\nFROM\n\tcharging_processes;",
+          "rawSql": "SELECT\n\tsum(charge_energy_added)\nFROM\n\tcharging_processes\nWHERE\n\tcar_id = $car_id;\n",
           "refId": "A",
           "select": [
             [
