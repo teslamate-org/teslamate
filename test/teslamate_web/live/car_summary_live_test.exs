@@ -95,7 +95,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
         assert html = render(view)
         assert html =~ table_row("Status", unquote(Macro.escape(status)))
-        assert html =~ ~r/a class="button is-danger .*? disabled>#{unquote(msg)}<\/a>/
+        assert html =~ ~r/a class="button is-danger .*? disabled="disabled">#{unquote(msg)}<\/a>/
       end
     end
   end
