@@ -97,12 +97,16 @@ defmodule TeslaMate.VehicleCase do
         )
       end
 
-      def charging_event(ts, charging_state, charge_energy_added) do
+      def charging_event(ts, charging_state, charge_energy_added, opts \\ []) do
+        range = Keyword.get(opts, :range)
+
         online_event(
           charge_state: %{
             timestamp: ts,
             charging_state: charging_state,
-            charge_energy_added: charge_energy_added
+            charge_energy_added: charge_energy_added,
+            ideal_battery_range: range,
+            battery_range: range
           },
           drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
         )

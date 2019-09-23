@@ -8,12 +8,12 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     events = [
       {:ok, online_event()},
       {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
-      {:ok, charging_event(now_ts + 1, "Starting", 0.1)},
-      {:ok, charging_event(now_ts + 2, "Charging", 0.2)},
-      {:ok, charging_event(now_ts + 3, "Charging", 0.3)},
-      {:ok, charging_event(now_ts + 4, "Complete", 0.4)},
-      {:ok, charging_event(now_ts + 5, "Complete", 0.4)},
-      {:ok, charging_event(now_ts + 6, "Unplugged", 0.4)},
+      {:ok, charging_event(now_ts + 1, "Starting", 0.1, range: 1)},
+      {:ok, charging_event(now_ts + 2, "Charging", 0.2, range: 2)},
+      {:ok, charging_event(now_ts + 3, "Charging", 0.3, range: 3)},
+      {:ok, charging_event(now_ts + 4, "Complete", 0.4, range: 4)},
+      {:ok, charging_event(now_ts + 5, "Complete", 0.4, range: 4)},
+      {:ok, charging_event(now_ts + 6, "Unplugged", 0.4, range: 4)},
       {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
     ]
 
@@ -27,17 +27,45 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0},
                     []}
 
-    assert_receive {:insert_charge, charging_id, %{date: _, charge_energy_added: 0.1}}
+    assert_receive {:insert_charge, charging_id,
+                    %{
+                      date: _,
+                      charge_energy_added: 0.1,
+                      rated_battery_range_km: 1.6,
+                      ideal_battery_range_km: 1.6
+                    }}
+
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: s1}}}
     assert DateTime.diff(s0, s1, :nanosecond) < 0
 
-    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.2}}
+    assert_receive {:insert_charge, ^charging_id,
+                    %{
+                      date: _,
+                      charge_energy_added: 0.2,
+                      rated_battery_range_km: 3.2,
+                      ideal_battery_range_km: 3.2
+                    }}
+
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: ^s1}}}
 
-    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.3}}
+    assert_receive {:insert_charge, ^charging_id,
+                    %{
+                      date: _,
+                      charge_energy_added: 0.3,
+                      rated_battery_range_km: 4.8,
+                      ideal_battery_range_km: 4.8
+                    }}
+
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: ^s1}}}
 
-    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.4}}
+    assert_receive {:insert_charge, ^charging_id,
+                    %{
+                      date: _,
+                      charge_energy_added: 0.4,
+                      rated_battery_range_km: 6.4,
+                      ideal_battery_range_km: 6.4
+                    }}
+
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete, since: s2}}}
     assert DateTime.diff(s1, s2, :nanosecond) < 0
 

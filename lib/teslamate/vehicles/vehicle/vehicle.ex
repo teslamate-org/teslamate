@@ -679,6 +679,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       fast_charger_brand: vehicle.charge_state.fast_charger_brand,
       fast_charger_type: vehicle.charge_state.fast_charger_type,
       ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
+      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 1),
       not_enough_power_to_heat: vehicle.charge_state.not_enough_power_to_heat,
       outside_temp: vehicle.climate_state.outside_temp
     }
