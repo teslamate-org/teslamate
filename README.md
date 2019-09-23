@@ -338,8 +338,8 @@ To ensure a commit passes CI you should run `mix ci` locally, which executes the
 
 ### Making Changes to Grafana Dashboards
 
-To update dashboards you need Grafana running locally. Create the following
-_docker-compose.yml_:
+To update dashboards you need Grafana running locally. The following
+_docker-compose.yml_ can be used for this purpose:
 
 ```YAML
 version: '3'
@@ -359,6 +359,9 @@ services:
 volumes:
     grafana-data:
 ```
+
+_(on Linux use the actual IP address of the host as `DATABASE_HOST`instead of
+`host.docker.internal`)_
 
 Then build the image with `make grafana` and run the container via
 `docker-compose up grafana`.
