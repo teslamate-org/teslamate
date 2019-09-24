@@ -8,7 +8,7 @@
 - Add a satellite/hybrid layer to the geo-fence map
 - Use elevation data with 1 arc second (~30m) accuracy everywhere not just in
   the US
-- Add support for MQTT SSL (#140)
+- Add support for MQTT SSL ([#140](https://github.com/adriankumpf/teslamate/pull/140))
 - Add "Charged" annotation to the degradation dashboard
 - Add preferred range setting: you can now choose between "ideal" and "rated"
   range to use as the basis for efficiency and other metrics
@@ -27,6 +27,7 @@
 ### Fixed
 
 - Prevent suspending when an update is in progress
+- Fix charge counter when using with multi vehicles ([#175](https://github.com/adriankumpf/teslamate/pull/175))
 
 ### Removed
 
