@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.9.1] - 2019-09-24
+
+### Fixed
+
+- Fix set position when selecting search entry
+- Fix deleting of geo-fences
+
 ## [1.9.0] - 2019-09-24
 
 ### Added
@@ -369,7 +376,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.9.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.9.1...HEAD
+[1.9.1]: https://github.com/adriankumpf/teslamate/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/adriankumpf/teslamate/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/adriankumpf/teslamate/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/adriankumpf/teslamate/compare/v1.6.2...v1.7.0
