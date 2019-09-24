@@ -134,8 +134,7 @@ export const Map = {
     if (editable) {
       new Control.geocoder({ defaultMarkGeocode: false })
         .on("markgeocode", function(e) {
-          console.log(e);
-          const bbox = e.geocode.bbox;
+          const { bbox, center } = e.geocode;
 
           const poly = L.polygon([
             bbox.getSouthEast(),
@@ -146,8 +145,11 @@ export const Map = {
 
           map.fitBounds(poly.getBounds());
 
-          marker.setLatLng(e.geocode.center);
-          circle.setLatLng(e.geocode.center);
+          marker.setLatLng(center);
+          circle.setLatLng(center);
+
+          $latitude.value = center.lat;
+          $longitude.value = center.lng;
         })
         .addTo(map);
     }
