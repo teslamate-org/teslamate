@@ -670,7 +670,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       battery_level: vehicle.charge_state.battery_level,
       charge_energy_added: vehicle.charge_state.charge_energy_added,
       charger_actual_current: vehicle.charge_state.charger_actual_current,
-      charger_phases: with(p when is_number(p) <- vehicle.charge_state.charger_phases, do: p + 1),
+      charger_phases: vehicle.charge_state.charger_phases,
       charger_pilot_current: vehicle.charge_state.charger_pilot_current,
       charger_power: vehicle.charge_state.charger_power,
       charger_voltage: vehicle.charge_state.charger_voltage,

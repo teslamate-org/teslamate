@@ -6,8 +6,8 @@
 
 ### Fixed
 
-- Fix set position when selecting search entry
-- Fix deleting of geo-fences
+- Set position when selecting a search entry
+- Fix deletion of geo-fences
 
 ## [1.9.0] - 2019-09-24
 
