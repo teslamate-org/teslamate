@@ -35,7 +35,7 @@
           <p class="control">
   <%= if @flagged == to_string(geofence.id) do %>
             <%= link gettext("Confirm"),
-                  to: "#", phx_click: "delete", phx_value: geofence.id,
+                  to: "#", phx_click: "delete", phx_value_id: geofence.id,
                   class: "button is-danger is-small is-inverted"
             %>
   <% else %>
@@ -48,12 +48,12 @@
           <p class="control">
   <%= if @flagged == to_string(geofence.id) do %>
             <%= link gettext("Cancel"),
-                  to: "#", phx_click: "cancel", phx_value: geofence.id,
+                  to: "#", phx_click: "cancel", phx_value_id: geofence.id,
                   class: "button is-text is-small is-inverted"
             %>
   <% else %>
             <%= link gettext("Delete"),
-                  to: "#", phx_click: "flag", phx_value: geofence.id,
+                  to: "#", phx_click: "flag", phx_value_id: geofence.id,
                   class: "button is-danger is-small is-outlined"
             %>
   <% end %>

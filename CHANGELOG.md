@@ -36,8 +36,6 @@
 - Drop support for the deprecated env variables `TESLA_USERNAME` and
   `TESLA_PASSWORD`
 
-### Fixed
-
 ## [1.8.0] - 2019-09-03
 
 ### Added
