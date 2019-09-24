@@ -13,8 +13,8 @@
     "phoenix_live_view": "file:../deps/phoenix_live_view"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
     "babel-loader": "^8.0.6",
     "bulma": "^0.7.5",
     "copy-webpack-plugin": "^5.0.4",
@@ -25,7 +25,7 @@
     "sass-loader": "^8.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^2.1.0",
-    "webpack": "4.40.2",
+    "webpack": "4.41.0",
     "webpack-cli": "^3.3.9"
   }
 }
