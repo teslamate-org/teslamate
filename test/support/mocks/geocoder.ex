@@ -3,7 +3,8 @@ defmodule GeocoderMock do
     {:error, :induced_error}
   end
 
-  def reverse_lookup(52.514521, 13.350144) do
+  def reverse_lookup(lat, lng)
+      when lat in [52.51599, 52.515, 52.514521] and lng in [13.35199, 13.351, 13.350144] do
     {:ok,
      %{
        city: nil,

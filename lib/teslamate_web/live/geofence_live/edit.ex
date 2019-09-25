@@ -15,7 +15,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Edit do
 
   @impl true
   def mount(_session, socket) do
-    {:ok, assign(socket, type: :edit, show_errors: false)}
+    {:ok, assign(socket, show_errors: false)}
   end
 
   @impl true

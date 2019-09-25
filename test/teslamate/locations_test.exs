@@ -140,7 +140,7 @@ defmodule TeslaMate.LocationsTest do
     end
 
     test "checks if the address matches an existing geo-fence" do
-      assert {:ok, %GeoFence{address_id: id} = geofence} =
+      assert {:ok, %GeoFence{id: id} = geofence} =
                Locations.create_geofence(%{
                  name: "Home",
                  latitude: 52.514521,
@@ -148,14 +148,17 @@ defmodule TeslaMate.LocationsTest do
                  radius: 100
                })
 
-      assert {:ok, %Address{id: ^id}} =
+      assert {:ok, %Address{geofence_id: ^id}} =
                Locations.find_address(%{latitude: 52.515, longitude: 13.351})
+
+      assert {:ok, %Address{geofence_id: ^id}} =
+               Locations.find_address(%{latitude: 52.51599, longitude: 13.35199})
     end
   end
 
   describe "geofences" do
     @valid_attrs %{name: "foo", latitude: 52.514521, longitude: 13.350144, radius: 42}
-    @update_attrs %{name: "bar", latitude: nil, longitude: nil, radius: 43}
+    @update_attrs %{name: "bar", latitude: 53.514521, longitude: 14.350144, radius: 43}
     @invalid_attrs %{name: nil, latitude: nil, longitude: nil, radius: nil}
 
     def geofence_fixture(attrs \\ %{}) do
@@ -212,15 +215,15 @@ defmodule TeslaMate.LocationsTest do
                  radius: 20
                })
 
-      assert errors_on(changeset) == %{address_id: ["has already been taken"]}
+      assert errors_on(changeset) == %{latitude: ["is overlapping with other geo-fence"]}
     end
 
     test "update_geofence/2 with valid data updates the geofence" do
       geofence = geofence_fixture()
       assert {:ok, %GeoFence{} = geofence} = Locations.update_geofence(geofence, @update_attrs)
       assert geofence.name == "bar"
-      assert geofence.latitude == 52.514521
-      assert geofence.longitude == 13.350144
+      assert geofence.latitude == 53.514521
+      assert geofence.longitude == 14.350144
       assert geofence.radius == 43
     end
 

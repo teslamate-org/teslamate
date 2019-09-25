@@ -22,13 +22,13 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <div id="map" data-editable="<%= @type == :create %>" style="height: 400px; position: relative;"
+          <div id="map" style="height: 400px; position: relative;"
                phx-update="ignore"
                phx-hook="Map"
           ></div>
 
-          <%= text_input f, :latitude, class: "is-hidden", disabled: @type == :edit %>
-          <%= text_input f, :longitude, class: "is-hidden", disabled: @type == :edit %>
+          <%= text_input f, :latitude, class: "is-hidden" %>
+          <%= text_input f, :longitude, class: "is-hidden" %>
         </div>
       <%= if @show_errors do %>
         <p class="help is-danger">

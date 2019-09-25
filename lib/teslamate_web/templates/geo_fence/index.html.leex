@@ -23,7 +23,7 @@
 <%= for geofence <- @geofences do %>
     <tr>
       <td><strong><%= geofence.name %></strong></td>
-      <td class="is-hidden-mobile"><%= geofence.latitude %>, <%= geofence.longitude %></td>
+      <td class="is-hidden-mobile"><%= Float.round(geofence.latitude, 5) %>, <%= Float.round(geofence.longitude, 5) %></td>
       <td class="is-hidden-mobile"><%=
           case @unit_of_length do
             :ft -> geofence.radius |> m_to_ft() |> round()

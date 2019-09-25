@@ -1,6 +1,9 @@
 defmodule TeslaMate.Locations.GeoFence do
   use Ecto.Schema
+
   import Ecto.Changeset
+  import Ecto.Query
+  import TeslaMate.Locations.Functions
 
   alias TeslaMate.Locations.Address
 
@@ -10,7 +13,7 @@ defmodule TeslaMate.Locations.GeoFence do
     field :longitude, :float
     field :radius, :float
 
-    belongs_to :address, Address
+    has_many :addresses, Address, foreign_key: :geofence_id, on_delete: :nilify_all
 
     timestamps()
   end
@@ -21,7 +24,24 @@ defmodule TeslaMate.Locations.GeoFence do
     |> cast(attrs, [:name, :radius, :latitude, :longitude])
     |> validate_required([:name, :latitude, :longitude, :radius])
     |> validate_number(:radius, greater_than: 0, less_than: 1000)
-    |> foreign_key_constraint(:address_id)
-    |> unique_constraint(:address_id, name: :geofences_address_id_index)
+    |> prepare_changes(fn changeset ->
+      self = apply_changes(changeset)
+
+      overlapping? =
+        __MODULE__
+        |> select(count())
+        |> where_exclude(self)
+        |> where([g], within_geofence?(self, g, :left))
+        |> changeset.repo.one() > 0
+
+      if overlapping? do
+        add_error(changeset, :latitude, "is overlapping with other geo-fence")
+      else
+        changeset
+      end
+    end)
   end
+
+  defp where_exclude(query, %__MODULE__{id: nil}), do: query
+  defp where_exclude(query, %__MODULE__{id: id}), do: where(query, [g], g.id != ^id)
 end

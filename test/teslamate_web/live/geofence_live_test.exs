@@ -28,9 +28,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert [
                _,
-               ["Post office", "-25.066188, -130.100502", "100 m", _],
-               ["Service Center", "52.394246, 13.542552", "100 m", _],
-               ["Victory Column", "52.514521, 13.350144", "100 m", _]
+               ["Post office", "-25.06619, -130.1005", "100 m", _],
+               ["Service Center", "52.39425, 13.54255", "100 m", _],
+               ["Victory Column", "52.51452, 13.35014", "100 m", _]
              ] =
                html
                |> Floki.find("tr")
@@ -51,7 +51,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["Post office", "-25.066188, -130.100502", "328 ft", _] =
+      assert ["Post office", "-25.06619, -130.1005", "328 ft", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
 
@@ -61,7 +61,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["Victory Column", "52.514521, 13.350144", "100 m", _] =
+      assert ["Victory Column", "52.51452, 13.35014", "100 m", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
       assert html =~
@@ -87,11 +87,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       latitude = Floki.find(html, "#geo_fence_latitude")
       assert ["-25.066188"] = Floki.attribute(latitude, "value")
-      assert ["disabled"] = Floki.attribute(latitude, "disabled")
 
       longitude = Floki.find(html, "#geo_fence_longitude")
       assert ["-130.100502"] = Floki.attribute(longitude, "value")
-      assert ["disabled"] = Floki.attribute(longitude, "disabled")
 
       radius = Floki.find(html, "#geo_fence_radius")
       assert ["100"] = Floki.attribute(radius, "value")
@@ -122,11 +120,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       latitude = Floki.find(html, "#geo_fence_latitude")
       assert ["-25.066188"] = Floki.attribute(latitude, "value")
-      assert ["disabled"] = Floki.attribute(latitude, "disabled")
 
       longitude = Floki.find(html, "#geo_fence_longitude")
       assert ["-130.100502"] = Floki.attribute(longitude, "value")
-      assert ["disabled"] = Floki.attribute(longitude, "disabled")
 
       radius = Floki.find(html, "#geo_fence_radius")
       assert ["100"] = Floki.attribute(radius, "value")
@@ -138,7 +134,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["Adamstown", "-25.066188, -130.100502", "20 m", _] =
+      assert ["Adamstown", "0.0, 0.0", "20 m", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
 
@@ -160,11 +156,18 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["66.0"] = Floki.attribute(radius, "value")
 
       assert {:error, {:redirect, %{to: "/geo-fences"}}} =
-               render_submit(view, :save, %{geo_fence: %{radius: 30}})
+               render_submit(view, :save, %{
+                 geo_fence: %{
+                   name: "Post office",
+                   latitude: -25.066188,
+                   longitude: -130.100502,
+                   radius: 30
+                 }
+               })
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["Post office", "-25.066188, -130.100502", "30 ft", _] =
+      assert ["Post office", "-25.06619, -130.1005", "30 ft", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
       {:ok, _settings} =
@@ -172,7 +175,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["Post office", "-25.066188, -130.100502", "9 m", _] =
+      assert ["Post office", "-25.06619, -130.1005", "9 m", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
   end
@@ -261,7 +264,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert html =~ ~r/post office/
-      assert html =~ ~r/-25.066188, -130.100502/
+      assert html =~ ~r/-25.06619, -130.1005/
       assert html =~ ~r/25 m/
     end
 
@@ -284,7 +287,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert [_field_name, field_position, _field_radius, _] =
                Floki.find(html, ".field.is-horizontal")
 
-      assert ["has already been taken"] =
+      assert ["is overlapping with other geo-fence"] =
                field_position |> Floki.find("span") |> Enum.map(&Floki.text/1)
     end
 
@@ -306,7 +309,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["post office", "-25.066188, -130.100502", "50 ft", _] =
+      assert ["post office", "-25.06619, -130.1005", "50 ft", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
       {:ok, _settings} =
@@ -314,7 +317,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["post office", "-25.066188, -130.100502", "15 m", _] =
+      assert ["post office", "-25.06619, -130.1005", "15 m", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
   end

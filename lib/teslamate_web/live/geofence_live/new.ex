@@ -32,7 +32,6 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
     assigns = %{
       changeset: Locations.change_geofence(geo_fence, %{radius: radius}),
       unit_of_length: unit_of_length,
-      type: :create,
       show_errors: false
     }
 

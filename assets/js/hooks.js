@@ -116,9 +116,7 @@ export const Map = {
 
     const circle = new Circle(location, { radius }).addTo(map);
 
-    const editable = this.el.dataset.editable == "true";
-
-    const marker = new Marker(location, { icon, draggable: editable })
+    const marker = new Marker(location, { icon, draggable: true })
       .addTo(map)
       .on("dragstart", () => circle.setStyle({ opacity: 0, fill: false }))
       .on("dragend", e => {
@@ -131,27 +129,25 @@ export const Map = {
         circle.setStyle({ opacity: 1, fill: true });
       });
 
-    if (editable) {
-      new Control.geocoder({ defaultMarkGeocode: false })
-        .on("markgeocode", function(e) {
-          const { bbox, center } = e.geocode;
+    new Control.geocoder({ defaultMarkGeocode: false })
+      .on("markgeocode", function(e) {
+        const { bbox, center } = e.geocode;
 
-          const poly = L.polygon([
-            bbox.getSouthEast(),
-            bbox.getNorthEast(),
-            bbox.getNorthWest(),
-            bbox.getSouthWest()
-          ]);
+        const poly = L.polygon([
+          bbox.getSouthEast(),
+          bbox.getNorthEast(),
+          bbox.getNorthWest(),
+          bbox.getSouthWest()
+        ]);
 
-          map.fitBounds(poly.getBounds());
+        map.fitBounds(poly.getBounds());
 
-          marker.setLatLng(center);
-          circle.setLatLng(center);
+        marker.setLatLng(center);
+        circle.setLatLng(center);
 
-          $latitude.value = center.lat;
-          $longitude.value = center.lng;
-        })
-        .addTo(map);
-    }
+        $latitude.value = center.lat;
+        $longitude.value = center.lng;
+      })
+      .addTo(map);
   }
 };
