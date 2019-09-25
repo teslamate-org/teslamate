@@ -45,12 +45,20 @@ defmodule TeslaMate.Locations do
   end
 
   defp find_geofenced_address(lat, lng) do
-    geofences = list_geofences()
+    query =
+      from g in GeoFence,
+        where:
+          fragment(
+            "earth_box(ll_to_earth(?, ?), ?) @> ll_to_earth(?, ?)",
+            g.latitude,
+            g.longitude,
+            g.radius,
+            ^lat,
+            ^lng
+          ),
+        limit: 1
 
-    with %GeoFence{} = geofence <-
-           Enum.find(geofences, fn %GeoFence{radius: radius} = geofence ->
-             Geocalc.within?(radius, geofence, {lat, lng})
-           end),
+    with %GeoFence{} = geofence <- Repo.one(query),
          %GeoFence{address: address} <- Repo.preload(geofence, :address) do
       address
     end

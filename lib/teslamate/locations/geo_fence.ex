@@ -25,8 +25,3 @@ defmodule TeslaMate.Locations.GeoFence do
     |> unique_constraint(:address_id, name: :geofences_address_id_index)
   end
 end
-
-defimpl Geocalc.Point, for: TeslaMate.Locations.GeoFence do
-  def latitude(%TeslaMate.Locations.GeoFence{latitude: lat}), do: lat
-  def longitude(%TeslaMate.Locations.GeoFence{longitude: lng}), do: lng
-end
