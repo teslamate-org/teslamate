@@ -1,4 +1,4 @@
-FROM elixir:1.9-alpine@sha256:d071898e73d43aec89870e4965217ffc66d092eb1197b1cd56daad0f78421935 AS builder
+FROM elixir:1.9-alpine AS builder
 
 RUN apk add --update --no-cache nodejs yarn git build-base python && \
     mix local.rebar --force && \
