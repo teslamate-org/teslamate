@@ -43,49 +43,67 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              ~r(<input id="settings_req_not_unlocked" .* type="checkbox" value="true" checked="checked"/>)
   end
 
-  test "reacts to change events", %{conn: conn} do
-    assert {:ok, view, _html} = live(conn, "/settings")
+  describe "change events" do
+    test "reacts to change events", %{conn: conn} do
+      assert {:ok, view, _html} = live(conn, "/settings")
 
-    assert render_change(view, :change, %{settings: %{unit_of_length: :mi}}) =~
-             ~r(<select id="settings_unit_of_length" .+><option value="km">km</option><option value="mi" selected="selected">mi</option></select>)
+      assert render_change(view, :change, %{settings: %{unit_of_length: :mi}}) =~
+               ~r(<select id="settings_unit_of_length" .+><option value="km">km</option><option value="mi" selected="selected">mi</option></select>)
 
-    assert settings = Settings.get_settings!()
-    assert settings.unit_of_length == :mi
+      assert settings = Settings.get_settings!()
+      assert settings.unit_of_length == :mi
 
-    assert render_change(view, :change, %{settings: %{unit_of_temperature: :F}}) =~
-             ~r(<select id="settings_unit_of_temperature" .+><option value="C">°C</option><option value="F" selected="selected">°F</option></select>)
+      assert render_change(view, :change, %{settings: %{unit_of_temperature: :F}}) =~
+               ~r(<select id="settings_unit_of_temperature" .+><option value="C">°C</option><option value="F" selected="selected">°F</option></select>)
 
-    assert settings = Settings.get_settings!()
-    assert settings.unit_of_temperature == :F
+      assert settings = Settings.get_settings!()
+      assert settings.unit_of_temperature == :F
 
-    assert render_change(view, :change, %{settings: %{suspend_min: 90}}) =~
-             ~r(<select id="settings_suspend_min" .+>.*<option value="90" selected="selected">90 min</option>.*</select>)
+      assert render_change(view, :change, %{settings: %{suspend_min: 90}}) =~
+               ~r(<select id="settings_suspend_min" .+>.*<option value="90" selected="selected">90 min</option>.*</select>)
 
-    assert settings = Settings.get_settings!()
-    assert settings.suspend_min == 90
+      assert settings = Settings.get_settings!()
+      assert settings.suspend_min == 90
 
-    assert render_change(view, :change, %{settings: %{suspend_after_idle_min: 30}}) =~
-             ~r(<select id="settings_suspend_after_idle_min" .+>.*<option value="30" selected="selected">30 min</option>.*</select>)
+      assert render_change(view, :change, %{settings: %{suspend_after_idle_min: 30}}) =~
+               ~r(<select id="settings_suspend_after_idle_min" .+>.*<option value="30" selected="selected">30 min</option>.*</select>)
 
-    assert settings = Settings.get_settings!()
-    assert settings.suspend_after_idle_min == 30
+      assert settings = Settings.get_settings!()
+      assert settings.suspend_after_idle_min == 30
 
-    assert render_change(view, :change, %{settings: %{req_no_shift_state_reading: true}}) =~
-             ~r(<input id="settings_req_no_shift_state_reading" .* type="checkbox" value="true" checked="checked"/>)
+      assert render_change(view, :change, %{settings: %{req_no_shift_state_reading: true}}) =~
+               ~r(<input id="settings_req_no_shift_state_reading" .* type="checkbox" value="true" checked="checked"/>)
 
-    assert settings = Settings.get_settings!()
-    assert settings.req_no_shift_state_reading == true
+      assert settings = Settings.get_settings!()
+      assert settings.req_no_shift_state_reading == true
 
-    assert render_change(view, :change, %{settings: %{req_no_temp_reading: true}}) =~
-             ~r(<input id="settings_req_no_temp_reading" .* type="checkbox" value="true" checked="checked"/>)
+      assert render_change(view, :change, %{settings: %{req_no_temp_reading: true}}) =~
+               ~r(<input id="settings_req_no_temp_reading" .* type="checkbox" value="true" checked="checked"/>)
 
-    assert settings = Settings.get_settings!()
-    assert settings.req_no_temp_reading == true
+      assert settings = Settings.get_settings!()
+      assert settings.req_no_temp_reading == true
 
-    assert render_change(view, :change, %{settings: %{req_not_unlocked: false}}) =~
-             ~r(<input id="settings_req_not_unlocked" .* type="checkbox" value="true"/>)
+      assert render_change(view, :change, %{settings: %{req_not_unlocked: false}}) =~
+               ~r(<input id="settings_req_not_unlocked" .* type="checkbox" value="true"/>)
 
-    assert settings = Settings.get_settings!()
-    assert settings.req_not_unlocked == false
+      assert settings = Settings.get_settings!()
+      assert settings.req_not_unlocked == false
+    end
+
+    test "base_url", %{conn: conn} do
+      assert {:ok, view, _html} = live(conn, "/settings")
+
+      assert render_change(view, :change, %{settings: %{base_url: nil}})
+             |> Floki.find("#settings_base_url")
+             |> Floki.attribute("value") == []
+
+      assert Settings.get_settings!().base_url == nil
+
+      assert render_change(view, :change, %{settings: %{base_url: " https://example.com/  "}})
+             |> Floki.find("#settings_base_url")
+             |> Floki.attribute("value") == ["https://example.com"]
+
+      assert Settings.get_settings!().base_url == "https://example.com"
+    end
   end
 end

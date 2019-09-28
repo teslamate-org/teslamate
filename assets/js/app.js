@@ -10,7 +10,10 @@ import { Socket } from "phoenix";
 import LiveSocket from "phoenix_live_view";
 import * as hooks from "./hooks";
 
-const liveSocket = new LiveSocket("/live", Socket, { hooks });
+const liveSocket = new LiveSocket("/live", Socket, {
+  hooks,
+  params: { baseUrl: window.location.origin }
+});
 liveSocket.connect();
 
 import "./main";

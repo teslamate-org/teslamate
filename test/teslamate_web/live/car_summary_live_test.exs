@@ -28,7 +28,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       :ok = start_vehicles(events)
 
-      assert {:ok, parent_view, html} = live(conn, "/")
+      assert {:ok, parent_view, html} =
+               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
       [view] = children(parent_view)
 
       assert html = render(view)
@@ -89,7 +91,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
         :ok = start_vehicles(events)
 
-        assert {:ok, parent_view, html} = live(conn, "/")
+        assert {:ok, parent_view, html} =
+                 live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
         [view] = children(parent_view)
         render_click(view, :suspend_logging)
 
@@ -119,7 +123,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       :ok = start_vehicles(events)
 
-      assert {:ok, parent_view, html} = live(conn, "/")
+      assert {:ok, parent_view, html} =
+               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
       [view] = children(parent_view)
       render_click(view, :suspend_logging)
 
