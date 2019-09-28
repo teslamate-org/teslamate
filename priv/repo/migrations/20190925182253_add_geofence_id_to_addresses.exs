@@ -4,10 +4,10 @@ defmodule New do
     import Ecto.Changeset
 
     schema "geofences" do
-      field :latitude, :float
-      field :longitude, :float
-      field :radius, :float
-      has_many :addresses, Address
+      field(:latitude, :float)
+      field(:longitude, :float)
+      field(:radius, :float)
+      has_many(:addresses, Address)
     end
   end
 
@@ -18,10 +18,10 @@ defmodule New do
     alias New.GeoFence
 
     schema "addresses" do
-      field :latitude, :float
-      field :longitude, :float
+      field(:latitude, :float)
+      field(:longitude, :float)
 
-      belongs_to :geofence, GeoFence
+      belongs_to(:geofence, GeoFence)
     end
 
     @doc false
@@ -41,9 +41,9 @@ defmodule Old do
     alias Old.Address
 
     schema "geofences" do
-      field :latitude, :float
-      field :longitude, :float
-      belongs_to :address, Address
+      field(:latitude, :float)
+      field(:longitude, :float)
+      belongs_to(:address, Address)
     end
 
     @doc false
@@ -58,7 +58,7 @@ defmodule Old do
     use Ecto.Schema
 
     schema "addresses" do
-      field :place_id, :integer
+      field(:place_id, :integer)
     end
   end
 end
