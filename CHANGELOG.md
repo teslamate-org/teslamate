@@ -1,6 +1,18 @@
 # Changelog
 
-## [Unreleased]
+## [1.10.0-dev] - Unreleased
+
+### Added
+
+- Allow editing of geo-fence positions
+- Link from Grafana dashboards directly to `/geo-fences` to create or edit a
+  geo-fence
+
+### Changed
+
+- Check geo-fences on the database level
+- Apply geo-fences retrospectively
+- Allow geo-fences to have multiple addresses
 
 ## [1.9.1] - 2019-09-24
 
@@ -36,7 +48,8 @@
 ### Fixed
 
 - Prevent suspending when an update is in progress
-- Fix charge counter when using with multi vehicles ([#175](https://github.com/adriankumpf/teslamate/pull/175))
+- Fix charge counter when using with multi vehicles
+  ([#175](https://github.com/adriankumpf/teslamate/pull/175))
 
 ### Removed
 
@@ -376,7 +389,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.9.1...HEAD
+[1.10.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.9.1...HEAD
 [1.9.1]: https://github.com/adriankumpf/teslamate/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/adriankumpf/teslamate/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/adriankumpf/teslamate/compare/v1.7.0...v1.8.0
