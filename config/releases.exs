@@ -28,10 +28,6 @@ config :teslamate, TeslaMateWeb.Endpoint,
   secret_key_base: System.get_env("SECRET_KEY_BASE", Util.random_encoded_bytes()),
   live_view: [signing_salt: System.get_env("SIGNING_SALT", Util.random_encoded_bytes())]
 
-config :teslamate, :tesla_auth,
-  username: System.get_env("TESLA_USERNAME"),
-  password: System.get_env("TESLA_PASSWORD")
-
 if System.get_env("DISABLE_MQTT") != "true" do
   config :teslamate, :mqtt,
     host: System.fetch_env!("MQTT_HOST"),

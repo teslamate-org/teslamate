@@ -36,10 +36,6 @@ config :teslamate, TeslaMate.Repo,
   hostname: "localhost",
   pool_size: 10
 
-config :teslamate, :tesla_auth,
-  username: System.get_env("USERNAME"),
-  password: System.get_env("PASSWORD")
-
 config :teslamate, :mqtt,
   host: "localhost",
   username: "dev",

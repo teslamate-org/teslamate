@@ -15,8 +15,4 @@ config :teslamate, TeslaMate.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
-config :teslamate, :tesla_auth,
-  username: "admin",
-  password: "admin"
-
 config :teslamate, :srtm_cache, "./.srtm_cache"
