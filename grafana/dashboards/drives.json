@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1569439919650,
+  "iteration": 1569697795137,
   "links": [],
   "panels": [
     {
@@ -162,7 +162,7 @@
           "link": true,
           "linkTargetBlank": true,
           "linkTooltip": "",
-          "linkUrl": "https://www.google.com/maps/search/?api=1&query=${__cell_4},${__cell_5}",
+          "linkUrl": "[[base_url:raw]]/geo-fences/${__cell_28:raw}",
           "mappingType": 1,
           "pattern": "start_address",
           "preserveFormat": false,
@@ -184,7 +184,7 @@
           "link": true,
           "linkTargetBlank": true,
           "linkTooltip": "",
-          "linkUrl": "https://www.google.com/maps/search/?api=1&query=${__cell_6},${__cell_7}",
+          "linkUrl": "[[base_url:raw]]/geo-fences/${__cell_29:raw}",
           "mappingType": 1,
           "pattern": "end_address",
           "thresholds": [],
@@ -641,6 +641,22 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "(start|end)_path",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
           "decimals": 2,
           "pattern": "/.*/",
           "thresholds": [],
@@ -655,7 +671,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n    extract(epoch FROM start_date) * 1000 AS start_date_ts,\n    extract(epoch FROM end_date) * 1000 AS end_date_ts,\n    start_date,\n    end_date,\n    COALESCE(start_geofence.latitude, start_address.latitude) as latitude,\n    COALESCE(start_geofence.longitude, start_address.longitude) as longitude,\n    COALESCE(end_geofence.latitude, end_address.latitude) as latitude,\n    COALESCE(end_geofence.longitude, end_address.longitude) as longitude,\n    COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, CONCAT_WS(' ', start_address.road, start_address.house_number)), start_address.city)) AS start_address,\n    COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, CONCAT_WS(' ', end_address.road, end_address.house_number)), end_address.city)) AS end_address,\n    duration_min,\n    convert_km (distance, '$length_unit') AS distance_$length_unit,\n    convert_km (start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, '$length_unit') AS range_diff_$length_unit,\n    convert_km (distance, '$length_unit') / duration_min * 60 AS speed_avg_$length_unit,\n    ((start_ideal_range_km - end_ideal_range_km) * car.efficiency / distance * 100) * \n      CASE WHEN '$length_unit' = 'km' THEN 1\n           WHEN '$length_unit' = 'mi' THEN 1.60934\n      END AS consumption_kWh_100,\n    (start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km) * car.efficiency AS \"consumption_kWh\",\n    distance / NULLIF(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0) as efficiency,\n    convert_celsius (outside_temp_avg, '$temp_unit') AS outside_temp_$temp_unit,\n    convert_celsius (inside_temp_avg, '$temp_unit') AS inside_temp_$temp_unit,\n    convert_km (speed_max, '$length_unit') as speed_max_$length_unit,\n    power_max,\n    power_min,\n    power_avg,\n    convert_km (start_[[preferred_range]]_range_km, '$length_unit') as start_range_$length_unit,\n    convert_km (end_[[preferred_range]]_range_km, '$length_unit') as end_range_$length_unit,\n    convert_km (start_km, '$length_unit') as start_$length_unit,\n    convert_km (end_km, '$length_unit') as end_$length_unit,\n    drives.id\nFROM\n    drives\n    LEFT JOIN addresses start_address ON start_address_id = start_address.id\n    LEFT JOIN addresses end_address ON end_address_id = end_address.id\n    LEFT JOIN geofences start_geofence ON start_address.geofence_id = start_geofence.id\n    LEFT JOIN geofences end_geofence ON end_address.geofence_id = end_geofence.id\n    LEFT JOIN cars car ON car.id = car_id\nWHERE\n    $__timeFilter(start_date)\n    AND (duration_min > 1 OR end_date IS NULL)\n    AND car_id = $car_id\nORDER BY\n    start_date DESC;",
+          "rawSql": "SELECT\n    extract(epoch FROM start_date) * 1000 AS start_date_ts,\n    extract(epoch FROM end_date) * 1000 AS end_date_ts,\n    start_date,\n    end_date,\n    COALESCE(start_geofence.latitude, start_address.latitude) as latitude,\n    COALESCE(start_geofence.longitude, start_address.longitude) as longitude,\n    COALESCE(end_geofence.latitude, end_address.latitude) as latitude,\n    COALESCE(end_geofence.longitude, end_address.longitude) as longitude,\n    COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, CONCAT_WS(' ', start_address.road, start_address.house_number)), start_address.city)) AS start_address,\n    COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, CONCAT_WS(' ', end_address.road, end_address.house_number)), end_address.city)) AS end_address,\n    duration_min,\n    convert_km (distance, '$length_unit') AS distance_$length_unit,\n    convert_km (start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, '$length_unit') AS range_diff_$length_unit,\n    convert_km (distance, '$length_unit') / duration_min * 60 AS speed_avg_$length_unit,\n    ((start_ideal_range_km - end_ideal_range_km) * car.efficiency / distance * 100) * \n      CASE WHEN '$length_unit' = 'km' THEN 1\n           WHEN '$length_unit' = 'mi' THEN 1.60934\n      END AS consumption_kWh_100,\n    (start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km) * car.efficiency AS \"consumption_kWh\",\n    distance / NULLIF(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0) as efficiency,\n    convert_celsius (outside_temp_avg, '$temp_unit') AS outside_temp_$temp_unit,\n    convert_celsius (inside_temp_avg, '$temp_unit') AS inside_temp_$temp_unit,\n    convert_km (speed_max, '$length_unit') as speed_max_$length_unit,\n    power_max,\n    power_min,\n    power_avg,\n    convert_km (start_[[preferred_range]]_range_km, '$length_unit') as start_range_$length_unit,\n    convert_km (end_[[preferred_range]]_range_km, '$length_unit') as end_range_$length_unit,\n    convert_km (start_km, '$length_unit') as start_$length_unit,\n    convert_km (end_km, '$length_unit') as end_$length_unit,\n    drives.id,\n    CASE WHEN start_geofence.id IS NULL THEN CONCAT('new?lat=', start_address.latitude, '&lng=', start_address.longitude)\n         WHEN start_geofence.id IS NOT NULL THEN CONCAT(start_geofence.id, '/edit')\n    END as start_path,\n    CASE WHEN end_geofence.id IS NULL THEN CONCAT('new?lat=', end_address.latitude, '&lng=', end_address.longitude)\n         WHEN end_geofence.id IS NOT NULL THEN CONCAT(end_geofence.id, '/edit')\n    END as end_path\n    FROM\n    drives\n    LEFT JOIN addresses start_address ON start_address_id = start_address.id\n    LEFT JOIN addresses end_address ON end_address_id = end_address.id\n    LEFT JOIN geofences start_geofence ON start_address.geofence_id = start_geofence.id\n    LEFT JOIN geofences end_geofence ON end_address.geofence_id = end_geofence.id\n    LEFT JOIN cars car ON car.id = car_id\nWHERE\n    $__timeFilter(start_date)\n    AND (duration_min > 1 OR end_date IS NULL)\n    AND car_id = $car_id\nORDER BY\n    start_date DESC;",
           "refId": "A",
           "select": [
             [
@@ -777,6 +793,31 @@
         "name": "preferred_range",
         "options": [],
         "query": "select preferred_range from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "http://localhost:4000",
+          "value": "http://localhost:4000"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select base_url from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "base_url",
+        "options": [],
+        "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

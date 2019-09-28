@@ -23,19 +23,39 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
         %Settings.Settings{unit_of_length: :mi} -> {:ft, 65}
       end
 
-    geo_fence =
-      case Log.get_latest_position() do
-        %Position{latitude: lat, longitude: lng} -> %GeoFence{latitude: lat, longitude: lng}
-        nil -> %GeoFence{}
-      end
+    geo_fence = %GeoFence{radius: radius}
 
     assigns = %{
-      changeset: Locations.change_geofence(geo_fence, %{radius: radius}),
+      geo_fence: geo_fence,
+      changeset: Locations.change_geofence(geo_fence),
       unit_of_length: unit_of_length,
       show_errors: false
     }
 
     {:ok, assign(socket, assigns)}
+  end
+
+  @impl true
+  def handle_params(%{"lat" => lat, "lng" => lng}, _uri, socket) do
+    changeset =
+      socket.assigns.geo_fence
+      |> Locations.change_geofence(%{latitude: lat, longitude: lng})
+
+    {:noreply, assign(socket, changeset: changeset)}
+  end
+
+  def handle_params(_params, _uri, socket) do
+    attrs =
+      case Log.get_latest_position() do
+        %Position{latitude: lat, longitude: lng} -> %{latitude: lat, longitude: lng}
+        nil -> %{}
+      end
+
+    changeset =
+      socket.assigns.geo_fence
+      |> Locations.change_geofence(attrs)
+
+    {:noreply, assign(socket, changeset: changeset)}
   end
 
   @impl true

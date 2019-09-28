@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1569440292040,
+  "iteration": 1569696397980,
   "links": [],
   "panels": [
     {
@@ -57,7 +57,8 @@
           "decimals": 2,
           "link": true,
           "linkTargetBlank": true,
-          "linkUrl": "https://www.google.com/maps/search/?api=1&query=${__cell_0},${__cell_1}",
+          "linkTooltip": "",
+          "linkUrl": "[[base_url:raw]]/geo-fences/${__cell_0:raw}",
           "mappingType": 1,
           "pattern": "name",
           "thresholds": [],
@@ -139,23 +140,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "latitude",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "longitude",
+          "pattern": "path",
           "thresholds": [],
           "type": "hidden",
           "unit": "short"
@@ -181,7 +166,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tlatitude,\n\tlongitude,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry,\n\tupdated_at\nFROM\n\taddresses\nWHERE\n\t$__timeFilter(inserted_at);",
+          "rawSql": "SELECT\n  CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n       WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n  END as path,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry,\n\tupdated_at\nFROM\n\taddresses\nWHERE\n\t$__timeFilter(inserted_at);",
           "refId": "A",
           "select": [
             [
@@ -250,7 +235,7 @@
           "link": true,
           "linkTargetBlank": true,
           "linkTooltip": "",
-          "linkUrl": "https://www.google.com/maps/search/?api=1&query=${__cell_0},${__cell_1}",
+          "linkUrl": "[[base_url:raw]]/geo-fences/${__cell_0}/edit",
           "mappingType": 1,
           "pattern": "name",
           "thresholds": [],
@@ -268,7 +253,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "/(longitude|latitude)/",
+          "pattern": "id",
           "thresholds": [],
           "type": "hidden",
           "unit": "short"
@@ -294,7 +279,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tlatitude,\n\tlongitude,\n\tname\nFROM\n\tgeofences\nORDER BY\n\tinserted_at DESC;",
+          "rawSql": "SELECT\n  id,\n\tname\nFROM\n\tgeofences\nORDER BY\n\tinserted_at DESC;",
           "refId": "A",
           "select": [
             [
@@ -475,6 +460,31 @@
         "name": "car_id",
         "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "http://localhost:4000",
+          "value": "http://localhost:4000"
+        },
+        "datasource": "TeslaMate",
+        "definition": "SELECT base_url from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Car",
+        "multi": false,
+        "name": "base_url",
+        "options": [],
+        "query": "SELECT base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

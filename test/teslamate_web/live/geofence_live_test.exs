@@ -249,7 +249,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
 
       # Default radius of 20m
-      assert html =~ ~r/<input .*? id="geo_fence_radius" .*? value="20.0"\/>/
+      assert html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value") == ["20"]
 
       assert {:error, {:redirect, %{to: "/geo-fences"}}} =
                render_submit(view, :save, %{
@@ -263,9 +263,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert html =~ ~r/post office/
-      assert html =~ ~r/-25.06619, -130.1005/
-      assert html =~ ~r/25 m/
+      assert ["post office", "-25.06619, -130.1005", "25 m", _] =
+               html |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
 
     test "warn if a geo-fence already exists for a location", %{conn: conn} do
