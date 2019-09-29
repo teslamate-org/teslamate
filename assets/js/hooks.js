@@ -16,6 +16,18 @@ export const LocalTime = {
   }
 };
 
+export const ConfirmGeoFenceDeletion = {
+  mounted() {
+    const { id, msg } = this.el.dataset;
+
+    this.el.addEventListener("click", () => {
+      if (window.confirm(msg)) {
+        this.pushEvent("delete", { id });
+      }
+    });
+  }
+};
+
 import "leaflet-control-geocoder";
 import {
   Map as M,

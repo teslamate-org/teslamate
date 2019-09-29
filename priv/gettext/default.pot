@@ -11,22 +11,22 @@ msgid ""
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:54
+#: lib/teslamate_web/templates/car/summary.html.leex:61
 msgid "Status"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:155
+#: lib/teslamate_web/templates/car/summary.html.leex:162
 msgid "Speed"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:137
+#: lib/teslamate_web/templates/car/summary.html.leex:144
 msgid "State of Charge"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:98
+#: lib/teslamate_web/templates/car/summary.html.leex:105
 msgid "Charged"
 msgstr ""
 
@@ -61,36 +61,36 @@ msgid "updating"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:180
+#: lib/teslamate_web/templates/car/summary.html.leex:187
 msgid "Inside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:168
+#: lib/teslamate_web/templates/car/summary.html.leex:175
 msgid "Outside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:143
+#: lib/teslamate_web/templates/car/summary.html.leex:150
 msgid "Locked"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:113
-#: lib/teslamate_web/templates/car/summary.html.leex:144
-#: lib/teslamate_web/templates/car/summary.html.leex:150
+#: lib/teslamate_web/templates/car/summary.html.leex:120
+#: lib/teslamate_web/templates/car/summary.html.leex:151
+#: lib/teslamate_web/templates/car/summary.html.leex:157
 msgid "no"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:113
-#: lib/teslamate_web/templates/car/summary.html.leex:144
-#: lib/teslamate_web/templates/car/summary.html.leex:150
+#: lib/teslamate_web/templates/car/summary.html.leex:120
+#: lib/teslamate_web/templates/car/summary.html.leex:151
+#: lib/teslamate_web/templates/car/summary.html.leex:157
 msgid "yes"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:149
+#: lib/teslamate_web/templates/car/summary.html.leex:156
 msgid "Sentry Mode"
 msgstr ""
 
@@ -109,17 +109,17 @@ msgid "Settings"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:119
+#: lib/teslamate_web/templates/car/summary.html.leex:126
 msgid "Scheduled charging"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:112
+#: lib/teslamate_web/templates/car/summary.html.leex:119
 msgid "Plugged in"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:130
+#: lib/teslamate_web/templates/car/summary.html.leex:137
 msgid "Charge limit"
 msgstr ""
 
@@ -159,32 +159,12 @@ msgid "Back"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:50
-msgid "Cancel"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:37
-msgid "Confirm"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:55
-msgid "Delete"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:42
-msgid "Edit"
-msgstr ""
-
-#, elixir-format
 #: lib/teslamate_web/templates/layout/app.html.eex:41
 msgid "Geo-Fences"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/new.ex:64
+#: lib/teslamate_web/live/geofence_live/new.ex:84
 msgid "Geo-fence \"%{name}\" created"
 msgstr ""
 
@@ -208,19 +188,19 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:4
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:9
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:16
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:21
 msgid "Name"
 msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:20
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:17
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:22
 msgid "Position"
 msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:46
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:18
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:23
 msgid "Radius"
 msgstr ""
 
@@ -263,7 +243,8 @@ msgid "Car is unlocked"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:8
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:9
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:9
 msgid "Create"
 msgstr ""
 
@@ -283,23 +264,23 @@ msgid "User present"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:36
+#: lib/teslamate_web/templates/car/summary.html.leex:43
 msgid "cancel sleep attempt"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:33
+#: lib/teslamate_web/templates/car/summary.html.leex:40
 msgid "try to sleep"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:85
+#: lib/teslamate_web/templates/car/summary.html.leex:92
 msgid "Range (est.)"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:57
-#: lib/teslamate_web/templates/car/summary.html.leex:57
+#: lib/teslamate_web/templates/car/summary.html.leex:64
+#: lib/teslamate_web/templates/car/summary.html.leex:64
 msgid "for"
 msgstr ""
 
@@ -339,12 +320,12 @@ msgid "Temperature readings"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:65
+#: lib/teslamate_web/templates/car/summary.html.leex:72
 msgid "Range (rated)"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:104
+#: lib/teslamate_web/templates/car/summary.html.leex:111
 msgid "Charger Power"
 msgstr ""
 
@@ -369,7 +350,7 @@ msgid "rated"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:64
+#: lib/teslamate_web/templates/car/summary.html.leex:71
 msgid "Range (ideal)"
 msgstr ""
 
@@ -391,4 +372,9 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:162
 msgid "General"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:51
+msgid "Do you really want to delete '%{geo_fence}'?"
 msgstr ""

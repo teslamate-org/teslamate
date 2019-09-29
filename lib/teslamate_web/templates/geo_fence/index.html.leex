@@ -38,30 +38,21 @@
       <td style="min-width: 160px;">
         <div class="field is-grouped is-pulled-right">
           <p class="control">
-  <%= if @flagged == to_string(geofence.id) do %>
-            <%= link gettext("Confirm"),
-                  to: "#", phx_click: "delete", phx_value_id: geofence.id,
-                  class: "button is-danger is-small is-inverted"
-            %>
-  <% else %>
             <%= link raw("<span class='icon'><span class='ion-ionic ion-md-create'></span></span>"),
                   to: Routes.live_path(@socket, GeoFenceLive.Edit, geofence),
                   class: "button is-info is-small is-outlined"
             %>
-  <% end %>
           </p>
           <p class="control">
-  <%= if @flagged == to_string(geofence.id) do %>
-            <%= link gettext("Cancel"),
-                  to: "#", phx_click: "cancel", phx_value_id: geofence.id,
-                  class: "button is-text is-small is-inverted"
-            %>
-  <% else %>
             <%= link raw("<span class='icon'><span class='ion-ionic ion-md-trash'></span></span>"),
-                  to: "#", phx_click: "flag", phx_value_id: geofence.id,
+                  to: "#", phx_hook: "ConfirmGeoFenceDeletion",
+                  data: [
+                    id: geofence.id,
+                    msg: gettext("Do you really want to delete '%{geo_fence}'?", geo_fence: geofence.name)
+                  ],
+                  type: "button",
                   class: "button is-danger is-small is-outlined"
             %>
-  <% end %>
           </p>
         </div>
       </td>

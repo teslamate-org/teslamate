@@ -157,7 +157,7 @@
             <td><%= (if @summary.sentry_mode, do: gettext("yes"), else: gettext("no"))  %></td>
           </tr>
           <% end %>
-          <%= unless is_nil(@summary.speed) do %>
+          <%= if @summary.state == :driving and not is_nil(@summary.speed) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Speed" %></td>
             <td>

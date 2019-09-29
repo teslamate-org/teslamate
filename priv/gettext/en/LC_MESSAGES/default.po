@@ -124,22 +124,6 @@ msgid "Back"
 msgstr ""
 
 #, elixir-format
-msgid "Cancel"
-msgstr ""
-
-#, elixir-format
-msgid "Confirm"
-msgstr ""
-
-#, elixir-format
-msgid "Delete"
-msgstr ""
-
-#, elixir-format
-msgid "Edit"
-msgstr ""
-
-#, elixir-format
 msgid "Geo-Fences"
 msgstr ""
 
@@ -301,4 +285,8 @@ msgstr ""
 
 #, elixir-format
 msgid "General"
+msgstr ""
+
+#, elixir-format
+msgid "Do you really want to delete '%{geo_fence}'?"
 msgstr ""
