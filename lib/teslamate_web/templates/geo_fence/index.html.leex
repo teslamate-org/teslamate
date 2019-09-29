@@ -5,7 +5,12 @@
   </ul>
 </nav>
 
-<%= link gettext("Create"),
+<%= link raw("""
+      <span>#{gettext("Create")}</span>
+      <span class="icon">
+        <span class="ion-ionic ion-md-add"></span>
+      </span>
+      """) ,
       to: Routes.live_path(@socket, GeoFenceLive.New),
       class: "button is-info is-small is-round is-pulled-right mb-20"
 %>
@@ -39,7 +44,7 @@
                   class: "button is-danger is-small is-inverted"
             %>
   <% else %>
-            <%= link gettext("Edit"),
+            <%= link raw("<span class='icon'><span class='ion-ionic ion-md-create'></span></span>"),
                   to: Routes.live_path(@socket, GeoFenceLive.Edit, geofence),
                   class: "button is-info is-small is-outlined"
             %>
@@ -52,7 +57,7 @@
                   class: "button is-text is-small is-inverted"
             %>
   <% else %>
-            <%= link gettext("Delete"),
+            <%= link raw("<span class='icon'><span class='ion-ionic ion-md-trash'></span></span>"),
                   to: "#", phx_click: "flag", phx_value_id: geofence.id,
                   class: "button is-danger is-small is-outlined"
             %>

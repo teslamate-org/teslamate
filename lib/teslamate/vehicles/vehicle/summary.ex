@@ -8,6 +8,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :display_name,
     :state,
     :since,
+    :healthy,
     :latitude,
     :longitude,
     :battery_level,
@@ -26,12 +27,17 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :charger_power
   ]
 
-  def into(:start, _since, nil) do
+  def into(nil, %{state: :start}) do
     %__MODULE__{state: :unavailable}
   end
 
-  def into(state, since, vehicle) do
-    %__MODULE__{format_vehicle(vehicle) | state: format_state(state), since: since}
+  def into(vehicle, %{state: state, since: since, healthy?: healthy?}) do
+    %__MODULE__{
+      format_vehicle(vehicle)
+      | state: format_state(state),
+        since: since,
+        healthy: healthy?
+    }
   end
 
   defp format_state({:charging, "Complete", _process_id}), do: :charging_complete

@@ -41,6 +41,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Phoenix.PubSub.subscribe(TeslaMate.PubSub, @topic <> "#{car_id}")
   end
 
+  def healthy?(car_id) do
+    case :fuse.ask(fuse_name(:api_error, car_id), :sync) do
+      :blown -> false
+      :ok -> true
+    end
+  end
+
   def summary(car_id) do
     GenStateMachine.call(:"#{car_id}", :summary)
   end
@@ -80,15 +87,19 @@ defmodule TeslaMate.Vehicles.Vehicle do
       deps: deps
     }
 
+    :ok =
+      :fuse.install(
+        fuse_name(:vehicle_not_found, data.car.id),
+        {{:standard, 8, :timer.minutes(10)}, {:reset, :timer.minutes(5)}}
+      )
+
+    :ok =
+      :fuse.install(
+        fuse_name(:api_error, data.car.id),
+        {{:standard, 3, :timer.minutes(5)}, {:reset, :timer.minutes(1)}}
+      )
+
     :ok = call(deps.settings, :subscribe_to_changes)
-
-    fuse_name = fuse_name(:vehicle_not_found, data)
-    fuse_opts = {{:standard, 8, :timer.minutes(10)}, {:reset, :timer.minutes(5)}}
-
-    case :fuse.install(fuse_name, fuse_opts) do
-      :reset -> Logger.info("Reset fuse: #{inspect(fuse_name)}")
-      :ok -> :ok
-    end
 
     {:ok, :start, data, {:next_event, :internal, :fetch}}
   end
@@ -123,7 +134,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
         _ -> vehicle
       end
 
-    {:keep_state_and_data, {:reply, from, Summary.into(state, data.last_state_change, vehicle)}}
+    summary =
+      Summary.into(vehicle, %{
+        state: state,
+        since: data.last_state_change,
+        healthy?: healthy?(data.car.id)
+      })
+
+    {:keep_state_and_data, {:reply, from, summary}}
   end
 
   ### resume_logging
@@ -230,32 +248,35 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.warn("Error / :timeout", car_id: data.car.id)
         {:keep_state_and_data, schedule_fetch(5)}
 
-      {:error, :unknown} ->
-        Logger.warn("Error / :unknown", car_id: data.car.id)
-        {:keep_state_and_data, schedule_fetch(30)}
-
       {:error, :vehicle_not_found} ->
         Logger.error("Error / :vehicle_not_found", car_id: data.car.id)
 
-        fuse_name = fuse_name(:vehicle_not_found, data)
+        fuse_name = fuse_name(:vehicle_not_found, data.car.id)
+        :ok = :fuse.melt(fuse_name(:api_error, data.car.id))
+        :ok = :fuse.melt(fuse_name)
 
-        case :fuse.ask(fuse_name, :sync) do
-          :blown -> true = call(data.deps.vehicles, :kill)
-          :ok -> :ok = :fuse.melt(fuse_name)
+        with :blown <- :fuse.ask(fuse_name, :sync) do
+          true = call(data.deps.vehicles, :kill)
         end
 
-        {:keep_state_and_data, schedule_fetch(30)}
+        {:keep_state_and_data, [notify_subscribers(), schedule_fetch(30)]}
 
       {:error, reason} ->
         Logger.warn("Error / #{inspect(reason)}", car_id: data.car.id)
-        {:keep_state_and_data, schedule_fetch()}
+        :ok = fuse_name(:api_error, data.car.id) |> :fuse.melt()
+        {:keep_state_and_data, [notify_subscribers(), schedule_fetch(30)]}
     end
   end
 
   ## notify_subscribers
 
   def handle_event(:internal, :notify_subscribers, state, %Data{last_response: vehicle} = data) do
-    payload = Summary.into(state, data.last_state_change, vehicle)
+    payload =
+      Summary.into(vehicle, %{
+        state: state,
+        since: data.last_state_change,
+        healthy?: healthy?(data.car.id)
+      })
 
     :ok =
       call(data.deps.pubsub, :broadcast, [TeslaMate.PubSub, @topic <> "#{data.car.id}", payload])
@@ -818,9 +839,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp determince_interval(n) when not is_nil(n) and n > 0, do: round(725 / n) |> min(30)
   defp determince_interval(_), do: 15
 
-  defp fuse_name(:vehicle_not_found, %Data{car: car}) do
-    :"#{__MODULE__}_#{car.id}_not_found"
-  end
+  defp fuse_name(:vehicle_not_found, car_id), do: :"#{__MODULE__}_#{car_id}_not_found"
+  defp fuse_name(:api_error, car_id), do: :"#{__MODULE__}_#{car_id}_api_error"
 
   defp notify_subscribers do
     {:next_event, :internal, :notify_subscribers}

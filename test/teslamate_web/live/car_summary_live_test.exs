@@ -142,6 +142,27 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     end
   end
 
+  describe "health status" do
+    @tag :signed_in
+    @tag :capture_log
+    test "reports health status", %{conn: conn} do
+      events = [
+        {:ok, online_event(display_name: "FooCar")},
+        {:ok, online_event(display_name: "FooCar")},
+        {:error, :unknown}
+      ]
+
+      :ok = start_vehicles(events)
+
+      Process.sleep(300)
+
+      assert {:ok, _parent_view, html} =
+               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
+      assert [{"span", _, _}] = html |> Floki.find(".health")
+    end
+  end
+
   def start_vehicles(events \\ []) do
     {:ok, _pid} = start_supervised({ApiMock, name: :api_vehicle, events: events, pid: self()})
 

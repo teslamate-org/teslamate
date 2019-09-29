@@ -185,7 +185,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok = start_vehicle(name, events)
     assert_receive {:start_state, _, :online}
-    assert_receive {:start_update, 0}
+    assert_receive {:start_update, _car_id}
 
     assert {:error, :update_in_progress} = Vehicle.suspend_logging(name)
   end
@@ -270,7 +270,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     refute_receive _
   end
 
-  test "suspends when idling", %{test: name} do
+  test "is suspendable when idling", %{test: name} do
     events = [
       {:ok, online_event()}
     ]

@@ -19,6 +19,7 @@
     "bulma": "^0.7.5",
     "copy-webpack-plugin": "^5.0.4",
     "css-loader": "^3.2.0",
+    "file-loader": "^4.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "sass": "^1.22.12",

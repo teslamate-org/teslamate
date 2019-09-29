@@ -195,6 +195,7 @@ Unless the MQTT feature is disabled data is published to the following topics
 ```
 teslamate/cars/$car_id/display_name
 teslamate/cars/$car_id/state
+teslamate/cars/$car_id/healthy
 teslamate/cars/$car_id/battery_level
 teslamate/cars/$car_id/ideal_battery_range_km
 teslamate/cars/$car_id/est_battery_range_km

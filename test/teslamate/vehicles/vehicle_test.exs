@@ -11,6 +11,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :unavailable}}}
+
       refute_receive _
     end
 
@@ -216,12 +218,42 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     @tag :capture_log
     test "restarts if the eid changed", %{test: name} do
       events = [
+        {:ok, online_event()},
+        {:ok, online_event()},
         {:error, :vehicle_not_found}
       ]
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {VehiclesMock, :kill}, 2500
+      # Online
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
+
+      # Too many errors
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: false}}}
+
+      # Killed
+      assert_receive {VehiclesMock, :kill}
+    end
+
+    @tag :capture_log
+    test "reports the health status", %{test: name} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event()},
+        {:error, :unknown}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
+
+      # ...
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: false}}}, 1000
     end
   end
 end

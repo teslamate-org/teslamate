@@ -7,12 +7,38 @@
 - Allow editing of geo-fence positions
 - Link from Grafana dashboards directly to `/geo-fences` to create or edit a
   geo-fence
+- Report health status of the logger via the MQTT topic `teslamate/cars/$car_id/healthy`
+- Show warning icon if the health check fails for a vehicle
 
 ### Changed
 
 - Check geo-fences on the database level
 - Apply geo-fences retrospectively
 - Allow geo-fences to have multiple addresses
+
+### Fixed
+
+- Handle case when Tesla decides for whatever reason to change the eID of a
+  vehicle again by automatically restarting parts of the application and
+  persisting the new eID
+
+### Migrations
+
+**Please note:** In order for the migrations to run successfully, the database
+user must be assigned superuser rights (temporarily). Users of the default
+`docker-compose.yml` can skip this part.
+
+To add superuser rights:
+
+```bash
+ALTER USER teslamate WITH SUPERUSER;
+```
+
+To remove superuser rights:
+
+```bash
+ALTER USER teslamate WITH NOSUPERUSER;
+```
 
 ## [1.9.1] - 2019-09-24
 

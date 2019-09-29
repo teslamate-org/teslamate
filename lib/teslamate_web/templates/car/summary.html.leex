@@ -26,6 +26,13 @@
        <div class="ml-5">
         <%=
           cond do
+            @summary.healthy == false ->
+              raw """
+              <span class="health icon has-text-danger">
+                <span class="ion-ionic ion-md-warning"></span>
+              </span>
+              """
+
             not is_nil(@error) ->
               link @error, to: "#", class: "button is-danger is-small is-outlined", disabled: true
 

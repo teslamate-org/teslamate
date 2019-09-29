@@ -3,7 +3,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
   alias TeslaMate.Vehicles.Vehicle
 
-  test "suspends when idling", %{test: name} do
+  test "suspends when idling.", %{test: name} do
     suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
@@ -381,6 +381,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       assert_receive {:insert_position, ^car_id, %{}}
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, locked: false}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, locked: false}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, locked: false}}}
 
       refute_receive _
