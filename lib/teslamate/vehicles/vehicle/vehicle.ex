@@ -560,7 +560,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:internal, {:update, {:online, vehicle}}, {:updating, update_id}, data) do
-    case vehicle.vehicle_state.software_update do
+    case Map.get(vehicle.vehicle_state || %{}, :software_update) do
+      nil ->
+        Logger.warn("Update / no data", car_id: data.car.id)
+
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
+
       %VehicleState.SoftwareUpdate{status: "installing"} ->
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15)}
 

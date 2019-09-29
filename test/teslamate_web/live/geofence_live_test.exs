@@ -64,11 +64,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["Victory Column", "52.51452, 13.35014", "100 m", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
-      assert html =~
-               ~r/a class="button.*?" href="#" phx-click="flag" phx-value-id="#{id}"/
-
-      assert render_click(view, :flag, %{"id" => "#{id}"}) =~
-               ~r/a class="button.*?" href="#" phx-click="delete" phx-value-id="#{id}"/
+      assert [{"a", _, _}] = html |> Floki.find("[data-id=#{id}]")
 
       assert [{"tbody", [], []}] =
                view |> render_click(:delete, %{"id" => "#{id}"}) |> Floki.find("tbody")

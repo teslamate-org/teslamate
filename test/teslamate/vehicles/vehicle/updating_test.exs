@@ -8,6 +8,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
       {:ok, update_event("installing", "2019.8.4 530d1d3")},
       {:ok, update_event("installing", "2019.8.4 530d1d3")},
       {:ok, update_event("installing", "2019.8.4 530d1d3")},
+      {:ok, %TeslaApi.Vehicle{state: "online", vehicle_state: nil}},
       {:error, :vehicle_unavailable},
       {:ok, %TeslaApi.Vehicle{state: "offline"}},
       {:ok, update_event("installing", "2019.8.4 530d1d3")},
