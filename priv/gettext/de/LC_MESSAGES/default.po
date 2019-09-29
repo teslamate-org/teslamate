@@ -290,3 +290,7 @@ msgstr "Allgemein"
 #, elixir-format
 msgid "Do you really want to delete '%{geo_fence}'?"
 msgstr "Willst du wirklich '%{geo_fence}' löschen?"
+
+#, elixir-format
+msgid "Windows open"
+msgstr "Fenster geöffnet"

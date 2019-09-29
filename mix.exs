@@ -47,7 +47,7 @@ defmodule TeslaMate.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       # Custom
-      {:tesla_api, github: "mgwidmann/tesla_api"},
+      {:tesla_api, github: "adriankumpf/tesla_api", branch: "v10"},
       {:gen_state_machine, "~> 2.0"},
       {:ecto_enum, "~> 1.2"},
       {:phoenix_live_view, "~> 0.1"},

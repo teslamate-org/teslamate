@@ -210,6 +210,7 @@ teslamate/cars/$car_id/outside_temp
 teslamate/cars/$car_id/inside_temp
 teslamate/cars/$car_id/locked
 teslamate/cars/$car_id/sentry_mode
+teslamate/cars/$car_id/windows_open
 ```
 
 ## FAQ

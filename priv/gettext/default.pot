@@ -16,7 +16,7 @@ msgid "Status"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:162
+#: lib/teslamate_web/templates/car/summary.html.leex:168
 msgid "Speed"
 msgstr ""
 
@@ -61,12 +61,12 @@ msgid "updating"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:187
+#: lib/teslamate_web/templates/car/summary.html.leex:193
 msgid "Inside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:175
+#: lib/teslamate_web/templates/car/summary.html.leex:181
 msgid "Outside temperature"
 msgstr ""
 
@@ -79,6 +79,7 @@ msgstr ""
 #: lib/teslamate_web/templates/car/summary.html.leex:120
 #: lib/teslamate_web/templates/car/summary.html.leex:151
 #: lib/teslamate_web/templates/car/summary.html.leex:157
+#: lib/teslamate_web/templates/car/summary.html.leex:163
 msgid "no"
 msgstr ""
 
@@ -86,11 +87,12 @@ msgstr ""
 #: lib/teslamate_web/templates/car/summary.html.leex:120
 #: lib/teslamate_web/templates/car/summary.html.leex:151
 #: lib/teslamate_web/templates/car/summary.html.leex:157
+#: lib/teslamate_web/templates/car/summary.html.leex:163
 msgid "yes"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:156
+#: lib/teslamate_web/templates/car/summary.html.leex:162
 msgid "Sentry Mode"
 msgstr ""
 
@@ -377,4 +379,9 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:51
 msgid "Do you really want to delete '%{geo_fence}'?"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:156
+msgid "Windows open"
 msgstr ""

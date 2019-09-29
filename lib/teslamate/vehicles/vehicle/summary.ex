@@ -24,7 +24,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :plugged_in,
     :scheduled_charging_start_time,
     :charge_limit_soc,
-    :charger_power
+    :charger_power,
+    :windows_open
   ]
 
   def into(nil, %{state: :start}) do
@@ -69,7 +70,12 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),
       inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp]),
       locked: get_in_struct(vehicle, [:vehicle_state, :locked]),
-      sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode])
+      sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
+      windows_open:
+        get_in_struct(vehicle, [:vehicle_state, :fd_window]) == 1 or
+          get_in_struct(vehicle, [:vehicle_state, :fp_window]) == 1 or
+          get_in_struct(vehicle, [:vehicle_state, :rd_window]) == 1 or
+          get_in_struct(vehicle, [:vehicle_state, :rp_window]) == 1
     }
   end
 

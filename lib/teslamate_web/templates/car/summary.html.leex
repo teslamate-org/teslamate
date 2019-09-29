@@ -151,6 +151,12 @@
             <td><%= (if @summary.locked, do: gettext("yes"), else: gettext("no"))  %></td>
           </tr>
           <% end %>
+          <%= if @summary.windows_open == true do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Windows open" %></td>
+            <td><%= (if @summary.windows_open, do: gettext("yes"), else: gettext("no"))  %></td>
+          </tr>
+          <% end %>
           <%= if @summary.sentry_mode do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Sentry Mode" %></td>
