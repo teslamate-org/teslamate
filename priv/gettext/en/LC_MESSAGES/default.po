@@ -288,9 +288,9 @@ msgid "General"
 msgstr ""
 
 #, elixir-format
-msgid "Do you really want to delete '%{geo_fence}'?"
+msgid "Windows open"
 msgstr ""
 
 #, elixir-format
-msgid "Windows open"
+msgid "Delete '%{geo_fence}'?"
 msgstr ""

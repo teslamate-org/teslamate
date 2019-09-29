@@ -377,11 +377,11 @@ msgid "General"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:51
-msgid "Do you really want to delete '%{geo_fence}'?"
+#: lib/teslamate_web/templates/car/summary.html.leex:156
+msgid "Windows open"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:156
-msgid "Windows open"
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:51
+msgid "Delete '%{geo_fence}'?"
 msgstr ""
