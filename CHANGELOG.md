@@ -7,7 +7,7 @@
 - Allow editing of geo-fence positions
 - Link from Grafana dashboards directly to `/geo-fences` to create or edit a
   geo-fence
-- Report health status of the logger via the MQTT topic `teslamate/cars/$car_id/healthy`
+- Report the health status via MQTT topic `teslamate/cars/$car_id/healthy`
 - Show warning icon if the health check fails for a vehicle
 
 ### Changed
@@ -21,6 +21,7 @@
 - Handle case when Tesla decides for whatever reason to change the eID of a
   vehicle again by automatically restarting parts of the application and
   persisting the new eID
+- Use the actual charger phases reported by the API
 
 ### Migrations
 
