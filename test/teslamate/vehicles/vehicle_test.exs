@@ -211,4 +211,17 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       refute_receive _
     end
   end
+
+  describe "error handling" do
+    @tag :capture_log
+    test "restarts if the eid changed", %{test: name} do
+      events = [
+        {:error, :vehicle_not_found}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {VehiclesMock, :kill}, 2500
+    end
+  end
 end

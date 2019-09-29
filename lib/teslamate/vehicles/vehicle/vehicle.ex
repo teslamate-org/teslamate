@@ -4,7 +4,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   require Logger
 
   alias __MODULE__.Summary
-  alias TeslaMate.{Api, Log, Settings, Convert}
+  alias TeslaMate.{Vehicles, Api, Log, Settings, Convert}
   alias TeslaMate.Vehicles.Identification
 
   alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge}
@@ -61,6 +61,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       log: Keyword.get(opts, :deps_log, Log),
       api: Keyword.get(opts, :deps_api, Api),
       settings: Keyword.get(opts, :deps_settings, Settings),
+      vehicles: Keyword.get(opts, :deps_vehicles, Vehicles),
       pubsub: Keyword.get(opts, :deps_pubsub, Phoenix.PubSub)
     }
 
@@ -80,6 +81,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
     }
 
     :ok = call(deps.settings, :subscribe_to_changes)
+
+    fuse_name = fuse_name(:vehicle_not_found, data)
+    fuse_opts = {{:standard, 8, :timer.minutes(10)}, {:reset, :timer.minutes(5)}}
+
+    case :fuse.install(fuse_name, fuse_opts) do
+      :reset -> Logger.info("Reset fuse: #{inspect(fuse_name)}")
+      :ok -> :ok
+    end
 
     {:ok, :start, data, {:next_event, :internal, :fetch}}
   end
@@ -227,7 +236,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       {:error, :vehicle_not_found} ->
         Logger.error("Error / :vehicle_not_found", car_id: data.car.id)
-        {:keep_state_and_data, schedule_fetch(60)}
+
+        fuse_name = fuse_name(:vehicle_not_found, data)
+
+        case :fuse.ask(fuse_name, :sync) do
+          :blown -> true = call(data.deps.vehicles, :kill)
+          :ok -> :ok = :fuse.melt(fuse_name)
+        end
+
+        {:keep_state_and_data, schedule_fetch(30)}
 
       {:error, reason} ->
         Logger.warn("Error / #{inspect(reason)}", car_id: data.car.id)
@@ -800,6 +817,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp determince_interval(n) when not is_nil(n) and n > 0, do: round(725 / n) |> min(30)
   defp determince_interval(_), do: 15
+
+  defp fuse_name(:vehicle_not_found, %Data{car: car}) do
+    :"#{__MODULE__}_#{car.id}_not_found"
+  end
 
   defp notify_subscribers do
     {:next_event, :internal, :notify_subscribers}

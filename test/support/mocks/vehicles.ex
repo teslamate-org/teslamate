@@ -10,6 +10,7 @@ defmodule VehiclesMock do
     GenServer.start_link(__MODULE__, opts, name: Keyword.fetch!(opts, :name))
   end
 
+  def kill(name), do: GenServer.call(name, :kill)
   def restart(name), do: GenServer.call(name, :restart)
 
   def subscribe(name, car_id), do: GenServer.call(name, {:subscribe, car_id})
@@ -25,6 +26,11 @@ defmodule VehiclesMock do
   def handle_call({:subscribe, _car_id} = action, _from, %State{pid: pid} = state) do
     send(pid, {VehiclesMock, action})
     {:reply, :ok, state}
+  end
+
+  def handle_call(:kill, _from, %State{pid: pid} = state) do
+    send(pid, {VehiclesMock, :kill})
+    {:reply, true, state}
   end
 
   def handle_call(:restart, _from, %State{pid: pid} = state) do

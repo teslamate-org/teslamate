@@ -32,6 +32,11 @@ defmodule TeslaMate.Vehicles do
     )
   end
 
+  def kill do
+    Logger.warn("Restarting #{__MODULE__} supervisor")
+    __MODULE__ |> Process.whereis() |> Process.exit(:kill)
+  end
+
   def restart do
     with :ok <- Supervisor.stop(@name, :normal),
          :ok <- block_until_started(250) do
@@ -61,8 +66,13 @@ defmodule TeslaMate.Vehicles do
   end
 
   defp fallback_vehicles do
-    Log.list_cars()
-    |> Enum.map(&%TeslaApi.Vehicle{id: &1.eid, vin: &1.vin, vehicle_id: &1.vid})
+    vehicles =
+      Log.list_cars()
+      |> Enum.map(&%TeslaApi.Vehicle{id: &1.eid, vin: &1.vin, vehicle_id: &1.vid})
+
+    Logger.warn("Using fallback vehicles:\n\n#{inspect(vehicles, pretty: true)}")
+
+    vehicles
   end
 
   defp create_or_update!(%TeslaApi.Vehicle{} = vehicle) do

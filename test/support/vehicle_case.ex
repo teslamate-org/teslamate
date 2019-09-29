@@ -17,11 +17,13 @@ defmodule TeslaMate.VehicleCase do
         log_name = :"log_#{name}"
         api_name = :"api_#{name}"
         settings_name = :"settings_#{name}"
+        vehicles_name = :"vehicles_#{name}"
         pubsub_name = :"pubsub_#{name}"
 
         {:ok, _pid} = start_supervised({LogMock, name: log_name, pid: self()})
         {:ok, _pid} = start_supervised({ApiMock, name: api_name, events: events, pid: self()})
         {:ok, _pid} = start_supervised({SettingsMock, name: settings_name, pid: self()})
+        {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
         {:ok, _pid} = start_supervised({PubSubMock, name: pubsub_name, pid: self()})
 
         opts =
@@ -52,6 +54,7 @@ defmodule TeslaMate.VehicleCase do
                deps_log: {LogMock, log_name},
                deps_api: {ApiMock, api_name},
                deps_settings: {SettingsMock, settings_name},
+               deps_vehicles: {VehiclesMock, vehicles_name},
                deps_pubsub: {PubSubMock, pubsub_name}
              )}
           )
