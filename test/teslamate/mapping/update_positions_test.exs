@@ -107,29 +107,6 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
     refute_receive _
   end
 
-  test "only fetches positions that are within bounds", %{test: name} do
-    assert %Car{id: car_id} = car_fixture()
-
-    [
-      %{date: DateTime.utc_now(), latitude: 60.9, longitude: 0},
-      %{date: DateTime.utc_now(), latitude: 61, longitude: 0},
-      %{date: DateTime.utc_now(), latitude: -55.9, longitude: 0},
-      %{date: DateTime.utc_now(), latitude: -56, longitude: 0}
-    ]
-    |> Enum.map(fn position -> {:ok, _pos} = Log.insert_position(car_id, position) end)
-
-    :ok =
-      start_mapping(name, %{
-        {-55.9, 0.0} => fn -> {:ok, 42} end,
-        {60.9, 0.0} => fn -> {:ok, 42} end
-      })
-
-    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 60.9, 0.0}}
-    assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, -55.9, 0.0}}
-
-    refute_receive _
-  end
-
   defp car_fixture(attrs \\ %{}) do
     {:ok, car} =
       attrs
