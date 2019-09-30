@@ -13,6 +13,8 @@
   windows are open
 - Request to sign in again if the access tokens become invalid e.g. because the
   password for the Tesla Account password has been changed
+- Use the best available SRTM data source which provides global elevation data
+  (even for for 60N)
 
 ### Changed
 
