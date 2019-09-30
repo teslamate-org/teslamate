@@ -256,5 +256,57 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: false}}}, 1000
     end
+
+    @tag :capture_log
+    test "handles timeout errors", %{test: name} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event()},
+        {:error, :timeout},
+        {:error, :timeout},
+        {:error, :timeout},
+        {:error, :timeout},
+        {:ok, online_event()},
+        {:ok, online_event()},
+        {:error, :timeout},
+        {:error, :timeout},
+        {:error, :timeout},
+        {:error, :timeout},
+        {:ok, online_event()},
+        {:ok, online_event()}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      # Online
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
+
+      refute_receive _, 100
+    end
+
+    @tag :capture_log
+    test "stops polling if signed out", %{test: name} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event()},
+        {:error, :not_signed_in},
+        # next events shall just show that polling stops
+        {:ok, online_event()},
+        {:ok, online_event()}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      # Online
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :start, healthy: false}}}
+
+      refute_receive _
+    end
   end
 end

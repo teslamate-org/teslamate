@@ -55,6 +55,12 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                     {:publish, "teslamate/cars/0/charge_limit_soc", "90", [retain: true, qos: 1]}}
 
     assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/latitude", "37.889602", [retain: true, qos: 1]}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/longitude", "41.129182", [retain: true, qos: 1]}}
+
+    assert_receive {MqttPublisherMock,
                     {:publish, "teslamate/cars/0/display_name", "Foo", [retain: true, qos: 1]}}
 
     assert_receive {MqttPublisherMock,

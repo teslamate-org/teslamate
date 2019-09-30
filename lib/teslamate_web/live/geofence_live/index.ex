@@ -17,27 +17,20 @@ defmodule TeslaMateWeb.GeoFenceLive.Index do
 
     assigns = %{
       geofences: Locations.list_geofences(),
-      unit_of_length: unit_of_length,
-      flagged: nil
+      unit_of_length: unit_of_length
     }
 
     {:ok, assign(socket, assigns)}
   end
 
   @impl true
-  def handle_event("flag", %{"id" => id}, socket) do
-    {:noreply, assign(socket, flagged: id)}
-  end
+  def handle_event("delete", %{"id" => id}, %{assigns: %{geofences: geofences}} = socket) do
+    {:ok, deleted_geofence} =
+      Locations.get_geofence!(id)
+      |> Locations.delete_geofence()
 
-  def handle_event("cancel", %{"id" => id}, %{assigns: %{flagged: id}} = socket) do
-    {:noreply, assign(socket, flagged: nil)}
-  end
+    geofences = Enum.reject(geofences, &(&1.id == deleted_geofence.id))
 
-  def handle_event("delete", %{"id" => id}, socket) do
-    geofence = Locations.get_geofence!(id)
-    {:ok, geofence} = Locations.delete_geofence(geofence)
-    geofences = Enum.reject(socket.assigns.geofences, &(&1.id == geofence.id))
-
-    {:noreply, assign(socket, geofences: geofences, flagged: nil)}
+    {:noreply, assign(socket, geofences: geofences)}
   end
 end
