@@ -25,9 +25,10 @@ defmodule TeslaMateWeb.CarControllerTest do
         {:ok, %TeslaApi.Vehicle{state: "asleep", display_name: "FooCar"}}
       ]
 
-      :ok = start_vehicles(events)
-
-      %Car{id: id} = Log.get_car_by(vin: "xxxxx")
+      {:ok, %Car{id: id}} =
+        %Car{}
+        |> Car.changeset(%{vid: 404, eid: 404, vin: "xxxxx"})
+        |> Log.create_or_update_car()
 
       {:ok, _position} =
         Log.insert_position(id, %{
@@ -41,6 +42,8 @@ defmodule TeslaMateWeb.CarControllerTest do
           outside_temp: 20.1,
           inside_temp: 21.0
         })
+
+      :ok = start_vehicles(events)
 
       conn = get(conn, Routes.car_path(conn, :index))
 

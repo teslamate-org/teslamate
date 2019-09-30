@@ -11,7 +11,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :unavailable}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :unavailable, healthy: true}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{healthy: false, state: :unavailable}}}
 
       refute_receive _
     end

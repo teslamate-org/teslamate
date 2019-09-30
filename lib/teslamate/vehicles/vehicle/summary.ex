@@ -28,8 +28,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :windows_open
   ]
 
-  def into(nil, %{state: :start}) do
-    %__MODULE__{state: :unavailable}
+  def into(nil, %{state: :start, healthy?: healthy?}) do
+    %__MODULE__{state: :unavailable, healthy: healthy?}
   end
 
   def into(vehicle, %{state: state, since: since, healthy?: healthy?}) do

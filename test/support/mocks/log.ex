@@ -4,7 +4,7 @@ defmodule LogMock do
   defstruct [:pid]
   alias __MODULE__, as: State
 
-  alias TeslaMate.Log.{Drive, ChargingProcess, Update, Car}
+  alias TeslaMate.Log.{Drive, ChargingProcess, Update, Car, Position}
   alias TeslaMate.Log
 
   # API
@@ -51,6 +51,10 @@ defmodule LogMock do
 
   def create_or_update_car(name, attrs) do
     GenServer.call(name, {:create_or_update_car, attrs})
+  end
+
+  def get_latest_position(name, car_id) do
+    GenServer.call(name, {:get_latest_position, car_id})
   end
 
   # Callbacks
@@ -119,6 +123,10 @@ defmodule LogMock do
     # send(pid, action)
     %Car{} = car = Ecto.Changeset.apply_changes(attrs)
     {:reply, {:ok, car}, state}
+  end
+
+  def handle_call({:get_latest_position, _car_id}, _from, state) do
+    {:reply, %Position{latitude: 0.0, longitude: 0.0}, state}
   end
 
   def handle_call(action, _from, %State{pid: pid} = state) do

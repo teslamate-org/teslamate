@@ -129,8 +129,8 @@ defmodule TeslaMate.ApiTest do
       assert_receive {TeslaApi.AuthMock, {:refresh, _}}
       assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
 
-      assert {:error, :vehicle_not_found} = Api.get_vehicle(name, 0)
-      assert_receive {TeslaApi.VehicleMock, {:list, %TeslaApi.Auth{}}}
+      assert {:ok, %TeslaApi.Vehicle{id: 0}} = Api.get_vehicle(name, 0)
+      assert_receive {TeslaApi.VehicleMock, {:get, %TeslaApi.Auth{}, 0}}
 
       refute_receive _
     end

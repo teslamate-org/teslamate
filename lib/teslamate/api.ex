@@ -85,21 +85,51 @@ defmodule TeslaMate.Api do
   end
 
   def handle_call(:list_vehicles, _from, state) do
-    {:reply, do_list_vehicles(state), state}
+    case call(state.deps.tesla_api_vehicle, :list, [state.auth]) do
+      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
+        {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
+
+      {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
+        Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
+        {:reply, {:error, reason}, state}
+
+      {:ok, vehicles} ->
+        {:reply, {:ok, vehicles}, state}
+    end
   end
 
   def handle_call({:get_vehicle, id}, _from, state) do
-    {:reply, do_get_vehicle(id, state), state}
+    case call(state.deps.tesla_api_vehicle, :get, [state.auth, id]) do
+      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
+        {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
+
+      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 404, body: %{"error" => "not_found"}}}} ->
+        {:reply, {:error, :vehicle_not_found}, state}
+
+      {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
+        Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
+        {:reply, {:error, reason}, state}
+
+      {:ok, %TeslaApi.Vehicle{} = vehicle} ->
+        {:reply, {:ok, vehicle}, state}
+    end
   end
 
   def handle_call({:get_vehicle_with_state, id}, _from, state) do
-    response =
-      case call(state.deps.tesla_api_vehicle, :get_with_state, [state.auth, id]) do
-        {:error, %TeslaApi.Error{error: reason}} -> {:error, reason}
-        {:ok, %TeslaApi.Vehicle{} = vehicle} -> {:ok, vehicle}
-      end
+    case call(state.deps.tesla_api_vehicle, :get_with_state, [state.auth, id]) do
+      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
+        {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
 
-    {:reply, response, state}
+      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 404, body: %{"error" => "not_found"}}}} ->
+        {:reply, {:error, :vehicle_not_found}, state}
+
+      {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
+        Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
+        {:reply, {:error, reason}, state}
+
+      {:ok, %TeslaApi.Vehicle{} = vehicle} ->
+        {:reply, {:ok, vehicle}, state}
+    end
   end
 
   @impl true
@@ -146,27 +176,5 @@ defmodule TeslaMate.Api do
     Process.send_after(self(), :refresh_auth, ms)
 
     {:noreply, state}
-  end
-
-  # Private
-
-  defp do_get_vehicle(id, state) do
-    with {:ok, vehicles} <- do_list_vehicles(state),
-         {:ok, vehicle} <- find_vehicle(vehicles, id) do
-      {:ok, vehicle}
-    end
-  end
-
-  defp do_list_vehicles(%State{auth: auth, deps: deps}) do
-    with {:error, %TeslaApi.Error{error: reason}} <- call(deps.tesla_api_vehicle, :list, [auth]) do
-      {:error, reason}
-    end
-  end
-
-  defp find_vehicle(vehicles, id) do
-    case Enum.find(vehicles, &match?(%TeslaApi.Vehicle{id: ^id}, &1)) do
-      nil -> {:error, :vehicle_not_found}
-      vehicle -> {:ok, vehicle}
-    end
   end
 end

@@ -42,9 +42,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def healthy?(car_id) do
-    case :fuse.ask(fuse_name(:api_error, car_id), :sync) do
+    with :ok <- :fuse.ask(fuse_name(:api_error, car_id), :sync),
+         :ok <- :fuse.ask(fuse_name(:vehicle_not_found, car_id), :sync) do
+      true
+    else
       :blown -> false
-      :ok -> true
     end
   end
 
@@ -90,13 +92,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :ok =
       :fuse.install(
         fuse_name(:vehicle_not_found, data.car.id),
-        {{:standard, 8, :timer.minutes(10)}, {:reset, :timer.minutes(5)}}
+        {{:standard, 8, :timer.minutes(20)}, {:reset, :timer.minutes(10)}}
       )
 
     :ok =
       :fuse.install(
         fuse_name(:api_error, data.car.id),
-        {{:standard, 3, :timer.minutes(5)}, {:reset, :timer.minutes(1)}}
+        {{:standard, 3, :timer.minutes(10)}, {:reset, :timer.minutes(5)}}
       )
 
     :ok = call(deps.settings, :subscribe_to_changes)
@@ -109,31 +111,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ### Summary
 
   def handle_event({:call, from}, :summary, state, %Data{last_response: vehicle} = data) do
-    vehicle =
-      with %Vehicle{drive_state: nil, charge_state: nil, climate_state: nil} <- vehicle,
-           %Log.Position{} = position <- call(data.deps.log, :get_latest_position, [data.car.id]) do
-        drive = %Drive{
-          latitude: position.latitude,
-          longitude: position.longitude
-        }
-
-        charge = %Charge{
-          ideal_battery_range: position.ideal_battery_range_km |> Convert.km_to_miles(1),
-          est_battery_range: position.est_battery_range_km |> Convert.km_to_miles(1),
-          battery_range: position.rated_battery_range_km |> Convert.km_to_miles(1),
-          battery_level: position.battery_level
-        }
-
-        climate = %Climate{
-          outside_temp: position.outside_temp,
-          inside_temp: position.inside_temp
-        }
-
-        %Vehicle{vehicle | drive_state: drive, charge_state: charge, climate_state: climate}
-      else
-        _ -> vehicle
-      end
-
     summary =
       Summary.into(vehicle, %{
         state: state,
@@ -231,14 +208,24 @@ defmodule TeslaMate.Vehicles.Vehicle do
          {:next_event, :internal, {:update, {:online, vehicle}}}}
 
       {:ok, %Vehicle{state: "offline"} = vehicle} ->
-        {:keep_state,
-         if(is_nil(data.last_response), do: %Data{data | last_response: vehicle}, else: data),
-         {:next_event, :internal, {:update, :offline}}}
+        data =
+          if is_nil(data.last_response) do
+            %Data{data | last_response: restore_last_knwon_values(vehicle, data)}
+          else
+            data
+          end
+
+        {:keep_state, data, {:next_event, :internal, {:update, :offline}}}
 
       {:ok, %Vehicle{state: "asleep"} = vehicle} ->
-        {:keep_state,
-         if(is_nil(data.last_response), do: %Data{data | last_response: vehicle}, else: data),
-         {:next_event, :internal, {:update, :asleep}}}
+        data =
+          if is_nil(data.last_response) do
+            %Data{data | last_response: restore_last_knwon_values(vehicle, data)}
+          else
+            data
+          end
+
+        {:keep_state, data, {:next_event, :internal, {:update, :asleep}}}
 
       {:ok, unknown} ->
         Logger.warn("Error / unkown vehicle state: #{inspect(unknown)}}", car_id: data.car.id)
@@ -247,6 +234,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:error, :timeout} ->
         Logger.warn("Error / :timeout", car_id: data.car.id)
         {:keep_state_and_data, schedule_fetch(5)}
+
+      {:error, :not_signed_in} ->
+        Logger.error("Error / :not_signed_in")
+
+        :ok = fuse_name(:api_error, data.car.id) |> :fuse.circuit_disable()
+
+        # Stop polling
+        {:next_state, :start, data, notify_subscribers()}
 
       {:error, :vehicle_not_found} ->
         Logger.error("Error / :vehicle_not_found", car_id: data.car.id)
@@ -262,7 +257,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state_and_data, [notify_subscribers(), schedule_fetch(30)]}
 
       {:error, reason} ->
-        Logger.warn("Error / #{inspect(reason)}", car_id: data.car.id)
+        Logger.error("Error / #{inspect(reason)}", car_id: data.car.id)
         :ok = fuse_name(:api_error, data.car.id) |> :fuse.melt()
         {:keep_state_and_data, [notify_subscribers(), schedule_fetch(30)]}
     end
@@ -635,6 +630,32 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   # Private
+
+  defp restore_last_knwon_values(vehicle, data) do
+    with %Vehicle{drive_state: nil, charge_state: nil, climate_state: nil} <- vehicle,
+         %Log.Position{} = position <- call(data.deps.log, :get_latest_position, [data.car.id]) do
+      drive = %Drive{
+        latitude: position.latitude,
+        longitude: position.longitude
+      }
+
+      charge = %Charge{
+        ideal_battery_range: position.ideal_battery_range_km |> Convert.km_to_miles(1),
+        est_battery_range: position.est_battery_range_km |> Convert.km_to_miles(1),
+        battery_range: position.rated_battery_range_km |> Convert.km_to_miles(1),
+        battery_level: position.battery_level
+      }
+
+      climate = %Climate{
+        outside_temp: position.outside_temp,
+        inside_temp: position.inside_temp
+      }
+
+      %Vehicle{vehicle | drive_state: drive, charge_state: charge, climate_state: climate}
+    else
+      _ -> vehicle
+    end
+  end
 
   defp fetch(%Data{car: car, deps: deps}, expected_state: expected_state) do
     reachable? =
