@@ -9,25 +9,30 @@
   geo-fence
 - Report the health status via MQTT topic `teslamate/cars/$car_id/healthy`
 - Show warning icon if the health check fails for a vehicle
+- Add MQTT topic `teslamate/cars/$car_id/windows_open` and report if the
+  windows are open
+- Request to sign in again if the access tokens become invalid e.g. because the
+  password for the Tesla Account password has been changed
 
 ### Changed
 
-- Check geo-fences on the database level
+- Accelerate the comparison of many geo fences by moving the lookup into the database
 - Apply geo-fences retrospectively
-- Allow geo-fences to have multiple addresses
+- Allow geo-fences to cover multiple addresses
 
 ### Fixed
 
-- Handle case when Tesla decides for whatever reason to change the eID of a
-  vehicle again by automatically restarting parts of the application and
-  persisting the new eID
-- Use the actual charger phases reported by the API
+- Automatically restart parts of the application if Tesla decides yet again to
+  change the IDs of some vehicles
+- Protects against empty payloads during an update to prevent an update from
+  not being fully logged
+- Log the number of phases as returned by the API
 
 ### Migrations
 
-**Please note:** In order for the migrations to run successfully, the database
-user must be assigned superuser rights (temporarily). Users of the default
-`docker-compose.yml` can skip this part.
+**Please note:** To run the migrations successfully, the database user has to
+have superuser rights (temporarily). Users of the default `docker-compose.yml`
+can skip this part.
 
 To add superuser rights:
 
