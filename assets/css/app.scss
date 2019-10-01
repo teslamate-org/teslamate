@@ -101,3 +101,21 @@ $positions: ('top','left','bottom','right');
 .ion-ionic {
   font-size: 1.25em;
 }
+
+@media screen and (orientation: landscape) and (max-width: 1023px) {
+  body{
+    -webkit-text-size-adjust: none;
+  }
+
+  .navbar .navbar-brand,
+  .navbar .navbar-end,
+  main.section .container{
+    max-width: 95%;
+  }
+
+  .navbar .navbar-brand,
+  .navbar .navbar-end
+  {
+    margin: 0 auto;
+  }
+}
