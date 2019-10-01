@@ -227,16 +227,24 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:keep_state, data, {:next_event, :internal, {:update, :asleep}}}
 
-      {:ok, unknown} ->
-        Logger.warn("Error / unkown vehicle state: #{inspect(unknown)}}", car_id: data.car.id)
+      {:ok, %Vehicle{state: state} = vehicle} ->
+        Logger.warn(
+          "Error / unknown vehicle state #{inspect(state)}\n\n#{inspect(vehicle, pretty: true)}",
+          car_id: data.car.id
+        )
+
         {:keep_state_and_data, schedule_fetch()}
 
       {:error, :timeout} ->
-        Logger.warn("Error / :timeout", car_id: data.car.id)
+        Logger.warn("Error / upstream timeout", car_id: data.car.id)
+        {:keep_state_and_data, schedule_fetch(5)}
+
+      {:error, :closed} ->
+        Logger.warn("Error / connection closed", car_id: data.car.id)
         {:keep_state_and_data, schedule_fetch(5)}
 
       {:error, :not_signed_in} ->
-        Logger.error("Error / :not_signed_in")
+        Logger.error("Error / unauthorized")
 
         :ok = fuse_name(:api_error, data.car.id) |> :fuse.circuit_disable()
 
@@ -557,7 +565,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:online, vehicle}}, {:updating, update_id}, data) do
     case Map.get(vehicle.vehicle_state || %{}, :software_update) do
       nil ->
-        Logger.warn("Update / no data", car_id: data.car.id)
+        Logger.warn("Update / empty payload:\n\n#{inspect(vehicle, pretty: true)}",
+          car_id: data.car.id
+        )
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
 
@@ -567,14 +577,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %VehicleState.SoftwareUpdate{status: "available"} = software_update ->
         {:ok, %Log.Update{}} = call(data.deps.log, :cancel_update, [update_id])
 
-        Logger.warn("Update canceled | #{inspect(software_update)}", car_id: data.car.id)
+        Logger.warn("Update canceled:\n\n#{inspect(software_update, pretty: true)}",
+          car_id: data.car.id
+        )
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, vehicle}}}}
 
       %VehicleState.SoftwareUpdate{status: status} = software_update ->
         if status != "" do
-          Logger.error("Update failed: #{status} | #{inspect(software_update)}",
+          Logger.error("Update failed: #{status}\n\n#{inspect(software_update, pretty: true)}",
             car_id: data.car.id
           )
         end
@@ -582,7 +594,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         car_version = vehicle.vehicle_state.car_version
         {:ok, %Log.Update{}} = call(data.deps.log, :finish_update, [update_id, car_version])
 
-        Logger.info("Update / Installed / #{car_version}", car_id: data.car.id)
+        Logger.info("Update / Installed #{car_version}", car_id: data.car.id)
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, vehicle}}}}

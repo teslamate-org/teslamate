@@ -23,15 +23,15 @@ defmodule TeslaMate.Api do
   ## State
 
   def list_vehicles(name \\ @name) do
-    GenServer.call(name, :list_vehicles, 35_000)
+    GenServer.call(name, :list, 35_000)
   end
 
   def get_vehicle(name \\ @name, id) do
-    GenServer.call(name, {:get_vehicle, id}, 35_000)
+    GenServer.call(name, {:get, id}, 35_000)
   end
 
   def get_vehicle_with_state(name \\ @name, id) do
-    GenServer.call(name, {:get_vehicle_with_state, id}, 35_000)
+    GenServer.call(name, {:get_with_state, id}, 35_000)
   end
 
   ## Internals
@@ -84,7 +84,7 @@ defmodule TeslaMate.Api do
     {:reply, {:error, :not_signed_in}, state}
   end
 
-  def handle_call(:list_vehicles, _from, state) do
+  def handle_call(:list, _from, state) do
     case call(state.deps.tesla_api_vehicle, :list, [state.auth]) do
       {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
         {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
@@ -93,13 +93,16 @@ defmodule TeslaMate.Api do
         Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
         {:reply, {:error, reason}, state}
 
+      {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
+        {:reply, {:error, reason}, state}
+
       {:ok, vehicles} ->
         {:reply, {:ok, vehicles}, state}
     end
   end
 
-  def handle_call({:get_vehicle, id}, _from, state) do
-    case call(state.deps.tesla_api_vehicle, :get, [state.auth, id]) do
+  def handle_call({cmd, id}, _from, state) when cmd in [:get, :get_with_state] do
+    case call(state.deps.tesla_api_vehicle, cmd, [state.auth, id]) do
       {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
         {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
 
@@ -110,21 +113,7 @@ defmodule TeslaMate.Api do
         Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
         {:reply, {:error, reason}, state}
 
-      {:ok, %TeslaApi.Vehicle{} = vehicle} ->
-        {:reply, {:ok, vehicle}, state}
-    end
-  end
-
-  def handle_call({:get_vehicle_with_state, id}, _from, state) do
-    case call(state.deps.tesla_api_vehicle, :get_with_state, [state.auth, id]) do
-      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
-        {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
-
-      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 404, body: %{"error" => "not_found"}}}} ->
-        {:reply, {:error, :vehicle_not_found}, state}
-
-      {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
-        Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
+      {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
         {:reply, {:error, reason}, state}
 
       {:ok, %TeslaApi.Vehicle{} = vehicle} ->

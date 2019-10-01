@@ -270,7 +270,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, online_event()},
         {:error, :timeout},
         {:error, :timeout},
-        {:error, :timeout},
+        {:error, :closed},
+        {:error, :closed},
         {:error, :timeout},
         {:ok, online_event()},
         {:ok, online_event()}
