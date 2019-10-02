@@ -30,10 +30,10 @@
 - Automatically restart parts of the application if Tesla decides yet again to
   change the IDs of some vehicles
 - Request to sign in again if the access tokens become invalid e.g. because the
-  password for the Tesla Account password has been changed
+  password of the Tesla Account has been changed
 - Protects against empty payloads during an update to prevent an update from
   not being fully logged
-- Log the number of phases as returned by the API
+- Log the number of charging phases as returned by the API
 
 ### ⚠️ Running Migrations
 

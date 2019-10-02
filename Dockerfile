@@ -24,7 +24,7 @@ RUN mkdir -p /opt/built && mix release --path /opt/built
 
 ########################################################################
 
-FROM alpine:3.9 AS app
+FROM alpine:3.10 AS app
 
 ENV LANG=C.UTF-8 \
     SRTM_CACHE=/opt/app/.srtm_cache
