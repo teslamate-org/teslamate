@@ -70,7 +70,9 @@ defmodule TeslaMate.Vehicles do
       Log.list_cars()
       |> Enum.map(&%TeslaApi.Vehicle{id: &1.eid, vin: &1.vin, vehicle_id: &1.vid})
 
-    Logger.warn("Using fallback vehicles:\n\n#{inspect(vehicles, pretty: true)}")
+    if vehicles != [] do
+      Logger.warn("Using fallback vehicles:\n\n#{inspect(vehicles, pretty: true)}")
+    end
 
     vehicles
   end
@@ -79,9 +81,9 @@ defmodule TeslaMate.Vehicles do
     Logger.info("Found '#{vehicle.display_name}'")
 
     {:ok, car} =
-      with nil <- Log.get_car_by(vin: vehicle.vin),
-           nil <- Log.get_car_by(vid: vehicle.vehicle_id),
-           nil <- Log.get_car_by(eid: vehicle.id) do
+      with nil <- Log.get_car_by(vin: vehicle.vin || ""),
+           nil <- Log.get_car_by(vid: vehicle.vehicle_id || -1),
+           nil <- Log.get_car_by(eid: vehicle.id || -1) do
         %Car{}
       end
       |> Car.changeset(%{
