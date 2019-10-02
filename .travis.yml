@@ -4,7 +4,7 @@ services:
 elixir:
   - 1.9
 otp_release:
-  - 22.1
+  - 22.0
 env:
   - MIX_ENV=test
 cache:
