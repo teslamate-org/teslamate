@@ -25,7 +25,15 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :scheduled_charging_start_time,
     :charge_limit_soc,
     :charger_power,
-    :windows_open
+    :windows_open,
+    :odometer,
+    :shift_state,
+    :charge_port_door_open,
+    :charge_port_latch_engaged,
+    :time_to_full_charge,
+    :charger_phases,
+    :charger_actual_current,
+    :charger_voltage
   ]
 
   def into(nil, %{state: :start, healthy?: healthy?}) do
@@ -50,34 +58,45 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
   defp format_vehicle(%Vehicle{} = vehicle) do
     %__MODULE__{
+      # General
       display_name: vehicle.display_name,
+
+      # Drive State
       latitude: get_in_struct(vehicle, [:drive_state, :latitude]),
       longitude: get_in_struct(vehicle, [:drive_state, :longitude]),
       speed: speed(vehicle),
-      ideal_battery_range_km:
-        get_in_struct(vehicle, [:charge_state, :ideal_battery_range]) |> miles_to_km(1),
-      est_battery_range_km:
-        get_in_struct(vehicle, [:charge_state, :est_battery_range]) |> miles_to_km(1),
-      rated_battery_range_km:
-        get_in_struct(vehicle, [:charge_state, :battery_range]) |> miles_to_km(1),
-      battery_level: get_in_struct(vehicle, [:charge_state, :battery_level]),
-      charge_energy_added: get_in_struct(vehicle, [:charge_state, :charge_energy_added]),
-      charger_power: get_in_struct(vehicle, [:charge_state, :charger_power]),
+      shift_state: get_in_struct(vehicle, [:drive_state, :shift_state]),
+
+      # Charge State
       plugged_in: plugged_in(vehicle),
+      battery_level: charge(vehicle, :battery_level),
+      charge_energy_added: charge(vehicle, :charge_energy_added),
+      charge_limit_soc: charge(vehicle, :charge_limit_soc),
+      charge_port_door_open: charge(vehicle, :charge_port_door_open),
+      charger_actual_current: charge(vehicle, :charger_actual_current),
+      charger_phases: charge(vehicle, :charger_phases),
+      charger_power: charge(vehicle, :charger_power),
+      charger_voltage: charge(vehicle, :charger_voltage),
+      est_battery_range_km: charge(vehicle, :est_battery_range) |> miles_to_km(2),
+      ideal_battery_range_km: charge(vehicle, :ideal_battery_range) |> miles_to_km(2),
+      rated_battery_range_km: charge(vehicle, :battery_range) |> miles_to_km(2),
+      time_to_full_charge: charge(vehicle, :time_to_full_charge),
       scheduled_charging_start_time:
-        get_in_struct(vehicle, [:charge_state, :scheduled_charging_start_time]) |> to_datetime(),
-      charge_limit_soc: get_in_struct(vehicle, [:charge_state, :charge_limit_soc]),
+        charge(vehicle, :scheduled_charging_start_time) |> to_datetime(),
+
+      # Climate State
       outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),
       inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp]),
+
+      # Vehicle State
+      odometer: get_in_struct(vehicle, [:vehicle_state, :odometer]) |> miles_to_km(2),
       locked: get_in_struct(vehicle, [:vehicle_state, :locked]),
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
-      windows_open:
-        get_in_struct(vehicle, [:vehicle_state, :fd_window]) == 1 or
-          get_in_struct(vehicle, [:vehicle_state, :fp_window]) == 1 or
-          get_in_struct(vehicle, [:vehicle_state, :rd_window]) == 1 or
-          get_in_struct(vehicle, [:vehicle_state, :rp_window]) == 1
+      windows_open: window_open?(vehicle)
     }
   end
+
+  defp charge(vehicle, key), do: get_in_struct(vehicle, [:charge_state, key])
 
   defp speed(%Vehicle{drive_state: %Drive{speed: s}}) when not is_nil(s), do: mph_to_kmh(s)
   defp speed(_vehicle), do: nil
@@ -92,6 +111,13 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   end
 
   defp plugged_in(_vehicle), do: false
+
+  defp window_open?(vehicle) do
+    get_in_struct(vehicle, [:vehicle_state, :fd_window]) == 1 or
+      get_in_struct(vehicle, [:vehicle_state, :fp_window]) == 1 or
+      get_in_struct(vehicle, [:vehicle_state, :rd_window]) == 1 or
+      get_in_struct(vehicle, [:vehicle_state, :rp_window]) == 1
+  end
 
   defp to_datetime(nil), do: nil
   defp to_datetime(ts), do: DateTime.from_unix!(ts)

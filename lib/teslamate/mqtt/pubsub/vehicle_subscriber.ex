@@ -43,7 +43,6 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   def handle_info(summary, %State{car_id: car_id} = state) do
     summary
     |> Map.from_struct()
-    |> Stream.reject(fn {key, _value} -> key in [:latitude, :longitude] end)
     |> Stream.filter(fn {key, value} ->
       key == :scheduled_charging_start_time or not is_nil(value)
     end)

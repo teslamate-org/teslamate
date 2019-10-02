@@ -652,9 +652,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
       }
 
       charge = %Charge{
-        ideal_battery_range: position.ideal_battery_range_km |> Convert.km_to_miles(1),
-        est_battery_range: position.est_battery_range_km |> Convert.km_to_miles(1),
-        battery_range: position.rated_battery_range_km |> Convert.km_to_miles(1),
+        ideal_battery_range: position.ideal_battery_range_km |> Convert.km_to_miles(10),
+        est_battery_range: position.est_battery_range_km |> Convert.km_to_miles(10),
+        battery_range: position.rated_battery_range_km |> Convert.km_to_miles(10),
         battery_level: position.battery_level
       }
 

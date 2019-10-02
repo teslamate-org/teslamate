@@ -5,8 +5,11 @@ defmodule TeslaMateWeb.CarControllerTest do
   alias TeslaMate.{Log, Settings}
   alias TeslaMate.Log.Car
 
-  defp table_row(key, value) do
-    ~r/<tr>\n?\s*<td class=\"has-text-weight-medium\">#{key}<\/td>\n?\s*<td.*?>\n?\s*#{value}\n?\s*<\/td>\n?\s*<\/tr>/
+  defp table_row(html, key, value) do
+    assert {"tr", _, [{"td", _, [^key]}, {"td", [], [^value]}]} =
+             html
+             |> Floki.find("tr")
+             |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
   end
 
   describe "index" do
@@ -35,8 +38,8 @@ defmodule TeslaMateWeb.CarControllerTest do
           date: DateTime.utc_now(),
           longitude: 0,
           latitude: 0,
-          ideal_battery_range_km: 380.1,
-          est_battery_range_km: 401.5,
+          ideal_battery_range_km: 380.25,
+          est_battery_range_km: 401.52,
           rated_battery_range_km: 175.1,
           battery_level: 80,
           outside_temp: 20.1,
@@ -49,12 +52,12 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Status", "asleep")
-      assert html =~ table_row("Range \\(ideal\\)", "380.1 km")
-      assert html =~ table_row("Range \\(est.\\)", "401.5 km")
-      assert html =~ table_row("State of Charge", "80%")
-      assert html =~ table_row("Outside temperature", "20.1 °C")
-      assert html =~ table_row("Inside temperature", "21.0 °C")
+      assert table_row(html, "Status", "asleep")
+      assert table_row(html, "Range (ideal)", "380.25 km")
+      assert table_row(html, "Range (est.)", "401.52 km")
+      assert table_row(html, "State of Charge", "80%")
+      assert table_row(html, "Outside temperature", "20.1 °C")
+      assert table_row(html, "Inside temperature", "21.0 °C")
     end
 
     @tag :signed_in
@@ -85,15 +88,15 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ ~r/<p class="subtitle is-6 has-text-weight-light">Model S P90D<\/p>/
-      assert html =~ table_row("Status", "online")
-      assert html =~ table_row("Plugged in", "no")
-      assert html =~ table_row("Range \\(ideal\\)", "321.9 km")
-      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
-      assert html =~ table_row("State of Charge", "69%")
-      assert html =~ table_row("Locked", "yes")
-      assert html =~ table_row("Sentry Mode", "yes")
-      assert html =~ table_row("Outside temperature", "24 °C")
-      assert html =~ table_row("Inside temperature", "23.2 °C")
+      assert table_row(html, "Status", "online")
+      assert table_row(html, "Plugged in", "no")
+      assert table_row(html, "Range (ideal)", "321.87 km")
+      assert table_row(html, "Range (est.)", "289.68 km")
+      assert table_row(html, "State of Charge", "69%")
+      assert table_row(html, "Locked", "yes")
+      assert table_row(html, "Sentry Mode", "yes")
+      assert table_row(html, "Outside temperature", "24 °C")
+      assert table_row(html, "Inside temperature", "23.2 °C")
     end
 
     @tag :signed_in
@@ -125,20 +128,20 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Status", "charging")
-      assert html =~ table_row("Plugged in", "yes")
-      assert html =~ table_row("Range \\(ideal\\)", "321.9 km")
-      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
-      assert html =~ table_row("Charged", "4.32 kWh")
-      assert html =~ table_row("Charger Power", "50 kW")
+      assert table_row(html, "Status", "charging")
+      assert table_row(html, "Plugged in", "yes")
+      assert table_row(html, "Range (ideal)", "321.87 km")
+      assert table_row(html, "Range (est.)", "289.68 km")
+      assert table_row(html, "Charged", "4.32 kWh")
+      assert table_row(html, "Charger Power", "50 kW")
 
-      assert html =~
-               table_row(
-                 "Scheduled charging",
-                 "<span data-date=\"2019-08-12T14:38:27Z\" phx-hook=\"LocalTime\">"
-               )
+      assert table_row(
+               html,
+               "Scheduled charging",
+               {"span", [{"data-date", "2019-08-12T14:38:27Z"}, {"phx-hook", "LocalTime"}], []}
+             )
 
-      assert html =~ table_row("Charge limit", "85%")
+      assert table_row(html, "Charge limit", "85%")
     end
 
     @tag :signed_in
@@ -202,7 +205,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Status", "charging complete")
+      assert table_row(html, "Status", "charging complete")
     end
 
     @tag :signed_in
@@ -227,8 +230,8 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Status", "driving")
-      assert html =~ table_row("Speed", "48 km/h")
+      assert table_row(html, "Status", "driving")
+      assert table_row(html, "Speed", "48 km/h")
     end
 
     @tag :signed_in
@@ -252,7 +255,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Status", "updating")
+      assert table_row(html, "Status", "updating")
     end
 
     @tag :signed_in
@@ -267,7 +270,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Status", "asleep")
+      assert table_row(html, "Status", "asleep")
     end
 
     @tag :signed_in
@@ -282,7 +285,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Status", "offline")
+      assert table_row(html, "Status", "offline")
     end
 
     @tag :signed_in
@@ -308,7 +311,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Status", "falling asleep")
+      assert table_row(html, "Status", "falling asleep")
     end
 
     @tag :capture_log
@@ -324,7 +327,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5"><\/p>/
-      assert html =~ table_row("Status", "unavailable")
+      assert table_row(html, "Status", "unavailable")
     end
 
     @tag :signed_in
@@ -358,8 +361,8 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Range \\(rated\\)", "281.6 km")
-      assert html =~ table_row("Range \\(est.\\)", "289.7 km")
+      assert table_row(html, "Range (rated)", "281.64 km")
+      assert table_row(html, "Range (est.)", "289.68 km")
     end
 
     @tag :signed_in
@@ -390,12 +393,12 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ table_row("Status", "driving")
-      assert html =~ table_row("Range \\(ideal\\)", "200.0 mi")
-      assert html =~ table_row("Range \\(est.\\)", "180.0 mi")
-      assert html =~ table_row("Speed", "30 mph")
-      assert html =~ table_row("Outside temperature", "75.2 °F")
-      assert html =~ table_row("Inside temperature", "73.8 °F")
+      assert table_row(html, "Status", "driving")
+      assert table_row(html, "Range (ideal)", "200.0 mi")
+      assert table_row(html, "Range (est.)", "180.0 mi")
+      assert table_row(html, "Speed", "30 mph")
+      assert table_row(html, "Outside temperature", "75.2 °F")
+      assert table_row(html, "Inside temperature", "73.8 °F")
     end
   end
 

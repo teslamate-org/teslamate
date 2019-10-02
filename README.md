@@ -192,25 +192,40 @@ can access it at [localhost:4000](http://localhost:4000).
 Unless the MQTT feature is disabled data is published to the following topics
 (`$car_id` usually starts at 1):
 
-```
+```bash
 teslamate/cars/$car_id/display_name
 teslamate/cars/$car_id/state
 teslamate/cars/$car_id/healthy
-teslamate/cars/$car_id/battery_level
-teslamate/cars/$car_id/ideal_battery_range_km
-teslamate/cars/$car_id/est_battery_range_km
-teslamate/cars/$car_id/rated_battery_range_km
-teslamate/cars/$car_id/charge_energy_added
-teslamate/cars/$car_id/charger_power
-teslamate/cars/$car_id/plugged_in
-teslamate/cars/$car_id/scheduled_charging_start_time
-teslamate/cars/$car_id/charge_limit_soc
-teslamate/cars/$car_id/speed
-teslamate/cars/$car_id/outside_temp
-teslamate/cars/$car_id/inside_temp
+
+teslamate/cars/$car_id/latitude
+teslamate/cars/$car_id/longitude
+teslamate/cars/$car_id/shift_state
+teslamate/cars/$car_id/speed # km/h
+
 teslamate/cars/$car_id/locked
 teslamate/cars/$car_id/sentry_mode
 teslamate/cars/$car_id/windows_open
+
+teslamate/cars/$car_id/outside_temp # °C
+teslamate/cars/$car_id/inside_temp # °C
+
+teslamate/cars/$car_id/odometer # km
+teslamate/cars/$car_id/ideal_battery_range_km
+teslamate/cars/$car_id/est_battery_range_km
+teslamate/cars/$car_id/rated_battery_range_km
+
+teslamate/cars/$car_id/battery_level
+teslamate/cars/$car_id/plugged_in
+teslamate/cars/$car_id/charge_energy_added
+teslamate/cars/$car_id/charge_limit_soc
+teslamate/cars/$car_id/charge_port_door_open
+teslamate/cars/$car_id/charge_port_latch_engaged
+teslamate/cars/$car_id/charger_actual_current
+teslamate/cars/$car_id/charger_phases
+teslamate/cars/$car_id/charger_power
+teslamate/cars/$car_id/charger_voltag
+teslamate/cars/$car_id/scheduled_charging_start_time
+teslamate/cars/$car_id/time_to_full_charge
 ```
 
 ## FAQ
