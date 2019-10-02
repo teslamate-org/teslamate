@@ -7,46 +7,43 @@
 - Allow editing of geo-fence positions
 - Link from Grafana dashboards directly to `/geo-fences` to create or edit a
   geo-fence
-- Report the health status via MQTT topic `teslamate/cars/$car_id/healthy`
 - Show warning icon if the health check fails for a vehicle
-- Add MQTT topic `teslamate/cars/$car_id/windows_open` and report if the
-  windows are open
-- Request to sign in again if the access tokens become invalid e.g. because the
-  password for the Tesla Account password has been changed
 - Use the best available SRTM data source which provides global elevation data
-  (even for for 60N)
+  including 60N and above
+
+#### New MQTT topics
+
+- `teslamate/cars/$car_id/healthy`: Reports the health status
+- `teslamate/cars/$car_id/windows_open`: reports if the windows are open
 
 ### Changed
 
-- Accelerate the comparison of many geo fences by moving the lookup into the database
-- Apply geo-fences retrospectively
-- Allow geo-fences to cover multiple addresses
+- Optimize the comparison of geo fences by moving the lookup into the database
+- Allow geo-fences to cover multiple addresses and apply them
+  retrospectively
+- Generally improve error handling and error messages
+- Improve landscape mode on devices with a notch
+- Bump Grafana to v6.4.1
 
 ### Fixed
 
 - Automatically restart parts of the application if Tesla decides yet again to
   change the IDs of some vehicles
+- Request to sign in again if the access tokens become invalid e.g. because the
+  password for the Tesla Account password has been changed
 - Protects against empty payloads during an update to prevent an update from
   not being fully logged
 - Log the number of phases as returned by the API
 
-### Migrations
+### ⚠️ Running Migrations
 
-**Please note:** To run the migrations successfully, the database user has to
-have superuser rights (temporarily). Users of the default `docker-compose.yml`
-can skip this part.
+_Users of the default `docker-compose.yml` can skip this part._
 
-To add superuser rights:
+To run the migrations successfully, the database user has to have
+superuser rights (temporarily).
 
-```bash
-ALTER USER teslamate WITH SUPERUSER;
-```
-
-To remove superuser rights:
-
-```bash
-ALTER USER teslamate WITH NOSUPERUSER;
-```
+- To add superuser rights: `ALTER USER teslamate WITH SUPERUSER;`
+- To remove superuser rights: `ALTER USER teslamate WITH NOSUPERUSER;`
 
 ## [1.9.1] - 2019-09-24
 
