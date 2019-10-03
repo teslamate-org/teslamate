@@ -50,10 +50,17 @@ There are a number of applicatons that provide this functionality on Android:
 
 | Application | Price   | Guide(s) |
 | ----------- |---------|----------|
+| [Automagic](https://play.google.com/store/apps/details?id=ch.gridvision.ppam.androidautomagic&hl=en_AU)   | US$3.50 | N/A |
 | MacroDroid  | Free (Limited)   | Testing |
 | Tasker      | US$3.00 | [TaskerSetup](TaskerSetup.md) |
 
 #### iPhone
+
+On the iOS platform, Apple provides the Shortcuts workflow tool:
+
+| Application | Price   | Guide(s) |
+| ----------- |---------|----------|
+| [Shortcuts](https://apps.apple.com/us/app/shortcuts/id915249334)   | Free    | Coming Soon |
 
 ### Event-Based Hints
 
@@ -102,5 +109,5 @@ There are some parameters which are tunable on some Tesla vehicles. Keep in mind
 ### Always Connected
 
    * Always Connected is a setting available only on Model S and Model X vehicles with the MCU1 hardware.
-   * It is available under Settings > Controls > Power Management
+   * It is available under Settings > Controls > Displays > Power Management
    
