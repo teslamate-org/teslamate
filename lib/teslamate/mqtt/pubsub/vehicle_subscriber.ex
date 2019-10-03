@@ -40,20 +40,22 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     {:noreply, state}
   end
 
-  def handle_info(summary, %State{car_id: car_id} = state) do
+  def handle_info(summary, state) do
     summary
     |> Map.from_struct()
     |> Stream.filter(fn {key, value} ->
-      key == :scheduled_charging_start_time or not is_nil(value)
+      not is_nil(value) or
+        key in [
+          :charge_energy_added,
+          :charger_actual_current,
+          :charger_phases,
+          :charger_power,
+          :charger_voltage,
+          :scheduled_charging_start_time,
+          :time_to_full_charge
+        ]
     end)
-    |> Task.async_stream(
-      fn {key, value} ->
-        call(state.deps.publisher, :publish, [
-          "teslamate/cars/#{car_id}/#{key}",
-          to_string(value),
-          [retain: true, qos: 1]
-        ])
-      end,
+    |> Task.async_stream(&publish(&1, state),
       max_concurrency: 10,
       on_timeout: :kill_task,
       ordered: false
@@ -65,4 +67,15 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
     {:noreply, %State{state | last_summary: summary}}
   end
+
+  defp publish({key, value}, %State{car_id: car_id, deps: deps}) do
+    call(deps.publisher, :publish, [
+      "teslamate/cars/#{car_id}/#{key}",
+      to_str(value),
+      [retain: true, qos: 1]
+    ])
+  end
+
+  defp to_str(%DateTime{} = datetime), do: DateTime.to_iso8601(datetime)
+  defp to_str(value), do: to_string(value)
 end

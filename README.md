@@ -219,11 +219,10 @@ teslamate/cars/$car_id/plugged_in
 teslamate/cars/$car_id/charge_energy_added
 teslamate/cars/$car_id/charge_limit_soc
 teslamate/cars/$car_id/charge_port_door_open
-teslamate/cars/$car_id/charge_port_latch_engaged
 teslamate/cars/$car_id/charger_actual_current
 teslamate/cars/$car_id/charger_phases
 teslamate/cars/$car_id/charger_power
-teslamate/cars/$car_id/charger_voltag
+teslamate/cars/$car_id/charger_voltage
 teslamate/cars/$car_id/scheduled_charging_start_time
 teslamate/cars/$car_id/time_to_full_charge
 ```

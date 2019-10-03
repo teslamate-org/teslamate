@@ -2,7 +2,7 @@
 
 ## [1.10.0-dev] - Unreleased
 
-### Added
+### Enhancements
 
 - Allow editing of geo-fence positions
 - Link from Grafana dashboards directly to `/geo-fences` to create or edit a
@@ -10,22 +10,28 @@
 - Show warning icon if the health check fails for a vehicle
 - Use the best available SRTM data source which provides global elevation data
   including 60N and above
-
-#### New MQTT topics
-
-- `teslamate/cars/$car_id/healthy`: Reports the health status
-- `teslamate/cars/$car_id/windows_open`: reports if the windows are open
-
-### Changed
-
 - Optimize the comparison of geo fences by moving the lookup into the database
 - Allow geo-fences to cover multiple addresses and apply them
   retrospectively
 - Generally improve error handling and error messages
 - Improve landscape mode on devices with a notch
-- Bump Grafana to v6.4.1
 
-### Fixed
+#### New MQTT topics
+
+- `teslamate/cars/$car_id/healthy`: Reports the health status of the logger
+- `teslamate/cars/$car_id/windows_open`
+- `teslamate/cars/$car_id/shift_state`
+- `teslamate/cars/$car_id/latitude`
+- `teslamate/cars/$car_id/longitude`
+- `teslamate/cars/$car_id/odometer`
+- `teslamate/cars/$car_id/charge_port_door_open`
+- `teslamate/cars/$car_id/charger_actual_current`
+- `teslamate/cars/$car_id/charger_phases`
+- `teslamate/cars/$car_id/charger_power`
+- `teslamate/cars/$car_id/charger_voltage`
+- `teslamate/cars/$car_id/time_to_full_charge`
+
+### Bug Fixes
 
 - Automatically restart parts of the application if Tesla decides yet again to
   change the IDs of some vehicles

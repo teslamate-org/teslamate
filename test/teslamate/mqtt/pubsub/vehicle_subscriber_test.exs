@@ -46,15 +46,29 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     send(pid, summary)
 
-    for {key, val} <- Map.from_struct(summary), not is_nil(val) do
+    for {key, val} <- Map.from_struct(summary), not is_nil(val) and key != :since do
       topic = "teslamate/cars/0/#{key}"
       data = to_string(val)
       assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: true, qos: 1]}}
     end
 
+    iso_time = DateTime.to_iso8601(summary.since)
+
     assert_receive {MqttPublisherMock,
-                    {:publish, "teslamate/cars/0/scheduled_charging_start_time", "",
-                     [retain: true, qos: 1]}}
+                    {:publish, "teslamate/cars/0/since", ^iso_time, [retain: true, qos: 1]}}
+
+    for key <- [
+          :charge_energy_added,
+          :charger_actual_current,
+          :charger_phases,
+          :charger_power,
+          :charger_voltage,
+          :scheduled_charging_start_time,
+          :time_to_full_charge
+        ] do
+      topic = "teslamate/cars/0/#{key}"
+      assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
+    end
 
     refute_receive _
   end
@@ -83,28 +97,17 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     send(pid, summary)
 
-    for {key, val} <- Map.from_struct(summary), not is_nil(val) do
+    for {key, val} <- Map.from_struct(summary),
+        not is_nil(val) and key != :scheduled_charging_start_time do
       topic = "teslamate/cars/0/#{key}"
       data = to_string(val)
       assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: true, qos: 1]}}
     end
 
-    refute_receive _
-  end
-
-  test "send empty string if scheduled_charging_start_time is nil", %{test: name} do
-    {:ok, pid} = start_subscriber(name, 0)
-
-    assert_receive {VehiclesMock, {:subscribe, 0}}
-
-    summary = %Summary{
-      scheduled_charging_start_time: nil
-    }
-
-    send(pid, summary)
+    iso_time = DateTime.to_iso8601(summary.scheduled_charging_start_time)
 
     assert_receive {MqttPublisherMock,
-                    {:publish, "teslamate/cars/0/scheduled_charging_start_time", "",
+                    {:publish, "teslamate/cars/0/scheduled_charging_start_time", ^iso_time,
                      [retain: true, qos: 1]}}
 
     refute_receive _

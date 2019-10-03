@@ -29,7 +29,6 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :odometer,
     :shift_state,
     :charge_port_door_open,
-    :charge_port_latch_engaged,
     :time_to_full_charge,
     :charger_phases,
     :charger_actual_current,
