@@ -89,17 +89,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
       deps: deps
     }
 
-    :ok =
-      :fuse.install(
-        fuse_name(:vehicle_not_found, data.car.id),
-        {{:standard, 8, :timer.minutes(20)}, {:reset, :timer.minutes(10)}}
-      )
+    fuses = [
+      {:vehicle_not_found, {{:standard, 8, :timer.minutes(20)}, {:reset, :timer.minutes(10)}}},
+      {:api_error, {{:standard, 3, :timer.minutes(10)}, {:reset, :timer.minutes(5)}}}
+    ]
 
-    :ok =
-      :fuse.install(
-        fuse_name(:api_error, data.car.id),
-        {{:standard, 3, :timer.minutes(10)}, {:reset, :timer.minutes(5)}}
-      )
+    for {key, opts} <- fuses do
+      name = fuse_name(key, data.car.id)
+      :ok = :fuse.install(name, opts)
+      :ok = :fuse.circuit_enable(name)
+    end
 
     :ok = call(deps.settings, :subscribe_to_changes)
 
