@@ -23,7 +23,7 @@
     "file-loader": "^4.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "sass": "^1.22.12",
+    "sass": "^1.23.0",
     "sass-loader": "^8.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^2.1.0",

@@ -79,7 +79,9 @@ export const SimpleMap = {
       doubleClickZoom: false,
       keyboard: false,
       scrollWheelZoom: false,
-      tap: false
+      tap: false,
+      dragging: false,
+      touchZoom: false
     });
 
     let marker;
