@@ -2,8 +2,8 @@ defmodule TeslaMate.Log.ChargingProcess do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias TeslaMate.Locations.{Address, GeoFence}
   alias TeslaMate.Log.{Charge, Car, Position}
-  alias TeslaMate.Locations.Address
 
   schema "charging_processes" do
     field :start_date, :utc_datetime
@@ -21,6 +21,7 @@ defmodule TeslaMate.Log.ChargingProcess do
     belongs_to(:car, Car)
     belongs_to(:position, Position)
     belongs_to(:address, Address)
+    belongs_to(:geofence, GeoFence)
 
     has_many :charges, Charge
   end
@@ -29,6 +30,7 @@ defmodule TeslaMate.Log.ChargingProcess do
   def changeset(charging_state, attrs) do
     charging_state
     |> cast(attrs, [
+      :geofence_id,
       :start_date,
       :end_date,
       :charge_energy_added,
@@ -45,6 +47,7 @@ defmodule TeslaMate.Log.ChargingProcess do
     |> foreign_key_constraint(:car_id)
     |> foreign_key_constraint(:position_id)
     |> foreign_key_constraint(:address_id)
+    |> foreign_key_constraint(:geofence_id)
     |> cast_assoc(:position, with: &Position.changeset/2, required: true)
   end
 end

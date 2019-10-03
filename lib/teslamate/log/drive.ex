@@ -2,8 +2,8 @@ defmodule TeslaMate.Log.Drive do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias TeslaMate.Locations.{Address, GeoFence}
   alias TeslaMate.Log.{Position, Car}
-  alias TeslaMate.Locations.Address
 
   schema "drives" do
     field :start_date, :utc_datetime
@@ -23,8 +23,15 @@ defmodule TeslaMate.Log.Drive do
     field :distance, :float
     field :duration_min, :integer
 
+    belongs_to :start_position, Position
+    belongs_to :end_position, Position
+
     belongs_to :start_address, Address
     belongs_to :end_address, Address
+
+    belongs_to :start_geofence, GeoFence
+    belongs_to :end_geofence, GeoFence
+
     belongs_to :car, Car
 
     has_many :positions, Position, on_delete: :delete_all
@@ -38,6 +45,10 @@ defmodule TeslaMate.Log.Drive do
       :end_date,
       :start_address_id,
       :end_address_id,
+      :start_position_id,
+      :end_position_id,
+      :start_geofence_id,
+      :end_geofence_id,
       :outside_temp_avg,
       :inside_temp_avg,
       :speed_max,
@@ -55,7 +66,11 @@ defmodule TeslaMate.Log.Drive do
     ])
     |> validate_required([:car_id, :start_date])
     |> foreign_key_constraint(:car_id)
-    |> foreign_key_constraint(:start_address)
-    |> foreign_key_constraint(:end_address)
+    |> foreign_key_constraint(:start_address_id)
+    |> foreign_key_constraint(:end_address_id)
+    |> foreign_key_constraint(:start_geofence_id)
+    |> foreign_key_constraint(:end_geofence_id)
+    |> foreign_key_constraint(:start_position_id)
+    |> foreign_key_constraint(:end_position_id)
   end
 end

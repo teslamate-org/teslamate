@@ -335,4 +335,68 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.outside_temp_avg == 15.17
     end
   end
+
+  describe "geo-fencing" do
+    alias TeslaMate.Locations.GeoFence
+    alias TeslaMate.Locations
+
+    def geofence_fixture(attrs \\ %{}) do
+      {:ok, geofence} =
+        attrs
+        |> Enum.into(%{name: "foo", latitude: 52.514521, longitude: 13.350144, radius: 42})
+        |> Locations.create_geofence()
+
+      geofence
+    end
+
+    test "links to the nearby geo-fence" do
+      %Car{id: car_id} = car_fixture()
+
+      charges = [
+        %{
+          date: "2019-04-05 16:01:27",
+          battery_level: 50,
+          charge_energy_added: 0.41,
+          charger_actual_current: 5,
+          charger_phases: 3,
+          charger_pilot_current: 16,
+          charger_power: 4,
+          charger_voltage: 234,
+          ideal_battery_range_km: 266.6,
+          rated_battery_range_km: 206.6,
+          outside_temp: 16
+        },
+        %{
+          date: "2019-04-05 16:05:40",
+          battery_level: 54,
+          charge_energy_added: 0.72,
+          charger_actual_current: 5,
+          charger_phases: 3,
+          charger_pilot_current: 16,
+          charger_power: 4,
+          charger_voltage: 234,
+          ideal_battery_range_km: 268.6,
+          rated_battery_range_km: 208.6,
+          outside_temp: 14.5
+        }
+      ]
+
+      ###
+
+      assert %GeoFence{id: id} =
+               geofence_fixture(%{latitude: 50.1121, longitude: 11.597, radius: 50})
+
+      {:ok, charging_process_id} =
+        Log.start_charging_process(car_id, %{
+          date: DateTime.utc_now(),
+          latitude: 50.112198,
+          longitude: 11.597669
+        })
+
+      for c <- charges, do: {:ok, %Charge{}} = Log.insert_charge(charging_process_id, c)
+
+      assert {:ok, %ChargingProcess{geofence_id: ^id}} =
+               Log.complete_charging_process(charging_process_id)
+    end
+  end
 end

@@ -2,8 +2,6 @@ defmodule TeslaMate.Locations.Address do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias TeslaMate.Locations.GeoFence
-
   schema "addresses" do
     field :city, :string
     field :county, :string
@@ -21,8 +19,6 @@ defmodule TeslaMate.Locations.Address do
     field :state, :string
     field :state_district, :string
 
-    belongs_to :geofence, GeoFence
-
     timestamps()
   end
 
@@ -31,7 +27,6 @@ defmodule TeslaMate.Locations.Address do
     address
     |> cast(attrs, [
       :display_name,
-      :geofence_id,
       :place_id,
       :latitude,
       :longitude,
@@ -55,6 +50,5 @@ defmodule TeslaMate.Locations.Address do
       :raw
     ])
     |> unique_constraint(:place_id)
-    |> foreign_key_constraint(:geofence_id)
   end
 end

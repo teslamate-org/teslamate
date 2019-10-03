@@ -153,6 +153,7 @@ defmodule TeslaMate.Log do
     query =
       Position
       |> select([p], %{
+        id: p.id,
         date: p.date,
         latitude: p.latitude,
         longitude: p.longitude,
@@ -187,6 +188,8 @@ defmodule TeslaMate.Log do
         distance = end_pos.odometer - start_pos.odometer
 
         attrs = %{
+          start_position_id: start_pos.id,
+          end_position_id: end_pos.id,
           outside_temp_avg: end_pos.outside_temp_avg,
           inside_temp_avg: end_pos.inside_temp_avg,
           speed_max: end_pos.speed_max,
@@ -211,6 +214,8 @@ defmodule TeslaMate.Log do
             attrs
             |> put_address(:start_address_id, start_pos)
             |> put_address(:end_address_id, end_pos)
+            |> put_geofence(:start_geofence_id, start_pos)
+            |> put_geofence(:end_geofence_id, end_pos)
 
           drive |> Drive.changeset(attrs) |> Repo.update()
         end
@@ -225,6 +230,13 @@ defmodule TeslaMate.Log do
       {:error, reason} ->
         Logger.warn("Address not found: #{inspect(reason)}")
         attrs
+    end
+  end
+
+  defp put_geofence(attrs, key, position) do
+    case Locations.find_geofence(position) do
+      %Locations.GeoFence{id: id} -> Map.put(attrs, key, id)
+      nil -> attrs
     end
   end
 
@@ -243,10 +255,15 @@ defmodule TeslaMate.Log do
           nil
       end
 
+    geofence_id =
+      with %Locations.GeoFence{id: id} <- Locations.find_geofence(position) do
+        id
+      end
+
     start_date = Keyword.get_lazy(opts, :date, &DateTime.utc_now/0)
 
     with {:ok, %ChargingProcess{id: id}} <-
-           %ChargingProcess{car_id: car_id, address_id: address_id}
+           %ChargingProcess{car_id: car_id, address_id: address_id, geofence_id: geofence_id}
            |> ChargingProcess.changeset(%{start_date: start_date, position: position})
            |> Repo.insert() do
       {:ok, id}

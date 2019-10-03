@@ -210,4 +210,68 @@ defmodule TeslaMate.LogDriveTest do
       assert nil == Repo.get(Drive, drive_id)
     end
   end
+
+  describe "geo-fencing" do
+    alias TeslaMate.Locations.GeoFence
+    alias TeslaMate.Locations
+
+    def geofence_fixture(attrs \\ %{}) do
+      {:ok, geofence} =
+        attrs
+        |> Enum.into(%{name: "foo", latitude: 52.514521, longitude: 13.350144, radius: 42})
+        |> Locations.create_geofence()
+
+      geofence
+    end
+
+    test "links to the nearby geo-fence" do
+      %Car{id: car_id} = car_fixture()
+
+      positions = [
+        %{
+          date: "2019-04-06 10:19:02",
+          latitude: 50.112198,
+          longitude: 11.597669,
+          speed: 23,
+          power: 15,
+          odometer: 284.85156,
+          ideal_battery_range_km: 338.8,
+          rated_battery_range_km: 308.8,
+          battery_level: 68,
+          outside_temp: 19.2,
+          inside_temp: 21.0
+        },
+        %{
+          date: "2019-04-06 10:23:25",
+          latitude: 49.11196,
+          longitude: 11.222,
+          speed: 39,
+          power: 36,
+          odometer: 288.045561,
+          ideal_battery_range_km: 334.8,
+          rated_battery_range_km: 304.8,
+          battery_level: 68,
+          outside_temp: 18.0,
+          inside_temp: 21.0
+        }
+      ]
+
+      ###
+
+      assert %GeoFence{id: start_id} =
+               geofence_fixture(%{latitude: 50.1121, longitude: 11.597, radius: 100})
+
+      assert %GeoFence{id: end_id} =
+               geofence_fixture(%{latitude: 49.11161, longitude: 11.222, radius: 200})
+
+      {:ok, drive_id} = Log.start_drive(car_id)
+
+      for p <- positions,
+          do: {:ok, _} = Log.insert_position(car_id, Map.put(p, :drive_id, drive_id))
+
+      assert {:ok, drive} = Log.close_drive(drive_id)
+      assert drive.start_geofence_id == start_id
+      assert drive.end_geofence_id == end_id
+    end
+  end
 end

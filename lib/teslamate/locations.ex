@@ -12,28 +12,15 @@ defmodule TeslaMate.Locations do
   ## Address
 
   def create_address(attrs \\ %{}) do
-    with {:ok, address} <- validate_address(attrs) do
-      geofence_id =
-        with %GeoFence{id: id} <- get_geofence(address) do
-          id
-        end
-
-      %Address{}
-      |> Address.changeset(Map.put(attrs, :geofence_id, geofence_id))
-      |> Repo.insert()
-    end
+    %Address{}
+    |> Address.changeset(attrs)
+    |> Repo.insert()
   end
 
   def update_address(%Address{} = address, attrs) do
     address
     |> Address.changeset(attrs)
     |> Repo.update()
-  end
-
-  defp validate_address(attrs) do
-    %Address{}
-    |> change_address(attrs)
-    |> Ecto.Changeset.apply_action(:insert)
   end
 
   def change_address(%Address{} = address, attrs \\ %{}) do
@@ -54,18 +41,51 @@ defmodule TeslaMate.Locations do
     end
   end
 
-  defp apply_geofence_to_addresses(%GeoFence{} = geofence) do
+  defp apply_geofence(%GeoFence{id: id} = geofence) do
+    alias TeslaMate.Log.{Drive, Position, ChargingProcess}
+
     {_n, nil} =
-      Address
-      |> where([a], within_geofence?(a, geofence))
-      |> Repo.update_all(set: [geofence_id: geofence.id])
+      from(d in Drive,
+        join: p in Position,
+        on: [id: d.start_position_id],
+        where: within_geofence?(p, geofence)
+      )
+      |> Repo.update_all(set: [start_geofence_id: id])
+
+    {_n, nil} =
+      from(d in Drive,
+        join: p in Position,
+        on: [id: d.end_position_id],
+        where: within_geofence?(p, geofence)
+      )
+      |> Repo.update_all(set: [end_geofence_id: id])
+
+    {_n, nil} =
+      from(d in ChargingProcess,
+        join: p in Position,
+        on: [id: d.position_id],
+        where: within_geofence?(p, geofence)
+      )
+      |> Repo.update_all(set: [geofence_id: id])
 
     :ok
   end
 
-  defp remove_geofence_from_addresses(%GeoFence{id: id}) do
+  defp remove_geofence(%GeoFence{id: id}) do
+    alias TeslaMate.Log.{Drive, ChargingProcess}
+
     {_n, nil} =
-      Address
+      Drive
+      |> where(start_geofence_id: ^id)
+      |> Repo.update_all(set: [start_geofence_id: nil])
+
+    {_n, nil} =
+      Drive
+      |> where(end_geofence_id: ^id)
+      |> Repo.update_all(set: [end_geofence_id: nil])
+
+    {_n, nil} =
+      ChargingProcess
       |> where(geofence_id: ^id)
       |> Repo.update_all(set: [geofence_id: nil])
 
@@ -76,7 +96,7 @@ defmodule TeslaMate.Locations do
 
   def list_geofences do
     GeoFence
-    |> order_by(asc: :inserted_at)
+    |> order_by([g], fragment("? COLLATE \"C\" DESC", g.name))
     |> Repo.all()
   end
 
@@ -84,44 +104,36 @@ defmodule TeslaMate.Locations do
     Repo.get!(GeoFence, id)
   end
 
-  defp get_geofence(%Address{} = address) do
-    from(
-      geofence in GeoFence,
-      select: [:id],
-      where: within_geofence?(address, geofence, :left),
-      order_by: :id,
-      limit: 1
-    )
+  def find_geofence(%{latitude: _, longitude: _} = point) do
+    GeoFence
+    |> select([:id])
+    |> where([geofence], within_geofence?(point, geofence, :left))
+    |> order_by(:id)
+    |> limit(1)
     |> Repo.one()
   end
 
   def create_geofence(attrs) do
-    with {:ok, %GeoFence{latitude: lat, longitude: lng}} <- validate_geofence(attrs) do
-      Repo.transaction(fn ->
-        with {:ok, _address} <- find_address(%{latitude: lat, longitude: lng}),
-             {:ok, geofence} <- %GeoFence{} |> GeoFence.changeset(attrs) |> Repo.insert(),
-             :ok <- apply_geofence_to_addresses(geofence) do
-          geofence
-        else
-          {:error, reason} -> Repo.rollback(reason)
-        end
-      end)
-    end
+    Repo.transaction(fn ->
+      with {:ok, geofence} <- %GeoFence{} |> GeoFence.changeset(attrs) |> Repo.insert(),
+           :ok <- apply_geofence(geofence) do
+        geofence
+      else
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end)
   end
 
   def update_geofence(%GeoFence{} = geofence, attrs) do
-    with {:ok, %GeoFence{latitude: lat, longitude: lng}} <- validate_geofence(attrs) do
-      Repo.transaction(fn ->
-        with {:ok, _address} <- find_address(%{latitude: lat, longitude: lng}),
-             {:ok, geofence} <- geofence |> GeoFence.changeset(attrs) |> Repo.update(),
-             :ok <- remove_geofence_from_addresses(geofence),
-             :ok <- apply_geofence_to_addresses(geofence) do
-          geofence
-        else
-          {:error, reason} -> Repo.rollback(reason)
-        end
-      end)
-    end
+    Repo.transaction(fn ->
+      with {:ok, geofence} <- geofence |> GeoFence.changeset(attrs) |> Repo.update(),
+           :ok <- remove_geofence(geofence),
+           :ok <- apply_geofence(geofence) do
+        geofence
+      else
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end)
   end
 
   def delete_geofence(%GeoFence{} = geofence) do
@@ -130,11 +142,5 @@ defmodule TeslaMate.Locations do
 
   def change_geofence(%GeoFence{} = geofence, attrs \\ %{}) do
     GeoFence.changeset(geofence, attrs)
-  end
-
-  defp validate_geofence(attrs) do
-    %GeoFence{}
-    |> change_geofence(attrs)
-    |> Ecto.Changeset.apply_action(:insert)
   end
 end
