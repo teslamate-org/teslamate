@@ -10,7 +10,7 @@ defmodule TeslaMate.Repo.Migrations.AddPositionIdsAndApplyGeofences do
     import Ecto.Changeset
 
     schema "positions" do
-      field :date, :utc_datetime
+      field(:date, :utc_datetime)
       belongs_to(:drive, Drive)
     end
   end
@@ -22,8 +22,8 @@ defmodule TeslaMate.Repo.Migrations.AddPositionIdsAndApplyGeofences do
     schema "drives" do
       belongs_to(:start_position, Position)
       belongs_to(:end_position, Position)
-      belongs_to :start_geofence, GeoFence
-      belongs_to :end_geofence, GeoFence
+      belongs_to(:start_geofence, GeoFence)
+      belongs_to(:end_geofence, GeoFence)
     end
 
     @doc false

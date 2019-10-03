@@ -22,4 +22,5 @@ install:
   - mix local.hex --force
   - mix do deps.get, compile
 script:
-  - mix do format --check-formatted, coveralls.travis
+  - MIX_ENV=dev mix format --check-formatted
+  - mix coveralls.travis
