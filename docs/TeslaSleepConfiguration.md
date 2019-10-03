@@ -111,3 +111,8 @@ There are some parameters which are tunable on some Tesla vehicles. Keep in mind
    * Always Connected is a setting available only on Model S and Model X vehicles with the MCU1 hardware.
    * It is available under Settings > Controls > Displays > Power Management
    
+## Tested Configurations
+
+| *Tested By* | *Vehicle Model + Year* | *Software Version* | *Attempt to Sleep value(s)* | *Outcome*                    |
+| ----------- | ---------------------- | ------------------ | ------------------------ | ---------------------------- |
+| @ngardiner  | Model 3 MY 2019 (MCU2) | 2019.32.11.1       | 21 Minutes, 15 Minutes   | Vehicle sleeps without issue |
