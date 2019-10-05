@@ -1,20 +1,26 @@
 # Changelog
 
-## [1.10.0-dev] - Unreleased
+## [1.10.0] - 2019-10-05
 
 ### Enhancements
 
 - Allow editing of geo-fence positions
-- Link from Grafana dashboards directly to `/geo-fences` to create or edit a
-  geo-fence
 - Show warning icon if the health check fails for a vehicle
 - Use the best available SRTM data source which provides global elevation data
   including 60N and above
-- Optimize the comparison of geo fences by moving the lookup into the database
-- Allow geo-fences to cover multiple addresses and apply them
-  retrospectively
+- Optimize the comparison of geo-fences by moving the lookup into the database
+- Use the exact position instead of the center of an address for the geo-fence
+  lookup
 - Generally improve error handling and error messages
 - Improve landscape mode on devices with a notch
+
+* Open the geo-fence editor by clicking on the start or destination address of
+  a trip
+
+  **Note:** For this feature to work Grafana needs to know the base URL of the
+  TeslaMate web interface. To automatically set the base URL open the web
+  interface once after upgrading to this version. Manually changing the base
+  URL is possible via the settings page.
 
 #### New MQTT topics
 
@@ -37,7 +43,7 @@
   change the IDs of some vehicles
 - Request to sign in again if the access tokens become invalid e.g. because the
   password of the Tesla Account has been changed
-- Protects against empty payloads during an update to prevent an update from
+- Protect against empty payloads during an update to prevent an update from
   not being fully logged
 - Log the number of charging phases as returned by the API
 
@@ -46,7 +52,7 @@
 _Users of the default `docker-compose.yml` can skip this part._
 
 To run the migrations successfully, the database user has to have
-superuser rights (temporarily).
+superuser rights (temporarily):
 
 - To add superuser rights: `ALTER USER teslamate WITH SUPERUSER;`
 - To remove superuser rights: `ALTER USER teslamate WITH NOSUPERUSER;`
@@ -426,7 +432,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[1.10.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.9.1...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.10.0...HEAD
+[1.10.0]: https://github.com/adriankumpf/teslamate/compare/v1.9.1...v1.10.0
 [1.9.1]: https://github.com/adriankumpf/teslamate/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/adriankumpf/teslamate/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/adriankumpf/teslamate/compare/v1.7.0...v1.8.0
