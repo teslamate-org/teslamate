@@ -23,10 +23,6 @@ defmodule TeslaMate.Locations do
     |> Repo.update()
   end
 
-  def change_address(%Address{} = address, attrs \\ %{}) do
-    Address.changeset(address, attrs)
-  end
-
   @geocoder (case Mix.env() do
                :test -> GeocoderMock
                _____ -> Geocoder
