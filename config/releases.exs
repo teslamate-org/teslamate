@@ -7,7 +7,12 @@ defmodule Util do
 
   def validate_locale!("en"), do: "en"
   def validate_locale!("de"), do: "de"
-  def validate_locale!(lang), do: raise("Unsopported locale #{inspect(lang)}")
+  def validate_locale!(lang), do: raise("Unsopported locale: #{inspect(lang)}")
+
+  def parse_check_origin!("true"), do: true
+  def parse_check_origin!("false"), do: false
+  def parse_check_origin!(hosts) when is_binary(hosts), do: String.split(hosts, ",")
+  def parse_check_origin!(hosts), do: raise("Invalid check_origin option: #{inspect(hosts)}")
 end
 
 config :gettext,
@@ -26,7 +31,8 @@ config :teslamate, TeslaMateWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT", "4000")],
   url: [host: System.get_env("VIRTUAL_HOST", "localhost"), port: 80],
   secret_key_base: System.get_env("SECRET_KEY_BASE", Util.random_encoded_bytes()),
-  live_view: [signing_salt: System.get_env("SIGNING_SALT", Util.random_encoded_bytes())]
+  live_view: [signing_salt: System.get_env("SIGNING_SALT", Util.random_encoded_bytes())],
+  check_origin: System.get_env("CHECK_ORIGIN", "true") |> Util.parse_check_origin!()
 
 if System.get_env("DISABLE_MQTT") != "true" do
   config :teslamate, :mqtt,

@@ -27,11 +27,12 @@ RUN mkdir -p /opt/built && mix release --path /opt/built
 FROM alpine:3.10 AS app
 
 ENV LANG=C.UTF-8 \
-    SRTM_CACHE=/opt/app/.srtm_cache
+    SRTM_CACHE=/opt/app/.srtm_cache \
+    HOME=/opt/app
 
 RUN apk add --update --no-cache bash openssl tzdata
 
-WORKDIR /opt/app
+WORKDIR $HOME
 
 COPY --chown=nobody entrypoint.sh /
 COPY --from=builder --chown=nobody /opt/built .
