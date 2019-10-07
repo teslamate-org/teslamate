@@ -40,11 +40,13 @@
 - platform: mqtt
   name: tesla_charger_power
   state_topic: "teslamate/cars/1/charger_power"
+  unit_of_measurement: 'W'
   icon: mdi:power-plug
 
 - platform: mqtt
   name: tesla_charger_voltage
   state_topic: "teslamate/cars/1/charger_voltage"
+  unit_of_measurement: 'V'
   icon: mdi:gauge
 
 - platform: mqtt
