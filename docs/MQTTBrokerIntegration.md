@@ -10,11 +10,11 @@ Unless the MQTT feature is disabled data is published to the following topics
 | teslamate/cars/$car_id/battery_level        | 88      | Battery Level Percentage           |
 | teslamate/cars/$car_id/charge_energy_added  | 5.06    | Last added energy in kW            |
 | teslamate/cars/$car_id/charge_limit_soc     | 90      | Charge Limit Configured in Percentage |
-| teslamate/cars/$car_id/charge_port_door_open | |
-| teslamate/cars/$car_id/charger_actual_current | |
-| teslamate/cars/$car_id/charger_phases       | |
+| teslamate/cars/$car_id/charge_port_door_open | true   | Is the charger door open? Yes/No   |
+| teslamate/cars/$car_id/charger_actual_current | 2.05  | Current amperage supplied by charger |
+| teslamate/cars/$car_id/charger_phases       | 3       | Number of charger power phases (1-3) |
 | teslamate/cars/$car_id/charger_power        | |
-| teslamate/cars/$car_id/charger_voltage      | |
+| teslamate/cars/$car_id/charger_voltage      | 240     | Charger Voltage                    |
 | teslamate/cars/$car_id/display_name         | TBA     | TBA |
 | teslamate/cars/$car_id/est_battery_range_km | 372.5   | Estimated Range in km              |
 | teslamate/cars/$car_id/healthy              | true    | TBA |
