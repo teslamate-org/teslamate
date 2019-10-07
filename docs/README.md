@@ -19,8 +19,8 @@ TeslaMate is a powerful data logger for your Tesla.
      
 ## Integration
 
-  * HomeAssistant Integration 
-  * MQTT Broker Integration
+  * [HomeAssistant](HomeAssistantIntegration.md) Integration 
+  * [MQTT Broker](MQTTBrokerIntegration.md) Integration
   
 ## Frequently Asked Questions
 
