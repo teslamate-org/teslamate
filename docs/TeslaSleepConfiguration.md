@@ -42,24 +42,24 @@ Using Bluetooth hints, a tool like tasker on the phone can then detect the Bluet
   * If you are specifying the local (LAN) IP address/port of your TeslaMate instance when performing the wake up, this may fail for a number of reasons:
      * It will not provide hints to TeslaMate when you are outside of your home network (ie if you have been driving).
      * It will not provide hints to TeslaMate if the mobile phone becomes disconnected from the wifi network.
-  * For these reasons, it is highly recommended that the hints be provided over a public interface to TeslaMate, which may require that interface to 
+  * For these reasons, it is necessary to use a method that allows external communication between your smartphone and your TeslaMate instance(s). This is described in each of the guides below with some options that can be used to achieve this.
 
 #### Android
 
 There are a number of applicatons that provide this functionality on Android:
 
-| Application | Price   | Guide(s) |
-| ----------- |---------|----------|
-| [Automagic](https://play.google.com/store/apps/details?id=ch.gridvision.ppam.androidautomagic&hl=en_AU)   | US$3.50 | N/A |
-| MacroDroid  | Free (Limited)   | Testing |
-| Tasker      | US$3.00 | [TaskerSetup](TaskerSetup.md) |
+| Application | Price           | Guide(s) |
+| ----------- | --------------- |----------|
+| [Automagic](https://play.google.com/store/apps/details?id=ch.gridvision.ppam.androidautomagic)   | US$3.50 | N/A |
+| [MacroDroid](https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid)  | Free (Limited)  | [MacroDroidSetup](MacroDroidSetup.md) |
+| [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm) | US$3.00         | [TaskerSetup](TaskerSetup.md) |
 
 #### iPhone
 
 On the iOS platform, Apple provides the Shortcuts workflow tool:
 
-| Application | Price   | Guide(s) |
-| ----------- |---------|----------|
+| Application                                                        | Price   | Guide(s) |
+| ------------------------------------------------------------------ | ------- | -------- |
 | [Shortcuts](https://apps.apple.com/us/app/shortcuts/id915249334)   | Free    | Coming Soon |
 
 ### Event-Based Hints
@@ -113,6 +113,7 @@ There are some parameters which are tunable on some Tesla vehicles. Keep in mind
    
 ## Tested Configurations
 
-| *Tested By* | *Vehicle Model + Year* | *Software Version* | *Attempt to Sleep value(s)* | *Outcome*                    |
+| *Tested By* | *Vehicle Model + Year* | *Software Version* | *Attempt to Sleep value* | *Outcome*                    |
 | ----------- | ---------------------- | ------------------ | ------------------------ | ---------------------------- |
-| @ngardiner  | Model 3 MY 2019 (MCU2) | 2019.32.11.1       | 21 Minutes, 15 Minutes   | Vehicle sleeps without issue |
+| @ngardiner  | Model 3 MY 2019 (MCU2) | 2019.32.11.1       | 15 Minutes               | Vehicle sleeps without issue |
+| @ngardiner  | Model 3 MY 2019 (MCU2) | 2019.32.11.1       | 12 Minutes               | Currently testing this setting |
