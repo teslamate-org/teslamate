@@ -13,7 +13,7 @@ defmodule TeslaMate.IdentificationTest do
   end
 
   test "detects common Model S, 3 and X" do
-    assert %{model: "S", trim_badging: "90D", efficiency: 0.189} ==
+    assert %{model: "S", trim_badging: "90D", efficiency: 0.188} ==
              vehicle_fixture(%{car_type: "models2", trim_badging: "90d"})
              |> Identification.properties()
 
