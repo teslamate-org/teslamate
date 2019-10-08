@@ -206,7 +206,7 @@ defmodule TeslaMate.Log do
           distance: distance
         }
 
-        if distance < 0.1 do
+        if distance < 0.01 do
           drive |> Drive.changeset(attrs) |> Repo.delete()
         else
           attrs =
