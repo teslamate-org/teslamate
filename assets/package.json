@@ -8,7 +8,7 @@
   "dependencies": {
     "ionicons": "^4.6.3",
     "leaflet": "^1.5.1",
-    "leaflet-control-geocoder": "^1.9.0",
+    "leaflet-control-geocoder": "^1.10.0",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
     "phoenix_live_view": "file:../deps/phoenix_live_view"

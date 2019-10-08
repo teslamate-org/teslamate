@@ -47,13 +47,13 @@ defmodule TeslaMate.MappingTest do
       :ok =
         start_mapping(name, %{
           {0, 0} => fn ->
-            :timer.sleep(150)
+            :timer.sleep(550)
             {:ok, 42}
           end
         })
 
       assert Mapping.get_elevation(name, {0, 0}) == nil
-      assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
+      assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}, 200
 
       # still blocked
       assert Mapping.get_elevation(name, {0, 0}) == nil

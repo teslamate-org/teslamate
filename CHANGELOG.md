@@ -1,5 +1,24 @@
 # Changelog
 
+## [Unreleased]
+
+### New Features
+
+- Make :check_origin option configurable via environment variable
+  `CHECK_ORIGIN`
+
+### Enhancements
+
+- Add GIST index based on `ll_to_earth` to speed up geo-fence lookups
+- Improve accuracy of geo-fence lookups for some edge cases
+- Delete trips with less than 10m driven
+- Add/Update efficiency factors
+
+### Bug Fixes
+
+- Exit early if the migrations fail
+- Downgrade Grafana to v6.3.5
+
 ## [1.10.0] - 2019-10-05
 
 ### Enhancements

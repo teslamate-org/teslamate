@@ -2933,10 +2933,10 @@ lcid@^2.0.0:
   dependencies:
     invert-kv "^2.0.0"
 
-leaflet-control-geocoder@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/leaflet-control-geocoder/-/leaflet-control-geocoder-1.9.0.tgz#d837569de7762953cd4f9543850602bab9f82230"
-  integrity sha512-yY6v8wly5Z+S4avTedgEGlDiW1HNPUS+1Eggus0k8UFxoSg7doZZv23T/1wQjix5hJZBEnlEgyHv4HAW1D8W+A==
+leaflet-control-geocoder@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/leaflet-control-geocoder/-/leaflet-control-geocoder-1.10.0.tgz#634ab52a963e9db1e352123891bba436c3015d1b"
+  integrity sha512-ff8+wAifAg/NQetICfjpca8YD2fEYO2totnFUdtOH2JG7ufQeMLG38U2aqJTJ3Oz9g4hpIpng2f5QtlGOG8HYw==
   optionalDependencies:
     open-location-code "^1.0.0"
 
