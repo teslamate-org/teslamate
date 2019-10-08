@@ -22,24 +22,52 @@ Coming soon
 
 ### automation.yaml
 
-Automation to update the location of the device_tracker.tesla_location tracker when new lat/lon values are published to MQTT
+The following provides an automation to update the location of the device_tracker.tesla_location tracker when new lat/lon values are published to MQTT. You can use this to:
+
+   * Plot the location of your Tesla on a map (see the ui-lovelace.yaml file for an example of this)
+   * Calculate the proximity of your Tesla to another location such as home (see configuration.yaml, below)
+
 ```
-- name: Update Tesla location as MQTT location updates
+- alias: Update Tesla location as MQTT location updates
   initial_state: on
   trigger:
-    - platform: state
-      entity_id: sensor.tesla_latitude
-    - platform: state
-      entity_id: sensor.tesla_longitude
+    - platform: mqtt
+      topic: teslamate/cars/1/latitude
+    - platform: mqtt
+      topic: teslamate/cars/1/longitude
   action:
     - service: device_tracker.see
       data_template:
         dev_id: tesla_location
         location_name: not_home
-        gps: [ '{{ sensor.tesla_latitude }}', '{{ sensor.tesla_longitude }}' ]
+        gps: [ '{{ states.sensor.tesla_latitude.state }}', '{{ states.sensor.tesla_longitude.state }}' ]
+```
+
+### configuration.yaml
+
+Proximity sensors allow us to calculate the proximity of the Tesla device_tracker to defined zones. This can be useful for:
+
+  * Automatic Garage Door opening when you arrive home
+  * Notifications when the vehicle is arriving
+
+```
+automation: !include automation.yaml
+
+proximity:
+  home_tesla:
+    zone: home
+    devices:
+      - device_tracker.tesla_location
+    tolerance: 10
+    unit_of_measurement: km
+
+sensor: !include sensor.yaml
 ```
 
 ### known_devices.yaml (define a tracker for Tesla)
+
+This is required for the automation above (in the automation.yaml section). It defines the device_tracker object that we use to represent the location of your Tesla vehicle.
+
 ```
 tesla_location:
   hide_if_away: false
@@ -290,7 +318,8 @@ The below is the Lovelace UI configuration used to make the example screenshot a
             name: SOC Charge Limit
           - entity: sensor.tesla_charge_energy_added
             name: Last Charge Energy Added
-          - sensor.tesla_model_3_mileage_sensor
+          - entity: sensor.tesla_odometer
+            name: Odometer
           - entity: sensor.tesla_estimated_range
             name: Estimated Range
           - entity: sensor.tesla_rated_range
