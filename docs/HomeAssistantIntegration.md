@@ -6,6 +6,8 @@ Whilst HomeAssistant provides an official component for Tesla vehicles, the comp
 
 The ultimate goal of this guide is to consume as much of the TeslaMate polling data as possible to replace the majority of the official Tesla component's polling functionality. 
 
+If your intention is to only use read-only sensor values, those provided by TeslaMate via MQTT are sufficient, and you do not need to utilise the official Tesla compoent. If however you would like to be able to write values to the Tesla API (Lock/Unlock Doors or automate Climate), there is a solution which involves configuring an extremely high polling interval for the Tesla component and using automation to populate the values from the TeslaMate MQTT parameters.
+
 ## Screenshot
 
 Coming soon
@@ -15,7 +17,6 @@ Coming soon
   * Sensors: All existing sensors available except for:
     * Park Brake
   * Locks: Not implemented
-  * Maps: Not implemented (currently testing solution)
   * Climate: Not implemented
 
 ## Configuration
@@ -60,6 +61,11 @@ proximity:
       - device_tracker.tesla_location
     tolerance: 10
     unit_of_measurement: km
+
+tesla:
+  username: !secret tesla_username
+  password: !secret tesla_password
+  scan_interval: 3600
 
 sensor: !include sensor.yaml
 ```
