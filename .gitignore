@@ -47,3 +47,7 @@ conf/wizzy.json
 
 .env
 .srtm_cache/
+
+# Make sure IDE files don't get committed to the repo
+.idea/
+.eclipse/
