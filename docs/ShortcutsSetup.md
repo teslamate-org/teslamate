@@ -79,3 +79,37 @@ These values are used on the screenshots. Whenever you see them, replace them wi
    <img src="../images/shortcuts/run_01_run.png" />
    
  * Done. 
+
+   <img src="../images/shortcuts/create_00_home.png" />
+   <img src="../images/shortcuts/create_01_aut_home.png" />
+   <img src="../images/shortcuts/create_02_new_automation_type.png" />
+   <img src="../images/shortcuts/create_03_triggering_event.png" />
+   <img src="../images/shortcuts/create_04_bluetooth.png" />
+   <img src="../images/shortcuts/create_05_bluetooth_device.png" />
+   <img src="../images/shortcuts/create_06_bluetooth_selected.png" />
+   <img src="../images/shortcuts/create_07_add_action.png" />
+   <img src="../images/shortcuts/create_08_action_categories.png" />
+   <img src="../images/shortcuts/create_09_docs_text.png" />
+   <img src="../images/shortcuts/create_10_text_edit.png" />
+   <img src="../images/shortcuts/create_11_text_edit_filled.png" />
+   <img src="../images/shortcuts/create_12_documents_close.png" />
+   <img src="../images/shortcuts/create_13_action_categories.png" />
+   <img src="../images/shortcuts/create_14_scripting_enc.png" />
+   <img src="../images/shortcuts/create_15_enc_added.png" />
+   <img src="../images/shortcuts/create_16_scripting_close.png" />
+   <img src="../images/shortcuts/create_17_action_categories.png" />
+   <img src="../images/shortcuts/create_17_url.png" />
+   <img src="../images/shortcuts/create_18_url_edit.png" />
+   <img src="../images/shortcuts/create_19_url_contents.png" />
+   <img src="../images/shortcuts/create_20_url_contents_added.png" />
+   <img src="../images/shortcuts/create_21_show_more.png" />
+   <img src="../images/shortcuts/create_22_method.png" />
+   <img src="../images/shortcuts/create_23_headers.png" />
+   <img src="../images/shortcuts/create_24_headers_add.png" />
+   <img src="../images/shortcuts/create_25_headers_values.png" />
+   <img src="../images/shortcuts/create_26_headers_values_var.png" />
+   <img src="../images/shortcuts/create_27_contents_filled.png" />
+   <img src="../images/shortcuts/create_28_automation_detail.png" />
+   <img src="../images/shortcuts/create_29_automation_list.png" />
+   <img src="../images/shortcuts/edit_01_automation_detail.png" />
+   <img src="../images/shortcuts/edit_02_edit_actions.png" />
