@@ -142,10 +142,6 @@
               {
                 "color": "semi-dark-green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ],
             "unit": "volt"
@@ -222,10 +218,6 @@
               {
                 "color": "semi-dark-green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ],
             "unit": "kwatt"
@@ -943,10 +935,6 @@
               {
                 "color": "semi-dark-green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ],
             "unit": "degree"
@@ -1023,10 +1011,6 @@
               {
                 "color": "semi-dark-green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ],
             "unit": "degree"
@@ -1103,10 +1087,6 @@
               {
                 "color": "semi-dark-green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ],
             "unit": "degree"
