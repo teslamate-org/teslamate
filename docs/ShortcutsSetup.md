@@ -58,12 +58,5 @@ These values are used on the screenshots. Whenever you see them, replace them wi
  * Once the Bluetooth connects, you will see notification on your lock screen.
  * Click it and unlock the phone.
  * Click **Execute** button.
+   <img align="right" src="../images/macrodroid-device-connected.png" />
  * Done. 
- 
- 
- 
-
-
-<img align="right" src="images/macrodroid-connect-select.png" />
-<img align="right" src="images/macrodroid-device-connected.png" />
-
