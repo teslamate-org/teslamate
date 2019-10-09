@@ -93,7 +93,7 @@ defmodule TeslaMate.MappingTest do
       assert Mapping.get_elevation(name, {0, 0}) == nil
 
       # circuit broke after 3 attempts
-      Process.sleep(100)
+      Process.sleep(200)
       assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
       assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
       assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}

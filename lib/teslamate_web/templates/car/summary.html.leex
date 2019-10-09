@@ -206,6 +206,12 @@
           </tr>
             <% end %>
           <% end %>
+          <%= unless is_nil(@summary.version) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Version" %></td>
+            <td><%= @summary.version %></td>
+          </tr>
+          <% end %>
         </tbody>
       </table>
     </div>

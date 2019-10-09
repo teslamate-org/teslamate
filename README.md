@@ -196,6 +196,7 @@ Unless the MQTT feature is disabled data is published to the following topics
 ```bash
 teslamate/cars/$car_id/display_name
 teslamate/cars/$car_id/state
+teslamate/cars/$car_id/version
 teslamate/cars/$car_id/healthy
 
 teslamate/cars/$car_id/latitude

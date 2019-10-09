@@ -41,7 +41,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       inside_temp: 20.0,
       locked: true,
       sentry_mode: false,
-      plugged_in: false
+      plugged_in: false,
+      version: "2019.42"
     }
 
     send(pid, summary)

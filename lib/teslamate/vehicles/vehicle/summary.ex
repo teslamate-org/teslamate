@@ -32,7 +32,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :time_to_full_charge,
     :charger_phases,
     :charger_actual_current,
-    :charger_voltage
+    :charger_voltage,
+    :version
   ]
 
   def into(nil, %{state: :start, healthy?: healthy?}) do
@@ -91,7 +92,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       odometer: get_in_struct(vehicle, [:vehicle_state, :odometer]) |> miles_to_km(2),
       locked: get_in_struct(vehicle, [:vehicle_state, :locked]),
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
-      windows_open: window_open?(vehicle)
+      windows_open: window_open?(vehicle),
+      version: get_in_struct(vehicle, [:vehicle_state, :car_version])
     }
   end
 

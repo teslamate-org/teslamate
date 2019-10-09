@@ -12,22 +12,22 @@ msgstr ""
 "Plural-Forms: nplurals=2\n"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:61
+#: lib/teslamate_web/templates/car/summary.html.leex:62
 msgid "Status"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:172
+#: lib/teslamate_web/templates/car/summary.html.leex:173
 msgid "Speed"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:148
+#: lib/teslamate_web/templates/car/summary.html.leex:149
 msgid "State of Charge"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:111
+#: lib/teslamate_web/templates/car/summary.html.leex:112
 msgid "Charged"
 msgstr ""
 
@@ -62,28 +62,28 @@ msgid "updating"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:154
+#: lib/teslamate_web/templates/car/summary.html.leex:155
 msgid "Locked"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:126
-#: lib/teslamate_web/templates/car/summary.html.leex:155
-#: lib/teslamate_web/templates/car/summary.html.leex:161
-#: lib/teslamate_web/templates/car/summary.html.leex:167
+#: lib/teslamate_web/templates/car/summary.html.leex:127
+#: lib/teslamate_web/templates/car/summary.html.leex:156
+#: lib/teslamate_web/templates/car/summary.html.leex:162
+#: lib/teslamate_web/templates/car/summary.html.leex:168
 msgid "no"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:126
-#: lib/teslamate_web/templates/car/summary.html.leex:155
-#: lib/teslamate_web/templates/car/summary.html.leex:161
-#: lib/teslamate_web/templates/car/summary.html.leex:167
+#: lib/teslamate_web/templates/car/summary.html.leex:127
+#: lib/teslamate_web/templates/car/summary.html.leex:156
+#: lib/teslamate_web/templates/car/summary.html.leex:162
+#: lib/teslamate_web/templates/car/summary.html.leex:168
 msgid "yes"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:166
+#: lib/teslamate_web/templates/car/summary.html.leex:167
 msgid "Sentry Mode"
 msgstr ""
 
@@ -102,17 +102,17 @@ msgid "Settings"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:132
+#: lib/teslamate_web/templates/car/summary.html.leex:133
 msgid "Scheduled charging"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:125
+#: lib/teslamate_web/templates/car/summary.html.leex:126
 msgid "Plugged in"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:141
+#: lib/teslamate_web/templates/car/summary.html.leex:142
 msgid "Charge limit"
 msgstr ""
 
@@ -257,23 +257,23 @@ msgid "User present"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:43
+#: lib/teslamate_web/templates/car/summary.html.leex:44
 msgid "cancel sleep attempt"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:40
+#: lib/teslamate_web/templates/car/summary.html.leex:41
 msgid "try to sleep"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:98
+#: lib/teslamate_web/templates/car/summary.html.leex:99
 msgid "Range (est.)"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:64
-#: lib/teslamate_web/templates/car/summary.html.leex:64
+#: lib/teslamate_web/templates/car/summary.html.leex:65
+#: lib/teslamate_web/templates/car/summary.html.leex:65
 msgid "for"
 msgstr ""
 
@@ -313,12 +313,12 @@ msgid "Temperature readings"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:79
+#: lib/teslamate_web/templates/car/summary.html.leex:80
 msgid "Range (rated)"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:117
+#: lib/teslamate_web/templates/car/summary.html.leex:118
 msgid "Charger Power"
 msgstr ""
 
@@ -343,7 +343,7 @@ msgid "rated"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:78
+#: lib/teslamate_web/templates/car/summary.html.leex:79
 msgid "Range (ideal)"
 msgstr ""
 
@@ -368,7 +368,7 @@ msgid "General"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:160
+#: lib/teslamate_web/templates/car/summary.html.leex:161
 msgid "Windows open"
 msgstr ""
 
@@ -377,12 +377,17 @@ msgstr ""
 msgid "Delete '%{geo_fence}'?"
 msgstr ""
 
-#, elixir-format, fuzzy
-#: lib/teslamate_web/templates/car/summary.html.leex:197
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:198
 msgid "Inside temperature"
 msgstr ""
 
-#, elixir-format, fuzzy
-#: lib/teslamate_web/templates/car/summary.html.leex:185
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:186
 msgid "Outside temperature"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:211
+msgid "Version"
 msgstr ""
