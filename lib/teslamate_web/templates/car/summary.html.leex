@@ -2,7 +2,8 @@
    <div class="card-image">
     <figure>
         <div
-          id="map"
+          id="map_<%= @car.id %>"
+          class="map"
           style="height: 175px; position: relative;"
           data-id="<%= @car.id %>"
           phx-update="ignore"
@@ -53,16 +54,23 @@
         <thead>
           <tr>
             <th></th>
-            <th style="max-width: 40%; width: 40%"></th>
+            <th></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody style="font-variant-numeric: tabular-nums;">
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Status" %></td>
-            <td><%=
-              @translate_state.(@summary.state) <>
-              unless is_nil(@duration), do: " #{gettext("for")} #{@duration}", else: ""
-            %></td>
+            <td><%= raw(
+              @translate_state.(@summary.state) <> unless is_nil(@duration) do
+                " #{gettext("for")} " <>
+                case  @duration do
+                  [a , b] -> "#{a}<span class=\"duration-extended\">, #{b}</span>"
+                  [a] -> a
+                end
+              else
+                ""
+              end
+            )%></td>
           </tr>
           <%= unless is_nil(@summary.ideal_battery_range_km) do %>
           <tr>

@@ -47,7 +47,7 @@ const icon = new Icon({
 });
 
 function createMap(opts) {
-  const map = new M("map", opts);
+  const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", opts);
 
   const osm = new TileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -73,6 +73,7 @@ export const SimpleMap = {
     const $position = document.querySelector(`#position_${this.el.dataset.id}`);
 
     const map = createMap({
+      elId: this.el.dataset.id,
       zoomControl: false,
       dragging: false,
       boxZoom: false,

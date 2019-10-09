@@ -6,6 +6,8 @@
 @import "~ionicons/dist/css/ionicons.min.css";
 
 $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
+$widescreen-enabled: false;
+$fullhd-enabled: false;
 
 @import "~bulma/sass/utilities/_all";
 @import "~bulma/sass/base/_all";
@@ -34,10 +36,12 @@ $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
 }
 
 .car {
+  display: flex;
+  flex-direction: column;
   margin-bottom: 25px;
 
   .card-content {
-    padding: 0.8rem;
+    padding: 0.8rem 0.4rem;
   }
 
   .content table td,
@@ -45,7 +49,7 @@ $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
     border: none;
   }
 
-  #map {
+  .map {
     .leaflet-control-attribution.leaflet-control {
       display: none;
     }
@@ -53,11 +57,49 @@ $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
 
   .card-content {
     .media {
+      padding: 0 0.25em;
       justify-content: space-between;
     }
 
-    .table.is-narrow td {
-      padding: 0.1em 0em;
+    .table {
+      &.is-narrow td {
+        padding: 0.125em 0.25em;
+      }
+
+      th:first-of-type {
+        width: 50%;
+      }
+
+    }
+
+    @media screen and (max-width: 900px) {
+      .duration-extended {
+        display: none;
+      }
+    }
+  }
+
+
+  @media screen and (min-width: $tablet) {
+    flex-direction: row;
+
+    .card-image {
+      min-width: 300px;
+      width: 50%;
+
+      .map {
+        position: absolute !important;
+        top: 0;
+        bottom: 0;
+        height: 100% !important;
+        width: 100%;
+      }
+    }
+
+    .card-content {
+      width: 100%;
+      max-width: 550px;
+      padding: 0.75rem 1.5rem;
     }
   }
 }
@@ -102,7 +144,7 @@ $positions: ('top','left','bottom','right');
   font-size: 1.25em;
 }
 
-@media screen and (orientation: landscape) and (max-width: 1023px) {
+@media screen and (orientation: landscape) and (max-width:  $desktop - 1) {
   body{
     -webkit-text-size-adjust: none;
   }
@@ -118,4 +160,16 @@ $positions: ('top','left','bottom','right');
   {
     margin: 0 auto;
   }
+}
+
+@media screen and (max-width: 390px) {
+  main.section {
+    padding: 1.5rem 0.75rem;
+  }
+}
+
+.is-truncated {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

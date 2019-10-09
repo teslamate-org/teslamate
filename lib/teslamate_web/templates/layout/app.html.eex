@@ -41,7 +41,10 @@
             <%= link(gettext("Geo-Fences"), to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item") %>
             <%= link(gettext("Settings"), to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5") %>
             <div class="navbar-item tags has-addons">
-              <span class="tag is-primary">v<%= Application.spec(:teslamate, :vsn) %></span>
+              <%= link "v#{Application.spec(:teslamate, :vsn)}", to: "https://github.com/adriankumpf/teslamate/releases",
+                                                                 class: "tag is-primary",
+                                                                 target: "_blank", rel: "noopener noreferrer"
+              %>
             </div>
           </div>
         </div>

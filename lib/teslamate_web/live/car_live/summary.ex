@@ -114,6 +114,5 @@ defmodule TeslaMateWeb.CarLive.Summary do
     ["#{w} wk", "#{d} d", "#{h} hr", "#{m} min", "#{s} sec"]
     |> Enum.reject(&String.starts_with?(&1, "0"))
     |> Enum.take(2)
-    |> Enum.join(", ")
   end
 end

@@ -53,7 +53,8 @@ defmodule TeslaMate.MappingTest do
         })
 
       assert Mapping.get_elevation(name, {0, 0}) == nil
-      assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}, 200
+      Process.sleep(100)
+      assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
 
       # still blocked
       assert Mapping.get_elevation(name, {0, 0}) == nil
@@ -72,6 +73,7 @@ defmodule TeslaMate.MappingTest do
         })
 
       assert Mapping.get_elevation(name, {1, 1}) == nil
+      Process.sleep(100)
       assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 1, 1}}
 
       refute_receive _
@@ -91,6 +93,7 @@ defmodule TeslaMate.MappingTest do
       assert Mapping.get_elevation(name, {0, 0}) == nil
 
       # circuit broke after 3 attempts
+      Process.sleep(100)
       assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
       assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
       assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}

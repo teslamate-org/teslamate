@@ -66,7 +66,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert [{"a", _, _}] = html |> Floki.find("[data-id=#{id}]")
 
-      assert [{"tbody", [], []}] =
+      assert [{"tbody", _, []}] =
                view |> render_click(:delete, %{"id" => "#{id}"}) |> Floki.find("tbody")
     end
   end
