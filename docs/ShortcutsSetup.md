@@ -34,9 +34,17 @@ These values are used on the screenshots. Whenever you see them, replace them wi
  * Select **Documents** (yellow icon), go to **Text** block and select **Text**.
  * It brings you to text editor. Type in your login and password separated by colon. For the assumption above, it will be "**mylogin:mysecretpassword**" (without the quotes).
  * Click **+** icon below the actions. This brings you to the list of available actions.
+ 
+ You will be back in Documents. Do not press Back, you'd lose the previously entered actions in this case.
+ Instead, scroll up and pres the gray X next to Documents. This will bring you to the categories of action.
+ 
+ 
  * Select **Scripting** (gray icon), go to **Files** block and select **Base64 Encode**.
  * Click  **Edit Automation** (upper left corner), it brings you back to the list of actions.
  * Click **+** icon below the actions. This brings you to the list of available actions.
+ 
+ close Scripting
+ 
  * Select **Web** (cyan icon), go to **URLs** block and select **URL**.
  * It brings you to text editor. Type in your endpoint public URL. For the assumption above, it will be "**https://mytm.myweb.com/wake**" (without the quotes).
  * Click  **Edit Automation** (upper left corner), it brings you back to the list of actions.
@@ -44,19 +52,26 @@ These values are used on the screenshots. Whenever you see them, replace them wi
  * Select **Web** (cyan icon) again, go to **Web Requests** block and select **Get Contents of URL**.
  * In the newly added action, click **Show more**
  * Change **Method** to **PUT**.
+ Click headers
  * In **Headers** section, click on **Add new header** (green + icon).
  * Type **Authorization** in **Key** box and **"Basic "** (without the quotes, note the **space** after **Basic**) into the **Value** box.
  * While still in **Value** box, click **Base64 Encoded** on **Variables** panel (bottom of the screen). It will be added to **Value**.
- * Click  **Edit Automation** (upper left corner), it brings you back to the list of actions.
- * Click  **Edit Automation** (upper left corner) once more, it brings you back to the main screen of the automation ().
 
 ### Saving an Automation
 
+ * Click *Next* (upper right corner), it will bring you to the summary page.
+ * Click **Done** (upper right corner), it will bring you to the main screen (list of automations).
+
+## Enabling / Disabling the Automation
+ * Click the automation
+ * Turn on/off the **Enable this automation**.
+ * Save by clicking **Done**.
+ 
 ## Executing the Automation
 
  * Get into the car and wake it up by pressing the brake pedal (if needed).
  * Once the Bluetooth connects, you will see notification on your lock screen.
- * Click it and unlock the phone.
- * Click **Execute** button.
-   <img src="../images/create_02_new_automation_type.png" />
+   <img src="../images/shortcuts/run_00_notification.png" />
+ * Click **Run** button.
+   <img src="../images/shortcuts/run_01_run.png" />
  * Done. 
