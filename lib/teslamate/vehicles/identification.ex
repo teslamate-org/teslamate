@@ -4,13 +4,22 @@ defmodule TeslaMate.Vehicles.Identification do
 
   require Logger
 
-  def properties(%Vehicle{vehicle_config: %Config{car_type: type, trim_badging: badging} = conf}) do
+  def properties(%Vehicle{vehicle_config: conf, option_codes: option_codes}) do
+    %Config{car_type: type, trim_badging: badging} = conf
+
     model = type |> String.downcase() |> get_model()
     trim_badging = badging |> upcase()
 
     efficiency =
       with :unknown <- get_efficiency(model, trim_badging) do
-        Logger.warn("Vehicle could not be identified!\n\n#{inspect(conf, pretty: true)}")
+        Logger.warn("""
+        Vehicle could not be identified!
+
+        #{inspect(conf, pretty: true)}
+
+        option codes: #{inspect(option_codes, pretty: true)}
+        """)
+
         nil
       end
 

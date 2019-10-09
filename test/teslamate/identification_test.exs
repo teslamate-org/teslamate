@@ -9,7 +9,7 @@ defmodule TeslaMate.IdentificationTest do
   import ExUnit.CaptureLog
 
   defp vehicle_fixture(config) do
-    %Vehicle{vehicle_config: struct(Config, config)}
+    %Vehicle{vehicle_config: struct(Config, config), option_codes: ["FOO", "AP42"]}
   end
 
   test "detects common Model S, 3 and X" do
@@ -68,6 +68,8 @@ defmodule TeslaMate.IdentificationTest do
                trim_badging: #{inspect(trim_badging)},
                wheel_type: nil
              }
+
+             option codes: ["FOO", "AP42"]
              """
     end
   end
