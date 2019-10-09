@@ -17,15 +17,36 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 25,
-  "iteration": 1570496706795,
+  "iteration": 1570498720288,
   "links": [],
   "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 18,
+      "panels": [],
+      "repeat": "car",
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
+      "title": "$car",
+      "type": "row"
+    },
     {
       "gridPos": {
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 4,
       "options": {
@@ -62,6 +83,13 @@
         "showThresholdMarkers": true
       },
       "pluginVersion": "6.3.5",
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "targets": [
         {
           "format": "table",
@@ -96,7 +124,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 0
+        "y": 1
       },
       "id": 10,
       "links": [],
@@ -109,10 +137,15 @@
             "decimals": 0,
             "mappings": [],
             "max": 260,
+            "min": 0,
             "thresholds": [
               {
                 "color": "semi-dark-green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ],
             "unit": "volt"
@@ -125,6 +158,13 @@
         "showThresholdMarkers": true
       },
       "pluginVersion": "6.3.5",
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "targets": [
         {
           "format": "table",
@@ -165,7 +205,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 0
+        "y": 1
       },
       "id": 11,
       "options": {
@@ -182,6 +222,10 @@
               {
                 "color": "semi-dark-green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ],
             "unit": "kwatt"
@@ -194,6 +238,13 @@
         "showThresholdMarkers": true
       },
       "pluginVersion": "6.3.5",
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "targets": [
         {
           "format": "table",
@@ -240,7 +291,7 @@
         "h": 7,
         "w": 15,
         "x": 9,
-        "y": 0
+        "y": 1
       },
       "id": 13,
       "legend": {
@@ -272,6 +323,13 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
@@ -371,7 +429,7 @@
         "h": 3,
         "w": 4,
         "x": 0,
-        "y": 4
+        "y": 5
       },
       "id": 14,
       "interval": null,
@@ -402,6 +460,13 @@
           "to": "null"
         }
       ],
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
@@ -476,7 +541,7 @@
         "h": 3,
         "w": 5,
         "x": 4,
-        "y": 4
+        "y": 5
       },
       "id": 6,
       "interval": null,
@@ -513,6 +578,13 @@
           "to": "null"
         }
       ],
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
@@ -586,7 +658,7 @@
         "h": 3,
         "w": 9,
         "x": 0,
-        "y": 7
+        "y": 8
       },
       "id": 2,
       "interval": null,
@@ -623,6 +695,13 @@
           "to": "null"
         }
       ],
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
@@ -688,7 +767,7 @@
         "h": 7,
         "w": 15,
         "x": 9,
-        "y": 7
+        "y": 8
       },
       "id": 15,
       "legend": {
@@ -720,6 +799,13 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "seriesOverrides": [
         {
           "alias": "Power [kW]",
@@ -840,7 +926,7 @@
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 10
+        "y": 11
       },
       "id": 16,
       "options": {
@@ -851,10 +937,16 @@
           "defaults": {
             "decimals": 0,
             "mappings": [],
+            "max": 100,
+            "min": 0,
             "thresholds": [
               {
                 "color": "semi-dark-green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ],
             "unit": "degree"
@@ -867,6 +959,13 @@
         "showThresholdMarkers": true
       },
       "pluginVersion": "6.3.5",
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "targets": [
         {
           "format": "table",
@@ -907,7 +1006,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 10
+        "y": 11
       },
       "id": 8,
       "options": {
@@ -918,10 +1017,16 @@
           "defaults": {
             "decimals": 0,
             "mappings": [],
+            "max": 100,
+            "min": 0,
             "thresholds": [
               {
                 "color": "semi-dark-green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ],
             "unit": "degree"
@@ -934,6 +1039,13 @@
         "showThresholdMarkers": true
       },
       "pluginVersion": "6.3.5",
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "targets": [
         {
           "format": "table",
@@ -974,7 +1086,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 10
+        "y": 11
       },
       "id": 9,
       "options": {
@@ -991,6 +1103,10 @@
               {
                 "color": "semi-dark-green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ],
             "unit": "degree"
@@ -1003,6 +1119,13 @@
         "showThresholdMarkers": true
       },
       "pluginVersion": "6.3.5",
+      "scopedVars": {
+        "car": {
+          "selected": true,
+          "text": "Doug",
+          "value": "1"
+        }
+      },
       "targets": [
         {
           "format": "table",
@@ -1161,5 +1284,5 @@
   "timezone": "",
   "title": "Overview Dash",
   "uid": "kOuP_Fggz",
-  "version": 30
+  "version": 35
 }
