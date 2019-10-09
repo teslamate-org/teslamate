@@ -72,10 +72,10 @@ These values are used on the screenshots. Whenever you see them, replace them wi
  * Get into the car and wake it up by pressing the brake pedal (if needed).
  * Once the Bluetooth connects, you will see notification on your lock screen.
  
-   <img align="right" src="../images/shortcuts/run_00_notification.png" />
+   <img src="../images/shortcuts/run_00_notification.png" />
    
  * Click **Run** button.
  
-   <img align="right" src="../images/shortcuts/run_01_run.png" />
+   <img src="../images/shortcuts/run_01_run.png" />
    
  * Done. 
