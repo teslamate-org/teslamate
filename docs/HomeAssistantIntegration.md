@@ -10,12 +10,11 @@ If your intention is to only use read-only sensor values, those provided by Tesl
 
 ## Screenshot
 
-Coming soon
+![HASS Screenshot](images/hass-dashboard.png)
 
 ## Current Status
 
-  * Sensors: All existing sensors available except for:
-    * Park Brake
+  * Sensors: All sensors exposed by the Tesla component are available
   * Locks: Not implemented
   * Climate: Not implemented
 
@@ -77,7 +76,7 @@ This is required for the automation above (in the automation.yaml section). It d
 ```
 tesla_location:
   hide_if_away: false
-  icon:
+  icon: mdi:car
   mac:
   name: Tesla
   picture:
@@ -178,6 +177,7 @@ tesla_location:
 - platform: mqtt
   name: tesla_odometer
   state_topic: "teslamate/cars/1/odometer"
+  unit_of_measurement: km
   icon: mdi:gauge
 
 - platform: mqtt
@@ -185,6 +185,17 @@ tesla_location:
   state_topic: "teslamate/cars/1/outside_temp"
   unit_of_measurement: °C
   icon: mdi:thermometer-lines
+
+- platform: template
+  sensors:
+    tesla_park_brake:
+      friendly_name: Park Brake
+      value_template: >-
+        {% if is_state('sensor.tesla_shift_state', 'P') %}
+          true
+        {% else %}
+          false
+        {% endif %}
 
 - platform: mqtt
   name: tesla_plugged_in
@@ -255,7 +266,7 @@ The below is the Lovelace UI configuration used to make the example screenshot a
                 name: Plugged In
           - type: glance
             entities:
-              - entity: binary_sensor.tesla_model_3_parking_brake_sensor
+              - entity: sensor.tesla_park_brake
                 name: Park Brake
               - entity: sensor.tesla_sentry_mode
                 name: Sentry Mode
