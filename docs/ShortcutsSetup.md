@@ -61,25 +61,32 @@ These values are used on the screenshots. Whenever you see them, replace them wi
  * Stay in **Web** (cyan icon) again, go to **Web Requests** block and select **Get Contents of URL**.
  * In the newly added action, click **Show more**
  * Change **Method** to **PUT**.
+ * Click **Headers**
  
 <img src="../images/shortcuts/create_18_url_edit.png" /> <img src="../images/shortcuts/create_19_url_contents.png" /> <img src="../images/shortcuts/create_20_url_contents_added.png" />
 <img src="../images/shortcuts/create_21_show_more.png" /> <img src="../images/shortcuts/create_22_method.png" />
  
- * Click **Headers**
  * In **Headers** section, click on **Add new header** (green + icon).
  * Type **Authorization** in **Key** box and **"Basic "** (without the quotes, note the **space** after **Basic**) into the **Value** box.
  * While still in **Value** box, click **Base64 Encoded** on **Variables** panel (bottom of the screen). It will be added to **Value**.
+
+<img src="../images/shortcuts/create_23_headers.png" /> <img src="../images/shortcuts/create_24_headers_add.png" /> <img src="../images/shortcuts/create_25_headers_values.png" />
+<img src="../images/shortcuts/create_26_headers_values_var.png" />
 
 ### Saving an Automation
 
  * Click *Next* (upper right corner), it will bring you to the summary page.
  * Click **Done** (upper right corner), it will bring you to the main screen (list of automations).
 
+<img src="../images/shortcuts/create_27_contents_filled.png" /> <img src="../images/shortcuts/create_28_automation_detail.png" /> <img src="../images/shortcuts/create_29_automation_list.png" />
+
 ## Enabling / Disabling the Automation
  * Click the automation
  * Turn on/off the **Enable this automation**.
  * Save by clicking **Done**.
- 
+
+<img src="../images/shortcuts/edit_01_automation_detail.png" /> <img src="../images/shortcuts/edit_02_edit_actions.png" />
+
 ## Executing the Automation
 
  * Get into the car and wake it up by pressing the brake pedal (if needed).
@@ -92,13 +99,3 @@ These values are used on the screenshots. Whenever you see them, replace them wi
    <img src="../images/shortcuts/run_01_run.png" />
    
  * Done. 
-
-   <img src="../images/shortcuts/create_23_headers.png" />
-   <img src="../images/shortcuts/create_24_headers_add.png" />
-   <img src="../images/shortcuts/create_25_headers_values.png" />
-   <img src="../images/shortcuts/create_26_headers_values_var.png" />
-   <img src="../images/shortcuts/create_27_contents_filled.png" />
-   <img src="../images/shortcuts/create_28_automation_detail.png" />
-   <img src="../images/shortcuts/create_29_automation_list.png" />
-   <img src="../images/shortcuts/edit_01_automation_detail.png" />
-   <img src="../images/shortcuts/edit_02_edit_actions.png" />
