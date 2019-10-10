@@ -4,6 +4,8 @@
 
 ## Introduction
 
+<img src="../images/shortcuts/icon.png" />
+
 Shortcuts is an iOS application ("internal" since 13.1) with similar features to Tasker or MacroDroid on Android. It's meant to create shortcuts (sequence of actions triggered by click) or automations (sequence of actions triggered by event - i.e. Bluetooth device connected). 
 
 Unfortunately, only couple of the useful events (like NFC on NFC enabled phones) can be really automated (no user interaction), most of them require unlocking the phone and confirming the action. See [Shortcuts documentation](https://support.apple.com/guide/shortcuts/enable-or-disable-a-personal-automation-apd602971e63/ios) (section: Enable an automation to run without asking) for more details.
