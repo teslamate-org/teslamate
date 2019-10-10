@@ -29,8 +29,8 @@ These values are used on the screenshots. Whenever you see them, replace them wi
  * Click **Next** (upper right corner). This brings you to the list of actions (empty for now).
 
 <img src="../images/shortcuts/create_00_home.png" /> <img src="../images/shortcuts/create_01_aut_home.png" /> <img src="../images/shortcuts/create_02_new_automation_type.png" />
-<img src="../images/shortcuts/create_03_triggering_event.png" /> <img src="../images/shortcuts/create_04_bluetooth.png" />
-<img src="../images/shortcuts/create_05_bluetooth_device.png" /> <img src="../images/shortcuts/create_06_bluetooth_selected.png" />
+<img src="../images/shortcuts/create_03_triggering_event.png" /> <img src="../images/shortcuts/create_04_bluetooth.png" /> <img src="../images/shortcuts/create_05_bluetooth_device.png" /> 
+<img src="../images/shortcuts/create_06_bluetooth_selected.png" />
 
 
 ### Building an action
@@ -40,28 +40,32 @@ These values are used on the screenshots. Whenever you see them, replace them wi
  * It brings you to text editor. Type in your login and password separated by colon. For the assumption above, it will be "**mylogin:mysecretpassword**" (without the quotes).
  
    <img src="../images/shortcuts/create_07_add_action.png" />    <img src="../images/shortcuts/create_08_action_categories.png" />    <img src="../images/shortcuts/create_09_docs_text.png" />
-   <img src="../images/shortcuts/create_10_text_edit.png" />
+<img src="../images/shortcuts/create_10_text_edit.png" />
 
  * Click **+** icon below the actions. This brings you to the list of available actions.
- 
- You will be back in Documents. Do not press Back, you'd lose the previously entered actions in this case.
- Instead, scroll up and pres the gray X next to Documents. This will bring you to the categories of action.
- 
- 
+ * You will be back in Documents. **DO NOT** (I know, it's tempting) press Back, you'd lose the previously entered actions in such case. Instead, scroll up and click the gray **X** next to Documents. This will bring you to the categories of action.
  * Select **Scripting** (gray icon), go to **Files** block and select **Base64 Encode**.
- * Click  **Edit Automation** (upper left corner), it brings you back to the list of actions.
+
+<img src="../images/shortcuts/create_11_text_edit_filled.png" /> <img src="../images/shortcuts/create_12_documents_close.png" /> <img src="../images/shortcuts/create_13_action_categories.png" />
+<img src="../images/shortcuts/create_14_scripting_enc.png" />
+
  * Click **+** icon below the actions. This brings you to the list of available actions.
- 
- close Scripting
- 
+ * Click the gray **X** to close Scripting category.
  * Select **Web** (cyan icon), go to **URLs** block and select **URL**.
  * It brings you to text editor. Type in your endpoint public URL. For the assumption above, it will be "**https://mytm.myweb.com/wake**" (without the quotes).
- * Click  **Edit Automation** (upper left corner), it brings you back to the list of actions.
+ 
+<img src="../images/shortcuts/create_15_enc_added.png" /> <img src="../images/shortcuts/create_16_scripting_close.png" /> <img src="../images/shortcuts/create_17_action_categories.png" />
+<img src="../images/shortcuts/create_17_url.png" /> 
+ 
  * Click **+** icon below the actions. This brings you to the list of available actions.
- * Select **Web** (cyan icon) again, go to **Web Requests** block and select **Get Contents of URL**.
+ * Stay in **Web** (cyan icon) again, go to **Web Requests** block and select **Get Contents of URL**.
  * In the newly added action, click **Show more**
  * Change **Method** to **PUT**.
- Click headers
+ 
+<img src="../images/shortcuts/create_18_url_edit.png" /> <img src="../images/shortcuts/create_19_url_contents.png" /> <img src="../images/shortcuts/create_20_url_contents_added.png" />
+<img src="../images/shortcuts/create_21_show_more.png" /> <img src="../images/shortcuts/create_22_method.png" />
+ 
+ * Click **Headers**
  * In **Headers** section, click on **Add new header** (green + icon).
  * Type **Authorization** in **Key** box and **"Basic "** (without the quotes, note the **space** after **Basic**) into the **Value** box.
  * While still in **Value** box, click **Base64 Encoded** on **Variables** panel (bottom of the screen). It will be added to **Value**.
@@ -89,19 +93,6 @@ These values are used on the screenshots. Whenever you see them, replace them wi
    
  * Done. 
 
-   <img src="../images/shortcuts/create_11_text_edit_filled.png" />
-   <img src="../images/shortcuts/create_12_documents_close.png" />
-   <img src="../images/shortcuts/create_13_action_categories.png" />
-   <img src="../images/shortcuts/create_14_scripting_enc.png" />
-   <img src="../images/shortcuts/create_15_enc_added.png" />
-   <img src="../images/shortcuts/create_16_scripting_close.png" />
-   <img src="../images/shortcuts/create_17_action_categories.png" />
-   <img src="../images/shortcuts/create_17_url.png" />
-   <img src="../images/shortcuts/create_18_url_edit.png" />
-   <img src="../images/shortcuts/create_19_url_contents.png" />
-   <img src="../images/shortcuts/create_20_url_contents_added.png" />
-   <img src="../images/shortcuts/create_21_show_more.png" />
-   <img src="../images/shortcuts/create_22_method.png" />
    <img src="../images/shortcuts/create_23_headers.png" />
    <img src="../images/shortcuts/create_24_headers_add.png" />
    <img src="../images/shortcuts/create_25_headers_values.png" />
