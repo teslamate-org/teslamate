@@ -38,6 +38,10 @@ These values are used on the screenshots. Whenever you see them, replace them wi
  * Click **Add Action** button. This brings you to the list of available actions.
  * Select **Documents** (yellow icon), go to **Text** block and select **Text**.
  * It brings you to text editor. Type in your login and password separated by colon. For the assumption above, it will be "**mylogin:mysecretpassword**" (without the quotes).
+ 
+   <img src="../images/shortcuts/create_07_add_action.png" />    <img src="../images/shortcuts/create_08_action_categories.png" />    <img src="../images/shortcuts/create_09_docs_text.png" />
+   <img src="../images/shortcuts/create_10_text_edit.png" />
+
  * Click **+** icon below the actions. This brings you to the list of available actions.
  
  You will be back in Documents. Do not press Back, you'd lose the previously entered actions in this case.
@@ -85,10 +89,6 @@ These values are used on the screenshots. Whenever you see them, replace them wi
    
  * Done. 
 
-   <img src="../images/shortcuts/create_07_add_action.png" />
-   <img src="../images/shortcuts/create_08_action_categories.png" />
-   <img src="../images/shortcuts/create_09_docs_text.png" />
-   <img src="../images/shortcuts/create_10_text_edit.png" />
    <img src="../images/shortcuts/create_11_text_edit_filled.png" />
    <img src="../images/shortcuts/create_12_documents_close.png" />
    <img src="../images/shortcuts/create_13_action_categories.png" />
