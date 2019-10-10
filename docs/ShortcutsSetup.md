@@ -28,13 +28,9 @@ These values are used on the screenshots. Whenever you see them, replace them wi
  * Click **Device**, select your Tesla (you need to have it paired already) and click **Done** (upper right corner).
  * Click **Next** (upper right corner). This brings you to the list of actions (empty for now).
 
-<img src="../images/shortcuts/create_00_home.png" />
-<img src="../images/shortcuts/create_01_aut_home.png" />
-<img src="../images/shortcuts/create_02_new_automation_type.png" />
-<img src="../images/shortcuts/create_03_triggering_event.png" />
-<img src="../images/shortcuts/create_04_bluetooth.png" />
-<img src="../images/shortcuts/create_05_bluetooth_device.png" />
-<img src="../images/shortcuts/create_06_bluetooth_selected.png" />
+<img src="../images/shortcuts/create_00_home.png" /> <img src="../images/shortcuts/create_01_aut_home.png" /> <img src="../images/shortcuts/create_02_new_automation_type.png" />
+<img src="../images/shortcuts/create_03_triggering_event.png" /> <img src="../images/shortcuts/create_04_bluetooth.png" />
+<img src="../images/shortcuts/create_05_bluetooth_device.png" /> <img src="../images/shortcuts/create_06_bluetooth_selected.png" />
 
 
 ### Building an action
