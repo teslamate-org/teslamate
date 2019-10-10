@@ -75,27 +75,27 @@ These values are used on the screenshots. Whenever you see them, replace them wi
 
 ### Saving an Automation
 
- * Click *Next* (upper right corner), it will bring you to the summary page.
+ * Click **Next** (upper right corner), it will bring you to the summary page.
  * Click **Done** (upper right corner), it will bring you to the main screen (list of automations).
+ * You have your new automation ready.
 
 <img src="../images/shortcuts/create_27_contents_filled.png" /> <img src="../images/shortcuts/create_28_automation_detail.png" /> <img src="../images/shortcuts/create_29_automation_list.png" />
 
-## Enabling / Disabling the Automation
+## Enabling / Disabling / Editing the Automation
  * Click the automation
  * Turn on/off the **Enable this automation**.
+ * If you need to edit something, click thru to the appropriate part of the automation.
  * Save by clicking **Done**.
 
 <img src="../images/shortcuts/edit_01_automation_detail.png" /> <img src="../images/shortcuts/edit_02_edit_actions.png" />
 
-## Executing the Automation
+## Running the Automation
 
  * Get into the car and wake it up by pressing the brake pedal (if needed).
- * Once the Bluetooth connects, you will see notification on your lock screen.
- 
-   <img src="../images/shortcuts/run_00_notification.png" />
-   
+ * Once the Bluetooth connects, you will see notification on your lock screen.   
  * Click **Run** button.
- 
-   <img src="../images/shortcuts/run_01_run.png" />
-   
  * Done. 
+ 
+<img src="../images/shortcuts/run_01_run.png" /> <img src="../images/shortcuts/run_00_notification.png" />
+   
+ 
