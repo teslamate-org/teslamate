@@ -16,8 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 25,
-  "iteration": 1570498720288,
+  "iteration": 1570875764225,
   "links": [],
   "panels": [
     {
@@ -1176,8 +1175,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "mi",
-          "value": "mi"
+          "text": "km",
+          "value": "km"
         },
         "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
@@ -1186,15 +1185,9 @@
         "label": null,
         "multi": false,
         "name": "length_unit",
-        "options": [
-          {
-            "selected": true,
-            "text": "mi",
-            "value": "mi"
-          }
-        ],
+        "options": [],
         "query": "select unit_of_length from settings limit 1;",
-        "refresh": 0,
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
@@ -1207,8 +1200,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "F",
-          "value": "F"
+          "text": "C",
+          "value": "C"
         },
         "datasource": "TeslaMate",
         "definition": "select unit_of_temperature from settings limit 1;",
@@ -1264,5 +1257,5 @@
   "timezone": "",
   "title": "Overview Dash",
   "uid": "kOuP_Fggz",
-  "version": 35
+  "version": 1
 }
