@@ -147,7 +147,7 @@ defmodule TeslaMate.Mapping do
   end
 
   def handle_event(:info, :purge_srtm_in_memory_cache, _state, %Data{client: client} = data) do
-    Logger.debug("Puring SRTM in-memory cache ...")
+    Logger.debug("Purging SRTM in-memory cache ...")
     {:ok, client} = SRTM.Client.purge_in_memory_cache(client, keep: 2)
     {:keep_state, %Data{data | client: client}}
   end
@@ -167,7 +167,7 @@ defmodule TeslaMate.Mapping do
 
       {:error, :not_found} ->
         Logger.debug("Installing circuit-breaker ...")
-        :fuse.install(name, {{:standard, 2, :timer.minutes(2)}, {:reset, :timer.minutes(5)}})
+        :fuse.install(name, {{:standard, 2, :timer.minutes(3)}, {:reset, :timer.minutes(15)}})
         do_get_elevation({lat, lng}, data)
     end
   end
