@@ -1,22 +1,34 @@
 # Changelog
 
-## [Unreleased]
+## [1.11.0] - 2019-10-12
 
 ### New Features
 
+- Add overview dashboard (by DBemis;
+  [#196](https://github.com/adriankumpf/teslamate/pull/196))
 - Make :check_origin option configurable via environment variable
   `CHECK_ORIGIN`
+- Open GitHub release page when clicking the version tag in the navbar
+- Display the current software version
+
+### New MQTT topics
+
+- `teslamate/cars/$car_id/version`: Current software version
 
 ### Enhancements
 
+- Tweak the mobile and desktop views
 - Add GIST index based on `ll_to_earth` to speed up geo-fence lookups
 - Improve accuracy of geo-fence lookups for some edge cases
+- Log option codes as well if the vehicle identification fails
 - Delete trips with less than 10m driven
 - Add/Update efficiency factors
 
 ### Bug Fixes
 
-- Exit early if the migrations fail
+- Fix an issue where postgres' automatic analyze couldn't succeed
+- Fix an issue where the derived efficiency factors could not be calculated
+- Exit early if migrations fail
 - Downgrade Grafana to v6.3.5
 
 ## [1.10.0] - 2019-10-05
@@ -451,7 +463,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.10.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.11.0...HEAD
+[1.11.0]: https://github.com/adriankumpf/teslamate/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/adriankumpf/teslamate/compare/v1.9.1...v1.10.0
 [1.9.1]: https://github.com/adriankumpf/teslamate/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/adriankumpf/teslamate/compare/v1.8.0...v1.9.0
