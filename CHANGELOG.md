@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.11.1] - 2019-10-13
+
+### Bug Fixes
+
+- Show all cars in the Overview dashboard
+
 ## [1.11.0] - 2019-10-12
 
 ### New Features
@@ -463,7 +469,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.11.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.11.1...HEAD
+[1.11.1]: https://github.com/adriankumpf/teslamate/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/adriankumpf/teslamate/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/adriankumpf/teslamate/compare/v1.9.1...v1.10.0
 [1.9.1]: https://github.com/adriankumpf/teslamate/compare/v1.9.0...v1.9.1
