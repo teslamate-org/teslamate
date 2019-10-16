@@ -5,9 +5,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   alias __MODULE__.Summary
   alias TeslaMate.{Vehicles, Api, Log, Settings, Convert}
-  alias TeslaMate.Vehicles.Identification
 
-  alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge}
+  alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge, VehicleConfig}
   alias TeslaApi.Vehicle
 
   import Core.Dependency, only: [call: 3, call: 2]
@@ -313,18 +312,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:online, vehicle}} = event, :start, data) do
     Logger.info("Start / :online", car_id: data.car.id)
 
-    %{model: model, trim_badging: trim_badging, efficiency: efficiency} =
-      Identification.properties(vehicle)
-
-    {:ok, car} =
-      data.car
-      |> Log.Car.changeset(%{
-        name: vehicle.display_name,
-        model: model,
-        trim_badging: trim_badging,
-        efficiency: efficiency
-      })
-      |> (fn attrs -> call(data.deps.log, :create_or_update_car, [attrs]) end).()
+    {:ok, car} = call(data.deps.log, :update_car, [data.car, identify(vehicle)])
 
     {:ok, %Log.State{start_date: last_state_change}} =
       call(data.deps.log, :start_state, [data.car.id, :online])
@@ -641,6 +629,26 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   # Private
+
+  defp identify(%Vehicle{display_name: name, vehicle_config: config}) do
+    %VehicleConfig{car_type: type, trim_badging: trim_badging} = config
+
+    trim_badging =
+      with str when is_binary(str) <- trim_badging do
+        String.upcase(str)
+      end
+
+    model =
+      case String.downcase(type) do
+        "models" <> _ -> "S"
+        "model3" <> _ -> "3"
+        "modelx" <> _ -> "X"
+        "modely" <> _ -> "Y"
+        _____________ -> nil
+      end
+
+    %{trim_badging: trim_badging, model: model, name: name}
+  end
 
   defp restore_last_knwon_values(vehicle, data) do
     with %Vehicle{drive_state: nil, charge_state: nil, climate_state: nil} <- vehicle,

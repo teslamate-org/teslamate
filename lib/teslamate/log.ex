@@ -6,7 +6,7 @@ defmodule TeslaMate.Log do
   require Logger
 
   import Ecto.Query, warn: false
-  import __MODULE__.Functions, only: [duration_min: 2]
+  import TeslaMate.CustomExpressions
 
   alias TeslaMate.{Repo, Locations, Mapping}
 
@@ -33,6 +33,12 @@ defmodule TeslaMate.Log do
 
   def create_or_update_car(%Ecto.Changeset{} = changeset) do
     Repo.insert_or_update(changeset)
+  end
+
+  def update_car(%Car{} = car, attrs) do
+    car
+    |> Car.changeset(attrs)
+    |> Repo.update()
   end
 
   ## State
@@ -313,9 +319,41 @@ defmodule TeslaMate.Log do
       |> Repo.one()
       |> Map.put(:end_date, Keyword.get_lazy(opts, :date, &DateTime.utc_now/0))
 
-    charging_process
-    |> ChargingProcess.changeset(stats)
-    |> Repo.update()
+    with {:ok, cproc} <- charging_process |> ChargingProcess.changeset(stats) |> Repo.update(),
+         {:ok, _car} <- recalculate_efficiency(charging_process.car) do
+      {:ok, cproc}
+    end
+  end
+
+  def recalculate_efficiency(car, opts \\ [{5, 12}, {4, 8}, {3, 5}, {2, 3}])
+  def recalculate_efficiency(car, []), do: {:ok, car}
+
+  def recalculate_efficiency(%Car{id: id} = car, [{precision, threshold} | opts]) do
+    query =
+      from c in ChargingProcess,
+        select: {
+          round(
+            c.charge_energy_added / nullif(c.end_ideal_range_km - c.start_ideal_range_km, 0),
+            ^precision
+          ),
+          count()
+        },
+        where: c.car_id == ^id and c.duration_min > 10 and c.end_battery_level <= 95,
+        group_by: 1,
+        order_by: [desc: 2],
+        limit: 1
+
+    case Repo.one(query) do
+      {factor, n} when n >= threshold and not is_nil(factor) ->
+        Logger.info("Derived efficiency factor: #{factor} Wh/km (#{n}x confirmed)", car_id: id)
+
+        car
+        |> Car.changeset(%{efficiency: factor})
+        |> Repo.update()
+
+      _ ->
+        recalculate_efficiency(car, opts)
+    end
   end
 
   alias TeslaMate.Log.Update

@@ -1,5 +1,27 @@
-defmodule TeslaMate.Locations.Functions do
+defmodule TeslaMate.CustomExpressions do
   import Ecto.Query, warn: false
+
+  defmacro duration_min(a, b) do
+    quote do
+      fragment(
+        "(EXTRACT(EPOCH FROM (?::timestamp - ?::timestamp)) / 60)::integer",
+        unquote(a),
+        unquote(b)
+      )
+    end
+  end
+
+  defmacro nullif(a, b) do
+    quote do
+      fragment("NULLIF(?, ?)", unquote(a), unquote(b))
+    end
+  end
+
+  defmacro round(v, s) do
+    quote do
+      fragment("ROUND((?)::numeric, ?)::float8", unquote(v), unquote(s))
+    end
+  end
 
   defmacro within_geofence?(position, geofence, direction \\ :right)
 

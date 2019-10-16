@@ -4,7 +4,7 @@ defmodule TeslaMate.Locations do
   """
 
   import Ecto.Query, warn: false
-  import __MODULE__.Functions
+  import TeslaMate.CustomExpressions
 
   alias TeslaMate.Repo
   alias __MODULE__.{Address, Geocoder, GeoFence}

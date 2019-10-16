@@ -53,6 +53,10 @@ defmodule LogMock do
     GenServer.call(name, {:create_or_update_car, attrs})
   end
 
+  def update_car(name, car, attrs) do
+    GenServer.call(name, {:update_car, car, attrs})
+  end
+
   def get_latest_position(name, car_id) do
     GenServer.call(name, {:get_latest_position, car_id})
   end
@@ -123,6 +127,15 @@ defmodule LogMock do
     # send(pid, action)
     %Car{} = car = Ecto.Changeset.apply_changes(attrs)
     {:reply, {:ok, car}, state}
+  end
+
+  def handle_call({:update_car, car, attrs} = _action, _from, %State{pid: _pid} = state) do
+    result =
+      car
+      |> Car.changeset(attrs)
+      |> Ecto.Changeset.apply_changes()
+
+    {:reply, {:ok, result}, state}
   end
 
   def handle_call({:get_latest_position, _car_id}, _from, state) do

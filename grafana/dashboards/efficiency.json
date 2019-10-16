@@ -783,7 +783,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tround((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric, 3) as factor,\n\tcount(*) as count\nFROM\n\tcharging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 15\n\tAND end_battery_level <= 90\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 3",
+          "rawSql": "SELECT\n\tround((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric, 3) as factor,\n\tcount(*) as count\nFROM\n\tcharging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n\tAND end_battery_level <= 95\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 3",
           "refId": "A",
           "select": [
             [

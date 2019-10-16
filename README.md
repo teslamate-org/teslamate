@@ -32,7 +32,6 @@ A data logger for your Tesla.
 
 - Little to no additional vampire drain: the car will fall asleep after a
   certain idle time
-- Built-in API to manually suspend / resume sending requests to the Tesla API
 - Automatic address lookup
 - Locally enriches positions with elevation data
 - Geo-fencing feature to create custom locations
@@ -231,6 +230,15 @@ teslamate/cars/$car_id/time_to_full_charge
 
 ## FAQ
 
+### Why are no consumption values displayed?
+
+Unfortunately, the Tesla API does not return consumption values for a trip. In
+order to still be able to display values TeslaMate estimates the consumption on
+the basis of the recorded (charging) data. It takes **at least three** charging
+sessions before the first estimate can be displayed. Each charging session will
+slightly improve the accuracy of the estimate, which is applied retroactively
+to all data.
+
 ### Sometimes the first few minutes of a drive are not recorded even though the car was online. Why?
 
 TeslaMate polls the car every few seconds while driving or charging. After
@@ -411,5 +419,5 @@ particular is not endorsed by Tesla. Use at your own risk.
 
 ## Credits
 
-[TeslaLogger](https://github.com/bassmaster187/TeslaLogger) was a big
-inspiration especially during early development. Thanks!
+- [TeslaLogger](https://github.com/bassmaster187/TeslaLogger) was a great
+  inspiration during the initial development period
