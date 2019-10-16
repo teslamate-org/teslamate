@@ -1,7 +1,7 @@
 defmodule TeslaMate.Vehicles.Vehicle.Summary do
   import TeslaMate.Convert, only: [miles_to_km: 2, mph_to_kmh: 1]
 
-  alias TeslaApi.Vehicle.State.{Drive, Charge}
+  alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleState}
   alias TeslaApi.Vehicle
 
   defstruct [
@@ -33,7 +33,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :charger_phases,
     :charger_actual_current,
     :charger_voltage,
-    :version
+    :version,
+    :update_available
   ]
 
   def into(nil, %{state: :start, healthy?: healthy?}) do
@@ -92,8 +93,9 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       odometer: get_in_struct(vehicle, [:vehicle_state, :odometer]) |> miles_to_km(2),
       locked: get_in_struct(vehicle, [:vehicle_state, :locked]),
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
-      windows_open: window_open?(vehicle),
-      version: get_in_struct(vehicle, [:vehicle_state, :car_version])
+      windows_open: window_open(vehicle),
+      version: get_in_struct(vehicle, [:vehicle_state, :car_version]),
+      update_available: update_available(vehicle)
     }
   end
 
@@ -113,11 +115,23 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
   defp plugged_in(_vehicle), do: false
 
-  defp window_open?(vehicle) do
-    get_in_struct(vehicle, [:vehicle_state, :fd_window]) == 1 or
-      get_in_struct(vehicle, [:vehicle_state, :fp_window]) == 1 or
-      get_in_struct(vehicle, [:vehicle_state, :rd_window]) == 1 or
-      get_in_struct(vehicle, [:vehicle_state, :rp_window]) == 1
+  defp window_open(%Vehicle{vehicle_state: vehicle_state}) do
+    case vehicle_state do
+      %VehicleState{fd_window: fd, fp_window: fp, rd_window: rd, rp_window: rp}
+      when is_number(fd) and is_number(fp) and is_number(rd) and is_number(fp) ->
+        fd > 0 or fp > 0 or rd > 0 or rp > 0
+
+      _ ->
+        nil
+    end
+  end
+
+  defp update_available(vehicle) do
+    case get_in_struct(vehicle, [:vehicle_state, :software_update, :status]) do
+      "available" -> true
+      status when is_binary(status) -> false
+      nil -> nil
+    end
   end
 
   defp to_datetime(nil), do: nil

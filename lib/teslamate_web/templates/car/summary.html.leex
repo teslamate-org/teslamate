@@ -214,6 +214,13 @@
           <% end %>
         </tbody>
       </table>
+
+     <%= if @summary.update_available do %>
+      <span class="update-available tag has-background-white-ter has-text-grey">
+        <span class="icon"><span class="ion-ionic ion-md-gift"></span></span> <%=
+          gettext "Software Update available"
+        %></span>
+      <% end %>
     </div>
   </div>
 </div>

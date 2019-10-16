@@ -163,6 +163,28 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     end
   end
 
+  describe "tags" do
+    @tag :signed_in
+    @tag :capture_log
+    test "shows tag if update is available ", %{conn: conn} do
+      events = [
+        {:ok, online_event()},
+        {:ok, update_event("available", nil)},
+        {:error, :unknown}
+      ]
+
+      :ok = start_vehicles(events)
+
+      Process.sleep(300)
+
+      assert {:ok, _parent_view, html} =
+               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
+      assert [{"span", _, [{"span", _, _}, " Software Update available"]}] =
+               html |> Floki.find(".update-available")
+    end
+  end
+
   def start_vehicles(events \\ []) do
     {:ok, _pid} = start_supervised({ApiMock, name: :api_vehicle, events: events, pid: self()})
 

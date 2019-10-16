@@ -5,6 +5,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
   test "logs an update cycle", %{test: name} do
     events = [
       {:ok, online_event()},
+      {:ok, update_event("available", nil)},
       {:ok, update_event("installing", "2019.8.4 530d1d3")},
       {:ok, update_event("installing", "2019.8.4 530d1d3")},
       {:ok, update_event("installing", "2019.8.4 530d1d3")},
@@ -19,7 +20,10 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online, since: s0}}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _server, _topic,
+                     %Summary{state: :online, since: s0, update_available: true}}}
 
     assert_receive {:start_update, ^car_id}
 
@@ -46,6 +50,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
   test "logs an update if the status is not empty", %{test: name} do
     events = [
       {:ok, online_event()},
+      {:ok, update_event("available", nil)},
       {:ok, update_event("installing", "2019.8.4 530d1d3")},
       {:ok, update_event("foo", "2019.8.5 3aaa23d")}
     ]
@@ -54,7 +59,10 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
-    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online, since: s0}}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _server, _topic,
+                     %Summary{state: :online, since: s0, update_available: true}}}
 
     assert_receive {:start_update, ^car_id}
     assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :updating, since: s1}}}

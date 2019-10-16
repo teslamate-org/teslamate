@@ -226,6 +226,7 @@ teslamate/cars/$car_id/charger_power
 teslamate/cars/$car_id/charger_voltage
 teslamate/cars/$car_id/scheduled_charging_start_time
 teslamate/cars/$car_id/time_to_full_charge
+teslamate/cars/$car_id/update_available
 ```
 
 ## FAQ

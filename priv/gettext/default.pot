@@ -390,3 +390,8 @@ msgstr ""
 #: lib/teslamate_web/templates/car/summary.html.leex:211
 msgid "Version"
 msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:220
+msgid "Software Update available"
+msgstr ""
