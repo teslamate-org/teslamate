@@ -39,10 +39,14 @@ defmodule TeslaMate.LogStateTest do
       assert {:ok, %State{state: :online, start_date: start_date, end_date: nil}} =
                Log.start_state(car_id, :online)
 
-      :timer.sleep(10)
-
-      assert {:ok, %State{state: :offline, start_date: end_date, end_date: nil}} =
-               Log.start_state(car_id, :offline)
+      {:ok, %State{start_date: end_date}} =
+        TestHelper.eventually(
+          fn ->
+            assert {:ok, %State{state: :offline, end_date: nil}} =
+                     Log.start_state(car_id, :offline)
+          end,
+          delay: 10
+        )
 
       assert [
                %State{state: :online, start_date: ^start_date, end_date: ^end_date},
@@ -57,11 +61,17 @@ defmodule TeslaMate.LogStateTest do
       assert {:ok, %State{state: :online, start_date: s0, end_date: nil}} =
                Log.start_state(car_id, :online)
 
+      Process.sleep(10)
+
       assert {:ok, %State{state: :online, start_date: s1, end_date: nil}} =
                Log.start_state(another_car_id, :online)
 
+      Process.sleep(10)
+
       assert {:ok, %State{state: :asleep, start_date: e1, end_date: nil}} =
                Log.start_state(another_car_id, :asleep)
+
+      Process.sleep(10)
 
       assert {:ok, %State{state: :offline, start_date: e0, end_date: nil}} =
                Log.start_state(car_id, :offline)

@@ -81,7 +81,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      :timer.sleep(250)
+      Process.sleep(250)
 
       conn = get(conn, Routes.car_path(conn, :index))
 
@@ -199,7 +199,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      :timer.sleep(100)
+      Process.sleep(100)
 
       conn = get(conn, Routes.car_path(conn, :index))
 
@@ -305,7 +305,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      :timer.sleep(100)
+      Process.sleep(100)
 
       conn = get(conn, Routes.car_path(conn, :index))
 
@@ -355,7 +355,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      :timer.sleep(250)
+      Process.sleep(250)
 
       conn = get(conn, Routes.car_path(conn, :index))
 
@@ -471,7 +471,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       ]
 
       :ok = start_vehicles(events)
-      :timer.sleep(100)
+      Process.sleep(100)
 
       %Car{id: id} = Log.get_car_by(vin: "xxxxx")
       %Summary{state: :suspended} = TeslaMate.Vehicles.summary(id)

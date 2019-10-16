@@ -32,7 +32,7 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
       start_mapping(name, %{
         {0.0, 0.0} => fn -> {:ok, 42} end,
         {1.0, 1.0} => fn ->
-          :timer.sleep(100)
+          Process.sleep(100)
           {:ok, 420}
         end
       })
@@ -84,7 +84,7 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
         {0.0, 0.0} => fn -> {:ok, 42} end,
         {1.0, 1.0} => fn -> {:error, :boom} end,
         {42.0, 42.0} => fn ->
-          :timer.sleep(100)
+          Process.sleep(100)
           {:error, :kaputt}
         end
       })
@@ -95,7 +95,7 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
     assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 42.0, 42.0}}
     # 4th and 5th are :unavailable
 
-    :timer.sleep(300)
+    Process.sleep(300)
 
     assert %Position{elevation: 42.0} = TeslaMate.Repo.get(Position, p0.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p1.id)

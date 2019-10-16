@@ -52,7 +52,7 @@ defmodule TeslaMate.Vehicles do
       :ok
     else
       _ ->
-        :timer.sleep(10)
+        Process.sleep(10)
         block_until_started(retries - 1)
     end
   end
