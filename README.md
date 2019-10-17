@@ -234,7 +234,7 @@ teslamate/cars/$car_id/time_to_full_charge
 
 Unfortunately, the Tesla API does not return consumption values for a trip. In
 order to still be able to display values TeslaMate estimates the consumption on
-the basis of the recorded (charging) data. It takes **at least three** charging
+the basis of the recorded (charging) data. It takes **at least two** charging
 sessions before the first estimate can be displayed. Each charging session will
 slightly improve the accuracy of the estimate, which is applied retroactively
 to all data.

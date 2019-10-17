@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1568831186926,
+  "iteration": 1571332652839,
   "links": [],
   "panels": [
     {
@@ -592,7 +592,7 @@
         "#d44a3a"
       ],
       "datasource": "TeslaMate",
-      "decimals": 3,
+      "decimals": 0,
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -603,7 +603,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
+        "w": 8,
         "x": 0,
         "y": 13
       },
@@ -625,7 +625,7 @@
       "nullPointMode": "connected",
       "nullText": null,
       "options": {},
-      "postfix": "",
+      "postfix": " Wh/$length_unit",
       "postfixFontSize": "50%",
       "prefix": "",
       "prefixFontSize": "50%",
@@ -658,7 +658,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select efficiency from cars where id = $car_id;",
+          "rawSql": "SELECT\n\tCASE WHEN '$length_unit' = 'km' THEN efficiency\n\t     WHEN '$length_unit' = 'mi' THEN efficiency * 1.60934\n\tEND * 1000 as efficiency\nFROM\n\tcars\nWHERE\n\tid = $car_id;",
           "refId": "A",
           "select": [
             [
@@ -685,7 +685,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Current efficiency factor",
+      "title": "Current $preferred_range efficiency",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -703,8 +703,8 @@
       "fontSize": "100%",
       "gridPos": {
         "h": 5,
-        "w": 19,
-        "x": 5,
+        "w": 8,
+        "x": 8,
         "y": 13
       },
       "id": 12,
@@ -739,9 +739,9 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 3,
+          "decimals": 0,
           "mappingType": 1,
-          "pattern": "factor",
+          "pattern": "efficiency",
           "thresholds": [],
           "type": "number",
           "unit": "short"
@@ -770,7 +770,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "decimals": 2,
+          "decimals": 0,
           "pattern": "/.*/",
           "thresholds": [],
           "type": "number",
@@ -783,7 +783,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tround((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric, 3) as factor,\n\tcount(*) as count\nFROM\n\tcharging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n\tAND end_battery_level <= 95\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 3",
+          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric *\n\t  CASE WHEN '$length_unit' = 'km' THEN 1.0\n\t       WHEN '$length_unit' = 'mi' THEN 1.60934\n\t  END, 3) * 1000 as efficiency,\n  count(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_ideal_range_km IS NOT NULL\n  AND end_ideal_range_km IS NOT NULL\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
           "refId": "A",
           "select": [
             [
@@ -809,7 +809,116 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Derived efficiency factors",
+      "title": "Derived ideal efficiencies (Wh/$length_unit)",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": "TeslaMate",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 16,
+        "y": 13
+      },
+      "id": 15,
+      "options": {},
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 1,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "efficiency",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "count",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 0,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric *\n\t  CASE WHEN '$length_unit' = 'km' THEN 1.0\n\t       WHEN '$length_unit' = 'mi' THEN 1.60934\n\t  END, 3) * 1000 as efficiency,\n\tcount(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_rated_range_km IS NOT NULL\n  AND end_rated_range_km IS NOT NULL\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "charge_energy_added"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "charges",
+          "timeColumn": "date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Derived rated efficiencies (Wh/$length_unit)",
       "transform": "table",
       "type": "table"
     }

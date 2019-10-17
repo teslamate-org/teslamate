@@ -8,7 +8,7 @@ defmodule TeslaMate.Log do
   import Ecto.Query, warn: false
   import TeslaMate.CustomExpressions
 
-  alias TeslaMate.{Repo, Locations, Mapping}
+  alias TeslaMate.{Repo, Locations, Mapping, Settings}
 
   ## Car
 
@@ -39,6 +39,14 @@ defmodule TeslaMate.Log do
     car
     |> Car.changeset(attrs)
     |> Repo.update()
+  end
+
+  def recalculate_efficiencies(%Settings.Settings{} = settings) do
+    for car <- list_cars() do
+      {:ok, _car} = recalculate_efficiency(car, settings)
+    end
+
+    :ok
   end
 
   ## State
@@ -302,6 +310,8 @@ defmodule TeslaMate.Log do
       |> preload([:car, :position])
       |> Repo.get!(process_id)
 
+    settings = Settings.get_settings!()
+
     stats =
       Charge
       |> where(charging_process_id: ^process_id)
@@ -320,25 +330,36 @@ defmodule TeslaMate.Log do
       |> Map.put(:end_date, Keyword.get_lazy(opts, :date, &DateTime.utc_now/0))
 
     with {:ok, cproc} <- charging_process |> ChargingProcess.changeset(stats) |> Repo.update(),
-         {:ok, _car} <- recalculate_efficiency(charging_process.car) do
+         {:ok, _car} <- recalculate_efficiency(charging_process.car, settings) do
       {:ok, cproc}
     end
   end
 
-  def recalculate_efficiency(car, opts \\ [{5, 12}, {4, 8}, {3, 5}, {2, 3}])
-  def recalculate_efficiency(car, []), do: {:ok, car}
+  defp recalculate_efficiency(car, settings, opts \\ [{5, 8}, {4, 5}, {3, 3}, {2, 2}])
+  defp recalculate_efficiency(car, _settings, []), do: {:ok, car}
 
-  def recalculate_efficiency(%Car{id: id} = car, [{precision, threshold} | opts]) do
+  defp recalculate_efficiency(%Car{id: id} = car, settings, [{precision, threshold} | opts]) do
+    {start_range, end_range} =
+      case settings do
+        %Settings.Settings{preferred_range: :ideal} ->
+          {:start_ideal_range_km, :end_ideal_range_km}
+
+        %Settings.Settings{preferred_range: :rated} ->
+          {:start_rated_range_km, :end_rated_range_km}
+      end
+
     query =
       from c in ChargingProcess,
         select: {
           round(
-            c.charge_energy_added / nullif(c.end_ideal_range_km - c.start_ideal_range_km, 0),
+            c.charge_energy_added / nullif(field(c, ^end_range) - field(c, ^start_range), 0),
             ^precision
           ),
           count()
         },
-        where: c.car_id == ^id and c.duration_min > 10 and c.end_battery_level <= 95,
+        where:
+          c.car_id == ^id and c.duration_min > 10 and c.end_battery_level <= 95 and
+            not is_nil(field(c, ^end_range)) and not is_nil(field(c, ^start_range)),
         group_by: 1,
         order_by: [desc: 2],
         limit: 1
@@ -352,7 +373,7 @@ defmodule TeslaMate.Log do
         |> Repo.update()
 
       _ ->
-        recalculate_efficiency(car, opts)
+        recalculate_efficiency(car, settings, opts)
     end
   end
 

@@ -110,4 +110,86 @@ defmodule TeslaMate.SettingsTest do
       end
     end
   end
+
+  describe "efficiencies" do
+    alias TeslaMate.Log.{Car, ChargingProcess, Position}
+    alias TeslaMate.Log
+
+    test "triggers a recalculaten of efficiencies if the preferred range chages" do
+      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
+      %Car{id: car_id, efficiency: nil} = car_fixture()
+
+      data = [
+        {293.9, 293.9, nil, nil, 0.0, 59, 59, 0},
+        {293.2, 303.4, nil, nil, 1.65, 59, 61, 33},
+        {302.5, 302.5, nil, nil, 0.0, 61, 61, 0},
+        {302.5, 302.5, nil, nil, 0.0, 61, 61, 0},
+        {302.1, 309.5, nil, nil, 1.14, 61, 62, 23},
+        {71.9, 350.5, nil, nil, 42.21, 14, 70, 27},
+        {181.0, 484.0, nil, nil, 46.13, 36, 97, 46},
+        {312.3, 324.9, nil, nil, 1.75, 63, 65, 6},
+        {325.6, 482.7, nil, nil, 23.71, 65, 97, 34},
+        {80.5, 412.4, nil, nil, 50.63, 16, 83, 70},
+        {259.7, 426.2, nil, nil, 25.56, 52, 85, 36},
+        {105.5, 361.4, nil, nil, 38.96, 21, 72, 22},
+        {143.1, 282.5, nil, nil, 21.11, 29, 57, 15},
+        {111.6, 406.9, nil, nil, 44.93, 22, 82, 36},
+        {115.0, 453.2, nil, nil, 51.49, 23, 91, 38},
+        {112.5, 112.5, 111.5, 112.5, 0.0, 23, 23, 1},
+        {109.7, 139.7, 108.7, 139.7, 4.57, 22, 28, 26},
+        {63.9, 142.3, 64.9, 142.3, 11.82, 13, 29, 221},
+        {107.9, 450.1, 108.9, 450.1, 52.1, 22, 90, 40}
+      ]
+
+      :ok = insert_charging_processes(car_id, data)
+      settings = Settings.get_settings!()
+
+      # no change
+      assert {:ok, settings} = Settings.update_settings(settings, %{preferred_range: :ideal})
+      assert %Car{efficiency: nil} = Log.get_car!(car_id)
+
+      # changed
+      assert {:ok, settings} = Settings.update_settings(settings, %{preferred_range: :rated})
+      assert %Car{efficiency: 0.15} = Log.get_car!(car_id)
+
+      # changed back
+      assert {:ok, settings} = Settings.update_settings(settings, %{preferred_range: :ideal})
+      assert %Car{efficiency: 0.152} = Log.get_car!(car_id)
+    end
+
+    defp car_fixture(attrs \\ %{}) do
+      {:ok, car} =
+        attrs
+        |> Enum.into(%{eid: 42, model: "M3", vid: 42, vin: "xxxxx"})
+        |> Log.create_car()
+
+      car
+    end
+
+    @valid_pos_attrs %{date: DateTime.utc_now(), latitude: 0.0, longitude: 0.0}
+
+    defp insert_charging_processes(car_id, data) do
+      {:ok, %Position{id: position_id}} = Log.insert_position(car_id, @valid_pos_attrs)
+
+      data =
+        for {sir, eir, srr, err, ca, sl, el, d} <- data do
+          %{
+            car_id: car_id,
+            position_id: position_id,
+            start_ideal_range_km: sir,
+            end_ideal_range_km: eir,
+            start_rated_range_km: srr,
+            end_rated_range_km: err,
+            charge_energy_added: ca,
+            start_battery_level: sl,
+            end_battery_level: el,
+            duration_min: d
+          }
+        end
+
+      {_, nil} = Repo.insert_all(ChargingProcess, data)
+
+      :ok
+    end
+  end
 end

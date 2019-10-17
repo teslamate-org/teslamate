@@ -402,7 +402,9 @@ defmodule TeslaMate.LogChargingTest do
 
   describe "efficiency factor" do
     test "recalculates the efficiency factor after completing a charging session" do
-      assert %Car{id: car_id, efficiency: nil} = car_fixture()
+      alias TeslaMate.Settings
+
+      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
 
       data = [
         {293.9, 293.9, 0.0, 59, 59, 0},
@@ -426,9 +428,16 @@ defmodule TeslaMate.LogChargingTest do
         {107.9, 450.1, 52.1, 22, 90, 40}
       ]
 
-      :ok = insert_charging_process_fixtures(car_id, data)
+      assert %Car{id: car_id_0, efficiency: nil} = car_fixture(eid: 3_453, vid: 3240, vin: "slkf")
+      assert %Car{id: car_id_1, efficiency: nil} = car_fixture(eid: 3_904, vid: 9403, vin: "salk")
 
-      assert %Car{efficiency: 0.152} = Log.get_car!(car_id)
+      for {range, car_id} <- [{:ideal, car_id_0}, {:rated, car_id_1}] do
+        {:ok, _} = Settings.get_settings!() |> Settings.update_settings(%{preferred_range: range})
+
+        :ok = insert_charging_process_fixtures(car_id, data, range)
+
+        assert %Car{efficiency: 0.152} = Log.get_car!(car_id)
+      end
     end
 
     test "makes an estimate with up to 4 decimal places" do
@@ -470,13 +479,12 @@ defmodule TeslaMate.LogChargingTest do
       assert %Car{efficiency: 0.1522} = Log.get_car!(car_id)
     end
 
-    test "makes a rough estimate starting a three values" do
+    test "makes a rough estimate starting a two values" do
       ## 2x
       assert %Car{id: car_id, efficiency: nil} = car_fixture(eid: 666, vid: 667, vin: "668")
 
       data = [
-        {283.1, 353.9, 10.57, 57, 71, 60},
-        {259.7, 426.2, 25.56, 52, 85, 36}
+        {283.1, 353.9, 10.57, 57, 71, 60}
       ]
 
       :ok = insert_charging_process_fixtures(car_id, data)
@@ -488,7 +496,6 @@ defmodule TeslaMate.LogChargingTest do
       assert %Car{id: car_id, efficiency: nil} = car_fixture(eid: 886, vid: 887, vin: "888")
 
       data = [
-        {131.9, 285.9, 23.54, 26, 57, 41},
         {283.1, 353.9, 10.57, 57, 71, 60},
         {259.7, 426.2, 25.56, 52, 85, 36}
       ]
@@ -512,21 +519,27 @@ defmodule TeslaMate.LogChargingTest do
       assert %Car{efficiency: nil} = Log.get_car!(car_id)
     end
 
-    defp insert_charging_process_fixtures(car_id, data) do
+    defp insert_charging_process_fixtures(car_id, data, range \\ :ideal) do
       {:ok, %Position{id: position_id}} = Log.insert_position(car_id, @valid_pos_attrs)
+
+      {start_range, end_range} =
+        case range do
+          :ideal -> {:start_ideal_range_km, :end_ideal_range_km}
+          :rated -> {:start_rated_range_km, :end_rated_range_km}
+        end
 
       data =
         for {sr, er, ca, sl, el, d} <- data do
           %{
             car_id: car_id,
             position_id: position_id,
-            start_ideal_range_km: sr,
-            end_ideal_range_km: er,
             charge_energy_added: ca,
             start_battery_level: sl,
             end_battery_level: el,
             duration_min: d
           }
+          |> Map.put(start_range, sr)
+          |> Map.put(end_range, er)
         end
 
       {_, nil} = Repo.insert_all(ChargingProcess, data)
