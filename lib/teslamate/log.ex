@@ -5,8 +5,8 @@ defmodule TeslaMate.Log do
 
   require Logger
 
-  import Ecto.Query, warn: false
   import TeslaMate.CustomExpressions
+  import Ecto.Query, warn: false
 
   alias TeslaMate.{Repo, Locations, Mapping, Settings}
 
@@ -299,7 +299,9 @@ defmodule TeslaMate.Log do
       end_ideal_range_km: nil,
       end_rated_range_km: nil,
       end_battery_level: nil,
-      duration_min: nil
+      duration_min: nil,
+      charge_energy_used: nil,
+      charge_energy_used_confidence: nil
     })
     |> Repo.update()
   end
@@ -312,11 +314,23 @@ defmodule TeslaMate.Log do
 
     settings = Settings.get_settings!()
 
+    charging_interval = Keyword.get(opts, :charging_interval)
+    charge_energy_used_confidence = calculate_confidence(process_id, charging_interval)
+
     stats =
       Charge
       |> where(charging_process_id: ^process_id)
       |> select([c], %{
         charge_energy_added: max(c.charge_energy_added) - min(c.charge_energy_added),
+        charge_energy_used:
+          sum(
+            c_if is_nil(c.charger_phases) do
+              c.charger_power
+            else
+              c.charger_actual_current * c.charger_voltage *
+                c_if(c.charger_phases == 2, do: 3, else: c.charger_phases) / 1000.0
+            end
+          ) * ^charging_interval / 3600,
         start_ideal_range_km: min(c.ideal_battery_range_km),
         end_ideal_range_km: max(c.ideal_battery_range_km),
         start_rated_range_km: min(c.rated_battery_range_km),
@@ -328,11 +342,42 @@ defmodule TeslaMate.Log do
       })
       |> Repo.one()
       |> Map.put(:end_date, Keyword.get_lazy(opts, :date, &DateTime.utc_now/0))
+      |> Map.put(:charge_energy_used_confidence, charge_energy_used_confidence)
+      |> Map.put(:interval_sec, charging_interval)
 
     with {:ok, cproc} <- charging_process |> ChargingProcess.changeset(stats) |> Repo.update(),
          {:ok, _car} <- recalculate_efficiency(charging_process.car, settings) do
       {:ok, cproc}
     end
+  end
+
+  defp calculate_confidence(_process_id, nil), do: nil
+
+  defp calculate_confidence(process_id, charging_interval) do
+    {:ok, %{rows: [[confidence]]}} =
+      Repo.query(
+        """
+        WITH deltas AS (
+          SELECT
+            date - lag(date, 1) OVER (ORDER BY date) as delta
+          FROM
+            charges
+          WHERE
+            charging_process_id = $1
+          ORDER BY
+            date
+        )
+        SELECT
+          (NULLIF(count(*), 0) / NULLIF((select count(*) from deltas)::numeric, 0))::float as confidence
+        FROM
+          deltas
+        WHERE
+          delta >= $2 * INTERVAL '1 second' and delta <= ($2 + 1) * INTERVAL '1 second';
+        """,
+        [process_id, charging_interval]
+      )
+
+    confidence
   end
 
   defp recalculate_efficiency(car, settings, opts \\ [{5, 8}, {4, 5}, {3, 3}, {2, 2}])

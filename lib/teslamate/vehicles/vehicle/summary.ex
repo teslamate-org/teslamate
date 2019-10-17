@@ -76,7 +76,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       charge_port_door_open: charge(vehicle, :charge_port_door_open),
       charger_actual_current: charge(vehicle, :charger_actual_current),
       charger_phases: charge(vehicle, :charger_phases),
-      charger_power: charge(vehicle, :charger_power),
+      charger_power: charger_power(vehicle),
       charger_voltage: charge(vehicle, :charger_voltage),
       est_battery_range_km: charge(vehicle, :est_battery_range) |> miles_to_km(2),
       ideal_battery_range_km: charge(vehicle, :ideal_battery_range) |> miles_to_km(2),
@@ -100,6 +100,17 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   end
 
   defp charge(vehicle, key), do: get_in_struct(vehicle, [:charge_state, key])
+
+  defp charger_power(%Vehicle{charge_state: %Charge{charger_phases: nil} = c}) do
+    c.charger_power
+  end
+
+  defp charger_power(%Vehicle{charge_state: %Charge{} = c}) do
+    c.charger_actual_current * c.charger_voltage *
+      if(c.charger_phases == 2, do: 3, else: c.charger_phases) / 1000.0
+  end
+
+  defp charger_power(_vehicle), do: nil
 
   defp speed(%Vehicle{drive_state: %Drive{speed: s}}) when not is_nil(s), do: mph_to_kmh(s)
   defp speed(_vehicle), do: nil

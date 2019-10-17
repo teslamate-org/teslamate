@@ -61,27 +61,22 @@ defmodule TeslaMate.LogStateTest do
       assert {:ok, %State{state: :online, start_date: s0, end_date: nil}} =
                Log.start_state(car_id, :online)
 
-      Process.sleep(10)
-
       assert {:ok, %State{state: :online, start_date: s1, end_date: nil}} =
                Log.start_state(another_car_id, :online)
 
-      Process.sleep(10)
+      Process.sleep(1010)
 
       assert {:ok, %State{state: :asleep, start_date: e1, end_date: nil}} =
                Log.start_state(another_car_id, :asleep)
 
-      Process.sleep(10)
-
       assert {:ok, %State{state: :offline, start_date: e0, end_date: nil}} =
                Log.start_state(car_id, :offline)
 
-      assert [
-               %State{state: :online, start_date: ^s0, end_date: ^e0},
-               %State{state: :online, start_date: ^e1, end_date: ^e1},
-               %State{state: :asleep, start_date: ^s1, end_date: nil},
-               %State{state: :offline, start_date: ^s0, end_date: nil}
-             ] = State |> order_by(asc: :id) |> Repo.all()
+      assert [state_0, state_1, state_2, state_3] = State |> order_by(asc: :id) |> Repo.all()
+      assert %State{state: :online, start_date: ^s0, end_date: ^e0} = state_0
+      assert %State{state: :online, start_date: ^s1, end_date: ^e1} = state_1
+      assert %State{state: :asleep, start_date: ^e1, end_date: nil} = state_2
+      assert %State{state: :offline, start_date: ^e0, end_date: nil} = state_3
     end
 
     test "with invalid data returns error changeset" do

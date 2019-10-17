@@ -3,7 +3,7 @@ defmodule TeslaMate.Locations.GeoFence do
 
   import Ecto.Changeset
   import Ecto.Query
-  import TeslaMate.CustomExpressions
+  import TeslaMate.CustomExpressions, only: [within_geofence?: 3]
 
   alias TeslaMate.Log.{ChargingProcess, Drive}
 

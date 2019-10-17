@@ -1,6 +1,17 @@
 defmodule TeslaMate.CustomExpressions do
   import Ecto.Query, warn: false
 
+  defmacro c_if(condition, do: do_clause, else: else_clause) do
+    quote do
+      fragment(
+        "CASE WHEN ? THEN ? ELSE ? END",
+        unquote(condition),
+        unquote(do_clause),
+        unquote(else_clause)
+      )
+    end
+  end
+
   defmacro duration_min(a, b) do
     quote do
       fragment(

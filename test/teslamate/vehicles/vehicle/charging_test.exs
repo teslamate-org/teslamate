@@ -70,9 +70,9 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert DateTime.diff(s1, s2, :nanosecond) < 0
 
     # Completed
-    assert_receive {:complete_charging_process, ^charging_id, []}
+    assert_receive {:complete_charging_process, ^charging_id, [charging_interval: 5]}
     # Unplugged
-    assert_receive {:complete_charging_process, ^charging_id, []}
+    assert_receive {:complete_charging_process, ^charging_id, [charging_interval: 5]}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -125,9 +125,9 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 0.3}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
-    assert_receive {:complete_charging_process, ^charging_id, []}
+    assert_receive {:complete_charging_process, ^charging_id, [charging_interval: 5]}
 
-    assert_receive {:complete_charging_process, ^charging_id, []}
+    assert_receive {:complete_charging_process, ^charging_id, [charging_interval: 5]}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}

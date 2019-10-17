@@ -479,7 +479,7 @@ defmodule TeslaMate.LogChargingTest do
       assert %Car{efficiency: 0.1522} = Log.get_car!(car_id)
     end
 
-    test "makes a rough estimate starting a two values" do
+    test "makes a rough estimate starting at two values" do
       ## 2x
       assert %Car{id: car_id, efficiency: nil} = car_fixture(eid: 666, vid: 667, vin: "668")
 

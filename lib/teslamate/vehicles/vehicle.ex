@@ -21,7 +21,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
   alias __MODULE__, as: Data
 
   @topic inspect(__MODULE__)
+
   @asleep_interval 60
+  @charging_interval 5
+  @driving_interval 2.5
 
   def child_spec(arg) do
     %{
@@ -296,7 +299,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       call(data.deps.log, :start_state, [data.car.id, :asleep])
 
     {:next_state, {:asleep, @asleep_interval}, %Data{data | last_state_change: last_state_change},
-     [notify_subscribers(), schedule_fetch(30)]}
+     [notify_subscribers(), schedule_fetch()]}
   end
 
   def handle_event(:internal, {:update, :offline}, :start, data) do
@@ -350,7 +353,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:next_state, {:driving, :available, drive_id},
          %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(2.5)]}
+         [notify_subscribers(), schedule_fetch(@driving_interval)]}
 
       %{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
       when charging_state in ["Starting", "Charging"] ->
@@ -362,7 +365,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:next_state, {:charging, charging_state, charge_id},
          %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(2.5)]}
+         [notify_subscribers(), schedule_fetch(@charging_interval)]}
 
       _ ->
         try_to_suspend(vehicle, :online, data)
@@ -387,13 +390,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         :ok = insert_charge(pid, vehicle, data)
 
-        interval =
-          vehicle.charge_state
-          |> Map.get(:charger_power)
-          |> determince_interval()
-
         {:next_state, {:charging, "Charging", pid}, %Data{data | last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(interval)]}
+         [notify_subscribers(), schedule_fetch(@charging_interval)]}
 
       {"Complete", "Complete"} ->
         try_to_suspend(vehicle, s, data)
@@ -402,7 +400,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :ok = insert_charge(pid, vehicle, data)
 
         {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
-          call(data.deps.log, :complete_charging_process, [pid])
+          call(data.deps.log, :complete_charging_process, [
+            pid,
+            [charging_interval: @charging_interval]
+          ])
 
         Logger.info("Charging / Complete / #{Float.round(added, 2)} kWh – #{duration} min",
           car_id: data.car.id
@@ -410,11 +411,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:next_state, {:charging, "Complete", pid},
          %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch()]}
+         [notify_subscribers(), schedule_fetch(@charging_interval * 3)]}
 
       {state, _} ->
         {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
-          call(data.deps.log, :complete_charging_process, [pid])
+          call(data.deps.log, :complete_charging_process, [
+            pid,
+            [charging_interval: @charging_interval]
+          ])
 
         Logger.info("Charging / #{state} / #{added} kWh – #{duration} min", car_id: data.car.id)
 
@@ -529,7 +533,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :ok = insert_position(vehicle, data, drive_id: did)
 
         {:next_state, {:driving, :available, did}, %Data{data | last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(2.5)]}
+         [notify_subscribers(), schedule_fetch(@driving_interval)]}
 
       shift_state when is_nil(shift_state) or shift_state == "P" ->
         {:ok, %Log.Drive{distance: km, duration_min: min}} =
@@ -880,9 +884,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     Map.put(vehicle, :charge_state, charge_state)
   end
-
-  defp determince_interval(n) when not is_nil(n) and n > 0, do: round(725 / n) |> min(30)
-  defp determince_interval(_), do: 15
 
   defp fuse_name(:vehicle_not_found, car_id), do: :"#{__MODULE__}_#{car_id}_not_found"
   defp fuse_name(:api_error, car_id), do: :"#{__MODULE__}_#{car_id}_api_error"
