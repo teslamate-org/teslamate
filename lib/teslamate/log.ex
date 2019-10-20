@@ -317,6 +317,12 @@ defmodule TeslaMate.Log do
     charging_interval = Keyword.get(opts, :charging_interval)
     charge_energy_used_confidence = calculate_confidence(process_id, charging_interval)
 
+    end_date =
+      case Keyword.get_lazy(opts, :date, &DateTime.utc_now/0) do
+        :do_not_override -> charging_process.end_date || DateTime.utc_now()
+        %DateTime{} = date -> date
+      end
+
     stats =
       Charge
       |> where(charging_process_id: ^process_id)
@@ -341,7 +347,7 @@ defmodule TeslaMate.Log do
         duration_min: duration_min(max(c.date), min(c.date))
       })
       |> Repo.one()
-      |> Map.put(:end_date, Keyword.get_lazy(opts, :date, &DateTime.utc_now/0))
+      |> Map.put(:end_date, end_date)
       |> Map.put(:charge_energy_used_confidence, charge_energy_used_confidence)
       |> Map.put(:interval_sec, charging_interval)
 

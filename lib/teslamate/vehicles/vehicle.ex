@@ -417,7 +417,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
           call(data.deps.log, :complete_charging_process, [
             pid,
-            [charging_interval: @charging_interval]
+            [charging_interval: @charging_interval, date: :do_not_override]
           ])
 
         Logger.info("Charging / #{state} / #{added} kWh – #{duration} min", car_id: data.car.id)
