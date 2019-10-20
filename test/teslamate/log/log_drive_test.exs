@@ -133,7 +133,7 @@ defmodule TeslaMate.LogDriveTest do
 
       assert {:ok, drive} = Log.close_drive(drive_id)
 
-      assert {:ok, drive.end_date, 0} == DateTime.from_iso8601("2019-04-06 10:23:25Z")
+      assert {:ok, drive.end_date, 0} == DateTime.from_iso8601("2019-04-06 10:23:25.000000Z")
       assert drive.outside_temp_avg == 19.04
       assert drive.inside_temp_avg == 21.04
       assert drive.speed_max == 42

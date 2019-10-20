@@ -8,8 +8,8 @@ defmodule TeslaMate.Log.ChargingProcess do
   schema "charging_processes" do
     field :interval_sec, :integer
 
-    field :start_date, :utc_datetime
-    field :end_date, :utc_datetime
+    field :start_date, :utc_datetime_usec
+    field :end_date, :utc_datetime_usec
     field :charge_energy_added, :float
     field :charge_energy_used, :float
     field :charge_energy_used_confidence, :float

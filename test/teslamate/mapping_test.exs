@@ -12,7 +12,7 @@ defmodule TeslaMate.MappingTest do
 
     opts = [
       name: name,
-      timeout: 100,
+      timeout: 150,
       deps_log: {LogMock, log_name},
       deps_srtm: {SRTMMock, srtm_name}
     ]

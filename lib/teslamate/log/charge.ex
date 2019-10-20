@@ -5,7 +5,7 @@ defmodule TeslaMate.Log.Charge do
   alias TeslaMate.Log.ChargingProcess
 
   schema "charges" do
-    field :date, :utc_datetime
+    field :date, :utc_datetime_usec
     field :battery_heater, :boolean
     field :battery_heater_on, :boolean
     field :battery_heater_no_power, :boolean

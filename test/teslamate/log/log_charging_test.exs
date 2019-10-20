@@ -31,7 +31,7 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.car_id == car_id
       assert cproc.position.latitude == @valid_pos_attrs.latitude
       assert cproc.position.longitude == @valid_pos_attrs.longitude
-      assert cproc.position.date == DateTime.truncate(@valid_pos_attrs.date, :second)
+      assert cproc.position.date == @valid_pos_attrs.date
       assert %DateTime{} = cproc.start_date
       assert cproc.address.city == "Bielefeld"
       assert cproc.address.place_id == 103_619_766
@@ -53,7 +53,7 @@ defmodule TeslaMate.LogChargingTest do
     test "accepts a custom start date" do
       assert %Car{id: car_id} = car_fixture()
 
-      custom_date = DateTime.from_unix!(1_566_059_683)
+      custom_date = DateTime.from_unix!(1_566_059_683_000, :microsecond)
 
       assert {:ok, %ChargingProcess{start_date: ^custom_date}} =
                Log.start_charging_process(car_id, @valid_pos_attrs, date: custom_date)
@@ -85,7 +85,7 @@ defmodule TeslaMate.LogChargingTest do
       assert {:ok, %Charge{} = charge} = Log.insert_charge(cproc, @valid_attrs)
 
       assert charge.charging_process_id == cproc.id
-      assert charge.date == DateTime.truncate(@valid_attrs.date, :second)
+      assert charge.date == @valid_attrs.date
       assert charge.charger_phases == @valid_attrs.charger_phases
       assert charge.charger_power == @valid_attrs.charger_power
       assert charge.charge_energy_added == @valid_attrs.charge_energy_added
@@ -186,12 +186,17 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.start_rated_range_km == 206.6
       assert cproc.end_rated_range_km == 208.6
       assert cproc.outside_temp_avg == 15.25
+
+      Process.sleep(100)
+
+      # calling it a 2nd time won't overwrite the end_date
+      assert {:ok, ^cproc} = Log.complete_charging_process(cproc)
     end
 
     test "accepts a custom end date" do
       assert %Car{id: car_id} = car_fixture()
 
-      custom_date = DateTime.from_unix!(1_566_059_683)
+      custom_date = DateTime.from_unix!(1_566_059_683_000_000, :microsecond)
 
       assert {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
 

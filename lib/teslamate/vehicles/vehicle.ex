@@ -794,9 +794,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp parse_timestamp(ts) do
-    ts
-    |> DateTime.from_unix!(:millisecond)
-    |> DateTime.truncate(:second)
+    DateTime.from_unix!(ts, :millisecond)
   end
 
   defp try_to_suspend(vehicle, current_state, %Data{car: car, settings: settings} = data) do

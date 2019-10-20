@@ -6,8 +6,8 @@ defmodule TeslaMate.Log.Drive do
   alias TeslaMate.Log.{Position, Car}
 
   schema "drives" do
-    field :start_date, :utc_datetime
-    field :end_date, :utc_datetime
+    field :start_date, :utc_datetime_usec
+    field :end_date, :utc_datetime_usec
     field :outside_temp_avg, :float
     field :inside_temp_avg, :float
     field :speed_max, :integer

@@ -209,8 +209,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:close_drive, 111}, 300
 
       # Logs a charge session based on the available data
-      start_date = now |> DateTime.add(1, :second) |> DateTime.truncate(:second)
-      end_date = now |> DateTime.add(5 * 60 - 1, :second) |> DateTime.truncate(:second)
+      start_date = now |> DateTime.add(1, :second) |> DateTime.truncate(:millisecond)
+      end_date = now |> DateTime.add(5 * 60 - 1, :second) |> DateTime.truncate(:millisecond)
 
       assert_receive {:start_charging_process, ^car_id, %{latitude: 0.1, longitude: 0.1},
                       date: ^start_date}
@@ -264,7 +264,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
 
       # Timeout
-      assert_receive {:close_drive, 111}, 900
+      assert_receive {:close_drive, 111}, 1200
 
       refute_receive _
     end

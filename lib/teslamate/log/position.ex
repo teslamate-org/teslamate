@@ -5,7 +5,7 @@ defmodule TeslaMate.Log.Position do
   alias TeslaMate.Log.{Car, Drive}
 
   schema "positions" do
-    field :date, :utc_datetime
+    field :date, :utc_datetime_usec
     field :latitude, :float
     field :longitude, :float
     field :elevation, :float
