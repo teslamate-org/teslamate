@@ -275,24 +275,22 @@ defmodule TeslaMate.Log do
 
     start_date = Keyword.get_lazy(opts, :date, &DateTime.utc_now/0)
 
-    with {:ok, %ChargingProcess{id: id}} <-
+    with {:ok, cproc} <-
            %ChargingProcess{car_id: car_id, address_id: address_id, geofence_id: geofence_id}
            |> ChargingProcess.changeset(%{start_date: start_date, position: position})
            |> Repo.insert() do
-      {:ok, id}
+      {:ok, Repo.preload(cproc, [:car, :position, :address, :geofence])}
     end
   end
 
-  def insert_charge(process_id, attrs) do
-    %Charge{charging_process_id: process_id}
+  def insert_charge(%ChargingProcess{id: id}, attrs) do
+    %Charge{charging_process_id: id}
     |> Charge.changeset(attrs)
     |> Repo.insert()
   end
 
-  def resume_charging_process(process_id) do
-    ChargingProcess
-    |> preload([:car, :position])
-    |> Repo.get!(process_id)
+  def resume_charging_process(%ChargingProcess{} = charging_process) do
+    charging_process
     |> ChargingProcess.changeset(%{
       end_date: nil,
       charge_energy_added: nil,
@@ -306,26 +304,21 @@ defmodule TeslaMate.Log do
     |> Repo.update()
   end
 
-  def complete_charging_process(process_id, opts \\ []) do
-    charging_process =
-      ChargingProcess
-      |> preload([:car, :position])
-      |> Repo.get!(process_id)
-
+  def complete_charging_process(%ChargingProcess{} = charging_process, opts \\ []) do
     settings = Settings.get_settings!()
 
     charging_interval = Keyword.get(opts, :charging_interval)
-    charge_energy_used_confidence = calculate_confidence(process_id, charging_interval)
+    charge_energy_used_confidence = calculate_confidence(charging_process.id, charging_interval)
 
     end_date =
-      case Keyword.get_lazy(opts, :date, &DateTime.utc_now/0) do
-        :do_not_override -> charging_process.end_date || DateTime.utc_now()
-        %DateTime{} = date -> date
+      case charging_process do
+        %ChargingProcess{end_date: nil} -> Keyword.get(opts, :date) || DateTime.utc_now()
+        %ChargingProcess{end_date: %DateTime{} = end_date} -> end_date
       end
 
     stats =
       Charge
-      |> where(charging_process_id: ^process_id)
+      |> where(charging_process_id: ^charging_process.id)
       |> select([c], %{
         charge_energy_added: max(c.charge_energy_added) - min(c.charge_energy_added),
         charge_energy_used:

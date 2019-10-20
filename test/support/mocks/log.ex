@@ -29,20 +29,20 @@ defmodule LogMock do
     GenServer.call(name, {:start_charging_process, car_id, position_attrs, opts})
   end
 
-  def resume_charging_process(name, process_id) do
-    GenServer.call(name, {:resume_charging_process, process_id})
+  def resume_charging_process(name, cproc) do
+    GenServer.call(name, {:resume_charging_process, cproc})
   end
 
-  def complete_charging_process(name, process_id, opts \\ []) do
-    GenServer.call(name, {:complete_charging_process, process_id, opts})
+  def complete_charging_process(name, cproc, opts \\ []) do
+    GenServer.call(name, {:complete_charging_process, cproc, opts})
   end
 
   def insert_position(name, car_id, attrs) do
     GenServer.call(name, {:insert_position, car_id, attrs})
   end
 
-  def insert_charge(name, car_id, attrs) do
-    GenServer.call(name, {:insert_charge, car_id, attrs})
+  def insert_charge(name, cproc, attrs) do
+    GenServer.call(name, {:insert_charge, cproc, attrs})
   end
 
   def get_positions_without_elevation(name, min_id, opts) do
@@ -76,17 +76,31 @@ defmodule LogMock do
 
   def handle_call({:start_charging_process, _, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, 99}, state}
+    {:reply, {:ok, %ChargingProcess{id: 99, start_date: DateTime.utc_now()}}, state}
   end
 
-  def handle_call({:resume_charging_process, _pid} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:resume_charging_process, cproc} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %ChargingProcess{}}, state}
+
+    new_cproc = %ChargingProcess{
+      cproc
+      | end_date: nil,
+        charge_energy_added: nil,
+        end_ideal_range_km: nil,
+        end_rated_range_km: nil,
+        end_battery_level: nil,
+        duration_min: nil,
+        charge_energy_used: nil,
+        charge_energy_used_confidence: nil
+    }
+
+    {:reply, {:ok, new_cproc}, state}
   end
 
-  def handle_call({:complete_charging_process, _, _} = action, _from, %State{pid: pid} = state) do
-    send(pid, action)
-    {:reply, {:ok, %ChargingProcess{charge_energy_added: 45}}, state}
+  def handle_call({:complete_charging_process, cproc, _} = action, _from, %State{} = state) do
+    send(state.pid, action)
+    new_cproc = %ChargingProcess{cproc | charge_energy_added: 45, end_date: DateTime.utc_now()}
+    {:reply, {:ok, new_cproc}, state}
   end
 
   def handle_call({:start_drive, _car_id} = action, _from, %State{pid: pid} = state) do

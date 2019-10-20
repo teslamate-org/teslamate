@@ -146,6 +146,12 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "renders current vehicle stats [:charging_complete]", %{conn: conn} do
+      {:ok, _} =
+        Settings.get_settings!()
+        |> Settings.change_settings()
+        |> Ecto.Changeset.force_change(:suspend_after_idle_min, 1_000_000)
+        |> TeslaMate.Repo.update()
+
       events = [
         {:ok,
          online_event(
@@ -199,13 +205,17 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      Process.sleep(100)
+      TestHelper.eventually(
+        fn ->
+          conn = get(conn, Routes.car_path(conn, :index))
 
-      conn = get(conn, Routes.car_path(conn, :index))
-
-      assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert table_row(html, "Status", "charging complete")
+          assert html = response(conn, 200)
+          assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+          assert table_row(html, "Status", "charging complete")
+        end,
+        delay: 10,
+        attempts: 15
+      )
     end
 
     @tag :signed_in
