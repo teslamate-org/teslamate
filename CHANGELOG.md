@@ -1,5 +1,72 @@
 # Changelog
 
+## [1.12.0-dev] - unreleased
+
+We finally have documentation! Many thanks to @ngardiner for kicking if off and
+for doing most of the work and also thanks to @krezac for contributing a guide
+to creating iOS Shortcuts for TeslaMate!
+
+### New Features
+
+#### Vehicle Efficiency
+
+Previous versions of TeslaMate shipped with hard-coded efficiency values for
+the various Tesla models. These efficiency values are needed to calculate
+trip consumptions, because the Tesla API does not provide them directly.
+
+The hard-coded efficiency values were _probably_ pretty accurate, but I could
+never ensure the correctness of all of them. In addition, the new Model S and X
+"Raven" could not be reliably identified because the Tesla API often returned
+wrong option codes for both.
+
+This version eliminates the need to use hard-coded values and instead
+calculates them dynamically based on the recorded charging data. It takes **at
+least two** charging sessions to display the first estimate. Each charge will
+slightly improve the accuracy of the estimate, which is applied retroactively
+to all data.
+
+#### Charge energy used
+
+In addition to the kWh added to the battery during the charge TeslaMate now
+calculates the actual energy used by the charger, which in most cases is higher
+than the energy added to the battery.
+
+Consider this feature "experimental". Theoretically, however, it should be
+pretty accurate as long as the vehicle has a stable mobile/WiFi connection
+while charging (other _paid_ Tesla loggers use the same calculation method). To
+see TeslaMate's assessment of the correctness of the calculated value, hover
+over or tap the underlined field (in Grafana).
+
+If you have feedback or can even verify/compare the calculated value with a
+real measurement (e.g. from your wallbox), I would be very happy to hear from
+you!
+
+#### New MQTT Topics
+
+- `teslamate/cars/$car_id/update_available`: Indicates whether a car software
+  update is available
+
+### Enhancements
+
+- Disable origin check by default to ease the installation of TeslaMate.
+
+  ⚠️ If you have a publicly exposed TeslaMate instance, I recommend to re-enable
+  the origin check by adding the environment variable `CHECK_ORIGIN=true` (this
+  requires that the variable `VIRTUAL_HOST` is present).
+
+### Bug Fixes
+
+- Set the correct end date of charges where the vehicle remains plugged in
+  after the charge is completed
+
+---
+
+```text
+TeslaMate is open source and completely free for everyone to use.
+
+If you like this project and want to support further development, please consider making a donation.
+```
+
 ## [1.11.1] - 2019-10-13
 
 ### Bug Fixes
@@ -469,7 +536,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.11.1...HEAD
+[1.12.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.11.1...HEAD
 [1.11.1]: https://github.com/adriankumpf/teslamate/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/adriankumpf/teslamate/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/adriankumpf/teslamate/compare/v1.9.1...v1.10.0

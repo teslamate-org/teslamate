@@ -2,7 +2,7 @@
 
 ## Why are no consumption values displayed in Grafana?
 
-Unfortunately, the Tesla API does not return consumption values for a trip. In
+Unfortunately the Tesla API does not return consumption values for a trip. In
 order to still be able to display values TeslaMate estimates the consumption on
 the basis of the recorded (charging) data. It takes **at least two** charging
 sessions before the first estimate can be displayed. Each charging session will
