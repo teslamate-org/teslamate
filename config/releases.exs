@@ -32,7 +32,7 @@ config :teslamate, TeslaMateWeb.Endpoint,
   url: [host: System.get_env("VIRTUAL_HOST", "localhost"), port: 80],
   secret_key_base: System.get_env("SECRET_KEY_BASE", Util.random_encoded_bytes()),
   live_view: [signing_salt: System.get_env("SIGNING_SALT", Util.random_encoded_bytes())],
-  check_origin: System.get_env("CHECK_ORIGIN", "true") |> Util.parse_check_origin!()
+  check_origin: System.get_env("CHECK_ORIGIN", "false") |> Util.parse_check_origin!()
 
 if System.get_env("DISABLE_MQTT") != "true" do
   config :teslamate, :mqtt,
