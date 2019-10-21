@@ -4,7 +4,7 @@
 
 Tesla vehicles have a sleep mode which allows the vehicle to conserve battery power when not actively operating. After a period of inactivity, the vehicle will power down systems which are not necessary during times of inactivity.
 
-One challenge of Tesla API-based Data Loggers is that the continual polling of vehicles via the API results in the vehicle waking up or failing to go into sleep mode. To avoid these scenarios, TeslaMate uses two configuration parameters to define when a vehicle will start to sleep due to inactivity.
+One challenge of Tesla API-based Data Loggers is that the continual polling of vehicles via the API results in the vehicle failing to go into sleep mode. To avoid these scenarios, TeslaMate uses two configuration parameters to define when a vehicle will start to sleep due to inactivity.
 
 ## Idle Time Before Trying to Sleep
 
@@ -46,10 +46,15 @@ Using Bluetooth hints, a tool like Tasker on the phone can then detect the Bluet
 
 #### Notes
 
-- If you are specifying the local (LAN) IP address/port of your TeslaMate instance when performing the wake up, this may fail for a number of reasons:
-  - It will not provide hints to TeslaMate when you are outside of your home network (ie if you have been driving).
-  - It will not provide hints to TeslaMate if the mobile phone becomes disconnected from the wifi network.
-- For these reasons, it is necessary to use a method that allows external communication between your smartphone and your TeslaMate instance(s). This is described in each of the guides below with some options that can be used to achieve this.
+If you are specifying the local (LAN) IP address/port of your TeslaMate instance when performing the wake up, this may fail for a number of reasons:
+
+- It will not provide hints to TeslaMate when you are outside of your home network (ie if you have been driving).
+- It will not provide hints to TeslaMate if the mobile phone becomes disconnected from the wifi network.
+
+For these reasons, it is necessary to use a method that allows external communication between your smartphone and your TeslaMate instance. There are two key ways that this can be achieved:
+
+- Use a VPN solution such as Wireguard or OpenVPN.
+- Make your TeslaMate instance publicly available (see [Advanved Docker Setup](../installation/docker_advanced.md) for an example).
 
 #### Android
 

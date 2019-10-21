@@ -29,8 +29,8 @@ Please note that in the following examples, we will be specifying a URL to call 
 
 There are two key ways that this can be achieved:
 
-- Make your TeslaMate instance publicly available, either through Port Forwarding or a Reverse Proxy (see [../../../docker_advanced.md](Advanved Docker Setup)).
-- Use a VPN solution such as [OpenVPN](https://github.com/adriankumpf/teslamate/issues/102#issuecomment-531497214)
+- Use a VPN solution such as Wireguard or [OpenVPN](https://github.com/adriankumpf/teslamate/issues/102#issuecomment-531497214)
+- Make your TeslaMate instance publicly available (see [Advanved Docker Setup](../../installation/docker_advanced.md) for an example).
 
 <img align="right" src="../../images/tasker-http.png" />
 

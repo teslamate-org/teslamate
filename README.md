@@ -107,7 +107,7 @@ volumes:
 
 Afterwards start the stack with `docker-compose up`.
 
-To sign in with your Tesla Account open the web interface at [http://your-ip-address:3000](http://localhost:3000).
+To sign in with your Tesla Account open the web interface at [http://your-ip-address:4000](http://localhost:4000).
 
 The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000).
 
