@@ -1,10 +1,12 @@
-# Installation on Docker
+# Installation with Docker
 
-The recommended way to install and run TeslaMate is to use Docker. Create a
-`docker-compose.yml` file and replace the necessary `environment` variables:
+The recommended way to install and run TeslaMate is to use Docker. Create a file called `docker-compose.yml` with the following content:
+
+**docker-compose.yml**
 
 ```YAML
 version: '3'
+
 services:
   teslamate:
     image: teslamate/teslamate:latest
@@ -15,9 +17,6 @@ services:
       - DATABASE_NAME=teslamate
       - DATABASE_HOST=db
       - MQTT_HOST=mosquitto
-      - VIRTUAL_HOST=localhost # if you're going to access the UI from another  machine replace
-                               # "localhost" with the hostname / IP address of the docker host.
-      - TZ=Europe/Berlin       # (optional) replace to use local time in debug logs. See "Configuration".
     ports:
       - 4000:4000
     cap_drop:
@@ -58,15 +57,8 @@ volumes:
     mosquitto-data:
 ```
 
-Afterwards start everything with `docker-compose up`.
+Afterwards start the stack with `docker-compose up`.
 
-Open the web interface at http://ip-of-your-machine:4000 and sign in with your
-Tesla Account.
+To sign in with your Tesla Account open the web interface at [http://your-ip-address:3000](http://localhost:3000).
 
-To access Grafana go to http://ip-of-your-machine:3000.
-
-**Optional:** To switch to **imperial measurements** open the web interface and
-navigate to `Settings`.
-
-_For a more advanced setup check out the wiki: [Advanved Setup (SSL, FQDN, pw
-protected)](<https://github.com/adriankumpf/teslamate/wiki/Advanved-Setup-(SSL,-FQDN,-pw-protected)>)_
+The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000).

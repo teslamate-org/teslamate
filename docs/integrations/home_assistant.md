@@ -4,30 +4,30 @@
 
 Whilst HomeAssistant provides an official component for Tesla vehicles, the component has not been updated recently, and does not have the sophistication of TeslaMate's polling mechanism, resulting in the component's default values keeping the vehicle awake and draining the battery.
 
-The ultimate goal of this guide is to consume as much of the TeslaMate polling data as possible to replace the majority of the official Tesla component's polling functionality. 
+The ultimate goal of this guide is to consume as much of the TeslaMate polling data as possible to replace the majority of the official Tesla component's polling functionality.
 
-If your intention is to only use read-only sensor values, those provided by TeslaMate via MQTT are sufficient, and you do not need to utilise the official Tesla compoent. If however you would like to be able to write values to the Tesla API (Lock/Unlock Doors or automate Climate), there is a solution which involves configuring an extremely high polling interval for the Tesla component and using automation to populate the values from the TeslaMate MQTT parameters.
+If your intention is to only use read-only sensor values, those provided by TeslaMate via MQTT are sufficient, and you do not need to utilise the official Tesla component. If however you would like to be able to write values to the Tesla API (Lock/Unlock Doors or automate Climate), there is a solution which involves configuring an extremely high polling interval for the Tesla component and using automation to populate the values from the TeslaMate MQTT parameters.
 
 ## Screenshot
 
-![HASS Screenshot](images/hass-dashboard.png)
+![HASS Screenshot](../images/hass-dashboard.png)
 
 ## Current Status
 
-  * Sensors: All sensors exposed by the Tesla component are available
-  * Locks: Not implemented
-  * Climate: Not implemented
+- Sensors: All sensors exposed by the Tesla component are available
+- Locks: Not implemented
+- Climate: Not implemented
 
 ## Configuration
 
 ### automation.yaml
 
-The following provides an automation to update the location of the device_tracker.tesla_location tracker when new lat/lon values are published to MQTT. You can use this to:
+The following provides an automation to update the location of the `device_tracker.tesla_location` tracker when new lat/lon values are published to MQTT. You can use this to:
 
-   * Plot the location of your Tesla on a map (see the ui-lovelace.yaml file for an example of this)
-   * Calculate the proximity of your Tesla to another location such as home (see configuration.yaml, below)
+- Plot the location of your Tesla on a map (see the _ui-lovelace.yaml_ file for an example of this)
+- Calculate the proximity of your Tesla to another location such as home (see _configuration.yaml_, below)
 
-```
+```YAML
 - alias: Update Tesla location as MQTT location updates
   initial_state: on
   trigger:
@@ -45,12 +45,12 @@ The following provides an automation to update the location of the device_tracke
 
 ### configuration.yaml
 
-Proximity sensors allow us to calculate the proximity of the Tesla device_tracker to defined zones. This can be useful for:
+Proximity sensors allow us to calculate the proximity of the Tesla `device_tracker` to defined zones. This can be useful for:
 
-  * Automatic Garage Door opening when you arrive home
-  * Notifications when the vehicle is arriving
+- Automatic Garage Door opening when you arrive home
+- Notifications when the vehicle is arriving
 
-```
+```YAML
 automation: !include automation.yaml
 
 proximity:
@@ -71,9 +71,9 @@ sensor: !include sensor.yaml
 
 ### known_devices.yaml (define a tracker for Tesla)
 
-This is required for the automation above (in the automation.yaml section). It defines the device_tracker object that we use to represent the location of your Tesla vehicle.
+This is required for the automation above (in the _automation.yaml_ section). It defines the device_tracker object that we use to represent the location of your Tesla vehicle.
 
-```
+```YAML
 tesla_location:
   hide_if_away: false
   icon: mdi:car
@@ -84,7 +84,8 @@ tesla_location:
 ```
 
 ### sensor.yaml (sensor: section of configuration.yaml)
-```
+
+```YAML
 - platform: mqtt
   name: tesla_battery_level
   state_topic: "teslamate/cars/1/battery_level"
@@ -107,13 +108,13 @@ tesla_location:
   name: tesla_charge_port_door_open
   state_topic: "teslamate/cars/1/charge_port_door_open"
   icon: mdi:car-door
-  
+
 - platform: mqtt
   name: tesla_charger_actual_current
   state_topic: "teslamate/cars/1/charger_actual_current"
   unit_of_measurement: 'A'
   icon: mdi:battery-80
-  
+
 - platform: mqtt
   name: tesla_charger_phases
   state_topic: "teslamate/cars/1/charger_phases"
@@ -238,17 +239,28 @@ tesla_location:
   state_topic: "teslamate/cars/1/time_to_full_charge"
   icon: mdi:clock-outline
 
-  - platform: mqtt
+- platform: mqtt
   name: tesla_windows_open
   state_topic: "teslamate/cars/1/windows_open"
   icon: mdi:car-door
+
+- platform: mqtt
+  name: tesla_version
+  state_topic: "teslamate/cars/1/version"
+  icon: mdi:alphabetical
+
+- platform: mqtt
+  name: tesla_update_available
+  state_topic: "teslamate/cars/1/update_available"
+  icon: mdi:gift
+
 ```
 
 ### ui-lovelace.yaml
 
 The below is the Lovelace UI configuration used to make the example screenshot above. You will obviously want to configure this to your liking, however the example contains all of the sensors and values presented via MQTT and could be used as the basis of UI configuration.
 
-```
+```YAML
   - path: car
     title: Car
     badges: []
