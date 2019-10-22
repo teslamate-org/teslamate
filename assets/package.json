@@ -6,7 +6,8 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "ionicons": "^4.6.3",
+    "@mdi/font": "^4.5.95",
+    "bulma-tooltip": "^3.0.0",
     "leaflet": "^1.5.1",
     "leaflet-control-geocoder": "^1.10.0",
     "phoenix": "file:../deps/phoenix",
@@ -14,10 +15,10 @@
     "phoenix_live_view": "file:../deps/phoenix_live_view"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.3",
+    "@babel/core": "^7.6.4",
     "@babel/preset-env": "^7.6.3",
     "babel-loader": "^8.0.6",
-    "bulma": "^0.7.5",
+    "bulma": "^0.8.0",
     "copy-webpack-plugin": "^5.0.4",
     "css-loader": "^3.2.0",
     "file-loader": "^4.2.0",
@@ -27,7 +28,7 @@
     "sass-loader": "^8.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^2.2.0",
-    "webpack": "4.41.0",
+    "webpack": "4.41.2",
     "webpack-cli": "^3.3.9"
   }
 }

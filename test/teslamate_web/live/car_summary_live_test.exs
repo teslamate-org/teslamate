@@ -99,7 +99,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
         assert html = render(view)
         assert html =~ table_row("Status", unquote(Macro.escape(status)))
-        assert html =~ ~r/a class="button is-danger .*? disabled="disabled">#{unquote(msg)}<\/a>/
+
+        assert [{"a", [_, _, {"disabled", "disabled"}], [unquote(msg)]}] =
+                 Floki.find(html, ".button.is-danger")
       end
     end
   end
@@ -180,8 +182,12 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert {:ok, _parent_view, html} =
                live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
 
-      assert [{"span", _, [{"span", _, _}, " Software Update available"]}] =
-               html |> Floki.find(".update-available")
+      assert {"span", _, [{"span", [{"class", "mdi mdi-gift-outline"}], _}]} =
+               html
+               |> Floki.find(".icons .icon")
+               |> Enum.find(
+                 &match?({"span", [_, {"data-tooltip", "Software Update available"}], _}, &1)
+               )
     end
   end
 

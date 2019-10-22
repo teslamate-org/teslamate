@@ -8,11 +8,11 @@
 <%= link raw("""
       <span>#{gettext("Create")}</span>
       <span class="icon">
-        <span class="ion-ionic ion-md-add"></span>
+        <span class="mdi mdi-plus"></span>
       </span>
       """) ,
       to: Routes.live_path(@socket, GeoFenceLive.New),
-      class: "button is-info is-small is-round is-pulled-right mb-20"
+      class: "button is-info is-small is-rounded is-pulled-right mb-20"
 %>
 
 <table class="table is-fullwidth">
@@ -38,20 +38,20 @@
       <td>
         <div class="field is-grouped is-pulled-right">
           <p class="control">
-            <%= link raw("<span class='icon'><span class='ion-ionic ion-md-create'></span></span>"),
+            <%= link raw("<span class='icon'><span class='mdi mdi-square-edit-outline'></span></span>"),
                   to: Routes.live_path(@socket, GeoFenceLive.Edit, geofence),
-                  class: "button is-info is-small is-outlined"
+                  class: "button is-info is-small is-inverted is-light"
             %>
           </p>
           <p class="control">
-            <%= link raw("<span class='icon'><span class='ion-ionic ion-md-trash'></span></span>"),
+            <%= link raw("<span class='icon'><span class='mdi mdi-trash-can'></span></span>"),
                   to: "#", phx_hook: "ConfirmGeoFenceDeletion",
                   data: [
                     id: geofence.id,
                     msg: gettext("Delete '%{geo_fence}'?", geo_fence: geofence.name)
                   ],
                   type: "button",
-                  class: "button is-danger is-small is-outlined"
+                  class: "button is-danger is-small is-inverted is-light"
             %>
           </p>
         </div>

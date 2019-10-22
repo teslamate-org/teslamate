@@ -24,29 +24,37 @@
         <p class="subtitle is-6 has-text-weight-light">Model <%= @car.model %> <%= @car.trim_badging %></p>
         <% end %>
       </div>
-       <div class="ml-5">
-        <%=
-          cond do
-            @summary.healthy == false ->
-              raw """
-              <span class="health icon has-text-danger">
-                <span class="ion-ionic ion-md-warning"></span>
-              </span>
-              """
-
-            not is_nil(@error) ->
-              link @error, to: "#", class: "button is-danger is-small is-outlined", disabled: true
-
-            @summary.state == :online and !@summary.sentry_mode and @summary.locked->
-              link gettext("try to sleep"), to: "#", phx_click: "suspend_logging", class: "button is-info is-small is-outlined"
-
-            @summary.state == :suspended ->
-              link gettext("cancel sleep attempt"), to: "#", phx_click: "resume_logging", class: "button is-info is-small is-outlined"
-
-            true ->
-              nil
-          end
-        %>
+       <div class="icons ml-5">
+      <%= if @summary.plugged_in do %>
+        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Plugged in" %>'>
+          <span class="mdi mdi-power-plug"></span>
+        </span>
+      <% end %>
+      <%= if @summary.windows_open do %>
+        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Windows open" %>'>
+          <span class="mdi mdi-window-open"></span>
+        </span>
+      <% end %>
+      <%= if @summary.sentry_mode do %>
+        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Sentry Mode" %>'>
+          <span class="mdi mdi-shield-check"></span>
+        </span>
+      <% end %>
+      <%= unless is_nil(@summary.locked) do %>
+        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= (if @summary.locked, do: gettext("Locked"), else: gettext("Unlocked")) %>'>
+          <%= content_tag(:span, nil, class: "mdi mdi-lock" <> (if @summary.locked, do: "", else: "-open-variant")) %>
+        </span>
+      <% end %>
+      <%= if @summary.update_available do %>
+        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Software Update available" %>'>
+          <span class="mdi mdi-gift-outline"></span>
+        </span>
+      <% end %>
+      <%= if @summary.healthy == false do %>
+        <span class="health icon has-text-danger tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Health check failed" %>'>
+          <span class="mdi mdi-alert-box"></span>
+        </span>
+      <% end %>
       </div>
     </div>
     <div class="content">
@@ -121,12 +129,6 @@
             <% end %>
           <% end %>
 
-          <%= if @summary.state != :driving and not is_nil(@summary.plugged_in) do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Plugged in" %></td>
-            <td><%= (if @summary.plugged_in, do: gettext("yes"), else: gettext("no"))  %></td>
-          </tr>
-          <% end %>
           <%= if @summary.plugged_in do %>
             <%= if not is_nil(@summary.scheduled_charging_start_time) do %>
             <tr>
@@ -148,24 +150,6 @@
           <tr>
             <td class="has-text-weight-medium"><%= gettext "State of Charge" %></td>
             <td><%= @summary.battery_level %>%</td>
-          </tr>
-          <% end %>
-          <%= unless is_nil(@summary.locked) do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Locked" %></td>
-            <td><%= (if @summary.locked, do: gettext("yes"), else: gettext("no"))  %></td>
-          </tr>
-          <% end %>
-          <%= if @summary.windows_open == true do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Windows open" %></td>
-            <td><%= (if @summary.windows_open, do: gettext("yes"), else: gettext("no"))  %></td>
-          </tr>
-          <% end %>
-          <%= if @summary.sentry_mode do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Sentry Mode" %></td>
-            <td><%= (if @summary.sentry_mode, do: gettext("yes"), else: gettext("no"))  %></td>
           </tr>
           <% end %>
           <%= if @summary.state == :driving and not is_nil(@summary.speed) do %>
@@ -214,13 +198,23 @@
           <% end %>
         </tbody>
       </table>
+      <%=
+        cond do
+          not is_nil(@error) ->
+            link @error, to: "#", class: "button is-danger is-small is-outlined is-fullwidth", disabled: true
 
-     <%= if @summary.update_available do %>
-      <span class="update-available tag has-background-white-ter has-text-grey">
-        <span class="icon"><span class="ion-ionic ion-md-gift"></span></span> <%=
-          gettext "Software Update available"
-        %></span>
-      <% end %>
+          @summary.state == :online and !@summary.sentry_mode and @summary.locked->
+            link gettext("try to sleep"), to: "#", phx_click: "suspend_logging",
+                                          class: "button is-info is-small is-outlined is-fullwidth" <> (if @loading, do: " is-loading", else: "")
+
+          @summary.state == :suspended ->
+            link gettext("cancel sleep attempt"), to: "#", phx_click: "resume_logging",
+                                                  class: "button is-info is-small is-outlined is-fullwidth" <> (if @loading, do: " is-loading", else: "")
+
+          true ->
+            nil
+        end
+    %>
     </div>
   </div>
 </div>

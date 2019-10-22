@@ -12,6 +12,15 @@ defmodule TeslaMateWeb.CarControllerTest do
              |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
   end
 
+  defp icon(html, tooltip, icon) do
+    icon_class = "mdi mdi-#{icon}"
+
+    assert {"span", _, [{"span", [{"class", ^icon_class}], _}]} =
+             html
+             |> Floki.find(".icons .icon")
+             |> Enum.find(&match?({"span", [_, {"data-tooltip", ^tooltip}], _}, &1))
+  end
+
   describe "index" do
     test "redirects if not signed in", %{conn: conn} do
       assert conn = get(conn, Routes.car_path(conn, :index))
@@ -74,7 +83,15 @@ defmodule TeslaMateWeb.CarControllerTest do
              battery_level: 69
            },
            climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2},
-           vehicle_state: %{locked: true, sentry_mode: true},
+           vehicle_state: %{
+             software_update: %{status: "available"},
+             locked: true,
+             sentry_mode: true,
+             fd_window: 1,
+             fp_window: 0,
+             rd_window: 0,
+             rp_window: 0
+           },
            vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
          )}
       ]
@@ -89,12 +106,13 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ ~r/<p class="subtitle is-6 has-text-weight-light">Model S P90D<\/p>/
       assert table_row(html, "Status", "online")
-      assert table_row(html, "Plugged in", "no")
       assert table_row(html, "Range (ideal)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "State of Charge", "69%")
-      assert table_row(html, "Locked", "yes")
-      assert table_row(html, "Sentry Mode", "yes")
+      assert icon(html, "Locked", "lock")
+      assert icon(html, "Sentry Mode", "shield-check")
+      assert icon(html, "Windows open", "window-open")
+      assert icon(html, "Software Update available", "gift-outline")
       assert table_row(html, "Outside temperature", "24 °C")
       assert table_row(html, "Inside temperature", "23.2 °C")
     end
@@ -129,7 +147,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert table_row(html, "Status", "charging")
-      assert table_row(html, "Plugged in", "yes")
+      assert icon(html, "Plugged in", "power-plug")
       assert table_row(html, "Range (ideal)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "Charged", "4.32 kWh")

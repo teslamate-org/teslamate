@@ -3,7 +3,8 @@
 @import "~leaflet/dist/leaflet.css";
 @import "~leaflet-control-geocoder/dist/Control.Geocoder.css";
 
-@import "~ionicons/dist/css/ionicons.min.css";
+$mdi-font-path: '~@mdi/font/fonts';
+@import "~@mdi/font/scss/materialdesignicons.scss";
 
 $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
 $widescreen-enabled: false;
@@ -26,6 +27,8 @@ $fullhd-enabled: false;
 @import "~bulma/sass/form/_all";
 @import "~bulma/sass/layout/section";
 @import "~bulma/sass/grid/_all";
+
+@import '~bulma-tooltip';
 
 // @import "~bulma/bulma";
 
@@ -56,6 +59,12 @@ $fullhd-enabled: false;
   }
 
   .card-content {
+    // .icons {
+    //   .icon:not(last-child) {
+    //     margin-right: 8px;
+    //   }
+    // }
+
     .media {
       padding: 0 0.25em;
       justify-content: space-between;
@@ -150,7 +159,7 @@ $positions: ('top','left','bottom','right');
   }
 }
 
-.ion-ionic {
+.mdi {
   font-size: 1.25em;
 }
 
