@@ -4,17 +4,15 @@ defmodule TeslaMateWeb.CarLive.Summary do
   import TeslaMateWeb.Gettext
 
   alias TeslaMateWeb.CarView
+  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles
-  alias TeslaMate.Log.Car
 
   @impl true
-  def mount(%{car: %Car{} = car, settings: settings}, socket) do
+  def mount(%{summary: %Summary{car: car} = summary, settings: settings}, socket) do
     if connected?(socket) do
       send(self(), :update_duration)
       Vehicles.subscribe(car.id)
     end
-
-    summary = Vehicles.summary(car.id)
 
     assigns = %{
       car: car,

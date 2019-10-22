@@ -4,7 +4,7 @@ defmodule TeslaMateWeb.CarLive.Index do
   require Logger
 
   alias TeslaMateWeb.CarView
-  alias TeslaMate.{Settings, Log}
+  alias TeslaMate.{Settings, Vehicles}
 
   @impl true
   def mount(_session, socket) do
@@ -14,7 +14,7 @@ defmodule TeslaMateWeb.CarLive.Index do
 
     socket =
       socket
-      |> assign_new(:cars, fn -> Log.list_cars() end)
+      |> assign_new(:summaries, fn -> Vehicles.list() end)
       |> assign_new(:settings, fn -> settings end)
 
     {:ok, socket}

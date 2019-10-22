@@ -2,7 +2,7 @@ defmodule TeslaMate.Mqtt.PubSub do
   use Supervisor
 
   alias __MODULE__.VehicleSubscriber
-  alias TeslaMate.Log
+  alias TeslaMate.Vehicles
 
   # API
 
@@ -13,8 +13,8 @@ defmodule TeslaMate.Mqtt.PubSub do
   @impl true
   def init(_opts) do
     children =
-      Log.list_cars()
-      |> Enum.map(&{VehicleSubscriber, car_id: &1.id})
+      Vehicles.list()
+      |> Enum.map(&{VehicleSubscriber, car_id: &1.car.id})
 
     Supervisor.init(children, strategy: :one_for_one)
   end

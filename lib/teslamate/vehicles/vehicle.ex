@@ -55,9 +55,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  def summary(car_id) do
-    GenStateMachine.call(:"#{car_id}", :summary)
-  end
+  def summary(pid) when is_pid(pid), do: GenStateMachine.call(pid, :summary)
+  def summary(car_id), do: GenStateMachine.call(:"#{car_id}", :summary)
 
   def suspend_logging(car_id) do
     GenStateMachine.call(:"#{car_id}", :suspend_logging)
@@ -119,7 +118,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       Summary.into(vehicle, %{
         state: state,
         since: data.last_state_change,
-        healthy?: healthy?(data.car.id)
+        healthy?: healthy?(data.car.id),
+        car: data.car
       })
 
     {:keep_state_and_data, {:reply, from, summary}}
@@ -282,7 +282,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       Summary.into(vehicle, %{
         state: state,
         since: data.last_state_change,
-        healthy?: healthy?(data.car.id)
+        healthy?: healthy?(data.car.id),
+        car: nil
       })
 
     :ok =

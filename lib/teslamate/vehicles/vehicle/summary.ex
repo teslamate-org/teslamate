@@ -5,6 +5,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   alias TeslaApi.Vehicle
 
   defstruct [
+    :car,
     :display_name,
     :state,
     :since,
@@ -37,16 +38,17 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :update_available
   ]
 
-  def into(nil, %{state: :start, healthy?: healthy?}) do
-    %__MODULE__{state: :unavailable, healthy: healthy?}
+  def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
+    %__MODULE__{state: :unavailable, healthy: healthy?, car: car}
   end
 
-  def into(vehicle, %{state: state, since: since, healthy?: healthy?}) do
+  def into(vehicle, %{state: state, since: since, healthy?: healthy?, car: car}) do
     %__MODULE__{
       format_vehicle(vehicle)
       | state: format_state(state),
         since: since,
-        healthy: healthy?
+        healthy: healthy?,
+        car: car
     }
   end
 
