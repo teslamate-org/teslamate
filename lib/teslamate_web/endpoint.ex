@@ -3,16 +3,12 @@ defmodule TeslaMateWeb.Endpoint do
 
   socket "/live", TeslaMateWeb.LiveViewSocket
 
-  # Serve at "/" the static files from "priv/static" directory.
-  #
-  # You should set gzip to true if you are running phx.digest
-  # when deploying your static files in production.
-  plug Plug.Static,
-    at: "/",
-    from: :teslamate,
-    gzip: false,
-    only:
-      ~w(css fonts images js favicon.ico robots.txt android-chrome-192x192.png android-chrome-512x512.png apple-touch-icon.png browserconfig.xml favicon-16x16.png favicon-32x32.png mstile-150x150.png safari-pinned-tab.svg site.webmanifest)
+  @only ~w(css fonts images js favicon.ico robots.txt android-chrome-192x192.png
+           android-chrome-512x512.png apple-touch-icon.png browserconfig.xml
+           favicon-16x16.png favicon-32x32.png mstile-150x150.png
+           safari-pinned-tab.svg site.webmanifest)
+
+  plug Plug.Static, at: "/", from: :teslamate, gzip: true, only: @only
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
