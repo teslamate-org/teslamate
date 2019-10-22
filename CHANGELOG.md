@@ -24,7 +24,8 @@ If you have feedback or can even verify/compare the calculated value with a real
 
 #### New MQTT Topics
 
-- `teslamate/cars/$car_id/update_available`: Indicates whether a car software update is available
+- `teslamate/cars/$car_id/update_available`: Indicates if a car software update is available
+- `teslamate/cars/$car_id/is_climate_on`: Indicates if the climate control is on
 
 ### Enhancements
 

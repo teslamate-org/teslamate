@@ -20,6 +20,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     :speed,
     :outside_temp,
     :inside_temp,
+    :is_climate_on,
     :locked,
     :sentry_mode,
     :plugged_in,
@@ -88,6 +89,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         charge(vehicle, :scheduled_charging_start_time) |> to_datetime(),
 
       # Climate State
+      is_climate_on: get_in_struct(vehicle, [:climate_state, :is_climate_on]),
       outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),
       inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp]),
 

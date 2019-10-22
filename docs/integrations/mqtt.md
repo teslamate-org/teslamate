@@ -21,10 +21,11 @@ Vehicle data will be published to the following topics (`$car_id` usually starts
 | `teslamate/cars/$car_id/shift_state`                   | D                    | Current/Last Shift State (D/N/R/P)                           |
 | `teslamate/cars/$car_id/speed`                         | 12                   | Current Speed in km/h                                        |
 |                                                        |                      |                                                              |
-| `teslamate/cars/$car_id/locked`                        | true                 | Indicates whether the car is locked                          |
+| `teslamate/cars/$car_id/locked`                        | true                 | Indicates if the car is locked                               |
 | `teslamate/cars/$car_id/sentry_mode`                   | false                | Indicates if Sentry Mode is active                           |
 | `teslamate/cars/$car_id/windows_open`                  | false                | Indicates if any of the windows are open                     |
 |                                                        |                      |                                                              |
+| `teslamate/cars/$car_id/is_climate_on`                 | true                 | Indicates if the climate control is on                       |
 | `teslamate/cars/$car_id/inside_temp`                   | 20.8                 | Inside Temperature in °C                                     |
 | `teslamate/cars/$car_id/outside_temp`                  | 18.4                 | Temperature in °C                                            |
 |                                                        |                      |                                                              |
