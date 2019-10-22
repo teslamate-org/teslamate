@@ -7,7 +7,7 @@
 [![](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)](https://hub.docker.com/r/teslamate/teslamate)
 [![](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YE4CPXRAV9CVL&source=url)
 
-A powerful data logger for your Tesla.
+A powerful, self-hosted data logger for your Tesla.
 
 - Written in [Elixir](https://elixir-lang.org/)
 - Data is stored in a Postgres database
@@ -131,9 +131,11 @@ The TeslaMate documentation is available [here](docs/README.md).
 
 ## Donations
 
-Maintaining this project isn't effortless, or free. If you would like to kick
-in and help me cover those costs, that would be awesome. If you don't, no
-problem; just share your love and show your support.
+TeslaMate is open source and completely free for everyone to use.
+
+Maintaining this project isn't effortless, or free. If you would like to
+support further development, that would be awesome. If you don't, no problem;
+just share your love and show your support.
 
 <p align="center">
   <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YE4CPXRAV9CVL&source=url">

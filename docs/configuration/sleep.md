@@ -62,9 +62,11 @@ There are a number of applicatons that provide this functionality on Android:
 
 | Application                                                                                    | Price          | Guide(s)                                  |
 | ---------------------------------------------------------------------------------------------- | -------------- | ----------------------------------------- |
-| [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm)          | US\$3.00       | [Tasker Setup](guides/tasker.md)          |
+| [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm)          | US\$3.00\*     | [Tasker Setup](guides/tasker.md)          |
 | [MacroDroid](https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid)            | Free (Limited) | [MacroDroid Setup](guides/macro_droid.md) |
-| [Automagic](https://play.google.com/store/apps/details?id=ch.gridvision.ppam.androidautomagic) | US\$3.50       | N/A                                       |
+| [Automagic](https://play.google.com/store/apps/details?id=ch.gridvision.ppam.androidautomagic) | US\$3.50\*     | N/A                                       |
+
+_\*If you’re going to pay for an app anyway, consider donating to this project as well 😎_
 
 #### iPhone
 
