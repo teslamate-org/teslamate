@@ -200,6 +200,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state, %Data{data | settings: settings}}
   end
 
+  def handle_event(:info, message, _state, _data) do
+    Logger.error("Unhandled message: #{inspect(message, pretty: true)}")
+    :keep_state_and_data
+  end
+
   ## Internal Events
 
   ### Fetch

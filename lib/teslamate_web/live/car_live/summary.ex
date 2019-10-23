@@ -121,7 +121,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
         {rem(n, divisor), [div(n, divisor) | acc]}
       end)
 
-    ["#{w} wk", "#{d} d", "#{h} hr", "#{m} min", "#{s} sec"]
+    ["#{w} wk", "#{d} d", "#{h} h", "#{m} min", "#{s} s"]
     |> Enum.reject(&String.starts_with?(&1, "0"))
     |> Enum.take(2)
   end
