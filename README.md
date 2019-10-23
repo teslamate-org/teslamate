@@ -58,7 +58,7 @@ version: '3'
 services:
   teslamate:
     image: teslamate/teslamate:latest
-    restart: unless-stopped
+    restart: always
     environment:
       - DATABASE_USER=teslamate
       - DATABASE_PASS=secret
@@ -72,6 +72,7 @@ services:
 
   db:
     image: postgres:11
+    restart: always
     environment:
       - POSTGRES_USER=teslamate
       - POSTGRES_PASSWORD=secret
@@ -80,6 +81,7 @@ services:
 
   grafana:
     image: teslamate/grafana:latest
+    restart: always
     environment:
       - DATABASE_USER=teslamate
       - DATABASE_PASS=secret
@@ -92,6 +94,7 @@ services:
 
   mosquitto:
     image: eclipse-mosquitto:1.6
+    restart: always
     ports:
       - 1883:1883
     volumes:
