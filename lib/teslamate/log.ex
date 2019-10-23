@@ -376,6 +376,8 @@ defmodule TeslaMate.Log do
         [process_id, charging_interval]
       )
 
+    # TODO reduce range?
+
     confidence
   end
 
