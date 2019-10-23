@@ -26,6 +26,8 @@ If you have feedback or can even verify/compare the calculated value with a real
 
 - `teslamate/cars/$car_id/update_available`: Indicates if a car software update is available
 - `teslamate/cars/$car_id/is_climate_on`: Indicates if the climate control is on
+- `teslamate/cars/$car_id/is_preconditioning`: Indicates if the vehicle is being preconditioned
+- `teslamate/cars/$car_id/is_user_present`: Indicates if a user is present in the vehicle
 
 ### Enhancements
 

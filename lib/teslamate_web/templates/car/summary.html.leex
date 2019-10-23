@@ -25,6 +25,16 @@
         <% end %>
       </div>
        <div class="icons ml-5">
+      <%= if @summary.is_preconditioning do %>
+        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Preconditioning" %>'>
+          <span class="mdi mdi-air-conditioner"></span>
+        </span>
+      <% end %>
+      <%= if @summary.state != :driving and @summary.is_user_present do %>
+        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "User present" %>'>
+          <span class="mdi mdi-account"></span>
+        </span>
+      <% end %>
       <%= if @summary.plugged_in do %>
         <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Plugged in" %>'>
           <span class="mdi mdi-power-plug"></span>
@@ -203,7 +213,7 @@
           not is_nil(@error) ->
             link @error, to: "#", class: "button is-danger is-small is-outlined is-fullwidth", disabled: true
 
-          @summary.state == :online and !@summary.sentry_mode and @summary.locked->
+          @summary.state == :online and !@summary.sentry_mode and !@summary.is_user_present and !@summary.is_preconditioning and @summary.locked->
             link gettext("try to sleep"), to: "#", phx_click: "suspend_logging",
                                           class: "button is-info is-small is-outlined is-fullwidth" <> (if @loading, do: " is-loading", else: "")
 

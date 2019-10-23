@@ -27,9 +27,31 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert redirected_to(conn, 302) == Routes.live_path(conn, TeslaMateWeb.SignInLive.Index)
     end
 
-    # @tag :signed_in
-    # test "lists all cares", %{conn: conn} do
-    # end
+    @tag :signed_in
+    test "lists all active vehicles", %{conn: conn} do
+      {:ok, _pid} =
+        start_supervised(
+          {ApiMock, name: :api_vehicle, events: [{:ok, online_event()}], pid: self()}
+        )
+
+      {:ok, _pid} =
+        start_supervised(
+          {TeslaMate.Vehicles,
+           vehicle: VehicleMock,
+           vehicles: [
+             %TeslaApi.Vehicle{display_name: "f0o", id: 4241, vehicle_id: 11111, vin: "1221"},
+             %TeslaApi.Vehicle{display_name: "fo0", id: 1242, vehicle_id: 22222, vin: "2112"}
+           ]}
+        )
+
+      conn = get(conn, Routes.car_path(conn, :index))
+      html = response(conn, 200)
+
+      assert [
+               {"div", [{"class", "car card"}], _},
+               {"div", [{"class", "car card"}], _}
+             ] = Floki.find(html, ".car")
+    end
 
     @tag :signed_in
     test "renders last knwon vehicle stats", %{conn: conn} do
@@ -82,7 +104,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              battery_range: 175,
              battery_level: 69
            },
-           climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2},
+           climate_state: %{is_preconditioning: true, outside_temp: 24, inside_temp: 23.2},
            vehicle_state: %{
              software_update: %{status: "available"},
              locked: true,
@@ -90,7 +112,8 @@ defmodule TeslaMateWeb.CarControllerTest do
              fd_window: 1,
              fp_window: 0,
              rd_window: 0,
-             rp_window: 0
+             rp_window: 0,
+             is_user_present: true
            },
            vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
          )}
@@ -110,6 +133,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "State of Charge", "69%")
       assert icon(html, "Locked", "lock")
+      assert icon(html, "User present", "account")
+      assert icon(html, "Preconditioning", "air-conditioner")
       assert icon(html, "Sentry Mode", "shield-check")
       assert icon(html, "Windows open", "window-open")
       assert icon(html, "Software Update available", "gift-outline")

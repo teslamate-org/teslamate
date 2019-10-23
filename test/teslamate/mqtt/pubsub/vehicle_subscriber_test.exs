@@ -28,6 +28,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert_receive {VehiclesMock, {:subscribe, 0}}
 
     summary = %Summary{
+      healthy: true,
       display_name: "Foo",
       odometer: 42_000,
       windows_open: true,
@@ -43,7 +44,10 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       sentry_mode: false,
       plugged_in: false,
       version: "2019.42",
-      update_available: false
+      update_available: false,
+      is_preconditioning: true,
+      is_user_present: false,
+      is_climate_on: true
     }
 
     send(pid, summary)

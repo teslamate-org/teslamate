@@ -40,20 +40,16 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     {:noreply, state}
   end
 
+  @blacklist [:car]
+  @always_published ~w(charge_energy_added charger_actual_current charger_phases
+                       charger_power charger_voltage scheduled_charging_start_time
+                       time_to_full_charge)a
+
   def handle_info(summary, state) do
     summary
     |> Map.from_struct()
     |> Stream.filter(fn {key, value} ->
-      not is_nil(value) or
-        key in [
-          :charge_energy_added,
-          :charger_actual_current,
-          :charger_phases,
-          :charger_power,
-          :charger_voltage,
-          :scheduled_charging_start_time,
-          :time_to_full_charge
-        ]
+      not (key in @blacklist) and (not is_nil(value) or key in @always_published)
     end)
     |> Task.async_stream(&publish(&1, state),
       max_concurrency: 10,

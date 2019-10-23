@@ -4,40 +4,14 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleState}
   alias TeslaApi.Vehicle
 
-  defstruct [
-    :car,
-    :display_name,
-    :state,
-    :since,
-    :healthy,
-    :latitude,
-    :longitude,
-    :battery_level,
-    :ideal_battery_range_km,
-    :est_battery_range_km,
-    :rated_battery_range_km,
-    :charge_energy_added,
-    :speed,
-    :outside_temp,
-    :inside_temp,
-    :is_climate_on,
-    :locked,
-    :sentry_mode,
-    :plugged_in,
-    :scheduled_charging_start_time,
-    :charge_limit_soc,
-    :charger_power,
-    :windows_open,
-    :odometer,
-    :shift_state,
-    :charge_port_door_open,
-    :time_to_full_charge,
-    :charger_phases,
-    :charger_actual_current,
-    :charger_voltage,
-    :version,
-    :update_available
-  ]
+  defstruct ~w(
+    car display_name state since healthy latitude longitude battery_level
+    ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
+    speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
+    plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
+    odometer shift_state charge_port_door_open time_to_full_charge charger_phases
+    charger_actual_current charger_voltage version update_available is_user_present
+  )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
     %__MODULE__{state: :unavailable, healthy: healthy?, car: car}
@@ -90,6 +64,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
       # Climate State
       is_climate_on: get_in_struct(vehicle, [:climate_state, :is_climate_on]),
+      is_preconditioning: get_in_struct(vehicle, [:climate_state, :is_preconditioning]),
       outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),
       inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp]),
 
@@ -98,6 +73,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       locked: get_in_struct(vehicle, [:vehicle_state, :locked]),
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
       windows_open: window_open(vehicle),
+      is_user_present: get_in_struct(vehicle, [:vehicle_state, :is_user_present]),
       version: get_in_struct(vehicle, [:vehicle_state, :car_version]),
       update_available: update_available(vehicle)
     }
