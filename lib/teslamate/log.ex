@@ -316,20 +316,40 @@ defmodule TeslaMate.Log do
         %ChargingProcess{end_date: %DateTime{} = end_date} -> end_date
       end
 
-    stats =
-      Charge
-      |> where(charging_process_id: ^charging_process.id)
-      |> select([c], %{
-        charge_energy_added: max(c.charge_energy_added) - min(c.charge_energy_added),
-        charge_energy_used:
-          sum(
+    energy_used =
+      from c in Charge,
+        select: %{
+          energy_used:
             c_if is_nil(c.charger_phases) do
               c.charger_power
             else
               c.charger_actual_current * c.charger_voltage *
                 c_if(c.charger_phases == 2, do: 3, else: c.charger_phases) / 1000.0
-            end
-          ) * ^charging_interval / 3600,
+            end *
+              fragment(
+                "EXTRACT(epoch FROM (?))",
+                c.date - (lag(c.date) |> over(order_by: c.date))
+              ) / 3600,
+          charger_phases: c.charger_phases
+        },
+        where: c.charging_process_id == ^charging_process.id
+
+    charge_energy_used =
+      from(e in subquery(energy_used),
+        select: {sum(e.energy_used)},
+        where: e.energy_used > 0
+      )
+      |> Repo.one()
+      |> case do
+        {charge_energy_used} -> charge_energy_used
+        _ -> nil
+      end
+
+    stats =
+      Charge
+      |> where(charging_process_id: ^charging_process.id)
+      |> select([c], %{
+        charge_energy_added: max(c.charge_energy_added) - min(c.charge_energy_added),
         start_ideal_range_km: min(c.ideal_battery_range_km),
         end_ideal_range_km: max(c.ideal_battery_range_km),
         start_rated_range_km: min(c.rated_battery_range_km),
@@ -341,6 +361,7 @@ defmodule TeslaMate.Log do
       })
       |> Repo.one()
       |> Map.put(:end_date, end_date)
+      |> Map.put(:charge_energy_used, charge_energy_used)
       |> Map.put(:charge_energy_used_confidence, charge_energy_used_confidence)
       |> Map.put(:interval_sec, charging_interval)
 
@@ -352,31 +373,42 @@ defmodule TeslaMate.Log do
 
   defp calculate_confidence(_process_id, nil), do: nil
 
-  defp calculate_confidence(process_id, charging_interval) do
+  defp calculate_confidence(process_id, interval) when is_number(interval) do
     {:ok, %{rows: [[confidence]]}} =
       Repo.query(
         """
         WITH deltas AS (
           SELECT
-            date - lag(date, 1) OVER (ORDER BY date) as delta
+            date - lag(date, 1) OVER (ORDER BY date) as delta,
+            charger_phases
           FROM
             charges
           WHERE
             charging_process_id = $1
           ORDER BY
             date
+        ), interval_confidence as (
+          SELECT
+            (NULLIF(count(*), 0) / NULLIF((select count(*) from deltas)::numeric, 0))::float as confidence
+          FROM
+            deltas
+          WHERE
+            delta >= $2 * INTERVAL '1 second' and delta <= ($2 + 1.5) * INTERVAL '1 second'
+        ), fast_charge_penalty as (
+          SELECT
+            CASE WHEN (NULLIF(count(*), 0) / NULLIF((select count(*) from deltas)::numeric, 0)) > 0.9 THEN 0.10
+                 ELSE 0.0
+            END as penalty
+          FROM
+            deltas
+          WHERE
+            charger_phases IS NULL
         )
         SELECT
-          (NULLIF(count(*), 0) / NULLIF((select count(*) from deltas)::numeric, 0))::float as confidence
-        FROM
-          deltas
-        WHERE
-          delta >= $2 * INTERVAL '1 second' and delta <= ($2 + 1) * INTERVAL '1 second';
+          NULLIF(GREATEST((select confidence from interval_confidence) - (select penalty from fast_charge_penalty), 0), 0);
         """,
-        [process_id, charging_interval]
+        [process_id, interval]
       )
-
-    # TODO reduce range?
 
     confidence
   end
@@ -412,7 +444,9 @@ defmodule TeslaMate.Log do
 
     case Repo.one(query) do
       {factor, n} when n >= threshold and not is_nil(factor) ->
-        Logger.info("Derived efficiency factor: #{factor} Wh/km (#{n}x confirmed)", car_id: id)
+        Logger.info("Derived efficiency factor: #{factor * 1000} Wh/km (#{n}x confirmed)",
+          car_id: id
+        )
 
         car
         |> Car.changeset(%{efficiency: factor})

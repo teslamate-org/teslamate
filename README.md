@@ -10,9 +10,9 @@
 A powerful, self-hosted data logger for your Tesla.
 
 - Written in [Elixir](https://elixir-lang.org/)
-- Data is stored in a Postgres database
-- Visualization and data analysis with Grafana
-- Vehicle data is published to a local MQTT Broker
+- Data is stored in a **Postgres** database
+- Visualization and data analysis with **Grafana**
+- Vehicle data is published to a local **MQTT** Broker
 
 ## Features
 
@@ -22,6 +22,7 @@ A powerful, self-hosted data logger for your Tesla.
 - Drive and charging reports
 - Driving efficiency report
 - Consumption (net / gross)
+- Charge energy added vs energy used
 - Vampire drain
 - Projected 100% range (battery degradation)
 - SOC charging stats
@@ -30,8 +31,7 @@ A powerful, self-hosted data logger for your Tesla.
 
 **General**
 
-- Little to no additional vampire drain: the car will fall asleep after a
-  certain idle time
+- Little to no additional vampire drain: the car will fall asleep after a certain idle time
 - Automatic address lookup
 - Locally enriches positions with elevation data
 - Geo-fencing feature to create custom locations
