@@ -289,21 +289,6 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
-  def resume_charging_process(%ChargingProcess{} = charging_process) do
-    charging_process
-    |> ChargingProcess.changeset(%{
-      end_date: nil,
-      charge_energy_added: nil,
-      end_ideal_range_km: nil,
-      end_rated_range_km: nil,
-      end_battery_level: nil,
-      duration_min: nil,
-      charge_energy_used: nil,
-      charge_energy_used_confidence: nil
-    })
-    |> Repo.update()
-  end
-
   def complete_charging_process(%ChargingProcess{} = charging_process, opts \\ []) do
     settings = Settings.get_settings!()
 

@@ -23,7 +23,6 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:start_state, car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
-
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
     assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0},
@@ -68,22 +67,15 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                       ideal_battery_range_km: 6.4
                     }}
 
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete, since: s2}}}
-    assert DateTime.diff(s1, s2, :nanosecond) < 0
-
     # Completed
     assert_receive {:complete_charging_process, ^cproc, [charging_interval: 5]}
 
-    # Unplugged
-    assert_receive {:complete_charging_process, %ChargingProcess{id: ^process_id},
-                    [charging_interval: 5]}
-
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s3}}}
-    assert DateTime.diff(s2, s3, :nanosecond) < 0
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
+    assert DateTime.diff(s1, s2, :nanosecond) < 0
 
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: ^s3}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: ^s2}}}
 
     refute_receive _
   end
@@ -130,11 +122,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
     assert_receive {:complete_charging_process, ^cproc, [charging_interval: 5]}
-
-    assert_receive {:complete_charging_process, %ChargingProcess{id: ^cproc_id},
-                    [charging_interval: 5]}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -170,57 +158,5 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     # ...
 
     refute_received _
-  end
-
-  test "times out completd charges", %{test: name} do
-    now = DateTime.utc_now()
-    now_ts = DateTime.to_unix(now, :millisecond)
-
-    events = [
-      {:ok, online_event()},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
-      {:ok, charging_event(now_ts + 1, "Starting", 0.1, range: 1)},
-      {:ok, charging_event(now_ts + 2, "Charging", 0.2, range: 2)},
-      {:ok, charging_event(now_ts + 3, "Charging", 0.3, range: 3)},
-      {:ok, charging_event(now_ts + 4, "Complete", 0.4, range: 4)}
-    ]
-
-    :ok = start_vehicle(name, events, settings: %{sudpend_after_idle_ms: 1_000_000})
-
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
-
-    assert_receive {:start_charging_process, ^car_id, %{latitude: 0.0, longitude: 0.0}, []}
-    assert_receive {:insert_charge, cproc, %{charge_energy_added: 0.1}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: s1}}}
-    assert DateTime.diff(s0, s1, :nanosecond) < 0
-
-    assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.2}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: ^s1}}}
-    assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: ^s1}}}
-
-    assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.4}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete, since: s2}}}
-    assert DateTime.diff(s1, s2, :nanosecond) < 0
-
-    # Completed
-    assert_receive {:complete_charging_process, ^cproc, [charging_interval: 5]}
-
-    Process.sleep(500)
-
-    TestHelper.eventually(
-      fn ->
-        assert_receive {:start_state, ^car_id, :online}
-        assert_receive {:insert_position, ^car_id, %{}}
-        assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s3}}}
-        assert DateTime.diff(s2, s3, :nanosecond) < 0
-      end,
-      delay: 100,
-      attempts: 5
-    )
-
-    refute_receive _
   end
 end

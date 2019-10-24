@@ -60,66 +60,6 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
   describe "resume_logging/1" do
     alias TeslaMate.Vehicles.Vehicle
-    alias TeslaMate.Log.ChargingProcess
-
-    test "leaves suspended and restores previous state", %{test: name} do
-      events = [
-        {:ok, online_event()},
-        {:ok, charging_event(0, "Charging", 5.0)},
-        {:ok, charging_event(0, "Complete", 5.0)},
-        {:ok, charging_event(0, "Complete", 5.0)},
-        {:ok, charging_event(0, "Unplugged", 5.0)}
-      ]
-
-      :ok =
-        start_vehicle(name, events,
-          settings: %{
-            suspend_after_idle_min: round(1 / 60),
-            suspend_min: 10_000
-          }
-        )
-
-      # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
-      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
-
-      # Charging (start)
-      assert_receive {:start_charging_process, ^car_id, _, []}
-
-      assert_receive {:insert_charge, %ChargingProcess{id: cproc_id} = cproc,
-                      %{charge_energy_added: 5.0}}
-
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
-
-      # Charging (complete)
-      assert_receive {:complete_charging_process, ^cproc, [charging_interval: 5]}
-      assert_receive {:insert_charge, ^cproc, %{charge_energy_added: 5.0}}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
-
-      # suspended
-      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
-
-      # Resuming
-      assert :ok = Vehicle.resume_logging(name)
-
-      # Charging continues
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
-
-      # Unplugging
-      assert_receive {:complete_charging_process, %ChargingProcess{id: ^cproc_id},
-                      [charging_interval: 5]}
-
-      # Online
-      assert_receive {:start_state, ^car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
-      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
-
-      # Suspended, again
-      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
-
-      refute_receive _
-    end
 
     test "does nothing of already online", %{test: name} do
       events = [

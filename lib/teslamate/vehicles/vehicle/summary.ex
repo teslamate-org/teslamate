@@ -27,8 +27,6 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     }
   end
 
-  defp format_state({:charging, "Complete", _process_id}), do: :charging_complete
-  defp format_state({:charging, _state, _process_id}), do: :charging
   defp format_state({:driving, {:offline, _}, _id}), do: :offline
   defp format_state({:driving, _state, _id}), do: :driving
   defp format_state({state, _}) when is_atom(state), do: state

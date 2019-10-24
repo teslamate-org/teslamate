@@ -27,7 +27,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   @driving_interval 2.5
 
   @drive_timout_min 15
-  @completed_charge_timeout_min 15
 
   def child_spec(arg) do
     %{
@@ -168,8 +167,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:reply, from, {:error, :update_in_progress}}}
   end
 
-  def handle_event({:call, from}, :suspend_logging, {:charging, state, _}, _data)
-      when state != "Complete" do
+  def handle_event({:call, from}, :suspend_logging, {:charging, _}, _data) do
     {:keep_state_and_data, {:reply, from, {:error, :charging_in_progress}}}
   end
 
@@ -377,7 +375,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         |> Enum.join(" / ")
         |> Logger.info(car_id: data.car.id)
 
-        {:next_state, {:charging, charging_state, cproc},
+        {:next_state, {:charging, cproc},
          %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(@charging_interval)]}
 
@@ -388,57 +386,23 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   #### :charging
 
-  def handle_event(:internal, {:update, :offline}, {:charging, _, _}, data) do
+  def handle_event(:internal, {:update, :offline}, {:charging, _}, data) do
     Logger.warn("Vehicle went offline while charging", car_id: data.car.id)
 
     {:keep_state_and_data, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle}}, {:charging, last, cproc} = s, data) do
-    case {vehicle.charge_state.charging_state, last} do
-      {charging_state, last_state} when charging_state in ["Starting", "Charging"] ->
-        cproc =
-          if last_state == "Complete" do
-            Logger.info("Charging / Restart", car_id: data.car.id)
-            {:ok, cproc} = call(data.deps.log, :resume_charging_process, [cproc])
-            cproc
-          else
-            cproc
-          end
-
+  def handle_event(:internal, {:update, {:online, vehicle}}, {:charging, cproc}, data) do
+    case vehicle.charge_state.charging_state do
+      charging_state when charging_state in ["Starting", "Charging"] ->
         :ok = insert_charge(cproc, vehicle, data)
 
-        {:next_state, {:charging, "Charging", cproc}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:charging, cproc}, %Data{data | last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(@charging_interval)]}
 
-      {"Complete", "Complete"} ->
-        completed_for_min = diff_seconds(DateTime.utc_now(), cproc.end_date) / 60
-
-        if completed_for_min >= @completed_charge_timeout_min do
-          {:next_state, :start, data, {:next_event, :internal, {:update, {:online, vehicle}}}}
-        else
-          try_to_suspend(vehicle, s, data)
-        end
-
-      {"Complete", "Charging"} ->
+      state ->
         :ok = insert_charge(cproc, vehicle, data)
 
-        {:ok,
-         %Log.ChargingProcess{duration_min: duration, charge_energy_added: added} = new_cproc} =
-          call(data.deps.log, :complete_charging_process, [
-            cproc,
-            [charging_interval: @charging_interval]
-          ])
-
-        Logger.info("Charging / Complete / #{Float.round(added, 2)} kWh – #{duration} min",
-          car_id: data.car.id
-        )
-
-        {:next_state, {:charging, "Complete", new_cproc},
-         %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(@charging_interval * 3)]}
-
-      {state, _} ->
         {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
           call(data.deps.log, :complete_charging_process, [
             cproc,
@@ -709,7 +673,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :online -> true
         {:driving, _, _} -> true
         {:updating, _} -> true
-        {:charging, _, _} -> true
+        {:charging, _} -> true
         :start -> false
         {:offline, _} -> false
         {:asleep, _} -> false
