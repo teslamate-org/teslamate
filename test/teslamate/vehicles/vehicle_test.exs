@@ -233,6 +233,30 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     end
 
     @tag :capture_log
+    test "notices if vehicle is in service ", %{test: name} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event()},
+        {:error, :in_service},
+        {:error, :in_service},
+        {:error, :in_service},
+        {:error, :in_service},
+        {:error, :in_service},
+        {:ok, online_event()},
+        {:ok, online_event()}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      # Online
+      assert_receive {:start_state, car_id, :online}
+      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
+
+      refute_receive _, 400
+    end
+
+    @tag :capture_log
     test "stops polling if signed out", %{test: name} do
       events = [
         {:ok, online_event()},

@@ -250,6 +250,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.warn("Error / connection closed", car_id: data.car.id)
         {:keep_state_and_data, schedule_fetch(5)}
 
+      {:error, :in_service} ->
+        Logger.info("Vehicle is currently in service", car_id: data.car.id)
+        {:keep_state_and_data, schedule_fetch(60)}
+
       {:error, :not_signed_in} ->
         Logger.error("Error / unauthorized")
 

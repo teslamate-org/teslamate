@@ -314,8 +314,7 @@ defmodule TeslaMate.Log do
               fragment(
                 "EXTRACT(epoch FROM (?))",
                 c.date - (lag(c.date) |> over(order_by: c.date))
-              ) / 3600,
-          charger_phases: c.charger_phases
+              ) / 3600
         },
         where: c.charging_process_id == ^charging_process.id
 

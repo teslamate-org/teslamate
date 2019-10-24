@@ -109,6 +109,12 @@ defmodule TeslaMate.Api do
       {:error, %TeslaApi.Error{env: %Tesla.Env{status: 404, body: %{"error" => "not_found"}}}} ->
         {:reply, {:error, :vehicle_not_found}, state}
 
+      {:error,
+       %TeslaApi.Error{
+         env: %Tesla.Env{status: 405, body: %{"error" => "vehicle is curently in service"}}
+       }} ->
+        {:reply, {:error, :in_service}, state}
+
       {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
         Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
         {:reply, {:error, reason}, state}
