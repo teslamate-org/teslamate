@@ -164,74 +164,61 @@ defmodule TeslaMate.Log do
       |> Repo.get!(drive_id)
 
     query =
-      Position
-      |> select([p], %{
-        id: p.id,
-        date: p.date,
-        latitude: p.latitude,
-        longitude: p.longitude,
-        odometer: p.odometer,
-        ideal_battery_range_km: p.ideal_battery_range_km,
-        rated_battery_range_km: p.rated_battery_range_km,
-        power_avg: avg(p.power) |> over(),
-        outside_temp_avg: avg(p.outside_temp) |> over(),
-        inside_temp_avg: avg(p.inside_temp) |> over(),
-        speed_max: max(p.speed) |> over(),
-        power_max: max(p.power) |> over(),
-        power_min: min(p.power) |> over(),
-        first_row: row_number() |> over(order_by: [asc: p.date]),
-        last_row: row_number() |> over(order_by: [desc: p.date])
-      })
-      |> where(drive_id: ^drive_id)
-      |> order_by(asc: :date)
+      from p in Position,
+        select: %{
+          count: count() |> over(:w),
+          start_position_id: first_value(p.id) |> over(:w),
+          end_position_id: last_value(p.id) |> over(:w),
+          outside_temp_avg: avg(p.outside_temp) |> over(:w),
+          inside_temp_avg: avg(p.inside_temp) |> over(:w),
+          speed_max: max(p.speed) |> over(:w),
+          power_max: max(p.power) |> over(:w),
+          power_min: min(p.power) |> over(:w),
+          power_avg: avg(p.power) |> over(:w),
+          end_date: last_value(p.date) |> over(:w),
+          start_km: first_value(p.odometer) |> over(:w),
+          end_km: last_value(p.odometer) |> over(:w),
+          start_ideal_range_km: first_value(p.ideal_battery_range_km) |> over(:w),
+          end_ideal_range_km: last_value(p.ideal_battery_range_km) |> over(:w),
+          start_rated_range_km: first_value(p.rated_battery_range_km) |> over(:w),
+          end_rated_range_km: last_value(p.rated_battery_range_km) |> over(:w),
+          distance: (last_value(p.odometer) |> over(:w)) - (first_value(p.odometer) |> over(:w)),
+          duration_min:
+            fragment(
+              "round(extract(epoch from (? - ?)) / 60)::integer",
+              last_value(p.date) |> over(:w),
+              first_value(p.date) |> over(:w)
+            )
+        },
+        windows: [
+          w: [
+            order_by:
+              fragment("? RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING", p.date)
+          ]
+        ],
+        where: [drive_id: ^drive_id],
+        limit: 1
 
-    positions =
-      subquery(query)
-      |> where([p], p.first_row == 1 or p.last_row == 1)
-      |> Repo.all()
+    case Repo.one(query) do
+      %{count: count, distance: distance} = attrs when count >= 2 and distance >= 0.01 ->
+        start_pos = Repo.get!(Position, attrs.start_position_id)
+        end_pos = Repo.get!(Position, attrs.end_position_id)
 
-    case positions do
-      [] ->
-        drive |> Drive.changeset(%{distance: 0, duration_min: 0}) |> Repo.delete()
+        attrs =
+          attrs
+          |> put_address(:start_address_id, start_pos)
+          |> put_address(:end_address_id, end_pos)
+          |> put_geofence(:start_geofence_id, start_pos)
+          |> put_geofence(:end_geofence_id, end_pos)
 
-      [_] ->
-        drive |> Drive.changeset(%{distance: 0, duration_min: 0}) |> Repo.delete()
+        drive
+        |> Drive.changeset(attrs)
+        |> Repo.update()
 
-      [start_pos, end_pos] ->
-        distance = end_pos.odometer - start_pos.odometer
-
-        attrs = %{
-          start_position_id: start_pos.id,
-          end_position_id: end_pos.id,
-          outside_temp_avg: end_pos.outside_temp_avg,
-          inside_temp_avg: end_pos.inside_temp_avg,
-          speed_max: end_pos.speed_max,
-          power_max: end_pos.power_max,
-          power_min: end_pos.power_min,
-          power_avg: end_pos.power_avg,
-          end_date: end_pos.date,
-          start_km: start_pos.odometer,
-          end_km: end_pos.odometer,
-          start_ideal_range_km: start_pos.ideal_battery_range_km,
-          end_ideal_range_km: end_pos.ideal_battery_range_km,
-          start_rated_range_km: start_pos.rated_battery_range_km,
-          end_rated_range_km: end_pos.rated_battery_range_km,
-          duration_min: round(DateTime.diff(end_pos.date, start_pos.date) / 60),
-          distance: distance
-        }
-
-        if distance < 0.01 do
-          drive |> Drive.changeset(attrs) |> Repo.delete()
-        else
-          attrs =
-            attrs
-            |> put_address(:start_address_id, start_pos)
-            |> put_address(:end_address_id, end_pos)
-            |> put_geofence(:start_geofence_id, start_pos)
-            |> put_geofence(:end_geofence_id, end_pos)
-
-          drive |> Drive.changeset(attrs) |> Repo.update()
-        end
+      _ ->
+        drive
+        |> Drive.changeset(%{distance: 0, duration_min: 0})
+        |> Repo.delete()
     end
   end
 
@@ -330,26 +317,40 @@ defmodule TeslaMate.Log do
       end
 
     stats =
-      Charge
-      |> where(charging_process_id: ^charging_process.id)
-      |> select([c], %{
-        charge_energy_added: max(c.charge_energy_added) - min(c.charge_energy_added),
-        start_ideal_range_km: min(c.ideal_battery_range_km),
-        end_ideal_range_km: max(c.ideal_battery_range_km),
-        start_rated_range_km: min(c.rated_battery_range_km),
-        end_rated_range_km: max(c.rated_battery_range_km),
-        start_battery_level: min(c.battery_level),
-        end_battery_level: max(c.battery_level),
-        outside_temp_avg: avg(c.outside_temp),
-        duration_min: duration_min(max(c.date), min(c.date))
-      })
-      |> Repo.one()
+      from(c in Charge,
+        select: %{
+          start_ideal_range_km: first_value(c.ideal_battery_range_km) |> over(:w),
+          end_ideal_range_km: last_value(c.ideal_battery_range_km) |> over(:w),
+          start_rated_range_km: first_value(c.rated_battery_range_km) |> over(:w),
+          end_rated_range_km: last_value(c.rated_battery_range_km) |> over(:w),
+          start_battery_level: first_value(c.battery_level) |> over(:w),
+          end_battery_level: last_value(c.battery_level) |> over(:w),
+          outside_temp_avg: avg(c.outside_temp) |> over(:w),
+          charge_energy_added:
+            (last_value(c.charge_energy_added) |> over(:w)) -
+              (first_value(c.charge_energy_added) |> over(:w)),
+          duration_min:
+            duration_min(last_value(c.date) |> over(:w), first_value(c.date) |> over(:w))
+        },
+        windows: [
+          w: [
+            order_by:
+              fragment("? RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING", c.date)
+          ]
+        ],
+        where: [charging_process_id: ^charging_process.id],
+        limit: 1
+      )
+      |> Repo.one() || %{}
+
+    attrs =
+      stats
       |> Map.put(:end_date, end_date)
       |> Map.put(:charge_energy_used, charge_energy_used)
       |> Map.put(:charge_energy_used_confidence, charge_energy_used_confidence)
       |> Map.put(:interval_sec, charging_interval)
 
-    with {:ok, cproc} <- charging_process |> ChargingProcess.changeset(stats) |> Repo.update(),
+    with {:ok, cproc} <- charging_process |> ChargingProcess.changeset(attrs) |> Repo.update(),
          {:ok, _car} <- recalculate_efficiency(charging_process.car, settings) do
       {:ok, cproc}
     end
