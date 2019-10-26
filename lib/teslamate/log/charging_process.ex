@@ -51,8 +51,10 @@ defmodule TeslaMate.Log.ChargingProcess do
       :outside_temp_avg
     ])
     |> validate_required([:car_id, :start_date])
-    |> validate_number(:interval_sec, greater_than: 0)
+    |> validate_number(:charge_energy_added, greater_than_or_equal_to: 0)
+    |> validate_number(:charge_energy_used, greater_than_or_equal_to: 0)
     |> validate_number(:charge_energy_used_confidence, greater_than: 0, less_than_or_equal_to: 1.0)
+    |> validate_number(:interval_sec, greater_than: 0)
     |> foreign_key_constraint(:car_id)
     |> foreign_key_constraint(:position_id)
     |> foreign_key_constraint(:address_id)

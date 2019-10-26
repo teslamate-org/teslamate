@@ -349,6 +349,7 @@ defmodule TeslaMate.Log do
       |> Map.put(:charge_energy_used, charge_energy_used)
       |> Map.put(:charge_energy_used_confidence, charge_energy_used_confidence)
       |> Map.put(:interval_sec, charging_interval)
+      |> Map.update(:charge_energy_added, nil, &if(&1 < 0, do: nil, else: &1))
 
     with {:ok, cproc} <- charging_process |> ChargingProcess.changeset(attrs) |> Repo.update(),
          {:ok, _car} <- recalculate_efficiency(charging_process.car, settings) do
