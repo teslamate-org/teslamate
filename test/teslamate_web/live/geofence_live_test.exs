@@ -182,7 +182,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                Log.create_car(%{efficiency: 0.153, eid: 42, model: "3", vid: 42, vin: "xxxxx"})
 
       assert {:ok, _} =
-               Log.insert_position(car.id, %{
+               Log.insert_position(car, %{
                  date: DateTime.utc_now(),
                  latitude: 48.067612,
                  longitude: 12.862226

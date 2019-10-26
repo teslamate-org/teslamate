@@ -164,7 +164,7 @@ defmodule TeslaMate.LocationsTest do
     end
 
     defp create_drive(
-           car_id,
+           car,
            %{latitude: start_lat, longitude: start_lng},
            %{latitude: end_lat, longitude: end_lng}
          ) do
@@ -197,20 +197,20 @@ defmodule TeslaMate.LocationsTest do
         }
       ]
 
-      {:ok, drive_id} = Log.start_drive(car_id)
+      {:ok, drive} = Log.start_drive(car)
 
       for p <- positions do
-        {:ok, _} = Log.insert_position(car_id, Map.put(p, :drive_id, drive_id))
+        {:ok, _} = Log.insert_position(drive, p)
       end
 
-      {:ok, drive} = Log.close_drive(drive_id)
+      {:ok, drive} = Log.close_drive(drive)
 
       drive
     end
 
-    defp create_charging_process(car_id, %{latitude: lat, longitude: lng}) do
+    defp create_charging_process(car, %{latitude: lat, longitude: lng}) do
       {:ok, charging_process_id} =
-        Log.start_charging_process(car_id, %{
+        Log.start_charging_process(car, %{
           date: DateTime.utc_now(),
           latitude: lat,
           longitude: lng
@@ -303,17 +303,16 @@ defmodule TeslaMate.LocationsTest do
     end
 
     test "create_geofence/1 links the geofence with drives and charging processes" do
-      %Log.Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       %Log.ChargingProcess{id: cproc_id} =
-        create_charging_process(car_id, %{latitude: 52.51500, longitude: 13.35100})
+        create_charging_process(car, %{latitude: 52.51500, longitude: 13.35100})
 
       %Log.Drive{id: drive_id, start_geofence_id: nil, end_geofence_id: nil} =
-        create_drive(
-          car_id,
-          %{latitude: 52.51500, longitude: 13.35100},
-          %{latitude: 51.22, longitude: 13.95}
-        )
+        create_drive(car, %{latitude: 52.51500, longitude: 13.35100}, %{
+          latitude: 51.22,
+          longitude: 13.95
+        })
 
       assert {:ok, %GeoFence{id: start_geofence_id}} =
                Locations.create_geofence(%{
@@ -373,14 +372,14 @@ defmodule TeslaMate.LocationsTest do
     end
 
     test "update_geofence/1 links the geofence with drives and charging processes" do
-      %Log.Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       %Log.ChargingProcess{id: cproc_id} =
-        create_charging_process(car_id, %{latitude: 52.51500, longitude: 13.35100})
+        create_charging_process(car, %{latitude: 52.51500, longitude: 13.35100})
 
       %Log.Drive{id: drive_id, start_geofence_id: nil, end_geofence_id: nil} =
         create_drive(
-          car_id,
+          car,
           %{latitude: 52.51500, longitude: 13.35100},
           %{latitude: 51.22, longitude: 13.95}
         )

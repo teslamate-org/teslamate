@@ -8,12 +8,11 @@ defmodule TeslaMate.Log do
   import TeslaMate.CustomExpressions
   import Ecto.Query, warn: false
 
+  alias __MODULE__.{Car, Drive, Update, ChargingProcess, Charge, Position, State}
   alias TeslaMate.{Repo, Locations, Mapping, Settings}
   alias TeslaMate.Locations.GeoFence
 
   ## Car
-
-  alias TeslaMate.Log.Car
 
   def list_cars do
     Repo.all(Car)
@@ -52,19 +51,17 @@ defmodule TeslaMate.Log do
 
   ## State
 
-  alias TeslaMate.Log.State
-
-  def start_state(car_id, state) when not is_nil(car_id) and not is_nil(state) do
+  def start_state(%Car{} = car, state) when not is_nil(state) do
     now = DateTime.utc_now()
 
-    case get_current_state(car_id) do
+    case get_current_state(car) do
       %State{state: ^state} = s ->
         {:ok, s}
 
       %State{} = s ->
         Repo.transaction(fn ->
           with {:ok, _} <- s |> State.changeset(%{end_date: now}) |> Repo.update(),
-               {:ok, new_state} <- create_state(car_id, %{state: state, start_date: now}) do
+               {:ok, new_state} <- create_state(car, %{state: state, start_date: now}) do
             new_state
           else
             {:error, reason} -> Repo.rollback(reason)
@@ -72,36 +69,40 @@ defmodule TeslaMate.Log do
         end)
 
       nil ->
-        create_state(car_id, %{state: state, start_date: now})
+        create_state(car, %{state: state, start_date: now})
     end
   end
 
-  def get_current_state(car_id) do
+  def get_current_state(%Car{id: id}) do
     State
-    |> where([s], ^car_id == s.car_id and is_nil(s.end_date))
+    |> where([s], ^id == s.car_id and is_nil(s.end_date))
     |> Repo.one()
   end
 
-  defp create_state(car_id, attrs) do
-    %State{car_id: car_id}
+  defp create_state(%Car{id: id}, attrs) do
+    %State{car_id: id}
     |> State.changeset(attrs)
     |> Repo.insert()
   end
 
   ## Position
 
-  alias TeslaMate.Log.Position
-
   @mapping (case Mix.env() do
               :test -> MappingMock
               _____ -> Mapping
             end)
 
-  def insert_position(car_id, %{latitude: lat, longitude: lng} = attrs) do
-    elevation = @mapping.get_elevation({lat, lng})
+  def insert_position(%Drive{id: id, car_id: car_id}, attrs) do
+    elevation = @mapping.get_elevation({attrs.latitude, attrs.longitude})
     attrs = Map.put(attrs, :elevation, elevation)
 
-    %Position{car_id: car_id, drive_id: Map.get(attrs, :drive_id)}
+    %Position{car_id: car_id, drive_id: id}
+    |> Position.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def insert_position(%Car{id: id}, attrs) do
+    %Position{car_id: id}
     |> Position.changeset(attrs)
     |> Repo.insert()
   end
@@ -113,9 +114,9 @@ defmodule TeslaMate.Log do
     |> Repo.one()
   end
 
-  def get_latest_position(car_id) do
+  def get_latest_position(%Car{id: id}) do
     Position
-    |> where(car_id: ^car_id)
+    |> where(car_id: ^id)
     |> order_by(desc: :date)
     |> limit(1)
     |> Repo.one()
@@ -147,22 +148,14 @@ defmodule TeslaMate.Log do
 
   ## Drive
 
-  alias TeslaMate.Log.Drive
-
-  def start_drive(car_id) do
-    with {:ok, %Drive{id: id}} <-
-           %Drive{car_id: car_id}
-           |> Drive.changeset(%{start_date: DateTime.utc_now()})
-           |> Repo.insert() do
-      {:ok, id}
-    end
+  def start_drive(%Car{id: id}) do
+    %Drive{car_id: id}
+    |> Drive.changeset(%{start_date: DateTime.utc_now()})
+    |> Repo.insert()
   end
 
-  def close_drive(drive_id) do
-    drive =
-      Drive
-      |> preload([:car])
-      |> Repo.get!(drive_id)
+  def close_drive(%Drive{id: id} = drive) do
+    drive = Repo.preload(drive, [:car])
 
     query =
       from p in Position,
@@ -197,7 +190,7 @@ defmodule TeslaMate.Log do
               fragment("? RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING", p.date)
           ]
         ],
-        where: [drive_id: ^drive_id],
+        where: [drive_id: ^id],
         limit: 1
 
     case Repo.one(query) do
@@ -241,10 +234,10 @@ defmodule TeslaMate.Log do
     end
   end
 
-  alias TeslaMate.Log.{ChargingProcess, Charge}
+  ## ChargingProcess
 
-  def start_charging_process(car_id, %{latitude: _, longitude: _} = position_attrs, opts \\ []) do
-    position = Map.put(position_attrs, :car_id, car_id)
+  def start_charging_process(%Car{id: id}, %{latitude: _, longitude: _} = attrs, opts \\ []) do
+    position = Map.put(attrs, :car_id, id)
 
     address_id =
       case Locations.find_address(position) do
@@ -264,7 +257,7 @@ defmodule TeslaMate.Log do
     start_date = Keyword.get_lazy(opts, :date, &DateTime.utc_now/0)
 
     with {:ok, cproc} <-
-           %ChargingProcess{car_id: car_id, address_id: address_id, geofence_id: geofence_id}
+           %ChargingProcess{car_id: id, address_id: address_id, geofence_id: geofence_id}
            |> ChargingProcess.changeset(%{start_date: start_date, position: position})
            |> Repo.insert() do
       {:ok, Repo.preload(cproc, [:address, :geofence])}
@@ -407,26 +400,20 @@ defmodule TeslaMate.Log do
     end
   end
 
-  alias TeslaMate.Log.Update
+  ## Update
 
-  def start_update(car_id) do
-    with {:ok, %Update{id: id}} <-
-           %Update{car_id: car_id}
-           |> Update.changeset(%{start_date: DateTime.utc_now()})
-           |> Repo.insert() do
-      {:ok, id}
-    end
+  def start_update(%Car{id: id}) do
+    %Update{car_id: id}
+    |> Update.changeset(%{start_date: DateTime.utc_now()})
+    |> Repo.insert()
   end
 
-  def cancel_update(update_id) do
-    Update
-    |> Repo.get!(update_id)
-    |> Repo.delete()
+  def cancel_update(%Update{} = update) do
+    Repo.delete(update)
   end
 
-  def finish_update(update_id, version) do
-    Update
-    |> Repo.get!(update_id)
+  def finish_update(%Update{} = update, version) do
+    update
     |> Update.changeset(%{end_date: DateTime.utc_now(), version: version})
     |> Repo.update()
   end

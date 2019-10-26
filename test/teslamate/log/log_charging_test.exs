@@ -24,9 +24,9 @@ defmodule TeslaMate.LogChargingTest do
   end
 
   defp log_charging_process(charges) do
-    %Car{id: car_id} = car_fixture()
+    car = car_fixture()
 
-    {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
+    {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
 
     for {date, added, power, range, phases, current, voltage} <- charges do
       {:ok, %Charge{}} =
@@ -46,10 +46,10 @@ defmodule TeslaMate.LogChargingTest do
 
   describe "start_charging_process/2" do
     test "with valid data creates a position" do
-      assert %Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
-      assert {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
-      assert cproc.car_id == car_id
+      assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
+      assert cproc.car_id == car.id
       assert cproc.position.latitude == @valid_pos_attrs.latitude
       assert cproc.position.longitude == @valid_pos_attrs.longitude
       assert cproc.position.date == @valid_pos_attrs.date
@@ -60,7 +60,7 @@ defmodule TeslaMate.LogChargingTest do
 
     test "with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{} = changeset} =
-               Log.start_charging_process(nil, %{latitude: 0, longitude: 0})
+               Log.start_charging_process(%Car{}, %{latitude: 0, longitude: 0})
 
       assert errors_on(changeset) == %{
                car_id: ["can't be blank"],
@@ -72,26 +72,26 @@ defmodule TeslaMate.LogChargingTest do
     end
 
     test "accepts a custom start date" do
-      assert %Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       custom_date = DateTime.from_unix!(1_566_059_683_000, :microsecond)
 
       assert {:ok, %ChargingProcess{start_date: ^custom_date}} =
-               Log.start_charging_process(car_id, @valid_pos_attrs, date: custom_date)
+               Log.start_charging_process(car, @valid_pos_attrs, date: custom_date)
     end
 
     @tag :capture_log
     test "leaves address blank if resolving failed" do
-      assert %Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       assert {:ok, cproc} =
-               Log.start_charging_process(car_id, %{
+               Log.start_charging_process(car, %{
                  date: DateTime.utc_now(),
                  latitude: 99.9,
                  longitude: 99.9
                })
 
-      assert cproc.car_id == car_id
+      assert cproc.car_id == car.id
       assert cproc.position.latitude == 99.9
       assert cproc.position.longitude == 99.9
       assert cproc.address_id == nil
@@ -101,8 +101,9 @@ defmodule TeslaMate.LogChargingTest do
 
   describe "insert_charge/2" do
     test "with valid data creates a position" do
-      assert %Car{id: car_id} = car_fixture()
-      assert {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
+      car = car_fixture()
+
+      assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
       assert {:ok, %Charge{} = charge} = Log.insert_charge(cproc, @valid_attrs)
 
       assert charge.charging_process_id == cproc.id
@@ -114,8 +115,9 @@ defmodule TeslaMate.LogChargingTest do
     end
 
     test "with invalid data returns error changeset" do
-      assert %Car{id: car_id} = car_fixture()
-      assert {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
+      car = car_fixture()
+
+      assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
 
       assert {:error, %Ecto.Changeset{} = changeset} =
                Log.insert_charge(cproc, %{charger_phases: 0})
@@ -132,8 +134,8 @@ defmodule TeslaMate.LogChargingTest do
 
   describe "complete_charging_process/1" do
     test "aggregates charging data" do
-      assert %Car{id: car_id} = car_fixture()
-      assert {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
+      car = car_fixture()
+      assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
 
       charges = [
         %{
@@ -215,8 +217,9 @@ defmodule TeslaMate.LogChargingTest do
     end
 
     test "closes charging process with zero charges " do
-      assert %Car{id: car_id} = car_fixture()
-      assert {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
+      car = car_fixture()
+
+      assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
 
       assert {:ok, %ChargingProcess{} = cproc} = Log.complete_charging_process(cproc)
       assert %DateTime{} = cproc.start_date
@@ -340,7 +343,7 @@ defmodule TeslaMate.LogChargingTest do
     end
 
     test "links to the nearby geo-fence" do
-      %Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       charges = [
         %{
@@ -377,7 +380,7 @@ defmodule TeslaMate.LogChargingTest do
                geofence_fixture(%{latitude: 50.1121, longitude: 11.597, radius: 50})
 
       {:ok, cproc} =
-        Log.start_charging_process(car_id, %{
+        Log.start_charging_process(car, %{
           date: DateTime.utc_now(),
           latitude: 50.112198,
           longitude: 11.597669
@@ -417,20 +420,20 @@ defmodule TeslaMate.LogChargingTest do
         {107.9, 450.1, 52.1, 22, 90, 40}
       ]
 
-      assert %Car{id: car_id_0, efficiency: nil} = car_fixture(eid: 3_453, vid: 3240, vin: "slkf")
-      assert %Car{id: car_id_1, efficiency: nil} = car_fixture(eid: 3_904, vid: 9403, vin: "salk")
+      assert %Car{efficiency: nil} = car_0 = car_fixture(eid: 3_453, vid: 3240, vin: "slkf")
+      assert %Car{efficiency: nil} = car_1 = car_fixture(eid: 3_904, vid: 9403, vin: "salk")
 
-      for {range, car_id} <- [{:ideal, car_id_0}, {:rated, car_id_1}] do
+      for {range, car} <- [{:ideal, car_0}, {:rated, car_1}] do
         {:ok, _} = Settings.get_settings!() |> Settings.update_settings(%{preferred_range: range})
 
-        :ok = insert_charging_process_fixtures(car_id, data, range)
+        :ok = insert_charging_process_fixtures(car, data, range)
 
-        assert %Car{efficiency: 0.152} = Log.get_car!(car_id)
+        assert %Car{efficiency: 0.152} = Log.get_car!(car.id)
       end
     end
 
     test "makes an estimate with up to 4 decimal places" do
-      assert %Car{id: car_id, efficiency: nil} = car_fixture()
+      assert %Car{efficiency: nil} = car = car_fixture()
 
       data = [
         {330.8, 379.0, 7.34, 66, 76, 47},
@@ -463,39 +466,39 @@ defmodule TeslaMate.LogChargingTest do
         {332.2, 353.5, 3.25, 67, 71, 5}
       ]
 
-      :ok = insert_charging_process_fixtures(car_id, data)
+      :ok = insert_charging_process_fixtures(car, data)
 
-      assert %Car{efficiency: 0.1522} = Log.get_car!(car_id)
+      assert %Car{efficiency: 0.1522} = Log.get_car!(car.id)
     end
 
     test "makes a rough estimate starting at two values" do
       ## 2x
-      assert %Car{id: car_id, efficiency: nil} = car_fixture(eid: 666, vid: 667, vin: "668")
+      assert %Car{efficiency: nil} = car = car_fixture(eid: 666, vid: 667, vin: "668")
 
       data = [
         {283.1, 353.9, 10.57, 57, 71, 60}
       ]
 
-      :ok = insert_charging_process_fixtures(car_id, data)
+      :ok = insert_charging_process_fixtures(car, data)
 
-      assert %Car{efficiency: nil} = Log.get_car!(car_id)
+      assert %Car{efficiency: nil} = Log.get_car!(car.id)
 
       ## 3x
 
-      assert %Car{id: car_id, efficiency: nil} = car_fixture(eid: 886, vid: 887, vin: "888")
+      assert %Car{efficiency: nil} = car = car_fixture(eid: 886, vid: 887, vin: "888")
 
       data = [
         {283.1, 353.9, 10.57, 57, 71, 60},
         {259.7, 426.2, 25.56, 52, 85, 36}
       ]
 
-      :ok = insert_charging_process_fixtures(car_id, data)
+      :ok = insert_charging_process_fixtures(car, data)
 
-      assert %Car{efficiency: 0.15} = Log.get_car!(car_id)
+      assert %Car{efficiency: 0.15} = Log.get_car!(car.id)
     end
 
     test "handles NULL" do
-      assert %Car{id: car_id, efficiency: nil} = car_fixture()
+      assert %Car{efficiency: nil} = car = car_fixture()
 
       data = [
         {262.8, 263.5, 0.0, 53, 53, 0},
@@ -503,13 +506,13 @@ defmodule TeslaMate.LogChargingTest do
         {294.6, 294.6, 0.0, 59, 59, 0}
       ]
 
-      :ok = insert_charging_process_fixtures(car_id, data)
+      :ok = insert_charging_process_fixtures(car, data)
 
-      assert %Car{efficiency: nil} = Log.get_car!(car_id)
+      assert %Car{efficiency: nil} = Log.get_car!(car.id)
     end
 
-    defp insert_charging_process_fixtures(car_id, data, range \\ :ideal) do
-      {:ok, %Position{id: position_id}} = Log.insert_position(car_id, @valid_pos_attrs)
+    defp insert_charging_process_fixtures(car, data, range \\ :ideal) do
+      {:ok, %Position{id: position_id}} = Log.insert_position(car, @valid_pos_attrs)
 
       {start_range, end_range} =
         case range do
@@ -520,7 +523,7 @@ defmodule TeslaMate.LogChargingTest do
       data =
         for {sr, er, ca, sl, el, d} <- data do
           %{
-            car_id: car_id,
+            car_id: car.id,
             position_id: position_id,
             charge_energy_added: ca,
             start_battery_level: sl,
@@ -533,7 +536,7 @@ defmodule TeslaMate.LogChargingTest do
 
       {_, nil} = Repo.insert_all(ChargingProcess, data)
 
-      {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
+      {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
 
       charges = [
         %{

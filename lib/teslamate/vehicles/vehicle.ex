@@ -79,7 +79,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     settings = %Settings.Settings{} = Keyword.get_lazy(opts, :settings, &Settings.get_settings!/0)
 
     last_state_change =
-      with %Log.State{start_date: date} <- call(deps.log, :get_current_state, [car.id]) do
+      with %Log.State{start_date: date} <- call(deps.log, :get_current_state, [car]) do
         date
       end
 
@@ -306,7 +306,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Logger.info("Start / :asleep", car_id: data.car.id)
 
     {:ok, %Log.State{start_date: last_state_change}} =
-      call(data.deps.log, :start_state, [data.car.id, :asleep])
+      call(data.deps.log, :start_state, [data.car, :asleep])
 
     {:next_state, {:asleep, @asleep_interval}, %Data{data | last_state_change: last_state_change},
      [notify_subscribers(), schedule_fetch()]}
@@ -316,24 +316,24 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Logger.info("Start / :offline", car_id: data.car.id)
 
     {:ok, %Log.State{start_date: last_state_change}} =
-      call(data.deps.log, :start_state, [data.car.id, :offline])
+      call(data.deps.log, :start_state, [data.car, :offline])
 
     {:next_state, {:offline, @asleep_interval},
      %Data{data | last_state_change: last_state_change}, [notify_subscribers(), schedule_fetch()]}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle}} = event, :start, data) do
+  def handle_event(:internal, {:update, {:online, vehicle}} = evt, :start, data) do
     Logger.info("Start / :online", car_id: data.car.id)
 
     {:ok, car} = call(data.deps.log, :update_car, [data.car, identify(vehicle)])
 
     {:ok, %Log.State{start_date: last_state_change}} =
-      call(data.deps.log, :start_state, [data.car.id, :online])
+      call(data.deps.log, :start_state, [car, :online])
 
-    :ok = insert_position(vehicle, data)
+    {:ok, _pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle)])
 
     {:next_state, :online, %Data{data | car: car, last_state_change: last_state_change},
-     [notify_subscribers(), {:next_event, :internal, event}]}
+     [notify_subscribers(), {:next_event, :internal, evt}]}
   end
 
   #### :online
@@ -348,9 +348,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %Vehicle{vehicle_state: %VehicleState{software_update: %{status: "installing"}}} ->
         Logger.info("Update / Start", car_id: data.car.id)
 
-        {:ok, update_id} = call(data.deps.log, :start_update, [data.car.id])
+        {:ok, update} = call(data.deps.log, :start_update, [data.car])
 
-        {:next_state, {:updating, update_id},
+        {:next_state, {:updating, update},
          %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(15)]}
 
@@ -358,10 +358,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
       when shift_state in ["D", "N", "R"] ->
         Logger.info("Driving / Start", car_id: data.car.id)
 
-        {:ok, drive_id} = call(data.deps.log, :start_drive, [data.car.id])
-        :ok = insert_position(vehicle, data, drive_id: drive_id)
+        {:ok, drive} = call(data.deps.log, :start_drive, [data.car])
+        {:ok, _pos} = call(data.deps.log, :insert_position, [drive, create_position(vehicle)])
 
-        {:next_state, {:driving, :available, drive_id},
+        {:next_state, {:driving, :available, drive},
          %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(@driving_interval)]}
 
@@ -370,7 +370,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         alias Locations.GeoFence
 
         position = create_position(vehicle)
-        {:ok, cproc} = call(data.deps.log, :start_charging_process, [data.car.id, position])
+        {:ok, cproc} = call(data.deps.log, :start_charging_process, [data.car, position])
         :ok = insert_charge(cproc, vehicle, data)
 
         ["Charging", "SOC: #{lvl}%", with(%GeoFence{name: name} <- cproc.geofence, do: name)]
@@ -425,21 +425,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   #### msg: :offline
 
-  def handle_event(:internal, {:update, :offline}, {:driving, :available, drive_id}, data) do
+  def handle_event(:internal, {:update, :offline}, {:driving, :available, drive}, data) do
     Logger.warn("Vehicle went offline while driving", car_id: data.car.id)
 
-    {:next_state, {:driving, {:unavailable, 0}, drive_id},
+    {:next_state, {:driving, {:unavailable, 0}, drive},
      %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
   end
 
-  def handle_event(:internal, {:update, :offline}, {:driving, {:unavailable, n}, drive_id}, data)
+  def handle_event(:internal, {:update, :offline}, {:driving, {:unavailable, n}, drive}, data)
       when n < 15 do
-    {:next_state, {:driving, {:unavailable, n + 1}, drive_id},
+    {:next_state, {:driving, {:unavailable, n + 1}, drive},
      %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5)}
   end
 
-  def handle_event(:internal, {:update, :offline}, {:driving, {:unavailable, _n}, drive_id}, data) do
-    {:next_state, {:driving, {:offline, data.last_response}, drive_id},
+  def handle_event(:internal, {:update, :offline}, {:driving, {:unavailable, _n}, drive}, data) do
+    {:next_state, {:driving, {:offline, data.last_response}, drive},
      %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
   end
 
@@ -447,12 +447,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
   end
 
-  def handle_event(:internal, {:update, :offline}, {:driving, {:offline, last}, drive_id}, data) do
+  def handle_event(:internal, {:update, :offline}, {:driving, {:offline, last}, drive}, data) do
     offline_since = parse_timestamp(last.drive_state.timestamp)
 
     case diff_seconds(DateTime.utc_now(), offline_since) / 60 do
       min when min >= @drive_timout_min ->
-        timeout_drive(drive_id, data)
+        timeout_drive(drive, data)
 
         {:next_state, {:driving, {:offline, last}, nil},
          %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30)}
@@ -462,7 +462,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  def handle_event(:internal, {:update, {:online, now}}, {:driving, {:offline, last}, id}, data) do
+  def handle_event(
+        :internal,
+        {:update, {:online, now}},
+        {:driving, {:offline, last}, drive},
+        data
+      ) do
     offline_start = parse_timestamp(last.drive_state.timestamp)
     offline_end = parse_timestamp(now.drive_state.timestamp)
 
@@ -475,11 +480,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     cond do
       has_gained_range? and offline_min >= 5 ->
-        unless is_nil(id), do: timeout_drive(id, data)
+        unless is_nil(drive), do: timeout_drive(drive, data)
 
         {:ok, cproc} =
           call(data.deps.log, :start_charging_process, [
-            data.car.id,
+            data.car,
             create_position(last),
             [date: DateTime.add(offline_start, 1, :second)]
           ])
@@ -499,37 +504,42 @@ defmodule TeslaMate.Vehicles.Vehicle do
          {:next_event, :internal, {:update, {:online, now}}}}
 
       not has_gained_range? and offline_min >= @drive_timout_min ->
-        unless is_nil(id), do: timeout_drive(id, data)
+        unless is_nil(drive), do: timeout_drive(drive, data)
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, now}}}}
 
-      not is_nil(id) ->
-        {:next_state, {:driving, :available, id}, %Data{data | last_used: DateTime.utc_now()},
+      not is_nil(drive) ->
+        {:next_state, {:driving, :available, drive}, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, now}}}}
     end
   end
 
   #### msg: :online
 
-  def handle_event(:internal, {:update, {:online, _} = e}, {:driving, {:unavailable, _}, id}, d) do
+  def handle_event(
+        :internal,
+        {:update, {:online, _} = e},
+        {:driving, {:unavailable, _}, drive},
+        d
+      ) do
     Logger.info("Vehicle is back online", car_id: d.car.id)
 
-    {:next_state, {:driving, :available, id}, %Data{d | last_used: DateTime.utc_now()},
+    {:next_state, {:driving, :available, drive}, %Data{d | last_used: DateTime.utc_now()},
      {:next_event, :internal, {:update, e}}}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, :available, did}, data) do
+  def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, :available, drive}, data) do
     case get(vehicle, [:drive_state, :shift_state]) do
       shift_state when shift_state in ["D", "R", "N"] ->
-        :ok = insert_position(vehicle, data, drive_id: did)
+        {:ok, _pos} = call(data.deps.log, :insert_position, [drive, create_position(vehicle)])
 
-        {:next_state, {:driving, :available, did}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:driving, :available, drive}, %Data{data | last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(@driving_interval)]}
 
       shift_state when is_nil(shift_state) or shift_state == "P" ->
         {:ok, %Log.Drive{distance: km, duration_min: min}} =
-          call(data.deps.log, :close_drive, [did])
+          call(data.deps.log, :close_drive, [drive])
 
         Logger.info("Driving / Ended / #{round(km)} km – #{min} min", car_id: data.car.id)
 
@@ -545,7 +555,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch()}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle}}, {:updating, update_id}, data) do
+  def handle_event(:internal, {:update, {:online, vehicle}}, {:updating, update}, data) do
     case Map.get(vehicle.vehicle_state || %{}, :software_update) do
       nil ->
         Logger.warn("Update / empty payload:\n\n#{inspect(vehicle, pretty: true)}",
@@ -558,7 +568,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15)}
 
       %VehicleState.SoftwareUpdate{status: "available"} = software_update ->
-        {:ok, %Log.Update{}} = call(data.deps.log, :cancel_update, [update_id])
+        {:ok, %Log.Update{}} = call(data.deps.log, :cancel_update, [update])
 
         Logger.warn("Update canceled:\n\n#{inspect(software_update, pretty: true)}",
           car_id: data.car.id
@@ -575,7 +585,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         end
 
         car_version = vehicle.vehicle_state.car_version
-        {:ok, %Log.Update{}} = call(data.deps.log, :finish_update, [update_id, car_version])
+        {:ok, %Log.Update{}} = call(data.deps.log, :finish_update, [update, car_version])
 
         Logger.info("Update / Installed #{car_version}", car_id: data.car.id)
 
@@ -648,7 +658,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp restore_last_knwon_values(vehicle, data) do
     with %Vehicle{drive_state: nil, charge_state: nil, climate_state: nil} <- vehicle,
-         %Log.Position{} = position <- call(data.deps.log, :get_latest_position, [data.car.id]) do
+         %Log.Position{} = position <- call(data.deps.log, :get_latest_position, [data.car]) do
       drive = %Drive{
         latitude: position.latitude,
         longitude: position.longitude
@@ -704,17 +714,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp insert_position(vehicle, data, opts \\ []) do
-    position = create_position(vehicle, opts)
-
-    with {:ok, _pos} <- call(data.deps.log, :insert_position, [data.car.id, position]) do
-      :ok
-    end
-  end
-
-  defp create_position(%Vehicle{} = vehicle, opts \\ []) do
+  defp create_position(%Vehicle{} = vehicle) do
     %{
-      drive_id: Keyword.get(opts, :drive_id),
       date: parse_timestamp(vehicle.drive_state.timestamp),
       latitude: vehicle.drive_state.latitude,
       longitude: vehicle.drive_state.longitude,
@@ -853,9 +854,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp timeout_drive(drive_id, %Data{} = data) do
+  defp timeout_drive(drive, %Data{} = data) do
     {:ok, %Log.Drive{distance: km, duration_min: min}} =
-      call(data.deps.log, :close_drive, [drive_id])
+      call(data.deps.log, :close_drive, [drive])
 
     Logger.info("Driving / Timeout / #{round(km)} km – #{min} min", car_id: data.car.id)
   end

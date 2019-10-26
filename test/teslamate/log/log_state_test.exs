@@ -15,35 +15,34 @@ defmodule TeslaMate.LogStateTest do
 
   describe "create_state/1 " do
     test "with valid data creates a state" do
-      assert %Car{id: car_id} = car_fixture()
-      assert {:ok, %State{} = state} = Log.start_state(car_id, :online)
-      assert state.car_id == car_id
+      car = car_fixture()
+      assert {:ok, %State{} = state} = Log.start_state(car, :online)
+      assert state.car_id == car.id
       assert %DateTime{} = state.start_date
       assert state.end_date == nil
       assert state.state == :online
     end
 
     test "does not create a new state if the state is already open" do
-      assert %Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       assert {:ok, %State{state: :online, start_date: start_date, end_date: nil}} =
-               Log.start_state(car_id, :online)
+               Log.start_state(car, :online)
 
       assert {:ok, %State{state: :online, start_date: ^start_date, end_date: nil}} =
-               Log.start_state(car_id, :online)
+               Log.start_state(car, :online)
     end
 
     test "completes the previous state if the state changed" do
-      assert %Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       assert {:ok, %State{state: :online, start_date: start_date, end_date: nil}} =
-               Log.start_state(car_id, :online)
+               Log.start_state(car, :online)
 
       {:ok, %State{start_date: end_date}} =
         TestHelper.eventually(
           fn ->
-            assert {:ok, %State{state: :offline, end_date: nil}} =
-                     Log.start_state(car_id, :offline)
+            assert {:ok, %State{state: :offline, end_date: nil}} = Log.start_state(car, :offline)
           end,
           delay: 10
         )
@@ -55,22 +54,23 @@ defmodule TeslaMate.LogStateTest do
     end
 
     test "handles multiple cars" do
-      assert %Car{id: car_id} = car_fixture()
-      assert %Car{id: another_car_id} = car_fixture(eid: 43, vid: 43, vin: "yyyyy")
+      car = car_fixture()
+
+      another_car = car_fixture(eid: 43, vid: 43, vin: "yyyyy")
 
       assert {:ok, %State{state: :online, start_date: s0, end_date: nil}} =
-               Log.start_state(car_id, :online)
+               Log.start_state(car, :online)
 
       assert {:ok, %State{state: :online, start_date: s1, end_date: nil}} =
-               Log.start_state(another_car_id, :online)
+               Log.start_state(another_car, :online)
 
       Process.sleep(1010)
 
       assert {:ok, %State{state: :asleep, start_date: e1, end_date: nil}} =
-               Log.start_state(another_car_id, :asleep)
+               Log.start_state(another_car, :asleep)
 
       assert {:ok, %State{state: :offline, start_date: e0, end_date: nil}} =
-               Log.start_state(car_id, :offline)
+               Log.start_state(car, :offline)
 
       assert [state_0, state_1, state_2, state_3] = State |> order_by(asc: :id) |> Repo.all()
       assert %State{state: :online, start_date: ^s0, end_date: ^e0} = state_0
@@ -80,10 +80,10 @@ defmodule TeslaMate.LogStateTest do
     end
 
     test "with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{} = changeset} = Log.start_state(404, :foo)
+      assert {:error, %Ecto.Changeset{} = changeset} = Log.start_state(%Car{id: 404}, :foo)
       assert errors_on(changeset) == %{state: ["is invalid"]}
 
-      assert {:error, %Ecto.Changeset{} = changeset} = Log.start_state(404, :asleep)
+      assert {:error, %Ecto.Changeset{} = changeset} = Log.start_state(%Car{id: 404}, :asleep)
       assert errors_on(changeset) == %{car_id: ["does not exist"]}
     end
   end

@@ -117,7 +117,7 @@ defmodule TeslaMate.SettingsTest do
 
     test "triggers a recalculaten of efficiencies if the preferred range chages" do
       {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
-      %Car{id: car_id, efficiency: nil} = car_fixture()
+      %Car{efficiency: nil} = car = car_fixture()
 
       data = [
         {293.9, 293.9, nil, nil, 0.0, 59, 59, 0},
@@ -141,20 +141,20 @@ defmodule TeslaMate.SettingsTest do
         {107.9, 450.1, 108.9, 450.1, 52.1, 22, 90, 40}
       ]
 
-      :ok = insert_charging_processes(car_id, data)
+      :ok = insert_charging_processes(car, data)
       settings = Settings.get_settings!()
 
       # no change
       assert {:ok, settings} = Settings.update_settings(settings, %{preferred_range: :ideal})
-      assert %Car{efficiency: nil} = Log.get_car!(car_id)
+      assert %Car{efficiency: nil} = Log.get_car!(car.id)
 
       # changed
       assert {:ok, settings} = Settings.update_settings(settings, %{preferred_range: :rated})
-      assert %Car{efficiency: 0.15} = Log.get_car!(car_id)
+      assert %Car{efficiency: 0.15} = Log.get_car!(car.id)
 
       # changed back
       assert {:ok, settings} = Settings.update_settings(settings, %{preferred_range: :ideal})
-      assert %Car{efficiency: 0.152} = Log.get_car!(car_id)
+      assert %Car{efficiency: 0.152} = Log.get_car!(car.id)
     end
 
     defp car_fixture(attrs \\ %{}) do
@@ -168,13 +168,13 @@ defmodule TeslaMate.SettingsTest do
 
     @valid_pos_attrs %{date: DateTime.utc_now(), latitude: 0.0, longitude: 0.0}
 
-    defp insert_charging_processes(car_id, data) do
-      {:ok, %Position{id: position_id}} = Log.insert_position(car_id, @valid_pos_attrs)
+    defp insert_charging_processes(car, data) do
+      {:ok, %Position{id: position_id}} = Log.insert_position(car, @valid_pos_attrs)
 
       data =
         for {sir, eir, srr, err, ca, sl, el, d} <- data do
           %{
-            car_id: car_id,
+            car_id: car.id,
             position_id: position_id,
             start_ideal_range_km: sir,
             end_ideal_range_km: eir,

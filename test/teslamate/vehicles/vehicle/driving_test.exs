@@ -1,6 +1,8 @@
 defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
   use TeslaMate.VehicleCase, async: true
 
+  alias TeslaMate.Log.{Drive, Car}
+
   test "logs a full drive", %{test: name} do
     now = DateTime.utc_now()
     now_ts = DateTime.to_unix(now, :millisecond)
@@ -15,24 +17,24 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, since: s1}}}
     assert DateTime.diff(s0, s1, :nanosecond) < 0
 
-    assert_receive {:start_drive, ^car_id}
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 97, drive_id: 111}}
+    assert_receive {:start_drive, ^car}
+    assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 97}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, since: ^s1}}}
 
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
+    assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, since: ^s1}}}
 
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: -8, drive_id: 111}}
-    assert_receive {:close_drive, 111}
+    assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: -8}}
+    assert_receive {:close_drive, ^drive}
 
-    assert_receive {:start_state, ^car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, ^car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
     assert DateTime.diff(s1, s2, :nanosecond) < 0
 
@@ -59,21 +61,21 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
 
-    assert_receive {:start_drive, ^car_id}
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 80, drive_id: 111}}
+    assert_receive {:start_drive, ^car}
+    assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 80}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 89, drive_id: 111}}
+    assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 89}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 64, drive_id: 111}}
-    assert_receive {:close_drive, 111}
+    assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 64}}
+    assert_receive {:close_drive, ^drive}
 
-    assert_receive {:start_state, ^car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, ^car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
     refute_receive _
@@ -90,15 +92,16 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
 
-    assert_receive {:start_drive, ^car_id}
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, drive_id: 111}}
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, drive_id: 111}}
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 0, drive_id: 111}}
+    assert_receive {:start_drive, ^car}
+    assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 0}}
+    assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 0}}
+    assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 0}}
+
     # ...
 
     refute_received _
@@ -115,8 +118,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
     refute_receive _
@@ -135,20 +138,19 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
 
-    assert_receive {:start_drive, ^car_id}
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 8, drive_id: 111}}
+    assert_receive {:start_drive, ^car}
+    assert_receive {:insert_position, %Drive{id: 111} = drive, %{longitude: 0.1, speed: 8}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
-    assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 24, drive_id: 111}}
+    assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 24}}
+    assert_receive {:close_drive, ^drive}
 
-    assert_receive {:close_drive, 111}
-
-    assert_receive {:start_state, ^car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, ^car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
     refute_receive _
@@ -194,25 +196,25 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
 
-      assert_receive {:start_drive, ^car_id}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 48}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
 
       refute_receive _, 50
 
       # Logs previous drive because of timeout
-      assert_receive {:close_drive, 111}, 300
+      assert_receive {:close_drive, ^drive}, 300
 
       # Logs a charge session based on the available data
       start_date = now |> DateTime.add(1, :second) |> DateTime.truncate(:millisecond)
       end_date = now |> DateTime.add(5 * 60 - 1, :second) |> DateTime.truncate(:millisecond)
 
-      assert_receive {:start_charging_process, ^car_id, %{latitude: 0.1, longitude: 0.1},
+      assert_receive {:start_charging_process, ^car, %{latitude: 0.1, longitude: 0.1},
                       date: ^start_date}
 
       assert_receive {:insert_charge, charging_id,
@@ -223,17 +225,17 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       assert_receive {:complete_charging_process, ^charging_id, [date: ^end_date]}
 
-      assert_receive {:start_state, ^car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, ^car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-      assert_receive {:start_drive, ^car_id}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.2, speed: 32, drive_id: 111}}
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
-      assert_receive {:close_drive, 111}
+      assert_receive {:close_drive, ^drive}
 
-      assert_receive {:start_state, ^car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, ^car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
@@ -254,17 +256,17 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
 
-      assert_receive {:start_drive, ^car_id}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 48}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
 
       # Timeout
-      assert_receive {:close_drive, 111}, 1200
+      assert_receive {:close_drive, ^drive}, 1200
 
       refute_receive _
     end
@@ -289,31 +291,31 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
 
-      assert_receive {:start_drive, ^car_id}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 48}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
 
       refute_receive _, 100
 
       # Logs previous drive
-      assert_receive {:close_drive, 111}, 200
+      assert_receive {:close_drive, ^drive}, 200
 
-      assert_receive {:start_state, ^car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, ^car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-      assert_receive {:start_drive, ^car_id}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.2, speed: 32, drive_id: 111}}
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
-      assert_receive {:close_drive, 111}
+      assert_receive {:close_drive, ^drive}
 
-      assert_receive {:start_state, ^car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, ^car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
@@ -339,23 +341,23 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
 
-      assert_receive {:start_drive, ^car_id}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.1, speed: 48, drive_id: 111}}
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 48}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
 
       refute_receive _, 50
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
-      assert_receive {:insert_position, ^car_id, %{longitude: 0.2, speed: 32, drive_id: 111}}
-      assert_receive {:close_drive, 111}
+      assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
+      assert_receive {:close_drive, ^drive}
 
-      assert_receive {:start_state, ^car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, ^car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _

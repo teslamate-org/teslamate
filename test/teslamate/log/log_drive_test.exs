@@ -15,34 +15,36 @@ defmodule TeslaMate.LogDriveTest do
     car
   end
 
-  test "start_drive/1 returns the drive_id" do
-    assert %car{id: car_id} = car_fixture()
-    assert {:ok, drive_id} = Log.start_drive(car_id)
-    assert is_number(drive_id)
+  test "start_drive/1 returns the drive" do
+    %Car{id: id} = car = car_fixture()
+
+    assert {:ok, %Drive{car_id: ^id}} = Log.start_drive(car)
   end
 
   describe "insert_position/1" do
     test "with valid data creates a position" do
-      assert %Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
-      assert {:ok, %Position{} = position} = Log.insert_position(car_id, @valid_attrs)
+      assert {:ok, %Position{} = position} = Log.insert_position(car, @valid_attrs)
       assert %DateTime{} = position.date
-      assert position.car_id == car_id
+      assert position.car_id == car.id
       assert position.longitude == 0.0
       assert position.latitude == 0.0
     end
 
-    test "cannot insert positions for drives which don't exist" do
-      assert %Car{id: car_id} = car_fixture()
-
-      attrs = Map.put(@valid_attrs, :drive_id, 404)
-      assert {:error, %Ecto.Changeset{} = changeset} = Log.insert_position(car_id, attrs)
-      assert errors_on(changeset) == %{drive_id: ["does not exist"]}
-    end
-
     test "with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{} = changeset} =
-               Log.insert_position(nil, %{latitude: nil, longitude: nil})
+               Log.insert_position(%Drive{}, %{latitude: nil, longitude: nil})
+
+      assert errors_on(changeset) == %{
+               car_id: ["can't be blank"],
+               date: ["can't be blank"],
+               latitude: ["can't be blank"],
+               longitude: ["can't be blank"]
+             }
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Log.insert_position(%Car{}, %{latitude: nil, longitude: nil})
 
       assert errors_on(changeset) == %{
                car_id: ["can't be blank"],
@@ -55,7 +57,7 @@ defmodule TeslaMate.LogDriveTest do
 
   describe "close_drive/2" do
     test "aggregates drive data" do
-      assert %car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       positions = [
         %{
@@ -125,13 +127,13 @@ defmodule TeslaMate.LogDriveTest do
         }
       ]
 
-      assert {:ok, drive_id} = Log.start_drive(car_id)
+      assert {:ok, drive} = Log.start_drive(car)
 
       for p <- positions do
-        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :drive_id, drive_id))
+        assert {:ok, _} = Log.insert_position(drive, p)
       end
 
-      assert {:ok, drive} = Log.close_drive(drive_id)
+      assert {:ok, drive} = Log.close_drive(drive)
 
       assert {:ok, drive.end_date, 0} == DateTime.from_iso8601("2019-04-06 10:23:25.000000Z")
       assert drive.outside_temp_avg == 19.04
@@ -154,34 +156,32 @@ defmodule TeslaMate.LogDriveTest do
     end
 
     test "deletes a drive and if it has no positions" do
-      assert %car{id: car_id} = car_fixture()
+      car = car_fixture()
 
-      assert {:ok, drive_id} = Log.start_drive(car_id)
-      assert %Drive{} = Repo.get(Drive, drive_id)
-
-      assert {:ok, %Drive{distance: 0.0, duration_min: 0}} = Log.close_drive(drive_id)
-      assert nil == Repo.get(Drive, drive_id)
+      assert {:ok, %Drive{} = drive} = Log.start_drive(car)
+      assert {:ok, %Drive{id: id, distance: 0.0, duration_min: 0}} = Log.close_drive(drive)
+      assert nil == Repo.get(Drive, id)
     end
 
     test "deletes a drive and its position if it has only one position" do
-      assert %car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       positions = [
         %{date: "2019-04-06 10:00:00", latitude: 0.0, longitude: 0.0, odometer: 100}
       ]
 
-      assert {:ok, drive_id} = Log.start_drive(car_id)
+      assert {:ok, drive} = Log.start_drive(car)
 
       for p <- positions do
-        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :drive_id, drive_id))
+        assert {:ok, _} = Log.insert_position(drive, p)
       end
 
-      assert {:ok, %Drive{distance: 0.0, duration_min: 0}} = Log.close_drive(drive_id)
-      assert nil == Repo.get(Drive, drive_id)
+      assert {:ok, %Drive{id: id, distance: 0.0, duration_min: 0}} = Log.close_drive(drive)
+      assert nil == Repo.get(Drive, id)
     end
 
     test "deletes a drive and its position if the distance driven is 0" do
-      assert %car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       positions = [
         %{
@@ -200,14 +200,14 @@ defmodule TeslaMate.LogDriveTest do
         }
       ]
 
-      assert {:ok, drive_id} = Log.start_drive(car_id)
+      assert {:ok, drive} = Log.start_drive(car)
 
       for p <- positions do
-        assert {:ok, _} = Log.insert_position(car_id, Map.put(p, :drive_id, drive_id))
+        assert {:ok, _} = Log.insert_position(drive, p)
       end
 
-      assert {:ok, %Drive{distance: 0.0}} = Log.close_drive(drive_id)
-      assert nil == Repo.get(Drive, drive_id)
+      assert {:ok, %Drive{id: id, distance: 0.0}} = Log.close_drive(drive)
+      assert nil == Repo.get(Drive, id)
     end
   end
 
@@ -225,7 +225,7 @@ defmodule TeslaMate.LogDriveTest do
     end
 
     test "links to the nearby geo-fence" do
-      %Car{id: car_id} = car_fixture()
+      car = car_fixture()
 
       positions = [
         %{
@@ -264,12 +264,12 @@ defmodule TeslaMate.LogDriveTest do
       assert %GeoFence{id: end_id} =
                geofence_fixture(%{latitude: 49.11161, longitude: 11.222, radius: 200})
 
-      {:ok, drive_id} = Log.start_drive(car_id)
+      {:ok, drive} = Log.start_drive(car)
 
       for p <- positions,
-          do: {:ok, _} = Log.insert_position(car_id, Map.put(p, :drive_id, drive_id))
+          do: {:ok, _} = Log.insert_position(drive, p)
 
-      assert {:ok, drive} = Log.close_drive(drive_id)
+      assert {:ok, drive} = Log.close_drive(drive)
       assert drive.start_geofence_id == start_id
       assert drive.end_geofence_id == end_id
     end

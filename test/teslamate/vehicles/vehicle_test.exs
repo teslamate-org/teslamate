@@ -24,8 +24,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
@@ -38,7 +38,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :offline}
+      assert_receive {:start_state, car, :offline}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :offline}}}
 
       refute_receive _
@@ -51,7 +51,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :asleep}
+      assert_receive {:start_state, car, :asleep}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :asleep}}}
 
       refute_receive _
@@ -68,8 +68,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}, 100
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}, 100
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       assert :ok = Vehicle.resume_logging(name)
@@ -91,13 +91,13 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :asleep}
+      assert_receive {:start_state, car, :asleep}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :asleep}}}
 
       assert :ok = Vehicle.resume_logging(name)
 
-      assert_receive {:start_state, ^car_id, :online}, 100
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, ^car, :online}, 100
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
@@ -117,13 +117,13 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :offline}
+      assert_receive {:start_state, car, :offline}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :offline}}}
 
       assert :ok = Vehicle.resume_logging(name)
 
-      assert_receive {:start_state, ^car_id, :online}, 100
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, ^car, :online}, 100
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
@@ -146,8 +146,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         )
 
       # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
       refute_receive _, 500
@@ -172,8 +172,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, events)
 
       # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
 
       # Too many errors
@@ -193,8 +193,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
 
       # ...
@@ -225,8 +225,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, events)
 
       # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
 
       refute_receive _, 100
@@ -249,8 +249,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, events)
 
       # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
 
       refute_receive _, 400
@@ -270,8 +270,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, events)
 
       # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :start, healthy: false}}}

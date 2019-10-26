@@ -28,7 +28,7 @@ defmodule TeslaMate.VehicleCase do
 
         opts =
           Keyword.put_new_lazy(opts, :car, fn ->
-            %Car{id: :rand.uniform(65536), eid: 0, vid: 1000}
+            %Car{id: :rand.uniform(65536), eid: 0, vid: 1000, model: "3"}
           end)
 
         opts =

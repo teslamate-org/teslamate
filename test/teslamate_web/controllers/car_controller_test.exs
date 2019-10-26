@@ -59,13 +59,13 @@ defmodule TeslaMateWeb.CarControllerTest do
         {:ok, %TeslaApi.Vehicle{state: "asleep", display_name: "FooCar"}}
       ]
 
-      {:ok, %Car{id: id}} =
+      {:ok, car} =
         %Car{}
         |> Car.changeset(%{vid: 404, eid: 404, vin: "xxxxx"})
         |> Log.create_or_update_car()
 
       {:ok, _position} =
-        Log.insert_position(id, %{
+        Log.insert_position(car, %{
           date: DateTime.utc_now(),
           longitude: 0,
           latitude: 0,
