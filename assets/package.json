@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@mdi/font": "^4.5.95",
-    "bulma-tooltip": "^3.0.0",
+    "bulma-tooltip": "^3.0.2",
     "leaflet": "^1.5.1",
     "leaflet-control-geocoder": "^1.10.0",
     "phoenix": "file:../deps/phoenix",
@@ -24,7 +24,7 @@
     "file-loader": "^4.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "sass": "^1.23.0",
+    "sass": "^1.23.1",
     "sass-loader": "^8.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^2.2.0",

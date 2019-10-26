@@ -173,7 +173,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:insert_charge, charge_id, %{date: _, charge_energy_added: 0.1}}
 
     assert_receive {:insert_charge, ^charge_id, %{date: _, charge_energy_added: 0.2}}
-    assert_receive {:complete_charging_process, ^charge_id, [charging_interval: 5]}
+    assert_receive {:complete_charging_process, ^charge_id, []}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -226,7 +226,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
     assert_receive {:insert_charge, ^cproc_0, %{date: _, charge_energy_added: 0.15}}
-    assert_receive {:complete_charging_process, ^cproc_0, [charging_interval: 5]}
+    assert_receive {:complete_charging_process, ^cproc_0, []}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}

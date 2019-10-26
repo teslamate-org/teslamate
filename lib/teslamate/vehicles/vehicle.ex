@@ -23,7 +23,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   @topic inspect(__MODULE__)
 
   @asleep_interval 60
-  @charging_interval 5
   @driving_interval 2.5
 
   @drive_timout_min 15
@@ -381,7 +380,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:next_state, {:charging, cproc},
          %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(@charging_interval)]}
+         [notify_subscribers(), schedule_fetch(5)]}
 
       _ ->
         try_to_suspend(vehicle, :online, data)
@@ -401,17 +400,19 @@ defmodule TeslaMate.Vehicles.Vehicle do
       charging_state when charging_state in ["Starting", "Charging"] ->
         :ok = insert_charge(cproc, vehicle, data)
 
+        interval =
+          vehicle.charge_state
+          |> Map.get(:charger_power)
+          |> determince_interval()
+
         {:next_state, {:charging, cproc}, %Data{data | last_used: DateTime.utc_now()},
-         [notify_subscribers(), schedule_fetch(@charging_interval)]}
+         [notify_subscribers(), schedule_fetch(interval)]}
 
       state ->
         :ok = insert_charge(cproc, vehicle, data)
 
         {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
-          call(data.deps.log, :complete_charging_process, [
-            cproc,
-            [charging_interval: @charging_interval]
-          ])
+          call(data.deps.log, :complete_charging_process, [cproc])
 
         Logger.info("Charging / #{state} / #{added} kWh – #{duration} min", car_id: data.car.id)
 
@@ -873,6 +874,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     Map.put(vehicle, :charge_state, charge_state)
   end
+
+  defp determince_interval(n) when is_nil(n) or n <= 0, do: 5
+  defp determince_interval(n), do: round(425 / n) |> min(20) |> max(5)
 
   defp fuse_name(:vehicle_not_found, car_id), do: :"#{__MODULE__}_#{car_id}_not_found"
   defp fuse_name(:api_error, car_id), do: :"#{__MODULE__}_#{car_id}_api_error"

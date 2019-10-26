@@ -254,12 +254,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0},
                     []}
 
-    assert_receive {:insert_charge, charging_id, %{date: _, charge_energy_added: 1.5}}
+    assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: 1.5}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: s1}}}
     assert DateTime.diff(s0, s1, :nanosecond) < 0
 
-    assert_receive {:insert_charge, ^charging_id, %{date: _, charge_energy_added: 1.5}}
-    assert_receive {:complete_charging_process, ^charging_id, [charging_interval: 5]}
+    assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 1.5}}
+    assert_receive {:complete_charging_process, ^cproc, []}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}

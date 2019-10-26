@@ -90,8 +90,7 @@ defmodule LogMock do
         end_rated_range_km: nil,
         end_battery_level: nil,
         duration_min: nil,
-        charge_energy_used: nil,
-        charge_energy_used_confidence: nil
+        charge_energy_used: nil
     }
 
     {:reply, {:ok, new_cproc}, state}

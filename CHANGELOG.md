@@ -35,9 +35,17 @@ If you have feedback or can even verify/compare the calculated value with a real
 
   ⚠️ If you have a publicly exposed TeslaMate instance, I recommend to re-enable the origin check by adding the environment variable `CHECK_ORIGIN=true` (this requires that the variable `VIRTUAL_HOST` is present).
 
+- Show icon indicators for various things (sentry mode, locked, windows open, pre-conditioning etc.)
+- Various UI Tweaks
+- Show the precise duration of a drive in a tooltip
+- Serve gzipped assets
+
 ### Bug Fixes
 
 - Set the correct end date of charges where the vehicle remains plugged in after the charge is completed
+- Fix an issue with vehicles that were removed from the Tesla Account
+- Handle API responses which indicate that the vehicle is in service
+- Display effects of range gains (e.g. from supercharging pre-conditioning a cold battery) as NULL
 
 ---
 

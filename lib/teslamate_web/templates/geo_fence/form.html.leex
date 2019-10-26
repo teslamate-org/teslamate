@@ -60,6 +60,43 @@
     </div>
   </div>
 
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label f, :phase_correction, gettext("Phase correction"), class: "label" %>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <div class="select is-fullwidth">
+            <%= select f, :phase_correction, [{gettext("disabled"), ""} |  Enum.map(1..3, & {"#{&1} #{ngettext("Phase", "Phases", &1)}", &1})]  %>
+          </div>
+        </div>
+  <%= if @show_errors do %>
+        <p class="help is-danger"><%= error_tag(f, :phase_correction) %></p>
+  <% end %>
+          <p class="has-text-grey is-size-7 is-italic">
+            <%= gettext("Some firmwares always report 2 phases. With the phase correction a fixed value can be set for this location.") %>
+          </p>
+      </div>
+    </div>
+  </div>
+
+  <%= unless is_nil(Map.get(@changeset.changes, :phase_correction)) do %>
+  <div class="field is-horizontal">
+    <div class="field-label is-normal"></div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <label class="checkbox">
+            <%= checkbox(f, :apply_phase_correction) %> <%= gettext "Apply phase correction to existing charges" %>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% end %>
+
+
   <div class="field is-horizontal mt-25">
     <div class="field-label"></div>
     <div class="field-body">

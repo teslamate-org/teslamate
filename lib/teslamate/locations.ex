@@ -6,8 +6,9 @@ defmodule TeslaMate.Locations do
   import Ecto.Query, warn: false
   import TeslaMate.CustomExpressions
 
-  alias TeslaMate.Repo
   alias __MODULE__.{Address, Geocoder, GeoFence}
+  alias TeslaMate.Log.{Drive, Position, ChargingProcess}
+  alias TeslaMate.{Repo, Log}
 
   ## Address
 
@@ -38,8 +39,6 @@ defmodule TeslaMate.Locations do
   end
 
   defp apply_geofence(%GeoFence{id: id} = geofence) do
-    alias TeslaMate.Log.{Drive, Position, ChargingProcess}
-
     {_n, nil} =
       from(d in Drive,
         join: p in Position,
@@ -68,8 +67,6 @@ defmodule TeslaMate.Locations do
   end
 
   defp remove_geofence(%GeoFence{id: id}) do
-    alias TeslaMate.Log.{Drive, ChargingProcess}
-
     {_n, nil} =
       Drive
       |> where(start_geofence_id: ^id)
@@ -87,6 +84,17 @@ defmodule TeslaMate.Locations do
 
     :ok
   end
+
+  defp apply_phase_correction(%GeoFence{id: id, apply_phase_correction: true}) do
+    from(c in ChargingProcess,
+      where: c.geofence_id == ^id,
+      preload: [:car, :position, :geofence]
+    )
+    |> Repo.all()
+    |> Enum.each(fn cproc -> {:ok, _} = Log.update_energy_used(cproc) end)
+  end
+
+  defp apply_phase_correction(%GeoFence{}), do: :ok
 
   ## GeoFence
 
@@ -112,7 +120,8 @@ defmodule TeslaMate.Locations do
   def create_geofence(attrs) do
     Repo.transaction(fn ->
       with {:ok, geofence} <- %GeoFence{} |> GeoFence.changeset(attrs) |> Repo.insert(),
-           :ok <- apply_geofence(geofence) do
+           :ok <- apply_geofence(geofence),
+           :ok <- apply_phase_correction(geofence) do
         geofence
       else
         {:error, reason} -> Repo.rollback(reason)
@@ -123,8 +132,10 @@ defmodule TeslaMate.Locations do
   def update_geofence(%GeoFence{} = geofence, attrs) do
     Repo.transaction(fn ->
       with {:ok, geofence} <- geofence |> GeoFence.changeset(attrs) |> Repo.update(),
+           :ok <- apply_phase_correction(geofence),
            :ok <- remove_geofence(geofence),
-           :ok <- apply_geofence(geofence) do
+           :ok <- apply_geofence(geofence),
+           :ok <- apply_phase_correction(geofence) do
         geofence
       else
         {:error, reason} -> Repo.rollback(reason)
@@ -133,7 +144,10 @@ defmodule TeslaMate.Locations do
   end
 
   def delete_geofence(%GeoFence{} = geofence) do
-    Repo.delete(geofence)
+    with {:ok, geofence} <- Repo.delete(geofence),
+         :ok <- apply_phase_correction(geofence) do
+      {:ok, geofence}
+    end
   end
 
   def change_geofence(%GeoFence{} = geofence, attrs \\ %{}) do

@@ -13,6 +13,9 @@ defmodule TeslaMate.Locations.GeoFence do
     field :longitude, :float
     field :radius, :float
 
+    field :phase_correction, :integer
+    field :apply_phase_correction, :boolean, virtual: true
+
     has_many :charging_processes, ChargingProcess,
       foreign_key: :geofence_id,
       on_delete: :nilify_all
@@ -26,9 +29,17 @@ defmodule TeslaMate.Locations.GeoFence do
   @doc false
   def changeset(geofence, attrs) do
     geofence
-    |> cast(attrs, [:name, :radius, :latitude, :longitude])
+    |> cast(attrs, [
+      :name,
+      :radius,
+      :latitude,
+      :longitude,
+      :phase_correction,
+      :apply_phase_correction
+    ])
     |> validate_required([:name, :latitude, :longitude, :radius])
     |> validate_number(:radius, greater_than: 0, less_than: 1000)
+    |> validate_number(:phase_correction, greater_than: 0, less_than_or_equal_to: 3)
     |> prepare_changes(fn changeset ->
       self = apply_changes(changeset)
 

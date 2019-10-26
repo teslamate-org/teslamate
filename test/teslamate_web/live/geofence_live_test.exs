@@ -202,7 +202,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       html =
         render_submit(view, :save, %{
-          geo_fence: %{name: "", longitude: nil, latitude: nil, radius: ""}
+          geo_fence: %{name: "", longitude: nil, latitude: nil, radius: "", phase_correction: nil}
         })
 
       assert [""] = html |> Floki.find("#geo_fence_name") |> Floki.attribute("value")
@@ -210,7 +210,12 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert [""] = html |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
       assert [""] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
 
-      assert [field_name, field_position, field_radius, _] =
+      assert [""] =
+               html
+               |> Floki.find("#geo_fence_phase_correction option[selected]")
+               |> Floki.attribute("value")
+
+      assert [field_name, field_position, field_radius, field_phase_correction, _] =
                Floki.find(html, ".field.is-horizontal")
 
       assert field_name |> Floki.find("span") |> Floki.text() == "can't be blank"
@@ -219,10 +224,18 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                field_position |> Floki.find("span") |> Enum.map(&Floki.text/1)
 
       assert field_radius |> Floki.find("span") |> Floki.text() == "can't be blank"
+      assert field_phase_correction |> Floki.find("span") |> Floki.text() == ""
 
       html =
         render_submit(view, :save, %{
-          geo_fence: %{name: "foo", longitude: "wot", latitude: "wat", radius: "40"}
+          geo_fence: %{
+            name: "foo",
+            longitude: "wot",
+            latitude: "wat",
+            radius: "40",
+            phase_correction: 3,
+            apply_phase_correction: true
+          }
         })
 
       assert ["foo"] = html |> Floki.find("#geo_fence_name") |> Floki.attribute("value")
@@ -230,8 +243,19 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["wot"] = html |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
       assert ["40.0"] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
 
-      assert [field_name, field_position, field_radius, _] =
-               Floki.find(html, ".field.is-horizontal")
+      assert ["3"] =
+               html
+               |> Floki.find("#geo_fence_phase_correction option[selected]")
+               |> Floki.attribute("value")
+
+      assert [
+               field_name,
+               field_position,
+               field_radius,
+               field_phase_correction,
+               field_apply_phase_correction,
+               _
+             ] = Floki.find(html, ".field.is-horizontal")
 
       assert field_name |> Floki.find("span") |> Floki.text() == ""
 
@@ -239,6 +263,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                field_position |> Floki.find("span") |> Enum.map(&Floki.text/1)
 
       assert field_radius |> Floki.find("span") |> Floki.text() == ""
+      assert field_phase_correction |> Floki.find("span") |> Floki.text() == ""
+
+      assert ["true"] =
+               html |> Floki.find("#geo_fence_apply_phase_correction") |> Floki.attribute("value")
     end
 
     test "creates a new geo-fence", %{conn: conn} do
@@ -279,7 +307,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           }
         })
 
-      assert [_field_name, field_position, _field_radius, _] =
+      assert [_field_name, field_position, _field_radius, _field_phase_corr, _] =
                Floki.find(html, ".field.is-horizontal")
 
       assert ["is overlapping with other geo-fence"] =

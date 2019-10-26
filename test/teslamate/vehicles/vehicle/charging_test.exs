@@ -68,7 +68,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                     }}
 
     # Completed
-    assert_receive {:complete_charging_process, ^cproc, [charging_interval: 5]}
+    assert_receive {:complete_charging_process, ^cproc, []}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}
@@ -122,7 +122,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
-    assert_receive {:complete_charging_process, ^cproc, [charging_interval: 5]}
+    assert_receive {:complete_charging_process, ^cproc, []}
 
     assert_receive {:start_state, ^car_id, :online}
     assert_receive {:insert_position, ^car_id, %{}}

@@ -2,7 +2,7 @@ defmodule TeslaMate.LogChargingTest do
   use TeslaMate.DataCase, async: true
 
   alias TeslaMate.Log.{Car, ChargingProcess, Charge, Position}
-  alias TeslaMate.{Log, Repo}
+  alias TeslaMate.{Log, Repo, Locations}
 
   @valid_attrs %{
     date: DateTime.utc_now(),
@@ -41,7 +41,7 @@ defmodule TeslaMate.LogChargingTest do
         })
     end
 
-    {:ok, %ChargingProcess{}} = Log.complete_charging_process(cproc, charging_interval: 5)
+    {:ok, %ChargingProcess{}} = Log.complete_charging_process(cproc)
   end
 
   describe "start_charging_process/2" do
@@ -214,17 +214,6 @@ defmodule TeslaMate.LogChargingTest do
       assert {:ok, ^cproc} = Log.complete_charging_process(cproc)
     end
 
-    test "accepts a custom end date" do
-      assert %Car{id: car_id} = car_fixture()
-
-      custom_date = DateTime.from_unix!(1_566_059_683_000_000, :microsecond)
-
-      assert {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
-
-      assert {:ok, %ChargingProcess{end_date: ^custom_date}} =
-               Log.complete_charging_process(cproc, date: custom_date)
-    end
-
     test "closes charging process with zero charges " do
       assert %Car{id: car_id} = car_fixture()
       assert {:ok, cproc} = Log.start_charging_process(car_id, @valid_pos_attrs)
@@ -333,7 +322,6 @@ defmodule TeslaMate.LogChargingTest do
       assert {:ok, cproc} = log_charging_process(charges)
       assert cproc.charge_energy_added == nil
       assert cproc.charge_energy_used == 12.576319999999997
-      assert cproc.charge_energy_used_confidence == nil
       assert cproc.duration_min == 48
     end
   end
@@ -593,7 +581,6 @@ defmodule TeslaMate.LogChargingTest do
       assert {:ok, cproc} = log_charging_process(charges)
       assert cproc.charge_energy_added == 12.77
       assert cproc.charge_energy_used == 12.455230833333333
-      assert cproc.charge_energy_used_confidence == 0.88
       assert cproc.duration_min == 19
       assert cproc.start_ideal_range_km == 235.9
       assert cproc.end_ideal_range_km == 320.5
@@ -604,8 +591,27 @@ defmodule TeslaMate.LogChargingTest do
 
       assert {:ok, cproc} = log_charging_process(charges)
       assert cproc.charge_energy_added == 1.68
+      assert cproc.charge_energy_used == 1.1837933333333344
+      assert cproc.duration_min == 13
+      assert cproc.start_ideal_range_km == 288.9
+      assert cproc.end_ideal_range_km == 299.9
+    end
+
+    test "calculates the energy used with phase correction[I * U]" do
+      assert {:ok, _} =
+               Locations.create_geofence(%{
+                 name: "foo",
+                 latitude: 0,
+                 longitude: 0,
+                 radius: 20,
+                 phase_correction: 3
+               })
+
+      charges = charges_fixture_2()
+
+      assert {:ok, cproc} = log_charging_process(charges)
+      assert cproc.charge_energy_added == 1.68
       assert cproc.charge_energy_used == 1.7756899999999984
-      assert cproc.charge_energy_used_confidence == 0.9928571428571429
       assert cproc.duration_min == 13
       assert cproc.start_ideal_range_km == 288.9
       assert cproc.end_ideal_range_km == 299.9
@@ -621,7 +627,6 @@ defmodule TeslaMate.LogChargingTest do
       assert {:ok, cproc} = log_charging_process(charges)
       assert cproc.charge_energy_added == 12.67
       assert cproc.charge_energy_used == 12.45422888888889
-      assert cproc.charge_energy_used_confidence == nil
       assert cproc.duration_min == 18
       assert cproc.start_ideal_range_km == 235.9
       assert cproc.end_ideal_range_km == 319.8
@@ -651,7 +656,6 @@ defmodule TeslaMate.LogChargingTest do
       assert {:ok, cproc} = log_charging_process(charges)
       assert cproc.charge_energy_added == 13.77
       assert cproc.charge_energy_used == 13.8218975
-      assert cproc.charge_energy_used_confidence == 0.875
       assert cproc.duration_min == 21
     end
 
