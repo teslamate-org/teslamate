@@ -18,9 +18,9 @@ This version eliminates the need to use hard-coded values and instead calculates
 
 In addition to the kWh added to the battery during the charge TeslaMate now calculates the actual energy used by the charger, which in most cases is higher than the energy added to the battery.
 
-Consider this feature "experimental". Theoretically, however, it should be pretty accurate as long as the vehicle has a stable mobile/WiFi connection while charging (other _paid_ Tesla loggers use the same calculation method). To see TeslaMate's assessment of the correctness of the calculated value, hover over or tap the underlined field (in Grafana).
+Consider this feature somewhat "experimental". Theoretically, however, it should be pretty accurate as long as the vehicle has a stable internet connection while charging (other _paid_ Tesla loggers use the same calculation method).
 
-If you have feedback or can even verify/compare the calculated value with a real measurement (e.g. from your wallbox), I would be very happy to hear from you!
+It has been seen that some firmware versions have a bug which causes the wrong number of phases to be reported when charging. As a workaround, a phase correction can therefore be activated for a geo-fence.
 
 #### New MQTT Topics
 

@@ -10,7 +10,7 @@ version: '3'
 services:
   teslamate:
     image: teslamate/teslamate:latest
-    restart: unless-stopped
+    restart: always
     environment:
       - DATABASE_USER=teslamate
       - DATABASE_PASS=secret
@@ -24,6 +24,7 @@ services:
 
   db:
     image: postgres:11
+    restart: always
     environment:
       - POSTGRES_USER=teslamate
       - POSTGRES_PASSWORD=secret
@@ -32,6 +33,7 @@ services:
 
   grafana:
     image: teslamate/grafana:latest
+    restart: always
     environment:
       - DATABASE_USER=teslamate
       - DATABASE_PASS=secret
@@ -44,6 +46,7 @@ services:
 
   mosquitto:
     image: eclipse-mosquitto:1.6
+    restart: always
     ports:
       - 1883:1883
     volumes:
@@ -59,6 +62,6 @@ volumes:
 
 Afterwards start the stack with `docker-compose up`.
 
-To sign in with your Tesla Account open the web interface at [http://your-ip-address:3000](http://localhost:3000).
+To sign in with your Tesla Account open the web interface at [http://your-ip-address:4000](http://localhost:4000).
 
 The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000).

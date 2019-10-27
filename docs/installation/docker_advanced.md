@@ -20,7 +20,7 @@ version: '3'
 services:
   teslamate:
     image: teslamate/teslamate:latest
-    restart: unless-stopped
+    restart: always
     depends_on:
       - database
     environment:
@@ -46,6 +46,7 @@ services:
 
   database:
     image: postgres:11
+    restart: always
     environment:
       - POSTGRES_USER=${TM_DB_USER}
       - POSTGRES_PASSWORD=${TM_DB_PASS}
@@ -55,6 +56,7 @@ services:
 
   grafana:
     image: teslamate/grafana:latest
+    restart: always
     environment:
       - DATABASE_USER=${TM_DB_USER}
       - DATABASE_PASS=${TM_DB_PASS}
@@ -80,12 +82,14 @@ services:
 
   mosquitto:
     image: eclipse-mosquitto:1.6
+    restart: always
     volumes:
       - mosquitto-conf:/mosquitto/config
       - mosquitto-data:/mosquitto/data
 
   proxy:
     image: traefik:v2.0
+    restart: always
     command:
       - "--global.sendAnonymousUsage=false"
       - "--providers.docker"
