@@ -52,9 +52,13 @@
       <%= gettext("Range") %>
     </h2>
     <%= f = form_for @changeset, "#", [phx_change: :change] %>
-      <div class="field is-horizontal">
+      <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
-          <label class="label"><%= gettext("Preferred range") %></label>
+          <%= label class: "label tooltip has-tooltip-multiline", data_tooltip: gettext("The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle.")  do %>
+            <%= gettext("Preferred range") %> <span class="icon is-small" >
+              <span class="mdi mdi-information"></span>
+            </span>
+          <% end %>
         </div>
         <div class="field-body">
           <div class="field">
@@ -64,9 +68,6 @@
               </div>
             </div>
             <p class="help is-danger"><%= error_tag(f, :preferred_range) %></p>
-          <p class="has-text-grey is-size-7 is-italic">
-            <%= gettext("The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle.") %>
-          </p>
           </div>
         </div>
       </div>

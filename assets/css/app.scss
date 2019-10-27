@@ -123,21 +123,40 @@ $fullhd-enabled: false;
   background-color: transparent !important;
 }
 
-.field.is-horizontal.center-vertically .field {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+.field.is-horizontal {
+  &.center-vertically .field {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 
-  .control:not(.addon) {
-    flex-grow: 1;
+    .control:not(.addon) {
+      flex-grow: 1;
+    }
   }
-}
 
-.field.is-horizontal .field {
-  flex-wrap: wrap;
+  .field {
+    flex-wrap: wrap;
 
-  .help:not(:empty) {
-    width: 100%;
+    .help:not(:empty) {
+      width: 100%;
+    }
+  }
+
+  .field-label {
+    min-width: 165px;
+
+
+    .tooltip:before {
+      text-align: left !important;
+    }
+
+    .icon {
+      vertical-align: middle;
+    }
+
+    .mdi {
+      font-size: 1em;
+    }
   }
 }
 

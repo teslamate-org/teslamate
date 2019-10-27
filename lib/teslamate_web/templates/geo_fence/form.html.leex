@@ -1,4 +1,4 @@
-<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save] %>
+<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save, class: "geofence"] %>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <%= label f, :name, gettext("Name"), class: "label" %>
@@ -60,9 +60,13 @@
     </div>
   </div>
 
-  <div class="field is-horizontal">
+  <div class="field is-horizontal mt-30">
     <div class="field-label is-normal">
-      <%= label f, :phase_correction, gettext("Phase correction"), class: "label" %>
+      <%= label f, :phase_correction, class: "label tooltip has-tooltip-multiline", data_tooltip: gettext("Some firmware versions incorrectly report 2 phases when charging at some chargers. With phase correction, a fixed value can be set when charging at this location, which overwrites the reported phases.")  do %>
+        <%= gettext("Phase correction") %> <span class="icon is-small" >
+          <span class="mdi mdi-information"></span>
+        </span>
+      <% end %>
     </div>
     <div class="field-body">
       <div class="field">
@@ -74,35 +78,26 @@
   <%= if @show_errors do %>
         <p class="help is-danger"><%= error_tag(f, :phase_correction) %></p>
   <% end %>
-          <p class="has-text-grey is-size-7 is-italic">
-            <%= gettext("Some firmware versions incorrectly report 2 phases when charging at some chargers. With phase correction, a fixed value can be set when charging at this location, which overwrites the reported phases.") %>
-          </p>
-      </div>
-    </div>
-  </div>
 
-  <% phase_correction = Ecto.Changeset.get_field(@changeset, :phase_correction) %>
-  <% changed? = [:phase_correction, :latitude, :longitude, :radius] |> Enum.any?(&not is_nil(Map.get(@changeset.changes, &1))) %>
-  <%= if not is_nil(phase_correction) and changed? do %>
-  <div class="field is-horizontal">
-    <div class="field-label is-normal"></div>
-    <div class="field-body">
-      <div class="field">
-        <div class="control">
-          <label class="checkbox">
-            <%= checkbox(f, :apply_phase_correction) %> <%= gettext "Apply phase correction to existing charges" %>
-          </label>
+        <% phase_correction = Ecto.Changeset.get_field(@changeset, :phase_correction) %>
+        <% changed? = [:phase_correction, :latitude, :longitude, :radius] |> Enum.any?(&not is_nil(Map.get(@changeset.changes, &1))) %>
+        <%= if not is_nil(phase_correction) and changed? do %>
+        <div class="field mt-10">
+          <div class="control">
+            <label class="checkbox">
+              <%= checkbox(f, :apply_phase_correction) %> <%= gettext "Apply phase correction to existing charges" %>
+            </label>
+          </div>
         </div>
+        <% end %>
       </div>
     </div>
   </div>
-  <% end %>
 
   <div class="field is-horizontal mt-25">
     <div class="field-label"></div>
     <div class="field-body">
       <div class="field is-grouped">
-
         <div class="control">
           <%= link gettext("Back"), to: Routes.live_path(@socket, GeoFenceLive.Index), class: "button" %>
         </div>

@@ -192,12 +192,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                _field_name,
                _field_position,
                _field_radius,
-               _field_phase_correction,
-               field_apply_phase_correction,
+               field_phase_correction,
                _
              ] = Floki.find(html, ".field.is-horizontal")
 
-      assert field_apply_phase_correction
+      assert field_phase_correction
              |> Floki.find("#geo_fence_apply_phase_correction")
              |> Floki.attribute("checked") == []
     end
@@ -280,7 +279,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                field_position,
                field_radius,
                field_phase_correction,
-               field_apply_phase_correction,
                _
              ] = Floki.find(html, ".field.is-horizontal")
 
@@ -293,7 +291,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert field_phase_correction |> Floki.find("span") |> Floki.text() == ""
 
       assert ["checked"] =
-               field_apply_phase_correction
+               field_phase_correction
                |> Floki.find("#geo_fence_apply_phase_correction")
                |> Floki.attribute("checked")
     end
