@@ -31,7 +31,7 @@ msgid "Charged"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:93
+#: lib/teslamate_web/live/car_live/summary.ex:92
 msgid "asleep"
 msgstr ""
 
@@ -46,17 +46,17 @@ msgid "driving"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:92
+#: lib/teslamate_web/live/car_live/summary.ex:91
 msgid "offline"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:91
+#: lib/teslamate_web/live/car_live/summary.ex:90
 msgid "online"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:89
+#: lib/teslamate_web/live/car_live/summary.ex:88
 msgid "updating"
 msgstr ""
 
@@ -100,17 +100,12 @@ msgid "Charge limit"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:88
-msgid "charging complete"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:90
+#: lib/teslamate_web/live/car_live/summary.ex:89
 msgid "falling asleep"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:94
+#: lib/teslamate_web/live/car_live/summary.ex:93
 msgid "unavailable"
 msgstr ""
 
@@ -130,7 +125,7 @@ msgid "Units"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:87
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:107
 msgid "Back"
 msgstr ""
 
@@ -145,7 +140,7 @@ msgid "Geo-fence \"%{name}\" created"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/edit.ex:63
+#: lib/teslamate_web/live/geofence_live/edit.ex:71
 msgid "Geo-fence \"%{name}\" updated successfully"
 msgstr ""
 
@@ -181,12 +176,12 @@ msgid "Radius"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:92
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:110
 msgid "Save"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:92
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:110
 msgid "Saving..."
 msgstr ""
 
@@ -214,7 +209,7 @@ msgid "Signed in successfully"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:96
+#: lib/teslamate_web/live/car_live/summary.ex:95
 msgid "Car is unlocked"
 msgstr ""
 
@@ -225,18 +220,18 @@ msgid "Create"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:100
+#: lib/teslamate_web/live/car_live/summary.ex:99
 #: lib/teslamate_web/templates/car/summary.html.leex:29
 msgid "Preconditioning"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:97
+#: lib/teslamate_web/live/car_live/summary.ex:96
 msgid "Sentry mode is enabled"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:101
+#: lib/teslamate_web/live/car_live/summary.ex:100
 #: lib/teslamate_web/templates/car/summary.html.leex:34
 msgid "User present"
 msgstr ""
@@ -278,7 +273,7 @@ msgid "Requirements"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:98
+#: lib/teslamate_web/live/car_live/summary.ex:97
 msgid "Shift state present"
 msgstr ""
 
@@ -293,7 +288,7 @@ msgid "Vehicle must be locked"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:99
+#: lib/teslamate_web/live/car_live/summary.ex:98
 msgid "Temperature readings"
 msgstr ""
 
@@ -338,7 +333,7 @@ msgid "The car's estimate of remaining range is based on a fixed energy consumpt
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:102
+#: lib/teslamate_web/live/car_live/summary.ex:101
 msgid "Update in progress"
 msgstr ""
 
@@ -408,4 +403,14 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:71
 msgid "disabled"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:93
+msgid "Apply phase correction to existing charges"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:78
+msgid "Some firmware versions incorrectly report 2 phases when charging at some chargers. With phase correction, a fixed value can be set when charging at this location, which overwrites the reported phases."
 msgstr ""

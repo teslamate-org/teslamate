@@ -174,6 +174,33 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["Post office", "-25.06619, -130.1005", "9 m", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
+
+    test "asks to apply phase correction if the position has changed", %{conn: conn} do
+      %GeoFence{id: id} =
+        geofence_fixture(%{
+          name: "Post office",
+          latitude: -25.066188,
+          longitude: -130.100502,
+          phase_correction: 1
+        })
+
+      assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
+
+      assert html = render_change(view, :move, %{lat: -25, lng: -130})
+
+      assert [
+               _field_name,
+               _field_position,
+               _field_radius,
+               _field_phase_correction,
+               field_apply_phase_correction,
+               _
+             ] = Floki.find(html, ".field.is-horizontal")
+
+      assert field_apply_phase_correction
+             |> Floki.find("#geo_fence_apply_phase_correction")
+             |> Floki.attribute("checked") == []
+    end
   end
 
   describe "New" do
@@ -265,8 +292,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert field_radius |> Floki.find("span") |> Floki.text() == ""
       assert field_phase_correction |> Floki.find("span") |> Floki.text() == ""
 
-      assert ["true"] =
-               html |> Floki.find("#geo_fence_apply_phase_correction") |> Floki.attribute("value")
+      assert ["checked"] =
+               field_apply_phase_correction
+               |> Floki.find("#geo_fence_apply_phase_correction")
+               |> Floki.attribute("checked")
     end
 
     test "creates a new geo-fence", %{conn: conn} do

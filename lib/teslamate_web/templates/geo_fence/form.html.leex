@@ -75,13 +75,15 @@
         <p class="help is-danger"><%= error_tag(f, :phase_correction) %></p>
   <% end %>
           <p class="has-text-grey is-size-7 is-italic">
-            <%= gettext("Some firmwares always report 2 phases. With the phase correction a fixed value can be set for this location.") %>
+            <%= gettext("Some firmware versions incorrectly report 2 phases when charging at some chargers. With phase correction, a fixed value can be set when charging at this location, which overwrites the reported phases.") %>
           </p>
       </div>
     </div>
   </div>
 
-  <%= unless is_nil(Map.get(@changeset.changes, :phase_correction)) do %>
+  <% phase_correction = Ecto.Changeset.get_field(@changeset, :phase_correction) %>
+  <% changed? = [:phase_correction, :latitude, :longitude, :radius] |> Enum.any?(&not is_nil(Map.get(@changeset.changes, &1))) %>
+  <%= if not is_nil(phase_correction) and changed? do %>
   <div class="field is-horizontal">
     <div class="field-label is-normal"></div>
     <div class="field-body">
@@ -96,16 +98,13 @@
   </div>
   <% end %>
 
-
   <div class="field is-horizontal mt-25">
     <div class="field-label"></div>
     <div class="field-body">
       <div class="field is-grouped">
 
         <div class="control">
-          <%= link gettext("Back"), to: Routes.live_path(@socket, GeoFenceLive.Index),
-                                    class: "button"
-          %>
+          <%= link gettext("Back"), to: Routes.live_path(@socket, GeoFenceLive.Index), class: "button" %>
         </div>
         <div class="control">
           <%= submit gettext("Save"), phx_disable_with: gettext("Saving..."), class: "button is-info" %>

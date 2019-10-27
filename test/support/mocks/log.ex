@@ -29,10 +29,6 @@ defmodule LogMock do
     GenServer.call(name, {:start_charging_process, car, position_attrs, opts})
   end
 
-  def resume_charging_process(name, cproc) do
-    GenServer.call(name, {:resume_charging_process, cproc})
-  end
-
   def complete_charging_process(name, cproc, opts \\ []) do
     GenServer.call(name, {:complete_charging_process, cproc, opts})
   end
@@ -84,30 +80,13 @@ defmodule LogMock do
     {:reply, {:ok, %ChargingProcess{id: 99, start_date: DateTime.utc_now()}}, state}
   end
 
-  def handle_call({:resume_charging_process, cproc} = action, _from, %State{pid: pid} = state) do
-    send(pid, action)
-
-    new_cproc = %ChargingProcess{
-      cproc
-      | end_date: nil,
-        charge_energy_added: nil,
-        end_ideal_range_km: nil,
-        end_rated_range_km: nil,
-        end_battery_level: nil,
-        duration_min: nil,
-        charge_energy_used: nil
-    }
-
-    {:reply, {:ok, new_cproc}, state}
-  end
-
   def handle_call({:complete_charging_process, cproc, _} = action, _from, %State{} = state) do
     send(state.pid, action)
     new_cproc = %ChargingProcess{cproc | charge_energy_added: 45, end_date: DateTime.utc_now()}
     {:reply, {:ok, new_cproc}, state}
   end
 
-  def handle_call({:start_drive, car} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:start_drive, _car} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Drive{id: 111}}, state}
   end

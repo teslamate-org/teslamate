@@ -38,6 +38,14 @@ defmodule TeslaMateWeb.GeoFenceLive.Edit do
   end
 
   @impl true
+  def handle_event("move", %{"lat" => lat, "lng" => lng}, socket) do
+    changeset =
+      socket.assigns.changeset
+      |> Ecto.Changeset.change(%{latitude: lat, longitude: lng})
+
+    {:noreply, assign(socket, changeset: changeset, show_errors: false)}
+  end
+
   def handle_event("validate", %{"geo_fence" => params}, socket) do
     changeset =
       socket.assigns.geofence

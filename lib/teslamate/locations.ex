@@ -63,10 +63,20 @@ defmodule TeslaMate.Locations do
       )
       |> Repo.update_all(set: [geofence_id: id])
 
+    if geofence.apply_phase_correction do
+      :ok =
+        from(c in ChargingProcess,
+          where: c.geofence_id == ^id,
+          preload: [:car, :position, :geofence]
+        )
+        |> Repo.all()
+        |> Enum.each(fn cproc -> {:ok, _} = Log.update_energy_used(cproc) end)
+    end
+
     :ok
   end
 
-  defp remove_geofence(%GeoFence{id: id}) do
+  defp remove_geofence(%GeoFence{id: id} = geofence) do
     {_n, nil} =
       Drive
       |> where(start_geofence_id: ^id)
@@ -77,24 +87,25 @@ defmodule TeslaMate.Locations do
       |> where(end_geofence_id: ^id)
       |> Repo.update_all(set: [end_geofence_id: nil])
 
+    charging_processes =
+      ChargingProcess
+      |> where(geofence_id: ^id)
+      |> Repo.all()
+
     {_n, nil} =
       ChargingProcess
       |> where(geofence_id: ^id)
       |> Repo.update_all(set: [geofence_id: nil])
 
+    if geofence.apply_phase_correction do
+      :ok =
+        Enum.each(charging_processes, fn cproc ->
+          {:ok, _} = Log.update_energy_used(cproc)
+        end)
+    end
+
     :ok
   end
-
-  defp apply_phase_correction(%GeoFence{id: id, apply_phase_correction: true}) do
-    from(c in ChargingProcess,
-      where: c.geofence_id == ^id,
-      preload: [:car, :position, :geofence]
-    )
-    |> Repo.all()
-    |> Enum.each(fn cproc -> {:ok, _} = Log.update_energy_used(cproc) end)
-  end
-
-  defp apply_phase_correction(%GeoFence{}), do: :ok
 
   ## GeoFence
 
@@ -120,8 +131,7 @@ defmodule TeslaMate.Locations do
   def create_geofence(attrs) do
     Repo.transaction(fn ->
       with {:ok, geofence} <- %GeoFence{} |> GeoFence.changeset(attrs) |> Repo.insert(),
-           :ok <- apply_geofence(geofence),
-           :ok <- apply_phase_correction(geofence) do
+           :ok <- apply_geofence(geofence) do
         geofence
       else
         {:error, reason} -> Repo.rollback(reason)
@@ -132,10 +142,8 @@ defmodule TeslaMate.Locations do
   def update_geofence(%GeoFence{} = geofence, attrs) do
     Repo.transaction(fn ->
       with {:ok, geofence} <- geofence |> GeoFence.changeset(attrs) |> Repo.update(),
-           :ok <- apply_phase_correction(geofence),
            :ok <- remove_geofence(geofence),
-           :ok <- apply_geofence(geofence),
-           :ok <- apply_phase_correction(geofence) do
+           :ok <- apply_geofence(geofence) do
         geofence
       else
         {:error, reason} -> Repo.rollback(reason)
@@ -144,8 +152,8 @@ defmodule TeslaMate.Locations do
   end
 
   def delete_geofence(%GeoFence{} = geofence) do
-    with {:ok, geofence} <- Repo.delete(geofence),
-         :ok <- apply_phase_correction(geofence) do
+    with :ok <- remove_geofence(%GeoFence{geofence | apply_phase_correction: true}),
+         {:ok, geofence} <- Repo.delete(geofence) do
       {:ok, geofence}
     end
   end

@@ -52,6 +52,6 @@ defmodule TeslaMate.Log.ChargingProcess do
     |> foreign_key_constraint(:position_id)
     |> foreign_key_constraint(:address_id)
     |> foreign_key_constraint(:geofence_id)
-    |> cast_assoc(:position, with: &Position.changeset/2, required: true)
+    |> cast_assoc(:position, with: &Position.changeset/2)
   end
 end

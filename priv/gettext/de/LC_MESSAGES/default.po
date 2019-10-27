@@ -32,7 +32,7 @@ msgid "Charged"
 msgstr "Geladen"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:93
+#: lib/teslamate_web/live/car_live/summary.ex:92
 msgid "asleep"
 msgstr "schläft"
 
@@ -47,17 +47,17 @@ msgid "driving"
 msgstr "fährt"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:92
+#: lib/teslamate_web/live/car_live/summary.ex:91
 msgid "offline"
 msgstr "offline"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:91
+#: lib/teslamate_web/live/car_live/summary.ex:90
 msgid "online"
 msgstr "online"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:89
+#: lib/teslamate_web/live/car_live/summary.ex:88
 msgid "updating"
 msgstr "installiert Update"
 
@@ -101,17 +101,12 @@ msgid "Charge limit"
 msgstr "Ladelimit"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:88
-msgid "charging complete"
-msgstr "Ladevorgang abgeschlossen"
-
-#, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:90
+#: lib/teslamate_web/live/car_live/summary.ex:89
 msgid "falling asleep"
 msgstr "schläft ein"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:94
+#: lib/teslamate_web/live/car_live/summary.ex:93
 msgid "unavailable"
 msgstr "nicht verfügbar"
 
@@ -131,7 +126,7 @@ msgid "Units"
 msgstr "Einheiten"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:87
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:107
 msgid "Back"
 msgstr "Zurück"
 
@@ -146,7 +141,7 @@ msgid "Geo-fence \"%{name}\" created"
 msgstr "Geo-Fence \"%{name}\" erstellt"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/edit.ex:63
+#: lib/teslamate_web/live/geofence_live/edit.ex:71
 msgid "Geo-fence \"%{name}\" updated successfully"
 msgstr "Geo-Fence \"%{name}\" erfolgreich aktualisiert"
 
@@ -182,12 +177,12 @@ msgid "Radius"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:92
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:110
 msgid "Save"
 msgstr "Speichern"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:92
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:110
 msgid "Saving..."
 msgstr "Speichere..."
 
@@ -215,7 +210,7 @@ msgid "Signed in successfully"
 msgstr "Erfolgreich angemeldet"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:96
+#: lib/teslamate_web/live/car_live/summary.ex:95
 msgid "Car is unlocked"
 msgstr "Das Auto ist aufgeschlossen"
 
@@ -226,18 +221,18 @@ msgid "Create"
 msgstr "Erstellen"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:100
+#: lib/teslamate_web/live/car_live/summary.ex:99
 #: lib/teslamate_web/templates/car/summary.html.leex:29
 msgid "Preconditioning"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:97
+#: lib/teslamate_web/live/car_live/summary.ex:96
 msgid "Sentry mode is enabled"
 msgstr "Wächtermodus aktiviert"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:101
+#: lib/teslamate_web/live/car_live/summary.ex:100
 #: lib/teslamate_web/templates/car/summary.html.leex:34
 msgid "User present"
 msgstr "Benutzer anwesend"
@@ -279,7 +274,7 @@ msgid "Requirements"
 msgstr "Voraussetzungen"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:98
+#: lib/teslamate_web/live/car_live/summary.ex:97
 msgid "Shift state present"
 msgstr "Schaltzustand vorhanden"
 
@@ -294,7 +289,7 @@ msgid "Vehicle must be locked"
 msgstr "Fahrzeug muss verschlossen sein"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:99
+#: lib/teslamate_web/live/car_live/summary.ex:98
 msgid "Temperature readings"
 msgstr "Temperaturmesswerte"
 
@@ -339,7 +334,7 @@ msgid "The car's estimate of remaining range is based on a fixed energy consumpt
 msgstr "Die Schätzung der verbleibenden Reichweite basiert auf einem fixen Energieverbrauch in Wh/km. Der Wh/km-Faktor wird von Tesla bestimmt und ist nicht länderspezifisch, wohingegen die 'rated' Reichweite auf regulatorischen Tests in den verschiedenen Märkten für dieses Fahrzeug basiert."
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:102
+#: lib/teslamate_web/live/car_live/summary.ex:101
 msgid "Update in progress"
 msgstr "Update läuft"
 
@@ -398,15 +393,25 @@ msgstr "Verschlossen"
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:71
 msgid "Phase"
 msgid_plural "Phases"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Phase"
+msgstr[1] "Phasen"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:65
 msgid "Phase correction"
-msgstr ""
+msgstr "Phasenkorrektur"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:71
 msgid "disabled"
-msgstr ""
+msgstr "deaktiviert"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:93
+msgid "Apply phase correction to existing charges"
+msgstr "Phasenkorrektur auf bestehende Ladevorgänge anwenden"
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:78
+msgid "Some firmware versions incorrectly report 2 phases when charging at some chargers. With phase correction, a fixed value can be set when charging at this location, which overwrites the reported phases."
+msgstr "Einige Firmware-Versionen melden beim Laden an manchen Ladestationnen fälschlicherweise 2 Phasen. Mit der Phasenkorrektur kann beim Laden an diesem Ort ein fixer Wert eingestellt werden, der die gemeldeten Phasen überschreibt."

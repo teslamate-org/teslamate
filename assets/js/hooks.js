@@ -140,12 +140,14 @@ export const Map = {
         $latitude.value = lat;
         $longitude.value = lng;
 
+        this.pushEvent("move", { lat, lng });
+
         circle.setLatLng(marker.getLatLng());
         circle.setStyle({ opacity: 1, fill: true });
       });
 
     new Control.geocoder({ defaultMarkGeocode: false })
-      .on("markgeocode", function(e) {
+      .on("markgeocode", e => {
         const { bbox, center } = e.geocode;
 
         const poly = L.polygon([
@@ -160,8 +162,12 @@ export const Map = {
         marker.setLatLng(center);
         circle.setLatLng(center);
 
-        $latitude.value = center.lat;
-        $longitude.value = center.lng;
+        const { lat, lng } = center;
+
+        $latitude.value = lat;
+        $longitude.value = lng;
+
+        this.pushEvent("move", { lat, lng });
       })
       .addTo(map);
   }

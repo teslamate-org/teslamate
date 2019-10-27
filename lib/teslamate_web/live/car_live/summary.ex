@@ -85,7 +85,6 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp translate_state(:start), do: nil
   defp translate_state(:driving), do: gettext("driving")
   defp translate_state(:charging), do: gettext("charging")
-  defp translate_state(:charging_complete), do: gettext("charging complete")
   defp translate_state(:updating), do: gettext("updating")
   defp translate_state(:suspended), do: gettext("falling asleep")
   defp translate_state(:online), do: gettext("online")
