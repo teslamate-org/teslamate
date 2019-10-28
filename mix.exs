@@ -49,7 +49,7 @@ defmodule TeslaMate.MixProject do
       # Custom
       {:tesla_api, github: "adriankumpf/tesla_api", branch: "v10"},
       {:gen_state_machine, "~> 2.0"},
-      {:ecto_enum, "~> 1.2"},
+      {:ecto_enum, github: "dnsbty/ecto_enum", ref: "a69a9dde72cf98497606f9603bd46e3924979145"},
       {:phoenix_live_view, "~> 0.1"},
       {:floki, ">= 0.0.0", only: :test},
       {:tortoise, "~> 0.9"},

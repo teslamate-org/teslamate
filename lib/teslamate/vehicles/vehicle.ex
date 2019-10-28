@@ -462,12 +462,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  def handle_event(
-        :internal,
-        {:update, {:online, now}},
-        {:driving, {:offline, last}, drive},
-        data
-      ) do
+  def handle_event(:internal, {:update, {:online, now}}, {:driving, {:offline, last}, drv}, data) do
     offline_start = parse_timestamp(last.drive_state.timestamp)
     offline_end = parse_timestamp(now.drive_state.timestamp)
 
@@ -480,7 +475,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     cond do
       has_gained_range? and offline_min >= 5 ->
-        unless is_nil(drive), do: timeout_drive(drive, data)
+        unless is_nil(drv), do: timeout_drive(drv, data)
 
         {:ok, cproc} =
           call(data.deps.log, :start_charging_process, [
@@ -504,42 +499,37 @@ defmodule TeslaMate.Vehicles.Vehicle do
          {:next_event, :internal, {:update, {:online, now}}}}
 
       not has_gained_range? and offline_min >= @drive_timout_min ->
-        unless is_nil(drive), do: timeout_drive(drive, data)
+        unless is_nil(drv), do: timeout_drive(drv, data)
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, now}}}}
 
-      not is_nil(drive) ->
-        {:next_state, {:driving, :available, drive}, %Data{data | last_used: DateTime.utc_now()},
+      not is_nil(drv) ->
+        {:next_state, {:driving, :available, drv}, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, now}}}}
     end
   end
 
   #### msg: :online
 
-  def handle_event(
-        :internal,
-        {:update, {:online, _} = e},
-        {:driving, {:unavailable, _}, drive},
-        d
-      ) do
+  def handle_event(:internal, {:update, {:online, _} = e}, {:driving, {:unavailable, _}, drv}, d) do
     Logger.info("Vehicle is back online", car_id: d.car.id)
 
-    {:next_state, {:driving, :available, drive}, %Data{d | last_used: DateTime.utc_now()},
+    {:next_state, {:driving, :available, drv}, %Data{d | last_used: DateTime.utc_now()},
      {:next_event, :internal, {:update, e}}}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, :available, drive}, data) do
+  def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, :available, drv}, data) do
     case get(vehicle, [:drive_state, :shift_state]) do
       shift_state when shift_state in ["D", "R", "N"] ->
-        {:ok, _pos} = call(data.deps.log, :insert_position, [drive, create_position(vehicle)])
+        {:ok, _pos} = call(data.deps.log, :insert_position, [drv, create_position(vehicle)])
 
-        {:next_state, {:driving, :available, drive}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:driving, :available, drv}, %Data{data | last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(@driving_interval)]}
 
       shift_state when is_nil(shift_state) or shift_state == "P" ->
         {:ok, %Log.Drive{distance: km, duration_min: min}} =
-          call(data.deps.log, :close_drive, [drive])
+          call(data.deps.log, :close_drive, [drv])
 
         Logger.info("Driving / Ended / #{round(km)} km – #{min} min", car_id: data.car.id)
 

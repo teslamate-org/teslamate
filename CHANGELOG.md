@@ -10,9 +10,9 @@ We finally have **documentation**! Many thanks to [@ngardiner](https://github.co
 
 Previous versions of TeslaMate shipped with hard-coded efficiency values for the various Tesla models. These efficiency values are needed to calculate trip consumptions, because the Tesla API does not provide them directly.
 
-The hard-coded efficiency values were _probably_ pretty accurate, but I could never ensure the correctness of all of them. In addition, the new Model S and X "Raven" could not be reliably identified because the Tesla API often returned wrong option codes for both.
+The hard-coded efficiency values were _probably_ pretty accurate, but it was impossible to ensure the correctness of all of them. In addition, the new Model S and X "Raven" could not be reliably identified because the Tesla API returns wrong option codes for both.
 
-This version eliminates the need to use hard-coded values and instead calculates them dynamically based on the recorded charging data. It takes **at least two** charging sessions to display the first estimate. Each charge will slightly improve the accuracy of the estimate, which is applied retroactively to all data.
+This version eliminates the need to use hard-coded values and instead calculates them dynamically based on the recorded charging data. It takes **at least two** charges to display the first estimate. Each subsequent charge will continue to improve the accuracy of the estimate, which is applied retroactively to all data.
 
 #### Charge energy used
 
@@ -20,7 +20,7 @@ In addition to the kWh added to the battery during the charge TeslaMate now calc
 
 Consider this feature somewhat "experimental". Theoretically, however, it should be pretty accurate as long as the vehicle has a stable internet connection while charging (other _paid_ Tesla loggers use the same calculation method).
 
-It has been seen that some firmware versions have a bug which causes the wrong number of phases to be reported when charging. As a workaround, a phase correction can therefore be activated for a geo-fence.
+Currently, a firmware bug in some vehicles causes the wrong number of phases to be reported when charging. As a workaround, a phase correction can therefore be activated per geo-fence.
 
 #### New MQTT Topics
 
@@ -33,9 +33,9 @@ It has been seen that some firmware versions have a bug which causes the wrong n
 
 - Disable origin check by default to ease the installation of TeslaMate.
 
-  ⚠️ If you have a publicly exposed TeslaMate instance, I recommend to re-enable the origin check by adding the environment variable `CHECK_ORIGIN=true` (this requires that the variable `VIRTUAL_HOST` is present).
+  ⚠️ For publicly exposed TeslaMate instances it is advisable to re-enable the check by adding the environment variable `CHECK_ORIGIN=true`.
 
-- Show icon indicators for various things (sentry mode, locked, windows open, pre-conditioning etc.)
+- Show icon indicators for various things (sentry mode, vehicle locked, windows open, pre-conditioning etc.)
 - Various UI Tweaks
 - Show the precise duration of a drive in a tooltip
 - Serve gzipped assets

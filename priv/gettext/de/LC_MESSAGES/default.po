@@ -73,8 +73,7 @@ msgstr "Wächtermodus"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/edit.html.leex:3
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:3
-#: lib/teslamate_web/templates/geo_fence/new.html.leex:3
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:3 lib/teslamate_web/templates/geo_fence/new.html.leex:3
 #: lib/teslamate_web/templates/settings/index.html.leex:3
 msgid "Home"
 msgstr "Home"
@@ -147,8 +146,7 @@ msgstr "Geo-Fence \"%{name}\" erfolgreich aktualisiert"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/edit.html.leex:4
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:4
-#: lib/teslamate_web/templates/geo_fence/new.html.leex:4
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:4 lib/teslamate_web/templates/geo_fence/new.html.leex:4
 msgid "Geo-fences"
 msgstr "Geo-Fences"
 
@@ -159,8 +157,7 @@ msgstr "Leerlaufzeit vor dem Einschlafversuch"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:4
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:9
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:21
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:9 lib/teslamate_web/templates/geo_fence/index.html.leex:21
 msgid "Name"
 msgstr ""
 
@@ -198,8 +195,7 @@ msgstr "Dauer des Schlafversuchs"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:94
-#: lib/teslamate_web/templates/settings/index.html.leex:94
-#: lib/teslamate_web/templates/settings/index.html.leex:113
+#: lib/teslamate_web/templates/settings/index.html.leex:94 lib/teslamate_web/templates/settings/index.html.leex:113
 #: lib/teslamate_web/templates/settings/index.html.leex:113
 msgid "min"
 msgstr ""
