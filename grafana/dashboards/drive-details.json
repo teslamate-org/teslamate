@@ -16,7 +16,7 @@
         "iconColor": "rgba(255, 96, 96, 1)",
         "limit": 100,
         "name": "Charging",
-        "rawQuery": "SELECT\n\t$__time(start_date),\n\tconcat('Laden: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
+        "rawQuery": "SELECT\n\t$__time(start_date),\n\tconcat('Charged: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
         "showIn": 0,
         "tags": [],
         "type": "tags"
@@ -27,7 +27,7 @@
         "iconColor": "#508642",
         "limit": 100,
         "name": "Charging finished",
-        "rawQuery": "SELECT\n\t$__time(end_date),\n\tconcat('Laden: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
+        "rawQuery": "SELECT\n\t$__time(end_date),\n\tconcat('Charged: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
         "showIn": 0,
         "tags": [],
         "type": "tags"
