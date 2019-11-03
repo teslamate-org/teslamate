@@ -98,7 +98,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       ideal_battery_range_km: 230.52,
       rated_battery_range_km: 230.52,
       scheduled_charging_start_time: DateTime.utc_now() |> DateTime.add(60 * 60 * 10, :second),
-      time_to_full_charge: (DateTime.utc_now() |> DateTime.to_unix()) + :timer.minutes(25)
+      time_to_full_charge: 2.5
     }
 
     send(pid, summary)

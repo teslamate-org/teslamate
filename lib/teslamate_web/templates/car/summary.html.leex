@@ -90,6 +90,12 @@
               end
             )%></td>
           </tr>
+          <%= if @summary.state == :charging and not is_nil(@summary.time_to_full_charge) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Remaining Time" %></td>
+            <td><%= round(@summary.time_to_full_charge * 60) %> min</td>
+          </tr>
+          <% end %>
           <%= unless is_nil(@summary.ideal_battery_range_km) do %>
           <tr>
             <td class="has-text-weight-medium"><%=
@@ -124,7 +130,7 @@
             %></td>
           </tr>
           <% end %>
-          <%= if @summary.state in [:charging, :charging_complete] do %>
+          <%= if @summary.state == :charging do %>
             <%= unless is_nil(@summary.charge_energy_added) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Charged" %></td>
@@ -135,6 +141,12 @@
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Charger Power" %></td>
             <td><%= @summary.charger_power %> kW</td>
+          </tr>
+            <% end %>
+            <%= unless is_nil(@summary.time_to_full_charge) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Remaining Time" %></td>
+            <td><%= round(@summary.time_to_full_charge * 60) %> min</td>
           </tr>
             <% end %>
           <% end %>

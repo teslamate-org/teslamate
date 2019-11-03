@@ -16,17 +16,17 @@ msgid "Status"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:167
+#: lib/teslamate_web/templates/car/summary.html.leex:179
 msgid "Speed"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:161
+#: lib/teslamate_web/templates/car/summary.html.leex:173
 msgid "State of Charge"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:130
+#: lib/teslamate_web/templates/car/summary.html.leex:136
 msgid "Charged"
 msgstr ""
 
@@ -84,7 +84,7 @@ msgid "Settings"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:145
+#: lib/teslamate_web/templates/car/summary.html.leex:157
 msgid "Scheduled charging"
 msgstr ""
 
@@ -94,7 +94,7 @@ msgid "Plugged in"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:154
+#: lib/teslamate_web/templates/car/summary.html.leex:166
 msgid "Charge limit"
 msgstr ""
 
@@ -233,17 +233,17 @@ msgid "User present"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:221
+#: lib/teslamate_web/templates/car/summary.html.leex:233
 msgid "cancel sleep attempt"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:217
+#: lib/teslamate_web/templates/car/summary.html.leex:229
 msgid "try to sleep"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:117
+#: lib/teslamate_web/templates/car/summary.html.leex:123
 msgid "Range (est.)"
 msgstr ""
 
@@ -289,12 +289,12 @@ msgid "Temperature readings"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:98
+#: lib/teslamate_web/templates/car/summary.html.leex:104
 msgid "Range (rated)"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:136
+#: lib/teslamate_web/templates/car/summary.html.leex:142
 msgid "Charger Power"
 msgstr ""
 
@@ -319,7 +319,7 @@ msgid "rated"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:97
+#: lib/teslamate_web/templates/car/summary.html.leex:103
 msgid "Range (ideal)"
 msgstr ""
 
@@ -354,17 +354,17 @@ msgid "Delete '%{geo_fence}'?"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:192
+#: lib/teslamate_web/templates/car/summary.html.leex:204
 msgid "Inside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:180
+#: lib/teslamate_web/templates/car/summary.html.leex:192
 msgid "Outside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:205
+#: lib/teslamate_web/templates/car/summary.html.leex:217
 msgid "Version"
 msgstr ""
 
@@ -409,4 +409,10 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:65
 msgid "Some firmware versions incorrectly report 2 phases when charging at some chargers. With phase correction, a fixed value can be set when charging at this location, which overwrites the reported phases."
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:95
+#: lib/teslamate_web/templates/car/summary.html.leex:148
+msgid "Remaining Time"
 msgstr ""
