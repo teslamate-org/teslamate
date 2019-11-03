@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.12.1] - 2019-11-03
+
+### Enhancements
+
+- Display remaining time while charging
+
+### New MQTT Topics
+
+- `teslamate/cars/$car_id/heading`
+
+### Bug Fixes
+
+- Consistent language for label of charging events ([#299](https://github.com/adriankumpf/teslamate/pull/229))
+- Cap charging efficiency to 100%
+
 ## [1.12.0] - 2019-10-28
 
 We finally have **documentation**! Many thanks to [@ngardiner](https://github.com/ngardiner), who gave the impulse and did most of the work and also to [@krezac](https://github.com/krezac), who contributed a guide to creating iOS Shortcuts for TeslaMate!
@@ -521,7 +536,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.12.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.12.1...HEAD
+[1.12.1]: https://github.com/adriankumpf/teslamate/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/adriankumpf/teslamate/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/adriankumpf/teslamate/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/adriankumpf/teslamate/compare/v1.10.0...v1.11.0
