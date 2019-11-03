@@ -21,6 +21,7 @@ Vehicle data will be published to the following topics (`$car_id` usually starts
 | `teslamate/cars/$car_id/longitude`                     | 29.744801            | Last reported car longitude                                  |
 | `teslamate/cars/$car_id/shift_state`                   | D                    | Current/Last Shift State (D/N/R/P)                           |
 | `teslamate/cars/$car_id/speed`                         | 12                   | Current Speed in km/h                                        |
+| `teslamate/cars/$car_id/heading`                       | 340                  | Last reported car direction                                  |
 |                                                        |                      |                                                              |
 | `teslamate/cars/$car_id/locked`                        | true                 | Indicates if the car is locked                               |
 | `teslamate/cars/$car_id/sentry_mode`                   | false                | Indicates if Sentry Mode is active                           |

@@ -38,6 +38,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       latitude: 37.889602,
       longitude: 41.129182,
       speed: 40,
+      heading: 340,
       outside_temp: 15,
       inside_temp: 20.0,
       locked: true,
