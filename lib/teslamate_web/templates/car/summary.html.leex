@@ -143,12 +143,6 @@
             <td><%= @summary.charger_power %> kW</td>
           </tr>
             <% end %>
-            <%= unless is_nil(@summary.time_to_full_charge) do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Remaining Time" %></td>
-            <td><%= round(@summary.time_to_full_charge * 60) %> min</td>
-          </tr>
-            <% end %>
           <% end %>
 
           <%= if @summary.plugged_in do %>
