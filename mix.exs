@@ -55,6 +55,7 @@ defmodule TeslaMate.MixProject do
       {:tortoise, "~> 0.9"},
       {:excoveralls, "~> 0.10", only: :test},
       {:mojito, "~> 0.5"},
+      {:mint, "~> 1.0", override: true},
       {:srtm, "~> 0.2"},
       {:fuse, "~> 2.4"},
       {:mock, "~> 0.3", only: :test},
