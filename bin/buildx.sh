@@ -19,10 +19,10 @@ main() {
   grafana_dir=grafana
 
   pushd "$grafana_dir" > /dev/null || (echo "Couldn't change to $grafana_dir" && exit 1)
-  build "$task" "teslamate/grafana:$version"
+  build "$task" "teslamate/grafana:$version" linux/amd64,linux/arm64,linux/arm,linux/arm/v7
   popd > /dev/null
 
-  build "$task" "teslamate/teslamate:$version"
+  build "$task" "teslamate/teslamate:$version" linux/amd64,linux/arm64,linux/arm,linux/arm/v7,linux/s390x,linux/386
   echo "Done"
 
 }
@@ -30,10 +30,11 @@ main() {
 build() {
   local task=$1
   local tag=$2
+  local platforms=$3
 
   case $task in
-      build) echo "Building $tag" && docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t "$tag" .;;
-      push)  echo "Pushing $tag" && docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t "$tag" --push .;;
+      build) echo "Building $tag" && docker buildx build --platform "$platforms" -t "$tag" .;;
+      push)  echo "Pushing $tag" && docker buildx build --platform "$platforms" -t "$tag" --push .;;
       *)     exit 1;;
   esac
 }
