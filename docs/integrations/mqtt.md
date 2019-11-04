@@ -48,4 +48,4 @@ Vehicle data will be published to the following topics (`$car_id` usually starts
 | `teslamate/cars/$car_id/charger_power`                 | 48.9                 | Charger Power                                                |
 | `teslamate/cars/$car_id/charger_voltage`               | 240                  | Charger Voltage                                              |
 | `teslamate/cars/$car_id/scheduled_charging_start_time` | 2019-02-29T23:00:07Z | Start time of the scheduled charge                           |
-| `teslamate/cars/$car_id/time_to_full_charge`           | 0.0                  | Seconds remaining to full charge                             |
+| `teslamate/cars/$car_id/time_to_full_charge`           | 1.83                 | Hours remaining to full charge                               |
