@@ -15,7 +15,11 @@ defmodule TeslaMate.Vehicles do
 
   def list do
     Supervisor.which_children(@name)
-    |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end, ordered: false)
+    |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
+      ordered: false,
+      max_concurrency: 10,
+      timeout: 2500
+    )
     |> Enum.map(fn {:ok, vehicle} -> vehicle end)
     |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id}} -> id end)
   end

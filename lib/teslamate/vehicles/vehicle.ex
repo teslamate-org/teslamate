@@ -16,7 +16,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
             last_response: nil,
             last_state_change: nil,
             settings: nil,
-            deps: %{}
+            deps: %{},
+            task: nil
 
   alias __MODULE__, as: Data
 
@@ -170,7 +171,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:reply, from, {:error, :charging_in_progress}}}
   end
 
-  def handle_event({:call, from}, :suspend_logging, _online_or_charging_complete, data) do
+  def handle_event({:call, from}, :suspend_logging, _online, data) do
     with {:ok, %Vehicle{} = vehicle} <- fetch(data, expected_state: :online),
          :ok <- can_fall_asleep(vehicle, data.settings) do
       Logger.info("Suspending logging [Triggered manually]", car_id: data.car.id)
@@ -193,22 +194,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ## Info
 
-  def handle_event(:info, %Settings.Settings{} = settings, _state, data) do
-    {:keep_state, %Data{data | settings: settings}}
-  end
-
-  def handle_event(:info, message, _state, _data) do
-    Logger.error("Unhandled message: #{inspect(message, pretty: true)}")
-    :keep_state_and_data
-  end
-
-  ## Internal Events
-
-  ### Fetch
-
-  @impl true
-  def handle_event(event, :fetch, state, data) when event in [:state_timeout, :internal] do
-    case fetch(data, expected_state: state) do
+  def handle_event(:info, {ref, fetch_result}, _state, %Data{task: %Task{ref: ref}} = data)
+      when is_reference(ref) do
+    case fetch_result do
       {:ok, %Vehicle{state: "online"} = vehicle} ->
         {:keep_state, %Data{data | last_response: vehicle},
          {:next_event, :internal, {:update, {:online, vehicle}}}}
@@ -279,6 +267,39 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :ok = fuse_name(:api_error, data.car.id) |> :fuse.melt()
         {:keep_state_and_data, [notify_subscribers(), schedule_fetch(30)]}
     end
+  end
+
+  def handle_event(:info, {ref, result}, _state, _data) when is_reference(ref) do
+    Logger.warn("Unhandled fetch result: #{inspect(ref)} ")
+    Logger.debug("result: #{inspect(result, pretty: true)}")
+    :keep_state_and_data
+  end
+
+  def handle_event(:info, {:DOWN, _ref, :process, _pid, :normal}, _state, _data) do
+    :keep_state_and_data
+  end
+
+  def handle_event(:info, %Settings.Settings{} = settings, _state, data) do
+    {:keep_state, %Data{data | settings: settings}}
+  end
+
+  def handle_event(:info, message, _state, _data) do
+    Logger.error("Unhandled message: #{inspect(message, pretty: true)}")
+    :keep_state_and_data
+  end
+
+  ## Internal Events
+
+  ### Fetch
+
+  @impl true
+  def handle_event(event, :fetch, state, data) when event in [:state_timeout, :internal] do
+    task =
+      Task.async(fn ->
+        fetch(data, expected_state: state)
+      end)
+
+    {:keep_state, %Data{data | task: task}}
   end
 
   ## notify_subscribers
