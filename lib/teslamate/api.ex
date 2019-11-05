@@ -9,7 +9,7 @@ defmodule TeslaMate.Api do
 
   import Core.Dependency, only: [call: 3, call: 2]
 
-  defstruct auth: nil, deps: %{}
+  defstruct auth: nil, deps: %{}, refs: %{}
   alias __MODULE__, as: State
 
   @name __MODULE__
@@ -64,16 +64,13 @@ defmodule TeslaMate.Api do
     {:reply, {:error, :already_signed_in}, state}
   end
 
-  def handle_call({:sign_in, %Credentials{email: email, password: password}}, _from, state) do
-    case call(state.deps.tesla_api_auth, :login, [email, password]) do
-      {:ok, %TeslaApi.Auth{} = auth} ->
-        :ok = call(state.deps.auth, :save, [auth])
-        :ok = call(state.deps.vehicles, :restart)
-        {:reply, :ok, %State{state | auth: auth}, {:continue, :schedule_refresh}}
+  def handle_call({:sign_in, %Credentials{email: email, password: password}}, from, state) do
+    ref =
+      async(:sign_in, fn ->
+        call(state.deps.tesla_api_auth, :login, [email, password])
+      end)
 
-      {:error, %TeslaApi.Error{error: reason}} ->
-        {:reply, {:error, reason}, state}
-    end
+    {:noreply, %State{state | refs: Map.put(state.refs, ref, from)}}
   end
 
   def handle_call(:signed_in?, _from, %State{auth: auth} = state) do
@@ -84,50 +81,97 @@ defmodule TeslaMate.Api do
     {:reply, {:error, :not_signed_in}, state}
   end
 
-  def handle_call(:list, _from, state) do
-    case call(state.deps.tesla_api_vehicle, :list, [state.auth]) do
-      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
-        {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
+  def handle_call(:list, from, state) do
+    ref =
+      async(:list, fn ->
+        call(state.deps.tesla_api_vehicle, :list, [state.auth])
+      end)
 
-      {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
-        Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
-        {:reply, {:error, reason}, state}
-
-      {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
-        {:reply, {:error, reason}, state}
-
-      {:ok, vehicles} ->
-        {:reply, {:ok, vehicles}, state}
-    end
+    {:noreply, %State{state | refs: Map.put(state.refs, ref, from)}}
   end
 
-  def handle_call({cmd, id}, _from, state) when cmd in [:get, :get_with_state] do
-    case call(state.deps.tesla_api_vehicle, cmd, [state.auth, id]) do
-      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
-        {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
+  def handle_call({cmd, id}, from, state) when cmd in [:get, :get_with_state] do
+    ref =
+      async(cmd, fn ->
+        call(state.deps.tesla_api_vehicle, cmd, [state.auth, id])
+      end)
 
-      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 404, body: %{"error" => "not_found"}}}} ->
-        {:reply, {:error, :vehicle_not_found}, state}
-
-      {:error,
-       %TeslaApi.Error{
-         env: %Tesla.Env{status: 405, body: %{"error" => "vehicle is curently in service"}}
-       }} ->
-        {:reply, {:error, :in_service}, state}
-
-      {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
-        Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
-        {:reply, {:error, reason}, state}
-
-      {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
-        {:reply, {:error, reason}, state}
-
-      {:ok, %TeslaApi.Vehicle{} = vehicle} ->
-        {:reply, {:ok, vehicle}, state}
-    end
+    {:noreply, %State{state | refs: Map.put(state.refs, ref, from)}}
   end
 
   @impl true
+  def handle_info({:sign_in, ref, result}, %State{refs: refs} = state) do
+    {from, refs} = Map.pop(refs, ref)
+
+    case result do
+      {:ok, %TeslaApi.Auth{} = auth} ->
+        :ok = call(state.deps.auth, :save, [auth])
+        :ok = call(state.deps.vehicles, :restart)
+        GenServer.reply(from, :ok)
+        {:noreply, %State{state | auth: auth, refs: refs}, {:continue, :schedule_refresh}}
+
+      {:error, %TeslaApi.Error{error: reason}} ->
+        GenServer.reply(from, {:error, reason})
+        {:noreply, %State{state | refs: refs}}
+    end
+  end
+
+  def handle_info({:list, ref, result}, %State{refs: refs} = state) do
+    {reply, state} =
+      case result do
+        {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
+          {{:error, :not_signed_in}, %State{state | auth: nil}}
+
+        {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
+          Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
+          {{:error, reason}, state}
+
+        {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
+          {{:error, reason}, state}
+
+        {:ok, vehicles} ->
+          {{:ok, vehicles}, state}
+      end
+
+    {from, refs} = Map.pop(refs, ref)
+    GenServer.reply(from, reply)
+
+    {:noreply, %State{state | refs: refs}}
+  end
+
+  def handle_info({cmd, ref, result}, %State{refs: refs} = state)
+      when cmd in [:get, :get_with_state] do
+    {reply, state} =
+      case result do
+        {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
+          {{:error, :not_signed_in}, %State{state | auth: nil}}
+
+        {:error, %TeslaApi.Error{env: %Tesla.Env{status: 404, body: %{"error" => "not_found"}}}} ->
+          {{:error, :vehicle_not_found}, state}
+
+        {:error,
+         %TeslaApi.Error{
+           env: %Tesla.Env{status: 405, body: %{"error" => "vehicle is curently in service"}}
+         }} ->
+          {{:error, :in_service}, state}
+
+        {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
+          Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
+          {{:error, reason}, state}
+
+        {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
+          {{:error, reason}, state}
+
+        {:ok, %TeslaApi.Vehicle{} = vehicle} ->
+          {{:ok, vehicle}, state}
+      end
+
+    {from, refs} = Map.pop(refs, ref)
+    GenServer.reply(from, reply)
+
+    {:noreply, %State{state | refs: refs}}
+  end
+
   def handle_info(:refresh_auth, state) do
     case call(state.deps.tesla_api_auth, :refresh, [state.auth]) do
       {:ok, %TeslaApi.Auth{} = auth} ->
@@ -171,5 +215,14 @@ defmodule TeslaMate.Api do
     Process.send_after(self(), :refresh_auth, ms)
 
     {:noreply, state}
+  end
+
+  ## Private
+
+  defp async(cmd, func) do
+    current = self()
+    ref = :erlang.make_ref()
+    spawn_link(fn -> send(current, {cmd, ref, func.()}) end)
+    ref
   end
 end
