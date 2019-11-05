@@ -1,6 +1,7 @@
 # Screenshots
 
 ![Drive Details](screenshots/drive.png)
+![Race Track](screenshots/race_track.png)
 ![Drives](screenshots/drives.png)
 ![Efficiency](screenshots/efficiency.png)
 ![States](screenshots/states.png)
