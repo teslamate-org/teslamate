@@ -448,7 +448,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car_id\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nWHERE \n  date IS NOT NULL\nORDER BY\n\tdate DESC;",
+          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car_id\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nWHERE \n  date IS NOT NULL\nORDER BY\n\tdate ASC, state ASC;",
           "refId": "A",
           "select": [
             [
