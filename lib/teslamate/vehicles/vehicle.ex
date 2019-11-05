@@ -284,7 +284,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:info, message, _state, _data) do
-    Logger.error("Unhandled message: #{inspect(message, pretty: true)}")
+    Logger.debug("Unhandled message: #{inspect(message, pretty: true)}")
     :keep_state_and_data
   end
 
