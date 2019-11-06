@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.2] - 2019-11-06
+
+### Bug Fixes
+
+- Fix an issue where the "states" graph would not show every drive/charge
+- Fix an issue where the application would not start if the vehicle was parked at a place with poor reception
+- Remove duplicate table row "Remaining Time"
+
 ## [1.12.1] - 2019-11-03
 
 ### Enhancements
@@ -536,7 +544,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.12.1...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.12.2...HEAD
+[1.12.2]: https://github.com/adriankumpf/teslamate/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/adriankumpf/teslamate/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/adriankumpf/teslamate/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/adriankumpf/teslamate/compare/v1.11.0...v1.11.1
