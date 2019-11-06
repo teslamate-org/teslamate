@@ -165,7 +165,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tp.latitude AS lat,\n\tp.longitude AS lng\nFROM\n\tcharging_processes c\n\tJOIN positions p ON c.position_id = p.id\nWHERE\n\t$__timeFilter(date)\n\tAND c.car_id = $car_id;",
+          "rawSql": "SELECT\n\t$__time(date),\n\tunnest(ARRAY[latitude, latitude]) AS latitude,\n\tunnest(ARRAY[longitude, longitude]) AS longitude\nFROM\n\tcharging_processes c\n\tJOIN positions p ON c.position_id = p.id\nWHERE\n\t$__timeFilter(date)\n\tAND c.car_id = $car_id;",
           "refId": "A",
           "select": [
             [
