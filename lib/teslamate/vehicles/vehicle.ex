@@ -177,7 +177,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       Logger.info("Suspending logging [Triggered manually]", car_id: data.car.id)
 
       {:next_state, {:suspended, :online},
-       %Data{data | last_state_change: DateTime.utc_now(), last_response: vehicle},
+       %Data{data | last_state_change: DateTime.utc_now(), last_response: vehicle, task: nil},
        [
          {:reply, from, :ok},
          notify_subscribers(),
@@ -739,7 +739,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
       ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
       est_battery_range_km: Convert.miles_to_km(vehicle.charge_state.est_battery_range, 1),
       rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 1),
-      altitude: nil,
       fan_status: vehicle.climate_state.fan_status,
       is_climate_on: vehicle.climate_state.is_climate_on,
       driver_temp_setting: vehicle.climate_state.driver_temp_setting,
