@@ -25,16 +25,19 @@ defmodule ApiMock do
   @impl true
   def handle_call({action, _id}, _from, %State{events: [event | []]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
-    {:reply, event, state}
+    {:reply, exec(event), state}
   end
 
   def handle_call({action, _id}, _from, %State{events: [event | events]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
-    {:reply, event, %State{state | events: events}}
+    {:reply, exec(event), %State{state | events: events}}
   end
 
   def handle_call({:sign_in, _} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
     {:reply, :ok, state}
   end
+
+  defp exec(event) when is_function(event), do: event.()
+  defp exec(event), do: event
 end

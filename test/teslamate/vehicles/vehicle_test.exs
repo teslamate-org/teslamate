@@ -279,4 +279,40 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       refute_receive _
     end
   end
+
+  describe "summary" do
+    test "returns the summary if no api request was completed yet", %{test: name} do
+      events = [
+        fn ->
+          Process.sleep(10_000)
+          {:ok, online_event()}
+        end
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      for _ <- 1..10 do
+        assert %Vehicle.Summary{state: :unavailable, healthy: true} = Vehicle.summary(name)
+      end
+    end
+
+    test "returns the summary even if the api call is blocked", %{test: name} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event()},
+        fn ->
+          Process.sleep(10_000)
+          {:ok, online_event()}
+        end
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car, :online}
+
+      for _ <- 1..10 do
+        assert %Vehicle.Summary{state: :online, healthy: true} = Vehicle.summary(name)
+      end
+    end
+  end
 end
