@@ -762,7 +762,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       charger_actual_current: vehicle.charge_state.charger_actual_current,
       charger_phases: vehicle.charge_state.charger_phases,
       charger_pilot_current: vehicle.charge_state.charger_pilot_current,
-      charger_power: vehicle.charge_state.charger_power,
+      charger_power: vehicle.charge_state.charger_power || 0,
       charger_voltage: vehicle.charge_state.charger_voltage,
       conn_charge_cable: vehicle.charge_state.conn_charge_cable,
       fast_charger_present: vehicle.charge_state.fast_charger_present,
