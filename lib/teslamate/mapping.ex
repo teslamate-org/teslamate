@@ -27,7 +27,7 @@ defmodule TeslaMate.Mapping do
   def init(opts) do
     {:ok, client} = SRTM.Client.new(cache_path())
 
-    timeout = Keyword.get(opts, :timeout, 50)
+    timeout = Keyword.get(opts, :timeout, 100)
     name = Keyword.get(opts, :name, @name)
 
     deps = %{

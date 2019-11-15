@@ -159,6 +159,8 @@ defmodule TeslaMate.Api do
   end
 
   def handle_info(:refresh_auth, state) do
+    Logger.info("Refreshing access token ...")
+
     case call(state.deps.tesla_api_auth, :refresh, [state.auth]) do
       {:ok, %TeslaApi.Auth{} = auth} ->
         :ok = call(state.deps.auth, :save, [auth])
