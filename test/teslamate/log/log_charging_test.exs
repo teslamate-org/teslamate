@@ -511,6 +511,20 @@ defmodule TeslaMate.LogChargingTest do
       assert %Car{efficiency: nil} = Log.get_car!(car.id)
     end
 
+    test "rejects zero" do
+      assert %Car{efficiency: nil} = car = car_fixture()
+
+      data = [
+        {262.8, 263.5, 0.0, 53, 53, 20},
+        {176.8, 177.5, 0.0, 35, 36, 20},
+        {294.6, 294.6, 0.0, 59, 59, 45}
+      ]
+
+      :ok = insert_charging_process_fixtures(car, data)
+
+      assert %Car{efficiency: nil} = Log.get_car!(car.id)
+    end
+
     defp insert_charging_process_fixtures(car, data, range \\ :ideal) do
       {:ok, %Position{id: position_id}} = Log.insert_position(car, @valid_pos_attrs)
 

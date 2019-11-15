@@ -380,13 +380,14 @@ defmodule TeslaMate.Log do
         },
         where:
           c.car_id == ^id and c.duration_min > 10 and c.end_battery_level <= 95 and
-            not is_nil(field(c, ^end_range)) and not is_nil(field(c, ^start_range)),
+            not is_nil(field(c, ^end_range)) and not is_nil(field(c, ^start_range)) and
+            c.charge_energy_added > 0.0,
         group_by: 1,
         order_by: [desc: 2],
         limit: 1
 
     case Repo.one(query) do
-      {factor, n} when n >= threshold and not is_nil(factor) ->
+      {factor, n} when n >= threshold and not is_nil(factor) and factor > 0 ->
         Logger.info("Derived efficiency factor: #{factor * 1000} Wh/km (#{n}x confirmed)",
           car_id: id
         )

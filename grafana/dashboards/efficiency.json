@@ -783,7 +783,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric *\n\t  CASE WHEN '$length_unit' = 'km' THEN 1.0\n\t       WHEN '$length_unit' = 'mi' THEN 1.60934\n\t  END, 3) * 1000 as efficiency,\n  count(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_ideal_range_km IS NOT NULL\n  AND end_ideal_range_km IS NOT NULL\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
+          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric *\n\t  CASE WHEN '$length_unit' = 'km' THEN 1.0\n\t       WHEN '$length_unit' = 'mi' THEN 1.60934\n\t  END, 3) * 1000 as efficiency,\n  count(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_ideal_range_km IS NOT NULL\n  AND end_ideal_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
           "refId": "A",
           "select": [
             [
@@ -892,7 +892,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric *\n\t  CASE WHEN '$length_unit' = 'km' THEN 1.0\n\t       WHEN '$length_unit' = 'mi' THEN 1.60934\n\t  END, 3) * 1000 as efficiency,\n\tcount(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_rated_range_km IS NOT NULL\n  AND end_rated_range_km IS NOT NULL\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
+          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric *\n\t  CASE WHEN '$length_unit' = 'km' THEN 1.0\n\t       WHEN '$length_unit' = 'mi' THEN 1.60934\n\t  END, 3) * 1000 as efficiency,\n\tcount(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_rated_range_km IS NOT NULL\n  AND end_rated_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
           "refId": "A",
           "select": [
             [
@@ -1107,5 +1107,5 @@
   "timezone": "",
   "title": "Efficiency",
   "uid": "fu4SiQgWz",
-  "version": 2
+  "version": 1
 }
