@@ -13,7 +13,7 @@
     <%= f = form_for @changeset, "#", [phx_change: :change] %>
       <div class="field is-horizontal">
         <div class="field-label is-normal">
-          <label class="label"><%= gettext("Length") %></label>
+          <%= label f, :unit_of_length, gettext("Length"), class: "label" %>
         </div>
         <div class="field-body">
           <div class="field">
@@ -28,7 +28,7 @@
       </div>
       <div class="field is-horizontal">
         <div class="field-label is-normal">
-          <label class="label"><%= gettext("Temperature") %></label>
+          <%= label f, :unit_of_temperature, gettext("Temperature"), class: "label" %>
         </div>
         <div class="field-body">
           <div class="field">
@@ -54,7 +54,7 @@
     <%= f = form_for @changeset, "#", [phx_change: :change] %>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
-          <%= label class: "label tooltip has-tooltip-multiline", data_tooltip: gettext("The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle.")  do %>
+          <%= label f, :preferred_range, class: "label tooltip has-tooltip-multiline", data_tooltip: gettext("The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle.")  do %>
             <%= gettext("Preferred range") %> <span class="icon is-small" >
               <span class="mdi mdi-information"></span>
             </span>
@@ -83,7 +83,7 @@
     <%= f = form_for @changeset, "#", [phx_change: :change] %>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
-          <label class="label"><%= gettext("Time to Try Sleeping") %></label>
+          <%= label f, :suspend_min, gettext("Time to Try Sleeping"), class: "label" %>
         </div>
         <div class="field-body">
           <div class="field">
@@ -101,7 +101,7 @@
       </div>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
-          <label class="label"><%= gettext("Idle Time Before Trying to Sleep") %></label>
+          <%= label f, :suspend_after_idle_min, gettext("Idle Time Before Trying to Sleep"), class: "label" %>
         </div>
         <div class="field-body">
           <div class="field">
@@ -165,7 +165,7 @@
     <%= f = form_for @changeset, "#", [phx_change: :change] %>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
-          <label class="label"><%= gettext("Base URL") %></label>
+          <%= label f, :base_url, gettext("Base URL"), class: "label" %>
         </div>
         <div class="field-body">
           <div class="field">

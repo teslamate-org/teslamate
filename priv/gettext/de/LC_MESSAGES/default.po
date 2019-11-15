@@ -17,12 +17,12 @@ msgid "Status"
 msgstr "Status"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:179
+#: lib/teslamate_web/templates/car/summary.html.leex:173
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:173
+#: lib/teslamate_web/templates/car/summary.html.leex:167
 msgid "State of Charge"
 msgstr "Ladezustand"
 
@@ -85,7 +85,7 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:157
+#: lib/teslamate_web/templates/car/summary.html.leex:151
 msgid "Scheduled charging"
 msgstr "Ladezeitpunkt"
 
@@ -95,7 +95,7 @@ msgid "Plugged in"
 msgstr "Eingesteckt"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:166
+#: lib/teslamate_web/templates/car/summary.html.leex:160
 msgid "Charge limit"
 msgstr "Ladelimit"
 
@@ -234,12 +234,12 @@ msgid "User present"
 msgstr "Benutzer anwesend"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:233
+#: lib/teslamate_web/templates/car/summary.html.leex:227
 msgid "cancel sleep attempt"
 msgstr "Schlafversuch abbrechen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:229
+#: lib/teslamate_web/templates/car/summary.html.leex:223
 msgid "try to sleep"
 msgstr "versuchen zu schlafen"
 
@@ -355,17 +355,17 @@ msgid "Delete '%{geo_fence}'?"
 msgstr "'%{geo_fence}' löschen?"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:204
+#: lib/teslamate_web/templates/car/summary.html.leex:198
 msgid "Inside temperature"
 msgstr "Innentemperatur"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:192
+#: lib/teslamate_web/templates/car/summary.html.leex:186
 msgid "Outside temperature"
 msgstr "Außentemperatur"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:217
+#: lib/teslamate_web/templates/car/summary.html.leex:211
 msgid "Version"
 msgstr ""
 
@@ -414,6 +414,5 @@ msgstr "Einige Firmware-Versionen melden beim Laden an manchen Ladestationnen f�
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:95
-#: lib/teslamate_web/templates/car/summary.html.leex:148
 msgid "Remaining Time"
 msgstr "Restlaufzeit"
