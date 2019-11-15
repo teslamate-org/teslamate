@@ -32,6 +32,7 @@ defmodule TeslaMate.Log.ChargingProcess do
     charging_state
     |> cast(attrs, [
       :geofence_id,
+      :address_id,
       :start_date,
       :end_date,
       :charge_energy_added,

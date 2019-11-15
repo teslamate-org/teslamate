@@ -166,7 +166,7 @@ defmodule TeslaMate.Mapping do
         {:error, :unavailable}
 
       {:error, :not_found} ->
-        Logger.debug("Installing circuit-breaker ...")
+        Logger.debug("Installing circuit-breaker #{inspect(name)} ...")
         :fuse.install(name, {{:standard, 2, :timer.minutes(3)}, {:reset, :timer.minutes(15)}})
         do_get_elevation({lat, lng}, data)
     end
