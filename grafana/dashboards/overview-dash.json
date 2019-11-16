@@ -64,12 +64,20 @@
               },
               {
                 "color": "semi-dark-yellow",
-                "value": 25
+                "value": 10
               },
               {
                 "color": "semi-dark-green",
-                "value": 60
-              }
+                "value": 20
+              },
+              {
+                "color": "semi-dark-yellow",
+                "value": 80
+              },
+              {
+                "color": "light-red",
+                "value": 90
+              },
             ],
             "title": "",
             "unit": "percent"
