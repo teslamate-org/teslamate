@@ -8,3 +8,4 @@ defmodule TeslaMate.Repo.Migrations.AddCostFieldToCharges do
     end
 
   end
+end
