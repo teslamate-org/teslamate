@@ -7,15 +7,11 @@ defmodule TeslaMateWeb.CarLive.Index do
   alias TeslaMate.{Settings, Vehicles}
 
   @impl true
-  def mount(_session, socket) do
-    settings =
-      Settings.get_settings!()
-      |> update_base_url(socket)
-
+  def mount(%{settings: settings}, socket) do
     socket =
       socket
       |> assign_new(:summaries, fn -> Vehicles.list() end)
-      |> assign_new(:settings, fn -> settings end)
+      |> assign_new(:settings, fn -> update_base_url(settings, socket) end)
 
     {:ok, socket}
   end
