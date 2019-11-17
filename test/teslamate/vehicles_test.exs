@@ -44,6 +44,7 @@ defmodule TeslaMate.VehiclesTest do
   end
 
   describe "uses fallback vehicles" do
+    alias TeslaMate.Settings.CarSettings
     alias TeslaMate.{Log, Api}
     alias TeslaMate.Log.Car
 
@@ -52,7 +53,7 @@ defmodule TeslaMate.VehiclesTest do
     @tag :capture_log
     test "empty list" do
       {:ok, %Car{id: id}} =
-        %Car{}
+        %Car{settings: %CarSettings{}}
         |> Car.changeset(%{vid: 333_333, eid: 2_222_222, vin: "1234"})
         |> Log.create_or_update_car()
 
@@ -71,7 +72,7 @@ defmodule TeslaMate.VehiclesTest do
     @tag :capture_log
     test "not signed in" do
       {:ok, %Car{id: id}} =
-        %Car{}
+        %Car{settings: %CarSettings{}}
         |> Car.changeset(%{vid: 333_333, eid: 2_222_222, vin: "1234"})
         |> Log.create_or_update_car()
 

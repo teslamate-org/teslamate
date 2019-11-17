@@ -4,6 +4,7 @@ defmodule TeslaMate.Vehicles do
   require Logger
 
   alias __MODULE__.Vehicle
+  alias TeslaMate.Settings.CarSettings
   alias TeslaMate.Log.Car
   alias TeslaMate.Log
 
@@ -99,7 +100,8 @@ defmodule TeslaMate.Vehicles do
       with nil <- Log.get_car_by(vin: vehicle.vin),
            nil <- Log.get_car_by(vid: vehicle.vehicle_id),
            nil <- Log.get_car_by(eid: vehicle.id) do
-        %Car{}
+        # TODO: lower suspend_min for know raven models
+        %Car{settings: %CarSettings{}}
       end
       |> Car.changeset(%{
         name: vehicle.display_name,

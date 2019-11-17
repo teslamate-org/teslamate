@@ -132,7 +132,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
   describe "settings change" do
     alias TeslaMate.Vehicles.Vehicle
-    alias TeslaMate.Settings.Settings
+    alias TeslaMate.Settings.CarSettings
 
     test "applies new sleep settings", %{test: name} do
       events = [
@@ -153,7 +153,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       refute_receive _, 500
 
       # Reduce suspend_after_idle_min
-      send(name, %Settings{suspend_after_idle_min: 1, suspend_min: 10_000})
+      send(name, %CarSettings{suspend_after_idle_min: 1, suspend_min: 10_000})
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
 
       refute_receive _

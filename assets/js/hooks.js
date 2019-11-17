@@ -6,6 +6,21 @@ function dateToLocalTime(dateStr) {
     : "–";
 }
 
+export const Dropdown = {
+  mounted() {
+    const $el = this.el;
+
+    $el.querySelector("button").addEventListener("click", e => {
+      e.stopPropagation();
+      $el.classList.toggle("is-active");
+    });
+
+    document.addEventListener("click", e => {
+      $el.classList.remove("is-active");
+    });
+  }
+};
+
 export const LocalTime = {
   mounted() {
     this.el.innerText = dateToLocalTime(this.el.dataset.date);

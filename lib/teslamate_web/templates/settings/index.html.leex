@@ -5,82 +5,36 @@
   </ul>
 </nav>
 
-<div class="columns is-tablet is-centered">
-  <div class="column">
-    <h2 class="title is-4">
-      <%= gettext("Units") %>
-    </h2>
-    <%= f = form_for @changeset, "#", [phx_change: :change] %>
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <%= label f, :unit_of_length, gettext("Length"), class: "label" %>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <div class="select is-fullwidth">
-                <%= select(f, :unit_of_length, [:km, :mi]) %>
-              </div>
-            </div>
-            <p class="help is-danger"><%= error_tag(f, :unit_of_length) %></p>
-          </div>
-        </div>
-      </div>
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <%= label f, :unit_of_temperature, gettext("Temperature"), class: "label" %>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <div class="select is-fullwidth">
-                <%= select(f, :unit_of_temperature, ["°C": :C, "°F": :F]) %>
-              </div>
-            </div>
-            <p class="help is-danger"><%= error_tag(f, :unit_of_temperature) %></p>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
+<%= if Enum.count(@car_settings) > 0 do %>
+<div class="title-with-addon">
+  <h2 class="title is-4 is-marginless">
+    <%= gettext("Sleep") %>
+  </h2>
 
-
-<div class="columns is-tablet is-centered">
-  <div class="column">
-    <h2 class="title is-4">
-      <%= gettext("Range") %>
-    </h2>
-    <%= f = form_for @changeset, "#", [phx_change: :change] %>
-      <div class="field is-horizontal center-vertically">
-        <div class="field-label is-normal">
-          <%= label f, :preferred_range, class: "label tooltip has-tooltip-multiline", data_tooltip: gettext("The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle.")  do %>
-            <%= gettext("Preferred range") %> <span class="icon is-small" >
-              <span class="mdi mdi-information"></span>
-            </span>
-          <% end %>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <div class="select is-fullwidth">
-                <%= select(f, :preferred_range, [ideal: gettext("ideal"), rated: gettext("rated")]) %>
-              </div>
-            </div>
-            <p class="help is-danger"><%= error_tag(f, :preferred_range) %></p>
-          </div>
-        </div>
+  <div class="dropdown is-right" phx-hook="Dropdown">
+    <div class="dropdown-trigger">
+      <button class="button is-inverted is-info" aria-haspopup="true" aria-controls="dropdown-menu">
+        <span><%= @car_settings[@car].original.car.name %></span>
+        <span class="icon">
+          <i class="mdi mdi-chevron-down" aria-hidden="true"></i>
+        </span>
+      </button>
+    </div>
+    <div class="dropdown-menu" role="menu">
+      <div class="dropdown-content">
+        <%= Enum.map(@car_settings, fn {car_id, %{original: %{car: car}}} ->
+              link car.name, to: "#", phx_click: "car", phx_value_id: car_id,
+                         class: "dropdown-item#{if car_id == @car, do: " is-active"}"
+            end)
+        %>
       </div>
-    </form>
+    </div>
   </div>
 </div>
 
 <div class="columns is-tablet is-centered">
   <div class="column">
-    <h2 class="title is-4">
-      <%= gettext("Sleep") %>
-    </h2>
-    <%= f = form_for @changeset, "#", [phx_change: :change] %>
+    <%= f = form_for get_in(@car_settings, [@car, :changeset]), "#", [phx_change: :change] %>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
           <%= label f, :suspend_min, gettext("Time to Try Sleeping"), class: "label" %>
@@ -156,13 +110,83 @@
     </form>
   </div>
 </div>
+<% end %>
+
+<div class="columns is-tablet is-centered">
+  <div class="column">
+    <h2 class="title is-4">
+      <%= gettext("Range") %>
+    </h2>
+    <%= f = form_for @global_settings.changeset, "#", [phx_change: :change] %>
+      <div class="field is-horizontal center-vertically">
+        <div class="field-label is-normal">
+          <%= label f, :preferred_range, class: "label tooltip has-tooltip-multiline", data_tooltip: gettext("The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle.")  do %>
+            <%= gettext("Preferred range") %> <span class="icon is-small" >
+              <span class="mdi mdi-information"></span>
+            </span>
+          <% end %>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :preferred_range, [ideal: gettext("ideal"), rated: gettext("rated")]) %>
+              </div>
+            </div>
+            <p class="help is-danger"><%= error_tag(f, :preferred_range) %></p>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="columns is-tablet is-centered">
+  <div class="column">
+    <h2 class="title is-4">
+      <%= gettext("Units") %>
+    </h2>
+    <%= f = form_for @global_settings.changeset, "#", [phx_change: :change] %>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <%= label f, :unit_of_length, gettext("Length"), class: "label" %>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :unit_of_length, [:km, :mi]) %>
+              </div>
+            </div>
+            <p class="help is-danger"><%= error_tag(f, :unit_of_length) %></p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <%= label f, :unit_of_temperature, gettext("Temperature"), class: "label" %>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :unit_of_temperature, ["°C": :C, "°F": :F]) %>
+              </div>
+            </div>
+            <p class="help is-danger"><%= error_tag(f, :unit_of_temperature) %></p>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 
 <div class="columns is-tablet is-centered">
   <div class="column">
     <h2 class="title is-4">
       <%= gettext("URLs") %>
     </h2>
-    <%= f = form_for @changeset, "#", [phx_change: :change] %>
+    <%= f = form_for @global_settings.changeset, "#", [phx_change: :change] %>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
           <%= label f, :base_url, gettext("Web App"), class: "label" %>

@@ -16,6 +16,7 @@ $fullhd-enabled: false;
 @import "~bulma/sass/components/card";
 @import "~bulma/sass/components/message";
 @import "~bulma/sass/components/navbar";
+@import "~bulma/sass/components/dropdown";
 @import "~bulma/sass/elements/box";
 @import "~bulma/sass/elements/button";
 @import "~bulma/sass/elements/container";
@@ -200,4 +201,14 @@ $positions: ('top','left','bottom','right');
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.title-with-addon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:not(:last-child) {
+    margin-bottom: 1.5rem;
+  }
 }

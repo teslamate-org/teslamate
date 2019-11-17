@@ -2,7 +2,7 @@ defmodule TeslaMate.LogCarTest do
   use TeslaMate.DataCase, async: true
 
   alias TeslaMate.Log.Car
-  alias TeslaMate.Log
+  alias TeslaMate.{Log, Repo}
 
   @valid_attrs %{
     efficiency: 0.153,
@@ -43,17 +43,20 @@ defmodule TeslaMate.LogCarTest do
 
   test "list_cars/0 returns all car" do
     car = car_fixture()
-    assert Log.list_cars() == [car]
+    assert Log.list_cars() |> Enum.map(&Repo.preload(&1, :settings)) == [car]
   end
 
   test "get_car!/1 returns the car with given id" do
     car = car_fixture()
-    assert Log.get_car!(car.id) == car
+    assert Log.get_car!(car.id) |> Repo.preload(:settings) == car
   end
 
   test "create_or_update_car/1 with valid data creates a car" do
+    alias TeslaMate.Settings.CarSettings
+
     assert {:ok, %Car{} = car} =
-             Car.changeset(%Car{eid: @valid_attrs.eid, vid: @valid_attrs.vid}, @valid_attrs)
+             %Car{eid: @valid_attrs.eid, vid: @valid_attrs.vid, settings: %CarSettings{}}
+             |> Car.changeset(@valid_attrs)
              |> Log.create_or_update_car()
 
     assert car.efficiency == 0.153
@@ -98,6 +101,6 @@ defmodule TeslaMate.LogCarTest do
     assert {:error, %Ecto.Changeset{}} =
              Car.changeset(car, @invalid_attrs) |> Log.create_or_update_car()
 
-    assert car == Log.get_car!(car.id)
+    assert car == Log.get_car!(car.id) |> Repo.preload(:settings)
   end
 end

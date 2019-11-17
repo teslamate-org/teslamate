@@ -35,5 +35,5 @@ defmodule TeslaMateWeb.Router do
     put "/car/:id/logging/suspend", CarController, :suspend_logging
   end
 
-  defp fetch_settings(conn, _opts), do: assign(conn, :settings, Settings.get_settings!())
+  defp fetch_settings(conn, _opts), do: assign(conn, :settings, Settings.get_global_settings!())
 end

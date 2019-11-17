@@ -6,42 +6,65 @@ defmodule TeslaMate.Settings do
   import Ecto.Query, warn: false
   alias TeslaMate.Repo
 
-  alias __MODULE__.Settings
+  alias __MODULE__.{GlobalSettings, CarSettings}
+  alias TeslaMate.Log.Car
   alias TeslaMate.Log
 
-  @topic inspect(__MODULE__)
-
-  def get_settings! do
-    case Repo.all(Settings) do
+  def get_global_settings! do
+    case Repo.all(GlobalSettings) do
       [settings] -> settings
       _ -> raise "settings table is corrupted"
     end
   end
 
-  def update_settings(%Settings{} = old_settings, attrs) do
+  def get_car_settings do
+    from(s in CarSettings, order_by: s.id, preload: [:car])
+    |> Repo.all()
+  end
+
+  def update_global_settings(%GlobalSettings{} = pre, attrs) do
     Repo.transaction(fn ->
-      with {:ok, new_settings} <- old_settings |> Settings.changeset(attrs) |> Repo.update(),
-           :ok <- on_range_change(old_settings, new_settings),
-           :ok <- broadcast(new_settings) do
-        new_settings
+      with {:ok, post} <- pre |> GlobalSettings.changeset(attrs) |> Repo.update(),
+           :ok <- on_range_change(pre, post) do
+        post
       else
         {:error, reason} -> Repo.rollback(reason)
       end
     end)
   end
 
-  def change_settings(%Settings{} = settings, attrs \\ %{}) do
-    Settings.changeset(settings, attrs)
+  def update_car_settings(%CarSettings{car: %Car{}} = settings, attrs) do
+    Repo.transaction(fn ->
+      with {:ok, post} <- settings |> CarSettings.changeset(attrs) |> Repo.update(),
+           :ok <- broadcast(settings.car, post) do
+        post
+      else
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end)
   end
 
-  def subscribe_to_changes do
-    Phoenix.PubSub.subscribe(TeslaMate.PubSub, @topic)
+  def change_global_settings(%GlobalSettings{} = settings, attrs \\ %{}) do
+    GlobalSettings.changeset(settings, attrs)
   end
 
-  defp on_range_change(%Settings{preferred_range: pf}, %Settings{preferred_range: pf}), do: :ok
-  defp on_range_change(%Settings{}, %Settings{} = new), do: Log.recalculate_efficiencies(new)
+  def change_car_settings(%CarSettings{} = car_settings, attrs \\ %{}) do
+    CarSettings.changeset(car_settings, attrs)
+  end
 
-  defp broadcast(settings) do
-    Phoenix.PubSub.broadcast(TeslaMate.PubSub, @topic, settings)
+  def topic(%Car{id: id}), do: inspect(CarSettings) <> to_string(id)
+
+  def subscribe_to_changes(car) do
+    Phoenix.PubSub.subscribe(TeslaMate.PubSub, topic(car))
+  end
+
+  defp on_range_change(%GlobalSettings{preferred_range: pf}, %GlobalSettings{preferred_range: pf}),
+    do: :ok
+
+  defp on_range_change(%GlobalSettings{}, %GlobalSettings{} = new),
+    do: Log.recalculate_efficiencies(new)
+
+  defp broadcast(car, settings) do
+    Phoenix.PubSub.broadcast(TeslaMate.PubSub, topic(car), settings)
   end
 end

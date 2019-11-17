@@ -5,6 +5,7 @@ defmodule TeslaMateWeb.CarLive.Index do
 
   alias TeslaMateWeb.CarView
   alias TeslaMate.{Settings, Vehicles}
+  alias TeslaMate.Settings.GlobalSettings
 
   @impl true
   def mount(%{settings: settings}, socket) do
@@ -23,12 +24,12 @@ defmodule TeslaMateWeb.CarLive.Index do
 
   ## Private
 
-  defp update_base_url(%Settings.Settings{base_url: url} = settings, socket)
+  defp update_base_url(%GlobalSettings{base_url: url} = settings, socket)
        when is_nil(url) or url == "" do
     if connected?(socket) do
       base_url = get_connect_params(socket)["baseUrl"]
 
-      case Settings.update_settings(settings, %{base_url: base_url}) do
+      case Settings.update_global_settings(settings, %{base_url: base_url}) do
         {:error, reason} ->
           Logger.warn("Updating settings failed: #{inspect(reason)}")
           settings

@@ -3,6 +3,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
   use TeslaMate.VehicleCase
 
   alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
+  alias TeslaMate.Settings.GlobalSettings
   alias TeslaMate.Settings
 
   describe "base URL" do
@@ -10,12 +11,12 @@ defmodule TeslaMateWeb.CarLive.Indextest do
     test "initiall sets the base URL", %{conn: conn} do
       :ok = start_vehicles([{:ok, online_event()}])
 
-      assert %Settings.Settings{base_url: nil} = Settings.get_settings!()
+      assert %GlobalSettings{base_url: nil} = Settings.get_global_settings!()
 
       assert {:ok, _parent_view, _html} =
                live(conn, "/", connect_params: %{"baseUrl" => "http://example.com "})
 
-      assert %Settings.Settings{base_url: "http://example.com"} = Settings.get_settings!()
+      assert %GlobalSettings{base_url: "http://example.com"} = Settings.get_global_settings!()
     end
 
     @tag :signed_in
@@ -23,13 +24,13 @@ defmodule TeslaMateWeb.CarLive.Indextest do
       :ok = start_vehicles([{:ok, online_event()}])
 
       assert {:ok, _settings} =
-               Settings.get_settings!()
-               |> Settings.update_settings(%{base_url: "https://example.com"})
+               Settings.get_global_settings!()
+               |> Settings.update_global_settings(%{base_url: "https://example.com"})
 
       assert {:ok, _parent_view, _html} =
                live(conn, "/", connect_params: %{"baseUrl" => "http://foo.bar/ "})
 
-      assert %Settings.Settings{base_url: "https://example.com"} = Settings.get_settings!()
+      assert %GlobalSettings{base_url: "https://example.com"} = Settings.get_global_settings!()
     end
 
     @tag :signed_in
@@ -42,7 +43,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
                  live(conn, "/", connect_params: %{"baseUrl" => base_url})
       end
 
-      assert %Settings.Settings{base_url: nil} = Settings.get_settings!()
+      assert %GlobalSettings{base_url: nil} = Settings.get_global_settings!()
     end
   end
 

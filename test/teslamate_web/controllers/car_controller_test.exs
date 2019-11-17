@@ -2,7 +2,8 @@ defmodule TeslaMateWeb.CarControllerTest do
   use TeslaMateWeb.ConnCase
   use TeslaMate.VehicleCase
 
-  alias TeslaMate.{Log, Settings}
+  alias TeslaMate.Settings.CarSettings
+  alias TeslaMate.{Log, Settings, Repo}
   alias TeslaMate.Log.Car
 
   defp table_row(html, key, value) do
@@ -19,6 +20,26 @@ defmodule TeslaMateWeb.CarControllerTest do
              html
              |> Floki.find(".icons .icon")
              |> Enum.find(&match?({"span", [_, {"data-tooltip", ^tooltip}], _}, &1))
+  end
+
+  defp car_fixture(settings) do
+    {:ok, car} =
+      Log.create_car(%{
+        efficiency: 0.153,
+        eid: 4242,
+        vid: 404,
+        vin: "xxxxx",
+        model: "S",
+        name: "foo",
+        trim_badging: "P100D"
+      })
+
+    {:ok, _settings} =
+      car.settings
+      |> Repo.preload(:car)
+      |> Settings.update_car_settings(settings)
+
+    car
   end
 
   describe "index" do
@@ -60,7 +81,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       ]
 
       {:ok, car} =
-        %Car{}
+        %Car{settings: %CarSettings{}}
         |> Car.changeset(%{vid: 404, eid: 404, vin: "xxxxx"})
         |> Log.create_or_update_car()
 
@@ -274,9 +295,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "renders current vehicle stats [:falling asleep]", %{conn: conn} do
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 1})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1})
 
       events = [
         {:ok,
@@ -317,8 +336,8 @@ defmodule TeslaMateWeb.CarControllerTest do
     @tag :signed_in
     test "displays the rated range if preferred", %{conn: conn} do
       {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{preferred_range: :rated})
+        Settings.get_global_settings!()
+        |> Settings.update_global_settings(%{preferred_range: :rated})
 
       events = [
         {:ok,
@@ -352,8 +371,8 @@ defmodule TeslaMateWeb.CarControllerTest do
     @tag :signed_in
     test "displays imperial units", %{conn: conn} do
       {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{unit_of_length: :mi, unit_of_temperature: :F})
+        Settings.get_global_settings!()
+        |> Settings.update_global_settings(%{unit_of_length: :mi, unit_of_temperature: :F})
 
       events = [
         {:ok,
@@ -392,9 +411,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     test "suspends logging", %{conn: conn} do
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
 
       events = [
         {:ok,
@@ -415,9 +432,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     test "returns error if suspending is not possible", %{conn: conn} do
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
 
       events = [
         {:ok,
@@ -441,9 +456,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     test "resumes logging", %{conn: conn} do
       alias TeslaMate.Vehicles.Vehicle.Summary
 
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 1})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1})
 
       events = [
         {:ok,
@@ -458,7 +471,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       Process.sleep(100)
 
       %Car{id: id} = Log.get_car_by(vin: "xxxxx")
-      %Summary{state: :suspended} = TeslaMate.Vehicles.summary(id)
+      assert %Summary{state: :suspended} = TeslaMate.Vehicles.summary(id)
 
       conn = put(conn, Routes.car_path(conn, :resume_logging, id))
       assert "" == response(conn, 204)

@@ -17,10 +17,12 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
 
   @impl true
   def mount(_session, socket) do
+    alias Settings.GlobalSettings
+
     {unit_of_length, radius} =
-      case Settings.get_settings!() do
-        %Settings.Settings{unit_of_length: :km} -> {:m, 20}
-        %Settings.Settings{unit_of_length: :mi} -> {:ft, 65}
+      case Settings.get_global_settings!() do
+        %GlobalSettings{unit_of_length: :km} -> {:m, 20}
+        %GlobalSettings{unit_of_length: :mi} -> {:ft, 65}
       end
 
     geo_fence = %GeoFence{radius: radius}

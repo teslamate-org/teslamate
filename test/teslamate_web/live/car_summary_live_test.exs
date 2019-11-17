@@ -3,18 +3,36 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   use TeslaMate.VehicleCase
 
   alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
-  alias TeslaMate.Settings
+  alias TeslaMate.{Settings, Log, Repo}
 
   defp table_row(key, value) do
     ~r/<tr>\n?\s*<td class=\"has-text-weight-medium\">#{key}<\/td>\n?\s*<td.*?>\n?\s*#{value}\n?\s*<\/td>\n?\s*<\/tr>/
   end
 
+  defp car_fixture(settings) do
+    {:ok, car} =
+      Log.create_car(%{
+        efficiency: 0.153,
+        eid: 4242,
+        vid: 404,
+        vin: "xxxxx",
+        model: "S",
+        name: "foo",
+        trim_badging: "P100D"
+      })
+
+    {:ok, _settings} =
+      car.settings
+      |> Repo.preload(:car)
+      |> Settings.update_car_settings(settings)
+
+    car
+  end
+
   describe "suspend" do
     @tag :signed_in
     test "suspends logging", %{conn: conn} do
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
 
       events = [
         {:ok,
@@ -71,9 +89,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
             unquote(Macro.escape(settings))
           )
 
-        {:ok, _} =
-          Settings.get_settings!()
-          |> Settings.update_settings(settings)
+        _car = car_fixture(settings)
 
         events = [
           {:ok,
@@ -109,9 +125,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   describe "resume" do
     @tag :signed_in
     test "resumes logging", %{conn: conn} do
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
 
       events = [
         {:ok,

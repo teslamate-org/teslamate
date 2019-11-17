@@ -5,7 +5,7 @@ defmodule TeslaMate.VehicleCase do
     quote do
       alias TeslaMate.Vehicles.Vehicle.Summary
       alias TeslaMate.Vehicles.Vehicle
-      alias TeslaMate.Settings.Settings
+      alias TeslaMate.Settings.CarSettings
       alias TeslaMate.Log.Car
       alias TeslaApi.Vehicle.State
 
@@ -28,23 +28,20 @@ defmodule TeslaMate.VehicleCase do
 
         opts =
           Keyword.put_new_lazy(opts, :car, fn ->
-            %Car{id: :rand.uniform(65536), eid: 0, vid: 1000, model: "3"}
+            settings =
+              Keyword.get(opts, :settings, %{})
+              |> Map.put_new(:req_no_shift_state_reading, false)
+              |> Map.put_new(:req_no_temp_reading, false)
+              |> Map.put_new(:req_not_unlocked, true)
+
+            %Car{
+              id: :rand.uniform(65536),
+              eid: 0,
+              vid: 1000,
+              model: "3",
+              settings: struct(CarSettings, settings)
+            }
           end)
-
-        opts =
-          case Keyword.pop(opts, :settings) do
-            {nil, opts} ->
-              opts
-
-            {settings, opts} ->
-              settings =
-                settings
-                |> Map.put_new(:req_no_shift_state_reading, false)
-                |> Map.put_new(:req_no_temp_reading, false)
-                |> Map.put_new(:req_not_unlocked, true)
-
-              [{:settings, struct(Settings, settings)} | opts]
-          end
 
         {:ok, _pid} =
           start_supervised(

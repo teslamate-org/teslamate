@@ -11,6 +11,7 @@ defmodule TeslaMate.Log do
   alias __MODULE__.{Car, Drive, Update, ChargingProcess, Charge, Position, State}
   alias TeslaMate.{Repo, Locations, Mapping, Settings}
   alias TeslaMate.Locations.GeoFence
+  alias TeslaMate.Settings.{CarSettings, GlobalSettings}
 
   ## Car
 
@@ -26,13 +27,15 @@ defmodule TeslaMate.Log do
   def get_car_by([{_key, _val}] = opts), do: Repo.get_by(Car, opts)
 
   def create_car(attrs) do
-    %Car{}
+    %Car{settings: %CarSettings{}}
     |> Car.changeset(attrs)
     |> Repo.insert()
   end
 
   def create_or_update_car(%Ecto.Changeset{} = changeset) do
-    Repo.insert_or_update(changeset)
+    with {:ok, car} <- Repo.insert_or_update(changeset) do
+      {:ok, Repo.preload(car, [:settings])}
+    end
   end
 
   def update_car(%Car{} = car, attrs) do
@@ -41,7 +44,7 @@ defmodule TeslaMate.Log do
     |> Repo.update()
   end
 
-  def recalculate_efficiencies(%Settings.Settings{} = settings) do
+  def recalculate_efficiencies(%GlobalSettings{} = settings) do
     for car <- list_cars() do
       {:ok, _car} = recalculate_efficiency(car, settings)
     end
@@ -273,7 +276,7 @@ defmodule TeslaMate.Log do
   def complete_charging_process(%ChargingProcess{} = charging_process) do
     charging_process = Repo.preload(charging_process, [:car])
 
-    settings = Settings.get_settings!()
+    settings = Settings.get_global_settings!()
 
     stats =
       from(c in Charge,
@@ -362,10 +365,10 @@ defmodule TeslaMate.Log do
   defp recalculate_efficiency(%Car{id: id} = car, settings, [{precision, threshold} | opts]) do
     {start_range, end_range} =
       case settings do
-        %Settings.Settings{preferred_range: :ideal} ->
+        %GlobalSettings{preferred_range: :ideal} ->
           {:start_ideal_range_km, :end_ideal_range_km}
 
-        %Settings.Settings{preferred_range: :rated} ->
+        %GlobalSettings{preferred_range: :rated} ->
           {:start_rated_range_km, :end_rated_range_km}
       end
 

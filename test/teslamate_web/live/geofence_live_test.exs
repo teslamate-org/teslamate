@@ -39,7 +39,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
     test "displays radius in ft", %{conn: conn} do
       {:ok, _settings} =
-        Settings.get_settings!() |> Settings.update_settings(%{unit_of_length: :mi})
+        Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :mi})
 
       _gf1 =
         geofence_fixture(%{
@@ -136,7 +136,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
     test "allows editing of a geo-fence with radius being displayed in ft", %{conn: conn} do
       {:ok, _settings} =
-        Settings.get_settings!() |> Settings.update_settings(%{unit_of_length: :mi})
+        Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :mi})
 
       %GeoFence{id: id} =
         geofence_fixture(%{
@@ -167,7 +167,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
       {:ok, _settings} =
-        Settings.get_settings!() |> Settings.update_settings(%{unit_of_length: :km})
+        Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :km})
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
@@ -343,7 +343,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
     test "allows creating of a geo-fence with radius being displayed in ft", %{conn: conn} do
       {:ok, _settings} =
-        Settings.get_settings!() |> Settings.update_settings(%{unit_of_length: :mi})
+        Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :mi})
 
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
 
@@ -363,7 +363,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
       {:ok, _settings} =
-        Settings.get_settings!() |> Settings.update_settings(%{unit_of_length: :km})
+        Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :km})
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 

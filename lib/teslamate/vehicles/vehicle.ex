@@ -5,6 +5,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   alias __MODULE__.Summary
   alias TeslaMate.{Vehicles, Api, Log, Locations, Settings, Convert}
+  alias TeslaMate.Settings.CarSettings
 
   alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge, VehicleConfig}
   alias TeslaApi.Vehicle
@@ -67,7 +68,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   @impl true
   def init(opts) do
-    %Log.Car{} = car = Keyword.fetch!(opts, :car)
+    %Log.Car{settings: %CarSettings{} = settings} = car = Keyword.fetch!(opts, :car)
 
     deps = %{
       log: Keyword.get(opts, :deps_log, Log),
@@ -76,8 +77,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
       vehicles: Keyword.get(opts, :deps_vehicles, Vehicles),
       pubsub: Keyword.get(opts, :deps_pubsub, Phoenix.PubSub)
     }
-
-    settings = %Settings.Settings{} = Keyword.get_lazy(opts, :settings, &Settings.get_settings!/0)
 
     last_state_change =
       with %Log.State{start_date: date} <- call(deps.log, :get_current_state, [car]) do
@@ -103,7 +102,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       :ok = :fuse.circuit_enable(name)
     end
 
-    :ok = call(deps.settings, :subscribe_to_changes)
+    :ok = call(deps.settings, :subscribe_to_changes, [car])
 
     {:ok, :start, data, {:next_event, :internal, :fetch}}
   end
@@ -279,7 +278,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :keep_state_and_data
   end
 
-  def handle_event(:info, %Settings.Settings{} = settings, _state, data) do
+  def handle_event(:info, %CarSettings{} = settings, _state, data) do
     {:keep_state, %Data{data | settings: settings}}
   end
 
@@ -834,8 +833,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp can_fall_asleep(vehicle, settings) do
-    alias Settings.Settings
-
     case {vehicle, settings} do
       {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _} ->
         {:error, :user_present}
@@ -846,20 +843,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _} ->
         {:error, :sentry_mode}
 
-      {%Vehicle{vehicle_state: %VehicleState{locked: false}}, %Settings{req_not_unlocked: true}} ->
+      {%Vehicle{vehicle_state: %VehicleState{locked: false}},
+       %CarSettings{req_not_unlocked: true}} ->
         {:error, :unlocked}
 
       {%Vehicle{drive_state: %Drive{shift_state: shift_state}},
-       %Settings{req_no_shift_state_reading: true}}
+       %CarSettings{req_no_shift_state_reading: true}}
       when not is_nil(shift_state) ->
         {:error, :shift_state}
 
       {%Vehicle{climate_state: %Climate{outside_temp: out_t, inside_temp: in_t}},
-       %Settings{req_no_temp_reading: true}}
+       %CarSettings{req_no_temp_reading: true}}
       when not is_nil(out_t) or not is_nil(in_t) ->
         {:error, :temp_reading}
 
-      {%Vehicle{}, %Settings{}} ->
+      {%Vehicle{}, %CarSettings{}} ->
         :ok
     end
   end
