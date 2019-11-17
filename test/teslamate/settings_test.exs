@@ -14,7 +14,8 @@ defmodule TeslaMate.SettingsTest do
       req_no_temp_reading: false,
       req_not_unlocked: true,
       preferred_range: :rated,
-      base_url: "https://testlamate.exmpale.com"
+      base_url: "https://testlamate.exmpale.com",
+      grafana_url: "https://grafana.exmpale.com"
     }
     @invalid_attrs %{
       unit_of_length: nil,
@@ -25,7 +26,8 @@ defmodule TeslaMate.SettingsTest do
       req_no_temp_reading: nil,
       req_not_unlocked: nil,
       preferred_range: nil,
-      base_url: nil
+      base_url: nil,
+      grafana_url: nil
     }
 
     test "get_settings!/0 returns the settings" do
@@ -38,6 +40,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_not_unlocked == true
       assert settings.preferred_range == :ideal
       assert settings.base_url == nil
+      assert settings.grafana_url == nil
     end
 
     test "update_settings/2 with valid data updates the settings" do
@@ -54,6 +57,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_not_unlocked == true
       assert settings.preferred_range == :rated
       assert settings.base_url == "https://testlamate.exmpale.com"
+      assert settings.grafana_url == "https://grafana.exmpale.com"
     end
 
     test "update_settings/2 publishes the settings" do
@@ -108,6 +112,21 @@ defmodule TeslaMate.SettingsTest do
         assert {:error, changeset} = Settings.update_settings(settings, %{base_url: base_url})
         assert errors_on(changeset) == %{base_url: [message]}
       end
+    end
+
+    test "empty strings become nil" do
+      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
+
+      assert {:ok,
+              %S{
+                base_url: "https://testlamate.exmpale.com",
+                grafana_url: "https://grafana.exmpale.com"
+              } = settings} =
+               Settings.get_settings!()
+               |> Settings.update_settings(@update_attrs)
+
+      assert {:ok, %S{grafana_url: nil, base_url: nil}} =
+               Settings.update_settings(settings, %{grafana_url: "     ", base_url: ""})
     end
   end
 

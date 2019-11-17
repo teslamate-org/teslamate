@@ -78,7 +78,7 @@ msgid "Home"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/app.html.eex:42
+#: lib/teslamate_web/templates/layout/app.html.eex:45
 #: lib/teslamate_web/templates/settings/index.html.leex:4
 msgid "Settings"
 msgstr ""
@@ -129,7 +129,7 @@ msgid "Back"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/app.html.eex:41
+#: lib/teslamate_web/templates/layout/app.html.eex:44
 msgid "Geo-Fences"
 msgstr ""
 
@@ -334,16 +334,6 @@ msgid "Update in progress"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:168
-msgid "Base URL"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:163
-msgid "General"
-msgstr ""
-
-#, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:44
 msgid "Windows open"
 msgstr ""
@@ -414,4 +404,20 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:95
 msgid "Remaining Time"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/app.html.eex:42
+#: lib/teslamate_web/templates/settings/index.html.leex:182
+msgid "Dashboards"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:163
+msgid "URLs"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:168
+msgid "Web App"
 msgstr ""

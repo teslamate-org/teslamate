@@ -38,6 +38,9 @@
 
         <div id="navbar" class="navbar-menu">
           <div class="navbar-end">
+            <%= if grafana_url = @conn.assigns.settings.grafana_url do %>
+              <%= link(gettext("Dashboards"), to: grafana_url, class: "navbar-item", target: "_blank") %>
+            <% end %>
             <%= link(gettext("Geo-Fences"), to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item") %>
             <%= link(gettext("Settings"), to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5") %>
             <div class="navbar-item tags has-addons">

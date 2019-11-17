@@ -160,19 +160,33 @@
 <div class="columns is-tablet is-centered">
   <div class="column">
     <h2 class="title is-4">
-      <%= gettext("General") %>
+      <%= gettext("URLs") %>
     </h2>
     <%= f = form_for @changeset, "#", [phx_change: :change] %>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
-          <%= label f, :base_url, gettext("Base URL"), class: "label" %>
+          <%= label f, :base_url, gettext("Web App"), class: "label" %>
         </div>
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <%= text_input f, :base_url, type: :url, class: "input", phx_debounce: "blur" %>
+              <%= text_input f, :base_url, type: :url, class: "input", phx_debounce: "blur", placeholder: "teslamate.example.com" %>
             </div>
             <p class="help is-danger"><%= error_tag(f, :base_url) %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal center-vertically">
+        <div class="field-label is-normal">
+          <%= label f, :grafana_url, gettext("Dashboards"), class: "label" %>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <%= text_input f, :grafana_url, type: :url, class: "input", phx_debounce: "blur", placeholder: "grafana.example.com" %>
+            </div>
+            <p class="help is-danger"><%= error_tag(f, :grafana_url) %></p>
           </div>
         </div>
       </div>

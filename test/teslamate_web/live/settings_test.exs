@@ -105,5 +105,21 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert Settings.get_settings!().base_url == "https://example.com"
     end
+
+    test "grafana_url", %{conn: conn} do
+      assert {:ok, view, _html} = live(conn, "/settings")
+
+      assert render_change(view, :change, %{settings: %{grafana_url: nil}})
+             |> Floki.find("#settings_grafana_url")
+             |> Floki.attribute("value") == []
+
+      assert Settings.get_settings!().grafana_url == nil
+
+      assert render_change(view, :change, %{settings: %{grafana_url: " https://example.com/  "}})
+             |> Floki.find("#settings_grafana_url")
+             |> Floki.attribute("value") == ["https://example.com"]
+
+      assert Settings.get_settings!().grafana_url == "https://example.com"
+    end
   end
 end

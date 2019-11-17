@@ -79,7 +79,7 @@ msgid "Home"
 msgstr "Home"
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/app.html.eex:42
+#: lib/teslamate_web/templates/layout/app.html.eex:45
 #: lib/teslamate_web/templates/settings/index.html.leex:4
 msgid "Settings"
 msgstr "Einstellungen"
@@ -130,7 +130,7 @@ msgid "Back"
 msgstr "Zurück"
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/app.html.eex:41
+#: lib/teslamate_web/templates/layout/app.html.eex:44
 msgid "Geo-Fences"
 msgstr ""
 
@@ -335,16 +335,6 @@ msgid "Update in progress"
 msgstr "Update läuft"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:168
-msgid "Base URL"
-msgstr "Basis-URL"
-
-#, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:163
-msgid "General"
-msgstr "Allgemein"
-
-#, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:44
 msgid "Windows open"
 msgstr "Fenster geöffnet"
@@ -416,3 +406,19 @@ msgstr "Einige Firmware-Versionen melden beim Laden an manchen Ladestationnen f�
 #: lib/teslamate_web/templates/car/summary.html.leex:95
 msgid "Remaining Time"
 msgstr "Restlaufzeit"
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/app.html.eex:42
+#: lib/teslamate_web/templates/settings/index.html.leex:182
+msgid "Dashboards"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:163
+msgid "URLs"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:168
+msgid "Web App"
+msgstr ""
