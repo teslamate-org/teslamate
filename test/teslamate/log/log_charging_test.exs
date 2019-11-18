@@ -424,7 +424,9 @@ defmodule TeslaMate.LogChargingTest do
       assert %Car{efficiency: nil} = car_1 = car_fixture(eid: 3_904, vid: 9403, vin: "salk")
 
       for {range, car} <- [{:ideal, car_0}, {:rated, car_1}] do
-        {:ok, _} = Settings.get_global_settings!() |> Settings.update_global_settings(%{preferred_range: range})
+        {:ok, _} =
+          Settings.get_global_settings!()
+          |> Settings.update_global_settings(%{preferred_range: range})
 
         :ok = insert_charging_process_fixtures(car, data, range)
 
