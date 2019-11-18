@@ -8,7 +8,7 @@
   "dependencies": {
     "@mdi/font": "^4.5.95",
     "bulma-tooltip": "^3.0.2",
-    "leaflet": "^1.5.1",
+    "leaflet": "^1.6.0",
     "leaflet-control-geocoder": "^1.10.0",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
