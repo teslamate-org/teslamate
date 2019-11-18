@@ -29,6 +29,34 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   @drive_timout_min 15
 
+  # Static
+
+  def identify(%Vehicle{display_name: name, vehicle_config: config}) do
+    case config do
+      %VehicleConfig{car_type: type, trim_badging: trim_badging} ->
+        trim_badging =
+          with str when is_binary(str) <- trim_badging do
+            String.upcase(str)
+          end
+
+        model =
+          case String.downcase(type) do
+            "models" <> _ -> "S"
+            "model3" <> _ -> "3"
+            "modelx" <> _ -> "X"
+            "modely" <> _ -> "Y"
+            _____________ -> nil
+          end
+
+        {:ok, %{trim_badging: trim_badging, model: model, name: name}}
+
+      nil ->
+        {:error, :vehicle_config_not_available}
+    end
+  end
+
+  # API
+
   def child_spec(arg) do
     %{
       id: :"#{__MODULE__}_#{Keyword.fetch!(arg, :car).id}",
@@ -65,6 +93,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def resume_logging(car_id) do
     GenStateMachine.call(:"#{car_id}", :resume_logging)
   end
+
+  # Callbacks
 
   @impl true
   def init(opts) do
@@ -345,7 +375,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:online, vehicle}} = evt, :start, data) do
     Logger.info("Start / :online", car_id: data.car.id)
 
-    {:ok, car} = call(data.deps.log, :update_car, [data.car, identify(vehicle)])
+    {:ok, attrs} = identify(vehicle)
+    {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs])
 
     {:ok, %Log.State{start_date: last_state_change}} =
       call(data.deps.log, :start_state, [car, :online])
@@ -645,26 +676,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   # Private
-
-  defp identify(%Vehicle{display_name: name, vehicle_config: config}) do
-    %VehicleConfig{car_type: type, trim_badging: trim_badging} = config
-
-    trim_badging =
-      with str when is_binary(str) <- trim_badging do
-        String.upcase(str)
-      end
-
-    model =
-      case String.downcase(type) do
-        "models" <> _ -> "S"
-        "model3" <> _ -> "3"
-        "modelx" <> _ -> "X"
-        "modely" <> _ -> "Y"
-        _____________ -> nil
-      end
-
-    %{trim_badging: trim_badging, model: model, name: name}
-  end
 
   defp restore_last_knwon_values(vehicle, data) do
     with %Vehicle{drive_state: nil, charge_state: nil, climate_state: nil} <- vehicle,
