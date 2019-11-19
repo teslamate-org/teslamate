@@ -123,6 +123,49 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       car
     end
 
+    test "Greys out input fields if sleep mode is disabled", %{conn: conn} do
+      car = car_fixture()
+
+      ids = [
+        "#car_settings_#{car.id}_suspend_min",
+        "#car_settings_#{car.id}_suspend_after_idle_min",
+        "#car_settings_#{car.id}_req_no_shift_state_reading",
+        "#car_settings_#{car.id}_req_no_temp_reading",
+        "#car_settings_#{car.id}_req_not_unlocked"
+      ]
+
+      assert {:ok, view, html} = live(conn, "/settings")
+
+      assert ["checked"] ==
+               html
+               |> Floki.find("#car_settings_#{car.id}_sleep_mode_enabled")
+               |> Floki.attribute("checked")
+
+      html =
+        render_change(view, :change, %{"car_settings_#{car.id}" => %{sleep_mode_enabled: false}})
+
+      assert [] =
+               html
+               |> Floki.find("#car_settings_#{car.id}_sleep_mode_enabled")
+               |> Floki.attribute("checked")
+
+      for id <- ids do
+        assert ["disabled"] = html |> Floki.find(id) |> Floki.attribute("disabled")
+      end
+
+      html =
+        render_change(view, :change, %{"car_settings_#{car.id}" => %{sleep_mode_enabled: true}})
+
+      assert ["checked"] =
+               html
+               |> Floki.find("#car_settings_#{car.id}_sleep_mode_enabled")
+               |> Floki.attribute("checked")
+
+      for id <- ids do
+        assert [] = html |> Floki.find(id) |> Floki.attribute("disabled")
+      end
+    end
+
     test "shows 21 and 15 minutes by default", %{conn: conn} do
       car = car_fixture()
 

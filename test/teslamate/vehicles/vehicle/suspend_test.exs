@@ -3,7 +3,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
   alias TeslaMate.Vehicles.Vehicle
 
-  test "suspends when idling.", %{test: name} do
+  test "suspends when idling", %{test: name} do
     suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
@@ -38,6 +38,40 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:start_state, ^car_id, :asleep}, round(suspend_ms * 1.1)
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep, since: s2}}}
     assert DateTime.diff(s1, s2, :nanosecond) < 0
+
+    refute_receive _
+  end
+
+  test "does not suspend if sleep mode is disabled", %{test: name} do
+    suspendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        climate_state: %{is_preconditioning: false}
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, online_event()},
+      {:ok, suspendable}
+    ]
+
+    sudpend_after_idle_ms = 1
+    suspend_ms = 200
+
+    :ok =
+      start_vehicle(name, events,
+        settings: %{
+          sleep_mode_enabled: false,
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
+      )
+
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
+
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: ^s0}}}
 
     refute_receive _
   end

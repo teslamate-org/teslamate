@@ -120,6 +120,28 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                  Floki.find(html, ".button.is-danger")
       end
     end
+
+    @tag :signed_in
+    test "hides suspend button if sleep mode is disabled", %{conn: conn} do
+      _car =
+        car_fixture(%{sleep_mode_enabled: false, suspend_min: 60, suspend_after_idle_min: 60})
+
+      events = [
+        {:ok,
+         online_event(
+           display_name: "FooCar",
+           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           vehicle_state: %{sentry_mode: false, locked: true}
+         )}
+      ]
+
+      :ok = start_vehicles(events)
+
+      assert {:ok, _view, html} =
+               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
+      assert [] = Floki.find(html, "a[phx-click=suspend_logging]")
+    end
   end
 
   describe "resume" do

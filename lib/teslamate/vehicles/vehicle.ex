@@ -16,7 +16,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
             last_used: nil,
             last_response: nil,
             last_state_change: nil,
-            settings: nil,
             deps: %{},
             task: nil
 
@@ -98,7 +97,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   @impl true
   def init(opts) do
-    %Log.Car{settings: %CarSettings{} = settings} = car = Keyword.fetch!(opts, :car)
+    %Log.Car{settings: %CarSettings{}} = car = Keyword.fetch!(opts, :car)
 
     deps = %{
       log: Keyword.get(opts, :deps_log, Log),
@@ -117,7 +116,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
       car: car,
       last_used: DateTime.utc_now(),
       last_state_change: last_state_change,
-      settings: settings,
       deps: deps
     }
 
@@ -202,7 +200,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event({:call, from}, :suspend_logging, _online, data) do
     with {:ok, %Vehicle{} = vehicle} <- fetch(data, expected_state: :online),
-         :ok <- can_fall_asleep(vehicle, data.settings) do
+         :ok <- can_fall_asleep(vehicle, data.car.settings) do
       Logger.info("Suspending logging [Triggered manually]", car_id: data.car.id)
 
       {:next_state, {:suspended, :online},
@@ -210,7 +208,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
        [
          {:reply, from, :ok},
          notify_subscribers(),
-         schedule_fetch(data.settings.suspend_min, :minutes)
+         schedule_fetch(data.car.settings.suspend_min, :minutes)
        ]}
     else
       {:error, reason} ->
@@ -309,7 +307,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:info, %CarSettings{} = settings, _state, data) do
-    {:keep_state, %Data{data | settings: settings}}
+    Logger.debug("Received settings: #{inspect(settings, pretty: true)}")
+    {:keep_state, %Data{data | car: Map.put(data.car, :settings, settings)}}
   end
 
   def handle_event(:info, message, _state, _data) do
@@ -793,11 +792,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
     DateTime.from_unix!(ts, :millisecond)
   end
 
-  defp try_to_suspend(vehicle, current_state, %Data{car: car, settings: settings} = data) do
+  defp try_to_suspend(vehicle, current_state, %Data{car: %{settings: settings} = car} = data) do
     idle_min = diff_seconds(DateTime.utc_now(), data.last_used) / 60
     suspend = idle_min >= settings.suspend_after_idle_min
 
     case can_fall_asleep(vehicle, settings) do
+      {:error, :sleep_mode_disabled} ->
+        {:keep_state_and_data, [notify_subscribers(), schedule_fetch(30)]}
+
       {:error, :sentry_mode} ->
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
          [notify_subscribers(), schedule_fetch(30)]}
@@ -845,6 +847,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp can_fall_asleep(vehicle, settings) do
     case {vehicle, settings} do
+      {%Vehicle{}, %CarSettings{sleep_mode_enabled: false}} ->
+        {:error, :sleep_mode_disabled}
+
       {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _} ->
         {:error, :user_present}
 

@@ -53,10 +53,18 @@ defmodule TeslaMateWeb.SettingsLive.Index do
 
   def handle_event("change", %{"car_settings" => params}, socket) do
     %{assigns: %{car_settings: settings, car: id}} = socket
+    orig = get_in(settings, [id, :original])
+
+    # workaround for live_view bug
+    params =
+      if params["sleep_mode_enabled"] == "true" and not orig.sleep_mode_enabled do
+        %{"sleep_mode_enabled" => "true"}
+      else
+        params
+      end
 
     settings =
-      settings
-      |> get_in([id, :original])
+      orig
       |> Settings.update_car_settings(params)
       |> case do
         {:error, changeset} ->

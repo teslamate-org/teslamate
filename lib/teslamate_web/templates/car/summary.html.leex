@@ -212,7 +212,12 @@
           not is_nil(@error) ->
             link @error, to: "#", class: "button is-danger is-small is-outlined is-fullwidth", disabled: true
 
-          @summary.state == :online and !@summary.sentry_mode and !@summary.is_user_present and !@summary.is_preconditioning and @summary.locked->
+          @car.settings.sleep_mode_enabled and
+          @summary.state == :online and
+          !@summary.sentry_mode and
+          !@summary.is_user_present and
+          !@summary.is_preconditioning and
+          @summary.locked->
             link gettext("try to sleep"), to: "#", phx_click: "suspend_logging",
                                           class: "button is-info is-small is-outlined is-fullwidth" <> (if @loading, do: " is-loading", else: "")
 

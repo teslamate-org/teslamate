@@ -8,7 +8,7 @@
 <%= if Enum.count(@car_settings) > 0 do %>
 <div class="title-with-addon">
   <h2 class="title is-4 is-marginless">
-    <%= gettext("Sleep") %>
+    <%= gettext("Sleep Mode") %>
   </h2>
 
   <div class="dropdown is-right" phx-hook="Dropdown">
@@ -35,6 +35,22 @@
 <div class="columns is-tablet is-centered">
   <div class="column">
     <%= f = form_for get_in(@car_settings, [@car, :changeset]), "#", [phx_change: :change] %>
+      <% disabled = not Ecto.Changeset.get_field(f.source, :sleep_mode_enabled) %>
+
+      <div class="field is-horizontal center-vertically">
+        <div class="field-label is-normal is-paddingless">
+          <%= label f, :sleep_mode_enabled, gettext("Enabled"), class: "label" %>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <%= checkbox(f, :sleep_mode_enabled, class: "switch is-rounded is-success") %>
+              <%= label f, :sleep_mode_enabled, nil %>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
           <%= label f, :suspend_min, gettext("Time to Try Sleeping"), class: "label" %>
@@ -45,7 +61,7 @@
               <div class="select is-fullwidth">
                 <%= select(f, :suspend_min,
                               (Enum.filter(12..30, & rem(&1, 3) == 0) ++ Enum.filter(35..90, & rem(&1, 5) == 0))
-                              |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
+                              |> Enum.map(&{"#{&1} #{gettext("min")}", &1}), disabled: disabled)
                 %>
               </div>
             </div>
@@ -64,7 +80,7 @@
                 <%= select(f, :suspend_after_idle_min,
                               5..60
                               |> Enum.filter(& rem(&1, 5) == 0)
-                              |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
+                              |> Enum.map(&{"#{&1} #{gettext("min")}", &1}), disabled: disabled)
                 %>
               </div>
             </div>
@@ -73,7 +89,7 @@
         </div>
       </div>
 
-      <div class="field is-horizontal center-vertically mb-0">
+      <div class="field is-horizontal mb-0">
         <div class="field-label is-normal is-paddingless">
           <label class="label"><%= gettext("Requirements") %></label>
         </div>
@@ -83,19 +99,19 @@
               <div class="columns is-multiline is-mobile is-gapless">
                 <div class="column is-full">
                   <label class="checkbox">
-                    <%= checkbox(f, :req_no_shift_state_reading) %>&nbsp;
+                    <%= checkbox(f, :req_no_shift_state_reading, disabled: disabled) %>&nbsp;
                     <%= gettext("No shift state reading") %>
                   </label>
                 </div>
                 <div class="column is-full">
                   <label class="checkbox">
-                    <%= checkbox(f, :req_no_temp_reading) %>&nbsp;
+                    <%= checkbox(f, :req_no_temp_reading, disabled: disabled) %>&nbsp;
                     <%= gettext("No temperature readings") %>
                   </label>
                 </div>
                 <div class="column is-full">
                   <label class="checkbox">
-                    <%= checkbox(f, :req_not_unlocked) %>&nbsp;
+                    <%= checkbox(f, :req_not_unlocked, disabled: disabled) %>&nbsp;
                     <%= gettext("Vehicle must be locked") %>
                   </label>
                 </div>
