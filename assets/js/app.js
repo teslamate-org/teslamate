@@ -12,7 +12,10 @@ import * as hooks from "./hooks";
 
 const liveSocket = new LiveSocket("/live", Socket, {
   hooks,
-  params: { baseUrl: window.location.origin }
+  params: {
+    baseUrl: window.location.origin,
+    referrer: document.referrer
+  }
 });
 liveSocket.connect();
 

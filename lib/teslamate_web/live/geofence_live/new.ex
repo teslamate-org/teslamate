@@ -1,10 +1,13 @@
 defmodule TeslaMateWeb.GeoFenceLive.New do
   use Phoenix.LiveView
 
+  require Logger
+
   alias TeslaMateWeb.Router.Helpers, as: Routes
   alias TeslaMateWeb.GeoFenceLive
   alias TeslaMateWeb.GeoFenceView
 
+  alias TeslaMate.Settings.GlobalSettings
   alias TeslaMate.{Locations, Settings, Convert}
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Log.Position
@@ -17,10 +20,10 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
 
   @impl true
   def mount(_session, socket) do
-    alias Settings.GlobalSettings
+    settings = Settings.get_global_settings!()
 
     {unit_of_length, radius} =
-      case Settings.get_global_settings!() do
+      case settings do
         %GlobalSettings{unit_of_length: :km} -> {:m, 20}
         %GlobalSettings{unit_of_length: :mi} -> {:ft, 65}
       end
@@ -28,6 +31,7 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
     geo_fence = %GeoFence{radius: radius}
 
     assigns = %{
+      settings: settings,
       geo_fence: geo_fence,
       changeset: Locations.change_geofence(geo_fence),
       unit_of_length: unit_of_length,
@@ -39,6 +43,8 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
 
   @impl true
   def handle_params(%{"lat" => lat, "lng" => lng}, _uri, socket) do
+    if connected?(socket), do: :ok = set_grafana_url(socket)
+
     changeset =
       socket.assigns.geo_fence
       |> Locations.change_geofence(%{latitude: lat, longitude: lng})
@@ -88,6 +94,22 @@ defmodule TeslaMateWeb.GeoFenceLive.New do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset, show_errors: true)}
+    end
+  end
+
+  # Private
+
+  defp set_grafana_url(%{assigns: %{settings: settings}} = socket) do
+    with nil <- settings.grafana_url,
+         %{"referrer" => referrer} when is_binary(referrer) <- get_connect_params(socket),
+         url = URI.parse(referrer),
+         [_, _, _ | path] <- url.path |> String.split("/") |> Enum.reverse(),
+         url = %URI{url | path: Enum.join([nil | path], "/"), query: nil} |> URI.to_string(),
+         {:ok, _settings} <- Settings.update_global_settings(settings, %{grafana_url: url}) do
+      :ok
+    else
+      {:error, reason} -> Logger.warn("Updating settings failed: #{inspect(reason)}")
+      _ -> :ok
     end
   end
 end
