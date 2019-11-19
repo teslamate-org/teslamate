@@ -1,14 +1,7 @@
 <div class="car card">
    <div class="card-image">
-    <figure>
-        <div
-          id="map_<%= @car.id %>"
-          class="map"
-          style="height: 175px; position: relative;"
-          data-id="<%= @car.id %>"
-          phx-update="ignore"
-          phx-hook="SimpleMap"
-        />
+     <figure data-id="<%= @car.id %>" phx-update="ignore" phx-hook="SimpleMap">
+        <div id="map_<%= @car.id %>" class="map" style="height: 175px; position: relative;" />
     </figure>
     <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude}",
                                             phx_hook: "TriggerChange",
