@@ -103,6 +103,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       log: Keyword.get(opts, :deps_log, Log),
       api: Keyword.get(opts, :deps_api, Api),
       settings: Keyword.get(opts, :deps_settings, Settings),
+      locations: Keyword.get(opts, :deps_locations, Locations),
       vehicles: Keyword.get(opts, :deps_vehicles, Vehicles),
       pubsub: Keyword.get(opts, :deps_pubsub, Phoenix.PubSub)
     }
@@ -200,7 +201,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event({:call, from}, :suspend_logging, _online, data) do
     with {:ok, %Vehicle{} = vehicle} <- fetch(data, expected_state: :online),
-         :ok <- can_fall_asleep(vehicle, data.car.settings) do
+         :ok <- can_fall_asleep(vehicle, data) do
       Logger.info("Suspending logging [Triggered manually]", car_id: data.car.id)
 
       {:next_state, {:suspended, :online},
@@ -796,8 +797,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     idle_min = diff_seconds(DateTime.utc_now(), data.last_used) / 60
     suspend = idle_min >= settings.suspend_after_idle_min
 
-    case can_fall_asleep(vehicle, settings) do
-      {:error, :sleep_mode_disabled} ->
+    case can_fall_asleep(vehicle, data) do
+      {:error, reason} when reason in [:sleep_mode_disabled, :sleep_mode_disabled_for_location] ->
         {:keep_state_and_data, [notify_subscribers(), schedule_fetch(30)]}
 
       {:error, :sentry_mode} ->
@@ -845,35 +846,40 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp can_fall_asleep(vehicle, settings) do
-    case {vehicle, settings} do
-      {%Vehicle{}, %CarSettings{sleep_mode_enabled: false}} ->
+  defp can_fall_asleep(vehicle, %Data{car: car, deps: deps}) do
+    may_fall_asleep = call(deps.locations, :may_fall_asleep_at?, [car, vehicle.drive_state])
+
+    case {vehicle, car.settings, may_fall_asleep} do
+      {%Vehicle{}, %CarSettings{sleep_mode_enabled: false}, false} ->
         {:error, :sleep_mode_disabled}
 
-      {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _} ->
+      {%Vehicle{}, %CarSettings{sleep_mode_enabled: true}, false} ->
+        {:error, :sleep_mode_disabled_for_location}
+
+      {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _, true} ->
         {:error, :user_present}
 
-      {%Vehicle{climate_state: %Climate{is_preconditioning: true}}, _} ->
+      {%Vehicle{climate_state: %Climate{is_preconditioning: true}}, _, true} ->
         {:error, :preconditioning}
 
-      {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _} ->
+      {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _, true} ->
         {:error, :sentry_mode}
 
       {%Vehicle{vehicle_state: %VehicleState{locked: false}},
-       %CarSettings{req_not_unlocked: true}} ->
+       %CarSettings{req_not_unlocked: true}, true} ->
         {:error, :unlocked}
 
       {%Vehicle{drive_state: %Drive{shift_state: shift_state}},
-       %CarSettings{req_no_shift_state_reading: true}}
+       %CarSettings{req_no_shift_state_reading: true}, true}
       when not is_nil(shift_state) ->
         {:error, :shift_state}
 
       {%Vehicle{climate_state: %Climate{outside_temp: out_t, inside_temp: in_t}},
-       %CarSettings{req_no_temp_reading: true}}
+       %CarSettings{req_no_temp_reading: true}, true}
       when not is_nil(out_t) or not is_nil(in_t) ->
         {:error, :temp_reading}
 
-      {%Vehicle{}, %CarSettings{}} ->
+      {%Vehicle{}, %CarSettings{}, true} ->
         :ok
     end
   end

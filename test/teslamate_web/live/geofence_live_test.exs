@@ -1,8 +1,9 @@
 defmodule TeslaMateWeb.GeoFenceLiveTest do
   use TeslaMateWeb.ConnCase
 
-  alias TeslaMate.{Locations, Settings, Log}
+  alias TeslaMate.{Locations, Settings, Log, Repo}
   alias TeslaMate.Locations.GeoFence
+  alias TeslaMate.Log.Car
 
   def geofence_fixture(attrs \\ %{}) do
     {:ok, address} =
@@ -11,6 +12,23 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       |> Locations.create_geofence()
 
     address
+  end
+
+  defp car_fixture(attrs \\ %{}) do
+    {:ok, car} =
+      attrs
+      |> Enum.into(%{
+        efficiency: 0.153,
+        eid: 42,
+        model: "S",
+        vid: 42,
+        name: "foo",
+        trim_badging: "P100D",
+        vin: "12345F"
+      })
+      |> Log.create_car()
+
+    car
   end
 
   describe "Index" do
@@ -193,7 +211,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                _field_position,
                _field_radius,
                field_phase_correction,
-               _
+               _,
+               _sleep_mode
              ] = Floki.find(html, ".field.is-horizontal")
 
       assert field_phase_correction
@@ -204,8 +223,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
   describe "New" do
     test "pre-fills the coordinates with the most recent position", %{conn: conn} do
-      assert {:ok, car} =
-               Log.create_car(%{efficiency: 0.153, eid: 42, model: "3", vid: 42, vin: "xxxxx"})
+      car = car_fixture()
 
       assert {:ok, _} =
                Log.insert_position(car, %{
@@ -224,6 +242,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     end
 
     test "validates cahnges when creating a new geo-fence", %{conn: conn} do
+      %Car{id: car_id} = car_fixture()
+
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
 
       html =
@@ -241,8 +261,14 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                |> Floki.find("#geo_fence_phase_correction option[selected]")
                |> Floki.attribute("value")
 
-      assert [field_name, field_position, field_radius, field_phase_correction, _] =
-               Floki.find(html, ".field.is-horizontal")
+      assert [
+               field_name,
+               field_position,
+               field_radius,
+               field_phase_correction,
+               field_sleep_mode,
+               _
+             ] = Floki.find(html, ".field.is-horizontal")
 
       assert field_name |> Floki.find("span") |> Floki.text() == "can't be blank"
 
@@ -251,6 +277,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert field_radius |> Floki.find("span") |> Floki.text() == "can't be blank"
       assert field_phase_correction |> Floki.find("span") |> Floki.text() == ""
+
+      assert ["checked"] =
+               field_sleep_mode
+               |> Floki.find("#sleep_mode_#{car_id}")
+               |> Floki.attribute("checked")
 
       html =
         render_submit(view, :save, %{
@@ -279,6 +310,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                field_position,
                field_radius,
                field_phase_correction,
+               _field_sleep_mod,
                _
              ] = Floki.find(html, ".field.is-horizontal")
 
@@ -334,7 +366,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           }
         })
 
-      assert [_field_name, field_position, _field_radius, _field_phase_corr, _] =
+      assert [_field_name, field_position, _field_radius, _field_phase_corr, _field_sleep_mode, _] =
                Floki.find(html, ".field.is-horizontal")
 
       assert ["is overlapping with other geo-fence"] =
@@ -370,5 +402,93 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["post office", "-25.06619, -130.1005", "15 m", _] =
                html |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
+  end
+
+  test "toggles sleep mode status", %{conn: conn} do
+    %Car{id: car_id} = car = car_fixture()
+    %Car{id: another_car_id} = another_car = car_fixture(vid: 43, eid: 43, vin: "43")
+
+    {:ok, _settings} =
+      Settings.get_car_settings!(another_car)
+      |> Settings.update_car_settings(%{sleep_mode_enabled: false})
+
+    assert {:ok, view, html} = live(conn, "/geo-fences/new")
+
+    assert ["checked"] =
+             html
+             |> Floki.find("#sleep_mode_#{car.id}")
+             |> Floki.attribute("checked")
+
+    assert [] =
+             html
+             |> Floki.find("#sleep_mode_#{another_car.id}")
+             |> Floki.attribute("checked")
+
+    assert [] =
+             render_click(view, :toggle, %{checked: "false", car: to_string(car.id)})
+             |> Floki.find("#sleep_mode_#{car.id}")
+             |> Floki.attribute("checked")
+
+    assert ["checked"] =
+             render_click(view, :toggle, %{checked: "true", car: to_string(another_car.id)})
+             |> Floki.find("#sleep_mode_#{another_car.id}")
+             |> Floki.attribute("checked")
+
+    assert {:error, {:redirect, %{to: "/geo-fences"}}} =
+             render_submit(view, :save, %{
+               geo_fence: %{
+                 name: "post office",
+                 latitude: -25.066188,
+                 longitude: -130.100502,
+                 radius: 25
+               }
+             })
+
+    assert [
+             %GeoFence{
+               id: id,
+               sleep_mode_blacklist: [%Car{id: ^car_id}],
+               sleep_mode_whitelist: [%Car{id: ^another_car_id}]
+             }
+           ] =
+             Locations.list_geofences()
+             |> Enum.map(&Repo.preload(&1, [:sleep_mode_blacklist, :sleep_mode_whitelist]))
+
+    # enable sleep mode(s)
+
+    assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
+
+    assert [] =
+             html
+             |> Floki.find("#sleep_mode_#{car.id}")
+             |> Floki.attribute("checked")
+
+    assert ["checked"] =
+             html
+             |> Floki.find("#sleep_mode_#{another_car.id}")
+             |> Floki.attribute("checked")
+
+    assert ["checked"] =
+             render_click(view, :toggle, %{checked: "true", car: to_string(car.id)})
+             |> Floki.find("#sleep_mode_#{car.id}")
+             |> Floki.attribute("checked")
+
+    assert [] =
+             render_click(view, :toggle, %{checked: "false", car: to_string(another_car.id)})
+             |> Floki.find("#sleep_mode_#{another_car.id}")
+             |> Floki.attribute("checked")
+
+    assert {:error, {:redirect, %{to: "/geo-fences"}}} =
+             render_submit(view, :save, %{geo_fence: %{name: "post_office", radius: 20}})
+
+    assert [
+             %GeoFence{
+               id: ^id,
+               sleep_mode_blacklist: [],
+               sleep_mode_whitelist: []
+             }
+           ] =
+             Locations.list_geofences()
+             |> Enum.map(&Repo.preload(&1, [:sleep_mode_blacklist, :sleep_mode_whitelist]))
   end
 end

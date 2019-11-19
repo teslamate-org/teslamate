@@ -72,9 +72,8 @@ msgid "Sentry Mode"
 msgstr "Wächtermodus"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/edit.html.leex:3
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:3 lib/teslamate_web/templates/geo_fence/new.html.leex:3
-#: lib/teslamate_web/templates/settings/index.html.leex:3
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:3
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:3 lib/teslamate_web/templates/settings/index.html.leex:3
 msgid "Home"
 msgstr "Home"
 
@@ -125,7 +124,7 @@ msgid "Units"
 msgstr "Einheiten"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:102
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:153
 msgid "Back"
 msgstr "Zurück"
 
@@ -135,18 +134,13 @@ msgid "Geo-Fences"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/new.ex:92
+#: lib/teslamate_web/live/geofence_live/form.ex:186
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Geo-Fence \"%{name}\" erstellt"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/edit.ex:72
-msgid "Geo-fence \"%{name}\" updated successfully"
-msgstr "Geo-Fence \"%{name}\" erfolgreich aktualisiert"
-
-#, elixir-format
-#: lib/teslamate_web/templates/geo_fence/edit.html.leex:4
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:4 lib/teslamate_web/templates/geo_fence/new.html.leex:4
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:4
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:4
 msgid "Geo-fences"
 msgstr "Geo-Fences"
 
@@ -156,30 +150,30 @@ msgid "Idle Time Before Trying to Sleep"
 msgstr "Leerlaufzeit vor dem Einschlafversuch"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:4
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:9 lib/teslamate_web/templates/geo_fence/index.html.leex:21
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:17
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:22 lib/teslamate_web/templates/geo_fence/index.html.leex:21
 msgid "Name"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:20
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:33
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:22
 msgid "Position"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:46
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:59
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:23
 msgid "Radius"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:105
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:156
 msgid "Save"
 msgstr "Speichern"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:105
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:156
 msgid "Saving..."
 msgstr "Speichere..."
 
@@ -215,7 +209,7 @@ msgstr "Erstellen"
 #: lib/teslamate_web/live/car_live/summary.ex:99
 #: lib/teslamate_web/templates/car/summary.html.leex:22
 msgid "Preconditioning"
-msgstr ""
+msgstr "Vorkonditionierung"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:96
@@ -229,12 +223,12 @@ msgid "User present"
 msgstr "Benutzer anwesend"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:225
+#: lib/teslamate_web/templates/car/summary.html.leex:233
 msgid "cancel sleep attempt"
 msgstr "Schlafversuch abbrechen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:221
+#: lib/teslamate_web/templates/car/summary.html.leex:227
 msgid "try to sleep"
 msgstr "versuchen zu schlafen"
 
@@ -370,30 +364,30 @@ msgid "Unlocked"
 msgstr "Verschlossen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:75
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:75
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:88
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:88
 msgid "Phase"
 msgid_plural "Phases"
 msgstr[0] "Phase"
 msgstr[1] "Phasen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:66
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:79
 msgid "Phase correction"
 msgstr "Phasenkorrektur"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:75
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:88
 msgid "disabled"
 msgstr "deaktiviert"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:88
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:101
 msgid "Apply phase correction to existing charges"
 msgstr "Phasenkorrektur auf bestehende Ladevorgänge anwenden"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:65
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:78
 msgid "Some firmware versions incorrectly report 2 phases when charging at some chargers. With phase correction, a fixed value can be set when charging at this location, which overwrites the reported phases."
 msgstr "Einige Firmware-Versionen melden beim Laden an manchen Ladestationnen fälschlicherweise 2 Phasen. Mit der Phasenkorrektur kann beim Laden an diesem Ort ein fixer Wert eingestellt werden, der die gemeldeten Phasen überschreibt."
 
@@ -423,7 +417,17 @@ msgstr ""
 msgid "Enabled"
 msgstr "Aktiviert"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:11
 msgid "Sleep Mode"
 msgstr "Schlafmodus"
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/live/geofence_live/form.ex:187
+msgid "Geo-fence \"%{name}\" updated"
+msgstr "Geo-Fence \"%{name}\" aktualisiert"
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:112
+msgid "Sleep Mode Enabled"
+msgstr "Schlafmodus aktiviert"

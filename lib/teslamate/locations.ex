@@ -116,7 +116,9 @@ defmodule TeslaMate.Locations do
   end
 
   def get_geofence!(id) do
-    Repo.get!(GeoFence, id)
+    GeoFence
+    |> Repo.get!(id)
+    |> Repo.preload([:sleep_mode_blacklist, :sleep_mode_whitelist])
   end
 
   def find_geofence(%{latitude: _, longitude: _} = point) do
@@ -126,6 +128,34 @@ defmodule TeslaMate.Locations do
     |> order_by(:id)
     |> limit(1)
     |> Repo.one()
+  end
+
+  alias TeslaMate.Settings.CarSettings
+  alias TeslaMate.Log.Car
+
+  # TODO cache
+  def may_fall_asleep_at?(
+        %Car{id: id, settings: %CarSettings{sleep_mode_enabled: true}},
+        %{latitude: _, longitude: _} = position
+      ) do
+    GeoFence
+    |> select([:id])
+    |> join(:left, [geofence], c in assoc(geofence, :sleep_mode_blacklist))
+    |> where([geofence, c], c.id == ^id and within_geofence?(position, geofence, :left))
+    |> limit(1)
+    |> Repo.one() == nil
+  end
+
+  def may_fall_asleep_at?(
+        %Car{id: id, settings: %CarSettings{sleep_mode_enabled: false}},
+        %{latitude: _, longitude: _} = position
+      ) do
+    GeoFence
+    |> select([:id])
+    |> join(:left, [geofence], c in assoc(geofence, :sleep_mode_whitelist))
+    |> where([geofence, c], c.id == ^id and within_geofence?(position, geofence, :left))
+    |> limit(1)
+    |> Repo.one() != nil
   end
 
   def create_geofence(attrs) do

@@ -50,8 +50,6 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       )
 
     events = [
-      {:ok, online_event()},
-      {:ok, online_event()},
       {:ok, suspendable}
     ]
 
@@ -71,7 +69,73 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:insert_position, ^car_id, %{}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: ^s0}}}
+
+    refute_receive _
+  end
+
+  test "suspends if sleep mode is disabled but enabled for location", %{test: name} do
+    suspendable =
+      online_event(drive_state: %{timestamp: 0, latitude: -50.606993, longitude: 165.972471})
+
+    events = [
+      {:ok, online_event()},
+      {:ok, online_event()},
+      {:ok, suspendable},
+      {:ok, %TeslaApi.Vehicle{state: "asleep"}}
+    ]
+
+    sudpend_after_idle_ms = 1
+    suspend_ms = 200
+
+    :ok =
+      start_vehicle(name, events,
+        settings: %{
+          sleep_mode_enabled: false,
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        },
+        whitelist: [{-50.606993, 165.972471}]
+      )
+
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
+
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, since: s1}}}
+    assert DateTime.diff(s0, s1, :nanosecond) < 0
+
+    assert_receive {:start_state, ^car_id, :asleep}, round(suspend_ms * 1.1)
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep, since: s2}}}
+    assert DateTime.diff(s1, s2, :nanosecond) < 0
+
+    refute_receive _
+  end
+
+  test "does not suspend if sleep mode is disabled for the current location", %{test: name} do
+    suspendable =
+      online_event(drive_state: %{timestamp: 0, latitude: -50.606993, longitude: 165.972471})
+
+    events = [
+      {:ok, suspendable}
+    ]
+
+    sudpend_after_idle_ms = 1
+    suspend_ms = 200
+
+    :ok =
+      start_vehicle(name, events,
+        settings: %{
+          sleep_mode_enabled: true,
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        },
+        blacklist: [{-50.606993, 165.972471}]
+      )
+
+    assert_receive {:start_state, car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
+
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
     refute_receive _
   end

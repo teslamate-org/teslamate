@@ -192,6 +192,53 @@ defmodule TeslaMate.SettingsTest do
 
       assert [^settings] = Settings.get_car_settings()
     end
+
+    test "toggling sleep mode status clears the corresponding geo-fence black- & whitelists" do
+      alias TeslaMate.Locations.GeoFence
+      alias TeslaMate.Locations
+      alias TeslaMate.Log.Car
+
+      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
+
+      car = car_fixture()
+      another_car = car_fixture(eid: 43, vid: 43, vin: "43")
+
+      car_id = car.id
+      another_car_id = another_car.id
+
+      {:ok, geofence} =
+        Locations.create_geofence(%{
+          name: "foo",
+          latitude: -50.606262,
+          longitude: 165.972475,
+          radius: 250,
+          sleep_mode_blacklist: [car],
+          sleep_mode_whitelist: [car]
+        })
+
+      {:ok, another_geofence} =
+        Locations.create_geofence(%{
+          name: "bar",
+          latitude: 37.457631,
+          longitude: -92.105263,
+          radius: 250,
+          sleep_mode_blacklist: [another_car],
+          sleep_mode_whitelist: [another_car]
+        })
+
+      [%CarSettings{car: %Car{id: ^car_id}} = settings, _] = Settings.get_car_settings()
+
+      assert {:ok, %CarSettings{} = settings} =
+               Settings.update_car_settings(settings, %{sleep_mode_enabled: false})
+
+      assert %GeoFence{sleep_mode_whitelist: [], sleep_mode_blacklist: []} =
+               Locations.get_geofence!(geofence.id)
+
+      assert %GeoFence{
+               sleep_mode_whitelist: [%Car{id: ^another_car_id}],
+               sleep_mode_blacklist: [%Car{id: ^another_car_id}]
+             } = Locations.get_geofence!(another_geofence.id)
+    end
   end
 
   describe "efficiencies" do

@@ -59,6 +59,36 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert {:error, :sleep_mode_disabled} = Vehicle.suspend_logging(name)
   end
 
+  @tag :capture_log
+  test "is suspended if sleep mode is disabled but enabled for current location", %{test: name} do
+    events = [
+      {:ok,
+       online_event(drive_state: %{timestamp: 0, latitude: -50.606993, longitude: 165.972471})}
+    ]
+
+    :ok =
+      start_vehicle(name, events,
+        settings: %{sleep_mode_enabled: false},
+        whitelist: [{-50.606993, 165.972471}]
+      )
+
+    assert_receive {:start_state, _, :online}
+
+    assert :ok = Vehicle.suspend_logging(name)
+  end
+
+  test "cannot be suspended if sleep mode is disabled for the current location", %{test: name} do
+    events = [
+      {:ok,
+       online_event(drive_state: %{timestamp: 0, latitude: -50.606993, longitude: 165.972471})}
+    ]
+
+    :ok = start_vehicle(name, events, blacklist: [{-50.606993, 165.972471}])
+    assert_receive {:start_state, _, :online}
+
+    assert {:error, :sleep_mode_disabled_for_location} = Vehicle.suspend_logging(name)
+  end
+
   test "cannot be suspended if vehicle is preconditioning", %{test: name} do
     not_supendable =
       online_event(

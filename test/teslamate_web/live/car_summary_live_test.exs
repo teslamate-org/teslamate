@@ -3,7 +3,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   use TeslaMate.VehicleCase
 
   alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
-  alias TeslaMate.{Settings, Log, Repo}
+  alias TeslaMate.{Locations, Settings, Log, Repo}
 
   defp table_row(key, value) do
     ~r/<tr>\n?\s*<td class=\"has-text-weight-medium\">#{key}<\/td>\n?\s*<td.*?>\n?\s*#{value}\n?\s*<\/td>\n?\s*<\/tr>/
@@ -54,8 +54,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert html = render(view)
       assert html =~ table_row("Status", "online")
 
-      assert html =~
-               ~r/a class="button is-info .*?" .*? phx-click="suspend_logging">try to sleep<\/a>/
+      assert "try to sleep" == html |> Floki.find("a[phx-click=suspend_logging]") |> Floki.text()
 
       render_click(view, :suspend_logging)
 
@@ -142,6 +141,37 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       assert [] = Floki.find(html, "a[phx-click=suspend_logging]")
     end
+
+    @tag :signed_in
+    test "disables suspend button if sleep mode is disabled for locations", %{conn: conn} do
+      car = car_fixture(%{sleep_mode_enabled: true, suspend_min: 60, suspend_after_idle_min: 60})
+
+      assert {:ok, _geofence} =
+               Locations.create_geofence(%{
+                 name: "foo",
+                 latitude: -50.606,
+                 longitude: 165.972,
+                 radius: 500,
+                 sleep_mode_blacklist: [car]
+               })
+
+      events = [
+        {:ok,
+         online_event(
+           display_name: "FooCar",
+           drive_state: %{timestamp: 0, latitude: -50.606262, longitude: 165.972475},
+           vehicle_state: %{sentry_mode: false, locked: true}
+         )}
+      ]
+
+      :ok = start_vehicles(events)
+
+      assert {:ok, _view, html} =
+               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
+      assert ["disabled"] =
+               html |> Floki.find("a[phx-click=suspend_logging]") |> Floki.attribute("disabled")
+    end
   end
 
   describe "resume" do
@@ -170,8 +200,8 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert html = render(view)
       assert html =~ table_row("Status", "falling asleep")
 
-      assert html =~
-               ~r/a class="button is-info .*?" .*? phx-click="resume_logging">cancel sleep attempt<\/a>/
+      assert "cancel sleep attempt" ==
+               html |> Floki.find("a[phx-click=resume_logging]") |> Floki.text()
 
       render_click(view, :resume_logging)
 

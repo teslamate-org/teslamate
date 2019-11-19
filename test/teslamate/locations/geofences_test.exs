@@ -6,8 +6,22 @@ defmodule TeslaMate.LocationsGeofencesTest do
 
   describe "geofences" do
     @valid_attrs %{name: "foo", latitude: 52.514521, longitude: 13.350144, radius: 42}
-    @update_attrs %{name: "bar", latitude: 53.514521, longitude: 14.350144, radius: 43}
-    @invalid_attrs %{name: nil, latitude: nil, longitude: nil, radius: nil}
+    @update_attrs %{
+      name: "bar",
+      latitude: 53.514521,
+      longitude: 14.350144,
+      radius: 43,
+      phase_correction: 3
+    }
+    @invalid_attrs %{
+      name: nil,
+      latitude: nil,
+      longitude: nil,
+      radius: nil,
+      phase_correction: nil,
+      sleep_mode_whitelist: nil,
+      sleep_mode_blacklist: nil
+    }
 
     def geofence_fixture(attrs \\ %{}) do
       {:ok, geofence} =
@@ -15,7 +29,7 @@ defmodule TeslaMate.LocationsGeofencesTest do
         |> Enum.into(@valid_attrs)
         |> Locations.create_geofence()
 
-      geofence
+      Repo.preload(geofence, [:sleep_mode_whitelist, :sleep_mode_blacklist])
     end
 
     defp car_fixture(attrs \\ %{}) do
@@ -120,7 +134,12 @@ defmodule TeslaMate.LocationsGeofencesTest do
 
     test "list_geofences/0 returns all geofences" do
       geofence = geofence_fixture()
-      assert Locations.list_geofences() == [geofence]
+
+      geofences =
+        Locations.list_geofences()
+        |> Enum.map(&Repo.preload(&1, [:sleep_mode_blacklist, :sleep_mode_whitelist]))
+
+      assert geofences == [geofence]
     end
 
     test "get_geofence!/1 returns the geofence with given id" do
@@ -134,6 +153,10 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.latitude == 52.514521
       assert geofence.longitude == 13.350144
       assert geofence.radius == 42
+      assert geofence.phase_correction == nil
+      geofence = Repo.preload(geofence, [:sleep_mode_whitelist, :sleep_mode_blacklist])
+      assert geofence.sleep_mode_blacklist == []
+      assert geofence.sleep_mode_whitelist == []
     end
 
     test "create_geofence/1 with invalid data returns error changeset" do
@@ -147,9 +170,17 @@ defmodule TeslaMate.LocationsGeofencesTest do
              }
 
       assert {:error, %Ecto.Changeset{} = changeset} =
-               Locations.create_geofence(%{latitude: "wat", longitude: "wat"})
+               Locations.create_geofence(%{
+                 latitude: "wat",
+                 longitude: "wat",
+                 phase_correction: "wat"
+               })
 
-      assert %{latitude: ["is invalid"], longitude: ["is invalid"]} = errors_on(changeset)
+      assert %{
+               latitude: ["is invalid"],
+               longitude: ["is invalid"],
+               phase_correction: ["is invalid"]
+             } = errors_on(changeset)
     end
 
     test "create_geofence/1 fails if there is already a geo-fence nearby" do
@@ -221,12 +252,26 @@ defmodule TeslaMate.LocationsGeofencesTest do
     end
 
     test "update_geofence/2 with valid data updates the geofence" do
+      car = car_fixture()
       geofence = geofence_fixture()
-      assert {:ok, %GeoFence{} = geofence} = Locations.update_geofence(geofence, @update_attrs)
+
+      attrs =
+        Enum.into(%{sleep_mode_whitelist: [car], sleep_mode_blacklist: [car]}, @update_attrs)
+
+      assert {:ok, %GeoFence{} = geofence} = Locations.update_geofence(geofence, attrs)
       assert geofence.name == "bar"
       assert geofence.latitude == 53.514521
       assert geofence.longitude == 14.350144
       assert geofence.radius == 43
+      assert geofence.phase_correction == 3
+      assert geofence.sleep_mode_blacklist == [car]
+      assert geofence.sleep_mode_whitelist == [car]
+
+      assert {:ok, %GeoFence{} = geofence} =
+               Locations.update_geofence(geofence, %{sleep_mode_whitelist: []})
+
+      assert geofence.sleep_mode_blacklist == [car]
+      assert geofence.sleep_mode_whitelist == []
     end
 
     test "update_geofence/2 with invalid data returns error changeset" do

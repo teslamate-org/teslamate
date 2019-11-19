@@ -1,6 +1,8 @@
 defmodule TeslaMateWeb.SettingsLive.Index do
   use Phoenix.LiveView
 
+  require Logger
+
   alias TeslaMateWeb.Router.Helpers, as: Routes
   alias TeslaMateWeb.SettingsView
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
@@ -51,11 +53,14 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     {:noreply, assign(socket, global_settings: settings)}
   end
 
-  def handle_event("change", %{"car_settings" => params}, socket) do
-    %{assigns: %{car_settings: settings, car: id}} = socket
+  def handle_event("change", params, %{assigns: %{car_settings: settings, car: id}} = socket) do
     orig = get_in(settings, [id, :original])
 
-    # workaround for live_view bug
+    # workaround #1: switching between cars caused leex to not be re-evaluated.
+    # Solution: custom ":as" attribute on form_for/4 for each CarSetting changeset
+    params = params["car_settings_#{id}"]
+
+    # workaround #2: enableding sleep mode caused previously disabled checkbox to be disabled
     params =
       if params["sleep_mode_enabled"] == "true" and not orig.sleep_mode_enabled do
         %{"sleep_mode_enabled" => "true"}
@@ -68,6 +73,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       |> Settings.update_car_settings(params)
       |> case do
         {:error, changeset} ->
+          Logger.warn(inspect(changeset))
           put_in(settings, [id, :changeset], changeset)
 
         {:ok, car_settings} ->

@@ -34,7 +34,7 @@
 
 <div class="columns is-tablet is-centered">
   <div class="column">
-    <%= f = form_for get_in(@car_settings, [@car, :changeset]), "#", [phx_change: :change] %>
+    <%= f = form_for get_in(@car_settings, [@car, :changeset]), "#", [phx_change: :change, as: "car_settings_#{@car}"] %>
       <% disabled = not Ecto.Changeset.get_field(f.source, :sleep_mode_enabled) %>
 
       <div class="field is-horizontal center-vertically">
