@@ -105,6 +105,9 @@ defmodule TeslaMate.Log do
   end
 
   def insert_position(%Car{id: id}, attrs) do
+    elevation = @mapping.get_elevation({attrs.latitude, attrs.longitude})
+    attrs = Map.put(attrs, :elevation, elevation)
+
     %Position{car_id: id}
     |> Position.changeset(attrs)
     |> Repo.insert()
