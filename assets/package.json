@@ -6,28 +6,29 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "ionicons": "^4.6.3",
-    "leaflet": "^1.5.1",
-    "leaflet-control-geocoder": "^1.9.0",
+    "@mdi/font": "^4.5.95",
+    "bulma-tooltip": "^3.0.2",
+    "leaflet": "^1.6.0",
+    "leaflet-control-geocoder": "^1.10.0",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
     "phoenix_live_view": "file:../deps/phoenix_live_view"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
     "babel-loader": "^8.0.6",
-    "bulma": "^0.7.5",
-    "copy-webpack-plugin": "^5.0.4",
+    "bulma": "^0.8.0",
+    "copy-webpack-plugin": "^5.0.5",
     "css-loader": "^3.2.0",
     "file-loader": "^4.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "sass": "^1.23.0",
+    "sass": "^1.23.6",
     "sass-loader": "^8.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^2.2.0",
-    "webpack": "4.41.0",
-    "webpack-cli": "^3.3.9"
+    "webpack": "4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }

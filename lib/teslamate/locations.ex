@@ -4,10 +4,11 @@ defmodule TeslaMate.Locations do
   """
 
   import Ecto.Query, warn: false
-  import __MODULE__.Functions
+  import TeslaMate.CustomExpressions
 
-  alias TeslaMate.Repo
   alias __MODULE__.{Address, Geocoder, GeoFence}
+  alias TeslaMate.Log.{Drive, Position, ChargingProcess}
+  alias TeslaMate.{Repo, Log}
 
   ## Address
 
@@ -38,8 +39,6 @@ defmodule TeslaMate.Locations do
   end
 
   defp apply_geofence(%GeoFence{id: id} = geofence) do
-    alias TeslaMate.Log.{Drive, Position, ChargingProcess}
-
     {_n, nil} =
       from(d in Drive,
         join: p in Position,
@@ -64,12 +63,20 @@ defmodule TeslaMate.Locations do
       )
       |> Repo.update_all(set: [geofence_id: id])
 
+    if geofence.apply_phase_correction do
+      :ok =
+        from(c in ChargingProcess,
+          where: c.geofence_id == ^id,
+          preload: [:car, :position, :geofence]
+        )
+        |> Repo.all()
+        |> Enum.each(fn cproc -> {:ok, _} = Log.update_energy_used(cproc) end)
+    end
+
     :ok
   end
 
-  defp remove_geofence(%GeoFence{id: id}) do
-    alias TeslaMate.Log.{Drive, ChargingProcess}
-
+  defp remove_geofence(%GeoFence{id: id} = geofence) do
     {_n, nil} =
       Drive
       |> where(start_geofence_id: ^id)
@@ -80,10 +87,22 @@ defmodule TeslaMate.Locations do
       |> where(end_geofence_id: ^id)
       |> Repo.update_all(set: [end_geofence_id: nil])
 
+    charging_processes =
+      ChargingProcess
+      |> where(geofence_id: ^id)
+      |> Repo.all()
+
     {_n, nil} =
       ChargingProcess
       |> where(geofence_id: ^id)
       |> Repo.update_all(set: [geofence_id: nil])
+
+    if geofence.apply_phase_correction do
+      :ok =
+        Enum.each(charging_processes, fn cproc ->
+          {:ok, _} = Log.update_energy_used(cproc)
+        end)
+    end
 
     :ok
   end
@@ -133,7 +152,10 @@ defmodule TeslaMate.Locations do
   end
 
   def delete_geofence(%GeoFence{} = geofence) do
-    Repo.delete(geofence)
+    with :ok <- remove_geofence(%GeoFence{geofence | apply_phase_correction: true}),
+         {:ok, geofence} <- Repo.delete(geofence) do
+      {:ok, geofence}
+    end
   end
 
   def change_geofence(%GeoFence{} = geofence, attrs \\ %{}) do

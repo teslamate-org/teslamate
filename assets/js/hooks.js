@@ -6,6 +6,21 @@ function dateToLocalTime(dateStr) {
     : "–";
 }
 
+export const Dropdown = {
+  mounted() {
+    const $el = this.el;
+
+    $el.querySelector("button").addEventListener("click", e => {
+      e.stopPropagation();
+      $el.classList.toggle("is-active");
+    });
+
+    document.addEventListener("click", e => {
+      $el.classList.remove("is-active");
+    });
+  }
+};
+
 export const LocalTime = {
   mounted() {
     this.el.innerText = dateToLocalTime(this.el.dataset.date);
@@ -47,7 +62,7 @@ const icon = new Icon({
 });
 
 function createMap(opts) {
-  const map = new M("map", opts);
+  const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", opts);
 
   const osm = new TileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -73,6 +88,7 @@ export const SimpleMap = {
     const $position = document.querySelector(`#position_${this.el.dataset.id}`);
 
     const map = createMap({
+      elId: this.el.dataset.id,
       zoomControl: false,
       dragging: false,
       boxZoom: false,
@@ -139,12 +155,14 @@ export const Map = {
         $latitude.value = lat;
         $longitude.value = lng;
 
+        this.pushEvent("move", { lat, lng });
+
         circle.setLatLng(marker.getLatLng());
         circle.setStyle({ opacity: 1, fill: true });
       });
 
     new Control.geocoder({ defaultMarkGeocode: false })
-      .on("markgeocode", function(e) {
+      .on("markgeocode", e => {
         const { bbox, center } = e.geocode;
 
         const poly = L.polygon([
@@ -159,8 +177,12 @@ export const Map = {
         marker.setLatLng(center);
         circle.setLatLng(center);
 
-        $latitude.value = center.lat;
-        $longitude.value = center.lng;
+        const { lat, lng } = center;
+
+        $latitude.value = lat;
+        $longitude.value = lng;
+
+        this.pushEvent("move", { lat, lng });
       })
       .addTo(map);
   }

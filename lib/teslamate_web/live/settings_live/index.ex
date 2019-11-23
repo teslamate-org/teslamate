@@ -1,26 +1,89 @@
 defmodule TeslaMateWeb.SettingsLive.Index do
   use Phoenix.LiveView
 
+  alias TeslaMateWeb.Router.Helpers, as: Routes
   alias TeslaMateWeb.SettingsView
+  alias TeslaMate.Settings.{GlobalSettings, CarSettings}
   alias TeslaMate.Settings
 
   @impl true
   def mount(_session, socket) do
-    {:ok, put(socket, Settings.get_settings!())}
+    socket =
+      socket
+      |> assign_new(:global_settings, fn -> Settings.get_global_settings!() |> prepare() end)
+      |> assign_new(:car_settings, fn -> Settings.get_car_settings() |> prepare() end)
+      |> assign_new(:car, fn -> nil end)
+
+    {:ok, socket}
   end
 
   @impl true
   def render(assigns), do: SettingsView.render("index.html", assigns)
 
   @impl true
-  def handle_event("change", %{"settings" => params}, %{assigns: assigns} = socket) do
-    case Settings.update_settings(assigns.settings, params) do
-      {:error, changeset} -> {:noreply, assign(socket, changeset: changeset)}
-      {:ok, settings} -> {:noreply, put(socket, settings)}
-    end
+  def handle_params(params, _uri, socket) do
+    %{car_settings: settings, car: car} = socket.assigns
+
+    car =
+      with id when not is_nil(id) <- Map.get(params, "car"),
+           {id, ""} <- Integer.parse(id),
+           true <- Map.has_key?(settings, id) do
+        id
+      else
+        _ -> car || settings |> Map.keys() |> List.first()
+      end
+
+    {:noreply, assign(socket, car: car)}
   end
 
-  defp put(socket, settings) do
-    assign(socket, settings: settings, changeset: Settings.change_settings(settings))
+  @impl true
+  def handle_event("car", %{"id" => id}, socket) do
+    {:noreply, add_params(socket, car: id)}
+  end
+
+  def handle_event("change", %{"global_settings" => params}, %{assigns: assigns} = socket) do
+    settings =
+      case Settings.update_global_settings(assigns.global_settings.original, params) do
+        {:error, changeset} -> Map.put(assigns.global_settings, :changeset, changeset)
+        {:ok, settings} -> prepare(settings)
+      end
+
+    {:noreply, assign(socket, global_settings: settings)}
+  end
+
+  def handle_event("change", %{"car_settings" => params}, socket) do
+    %{assigns: %{car_settings: settings, car: id}} = socket
+
+    settings =
+      settings
+      |> get_in([id, :original])
+      |> Settings.update_car_settings(params)
+      |> case do
+        {:error, changeset} ->
+          put_in(settings, [id, :changeset], changeset)
+
+        {:ok, car_settings} ->
+          settings
+          |> put_in([id, :original], car_settings)
+          |> put_in([id, :changeset], Settings.change_car_settings(car_settings))
+      end
+
+    {:noreply, assign(socket, :car_settings, settings)}
+  end
+
+  # Private
+
+  defp add_params(socket, params) do
+    live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params), replace: true)
+  end
+
+  defp prepare(%GlobalSettings{} = settings) do
+    %{original: settings, changeset: Settings.change_global_settings(settings)}
+  end
+
+  defp prepare(settings) do
+    Enum.reduce(settings, %{}, fn %CarSettings{car: car} = s, acc ->
+      Map.put(acc, car.id, %{original: s, changeset: Settings.change_car_settings(s)})
+    end)
   end
 end

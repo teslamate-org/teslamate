@@ -4,17 +4,15 @@ defmodule TeslaMateWeb.CarLive.Summary do
   import TeslaMateWeb.Gettext
 
   alias TeslaMateWeb.CarView
+  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles
-  alias TeslaMate.Log.Car
 
   @impl true
-  def mount(%{car: %Car{} = car, settings: settings}, socket) do
+  def mount(%{summary: %Summary{car: car} = summary, settings: settings}, socket) do
     if connected?(socket) do
       send(self(), :update_duration)
       Vehicles.subscribe(car.id)
     end
-
-    summary = Vehicles.summary(car.id)
 
     assigns = %{
       car: car,
@@ -23,7 +21,8 @@ defmodule TeslaMateWeb.CarLive.Summary do
       translate_state: &translate_state/1,
       duration: duration_str(summary.since),
       error: nil,
-      error_timeout: nil
+      error_timeout: nil,
+      loading: false
     }
 
     {:ok, assign(socket, assigns)}
@@ -37,25 +36,13 @@ defmodule TeslaMateWeb.CarLive.Summary do
   @impl true
   def handle_event("suspend_logging", _val, socket) do
     cancel_timer(socket.assigns.error_timeout)
-
-    assigns =
-      case Vehicles.suspend_logging(socket.assigns.car.id) do
-        :ok ->
-          %{error: nil, error_timeout: nil}
-
-        {:error, reason} ->
-          %{
-            error: translate_error(reason),
-            error_timeout: Process.send_after(self(), :hide_error, 5_000)
-          }
-      end
-
-    {:noreply, assign(socket, assigns)}
+    send(self(), :suspend_logging)
+    {:noreply, assign(socket, loading: true)}
   end
 
   def handle_event("resume_logging", _val, socket) do
-    :ok = Vehicles.resume_logging(socket.assigns.car.id)
-    {:noreply, socket}
+    send(self(), :resume_logging)
+    {:noreply, assign(socket, loading: true)}
   end
 
   @impl true
@@ -64,18 +51,40 @@ defmodule TeslaMateWeb.CarLive.Summary do
     {:noreply, assign(socket, duration: duration_str(socket.assigns.summary.since))}
   end
 
+  def handle_info(:resume_logging, socket) do
+    :ok = Vehicles.resume_logging(socket.assigns.car.id)
+    {:noreply, socket}
+  end
+
+  def handle_info(:suspend_logging, socket) do
+    assigns =
+      case Vehicles.suspend_logging(socket.assigns.car.id) do
+        :ok ->
+          %{error: nil, error_timeout: nil, loading: false}
+
+        {:error, reason} ->
+          %{
+            error: translate_error(reason),
+            error_timeout: Process.send_after(self(), :hide_error, 5_000),
+            loading: false
+          }
+      end
+
+    {:noreply, assign(socket, assigns)}
+  end
+
   def handle_info(:hide_error, socket) do
     {:noreply, assign(socket, error: nil, error_timeout: nil)}
   end
 
   def handle_info(summary, socket) do
-    {:noreply, assign(socket, summary: summary, duration: duration_str(summary.since))}
+    {:noreply,
+     assign(socket, summary: summary, duration: duration_str(summary.since), loading: false)}
   end
 
   defp translate_state(:start), do: nil
   defp translate_state(:driving), do: gettext("driving")
   defp translate_state(:charging), do: gettext("charging")
-  defp translate_state(:charging_complete), do: gettext("charging complete")
   defp translate_state(:updating), do: gettext("updating")
   defp translate_state(:suspended), do: gettext("falling asleep")
   defp translate_state(:online), do: gettext("online")
@@ -111,9 +120,8 @@ defmodule TeslaMateWeb.CarLive.Summary do
         {rem(n, divisor), [div(n, divisor) | acc]}
       end)
 
-    ["#{w} wk", "#{d} d", "#{h} hr", "#{m} min", "#{s} sec"]
+    ["#{w} wk", "#{d} d", "#{h} h", "#{m} min", "#{s} s"]
     |> Enum.reject(&String.starts_with?(&1, "0"))
     |> Enum.take(2)
-    |> Enum.join(", ")
   end
 end

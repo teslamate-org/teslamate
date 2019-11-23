@@ -4,6 +4,7 @@ defmodule TeslaMate.Vehicles do
   require Logger
 
   alias __MODULE__.Vehicle
+  alias TeslaMate.Settings.CarSettings
   alias TeslaMate.Log.Car
   alias TeslaMate.Log
 
@@ -13,10 +14,35 @@ defmodule TeslaMate.Vehicles do
     Supervisor.start_link(__MODULE__, opts, name: @name)
   end
 
+  def list do
+    Supervisor.which_children(@name)
+    |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
+      ordered: false,
+      max_concurrency: 10,
+      timeout: 2500
+    )
+    |> Enum.map(fn {:ok, vehicle} -> vehicle end)
+    |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id}} -> id end)
+  end
+
+  def kill do
+    Logger.warn("Restarting #{__MODULE__} supervisor")
+    __MODULE__ |> Process.whereis() |> Process.exit(:kill)
+  end
+
+  def restart do
+    with :ok <- Supervisor.stop(@name, :normal),
+         :ok <- block_until_started(250) do
+      :ok
+    end
+  end
+
   defdelegate summary(id), to: Vehicle
   defdelegate resume_logging(id), to: Vehicle
   defdelegate suspend_logging(id), to: Vehicle
   defdelegate subscribe(id), to: Vehicle
+
+  # Callbacks
 
   @impl true
   def init(opts) do
@@ -32,17 +58,7 @@ defmodule TeslaMate.Vehicles do
     )
   end
 
-  def kill do
-    Logger.warn("Restarting #{__MODULE__} supervisor")
-    __MODULE__ |> Process.whereis() |> Process.exit(:kill)
-  end
-
-  def restart do
-    with :ok <- Supervisor.stop(@name, :normal),
-         :ok <- block_until_started(250) do
-      :ok
-    end
-  end
+  # Private
 
   defp block_until_started(0), do: {:error, :restart_failed}
 
@@ -52,7 +68,7 @@ defmodule TeslaMate.Vehicles do
       :ok
     else
       _ ->
-        :timer.sleep(10)
+        Process.sleep(10)
         block_until_started(retries - 1)
     end
   end
@@ -84,7 +100,14 @@ defmodule TeslaMate.Vehicles do
       with nil <- Log.get_car_by(vin: vehicle.vin),
            nil <- Log.get_car_by(vid: vehicle.vehicle_id),
            nil <- Log.get_car_by(eid: vehicle.id) do
-        %Car{}
+        suspend_min =
+          case Vehicle.identify(vehicle) do
+            {:ok, %{model: m, trim_badging: nil}} when m in ["S", "X"] -> 12
+            {:ok, %{model: m}} when m in ["3", "Y"] -> 12
+            _ -> nil
+          end
+
+        %Car{settings: %CarSettings{suspend_min: suspend_min}}
       end
       |> Car.changeset(%{
         name: vehicle.display_name,

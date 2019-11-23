@@ -27,7 +27,7 @@ defmodule TeslaMate.Mapping do
   def init(opts) do
     {:ok, client} = SRTM.Client.new(cache_path())
 
-    timeout = Keyword.get(opts, :timeout, 50)
+    timeout = Keyword.get(opts, :timeout, 100)
     name = Keyword.get(opts, :name, @name)
 
     deps = %{
@@ -147,7 +147,7 @@ defmodule TeslaMate.Mapping do
   end
 
   def handle_event(:info, :purge_srtm_in_memory_cache, _state, %Data{client: client} = data) do
-    Logger.debug("Puring SRTM in-memory cache ...")
+    Logger.debug("Purging SRTM in-memory cache ...")
     {:ok, client} = SRTM.Client.purge_in_memory_cache(client, keep: 2)
     {:keep_state, %Data{data | client: client}}
   end
@@ -166,8 +166,8 @@ defmodule TeslaMate.Mapping do
         {:error, :unavailable}
 
       {:error, :not_found} ->
-        Logger.debug("Installing circuit-breaker ...")
-        :fuse.install(name, {{:standard, 2, :timer.minutes(2)}, {:reset, :timer.minutes(5)}})
+        Logger.debug("Installing circuit-breaker #{inspect(name)} ...")
+        :fuse.install(name, {{:standard, 2, :timer.minutes(3)}, {:reset, :timer.minutes(15)}})
         do_get_elevation({lat, lng}, data)
     end
   end

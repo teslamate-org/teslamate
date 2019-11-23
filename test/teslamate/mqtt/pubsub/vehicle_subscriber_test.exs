@@ -28,6 +28,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert_receive {VehiclesMock, {:subscribe, 0}}
 
     summary = %Summary{
+      healthy: true,
       display_name: "Foo",
       odometer: 42_000,
       windows_open: true,
@@ -37,11 +38,17 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       latitude: 37.889602,
       longitude: 41.129182,
       speed: 40,
+      heading: 340,
       outside_temp: 15,
       inside_temp: 20.0,
       locked: true,
       sentry_mode: false,
-      plugged_in: false
+      plugged_in: false,
+      version: "2019.42",
+      update_available: false,
+      is_preconditioning: true,
+      is_user_present: false,
+      is_climate_on: true
     }
 
     send(pid, summary)
@@ -92,7 +99,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       ideal_battery_range_km: 230.52,
       rated_battery_range_km: 230.52,
       scheduled_charging_start_time: DateTime.utc_now() |> DateTime.add(60 * 60 * 10, :second),
-      time_to_full_charge: (DateTime.utc_now() |> DateTime.to_unix()) + :timer.minutes(25)
+      time_to_full_charge: 2.5
     }
 
     send(pid, summary)

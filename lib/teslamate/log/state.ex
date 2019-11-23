@@ -8,8 +8,8 @@ defmodule TeslaMate.Log.State do
   schema "states" do
     field :state, State
 
-    field :start_date, :utc_datetime
-    field :end_date, :utc_datetime
+    field :start_date, :utc_datetime_usec
+    field :end_date, :utc_datetime_usec
 
     belongs_to(:car, Car)
   end

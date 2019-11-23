@@ -10,7 +10,8 @@ defmodule TeslaMate.Application do
       TeslaMateWeb.Endpoint,
       TeslaMate.Mapping,
       TeslaMate.Vehicles,
-      if(mqtt_enabled?(), do: TeslaMate.Mqtt)
+      if(mqtt_enabled?(), do: TeslaMate.Mqtt),
+      TeslaMate.Repair
     ]
     |> Enum.reject(&is_nil/1)
     |> Supervisor.start_link(strategy: :one_for_one, name: TeslaMate.Supervisor)

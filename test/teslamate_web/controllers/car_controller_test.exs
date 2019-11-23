@@ -2,7 +2,8 @@ defmodule TeslaMateWeb.CarControllerTest do
   use TeslaMateWeb.ConnCase
   use TeslaMate.VehicleCase
 
-  alias TeslaMate.{Log, Settings}
+  alias TeslaMate.Settings.CarSettings
+  alias TeslaMate.{Log, Settings, Repo}
   alias TeslaMate.Log.Car
 
   defp table_row(html, key, value) do
@@ -12,15 +13,66 @@ defmodule TeslaMateWeb.CarControllerTest do
              |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
   end
 
+  defp icon(html, tooltip, icon) do
+    icon_class = "mdi mdi-#{icon}"
+
+    assert {"span", _, [{"span", [{"class", ^icon_class}], _}]} =
+             html
+             |> Floki.find(".icons .icon")
+             |> Enum.find(&match?({"span", [_, {"data-tooltip", ^tooltip}], _}, &1))
+  end
+
+  defp car_fixture(settings) do
+    {:ok, car} =
+      Log.create_car(%{
+        efficiency: 0.153,
+        eid: 4242,
+        vid: 404,
+        vin: "xxxxx",
+        model: "S",
+        name: "foo",
+        trim_badging: "P100D"
+      })
+
+    {:ok, _settings} =
+      car.settings
+      |> Repo.preload(:car)
+      |> Settings.update_car_settings(settings)
+
+    car
+  end
+
   describe "index" do
     test "redirects if not signed in", %{conn: conn} do
       assert conn = get(conn, Routes.car_path(conn, :index))
       assert redirected_to(conn, 302) == Routes.live_path(conn, TeslaMateWeb.SignInLive.Index)
     end
 
-    # @tag :signed_in
-    # test "lists all cares", %{conn: conn} do
-    # end
+    @tag :signed_in
+    test "lists all active vehicles", %{conn: conn} do
+      {:ok, _pid} =
+        start_supervised(
+          {ApiMock, name: :api_vehicle, events: [{:ok, online_event()}], pid: self()}
+        )
+
+      {:ok, _pid} =
+        start_supervised(
+          {TeslaMate.Vehicles,
+           vehicle: VehicleMock,
+           vehicles: [
+             %TeslaApi.Vehicle{display_name: "f0o", id: 4241, vehicle_id: 11111, vin: "1221"},
+             %TeslaApi.Vehicle{display_name: "fo0", id: 1242, vehicle_id: 22222, vin: "2112"}
+           ]}
+        )
+
+      conn = get(conn, Routes.car_path(conn, :index))
+      html = response(conn, 200)
+
+      assert [
+               {"div", [{"class", "car card"}], _},
+               {"div", [{"class", "car card"}], _}
+             ] = Floki.find(html, ".car")
+    end
 
     @tag :signed_in
     test "renders last knwon vehicle stats", %{conn: conn} do
@@ -28,13 +80,13 @@ defmodule TeslaMateWeb.CarControllerTest do
         {:ok, %TeslaApi.Vehicle{state: "asleep", display_name: "FooCar"}}
       ]
 
-      {:ok, %Car{id: id}} =
-        %Car{}
+      {:ok, car} =
+        %Car{settings: %CarSettings{}}
         |> Car.changeset(%{vid: 404, eid: 404, vin: "xxxxx"})
         |> Log.create_or_update_car()
 
       {:ok, _position} =
-        Log.insert_position(id, %{
+        Log.insert_position(car, %{
           date: DateTime.utc_now(),
           longitude: 0,
           latitude: 0,
@@ -73,15 +125,24 @@ defmodule TeslaMateWeb.CarControllerTest do
              battery_range: 175,
              battery_level: 69
            },
-           climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2},
-           vehicle_state: %{locked: true, sentry_mode: true},
+           climate_state: %{is_preconditioning: true, outside_temp: 24, inside_temp: 23.2},
+           vehicle_state: %{
+             software_update: %{status: "available"},
+             locked: true,
+             sentry_mode: true,
+             fd_window: 1,
+             fp_window: 0,
+             rd_window: 0,
+             rp_window: 0,
+             is_user_present: true
+           },
            vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
          )}
       ]
 
       :ok = start_vehicles(events)
 
-      :timer.sleep(250)
+      Process.sleep(250)
 
       conn = get(conn, Routes.car_path(conn, :index))
 
@@ -89,12 +150,15 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ ~r/<p class="subtitle is-6 has-text-weight-light">Model S P90D<\/p>/
       assert table_row(html, "Status", "online")
-      assert table_row(html, "Plugged in", "no")
       assert table_row(html, "Range (ideal)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "State of Charge", "69%")
-      assert table_row(html, "Locked", "yes")
-      assert table_row(html, "Sentry Mode", "yes")
+      assert icon(html, "Locked", "lock")
+      assert icon(html, "User present", "account")
+      assert icon(html, "Preconditioning", "air-conditioner")
+      assert icon(html, "Sentry Mode", "shield-check")
+      assert icon(html, "Windows open", "window-open")
+      assert icon(html, "Software Update available", "gift-outline")
       assert table_row(html, "Outside temperature", "24 °C")
       assert table_row(html, "Inside temperature", "23.2 °C")
     end
@@ -109,6 +173,9 @@ defmodule TeslaMateWeb.CarControllerTest do
            charge_state: %{
              timestamp: 0,
              charger_power: 50,
+             charger_phases: 3,
+             charger_voltage: 230,
+             charger_actual_current: 16,
              ideal_battery_range: 200,
              est_battery_range: 180,
              battery_range: 175,
@@ -117,7 +184,8 @@ defmodule TeslaMateWeb.CarControllerTest do
              charge_port_latch: "Engaged",
              charge_port_door_open: true,
              scheduled_charging_start_time: 1_565_620_707,
-             charge_limit_soc: 85
+             charge_limit_soc: 85,
+             time_to_full_charge: 1.83
            }
          )}
       ]
@@ -129,11 +197,12 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert table_row(html, "Status", "charging")
-      assert table_row(html, "Plugged in", "yes")
+      assert table_row(html, "Remaining Time", "110 min")
+      assert icon(html, "Plugged in", "power-plug")
       assert table_row(html, "Range (ideal)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "Charged", "4.32 kWh")
-      assert table_row(html, "Charger Power", "50 kW")
+      assert table_row(html, "Charger Power", "11.04 kW")
 
       assert table_row(
                html,
@@ -142,70 +211,6 @@ defmodule TeslaMateWeb.CarControllerTest do
              )
 
       assert table_row(html, "Charge limit", "85%")
-    end
-
-    @tag :signed_in
-    test "renders current vehicle stats [:charging_complete]", %{conn: conn} do
-      events = [
-        {:ok,
-         online_event(
-           display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-           charge_state: %{
-             timestamp: 0,
-             charger_power: 50,
-             ideal_battery_range: 200,
-             est_battery_range: 180,
-             charging_state: "Charging",
-             charge_energy_added: "4.32",
-             charge_port_latch: "Engaged",
-             charge_port_door_open: true,
-             scheduled_charging_start_time: 1_565_620_707,
-             charge_limit_soc: 85
-           }
-         )},
-        {:ok,
-         online_event(
-           display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-           charge_state: %{
-             timestamp: 0,
-             charger_power: 50,
-             ideal_battery_range: 200,
-             est_battery_range: 180,
-             charging_state: "Charging",
-             charge_energy_added: "4.32",
-             charge_port_latch: "Engaged",
-             charge_port_door_open: true,
-             scheduled_charging_start_time: 1_565_620_707,
-             charge_limit_soc: 85
-           }
-         )},
-        {:ok,
-         online_event(
-           display_name: "FooCar",
-           charge_state: %{
-             timestamp: 0,
-             charger_power: 50,
-             ideal_battery_range: 200,
-             est_battery_range: 180,
-             charging_state: "Complete",
-             charge_energy_added: "4.32",
-             charge_port_latch: "Engaged",
-             charge_port_door_open: true
-           }
-         )}
-      ]
-
-      :ok = start_vehicles(events)
-
-      :timer.sleep(100)
-
-      conn = get(conn, Routes.car_path(conn, :index))
-
-      assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert table_row(html, "Status", "charging complete")
     end
 
     @tag :signed_in
@@ -290,9 +295,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "renders current vehicle stats [:falling asleep]", %{conn: conn} do
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 1})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1})
 
       events = [
         {:ok,
@@ -305,7 +308,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      :timer.sleep(100)
+      Process.sleep(100)
 
       conn = get(conn, Routes.car_path(conn, :index))
 
@@ -333,8 +336,8 @@ defmodule TeslaMateWeb.CarControllerTest do
     @tag :signed_in
     test "displays the rated range if preferred", %{conn: conn} do
       {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{preferred_range: :rated})
+        Settings.get_global_settings!()
+        |> Settings.update_global_settings(%{preferred_range: :rated})
 
       events = [
         {:ok,
@@ -355,7 +358,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       :ok = start_vehicles(events)
 
-      :timer.sleep(250)
+      Process.sleep(250)
 
       conn = get(conn, Routes.car_path(conn, :index))
 
@@ -368,8 +371,8 @@ defmodule TeslaMateWeb.CarControllerTest do
     @tag :signed_in
     test "displays imperial units", %{conn: conn} do
       {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{unit_of_length: :mi, unit_of_temperature: :F})
+        Settings.get_global_settings!()
+        |> Settings.update_global_settings(%{unit_of_length: :mi, unit_of_temperature: :F})
 
       events = [
         {:ok,
@@ -408,9 +411,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     test "suspends logging", %{conn: conn} do
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
 
       events = [
         {:ok,
@@ -431,9 +432,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     test "returns error if suspending is not possible", %{conn: conn} do
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
 
       events = [
         {:ok,
@@ -457,9 +456,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     test "resumes logging", %{conn: conn} do
       alias TeslaMate.Vehicles.Vehicle.Summary
 
-      {:ok, _} =
-        Settings.get_settings!()
-        |> Settings.update_settings(%{suspend_min: 60, suspend_after_idle_min: 1})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1})
 
       events = [
         {:ok,
@@ -471,10 +468,10 @@ defmodule TeslaMateWeb.CarControllerTest do
       ]
 
       :ok = start_vehicles(events)
-      :timer.sleep(100)
+      Process.sleep(100)
 
       %Car{id: id} = Log.get_car_by(vin: "xxxxx")
-      %Summary{state: :suspended} = TeslaMate.Vehicles.summary(id)
+      assert %Summary{state: :suspended} = TeslaMate.Vehicles.summary(id)
 
       conn = put(conn, Routes.car_path(conn, :resume_logging, id))
       assert "" == response(conn, 204)

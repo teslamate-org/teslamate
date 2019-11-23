@@ -4,7 +4,7 @@ defmodule TeslaMate.MixProject do
   def project do
     [
       app: :teslamate,
-      version: "1.10.0",
+      version: "1.13.0-dev",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -49,12 +49,13 @@ defmodule TeslaMate.MixProject do
       # Custom
       {:tesla_api, github: "adriankumpf/tesla_api", branch: "v10"},
       {:gen_state_machine, "~> 2.0"},
-      {:ecto_enum, "~> 1.2"},
+      {:ecto_enum, "~> 1.0"},
       {:phoenix_live_view, "~> 0.1"},
       {:floki, ">= 0.0.0", only: :test},
       {:tortoise, "~> 0.9"},
       {:excoveralls, "~> 0.10", only: :test},
       {:mojito, "~> 0.5"},
+      {:mint, "~> 1.0", override: true},
       {:srtm, "~> 0.2"},
       {:fuse, "~> 2.4"},
       {:mock, "~> 0.3", only: :test},

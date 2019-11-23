@@ -6,9 +6,10 @@ defmodule TeslaMate.Log.ChargingProcess do
   alias TeslaMate.Log.{Charge, Car, Position}
 
   schema "charging_processes" do
-    field :start_date, :utc_datetime
-    field :end_date, :utc_datetime
+    field :start_date, :utc_datetime_usec
+    field :end_date, :utc_datetime_usec
     field :charge_energy_added, :float
+    field :charge_energy_used, :float
     field :start_ideal_range_km, :float
     field :end_ideal_range_km, :float
     field :start_rated_range_km, :float
@@ -31,9 +32,11 @@ defmodule TeslaMate.Log.ChargingProcess do
     charging_state
     |> cast(attrs, [
       :geofence_id,
+      :address_id,
       :start_date,
       :end_date,
       :charge_energy_added,
+      :charge_energy_used,
       :start_ideal_range_km,
       :end_ideal_range_km,
       :start_rated_range_km,
@@ -44,10 +47,12 @@ defmodule TeslaMate.Log.ChargingProcess do
       :outside_temp_avg
     ])
     |> validate_required([:car_id, :start_date])
+    |> validate_number(:charge_energy_added, greater_than_or_equal_to: 0)
+    |> validate_number(:charge_energy_used, greater_than_or_equal_to: 0)
     |> foreign_key_constraint(:car_id)
     |> foreign_key_constraint(:position_id)
     |> foreign_key_constraint(:address_id)
     |> foreign_key_constraint(:geofence_id)
-    |> cast_assoc(:position, with: &Position.changeset/2, required: true)
+    |> cast_assoc(:position, with: &Position.changeset/2)
   end
 end

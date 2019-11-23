@@ -5,6 +5,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Edit do
   alias TeslaMateWeb.GeoFenceLive
   alias TeslaMateWeb.GeoFenceView
 
+  alias TeslaMate.Settings.GlobalSettings
   alias TeslaMate.{Locations, Settings, Convert}
   alias TeslaMate.Locations.GeoFence
 
@@ -23,9 +24,9 @@ defmodule TeslaMateWeb.GeoFenceLive.Edit do
     %GeoFence{radius: radius} = geofence = Locations.get_geofence!(id)
 
     {unit_of_length, radius} =
-      case Settings.get_settings!() do
-        %Settings.Settings{unit_of_length: :km} -> {:m, radius}
-        %Settings.Settings{unit_of_length: :mi} -> {:ft, Convert.m_to_ft(radius)}
+      case Settings.get_global_settings!() do
+        %GlobalSettings{unit_of_length: :km} -> {:m, radius}
+        %GlobalSettings{unit_of_length: :mi} -> {:ft, Convert.m_to_ft(radius)}
       end
 
     assigns = %{
@@ -38,6 +39,14 @@ defmodule TeslaMateWeb.GeoFenceLive.Edit do
   end
 
   @impl true
+  def handle_event("move", %{"lat" => lat, "lng" => lng}, socket) do
+    changeset =
+      socket.assigns.changeset
+      |> Ecto.Changeset.change(%{latitude: lat, longitude: lng})
+
+    {:noreply, assign(socket, changeset: changeset, show_errors: false)}
+  end
+
   def handle_event("validate", %{"geo_fence" => params}, socket) do
     changeset =
       socket.assigns.geofence

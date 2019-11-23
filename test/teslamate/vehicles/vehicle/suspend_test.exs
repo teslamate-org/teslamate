@@ -171,12 +171,17 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
     assert_receive {:insert_charge, charge_id, %{date: _, charge_energy_added: 0.1}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
+
     assert_receive {:insert_charge, ^charge_id, %{date: _, charge_energy_added: 0.2}}
     assert_receive {:complete_charging_process, ^charge_id, []}
 
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended}}}
+    assert_receive {:start_state, ^car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
+    # ...
+
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended}}}
     assert_receive {:start_state, ^car_id, :asleep}, round(suspend_ms * 1.1)
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
@@ -190,9 +195,11 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     events = [
       {:ok, online_event()},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
+      {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, charging_event(now_ts + 2, "Complete", 0.15)},
       {:ok, charging_event(now_ts + 3, "Complete", 0.15)},
       {:ok, charging_event(now_ts + 4, "Complete", 0.15)},
+      {:ok, charging_event(now_ts + 5, "Charging", 0.2)},
       {:ok, charging_event(now_ts + 5, "Charging", 0.2)},
       {:ok, charging_event(now_ts + 6, "Charging", 0.3)}
     ]
@@ -215,23 +222,31 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0},
                     []}
 
-    assert_receive {:insert_charge, charging_event, %{date: _, charge_energy_added: 0.1}}
+    assert_receive {:insert_charge, cproc_0, %{date: _, charge_energy_added: 0.1}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
-    assert_receive {:insert_charge, ^charging_event, %{date: _, charge_energy_added: 0.15}}
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
-    assert_receive {:complete_charging_process, ^charging_event, []}
+    assert_receive {:insert_charge, ^cproc_0, %{date: _, charge_energy_added: 0.15}}
+    assert_receive {:complete_charging_process, ^cproc_0, []}
+
+    assert_receive {:start_state, ^car_id, :online}
+    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended}}}
 
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}},
-                   round(suspend_ms * 1.1)
+    # new charging session
 
-    assert_receive {:insert_charge, ^charging_event, %{date: _, charge_energy_added: 0.2}}
+    TestHelper.eventually(
+      fn -> assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}} end,
+      delay: suspend_ms,
+      attempts: 3
+    )
+
+    assert_receive {:insert_charge, cproc_1, %{date: _, charge_energy_added: 0.2}}
+    assert cproc_0 != cproc_1
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
-    assert_receive {:insert_charge, ^charging_event, %{date: _, charge_energy_added: 0.3}}
-    assert_receive {:resume_charging_process, ^charging_event}
+    assert_receive {:insert_charge, ^cproc_1, %{date: _, charge_energy_added: 0.3}}
 
     # ...
   end
