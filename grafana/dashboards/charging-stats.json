@@ -59,7 +59,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 12,
+        "w": 7,
         "x": 0,
         "y": 1
       },
@@ -173,8 +173,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 12,
-        "x": 12,
+        "w": 9,
+        "x": 7,
         "y": 1
       },
       "id": 10,
@@ -250,7 +250,7 @@
               "type": "macro"
             }
           ]
-        },
+        }
       ],
       "thresholds": "",
       "timeFrom": null,
@@ -287,7 +287,7 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 2,
+        "h": 3,
         "w": 8,
         "x": 16,
         "y": 0
