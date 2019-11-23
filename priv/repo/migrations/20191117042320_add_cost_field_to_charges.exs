@@ -3,8 +3,8 @@ defmodule TeslaMate.Repo.Migrations.AddCostFieldToCharges do
 
   def change do
 
-    alter table(:charges) do
-      add(:cost, :decimal(6,2))
+    alter table(:charging_processes) do
+      add(:cost, :decimal, precision: 6, scale: 2)
     end
 
   end
