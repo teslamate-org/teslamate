@@ -31,8 +31,13 @@ defmodule TeslaMateWeb.Router do
   scope "/api", TeslaMateWeb do
     pipe_through :api
 
+    get "/address", AddressController, :get_addresses
+    get "/address/:id", AddressController, :get_address
     put "/car/:id/logging/resume", CarController, :resume_logging
     put "/car/:id/logging/suspend", CarController, :suspend_logging
+    get "/charging_process", ChargingController, :get_charge_processes
+    get "/charging_process/:id/cost", ChargingController, :get_charge_cost
+    put "/charging_process/:id/cost", ChargingController, :set_charge_cost
   end
 
   defp fetch_settings(conn, _opts), do: assign(conn, :settings, Settings.get_global_settings!())
