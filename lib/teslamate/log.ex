@@ -9,7 +9,7 @@ defmodule TeslaMate.Log do
   import Ecto.Query, warn: false
 
   alias __MODULE__.{Car, Drive, Update, ChargingProcess, Charge, Position, State}
-  alias TeslaMate.{Repo, Locations, Mapping, Settings}
+  alias TeslaMate.{Repo, Locations, Terrain, Settings}
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Settings.{CarSettings, GlobalSettings}
 
@@ -90,13 +90,13 @@ defmodule TeslaMate.Log do
 
   ## Position
 
-  @mapping (case Mix.env() do
-              :test -> MappingMock
-              _____ -> Mapping
+  @terrain (case Mix.env() do
+              :test -> TerrainMock
+              _____ -> Terrain
             end)
 
   def insert_position(%Drive{id: id, car_id: car_id}, attrs) do
-    elevation = @mapping.get_elevation({attrs.latitude, attrs.longitude})
+    elevation = @terrain.get_elevation({attrs.latitude, attrs.longitude})
     attrs = Map.put(attrs, :elevation, elevation)
 
     %Position{car_id: car_id, drive_id: id}
@@ -105,7 +105,7 @@ defmodule TeslaMate.Log do
   end
 
   def insert_position(%Car{id: id}, attrs) do
-    elevation = @mapping.get_elevation({attrs.latitude, attrs.longitude})
+    elevation = @terrain.get_elevation({attrs.latitude, attrs.longitude})
     attrs = Map.put(attrs, :elevation, elevation)
 
     %Position{car_id: id}
