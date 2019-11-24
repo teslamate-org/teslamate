@@ -7,8 +7,8 @@ defmodule TeslaMate.Settings do
   alias TeslaMate.Repo
 
   alias __MODULE__.{GlobalSettings, CarSettings}
+  alias TeslaMate.{Log, Locations}
   alias TeslaMate.Log.Car
-  alias TeslaMate.Log
 
   def get_global_settings! do
     case Repo.all(GlobalSettings) do
@@ -88,6 +88,8 @@ defmodule TeslaMate.Settings do
 
     {:ok, %Postgrex.Result{num_rows: _rows}} =
       Repo.query("DELETE FROM geofence_sleep_mode_blacklist WHERE car_id = $1", [car_id])
+
+    :ok = Locations.clear_cache()
 
     :ok
   end

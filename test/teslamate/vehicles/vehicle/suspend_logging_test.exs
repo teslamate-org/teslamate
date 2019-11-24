@@ -86,7 +86,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     :ok = start_vehicle(name, events, blacklist: [{-50.606993, 165.972471}])
     assert_receive {:start_state, _, :online}
 
-    assert {:error, :sleep_mode_disabled_for_location} = Vehicle.suspend_logging(name)
+    assert {:error, :sleep_mode_disabled_at_location} = Vehicle.suspend_logging(name)
   end
 
   test "cannot be suspended if vehicle is preconditioning", %{test: name} do

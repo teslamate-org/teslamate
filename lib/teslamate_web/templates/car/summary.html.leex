@@ -218,10 +218,15 @@
           !@summary.is_user_present and
           !@summary.is_preconditioning and
           @summary.locked->
-            link gettext("try to sleep"), to: "#",
-                                          phx_click: "suspend_logging",
+            disabled =
+              case Locations.may_fall_asleep_at?(@car, @summary) do
+                {:ok, may_fall_asleep?} -> not may_fall_asleep?
+                {:error, _reason} -> true
+              end
+
+            link gettext("try to sleep"), to: "#", phx_click: "suspend_logging",
                                           class: "button is-info is-small is-outlined is-fullwidth" <> (if @loading, do: " is-loading", else: ""),
-                                          disabled: not Locations.may_fall_asleep_at?(@car, @summary)
+                                          disabled: disabled
 
           @summary.state == :suspended ->
             link gettext("cancel sleep attempt"), to: "#", phx_click: "resume_logging",

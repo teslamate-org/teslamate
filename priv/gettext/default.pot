@@ -430,3 +430,8 @@ msgstr ""
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:112
 msgid "Sleep Mode Enabled"
 msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:104
+msgid "Sleep Mode is disabled at current location"
+msgstr ""

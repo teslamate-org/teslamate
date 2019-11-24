@@ -422,12 +422,17 @@ msgstr "Aktiviert"
 msgid "Sleep Mode"
 msgstr "Schlafmodus"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:187
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geo-Fence \"%{name}\" aktualisiert"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:112
 msgid "Sleep Mode Enabled"
 msgstr "Schlafmodus aktiviert"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:104
+msgid "Sleep Mode is disabled at current location"
+msgstr "Schlafmodus ist am aktuellen Ort deaktiviert"

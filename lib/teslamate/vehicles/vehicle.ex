@@ -798,7 +798,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     suspend = idle_min >= settings.suspend_after_idle_min
 
     case can_fall_asleep(vehicle, data) do
-      {:error, reason} when reason in [:sleep_mode_disabled, :sleep_mode_disabled_for_location] ->
+      {:error, reason} when reason in [:sleep_mode_disabled, :sleep_mode_disabled_at_location] ->
         {:keep_state_and_data, [notify_subscribers(), schedule_fetch(30)]}
 
       {:error, :sentry_mode} ->
@@ -847,14 +847,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp can_fall_asleep(vehicle, %Data{car: car, deps: deps}) do
-    may_fall_asleep = call(deps.locations, :may_fall_asleep_at?, [car, vehicle.drive_state])
+    {:ok, may_fall_asleep} =
+      call(deps.locations, :may_fall_asleep_at?, [car, vehicle.drive_state])
 
     case {vehicle, car.settings, may_fall_asleep} do
       {%Vehicle{}, %CarSettings{sleep_mode_enabled: false}, false} ->
         {:error, :sleep_mode_disabled}
 
       {%Vehicle{}, %CarSettings{sleep_mode_enabled: true}, false} ->
-        {:error, :sleep_mode_disabled_for_location}
+        {:error, :sleep_mode_disabled_at_location}
 
       {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _, true} ->
         {:error, :user_present}

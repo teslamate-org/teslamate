@@ -100,6 +100,9 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp translate_error(:user_present), do: gettext("User present")
   defp translate_error(:update_in_progress), do: gettext("Update in progress")
 
+  defp translate_error(:sleep_mode_disabled_at_location),
+    do: gettext("Sleep Mode is disabled at current location")
+
   defp cancel_timer(nil), do: :ok
   defp cancel_timer(ref) when is_reference(ref), do: Process.cancel_timer(ref)
 

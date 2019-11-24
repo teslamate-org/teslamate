@@ -43,6 +43,6 @@ defmodule LocationsMock do
           Enum.find(state.whitelist, &match?({^lat, ^lng}, &1)) != nil
       end
 
-    {:reply, response, state}
+    {:reply, {:ok, response}, state}
   end
 end

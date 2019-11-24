@@ -7,6 +7,7 @@ defmodule TeslaMate.Application do
     [
       TeslaMate.Repo,
       TeslaMate.Api,
+      TeslaMate.Locations,
       TeslaMateWeb.Endpoint,
       TeslaMate.Mapping,
       TeslaMate.Vehicles,
