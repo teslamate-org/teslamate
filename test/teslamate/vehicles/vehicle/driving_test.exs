@@ -303,7 +303,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       refute_receive _, 100
 
       # Logs previous drive
-      assert_receive {:close_drive, ^drive}, 200
+      assert_receive {:close_drive, ^drive}, 250
 
       assert_receive {:start_state, ^car, :online}
       assert_receive {:insert_position, ^car, %{}}

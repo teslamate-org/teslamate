@@ -12,7 +12,7 @@ defmodule TeslaMate.TerrainTest do
 
     opts = [
       name: name,
-      timeout: 150,
+      timeout: 500,
       deps_log: {LogMock, log_name},
       deps_srtm: {SRTMMock, srtm_name}
     ]
@@ -56,8 +56,10 @@ defmodule TeslaMate.TerrainTest do
         })
 
       assert Terrain.get_elevation(name, {0, 0}) == nil
-      Process.sleep(100)
-      assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
+
+      TestHelper.eventually(fn ->
+        assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
+      end)
 
       # still blocked
       assert Terrain.get_elevation(name, {0, 0}) == nil
@@ -76,8 +78,10 @@ defmodule TeslaMate.TerrainTest do
         })
 
       assert Terrain.get_elevation(name, {1, 1}) == nil
-      Process.sleep(100)
-      assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 1, 1}}
+
+      TestHelper.eventually(fn ->
+        assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 1, 1}}
+      end)
 
       refute_receive _
     end
@@ -102,7 +106,7 @@ defmodule TeslaMate.TerrainTest do
           assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
           assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
         end,
-        attempts: 15
+        attempts: 25
       )
 
       refute_receive _

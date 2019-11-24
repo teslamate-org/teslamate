@@ -491,4 +491,46 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
              Locations.list_geofences()
              |> Enum.map(&Repo.preload(&1, [:sleep_mode_blacklist, :sleep_mode_whitelist]))
   end
+
+  describe "grafana URL" do
+    alias TeslaMate.Settings.GlobalSettings
+
+    test "initiall sets the base URL", %{conn: conn} do
+      assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
+
+      assert {:ok, _parent_view, _html} =
+               live(conn, "/geo-fences/new?lat=0.0&lng=0.0",
+                 connect_params: %{"referrer" => "http://grafana.example.com/d/xyz/12"}
+               )
+
+      assert %GlobalSettings{grafana_url: "http://grafana.example.com"} =
+               Settings.get_global_settings!()
+    end
+
+    test "keeps the path", %{conn: conn} do
+      assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
+
+      assert {:ok, _parent_view, _html} =
+               live(conn, "/geo-fences/new?lat=0.0&lng=0.0",
+                 connect_params: %{"referrer" => "http://example.com:9090/grafana/d/xyz/12"}
+               )
+
+      assert %GlobalSettings{grafana_url: "http://example.com:9090/grafana"} =
+               Settings.get_global_settings!()
+    end
+
+    test "does not update the base URL if exists already", %{conn: conn} do
+      assert {:ok, _settings} =
+               Settings.get_global_settings!()
+               |> Settings.update_global_settings(%{grafana_url: "https://grafana.example.com"})
+
+      assert {:ok, _parent_view, _html} =
+               live(conn, "/geo-fences/new?lat=0.0&lng=0.0",
+                 connect_params: %{"referrer" => "http://grafana.foo.com/d/xyz/12"}
+               )
+
+      assert %GlobalSettings{grafana_url: "https://grafana.example.com"} =
+               Settings.get_global_settings!()
+    end
+  end
 end

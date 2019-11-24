@@ -9,4 +9,4 @@ TeslaMate.Repo.start_link()
 %{start: {m, f, [name, _opts]}} = TeslaMate.Locations.child_spec([])
 apply(m, f, [name, [limit: 1]])
 
-ExUnit.start(assert_receive_timeout: 200)
+ExUnit.start(assert_receive_timeout: 300)
