@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 19,
-  "iteration": 1574694912453,
+  "iteration": 1574711546516,
   "links": [],
   "panels": [
     {
@@ -997,6 +996,6 @@
   },
   "timezone": "",
   "title": "Charging Stats",
-  "uid": "-ozeguwopij",
-  "version": 17
+  "uid": "-pkIkhmRz",
+  "version": 1
 }
