@@ -41,6 +41,7 @@
       "type": "row"
     },
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -127,6 +128,7 @@
       "type": "gauge"
     },
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -204,6 +206,7 @@
       "type": "gauge"
     },
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -284,6 +287,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "TeslaMate",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -415,6 +419,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "decimals": 0,
       "format": "none",
       "gauge": {
@@ -527,6 +532,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "decimals": 0,
       "format": "none",
       "gauge": {
@@ -645,6 +651,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -760,6 +767,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "TeslaMate",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -921,6 +929,7 @@
       }
     },
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -997,6 +1006,7 @@
       "type": "gauge"
     },
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -1073,6 +1083,7 @@
       "type": "gauge"
     },
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -1158,8 +1169,9 @@
       {
         "allValue": null,
         "current": {
-          "text": "1",
-          "value": "1"
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
