@@ -305,7 +305,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(start_date),\n  start_battery_level,\n  end_battery_level\nFROM\n  charging_processes\nWHERE\n  $__timeFilter(start_date)\n\tAND duration_min > 3\n\tAND car_id = $car_id",
+          "rawSql": "SELECT\n  $__time(start_date),\n  start_battery_level,\n  end_battery_level\nFROM\n  charging_processes\nWHERE\n  $__timeFilter(start_date)\n\tAND duration_min > 3\n\tAND car_id = $car_id\nORDER BY \n  start_date;",
           "refId": "A",
           "select": [
             [
@@ -416,7 +416,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(start_date),\n  start_battery_level,\n  end_battery_level\nFROM\n  charging_processes\nWHERE\n  $__timeFilter(start_date)\n\tAND duration_min > 3\n\tAND car_id = $car_id",
+          "rawSql": "SELECT\n  $__time(start_date),\n  start_battery_level,\n  end_battery_level\nFROM\n  charging_processes\nWHERE\n  $__timeFilter(start_date)\n\tAND duration_min > 3\n\tAND car_id = $car_id\nORDER BY \n  start_date;",
           "refId": "A",
           "select": [
             [
@@ -691,7 +691,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tROUND(start_battery_level / 5, 0) * 5 AS SOC,\n\tcount(*) AS n\nFROM\n\tcharging_processes\nWHERE\n\tduration_min > 3\n\tAND car_id = $car_id\nGROUP BY\n\tROUND(start_battery_level / 5, 0) * 5\nORDER BY\n\tSOC DESC",
+          "rawSql": "SELECT\n\tROUND(start_battery_level / 5, 0) * 5 AS SOC,\n\tcount(*) AS n\nFROM\n\tcharging_processes\nWHERE\n\tduration_min > 3\n\tAND car_id = $car_id\nGROUP BY\n  1\nORDER BY\n\tSOC DESC",
           "refId": "A",
           "select": [
             [
