@@ -277,6 +277,7 @@
         "mode": "opacity"
       },
       "dataFormat": "timeseries",
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 6,
         "w": 12,
@@ -359,6 +360,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "TeslaMate",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
