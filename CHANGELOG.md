@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.13.1] - 2019-11-26
+
+### Enhancements
+
+Add a database column that will allow tracking charge costs:
+
+- Merge 20191117042320_add_cost_field_to_charges.exs (Charge Cost field) ([#258](https://github.com/adriankumpf/teslamate/pull/258) by [@ngardiner](https://github.com/ngardiner))
+- Grafana Dashboard Integration for Charge Cost ([#273](https://github.com/adriankumpf/teslamate/pull/273) by [@ngardiner](https://github.com/ngardiner))
+
+Note: There is no charging cost interface either manual or automatic at this point but there will be in the future.
+
+### Bug Fixes
+
+- Downgrade the Grafana docker image to v6.3.7 because there are still issues with ARM-compatible images
+- Fix an issue where the selected car was not displayed when opening the drive or charging details
+
 ## [1.13.0] - 2019-11-25
 
 ### New Features
@@ -573,7 +589,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.13.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.13.1...HEAD
+[1.13.1]: https://github.com/adriankumpf/teslamate/compare/v1.13.0...v1.13.1
 [1.13.0]: https://github.com/adriankumpf/teslamate/compare/v1.12.2...v1.13.0
 [1.12.2]: https://github.com/adriankumpf/teslamate/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/adriankumpf/teslamate/compare/v1.12.0...v1.12.1

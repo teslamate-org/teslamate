@@ -48,7 +48,7 @@ A powerful, self-hosted data logger for your Tesla.
 
 ## Quick Start
 
-The recommended way to install and run TeslaMate is to use Docker. Create a file called `docker-compose.yml` with the following content:
+The recommended way to install and run TeslaMate is to use [Docker](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl). Create a file called `docker-compose.yml` with the following content:
 
 **docker-compose.yml**
 
