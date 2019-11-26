@@ -1,4 +1,4 @@
-defmodule TeslaMate.Mapping do
+defmodule TeslaMate.Terrain do
   use GenStateMachine
 
   require Logger

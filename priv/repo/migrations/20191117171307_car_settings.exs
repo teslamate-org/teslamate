@@ -47,8 +47,6 @@ defmodule TeslaMate.Repo.Migrations.CarSettings do
     use Ecto.Schema
     import Ecto.Changeset
 
-    alias TeslaMate.Settings.CarSettings
-
     schema "cars" do
       belongs_to(:settings, CarSettings)
     end

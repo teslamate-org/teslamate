@@ -117,14 +117,16 @@ defmodule TeslaMate.SettingsTest do
       suspend_after_idle_min: 60,
       req_no_shift_state_reading: false,
       req_no_temp_reading: false,
-      req_not_unlocked: true
+      req_not_unlocked: true,
+      sleep_mode_enabled: false
     }
     @invalid_attrs %{
       suspend_min: nil,
       suspend_after_idle_min: nil,
       req_no_shift_state_reading: nil,
       req_no_temp_reading: nil,
-      req_not_unlocked: nil
+      req_not_unlocked: nil,
+      sleep_mode_enabled: nil
     }
 
     test "get_car_settings/0 returns the settings" do
@@ -137,6 +139,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_no_shift_state_reading == false
       assert settings.req_no_temp_reading == false
       assert settings.req_not_unlocked == true
+      assert settings.sleep_mode_enabled == true
     end
 
     test "update_car_settings/2 with valid data updates the settings" do
@@ -154,6 +157,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_no_shift_state_reading == false
       assert settings.req_no_temp_reading == false
       assert settings.req_not_unlocked == true
+      assert settings.sleep_mode_enabled == false
     end
 
     test "update_car_settings/2 publishes the settings" do
@@ -182,10 +186,58 @@ defmodule TeslaMate.SettingsTest do
                req_no_temp_reading: ["can't be blank"],
                req_not_unlocked: ["can't be blank"],
                suspend_after_idle_min: ["can't be blank"],
-               suspend_min: ["can't be blank"]
+               suspend_min: ["can't be blank"],
+               sleep_mode_enabled: ["can't be blank"]
              }
 
       assert [^settings] = Settings.get_car_settings()
+    end
+
+    test "toggling sleep mode status clears the corresponding geo-fence black- & whitelists" do
+      alias TeslaMate.Locations.GeoFence
+      alias TeslaMate.Locations
+      alias TeslaMate.Log.Car
+
+      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
+
+      car = car_fixture()
+      another_car = car_fixture(eid: 43, vid: 43, vin: "43")
+
+      car_id = car.id
+      another_car_id = another_car.id
+
+      {:ok, geofence} =
+        Locations.create_geofence(%{
+          name: "foo",
+          latitude: -50.606262,
+          longitude: 165.972475,
+          radius: 250,
+          sleep_mode_blacklist: [car],
+          sleep_mode_whitelist: [car]
+        })
+
+      {:ok, another_geofence} =
+        Locations.create_geofence(%{
+          name: "bar",
+          latitude: 37.457631,
+          longitude: -92.105263,
+          radius: 250,
+          sleep_mode_blacklist: [another_car],
+          sleep_mode_whitelist: [another_car]
+        })
+
+      [%CarSettings{car: %Car{id: ^car_id}} = settings, _] = Settings.get_car_settings()
+
+      assert {:ok, %CarSettings{} = settings} =
+               Settings.update_car_settings(settings, %{sleep_mode_enabled: false})
+
+      assert %GeoFence{sleep_mode_whitelist: [], sleep_mode_blacklist: []} =
+               Locations.get_geofence!(geofence.id)
+
+      assert %GeoFence{
+               sleep_mode_whitelist: [%Car{id: ^another_car_id}],
+               sleep_mode_blacklist: [%Car{id: ^another_car_id}]
+             } = Locations.get_geofence!(another_geofence.id)
     end
   end
 

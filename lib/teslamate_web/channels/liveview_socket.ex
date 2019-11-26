@@ -8,21 +8,25 @@ defmodule TeslaMateWeb.LiveViewSocket do
   """
   use Phoenix.Socket, log: :debug
 
+  if Version.match?(System.version(), ">= 1.8.0") do
+    @derive {Inspect, only: [:id, :endpoint, :view, :parent_pid, :root_id, :assigns, :changed]}
+  end
+
   defstruct id: nil,
             endpoint: nil,
             view: nil,
-            router: nil,
             parent_pid: nil,
             root_pid: nil,
             assigns: %{},
             changed: %{},
-            temporary: %{},
-            fingerprints: {nil, %{}},
             private: %{},
+            fingerprints: Phoenix.LiveView.Diff.new_fingerprints(),
             redirected: nil,
             connected?: false
 
   @type t :: %__MODULE__{}
+  @type unsigned_params :: map
+  @type assigns :: map
 
   channel "lv:*", Phoenix.LiveView.Channel
 

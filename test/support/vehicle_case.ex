@@ -17,6 +17,7 @@ defmodule TeslaMate.VehicleCase do
         log_name = :"log_#{name}"
         api_name = :"api_#{name}"
         settings_name = :"settings_#{name}"
+        locations_name = :"locations_#{name}"
         vehicles_name = :"vehicles_#{name}"
         pubsub_name = :"pubsub_#{name}"
 
@@ -25,6 +26,15 @@ defmodule TeslaMate.VehicleCase do
         {:ok, _pid} = start_supervised({SettingsMock, name: settings_name, pid: self()})
         {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
         {:ok, _pid} = start_supervised({PubSubMock, name: pubsub_name, pid: self()})
+
+        {:ok, _pid} =
+          start_supervised(
+            {LocationsMock,
+             name: locations_name,
+             pid: self(),
+             blacklist: Keyword.get(opts, :blacklist, []),
+             whitelist: Keyword.get(opts, :whitelist, [])}
+          )
 
         opts =
           Keyword.put_new_lazy(opts, :car, fn ->
@@ -51,6 +61,7 @@ defmodule TeslaMate.VehicleCase do
                deps_log: {LogMock, log_name},
                deps_api: {ApiMock, api_name},
                deps_settings: {SettingsMock, settings_name},
+               deps_locations: {LocationsMock, locations_name},
                deps_vehicles: {VehiclesMock, vehicles_name},
                deps_pubsub: {PubSubMock, pubsub_name}
              )}

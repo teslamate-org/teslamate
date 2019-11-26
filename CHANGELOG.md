@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.13.0] - 2019-11-25
+
+### New Features
+
+- Display link "Dashboards" inside the navigation bar (it becomes visible after clicking an address in one of the Grafana dashboards. Alternatively the Grafana URL can be added manually on the settings page)
+- Enable or disable the sleep mode depending on the location. For example, the car can be allowed to sleep at home or work, but nowhere else.
+- Extend Charge Stats Dashboard with discharge stats, a charge delta graph and a charge heatmap ([#270](https://github.com/adriankumpf/teslamate/pull/270) by [@marcogabriel](https://github.com/marcogabriel))
+
+### Enhancements
+
+- Make sleep mode separately configurable for each car
+- Reduce default "Time to try sleeping" to 12 minutes for newer vehicles
+- The "States" dashboard now includes software updates
+- Automatically repair trips and charges with missing addresses (e.g. because OpenStreetMap was temporarily unavailable)
+- Update thresholds of the battery level gauge ([#256](https://github.com/adriankumpf/teslamate/pull/256) by [@marcogabriel](https://github.com/marcogabriel))
+
+### Bug Fixes
+
+- Fix issue where consumption values were displayed as 0
+- Fix issue where installing a software update when charging would produce an incomplete charge record
+
+---
+
+```text
+TeslaMate is open source and completely free for everyone to use.
+
+If you like this project and want to support further development, please consider making a donation.
+```
+
 ## [1.12.2] - 2019-11-06
 
 ### Bug Fixes
@@ -544,7 +573,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.12.2...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/adriankumpf/teslamate/compare/v1.12.2...v1.13.0
 [1.12.2]: https://github.com/adriankumpf/teslamate/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/adriankumpf/teslamate/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/adriankumpf/teslamate/compare/v1.11.1...v1.12.0

@@ -4,7 +4,7 @@ defmodule TeslaMate.MixProject do
   def project do
     [
       app: :teslamate,
-      version: "1.13.0-dev",
+      version: "1.13.0",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -59,7 +59,8 @@ defmodule TeslaMate.MixProject do
       {:srtm, "~> 0.2"},
       {:fuse, "~> 2.4"},
       {:mock, "~> 0.3", only: :test},
-      {:castore, "~> 0.1"}
+      {:castore, "~> 0.1"},
+      {:cachex, "~> 3.2"}
     ]
   end
 

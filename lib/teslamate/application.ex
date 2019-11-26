@@ -7,8 +7,9 @@ defmodule TeslaMate.Application do
     [
       TeslaMate.Repo,
       TeslaMate.Api,
+      TeslaMate.Locations,
       TeslaMateWeb.Endpoint,
-      TeslaMate.Mapping,
+      TeslaMate.Terrain,
       TeslaMate.Vehicles,
       if(mqtt_enabled?(), do: TeslaMate.Mqtt),
       TeslaMate.Repair

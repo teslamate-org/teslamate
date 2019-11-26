@@ -5,7 +5,7 @@ defmodule TeslaMate.Locations.GeoFence do
   import Ecto.Query
   import TeslaMate.CustomExpressions, only: [within_geofence?: 3]
 
-  alias TeslaMate.Log.{ChargingProcess, Drive}
+  alias TeslaMate.Log.{ChargingProcess, Drive, Car}
 
   schema "geofences" do
     field :name, :string
@@ -23,6 +23,18 @@ defmodule TeslaMate.Locations.GeoFence do
     has_many :drives_start, Drive, foreign_key: :start_geofence_id, on_delete: :nilify_all
     has_many :drives_end, Drive, foreign_key: :end_geofence_id, on_delete: :nilify_all
 
+    many_to_many :sleep_mode_whitelist, Car,
+      join_through: "geofence_sleep_mode_whitelist",
+      join_keys: [geofence_id: :id, car_id: :id],
+      on_replace: :delete,
+      unique: true
+
+    many_to_many :sleep_mode_blacklist, Car,
+      join_through: "geofence_sleep_mode_blacklist",
+      join_keys: [geofence_id: :id, car_id: :id],
+      on_replace: :delete,
+      unique: true
+
     timestamps()
   end
 
@@ -37,6 +49,8 @@ defmodule TeslaMate.Locations.GeoFence do
       :phase_correction,
       :apply_phase_correction
     ])
+    |> put_assoc_if(attrs, :sleep_mode_blacklist)
+    |> put_assoc_if(attrs, :sleep_mode_whitelist)
     |> validate_required([:name, :latitude, :longitude, :radius])
     |> validate_number(:radius, greater_than: 0, less_than: 1000)
     |> validate_number(:phase_correction, greater_than: 0, less_than_or_equal_to: 3)
@@ -56,6 +70,13 @@ defmodule TeslaMate.Locations.GeoFence do
         changeset
       end
     end)
+  end
+
+  defp put_assoc_if(changeset, attrs, key) do
+    case attrs[key] || attrs["#{key}"] do
+      nil -> changeset
+      val -> put_assoc(changeset, key, val)
+    end
   end
 
   defp where_exclude(query, %__MODULE__{id: nil}), do: query

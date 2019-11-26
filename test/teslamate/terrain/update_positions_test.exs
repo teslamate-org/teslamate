@@ -1,7 +1,7 @@
-defmodule TeslaMate.Mapping.UpdatePositionsTest do
+defmodule TeslaMate.Terrain.UpdatePositionsTest do
   use TeslaMate.DataCase
 
-  alias TeslaMate.{Log, Mapping}
+  alias TeslaMate.{Log, Terrain}
   alias TeslaMate.Log.Position
 
   defp start_mapping(name, responses) do
@@ -10,7 +10,7 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
     {:ok, _pid} = start_supervised({SRTMMock, name: srtm_name, pid: self(), responses: responses})
 
     {:ok, _} =
-      start_supervised({Mapping, name: name, timeout: 100, deps_srtm: {SRTMMock, srtm_name}})
+      start_supervised({Terrain, name: name, timeout: 100, deps_srtm: {SRTMMock, srtm_name}})
 
     :ok
   end
@@ -38,9 +38,9 @@ defmodule TeslaMate.Mapping.UpdatePositionsTest do
       })
 
     # blocked
-    assert Mapping.get_elevation(name, {0, 0}) == nil
-    assert Mapping.get_elevation(name, {0, 0}) == nil
-    assert Mapping.get_elevation(name, {0, 0}) == nil
+    assert Terrain.get_elevation(name, {0, 0}) == nil
+    assert Terrain.get_elevation(name, {0, 0}) == nil
+    assert Terrain.get_elevation(name, {0, 0}) == nil
 
     for {_, i} <- Enum.with_index(positions) do
       if i in [50, 150] do

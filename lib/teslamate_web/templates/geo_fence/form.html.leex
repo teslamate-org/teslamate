@@ -1,4 +1,17 @@
-<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save, class: "geofence"] %>
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><%= link gettext("Home"), to: "/" %></li>
+    <li><%= link gettext("Geo-fences"), to: "/geo-fences" %></li>
+    <li class="is-active"><a href="#"><%=
+      case @action do
+        :new -> Ecto.Changeset.get_field(@changeset, :name) || "…"
+        :edit -> @geofence.name
+      end
+    %></a></li>
+  </ul>
+</nav>
+
+<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save, class: "geofence", id: @geofence.id] %>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <%= label f, :name, gettext("Name"), class: "label" %>
@@ -91,6 +104,44 @@
         </div>
         <% end %>
       </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal mt-20">
+    <div class="field-label is-normal">
+      <%= label class: "label" do gettext("Sleep Mode Enabled") end %>
+    </div>
+    <div class="field-body">
+      <table class="table is-fullwidth">
+        <tbody>
+        <%= for settings <- @car_settings do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= settings.car.name %></td>
+            <td align="right">
+              <%
+                car_id = settings.car.id
+
+                value =
+                  if settings.sleep_mode_enabled do
+                    Enum.find(@sleep_mode_blacklist, &match?(%Car{id: ^car_id}, &1)) == nil
+                  else
+                    Enum.find(@sleep_mode_whitelist, &match?(%Car{id: ^car_id}, &1)) != nil
+                  end
+              %>
+
+              <%= checkbox :sleep_mode, :"#{settings.car.id}", class: "switch is-rounded is-success ",
+                                                             phx_click: "toggle",
+                                                             phx_value_car: settings.car.id,
+                                                             phx_value_checked: to_string(not value),
+                                                             value: value
+              %>
+              <%= label :sleep_mode, :"#{settings.car.id}", nil %>
+            </td>
+          </tr>
+        <% end %>
+
+        </tbody>
+      </table>
     </div>
   </div>
 

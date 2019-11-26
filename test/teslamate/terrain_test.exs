@@ -1,7 +1,7 @@
-defmodule TeslaMate.MappingTest do
+defmodule TeslaMate.TerrainTest do
   use TeslaMate.DataCase, async: true
 
-  alias TeslaMate.Mapping
+  alias TeslaMate.Terrain
 
   def start_mapping(name, responses \\ %{}) do
     log_name = :"log_#{name}"
@@ -12,12 +12,12 @@ defmodule TeslaMate.MappingTest do
 
     opts = [
       name: name,
-      timeout: 150,
+      timeout: 500,
       deps_log: {LogMock, log_name},
       deps_srtm: {SRTMMock, srtm_name}
     ]
 
-    {:ok, _} = start_supervised({Mapping, opts})
+    {:ok, _} = start_supervised({Terrain, opts})
     assert_receive {:get_positions_without_elevation, 0}
 
     :ok
@@ -27,7 +27,7 @@ defmodule TeslaMate.MappingTest do
     test "return the elevation", %{test: name} do
       :ok = start_mapping(name, %{{0, 0} => fn -> {:ok, 42} end})
 
-      assert 42 == Mapping.get_elevation(name, {0, 0})
+      assert 42 == Terrain.get_elevation(name, {0, 0})
       assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
 
       refute_receive _
@@ -37,7 +37,7 @@ defmodule TeslaMate.MappingTest do
     test "return nil if an error occured", %{test: name} do
       :ok = start_mapping(name, %{{0, 0} => fn -> {:error, :kaputt} end})
 
-      assert Mapping.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == nil
 
       TestHelper.eventually(fn ->
         assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
@@ -55,12 +55,14 @@ defmodule TeslaMate.MappingTest do
           end
         })
 
-      assert Mapping.get_elevation(name, {0, 0}) == nil
-      Process.sleep(100)
-      assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
+      assert Terrain.get_elevation(name, {0, 0}) == nil
+
+      TestHelper.eventually(fn ->
+        assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
+      end)
 
       # still blocked
-      assert Mapping.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == nil
 
       refute_receive _, 300
     end
@@ -75,9 +77,11 @@ defmodule TeslaMate.MappingTest do
           end
         })
 
-      assert Mapping.get_elevation(name, {1, 1}) == nil
-      Process.sleep(100)
-      assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 1, 1}}
+      assert Terrain.get_elevation(name, {1, 1}) == nil
+
+      TestHelper.eventually(fn ->
+        assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 1, 1}}
+      end)
 
       refute_receive _
     end
@@ -89,11 +93,11 @@ defmodule TeslaMate.MappingTest do
           {0, 0} => fn -> {:error, :kaputt} end
         })
 
-      assert Mapping.get_elevation(name, {0, 0}) == nil
-      assert Mapping.get_elevation(name, {0, 0}) == nil
-      assert Mapping.get_elevation(name, {0, 0}) == nil
-      assert Mapping.get_elevation(name, {0, 0}) == nil
-      assert Mapping.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == nil
 
       # circuit broke after 3 attempts
       TestHelper.eventually(
@@ -102,7 +106,7 @@ defmodule TeslaMate.MappingTest do
           assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
           assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
         end,
-        attempts: 15
+        attempts: 25
       )
 
       refute_receive _
