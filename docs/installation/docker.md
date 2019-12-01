@@ -1,5 +1,17 @@
 # Installation with Docker
 
+This setup doesn't use SSL (HTTPS) it's recommended only if you are running TeslaMate on your home network, as otherwise your Tesla credentials might be at risk.
+
+## Requirements
+
+* Docker
+* A Machine that's always on, so TeslaMate can continually fetch data
+* External internet access, to talk to tesla.com
+
+If you are new to Docker, see [Docker on Raspberry Pi](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl)
+
+## Setup
+
 The recommended way to install and run TeslaMate is to use Docker. Create a file called `docker-compose.yml` with the following content:
 
 **docker-compose.yml**
@@ -60,8 +72,13 @@ volumes:
     mosquitto-data:
 ```
 
+## Start Docker
+
 Afterwards start the stack with `docker-compose up`.
 
-To sign in with your Tesla Account open the web interface at [http://your-ip-address:4000](http://localhost:4000).
 
-The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000).
+## Usage
+
+1) Open the web interface [http://your-ip-address:4000](http://localhost:4000)
+2) Sign in with your Tesla Account open the web interface
+3) The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000).

@@ -127,7 +127,7 @@ $TESLAMATEPATH/_build/prod/rel/teslamate/bin/teslamate start
 Add the following to /etc/rc.local, to start a screen session at boot time and run the TeslaMate server within a screen session. This lets you interactively connect to the session if needed.
 
 ```bash
-# Start Teslamate
+# Start TeslaMate
 cd /usr/src/teslamate
 screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
 ```
