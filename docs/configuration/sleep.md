@@ -54,7 +54,7 @@ If you are specifying the local (LAN) IP address/port of your TeslaMate instance
 For these reasons, it is necessary to use a method that allows external communication between your smartphone and your TeslaMate instance. There are two key ways that this can be achieved:
 
 - Use a VPN solution such as Wireguard or OpenVPN.
-- Make your TeslaMate instance publicly available (see [Advanved Docker Setup](../installation/docker_advanced.md) for an example).
+- Make your TeslaMate instance publicly available (see [Advanced Docker Setup](../installation/docker_advanced.md) for an example).
 
 #### Android
 
@@ -83,7 +83,7 @@ In addition to Bluetooth hints, which would address most use cases, it is also p
 - _automations.yaml_
 
   ```YAML
-  - alias: Wake Teslamate on Garage Open
+  - alias: Wake TeslaMate on Garage Open
     initial_state: on
     trigger:
       - platform: state

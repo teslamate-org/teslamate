@@ -48,80 +48,16 @@ A powerful, self-hosted data logger for your Tesla.
 
 ## Quick Start
 
-The recommended way to install and run TeslaMate is to use [Docker](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl). Create a file called `docker-compose.yml` with the following content:
-
-**docker-compose.yml**
-
-```YAML
-version: '3'
-
-services:
-  teslamate:
-    image: teslamate/teslamate:latest
-    restart: always
-    environment:
-      - DATABASE_USER=teslamate
-      - DATABASE_PASS=secret
-      - DATABASE_NAME=teslamate
-      - DATABASE_HOST=db
-      - MQTT_HOST=mosquitto
-    ports:
-      - 4000:4000
-    cap_drop:
-      - all
-
-  db:
-    image: postgres:11
-    restart: always
-    environment:
-      - POSTGRES_USER=teslamate
-      - POSTGRES_PASSWORD=secret
-    volumes:
-      - teslamate-db:/var/lib/postgresql/data
-
-  grafana:
-    image: teslamate/grafana:latest
-    restart: always
-    environment:
-      - DATABASE_USER=teslamate
-      - DATABASE_PASS=secret
-      - DATABASE_NAME=teslamate
-      - DATABASE_HOST=db
-    ports:
-      - 3000:3000
-    volumes:
-      - teslamate-grafana-data:/var/lib/grafana
-
-  mosquitto:
-    image: eclipse-mosquitto:1.6
-    restart: always
-    ports:
-      - 1883:1883
-    volumes:
-      - mosquitto-conf:/mosquitto/config
-      - mosquitto-data:/mosquitto/data
-
-volumes:
-    teslamate-db:
-    teslamate-grafana-data:
-    mosquitto-conf:
-    mosquitto-data:
-```
-
-Afterwards start the stack with `docker-compose up`.
-
-To sign in with your Tesla Account open the web interface at [http://your-ip-address:4000](http://localhost:4000).
-
-The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000).
+See [Docker (local install)](docs/installation/docker.md)
 
 ## Documentation
 
 The TeslaMate documentation is available [here](docs/README.md).
 
 - [Installation](docs/README.md#installation)
-  - [Docker (recommended)](docs/installation/docker.md)
-  - [Docker (advanced)](docs/installation/docker_advanced.md)
-  - [Manual Installation on Debian/Ubuntu](docs/installation/debian.md)
+  - [Docker](installation/docker.md) (simplified, recommended)
+  - [Docker (advanced)](installation/docker_advanced.md) (Reverse Proxy, Let's Encrypt Certificate, HTTP Basic Auth)
+  - [Debian/Ubuntu](installation/debian.md) (without Docker)
 - [Upgrading to a new version](docs/upgrading.md)
 - [Configuration](docs/README.md#configuration)
   - [Environment Variables](docs/configuration/environment_variables.md)

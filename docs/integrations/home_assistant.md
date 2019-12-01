@@ -1,6 +1,6 @@
 # HomeAssistant Integration
 
-## Introducton
+## Introduction
 
 Whilst HomeAssistant provides an official component for Tesla vehicles, the component has not been updated recently, and does not have the sophistication of TeslaMate's polling mechanism, resulting in the component's default values keeping the vehicle awake and draining the battery.
 
@@ -8,7 +8,7 @@ The ultimate goal of this guide is to consume as much of the TeslaMate polling d
 
 If your intention is to only use read-only sensor values, those provided by TeslaMate via MQTT are sufficient, and you do not need to utilise the official Tesla component. If however you would like to be able to write values to the Tesla API (Lock/Unlock Doors or automate Climate), there is a solution which involves configuring an extremely high polling interval for the Tesla component and using automation to populate the values from the TeslaMate MQTT parameters.
 
-## Screenshot
+## Screenshots
 
 ![HASS Screenshot](../images/hass-dashboard.png)
 

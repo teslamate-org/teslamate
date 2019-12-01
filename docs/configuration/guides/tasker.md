@@ -30,7 +30,7 @@ Please note that in the following examples, we will be specifying a URL to call 
 There are two key ways that this can be achieved:
 
 - Use a VPN solution such as Wireguard or [OpenVPN](https://github.com/adriankumpf/teslamate/issues/102#issuecomment-531497214)
-- Make your TeslaMate instance publicly available (see [Advanved Docker Setup](../../installation/docker_advanced.md) for an example).
+- Make your TeslaMate instance publicly available (see [Advanced Docker Setup](../../installation/docker_advanced.md) for an example).
 
 <img align="right" src="../../images/tasker-http.png" />
 
@@ -93,7 +93,7 @@ Provide the following details:
 
 ### Creating a Profile
 
-Now that the action to trigger the connection to TeslaMate has been created, we create a profile which will trigger the action in the event that a bluetooth connection is established to a Tesla vehicle.
+Now that the action to trigger the connection to TeslaMate has been created, we create a profile which will trigger the action in the event that a Bluetooth connection is established to a Tesla vehicle.
 
 - Select the **Profiles** tab in Tasker.
 - Click on the Plus (+) sign in the bottom-right corner of the screen.
@@ -121,7 +121,7 @@ This step is optional, however it may improve the battery efficiency of your veh
 - Name the task **TeslaMateSuspend**.
 - Select the checkmark to confirm adding the new task.
 
-- Select the same action that you selected for the intial resume task, and change the suspend in the URL to resume.
+- Select the same action that you selected for the initial resume task, and change the suspend in the URL to resume.
 
 ### Create an exit task for the Bluetooth profile
 

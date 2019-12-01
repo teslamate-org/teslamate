@@ -1,12 +1,18 @@
-# Advanved Docker Setup
+# Advanced Docker Setup
 
 _Credit goes to @Helmi for creating this setup_
 
-**What is different from the basic setup:**
+## What is different from the basic setup
 
-- everything sits behind a reverse proxy (Traefik) that terminates HTTPS traffic
-- custom configuration was moved into a separate _.env_ file
-- all publicly accessible services use fully qualified domain name and automatically acquire a Let's Encrypt certificate
+- Web services (`teslamate` and `grafana`) sits behind a reverse proxy (Traefik) which terminates HTTPS traffic
+- Custom configuration was moved into a separate `.env` file
+- All publicly accessible services use fully qualified domain name and automatically acquire a Let's Encrypt certificate
+
+## Requirements
+
+* Docker running on a machine that's always on
+* Two FQDN (`teslamate.example.com` & `grafana.example.com`)
+* External internet access, to talk to tesla.com
 
 ## Quick Start
 
@@ -125,17 +131,17 @@ TM_DB_NAME=teslamate
 GRAFANA_USER=admin
 GRAFANA_PW=admin
 
-FQDN_GRAFANA=your.host.for.grafana.com
-FQDN_TM=your.host.for.teslamate.com
+FQDN_GRAFANA=grafana.example.com
+FQDN_TM=teslamate.example.com
 
 TM_TZ=Europe/Berlin
 
-LETSENCRYPT_EMAIL=yourperson@lemail.com
+LETSENCRYPT_EMAIL=yourperson@example.com
 ```
 
 ### .htpasswd
 
-This file contains a user and password for accessing TeslaMate. You can generate it on the web if you don't have the apache tools installed (e.g. http://www.htaccesstools.com/htpasswd-generator/).
+This file contains a user and password for accessing TeslaMate (Basic-auth), note this is NOT your tesla.com password. You can generate it on the web if you don't have the Apache tools installed (e.g. http://www.htaccesstools.com/htpasswd-generator/).
 
 **Example:**
 
@@ -143,9 +149,20 @@ This file contains a user and password for accessing TeslaMate. You can generate
 teslamate:$apr1$0hau3aWq$yzNEh.ABwZBAIEYZ6WfbH/
 ```
 
+## Start Docker
+
+Afterwards start the stack with `docker-compose up`.
+
+## Usage
+
+1) Open the web interface [https://tesla.example.com](https://tesla.example.com)
+2) Sign in with your Tesla Account open the web interface
+3) The Grafana dashboards are available at [https://grafana.example.com](https://grafana.example.com).
+
+
 ## Tips for upgrading from the recommended docker setup
 
 If you are upgrading and want to keep your EXISTING DATA:
 
-- Make sure to setup your _.env_ file so the login/password are exactly what you used in your recommended setup (e.g. `teslamate/secret`)
-- If you have difficulty logging into your Grafana i.e. you cannot login with the credentials from either the original recommended setup or the values stored in the _.env_ file reset the admin password with the following command: `docker-compose exec grafana grafana-cli admin reset-admin-password`
+- Make sure to setup your `.env` file so the login/password are exactly what you used in your recommended setup (e.g. `teslamate/secret`)
+- If you have difficulty logging into your Grafana i.e. you cannot login with the credentials from either the original recommended setup or the values stored in the `.env` file reset the admin password with the following command: `docker-compose exec grafana grafana-cli admin reset-admin-password`
