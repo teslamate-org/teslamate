@@ -264,7 +264,7 @@
       ],
       "valueName": "avg"
     },
- {
+    {
       "cacheTimeout": null,
       "colorBackground": false,
       "colorValue": false,
@@ -437,7 +437,7 @@
           ]
         }
       ],
-      "timeFrom": null,
+      "timeFrom": "6M",
       "timeShift": null,
       "title": "Charge Heatmap",
       "tooltip": {
@@ -566,7 +566,7 @@
           "yaxis": "left"
         }
       ],
-      "timeFrom": null,
+      "timeFrom": "6M",
       "timeRegions": [],
       "timeShift": null,
       "title": "Charge Delta",
@@ -1075,7 +1075,7 @@
     ]
   },
   "time": {
-    "from": "now-6M",
+    "from": "now-10y",
     "to": "now"
   },
   "timepicker": {
