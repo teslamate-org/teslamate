@@ -73,7 +73,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           {"Temperature readings", 1, "online", %{req_no_temp_reading: true},
            climate_state: %{inside_temp: 10.0}},
           {"Preconditioning", 0, "online", %{}, climate_state: %{is_preconditioning: true}},
-          {"User present", 0, "online", %{}, vehicle_state: %{is_user_present: true}},
+          {"Driver present", 0, "online", %{}, vehicle_state: %{is_user_present: true}},
           {"Update in progress", 0, "updating", %{},
            vehicle_state: %{
              car_version: "v9",

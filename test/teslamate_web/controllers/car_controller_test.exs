@@ -154,7 +154,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "State of Charge", "69%")
       assert icon(html, "Locked", "lock")
-      assert icon(html, "User present", "account")
+      assert icon(html, "Driver present", "account")
       assert icon(html, "Preconditioning", "air-conditioner")
       assert icon(html, "Sentry Mode", "shield-check")
       assert icon(html, "Windows open", "window-open")

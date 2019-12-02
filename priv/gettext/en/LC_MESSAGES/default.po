@@ -219,11 +219,11 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:100
 #: lib/teslamate_web/templates/car/summary.html.leex:27
-msgid "User present"
+msgid "Driver present"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:233
+#: lib/teslamate_web/templates/car/summary.html.leex:232
 msgid "cancel sleep attempt"
 msgstr ""
 
@@ -433,6 +433,11 @@ msgid "Sleep Mode Enabled"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:104
+#: lib/teslamate_web/live/car_live/summary.ex:105
 msgid "Sleep Mode is disabled at current location"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:102
+msgid "An error occurred"
 msgstr ""

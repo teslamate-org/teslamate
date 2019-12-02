@@ -219,11 +219,11 @@ msgstr "Wächtermodus aktiviert"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:100
 #: lib/teslamate_web/templates/car/summary.html.leex:27
-msgid "User present"
-msgstr "Benutzer anwesend"
+msgid "Driver present"
+msgstr "Fahrer anwesend"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:233
+#: lib/teslamate_web/templates/car/summary.html.leex:232
 msgid "cancel sleep attempt"
 msgstr "Schlafversuch abbrechen"
 
@@ -433,6 +433,11 @@ msgid "Sleep Mode Enabled"
 msgstr "Schlafmodus aktiviert"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:104
+#: lib/teslamate_web/live/car_live/summary.ex:105
 msgid "Sleep Mode is disabled at current location"
 msgstr "Schlafmodus ist am aktuellen Ort deaktiviert"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:102
+msgid "An error occurred"
+msgstr "Ein Fehler ist aufgetreten"
