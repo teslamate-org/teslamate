@@ -55,9 +55,9 @@ See [Docker (local install)](docs/installation/docker.md)
 The TeslaMate documentation is available [here](docs/README.md).
 
 - [Installation](docs/README.md#installation)
-  - [Docker](installation/docker.md) (simplified, recommended)
-  - [Docker (advanced)](installation/docker_advanced.md) (Reverse Proxy, Let's Encrypt Certificate, HTTP Basic Auth)
-  - [Debian/Ubuntu](installation/debian.md) (without Docker)
+  - [Docker](docs/installation/docker.md) (simplified, recommended)
+  - [Docker (advanced)](docs/installation/docker_advanced.md) (Reverse Proxy, Let's Encrypt Certificate, HTTP Basic Auth)
+  - [Debian/Ubuntu](docs/installation/debian.md) (without Docker)
 - [Upgrading to a new version](docs/upgrading.md)
 - [Configuration](docs/README.md#configuration)
   - [Environment Variables](docs/configuration/environment_variables.md)
