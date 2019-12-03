@@ -18,8 +18,8 @@ You will be prompted for a Macro Name and Category. Provide the following Detail
 - **Category**: Uncategorized
 - **Name**: TeslaMateResume
 
-<img align="right" src="../../images/macrodroid-connect-select.png" />
-<img align="right" src="../../images/macrodroid-device-connected.png" />
+![](../../images/macrodroid-connect-select.png)
+![](../../images/macrodroid-device-connected.png)
 
 ### Defining a Trigger
 
