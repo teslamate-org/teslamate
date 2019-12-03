@@ -46,7 +46,8 @@ module.exports = (env, options) => ({
         loader: "url-loader",
         options: {
           limit: 10000,
-          name: "../images/[name].[hash:7].[ext]"
+          name: "../images/[name].[hash:7].[ext]",
+          esModule: false
         }
       },
 
@@ -55,7 +56,8 @@ module.exports = (env, options) => ({
         loader: "url-loader",
         options: {
           limit: 10000,
-          name: "../fonts/[name].[hash:7].[ext]"
+          name: "../fonts/[name].[hash:7].[ext]",
+          esModule: false
         }
       }
     ]
