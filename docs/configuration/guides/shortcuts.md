@@ -4,7 +4,7 @@ _Note: This guide is currently a work in progress. Check back soon for a complet
 
 ## Introduction
 
-<img src="../../images/shortcuts/icon.png" />
+![](../../images/shortcuts/icon.png)
 
 Shortcuts is an iOS application ("internal" since 13.1) with similar features to Tasker or MacroDroid on Android. It's meant to create shortcuts (sequence of actions triggered manually) or automations (sequence of actions triggered by events - i.e. Bluetooth device connected).
 
@@ -14,7 +14,7 @@ Unfortunately, only couple of the useful events (like NFC on NFC enabled phones)
 
 These values are used in the screenshots. Whenever you see them, replace them with the actual values used on your system.
 
-- Your wake up endpoint is exposed at: **https://mytm.myweb.com/wake** and proxied to something like http://teslamate:4000/api/car/$car_id/logging/resume where **\$car_id** is 1 if you have only one car.
+- Your wake up endpoint is exposed at: **https://teslamate.example.com/wake** and proxied to something like `http://teslamate:4000/api/car/$car_id/logging/resume` where `$car_id` is 1 if you have only one car.
 - The Endpoint is protected by **Basic Authentication** with the user **mylogin** and password **mysecretpassword**. Note that this **IS NOT** your Tesla password.
 
 ## Setup the automation
@@ -31,9 +31,9 @@ These values are used in the screenshots. Whenever you see them, replace them wi
 - Click **Device**, select your Tesla (you need to have it paired already) and click **Done** (upper right corner).
 - Click **Next** (upper right corner). This brings you to the list of actions (empty for now).
 
-<img src="../../images/shortcuts/create_00_home.png" /> <img src="../../images/shortcuts/create_01_aut_home.png" /> <img src="../../images/shortcuts/create_02_new_automation_type.png" />
-<img src="../../images/shortcuts/create_03_triggering_event.png" /> <img src="../../images/shortcuts/create_04_bluetooth.png" /> <img src="../../images/shortcuts/create_05_bluetooth_device.png" />
-<img src="../../images/shortcuts/create_06_bluetooth_selected.png" />
+![](../../images/shortcuts/create_00_home.png) ![](../../images/shortcuts/create_01_aut_home.png) ![](../../images/shortcuts/create_02_new_automation_type.png)
+![](../../images/shortcuts/create_03_triggering_event.png) ![](../../images/shortcuts/create_04_bluetooth.png) ![](../../images/shortcuts/create_05_bluetooth_device.png)
+![](../../images/shortcuts/create_06_bluetooth_selected.png)
 
 ### Building an action
 
@@ -41,23 +41,23 @@ These values are used in the screenshots. Whenever you see them, replace them wi
 - Select **Documents**, tap on the **Text** block and select the **Text** field.
 - Type in your login and password separated by colon e.g. `mylogin:mysecretpassword`
 
-  <img src="../../images/shortcuts/create_07_add_action.png" /> <img src="../../images/shortcuts/create_08_action_categories.png" /> <img src="../../images/shortcuts/create_09_docs_text.png" />
-  <img src="../../images/shortcuts/create_10_text_edit.png" />
+![](../../images/shortcuts/create_07_add_action.png) ![](../../images/shortcuts/create_08_action_categories.png) ![](../../images/shortcuts/create_09_docs_text.png)
+![](../../images/shortcuts/create_10_text_edit.png)
 
 - Click **+** icon below the actions. This brings you to the list of available actions.
 - You will be back in Documents. **DO NOT** (I know, it's tempting) press Back, you'd lose the previously entered actions in such case. Instead, scroll up and click the gray **X** next to Documents. This will bring you to the categories of action.
 - Select **Scripting** (gray icon), go to **Files** block and select **Base64 Encode**.
 
-<img src="../../images/shortcuts/create_11_text_edit_filled.png" /> <img src="../../images/shortcuts/create_12_documents_close.png" /> <img src="../../images/shortcuts/create_13_action_categories.png" />
-<img src="../../images/shortcuts/create_14_scripting_enc.png" />
+![](../../images/shortcuts/create_11_text_edit_filled.png) ![](../../images/shortcuts/create_12_documents_close.png) ![](../../images/shortcuts/create_13_action_categories.png)
+![](../../images/shortcuts/create_14_scripting_enc.png)
 
 - Click the **+** icon below the actions. This brings you to the list of available actions.
 - Click the gray **X** to close Scripting category.
 - Select **Web** (cyan icon), go to **URLs** block and select **URL**.
 - Type in your endpoint public URL e.g. `https://mytm.myweb.com/wake`
 
-<img src="../../images/shortcuts/create_15_enc_added.png" /> <img src="../../images/shortcuts/create_16_scripting_close.png" /> <img src="../../images/shortcuts/create_17_action_categories.png" />
-<img src="../../images/shortcuts/create_17_url.png" />
+![](../../images/shortcuts/create_15_enc_added.png) ![](../../images/shortcuts/create_16_scripting_close.png) ![](../../images/shortcuts/create_17_action_categories.png)
+![](../../images/shortcuts/create_17_url.png)
 
 - Click the **+** icon below the actions. This brings you to the list of available actions.
 - Stay in **Web** (cyan icon) again, go to **Web Requests** block and select **Get Contents of URL**.
@@ -65,15 +65,15 @@ These values are used in the screenshots. Whenever you see them, replace them wi
 - Change **Method** to **PUT**.
 - Click **Headers**
 
-<img src="../../images/shortcuts/create_18_url_edit.png" /> <img src="../../images/shortcuts/create_19_url_contents.png" /> <img src="../../images/shortcuts/create_20_url_contents_added.png" />
-<img src="../../images/shortcuts/create_21_show_more.png" /> <img src="../../images/shortcuts/create_22_method.png" />
+![](../../images/shortcuts/create_18_url_edit.png) ![](../../images/shortcuts/create_19_url_contents.png) ![](../../images/shortcuts/create_20_url_contents_added.png)
+![](../../images/shortcuts/create_21_show_more.png) ![](../../images/shortcuts/create_22_method.png)
 
 - In the **Headers** section, click on **Add new header** (green + icon).
 - Type **Authorization** in **Key** box and **"Basic "** (without the quotes, note the **space** after **Basic**) into the **Value** box.
 - While still in **Value** box, click **Base64 Encoded** on **Variables** panel (bottom of the screen). It will be added to **Value**.
 
-<img src="../../images/shortcuts/create_23_headers.png" /> <img src="../../images/shortcuts/create_24_headers_add.png" /> <img src="../../images/shortcuts/create_25_headers_values.png" />
-<img src="../../images/shortcuts/create_26_headers_values_var.png" />
+![](../../images/shortcuts/create_23_headers.png) ![](../../images/shortcuts/create_24_headers_add.png) ![](../../images/shortcuts/create_25_headers_values.png)
+![](../../images/shortcuts/create_26_headers_values_var.png)
 
 ### Saving an Automation
 
@@ -81,7 +81,7 @@ These values are used in the screenshots. Whenever you see them, replace them wi
 - Click **Done** (upper right corner), it will bring you to the main screen (list of automations).
 - You have your new automation ready.
 
-<img src="../../images/shortcuts/create_27_contents_filled.png" /> <img src="../../images/shortcuts/create_28_automation_detail.png" /> <img src="../../images/shortcuts/create_29_automation_list.png" />
+![](../../images/shortcuts/create_27_contents_filled.png) ![](../../images/shortcuts/create_28_automation_detail.png) ![](../../images/shortcuts/create_29_automation_list.png)
 
 ## Enabling / Disabling / Editing the Automation
 
@@ -90,7 +90,7 @@ These values are used in the screenshots. Whenever you see them, replace them wi
 - If you need to edit something, click thru to the appropriate part of the automation.
 - Save by clicking **Done**.
 
-<img src="../../images/shortcuts/edit_01_automation_detail.png" /> <img src="../../images/shortcuts/edit_02_edit_actions.png" />
+![](../../images/shortcuts/edit_01_automation_detail.png) ![](../../images/shortcuts/edit_02_edit_actions.png)
 
 ## Running the Automation
 
@@ -99,4 +99,4 @@ These values are used in the screenshots. Whenever you see them, replace them wi
 - Click **Run** button.
 - Done.
 
-<img src="../../images/shortcuts/run_01_run.png" /> <img src="../../images/shortcuts/run_00_notification.png" />
+![](../../images/shortcuts/run_01_run.png) ![](../../images/shortcuts/run_00_notification.png)

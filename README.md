@@ -84,5 +84,6 @@ just share your love and show your support.
 
 ## Credits
 
-- Authors: Adrian Kumpf - [List of contributors](https://github.com/adriankumpf/teslamate/graphs/contributors)
+- Authors: Adrian Kumpf
+- [List of contributors](https://github.com/adriankumpf/teslamate/graphs/contributors)
 - Distributed under MIT License

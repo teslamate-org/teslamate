@@ -10,7 +10,7 @@ _Credit goes to [jun3280net](https://github.com/jun3280net) and [MertonKnight](h
 
 Tasker should be downloaded from the [Google Play Store](https://play.google.com/store) (paid application). Open the Tasker app once the application is installed on your phone.
 
-<img align="right" src="../../images/tasker-create-action.png" />
+![](../../images/tasker-create-action.png)
 
 ### Create an action
 
@@ -32,7 +32,7 @@ There are two key ways that this can be achieved:
 - Use a VPN solution such as Wireguard or [OpenVPN](https://github.com/adriankumpf/teslamate/issues/102#issuecomment-531497214)
 - Make your TeslaMate instance publicly available (see [Advanced Docker Setup](../../installation/docker_advanced.md) for an example).
 
-<img align="right" src="../../images/tasker-http.png" />
+![](../../images/tasker-http.png)
 
 #### Using HTTP only (HTTP Request)
 
@@ -44,7 +44,7 @@ The HTTP Request plugin can be used to send a HTTP request to TeslaMate. Note th
 - **Query Parameters**: None
 - **Body**: None
 
-<img align="right" src="../../images/tasker-scriptlet.png" />
+![](../../images/tasker-scriptlet.png)
 
 #### Using HTTP or HTTPS (JavaScriptlet)
 
@@ -83,11 +83,11 @@ Provide the following details:
 - **Host**: `http://teslamate.domain.com/api/car/1/logging/resume`
 - **Basic Auth**: _Configure authentication if it is used in your environment_
 
-<img src="../../images/restask-config1.png" /><img src="../../images/restask-config2.png" />
+![](../../images/restask-config1.png) ![](../../images/restask-config2.png)
 
 - Press the Play button in the top-right hand corner of the screen to test the task. You should get a HTTP 204 (Successful with no response body) response from TeslaMate.
 
-<img src="../../images/http_204.png"/>
+![](../../images/http_204.png)
 
 - See the Testing Your Task section below to ensure you see the output expected.
 
@@ -108,9 +108,9 @@ When within Bluetooth range of your vehicle, turn off your Bluetooth connectivit
 
 - Check your TeslaMate logs, and verify that you see something similar to the following:
 
-<img src="../../images/teslamate-console-resume.png" />
+![](../../images/teslamate-console-resume.png)
 
-<img align="right" src="../../images/tasker-exit-task.png" />
+![](../../images/tasker-exit-task.png)
 
 ### Create an action for suspending logging
 
