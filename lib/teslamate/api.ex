@@ -118,24 +118,8 @@ defmodule TeslaMate.Api do
 
         {:ok, vehicles} ->
           vehicles =
-            Task.async_stream(
-              vehicles,
-              fn
-                %TeslaApi.Vehicle{state: "online", id: id} = vehicle ->
-                  case call(state.deps.tesla_api_vehicle, :get_with_state, [state.auth, id]) do
-                    {:ok, %TeslaApi.Vehicle{} = vehicle} ->
-                      vehicle
-
-                    {:error, reason} ->
-                      Logger.warn("TeslaApi.Error / #{inspect(reason, pretty: true)}")
-                      vehicle
-                  end
-
-                %TeslaApi.Vehicle{} = vehicle ->
-                  vehicle
-              end,
-              timeout: 32_500
-            )
+            vehicles
+            |> Task.async_stream(&preload_vehicle(&1, state), timeout: 32_500)
             |> Enum.map(fn {:ok, vehicle} -> vehicle end)
 
           {{:ok, vehicles}, state}
@@ -224,4 +208,19 @@ defmodule TeslaMate.Api do
 
     {:noreply, state}
   end
+
+  ## Private
+
+  defp preload_vehicle(%TeslaApi.Vehicle{state: "online", id: id} = vehicle, state) do
+    case call(state.deps.tesla_api_vehicle, :get_with_state, [state.auth, id]) do
+      {:ok, %TeslaApi.Vehicle{} = vehicle} ->
+        vehicle
+
+      {:error, reason} ->
+        Logger.warn("TeslaApi.Error / #{inspect(reason, pretty: true)}")
+        vehicle
+    end
+  end
+
+  defp preload_vehicle(%TeslaApi.Vehicle{} = vehicle, _state), do: vehicle
 end

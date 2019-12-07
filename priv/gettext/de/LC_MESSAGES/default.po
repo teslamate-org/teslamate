@@ -433,7 +433,7 @@ msgid "Sleep Mode Enabled"
 msgstr "Schlafmodus aktiviert"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:105
+#: lib/teslamate_web/live/car_live/summary.ex:106
 msgid "Sleep Mode is disabled at current location"
 msgstr "Schlafmodus ist am aktuellen Ort deaktiviert"
 
@@ -441,3 +441,8 @@ msgstr "Schlafmodus ist am aktuellen Ort deaktiviert"
 #: lib/teslamate_web/live/car_live/summary.ex:102
 msgid "An error occurred"
 msgstr "Ein Fehler ist aufgetreten"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:103
+msgid "Timeout"
+msgstr ""

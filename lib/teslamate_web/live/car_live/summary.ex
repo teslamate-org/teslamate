@@ -100,6 +100,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp translate_error(:user_present), do: gettext("Driver present")
   defp translate_error(:update_in_progress), do: gettext("Update in progress")
   defp translate_error(:unknown), do: gettext("An error occurred")
+  defp translate_error(:timeout), do: gettext("Timeout")
 
   defp translate_error(:sleep_mode_disabled_at_location),
     do: gettext("Sleep Mode is disabled at current location")
