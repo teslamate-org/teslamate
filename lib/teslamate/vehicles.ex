@@ -100,14 +100,19 @@ defmodule TeslaMate.Vehicles do
       with nil <- Log.get_car_by(vin: vehicle.vin),
            nil <- Log.get_car_by(vid: vehicle.vehicle_id),
            nil <- Log.get_car_by(eid: vehicle.id) do
-        suspend_min =
+        settings =
           case Vehicle.identify(vehicle) do
-            {:ok, %{model: m, trim_badging: nil}} when m in ["S", "X"] -> 12
-            {:ok, %{model: m}} when m in ["3", "Y"] -> 12
-            _ -> nil
+            {:ok, %{model: m, trim_badging: nil}} when m in ["S", "X"] ->
+              %CarSettings{suspend_min: 12}
+
+            {:ok, %{model: m}} when m in ["3", "Y"] ->
+              %CarSettings{suspend_min: 12}
+
+            _ ->
+              %CarSettings{}
           end
 
-        %Car{settings: %CarSettings{suspend_min: suspend_min}}
+        %Car{settings: settings}
       end
       |> Car.changeset(%{
         name: vehicle.display_name,

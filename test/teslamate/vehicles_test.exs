@@ -92,6 +92,7 @@ defmodule TeslaMate.VehiclesTest do
   describe "car settings" do
     alias TeslaApi.Vehicle.State.VehicleConfig
     alias TeslaMate.{Log, Repo}
+    alias TeslaMate.Vehicles.Vehicle.Summary
 
     import Ecto.Query
 
@@ -163,17 +164,24 @@ defmodule TeslaMate.VehiclesTest do
                from(c in Log.Car, preload: :settings, order_by: :id)
                |> Repo.all()
 
-      assert s.settings.suspend_min == 12
-      assert e.settings.suspend_min == 12
-      assert x.settings.suspend_min == 12
-      assert y.settings.suspend_min == 12
+      assert_suspend_min(s, 12)
+      assert_suspend_min(e, 12)
+      assert_suspend_min(x, 12)
+      assert_suspend_min(y, 12)
       # ---------------------------------
       assert [s, x | rest] = rest
-      assert s.settings.suspend_min == 21
-      assert x.settings.suspend_min == 21
+      assert_suspend_min(s, 21)
+      assert_suspend_min(x, 21)
       # ---------------------------------
       assert [asleep] = rest
-      assert asleep.settings.suspend_min == 21
+      assert_suspend_min(asleep, 21)
+    end
+
+    defp assert_suspend_min(car, suspend_min) do
+      assert car.settings.suspend_min == suspend_min
+
+      assert %Summary{car: %Log.Car{settings: %CarSettings{suspend_min: ^suspend_min}}} =
+               Vehicle.summary(car.id)
     end
   end
 end
