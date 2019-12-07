@@ -117,6 +117,27 @@ defmodule TeslaMate.Api do
           {{:error, reason}, state}
 
         {:ok, vehicles} ->
+          vehicles =
+            Task.async_stream(
+              vehicles,
+              fn
+                %TeslaApi.Vehicle{state: "online", id: id} = vehicle ->
+                  case call(state.deps.tesla_api_vehicle, :get_with_state, [state.auth, id]) do
+                    {:ok, %TeslaApi.Vehicle{} = vehicle} ->
+                      vehicle
+
+                    {:error, reason} ->
+                      Logger.warn("TeslaApi.Error / #{inspect(reason, pretty: true)}")
+                      vehicle
+                  end
+
+                %TeslaApi.Vehicle{} = vehicle ->
+                  vehicle
+              end,
+              timeout: 32_500
+            )
+            |> Enum.map(fn {:ok, vehicle} -> vehicle end)
+
           {{:ok, vehicles}, state}
       end
 
