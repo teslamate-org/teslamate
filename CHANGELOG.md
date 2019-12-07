@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.13.2] - 2019-12-07
+
+### Enhancements
+
+- Enable the time range control in the "Charging Stats" dashboard ([#278](https://github.com/adriankumpf/teslamate/pull/278) by [@nnoally](https://github.com/nnoally))
+- Various docs improvements ([#285](https://github.com/adriankumpf/teslamate/pull/285) by [@gundalow](https://github.com/gundalow))
+
+### Bug Fixes
+
+- Fix issue where on a brand new installation suspending logging would only work after a restart
+- Fix the elevation scale in the Drive Details
+
 ## [1.13.1] - 2019-11-26
 
 ### Enhancements
@@ -589,7 +601,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.13.1...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.13.2...HEAD
+[1.13.2]: https://github.com/adriankumpf/teslamate/compare/v1.13.1...v1.13.2
 [1.13.1]: https://github.com/adriankumpf/teslamate/compare/v1.13.0...v1.13.1
 [1.13.0]: https://github.com/adriankumpf/teslamate/compare/v1.12.2...v1.13.0
 [1.12.2]: https://github.com/adriankumpf/teslamate/compare/v1.12.1...v1.12.2
