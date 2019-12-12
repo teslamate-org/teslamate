@@ -6,7 +6,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "@mdi/font": "^4.6.95",
+    "@mdi/font": "^4.7.95",
     "bulma-switch": "^2.0.0",
     "bulma-tooltip": "^3.0.2",
     "leaflet": "^1.6.0",
@@ -17,17 +17,17 @@
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
-    "@babel/preset-env": "^7.7.5",
+    "@babel/preset-env": "^7.7.6",
     "babel-loader": "^8.0.6",
     "bulma": "^0.8.0",
-    "copy-webpack-plugin": "^5.0.5",
-    "css-loader": "^3.2.1",
+    "copy-webpack-plugin": "^5.1.1",
+    "css-loader": "^3.3.0",
     "file-loader": "^5.0.2",
     "mini-css-extract-plugin": "^0.8.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "sass": "^1.23.7",
     "sass-loader": "^8.0.0",
-    "uglifyjs-webpack-plugin": "^2.2.0",
+    "terser-webpack-plugin": "^2.3.0",
     "url-loader": "^3.0.0",
     "webpack": "4.41.2",
     "webpack-cli": "^3.3.10"
