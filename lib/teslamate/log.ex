@@ -328,21 +328,19 @@ defmodule TeslaMate.Log do
     |> Repo.update()
   end
 
-  defp calculate_energy_used(%ChargingProcess{id: id}) do
+  defp calculate_energy_used(%ChargingProcess{id: id} = charging_process) do
+    phases = determine_phases(charging_process)
+
     query =
       from c in Charge,
         join: p in ChargingProcess,
         on: [id: c.charging_process_id],
-        full_join: g in GeoFence,
-        on: [id: p.geofence_id],
         select: %{
           energy_used:
             c_if is_nil(c.charger_phases) do
               c.charger_power
             else
-              c.charger_actual_current * c.charger_voltage *
-                coalesce(g.phase_correction, c.charger_phases) /
-                1000.0
+              c.charger_actual_current * c.charger_voltage * type(^phases, :float) / 1000.0
             end *
               fragment(
                 "EXTRACT(epoch FROM (?))",
@@ -359,6 +357,43 @@ defmodule TeslaMate.Log do
     |> case do
       {charge_energy_used} -> charge_energy_used
       _ -> nil
+    end
+  end
+
+  defp determine_phases(%ChargingProcess{id: id}) do
+    from(c in Charge,
+      join: p in ChargingProcess,
+      on: [id: c.charging_process_id],
+      select: {
+        avg(c.charger_power * 1000 / nullif(c.charger_actual_current * c.charger_voltage, 0)),
+        type(avg(c.charger_phases), :integer),
+        type(avg(c.charger_voltage), :float),
+        count()
+      },
+      group_by: c.charging_process_id,
+      where: c.charging_process_id == ^id
+    )
+    |> Repo.one()
+    |> case do
+      {p, r, v, n} when not is_nil(p) and p > 0 and n > 15 ->
+        cond do
+          r == round(p) ->
+            r
+
+          r == 3 and abs(p / :math.sqrt(r) - 1) <= 0.1 ->
+            Logger.info("Voltage correction: #{round(v)}V -> #{round(v / :math.sqrt(r))}V")
+            :math.sqrt(r)
+
+          abs(round(p) - p) <= 0.3 ->
+            Logger.info("Phase correction: #{r} -> #{round(p)}")
+            round(p)
+
+          true ->
+            nil
+        end
+
+      _ ->
+        nil
     end
   end
 
