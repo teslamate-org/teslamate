@@ -124,7 +124,7 @@ msgid "Units"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:153
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:119
 msgid "Back"
 msgstr ""
 
@@ -168,12 +168,12 @@ msgid "Radius"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:156
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:122
 msgid "Save"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:156
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:122
 msgid "Saving..."
 msgstr ""
 
@@ -364,34 +364,6 @@ msgid "Unlocked"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:88
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:88
-msgid "Phase"
-msgid_plural "Phases"
-msgstr[0] ""
-msgstr[1] ""
-
-#, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:79
-msgid "Phase correction"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:88
-msgid "disabled"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:101
-msgid "Apply phase correction to existing charges"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:78
-msgid "Some firmware versions incorrectly report 2 phases when charging at some chargers. With phase correction, a fixed value can be set when charging at this location, which overwrites the reported phases."
-msgstr ""
-
-#, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:88
 msgid "Remaining Time"
 msgstr ""
@@ -428,7 +400,7 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:112
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:78
 msgid "Sleep Mode Enabled"
 msgstr ""
 

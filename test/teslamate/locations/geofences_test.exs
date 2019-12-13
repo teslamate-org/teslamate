@@ -10,15 +10,13 @@ defmodule TeslaMate.LocationsGeofencesTest do
       name: "bar",
       latitude: 53.514521,
       longitude: 14.350144,
-      radius: 43,
-      phase_correction: 3
+      radius: 43
     }
     @invalid_attrs %{
       name: nil,
       latitude: nil,
       longitude: nil,
       radius: nil,
-      phase_correction: nil,
       sleep_mode_whitelist: nil,
       sleep_mode_blacklist: nil
     }
@@ -153,7 +151,6 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.latitude == 52.514521
       assert geofence.longitude == 13.350144
       assert geofence.radius == 42
-      assert geofence.phase_correction == nil
       geofence = Repo.preload(geofence, [:sleep_mode_whitelist, :sleep_mode_blacklist])
       assert geofence.sleep_mode_blacklist == []
       assert geofence.sleep_mode_whitelist == []
@@ -172,14 +169,12 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert {:error, %Ecto.Changeset{} = changeset} =
                Locations.create_geofence(%{
                  latitude: "wat",
-                 longitude: "wat",
-                 phase_correction: "wat"
+                 longitude: "wat"
                })
 
       assert %{
                latitude: ["is invalid"],
-               longitude: ["is invalid"],
-               phase_correction: ["is invalid"]
+               longitude: ["is invalid"]
              } = errors_on(changeset)
     end
 
@@ -263,7 +258,6 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.latitude == 53.514521
       assert geofence.longitude == 14.350144
       assert geofence.radius == 43
-      assert geofence.phase_correction == 3
       assert geofence.sleep_mode_blacklist == [car]
       assert geofence.sleep_mode_whitelist == [car]
 

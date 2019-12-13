@@ -10,7 +10,7 @@ defmodule TeslaMate.Locations do
 
   alias __MODULE__.{Address, Geocoder, GeoFence, Cache}
   alias TeslaMate.Log.{Drive, Position, ChargingProcess}
-  alias TeslaMate.{Repo, Log}
+  alias TeslaMate.Repo
 
   def child_spec(_arg) do
     %{id: __MODULE__, start: {Cachex, :start_link, [Cache, [limit: 100]]}}
@@ -69,20 +69,10 @@ defmodule TeslaMate.Locations do
       )
       |> Repo.update_all(set: [geofence_id: id])
 
-    if geofence.apply_phase_correction do
-      :ok =
-        from(c in ChargingProcess,
-          where: c.geofence_id == ^id,
-          preload: [:car, :position, :geofence]
-        )
-        |> Repo.all()
-        |> Enum.each(fn cproc -> {:ok, _} = Log.update_energy_used(cproc) end)
-    end
-
     :ok
   end
 
-  defp remove_geofence(%GeoFence{id: id} = geofence) do
+  defp remove_geofence(%GeoFence{id: id}) do
     {_n, nil} =
       Drive
       |> where(start_geofence_id: ^id)
@@ -93,22 +83,10 @@ defmodule TeslaMate.Locations do
       |> where(end_geofence_id: ^id)
       |> Repo.update_all(set: [end_geofence_id: nil])
 
-    charging_processes =
-      ChargingProcess
-      |> where(geofence_id: ^id)
-      |> Repo.all()
-
     {_n, nil} =
       ChargingProcess
       |> where(geofence_id: ^id)
       |> Repo.update_all(set: [geofence_id: nil])
-
-    if geofence.apply_phase_correction do
-      :ok =
-        Enum.each(charging_processes, fn cproc ->
-          {:ok, _} = Log.update_energy_used(cproc)
-        end)
-    end
 
     :ok
   end
@@ -205,7 +183,7 @@ defmodule TeslaMate.Locations do
 
   def delete_geofence(%GeoFence{} = geofence) do
     Repo.transaction(fn ->
-      with :ok <- remove_geofence(%GeoFence{geofence | apply_phase_correction: true}),
+      with :ok <- remove_geofence(geofence),
            {:ok, geofence} <- Repo.delete(geofence),
            :ok <- clear_cache() do
         geofence
