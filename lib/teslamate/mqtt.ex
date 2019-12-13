@@ -1,7 +1,7 @@
 defmodule TeslaMate.Mqtt do
   use Supervisor
 
-  alias __MODULE__.{Publisher, PubSub}
+  alias __MODULE__.{Publisher, PubSub, Handler}
 
   # API
 
@@ -48,7 +48,7 @@ defmodule TeslaMate.Mqtt do
       user_name: Keyword.get(auth, :username),
       password: Keyword.get(auth, :password),
       server: server,
-      handler: {Tortoise.Handler.Logger, []},
+      handler: {Handler, []},
       subscriptions: []
     ]
   end
