@@ -99,11 +99,12 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp translate_error(:preconditioning), do: gettext("Preconditioning")
   defp translate_error(:user_present), do: gettext("Driver present")
   defp translate_error(:update_in_progress), do: gettext("Update in progress")
-  defp translate_error(:unknown), do: gettext("An error occurred")
   defp translate_error(:timeout), do: gettext("Timeout")
 
   defp translate_error(:sleep_mode_disabled_at_location),
     do: gettext("Sleep Mode is disabled at current location")
+
+  defp translate_error(_other), do: gettext("An error occurred")
 
   defp cancel_timer(nil), do: :ok
   defp cancel_timer(ref) when is_reference(ref), do: Process.cancel_timer(ref)

@@ -27,7 +27,7 @@ defmodule TeslaApi.AuthMock do
         %State{pid: pid} = state
       ) do
     send(pid, {TeslaApi.AuthMock, event})
-    {:reply, {:error, %TeslaApi.Error{error: :induced_error}}, state}
+    {:reply, {:error, %TeslaApi.Error{reason: :induced_error, message: "foo"}}, state}
   end
 
   def handle_call(event, _from, %State{pid: pid} = state) do

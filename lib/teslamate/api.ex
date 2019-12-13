@@ -7,12 +7,15 @@ defmodule TeslaMate.Api do
   alias TeslaMate.Auth
   alias TeslaMate.Vehicles
 
+  alias Mojito.Response
+
   import Core.Dependency, only: [call: 3, call: 2]
 
   defstruct auth: nil, deps: %{}, refs: %{}
   alias __MODULE__, as: State
 
   @name __MODULE__
+  @timeout 65_000
 
   # API
 
@@ -23,15 +26,15 @@ defmodule TeslaMate.Api do
   ## State
 
   def list_vehicles(name \\ @name) do
-    GenServer.call(name, :list, 35_000)
+    GenServer.call(name, :list, @timeout)
   end
 
   def get_vehicle(name \\ @name, id) do
-    GenServer.call(name, {:get, id}, 35_000)
+    GenServer.call(name, {:get, id}, @timeout)
   end
 
   def get_vehicle_with_state(name \\ @name, id) do
-    GenServer.call(name, {:get_with_state, id}, 35_000)
+    GenServer.call(name, {:get_with_state, id}, @timeout)
   end
 
   ## Internals
@@ -71,7 +74,7 @@ defmodule TeslaMate.Api do
         :ok = call(state.deps.vehicles, :restart)
         {:reply, :ok, %State{state | auth: auth}, {:continue, :schedule_refresh}}
 
-      {:error, %TeslaApi.Error{error: reason}} ->
+      {:error, %TeslaApi.Error{reason: reason}} ->
         {:reply, {:error, reason}, state}
     end
   end
@@ -103,55 +106,28 @@ defmodule TeslaMate.Api do
   end
 
   @impl true
-  def handle_info({ref, {:list, result}}, %State{refs: refs} = state) do
+  def handle_info({ref, {cmd, result}}, %State{refs: refs} = state)
+      when cmd in [:list, :get, :get_with_state] do
     {reply, state} =
       case result do
-        {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
+        {:error, %TeslaApi.Error{reason: :unauthorized}} ->
           {{:error, :not_signed_in}, %State{state | auth: nil}}
 
-        {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
+        {:error, %TeslaApi.Error{reason: reason, env: %Response{status_code: status, body: body}}} ->
           Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
           {{:error, reason}, state}
 
-        {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
+        {:error, %TeslaApi.Error{reason: reason, message: msg}} ->
+          if is_binary(msg) and msg != "", do: Logger.warn("TeslaApi.Error / #{msg}")
           {{:error, reason}, state}
 
-        {:ok, vehicles} ->
+        {:ok, vehicles} when is_list(vehicles) ->
           vehicles =
             vehicles
             |> Task.async_stream(&preload_vehicle(&1, state), timeout: 32_500)
             |> Enum.map(fn {:ok, vehicle} -> vehicle end)
 
           {{:ok, vehicles}, state}
-      end
-
-    {from, refs} = Map.pop(refs, ref)
-    GenServer.reply(from, reply)
-
-    {:noreply, %State{state | refs: refs}}
-  end
-
-  def handle_info({ref, {_cmd, result}}, %State{refs: refs} = state) do
-    {reply, state} =
-      case result do
-        {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
-          {{:error, :not_signed_in}, %State{state | auth: nil}}
-
-        {:error, %TeslaApi.Error{env: %Tesla.Env{status: 404, body: %{"error" => "not_found"}}}} ->
-          {{:error, :vehicle_not_found}, state}
-
-        {:error,
-         %TeslaApi.Error{
-           env: %Tesla.Env{status: 405, body: %{"error" => "vehicle is curently in service"}}
-         }} ->
-          {{:error, :in_service}, state}
-
-        {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
-          Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
-          {{:error, reason}, state}
-
-        {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
-          {{:error, reason}, state}
 
         {:ok, %TeslaApi.Vehicle{} = vehicle} ->
           {{:ok, vehicle}, state}
@@ -171,8 +147,8 @@ defmodule TeslaMate.Api do
         :ok = call(state.deps.auth, :save, [auth])
         {:noreply, %State{state | auth: auth}, {:continue, :schedule_refresh}}
 
-      {:error, %TeslaApi.Error{error: error, message: reason, env: _}} ->
-        {:stop, {error, reason}}
+      {:error, %TeslaApi.Error{reason: reason, message: message}} ->
+        {:stop, {reason, message}}
     end
   end
 
@@ -184,11 +160,12 @@ defmodule TeslaMate.Api do
     with %Tokens{access: access, refresh: refresh} <- call(state.deps.auth, :get_tokens),
          api_auth = %TeslaApi.Auth{token: access, refresh_token: refresh},
          {:ok, %TeslaApi.Auth{} = auth} <- call(state.deps.tesla_api_auth, :refresh, [api_auth]) do
+      Logger.info("Refreshed api tokens")
       :ok = call(state.deps.auth, :save, [auth])
       {:noreply, %State{state | auth: auth}, {:continue, :schedule_refresh}}
     else
       nil ->
-        Logger.info("Please sign in.")
+        Logger.info("Please sign in")
         {:noreply, state}
 
       {:error, %TeslaApi.Error{} = error} ->
@@ -204,6 +181,7 @@ defmodule TeslaMate.Api do
       |> round()
       |> :timer.seconds()
 
+    Logger.info("Scheduling token refresh in #{round(ms / (24 * 60 * 60 * 1000))}d")
     Process.send_after(self(), :refresh_auth, ms)
 
     {:noreply, state}

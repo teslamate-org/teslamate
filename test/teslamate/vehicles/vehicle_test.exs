@@ -3,10 +3,10 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
   describe "starting" do
     @tag :capture_log
-    test "handles unkown and faulty states", %{test: name} do
+    test "handles unknown and faulty states", %{test: name} do
       events = [
         {:ok, %TeslaApi.Vehicle{state: "unknown"}},
-        {:error, %TeslaApi.Error{message: "boom"}}
+        {:error, %TeslaApi.Error{reason: :boom, message: "boom"}}
       ]
 
       :ok = start_vehicle(name, events)
@@ -237,11 +237,11 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       events = [
         {:ok, online_event()},
         {:ok, online_event()},
-        {:error, :in_service},
-        {:error, :in_service},
-        {:error, :in_service},
-        {:error, :in_service},
-        {:error, :in_service},
+        {:error, :vehicle_in_service},
+        {:error, :vehicle_in_service},
+        {:error, :vehicle_in_service},
+        {:error, :vehicle_in_service},
+        {:error, :vehicle_in_service},
         {:ok, online_event()},
         {:ok, online_event()}
       ]

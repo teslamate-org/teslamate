@@ -321,7 +321,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     @tag :signed_in
     test "renders current vehicle stats [:unavailable]", %{conn: conn} do
       events = [
-        {:error, :unkown}
+        {:error, :unknown}
       ]
 
       :ok = start_vehicles(events)

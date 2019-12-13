@@ -9,7 +9,9 @@ defmodule TeslaMate.ApiErrorsTest do
   @valid_credentials %Credentials{email: "teslamate", password: "foo"}
 
   test "sign_in", %{test: name} do
-    login = fn _email, _password -> {:error, %TeslaApi.Error{error: :unauthorized}} end
+    login = fn _email, _password ->
+      {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+    end
 
     with_mock TeslaApi.Auth, login: login do
       :ok = start_real_api(name)
@@ -21,9 +23,15 @@ defmodule TeslaMate.ApiErrorsTest do
     vehicle_mock =
       {TeslaApi.Vehicle, [],
        [
-         list: fn _ -> {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} end,
-         get: fn _, _ -> {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} end,
-         get_with_state: fn _, _ -> {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} end
+         list: fn _ ->
+           {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+         end,
+         get: fn _, _ ->
+           {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+         end,
+         get_with_state: fn _, _ ->
+           {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+         end
        ]}
 
     with_mocks [auth_mock(), vehicle_mock] do
@@ -40,8 +48,9 @@ defmodule TeslaMate.ApiErrorsTest do
     end
   end
 
+  @tag :capture_log
   test ":vehicle_not_found", %{test: name} do
-    api_error = %TeslaApi.Error{env: %Tesla.Env{status: 404, body: %{"error" => "not_found"}}}
+    api_error = %TeslaApi.Error{reason: :vehicle_not_found, env: %Mojito.Response{}}
 
     vehicle_mock =
       {TeslaApi.Vehicle, [],
@@ -61,7 +70,11 @@ defmodule TeslaMate.ApiErrorsTest do
 
   @tag :capture_log
   test "other error witn Env", %{test: name} do
-    api_error = %TeslaApi.Error{error: :unkown, env: %Tesla.Env{status: 503, body: ""}}
+    api_error = %TeslaApi.Error{
+      reason: :unknown,
+      message: "",
+      env: %Mojito.Response{status_code: 503, body: ""}
+    }
 
     vehicle_mock =
       {TeslaApi.Vehicle, [],
@@ -75,14 +88,15 @@ defmodule TeslaMate.ApiErrorsTest do
       :ok = start_real_api(name)
 
       assert :ok = Api.sign_in(@valid_credentials)
-      assert {:error, :unkown} = Api.list_vehicles()
-      assert {:error, :unkown} = Api.get_vehicle(0)
-      assert {:error, :unkown} = Api.get_vehicle_with_state(0)
+      assert {:error, :unknown} = Api.list_vehicles()
+      assert {:error, :unknown} = Api.get_vehicle(0)
+      assert {:error, :unknown} = Api.get_vehicle_with_state(0)
     end
   end
 
+  @tag :capture_log
   test "other error witnout Env", %{test: name} do
-    api_error = %TeslaApi.Error{error: :closed, message: "foo"}
+    api_error = %TeslaApi.Error{reason: :closed, message: "foo"}
 
     vehicle_mock =
       {TeslaApi.Vehicle, [],
