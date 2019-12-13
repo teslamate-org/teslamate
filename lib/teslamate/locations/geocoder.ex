@@ -58,7 +58,9 @@ defmodule TeslaMate.Locations.Geocoder do
     "path",
     "pedestrian",
     "road_reference",
-    "road_reference_intl"
+    "road_reference_intl",
+    "square",
+    "place"
   ]
 
   @neighbourhood_aliases [
@@ -67,6 +69,8 @@ defmodule TeslaMate.Locations.Geocoder do
     "city_district",
     "district",
     "quarter",
+    "residential",
+    "commercial",
     "houses",
     "subdivision"
   ]
