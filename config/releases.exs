@@ -25,7 +25,7 @@ config :teslamate, TeslaMate.Repo,
   database: System.fetch_env!("DATABASE_NAME"),
   hostname: System.fetch_env!("DATABASE_HOST"),
   port: System.get_env("DATABASE_PORT", "5432"),
-  pool_size: System.get_env("DATABASE_POOL_SIZE", "5") |> String.to_integer()
+  pool_size: System.get_env("DATABASE_POOL_SIZE", "8") |> String.to_integer()
 
 config :teslamate, TeslaMateWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT", "4000")],
