@@ -222,7 +222,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ## Info
 
-  def handle_event(:info, {ref, fetch_result}, _state, %Data{task: %Task{ref: ref}} = data)
+  def handle_event(:info, {ref, fetch_result}, state, %Data{task: %Task{ref: ref}} = data)
       when is_reference(ref) do
     case fetch_result do
       {:ok, %Vehicle{state: "online"} = vehicle} ->
@@ -293,7 +293,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:error, reason} ->
         Logger.error("Error / #{inspect(reason)}", car_id: data.car.id)
         :ok = fuse_name(:api_error, data.car.id) |> :fuse.melt()
-        {:keep_state_and_data, [notify_subscribers(), schedule_fetch(30)]}
+
+        interval =
+          case state do
+            {:driving, _, _} -> 5
+            :online -> 15
+            _ -> 30
+          end
+
+        {:keep_state_and_data, [notify_subscribers(), schedule_fetch(interval)]}
     end
   end
 
