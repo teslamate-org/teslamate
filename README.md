@@ -61,7 +61,7 @@ The TeslaMate documentation is available [here](docs/README.md).
 - [Upgrading to a new version](docs/upgrading.md)
 - [Configuration](docs/README.md#configuration)
   - [Environment Variables](docs/configuration/environment_variables.md)
-  - [Sleep Configuration](docs/configuration/sleep.md)
+  - [Sleep Mode Configuration](docs/configuration/sleep.md)
 - [Integrations](docs/README.md#integrations)
   - [HomeAssistant](docs/integrations/home_assistant.md)
   - [MQTT](docs/integrations/mqtt.md)

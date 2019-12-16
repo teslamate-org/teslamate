@@ -13,7 +13,7 @@
 ## Configuration
 
 - [Environment Variables](configuration/environment_variables.md) – Documents the available runtime configuration parameters.
-- [Sleep Configuration](configuration/sleep.md) – Documents the sleep behaviour for Tesla vehicles and the related TeslaMate configuration
+- [Sleep Mode Configuration](configuration/sleep.md) – Documents the sleep behaviour for Tesla vehicles and the related TeslaMate configuration
   - [Shortcuts Setup](configuration/guides/shortcuts.md)
   - [Tasker Setup](configuration/guides/tasker.md)
   - [MacroDroid Setup](configuration/guides/macro_droid.md)

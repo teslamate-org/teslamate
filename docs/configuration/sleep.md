@@ -1,4 +1,4 @@
-# Sleep Configuration
+# Sleep Mode Configuration
 
 ## Introduction
 
@@ -8,20 +8,21 @@ One challenge of Tesla API-based Data Loggers is that the continual polling of v
 
 ## Idle Time Before Trying to Sleep
 
-Following activity such as driving or charging, TeslaMate will continue to actively poll a vehicle for a configurable amount of time (by default **15 Minutes**) in order to detect whether the vehicle will continue to be in active use (for example, whether the vehicle has stopped temporarily to pick up a passenger or to visit a shop) or whether it will return to idle state.
+Following activity such as driving or charging, TeslaMate will continue to actively poll a vehicle (every few seconds) for a configurable amount of time (by default **15 Minutes**) in order to detect whether the vehicle will continue to be in active use (for example, whether the vehicle has stopped temporarily to pick up a passenger or to visit a shop) or whether it will return to idle state.
 
 - If this value is set too low, the car may attempt to sleep prior to actually being idle. In this case, you may miss subsequent parts of a trip, for example if you had stopped for 20 minutes to pick up some items but the idle time was set to 15 minutes, the car would attempt to sleep.
 - If this value is set too high, the time after a drive during which the car is continually actively polled and is unable to go to sleep will be longer than necessary, consuming a greater amount of battery power.
 
 ## Time to Try Sleeping
 
-Once the idle timer is reached, TeslaMate will try to allow the car to go to sleep. It does this by halting all polling for the configured time period, which is **21 Minutes** by default.
+Once the idle timer is reached, TeslaMate will try to allow the car to go to sleep. It does this by halting all polling for the configured time period, which is **21 Minutes** by default (12 Minutes for Model 3 and S/X Raven).
 
 - You will know that the vehicle is in this state when the status in TeslaMate is _falling asleep for x minutes_.
 - At the end of this polling window, TeslaMate will poll the vehicle status.
   - If the vehicle status is offline or asleep, this indicates that the sleep process succeeded and the car is no longer directly queryable.
   - If the vehicle is still online – which may sometimes happen due to e.g. background activity – TeslaMate will repeatedly halt polling for the configured time period until the vehicle is asleep.
-- Once the vehicle is offline/asleep polling will continue once per minute so that TeslaMate knows when the vehicle is woken up
+
+Once the vehicle is offline/asleep **polling will continue once per minute** so that TeslaMate knows when the vehicle is woken up.
 
 If you were to drive a vehicle that has just woken from Sleep Mode immediately after polling was halted, TeslaMate would miss 21 minutes (_by default_) of the drive session.
 
