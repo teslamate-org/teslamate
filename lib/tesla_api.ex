@@ -5,7 +5,7 @@ defmodule TeslaApi do
 
   @base_url URI.parse("https://owner-api.teslamotors.com/")
   @user_agent "github.com/adriankumpf/teslamate"
-  @timeout 60_000
+  @timeout 30_000
 
   def get(path, token, opts \\ []) when is_binary(token) do
     headers = [{"user-agent", @user_agent}, {"Authorization", "Bearer " <> token}]

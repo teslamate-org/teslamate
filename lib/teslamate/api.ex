@@ -15,7 +15,7 @@ defmodule TeslaMate.Api do
   alias __MODULE__, as: State
 
   @name __MODULE__
-  @timeout 65_000
+  @timeout 32_500
 
   # API
 
