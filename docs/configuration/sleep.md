@@ -22,7 +22,7 @@ Once the idle timer is reached, TeslaMate will try to allow the car to go to sle
   - If the vehicle status is offline or asleep, this indicates that the sleep process succeeded and the car is no longer directly queryable.
   - If the vehicle is still online – which may sometimes happen due to e.g. background activity – TeslaMate will repeatedly halt polling for the configured time period until the vehicle is asleep.
 
-Once the vehicle is offline/asleep **polling will continue once per minute** so that TeslaMate knows when the vehicle is woken up.
+Once the vehicle is offline/asleep **polling will continue twice per minute** so that TeslaMate knows when the vehicle is woken up.
 
 If you were to drive a vehicle that has just woken from Sleep Mode immediately after polling was halted, TeslaMate would miss 21 minutes (_by default_) of the drive session.
 

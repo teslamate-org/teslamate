@@ -23,7 +23,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   @topic inspect(__MODULE__)
 
-  @asleep_interval 60
+  @asleep_interval 30
   @driving_interval 2.5
 
   @drive_timout_min 15
