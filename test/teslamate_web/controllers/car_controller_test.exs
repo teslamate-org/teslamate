@@ -172,9 +172,9 @@ defmodule TeslaMateWeb.CarControllerTest do
            drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
            charge_state: %{
              timestamp: 0,
-             charger_power: 50,
+             charger_power: 11,
              charger_phases: 3,
-             charger_voltage: 230,
+             charger_voltage: 229,
              charger_actual_current: 16,
              ideal_battery_range: 200,
              est_battery_range: 180,
@@ -202,7 +202,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Range (ideal)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "Charged", "4.32 kWh")
-      assert table_row(html, "Charger Power", "11.04 kW")
+      assert table_row(html, "Charger Power", "11 kW")
 
       assert table_row(
                html,
