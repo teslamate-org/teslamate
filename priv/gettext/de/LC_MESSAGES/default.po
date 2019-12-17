@@ -361,7 +361,7 @@ msgstr "Health Check fehlgeschlagen"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:47
 msgid "Unlocked"
-msgstr "Verschlossen"
+msgstr "nicht verschlossen"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:88

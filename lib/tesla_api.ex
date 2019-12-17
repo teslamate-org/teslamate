@@ -43,7 +43,7 @@ defmodule TeslaApi do
         end
 
       {:error, %Err{reason: reason, message: msg}} ->
-        {:error, %Error{reason: reason, message: msg || "An unknown error has occurred"}}
+        {:error, %Error{reason: reason, message: msg}}
     end
   end
 

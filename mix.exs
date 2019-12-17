@@ -35,7 +35,6 @@ defmodule TeslaMate.MixProject do
 
   defp deps do
     [
-      # Default
       {:phoenix, "~> 1.4"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
