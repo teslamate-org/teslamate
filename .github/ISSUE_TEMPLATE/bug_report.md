@@ -2,15 +2,17 @@
 name: Bug report
 about: Create a report to improve this project
 title: ''
-labels: ''
+labels: bug
 assignees: ''
 
 ---
 
 **Describe the bug**
+
 A clear and concise description of what the bug is.
 
 **To Reproduce**
+
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -18,18 +20,24 @@ Steps to reproduce the behavior:
 4. See error
 
 **Expected behavior**
+
 A clear and concise description of what you expected to happen.
 
 **Relevant entries from the logs**
-_You **have to** provide the logs of the teslamate container / application unless the bug is limited to Grafana only. To fetch the logs of the teslamte container run the following command:_ `docker-compose logs teslamate`
+
+You must provide the logs of the teslamate container/application unless the bug can be narrowed down to Grafana.
+To get the teslamate Docker container logs, for example, use the following command: `docker-compose logs teslamate`.
 
 ```
 paste logs here
 ```
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
 
-**Operating environment (please complete the following information):**
+If applicable, add screenshots to help explain the problem.
+
+**Operating environment**
+
  - OS: [e.g. Ubuntu]
- - Version [e.g. v1.7.0]
+ - TeslaMate Version: [e.g. v1.14.0]
+ - Type of installation: [e.g. Docker or Manual]
