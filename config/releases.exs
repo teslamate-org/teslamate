@@ -7,7 +7,7 @@ defmodule Util do
 
   def validate_locale!("en"), do: "en"
   def validate_locale!("de"), do: "de"
-  def validate_locale!(lang), do: raise("Unsopported locale: #{inspect(lang)}")
+  def validate_locale!(lang), do: raise("Unsupported locale: #{inspect(lang)}")
 
   def parse_check_origin!("true"), do: true
   def parse_check_origin!("false"), do: false

@@ -1,9 +1,11 @@
 defmodule TeslaMate.Application do
-  @moduledoc false
-
   use Application
 
+  require Logger
+
   def start(_type, _args) do
+    Logger.info("Version: #{Application.spec(:teslamate, :vsn) || "???"}")
+
     [
       TeslaMate.Repo,
       TeslaMate.Api,
