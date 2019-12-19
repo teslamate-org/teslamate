@@ -61,11 +61,11 @@ For these reasons, it is necessary to use a method that allows external communic
 
 There are a number of applicatons that provide this functionality on Android:
 
-| Application                                                                                    | Price          | Guide(s)                                  |
-| ---------------------------------------------------------------------------------------------- | -------------- | ----------------------------------------- |
-| [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm)          | US\$3.00\*     | [Tasker Setup](guides/tasker.md)          |
-| [MacroDroid](https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid)            | Free (Limited) | [MacroDroid Setup](guides/macro_droid.md) |
-| [Automagic](https://play.google.com/store/apps/details?id=ch.gridvision.ppam.androidautomagic) | US\$3.50\*     | N/A                                       |
+| Application                                                                                    | Price          | Guide(s)                                    |
+| ---------------------------------------------------------------------------------------------- | -------------- | ------------------------------------------- |
+| [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm)          | US\$3.00\*     | [Tasker Setup](guides/tasker.html)          |
+| [MacroDroid](https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid)            | Free (Limited) | [MacroDroid Setup](guides/macro_droid.html) |
+| [Automagic](https://play.google.com/store/apps/details?id=ch.gridvision.ppam.androidautomagic) | US\$3.50\*     | N/A                                         |
 
 _\*If you’re going to pay for an app anyway, consider donating to this project as well 😎_
 
@@ -73,9 +73,9 @@ _\*If you’re going to pay for an app anyway, consider donating to this project
 
 On the iOS platform, Apple provides the Shortcuts workflow tool:
 
-| Application                                                      | Price | Guide(s)                               |
-| ---------------------------------------------------------------- | ----- | -------------------------------------- |
-| [Shortcuts](https://apps.apple.com/us/app/shortcuts/id915249334) | Free  | [Shortcuts Setup](guides/shortcuts.md) |
+| Application                                                      | Price | Guide(s)                                 |
+| ---------------------------------------------------------------- | ----- | ---------------------------------------- |
+| [Shortcuts](https://apps.apple.com/us/app/shortcuts/id915249334) | Free  | [Shortcuts Setup](guides/shortcuts.html) |
 
 ### Event-Based Hints
 

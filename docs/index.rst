@@ -38,7 +38,7 @@ Screenshots
 ~~~~~~~~~~~
 
 .. figure:: screenshots/drive.png
-   :target: screenshots/drive.png
+   :target: _images/drive.png
 
    The Drive Details dashboard in Grafana
 
@@ -49,7 +49,7 @@ Screenshots
 
 
 .. figure:: screenshots/web_interface.png
-   :target: screenshots/web_interface.png
+   :target: _images/web_interface.png
 
    TeslaMate homepage
 
