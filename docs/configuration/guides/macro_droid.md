@@ -1,6 +1,6 @@
 # MacroDroid Setup
 
-_Note: This guide is currently a work in progress. Check back soon for a complete walkthrough!_
+_Note: This guide is currently a work in progress. You can help improve it by clicking the `Edit on GitHub` link on the top right!_
 
 ## Introduction
 
