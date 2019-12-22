@@ -1,8 +1,4 @@
-# MacroDroid Setup
-
-_Note: This guide is currently a work in progress. You can help improve it by clicking the `Edit on GitHub` link on the top right!_
-
-## Introduction
+# MacroDroid Setup (Android)
 
 MacroDroid is an Android application with similar features to Tasker, but with a free version that provides:
 

@@ -1,6 +1,6 @@
-# FAQ
+# Frequently Asked Questions
 
-## Why are no consumption values displayed in Grafana?
+**Why are no consumption values displayed in Grafana?**
 
 Unfortunately the Tesla API does not return consumption values for a trip. In
 order to still be able to display values TeslaMate estimates the consumption on
@@ -9,7 +9,7 @@ sessions before the first estimate can be displayed. Each charging session will
 slightly improve the accuracy of the estimate, which is applied retroactively
 to all data.
 
-## What is the geo-fence feature for?
+**What is the geo-fence feature for?**
 
 At the moment geo-fences are a way to create custom locations like `🏡 Home` or
 `🛠️ Work` That may be particularly useful if the addresses (which are provided

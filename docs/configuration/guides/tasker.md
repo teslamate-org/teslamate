@@ -1,10 +1,8 @@
-# Tasker Setup for Android
-
-## Introduction
+# Tasker Setup (Android)
 
 This walkthrough provides a step-by-step configuration for the installation and configuration of Tasker in order to detect the Bluetooth connection between your mobile phone and your Tesla vehicle, to push a resume hint to TeslaMate every time your phone connects locally to Tesla's Bluetooth.
 
-_Credit goes to [jun3280net](https://github.com/jun3280net) and [MertonKnight](https://github.com/MertonKnight) for content used within this guide._
+## Steps
 
 ### Install Tasker and open the app
 

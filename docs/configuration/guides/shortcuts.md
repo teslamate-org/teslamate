@@ -1,10 +1,4 @@
-# iOS Shortcuts Setup
-
-_Note: This guide is currently a work in progress. Check back soon for a complete walkthrough!_
-
-## Introduction
-
-![](../../images/shortcuts/icon.png)
+# Shortcuts Setup (iOS)
 
 Shortcuts is an iOS application ("internal" since 13.1) with similar features to Tasker or MacroDroid on Android. It's meant to create shortcuts (sequence of actions triggered manually) or automations (sequence of actions triggered by events - i.e. Bluetooth device connected).
 

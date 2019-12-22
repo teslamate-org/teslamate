@@ -1,7 +1,5 @@
 # Sleep Mode Configuration
 
-## Introduction
-
 Tesla vehicles have a sleep mode which allows the vehicle to conserve battery power when not actively operating. After a period of inactivity, the vehicle will power down systems which are not necessary during times of inactivity.
 
 One challenge of Tesla API-based Data Loggers is that the continual polling of vehicles via the API results in the vehicle failing to go into sleep mode. To avoid these scenarios, TeslaMate uses two configuration parameters to define when a vehicle will start to sleep due to inactivity.
@@ -21,18 +19,9 @@ Once the idle timer is reached, TeslaMate will try to allow the car to go to sle
 - At the end of this polling window, TeslaMate will poll the vehicle status.
   - If the vehicle status is offline or asleep, this indicates that the sleep process succeeded and the car is no longer directly queryable.
   - If the vehicle is still online – which may sometimes happen due to e.g. background activity – TeslaMate will repeatedly halt polling for the configured time period until the vehicle is asleep.
-
-Once the vehicle is offline/asleep **polling will continue twice per minute** so that TeslaMate knows when the vehicle is woken up.
+- Once the vehicle is offline/asleep **polling will continue twice per minute** so that TeslaMate knows when the vehicle is woken up.
 
 If you were to drive a vehicle that has just woken from Sleep Mode immediately after polling was halted, TeslaMate would miss 21 minutes (_by default_) of the drive session.
-
-## Tested Configurations
-
-| _Tested By_                                    | _Vehicle Model + Year_ | _Software Version_ | _Time to Try Sleeping_ | _Outcome_                      |
-| ---------------------------------------------- | ---------------------- | ------------------ | ---------------------- | ------------------------------ |
-| [@adriankumpf](https://github.com/adriankumpf) | Model 3 AP 2019        | any                | 12 Minutes             | Vehicle sleeps perfectly       |
-| [@ngardiner](https://github.com/ngardiner)     | Model 3 MY 2019 (MCU2) | 2019.32.11.1       | 15 Minutes             | Vehicle sleeps without issue   |
-| [@ngardiner](https://github.com/ngardiner)     | Model 3 MY 2019 (MCU2) | 2019.32.11.1       | 12 Minutes             | Currently testing this setting |
 
 ## Providing wake-up hints to TeslaMate
 
@@ -63,11 +52,9 @@ There are a number of applicatons that provide this functionality on Android:
 
 | Application                                                                                    | Price          | Guide(s)                                    |
 | ---------------------------------------------------------------------------------------------- | -------------- | ------------------------------------------- |
-| [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm)          | US\$3.00\*     | [Tasker Setup](guides/tasker.html)          |
+| [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm)          | US\$3.00       | [Tasker Setup](guides/tasker.html)          |
 | [MacroDroid](https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid)            | Free (Limited) | [MacroDroid Setup](guides/macro_droid.html) |
-| [Automagic](https://play.google.com/store/apps/details?id=ch.gridvision.ppam.androidautomagic) | US\$3.50\*     | N/A                                         |
-
-_\*If you’re going to pay for an app anyway, consider donating to this project as well 😎_
+| [Automagic](https://play.google.com/store/apps/details?id=ch.gridvision.ppam.androidautomagic) | US\$3.50       | N/A                                         |
 
 #### iPhone
 

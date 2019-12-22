@@ -1,10 +1,10 @@
-# Development
+# Development and Contributing
 
 ## Requirements
 
-- Elixir >= 1.9
-- Postgres >= 10
-- An MQTT broker e.g. mosquitto (_optional_)
+- **Elixir** >= 1.9
+- **Postgres** >= 10
+- An **MQTT broker** e.g. mosquitto (_optional_)
 
 ## Initial Setup
 

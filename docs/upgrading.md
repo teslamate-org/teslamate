@@ -1,6 +1,6 @@
 # Upgrading to a new version
 
-## Docker Containers
+## Docker
 
 1. Check out the [Changelog](https://github.com/adriankumpf/teslamate/blob/master/CHANGELOG.md) before upgrading!
 

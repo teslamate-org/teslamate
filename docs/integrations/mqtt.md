@@ -1,7 +1,5 @@
 # MQTT Integration
 
-## Introduction
-
 The MQTT function within TeslaMate allows useful values to be published to an MQTT broker. This is useful in allowing other automation platforms to consume data from TeslaMate.
 
 ## MQTT Topics
