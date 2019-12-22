@@ -59,6 +59,7 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
   - [Simple Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker.html) (inside your home network)
   - [Advanced Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker_advanced.html) (Reverse Proxy, Let's Encrypt Certificate, HTTP Basic Auth)
   - [Manual install on Debian/Ubuntu](https://teslamate.readthedocs.io/en/latest/installation/debian.html) (without Docker)
+  - [Kubernetes install](https://hub.helm.sh/charts/billimek/teslamate) (opinionated helm chart)
   - [Upgrading to a new version](https://teslamate.readthedocs.io/en/latest/upgrading.html)
   - [Frequently Asked Questions](https://teslamate.readthedocs.io/en/latest/faq.html)
 - Sleep Mode
