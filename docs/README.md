@@ -5,6 +5,7 @@
 - [Docker](installation/docker.md) (simplified, recommended)
 - [Docker (advanced)](installation/docker_advanced.md) (Reverse Proxy, Let's Encrypt Certificate, HTTP Basic Auth)
 - [Debian/Ubuntu](installation/debian.md) (without Docker)
+- [Kubernetes](https://hub.helm.sh/charts/billimek/teslamate) (opinionated helm chart installed with a standalone postgresql database)
 
 ## Upgrading to a new version
 
