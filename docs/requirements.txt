@@ -1,1 +1,2 @@
 sphinx-markdown-tables
+sphinx-press-theme
