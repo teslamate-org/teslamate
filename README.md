@@ -1,5 +1,6 @@
 # TeslaMate
 
+[![](https://readthedocs.org/projects/teslamate/badge/?version=master))](https://teslamate.readthedocs.io/)
 [![](https://travis-ci.org/adriankumpf/teslamate.svg?branch=master)](https://travis-ci.org/adriankumpf/teslamate)
 [![](https://coveralls.io/repos/github/adriankumpf/teslamate/badge.svg?branch=master)](https://coveralls.io/github/adriankumpf/teslamate?branch=master)
 [![](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://hub.docker.com/r/teslamate/teslamate)
@@ -13,6 +14,10 @@ A powerful, self-hosted data logger for your Tesla.
 - Data is stored in a **Postgres** database
 - Visualization and data analysis with **Grafana**
 - Vehicle data is published to a local **MQTT** Broker
+
+## Documentation
+
+The full TeslaMate documentation is available on [Read The Docs](https://teslamate.readthedocs.io/).
 
 ## Features
 
@@ -48,25 +53,7 @@ A powerful, self-hosted data logger for your Tesla.
 
 ## Quick Start
 
-See [Docker (local install)](docs/installation/docker.md)
-
-## Documentation
-
-The TeslaMate documentation is available [here](docs/README.md).
-
-- [Installation](docs/README.md#installation)
-  - [Docker](docs/installation/docker.md) (simplified, recommended)
-  - [Docker (advanced)](docs/installation/docker_advanced.md) (Reverse Proxy, Let's Encrypt Certificate, HTTP Basic Auth)
-  - [Debian/Ubuntu](docs/installation/debian.md) (without Docker)
-- [Upgrading to a new version](docs/upgrading.md)
-- [Configuration](docs/README.md#configuration)
-  - [Environment Variables](docs/configuration/environment_variables.md)
-  - [Sleep Mode Configuration](docs/configuration/sleep.md)
-- [Integrations](docs/README.md#integrations)
-  - [HomeAssistant](docs/integrations/home_assistant.md)
-  - [MQTT](docs/integrations/mqtt.md)
-- [Frequently Asked Questions](docs/faq.md)
-- [Development](docs/development.md)
+The Full TeslaMate documentation is available on [Read The Docs](https://teslamate.readthedocs.io/).
 
 ## Donations
 
