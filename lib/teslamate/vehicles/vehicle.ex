@@ -333,11 +333,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(event, :fetch, state, data) when event in [:state_timeout, :internal] do
     task =
       Task.async(fn ->
-        try do
-          fetch(data, expected_state: state)
-        catch
-          :exit, {:timeout, _} -> {:error, :timeout}
-        end
+        fetch(data, expected_state: state)
       end)
 
     {:keep_state, %Data{data | task: task}}
