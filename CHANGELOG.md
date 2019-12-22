@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.14.0] - 2019-12-22
+
+### Enhancements
+
+**Documentation**
+
+[@gundalow](https://github.com/gundalow) has revamped the docs ([#292](https://github.com/adriankumpf/teslamate/pull/292), [#314](https://github.com/adriankumpf/teslamate/pull/314)). The new documentation is available here: [teslamate.readthedocs.io](https://teslamate.readthedocs.io)
+
+**Automatic phase correction**
+
+The phase correction is now applied automatically.
+
+Background: some vehicles incorrectly report 2 instead of 1 or 3 phases when charging. This led to an incorrect calculation of the 'kWh used'. Furthermore, the calculation did not work reliably in three-phase networks with e.g. 127/220V. Therefore it was necessary in the past to manually activate a phase correction for specific geo-fences. With this update the correction is now applied automatically.
+
+**Other enhancements**
+
+- Refactored API module
+- Increased polling frequency in asleep state
+- New OSM aliases
+- ... and other minor improvements
+
+### Bug Fixes
+
+- Efficiency Dashboard: convert km/h to mph in the temperature efficiency table
+- Fix an issue where the application could crash because the database pool was too small
+- Fix an issue where a drive/charge could be split into two parts due to API timeouts
+
+---
+
+```text
+TeslaMate is open source and completely free for everyone to use.
+
+If you like this project and want to support further development, please consider making a donation.
+```
+
 ## [1.13.2] - 2019-12-07
 
 ### Enhancements
@@ -601,7 +636,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.13.2...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.14.0...HEAD
+[1.14.0]: https://github.com/adriankumpf/teslamate/compare/v1.13.2...v1.14.0
 [1.13.2]: https://github.com/adriankumpf/teslamate/compare/v1.13.1...v1.13.2
 [1.13.1]: https://github.com/adriankumpf/teslamate/compare/v1.13.0...v1.13.1
 [1.13.0]: https://github.com/adriankumpf/teslamate/compare/v1.12.2...v1.13.0
