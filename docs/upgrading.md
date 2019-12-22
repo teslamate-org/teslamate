@@ -2,23 +2,20 @@
 
 ## Docker
 
-1. Check out the [Changelog](https://github.com/adriankumpf/teslamate/blob/master/CHANGELOG.md) before upgrading!
+1. Check out the [Changelog](https://github.com/adriankumpf/teslamate/releases) before upgrading!
 
 2. Ensure your credentials are correct in `docker-compose.yml` (or `.env` if you are using [Docker (advanced)](installation/docker_advanced))
 
 3. Pull the new images and restart the stack:
 
-```bash
-docker-compose pull
-
-docker-compose up
-```
-
-3. Log in and check
+   ```bash
+   docker-compose pull
+   docker-compose up
+   ```
 
 ## Manual Installation
 
-1. Check out the [Changelog](https://github.com/adriankumpf/teslamate/blob/master/CHANGELOG.md) before upgrading!
+1. Check out the [Changelog](https://github.com/adriankumpf/teslamate/releases) before upgrading!
 
 2. Pull the new changes from the git repository, checkout the new version and then build the new release:
 

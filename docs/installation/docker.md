@@ -79,5 +79,5 @@ Afterwards start the stack with `docker-compose up`. To run the containers in th
 ## Usage
 
 1. Open the web interface [http://your-ip-address:4000](http://localhost:4000)
-2. Sign in with your Tesla Account open the web interface
+2. Sign in with your Tesla account
 3. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000).

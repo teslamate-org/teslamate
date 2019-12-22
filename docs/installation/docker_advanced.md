@@ -16,7 +16,7 @@
 
 Create the following three files:
 
-**docker-compose.yml**
+#### docker-compose.yml
 
 ```YAML
 version: '3'
@@ -119,7 +119,7 @@ volumes:
     mosquitto-data:
 ```
 
-**.env**
+#### .env
 
 ```
 TM_DB_USER=teslamate
@@ -137,11 +137,11 @@ TM_TZ=Europe/Berlin
 LETSENCRYPT_EMAIL=yourperson@example.com
 ```
 
-**.htpasswd**
+#### .htpasswd
 
 This file contains a user and password for accessing TeslaMate (Basic-auth), note this is NOT your tesla.com password. You can generate it on the web if you don't have the Apache tools installed (e.g. http://www.htaccesstools.com/htpasswd-generator/).
 
-Example:
+**Example:**
 
 ```
 teslamate:$apr1$0hau3aWq$yzNEh.ABwZBAIEYZ6WfbH/
@@ -152,7 +152,7 @@ teslamate:$apr1$0hau3aWq$yzNEh.ABwZBAIEYZ6WfbH/
 Start the stack with `docker-compose up`.
 
 1. Open the web interface [https://tesla.example.com](https://tesla.example.com)
-2. Sign in with your Tesla Account open the web interface
+2. Sign in with your Tesla account
 3. The Grafana dashboards are available at [https://grafana.example.com](https://grafana.example.com).
 
 ## Tips for upgrading from the recommended docker setup
