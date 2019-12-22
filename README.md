@@ -15,10 +15,6 @@ A powerful, self-hosted data logger for your Tesla.
 - Visualization and data analysis with **Grafana**
 - Vehicle data is published to a local **MQTT** Broker
 
-## Documentation
-
-The full TeslaMate documentation is available on [Read The Docs](https://teslamate.readthedocs.io/).
-
 ## Features
 
 **Dashboards**
@@ -91,6 +87,5 @@ just share your love and show your support.
 
 ## Credits
 
-- Authors: Adrian Kumpf
-- [List of contributors](https://github.com/adriankumpf/teslamate/graphs/contributors)
+- Authors: Adrian Kumpf – [List of contributors](https://github.com/adriankumpf/teslamate/graphs/contributors)
 - Distributed under MIT License
