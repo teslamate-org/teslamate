@@ -51,9 +51,28 @@ The full TeslaMate documentation is available on [Read The Docs](https://teslama
   <strong><a href="/docs/screenshots.md">MORE SCREENSHOTS</a></strong>
 </p>
 
-## Quick Start
+## Documentation
 
-The Full TeslaMate documentation is available on [Read The Docs](https://teslamate.readthedocs.io/).
+The full TeslaMate documentation is available on [Read the Docs](https://teslamate.readthedocs.io/).
+
+- Getting Started
+  - [Simple Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker.html) (inside your home network)
+  - [Advanced Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker_advanced.html) (Reverse Proxy, Let's Encrypt Certificate, HTTP Basic Auth)
+  - [Manual install on Debian/Ubuntu](https://teslamate.readthedocs.io/en/latest/installation/debian.html) (without Docker)
+  - [Upgrading to a new version](https://teslamate.readthedocs.io/en/latest/upgrading.html)
+  - [Frequently Asked Questions](https://teslamate.readthedocs.io/en/latest/faq.html)
+- Sleep Mode
+  - [Configuration](https://teslamate.readthedocs.io/en/latest/configuration/sleep.html)
+  - [Shortcuts Setup (iOS)](https://teslamate.readthedocs.io/en/latest/configuration/guides/shortcuts.html)
+  - [Tasker Setup (Android)](https://teslamate.readthedocs.io/en/latest/configuration/guides/tasker.html)
+  - [MacroDroid Setup (Setup)](https://teslamate.readthedocs.io/en/latest/configuration/guides/macro_droid.html)
+- Integrations
+  - [HomeAssistant](https://teslamate.readthedocs.io/en/latest/integrations/home_assistant.html)
+  - [MQTT](https://teslamate.readthedocs.io/en/latest/integrations/mqtt.html)
+- Advanced configuration
+  - [Environment Variables](https://teslamate.readthedocs.io/en/latest/configuration/environment_variables.html)
+- Development and Contributing
+  - [Development](https://teslamate.readthedocs.io/en/latest/development.html)
 
 ## Donations
 
