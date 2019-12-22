@@ -1,6 +1,6 @@
 # TeslaMate
 
-[![](https://readthedocs.org/projects/teslamate/badge/?version=master))](https://teslamate.readthedocs.io/)
+[![](https://readthedocs.org/projects/teslamate/badge/?version=latest)](https://teslamate.readthedocs.io/)
 [![](https://travis-ci.org/adriankumpf/teslamate.svg?branch=master)](https://travis-ci.org/adriankumpf/teslamate)
 [![](https://coveralls.io/repos/github/adriankumpf/teslamate/badge.svg?branch=master)](https://coveralls.io/github/adriankumpf/teslamate?branch=master)
 [![](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://hub.docker.com/r/teslamate/teslamate)
