@@ -18,6 +18,7 @@ defmodule TeslaMate.Log.ChargingProcess do
     field :end_battery_level, :integer
     field :duration_min, :integer
     field :outside_temp_avg, :float
+    field :cost, :decimal
 
     belongs_to(:car, Car)
     belongs_to(:position, Position)
@@ -44,11 +45,13 @@ defmodule TeslaMate.Log.ChargingProcess do
       :start_battery_level,
       :end_battery_level,
       :duration_min,
-      :outside_temp_avg
+      :outside_temp_avg,
+      :cost
     ])
     |> validate_required([:car_id, :start_date])
     |> validate_number(:charge_energy_added, greater_than_or_equal_to: 0)
     |> validate_number(:charge_energy_used, greater_than_or_equal_to: 0)
+    |> validate_number(:cost, greater_than_or_equal_to: 0)
     |> foreign_key_constraint(:car_id)
     |> foreign_key_constraint(:position_id)
     |> foreign_key_constraint(:address_id)

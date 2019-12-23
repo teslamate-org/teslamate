@@ -242,6 +242,19 @@ defmodule TeslaMate.Log do
 
   ## ChargingProcess
 
+  def get_charging_process!(id) do
+    ChargingProcess
+    |> where(id: ^id)
+    |> preload([:address, :geofence, :car, :position])
+    |> Repo.one!()
+  end
+
+  def update_charging_process(%ChargingProcess{} = charge, attrs) do
+    charge
+    |> ChargingProcess.changeset(attrs)
+    |> Repo.update()
+  end
+
   def start_charging_process(%Car{id: id}, %{latitude: _, longitude: _} = attrs, opts \\ []) do
     position = Map.put(attrs, :car_id, id)
 

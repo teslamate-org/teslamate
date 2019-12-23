@@ -26,6 +26,7 @@ defmodule TeslaMateWeb.Router do
     live "/geo-fences", GeoFenceLive.Index
     live "/geo-fences/new", GeoFenceLive.Form, session: [action: :new]
     live "/geo-fences/:id/edit", GeoFenceLive.Form, session: [action: :edit]
+    live "/charge-cost/:id", ChargeLive.Cost
   end
 
   scope "/api", TeslaMateWeb do

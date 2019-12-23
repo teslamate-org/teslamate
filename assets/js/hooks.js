@@ -1,8 +1,20 @@
-function dateToLocalTime(dateStr) {
+const LANG = navigator.languages
+  ? navigator.languages[0]
+  : navigator.language || navigator.userLanguage;
+
+function toLocalTime(dateStr, opts) {
   const date = new Date(dateStr);
 
   return date instanceof Date && !isNaN(date.valueOf())
-    ? date.toLocaleTimeString()
+    ? date.toLocaleTimeString(LANG, opts)
+    : "–";
+}
+
+function toLocalDate(dateStr, opts) {
+  const date = new Date(dateStr);
+
+  return date instanceof Date && !isNaN(date.valueOf())
+    ? date.toLocaleDateString(LANG, opts)
     : "–";
 }
 
@@ -23,11 +35,35 @@ export const Dropdown = {
 
 export const LocalTime = {
   mounted() {
-    this.el.innerText = dateToLocalTime(this.el.dataset.date);
+    this.el.innerText = toLocalTime(this.el.dataset.date);
   },
 
   updated() {
-    this.el.innerText = dateToLocalTime(this.el.dataset.date);
+    this.el.innerText = toLocalTime(this.el.dataset.date);
+  }
+};
+
+export const LocalTimeRange = {
+  exec() {
+    const date = toLocalDate(this.el.dataset.startDate, {
+      month: "short",
+      day: "numeric"
+    });
+
+    const time = [this.el.dataset.startDate, this.el.dataset.endDate]
+      .map(date =>
+        toLocalTime(date, { hour: "2-digit", minute: "2-digit", hour12: false })
+      )
+      .join(" – ");
+
+    this.el.innerText = `${date}, ${time}`;
+  },
+
+  mounted() {
+    this.exec();
+  },
+  updated() {
+    this.exec();
   }
 };
 
