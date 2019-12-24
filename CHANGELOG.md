@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.14.1] - 2019-12-24
+
+### Bug Fixes
+
+- Fix an issue where the database migrations would not succeed if there were charges without any data points
+
 ## [1.14.0] - 2019-12-22
 
 ### Enhancements
@@ -636,7 +642,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.14.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.14.1...HEAD
+[1.14.1]: https://github.com/adriankumpf/teslamate/compare/v1.14.0...v1.14.1
 [1.14.0]: https://github.com/adriankumpf/teslamate/compare/v1.13.2...v1.14.0
 [1.13.2]: https://github.com/adriankumpf/teslamate/compare/v1.13.1...v1.13.2
 [1.13.1]: https://github.com/adriankumpf/teslamate/compare/v1.13.0...v1.13.1
