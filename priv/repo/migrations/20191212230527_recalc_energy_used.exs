@@ -150,7 +150,7 @@ defmodule TeslaMate.Repo.Migrations.RecalcEnergyUsed do
         where: [charging_process_id: ^charging_process.id],
         limit: 1
       )
-      |> Repo.one() || %{}
+      |> Repo.one() || %{detected_end_date: nil}
 
     charge_energy_used = calculate_energy_used(charging_process)
 
