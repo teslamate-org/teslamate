@@ -61,7 +61,7 @@
     <div class="field-body">
       <div class="field has-addons">
         <div class="control is-expanded">
-          <%= text_input f, :radius, class: "input", type: :number, min: 0, data: [unit: @unit_of_length] %>
+          <%= text_input f, :radius, class: "input", type: :number, min: 0, data: [unit: @unit_of_length], phx_hook: "SetLangAttr" %>
         </div>
         <div class="control addon">
           <a class="button is-static"><%= @unit_of_length %></a>

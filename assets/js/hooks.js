@@ -223,3 +223,16 @@ export const Map = {
       .addTo(map);
   }
 };
+
+export const SetLangAttr = {
+  exec() {
+    this.el.setAttribute("lang", LANG);
+  },
+
+  mounted() {
+    this.exec();
+  },
+  updated() {
+    this.exec();
+  }
+};
