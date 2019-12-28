@@ -103,7 +103,7 @@ Create the following file: `/usr/local/bin/teslamate-start.sh`
 
 You should at least substitute the following details:
 
-- `MQTT_HOST` should be the IP address of your MQTT broker, or blank if you do not have one installed
+- `MQTT_HOST` should be the IP address of your MQTT broker. If you do not have one installed, the MQTT functionality can be disabled with 'DISABLE_MQTT=true'.
 - `TZ` should be your local timezone. Work out your timezone name using the [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) in the linked wikipedia page.
 - `TESLAMATEPATH` should be the path that you ran the `git clone` within.
 
