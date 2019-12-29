@@ -40,6 +40,7 @@ services:
     environment:
       - POSTGRES_USER=teslamate
       - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=teslamate
     volumes:
       - teslamate-db:/var/lib/postgresql/data
 
