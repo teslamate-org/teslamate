@@ -189,8 +189,8 @@
     ]
   },
   "time": {
-    "from": "now/y",
-    "to": "now/y"
+    "from": "now-1y",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -220,5 +220,5 @@
   "timezone": "",
   "title": "Updates",
   "uid": "IiC07mgWz",
-  "version": 2
+  "version": 1
 }
