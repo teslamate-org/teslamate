@@ -58,6 +58,11 @@
           <span class="mdi mdi-alert-box"></span>
         </span>
       <% end %>
+      <%= if not is_nil(@summary.battery_level) and not is_nil(@summary.usable_battery_level) and @summary.battery_level - @summary.usable_battery_level > 2 do %>
+        <span class="health icon has-text-link tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Reduced Battery Range" %>'>
+          <span class="mdi mdi-snowflake"></span>
+        </span>
+      <% end %>
       </div>
     </div>
     <div class="content">
@@ -169,7 +174,7 @@
               %> 100%)</td>
           </tr>
           <% end %>
-          <%= unless is_nil(@summary.usable_battery_level) do %>
+          <%= unless is_nil(@summary.usable_battery_level) or @summary.usable_battery_level == @summary.battery_level do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Usable State of Charge" %></td>
             <td><%= @summary.usable_battery_level %>% (<%= 
