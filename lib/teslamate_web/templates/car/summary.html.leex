@@ -158,7 +158,31 @@
           <%= unless is_nil(@summary.battery_level) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "State of Charge" %></td>
-            <td><%= @summary.battery_level %>%</td>
+            <td><%= @summary.battery_level %>% (<%= 
+ 
+                if @settings.unit_of_length == :mi do
+                  "#{Float.round(@summary.rated_battery_range_km/@summary.battery_level * 100 / 1.60934, 2)} mi"
+                else
+                  "#{Float.round(@summary.rated_battery_range_km/@summary.battery_level * 100,2)} km"
+                end
+ 
+              #Float.round(@summary.rated_battery_range_km/@summary.battery_level * 100,0)               
+              %> at 100%)</td>
+          </tr>
+          <% end %>
+          <%= unless is_nil(@summary.usable_battery_level) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Usable State of Charge" %></td>
+            <td><%= @summary.usable_battery_level %>% (<%= 
+            
+                if @settings.unit_of_length == :mi do
+                  "#{Float.round(@summary.rated_battery_range_km/@summary.usable_battery_level * 100 / 1.60934, 2)} mi"
+                else
+                  "#{Float.round(@summary.rated_battery_range_km/@summary.usable_battery_level * 100,2)} km"
+                end
+
+            # Float.round(@summary.rated_battery_range_km/@summary.usable_battery_level * 100,0) 
+            %> at 100%)</td>
           </tr>
           <% end %>
           <%= if @summary.state == :driving and not is_nil(@summary.speed) do %>
