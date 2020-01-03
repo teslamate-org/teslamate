@@ -51,3 +51,7 @@ conf/wizzy.json
 # Make sure IDE files don't get committed to the repo
 .idea/
 .eclipse/
+
+# other stuff created by my build env?!
+.elixir_ls/
+assets/package-lock.json
