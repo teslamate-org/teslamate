@@ -751,6 +751,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       speed: Convert.mph_to_kmh(vehicle.drive_state.speed),
       power: with(n when is_number(n) <- vehicle.drive_state.power, do: n * 1.0),
       battery_level: vehicle.charge_state.battery_level,
+      usable_battery_level: vehicle.charge_state.usable_battery_level,
       outside_temp: vehicle.climate_state.outside_temp,
       inside_temp: vehicle.climate_state.inside_temp,
       odometer: Convert.miles_to_km(vehicle.vehicle_state.odometer, 6),
