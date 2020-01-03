@@ -418,3 +418,8 @@ msgstr "Ein Fehler ist aufgetreten"
 #: lib/teslamate_web/live/car_live/summary.ex:102
 msgid "Timeout"
 msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:175
+msgid "Usable State of Charge"
+msgstr "Verfügbarer Ladestand"

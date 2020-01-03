@@ -16,7 +16,7 @@ msgid "Status"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:166
+#: lib/teslamate_web/templates/car/summary.html.leex:190
 msgid "Speed"
 msgstr ""
 
@@ -222,12 +222,12 @@ msgid "Driver present"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:232
+#: lib/teslamate_web/templates/car/summary.html.leex:256
 msgid "cancel sleep attempt"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:227
+#: lib/teslamate_web/templates/car/summary.html.leex:251
 msgid "try to sleep"
 msgstr ""
 
@@ -333,17 +333,17 @@ msgid "Delete '%{geo_fence}'?"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:191
+#: lib/teslamate_web/templates/car/summary.html.leex:215
 msgid "Inside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:179
+#: lib/teslamate_web/templates/car/summary.html.leex:203
 msgid "Outside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:204
+#: lib/teslamate_web/templates/car/summary.html.leex:228
 msgid "Version"
 msgstr ""
 
@@ -416,4 +416,9 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:102
 msgid "Timeout"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:175
+msgid "Usable State of Charge"
 msgstr ""

@@ -107,7 +107,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Status", "asleep")
       assert table_row(html, "Range (ideal)", "380.25 km")
       assert table_row(html, "Range (est.)", "401.52 km")
-      assert table_row(html, "State of Charge", "80%")
+      assert table_row(html, "State of Charge", "80% (218.87 km 100%)")
       assert table_row(html, "Outside temperature", "20.1 °C")
       assert table_row(html, "Inside temperature", "21.0 °C")
     end
@@ -123,6 +123,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              ideal_battery_range: 200,
              est_battery_range: 180,
              battery_range: 175,
+             usable_battery_level: 67,
              battery_level: 69
            },
            climate_state: %{is_preconditioning: true, outside_temp: 24, inside_temp: 23.2},
@@ -152,7 +153,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Status", "online")
       assert table_row(html, "Range (ideal)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
-      assert table_row(html, "State of Charge", "69%")
+      assert table_row(html, "State of Charge", "69% (408.17 km 100%)")
+      assert table_row(html, "Usable State of Charge", "67% (420.36 km 100%)")
       assert icon(html, "Locked", "lock")
       assert icon(html, "Driver present", "account")
       assert icon(html, "Preconditioning", "air-conditioner")
