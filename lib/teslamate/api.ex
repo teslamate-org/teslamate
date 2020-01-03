@@ -119,6 +119,11 @@ defmodule TeslaMate.Api do
     {:noreply, state}
   end
 
+  def handle_info(msg, state) do
+    Logger.info("#{__MODULE__} / unhandled message: #{inspect(msg, pretty: true)}")
+    {:noreply, state}
+  end
+
   ## Private
 
   defp schedule_refresh(%Auth{} = auth) do
@@ -143,6 +148,8 @@ defmodule TeslaMate.Api do
       [auth: %Auth{} = auth] -> {:ok, auth}
       [] -> {:error, :not_signed_in}
     end
+  rescue
+    _ in ArgumentError -> {:error, :not_signed_in}
   end
 
   defp handle_result(result, auth, name) do

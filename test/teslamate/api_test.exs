@@ -246,6 +246,39 @@ defmodule TeslaMate.ApiTest do
       end
     end
 
+    test "returns :not_signed_in if Api GenServer is not found", %{test: name} do
+      assert {:error, :not_signed_in} = Api.list_vehicles(name)
+    end
+
+    test "handles unknown messages gracefully", %{test: name} do
+      vehicle_mock =
+        {TeslaApi.Vehicle, [],
+         [
+           list: fn _ ->
+             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+           end,
+           get: fn _, _ ->
+             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+           end,
+           get_with_state: fn _, _ ->
+             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+           end
+         ]}
+
+      with_mocks [auth_mock(self()), vehicle_mock] do
+        :ok = start_api(name, start_auth: false)
+
+        true =
+          name
+          |> Process.whereis()
+          |> Process.link()
+
+        send(name, :boom)
+
+        refute_receive _
+      end
+    end
+
     @tag :capture_log
     test ":vehicle_not_found", %{test: name} do
       api_error = %TeslaApi.Error{reason: :vehicle_not_found, env: %Mojito.Response{}}
