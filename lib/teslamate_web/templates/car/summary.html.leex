@@ -166,8 +166,7 @@
                   "#{Float.round(@summary.rated_battery_range_km/@summary.battery_level * 100,2)} km"
                 end
  
-              #Float.round(@summary.rated_battery_range_km/@summary.battery_level * 100,0)               
-              %> at 100%)</td>
+              %> 100%)</td>
           </tr>
           <% end %>
           <%= unless is_nil(@summary.usable_battery_level) do %>
@@ -181,8 +180,7 @@
                   "#{Float.round(@summary.rated_battery_range_km/@summary.usable_battery_level * 100,2)} km"
                 end
 
-            # Float.round(@summary.rated_battery_range_km/@summary.usable_battery_level * 100,0) 
-            %> at 100%)</td>
+            %> 100%)</td>
           </tr>
           <% end %>
           <%= if @summary.state == :driving and not is_nil(@summary.speed) do %>
