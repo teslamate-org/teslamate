@@ -423,3 +423,8 @@ msgstr ""
 #: lib/teslamate_web/templates/car/summary.html.leex:175
 msgid "Usable State of Charge"
 msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:62
+msgid "Reduced Battery Range"
+msgstr ""
