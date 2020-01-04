@@ -62,7 +62,7 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
   - [Configuration](https://teslamate.readthedocs.io/en/latest/configuration/sleep.html)
   - [Shortcuts Setup (iOS)](https://teslamate.readthedocs.io/en/latest/configuration/guides/shortcuts.html)
   - [Tasker Setup (Android)](https://teslamate.readthedocs.io/en/latest/configuration/guides/tasker.html)
-  - [MacroDroid Setup (Setup)](https://teslamate.readthedocs.io/en/latest/configuration/guides/macro_droid.html)
+  - [MacroDroid Setup (Android)](https://teslamate.readthedocs.io/en/latest/configuration/guides/macro_droid.html)
 - Integrations
   - [HomeAssistant](https://teslamate.readthedocs.io/en/latest/integrations/home_assistant.html)
   - [MQTT](https://teslamate.readthedocs.io/en/latest/integrations/mqtt.html)
