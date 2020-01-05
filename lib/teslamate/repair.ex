@@ -27,14 +27,16 @@ defmodule TeslaMate.Repair do
   @impl true
   def handle_info(:repair, state) do
     from(d in Drive,
-      where: is_nil(d.start_address_id) or is_nil(d.end_address_id),
+      where:
+        (is_nil(d.start_address_id) or is_nil(d.end_address_id)) and
+          (not is_nil(d.start_position_id) and not is_nil(d.end_position_id)),
       preload: [:start_position, :end_position]
     )
     |> Repo.all()
     |> repair()
 
     from(c in ChargingProcess,
-      where: is_nil(c.address_id),
+      where: is_nil(c.address_id) and not is_nil(c.position_id),
       preload: [:position]
     )
     |> Repo.all()
