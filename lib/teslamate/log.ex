@@ -360,7 +360,7 @@ defmodule TeslaMate.Log do
     end
   end
 
-  defp determine_phases(%ChargingProcess{id: id}) do
+  defp determine_phases(%ChargingProcess{id: id, car_id: car_id}) do
     from(c in Charge,
       join: p in ChargingProcess,
       on: [id: c.charging_process_id],
@@ -381,11 +381,14 @@ defmodule TeslaMate.Log do
             r
 
           r == 3 and abs(p / :math.sqrt(r) - 1) <= 0.1 ->
-            Logger.info("Voltage correction: #{round(v)}V -> #{round(v / :math.sqrt(r))}V")
+            Logger.info("Voltage correction: #{round(v)}V -> #{round(v / :math.sqrt(r))}V",
+              car_id: car_id
+            )
+
             :math.sqrt(r)
 
           abs(round(p) - p) <= 0.3 ->
-            Logger.info("Phase correction: #{r} -> #{round(p)}")
+            Logger.info("Phase correction: #{r} -> #{round(p)}", car_id: car_id)
             round(p)
 
           true ->

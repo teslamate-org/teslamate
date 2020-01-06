@@ -306,8 +306,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:info, {ref, result}, _state, _data) when is_reference(ref) do
-    Logger.warn("Unhandled fetch result: #{inspect(ref)} ")
-    Logger.debug("result: #{inspect(result, pretty: true)}")
+    Logger.debug("Unhandled fetch result: #{inspect(result, pretty: true)}")
     :keep_state_and_data
   end
 
@@ -628,7 +627,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       %VehicleState.SoftwareUpdate{status: status} = software_update ->
         if status != "" do
-          Logger.error("Update failed: #{status}\n\n#{inspect(software_update, pretty: true)}",
+          Logger.error(
+            "Unexpected update status: #{status}\n\n#{inspect(software_update, pretty: true)}",
             car_id: data.car.id
           )
         end
