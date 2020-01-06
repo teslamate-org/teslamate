@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+## [1.14.3] - 2020-01-06
+
+### Enhancements
+
+- Locations dashboard: Visualize cities and states with the most stored addresses
+
+### Bug Fixes
+
+- Fix an issue where a broken rear window sensor could cause the windows to always be displayed as open
+- Address an issue where a charge wouldn't be properly logged if the Tesla API reported invalid charge data
+- Fix a bug that could cause the geo-fence form to become unresponsive
+
 ## [1.14.2] - 2020-01-03
 
 ### Bug Fixes
@@ -649,7 +663,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.14.2...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.14.3...HEAD
+[1.14.3]: https://github.com/adriankumpf/teslamate/compare/v1.14.2...v1.14.3
 [1.14.2]: https://github.com/adriankumpf/teslamate/compare/v1.14.1...v1.14.2
 [1.14.1]: https://github.com/adriankumpf/teslamate/compare/v1.14.0...v1.14.1
 [1.14.0]: https://github.com/adriankumpf/teslamate/compare/v1.13.2...v1.14.0
