@@ -14,6 +14,8 @@ defmodule TeslaMate.VehicleCase do
       import Ecto.Query
 
       def start_vehicle(name, events, opts \\ []) when length(events) > 0 do
+        mock_log? = Keyword.get(opts, :log, true)
+
         log_name = :"log_#{name}"
         api_name = :"api_#{name}"
         settings_name = :"settings_#{name}"
@@ -48,24 +50,28 @@ defmodule TeslaMate.VehicleCase do
               id: :rand.uniform(65536),
               eid: 0,
               vid: 1000,
+              vin: "1000",
               model: "3",
               settings: struct(CarSettings, settings)
             }
           end)
 
-        {:ok, _pid} =
-          start_supervised(
-            {Vehicle,
-             Keyword.merge(opts,
-               name: name,
-               deps_log: {LogMock, log_name},
-               deps_api: {ApiMock, api_name},
-               deps_settings: {SettingsMock, settings_name},
-               deps_locations: {LocationsMock, locations_name},
-               deps_vehicles: {VehiclesMock, vehicles_name},
-               deps_pubsub: {PubSubMock, pubsub_name}
-             )}
-          )
+        deps =
+          [
+            name: name,
+            deps_log: {LogMock, log_name},
+            deps_api: {ApiMock, api_name},
+            deps_settings: {SettingsMock, settings_name},
+            deps_locations: {LocationsMock, locations_name},
+            deps_vehicles: {VehiclesMock, vehicles_name},
+            deps_pubsub: {PubSubMock, pubsub_name}
+          ]
+          |> Enum.filter(fn
+            {:deps_log, _} -> mock_log?
+            _ -> true
+          end)
+
+        {:ok, _pid} = start_supervised({Vehicle, Keyword.merge(opts, deps)})
 
         assert_receive {SettingsMock, :subscribe_to_changes}
 

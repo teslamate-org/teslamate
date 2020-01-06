@@ -792,8 +792,19 @@ defmodule TeslaMate.Vehicles.Vehicle do
       outside_temp: vehicle.climate_state.outside_temp
     }
 
-    with {:ok, _} <- call(data.deps.log, :insert_charge, [charging_process, attrs]) do
-      :ok
+    case call(data.deps.log, :insert_charge, [charging_process, attrs]) do
+      {:error, %Ecto.Changeset{} = changeset} ->
+        errors =
+          Ecto.Changeset.traverse_errors(changeset, fn {message, opts} ->
+            Enum.reduce(opts, message, fn {key, value}, acc ->
+              String.replace(acc, "%{#{key}}", to_string(value))
+            end)
+          end)
+
+        Logger.warn("Invalid charge data: #{inspect(errors, pretty: true)}", car_id: data.car.id)
+
+      {:ok, _charge} ->
+        :ok
     end
   end
 

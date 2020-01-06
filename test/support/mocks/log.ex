@@ -75,6 +75,11 @@ defmodule LogMock do
     {:reply, {:ok, %Log.Position{id: 111}}, state}
   end
 
+  def handle_call({:insert_charge, _, _attrs} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %Log.Charge{id: 222}}, state}
+  end
+
   def handle_call({:start_charging_process, _, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %ChargingProcess{id: 99, start_date: DateTime.utc_now()}}, state}
