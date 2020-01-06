@@ -97,7 +97,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp window_open(%Vehicle{vehicle_state: vehicle_state}) do
     case vehicle_state do
       %VehicleState{fd_window: fd, fp_window: fp, rd_window: rd, rp_window: rp}
-      when is_number(fd) and is_number(fp) and is_number(rd) and is_number(fp) ->
+      when is_number(fd) and is_number(fp) and is_number(rd) and is_number(rp) ->
         fd > 0 or fp > 0 or rd > 0 or rp > 0
 
       _ ->
