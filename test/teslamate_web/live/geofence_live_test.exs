@@ -459,6 +459,19 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                Settings.get_global_settings!()
     end
 
+    test "handles weird referrers", %{conn: conn} do
+      assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
+
+      for referrer <- [nil, "", "example.com", "http://example.com", "http://example.com/"] do
+        assert {:ok, _parent_view, _html} =
+                 live(conn, "/geo-fences/new?lat=0.0&lng=0.0",
+                   connect_params: %{"referrer" => referrer}
+                 )
+
+        assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
+      end
+    end
+
     test "keeps the path", %{conn: conn} do
       assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
 

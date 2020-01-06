@@ -172,8 +172,8 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   defp set_grafana_url(%{assigns: %{settings: settings}} = socket) do
     with nil <- settings.grafana_url,
          %{"referrer" => referrer} when is_binary(referrer) <- get_connect_params(socket),
-         url = URI.parse(referrer),
-         [_, _, _ | path] <- url.path |> String.split("/") |> Enum.reverse(),
+         %URI{path: path} = url when is_binary(path) <- URI.parse(referrer),
+         [_, _, _ | path] <- path |> String.split("/") |> Enum.reverse(),
          url = %URI{url | path: Enum.join([nil | path], "/"), query: nil} |> URI.to_string(),
          {:ok, _settings} <- Settings.update_global_settings(settings, %{grafana_url: url}) do
       :ok
