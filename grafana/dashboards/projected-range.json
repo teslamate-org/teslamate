@@ -1,509 +1,516 @@
 {
-    "annotations": {
-      "list": [
-        {
-          "builtIn": 1,
-          "datasource": "-- Grafana --",
-          "enable": true,
-          "hide": true,
-          "iconColor": "rgba(0, 211, 255, 1)",
-          "name": "Annotations & Alerts",
-          "type": "dashboard"
-        },
-        {
-          "datasource": "TeslaMate",
-          "enable": false,
-          "hide": false,
-          "iconColor": "#8AB8FF",
-          "limit": 100,
-          "name": "Charged",
-          "rawQuery": "SELECT\n\t$__time(start_date),\n\tconcat('Charged: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
-          "showIn": 0,
-          "tags": [],
-          "type": "tags"
-        }
-      ]
-    },
-    "editable": true,
-    "gnetId": null,
-    "graphTooltip": 0,
-    "id": 17,
-    "iteration": 1578224904413,
-    "links": [],
-    "panels": [
+  "annotations": {
+    "list": [
       {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 0
-        },
-        "id": 4,
-        "panels": [],
-        "repeat": "car_id",
-        "scopedVars": {
-          "car_id": {
-            "selected": false,
-            "text": "1",
-            "value": "1"
-          }
-        },
-        "title": "$car_id",
-        "type": "row"
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
       },
       {
-        "aliasColors": {},
-        "bars": false,
-        "dashLength": 10,
-        "dashes": false,
         "datasource": "TeslaMate",
-        "decimals": 2,
-        "fill": 1,
-        "fillGradient": 3,
-        "gridPos": {
-          "h": 21,
-          "w": 24,
-          "x": 0,
-          "y": 1
-        },
-        "id": 2,
-        "legend": {
-          "alignAsTable": true,
-          "avg": true,
-          "current": false,
-          "max": true,
-          "min": true,
-          "rightSide": false,
-          "show": true,
-          "total": false,
-          "values": true
-        },
-        "lines": true,
-        "linewidth": 1,
-        "links": [],
-        "nullPointMode": "null",
-        "options": {
-          "dataLinks": []
-        },
-        "percentage": false,
-        "pointradius": 5,
-        "points": false,
-        "renderer": "flot",
-        "scopedVars": {
-          "car_id": {
-            "selected": false,
-            "text": "1",
-            "value": "1"
-          }
-        },
-        "seriesOverrides": [
-          {
-            "alias": "/Mileage.*/",
-            "fill": 0,
-            "yaxis": 2
-          }
-        ],
-        "spaceLength": 10,
-        "stack": false,
-        "steppedLine": true,
-        "targets": [
-          {
-            "alias": "",
-            "format": "time_series",
-            "group": [],
-            "hide": false,
-            "metricColumn": "none",
-            "rawQuery": true,
-            "rawSql": "SELECT\n\t$__timeGroup(date, '6h') AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level) [$length_unit]\",\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
-            "refId": "A",
-            "select": [
-              [
-                {
-                  "params": [
-                    "value"
-                  ],
-                  "type": "column"
-                }
-              ]
-            ],
-            "timeColumn": "time",
-            "where": [
-              {
-                "name": "$__timeFilter",
-                "params": [],
-                "type": "macro"
-              }
-            ]
-          },
-          {
-            "format": "time_series",
-            "group": [],
-            "metricColumn": "none",
-            "rawQuery": true,
-            "rawSql": "SELECT\n\t$__timeGroup(date, '1h', previous) AS time,\n\tconvert_km(avg(odometer), '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC;",
-            "refId": "B",
-            "select": [
-              [
-                {
-                  "params": [
-                    "efficiency"
-                  ],
-                  "type": "column"
-                }
-              ]
-            ],
-            "table": "cars",
-            "timeColumn": "inserted_at",
-            "timeColumnType": "timestamp",
-            "where": [
-              {
-                "name": "$__timeFilter",
-                "params": [],
-                "type": "macro"
-              }
-            ]
-          }
-        ],
-        "thresholds": [],
-        "timeFrom": null,
-        "timeRegions": [],
-        "timeShift": null,
-        "title": "Projected Range - Milage",
-        "tooltip": {
-          "shared": true,
-          "sort": 0,
-          "value_type": "individual"
-        },
-        "type": "graph",
-        "xaxis": {
-          "buckets": null,
-          "mode": "time",
-          "name": null,
-          "show": true,
-          "values": []
-        },
-        "yaxes": [
-          {
-            "decimals": 0,
-            "format": "none",
-            "label": "Projected Range",
-            "logBase": 1,
-            "max": null,
-            "min": "200",
-            "show": true
-          },
-          {
-            "decimals": null,
-            "format": "none",
-            "label": "Milage",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true
-          }
-        ],
-        "yaxis": {
-          "align": false,
-          "alignLevel": null
-        }
-      },
-      {
-        "aliasColors": {},
-        "bars": false,
-        "dashLength": 10,
-        "dashes": false,
-        "datasource": "TeslaMate",
-        "decimals": 2,
-        "fill": 1,
-        "fillGradient": 3,
-        "gridPos": {
-          "h": 21,
-          "w": 24,
-          "x": 0,
-          "y": 22
-        },
-        "id": 5,
-        "legend": {
-          "alignAsTable": true,
-          "avg": true,
-          "current": false,
-          "max": true,
-          "min": true,
-          "rightSide": false,
-          "show": true,
-          "total": false,
-          "values": true
-        },
-        "lines": true,
-        "linewidth": 1,
-        "links": [],
-        "nullPointMode": "null",
-        "options": {
-          "dataLinks": []
-        },
-        "percentage": false,
-        "pointradius": 5,
-        "points": false,
-        "renderer": "flot",
-        "scopedVars": {
-          "car_id": {
-            "selected": false,
-            "text": "1",
-            "value": "1"
-          }
-        },
-        "seriesOverrides": [
-          {
-            "alias": "/Temp.*/",
-            "fill": 0,
-            "yaxis": 2
-          }
-        ],
-        "spaceLength": 10,
-        "stack": false,
-        "steppedLine": true,
-        "targets": [
-          {
-            "alias": "",
-            "format": "time_series",
-            "group": [],
-            "hide": false,
-            "metricColumn": "none",
-            "rawQuery": true,
-            "rawSql": "SELECT\n\t$__timeGroup(date, '6h') AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level) [$length_unit]\",\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
-            "refId": "A",
-            "select": [
-              [
-                {
-                  "params": [
-                    "value"
-                  ],
-                  "type": "column"
-                }
-              ]
-            ],
-            "timeColumn": "time",
-            "where": [
-              {
-                "name": "$__timeFilter",
-                "params": [],
-                "type": "macro"
-              }
-            ]
-          },
-          {
-            "alias": "",
-            "format": "time_series",
-            "group": [],
-            "hide": false,
-            "metricColumn": "none",
-            "rawQuery": true,
-            "rawSql": "SELECT\n\t$__timeGroup(date, '6h') AS time,\n\tavg(convert_celsius(outside_temp, '$temp_unit')) as \"Outdoor Temperature [°$temp_unit]\"\n\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
-            "refId": "B",
-            "select": [
-              [
-                {
-                  "params": [
-                    "value"
-                  ],
-                  "type": "column"
-                }
-              ]
-            ],
-            "timeColumn": "time",
-            "where": [
-              {
-                "name": "$__timeFilter",
-                "params": [],
-                "type": "macro"
-              }
-            ]
-          }
-        ],
-        "thresholds": [],
-        "timeFrom": null,
-        "timeRegions": [],
-        "timeShift": null,
-        "title": "Projected Range - Outdoor Temp",
-        "tooltip": {
-          "shared": true,
-          "sort": 0,
-          "value_type": "individual"
-        },
-        "type": "graph",
-        "xaxis": {
-          "buckets": null,
-          "mode": "time",
-          "name": null,
-          "show": true,
-          "values": []
-        },
-        "yaxes": [
-          {
-            "decimals": 0,
-            "format": "none",
-            "label": "Projected Range",
-            "logBase": 1,
-            "max": null,
-            "min": "200",
-            "show": true
-          },
-          {
-            "decimals": null,
-            "format": "none",
-            "label": "Temp",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true
-          }
-        ],
-        "yaxis": {
-          "align": false,
-          "alignLevel": null
-        }
+        "enable": false,
+        "hide": false,
+        "iconColor": "#8AB8FF",
+        "limit": 100,
+        "name": "Charged",
+        "rawQuery": "SELECT\n\t$__time(start_date),\n\tconcat('Charged: ',charge_energy_added,\n\t\t' kWh') AS text\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)  AND duration_min > 5\nORDER BY\n\tstart_date DESC",
+        "showIn": 0,
+        "tags": [],
+        "type": "tags"
       }
-    ],
-    "refresh": false,
-    "schemaVersion": 19,
-    "style": "dark",
-    "tags": [],
-    "templating": {
-      "list": [
-        {
-          "allValue": null,
-          "current": {
-            "text": "All",
-            "value": "$__all"
-          },
-          "datasource": "TeslaMate",
-          "definition": "SELECT name AS __text, id AS __value FROM cars;",
-          "hide": 2,
-          "includeAll": true,
-          "label": "Car",
-          "multi": true,
-          "name": "car_id",
-          "options": [],
-          "query": "SELECT name AS __text, id AS __value FROM cars;",
-          "refresh": 1,
-          "regex": "",
-          "skipUrlSync": false,
-          "sort": 5,
-          "tagValuesQuery": "",
-          "tags": [],
-          "tagsQuery": "",
-          "type": "query",
-          "useTags": false
-        },
-        {
-          "allValue": null,
-          "current": {
-            "text": "km",
-            "value": "km"
-          },
-          "datasource": "TeslaMate",
-          "definition": "select unit_of_length from settings limit 1;",
-          "hide": 2,
-          "includeAll": false,
-          "label": "",
-          "multi": false,
-          "name": "length_unit",
-          "options": [],
-          "query": "select unit_of_length from settings limit 1;",
-          "refresh": 1,
-          "regex": "",
-          "skipUrlSync": false,
-          "sort": 0,
-          "tagValuesQuery": "",
-          "tags": [],
-          "tagsQuery": "",
-          "type": "query",
-          "useTags": false
-        },
-        {
-          "allValue": null,
-          "current": {
-            "text": "rated",
-            "value": "rated"
-          },
-          "datasource": "TeslaMate",
-          "definition": "select preferred_range from settings limit 1;",
-          "hide": 2,
-          "includeAll": false,
-          "label": null,
-          "multi": false,
-          "name": "preferred_range",
-          "options": [],
-          "query": "select preferred_range from settings limit 1;",
-          "refresh": 1,
-          "regex": "",
-          "skipUrlSync": false,
-          "sort": 0,
-          "tagValuesQuery": "",
-          "tags": [],
-          "tagsQuery": "",
-          "type": "query",
-          "useTags": false
-        },
-        {
-          "allValue": null,
-          "current": {
-            "text": "C",
-            "value": "C"
-          },
-          "datasource": "TeslaMate",
-          "definition": "select unit_of_temperature from settings limit 1;",
-          "hide": 2,
-          "includeAll": false,
-          "label": "",
-          "multi": false,
-          "name": "temp_unit",
-          "options": [],
-          "query": "select unit_of_temperature from settings limit 1;",
-          "refresh": 1,
-          "regex": "",
-          "skipUrlSync": false,
-          "sort": 0,
-          "tagValuesQuery": "",
-          "tags": [],
-          "tagsQuery": "",
-          "type": "query",
-          "useTags": false
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "iteration": 1579008357306,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "panels": [],
+      "repeat": "car_id",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
         }
-      ]
+      },
+      "title": "$car_id",
+      "type": "row"
     },
-    "time": {
-      "from": "now-30d",
-      "to": "now"
-    },
-    "timepicker": {
-      "refresh_intervals": [
-        "5s",
-        "10s",
-        "30s",
-        "1m",
-        "5m",
-        "15m",
-        "30m",
-        "1h",
-        "2h",
-        "1d"
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "TeslaMate",
+      "decimals": 2,
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 21,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "/Mileage.*/",
+          "fill": 0,
+          "yaxis": 2
+        }
       ],
-      "time_options": [
-        "5m",
-        "15m",
-        "1h",
-        "6h",
-        "12h",
-        "24h",
-        "2d",
-        "7d",
-        "30d"
-      ]
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "alias": "",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__timeGroup(date, '6h') AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected Range [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__timeGroup(date, '1h', previous) AS time,\n\tconvert_km(avg(odometer), '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "efficiency"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cars",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Projected Range - Milage",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "none",
+          "label": "Projected Range",
+          "logBase": 1,
+          "max": null,
+          "min": "200",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "none",
+          "label": "Milage",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     },
-    "timezone": "",
-    "title": "Projected Range",
-    "uid": "uOrsSukRz",
-    "version": 12
-  }
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "TeslaMate",
+      "decimals": 2,
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 21,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 5,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "/Temp.*/",
+          "fill": 0,
+          "yaxis": 2
+        },
+        {
+          "alias": "/.*usable_battery_level.*/",
+          "color": "#56A64B"
+        },
+        {
+          "alias": "/.*battery_level.*/",
+          "color": "#C8F2C2"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "alias": "",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__timeGroup(date, '6h') AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(usable_battery_level) * 100, '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\",\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level) [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "alias": "",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__timeGroup(date, '6h') AS time,\n\tavg(convert_celsius(outside_temp, '$temp_unit')) as \"Outdoor Temperature [°$temp_unit]\"\n\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Projected Range - Outdoor Temp",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "none",
+          "label": "Projected Range",
+          "logBase": 1,
+          "max": null,
+          "min": "200",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "none",
+          "label": "Temp",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 19,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "TeslaMate",
+        "definition": "SELECT name AS __text, id AS __value FROM cars;",
+        "hide": 2,
+        "includeAll": true,
+        "label": "Car",
+        "multi": true,
+        "name": "car_id",
+        "options": [],
+        "query": "SELECT name AS __text, id AS __value FROM cars;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "km",
+          "value": "km"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select unit_of_length from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "length_unit",
+        "options": [],
+        "query": "select unit_of_length from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "ideal",
+          "value": "ideal"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select preferred_range from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "preferred_range",
+        "options": [],
+        "query": "select preferred_range from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "C",
+          "value": "C"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select unit_of_temperature from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "temp_unit",
+        "options": [],
+        "query": "select unit_of_temperature from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6M",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "Projected Range",
+  "uid": "riqUfXgRz",
+  "version": 1
+}
