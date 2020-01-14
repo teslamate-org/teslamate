@@ -29,3 +29,11 @@ In MacroDroid, a trigger is the event that causes a task to execute. We will def
 ### Constraints
 
 We will not configure any constraints for the Macro we have created. When the Constraints screen appears, with **(No Constraints)** being the default setting, simply click the checkmark in the bottom-right hand corner of the screen to finish setting up your macro.
+
+### Defining the Action
+
+In case you have made your installation reachable publicly (which makes sense) and have secured it using e.g. a proxy with http basic auth (which you absolutely should, e.g. Docker Traefik works well for that) you need a REST API tool to send the required PUT request to teslamate. RESTask works well for that. Grab it from the Play Store, install it and then head back to Macrodroid. When selecting an Action, choose Locale/Tasker plugin and select RESTask. Here you simply provide the URL to your API installation: `https://yourinstallation.bla.blubb.com/api/car/1/logging/resume` Replace the number if you have multiple cars and you wish to select the right one. Request type is PUT, enter Basic Auth credentials and you are done. Maybe consider raising the timeout a bit if you start your drives in an underground parking garage or areas with poorer cell coverage.
+
+With all that done you can push the play button at the top to test. In the log of Teslamate you should see a 'increasing log frequency' message and RESTask should show a 204 return code. If so, everything is well. If not, check your settings and the logs of your proxy.
+
+Macrodoid can have multiple triggers for the same action. In addition to Bluetooth you may also select 'opening the Tesla app' as another trigger. So when you pre-heat or pre-cool the logging will start as well so you can collect consumption for that as well.
