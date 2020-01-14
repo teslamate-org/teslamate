@@ -19,47 +19,47 @@
       </div>
        <div class="icons ml-5">
       <%= if @summary.is_preconditioning do %>
-        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Preconditioning" %>'>
+        <span class="health icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Preconditioning" %>'>
           <span class="mdi mdi-air-conditioner"></span>
         </span>
       <% end %>
       <%= if @summary.state != :driving and @summary.is_user_present do %>
-        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Driver present" %>'>
+        <span class="health icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Driver present" %>'>
           <span class="mdi mdi-account"></span>
         </span>
       <% end %>
       <%= if @summary.plugged_in do %>
-        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Plugged in" %>'>
+        <span class="health icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Plugged in" %>'>
           <span class="mdi mdi-power-plug"></span>
         </span>
       <% end %>
       <%= if @summary.windows_open do %>
-        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Windows open" %>'>
+        <span class="health icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Windows open" %>'>
           <span class="mdi mdi-window-open"></span>
         </span>
       <% end %>
       <%= if @summary.sentry_mode do %>
-        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Sentry Mode" %>'>
+        <span class="health icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Sentry Mode" %>'>
           <span class="mdi mdi-shield-check"></span>
         </span>
       <% end %>
       <%= unless is_nil(@summary.locked) do %>
-        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= (if @summary.locked, do: gettext("Locked"), else: gettext("Unlocked")) %>'>
+        <span class="health icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= (if @summary.locked, do: gettext("Locked"), else: gettext("Unlocked")) %>'>
           <%= content_tag(:span, nil, class: "mdi mdi-lock" <> (if @summary.locked, do: "", else: "-open-variant")) %>
         </span>
       <% end %>
       <%= if @summary.update_available do %>
-        <span class="health icon has-text-grey-dark tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Software Update available" %>'>
+        <span class="health icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Software Update available" %>'>
           <span class="mdi mdi-gift-outline"></span>
         </span>
       <% end %>
       <%= if @summary.healthy == false do %>
-        <span class="health icon has-text-danger tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Health check failed" %>'>
+        <span class="health icon has-text-danger tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Health check failed" %>'>
           <span class="mdi mdi-alert-box"></span>
         </span>
       <% end %>
       <%= if not is_nil(@summary.battery_level) and not is_nil(@summary.usable_battery_level) and @summary.battery_level - @summary.usable_battery_level > 2 do %>
-        <span class="health icon has-text-link tooltip is-tooltip-top is-tooltip-left-mobile" data-tooltip='<%= gettext "Reduced Battery Range" %>'>
+        <span class="health icon has-text-link tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Reduced Battery Range" %>'>
           <span class="mdi mdi-snowflake"></span>
         </span>
       <% end %>
