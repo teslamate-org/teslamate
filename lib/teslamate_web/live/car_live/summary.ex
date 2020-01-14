@@ -5,7 +5,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   alias TeslaMateWeb.CarView
   alias TeslaMate.Vehicles.Vehicle.Summary
-  alias TeslaMate.Vehicles
+  alias TeslaMate.{Vehicles, Convert}
 
   @impl true
   def mount(%{summary: %Summary{car: car} = summary, settings: settings}, socket) do
@@ -110,24 +110,10 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp cancel_timer(ref) when is_reference(ref), do: Process.cancel_timer(ref)
 
   defp duration_str(nil), do: nil
-  defp duration_str(date), do: DateTime.utc_now() |> DateTime.diff(date, :second) |> sec_to_str()
 
-  @minute 60
-  @hour @minute * 60
-  @day @hour * 24
-  @week @day * 7
-  @divisor [@week, @day, @hour, @minute, 1]
-
-  def sec_to_str(sec) when sec < 5, do: nil
-
-  def sec_to_str(sec) do
-    {_, [s, m, h, d, w]} =
-      Enum.reduce(@divisor, {sec, []}, fn divisor, {n, acc} ->
-        {rem(n, divisor), [div(n, divisor) | acc]}
-      end)
-
-    ["#{w} wk", "#{d} d", "#{h} h", "#{m} min", "#{s} s"]
-    |> Enum.reject(&String.starts_with?(&1, "0"))
-    |> Enum.take(2)
+  defp duration_str(date) do
+    DateTime.utc_now()
+    |> DateTime.diff(date, :second)
+    |> Convert.sec_to_str()
   end
 end

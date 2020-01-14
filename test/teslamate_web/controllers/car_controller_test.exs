@@ -206,7 +206,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert table_row(html, "Status", "charging")
-      assert table_row(html, "Remaining Time", "110 min")
+      assert table_row(html, "Remaining Time", "1 h 49 min")
       assert icon(html, "Plugged in", "power-plug")
       assert table_row(html, "Range (ideal)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
@@ -220,6 +220,30 @@ defmodule TeslaMateWeb.CarControllerTest do
              )
 
       assert table_row(html, "Charge limit", "85%")
+    end
+
+    @tag :signed_in
+    test "does not render remaining seconds", %{conn: conn} do
+      events = [
+        {:ok,
+         online_event(
+           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           charge_state: %{
+             timestamp: 0,
+             charging_state: "Charging",
+             charge_energy_added: "4.32",
+             ideal_battery_range: 200,
+             time_to_full_charge: 0.33
+           }
+         )}
+      ]
+
+      :ok = start_vehicles(events)
+
+      conn = get(conn, Routes.car_path(conn, :index))
+
+      assert html = response(conn, 200)
+      assert table_row(html, "Remaining Time", "19 min")
     end
 
     @tag :signed_in

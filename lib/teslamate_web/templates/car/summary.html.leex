@@ -91,7 +91,12 @@
           <%= if @summary.state == :charging and not is_nil(@summary.time_to_full_charge) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Remaining Time" %></td>
-            <td><%= round(@summary.time_to_full_charge * 60) %> min</td>
+            <td><%=
+                round(@summary.time_to_full_charge * 60 * 60)
+                |> Convert.sec_to_str()
+                |> Enum.reject(&String.ends_with?(&1, "s"))
+                |> Enum.join(" ")
+            %></td>
           </tr>
           <% end %>
           <%= unless is_nil(@summary.ideal_battery_range_km) do %>
