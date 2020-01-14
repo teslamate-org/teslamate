@@ -133,6 +133,7 @@ defmodule TeslaMateWeb.CarControllerTest do
            },
            climate_state: %{is_preconditioning: true, outside_temp: 24, inside_temp: 23.2},
            vehicle_state: %{
+             car_version: "2019.40.50.7 ad132c7b057e",
              software_update: %{status: "available"},
              locked: true,
              sentry_mode: true,
@@ -168,6 +169,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Software Update available", "gift-outline")
       assert table_row(html, "Outside temperature", "24 °C")
       assert table_row(html, "Inside temperature", "23.2 °C")
+      assert table_row(html, "Version", "2019.40.50.7")
     end
 
     @tag :signed_in

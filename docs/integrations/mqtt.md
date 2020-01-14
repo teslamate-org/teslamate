@@ -12,7 +12,7 @@ Vehicle data will be published to the following topics (`$car_id` usually starts
 | `teslamate/cars/$car_id/state`                         | asleep               | Status of the vehicle (e.g. `onlilne`, `asleep`, `charging`) |
 | `teslamate/cars/$car_id/since`                         | 2019-02-29T23:00:07Z | Date of the last status change                               |
 | `teslamate/cars/$car_id/healthy`                       | true                 | Health status of the logger for that vehicle                 |
-| `teslamate/cars/$car_id/version`                       | 2019.32.12.2 58f3b76 | Software Version                                             |
+| `teslamate/cars/$car_id/version`                       | 2019.32.12.2         | Software Version                                             |
 | `teslamate/cars/$car_id/update_available`              | false                | Indicates if a software update is available                  |
 |                                                        |                      |                                                              |
 | `teslamate/cars/$car_id/latitude`                      | 35.278131            | Last reported car latitude                                   |

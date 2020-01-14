@@ -74,7 +74,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
       windows_open: window_open(vehicle),
       is_user_present: get_in_struct(vehicle, [:vehicle_state, :is_user_present]),
-      version: get_in_struct(vehicle, [:vehicle_state, :car_version]),
+      version: version(vehicle),
       update_available: update_available(vehicle)
     }
   end
@@ -103,6 +103,15 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
       _ ->
         nil
+    end
+  end
+
+  defp version(vehicle) do
+    with %Vehicle{vehicle_state: %VehicleState{car_version: v}} when is_binary(v) <- vehicle,
+         [version | _] <- String.split(v, " ") do
+      version
+    else
+      _ -> nil
     end
   end
 
