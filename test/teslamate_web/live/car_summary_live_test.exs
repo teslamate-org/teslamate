@@ -255,6 +255,30 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                  &match?({"span", [_, {"data-tooltip", "Software Update available"}], _}, &1)
                )
     end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "shows snowflake if usable_battery_level differs from battery_level", %{conn: conn} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event(charge_state: %{battery_level: 73, usable_battery_level: 70})},
+        {:error, :unknown}
+      ]
+
+      :ok = start_vehicles(events)
+
+      Process.sleep(300)
+
+      assert {:ok, _parent_view, html} =
+               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
+      assert {"span", _, [{"span", [{"class", "mdi mdi-snowflake"}], _}]} =
+               html
+               |> Floki.find(".icons .icon")
+               |> Enum.find(
+                 &match?({"span", [_, {"data-tooltip", "Reduced Battery Range"}], _}, &1)
+               )
+    end
   end
 
   def start_vehicles(events \\ []) do
