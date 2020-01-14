@@ -37,6 +37,7 @@ Vehicle data will be published to the following topics (`$car_id` usually starts
 | `teslamate/cars/$car_id/ideal_battery_range_km`        | 335.79               | Ideal Range in km                                            |
 |                                                        |                      |                                                              |
 | `teslamate/cars/$car_id/battery_level`                 | 88                   | Battery Level Percentage                                     |
+| `teslamate/cars/$car_id/usable_battery_level`          | 85                   | Usable battery level percentage                              |
 | `teslamate/cars/$car_id/plugged_in`                    | true                 | If car is currently plugged into a charger                   |
 | `teslamate/cars/$car_id/charge_energy_added`           | 5.06                 | Last added energy in kW                                      |
 | `teslamate/cars/$car_id/charge_limit_soc`              | 90                   | Charge Limit Configured in Percentage                        |
