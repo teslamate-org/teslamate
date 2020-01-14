@@ -6,11 +6,16 @@ defmodule TeslaMateWeb.CarControllerTest do
   alias TeslaMate.{Log, Settings, Repo}
   alias TeslaMate.Log.Car
 
-  defp table_row(html, key, value) do
-    assert {"tr", _, [{"td", _, [^key]}, {"td", [], [^value]}]} =
+  defp table_row(html, key, value, opts \\ []) do
+    assert {"tr", _, [{"td", _, [^key]}, {"td", [], [v]}]} =
              html
              |> Floki.find("tr")
              |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
+
+    case Keyword.get(opts, :tooltip) do
+      nil -> assert value == v
+      str -> assert {"span", [_, {"data-tooltip", ^str}], [^value]} = v
+    end
   end
 
   defp icon(html, tooltip, icon) do
@@ -107,7 +112,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Status", "asleep")
       assert table_row(html, "Range (ideal)", "380.25 km")
       assert table_row(html, "Range (est.)", "401.52 km")
-      assert table_row(html, "State of Charge", "80% (218.87 km 100%)")
+      assert table_row(html, "State of Charge", "80%", tooltip: "≈ 475 km at 100%")
       assert table_row(html, "Outside temperature", "20.1 °C")
       assert table_row(html, "Inside temperature", "21.0 °C")
     end
@@ -153,8 +158,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Status", "online")
       assert table_row(html, "Range (ideal)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
-      assert table_row(html, "State of Charge", "69% (408.17 km 100%)")
-      assert table_row(html, "Usable State of Charge", "67% (420.36 km 100%)")
+      assert table_row(html, "State of Charge", "69%", tooltip: "≈ 466 km at 100%")
+      assert table_row(html, "Usable State of Charge", "67%", tooltip: "≈ 480 km at 100%")
       assert icon(html, "Locked", "lock")
       assert icon(html, "Driver present", "account")
       assert icon(html, "Preconditioning", "air-conditioner")
@@ -387,7 +392,13 @@ defmodule TeslaMateWeb.CarControllerTest do
              shift_state: "D",
              speed: 30
            },
-           charge_state: %{ideal_battery_range: 200, est_battery_range: 180, battery_range: 175},
+           charge_state: %{
+             ideal_battery_range: 200,
+             est_battery_range: 180,
+             battery_range: 175,
+             usable_battery_level: 67,
+             battery_level: 69
+           },
            climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2}
          )}
       ]
@@ -401,6 +412,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Status", "driving")
       assert table_row(html, "Range (ideal)", "200.0 mi")
       assert table_row(html, "Range (est.)", "180.0 mi")
+      assert table_row(html, "State of Charge", "69%", tooltip: "≈ 290 mi at 100%")
+      assert table_row(html, "Usable State of Charge", "67%", tooltip: "≈ 299 mi at 100%")
       assert table_row(html, "Speed", "30 mph")
       assert table_row(html, "Outside temperature", "75.2 °F")
       assert table_row(html, "Inside temperature", "73.8 °F")

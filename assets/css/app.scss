@@ -217,3 +217,8 @@ $positions: ('top','left','bottom','right');
     margin-bottom: 1.5rem;
   }
 }
+
+.has-dotted-underline {
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+}

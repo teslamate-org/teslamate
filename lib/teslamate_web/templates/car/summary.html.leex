@@ -160,32 +160,48 @@
             </tr>
             <% end %>
           <% end %>
+          <%
+            get_range_at_100_text = fn battery_level ->
+              range =
+                case @settings.preferred_range do
+                  :ideal -> @summary.ideal_battery_range_km
+                  :rated -> @summary.rated_battery_range_km
+                end
+
+              unless is_nil(range) do
+                r100 = range / battery_level * 100
+
+                r100_str =
+                  if @settings.unit_of_length == :mi do
+                    "#{round(r100 / 1.60934)} mi"
+                  else
+                    "#{round(r100)} km"
+                  end
+
+                gettext("≈ %{range} at 100%", range: r100_str)
+              end
+            end
+          %>
           <%= unless is_nil(@summary.battery_level) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "State of Charge" %></td>
-            <td><%= @summary.battery_level %>% (<%= 
- 
-                if @settings.unit_of_length == :mi do
-                  "#{Float.round(@summary.rated_battery_range_km/@summary.battery_level * 100 / 1.60934, 2)} mi"
-                else
-                  "#{Float.round(@summary.rated_battery_range_km/@summary.battery_level * 100,2)} km"
-                end
- 
-              %> 100%)</td>
+            <td>
+              <span
+                class="tooltip has-tooltip-right is-link has-dotted-underline"
+                data-tooltip='<%= get_range_at_100_text.(@summary.battery_level) %>'
+              ><%= @summary.battery_level %>%</span>
+            </td>
           </tr>
           <% end %>
           <%= unless is_nil(@summary.usable_battery_level) or @summary.usable_battery_level == @summary.battery_level do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Usable State of Charge" %></td>
-            <td><%= @summary.usable_battery_level %>% (<%= 
-            
-                if @settings.unit_of_length == :mi do
-                  "#{Float.round(@summary.rated_battery_range_km/@summary.usable_battery_level * 100 / 1.60934, 2)} mi"
-                else
-                  "#{Float.round(@summary.rated_battery_range_km/@summary.usable_battery_level * 100,2)} km"
-                end
-
-            %> 100%)</td>
+            <td>
+              <span
+                class="tooltip has-tooltip-right has-dotted-underline"
+                data-tooltip='<%= get_range_at_100_text.(@summary.usable_battery_level) %>'
+              ><%= @summary.usable_battery_level %>%</span>
+            </td>
           </tr>
           <% end %>
           <%= if @summary.state == :driving and not is_nil(@summary.speed) do %>
