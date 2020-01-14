@@ -7,3 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// Fix sticky hover on iOS
+document.addEventListener("click", x => 0);
