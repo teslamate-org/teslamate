@@ -1,4 +1,4 @@
-# Advanced Docker Setup
+# Advanced Docker Setup with Traefik
 
 **Differences to the basic setup:**
 

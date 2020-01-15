@@ -53,8 +53,9 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
 
 - Getting Started
   - [Simple Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker.html) (inside your home network)
-  - [Advanced Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker_advanced.html) (Reverse Proxy, Let's Encrypt Certificate, HTTP Basic Auth)
-  - [Manual install on Debian/Ubuntu](https://teslamate.readthedocs.io/en/latest/installation/debian.html) (without Docker)
+  - [Advanced Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker_advanced.html) (Traefik, Let's Encrypt, HTTPS, HTTP Basic Auth)
+  - [Advanced Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker_advanced_apache.html) (Apache2, HTTPS, HTTP Basic Auth)
+  - [Manual install](https://teslamate.readthedocs.io/en/latest/installation/debian.html) (on Debian/Ubuntu without Docker)
   - [Kubernetes install](https://hub.helm.sh/charts/billimek/teslamate) (opinionated helm chart)
   - [Upgrading to a new version](https://teslamate.readthedocs.io/en/latest/upgrading.html)
   - [Frequently Asked Questions](https://teslamate.readthedocs.io/en/latest/faq.html)
@@ -68,6 +69,8 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
   - [MQTT](https://teslamate.readthedocs.io/en/latest/integrations/mqtt.html)
 - Advanced configuration
   - [Environment Variables](https://teslamate.readthedocs.io/en/latest/configuration/environment_variables.html)
+- Maintenance
+  - [Backup and Restore](https://teslamate.readthedocs.io/en/latest/maintenance/backup_restore.html)
 - Development and Contributing
   - [Development](https://teslamate.readthedocs.io/en/latest/development.html)
 

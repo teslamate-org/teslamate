@@ -8,7 +8,8 @@ A powerful, self-hosted data logger for your Tesla.
    :caption: Getting Started
 
    Simple Docker install inside your home network <installation/docker>
-   Advanced Docker install (Reverse Proxy, HTTPS, HTTP Basic Auth) <installation/docker_advanced>
+   Advanced Docker install (Traefik, Let's Encrypt, HTTPS, HTTP Basic Auth) <installation/docker_advanced>
+   Advanced Docker install (Apache2, HTTPS, HTTP Basic Auth) <installation/docker_advanced_apache.md>
    Manual install on Debian or Ubuntu <installation/debian>
    upgrading
    faq
@@ -34,6 +35,12 @@ A powerful, self-hosted data logger for your Tesla.
    :caption: Advanced Configuration
 
    configuration/environment_variables
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Maintenance
+
+   maintenance/backup_restore.md
 
 .. toctree::
    :maxdepth: 1
