@@ -5,7 +5,6 @@
   </ul>
 </nav>
 
-
 <%= f = form_for @changeset, "#", [ phx_submit: :save, class: "charging_process", id: @charging_process.id] %>
   <div class="field is-horizontal">
     <div class="field-label"></div>
@@ -33,31 +32,37 @@
 
         <div class="control">
           <div class="tags has-addons">
-            <span class="tag"><%= gettext "Date" %></span>
+            <span class="tag"><span class="icon"><span class="mdi mdi-calendar-range"></span></span></span>
+          <%= unless is_nil(@charging_process.end_date) do %>
             <%= content_tag :span, "–", data: [start_date: DateTime.to_iso8601(@charging_process.start_date),
                                               end_date: DateTime.to_iso8601(@charging_process.end_date)],
-                                       phx_hook: "LocalTimeRange", class: "tag is-info is-light" %>
+                                        phx_hook: "LocalTimeRange",
+                                        class: "tag",
+                                        id: :date_range %>
+          <% end %>
           </div>
         </div>
 
         <div class="control">
           <div class="tags has-addons">
-            <span class="tag"><%= gettext "Used" %></span>
-            <span class="tag is-info is-light"><%= Float.round(max(@charging_process.charge_energy_used || 0, @charging_process.charge_energy_added), 2) %> kWh</span>
+            <span class="tag"><span class="icon"><span class="mdi mdi-car"></span></span></span>
+            <span class="tag"><%= @charging_process.car.name %></span>
           </div>
         </div>
 
         <div class="control">
           <div class="tags has-addons">
-            <span class="tag"><%= gettext "Vehicle" %></span>
-            <span class="tag is-info is-light"><%= @charging_process.car.name %></span>
+            <span class="tag"><span class="icon"><span class="mdi mdi-flash"></span></span></span>
+          <%= unless is_nil(@charging_process.charge_energy_used) do %>
+            <span class="tag"><%= Float.round(max(@charging_process.charge_energy_used || 0, @charging_process.charge_energy_added), 2) %> kWh</span>
+          <% end %>
           </div>
         </div>
 
         <div class="control">
           <div class="tags has-addons">
-            <span class="tag"><%= gettext "Location" %></span>
-            <span class="tag is-info is-light"><%=
+            <span class="tag"><span class="icon"><span class="mdi mdi-map-marker"></span></span></span>
+            <span class="tag"><%=
               case @charging_process do
                 %ChargingProcess{geofence: %GeoFence{name: name}} -> name
                 %ChargingProcess{address: %Address{display_name: name}} -> name
@@ -78,7 +83,10 @@
     <div class="field-body">
       <div class="field">
         <div class="control is-expanded">
-          <%= text_input f, :cost, class: "input", type: :number, min: 0.0, step: 0.01, phx_hook: "SetLangAttr" %>
+          <%= text_input f, :cost, class: "input",
+                                   type: :number, inputmode: :decimal, min: 0.0, step: 0.01,
+                                   placeholder: gettext("Enter charge cost"),
+                                   phx_hook: "SetLangAttr" %>
         </div>
         <p class="help is-danger"><%= error_tag(f, :cost) %></p>
       </div>
@@ -92,8 +100,10 @@
         <div class="control">
           <%= link gettext("Back"), to: @redirect_to, class: "button" %>
         </div>
-        <div class="control">
-          <%= submit gettext("Save"), phx_disable_with: gettext("Saving..."), class: "button is-info" %>
+        <div class="control""min-width: 300px;">
+          <%= submit (if is_nil(@notification), do: gettext("Save"), else: @notification.message),
+                phx_disable_with: gettext("Saving..."),
+                class: "button " <> (if is_nil(@notification), do: "is-info", else: "is-#{@notification.key}") %>
         </div>
       </div>
     </div>

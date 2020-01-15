@@ -46,6 +46,7 @@ export const LocalTime = {
 export const LocalTimeRange = {
   exec() {
     const date = toLocalDate(this.el.dataset.startDate, {
+      year: "numeric",
       month: "short",
       day: "numeric"
     });
