@@ -27,14 +27,14 @@ services:
       - DATABASE_USER=teslamate
       - DATABASE_PASS=secret
       - DATABASE_NAME=teslamate
-      - DATABASE_HOST=db
+      - DATABASE_HOST=database
       - MQTT_HOST=mosquitto
     ports:
       - 4000:4000
     cap_drop:
       - all
 
-  db:
+  database:
     image: postgres:11
     restart: always
     environment:
@@ -51,7 +51,7 @@ services:
       - DATABASE_USER=teslamate
       - DATABASE_PASS=secret
       - DATABASE_NAME=teslamate
-      - DATABASE_HOST=db
+      - DATABASE_HOST=database
     ports:
       - 3000:3000
     volumes:
