@@ -87,6 +87,8 @@ services:
   mosquitto:
     image: eclipse-mosquitto:1.6
     restart: always
+    ports:
+      - 127.0.0.1:1883:1883
     volumes:
       - mosquitto-conf:/mosquitto/config
       - mosquitto-data:/mosquitto/data
