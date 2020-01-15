@@ -24,7 +24,7 @@ msgstr "Geschwindigkeit"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:192
 msgid "State of Charge"
-msgstr "Ladezustand"
+msgstr "Ladestand"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:139
@@ -125,7 +125,7 @@ msgid "Units"
 msgstr "Einheiten"
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:98
+#: lib/teslamate_web/templates/charge/cost.html.leex:100
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:119
 msgid "Back"
 msgstr "Zurück"
@@ -170,13 +170,13 @@ msgid "Radius"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:101
+#: lib/teslamate_web/templates/charge/cost.html.leex:103
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:122
 msgid "Save"
 msgstr "Speichern"
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:102
+#: lib/teslamate_web/templates/charge/cost.html.leex:104
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:122
 msgid "Saving..."
 msgstr "Speichere..."
@@ -444,16 +444,16 @@ msgid "Charge Cost"
 msgstr "Ladekosten"
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:81
+#: lib/teslamate_web/templates/charge/cost.html.leex:80
 msgid "Cost"
 msgstr "Kosten"
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:86
+#: lib/teslamate_web/templates/charge/cost.html.leex:87
 msgid "Enter charge cost"
-msgstr ""
+msgstr "Ladekosten eingeben"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.ex:46
 msgid "Saved!"
-msgstr "Speichern"
+msgstr "Gespeichert!"

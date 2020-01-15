@@ -125,7 +125,7 @@ msgid "Units"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:98
+#: lib/teslamate_web/templates/charge/cost.html.leex:100
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:119
 msgid "Back"
 msgstr ""
@@ -170,13 +170,13 @@ msgid "Radius"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:101
+#: lib/teslamate_web/templates/charge/cost.html.leex:103
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:122
 msgid "Save"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:102
+#: lib/teslamate_web/templates/charge/cost.html.leex:104
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:122
 msgid "Saving..."
 msgstr ""
@@ -444,12 +444,12 @@ msgid "Charge Cost"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:81
+#: lib/teslamate_web/templates/charge/cost.html.leex:80
 msgid "Cost"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:86
+#: lib/teslamate_web/templates/charge/cost.html.leex:87
 msgid "Enter charge cost"
 msgstr ""
 
