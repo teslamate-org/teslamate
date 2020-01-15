@@ -215,7 +215,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "link": true,
-          "linkTargetBlank": true,
+          "linkTargetBlank": false,
           "linkTooltip": "Set Cost",
           "linkUrl": "[[base_url:raw]]/charge-cost/${__cell_19:raw}",
           "mappingType": 1,
