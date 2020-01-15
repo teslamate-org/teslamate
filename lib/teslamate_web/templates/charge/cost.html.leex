@@ -30,38 +30,37 @@
     <div class="field-body">
       <div class="field is-grouped is-grouped-multiline">
 
+        <%= unless is_nil(@charging_process.end_date) do %>
         <div class="control">
-          <div class="tags has-addons">
-            <span class="tag"><span class="icon"><span class="mdi mdi-calendar-range"></span></span></span>
-          <%= unless is_nil(@charging_process.end_date) do %>
+          <div id="date-tag" class="tags has-addons">
+            <span class="tag is-primary is-light"><span class="icon"><span class="mdi mdi-calendar-range"></span></span></span>
             <%= content_tag :span, "–", data: [start_date: DateTime.to_iso8601(@charging_process.start_date),
                                               end_date: DateTime.to_iso8601(@charging_process.end_date)],
                                         phx_hook: "LocalTimeRange",
-                                        class: "tag",
-                                        id: :date_range %>
-          <% end %>
+                                        class: "tag" %>
           </div>
         </div>
+        <% end %>
 
         <div class="control">
-          <div class="tags has-addons">
-            <span class="tag"><span class="icon"><span class="mdi mdi-car"></span></span></span>
+          <div id="car-tag" class="tags has-addons">
+            <span class="tag is-info is-light"><span class="icon"><span class="mdi mdi-car"></span></span></span>
             <span class="tag"><%= @charging_process.car.name %></span>
           </div>
         </div>
 
+        <%= unless is_nil(@charging_process.charge_energy_added) do %>
         <div class="control">
-          <div class="tags has-addons">
-            <span class="tag"><span class="icon"><span class="mdi mdi-flash"></span></span></span>
-          <%= unless is_nil(@charging_process.charge_energy_used) do %>
+          <div id="energy-tag" class="tags has-addons">
+            <span class="tag is-warning is-light"><span class="icon"><span class="mdi mdi-flash"></span></span></span>
             <span class="tag"><%= Float.round(max(@charging_process.charge_energy_used || 0, @charging_process.charge_energy_added), 2) %> kWh</span>
-          <% end %>
           </div>
         </div>
+        <% end %>
 
         <div class="control">
-          <div class="tags has-addons">
-            <span class="tag"><span class="icon"><span class="mdi mdi-map-marker"></span></span></span>
+          <div id="location-tag" class="tags has-addons">
+            <span class="tag is-danger is-light"><span class="icon"><span class="mdi mdi-map-marker"></span></span></span>
             <span class="tag"><%=
               case @charging_process do
                 %ChargingProcess{geofence: %GeoFence{name: name}} -> name
