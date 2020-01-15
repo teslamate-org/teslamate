@@ -1,20 +1,18 @@
 # Advanced Docker Setup with Apache2
 
-Replace "example.com" in the following with your domain.
-
 **Differences to the basic setup:**
 
-- Uses (almost) pure simple docker installation
 - Access to services via teslamate.example.com and grafana.example.com
-- Web services (`teslamate` and `grafana`) sit behind a reverse proxy (apache2) which terminates HTTP and HTTPS traffic.
-- HTTP request are redirected to HTTPS 
-- SSL certificate must be existing
-- Ports 3000 (grafana) and 4000 (teslamate are only locally accessible
+- Web services (`teslamate` and `grafana`) sit behind a reverse proxy (Apache2) which terminates HTTPS traffic
+- Custom configuration was moved into a separate `.env` file
+- HTTP requests are redirected to HTTPS
+- Ports 3000 (grafana) and 4000 (teslamate) are only exposed locally
 
 ## Requirements
 
 - Docker running on a machine that's always on
 - Two FQDN (`teslamate.example.com` & `grafana.example.com`)
+- An existing SSL certificate
 - External internet access, to talk to tesla.com
 
 ## Setup
@@ -31,23 +29,26 @@ services:
     image: teslamate/teslamate:latest
     restart: always
     environment:
-      - DATABASE_USER=teslamate
-      - DATABASE_PASS=secret
-      - DATABASE_NAME=teslamate
-      - DATABASE_HOST=db
+      - DATABASE_USER=${TM_DB_USER}
+      - DATABASE_PASS=${TM_DB_PASS}
+      - DATABASE_NAME=${TM_DB_NAME}
+      - DATABASE_HOST=database
       - MQTT_HOST=mosquitto
+      - VIRTUAL_HOST=${FQDN_TM}
+      - CHECK_ORIGIN=true
+      - TZ={$TM_TZ}
     ports:
       - 127.0.0.1:4000:4000
     cap_drop:
       - all
 
-  db:
+  database:
     image: postgres:11
     restart: always
     environment:
-      - POSTGRES_USER=teslamate
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=teslamate
+      - POSTGRES_USER=${TM_DB_USER}
+      - POSTGRES_PASSWORD=${TM_DB_PASS}
+      - POSTGRES_DB=${TM_DB_NAME}
     volumes:
       - teslamate-db:/var/lib/postgresql/data
 
@@ -55,10 +56,16 @@ services:
     image: teslamate/grafana:latest
     restart: always
     environment:
-      - DATABASE_USER=teslamate
-      - DATABASE_PASS=secret
-      - DATABASE_NAME=teslamate
-      - DATABASE_HOST=db
+      - DATABASE_USER=${TM_DB_USER}
+      - DATABASE_PASS=${TM_DB_PASS}
+      - DATABASE_NAME=${TM_DB_NAME}
+      - DATABASE_HOST=database
+      - GRAFANA_PASSWD=${GRAFANA_PW}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PW}
+      - GF_AUTH_BASIC_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      - GF_SERVER_ROOT_URL=https://${FQDN_GRAFANA}
     ports:
       - 127.0.0.1:3000:3000
     volumes:
@@ -68,7 +75,7 @@ services:
     image: eclipse-mosquitto:1.6
     restart: always
     ports:
-      - 1883:1883
+      - 127.0.0.1:1883:1883
     volumes:
       - mosquitto-conf:/mosquitto/config
       - mosquitto-data:/mosquitto/data
@@ -80,11 +87,29 @@ volumes:
     mosquitto-data:
 ```
 
-#### teslamate.conf (to be placed in /etc/apache2/sites-available)
-
-This file contains the definition of the virtual hosts teslamate.example.com and grafana.example.com. It has to be enabled via "a2ensite teslamate".
+#### .env
 
 ```
+TM_DB_USER=teslamate
+TM_DB_PASS=secret
+TM_DB_NAME=teslamate
+
+GRAFANA_USER=admin
+GRAFANA_PW=admin
+
+FQDN_GRAFANA=grafana.example.com
+FQDN_TM=teslamate.example.com
+
+TM_TZ=Europe/Berlin
+
+LETSENCRYPT_EMAIL=yourperson@example.com
+```
+
+#### teslamate.conf (to be placed in /etc/apache2/sites-available)
+
+This file contains the definition of the virtual hosts `teslamate.example.com` and `grafana.example.com`. It has to be enabled via `a2ensite teslamate`.
+
+```apacheconf
 Define MYDOMAIN example.com
 Define LOG access.teslamate.log
 
@@ -137,7 +162,8 @@ Define LOG access.teslamate.log
     </VirtualHost>
 </IfModule>
 ```
-This assumes, that you have the SSL certificate files residing in /etc/letsencrypt/live/teslamate.example.com.
+
+This assumes, that you have the SSL certificate files residing in `/etc/letsencrypt/live/teslamate.example.com`.
 
 #### .htpasswd (to be placed in /etc/apache2)
 
@@ -145,7 +171,7 @@ This file contains a user and password for accessing TeslaMate (Basic-auth), not
 
 **Example:**
 
-```
+```apacheconf
 teslamate:$apr1$0hau3aWq$yzNEh.ABwZBAIEYZ6WfbH/
 ```
 
