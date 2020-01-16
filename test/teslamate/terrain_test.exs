@@ -7,7 +7,7 @@ defmodule TeslaMate.TerrainTest do
     log_name = :"log_#{name}"
     srtm_name = :"srtm_#{name}"
 
-    {:ok, _pid} = start_supervised({LogMock, name: log_name, pid: self()})
+    {:ok, _pid} = start_supervised({LogMock, name: log_name, pid: self(), last_update: nil})
     {:ok, _pid} = start_supervised({SRTMMock, name: srtm_name, pid: self(), responses: responses})
 
     opts = [

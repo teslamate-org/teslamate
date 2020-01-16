@@ -413,6 +413,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     {:ok, attrs} = identify(vehicle)
     {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs])
+    :ok = synchronize_updates(vehicle, data)
 
     {:ok, %Log.State{start_date: last_state_change}} =
       call(data.deps.log, :start_state, [car, :online])
@@ -954,6 +955,34 @@ defmodule TeslaMate.Vehicles.Vehicle do
       end)
 
     Map.put(vehicle, :charge_state, charge_state)
+  end
+
+  def synchronize_updates(%Vehicle{vehicle_state: %VehicleState{car_version: current_vsn}}, data)
+      when is_binary(current_vsn) do
+    case call(data.deps.log, :get_latest_update, [data.car]) do
+      %Log.Update{version: last_vsn} when last_vsn < current_vsn ->
+        with {:ok, _update} <- call(data.deps.log, :insert_missed_update, [data.car, current_vsn]) do
+          Logger.info("Logged missing software udpate: #{current_vsn}", car_id: data.car.id)
+          :ok
+        end
+
+      nil ->
+        with {:ok, _update} <- call(data.deps.log, :insert_missed_update, [data.car, current_vsn]) do
+          :ok
+        end
+
+      _ ->
+        Logger.debug("No missed updates", car_id: data.car.id)
+        :ok
+    end
+  end
+
+  def synchronize_updates(%Vehicle{vehicle_state: vehicle_state}, data) do
+    Logger.warn("Unexpected software version: #{inspect(vehicle_state, pretty: true)}",
+      car_id: data.car.id
+    )
+
+    :ok
   end
 
   defp summary_topic(car_id) when is_number(car_id), do: "#{__MODULE__}/summary/#{car_id}"

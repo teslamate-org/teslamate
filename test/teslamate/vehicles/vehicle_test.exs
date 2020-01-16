@@ -315,4 +315,89 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       end
     end
   end
+
+  describe "updates" do
+    test "logs the current software version at first startup", %{test: name} do
+      events = [
+        {:ok, online_event(vehicle_state: %{car_version: "42.42.42.0 b2ab650"})}
+      ]
+
+      :ok = start_vehicle(name, events, last_update: nil)
+
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:insert_missed_update, ^car, "42.42.42.0 b2ab650"}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
+
+    test "logs missing updates", %{test: name} do
+      events = [
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.50.7"})}
+      ]
+
+      :ok = start_vehicle(name, events, last_update: %Update{version: "2019.40.2.6"})
+
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:insert_missed_update, ^car, "2019.40.50.7"}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
+
+    test "does not log updates <= current version", %{test: name} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.50.7 ad132c7b057e"})},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, online_event()},
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.50.6"})},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, online_event()},
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.2.6"})}
+      ]
+
+      :ok =
+        start_vehicle(name, events, last_update: %Update{version: "2019.40.50.7 ad132c7b057e"})
+
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      assert_receive {:start_state, ^car, :asleep}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
+
+      assert_receive {:start_state, ^car, :online}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      assert_receive {:start_state, ^car, :asleep}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
+
+      assert_receive {:start_state, ^car, :online}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
+
+    @tag :capture_log
+    test "handles unexpected :car_version's", %{test: name} do
+      events = [
+        {:ok, online_event(vehicle_state: %{car_version: nil})}
+      ]
+
+      :ok = start_vehicle(name, events, last_update: nil)
+
+      assert_receive {:start_state, car, :online}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
+  end
 end

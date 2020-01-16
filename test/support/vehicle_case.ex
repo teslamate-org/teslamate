@@ -6,7 +6,7 @@ defmodule TeslaMate.VehicleCase do
       alias TeslaMate.Vehicles.Vehicle.Summary
       alias TeslaMate.Vehicles.Vehicle
       alias TeslaMate.Settings.CarSettings
-      alias TeslaMate.Log.Car
+      alias TeslaMate.Log.{Car, Update}
       alias TeslaApi.Vehicle.State
 
       import Ecto
@@ -15,6 +15,7 @@ defmodule TeslaMate.VehicleCase do
 
       def start_vehicle(name, events, opts \\ []) when length(events) > 0 do
         mock_log? = Keyword.get(opts, :log, true)
+        last = Keyword.get(opts, :last_update, %Update{version: "9999.99.99.0 lasjas234"})
 
         log_name = :"log_#{name}"
         api_name = :"api_#{name}"
@@ -23,7 +24,7 @@ defmodule TeslaMate.VehicleCase do
         vehicles_name = :"vehicles_#{name}"
         pubsub_name = :"pubsub_#{name}"
 
-        {:ok, _pid} = start_supervised({LogMock, name: log_name, pid: self()})
+        {:ok, _pid} = start_supervised({LogMock, name: log_name, pid: self(), last_update: last})
         {:ok, _pid} = start_supervised({ApiMock, name: api_name, events: events, pid: self()})
         {:ok, _pid} = start_supervised({SettingsMock, name: settings_name, pid: self()})
         {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
@@ -88,7 +89,7 @@ defmodule TeslaMate.VehicleCase do
 
         charge_state = Keyword.get(opts, :charge_state, %{})
         climate_state = Keyword.get(opts, :climate_state, %{})
-        vehicle_state = Keyword.get(opts, :vehicle_state, %{})
+        vehicle_state = Keyword.get(opts, :vehicle_state, %{car_version: ""})
         vehicle_config = Keyword.get(opts, :vehicle_config, %{car_type: "model3"})
 
         %TeslaApi.Vehicle{

@@ -97,7 +97,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       )
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, not_supendable}
     ]
 
@@ -111,11 +111,11 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     not_supendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-        vehicle_state: %{is_user_present: true}
+        vehicle_state: %{is_user_present: true, car_version: ""}
       )
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, not_supendable}
     ]
 
@@ -129,11 +129,11 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     not_supendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-        vehicle_state: %{sentry_mode: true}
+        vehicle_state: %{sentry_mode: true, car_version: ""}
       )
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, not_supendable}
     ]
 
@@ -147,11 +147,11 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     not_supendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-        vehicle_state: %{locked: false}
+        vehicle_state: %{locked: false, car_version: ""}
       )
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, not_supendable}
     ]
 
@@ -166,7 +166,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       online_event(drive_state: %{timestamp: 0, shift_state: "D", latitude: 0.0, longitude: 0.0})
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, not_supendable}
     ]
 
@@ -181,7 +181,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       online_event(drive_state: %{timestamp: 0, shift_state: "R", latitude: 0.0, longitude: 0.0})
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, not_supendable}
     ]
 
@@ -196,7 +196,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       online_event(drive_state: %{timestamp: 0, shift_state: "N", latitude: 0.0, longitude: 0.0})
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, not_supendable}
     ]
 
@@ -208,7 +208,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
   test "cannot be suspended while driving", %{test: name} do
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, drive_event(0, "D", 0)}
     ]
 
@@ -233,7 +233,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
   test "cannot be suspended while charing is not complete", %{test: name} do
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, charging_event(0, "Charging", 1.5)}
     ]
 
@@ -251,7 +251,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       )
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, not_supendable}
     ]
 
@@ -269,7 +269,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       )
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, not_supendable}
     ]
 
@@ -281,7 +281,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
   test "suspends when charging is complete", %{test: name} do
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, charging_event(0, "Charging", 1.5)},
       {:ok, charging_event(0, "Complete", 1.5)}
     ]
@@ -344,7 +344,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     unlocked =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-        vehicle_state: %{locked: false}
+        vehicle_state: %{locked: false, car_version: ""}
       )
 
     locked =
@@ -354,7 +354,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       )
 
     events = [
-      {:ok, %TeslaApi.Vehicle{state: "online"}},
+      {:ok, online_event()},
       {:ok, unlocked},
       {:ok, unlocked},
       {:ok, locked}

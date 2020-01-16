@@ -1,7 +1,7 @@
 defmodule LogMock do
   use GenServer
 
-  defstruct [:pid]
+  defstruct [:pid, :last_update]
   alias __MODULE__, as: State
 
   alias TeslaMate.Log.{Drive, ChargingProcess, Update, Car, Position}
@@ -21,9 +21,12 @@ defmodule LogMock do
 
   def start_update(name, car), do: GenServer.call(name, {:start_update, car})
   def cancel_update(name, update), do: GenServer.call(name, {:cancel_update, update})
+  def finish_update(name, update, vsn), do: GenServer.call(name, {:finish_update, update, vsn})
+  def get_latest_update(name, car), do: GenServer.call(name, {:get_latest_update, car})
 
-  def finish_update(name, update, version),
-    do: GenServer.call(name, {:finish_update, update, version})
+  def insert_missed_update(name, car, vsn) do
+    GenServer.call(name, {:insert_missed_update, car, vsn})
+  end
 
   def start_charging_process(name, car, position_attrs, opts \\ []) do
     GenServer.call(name, {:start_charging_process, car, position_attrs, opts})
@@ -57,7 +60,12 @@ defmodule LogMock do
 
   @impl true
   def init(opts) do
-    {:ok, %State{pid: Keyword.fetch!(opts, :pid)}}
+    state = %State{
+      pid: Keyword.fetch!(opts, :pid),
+      last_update: Keyword.fetch!(opts, :last_update)
+    }
+
+    {:ok, state}
   end
 
   @impl true
@@ -112,6 +120,15 @@ defmodule LogMock do
   end
 
   def handle_call({:finish_update, _update, _version} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %Update{}}, state}
+  end
+
+  def handle_call({:get_latest_update, _car}, _from, %State{last_update: update} = state) do
+    {:reply, update, state}
+  end
+
+  def handle_call({:insert_missed_update, _car, _vsn} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Update{}}, state}
   end

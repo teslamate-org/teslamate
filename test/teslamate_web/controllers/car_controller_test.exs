@@ -384,7 +384,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              battery_level: 69
            },
            climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2},
-           vehicle_state: %{locked: true, sentry_mode: true},
+           vehicle_state: %{locked: true, sentry_mode: true, car_version: ""},
            vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
          )}
       ]
