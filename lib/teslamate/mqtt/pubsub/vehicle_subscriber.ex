@@ -5,6 +5,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   import Core.Dependency, only: [call: 3]
 
   alias TeslaMate.Mqtt.Publisher
+  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles
 
   defstruct [:car_id, :last_summary, :deps]
@@ -30,7 +31,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       publisher: Keyword.get(opts, :deps_publisher, Publisher)
     }
 
-    :ok = call(deps.vehicles, :subscribe, [car_id])
+    :ok = call(deps.vehicles, :subscribe_to_summary, [car_id])
 
     {:ok, %State{car_id: car_id, deps: deps}}
   end
@@ -45,7 +46,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
                        charger_power charger_voltage scheduled_charging_start_time
                        time_to_full_charge shift_state)a
 
-  def handle_info(summary, state) do
+  def handle_info(%Summary{} = summary, state) do
     summary
     |> Map.from_struct()
     |> Stream.filter(fn {key, value} ->

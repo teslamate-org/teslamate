@@ -25,7 +25,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   test "publishes vehicle data", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 
-    assert_receive {VehiclesMock, {:subscribe, 0}}
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
 
     summary = %Summary{
       healthy: true,
@@ -83,7 +83,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   test "publishes charging data", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 
-    assert_receive {VehiclesMock, {:subscribe, 0}}
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
 
     summary = %Summary{
       plugged_in: false,

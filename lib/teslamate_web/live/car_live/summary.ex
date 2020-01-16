@@ -5,18 +5,24 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   alias TeslaMateWeb.CarView
   alias TeslaMate.Vehicles.Vehicle.Summary
+  alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.{Vehicles, Convert}
 
   @impl true
   def mount(%{summary: %Summary{car: car} = summary, settings: settings}, socket) do
     if connected?(socket) do
       send(self(), :update_duration)
-      Vehicles.subscribe(car.id)
+      send(self(), {:status, Vehicle.busy?(car.id)})
+      :ok = Vehicles.subscribe_to_summary(car.id)
+      :ok = Vehicles.subscribe_to_fetch(car.id)
     end
 
     assigns = %{
       car: car,
       summary: summary,
+      fetch_status: Vehicle.busy?(car.id),
+      fetch_start: 0,
+      fetch_timer: nil,
       settings: settings,
       translate_state: &translate_state/1,
       duration: duration_str(summary.since),
@@ -77,9 +83,44 @@ defmodule TeslaMateWeb.CarLive.Summary do
     {:noreply, assign(socket, error: nil, error_timeout: nil)}
   end
 
-  def handle_info(summary, socket) do
-    {:noreply,
-     assign(socket, summary: summary, duration: duration_str(summary.since), loading: false)}
+  def handle_info(%Summary{since: since} = summary, socket) do
+    {:noreply, assign(socket, summary: summary, duration: duration_str(since), loading: false)}
+  end
+
+  def handle_info({:status, true}, socket) do
+    cancel_timer(socket.assigns.fetch_timer)
+
+    assigns = %{
+      fetch_status: true,
+      fetch_start: System.monotonic_time(),
+      fetch_timer: nil
+    }
+
+    {:noreply, assign(socket, assigns)}
+  end
+
+  # Note: this must be smaller than the @driving_interval
+  @min_spinner_visibility_ms 1000
+
+  def handle_info({:status, false}, socket) do
+    fetch_duration =
+      (System.monotonic_time() - socket.assigns.fetch_start) /
+        System.convert_time_unit(1, :millisecond, :native)
+
+    assigns =
+      case @min_spinner_visibility_ms - fetch_duration do
+        diff when 0 < diff ->
+          %{fetch_timer: Process.send_after(self(), :set_status_to_false, round(diff))}
+
+        _ ->
+          %{fetch_status: false}
+      end
+
+    {:noreply, assign(socket, assigns)}
+  end
+
+  def handle_info(:set_status_to_false, socket) do
+    {:noreply, assign(socket, fetch_status: false)}
   end
 
   defp translate_state(:start), do: nil

@@ -23,6 +23,10 @@ defmodule PubSubMock do
 
   @impl true
 
+  def handle_call({:broadcast, _, "Elixir.TeslaMate.Vehicles.Vehicle/fetch/" <> _, _}, _, state) do
+    {:reply, :ok, state}
+  end
+
   def handle_call({:broadcast, _, _, _} = event, _from, %State{last_event: event} = state) do
     {:reply, :ok, state}
   end

@@ -13,7 +13,9 @@ defmodule VehiclesMock do
   def kill(name), do: GenServer.call(name, :kill)
   def restart(name), do: GenServer.call(name, :restart)
 
-  def subscribe(name, car_id), do: GenServer.call(name, {:subscribe, car_id})
+  def subscribe_to_summary(name, car_id) do
+    GenServer.call(name, {:subscribe_to_summary, car_id})
+  end
 
   # Callbacks
 
@@ -23,7 +25,7 @@ defmodule VehiclesMock do
   end
 
   @impl true
-  def handle_call({:subscribe, _car_id} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:subscribe_to_summary, _car_id} = action, _from, %State{pid: pid} = state) do
     send(pid, {VehiclesMock, action})
     {:reply, :ok, state}
   end

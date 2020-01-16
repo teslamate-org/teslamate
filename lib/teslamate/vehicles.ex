@@ -40,7 +40,8 @@ defmodule TeslaMate.Vehicles do
   defdelegate summary(id), to: Vehicle
   defdelegate resume_logging(id), to: Vehicle
   defdelegate suspend_logging(id), to: Vehicle
-  defdelegate subscribe(id), to: Vehicle
+  defdelegate subscribe_to_summary(id), to: Vehicle
+  defdelegate subscribe_to_fetch(id), to: Vehicle
 
   # Callbacks
 

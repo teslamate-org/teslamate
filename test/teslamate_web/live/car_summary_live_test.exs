@@ -227,7 +227,74 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert {:ok, _parent_view, html} =
                live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
 
-      assert [{"span", _, _}] = html |> Floki.find(".health")
+      assert {"span", _, [{"span", [{"class", "mdi mdi-alert-box"}], _}]} =
+               html
+               |> Floki.find(".icons .icon")
+               |> Enum.find(
+                 &match?({"span", [_, {"data-tooltip", "Health check failed"}], _}, &1)
+               )
+    end
+  end
+
+  describe "spinner" do
+    @tag :signed_in
+    @tag :capture_log
+    test "shows spinner if fetching vehicle data on first render", %{conn: conn} do
+      events = [
+        fn ->
+          :timer.sleep(10_0000)
+          {:ok, online_event()}
+        end
+      ]
+
+      :ok = start_vehicles(events)
+
+      assert {:ok, _view, html} =
+               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
+      assert [
+               {"span",
+                [
+                  {"class", "spinner tooltip has-tooltip-top has-tooltip-left-mobile"},
+                  {"data-tooltip", "Fetching vehicle data ..."}
+                ], _}
+             ] =
+               html
+               |> Floki.find(".icons .spinner")
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "shows spinner while fetching vehicle data", %{conn: conn} do
+      events = [
+        {:ok, online_event()},
+        fn ->
+          :timer.sleep(50)
+          {:ok, online_event()}
+        end
+      ]
+
+      :ok = start_vehicles(events)
+
+      assert {:ok, view, _html} =
+               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+
+      TestHelper.eventually(
+        fn ->
+          html = render(view)
+
+          assert [
+                   {"span",
+                    [
+                      {"class", "spinner tooltip has-tooltip-top has-tooltip-left-mobile"},
+                      {"data-tooltip", "Fetching vehicle data ..."}
+                    ], _}
+                 ] =
+                   html
+                   |> Floki.find(".icons .spinner")
+        end,
+        delay: 20
+      )
     end
   end
 

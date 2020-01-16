@@ -222,3 +222,20 @@ $positions: ('top','left','bottom','right');
   text-decoration-line: underline;
   text-decoration-style: dotted;
 }
+
+.spinner {
+  display: inline-flex;
+  justify-content: center;
+  height: 1.0rem;
+  width: 1.0rem;
+
+  .is-loading {
+      position: relative;
+      pointer-events: none;
+      &:after {
+        @extend %loader;
+        @include center(1em);
+        position: absolute !important;
+      }
+  }
+}
