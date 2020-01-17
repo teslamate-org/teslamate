@@ -8,7 +8,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles
 
-  defstruct [:car_id, :last_summary, :deps]
+  defstruct [:car_id, :last_summary, :deps, :namespace]
   alias __MODULE__, as: State
 
   def child_spec(arg) do
@@ -25,6 +25,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   @impl true
   def init(opts) do
     car_id = Keyword.fetch!(opts, :car_id)
+    namespace = Keyword.fetch!(opts, :namespace)
 
     deps = %{
       vehicles: Keyword.get(opts, :deps_vehicles, Vehicles),
@@ -33,7 +34,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
     :ok = call(deps.vehicles, :subscribe_to_summary, [car_id])
 
-    {:ok, %State{car_id: car_id, deps: deps}}
+    {:ok, %State{car_id: car_id, namespace: namespace, deps: deps}}
   end
 
   @impl true
@@ -65,12 +66,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     {:noreply, %State{state | last_summary: summary}}
   end
 
-  defp publish({key, value}, %State{car_id: car_id, deps: deps}) do
-    call(deps.publisher, :publish, [
-      "teslamate/cars/#{car_id}/#{key}",
-      to_str(value),
-      [retain: true, qos: 1]
-    ])
+  defp publish({key, value}, %State{car_id: car_id, namespace: namespace, deps: deps}) do
+    topic =
+      ["teslamate", namespace, "cars", car_id, key]
+      |> Enum.reject(&is_nil(&1))
+      |> Enum.join("/")
+
+    call(deps.publisher, :publish, [topic, to_str(value), [retain: true, qos: 1]])
   end
 
   defp to_str(%DateTime{} = datetime), do: DateTime.to_iso8601(datetime)

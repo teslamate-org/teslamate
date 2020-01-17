@@ -198,16 +198,18 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       [view] = children(parent_view)
       render_click(view, :suspend_logging)
 
-      assert html = render(view)
-      assert html =~ table_row("Status", "falling asleep")
+      TestHelper.eventually(fn ->
+        assert html = render(view)
+        assert html =~ table_row("Status", "falling asleep")
 
-      assert "cancel sleep attempt" ==
-               html |> Floki.find("a[phx-click=resume_logging]") |> Floki.text()
+        assert "cancel sleep attempt" ==
+                 html |> Floki.find("a[phx-click=resume_logging]") |> Floki.text()
 
-      render_click(view, :resume_logging)
+        render_click(view, :resume_logging)
 
-      assert html = render(view)
-      assert html =~ table_row("Status", "online")
+        assert html = render(view)
+        assert html =~ table_row("Status", "online")
+      end)
     end
   end
 

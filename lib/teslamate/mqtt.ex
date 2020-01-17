@@ -14,9 +14,9 @@ defmodule TeslaMate.Mqtt do
     client_id = generate_client_id()
 
     children = [
-      {Tortoise.Connection, config() ++ [client_id: client_id]},
+      {Tortoise.Connection, connection_config() ++ [client_id: client_id]},
       {Publisher, client_id: client_id},
-      PubSub
+      {PubSub, namespace: namespace()}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -26,14 +26,14 @@ defmodule TeslaMate.Mqtt do
 
   alias Tortoise.Transport
 
-  defp config do
-    auth = Application.get_env(:teslamate, :mqtt)
-    host = Keyword.get(auth, :host)
+  defp connection_config do
+    opts = Application.get_env(:teslamate, :mqtt)
+    host = Keyword.get(opts, :host)
 
     server =
-      if Keyword.get(auth, :tls) == "true" do
+      if Keyword.get(opts, :tls) == "true" do
         verify =
-          if Keyword.get(auth, :accept_invalid_certs) == "true" do
+          if Keyword.get(opts, :accept_invalid_certs) == "true" do
             :verify_none
           else
             :verify_peer
@@ -45,12 +45,16 @@ defmodule TeslaMate.Mqtt do
       end
 
     [
-      user_name: Keyword.get(auth, :username),
-      password: Keyword.get(auth, :password),
+      user_name: Keyword.get(opts, :username),
+      password: Keyword.get(opts, :password),
       server: server,
       handler: {Handler, []},
       subscriptions: []
     ]
+  end
+
+  defp namespace do
+    Application.get_env(:teslamate, :mqtt) |> Keyword.get(:namespace)
   end
 
   defp generate_client_id do

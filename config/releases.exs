@@ -9,6 +9,16 @@ defmodule Util do
   def validate_locale!("de"), do: "de"
   def validate_locale!(lang), do: raise("Unsupported locale: #{inspect(lang)}")
 
+  def validate_namespace!(nil), do: nil
+  def validate_namespace!(""), do: nil
+
+  def validate_namespace!(ns) when is_binary(ns) do
+    case String.contains?(ns, "/") do
+      true -> raise "MQTT_NAMESPACE must not contain '/'"
+      false -> ns
+    end
+  end
+
   def parse_check_origin!("true"), do: true
   def parse_check_origin!("false"), do: false
   def parse_check_origin!(hosts) when is_binary(hosts), do: String.split(hosts, ",")
@@ -40,7 +50,8 @@ if System.get_env("DISABLE_MQTT") != "true" do
     username: System.get_env("MQTT_USERNAME"),
     password: System.get_env("MQTT_PASSWORD"),
     tls: System.get_env("MQTT_TLS"),
-    accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS")
+    accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS"),
+    namespace: System.get_env("MQTT_NAMESPACE") |> Util.validate_namespace!()
 end
 
 config :logger,

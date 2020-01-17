@@ -11,10 +11,10 @@ defmodule TeslaMate.Mqtt.PubSub do
   end
 
   @impl true
-  def init(_opts) do
+  def init(opts) do
     children =
       Vehicles.list()
-      |> Enum.map(&{VehicleSubscriber, car_id: &1.car.id})
+      |> Enum.map(&{VehicleSubscriber, Keyword.merge(opts, car_id: &1.car.id)})
 
     Supervisor.init(children, strategy: :one_for_one)
   end

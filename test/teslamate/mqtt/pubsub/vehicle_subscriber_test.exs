@@ -4,7 +4,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
   alias TeslaMate.Vehicles.Vehicle.Summary
 
-  defp start_subscriber(name, car_id) do
+  defp start_subscriber(name, car_id, namespace \\ nil) do
     publisher_name = :"mqtt_publisher_#{name}"
     vehicles_name = :"vehicles_#{name}"
 
@@ -16,6 +16,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
        [
          name: name,
          car_id: car_id,
+         namespace: namespace,
          deps_publisher: {MqttPublisherMock, publisher_name},
          deps_vehicles: {VehiclesMock, vehicles_name}
        ]}
@@ -88,6 +89,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     summary = %Summary{
       plugged_in: false,
       battery_level: 60.0,
+      usable_battery_level: 59,
       charge_energy_added: 25,
       charge_limit_soc: 90,
       charge_port_door_open: false,
@@ -121,6 +123,44 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     # Always published
     assert_receive {MqttPublisherMock,
                     {:publish, "teslamate/cars/0/shift_state", "", [retain: true, qos: 1]}}
+
+    refute_receive _
+  end
+
+  test "allows namespaces", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0, "account_0")
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    summary = %Summary{
+      display_name: "Foo",
+      state: :online
+    }
+
+    send(pid, summary)
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/account_0/cars/0/display_name", "Foo",
+                     [retain: true, qos: 1]}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/account_0/cars/0/state", "online",
+                     [retain: true, qos: 1]}}
+
+    # Always published
+    for key <- [
+          :charge_energy_added,
+          :charger_actual_current,
+          :charger_phases,
+          :charger_power,
+          :charger_voltage,
+          :scheduled_charging_start_time,
+          :time_to_full_charge,
+          :shift_state
+        ] do
+      topic = "teslamate/account_0/cars/0/#{key}"
+      assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
+    end
 
     refute_receive _
   end
