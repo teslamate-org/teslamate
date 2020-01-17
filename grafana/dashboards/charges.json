@@ -222,7 +222,7 @@
           "pattern": "cost",
           "thresholds": [],
           "type": "number",
-          "unit": "currencyUSD"
+          "unit": "none"
         },
         {
           "alias": "",
