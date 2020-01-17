@@ -214,6 +214,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          :ok <- can_fall_asleep(vehicle, data) do
       Logger.info("Suspending logging [Triggered manually]", car_id: data.car.id)
 
+      {:ok, _pos} = call(data.deps.log, :insert_position, [data.car, create_position(vehicle)])
+
       {:next_state, {:suspended, :online},
        %Data{data | last_state_change: DateTime.utc_now(), last_response: vehicle, task: nil},
        [
@@ -354,7 +356,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state, %Data{data | task: task}, broadcast_fetch(true)}
   end
 
-  ## broadcast_summary
+  ### Broadcast Summary
 
   def handle_event(:internal, :broadcast_summary, state, %Data{last_response: vehicle} = data) do
     payload =
@@ -371,7 +373,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :keep_state_and_data
   end
 
-  ## broadcast_fetch
+  ### Broadcast Fetch
 
   def handle_event(:internal, {:broadcast_fetch, status}, _state, data) do
     :ok =
@@ -381,6 +383,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:status, status}
       ])
 
+    :keep_state_and_data
+  end
+
+  ### Store Position
+
+  def handle_event({:timeout, :store_position}, :store_position, :online, data) do
+    Logger.debug("Storing position ...")
+
+    {:ok, _pos} =
+      call(data.deps.log, :insert_position, [data.car, create_position(data.last_response)])
+
+    {:keep_state_and_data, schedule_position_storing()}
+  end
+
+  def handle_event({:timeout, :store_position}, :store_position, _state, _data) do
     :keep_state_and_data
   end
 
@@ -421,7 +438,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:ok, _pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle)])
 
     {:next_state, :online, %Data{data | car: car, last_state_change: last_state_change},
-     [broadcast_summary(), {:next_event, :internal, evt}]}
+     [broadcast_summary(), {:next_event, :internal, evt}, schedule_position_storing()]}
   end
 
   #### :online
@@ -887,6 +904,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         if suspend do
           Logger.info("Suspending logging", car_id: car.id)
 
+          {:ok, _pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle)])
+
           {:next_state, {:suspended, current_state},
            %Data{data | last_state_change: DateTime.utc_now()},
            [broadcast_summary(), schedule_fetch(settings.suspend_min, :minutes)]}
@@ -997,8 +1016,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp broadcast_summary, do: {:next_event, :internal, :broadcast_summary}
   defp broadcast_fetch(status), do: {:next_event, :internal, {:broadcast_fetch, status}}
 
-  defp get(struct, keys) do
-    Enum.reduce(keys, struct, fn key, acc -> if acc, do: Map.get(acc, key) end)
+  defp schedule_position_storing do
+    {{:timeout, :store_position}, :timer.minutes(5), :store_position}
   end
 
   defp schedule_fetch(n \\ 10, unit \\ :seconds)
@@ -1011,5 +1030,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
   case(Mix.env()) do
     :test -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :millisecond)
     _____ -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :second)
+  end
+
+  defp get(struct, keys) do
+    Enum.reduce(keys, struct, fn key, acc -> if acc, do: Map.get(acc, key) end)
   end
 end

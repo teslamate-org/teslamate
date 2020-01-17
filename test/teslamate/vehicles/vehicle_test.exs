@@ -146,7 +146,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         )
 
       # Online
-      assert_receive {:start_state, car, :online}
+      assert_receive {:start_state, %Car{id: car_id} = car, :online}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
@@ -155,6 +155,12 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       # Reduce suspend_after_idle_min
       send(name, %CarSettings{suspend_after_idle_min: 1, suspend_min: 10_000})
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
+
+      assert_receive {:insert_position,
+                      %Car{
+                        id: ^car_id,
+                        settings: %CarSettings{suspend_after_idle_min: 1, suspend_min: 10_000}
+                      }, %{}}
 
       refute_receive _
     end
