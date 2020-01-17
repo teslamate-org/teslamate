@@ -25,7 +25,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
       fetch_timer: nil,
       settings: settings,
       translate_state: &translate_state/1,
-      duration: duration_str(summary.since),
+      duration: humanize_duration(summary.since),
       error: nil,
       error_timeout: nil,
       loading: false
@@ -54,7 +54,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
   @impl true
   def handle_info(:update_duration, socket) do
     Process.send_after(self(), :update_duration, :timer.seconds(1))
-    {:noreply, assign(socket, duration: duration_str(socket.assigns.summary.since))}
+    {:noreply, assign(socket, duration: humanize_duration(socket.assigns.summary.since))}
   end
 
   def handle_info(:resume_logging, socket) do
@@ -84,7 +84,8 @@ defmodule TeslaMateWeb.CarLive.Summary do
   end
 
   def handle_info(%Summary{since: since} = summary, socket) do
-    {:noreply, assign(socket, summary: summary, duration: duration_str(since), loading: false)}
+    {:noreply,
+     assign(socket, summary: summary, duration: humanize_duration(since), loading: false)}
   end
 
   def handle_info({:status, true}, socket) do
@@ -150,11 +151,13 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp cancel_timer(nil), do: :ok
   defp cancel_timer(ref) when is_reference(ref), do: Process.cancel_timer(ref)
 
-  defp duration_str(nil), do: nil
+  defp humanize_duration(nil), do: nil
 
-  defp duration_str(date) do
-    DateTime.utc_now()
-    |> DateTime.diff(date, :second)
-    |> Convert.sec_to_str()
+  defp humanize_duration(date) do
+    case DateTime.utc_now() |> DateTime.diff(date, :second) do
+      dur when dur < 5 -> nil
+      dur when dur > 60 -> dur |> Convert.sec_to_str() |> Enum.reject(&String.ends_with?(&1, "s"))
+      dur -> dur |> Convert.sec_to_str()
+    end
   end
 end

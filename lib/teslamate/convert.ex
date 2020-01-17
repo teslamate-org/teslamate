@@ -20,8 +20,6 @@ defmodule TeslaMate.Convert do
   @week @day * 7
   @divisor [@week, @day, @hour, @minute, 1]
 
-  def sec_to_str(sec) when sec < 5, do: nil
-
   def sec_to_str(sec) when is_number(sec) do
     {_, [s, m, h, d, w]} =
       Enum.reduce(@divisor, {sec, []}, fn divisor, {n, acc} ->
