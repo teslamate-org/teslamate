@@ -171,47 +171,43 @@
             </tr>
             <% end %>
           <% end %>
+          <%= unless is_nil(@summary.battery_level) do %>
           <%
-            get_range_at_100_text = fn battery_level ->
-              range =
+            {soc_text, tooltip} = (fn ->
+              {text, tooltip_battery_level} =
+                case {@summary.battery_level, @summary.usable_battery_level} do
+                  {lvl, lvl} -> {"#{lvl}%", lvl}
+                  {lvl, nil} -> {"#{lvl}%", lvl}
+                  {lvl, usable_lvl} -> {"#{usable_lvl}% (#{lvl}%)", usable_lvl}
+                end
+
+              current_range =
                 case @settings.preferred_range do
                   :ideal -> @summary.ideal_battery_range_km
                   :rated -> @summary.rated_battery_range_km
                 end
 
-              unless is_nil(range) do
-                r100 = range / battery_level * 100
+              tooltip =
+                unless is_nil(current_range) do
+                  r100 = current_range / tooltip_battery_level * 100
 
-                r100_str =
-                  if @settings.unit_of_length == :mi do
-                    "#{round(r100 / 1.60934)} mi"
-                  else
-                    "#{round(r100)} km"
-                  end
+                  r100_str =
+                    if @settings.unit_of_length == :mi do
+                      "#{round(r100 / 1.60934)} mi"
+                    else
+                      "#{round(r100)} km"
+                    end
 
-                gettext("≈ %{range} at 100%", range: r100_str)
-              end
-            end
+                  gettext("≈ %{range} at 100%", range: r100_str)
+                end
+
+              {text, tooltip}
+            end).()
           %>
-          <%= unless is_nil(@summary.battery_level) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "State of Charge" %></td>
             <td>
-              <span
-                class="tooltip has-tooltip-right is-link has-dotted-underline"
-                data-tooltip='<%= get_range_at_100_text.(@summary.battery_level) %>'
-              ><%= @summary.battery_level %>%</span>
-            </td>
-          </tr>
-          <% end %>
-          <%= unless is_nil(@summary.usable_battery_level) or @summary.usable_battery_level == @summary.battery_level do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Usable State of Charge" %></td>
-            <td>
-              <span
-                class="tooltip has-tooltip-right has-dotted-underline"
-                data-tooltip='<%= get_range_at_100_text.(@summary.usable_battery_level) %>'
-              ><%= @summary.usable_battery_level %>%</span>
+              <span class="tooltip has-tooltip-right is-link has-dotted-underline" data-tooltip='<%= tooltip %>'><%= soc_text %></span>
             </td>
           </tr>
           <% end %>
