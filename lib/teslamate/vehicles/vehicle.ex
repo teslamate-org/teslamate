@@ -824,6 +824,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       battery_heater: vehicle.climate_state.battery_heater,
       battery_heater_no_power: vehicle.climate_state.battery_heater_no_power,
       battery_level: vehicle.charge_state.battery_level,
+      usable_battery_level: vehicle.charge_state.usable_battery_level,
       charge_energy_added: vehicle.charge_state.charge_energy_added,
       charger_actual_current: vehicle.charge_state.charger_actual_current,
       charger_phases: vehicle.charge_state.charger_phases,
