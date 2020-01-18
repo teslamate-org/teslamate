@@ -10,6 +10,7 @@ defmodule TeslaMate.Log.Charge do
     field :battery_heater_on, :boolean
     field :battery_heater_no_power, :boolean
     field :battery_level, :integer
+    field :usable_battery_level, :integer
     field :charge_energy_added, :float
     field :charger_actual_current, :integer
     field :charger_phases, :integer, default: 1
@@ -37,6 +38,7 @@ defmodule TeslaMate.Log.Charge do
       :battery_heater_on,
       :battery_heater,
       :battery_level,
+      :usable_battery_level,
       :charge_energy_added,
       :charger_actual_current,
       :charger_phases,
