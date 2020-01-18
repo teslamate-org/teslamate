@@ -5,8 +5,16 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
   alias TeslaMate.{Locations, Settings, Log, Repo}
 
-  defp table_row(key, value) do
-    ~r/<tr>\n?\s*<td class=\"has-text-weight-medium\">#{key}<\/td>\n?\s*<td.*?>\n?\s*#{value}\n?\s*<\/td>\n?\s*<\/tr>/
+  defp table_row(html, key, value, opts \\ []) do
+    assert {"tr", _, [{"td", _, [^key]}, {"td", [], [v]}]} =
+             html
+             |> Floki.find("tr")
+             |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
+
+    case Keyword.get(opts, :tooltip) do
+      nil -> assert value == v
+      str -> assert {"span", [_, {"data-tooltip", ^str}], [^value]} = v
+    end
   end
 
   defp car_fixture(settings) do
@@ -32,7 +40,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   describe "suspend" do
     @tag :signed_in
     test "suspends logging", %{conn: conn} do
-      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60_000, suspend_after_idle_min: 60_000})
 
       events = [
         {:ok,
@@ -46,20 +54,18 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       :ok = start_vehicles(events)
 
-      assert {:ok, parent_view, html} =
+      assert {:ok, parent_view, _html} =
                live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
 
       [view] = children(parent_view)
+      html = render(view)
 
-      assert html = render(view)
-      assert html =~ table_row("Status", "online")
-
+      assert table_row(html, "Status", "online")
       assert "try to sleep" == html |> Floki.find("a[phx-click=suspend_logging]") |> Floki.text()
 
+      # Suspend
       render_click(view, :suspend_logging)
-
-      assert html = render(view)
-      assert html =~ table_row("Status", "falling asleep")
+      assert view |> render() |> table_row("Status", "falling asleep")
     end
 
     for {msg, id, status, settings, attrs} <- [
@@ -85,7 +91,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       test "shows warning if suspending is not possible [#{msg}#{id}]", %{conn: conn} do
         settings =
           Map.merge(
-            %{suspend_min: 60, suspend_after_idle_min: 60},
+            %{suspend_min: 60_000, suspend_after_idle_min: 60_000},
             unquote(Macro.escape(settings))
           )
 
@@ -114,7 +120,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
         render_click(view, :suspend_logging)
 
         assert html = render(view)
-        assert html =~ table_row("Status", unquote(Macro.escape(status)))
+        assert table_row(html, "Status", unquote(Macro.escape(status)))
 
         assert [{"a", [_, _, {"disabled", "disabled"}], [unquote(msg)]}] =
                  Floki.find(html, ".button.is-danger")
@@ -178,7 +184,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   describe "resume" do
     @tag :signed_in
     test "resumes logging", %{conn: conn} do
-      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60_000, suspend_after_idle_min: 60_000})
 
       events = [
         {:ok,
@@ -195,21 +201,23 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert {:ok, parent_view, html} =
                live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
 
+      assert table_row(html, "Status", "online")
+      assert "try to sleep" == html |> Floki.find("a[phx-click=suspend_logging]") |> Floki.text()
+
       [view] = children(parent_view)
+
+      # Suspend
       render_click(view, :suspend_logging)
+      assert html = render(view)
+      assert table_row(html, "Status", "falling asleep")
 
-      TestHelper.eventually(fn ->
-        assert html = render(view)
-        assert html =~ table_row("Status", "falling asleep")
+      assert "cancel sleep attempt" ==
+               html |> Floki.find("a[phx-click=resume_logging]") |> Floki.text()
 
-        assert "cancel sleep attempt" ==
-                 html |> Floki.find("a[phx-click=resume_logging]") |> Floki.text()
-
-        render_click(view, :resume_logging)
-
-        assert html = render(view)
-        assert html =~ table_row("Status", "online")
-      end)
+      # Resume
+      render_click(view, :resume_logging)
+      assert html = render(view)
+      assert table_row(html, "Status", "online")
     end
   end
 

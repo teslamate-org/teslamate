@@ -397,8 +397,6 @@ defmodule TeslaMate.LogChargingTest do
     test "recalculates the efficiency factor after completing a charging session" do
       alias TeslaMate.Settings
 
-      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
-
       data = [
         {293.9, 293.9, 0.0, 59, 59, 0},
         {293.2, 303.4, 1.65, 59, 61, 33},

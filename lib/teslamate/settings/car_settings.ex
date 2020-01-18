@@ -31,7 +31,5 @@ defmodule TeslaMate.Settings.CarSettings do
     units
     |> cast(attrs, @all_fields)
     |> validate_required(@all_fields)
-    |> validate_number(:suspend_min, greater_than: 0, less_than_or_equal_to: 90)
-    |> validate_number(:suspend_after_idle_min, greater_than: 0, less_than_or_equal_to: 60)
   end
 end
