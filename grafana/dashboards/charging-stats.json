@@ -1314,7 +1314,7 @@
   "refresh": false,
   "schemaVersion": 21,
   "style": "dark",
-  "tags": [],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
