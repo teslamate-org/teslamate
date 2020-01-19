@@ -3,11 +3,21 @@ apiVersion: 1
 providers:
 - name: 'teslamate'
   orgId: 1
-  folder: $DASHBOARD_FOLDER
-  folderUid: $DASHBOARD_FOLDER_UID
+  folder: TeslaMate
+  folderUid: Nr4ofiDZk
   type: file
   disableDeletion: false
   editable: true
   updateIntervalSeconds: -1
   options:
     path: /dashboards
+- name: 'teslamate_internal'
+  orgId: 1
+  folder: Internal
+  folderUid: Nr5ofiDZk
+  type: file
+  disableDeletion: false
+  editable: true
+  updateIntervalSeconds: -1
+  options:
+    path: /dashboards_internal
