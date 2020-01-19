@@ -158,7 +158,7 @@
   ],
   "schemaVersion": 19,
   "style": "dark",
-  "tags": [],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
