@@ -63,9 +63,17 @@
             <span class="tag is-danger is-light"><span class="icon"><span class="mdi mdi-map-marker"></span></span></span>
             <span class="tag"><%=
               case @charging_process do
-                %ChargingProcess{geofence: %GeoFence{name: name}} -> name
-                %ChargingProcess{address: %Address{display_name: name}} -> name
-                _ -> "???"
+                %ChargingProcess{geofence: %GeoFence{name: name}} ->
+                  name
+
+                %ChargingProcess{address: %Address{name: name, road: road, house_number: no, city: city}} ->
+                  [name || [road, no], city]
+                  |> List.flatten()
+                  |> Enum.reject(&is_nil/1)
+                  |> Enum.join(", ")
+
+                _ ->
+                  "???"
               end
             %></span>
           </div>

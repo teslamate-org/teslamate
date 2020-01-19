@@ -106,10 +106,21 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
     test "shows the address name", %{conn: conn} do
       {:ok, address} =
         Locations.create_address(%{
-          display_name: "Fucking",
-          latitude: 48.067717,
-          longitude: 12.860775,
-          place_id: 42,
+          display_name:
+            "Beelitz Supercharger, Dr.-Herrmann-Straße, Beelitz-Heilstätten, Beelitz, Potsdam-Mittelmark, Brandenburg, 14547, Deutschland",
+          place_id: 66_385_359,
+          latitude: 52.2668097,
+          longitude: 12.9223251,
+          name: "Beelitz Supercharger",
+          house_number: nil,
+          road: "Dr.-Herrmann-Straße",
+          neighbourhood: "Beelitz-Heilstätten",
+          city: "Beelitz",
+          county: "Potsdam-Mittelmark",
+          postcode: "14547",
+          state: "Brandenburg",
+          state_district: nil,
+          country: "Deutschland",
           raw: %{}
         })
 
@@ -122,7 +133,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                {"div", _,
                 [
                   {"span", _, [{"span", _, [{"span", [{"class", "mdi mdi-map-marker"}], _}]}]},
-                  {"span", _, ["Fucking"]}
+                  {"span", _, ["Beelitz Supercharger, Beelitz"]}
                 ]}
              ] = Floki.find(html, "#location-tag")
     end
