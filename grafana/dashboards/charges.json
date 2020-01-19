@@ -44,7 +44,7 @@
       "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
-        "h": 15,
+        "h": 19,
         "w": 24,
         "x": 0,
         "y": 1
@@ -52,10 +52,10 @@
       "id": 6,
       "links": [],
       "options": {},
-      "pageSize": 15,
+      "pageSize": null,
       "scopedVars": {
         "car_id": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -63,31 +63,34 @@
       "scroll": false,
       "showHeader": true,
       "sort": {
-        "col": 2,
+        "col": 5,
         "desc": true
       },
       "styles": [
         {
-          "alias": "Start date",
+          "alias": "Date",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "link": true,
-          "linkTooltip": "",
-          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&var-charging_process_id=${__cell_19}&var-car_id=${__cell_21}",
-          "pattern": "start_date",
+          "linkTooltip": "View charge details",
+          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
+          "pattern": "start_date_km",
           "type": "date"
         },
         {
-          "alias": "End date",
+          "alias": "Date",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "dateFormat": "MM/DD/YY h:mm:ss a",
           "decimals": 2,
+          "link": true,
+          "linkTooltip": "View charge details",
+          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
           "mappingType": 1,
-          "pattern": "end_date",
+          "pattern": "start_date_mi",
           "thresholds": [],
           "type": "date",
           "unit": "short"
@@ -109,39 +112,7 @@
           "unit": "kwatth"
         },
         {
-          "alias": "TR Start",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "start_range_km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthkm"
-        },
-        {
-          "alias": "TR End",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "end_range_km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthkm"
-        },
-        {
-          "alias": "SOC Start",
+          "alias": "% Start",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -157,7 +128,7 @@
           "unit": "percent"
         },
         {
-          "alias": "SOC End",
+          "alias": "% End",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -217,7 +188,7 @@
           "link": true,
           "linkTargetBlank": false,
           "linkTooltip": "Set Cost",
-          "linkUrl": "[[base_url:raw]]/charge-cost/${__cell_19:raw}",
+          "linkUrl": "[[base_url:raw]]/charge-cost/${__cell_4:raw}",
           "mappingType": 1,
           "pattern": "cost",
           "thresholds": [],
@@ -235,7 +206,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": ".*_ts",
+          "pattern": "/.*_ts/",
           "thresholds": [],
           "type": "hidden",
           "unit": "short"
@@ -268,8 +239,8 @@
           "decimals": 2,
           "link": true,
           "linkTargetBlank": true,
-          "linkTooltip": "",
-          "linkUrl": "[[base_url:raw]]/geo-fences/${__cell_20:raw}",
+          "linkTooltip": "Create or edit geo-fence",
+          "linkUrl": "[[base_url:raw]]/geo-fences/${__cell_2:raw}",
           "mappingType": 1,
           "pattern": "address",
           "thresholds": [],
@@ -293,39 +264,7 @@
           "unit": "lengthkm"
         },
         {
-          "alias": "Consumed",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "consumption_kwh",
-          "thresholds": [],
-          "type": "number",
-          "unit": "kwatth"
-        },
-        {
-          "alias": "Consumption (gross)",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "consumption_kwh_100km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "kwatth"
-        },
-        {
-          "alias": "kW (Ø)",
+          "alias": "kW",
           "colorMode": "value",
           "colors": [
             "#96D98D",
@@ -341,10 +280,10 @@
             "55"
           ],
           "type": "number",
-          "unit": "none"
+          "unit": "kwatt"
         },
         {
-          "alias": "km / h (Ø)",
+          "alias": "km / h",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -360,38 +299,6 @@
           "unit": "lengthkm"
         },
         {
-          "alias": "TR Start",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "start_range_mi",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthmi"
-        },
-        {
-          "alias": "TR End",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "end_range_mi",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthmi"
-        },
-        {
           "alias": "Temp",
           "colorMode": null,
           "colors": [
@@ -405,7 +312,7 @@
           "pattern": "outside_temp_avg_f",
           "thresholds": [],
           "type": "number",
-          "unit": "farenheit"
+          "unit": "fahrenheit"
         },
         {
           "alias": "Driven",
@@ -424,23 +331,7 @@
           "unit": "lengthmi"
         },
         {
-          "alias": "Consumption (gross)",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "consumption_kwh_100mi",
-          "thresholds": [],
-          "type": "number",
-          "unit": "kwatth"
-        },
-        {
-          "alias": "mi / h (Ø)",
+          "alias": "mi / h",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -547,6 +438,22 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "end_date",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
           "decimals": 2,
           "pattern": "/.*/",
           "thresholds": [],
@@ -560,7 +467,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date)) * 1000) - 5000 AS start_date_ts,\n        (round(extract(epoch FROM end_date)) * 1000) + 5000 AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        charge_energy_added,\n        charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        start_[[preferred_range]]_range_km,\n        end_[[preferred_range]]_range_km,\n        outside_temp_avg,\n        c.id,\n        lag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        c.car_id,\n        cost\n    FROM\n        charging_processes c\n    LEFT JOIN positions p ON p.id = c.position_id\n    LEFT JOIN cars ON cars.id = c.car_id\n    LEFT JOIN addresses ON addresses.id = c.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\nWHERE \n    c.car_id = $car_id AND\n    $__timeFilter(start_date)\nORDER BY\n    start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    start_date,\n    end_date,\n    COALESCE(geofence_name, address) as address,    \n    duration_min,\n    charge_energy_added,\n    cost,\n    charge_energy_used,\n    CASE WHEN charge_energy_used IS NULL THEN NULL ELSE LEAST(charge_energy_added / charge_energy_used, 1.0) END as charging_efficiency,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km) * 60 / NULLIF (duration_min, 0), '$length_unit') AS range_added_per_hour_$length_unit,\n    start_battery_level,\n    end_battery_level,\n    convert_km(start_[[preferred_range]]_range_km, '$length_unit') AS start_range_$length_unit,\n    convert_km(end_[[preferred_range]]_range_km, '$length_unit') AS end_range_$length_unit,\n    convert_km(distance, '$length_unit') AS distance_$length_unit,\n    range_loss * efficiency AS consumption_kWh,\n    range_loss * efficiency / NULLIF (distance, 0) * 100 * \n      CASE WHEN '$length_unit' = 'km' THEN 1\n           WHEN '$length_unit' = 'mi' THEN 1.60934\n      END AS consumption_kWh_100$length_unit,\n    id,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id\n FROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL) AND (charge_energy_added IS NULL OR charge_energy_added > 0.1);\n    ",
+          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date)) * 1000) - 5000 AS start_date_ts,\n        (round(extract(epoch FROM end_date)) * 1000) + 5000 AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        charge_energy_added,\n        charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        start_[[preferred_range]]_range_km,\n        end_[[preferred_range]]_range_km,\n        outside_temp_avg,\n        c.id,\n        lag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        c.car_id,\n        cost\n    FROM\n        charging_processes c\n    LEFT JOIN positions p ON p.id = c.position_id\n    LEFT JOIN cars ON cars.id = c.car_id\n    LEFT JOIN addresses ON addresses.id = c.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\nWHERE \n    c.car_id = $car_id AND\n    $__timeFilter(start_date)\nORDER BY\n    start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id,\n    id,\n    -- Columns\n    start_date as start_date_[[length_unit]],\n    end_date,\n    COALESCE(geofence_name, address) as address,    \n    duration_min,\n    cost,\n    charge_energy_added,\n    charge_energy_used,\n    CASE WHEN charge_energy_used IS NULL THEN NULL ELSE LEAST(charge_energy_added / charge_energy_used, 1.0) END as charging_efficiency,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km) * 60 / NULLIF (duration_min, 0), '$length_unit') AS range_added_per_hour_$length_unit,\n    start_battery_level,\n    end_battery_level,\n    convert_km(distance, '$length_unit') AS distance_$length_unit\n FROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL) AND (charge_energy_added IS NULL OR charge_energy_added > 0.1)\nORDER BY\n  start_date DESC;\n    ",
           "refId": "A",
           "select": [
             [
@@ -589,7 +496,7 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 19,
+  "schemaVersion": 21,
   "style": "dark",
   "tags": [],
   "templating": {

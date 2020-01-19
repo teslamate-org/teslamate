@@ -730,7 +730,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT('new?lat=', latitude, '&lng=', longitude) as path,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry,\n\tupdated_at\nFROM\n\taddresses\nWHERE\n\t$__timeFilter(inserted_at)\nORDER BY updated_at DESC;",
+          "rawSql": "SELECT\n  CONCAT('new?lat=', latitude, '&lng=', longitude) as path,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry,\n\tupdated_at\nFROM\n\taddresses\nWHERE\n\t$__timeFilter(inserted_at)\nORDER BY inserted_at DESC;",
           "refId": "A",
           "select": [
             [

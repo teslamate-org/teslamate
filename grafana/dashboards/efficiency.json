@@ -106,7 +106,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "consumption",
+      "tableColumn": "",
       "targets": [
         {
           "format": "table",
@@ -140,7 +140,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Ø-Consumption (net)",
+      "title": "Consumption (net)",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -219,7 +219,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "consumption",
+      "tableColumn": "",
       "targets": [
         {
           "format": "table",
@@ -253,7 +253,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Ø-Consumption (gross) ",
+      "title": "Consumption (gross) ",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -332,7 +332,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "convert_km",
+      "tableColumn": "",
       "targets": [
         {
           "format": "table",
@@ -415,7 +415,7 @@
           "unit": "celsius"
         },
         {
-          "alias": "Ø Efficiency",
+          "alias": "Efficiency",
           "colorMode": "value",
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -434,7 +434,7 @@
           "unit": "percentunit"
         },
         {
-          "alias": "Distance [km]",
+          "alias": "Distance",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -447,10 +447,10 @@
           "pattern": "total_distance_km",
           "thresholds": [],
           "type": "number",
-          "unit": "none"
+          "unit": "lengthkm"
         },
         {
-          "alias": "Ø Consumption/100km",
+          "alias": "Consumption/100km",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -466,7 +466,7 @@
           "unit": "kwatth"
         },
         {
-          "alias": "Ø Speed",
+          "alias": "Speed",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -495,10 +495,10 @@
           "pattern": "outside_temp_f",
           "thresholds": [],
           "type": "number",
-          "unit": "farenheit"
+          "unit": "fahrenheit"
         },
         {
-          "alias": "Distance [mi]",
+          "alias": "Distance",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -511,10 +511,10 @@
           "pattern": "total_distance_mi",
           "thresholds": [],
           "type": "number",
-          "unit": "none"
+          "unit": "lengthmi"
         },
         {
-          "alias": "Ø Consumption/100mi",
+          "alias": "Consumption/100mi",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -530,7 +530,7 @@
           "unit": "kwatth"
         },
         {
-          "alias": "Ø Speed",
+          "alias": "Speed",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -651,7 +651,7 @@
         "ymax": null,
         "ymin": null
       },
-      "tableColumn": "efficiency",
+      "tableColumn": "",
       "targets": [
         {
           "format": "table",
@@ -923,7 +923,7 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 19,
+  "schemaVersion": 21,
   "style": "dark",
   "tags": [],
   "templating": {
