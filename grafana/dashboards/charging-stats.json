@@ -105,7 +105,7 @@
         "ymax": null,
         "ymin": null
       },
-      "tableColumn": "count",
+      "tableColumn": "",
       "targets": [
         {
           "format": "table",
@@ -218,7 +218,7 @@
         "ymax": null,
         "ymin": null
       },
-      "tableColumn": "sum",
+      "tableColumn": "",
       "targets": [
         {
           "format": "table",
@@ -275,7 +275,7 @@
       ],
       "datasource": null,
       "decimals": 2,
-      "format": "currencyUSD",
+      "format": "none",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -287,7 +287,7 @@
         "h": 2,
         "w": 8,
         "x": 16,
-        "y": 0
+        "y": 1
       },
       "id": 14,
       "interval": null,
@@ -390,7 +390,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 4
+        "y": 3
       },
       "heatmap": {},
       "hideZeroBuckets": false,
@@ -475,8 +475,9 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 4
+        "y": 3
       },
+      "hiddenSeries": false,
       "id": 16,
       "legend": {
         "avg": false,
@@ -615,7 +616,7 @@
         "h": 14,
         "w": 3,
         "x": 0,
-        "y": 10
+        "y": 9
       },
       "id": 2,
       "links": [],
@@ -724,7 +725,7 @@
         "h": 14,
         "w": 3,
         "x": 3,
-        "y": 10
+        "y": 9
       },
       "id": 13,
       "links": [],
@@ -833,7 +834,7 @@
         "h": 14,
         "w": 9,
         "x": 6,
-        "y": 10
+        "y": 9
       },
       "id": 4,
       "options": {},
@@ -933,7 +934,7 @@
         "h": 14,
         "w": 9,
         "x": 15,
-        "y": 10
+        "y": 9
       },
       "id": 6,
       "options": {},
@@ -974,7 +975,7 @@
           "unit": "short"
         },
         {
-          "alias": "Charges",
+          "alias": "Cost",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -982,12 +983,12 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
+          "decimals": 2,
           "mappingType": 1,
-          "pattern": "charges",
+          "pattern": "cost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "none"
         },
         {
           "alias": "",
@@ -1010,7 +1011,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tCOALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, CONCAT_WS(' ', address.road, address.house_number)), address.city)) AS location,\n\tcount(*) as charges\nFROM\n\tcharging_processes c\nLEFT JOIN addresses address ON c.address_id = address.id\nLEFT JOIN geofences geofence ON geofence_id = geofence.id\nWHERE\n\t$__timeFilter(end_date)\n\tAND car_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\tcharges DESC\nLIMIT 15;",
+          "rawSql": "SELECT\n\tCOALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, CONCAT_WS(' ', address.road, address.house_number)), address.city)) AS location,\n\tsum(cost) as cost\nFROM\n\tcharging_processes c\n\tLEFT JOIN addresses address ON c.address_id = address.id\n\tLEFT JOIN geofences geofence ON geofence_id = geofence.id\nWHERE\n  $__timeFilter(end_date) AND\n\tcar_id = $car_id AND\n\tCOST IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC NULLS LAST\nLIMIT 15;",
           "refId": "A",
           "select": [
             [
@@ -1036,13 +1037,13 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Charging Stations (Charges)",
+      "title": "Top Charging Stations (Cost)",
       "transform": "table",
       "type": "table"
     }
   ],
   "refresh": false,
-  "schemaVersion": 19,
+  "schemaVersion": 21,
   "style": "dark",
   "tags": [],
   "templating": {
