@@ -29,14 +29,18 @@ defmodule TeslaMate.Settings do
   end
 
   def update_global_settings(%GlobalSettings{} = pre, attrs) do
-    Repo.transaction(fn ->
-      with {:ok, post} <- pre |> GlobalSettings.changeset(attrs) |> Repo.update(),
-           :ok <- on_range_change(pre, post) do
-        post
-      else
-        {:error, reason} -> Repo.rollback(reason)
-      end
-    end)
+    Repo.transaction(
+      fn ->
+        with {:ok, post} <- pre |> GlobalSettings.changeset(attrs) |> Repo.update(),
+             :ok <- on_range_change(pre, post),
+             :ok <- on_language_change(pre, post) do
+          post
+        else
+          {:error, reason} -> Repo.rollback(reason)
+        end
+      end,
+      timeout: 60_000
+    )
   end
 
   def update_car_settings(%CarSettings{car: %Car{}} = pre, attrs) do
@@ -71,6 +75,14 @@ defmodule TeslaMate.Settings do
 
   defp on_range_change(%GlobalSettings{}, %GlobalSettings{} = new) do
     Log.recalculate_efficiencies(new)
+  end
+
+  defp on_language_change(%GlobalSettings{language: l}, %GlobalSettings{language: l}) do
+    :ok
+  end
+
+  defp on_language_change(%GlobalSettings{}, %GlobalSettings{language: lang}) do
+    Locations.refresh_addresses(lang)
   end
 
   defp on_sleep_mode_change(%CarSettings{sleep_mode_enabled: m}, %CarSettings{

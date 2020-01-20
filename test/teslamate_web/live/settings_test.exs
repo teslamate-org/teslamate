@@ -1,7 +1,7 @@
 defmodule TeslaMateWeb.SettingsLiveTest do
   use TeslaMateWeb.ConnCase
 
-  alias TeslaMate.Settings
+  alias TeslaMate.{Settings, Locations, Repo}
 
   describe "global settings" do
     test "shows km and C by default", %{conn: conn} do
@@ -100,6 +100,99 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert settings = Settings.get_global_settings!()
       assert settings.unit_of_temperature == :F
+    end
+  end
+
+  describe "language" do
+    alias Locations.Address
+
+    test "changes language", %{conn: conn} do
+      {:ok, %Address{id: address_id}} =
+        Locations.create_address(%{
+          display_name: "foo",
+          name: "bar",
+          latitude: 0,
+          longitude: 0,
+          osm_id: 0,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      assert {:ok, view, html} = live(conn, "/settings")
+
+      assert [{"option", [{"value", "en"}, {"selected", "selected"}], ["English"]}] =
+               html
+               |> Floki.find("#global_settings_language option[selected]")
+
+      render_change(view, :change, %{global_settings: %{language: "de"}})
+
+      TestHelper.eventually(fn ->
+        assert [{"option", [{"value", "de"}, {"selected", "selected"}], ["German"]}] =
+                 render(view)
+                 |> Floki.find("#global_settings_language option[selected]")
+
+        assert %Address{country: "de"} = Repo.get(Address, address_id)
+      end)
+    end
+
+    @tag :capture_log
+    test "shows error", %{conn: conn} do
+      {:ok, %Address{id: address_id}} =
+        Locations.create_address(%{
+          display_name: "error",
+          name: "bar",
+          latitude: 0,
+          longitude: 0,
+          osm_id: 0,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      assert {:ok, view, html} = live(conn, "/settings")
+
+      assert [{"option", [{"value", "en"}, {"selected", "selected"}], ["English"]}] =
+               html
+               |> Floki.find("#global_settings_language option[selected]")
+
+      render_change(view, :change, %{global_settings: %{language: "de"}})
+
+      TestHelper.eventually(fn ->
+        html = render(view)
+
+        assert "Something went wrong" =
+                 html
+                 |> Floki.find("form .field-body")
+                 |> Enum.find(
+                   &match?(
+                     {"div", _,
+                      [
+                        {_, _,
+                         [
+                           {_, _,
+                            [{_, _, [{"select", [{"id", "global_settings_language"}, _], _}]}]},
+                           _
+                         ]}
+                      ]},
+                     &1
+                   )
+                 )
+                 |> Floki.find("p.help")
+                 |> Floki.text()
+
+        assert [{"option", [{"value", "en"}, {"selected", "selected"}], ["English"]}] =
+                 html
+                 |> Floki.find("#global_settings_language option[selected]")
+
+        assert %Address{
+                 display_name: "error",
+                 name: "bar",
+                 latitude: 0.0,
+                 longitude: 0.0,
+                 osm_id: 0,
+                 osm_type: "way",
+                 raw: %{}
+               } = Repo.get(Address, address_id)
+      end)
     end
   end
 

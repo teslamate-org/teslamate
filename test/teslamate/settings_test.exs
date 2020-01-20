@@ -246,6 +246,97 @@ defmodule TeslaMate.SettingsTest do
     end
   end
 
+  describe "language" do
+    alias TeslaMate.Locations.Address
+    alias TeslaMate.Locations
+
+    test "refreshes all addresses when changfing the language" do
+      settings = Settings.get_global_settings!()
+
+      {:ok, %Address{}} =
+        Locations.create_address(%{
+          display_name: "foo",
+          name: "0",
+          latitude: 0,
+          longitude: 0,
+          state: "Berlin",
+          country: "Germany",
+          osm_id: 0,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      {:ok, %Address{}} =
+        Locations.create_address(%{
+          display_name: "bar",
+          name: "1",
+          latitude: 0,
+          longitude: 0,
+          state: "Berlin",
+          country: "Germany",
+          osm_id: 1,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      assert {:ok, _} = Settings.update_global_settings(settings, %{language: "nl"})
+
+      assert [
+               %Address{
+                 name: "0",
+                 state: "Berlin_nl",
+                 country: "nl",
+                 latitude: 0.0,
+                 longitude: 0.0
+               },
+               %Address{
+                 name: "1",
+                 state: "Berlin_nl",
+                 country: "nl",
+                 latitude: 0.0,
+                 longitude: 0.0
+               }
+             ] = Repo.all(from a in Address, order_by: 1)
+    end
+
+    test "returns error tuple" do
+      settings = Settings.get_global_settings!()
+
+      {:ok, %Address{} = a0} =
+        Locations.create_address(%{
+          display_name: "foo",
+          name: "0",
+          latitude: 0,
+          longitude: 0,
+          state: "Berlin",
+          country: "Germany",
+          osm_id: 0,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      {:ok, %Address{} = a1} =
+        Locations.create_address(%{
+          display_name: "error",
+          name: "1",
+          latitude: 0,
+          longitude: 0,
+          state: "Berlin",
+          country: "Germany",
+          osm_id: 1,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      assert {:error, :boom} = Settings.update_global_settings(settings, %{language: "nl"})
+
+      a0 = %Address{a0 | latitude: 0.0, longitude: 0.0}
+      a1 = %Address{a1 | latitude: 0.0, longitude: 0.0}
+
+      assert [^a0, ^a1] = Repo.all(from a in Address, order_by: 1)
+    end
+  end
+
   describe "efficiencies" do
     alias TeslaMate.Log.{Car, ChargingProcess, Position}
     alias TeslaMate.Log

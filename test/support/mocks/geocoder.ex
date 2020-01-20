@@ -1,4 +1,6 @@
 defmodule GeocoderMock do
+  alias TeslaMate.Locations.Address
+
   def reverse_lookup(99.9, 99.9, _lang) do
     {:error, :induced_error}
   end
@@ -123,5 +125,21 @@ defmodule GeocoderMock do
        road: "Von-der-Recke-Straße",
        state: "Nordrhein-Westfalen"
      }}
+  end
+
+  def details(addresses, lang) do
+    {:ok,
+     Enum.map(addresses, fn
+       %Address{display_name: "error"} ->
+         kind = Enum.at([:error], 0)
+         {:ok, _} = {kind, :boom}
+
+       %Address{} = address ->
+         address
+         |> Map.from_struct()
+         |> Map.update(:name, "", fn val -> "#{val}_#{lang}" end)
+         |> Map.update(:state, "", fn val -> "#{val}_#{lang}" end)
+         |> Map.update(:country, "", fn _ -> "#{lang}" end)
+     end)}
   end
 end

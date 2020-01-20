@@ -466,3 +466,8 @@ msgstr ""
 #: lib/teslamate_web/templates/settings/index.html.leex:163
 msgid "Language"
 msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.ex:61
+msgid "Something went wrong"
+msgstr ""

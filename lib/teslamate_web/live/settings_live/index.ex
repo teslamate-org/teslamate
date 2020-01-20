@@ -1,6 +1,7 @@
 defmodule TeslaMateWeb.SettingsLive.Index do
   use Phoenix.LiveView
 
+  import TeslaMateWeb.Gettext
   require Logger
 
   alias TeslaMateWeb.Router.Helpers, as: Routes
@@ -19,6 +20,9 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       |> assign_new(:global_settings, fn -> Settings.get_global_settings!() |> prepare() end)
       |> assign_new(:car_settings, fn -> Settings.get_car_settings() |> prepare() end)
       |> assign_new(:car, fn -> nil end)
+      |> assign_new(:addresses_migrated?, fn -> addresses_migrated?() end)
+      |> assign(:refreshing_addresses?, nil)
+      |> assign(:refresh_error, nil)
 
     {:ok, socket}
   end
@@ -48,13 +52,30 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   end
 
   def handle_event("change", %{"global_settings" => params}, %{assigns: assigns} = socket) do
-    settings =
+    settings = fn ->
       case Settings.update_global_settings(assigns.global_settings.original, params) do
-        {:error, changeset} -> Map.put(assigns.global_settings, :changeset, changeset)
-        {:ok, settings} -> prepare(settings)
+        {:error, %Ecto.Changeset{} = changeset} ->
+          %{global_settings: Map.put(assigns.global_settings, :changeset, changeset)}
+
+        {:error, reason} ->
+          Logger.warn("Updating settings failed: #{inspect(reason, pretty: true)}")
+          %{refresh_error: gettext("Something went wrong")}
+
+        {:ok, settings} ->
+          %{global_settings: prepare(settings)}
+      end
+    end
+
+    socket =
+      if params["language"] != nil and params["language"] != assigns.global_settings.original do
+        me = self()
+        spawn_link(fn -> send(me, {:assigns, settings.()}) end)
+        assign(socket, refreshing_addresses?: true)
+      else
+        assign(socket, settings.())
       end
 
-    {:noreply, assign(socket, global_settings: settings)}
+    {:noreply, socket}
   end
 
   def handle_event("change", params, %{assigns: %{car_settings: settings, car: id}} = socket) do
@@ -89,7 +110,50 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     {:noreply, assign(socket, :car_settings, settings)}
   end
 
+  @impl true
+  def handle_info({:assigns, assigns}, socket) do
+    socket =
+      socket
+      |> assign(refreshing_addresses?: false)
+      |> assign(assigns)
+
+    {:noreply, socket}
+  end
+
+  def handle_info(msg, socket) do
+    Logger.debug("Unexpected message: #{inspect(msg, pretty: true)}")
+    {:noreply, socket}
+  end
+
   # Private
+
+  defp addresses_migrated? do
+    alias TeslaMate.Log.{Drive, ChargingProcess}
+    alias TeslaMate.Repo
+
+    import Ecto.Query
+
+    count_drives =
+      from(d in Drive,
+        select: count(),
+        where:
+          (is_nil(d.start_address_id) or is_nil(d.end_address_id)) and
+            (not is_nil(d.start_position_id) and not is_nil(d.end_position_id))
+      )
+
+    count_charges =
+      from(c in ChargingProcess,
+        select: count(),
+        where: is_nil(c.address_id) and not is_nil(c.position_id)
+      )
+
+    [d, c] =
+      count_drives
+      |> union_all(^count_charges)
+      |> Repo.all()
+
+    d + c == 0
+  end
 
   defp add_params(socket, params) do
     live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params), replace: true)

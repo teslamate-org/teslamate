@@ -1,32 +1,32 @@
 defmodule TeslaMate.Repair do
-  use GenStateMachine
+  use GenServer
 
   require Logger
   import Ecto.Query
 
   alias TeslaMate.Log.{Drive, Position, ChargingProcess}
-  alias TeslaMate.Locations.{Address, Geocoder}
+  alias TeslaMate.Locations.Address
   alias TeslaMate.{Repo, Locations}
 
   # API
 
   def start_link(opts) do
-    GenStateMachine.start_link(__MODULE__, opts, name: __MODULE__)
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
-
-  # Callbacks
 
   @impl true
   def init(_opts) do
     {:ok, _ref} = :timer.send_interval(:timer.hours(6), self(), :repair)
 
-    {:ok, :ready, nil, {:next_event, :internal, :repair}}
+    send(self(), :repair)
+
+    {:ok, nil}
   end
 
   ## Repair
 
   @impl true
-  def handle_event(event, :repair, :ready, _data) when event in [:internal, :info] do
+  def handle_info(:repair, state) do
     from(d in Drive,
       where:
         (is_nil(d.start_address_id) or is_nil(d.end_address_id)) and
@@ -45,15 +45,7 @@ defmodule TeslaMate.Repair do
     |> Repo.all()
     |> repair()
 
-    :keep_state_and_data
-  end
-
-  def handle_event(_kind, :repair, _state, _data) do
-    :keep_state_and_data
-  end
-
-  def handle_event(:info, {ref, _result}, _state, _data) when is_reference(ref) do
-    :keep_state_and_data
+    {:noreply, state}
   end
 
   # Private
@@ -100,7 +92,7 @@ defmodule TeslaMate.Repair do
             Logger.warn("Address not found: #{inspect(reason)}")
             nil
 
-          {:ok, %Locations.Address{display_name: _name, id: id}} ->
+          {:ok, %Address{display_name: _name, id: id}} ->
             id
         end
 
@@ -118,6 +110,4 @@ defmodule TeslaMate.Repair do
         get_address_id(position)
     end
   end
-
-  defp schedule_refresh(n), do: {:state_timeout, :timer.seconds(n), :refresh}
 end

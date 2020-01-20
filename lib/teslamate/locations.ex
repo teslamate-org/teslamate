@@ -46,6 +46,59 @@ defmodule TeslaMate.Locations do
     end
   end
 
+  def refresh_addresses(lang) do
+    Address
+    |> Repo.all()
+    |> Enum.chunk_every(50)
+    |> Enum.map(fn addresses ->
+      {:ok, attrs} = @geocoder.details(addresses, lang)
+
+      addresses
+      |> merge_addresses(attrs)
+      |> Enum.map(fn
+        {%Address{osm_id: id, osm_type: type} = address, attrs} ->
+          attrs =
+            with nil <- attrs do
+              {:ok, %{osm_id: ^id, osm_type: ^type} = attrs} =
+                Geocoder.reverse_lookup(address.latitude, address.longitude, lang)
+
+              # Sleep between API calls
+              Process.sleep(1500)
+
+              attrs
+            end
+            |> Map.take([
+              :city,
+              :country,
+              :county,
+              :display_name,
+              :neighbourhood,
+              :state,
+              :state_district
+            ])
+
+          {:ok, _} = update_address(address, attrs)
+      end)
+    end)
+
+    :ok
+  rescue
+    e in MatchError -> {:error, with({:error, reason} <- e.term, do: reason)}
+  end
+
+  defp merge_addresses(addresses, attrs) do
+    addresses =
+      Enum.reduce(addresses, %{}, fn %Address{osm_id: id, osm_type: type} = address, acc ->
+        Map.put(acc, {type, id}, {address, nil})
+      end)
+
+    attrs
+    |> Enum.reduce(addresses, fn %{osm_id: id, osm_type: type} = attrs, acc ->
+      Map.update!(acc, {type, id}, fn {address, nil} -> {address, attrs} end)
+    end)
+    |> Map.values()
+  end
+
   defp apply_geofence(%GeoFence{id: id} = geofence) do
     {_n, nil} =
       from(d in Drive,
