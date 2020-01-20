@@ -17,6 +17,7 @@ RUN (cd assets && yarn install && yarn deploy)
 COPY config config
 COPY lib lib
 COPY priv priv
+COPY grafana/dashboards grafana/dashboards
 
 RUN mix do phx.digest, compile
 

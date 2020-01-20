@@ -78,7 +78,7 @@ msgid "Home"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/app.html.eex:45
+#: lib/teslamate_web/templates/layout/app.html.eex:53
 #: lib/teslamate_web/templates/settings/index.html.leex:4
 msgid "Settings"
 msgstr ""
@@ -124,13 +124,13 @@ msgid "Units"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:100
+#: lib/teslamate_web/templates/charge/cost.html.leex:108
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:119
 msgid "Back"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/app.html.eex:44
+#: lib/teslamate_web/templates/layout/app.html.eex:52
 msgid "Geo-Fences"
 msgstr ""
 
@@ -169,13 +169,13 @@ msgid "Radius"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:103
+#: lib/teslamate_web/templates/charge/cost.html.leex:111
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:122
 msgid "Save"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:104
+#: lib/teslamate_web/templates/charge/cost.html.leex:112
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:122
 msgid "Saving..."
 msgstr ""
@@ -372,7 +372,7 @@ msgid "Remaining Time"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/app.html.eex:42
+#: lib/teslamate_web/templates/layout/app.html.eex:44
 #: lib/teslamate_web/templates/settings/index.html.leex:222
 msgid "Dashboards"
 msgstr ""
@@ -438,12 +438,12 @@ msgid "Charge Cost"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:80
+#: lib/teslamate_web/templates/charge/cost.html.leex:88
 msgid "Cost"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:87
+#: lib/teslamate_web/templates/charge/cost.html.leex:95
 msgid "Enter charge cost"
 msgstr ""
 

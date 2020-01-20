@@ -40,7 +40,14 @@
         <div id="navbar" class="navbar-menu">
           <div class="navbar-end">
             <%= if grafana_url = @conn.assigns.settings.grafana_url do %>
-              <%= link(gettext("Dashboards"), to: grafana_url, class: "navbar-item", target: "_blank") %>
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link is-arrowless"><%= gettext "Dashboards" %></a>
+              <div class="navbar-dropdown">
+              <%= for %{"title" => title, "uid" => uid} <- dashboards() do %>
+                <%= link title, to: "#{grafana_url}/d/#{uid}", class: "navbar-item", target: "_blank" %>
+              <% end %>
+              </div>
+            </div>
             <% end %>
             <%= link(gettext("Geo-Fences"), to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item") %>
             <%= link(gettext("Settings"), to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5") %>

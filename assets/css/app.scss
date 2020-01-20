@@ -40,6 +40,10 @@ $fullhd-enabled: false;
   display: none;
 }
 
+nav.navbar {
+  z-index: 401;
+}
+
 .car {
   display: flex;
   flex-direction: column;
