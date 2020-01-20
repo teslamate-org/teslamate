@@ -14,6 +14,7 @@
     <link rel="shortcut icon" href="/favicon.ico?v=5AB53N3ALo">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
+    <script defer src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </head>
   <body tabIndex=0>
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
@@ -64,7 +65,5 @@
         <%= render @view_module, @view_template, assigns %>
       </div>
     </main>
-
-    <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
