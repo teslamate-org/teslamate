@@ -1,7 +1,8 @@
 defmodule TeslaMate.Locations.Geocoder do
   alias Mojito.{Response, Error}
+  alias TeslaMate.Locations.Address
 
-  def reverse_lookup(lat, lon, lang \\ :en) do
+  def reverse_lookup(lat, lon, lang \\ "en") do
     with {:ok, address_raw} <-
            fetch("https://nominatim.openstreetmap.org/reverse", lang,
              format: :jsonv2,
@@ -90,7 +91,8 @@ defmodule TeslaMate.Locations.Geocoder do
   defp into_address(raw) do
     %{
       display_name: Map.get(raw, "display_name"),
-      place_id: Map.get(raw, "place_id"),
+      osm_id: Map.get(raw, "osm_id"),
+      osm_type: Map.get(raw, "osm_type"),
       latitude: Map.get(raw, "lat"),
       longitude: Map.get(raw, "lon"),
       name: Map.get(raw, "name"),
@@ -103,7 +105,7 @@ defmodule TeslaMate.Locations.Geocoder do
       state: raw["address"] |> get_first(["state", "province", "state_code"]),
       state_district: get_in(raw, ["address", "state_district"]),
       country: raw["address"] |> get_first(["country", "country_name"]),
-      raw: raw["address"]
+      raw: raw
     }
   end
 

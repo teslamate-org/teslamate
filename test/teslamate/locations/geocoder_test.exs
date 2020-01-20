@@ -43,22 +43,43 @@ defmodule TeslaMate.Locations.GeocoderTest do
                   longitude: "41.1288167",
                   name: "Kahve Deryası",
                   neighbourhood: "Ziyagökalp Mahallesi",
-                  place_id: 241_575_531,
+                  osm_id: 5_983_038_298,
+                  osm_type: "node",
                   postcode: "72060",
-                  raw: %{
-                    "cafe" => "Kahve Deryası",
-                    "city" => "Batman merkez",
-                    "country" => "Turkey",
-                    "country_code" => "tr",
-                    "postcode" => "72060",
-                    "residential" => "Batman",
-                    "road" => "Cihan Kavşağı",
-                    "state" => "Southeastern Anatolia Region",
-                    "suburb" => "Ziyagökalp Mahallesi"
-                  },
                   road: "Cihan Kavşağı",
                   state: "Southeastern Anatolia Region",
-                  state_district: nil
+                  state_district: nil,
+                  raw: %{
+                    "address" => %{
+                      "cafe" => "Kahve Deryası",
+                      "city" => "Batman merkez",
+                      "country" => "Turkey",
+                      "country_code" => "tr",
+                      "postcode" => "72060",
+                      "residential" => "Batman",
+                      "road" => "Cihan Kavşağı",
+                      "state" => "Southeastern Anatolia Region",
+                      "suburb" => "Ziyagökalp Mahallesi"
+                    },
+                    "addresstype" => "amenity",
+                    "boundingbox" => ["37.8894442", "37.8896442", "41.1287167", "41.1289167"],
+                    "category" => "amenity",
+                    "display_name" =>
+                      "Kahve Deryası, Cihan Kavşağı, Batman, Ziyagökalp Mahallesi, Batman merkez, Batman, Southeastern Anatolia Region, 72060, Turkey",
+                    "extratags" => %{},
+                    "importance" => 0,
+                    "lat" => "37.8895442",
+                    "licence" =>
+                      "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+                    "lon" => "41.1288167",
+                    "name" => "Kahve Deryası",
+                    "namedetails" => %{"name" => "Kahve Deryası"},
+                    "osm_id" => 5_983_038_298,
+                    "osm_type" => "node",
+                    "place_id" => 241_575_531,
+                    "place_rank" => 30,
+                    "type" => "cafe"
+                  }
                 }}
     end
   end

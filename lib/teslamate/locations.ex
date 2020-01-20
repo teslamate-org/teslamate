@@ -10,7 +10,8 @@ defmodule TeslaMate.Locations do
 
   alias __MODULE__.{Address, Geocoder, GeoFence, Cache}
   alias TeslaMate.Log.{Drive, Position, ChargingProcess}
-  alias TeslaMate.Repo
+  alias TeslaMate.Settings.GlobalSettings
+  alias TeslaMate.{Repo, Settings}
 
   def child_spec(_arg) do
     %{id: __MODULE__, start: {Cachex, :start_link, [Cache, [limit: 100]]}}
@@ -36,8 +37,9 @@ defmodule TeslaMate.Locations do
              end)
 
   def find_address(%{latitude: lat, longitude: lng}) do
-    with {:ok, %{place_id: place_id} = attrs} <- @geocoder.reverse_lookup(lat, lng) do
-      case Repo.get_by(Address, place_id: place_id) do
+    with %GlobalSettings{language: lang} <- Settings.get_global_settings!(),
+         {:ok, %{osm_id: id, osm_type: type} = attrs} <- @geocoder.reverse_lookup(lat, lng, lang) do
+      case Repo.get_by(Address, osm_id: id, osm_type: type) do
         %Address{} = address -> {:ok, address}
         nil -> create_address(attrs)
       end

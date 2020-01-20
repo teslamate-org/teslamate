@@ -15,7 +15,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       longitude: 120.5,
       name: "some name",
       neighbourhood: "some neighbourhood",
-      place_id: 42,
+      osm_id: 42,
+      osm_type: "way",
       postcode: "some postcode",
       raw: %{},
       road: "some road",
@@ -32,7 +33,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       longitude: 456.7,
       name: "some updated name",
       neighbourhood: "some updated neighbourhood",
-      place_id: 43,
+      osm_id: 43,
+      osm_type: "road",
       postcode: "some updated postcode",
       raw: %{},
       road: "some updated road",
@@ -49,7 +51,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       longitude: nil,
       name: nil,
       neighbourhood: nil,
-      place_id: nil,
+      osm_id: nil,
+      osm_type: nil,
       postcode: nil,
       raw: nil,
       road: nil,
@@ -77,7 +80,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       assert address.longitude == 120.5
       assert address.name == "some name"
       assert address.neighbourhood == "some neighbourhood"
-      assert address.place_id == 42
+      assert address.osm_id == 42
+      assert address.osm_type == "way"
       assert address.postcode == "some postcode"
       assert address.raw == %{}
       assert address.road == "some road"
@@ -92,7 +96,8 @@ defmodule TeslaMate.LocationsAddressesTest do
                display_name: ["can't be blank"],
                latitude: ["can't be blank"],
                longitude: ["can't be blank"],
-               place_id: ["can't be blank"],
+               osm_id: ["can't be blank"],
+               osm_type: ["can't be blank"],
                raw: ["can't be blank"]
              }
     end
@@ -109,7 +114,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       assert address.longitude == 456.7
       assert address.name == "some updated name"
       assert address.neighbourhood == "some updated neighbourhood"
-      assert address.place_id == 43
+      assert address.osm_id == 43
+      assert address.osm_type == "road"
       assert address.postcode == "some updated postcode"
       assert address.raw == %{}
       assert address.road == "some updated road"
@@ -128,7 +134,7 @@ defmodule TeslaMate.LocationsAddressesTest do
       assert {:ok, %Address{} = address} =
                Locations.find_address(%{latitude: 52.019596, longitude: 8.526318})
 
-      assert address.place_id == 103_619_766
+      assert address.osm_id == 103_619_766
       assert address.city == "Bielefeld"
 
       assert [^address] = Repo.all(Address)

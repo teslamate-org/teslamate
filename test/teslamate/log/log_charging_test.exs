@@ -56,7 +56,7 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.position.date == @valid_pos_attrs.date
       assert %DateTime{} = cproc.start_date
       assert cproc.address.city == "Bielefeld"
-      assert cproc.address.place_id == 103_619_766
+      assert cproc.address.osm_id == 103_619_766
     end
 
     test "with invalid data returns error changeset" do

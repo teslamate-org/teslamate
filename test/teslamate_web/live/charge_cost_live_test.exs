@@ -108,7 +108,8 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
         Locations.create_address(%{
           display_name:
             "Beelitz Supercharger, Dr.-Herrmann-Straße, Beelitz-Heilstätten, Beelitz, Potsdam-Mittelmark, Brandenburg, 14547, Deutschland",
-          place_id: 66_385_359,
+          osm_id: 66_385_359,
+          osm_type: "way",
           latitude: 52.2668097,
           longitude: 12.9223251,
           name: "Beelitz Supercharger",

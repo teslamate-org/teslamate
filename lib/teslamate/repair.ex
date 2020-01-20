@@ -1,16 +1,17 @@
 defmodule TeslaMate.Repair do
-  use GenServer
+  use GenStateMachine
 
   require Logger
   import Ecto.Query
 
   alias TeslaMate.Log.{Drive, Position, ChargingProcess}
+  alias TeslaMate.Locations.{Address, Geocoder}
   alias TeslaMate.{Repo, Locations}
 
   # API
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+    GenStateMachine.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   # Callbacks
@@ -19,17 +20,18 @@ defmodule TeslaMate.Repair do
   def init(_opts) do
     {:ok, _ref} = :timer.send_interval(:timer.hours(6), self(), :repair)
 
-    send(self(), :repair)
-
-    {:ok, nil}
+    {:ok, :ready, nil, {:next_event, :internal, :repair}}
   end
 
+  ## Repair
+
   @impl true
-  def handle_info(:repair, state) do
+  def handle_event(event, :repair, :ready, _data) when event in [:internal, :info] do
     from(d in Drive,
       where:
         (is_nil(d.start_address_id) or is_nil(d.end_address_id)) and
           (not is_nil(d.start_position_id) and not is_nil(d.end_position_id)),
+      order_by: [desc: :id],
       preload: [:start_position, :end_position]
     )
     |> Repo.all()
@@ -37,12 +39,21 @@ defmodule TeslaMate.Repair do
 
     from(c in ChargingProcess,
       where: is_nil(c.address_id) and not is_nil(c.position_id),
+      order_by: [desc: :id],
       preload: [:position]
     )
     |> Repo.all()
     |> repair()
 
-    {:noreply, state}
+    :keep_state_and_data
+  end
+
+  def handle_event(_kind, :repair, _state, _data) do
+    :keep_state_and_data
+  end
+
+  def handle_event(:info, {ref, _result}, _state, _data) when is_reference(ref) do
+    :keep_state_and_data
   end
 
   # Private
@@ -73,8 +84,6 @@ defmodule TeslaMate.Repair do
       {:ok, _entity} -> Logger.info("OK")
     end
 
-    Process.sleep(3000)
-
     repair(rest)
   end
 
@@ -83,6 +92,8 @@ defmodule TeslaMate.Repair do
   defp get_address_id(%Position{} = position) do
     case :fuse.ask(:addr_fuse, :sync) do
       :ok ->
+        Process.sleep(1500)
+
         case Locations.find_address(position) do
           {:error, reason} ->
             :fuse.melt(:addr_fuse)
@@ -101,10 +112,12 @@ defmodule TeslaMate.Repair do
 
         :fuse.install(
           :addr_fuse,
-          {{:standard, 2, :timer.minutes(3)}, {:reset, :timer.minutes(15)}}
+          {{:standard, 5, :timer.minutes(3)}, {:reset, :timer.minutes(15)}}
         )
 
         get_address_id(position)
     end
   end
+
+  defp schedule_refresh(n), do: {:state_timeout, :timer.seconds(n), :refresh}
 end
