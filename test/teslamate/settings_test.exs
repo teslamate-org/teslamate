@@ -27,14 +27,16 @@ defmodule TeslaMate.SettingsTest do
       unit_of_temperature: :F,
       preferred_range: :rated,
       base_url: "https://testlamate.exmpale.com",
-      grafana_url: "https://grafana.exmpale.com"
+      grafana_url: "https://grafana.exmpale.com",
+      language: "de"
     }
     @invalid_attrs %{
       unit_of_length: nil,
       unit_of_temperature: nil,
       preferred_range: nil,
       base_url: nil,
-      grafana_url: nil
+      grafana_url: nil,
+      language: "foo"
     }
 
     test "get_global_settings!/0 returns the settings" do
@@ -44,6 +46,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.preferred_range == :ideal
       assert settings.base_url == nil
       assert settings.grafana_url == nil
+      assert settings.language == "en"
     end
 
     test "update_global_settings/2 with valid data updates the settings" do
@@ -57,6 +60,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.preferred_range == :rated
       assert settings.base_url == "https://testlamate.exmpale.com"
       assert settings.grafana_url == "https://grafana.exmpale.com"
+      assert settings.language == "de"
     end
 
     test "update_global_settings/2 with invalid data returns error changeset" do
@@ -68,7 +72,8 @@ defmodule TeslaMate.SettingsTest do
       assert errors_on(changeset) == %{
                unit_of_length: ["can't be blank"],
                unit_of_temperature: ["can't be blank"],
-               preferred_range: ["can't be blank"]
+               preferred_range: ["can't be blank"],
+               language: ["is not supported"]
              }
 
       assert ^settings = Settings.get_global_settings!()

@@ -5,10 +5,6 @@ defmodule Util do
     :crypto.strong_rand_bytes(64) |> Base.encode64()
   end
 
-  def validate_locale!("en"), do: "en"
-  def validate_locale!("de"), do: "de"
-  def validate_locale!(lang), do: raise("Unsupported locale: #{inspect(lang)}")
-
   def validate_namespace!(nil), do: nil
   def validate_namespace!(""), do: nil
 
@@ -24,10 +20,6 @@ defmodule Util do
   def parse_check_origin!(hosts) when is_binary(hosts), do: String.split(hosts, ",")
   def parse_check_origin!(hosts), do: raise("Invalid check_origin option: #{inspect(hosts)}")
 end
-
-config :gettext,
-       :default_locale,
-       System.get_env("LOCALE", "en") |> Util.validate_locale!()
 
 config :teslamate, TeslaMate.Repo,
   username: System.fetch_env!("DATABASE_USER"),

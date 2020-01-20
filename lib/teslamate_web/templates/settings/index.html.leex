@@ -160,6 +160,31 @@
 <div class="columns is-tablet is-centered">
   <div class="column">
     <h2 class="title is-4">
+      <%= gettext("Language") %>
+    </h2>
+    <%= f = form_for @global_settings.changeset, "#", [phx_change: :change] %>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <%= label f, :language, gettext("Addresses"), class: "label" %>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :language, GlobalSettings.supported_languages()) %>
+              </div>
+            </div>
+            <p class="help is-danger"><%= error_tag(f, :language) %></p>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="columns is-tablet is-centered">
+  <div class="column">
+    <h2 class="title is-4">
       <%= gettext("Units") %>
     </h2>
     <%= f = form_for @global_settings.changeset, "#", [phx_change: :change] %>

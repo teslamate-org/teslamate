@@ -1,9 +1,9 @@
 defmodule TeslaMate.Locations.Geocoder do
   alias Mojito.{Response, Error}
 
-  def reverse_lookup(lat, lon) do
+  def reverse_lookup(lat, lon, lang \\ :en) do
     with {:ok, address_raw} <-
-           fetch("https://nominatim.openstreetmap.org/reverse",
+           fetch("https://nominatim.openstreetmap.org/reverse", lang,
              format: :jsonv2,
              addressdetails: 1,
              extratags: 1,
@@ -16,10 +16,10 @@ defmodule TeslaMate.Locations.Geocoder do
     end
   end
 
-  defp fetch(url, params) do
+  defp fetch(url, lang, params) do
     url = assemble_url(url, params)
 
-    case Mojito.get(url, headers()) do
+    case Mojito.get(url, headers(lang)) do
       {:ok, %Response{status_code: 200, body: body}} -> {:ok, Jason.decode!(body)}
       {:ok, %Response{body: body}} -> {:error, Jason.decode!(body) |> Map.get("error")}
       {:error, %Error{reason: reason}} -> {:error, reason}
@@ -33,17 +33,13 @@ defmodule TeslaMate.Locations.Geocoder do
     |> URI.to_string()
   end
 
-  defp headers do
+  defp headers(lang) do
     [
       {"User-Agent", "TeslaMate"},
       {"Content-Type", "application/json"},
-      {"Accept-Language", lang()},
+      {"Accept-Language", lang},
       {"Accept", "Application/json; Charset=utf-8"}
     ]
-  end
-
-  defp lang do
-    Application.fetch_env!(:gettext, :default_locale)
   end
 
   # Address Formatting

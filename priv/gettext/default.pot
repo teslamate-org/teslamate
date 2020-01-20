@@ -31,32 +31,32 @@ msgid "Charged"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:134
+#: lib/teslamate_web/live/car_live/summary.ex:137
 msgid "asleep"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:129
+#: lib/teslamate_web/live/car_live/summary.ex:132
 msgid "charging"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:128
+#: lib/teslamate_web/live/car_live/summary.ex:131
 msgid "driving"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:133
+#: lib/teslamate_web/live/car_live/summary.ex:136
 msgid "offline"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:132
+#: lib/teslamate_web/live/car_live/summary.ex:135
 msgid "online"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:130
+#: lib/teslamate_web/live/car_live/summary.ex:133
 msgid "updating"
 msgstr ""
 
@@ -99,27 +99,27 @@ msgid "Charge limit"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:131
+#: lib/teslamate_web/live/car_live/summary.ex:134
 msgid "falling asleep"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:135
+#: lib/teslamate_web/live/car_live/summary.ex:138
 msgid "unavailable"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:168
+#: lib/teslamate_web/templates/settings/index.html.leex:193
 msgid "Length"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:183
+#: lib/teslamate_web/templates/settings/index.html.leex:208
 msgid "Temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:163
+#: lib/teslamate_web/templates/settings/index.html.leex:188
 msgid "Units"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgid "Geo-Fences"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:186
+#: lib/teslamate_web/live/geofence_live/form.ex:190
 msgid "Geo-fence \"%{name}\" created"
 msgstr ""
 
@@ -193,12 +193,12 @@ msgid "min"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:59
+#: lib/teslamate_web/live/signin_live/index.ex:63
 msgid "Signed in successfully"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:137
+#: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Car is unlocked"
 msgstr ""
 
@@ -209,18 +209,18 @@ msgid "Create"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:141
+#: lib/teslamate_web/live/car_live/summary.ex:144
 #: lib/teslamate_web/templates/car/summary.html.leex:28
 msgid "Preconditioning"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:138
+#: lib/teslamate_web/live/car_live/summary.ex:141
 msgid "Sentry mode is enabled"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:142
+#: lib/teslamate_web/live/car_live/summary.ex:145
 #: lib/teslamate_web/templates/car/summary.html.leex:38
 msgid "Driver present"
 msgstr ""
@@ -262,7 +262,7 @@ msgid "Requirements"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:139
+#: lib/teslamate_web/live/car_live/summary.ex:142
 msgid "Shift state present"
 msgstr ""
 
@@ -277,7 +277,7 @@ msgid "Vehicle must be locked"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:140
+#: lib/teslamate_web/live/car_live/summary.ex:143
 msgid "Temperature readings"
 msgstr ""
 
@@ -322,7 +322,7 @@ msgid "The car's estimate of remaining range is based on a fixed energy consumpt
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:143
+#: lib/teslamate_web/live/car_live/summary.ex:146
 msgid "Update in progress"
 msgstr ""
 
@@ -373,17 +373,17 @@ msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/app.html.eex:44
-#: lib/teslamate_web/templates/settings/index.html.leex:222
+#: lib/teslamate_web/templates/settings/index.html.leex:247
 msgid "Dashboards"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:203
+#: lib/teslamate_web/templates/settings/index.html.leex:228
 msgid "URLs"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:208
+#: lib/teslamate_web/templates/settings/index.html.leex:233
 msgid "Web App"
 msgstr ""
 
@@ -398,7 +398,7 @@ msgid "Sleep Mode"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:187
+#: lib/teslamate_web/live/geofence_live/form.ex:191
 msgid "Geo-fence \"%{name}\" updated"
 msgstr ""
 
@@ -408,17 +408,17 @@ msgid "Sleep Mode Enabled"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:147
+#: lib/teslamate_web/live/car_live/summary.ex:150
 msgid "Sleep Mode is disabled at current location"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:149
+#: lib/teslamate_web/live/car_live/summary.ex:152
 msgid "An error occurred"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:144
+#: lib/teslamate_web/live/car_live/summary.ex:147
 msgid "Timeout"
 msgstr ""
 
@@ -448,11 +448,21 @@ msgid "Enter charge cost"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.ex:46
+#: lib/teslamate_web/live/charge_live/cost.ex:50
 msgid "Saved!"
 msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:23
 msgid "Fetching vehicle data ..."
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:168
+msgid "Addresses"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:163
+msgid "Language"
 msgstr ""
