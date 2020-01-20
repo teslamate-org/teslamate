@@ -7,6 +7,7 @@ defmodule TeslaMateWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
+    plug TeslaMateWeb.LocalePlug, backend: TeslaMateWeb.Gettext
     plug Phoenix.LiveView.Flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
@@ -21,12 +22,12 @@ defmodule TeslaMateWeb.Router do
     pipe_through :browser
 
     get "/", CarController, :index
-    live "/sign_in", SignInLive.Index
-    live "/settings", SettingsLive.Index
-    live "/geo-fences", GeoFenceLive.Index
-    live "/geo-fences/new", GeoFenceLive.Form, session: [action: :new]
-    live "/geo-fences/:id/edit", GeoFenceLive.Form, session: [action: :edit]
-    live "/charge-cost/:id", ChargeLive.Cost
+    live "/sign_in", SignInLive.Index, session: [:locale]
+    live "/settings", SettingsLive.Index, session: [:locale]
+    live "/geo-fences", GeoFenceLive.Index, session: [:locale]
+    live "/geo-fences/new", GeoFenceLive.Form, session: [{:action, :new}, :locale]
+    live "/geo-fences/:id/edit", GeoFenceLive.Form, session: [{:action, :edit}, :locale]
+    live "/charge-cost/:id", ChargeLive.Cost, session: [:locale]
   end
 
   scope "/api", TeslaMateWeb do

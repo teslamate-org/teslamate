@@ -2,14 +2,17 @@ defmodule TeslaMateWeb.GeoFenceLive.Index do
   use Phoenix.LiveView
 
   alias TeslaMate.{Locations, Settings}
+  alias Settings.GlobalSettings
   alias TeslaMateWeb.GeoFenceView
 
   @impl true
   def render(assigns), do: GeoFenceView.render("index.html", assigns)
 
   @impl true
-  def mount(_session, socket) do
-    alias Settings.GlobalSettings
+  def mount(session, socket) do
+    if connected?(socket) do
+      Gettext.put_locale(session.locale)
+    end
 
     unit_of_length =
       case Settings.get_global_settings!() do

@@ -12,7 +12,9 @@ defmodule TeslaMateWeb.CarController do
   action_fallback TeslaMateWeb.FallbackController
 
   def index(conn, _) do
-    live_render(conn, TeslaMateWeb.CarLive.Index, session: %{settings: conn.assigns[:settings]})
+    live_render(conn, TeslaMateWeb.CarLive.Index,
+      session: %{settings: conn.assigns[:settings], locale: get_session(conn, :locale)}
+    )
   end
 
   def suspend_logging(conn, %{"id" => id}) do

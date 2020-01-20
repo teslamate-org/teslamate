@@ -8,9 +8,14 @@ defmodule TeslaMateWeb.CarLive.Index do
   alias TeslaMate.Settings.GlobalSettings
 
   @impl true
-  def mount(%{settings: settings}, socket) do
+  def mount(%{settings: settings, locale: locale}, socket) do
+    if connected?(socket) do
+      Gettext.put_locale(locale)
+    end
+
     socket =
       socket
+      |> assign(:locale, locale)
       |> assign_new(:summaries, fn -> Vehicles.list() end)
       |> assign_new(:settings, fn -> update_base_url(settings, socket) end)
 

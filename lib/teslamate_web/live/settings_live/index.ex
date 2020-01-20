@@ -9,7 +9,11 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   alias TeslaMate.Settings
 
   @impl true
-  def mount(_session, socket) do
+  def mount(session, socket) do
+    if connected?(socket) do
+      Gettext.put_locale(session.locale)
+    end
+
     socket =
       socket
       |> assign_new(:global_settings, fn -> Settings.get_global_settings!() |> prepare() end)

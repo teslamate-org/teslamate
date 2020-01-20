@@ -9,10 +9,13 @@ defmodule TeslaMateWeb.CarLive.Summary do
   alias TeslaMate.{Vehicles, Convert}
 
   @impl true
-  def mount(%{summary: %Summary{car: car} = summary, settings: settings}, socket) do
+  def mount(%{summary: %Summary{car: car} = summary} = session, socket) do
     if connected?(socket) do
+      Gettext.put_locale(session.locale)
+
       send(self(), :update_duration)
       send(self(), {:status, Vehicle.busy?(car.id)})
+
       :ok = Vehicles.subscribe_to_summary(car.id)
       :ok = Vehicles.subscribe_to_fetch(car.id)
     end
@@ -23,7 +26,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
       fetch_status: Vehicle.busy?(car.id),
       fetch_start: 0,
       fetch_timer: nil,
-      settings: settings,
+      settings: session.settings,
       translate_state: &translate_state/1,
       duration: humanize_duration(summary.since),
       error: nil,

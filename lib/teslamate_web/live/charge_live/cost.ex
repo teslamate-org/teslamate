@@ -15,7 +15,11 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
   def render(assigns), do: ChargeView.render("cost.html", assigns)
 
   @impl true
-  def mount(_session, socket) do
+  def mount(session, socket) do
+    if connected?(socket) do
+      Gettext.put_locale(session.locale)
+    end
+
     {:ok, assign(socket, notification: nil)}
   end
 
