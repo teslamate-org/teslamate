@@ -477,7 +477,7 @@
         },
         "orientation": "horizontal"
       },
-      "pluginVersion": "6.3.7",
+      "pluginVersion": "6.5.3",
       "targets": [
         {
           "format": "table",
@@ -546,7 +546,7 @@
         },
         "orientation": "horizontal"
       },
-      "pluginVersion": "6.3.7",
+      "pluginVersion": "6.5.3",
       "targets": [
         {
           "format": "table",
@@ -870,109 +870,9 @@
       "title": "Geo-fences",
       "transform": "table",
       "type": "table"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 22
-      },
-      "id": 8,
-      "panels": [],
-      "repeat": "car_id",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
-      "title": "$car_id",
-      "type": "row"
-    },
-    {
-      "datasource": "TeslaMate",
-      "gridPos": {
-        "h": 16,
-        "w": 24,
-        "x": 0,
-        "y": 23
-      },
-      "id": 4,
-      "links": [],
-      "options": {
-        "displayMode": "gradient",
-        "fieldOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "defaults": {
-            "mappings": [],
-            "max": 100,
-            "min": 0,
-            "thresholds": [
-              {
-                "color": "semi-dark-blue",
-                "value": null
-              },
-              {
-                "color": "super-light-blue",
-                "value": 50
-              }
-            ],
-            "title": "$__cell_0",
-            "unit": "none"
-          },
-          "override": {},
-          "values": true
-        },
-        "orientation": "horizontal"
-      },
-      "pluginVersion": "6.3.7",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\tCOALESCE(g.name, a.display_name) as name,\n\tcount(*) AS visited\nFROM\n\tdrives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE t.car_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\tvisited desc\nLIMIT 10",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Destinations",
-      "type": "bargauge"
     }
   ],
-  "schemaVersion": 19,
+  "schemaVersion": 21,
   "style": "dark",
   "tags": ["tesla"],
   "templating": {
@@ -1034,6 +934,7 @@
     "to": "now"
   },
   "timepicker": {
+    "hidden": true,
     "refresh_intervals": [
       "5s",
       "10s",
