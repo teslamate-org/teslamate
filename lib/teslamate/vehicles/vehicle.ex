@@ -514,6 +514,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [broadcast_summary(), schedule_fetch(interval)]}
 
       state ->
+        {:ok, _pos} = call(data.deps.log, :insert_position, [data.car, create_position(vehicle)])
         :ok = insert_charge(cproc, vehicle, data)
 
         {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =

@@ -21,12 +21,11 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
-    assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0},
-                    []}
+    assert_receive {:start_charging_process, ^car, %{date: _, latitude: 0.0, longitude: 0.0}, []}
 
     assert_receive {:insert_charge, %ChargingProcess{id: process_id} = cproc,
                     %{
@@ -59,6 +58,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: ^s1}}}
 
+    assert_receive {:insert_position, ^car, %{}}
+
     assert_receive {:insert_charge, ^cproc,
                     %{
                       date: _,
@@ -70,8 +71,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     # Completed
     assert_receive {:complete_charging_process, ^cproc, []}
 
-    assert_receive {:start_state, ^car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, ^car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
     assert DateTime.diff(s1, s2, :nanosecond) < 0
 
@@ -103,12 +104,11 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-    assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0},
-                    []}
+    assert_receive {:start_charging_process, ^car, %{date: _, latitude: 0.0, longitude: 0.0}, []}
 
     assert_receive {:insert_charge, %ChargingProcess{id: cproc_id} = cproc,
                     %{date: _, charge_energy_added: 0.1}}
@@ -121,11 +121,12 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
     assert_receive {:complete_charging_process, ^cproc, []}
 
-    assert_receive {:start_state, ^car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, ^car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -144,12 +145,11 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car_id, :online}
-    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:start_state, car, :online}
+    assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-    assert_receive {:start_charging_process, ^car_id, %{date: _, latitude: 0.0, longitude: 0.0},
-                    []}
+    assert_receive {:start_charging_process, ^car, %{date: _, latitude: 0.0, longitude: 0.0}, []}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
