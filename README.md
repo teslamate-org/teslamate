@@ -71,6 +71,7 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
   - [Environment Variables](https://teslamate.readthedocs.io/en/latest/configuration/environment_variables.html)
 - Maintenance
   - [Backup and Restore](https://teslamate.readthedocs.io/en/latest/maintenance/backup_restore.html)
+  - [Manually fixing data](https://teslamate.readthedocs.io/en/latest/maintenance/manually_fixing_data.html)
 - Development and Contributing
   - [Development](https://teslamate.readthedocs.io/en/latest/development.html)
 

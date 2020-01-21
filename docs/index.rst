@@ -41,6 +41,7 @@ A powerful, self-hosted data logger for your Tesla.
    :caption: Maintenance
 
    maintenance/backup_restore.md
+   maintenance/manually_fixing_data.md
 
 .. toctree::
    :maxdepth: 1
