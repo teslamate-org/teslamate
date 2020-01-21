@@ -25,7 +25,7 @@ sudo apt-get update
 sudo apt-get install -y grafana
 ```
 
-_TBA_: how to install the following plugins: `pr0ps-trackmap-panel` and `natel-discrete-panel`
+_TBA_: how to install the following plugins: `pr0ps-trackmap-panel`, `natel-discrete-panel` and `grafana-piechart-panel`
 
 ### Install mosquitto MQTT Broker
 
