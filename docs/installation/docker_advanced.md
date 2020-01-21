@@ -49,7 +49,7 @@ services:
       - "traefik.http.routers.teslamate.tls.certresolver=tmhttpchallenge"
 
   database:
-    image: postgres:11
+    image: postgres:12
     restart: always
     environment:
       - POSTGRES_USER=${TM_DB_USER}
@@ -94,7 +94,7 @@ services:
       - mosquitto-data:/mosquitto/data
 
   proxy:
-    image: traefik:v2.0
+    image: traefik:v2.1
     restart: always
     command:
       - "--global.sendAnonymousUsage=false"

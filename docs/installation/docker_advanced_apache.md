@@ -43,7 +43,7 @@ services:
       - all
 
   database:
-    image: postgres:11
+    image: postgres:12
     restart: always
     environment:
       - POSTGRES_USER=${TM_DB_USER}
