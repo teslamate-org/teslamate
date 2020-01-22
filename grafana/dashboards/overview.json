@@ -16,11 +16,12 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1579714908433,
+  "iteration": 1579715117268,
   "links": [],
   "panels": [
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -32,7 +33,7 @@
       "repeat": "car",
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -93,7 +94,7 @@
       "pluginVersion": "6.5.3",
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -165,18 +166,18 @@
       "pluginVersion": "6.5.3",
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
       },
       "targets": [
         {
-          "format": "table",
+          "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  case when date > NOW() - INTERVAL '5 min' then charger_voltage else 0 end as \"Charging Voltage [V]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  p.car_id = $car\nORDER BY\n  date desc",
+          "rawSql": "WITH charging_process AS (\n  SELECT id, end_date\n  FROM charging_processes\n  WHERE car_id = $car\n  ORDER BY start_date DESC\n  LIMIT 1\n)\nSELECT\n  $__time(date),\n  CASE WHEN charging_process.end_date IS NULL THEN charger_voltage\n       ELSE 0\n  END AS \"Charging Voltage [V]\"\nFROM charges, charging_process\nWHERE charging_process.id = charging_process_id\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -242,7 +243,7 @@
       "pluginVersion": "6.5.3",
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -253,7 +254,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\ncase when date > NOW() - INTERVAL '5 min' then charger_power else 0 end as \"Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  p.car_id = $car\nORDER BY\n  date desc",
+          "rawSql": "WITH charging_process AS (\n  SELECT id, end_date\n  FROM charging_processes\n  WHERE car_id = $car\n  ORDER BY start_date DESC\n  LIMIT 1\n)\nSELECT\n  $__time(date),\n  CASE WHEN charging_process.end_date IS NULL THEN charger_power\n       ELSE 0\n  END AS \"Power [kW]\"\nFROM charges, charging_process\nWHERE charging_process.id = charging_process_id\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -329,7 +330,7 @@
       "renderer": "flot",
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -344,7 +345,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select $__time(date), battery_level AS \"SOC [%]\"\r\nfrom\r\n    (SELECT\r\n    battery_level\r\n        , date\r\n    FROM\r\n    positions\r\n    WHERE\r\n    car_id = $car AND\r\n    $__timeFilter(date)\r\n    UNION ALL\r\n    select\r\n    battery_level\r\n        , date\r\n    from charges c\r\njoin\r\n  charging_processes p ON p.id = c.charging_process_id \r\nWHERE\r\n  $__timeFilter(date) and\r\n  p.car_id = $car) as data\r\nORDER BY\r\n    date ASC",
+          "rawSql": "SELECT $__time(date), battery_level AS \"SOC [%]\"\nFROM (\n\tSELECT battery_level, date\n\tFROM positions\n\tWHERE car_id = $car AND $__timeFilter(date)\n\tUNION ALL\n\tSELECT battery_level, date\n\tFROM charges c \n  JOIN charging_processes p ON p.id = c.charging_process_id\n\tWHERE $__timeFilter(date) AND p.car_id = $car) AS data\nORDER BY date ASC;",
           "refId": "A",
           "select": [
             [
@@ -467,7 +468,7 @@
       ],
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -586,7 +587,7 @@
       ],
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -704,7 +705,7 @@
       ],
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -810,7 +811,7 @@
       "renderer": "flot",
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -967,7 +968,7 @@
       "pluginVersion": "6.5.3",
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -978,7 +979,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\n\nFROM\n\tpositions\nWHERE\n car_id = $car\nORDER BY\n\tdate DESC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM\n\tpositions\nWHERE\n car_id = $car\nORDER BY\n\tdate DESC",
           "refId": "A",
           "select": [
             [
@@ -1044,7 +1045,7 @@
       "pluginVersion": "6.5.3",
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -1055,7 +1056,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\ndate,\n  convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\nFROM\n  positions\nWHERE\n  car_id = $car\n  and outside_temp is not null\norder by date desc\nlimit 1 ",
+          "rawSql": "WITH last_position AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM positions\n\tWHERE car_id = $car AND outside_temp IS NOT NULL\n\tORDER BY date DESC\n\tLIMIT 1\n),\nlast_charge AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM charges\n\tJOIN charging_processes ON charges.charging_process_id = charging_processes.id\n\tWHERE car_id = $car AND outside_temp IS NOT NULL\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT * FROM last_position\nUNION ALL\nSELECT * FROM last_charge\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -1121,7 +1122,7 @@
       "pluginVersion": "6.5.3",
       "scopedVars": {
         "car": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
