@@ -47,7 +47,7 @@ docker-compose exec database psql teslamate teslamate -c \
    "COPY (select * from charges where date > '2020-01-01') TO STDOUT WITH CSV HEADER" > charges.csv
 
 docker-compose exec database psql teslamate teslamate -c \
-   "COPY (select * from charging_processes where start_date> '2020-01-01') TO STDOUT WITH CSV HEADER" > charging_processes.csv
+   "COPY (select * from charging_processes where start_date > '2020-01-01') TO STDOUT WITH CSV HEADER" > charging_processes.csv
 ```
 
 To export drive data after January 1, 2020:
