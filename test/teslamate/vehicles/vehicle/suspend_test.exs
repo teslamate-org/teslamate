@@ -501,7 +501,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, locked: false}}}
       assert_receive {:insert_position, ^car, %{}}
 
-      refute_receive _
+      refute_receive _, 50
     end
   end
 
