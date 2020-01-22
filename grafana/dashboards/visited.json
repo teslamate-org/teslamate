@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": null,
   "iteration": 1568831696165,
   "links": [],
   "panels": [
@@ -98,7 +99,9 @@
   "refresh": false,
   "schemaVersion": 19,
   "style": "dark",
-  "tags": ["tesla"],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {
@@ -160,5 +163,5 @@
   "timezone": "",
   "title": "Visited",
   "uid": "RG_DxSmgk",
-  "version": 2
+  "version": 1
 }

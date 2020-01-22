@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": null,
   "iteration": 1571491749386,
   "links": [],
   "panels": [
@@ -514,7 +515,7 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 4,
+        "h": 2,
         "w": 12,
         "x": 0,
         "y": 20
@@ -538,8 +539,8 @@
       "nullText": null,
       "options": {},
       "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
+      "postfixFontSize": "70%",
+      "prefix": "Energy added:",
       "prefixFontSize": "50%",
       "rangeMaps": [
         {
@@ -552,7 +553,7 @@
         "fillColor": "rgba(242, 204, 12, 0.25)",
         "full": false,
         "lineColor": "#F2CC0C",
-        "show": true,
+        "show": false,
         "ymax": null,
         "ymin": null
       },
@@ -590,9 +591,10 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "kWh added",
+      "title": "",
+      "transparent": true,
       "type": "singlestat",
-      "valueFontSize": "80%",
+      "valueFontSize": "50%",
       "valueMaps": [
         {
           "op": "=",
@@ -621,7 +623,7 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 4,
+        "h": 2,
         "w": 12,
         "x": 12,
         "y": 20
@@ -645,8 +647,8 @@
       "nullText": null,
       "options": {},
       "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
+      "postfixFontSize": "70%",
+      "prefix": "Energy used:",
       "prefixFontSize": "50%",
       "rangeMaps": [
         {
@@ -655,11 +657,18 @@
           "to": "null"
         }
       ],
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(255, 120, 10, 0.25)",
         "full": false,
         "lineColor": "#FF780A",
-        "show": true,
+        "show": false,
         "ymax": null,
         "ymin": null
       },
@@ -697,9 +706,10 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "kWh used",
+      "title": "",
+      "transparent": true,
       "type": "singlestat",
-      "valueFontSize": "80%",
+      "valueFontSize": "50%",
       "valueMaps": [
         {
           "op": "=",
@@ -712,7 +722,9 @@
   ],
   "schemaVersion": 21,
   "style": "dark",
-  "tags": ["tesla"],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {

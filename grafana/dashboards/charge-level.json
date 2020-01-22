@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 19,
+  "id": null,
   "iteration": 1579330423173,
   "links": [],
   "panels": [
@@ -166,7 +166,9 @@
   "refresh": false,
   "schemaVersion": 19,
   "style": "dark",
-  "tags": ["tesla"],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {
@@ -228,5 +230,5 @@
   "timezone": "",
   "title": "Charge Level",
   "uid": "WopVO_mgz",
-  "version": 12
+  "version": 1
 }

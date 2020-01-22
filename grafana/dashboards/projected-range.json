@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 18,
+  "id": null,
   "iteration": 1579378185179,
   "links": [],
   "panels": [
@@ -520,7 +520,9 @@
   "refresh": false,
   "schemaVersion": 19,
   "style": "dark",
-  "tags": ["tesla"],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {

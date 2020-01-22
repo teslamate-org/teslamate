@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": null,
   "iteration": 1568831188317,
   "links": [],
   "panels": [
@@ -162,7 +163,9 @@
   "refresh": false,
   "schemaVersion": 19,
   "style": "dark",
-  "tags": ["tesla"],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {
@@ -249,5 +252,5 @@
   "timezone": "",
   "title": "Mileage",
   "uid": "NjtMTFggz",
-  "version": 2
+  "version": 1
 }
