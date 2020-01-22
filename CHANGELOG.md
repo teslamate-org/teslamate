@@ -2,6 +2,65 @@
 
 ## [Unreleased]
 
+## [1.15.0] - 2020-01-23
+
+### Enhancements
+
+- Add charge cost interface
+- Display usable SOC and show snowflake icon on summary page ([#338](https://github.com/adriankumpf/teslamate/pull/338) by [ctraber](https://github.com/ctraber))
+- Log missed software updates
+- Add tooltip with the estimated range at 100%
+- Remove software version commit hash
+- Format remaining charge time
+- Add option to use a custom namespace for MQTT topics
+- Periodically store vehicle data while online
+- Use the Accept-Language HTTP header get the locale (Supported languages: English, German)
+- Add setting to change the preferred language of OpenStreetMap results
+- Show spinner while fetching vehicle data
+- Add dropdown with dashboard links to the navigation bar
+
+#### New MQTT Topics
+
+- `teslamate/cars/$car_id/usable_battery_level`
+
+#### Dashboards
+
+- Projected Range: Use `usable_battery_level` to calculate the projected range and add more panels ([#338](https://github.com/adriankumpf/teslamate/pull/338), [#367](https://github.com/adriankumpf/teslamate/pull/367) by [ctraber](https://github.com/ctraber))
+- Add `tesla` tag ([#369](https://github.com/adriankumpf/teslamate/pull/369) by [TechForze](https://github.com/TechForze))
+- Vampire Drain: show SOC difference and ❄ (reduced range)
+- Charging Stats: Show share of AC/DC charging
+- Charging Stats: Show top charging stations by cost
+- Overview dashboard: Use the preferred range
+- Overview dashboard: Always show latest voltage and power while charging
+- Add Charge Level dashboard
+- Add Drive Stats dashboard
+- Revamp Drives/Drive Details and Charges/Charge Details dashboards
+
+#### Documentation
+
+- Add docs for an advanced Docker install with Apache2 ([#361](https://github.com/adriankumpf/teslamate/pull/361) by [DrMichael](https://github.com/DrMichael))
+- Add docs for backup and restore ([#361](https://github.com/adriankumpf/teslamate/pull/361) by [DrMichael](https://github.com/DrMichael))
+- Update the macrodroid docs ([#359](https://github.com/adriankumpf/teslamate/pull/359) by [markusdd](https://github.com/markusdd))
+- Add docs for manually fixing data
+- Add docs for updating Postgres
+
+### Bug Fixes
+
+- Fix tooltips in Safari (iOS)
+- Always publish the shift state via MQTT
+- Fix an issue where he charge location was not be displayed
+- Fix an issue that could cause the added charge kWh to be shown as 0
+
+**⚠️ Please note:** Due to internal changes, all addresses will be recalculated on first startup. Depending on the amount of data, this process may take up to 30 minutes or longer.
+
+---
+
+```text
+TeslaMate is open source and completely free for everyone to use.
+
+If you like this project and want to support further development, please consider making a donation.
+```
+
 ## [1.14.3] - 2020-01-06
 
 ### Enhancements
@@ -508,8 +567,6 @@ Find the full example in the updated README.
 
 **2. Switch to imperial units**
 
-![Settings](screenshots/settings.png)
-
 There is a new settings view in the web interface. To use imperial measurements
 in grafana and on the status screen just tick the checkbox it shows!
 
@@ -663,7 +720,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.14.3...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.15.0...HEAD
+[1.15.0]: https://github.com/adriankumpf/teslamate/compare/v1.14.3...v1.15.0
 [1.14.3]: https://github.com/adriankumpf/teslamate/compare/v1.14.2...v1.14.3
 [1.14.2]: https://github.com/adriankumpf/teslamate/compare/v1.14.1...v1.14.2
 [1.14.1]: https://github.com/adriankumpf/teslamate/compare/v1.14.0...v1.14.1

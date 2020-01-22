@@ -19,24 +19,28 @@ A powerful, self-hosted data logger for your Tesla.
 
 **Dashboards**
 
+- [Drive and charging reports](/docs/screenshots.md#charging-details)
+- [Driving efficiency report](/docs/screenshots.md#efficiency)
+- [Consumption (net / gross)](/docs/screenshots.md#efficiency)
+- [Charge energy added vs energy used](/docs/screenshots.md#charges)
+- [Vampire drain](/docs/screenshots.md#vampire-drain)
+- [Projected 100% range (battery degradation)](/docs/screenshots.md#projected-range)
+- [Charging Stats](/docs/screenshots.md#charging-stats)
+- [Drive Stats](/docs/screenshots.md#drive-stats)
+- [History of installed updates](/docs/screenshots.md#updates)
+- [See when your was online or asleep](/docs/screenshots.md#states)
 - Lifetime driving map
-- Drive and charging reports
-- Driving efficiency report
-- Consumption (net / gross)
-- Charge energy added vs energy used
-- Vampire drain
-- Projected 100% range (battery degradation)
-- SOC charging stats
 - Visited addresses
-- History of installed updates
 
 **General**
 
 - Little to no additional vampire drain: the car will fall asleep after a certain idle time
 - Automatic address lookup
 - Locally enriches positions with elevation data
+- Easy integration into Home Assistant (via MQTT)
 - Geo-fencing feature to create custom locations
 - Supports multiple vehicles per Tesla Account
+- Charge cost tracking
 
 ## Screenshots
 
