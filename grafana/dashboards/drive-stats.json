@@ -312,10 +312,10 @@
       "nullPointMode": "connected",
       "nullText": null,
       "options": {},
-      "postfix": "",
+      "postfix": " +",
       "postfixFontSize": "50%",
       "prefix": "",
-      "prefixFontSize": "50%",
+      "prefixFontSize": "80%",
       "rangeMaps": [
         {
           "from": "null",
@@ -654,7 +654,7 @@
       "nullPointMode": "connected",
       "nullText": null,
       "options": {},
-      "postfix": "",
+      "postfix": " +",
       "postfixFontSize": "50%",
       "prefix": "",
       "prefixFontSize": "50%",
