@@ -50,7 +50,10 @@ defmodule TeslaMate.Locations do
     Address
     |> Repo.all()
     |> Enum.chunk_every(50)
-    |> Enum.map(fn addresses ->
+    |> Enum.with_index()
+    |> Enum.map(fn {addresses, i} ->
+      if i > 0, do: Process.sleep(1500)
+
       {:ok, attrs} = @geocoder.details(addresses, lang)
 
       addresses
@@ -62,7 +65,6 @@ defmodule TeslaMate.Locations do
               {:ok, %{osm_id: ^id, osm_type: ^type} = attrs} =
                 Geocoder.reverse_lookup(address.latitude, address.longitude, lang)
 
-              # Sleep between API calls
               Process.sleep(1500)
 
               attrs

@@ -305,7 +305,10 @@ defmodule TeslaMate.Log do
           end_battery_level: last_value(c.battery_level) |> over(:w),
           outside_temp_avg: avg(c.outside_temp) |> over(:w),
           charge_energy_added:
-            (last_value(c.charge_energy_added) |> over(:w)) -
+            coalesce(
+              nullif(last_value(c.charge_energy_added) |> over(:w), 0),
+              max(c.charge_energy_added) |> over(:w)
+            ) -
               (first_value(c.charge_energy_added) |> over(:w)),
           duration_min:
             duration_min(last_value(c.date) |> over(:w), first_value(c.date) |> over(:w))
