@@ -231,7 +231,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH since as (\n\tSELECT date FROM positions\n\tWHERE car_id = $car_id\n\tORDER BY date ASC\n\tLIMIT 1\n),\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', date)::date AS date,\n\t\tmax(odometer) - min(odometer) AS distance\n\tFROM positions\n\tWHERE car_id = $car_id\n\tGROUP BY 1\n),\nbase_line AS (\n\tSELECT date_trunc('day', dd)::date AS date\n  FROM generate_series((select date from since) , now(), '1 day'::interval) dd\n)\nSELECT \n  base_line.date as \"time\", \n  convert_km(COALESCE(distance, 0), '$length_unit') as distance\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE $__timeFilter(base_line.date);",
+          "rawSql": "WITH since as (\n\tSELECT date FROM positions\n\tWHERE car_id = $car_id\n\tORDER BY date ASC\n\tLIMIT 1\n),\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', date)::date AS date,\n\t\tmax(odometer) - min(odometer) AS distance\n\tFROM positions\n\tWHERE car_id = $car_id\n\tGROUP BY 1\n),\nbase_line AS (\n\tSELECT date_trunc('day', dd)::date AS date\n  FROM generate_series((select date from since) , now(), '1 day'::interval) dd\n)\nSELECT \n  $__time(base_line.date), \n  convert_km(COALESCE(distance, 0), '$length_unit') as distance\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE $__timeFilter(base_line.date)\nORDER BY 1;",
           "refId": "A",
           "select": [
             [
@@ -345,7 +345,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  start_date AS \"time\",\n  NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency AS energy\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(inserted_at) AND car_id = $car_id\nORDER BY 1",
+          "rawSql": "SELECT\n  $__time(start_date),\n  NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency AS energy\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(inserted_at) AND car_id = $car_id\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -779,6 +779,13 @@
           "to": "null"
         }
       ],
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
@@ -886,6 +893,13 @@
           "to": "null"
         }
       ],
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
