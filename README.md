@@ -28,7 +28,7 @@ A powerful, self-hosted data logger for your Tesla.
 - [Charging Stats](/docs/screenshots.md#charging-stats)
 - [Drive Stats](/docs/screenshots.md#drive-stats)
 - [History of installed updates](/docs/screenshots.md#updates)
-- [See when your was online or asleep](/docs/screenshots.md#states)
+- [See when your car was online or asleep](/docs/screenshots.md#states)
 - Lifetime driving map
 - Visited addresses
 
