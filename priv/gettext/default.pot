@@ -468,6 +468,6 @@ msgid "Language"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/settings_live/index.ex:61
-msgid "Something went wrong"
+#: lib/teslamate_web/live/settings_live/index.ex:65
+msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr ""

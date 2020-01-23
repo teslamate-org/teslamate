@@ -159,7 +159,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       TestHelper.eventually(fn ->
         html = render(view)
 
-        assert "Something went wrong" =
+        assert "There was a problem retrieving data from OpenStreetMap. Please try again later." =
                  html
                  |> Floki.find("form .field-body")
                  |> Enum.find(

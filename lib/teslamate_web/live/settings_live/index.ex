@@ -59,7 +59,13 @@ defmodule TeslaMateWeb.SettingsLive.Index do
 
         {:error, reason} ->
           Logger.warn("Updating settings failed: #{inspect(reason, pretty: true)}")
-          %{refresh_error: gettext("Something went wrong")}
+
+          %{
+            refresh_error:
+              gettext(
+                "There was a problem retrieving data from OpenStreetMap. Please try again later."
+              )
+          }
 
         {:ok, settings} ->
           %{global_settings: prepare(settings)}
