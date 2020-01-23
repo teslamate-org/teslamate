@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Updates local dashboard configurations by retrieving
-# the new version from a Grafana instance.
-#
 # The script assumes that basic authentication is configured
 # (change the login credentials with `LOGIN`).
 #
@@ -23,14 +20,27 @@ readonly DASHBOARDS_DIRECTORY=${DASHBOARDS_DIRECTORY:-"./grafana/dashboards"}
 
 
 main() {
-  local dashboards
+  local task=$1
+
+  echo "
+URL:                  $URL
+LOGIN:                $LOGIN
+DASHBOARDS_DIRECTORY: $DASHBOARDS_DIRECTORY
+  "
+
+  case $task in
+      backup) backup;;
+      restore) restore;;
+      *)     exit 1;;
+  esac
+
+}
+
+
+backup() {
   local dashboard_json
 
-  dashboards=$(list_dashboards)
-
-  show_config
-
-  for dashboard in $dashboards; do
+  for dashboard in $(list_dashboards); do
     dashboard_json=$(get_dashboard "$dashboard")
 
     if [[ -z "$dashboard_json" ]]; then
@@ -41,30 +51,29 @@ main() {
     fi
 
     echo "$dashboard_json" > "$DASHBOARDS_DIRECTORY/$dashboard".json
+
+    echo "BACKED UP $(basename "$dashboard").json"
   done
 }
 
 
-# Shows the global environment variables that have been configured
-# for this run.
-show_config() {
-  echo "INFO:
-  Starting dashboard extraction.
+restore() {
+  find "$DASHBOARDS_DIRECTORY" -type f -name \*.json -print0 |
+      while IFS= read -r -d '' dashboard; do
+          curl \
+            --silent --show-error --output /dev/null \
+            --user "$LOGIN" \
+            -X POST -H "Content-Type: application/json" \
+            -d "{\"dashboard\":$(cat "$dashboard"),\"overwrite\":true, \
+                    \"inputs\":[{\"name\":\"DS_CLOUDWATCH\",\"type\":\"datasource\", \
+                    \"pluginId\":\"cloudwatch\",\"value\":\"TeslaMate\"}]}" \
+            "$URL/api/dashboards/import"
 
-  URL:                  $URL
-  LOGIN:                $LOGIN
-  DASHBOARDS_DIRECTORY: $DASHBOARDS_DIRECTORY
-  "
+        echo "RESTORED $(basename "$dashboard")"
+      done
 }
 
 
-# Retrieves a dashboard ($1) from the database of dashboards.
-#
-# As we're getting it right from the database, it'll contain an `id`.
-#
-# Given that the ID is potentially different when we import it
-# later, to be make this dashboard importable we make the `id`
-# field NULL.
 get_dashboard() {
   local dashboard=$1
 
@@ -83,13 +92,6 @@ get_dashboard() {
 }
 
 
-# lists all the dashboards available.
-#
-# `/api/search` lists all the dashboards and folders
-# that exist under our organization.
-#
-# Here we filter the response (that also contain folders)
-# to gather only the name of the dashboards.
 list_dashboards() {
   curl \
     --silent \
@@ -98,5 +100,6 @@ list_dashboards() {
     jq -r '.[] | select(.type == "dash-db") | .uri' |
     cut -d '/' -f2
 }
+
 
 main "$@"

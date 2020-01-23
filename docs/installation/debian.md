@@ -147,31 +147,29 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
     Version: 10
     ```
 
-3.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/adriankumpf/teslamate/tree/master/grafana/dashboards) or use `wizzy`:
-
-    Download and install wizzy
+3.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/adriankumpf/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
 
     ```bash
-    npm install -g wizzy
-    ```
+    $ ./grafana/dashboards.sh restore
 
-    Change directory:
+    URL:                  http://localhost:3000
+    LOGIN:                admin:admin
+    DASHBOARDS_DIRECTORY: ./grafana/dashboards
 
-    ```bash
-    cd grafana
-    ```
-
-    Configure grafana properties
-
-    ```bash
-    wizzy init
-    wizzy set grafana url http://localhost:3000
-    wizzy set grafana username admin
-    wizzy set grafana password admin
-    ```
-
-    Export the dashboards to Grafana
-
-    ```bash
-    wizzy export dashboards
+    RESTORED locations.json
+    RESTORED drive-stats.json
+    RESTORED updates.json
+    RESTORED drive-details.json
+    RESTORED charge-details.json
+    RESTORED states.json
+    RESTORED overview.json
+    RESTORED vampire-drain.json
+    RESTORED visited.json
+    RESTORED drives.json
+    RESTORED projected-range.json
+    RESTORED charge-level.json
+    RESTORED charging-stats.json
+    RESTORED mileage.json
+    RESTORED charges.json
+    RESTORED efficiency.json
     ```
