@@ -156,7 +156,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:reply, from, summary}}
   end
 
-  ### Fetching?
+  ### Busy?
 
   def handle_event({:call, from}, :busy?, _state, %Data{task: task}) do
     {:keep_state_and_data, {:reply, from, task != nil}}

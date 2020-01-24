@@ -48,6 +48,11 @@ defmodule TeslaMate.Repair do
     {:noreply, state}
   end
 
+  def handle_info(msg, state) do
+    Logger.warn("Unexpected message: #{inspect(msg, pretty: true)}")
+    {:noreply, state}
+  end
+
   # Private
 
   defp repair([]), do: :ok
