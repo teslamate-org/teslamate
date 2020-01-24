@@ -41,4 +41,6 @@ config :teslamate, :mqtt,
   username: "dev",
   password: "dev"
 
+config :teslamate, disable_token_refresh: true
+
 config :teslamate, :srtm_cache, "./.srtm_cache"

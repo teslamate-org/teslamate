@@ -76,12 +76,10 @@ defmodule TeslaMate.Api do
 
     ^name = :ets.new(name, [:named_table, :set, :public, read_concurrency: true])
 
-    with %Tokens{access: at, refresh: rt} <- call(deps.auth, :get_tokens),
-         {:ok, %Auth{} = auth} <- Auth.refresh(%Auth{token: at, refresh_token: rt}) do
-      Logger.info("Refreshed api tokens")
+    with %Tokens{} = tokens <- call(deps.auth, :get_tokens),
+         {:ok, auth} <- refresh_tokens(tokens) do
       :ok = call(deps.auth, :save, [auth])
       true = insert_auth(name, auth)
-      :ok = schedule_refresh(auth)
     else
       {:error, reason} -> Logger.warn("Token refresh failed: #{inspect(reason, pretty: true)}")
       nil -> nil
@@ -125,6 +123,23 @@ defmodule TeslaMate.Api do
   end
 
   ## Private
+
+  defp refresh_tokens(%Tokens{access: at, refresh: rt}) do
+    current = %Auth{token: at, refresh_token: rt}
+
+    case Application.get_env(:teslamate, :disable_token_refresh, false) do
+      true ->
+        Logger.info("Token refresh is disabled")
+        {:ok, current}
+
+      false ->
+        with {:ok, %Auth{} = auth} <- Auth.refresh(current) do
+          Logger.info("Refreshed api tokens")
+          :ok = schedule_refresh(auth)
+          {:ok, auth}
+        end
+    end
+  end
 
   defp schedule_refresh(%Auth{} = auth) do
     ms =
