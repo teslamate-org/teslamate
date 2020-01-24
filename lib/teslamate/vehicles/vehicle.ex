@@ -274,10 +274,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:keep_state, data, [broadcast_fetch(false), schedule_fetch()]}
 
-      {:error, :timeout} ->
-        Logger.warn("Error / upstream timeout", car_id: data.car.id)
-        {:keep_state, data, [broadcast_fetch(false), schedule_fetch(5)]}
-
       {:error, :closed} ->
         Logger.warn("Error / connection closed", car_id: data.car.id)
         {:keep_state, data, [broadcast_fetch(false), schedule_fetch(5)]}
@@ -309,7 +305,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       {:error, reason} ->
         Logger.error("Error / #{inspect(reason)}", car_id: data.car.id)
-        :ok = fuse_name(:api_error, data.car.id) |> :fuse.melt()
+
+        unless reason == :timeout do
+          :ok = fuse_name(:api_error, data.car.id) |> :fuse.melt()
+        end
 
         interval =
           case state do
