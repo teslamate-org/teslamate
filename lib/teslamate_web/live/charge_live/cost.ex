@@ -15,18 +15,21 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
   def render(assigns), do: ChargeView.render("cost.html", assigns)
 
   @impl true
-  def mount(session, socket) do
-    if connected?(socket) do
-      Gettext.put_locale(session.locale)
-    end
+  def mount(%{"id" => id}, %{"locale" => locale}, socket) do
+    if connected?(socket), do: Gettext.put_locale(locale)
 
-    {:ok, assign(socket, notification: nil)}
+    charging_process = Log.get_charging_process!(id)
+
+    socket =
+      socket
+      |> assign(notification: nil)
+      |> assign_charging_process(charging_process)
+
+    {:ok, socket}
   end
 
   @impl true
-  def handle_params(%{"id" => id}, uri, socket) do
-    charging_process = Log.get_charging_process!(id)
-
+  def handle_params(_params, uri, socket) do
     referrer =
       case {get_connect_params(socket)["referrer"], uri} do
         {uri, uri} -> nil
@@ -35,12 +38,7 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
         _ -> nil
       end
 
-    socket =
-      socket
-      |> assign(redirect_to: referrer || Routes.car_path(socket, :index))
-      |> assign_charging_process(charging_process)
-
-    {:noreply, socket}
+    {:noreply, assign(socket, redirect_to: referrer || Routes.car_path(socket, :index))}
   end
 
   @impl true

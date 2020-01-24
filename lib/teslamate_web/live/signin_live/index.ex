@@ -11,10 +11,11 @@ defmodule TeslaMateWeb.SignInLive.Index do
   import TeslaMateWeb.Gettext
 
   @impl true
-  def mount(session, socket) do
-    if connected?(socket) do
-      Gettext.put_locale(session.locale)
-    end
+  def render(assigns), do: SigninView.render("index.html", assigns)
+
+  @impl true
+  def mount(_params, %{"locale" => locale}, socket) do
+    if connected?(socket), do: Gettext.put_locale(locale)
 
     assigns = %{
       changeset: Auth.change_credentials(),
@@ -24,9 +25,6 @@ defmodule TeslaMateWeb.SignInLive.Index do
 
     {:ok, assign(socket, assigns)}
   end
-
-  @impl true
-  def render(assigns), do: SigninView.render("index.html", assigns)
 
   @impl true
   def handle_event("validate", %{"credentials" => credentials}, socket) do
@@ -50,6 +48,8 @@ defmodule TeslaMateWeb.SignInLive.Index do
         {:stop, redirect_to_carlive(socket)}
     end
   end
+
+  ## Private
 
   defp get_api(socket) do
     case get_connect_params(socket) do

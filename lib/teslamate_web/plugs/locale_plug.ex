@@ -13,11 +13,11 @@ defmodule TeslaMateWeb.LocalePlug do
         conn
         |> put_session(:locale, Gettext.get_locale(backend))
 
-      locale ->
+      locale when is_binary(locale) ->
         Gettext.put_locale(backend, locale)
 
         conn
-        |> put_session(:locale, locale)
+        |> put_session("locale", locale)
         |> put_resp_header("content-language", locale_to_language(locale))
         |> put_resp_cookie("locale", locale, max_age: @max_age)
     end

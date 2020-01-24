@@ -9,6 +9,7 @@ defmodule TeslaMateWeb.CarControllerTest do
   defp table_row(html, key, value, opts \\ []) do
     assert {"tr", _, [{"td", _, [^key]}, {"td", [], [v]}]} =
              html
+             |> TestHelper.parse_document!()
              |> Floki.find("tr")
              |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
 
@@ -23,6 +24,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     assert {"span", _, [{"span", [{"class", ^icon_class}], _}]} =
              html
+             |> TestHelper.parse_document!()
              |> Floki.find(".icons .icon")
              |> Enum.find(&match?({"span", [_, {"data-tooltip", ^tooltip}], _}, &1))
   end
@@ -76,7 +78,10 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert [
                {"div", [{"class", "car card"}], _},
                {"div", [{"class", "car card"}], _}
-             ] = Floki.find(html, ".car")
+             ] =
+               html
+               |> TestHelper.parse_document!()
+               |> Floki.find(".car")
     end
 
     @tag :signed_in
@@ -205,7 +210,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert table_row(html, "Status", "charging")
-      assert table_row(html, "Remaining Time", "1 h 49 min")
+      assert table_row(html, "Remaining Time", "1 h, 49 min")
       assert icon(html, "Plugged in", "power-plug")
       assert table_row(html, "Range (ideal)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")

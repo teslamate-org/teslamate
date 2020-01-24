@@ -22,12 +22,12 @@ defmodule TeslaMateWeb.Router do
     pipe_through :browser
 
     get "/", CarController, :index
-    live "/sign_in", SignInLive.Index, session: [:locale]
-    live "/settings", SettingsLive.Index, session: [:locale]
-    live "/geo-fences", GeoFenceLive.Index, session: [:locale]
-    live "/geo-fences/new", GeoFenceLive.Form, session: [{:action, :new}, :locale]
-    live "/geo-fences/:id/edit", GeoFenceLive.Form, session: [{:action, :edit}, :locale]
-    live "/charge-cost/:id", ChargeLive.Cost, session: [:locale]
+    live "/sign_in", SignInLive.Index
+    live "/settings", SettingsLive.Index
+    live "/geo-fences", GeoFenceLive.Index
+    live "/geo-fences/new", GeoFenceLive.Form, session: %{"action" => :new}
+    live "/geo-fences/:id/edit", GeoFenceLive.Form, session: %{"action" => :edit}
+    live "/charge-cost/:id", ChargeLive.Cost
   end
 
   scope "/api", TeslaMateWeb do

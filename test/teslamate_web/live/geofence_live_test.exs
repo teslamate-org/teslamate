@@ -51,6 +51,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                ["Post office", "-25.06619, -130.1005", "100 m", _]
              ] =
                html
+               |> TestHelper.parse_document!()
                |> Floki.find("tr")
                |> Enum.map(fn row -> row |> Floki.find("td") |> Enum.map(&Floki.text/1) end)
     end
@@ -70,7 +71,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert ["Post office", "-25.06619, -130.1005", "328 ft", _] =
-               html |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html |> TestHelper.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
 
     test "allows deletion of a geo-fence", %{conn: conn} do
@@ -80,12 +81,18 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert ["Victory Column", "52.51452, 13.35014", "100 m", _] =
-               html |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html |> TestHelper.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
-      assert [{"a", _, _}] = html |> Floki.find("[data-id=#{id}]")
+      assert [{"a", _, _}] =
+               html
+               |> TestHelper.parse_document!()
+               |> Floki.find("[data-id=#{id}]")
 
       assert [{"tbody", _, []}] =
-               view |> render_click(:delete, %{"id" => "#{id}"}) |> Floki.find("tbody")
+               view
+               |> render_click(:delete, %{"id" => "#{id}"})
+               |> TestHelper.parse_document!()
+               |> Floki.find("tbody")
     end
   end
 
@@ -95,6 +102,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
         geofence_fixture(%{name: "Post office", latitude: -25.066188, longitude: -130.100502})
 
       assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
+      html = TestHelper.parse_document!(html)
 
       name = Floki.find(html, "#geo_fence_name")
       assert ["Post office"] = Floki.attribute(name, "value")
@@ -108,7 +116,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       radius = Floki.find(html, "#geo_fence_radius")
       assert ["100"] = Floki.attribute(radius, "value")
 
-      html = render_submit(view, :save, %{geo_fence: %{name: "", radius: ""}})
+      html =
+        render_submit(view, :save, %{geo_fence: %{name: "", radius: ""}})
+        |> TestHelper.parse_document!()
 
       assert [""] = html |> Floki.find("#geo_fence_name") |> Floki.attribute("value")
 
@@ -128,6 +138,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
         geofence_fixture(%{name: "Post office", latitude: -25.066188, longitude: -130.100502})
 
       assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
+      html = TestHelper.parse_document!(html)
 
       name = Floki.find(html, "#geo_fence_name")
       assert ["Post office"] = Floki.attribute(name, "value")
@@ -149,7 +160,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert ["Adamstown", "0.0, 0.0", "20 m", _] =
-               html |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html |> TestHelper.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
 
     test "allows editing of a geo-fence with radius being displayed in ft", %{conn: conn} do
@@ -166,7 +177,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
 
-      radius = Floki.find(html, "#geo_fence_radius")
+      radius =
+        html
+        |> TestHelper.parse_document!()
+        |> Floki.find("#geo_fence_radius")
+
       assert ["66.0"] = Floki.attribute(radius, "value")
 
       assert {:error, {:redirect, %{to: "/geo-fences"}}} =
@@ -182,7 +197,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert ["Post office", "-25.06619, -130.1005", "30 ft", _] =
-               html |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html |> TestHelper.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
       {:ok, _settings} =
         Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :km})
@@ -190,7 +205,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert ["Post office", "-25.06619, -130.1005", "9 m", _] =
-               html |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html |> TestHelper.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
   end
 
@@ -206,6 +221,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                })
 
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
+      html = TestHelper.parse_document!(html)
 
       latitude = Floki.find(html, "#geo_fence_latitude")
       longitude = Floki.find(html, "#geo_fence_longitude")
@@ -223,6 +239,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
         render_submit(view, :save, %{
           geo_fence: %{name: "", longitude: nil, latitude: nil, radius: ""}
         })
+        |> TestHelper.parse_document!()
 
       assert [""] = html |> Floki.find("#geo_fence_name") |> Floki.attribute("value")
       assert [""] = html |> Floki.find("#geo_fence_latitude") |> Floki.attribute("value")
@@ -258,6 +275,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             radius: "40"
           }
         })
+        |> TestHelper.parse_document!()
 
       assert ["foo"] = html |> Floki.find("#geo_fence_name") |> Floki.attribute("value")
       assert ["wat"] = html |> Floki.find("#geo_fence_latitude") |> Floki.attribute("value")
@@ -284,7 +302,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
 
       # Default radius of 20m
-      assert html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value") == ["20"]
+      assert html
+             |> TestHelper.parse_document!()
+             |> Floki.find("#geo_fence_radius")
+             |> Floki.attribute("value") == ["20"]
 
       assert {:error, {:redirect, %{to: "/geo-fences"}}} =
                render_submit(view, :save, %{
@@ -299,7 +320,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert ["post office", "-25.06619, -130.1005", "25 m", _] =
-               html |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html |> TestHelper.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
 
     test "warn if a geo-fence already exists for a location", %{conn: conn} do
@@ -317,6 +338,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             radius: "20"
           }
         })
+        |> TestHelper.parse_document!()
 
       assert [_field_name, field_position, _field_radius, _field_sleep_mode, _] =
                Floki.find(html, ".field.is-horizontal")
@@ -344,7 +366,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert ["post office", "-25.06619, -130.1005", "50 ft", _] =
-               html |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html |> TestHelper.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
       {:ok, _settings} =
         Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :km})
@@ -352,7 +374,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert ["post office", "-25.06619, -130.1005", "15 m", _] =
-               html |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html |> TestHelper.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
   end
 
@@ -368,21 +390,25 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
     assert ["checked"] =
              html
+             |> TestHelper.parse_document!()
              |> Floki.find("#sleep_mode_#{car.id}")
              |> Floki.attribute("checked")
 
     assert [] =
              html
+             |> TestHelper.parse_document!()
              |> Floki.find("#sleep_mode_#{another_car.id}")
              |> Floki.attribute("checked")
 
     assert [] =
              render_click(view, :toggle, %{checked: "false", car: to_string(car.id)})
+             |> TestHelper.parse_document!()
              |> Floki.find("#sleep_mode_#{car.id}")
              |> Floki.attribute("checked")
 
     assert ["checked"] =
              render_click(view, :toggle, %{checked: "true", car: to_string(another_car.id)})
+             |> TestHelper.parse_document!()
              |> Floki.find("#sleep_mode_#{another_car.id}")
              |> Floki.attribute("checked")
 
@@ -412,21 +438,25 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
     assert [] =
              html
+             |> TestHelper.parse_document!()
              |> Floki.find("#sleep_mode_#{car.id}")
              |> Floki.attribute("checked")
 
     assert ["checked"] =
              html
+             |> TestHelper.parse_document!()
              |> Floki.find("#sleep_mode_#{another_car.id}")
              |> Floki.attribute("checked")
 
     assert ["checked"] =
              render_click(view, :toggle, %{checked: "true", car: to_string(car.id)})
+             |> TestHelper.parse_document!()
              |> Floki.find("#sleep_mode_#{car.id}")
              |> Floki.attribute("checked")
 
     assert [] =
              render_click(view, :toggle, %{checked: "false", car: to_string(another_car.id)})
+             |> TestHelper.parse_document!()
              |> Floki.find("#sleep_mode_#{another_car.id}")
              |> Floki.attribute("checked")
 

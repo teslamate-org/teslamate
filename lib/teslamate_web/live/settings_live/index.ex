@@ -10,10 +10,8 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   alias TeslaMate.Settings
 
   @impl true
-  def mount(session, socket) do
-    if connected?(socket) do
-      Gettext.put_locale(session.locale)
-    end
+  def mount(_params, %{"locale" => locale}, socket) do
+    if connected?(socket), do: Gettext.put_locale(locale)
 
     socket =
       socket

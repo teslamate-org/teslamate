@@ -17,10 +17,36 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   def render(assigns), do: GeoFenceView.render("form.html", assigns)
 
   @impl true
-  def mount(%{action: action} = session, socket) do
-    if connected?(socket) do
-      Gettext.put_locale(session.locale)
-    end
+  def mount(%{"lat" => lat, "lng" => lng}, %{"action" => :new} = session, socket) do
+    if connected?(socket), do: Gettext.put_locale(session["locale"])
+
+    {:ok, settings} =
+      Settings.get_global_settings!()
+      |> set_grafana_url(socket)
+
+    {unit_of_length, radius} =
+      case settings do
+        %GlobalSettings{unit_of_length: :km} -> {:m, 20}
+        %GlobalSettings{unit_of_length: :mi} -> {:ft, 65}
+      end
+
+    geofence = %GeoFence{
+      radius: radius,
+      latitude: lat,
+      longitude: lng,
+      sleep_mode_blacklist: [],
+      sleep_mode_whitelist: []
+    }
+
+    assigns =
+      base_assigns(geofence)
+      |> Map.merge(%{action: :new, settings: settings, unit_of_length: unit_of_length})
+
+    {:ok, assign(socket, assigns)}
+  end
+
+  def mount(_params, %{"action" => :new} = session, socket) do
+    if connected?(socket), do: Gettext.put_locale(session["locale"])
 
     settings = Settings.get_global_settings!()
 
@@ -30,65 +56,44 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
         %GlobalSettings{unit_of_length: :mi} -> {:ft, 65}
       end
 
-    geofence = %GeoFence{radius: radius}
+    %{latitude: lat, longitude: lng} =
+      case Log.get_latest_position() do
+        %Position{latitude: lat, longitude: lng} -> %{latitude: lat, longitude: lng}
+        nil -> %{latitude: 0.0, longitude: 0.0}
+      end
 
-    assigns = %{
-      action: action,
-      settings: settings,
-      geofence: geofence,
-      changeset: Locations.change_geofence(geofence),
-      unit_of_length: unit_of_length,
-      car_settings: Settings.get_car_settings(),
-      sleep_mode_whitelist: [],
+    geofence = %GeoFence{
+      radius: radius,
+      latitude: lat,
+      longitude: lng,
       sleep_mode_blacklist: [],
-      show_errors: false
+      sleep_mode_whitelist: []
     }
+
+    assigns =
+      base_assigns(geofence)
+      |> Map.merge(%{action: :new, settings: settings, unit_of_length: unit_of_length})
 
     {:ok, assign(socket, assigns)}
   end
 
-  @impl true
-  def handle_params(%{"id" => id}, _uri, %{assigns: %{action: :edit}} = socket) do
-    %GeoFence{radius: radius} = geofence = Locations.get_geofence!(id)
+  def mount(%{"id" => id}, %{"action" => :edit} = session, socket) do
+    if connected?(socket), do: Gettext.put_locale(session["locale"])
 
-    radius =
-      case socket.assigns.unit_of_length do
-        :m -> radius
-        :ft -> Convert.m_to_ft(radius)
+    settings = Settings.get_global_settings!()
+    geofence = %GeoFence{radius: radius} = Locations.get_geofence!(id)
+
+    {unit_of_length, radius} =
+      case settings do
+        %GlobalSettings{unit_of_length: :km} -> {:m, radius}
+        %GlobalSettings{unit_of_length: :mi} -> {:ft, Convert.m_to_ft(radius)}
       end
 
-    assigns = %{
-      geofence: geofence,
-      changeset: Locations.change_geofence(geofence, %{radius: round(radius)}),
-      sleep_mode_whitelist: geofence.sleep_mode_whitelist,
-      sleep_mode_blacklist: geofence.sleep_mode_blacklist
-    }
+    assigns =
+      base_assigns(geofence, %{radius: round(radius)})
+      |> Map.merge(%{action: :edit, settings: settings, unit_of_length: unit_of_length})
 
-    {:noreply, assign(socket, assigns)}
-  end
-
-  def handle_params(%{"lat" => lat, "lng" => lng}, _uri, %{assigns: %{action: :new}} = socket) do
-    if connected?(socket), do: :ok = set_grafana_url(socket)
-
-    changeset =
-      socket.assigns.geofence
-      |> Locations.change_geofence(%{latitude: lat, longitude: lng})
-
-    {:noreply, assign(socket, changeset: changeset)}
-  end
-
-  def handle_params(_params, _uri, %{assigns: %{action: :new}} = socket) do
-    attrs =
-      case Log.get_latest_position() do
-        %Position{latitude: lat, longitude: lng} -> %{latitude: lat, longitude: lng}
-        nil -> %{}
-      end
-
-    changeset =
-      socket.assigns.geofence
-      |> Locations.change_geofence(attrs)
-
-    {:noreply, assign(socket, changeset: changeset)}
+    {:ok, assign(socket, assigns)}
   end
 
   @impl true
@@ -173,17 +178,28 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
   # Private
 
-  defp set_grafana_url(%{assigns: %{settings: settings}} = socket) do
+  defp base_assigns(geofence, attrs \\ %{}) do
+    %{
+      geofence: geofence,
+      changeset: Locations.change_geofence(geofence, attrs),
+      car_settings: Settings.get_car_settings(),
+      sleep_mode_whitelist: geofence.sleep_mode_whitelist,
+      sleep_mode_blacklist: geofence.sleep_mode_blacklist,
+      show_errors: false
+    }
+  end
+
+  defp set_grafana_url(settings, socket) do
     with nil <- settings.grafana_url,
          %{"referrer" => referrer} when is_binary(referrer) <- get_connect_params(socket),
          %URI{path: path} = url when is_binary(path) <- URI.parse(referrer),
          [_, _, _ | path] <- path |> String.split("/") |> Enum.reverse(),
          url = %URI{url | path: Enum.join([nil | path], "/"), query: nil} |> URI.to_string(),
-         {:ok, _settings} <- Settings.update_global_settings(settings, %{grafana_url: url}) do
-      :ok
+         {:ok, settings} <- Settings.update_global_settings(settings, %{grafana_url: url}) do
+      {:ok, settings}
     else
       {:error, reason} -> Logger.warn("Updating settings failed: #{inspect(reason)}")
-      _ -> :ok
+      _ -> {:ok, settings}
     end
   end
 

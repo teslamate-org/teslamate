@@ -48,7 +48,7 @@ defmodule TeslaMate.MixProject do
       {:gen_state_machine, "~> 2.0"},
       {:ecto_enum, "~> 1.0"},
       {:phoenix_live_view, "~> 0.1"},
-      {:floki, "~> 0.23.1", only: :test},
+      {:floki, "~> 0.23", only: :test},
       {:tortoise, "~> 0.9"},
       {:excoveralls, "~> 0.10", only: :test},
       {:mojito, "~> 0.5"},

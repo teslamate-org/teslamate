@@ -1,7 +1,14 @@
 defmodule TeslaMateWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :teslamate
 
-  socket "/live", TeslaMateWeb.LiveViewSocket
+  @session_options [
+    store: :cookie,
+    key: "_teslamate_key",
+    signing_salt: "yt5O3CAQ"
+  ]
+
+  socket "/live", Phoenix.LiveView.Socket,
+    websocket: [connect_info: [session: @session_options], transport_log: :debug]
 
   @only ~w(css fonts images js favicon.ico robots.txt android-chrome-192x192.png
            android-chrome-512x512.png apple-touch-icon.png browserconfig.xml
@@ -32,10 +39,6 @@ defmodule TeslaMateWeb.Endpoint do
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
-  plug Plug.Session,
-    store: :cookie,
-    key: "_teslamate_key",
-    signing_salt: "yt5O3CAQ"
-
+  plug Plug.Session, @session_options
   plug TeslaMateWeb.Router
 end

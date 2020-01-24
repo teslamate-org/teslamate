@@ -16,7 +16,11 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
         Log.start_charging_process(car, %{date: DateTime.utc_now(), latitude: 0, longitude: 0})
 
       assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
-      assert [] == Floki.find(html, "#date-tag")
+
+      assert [] ==
+               html
+               |> TestHelper.parse_document!()
+               |> Floki.find("#date-tag")
 
       # complete
 
@@ -25,7 +29,10 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
 
-      assert [tag] = Floki.find(html, "#date-tag")
+      assert [tag] =
+               html
+               |> TestHelper.parse_document!()
+               |> Floki.find("#date-tag")
 
       assert tag
              |> Floki.find("[data-start-date]")
@@ -56,7 +63,10 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                     {"span", _, [{"span", _, [{"span", [{"class", "mdi mdi-flash"}], _}]}]},
                     {"span", _, [^tag_str]}
                   ]}
-               ] = Floki.find(html, "#energy-tag")
+               ] =
+                 html
+                 |> TestHelper.parse_document!()
+                 |> Floki.find("#energy-tag")
       end
 
       # both nil
@@ -64,7 +74,11 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       attrs = %{charge_energy_used: nil, charge_energy_added: nil}
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture(), attrs)
       assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
-      assert [] = Floki.find(html, "#energy-tag")
+
+      assert [] =
+               html
+               |> TestHelper.parse_document!()
+               |> Floki.find("#energy-tag")
     end
 
     test "shows the car name", %{conn: conn} do
@@ -77,7 +91,10 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                   {"span", _, [{"span", _, [{"span", [{"class", "mdi mdi-car"}], _}]}]},
                   {"span", _, ["joe"]}
                 ]}
-             ] = Floki.find(html, "#car-tag")
+             ] =
+               html
+               |> TestHelper.parse_document!()
+               |> Floki.find("#car-tag")
     end
 
     test "shows the geo-fence name", %{conn: conn} do
@@ -100,7 +117,10 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                   {"span", _, [{"span", _, [{"span", [{"class", "mdi mdi-map-marker"}], _}]}]},
                   {"span", _, ["Post Office"]}
                 ]}
-             ] = Floki.find(html, "#location-tag")
+             ] =
+               html
+               |> TestHelper.parse_document!()
+               |> Floki.find("#location-tag")
     end
 
     test "shows the address name", %{conn: conn} do
@@ -136,7 +156,10 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                   {"span", _, [{"span", _, [{"span", [{"class", "mdi mdi-map-marker"}], _}]}]},
                   {"span", _, ["Beelitz Supercharger, Beelitz"]}
                 ]}
-             ] = Floki.find(html, "#location-tag")
+             ] =
+               html
+               |> TestHelper.parse_document!()
+               |> Floki.find("#location-tag")
     end
   end
 
@@ -145,13 +168,24 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture(), %{cost: nil})
 
       assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
-      assert [] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
 
-      html = render_submit(view, :save, %{charging_process: %{cost: 42.12}})
+      assert [] =
+               html
+               |> TestHelper.parse_document!()
+               |> Floki.find("#charging_process_cost")
+               |> Floki.attribute("value")
+
+      html =
+        render_submit(view, :save, %{charging_process: %{cost: 42.12}})
+        |> TestHelper.parse_document!()
+
       assert ["42.12"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
       assert Decimal.from_float(42.12) == Repo.get(ChargingProcess, id).cost
 
-      html = render_submit(view, :save, %{charging_process: %{cost: nil}})
+      html =
+        render_submit(view, :save, %{charging_process: %{cost: nil}})
+        |> TestHelper.parse_document!()
+
       assert [] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
       assert nil == Repo.get(ChargingProcess, id).cost
     end
@@ -168,6 +202,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert ["http://grafana.example.com/d/xyz/12"] =
                html
+               |> TestHelper.parse_document!()
                |> Floki.find(".control a")
                |> Floki.attribute("href")
     end
@@ -180,6 +215,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert ["/"] =
                html
+               |> TestHelper.parse_document!()
                |> Floki.find(".control a")
                |> Floki.attribute("href")
     end

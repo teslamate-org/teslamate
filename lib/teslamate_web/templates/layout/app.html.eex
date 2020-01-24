@@ -14,6 +14,7 @@
     <link rel="shortcut icon" href="/favicon.ico?v=5AB53N3ALo">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
+    <%= csrf_meta_tag() %>
     <script defer src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </head>
   <body tabIndex=0>

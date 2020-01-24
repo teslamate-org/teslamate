@@ -101,7 +101,7 @@
                 round(@summary.time_to_full_charge * 60 * 60)
                 |> Convert.sec_to_str()
                 |> Enum.reject(&String.ends_with?(&1, "s"))
-                |> Enum.join(" ")
+                |> Enum.join(", ")
             %></td>
           </tr>
           <% end %>
