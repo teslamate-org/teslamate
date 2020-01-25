@@ -387,7 +387,7 @@
           "decimals": 2,
           "link": true,
           "linkTooltip": "View drive details",
-          "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_2}",
+          "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_2}&var-drive_id=${__cell_6}",
           "mappingType": 1,
           "pattern": "start_date_mi",
           "thresholds": [],
