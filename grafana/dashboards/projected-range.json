@@ -169,7 +169,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Projected Range - Milage",
+      "title": "Projected Range - Mileage",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -196,7 +196,7 @@
         {
           "decimals": null,
           "format": "none",
-          "label": "Milage",
+          "label": "Mileage",
           "logBase": 1,
           "max": null,
           "min": null,
