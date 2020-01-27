@@ -13,27 +13,36 @@ defmodule LogMock do
     GenServer.start_link(__MODULE__, opts, name: Keyword.fetch!(opts, :name))
   end
 
-  def start_state(name, car, state), do: GenServer.call(name, {:start_state, car, state})
+  def start_state(name, car, state, opts) do
+    GenServer.call(name, {:start_state, car, state, opts})
+  end
+
   def get_current_state(name, car), do: GenServer.call(name, {:get_current_state, car})
 
   def start_drive(name, car), do: GenServer.call(name, {:start_drive, car})
-  def close_drive(name, drive), do: GenServer.call(name, {:close_drive, drive})
+  def close_drive(name, drive, opts), do: GenServer.call(name, {:close_drive, drive, opts})
 
-  def start_update(name, car), do: GenServer.call(name, {:start_update, car})
+  def start_update(name, car, opts), do: GenServer.call(name, {:start_update, car, opts})
   def cancel_update(name, update), do: GenServer.call(name, {:cancel_update, update})
-  def finish_update(name, update, vsn), do: GenServer.call(name, {:finish_update, update, vsn})
-  def get_latest_update(name, car), do: GenServer.call(name, {:get_latest_update, car})
 
-  def insert_missed_update(name, car, vsn) do
-    GenServer.call(name, {:insert_missed_update, car, vsn})
+  def finish_update(name, update, vsn, opts) do
+    GenServer.call(name, {:finish_update, update, vsn, opts})
+  end
+
+  def get_latest_update(name, car) do
+    GenServer.call(name, {:get_latest_update, car})
+  end
+
+  def insert_missed_update(name, car, vsn, opts) do
+    GenServer.call(name, {:insert_missed_update, car, vsn, opts})
   end
 
   def start_charging_process(name, car, position_attrs, opts \\ []) do
     GenServer.call(name, {:start_charging_process, car, position_attrs, opts})
   end
 
-  def complete_charging_process(name, cproc, opts \\ []) do
-    GenServer.call(name, {:complete_charging_process, cproc, opts})
+  def complete_charging_process(name, cproc) do
+    GenServer.call(name, {:complete_charging_process, cproc})
   end
 
   def insert_position(name, car_or_drive, attrs) do
@@ -69,7 +78,7 @@ defmodule LogMock do
   end
 
   @impl true
-  def handle_call({:start_state, _car, s} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:start_state, _car, s, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Log.State{state: s, start_date: DateTime.utc_now()}}, state}
   end
@@ -93,7 +102,7 @@ defmodule LogMock do
     {:reply, {:ok, %ChargingProcess{id: 99, start_date: DateTime.utc_now()}}, state}
   end
 
-  def handle_call({:complete_charging_process, cproc, _} = action, _from, %State{} = state) do
+  def handle_call({:complete_charging_process, cproc} = action, _from, %State{} = state) do
     send(state.pid, action)
     new_cproc = %ChargingProcess{cproc | charge_energy_added: 45, end_date: DateTime.utc_now()}
     {:reply, {:ok, new_cproc}, state}
@@ -104,12 +113,12 @@ defmodule LogMock do
     {:reply, {:ok, %Drive{id: 111}}, state}
   end
 
-  def handle_call({:close_drive, _drive} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:close_drive, _drive, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Drive{duration_min: 10, distance: 20.0}}, state}
   end
 
-  def handle_call({:start_update, _car} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:start_update, _car, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Update{id: 111}}, state}
   end
@@ -119,7 +128,7 @@ defmodule LogMock do
     {:reply, {:ok, %Update{}}, state}
   end
 
-  def handle_call({:finish_update, _update, _version} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:finish_update, _, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Update{}}, state}
   end
@@ -128,7 +137,7 @@ defmodule LogMock do
     {:reply, update, state}
   end
 
-  def handle_call({:insert_missed_update, _car, _vsn} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:insert_missed_update, _, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Update{}}, state}
   end

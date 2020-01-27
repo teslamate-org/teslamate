@@ -72,15 +72,6 @@ defmodule TeslaMate.LogChargingTest do
              }
     end
 
-    test "accepts a custom start date" do
-      car = car_fixture()
-
-      custom_date = DateTime.from_unix!(1_566_059_683_000, :microsecond)
-
-      assert {:ok, %ChargingProcess{start_date: ^custom_date}} =
-               Log.start_charging_process(car, @valid_pos_attrs, date: custom_date)
-    end
-
     @tag :capture_log
     test "leaves address blank if resolving failed" do
       car = car_fixture()

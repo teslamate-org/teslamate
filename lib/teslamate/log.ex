@@ -54,8 +54,8 @@ defmodule TeslaMate.Log do
 
   ## State
 
-  def start_state(%Car{} = car, state) when not is_nil(state) do
-    now = DateTime.utc_now()
+  def start_state(%Car{} = car, state, opts \\ []) when not is_nil(state) do
+    now = Keyword.get(opts, :date) || DateTime.utc_now()
 
     case get_current_state(car) do
       %State{state: ^state} = s ->
@@ -160,7 +160,7 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
-  def close_drive(%Drive{id: id} = drive) do
+  def close_drive(%Drive{id: id} = drive, opts \\ []) do
     drive = Repo.preload(drive, [:car])
 
     query =
@@ -175,6 +175,7 @@ defmodule TeslaMate.Log do
           power_max: max(p.power) |> over(:w),
           power_min: min(p.power) |> over(:w),
           power_avg: avg(p.power) |> over(:w),
+          start_date: first_value(p.date) |> over(:w),
           end_date: last_value(p.date) |> over(:w),
           start_km: first_value(p.odometer) |> over(:w),
           end_km: last_value(p.odometer) |> over(:w),
@@ -201,13 +202,22 @@ defmodule TeslaMate.Log do
 
     case Repo.one(query) do
       %{count: count, distance: distance} = attrs when count >= 2 and distance >= 0.01 ->
+        lookup_address = Keyword.get(opts, :lookup_address, true)
+
         start_pos = Repo.get!(Position, attrs.start_position_id)
         end_pos = Repo.get!(Position, attrs.end_position_id)
 
         attrs =
+          if lookup_address do
+            attrs
+            |> put_address(:start_address_id, start_pos)
+            |> put_address(:end_address_id, end_pos)
+          else
+            attrs
+          end
+
+        attrs =
           attrs
-          |> put_address(:start_address_id, start_pos)
-          |> put_address(:end_address_id, end_pos)
           |> put_geofence(:start_geofence_id, start_pos)
           |> put_geofence(:end_geofence_id, end_pos)
 
@@ -256,16 +266,19 @@ defmodule TeslaMate.Log do
   end
 
   def start_charging_process(%Car{id: id}, %{latitude: _, longitude: _} = attrs, opts \\ []) do
+    lookup_address = Keyword.get(opts, :lookup_address, true)
     position = Map.put(attrs, :car_id, id)
 
     address_id =
-      case Locations.find_address(position) do
-        {:ok, %Locations.Address{id: id}} ->
-          id
+      if lookup_address do
+        case Locations.find_address(position) do
+          {:ok, %Locations.Address{id: id}} ->
+            id
 
-        {:error, reason} ->
-          Logger.warn("Address not found: #{inspect(reason)}")
-          nil
+          {:error, reason} ->
+            Logger.warn("Address not found: #{inspect(reason)}")
+            nil
+        end
       end
 
     geofence_id =
@@ -273,11 +286,9 @@ defmodule TeslaMate.Log do
         id
       end
 
-    start_date = Keyword.get_lazy(opts, :date, &DateTime.utc_now/0)
-
     with {:ok, cproc} <-
            %ChargingProcess{car_id: id, address_id: address_id, geofence_id: geofence_id}
-           |> ChargingProcess.changeset(%{start_date: start_date, position: position})
+           |> ChargingProcess.changeset(%{start_date: DateTime.utc_now(), position: position})
            |> Repo.insert() do
       {:ok, Repo.preload(cproc, [:address, :geofence])}
     end
@@ -297,6 +308,8 @@ defmodule TeslaMate.Log do
     stats =
       from(c in Charge,
         select: %{
+          start_date: first_value(c.date) |> over(:w),
+          end_date: last_value(c.date) |> over(:w),
           start_ideal_range_km: first_value(c.ideal_battery_range_km) |> over(:w),
           end_ideal_range_km: last_value(c.ideal_battery_range_km) |> over(:w),
           start_rated_range_km: first_value(c.rated_battery_range_km) |> over(:w),
@@ -322,13 +335,12 @@ defmodule TeslaMate.Log do
         where: [charging_process_id: ^charging_process.id],
         limit: 1
       )
-      |> Repo.one() || %{}
+      |> Repo.one() || %{end_date: DateTime.utc_now()}
 
     charge_energy_used = calculate_energy_used(charging_process)
 
     attrs =
       stats
-      |> Map.put(:end_date, charging_process.end_date || DateTime.utc_now())
       |> Map.put(:charge_energy_used, charge_energy_used)
       |> Map.update(:charge_energy_added, nil, &if(&1 < 0, do: nil, else: &1))
 
@@ -463,9 +475,11 @@ defmodule TeslaMate.Log do
 
   ## Update
 
-  def start_update(%Car{id: id}) do
+  def start_update(%Car{id: id}, opts \\ []) do
+    start_date = Keyword.get(opts, :date) || DateTime.utc_now()
+
     %Update{car_id: id}
-    |> Update.changeset(%{start_date: DateTime.utc_now()})
+    |> Update.changeset(%{start_date: start_date})
     |> Repo.insert()
   end
 
@@ -473,9 +487,11 @@ defmodule TeslaMate.Log do
     Repo.delete(update)
   end
 
-  def finish_update(%Update{} = update, version) do
+  def finish_update(%Update{} = update, version, opts \\ []) do
+    end_date = Keyword.get(opts, :date) || DateTime.utc_now()
+
     update
-    |> Update.changeset(%{end_date: DateTime.utc_now(), version: version})
+    |> Update.changeset(%{end_date: end_date, version: version})
     |> Repo.update()
   end
 
@@ -484,11 +500,11 @@ defmodule TeslaMate.Log do
     |> Repo.one()
   end
 
-  def insert_missed_update(%Car{id: id}, version) do
-    now = DateTime.utc_now()
+  def insert_missed_update(%Car{id: id}, version, opts \\ []) do
+    date = Keyword.get(opts, :date) || DateTime.utc_now()
 
     %Update{car_id: id}
-    |> Update.changeset(%{start_date: now, end_date: now, version: version})
+    |> Update.changeset(%{start_date: date, end_date: date, version: version})
     |> Repo.insert()
   end
 end

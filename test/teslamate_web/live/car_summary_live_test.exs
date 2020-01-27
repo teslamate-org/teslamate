@@ -38,18 +38,21 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     car
   end
 
+  defp now, do: (DateTime.utc_now() |> DateTime.to_unix()) * 1000
+
   describe "suspend" do
     @tag :signed_in
     test "suspends logging", %{conn: conn} do
       _car = car_fixture(%{suspend_min: 60_000, suspend_after_idle_min: 60_000})
+      now = now()
 
       events = [
         {:ok,
          online_event(
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-           climate_state: %{is_preconditioning: false},
-           vehicle_state: %{sentry_mode: false, locked: true, car_version: ""}
+           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
+           climate_state: %{timestamp: now, is_preconditioning: false},
+           vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
 
@@ -81,20 +84,22 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     end
 
     for {msg, id, status, settings, attrs} <- [
-          {"Car is unlocked", 0, "online", %{}, vehicle_state: %{locked: false, car_version: ""}},
+          {"Car is unlocked", 0, "online", %{},
+           vehicle_state: %{timestamp: 0, locked: false, car_version: ""}},
           {"Sentry mode is enabled", 0, "online", %{req_not_unlocked: true},
-           vehicle_state: %{sentry_mode: true, locked: true, car_version: ""}},
+           vehicle_state: %{timestamp: 0, sentry_mode: true, locked: true, car_version: ""}},
           {"Shift state present", 0, "online", %{req_no_shift_state_reading: true},
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0, shift_state: "P"}},
+           [drive_state: %{latitude: 0.0, longitude: 0.0, shift_state: "P"}]},
           {"Temperature readings", 0, "online", %{req_no_temp_reading: true},
            climate_state: %{outside_temp: 10.0}},
           {"Temperature readings", 1, "online", %{req_no_temp_reading: true},
            climate_state: %{inside_temp: 10.0}},
           {"Preconditioning", 0, "online", %{}, climate_state: %{is_preconditioning: true}},
           {"Driver present", 0, "online", %{},
-           vehicle_state: %{is_user_present: true, car_version: ""}},
+           vehicle_state: %{timestamp: 0, is_user_present: true, car_version: ""}},
           {"Update in progress", 0, "updating", %{},
            vehicle_state: %{
+             timestamp: 0,
              car_version: "v9",
              software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: "installing"}
            }}
@@ -108,6 +113,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           )
 
         _car = car_fixture(settings)
+        now = now()
 
         events = [
           {:ok,
@@ -115,8 +121,13 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
              Keyword.merge(
                [
                  display_name: "FooCar",
-                 drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-                 vehicle_state: %{sentry_mode: false, locked: true, car_version: ""}
+                 drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
+                 vehicle_state: %{
+                   timestamp: now,
+                   sentry_mode: false,
+                   locked: true,
+                   car_version: ""
+                 }
                ],
                unquote(Macro.escape(attrs))
              )
@@ -146,12 +157,14 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       _car =
         car_fixture(%{sleep_mode_enabled: false, suspend_min: 60, suspend_after_idle_min: 60})
 
+      now = now()
+
       events = [
         {:ok,
          online_event(
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-           vehicle_state: %{sentry_mode: false, locked: true, car_version: ""}
+           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
+           vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
 
@@ -169,6 +182,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     @tag :signed_in
     test "disables suspend button if sleep mode is disabled for locations", %{conn: conn} do
       car = car_fixture(%{sleep_mode_enabled: true, suspend_min: 60, suspend_after_idle_min: 60})
+      now = now()
 
       assert {:ok, _geofence} =
                Locations.create_geofence(%{
@@ -183,8 +197,8 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
         {:ok,
          online_event(
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: -50.606262, longitude: 165.972475},
-           vehicle_state: %{sentry_mode: false, locked: true, car_version: ""}
+           drive_state: %{timestamp: now, latitude: -50.606262, longitude: 165.972475},
+           vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
 
@@ -205,14 +219,15 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     @tag :signed_in
     test "resumes logging", %{conn: conn} do
       _car = car_fixture(%{suspend_min: 60_000, suspend_after_idle_min: 60_000})
+      now = now()
 
       events = [
         {:ok,
          online_event(
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-           climate_state: %{is_preconditioning: false},
-           vehicle_state: %{sentry_mode: false, locked: true, car_version: ""}
+           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
+           climate_state: %{timestamp: now, is_preconditioning: false},
+           vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
 
@@ -387,7 +402,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     test "shows tag if update is available ", %{conn: conn} do
       events = [
         {:ok, online_event()},
-        {:ok, update_event("available", nil)},
+        {:ok, update_event(0, "available", nil)},
         {:error, :unknown}
       ]
 

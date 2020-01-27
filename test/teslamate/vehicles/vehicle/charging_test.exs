@@ -4,8 +4,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
   alias TeslaMate.Log.ChargingProcess
 
   test "logs a full charging cycle", %{test: name} do
-    now = DateTime.utc_now()
-    now_ts = DateTime.to_unix(now, :millisecond)
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
       {:ok, online_event()},
@@ -16,16 +15,18 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
       {:ok, charging_event(now_ts + 4, "Complete", 0.4, range: 4)},
       {:ok, charging_event(now_ts + 5, "Complete", 0.4, range: 4)},
       {:ok, charging_event(now_ts + 6, "Unplugged", 0.4, range: 4)},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
+      {:ok, online_event(drive_state: %{timestamp: now_ts + 7, latitude: 0.2, longitude: 0.2})}
     ]
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car, :online}
+    start_date = DateTime.from_unix!(now_ts, :millisecond)
+    assert_receive {:start_state, car, :online, date: ^start_date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
-    assert_receive {:start_charging_process, ^car, %{date: _, latitude: 0.0, longitude: 0.0}, []}
+    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+                    [lookup_address: true]}
 
     assert_receive {:insert_charge, %ChargingProcess{id: process_id} = cproc,
                     %{
@@ -69,9 +70,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                     }}
 
     # Completed
-    assert_receive {:complete_charging_process, ^cproc, []}
+    assert_receive {:complete_charging_process, ^cproc}
 
-    assert_receive {:start_state, ^car, :online}
+    start_date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, ^car, :online, date: ^start_date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
     assert DateTime.diff(s1, s2, :nanosecond) < 0
@@ -83,8 +85,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
   @tag :capture_log
   test "handles a connection loss when charging", %{test: name} do
-    now = DateTime.utc_now()
-    now_ts = DateTime.to_unix(now, :millisecond)
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
       {:ok, online_event()},
@@ -104,11 +105,13 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car, :online}
+    start_date = DateTime.from_unix!(now_ts, :millisecond)
+    assert_receive {:start_state, car, :online, date: ^start_date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-    assert_receive {:start_charging_process, ^car, %{date: _, latitude: 0.0, longitude: 0.0}, []}
+    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+                    [lookup_address: true]}
 
     assert_receive {:insert_charge, %ChargingProcess{id: cproc_id} = cproc,
                     %{date: _, charge_energy_added: 0.1}}
@@ -123,9 +126,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
-    assert_receive {:complete_charging_process, ^cproc, []}
+    assert_receive {:complete_charging_process, ^cproc}
 
-    assert_receive {:start_state, ^car, :online}
+    start_date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, ^car, :online, date: ^start_date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
@@ -135,8 +139,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
   end
 
   test "Transitions directly into charging state", %{test: name} do
-    now = DateTime.utc_now()
-    now_ts = DateTime.to_unix(now, :millisecond)
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
       {:ok, online_event()},
@@ -145,16 +148,19 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     :ok = start_vehicle(name, events)
 
-    assert_receive {:start_state, car, :online}
+    start_date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, car, :online, date: ^start_date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-    assert_receive {:start_charging_process, ^car, %{date: _, latitude: 0.0, longitude: 0.0}, []}
+    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+                    [lookup_address: true]}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
     assert_receive {:insert_charge, charging_event, %{date: _, charge_energy_added: 22}}
     assert_receive {:insert_charge, ^charging_event, %{date: _, charge_energy_added: 22}}
+
     # ...
 
     refute_received _

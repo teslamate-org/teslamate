@@ -80,17 +80,19 @@ defmodule TeslaMate.VehicleCase do
       end
 
       def online_event(opts \\ []) do
-        drive_state =
-          Keyword.get(opts, :drive_state, %{
-            timestamp: 0,
-            latitude: 0.0,
-            longitude: 0.0
-          })
+        now = (DateTime.utc_now() |> DateTime.to_unix()) * 1000
 
-        charge_state = Keyword.get(opts, :charge_state, %{})
-        climate_state = Keyword.get(opts, :climate_state, %{})
-        vehicle_state = Keyword.get(opts, :vehicle_state, %{car_version: ""})
-        vehicle_config = Keyword.get(opts, :vehicle_config, %{car_type: "model3"})
+        drive_state =
+          Keyword.get(opts, :drive_state, %{latitude: 0.0, longitude: 0.0})
+          |> Map.update(:timestamp, now, fn
+            nil -> now
+            ts -> ts
+          end)
+
+        charge_state = Keyword.get(opts, :charge_state, %{timestamp: 0})
+        climate_state = Keyword.get(opts, :climate_state, %{timestamp: 0})
+        vehicle_state = Keyword.get(opts, :vehicle_state, %{timestamp: 0, car_version: ""})
+        vehicle_config = Keyword.get(opts, :vehicle_config, %{timestamp: 0, car_type: "model3"})
 
         %TeslaApi.Vehicle{
           state: "online",
@@ -126,18 +128,20 @@ defmodule TeslaMate.VehicleCase do
             ideal_battery_range: range,
             battery_range: range
           },
-          drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0}
         )
       end
 
-      defp update_event(state, version) do
+      defp update_event(ts, state, version) do
         alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
 
         online_event(
           vehicle_state: %{
+            timestamp: ts,
             car_version: version,
             software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: state}
-          }
+          },
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0}
         )
       end
     end

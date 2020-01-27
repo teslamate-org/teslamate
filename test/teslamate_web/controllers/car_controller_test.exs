@@ -124,11 +124,13 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "renders current vehicle stats [:online]", %{conn: conn} do
+      now = (DateTime.utc_now() |> DateTime.to_unix()) * 1000
+
       events = [
         {:ok,
          online_event(
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
            charge_state: %{
              ideal_battery_range: 200,
              est_battery_range: 180,
@@ -138,6 +140,7 @@ defmodule TeslaMateWeb.CarControllerTest do
            },
            climate_state: %{is_preconditioning: true, outside_temp: 24, inside_temp: 23.2},
            vehicle_state: %{
+             timestamp: 0,
              car_version: "2019.40.50.7 ad132c7b057e",
              software_update: %{status: "available"},
              locked: true,
@@ -285,6 +288,7 @@ defmodule TeslaMateWeb.CarControllerTest do
          online_event(
            display_name: "FooCar",
            vehicle_state: %{
+             timestamp: 0,
              car_version: "2019.8.4 530d1d3",
              software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: "installing"}
            }
@@ -388,7 +392,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              battery_level: 69
            },
            climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2},
-           vehicle_state: %{locked: true, sentry_mode: true, car_version: ""},
+           vehicle_state: %{timestamp: 0, locked: true, sentry_mode: true, car_version: ""},
            vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
          )}
       ]

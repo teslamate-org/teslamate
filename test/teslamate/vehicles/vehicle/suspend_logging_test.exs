@@ -11,7 +11,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :asleep}
+    assert_receive {:start_state, _, :asleep, []}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
     assert :ok = Vehicle.suspend_logging(name)
@@ -24,7 +24,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :offline}
+    assert_receive {:start_state, _, :offline, []}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
 
     assert :ok = Vehicle.suspend_logging(name)
@@ -37,7 +37,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events, settings: %{suspend_min: 1000})
-    assert_receive {:start_state, car, :online}
+    assert_receive {:start_state, car, :online, date: _}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
@@ -55,7 +55,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events, settings: %{sleep_mode_enabled: false})
-    assert_receive {:start_state, _, :online}
+    assert_receive {:start_state, _, :online, date: _}
 
     assert {:error, :sleep_mode_disabled} = Vehicle.suspend_logging(name)
   end
@@ -73,7 +73,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
         whitelist: [{-50.606993, 165.972471}]
       )
 
-    assert_receive {:start_state, _, :online}
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert :ok = Vehicle.suspend_logging(name)
   end
@@ -85,7 +86,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events, blacklist: [{-50.606993, 165.972471}])
-    assert_receive {:start_state, _, :online}
+
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :sleep_mode_disabled_at_location} = Vehicle.suspend_logging(name)
   end
@@ -103,7 +106,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :online}
+
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :preconditioning} = Vehicle.suspend_logging(name)
   end
@@ -121,7 +126,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :online}
+
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :user_present} = Vehicle.suspend_logging(name)
   end
@@ -139,7 +146,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :online}
+
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :sentry_mode} = Vehicle.suspend_logging(name)
   end
@@ -157,7 +166,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
-    assert_receive {:start_state, _, :online}
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :unlocked} = Vehicle.suspend_logging(name)
   end
@@ -172,7 +182,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :online}
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
   end
@@ -187,7 +198,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :online}
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
   end
@@ -202,7 +214,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :online}
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
   end
@@ -214,20 +227,26 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :online}
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
   end
 
   test "cannot be suspended while updating", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     events = [
       {:ok, online_event()},
-      {:ok, update_event("installing", "2019.8.4 530d1d3")}
+      {:ok, update_event(now_ts, "installing", "2019.8.4 530d1d3")}
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :online}
-    assert_receive {:start_update, _car}
+
+    zero_date = DateTime.from_unix!(0, :millisecond)
+    start_date = DateTime.from_unix!(now_ts, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^zero_date}
+    assert_receive {:start_update, _car, date: ^start_date}
 
     assert {:error, :update_in_progress} = Vehicle.suspend_logging(name)
   end
@@ -239,7 +258,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :online}
+
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :charging_in_progress} = Vehicle.suspend_logging(name)
   end
@@ -257,7 +278,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events, settings: %{req_no_temp_reading: true})
-    assert_receive {:start_state, _, :online}
+
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :temp_reading} = Vehicle.suspend_logging(name)
   end
@@ -275,25 +298,31 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events, settings: %{req_no_temp_reading: true})
-    assert_receive {:start_state, _, :online}
+
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :temp_reading} = Vehicle.suspend_logging(name)
   end
 
   test "suspends when charging is complete", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     events = [
       {:ok, online_event()},
-      {:ok, charging_event(0, "Charging", 1.5)},
-      {:ok, charging_event(0, "Complete", 1.5)}
+      {:ok, charging_event(now_ts, "Charging", 1.5)},
+      {:ok, charging_event(now_ts + 1, "Complete", 1.5)}
     ]
 
     :ok = start_vehicle(name, events, settings: %{suspend_min: 1_000_000})
 
-    assert_receive {:start_state, car, :online}
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, car, :online, date: ^date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
-    assert_receive {:start_charging_process, ^car, %{date: _, latitude: 0.0, longitude: 0.0}, []}
+    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+                    [lookup_address: true]}
 
     assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: 1.5}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: s1}}}
@@ -301,9 +330,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 1.5}}
-    assert_receive {:complete_charging_process, ^cproc, []}
+    assert_receive {:complete_charging_process, ^cproc}
 
-    assert_receive {:start_state, ^car, :online}
+    assert_receive {:start_state, ^car, :online, date: ^date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
     assert DateTime.diff(s1, s2, :nanosecond) < 0
@@ -329,7 +358,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
         }
       )
 
-    assert_receive {:start_state, car, :online}
+    assert_receive {:start_state, car, :online, date: _}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
@@ -371,7 +400,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
         }
       )
 
-    assert_receive {:start_state, car, :online}
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, car, :online, date: ^date}
     assert_receive {:insert_position, ^car, %{}}
 
     assert {:error, :unlocked} = Vehicle.suspend_logging(name)
