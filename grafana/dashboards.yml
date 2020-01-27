@@ -8,7 +8,7 @@ providers:
   type: file
   disableDeletion: false
   editable: true
-  updateIntervalSeconds: -1
+  updateIntervalSeconds: 86400
   options:
     path: /dashboards
 - name: 'teslamate_internal'
@@ -18,6 +18,6 @@ providers:
   type: file
   disableDeletion: false
   editable: true
-  updateIntervalSeconds: -1
+  updateIntervalSeconds: 86400
   options:
     path: /dashboards_internal
