@@ -9,7 +9,7 @@ defmodule TeslaMateWeb.CarControllerTest do
   defp table_row(html, key, value, opts \\ []) do
     assert {"tr", _, [{"td", _, [^key]}, {"td", [], [v]}]} =
              html
-             |> TestHelper.parse_document!()
+             |> Floki.parse_document!()
              |> Floki.find("tr")
              |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
 
@@ -24,7 +24,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     assert {"span", _, [{"span", [{"class", ^icon_class}], _}]} =
              html
-             |> TestHelper.parse_document!()
+             |> Floki.parse_document!()
              |> Floki.find(".icons .icon")
              |> Enum.find(&match?({"span", [_, {"data-tooltip", ^tooltip}], _}, &1))
   end
@@ -80,7 +80,7 @@ defmodule TeslaMateWeb.CarControllerTest do
                {"div", [{"class", "car card"}], _}
              ] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find(".car")
     end
 

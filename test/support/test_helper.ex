@@ -11,11 +11,4 @@ defmodule TestHelper do
       Process.sleep(delay)
       eventually(fun, attempts - 1, delay)
   end
-
-  def parse_document!(document) do
-    case Floki.parse_document(document) do
-      {:error, reason} -> raise reason
-      {:ok, html} -> html
-    end
-  end
 end

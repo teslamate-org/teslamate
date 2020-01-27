@@ -19,7 +19,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert [] ==
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("#date-tag")
 
       # complete
@@ -31,7 +31,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert [tag] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("#date-tag")
 
       assert tag
@@ -65,7 +65,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                   ]}
                ] =
                  html
-                 |> TestHelper.parse_document!()
+                 |> Floki.parse_document!()
                  |> Floki.find("#energy-tag")
       end
 
@@ -77,7 +77,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert [] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("#energy-tag")
     end
 
@@ -93,7 +93,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                 ]}
              ] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("#car-tag")
     end
 
@@ -119,7 +119,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                 ]}
              ] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("#location-tag")
     end
 
@@ -158,7 +158,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                 ]}
              ] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("#location-tag")
     end
   end
@@ -171,20 +171,20 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert [] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("#charging_process_cost")
                |> Floki.attribute("value")
 
       html =
         render_submit(view, :save, %{charging_process: %{cost: 42.12}})
-        |> TestHelper.parse_document!()
+        |> Floki.parse_document!()
 
       assert ["42.12"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
       assert Decimal.from_float(42.12) == Repo.get(ChargingProcess, id).cost
 
       html =
         render_submit(view, :save, %{charging_process: %{cost: nil}})
-        |> TestHelper.parse_document!()
+        |> Floki.parse_document!()
 
       assert [] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
       assert nil == Repo.get(ChargingProcess, id).cost
@@ -202,7 +202,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert ["http://grafana.example.com/d/xyz/12"] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find(".control a")
                |> Floki.attribute("href")
     end
@@ -215,7 +215,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert ["/"] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find(".control a")
                |> Floki.attribute("href")
     end

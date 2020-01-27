@@ -8,7 +8,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   defp table_row(html, key, value, opts \\ []) do
     assert {"tr", _, [{"td", _, [^key]}, {"td", [], [v]}]} =
              html
-             |> TestHelper.parse_document!()
+             |> Floki.parse_document!()
              |> Floki.find("tr")
              |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
 
@@ -65,13 +65,19 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       assert "try to sleep" ==
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("a[phx-click=suspend_logging]")
                |> Floki.text()
 
       # Suspend
       render_click(view, :suspend_logging)
-      assert view |> render() |> table_row("Status", "falling asleep")
+
+      TestHelper.eventually(
+        fn ->
+          assert view |> render() |> table_row("Status", "falling asleep")
+        end,
+        delay: 5
+      )
     end
 
     for {msg, id, status, settings, attrs} <- [
@@ -130,7 +136,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
         assert [{"a", [_, _, {"disabled", "disabled"}], [unquote(msg)]}] =
                  html
-                 |> TestHelper.parse_document!()
+                 |> Floki.parse_document!()
                  |> Floki.find(".button.is-danger")
       end
     end
@@ -156,7 +162,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       assert [] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("a[phx-click=suspend_logging]")
     end
 
@@ -189,7 +195,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       assert ["disabled"] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("a[phx-click=suspend_logging]")
                |> Floki.attribute("disabled")
     end
@@ -219,7 +225,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       assert "try to sleep" ==
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find("a[phx-click=suspend_logging]")
                |> Floki.text()
 
@@ -227,14 +233,20 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       # Suspend
       render_click(view, :suspend_logging)
-      assert html = render(view)
-      assert table_row(html, "Status", "falling asleep")
 
-      assert "cancel sleep attempt" ==
-               html
-               |> TestHelper.parse_document!()
-               |> Floki.find("a[phx-click=resume_logging]")
-               |> Floki.text()
+      TestHelper.eventually(
+        fn ->
+          assert html = render(view)
+          assert table_row(html, "Status", "falling asleep")
+
+          assert "cancel sleep attempt" ==
+                   html
+                   |> Floki.parse_document!()
+                   |> Floki.find("a[phx-click=resume_logging]")
+                   |> Floki.text()
+        end,
+        delay: 5
+      )
 
       # Resume
       render_click(view, :resume_logging)
@@ -262,7 +274,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       assert {"span", _, [{"span", [{"class", "mdi mdi-alert-box"}], _}]} =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find(".icons .icon")
                |> Enum.find(
                  &match?({"span", [_, {"data-tooltip", "Health check failed"}], _}, &1)
@@ -294,7 +306,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                 ], _}
              ] =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find(".icons .spinner")
     end
 
@@ -326,7 +338,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                     ], _}
                  ] =
                    html
-                   |> TestHelper.parse_document!()
+                   |> Floki.parse_document!()
                    |> Floki.find(".icons .spinner")
         end,
         delay: 20
@@ -363,7 +375,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                     ], _}
                  ] =
                    html
-                   |> TestHelper.parse_document!()
+                   |> Floki.parse_document!()
                    |> Floki.find(".icons .spinner")
         end,
         delay: 20
@@ -388,7 +400,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       assert {"span", _, [{"span", [{"class", "mdi mdi-gift-outline"}], _}]} =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find(".icons .icon")
                |> Enum.find(
                  &match?({"span", [_, {"data-tooltip", "Software Update available"}], _}, &1)
@@ -413,7 +425,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       assert {"span", _, [{"span", [{"class", "mdi mdi-snowflake"}], _}]} =
                html
-               |> TestHelper.parse_document!()
+               |> Floki.parse_document!()
                |> Floki.find(".icons .icon")
                |> Enum.find(
                  &match?({"span", [_, {"data-tooltip", "Reduced Battery Range"}], _}, &1)
