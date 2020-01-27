@@ -51,7 +51,7 @@ defmodule TeslaMate.Locations do
     |> Repo.all()
     |> Enum.chunk_every(50)
     |> Enum.with_index()
-    |> Enum.map(fn {addresses, i} ->
+    |> Enum.each(fn {addresses, i} ->
       if i > 0, do: Process.sleep(1500)
 
       {:ok, attrs} = @geocoder.details(addresses, lang)
@@ -82,8 +82,6 @@ defmodule TeslaMate.Locations do
           {:ok, _} = update_address(address, attrs)
       end)
     end)
-
-    :ok
   rescue
     e in MatchError -> {:error, with({:error, reason} <- e.term, do: reason)}
   end

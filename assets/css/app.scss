@@ -249,3 +249,7 @@ $positions: ('top','left','bottom','right');
       }
   }
 }
+
+.field.is-horizontal .field-label {
+  min-width: 200px;
+}
