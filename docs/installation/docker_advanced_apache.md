@@ -182,3 +182,32 @@ Start the stack with `docker-compose up` run in the same directory, where the do
 1. Open the web interface [https://teslamate.example.com](https://teslamate.example.com)
 2. Sign in with your Tesla account
 3. The Grafana dashboards are available at [https://grafana.example.com](https://grafana.example.com).
+
+## Proxying /wake Endpoint
+
+Replace the teslamate section of your apache configuration with the block below. (This assumes you have a single car set up!)
+
+```apacheconf
+<IfModule mod_ssl.c>
+    <VirtualHost *:443>
+        ProxyPreserveHost On
+        ServerName teslamate.${MYDOMAIN}
+        ProxyPass /live/websocket ws://127.0.0.1:4000/live/websocket
+        ProxyPassReverse /live/websocket ws://127.0.0.1:4000/live/websocket
+        ProxyPass /wake http://127.0.0.1:4000/api/car/1/logging/resume
+        ProxyPassReverse /wake http://127.0.0.1:4000/api/car/1/logging/resume
+        ProxyPass / http://127.0.0.1:4000/
+        ProxyPassReverse / http://127.0.0.1:4000/
+        CustomLog /var/log/apache2/${LOG} combined
+        <Proxy *>
+            Authtype Basic
+            Authname "Password Required"
+            AuthUserFile /etc/apache2/.htpasswd
+            Require valid-user
+        </Proxy>
+        SSLCertificateFile /etc/letsencrypt/live/teslamate.${MYDOMAIN}/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/teslamate.${MYDOMAIN}/privkey.pem
+        Include /etc/letsencrypt/options-ssl-apache.conf
+    </VirtualHost>
+</IfModule>
+```

@@ -8,7 +8,7 @@ Unfortunately, only couple of the useful events (like NFC on NFC enabled phones)
 
 These values are used in the screenshots. Whenever you see them, replace them with the actual values used on your system.
 
-- Your wake up endpoint is exposed at: **https://teslamate.example.com/wake** and proxied to something like `http://teslamate:4000/api/car/$car_id/logging/resume` where `$car_id` is 1 if you have only one car.
+- Your wake up endpoint is exposed at: **https://teslamate.example.com/wake** and proxied to something like `http://teslamate:4000/api/car/$car_id/logging/resume` where `$car_id` is 1 if you have only one car. (see [Advanced Docker Setup - Apache2](../../installation/docker_advanced_apache.md) for an example)
 - The Endpoint is protected by **Basic Authentication** with the user **mylogin** and password **mysecretpassword**. Note that this **IS NOT** your Tesla password.
 
 ## Setup the automation
