@@ -1056,7 +1056,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   if Mix.env() == :test, do: defp(schedule_fetch(n, _, _), do: {:state_timeout, round(n), :fetch})
   defp schedule_fetch(n, unit, _), do: {:state_timeout, round(apply(:timer, unit, [n])), :fetch}
 
-  # TODO
   case(Mix.env()) do
     :test -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :millisecond)
     _____ -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :second)

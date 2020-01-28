@@ -9,11 +9,11 @@ defmodule TeslaMateWeb.GeoFenceLive.Index do
   def render(assigns), do: GeoFenceView.render("index.html", assigns)
 
   @impl true
-  def mount(_params, session, socket) do
-    if connected?(socket), do: Gettext.put_locale(session["locale"])
+  def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
+    if connected?(socket), do: Gettext.put_locale(locale)
 
     unit_of_length =
-      case Settings.get_global_settings!() do
+      case settings do
         %GlobalSettings{unit_of_length: :km} -> :m
         %GlobalSettings{unit_of_length: :mi} -> :ft
       end

@@ -10,23 +10,23 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   alias TeslaMate.Settings
 
   @impl true
-  def mount(_params, %{"locale" => locale}, socket) do
+  def render(assigns), do: SettingsView.render("index.html", assigns)
+
+  @impl true
+  def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
     if connected?(socket), do: Gettext.put_locale(locale)
 
     socket =
       socket
-      |> assign_new(:global_settings, fn -> Settings.get_global_settings!() |> prepare() end)
+      |> assign_new(:addresses_migrated?, fn -> addresses_migrated?() end)
       |> assign_new(:car_settings, fn -> Settings.get_car_settings() |> prepare() end)
       |> assign_new(:car, fn -> nil end)
-      |> assign_new(:addresses_migrated?, fn -> addresses_migrated?() end)
+      |> assign(:global_settings, settings |> prepare())
       |> assign(:refreshing_addresses?, nil)
       |> assign(:refresh_error, nil)
 
     {:ok, socket}
   end
-
-  @impl true
-  def render(assigns), do: SettingsView.render("index.html", assigns)
 
   @impl true
   def handle_params(params, _uri, socket) do

@@ -18,11 +18,13 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
   @impl true
   def mount(%{"lat" => lat, "lng" => lng}, %{"action" => :new} = session, socket) do
-    if connected?(socket), do: Gettext.put_locale(session["locale"])
+    %{"settings" => settings, "locale" => locale} = session
 
-    {:ok, settings} =
-      Settings.get_global_settings!()
-      |> set_grafana_url(socket)
+    if connected?(socket) do
+      Gettext.put_locale(locale)
+    end
+
+    {:ok, settings} = set_grafana_url(settings, socket)
 
     {unit_of_length, radius} =
       case settings do
@@ -46,9 +48,11 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   end
 
   def mount(_params, %{"action" => :new} = session, socket) do
-    if connected?(socket), do: Gettext.put_locale(session["locale"])
+    %{"settings" => settings, "locale" => locale} = session
 
-    settings = Settings.get_global_settings!()
+    if connected?(socket) do
+      Gettext.put_locale(locale)
+    end
 
     {unit_of_length, radius} =
       case settings do
@@ -78,9 +82,12 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   end
 
   def mount(%{"id" => id}, %{"action" => :edit} = session, socket) do
-    if connected?(socket), do: Gettext.put_locale(session["locale"])
+    %{"settings" => settings, "locale" => locale} = session
 
-    settings = Settings.get_global_settings!()
+    if connected?(socket) do
+      Gettext.put_locale(locale)
+    end
+
     geofence = %GeoFence{radius: radius} = Locations.get_geofence!(id)
 
     {unit_of_length, radius} =
