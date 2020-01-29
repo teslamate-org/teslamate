@@ -27,7 +27,8 @@ defmodule TeslaMate.Locations.GeocoderTest do
     with_mock Mojito,
       get:
         fn "https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&extratags=1&namedetails=1&zoom=19&lat=37.889602&lon=41.129182",
-           _headers ->
+           _headers,
+           _opts ->
           @response
         end do
       assert Geocoder.reverse_lookup(37.889602, 41.129182) ==

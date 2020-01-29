@@ -117,7 +117,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
 
     assert_receive {:cancel_update, _upate_id}, 200
 
-    assert_receive {:start_state, ^car_id, :online, date: ^d0}
+    assert_receive {:start_state, ^car_id, :online, date: ^d0}, 400
     assert_receive {:insert_position, ^car_id, %{}}
 
     assert_receive {:pubsub,

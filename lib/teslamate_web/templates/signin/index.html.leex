@@ -8,14 +8,14 @@
       <% end %>
 
       <div class="field">
-        <%= label f, :email, class: "label" %>
+        <%= label f, :email, gettext("Email address"), class: "label" %>
         <div class="control">
           <%= text_input f, :email, class: "input is-rounded", type: "username" %>
         </div>
       </div>
 
       <div class="field">
-        <%= label f, :password, class: "label" %>
+        <%= label f, :password, gettext("Password") ,class: "label" %>
         <div class="control">
           <%= text_input f, :password, class: "input is-rounded", type: "password" %>
         </div>
@@ -27,10 +27,10 @@
       <div class="field mt-20">
         <div class="control">
           <%=
-            submit "Sign in",
+            submit gettext("Sign in"),
               class: "button is-rounded is-fullwidth is-link",
               disabled: !@changeset.valid?,
-              phx_disable_with: "Saving...",
+              phx_disable_with: gettext("Saving..."),
               phx_loading_class: "is-loading"
           %>
         </div>

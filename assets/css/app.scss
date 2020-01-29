@@ -14,9 +14,9 @@ $fullhd-enabled: false;
 @import "~bulma/sass/base/_all";
 @import "~bulma/sass/components/breadcrumb";
 @import "~bulma/sass/components/card";
+@import "~bulma/sass/components/dropdown";
 @import "~bulma/sass/components/message";
 @import "~bulma/sass/components/navbar";
-@import "~bulma/sass/components/dropdown";
 @import "~bulma/sass/elements/box";
 @import "~bulma/sass/elements/button";
 @import "~bulma/sass/elements/container";
@@ -252,4 +252,18 @@ $positions: ('top','left','bottom','right');
 
 .field.is-horizontal .field-label {
   min-width: 200px;
+}
+
+main.full-height {
+  min-height: calc(100vh - 102px);
+  min-height: calc((var(--vh, 1vh) * 100) - 102px);
+}
+
+.footer {
+  height: 50px;
+  opacity: 0.8;
+
+  .button.is-text {
+    text-decoration: initial;
+  }
 }

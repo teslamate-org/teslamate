@@ -38,12 +38,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
           end
 
         model =
-          case String.downcase(type) do
-            "models" <> _ -> "S"
-            "model3" <> _ -> "3"
-            "modelx" <> _ -> "X"
-            "modely" <> _ -> "Y"
-            _____________ -> nil
+          with str when is_binary(str) <- type do
+            case String.downcase(str) do
+              "models" <> _ -> "S"
+              "model3" <> _ -> "3"
+              "modelx" <> _ -> "X"
+              "modely" <> _ -> "Y"
+              _____________ -> nil
+            end
           end
 
         {:ok, %{trim_badging: trim_badging, model: model, name: name}}

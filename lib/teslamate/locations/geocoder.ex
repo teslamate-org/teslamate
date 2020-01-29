@@ -42,7 +42,7 @@ defmodule TeslaMate.Locations.Geocoder do
   defp fetch(url, lang, params) do
     url = assemble_url(url, params)
 
-    case Mojito.get(url, headers(lang)) do
+    case Mojito.get(url, headers(lang), timeout: 15_000) do
       {:ok, %Response{status_code: 200, body: body}} -> {:ok, Jason.decode!(body)}
       {:ok, %Response{body: body}} -> {:error, Jason.decode!(body) |> Map.get("error")}
       {:error, %Error{reason: reason}} -> {:error, reason}

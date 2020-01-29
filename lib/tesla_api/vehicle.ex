@@ -23,18 +23,18 @@ defmodule TeslaApi.Vehicle do
             vehicle_state: nil
 
   def list(%Auth{token: token}) do
-    TeslaApi.get("/api/1/vehicles", token, transform: &vehicle/1)
+    TeslaApi.get("/api/1/vehicles", token, transform: &result/1)
   end
 
   def get(%Auth{token: token}, id) do
-    TeslaApi.get("/api/1/vehicles/#{id}", token, transform: &vehicle/1)
+    TeslaApi.get("/api/1/vehicles/#{id}", token, transform: &result/1)
   end
 
   def get_with_state(%Auth{token: token}, id) do
-    TeslaApi.get("/api/1/vehicles/#{id}/vehicle_data", token, transform: &vehicle/1)
+    TeslaApi.get("/api/1/vehicles/#{id}/vehicle_data", token, transform: &result/1)
   end
 
-  defp vehicle(v) do
+  def result(v) do
     %__MODULE__{
       id: v["id"],
       vehicle_id: v["vehicle_id"],

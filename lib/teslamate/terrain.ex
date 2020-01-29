@@ -27,18 +27,24 @@ defmodule TeslaMate.Terrain do
   def init(opts) do
     {:ok, client} = SRTM.Client.new(cache_path())
 
-    timeout = Keyword.get(opts, :timeout, 100)
-    name = Keyword.get(opts, :name, @name)
-
-    deps = %{
-      srtm: Keyword.get(opts, :deps_srtm, SRTM),
-      log: Keyword.get(opts, :deps_log, Log)
+    data = %Data{
+      timeout: Keyword.get(opts, :timeout, 100),
+      name: Keyword.get(opts, :name, @name),
+      client: client,
+      deps: %{
+        srtm: Keyword.get(opts, :deps_srtm, SRTM),
+        log: Keyword.get(opts, :deps_log, Log)
+      }
     }
 
-    {:ok, _ref} = :timer.send_interval(:timer.hours(3), self(), :purge_srtm_in_memory_cache)
+    case Keyword.get(opts, :disabled, false) do
+      false ->
+        {:ok, _ref} = :timer.send_interval(:timer.hours(3), self(), :purge_srtm_in_memory_cache)
+        {:ok, :ready, data, {:next_event, :internal, {:fetch_positions, 0}}}
 
-    {:ok, :ready, %Data{client: client, timeout: timeout, deps: deps, name: name},
-     {:next_event, :internal, {:fetch_positions, 0}}}
+      true ->
+        {:ok, :disabled, data}
+    end
   end
 
   ## Call
@@ -78,7 +84,9 @@ defmodule TeslaMate.Terrain do
 
       {positions, next} ->
         Logger.info("Adding elevation to #{length(positions)} positions ...")
+
         :ok = GenStateMachine.cast(self(), :process)
+
         {:next_state, {:update, positions, next, nil}, data}
     end
   end
@@ -86,7 +94,11 @@ defmodule TeslaMate.Terrain do
   ## Cast
 
   def handle_event(:cast, :process, {:update, [], next, nil}, data) do
-    {:next_state, :ready, data, {:next_event, :internal, {:fetch_positions, next}}}
+    {:next_state, :ready, data,
+     [
+       {:next_event, :info, :purge_srtm_in_memory_cache},
+       {:next_event, :internal, {:fetch_positions, next}}
+     ]}
   end
 
   def handle_event(:cast, :process, {:update, [%Position{} = p | rest], next, nil}, data) do
@@ -149,7 +161,12 @@ defmodule TeslaMate.Terrain do
   def handle_event(:info, :purge_srtm_in_memory_cache, _state, %Data{client: client} = data) do
     Logger.debug("Purging SRTM in-memory cache ...")
     {:ok, client} = SRTM.Client.purge_in_memory_cache(client, keep: 2)
-    {:keep_state, %Data{data | client: client}}
+    {:keep_state, %Data{data | client: client}, {:next_event, :info, :garbage_collect}}
+  end
+
+  def handle_event(:info, :garbage_collect, _state, _data) do
+    :erlang.garbage_collect(self())
+    :keep_state_and_data
   end
 
   # Private

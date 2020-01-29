@@ -94,7 +94,7 @@ defmodule TeslaMate.Vehicles do
     vehicles
   end
 
-  defp create_or_update!(%TeslaApi.Vehicle{} = vehicle) do
+  def create_or_update!(%TeslaApi.Vehicle{} = vehicle) do
     unless is_nil(name = vehicle.display_name), do: Logger.info("Starting logger for '#{name}'")
 
     {:ok, car} =

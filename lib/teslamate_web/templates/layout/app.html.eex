@@ -64,7 +64,10 @@
       </div>
     </nav>
 
-    <main role="main" class="section"  style="overflow: hidden;">
+    <% show_doante_button = @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) %>
+
+    <%= content_tag :main, role: "main", style: "overflow: hidden;",
+                           class: ["section", to_string(if show_doante_button, do: " full-height")] do %>
       <div class="container">
         <%= Enum.map(get_flash(@conn), fn {flash_key, flash_message} -> %>
           <p class="notification is-<%= flash_key %>"><%= flash_message %></p>
@@ -72,6 +75,19 @@
 
         <%= render @view_module, @view_template, assigns %>
       </div>
-    </main>
+    <% end %>
+
+    <%= if @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) do %>
+    <footer class="footer">
+      <div class="content has-text-centered">
+          <%= link to: Routes.donate_path(@conn, :index),
+              class: "button is-rounded is-text is-small has-text-grey", type: "button",
+              target: "_blank", rel: "noopener noreferrer" do %>
+            <span class="icon"><i class="mdi mdi-heart"></i> </span>
+            <strong><%= gettext "Donate" %></strong>
+          <% end %>
+      </div>
+    </footer>
+    <% end %>
   </body>
 </html>

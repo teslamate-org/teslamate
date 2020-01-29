@@ -31,6 +31,8 @@ services:
       - MQTT_HOST=mosquitto
     ports:
       - 4000:4000
+    volumes:
+      - ./import:/opt/app/import
     cap_drop:
       - all
 

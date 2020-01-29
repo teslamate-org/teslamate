@@ -41,6 +41,7 @@ A powerful, self-hosted data logger for your Tesla.
 - Geo-fencing feature to create custom locations
 - Supports multiple vehicles per Tesla Account
 - Charge cost tracking
+- Import from TeslaFi
 
 ## Screenshots
 
@@ -68,6 +69,8 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
   - [Shortcuts Setup (iOS)](https://teslamate.readthedocs.io/en/latest/configuration/guides/shortcuts.html)
   - [Tasker Setup (Android)](https://teslamate.readthedocs.io/en/latest/configuration/guides/tasker.html)
   - [MacroDroid Setup (Android)](https://teslamate.readthedocs.io/en/latest/configuration/guides/macro_droid.html)
+- Import
+  - [TeslaFi](https://teslamate.readthedocs.io/en/latest/import/teslafi.html)
 - Integrations
   - [HomeAssistant](https://teslamate.readthedocs.io/en/latest/integrations/home_assistant.html)
   - [MQTT](https://teslamate.readthedocs.io/en/latest/integrations/mqtt.html)

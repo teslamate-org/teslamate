@@ -8,39 +8,63 @@ defmodule TeslaMate.Repair do
   alias TeslaMate.Locations.Address
   alias TeslaMate.{Repo, Locations}
 
+  defmodule State do
+    defstruct [:limit]
+  end
+
   # API
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__, fullsweep_after: 10)
+  end
+
+  def trigger_run do
+    GenServer.cast(__MODULE__, :repair)
   end
 
   @impl true
-  def init(_opts) do
-    {:ok, _ref} = :timer.send_interval(:timer.hours(6), self(), :repair)
+  def init(opts) do
+    {:ok, _ref} =
+      opts
+      |> Keyword.get_lazy(:interval, fn -> :timer.hours(1) end)
+      |> :timer.send_interval(self(), :repair)
 
-    send(self(), :repair)
+    :ok = trigger_run()
 
-    {:ok, nil}
+    {:ok, %State{limit: Keyword.get(opts, :limit, 5000)}}
   end
 
   ## Repair
 
   @impl true
-  def handle_info(:repair, state) do
+  def handle_cast(:repair, %State{limit: limit} = state) do
     from(d in Drive,
+      join: sp in assoc(d, :start_position),
+      join: ep in assoc(d, :end_position),
+      select: [
+        :id,
+        :car_id,
+        :start_date,
+        {:start_position, [:id, :latitude, :longitude]},
+        {:end_position, [:id, :latitude, :longitude]}
+      ],
       where:
         (is_nil(d.start_address_id) or is_nil(d.end_address_id)) and
           (not is_nil(d.start_position_id) and not is_nil(d.end_position_id)),
       order_by: [desc: :id],
-      preload: [:start_position, :end_position]
+      preload: [start_position: sp, end_position: ep],
+      limit: ^limit
     )
     |> Repo.all()
     |> repair()
 
     from(c in ChargingProcess,
+      join: p in assoc(c, :position),
+      select: [:id, :car_id, :start_date, {:position, [:id, :latitude, :longitude]}],
       where: is_nil(c.address_id) and not is_nil(c.position_id),
       order_by: [desc: :id],
-      preload: [:position]
+      preload: [position: p],
+      limit: ^limit
     )
     |> Repo.all()
     |> repair()
@@ -48,6 +72,7 @@ defmodule TeslaMate.Repair do
     {:noreply, state}
   end
 
+  @impl true
   def handle_info(msg, state) do
     Logger.warn("Unexpected message: #{inspect(msg, pretty: true)}")
     {:noreply, state}

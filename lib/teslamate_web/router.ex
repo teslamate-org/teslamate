@@ -1,7 +1,8 @@
 defmodule TeslaMateWeb.Router do
   use TeslaMateWeb, :router
 
-  alias TeslaMate.Settings
+  alias TeslaMate.{Settings, Release, Import}
+  alias TeslaMateWeb.Plugs.Donate
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -11,6 +12,7 @@ defmodule TeslaMateWeb.Router do
     plug Phoenix.LiveView.Flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug Donate
     plug :fetch_settings
   end
 
@@ -28,6 +30,8 @@ defmodule TeslaMateWeb.Router do
     live "/geo-fences/new", GeoFenceLive.Form
     live "/geo-fences/:id/edit", GeoFenceLive.Form
     live "/charge-cost/:id", ChargeLive.Cost
+    live "/import", ImportLive.Index
+    get "/donate", DonateController, :index
   end
 
   scope "/api", TeslaMateWeb do

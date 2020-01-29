@@ -82,6 +82,58 @@ defmodule TeslaMate.Log do
     |> Repo.one()
   end
 
+  def create_current_state(%Car{id: id} = car) do
+    query =
+      from s in State,
+        where: s.car_id == ^id,
+        order_by: [desc: s.start_date],
+        limit: 1
+
+    with nil <- get_current_state(car),
+         %State{} = state <- Repo.one(query),
+         {:ok, _} <- state |> State.changeset(%{end_date: nil}) |> Repo.update() do
+      :ok
+    else
+      {:error, reason} -> {:error, reason}
+      _ -> :ok
+    end
+  end
+
+  def complete_current_state(%Car{id: id} = car) do
+    case get_current_state(car) do
+      %State{start_date: date} = state ->
+        query =
+          from s in State,
+            where: s.car_id == ^id and s.start_date > ^date,
+            order_by: [asc: s.start_date],
+            limit: 1
+
+        end_date =
+          case Repo.one(query) do
+            %State{start_date: d} -> d
+            nil -> DateTime.add(date, 1, :second)
+          end
+
+        with {:ok, _} <-
+               state
+               |> State.changeset(%{end_date: end_date})
+               |> Repo.update() do
+          :ok
+        end
+
+      nil ->
+        :ok
+    end
+  end
+
+  def get_earliest_state(%Car{id: id}) do
+    State
+    |> where(car_id: ^id)
+    |> order_by(asc: :start_date)
+    |> limit(1)
+    |> Repo.one()
+  end
+
   defp create_state(%Car{id: id}, attrs) do
     %State{car_id: id}
     |> State.changeset(attrs)

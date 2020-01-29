@@ -25,6 +25,12 @@ A powerful, self-hosted data logger for your Tesla.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Import
+
+   import/teslafi.md
+
+.. toctree::
+   :maxdepth: 1
    :caption: Integrations
 
    integrations/home_assistant

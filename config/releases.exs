@@ -19,6 +19,25 @@ defmodule Util do
   def parse_check_origin!("false"), do: false
   def parse_check_origin!(hosts) when is_binary(hosts), do: String.split(hosts, ",")
   def parse_check_origin!(hosts), do: raise("Invalid check_origin option: #{inspect(hosts)}")
+
+  def validate_import_dir(nil), do: nil
+
+  def validate_import_dir(path) do
+    case File.ls(path) do
+      {:ok, [_ | _]} ->
+        path
+
+      {:ok, []} ->
+        nil
+
+      {:error, :enoent} ->
+        nil
+
+      {:error, reason} ->
+        IO.puts("Cannot access directory '#{path}': #{inspect(reason)}")
+        nil
+    end
+  end
 end
 
 config :teslamate, TeslaMate.Repo,
@@ -27,7 +46,8 @@ config :teslamate, TeslaMate.Repo,
   database: System.fetch_env!("DATABASE_NAME"),
   hostname: System.fetch_env!("DATABASE_HOST"),
   port: System.get_env("DATABASE_PORT", "5432"),
-  pool_size: System.get_env("DATABASE_POOL_SIZE", "8") |> String.to_integer()
+  pool_size: System.get_env("DATABASE_POOL_SIZE", "10") |> String.to_integer(),
+  timeout: System.get_env("DATABASE_TIMEOUT", "60000") |> String.to_integer()
 
 config :teslamate, TeslaMateWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT", "4000")],
@@ -55,3 +75,6 @@ config :logger, :console,
   metadata: [:car_id]
 
 config :teslamate, :srtm_cache, System.get_env("SRTM_CACHE", ".srtm_cache")
+
+config :teslamate,
+  import_directory: System.get_env("IMPORT_DIR", "import") |> Util.validate_import_dir()

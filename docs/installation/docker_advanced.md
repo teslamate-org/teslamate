@@ -36,6 +36,8 @@ services:
       - VIRTUAL_HOST=${FQDN_TM}
       - CHECK_ORIGIN=true
       - TZ={$TM_TZ}
+    volumes:
+      - ./import:/opt/app/import
     labels:
       - 'traefik.enable=true'
       - 'traefik.port=4000'

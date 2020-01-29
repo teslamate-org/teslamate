@@ -10,18 +10,37 @@ defmodule TeslaMate.Application do
     :ok = :telemetry.detach({Phoenix.Logger, [:phoenix, :socket_connected]})
     :ok = :telemetry.detach({Phoenix.Logger, [:phoenix, :channel_joined]})
 
-    [
-      TeslaMate.Repo,
-      TeslaMate.Api,
-      TeslaMate.Locations,
-      TeslaMateWeb.Endpoint,
-      TeslaMate.Terrain,
-      TeslaMate.Vehicles,
-      if(mqtt_enabled?(), do: TeslaMate.Mqtt),
-      TeslaMate.Repair
-    ]
-    |> Enum.reject(&is_nil/1)
-    |> Supervisor.start_link(strategy: :one_for_one, name: TeslaMate.Supervisor)
+    Supervisor.start_link(children(), strategy: :one_for_one, name: TeslaMate.Supervisor)
+  end
+
+  defp children do
+    mqtt_enabled? = !is_nil(Application.get_env(:teslamate, :mqtt))
+
+    case Application.get_env(:teslamate, :import_directory) do
+      nil ->
+        [
+          TeslaMate.Repo,
+          TeslaMate.Api,
+          TeslaMate.Locations,
+          TeslaMateWeb.Endpoint,
+          TeslaMate.Terrain,
+          TeslaMate.Vehicles,
+          if(mqtt_enabled?, do: TeslaMate.Mqtt),
+          TeslaMate.Repair
+        ]
+        |> Enum.reject(&is_nil/1)
+
+      import_directory ->
+        [
+          TeslaMate.Repo,
+          TeslaMate.Api,
+          TeslaMate.Locations,
+          TeslaMateWeb.Endpoint,
+          {TeslaMate.Terrain, disabled: true},
+          {TeslaMate.Repair, limit: 250},
+          {TeslaMate.Import, directory: import_directory}
+        ]
+    end
   end
 
   # Tell Phoenix to update the endpoint configuration
@@ -30,6 +49,4 @@ defmodule TeslaMate.Application do
     TeslaMateWeb.Endpoint.config_change(changed, removed)
     :ok
   end
-
-  defp mqtt_enabled?, do: !is_nil(Application.get_env(:teslamate, :mqtt))
 end

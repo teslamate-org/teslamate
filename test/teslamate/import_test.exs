@@ -1,0 +1,468 @@
+defmodule TeslaMate.ImportTest do
+  use TeslaMate.DataCase
+
+  alias TeslaMate.Log.{Car, Drive, ChargingProcess, State, Update}
+  alias TeslaMate.{Repo, Log, Repair}
+
+  alias TeslaMate.Import.Status
+  alias TeslaMate.Import
+
+  import Mock
+
+  @dir "./test/fixtures/import"
+
+  setup do
+    {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
+    [pid: self()]
+  end
+
+  test "logs drives, charges, states and updates", %{pid: pid} do
+    {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/01_complete"})
+
+    assert %Import.Status{files: [f0, f1], message: nil, state: :idle} = Import.get_status()
+    assert f0 == %{complete: false, date: [2016, 6], path: "#{@dir}/01_complete/TeslaFi62016.csv"}
+    assert f1 == %{complete: false, date: [2016, 7], path: "#{@dir}/01_complete/TeslaFi72016.csv"}
+
+    with_mock Repair, trigger_run: fn -> ok_fn(:trigger_run, pid) end do
+      assert :ok = Import.subscribe()
+      assert :ok = Import.run("America/Los_Angeles")
+
+      for {f0, f1} <- [{false, false}, {false, false}, {true, false}, {true, true}] do
+        assert_receive %Status{files: [%{complete: ^f0}, %{complete: ^f1}], state: :running}, 1000
+      end
+
+      assert_receive %Status{
+                       files: [
+                         %{complete: true, date: [2016, 6]},
+                         %{complete: true, date: [2016, 7]}
+                       ],
+                       state: :complete
+                     },
+                     1000
+
+      assert_receive :trigger_run
+      assert_receive :trigger_run
+      assert_receive :trigger_run
+
+      refute_receive _
+    end
+
+    assert [
+             %Car{
+               id: car_id,
+               name: "82420",
+               eid: _random,
+               vid: 1_111_111_111,
+               vin: "1YYSA1YYYFF08YYYY",
+               efficiency: nil,
+               model: nil,
+               trim_badging: nil,
+               settings_id: _
+             }
+           ] = all(Car)
+
+    assert [
+             %Drive{
+               car_id: ^car_id,
+               distance: 1.2049459999980172,
+               duration_min: 3,
+               start_date: ~U[2016-06-26 18:12:28.000000Z],
+               end_date: ~U[2016-06-26 18:15:06.000000Z],
+               start_address_id: nil,
+               end_address_id: nil,
+               start_geofence_id: nil,
+               end_geofence_id: nil,
+               start_ideal_range_km: 311.7,
+               end_ideal_range_km: 311.7,
+               start_km: 22414.13317,
+               end_km: 22415.338116,
+               start_position_id: _,
+               end_position_id: _,
+               start_rated_range_km: 247.2,
+               end_rated_range_km: 247.2,
+               inside_temp_avg: 26.46666666666667,
+               outside_temp_avg: 19.400000000000002,
+               power_avg: nil,
+               power_max: nil,
+               power_min: nil,
+               speed_max: 55
+             },
+             %Drive{
+               car_id: ^car_id,
+               distance: 4.962523999998666,
+               duration_min: 11,
+               start_date: ~U[2016-06-26 19:22:28.000000Z],
+               end_date: ~U[2016-06-26 19:33:47.000000Z],
+               start_address_id: nil,
+               end_address_id: nil,
+               start_geofence_id: nil,
+               end_geofence_id: nil,
+               start_km: 22415.387111,
+               end_km: 22420.349635,
+               start_position_id: _,
+               end_position_id: _,
+               start_rated_range_km: 246.1,
+               end_rated_range_km: 239.1,
+               start_ideal_range_km: 310.3,
+               end_ideal_range_km: 301.4,
+               inside_temp_avg: 29.133333333333336,
+               outside_temp_avg: 20.133333333333336,
+               power_avg: nil,
+               power_max: nil,
+               power_min: nil,
+               speed_max: 58
+             }
+           ] = all(Drive)
+
+    assert [
+             %ChargingProcess{
+               car_id: ^car_id,
+               charge_energy_added: 10.11,
+               charge_energy_used: 10.653244722222219,
+               address_id: nil,
+               cost: nil,
+               duration_min: 70,
+               start_battery_level: 57,
+               end_battery_level: 70,
+               start_date: ~U[2016-06-26 23:04:32.000000Z],
+               end_date: ~U[2016-06-27 00:14:32.000000Z],
+               start_ideal_range_km: 298.4,
+               end_ideal_range_km: 369.2,
+               start_rated_range_km: 236.7,
+               end_rated_range_km: 292.8,
+               geofence_id: nil,
+               outside_temp_avg: 23.5
+             }
+           ] = all(ChargingProcess)
+
+    assert [
+             %Update{
+               car_id: ^car_id,
+               start_date: ~U[2016-06-26 14:59:31.000000Z],
+               end_date: ~U[2016-06-26 14:59:31.000000Z],
+               version: "2.20.30"
+             }
+           ] = all(Update)
+
+    assert [
+             %State{
+               car_id: ^car_id,
+               start_date: ~U[2016-06-26 14:59:31.000000Z],
+               end_date: ~U[2016-07-01 07:25:33.000000Z],
+               state: :online
+             },
+             %State{
+               car_id: ^car_id,
+               start_date: ~U[2016-07-01 07:25:33.000000Z],
+               end_date: nil,
+               state: :asleep
+             }
+           ] = all(State)
+  end
+
+  test "handles overlap", %{pid: pid} do
+    {:ok, %Car{id: car_id} = car} =
+      Log.create_car(%{
+        name: "82420",
+        eid: 42,
+        vid: 1_111_111_111,
+        vin: "1YYSA1YYYFF08YYYY"
+      })
+
+    {:ok, _} = Log.start_state(car, :asleep, date: ~U[2016-06-26 19:22:28.000000Z])
+    {:ok, _} = Log.start_state(car, :online, date: ~U[2016-06-26 20:00:10.000000Z])
+
+    {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/01_complete"})
+
+    assert %Import.Status{files: [f0, f1], message: nil, state: :idle} = Import.get_status()
+    assert f0 == %{complete: false, date: [2016, 6], path: "#{@dir}/01_complete/TeslaFi62016.csv"}
+    assert f1 == %{complete: false, date: [2016, 7], path: "#{@dir}/01_complete/TeslaFi72016.csv"}
+
+    with_mock Repair, trigger_run: fn -> ok_fn(:trigger_run, pid) end do
+      assert :ok = Import.subscribe()
+      assert :ok = Import.run("America/Los_Angeles")
+
+      for {f0, f1} <- [{false, false}, {false, false}, {true, false}] do
+        assert_receive %Status{files: [%{complete: ^f0}, %{complete: ^f1}], state: :running}, 1000
+      end
+
+      assert_receive %Status{
+                       files: [
+                         %{complete: true, date: [2016, 6]},
+                         %{complete: false, date: [2016, 7]}
+                       ],
+                       state: :complete
+                     },
+                     1000
+
+      assert_receive :trigger_run
+      assert_receive :trigger_run
+
+      refute_receive _
+    end
+
+    assert [
+             %Drive{
+               car_id: ^car_id,
+               duration_min: 3,
+               start_date: ~U[2016-06-26 18:12:28.000000Z],
+               end_date: ~U[2016-06-26 18:15:06.000000Z]
+             }
+           ] = all(Drive)
+
+    assert [] = all(ChargingProcess)
+
+    assert [
+             %Update{
+               car_id: ^car_id,
+               start_date: ~U[2016-06-26 14:59:31.000000Z],
+               end_date: ~U[2016-06-26 14:59:31.000000Z],
+               version: "2.20.30"
+             }
+           ] = all(Update)
+
+    assert [
+             %State{
+               car_id: ^car_id,
+               start_date: ~U[2016-06-26 19:22:28.000000Z],
+               end_date: ~U[2016-06-26 20:00:10.000000Z],
+               state: :asleep
+             },
+             %State{
+               car_id: ^car_id,
+               start_date: ~U[2016-06-26 20:00:10.000000Z],
+               end_date: nil,
+               state: :online
+             },
+             %State{
+               car_id: ^car_id,
+               start_date: ~U[2016-06-26 14:59:31.000000Z],
+               end_date: ~U[2016-06-26 19:22:28.000000Z],
+               state: :online
+             }
+           ] = all(State)
+  end
+
+  describe "uses the locale time zone" do
+    test "America/Los_Angeles", %{pid: pid} do
+      {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/02_timezone"})
+
+      assert %Import.Status{files: [f], message: nil, state: :idle} = Import.get_status()
+
+      assert f == %{
+               complete: false,
+               date: [2019, 9],
+               path: "#{@dir}/02_timezone/TeslaFi92019.csv"
+             }
+
+      with_mock Repair, trigger_run: fn -> ok_fn(:trigger_run, pid) end do
+        assert :ok = Import.subscribe()
+        assert :ok = Import.run("America/Los_Angeles")
+
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: true}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: true}], state: :complete}, 1000
+
+        assert_receive :trigger_run
+        assert_receive :trigger_run
+
+        refute_receive _
+      end
+
+      assert [
+               %State{
+                 car_id: car_id,
+                 start_date: ~U[2019-09-01 10:18:11.000000Z],
+                 end_date: ~U[2019-09-01 15:55:12.000000Z],
+                 state: :asleep
+               },
+               %State{
+                 car_id: car_id,
+                 start_date: ~U[2019-09-01 15:55:12.000000Z],
+                 end_date: ~U[2019-09-01 22:49:11.000000Z],
+                 state: :online
+               },
+               %State{
+                 car_id: car_id,
+                 start_date: ~U[2019-09-01 22:49:11.000000Z],
+                 end_date: ~U[2019-09-01 23:34:12.000000Z],
+                 state: :asleep
+               },
+               %State{
+                 car_id: car_id,
+                 start_date: ~U[2019-09-01 23:34:12.000000Z],
+                 end_date: nil,
+                 state: :online
+               }
+             ] = all(State)
+
+      assert [] = all(Drive)
+      assert [] = all(ChargingProcess)
+    end
+
+    test "Europe/Berlin", %{pid: pid} do
+      {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/02_timezone"})
+
+      assert %Import.Status{files: [f], message: nil, state: :idle} = Import.get_status()
+
+      assert f == %{
+               complete: false,
+               date: [2019, 9],
+               path: "#{@dir}/02_timezone/TeslaFi92019.csv"
+             }
+
+      with_mock Repair, trigger_run: fn -> ok_fn(:trigger_run, pid) end do
+        assert :ok = Import.subscribe()
+        assert :ok = Import.run("Europe/Berlin")
+
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: true}], state: :running}, 10000
+        assert_receive %Status{files: [%{complete: true}], state: :complete}, 1000
+
+        assert_receive :trigger_run
+        assert_receive :trigger_run
+
+        refute_receive _
+      end
+
+      assert [
+               %State{
+                 car_id: car_id,
+                 start_date: ~U[2019-09-01 01:18:11.000000Z],
+                 end_date: ~U[2019-09-01 06:55:12.000000Z],
+                 state: :asleep
+               },
+               %State{
+                 car_id: car_id,
+                 start_date: ~U[2019-09-01 06:55:12.000000Z],
+                 end_date: ~U[2019-09-01 13:49:11.000000Z],
+                 state: :online
+               },
+               %State{
+                 car_id: car_id,
+                 start_date: ~U[2019-09-01 13:49:11.000000Z],
+                 end_date: ~U[2019-09-01 14:34:12.000000Z],
+                 state: :asleep
+               },
+               %State{
+                 car_id: car_id,
+                 start_date: ~U[2019-09-01 14:34:12.000000Z],
+                 end_date: nil,
+                 state: :online
+               }
+             ] = all(State)
+
+      assert [] = all(Drive)
+      assert [] = all(ChargingProcess)
+    end
+  end
+
+  test "car war permanently unreachable", %{pid: pid} do
+    {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/03_empty"})
+
+    assert %Import.Status{files: [f0, f1], message: nil, state: :idle} = Import.get_status()
+    assert f0 == %{complete: false, date: [2018, 5], path: "#{@dir}/03_empty/TeslaFi52018.csv"}
+    assert f1 == %{complete: false, date: [2018, 6], path: "#{@dir}/03_empty/TeslaFi62018.csv"}
+
+    with_mock Repair, trigger_run: fn -> ok_fn(:trigger_run, pid) end do
+      assert :ok = Import.subscribe()
+      assert :ok = Import.run("Europe/Berlin")
+
+      {t, f} = {true, false}
+      assert_receive %Status{files: [%{complete: ^f}, %{complete: ^f}], state: :running}, 500
+      assert_receive %Status{files: [%{complete: ^f}, %{complete: ^f}], state: :running}, 500
+      assert_receive %Status{files: [%{complete: ^t}, %{complete: ^f}], state: :running}, 500
+      assert_receive %Status{files: [%{complete: ^t}, %{complete: ^t}], state: :running}, 500
+      assert_receive %Status{files: [%{complete: ^t}, %{complete: ^t}], state: :complete}, 500
+
+      assert_receive :trigger_run
+      assert_receive :trigger_run
+      assert_receive :trigger_run
+
+      refute_receive _
+    end
+
+    assert [
+             %State{
+               car_id: car_id,
+               end_date: ~U[2018-06-01 05:27:14.000000Z],
+               start_date: ~U[2018-04-30 22:00:14.000000Z],
+               state: :asleep
+             },
+             %State{
+               car_id: car_id,
+               start_date: ~U[2018-06-01 05:27:14.000000Z],
+               end_date: nil,
+               state: :online
+             }
+           ] = all(State)
+
+    assert [] = all(Drive)
+    assert [] = all(ChargingProcess)
+  end
+
+  @tag :capture_log
+  test "captures errors of the vehicle process", %{pid: _pid} do
+    {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/04_error"})
+
+    assert %Import.Status{files: [_, _, _], message: nil, state: :idle} = Import.get_status()
+
+    assert :ok = Import.subscribe()
+    assert :ok = Import.run("Europe/Berlin")
+
+    assert_receive %Status{
+      files: [%{complete: false}, %{complete: false}, %{complete: false}],
+      state: :running
+    }
+
+    assert_receive %Status{
+      files: [%{complete: false}, %{complete: false}, %{complete: false}],
+      state: :running
+    }
+
+    assert_receive %Status{
+      files: [%{complete: true}, %{complete: false}, %{complete: false}],
+      state: :running
+    }
+
+    assert_receive %Status{
+      files: [%{complete: true}, %{complete: true}, %{complete: false}],
+      state: :running
+    }
+
+    assert_receive %Status{
+      files: [%{complete: true}, %{complete: true}, %{complete: false}],
+      state: :error,
+      message: msg
+    }
+
+    assert {{:badmatch,
+             {:error,
+              %Ecto.Changeset{
+                action: :insert,
+                changes: %{date: ~U[2017-12-01 13:36:14.000000Z]},
+                errors: [
+                  latitude: {"is invalid", [type: :float, validation: :cast]},
+                  longitude: {"is invalid", [type: :float, validation: :cast]}
+                ],
+                data: %Log.Position{},
+                valid?: false
+              }}},
+            [{TeslaMate.Vehicles.Vehicle, :handle_event, 4, [file: _, line: _]}, _, _]} = msg
+
+    refute_receive _
+  end
+
+  defp ok_fn(name, pid) do
+    send(pid, name)
+    :ok
+  end
+
+  defp all(struct) do
+    struct
+    |> order_by(:id)
+    |> Repo.all()
+  end
+end

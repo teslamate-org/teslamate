@@ -6,6 +6,7 @@ defmodule TeslaMateWeb.CarController do
   alias TeslaMate.Api, warn: false
   alias TeslaMate.{Log, Vehicles}
 
+  plug :redirect_if_importing when action in [:index]
   plug :fetch_signed_in when action in [:index]
   plug :redirect_unless_signed_in when action in [:index]
 
@@ -44,8 +45,16 @@ defmodule TeslaMateWeb.CarController do
     _____ -> defp fetch_signed_in(conn, _opts), do: assign(conn, :signed_in?, Api.signed_in?())
   end
 
+  defp redirect_if_importing(conn, _) do
+    case Application.get_env(:teslamate, :import_directory) do
+      nil -> conn
+      ___ -> conn |> redirect(to: import_page(conn)) |> halt()
+    end
+  end
+
   defp redirect_unless_signed_in(%Plug.Conn{assigns: %{signed_in?: true}} = conn, _), do: conn
   defp redirect_unless_signed_in(conn, _opts), do: conn |> redirect(to: sign_in(conn)) |> halt()
 
   defp sign_in(conn), do: Routes.live_path(conn, TeslaMateWeb.SignInLive.Index)
+  defp import_page(conn), do: Routes.live_path(conn, TeslaMateWeb.ImportLive.Index)
 end
