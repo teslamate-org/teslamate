@@ -289,6 +289,36 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       refute_receive _
     end
 
+    test "times out a drive when rececing sleep event", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events = [
+        {:ok, online_event()},
+        drive_event(now_ts, 0.1, 30, 20, 200, nil),
+        drive_event(now_ts + 1, 0.1, 30, 20, 200, nil),
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      date = DateTime.from_unix!(now_ts, :millisecond)
+      assert_receive {:start_state, car, :online, date: ^date}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 48}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
+
+      # Timeout
+      assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
+      assert_receive {:start_state, car, :asleep, []}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
+
+      refute_receive _
+    end
+
     @tag :capture_log
     test "logs a drive after a significant offline period while driving",
          %{test: name} do

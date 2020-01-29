@@ -627,6 +627,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
+  #### msg: asleep
+
+  def handle_event(:internal, {:update, {:asleep, _vehicle}}, {:driving, _, drv}, data) do
+    unless is_nil(drv), do: timeout_drive(drv, data)
+    {:next_state, :start, data, schedule_fetch(data)}
+  end
+
   #### msg: :online
 
   def handle_event(:internal, {:update, {:online, _} = e}, {:driving, {:unavailable, _}, drv}, d) do
@@ -648,7 +655,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:ok, %Log.Drive{distance: km, duration_min: min}} =
           call(data.deps.log, :close_drive, [drv, [lookup_address: !data.import?]])
 
-        Logger.info("Driving / Ended / #{round(km)} km – #{min} min", car_id: data.car.id)
+        Logger.info("Driving / Ended / #{km && round(km)} km – #{min} min", car_id: data.car.id)
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, vehicle}}}}
@@ -980,7 +987,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:ok, %Log.Drive{distance: km, duration_min: min}} =
       call(data.deps.log, :close_drive, [drive, [lookup_address: !data.import?]])
 
-    Logger.info("Driving / Timeout / #{round(km)} km – #{min} min", car_id: data.car.id)
+    Logger.info("Driving / Timeout / #{km && round(km)} km – #{min} min", car_id: data.car.id)
   end
 
   defp put_charge_defaults(vehicle) do
