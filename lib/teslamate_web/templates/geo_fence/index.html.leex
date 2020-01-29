@@ -11,7 +11,7 @@
         <span class="mdi mdi-plus"></span>
       </span>
       """) ,
-      to: Routes.live_path(@socket, GeoFenceLive.Form, session: [action: :new]),
+      to: Routes.live_path(@socket, GeoFenceLive.Form),
       class: "button is-info is-small is-rounded is-pulled-right mb-20"
 %>
 
@@ -39,7 +39,7 @@
         <div class="field is-grouped is-pulled-right">
           <p class="control">
             <%= link raw("<span class='icon'><span class='mdi mdi-square-edit-outline'></span></span>"),
-                  to: Routes.live_path(@socket, GeoFenceLive.Form, geofence, session: [action: :edit]),
+                  to: Routes.live_path(@socket, GeoFenceLive.Form, geofence, []),
                   class: "button is-info is-small is-inverted is-light"
             %>
           </p>

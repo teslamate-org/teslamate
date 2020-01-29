@@ -17,7 +17,29 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   def render(assigns), do: GeoFenceView.render("form.html", assigns)
 
   @impl true
-  def mount(%{"lat" => lat, "lng" => lng}, %{"action" => :new} = session, socket) do
+  def mount(%{"id" => id}, session, socket) do
+    %{"settings" => settings, "locale" => locale} = session
+
+    if connected?(socket) do
+      Gettext.put_locale(locale)
+    end
+
+    geofence = %GeoFence{radius: radius} = Locations.get_geofence!(id)
+
+    {unit_of_length, radius} =
+      case settings do
+        %GlobalSettings{unit_of_length: :km} -> {:m, radius}
+        %GlobalSettings{unit_of_length: :mi} -> {:ft, Convert.m_to_ft(radius)}
+      end
+
+    assigns =
+      base_assigns(geofence, %{radius: round(radius)})
+      |> Map.merge(%{action: :edit, settings: settings, unit_of_length: unit_of_length})
+
+    {:ok, assign(socket, assigns)}
+  end
+
+  def mount(%{"lat" => lat, "lng" => lng}, session, socket) do
     %{"settings" => settings, "locale" => locale} = session
 
     if connected?(socket) do
@@ -47,7 +69,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
     {:ok, assign(socket, assigns)}
   end
 
-  def mount(_params, %{"action" => :new} = session, socket) do
+  def mount(_params, session, socket) do
     %{"settings" => settings, "locale" => locale} = session
 
     if connected?(socket) do
@@ -77,28 +99,6 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
     assigns =
       base_assigns(geofence)
       |> Map.merge(%{action: :new, settings: settings, unit_of_length: unit_of_length})
-
-    {:ok, assign(socket, assigns)}
-  end
-
-  def mount(%{"id" => id}, %{"action" => :edit} = session, socket) do
-    %{"settings" => settings, "locale" => locale} = session
-
-    if connected?(socket) do
-      Gettext.put_locale(locale)
-    end
-
-    geofence = %GeoFence{radius: radius} = Locations.get_geofence!(id)
-
-    {unit_of_length, radius} =
-      case settings do
-        %GlobalSettings{unit_of_length: :km} -> {:m, radius}
-        %GlobalSettings{unit_of_length: :mi} -> {:ft, Convert.m_to_ft(radius)}
-      end
-
-    assigns =
-      base_assigns(geofence, %{radius: round(radius)})
-      |> Map.merge(%{action: :edit, settings: settings, unit_of_length: unit_of_length})
 
     {:ok, assign(socket, assigns)}
   end
