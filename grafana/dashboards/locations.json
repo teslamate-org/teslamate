@@ -28,6 +28,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -134,6 +135,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -240,6 +242,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -346,6 +349,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
+      "datasource": "TeslaMate",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -444,6 +448,7 @@
       "valueName": "avg"
     },
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -458,27 +463,34 @@
             "mean"
           ],
           "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
             "mappings": [],
             "max": 100,
             "min": 0,
-            "thresholds": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              },
-              {
-                "color": "super-light-green",
-                "value": 50
-              }
-            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-green",
+                  "value": null
+                },
+                {
+                  "color": "super-light-green",
+                  "value": 50
+                }
+              ]
+            },
             "title": "$__cell_0"
           },
-          "override": {},
+          "overrides": [],
           "values": true
         },
-        "orientation": "horizontal"
+        "orientation": "horizontal",
+        "showUnfilled": true
       },
-      "pluginVersion": "6.5.3",
+      "pluginVersion": "6.6.0",
       "targets": [
         {
           "format": "table",
@@ -513,6 +525,7 @@
       "type": "bargauge"
     },
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -527,27 +540,34 @@
             "mean"
           ],
           "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
             "mappings": [],
             "max": 100,
             "min": 0,
-            "thresholds": [
-              {
-                "color": "semi-dark-orange",
-                "value": null
-              },
-              {
-                "color": "super-light-orange",
-                "value": 50
-              }
-            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-orange",
+                  "value": null
+                },
+                {
+                  "color": "super-light-orange",
+                  "value": 50
+                }
+              ]
+            },
             "title": "$__cell_0"
           },
-          "override": {},
+          "overrides": [],
           "values": true
         },
-        "orientation": "horizontal"
+        "orientation": "horizontal",
+        "showUnfilled": true
       },
-      "pluginVersion": "6.5.3",
+      "pluginVersion": "6.6.0",
       "targets": [
         {
           "format": "table",
@@ -606,12 +626,14 @@
       "styles": [
         {
           "alias": "Updated at",
+          "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "updated_at",
           "type": "date"
         },
         {
           "alias": "Name",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -632,6 +654,7 @@
         },
         {
           "alias": "Neighbourhood",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -648,6 +671,7 @@
         },
         {
           "alias": "City",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -664,6 +688,7 @@
         },
         {
           "alias": "State",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -680,6 +705,7 @@
         },
         {
           "alias": "Country",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -696,6 +722,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -712,6 +739,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -783,12 +811,14 @@
       "styles": [
         {
           "alias": "Time",
+          "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
           "type": "date"
         },
         {
           "alias": "Name",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -809,6 +839,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -825,6 +856,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",

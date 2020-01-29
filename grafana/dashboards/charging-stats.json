@@ -742,7 +742,7 @@
       "fontSize": "150%",
       "format": "kwatth",
       "gridPos": {
-        "h": 9,
+        "h": 12,
         "w": 12,
         "x": 0,
         "y": 10
@@ -813,12 +813,12 @@
         "label": "Others",
         "threshold": 0
       },
-      "datasource": null,
+      "datasource": "TeslaMate",
       "decimals": 1,
       "fontSize": "150%",
       "format": "dtdurations",
       "gridPos": {
-        "h": 9,
+        "h": 12,
         "w": 12,
         "x": 12,
         "y": 10
@@ -882,7 +882,7 @@
         "h": 14,
         "w": 3,
         "x": 0,
-        "y": 19
+        "y": 22
       },
       "id": 2,
       "links": [],
@@ -904,6 +904,7 @@
       "styles": [
         {
           "alias": "SOC",
+          "align": "auto",
           "colorMode": "value",
           "colors": [
             "rgba(50, 172, 45, 0.97)",
@@ -923,6 +924,7 @@
         },
         {
           "alias": "# Charges",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -939,6 +941,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -992,7 +995,7 @@
         "h": 14,
         "w": 3,
         "x": 3,
-        "y": 19
+        "y": 22
       },
       "id": 13,
       "links": [],
@@ -1014,6 +1017,7 @@
       "styles": [
         {
           "alias": "SOC",
+          "align": "auto",
           "colorMode": "value",
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1033,6 +1037,7 @@
         },
         {
           "alias": "# Discharges",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1049,6 +1054,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1102,7 +1108,7 @@
         "h": 14,
         "w": 9,
         "x": 6,
-        "y": 19
+        "y": 22
       },
       "id": 4,
       "options": {},
@@ -1123,12 +1129,14 @@
       "styles": [
         {
           "alias": "Time",
+          "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
           "type": "date"
         },
         {
           "alias": "Location",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1146,6 +1154,7 @@
         },
         {
           "alias": "Charged",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1203,7 +1212,7 @@
         "h": 14,
         "w": 9,
         "x": 15,
-        "y": 19
+        "y": 22
       },
       "id": 6,
       "options": {},
@@ -1224,12 +1233,14 @@
       "styles": [
         {
           "alias": "Time",
+          "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
           "type": "date"
         },
         {
           "alias": "Location",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1246,6 +1257,7 @@
         },
         {
           "alias": "Cost",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -1262,6 +1274,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
