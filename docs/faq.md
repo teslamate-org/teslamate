@@ -27,11 +27,13 @@ returns:
 `{"access_token":"YOURACCESSTOKEN","token_type":"bearer","expires_in":3888000,"refresh_token":"YOURREFRESHTOKEN","created_at":1579971894}`
 
 Spawn a shell in the database docker
+
 `docker exec -it teslamate_db_1 psql -U teslamate`
 
 OR if you're not using docker just run `psql -U teslamate`
 
 connect to the teslamate database:
+
 `\c teslamate`
 
 Insert values from curl into table tokens:
