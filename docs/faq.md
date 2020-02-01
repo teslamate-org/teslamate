@@ -18,7 +18,7 @@ you street-park at locations where the exact address may vary.
 
 **How do I use my API token instead of my Tesla username/password?**
 
-Run the following command on any linux/unix console that has curl installed replacing YOURTESLAEMAIL@DOMAIN.COM and YOURPASSWORD as appropriate:
+Run the following command on any linux/unix console that has curl installed replacing `YOURTESLAEMAIL@DOMAIN.COM` and `YOURPASSWORD` as appropriate:
 ```
 curl -X POST -H 'Content-Type: application/json' -d '{"grant_type": "password", "client_id": "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384", "client_secret": "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3", "email": "YOURTESLAEMAIL@DOMAIN.COM","password": "YOURPASSWORD"}' 'https://owner-api.teslamotors.com/oauth/token'
 ```
@@ -28,18 +28,28 @@ returns:
 
 Spawn a shell in the database docker
 `docker exec -it teslamate_db_1 psql -U teslamate`
+
 OR if you're not using docker just run `psql -U teslamate`
 
 connect to the teslamate database:
 `\c teslamate`
+
 Insert values from curl into table tokens:
+
 `INSERT INTO tokens VALUES(DEFAULT, 'YOURACCESSTOKEN','YOURREFRESHTOKEN',current_timestamp,current_timestamp);`
+
 Verify that the insert ran correctly
+
 `SELECT * FROM tokens;`
+
 Exit out of PSQL
+
 `\q`
+
 Restart teslamate to pick up new values
+
 `docker-compose restart`
+
 OR if running in forground
 ```
 CTRL-C
