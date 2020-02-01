@@ -58,3 +58,4 @@ CTRL-C
 docker-compose up
 ```
 
+At this point it should automatically pick up your token and bypass the login screen on the teslamate web interface.  If it does not look for errors in the docker or Teslamate log files.
