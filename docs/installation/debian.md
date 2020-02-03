@@ -8,10 +8,19 @@ This document provides the necessary steps for installation of TeslaMate on a va
 sudo apt-get install -y git postgresql-11 screen wget
 ```
 
+In case postgresql-11 is not available on your system, add the PPA:
+```bash
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+echo "deb http://apt.postgresql.org/pub/repos/apt/$(lsb_release -cs)"-pgdg main | sudo tee  /etc/apt/sources.list.d/pgdg.list
+sudo apt-get update
+sudo apt-get install -y postgresql-11
+```
+
 ### Add Erlang repository and install
 
 ```bash
 wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && sudo dpkg -i erlang-solutions_1.0_all.deb
+sudo apt-get update
 sudo apt-get install -y elixir esl-erlang
 ```
 
@@ -23,9 +32,17 @@ sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
 wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
 sudo apt-get update
 sudo apt-get install -y grafana
+sudo systemctl start grafana-server
+sudo systemctl enable grafana-server.service # to start Grafana at boot time
 ```
 
-_TBA_: how to install the following plugins: `pr0ps-trackmap-panel`, `natel-discrete-panel` and `grafana-piechart-panel`
+Install the required Grafana plugins as well:
+```bash
+sudo grafana-cli plugins install pr0ps-trackmap-panel
+sudo grafana-cli plugins install natel-discrete-panel
+sudo grafana-cli plugins install grafana-piechart-panel
+sudo systemctl restart grafana-server
+```
 
 ### Install mosquitto MQTT Broker
 
@@ -46,6 +63,7 @@ The following command will clone the source files for the TeslaMate project. Thi
 cd /usr/src
 
 git clone https://github.com/adriankumpf/teslamate.git
+cd teslamate
 
 # Checkout the latest stable version
 git checkout $(git describe --tags)
@@ -57,7 +75,8 @@ The following commands will create a database called `teslamate` on the PostgreS
 
 ```bash
 su -c "createdb teslamate" postgres
-su -c "createuser teslamate -W" postgres
+su -c "createuser teslamate -W" postgres # use as password: secret
+su -c "ALTER USER teslamate WITH SUPERUSER;" postgres psql
 ```
 
 ### Compile Elixir Project
@@ -77,6 +96,10 @@ MIX_ENV=prod mix release
 The following command needs to be run once during the installation process in order to create the database schema for the TeslaMate installation:
 
 ```bash
+export DATABASE_USER="teslamate"
+export DATABASE_PASS="secret"
+export DATABASE_HOST="127.0.0.1"
+export DATABASE_NAME="teslamate"
 _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
 ```
 
@@ -109,7 +132,7 @@ You should at least substitute the following details:
 
 ```
 export DATABASE_USER="teslamate"
-export DATABASE_PASS="teslamate"
+export DATABASE_PASS="secret"
 export DATABASE_HOST="127.0.0.1"
 export DATABASE_NAME="teslamate"
 export MQTT_HOST="192.168.1.1"
@@ -132,7 +155,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
 
 ## Import Grafana Dashboards
 
-1.  Visit [localhost:3000](http://localhost:3000) and log in.
+1.  Visit [localhost:3000](http://localhost:3000) and log in. The default credentials are: admin:admin.
 
 2.  Create a data source with the name "TeslaMate":
 
@@ -153,7 +176,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
     $ ./grafana/dashboards.sh restore
 
     URL:                  http://localhost:3000
-    LOGIN:                admin:admin
+    LOGIN:                admin:admin # Change this to your actual credentials
     DASHBOARDS_DIRECTORY: ./grafana/dashboards
 
     RESTORED locations.json
