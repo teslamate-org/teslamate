@@ -292,8 +292,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert {:ok, _view, html} = live(conn, "/settings")
       html = Floki.parse_document!(html)
 
-      assert car.name == html |> Floki.find(".dropdown-item.is-active") |> Floki.text()
-
       assert [
                {"select", _,
                 [
@@ -351,8 +349,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert {:ok, _view, html} = live(conn, "/settings")
       html = Floki.parse_document!(html)
 
-      assert car.name == html |> Floki.find(".dropdown-item.is-active") |> Floki.text()
-
       assert [] =
                html
                |> Floki.find("#car_settings_#{car.id}_req_no_shift_state_reading")
@@ -377,17 +373,12 @@ defmodule TeslaMateWeb.SettingsLiveTest do
             suspend_after_idle_min: 15,
             req_no_shift_state_reading: false,
             req_no_temp_reading: false,
-            req_not_unlocked: true
+            req_not_unlocked: true,
+            free_supercharging: false
           }
         )
 
       assert {:ok, view, html} = live(conn, "/settings")
-
-      assert car.name ==
-               html
-               |> Floki.parse_document!()
-               |> Floki.find(".dropdown-item.is-active")
-               |> Floki.text()
 
       assert [{"option", [{"value", "90"}, {"selected", "selected"}], ["90 min"]}] =
                render_change(view, :change, %{"car_settings_#{car.id}" => %{suspend_min: 90}})
@@ -441,6 +432,25 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert [settings] = Settings.get_car_settings()
       assert settings.req_not_unlocked == false
+
+      ## Charge cost
+
+      assert [] ==
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#car_settings_#{car.id}_free_supercharging")
+               |> Floki.attribute("checked")
+
+      assert ["checked"] ==
+               render_change(view, :change, %{
+                 "car_settings_#{car.id}" => %{free_supercharging: true}
+               })
+               |> Floki.parse_document!()
+               |> Floki.find("#car_settings_#{car.id}_free_supercharging")
+               |> Floki.attribute("checked")
+
+      assert [settings] = Settings.get_car_settings()
+      assert settings.free_supercharging == true
     end
 
     test "changes between cars", %{conn: conn} do
@@ -452,7 +462,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert one.name ==
                html
                |> Floki.parse_document!()
-               |> Floki.find(".dropdown-item.is-active")
+               |> Floki.find(".tabs .is-active")
                |> Floki.text()
 
       # change settings of car "one"
@@ -473,7 +483,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert two.name ==
                html
                |> Floki.parse_document!()
-               |> Floki.find(".dropdown-item.is-active")
+               |> Floki.find(".tabs .is-active")
                |> Floki.text()
 
       assert [{"option", [{"value", "21"}, {"selected", "selected"}], ["21 min"]}] =
@@ -498,7 +508,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert one.name ==
                html
-               |> Floki.find(".dropdown-item.is-active")
+               |> Floki.find(".tabs .is-active")
                |> Floki.text()
 
       assert [{"option", [{"value", "90"}, {"selected", "selected"}], ["90 min"]}] =

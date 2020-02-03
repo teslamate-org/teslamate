@@ -108,5 +108,7 @@ defmodule TeslaMate.Settings do
 
   defp broadcast(car, settings) do
     Phoenix.PubSub.broadcast(TeslaMate.PubSub, topic(car), settings)
+  rescue
+    _ -> :ok
   end
 end

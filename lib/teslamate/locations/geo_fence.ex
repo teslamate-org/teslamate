@@ -5,7 +5,7 @@ defmodule TeslaMate.Locations.GeoFence do
   import Ecto.Query
   import TeslaMate.CustomExpressions, only: [within_geofence?: 3]
 
-  alias TeslaMate.Log.{ChargingProcess, Drive, Car}
+  alias TeslaMate.Log.Car
 
   schema "geofences" do
     field :name, :string
@@ -13,10 +13,7 @@ defmodule TeslaMate.Locations.GeoFence do
     field :longitude, :float
     field :radius, :float
 
-    has_many :charging_processes, ChargingProcess, foreign_key: :geofence_id
-
-    has_many :drives_start, Drive, foreign_key: :start_geofence_id
-    has_many :drives_end, Drive, foreign_key: :end_geofence_id
+    field :cost_per_kwh, :decimal
 
     many_to_many :sleep_mode_whitelist, Car,
       join_through: "geofence_sleep_mode_whitelist",
@@ -40,12 +37,14 @@ defmodule TeslaMate.Locations.GeoFence do
       :name,
       :radius,
       :latitude,
-      :longitude
+      :longitude,
+      :cost_per_kwh
     ])
     |> put_assoc_if(attrs, :sleep_mode_blacklist)
     |> put_assoc_if(attrs, :sleep_mode_whitelist)
     |> validate_required([:name, :latitude, :longitude, :radius])
     |> validate_number(:radius, greater_than: 0, less_than: 1000)
+    |> validate_number(:cost_per_kwh, greater_than_or_equal_to: 0)
     |> prepare_changes(fn changeset ->
       self = apply_changes(changeset)
 

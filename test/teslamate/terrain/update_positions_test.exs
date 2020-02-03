@@ -93,6 +93,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
     assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 1.0, 1.0}}
     assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 42.0, 42.0}}
     assert_receive {SRTM, {:get_elevation, %SRTM.Client{}, 42.0, 42.0}}
+
     # 4th and 5th are :unavailable
 
     Process.sleep(300)

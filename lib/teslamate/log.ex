@@ -353,12 +353,21 @@ defmodule TeslaMate.Log do
   end
 
   def complete_charging_process(%ChargingProcess{} = charging_process) do
-    charging_process = Repo.preload(charging_process, [:car])
-
+    charging_process = Repo.preload(charging_process, [{:car, :settings}, :geofence])
     settings = Settings.get_global_settings!()
+
+    type =
+      from(c in Charge,
+        select: %{
+          fast_charger_type: fragment("mode() WITHIN GROUP (ORDER BY ?)", c.fast_charger_type)
+        },
+        where: c.charging_process_id == ^charging_process.id and c.charger_power > 0.0
+      )
 
     stats =
       from(c in Charge,
+        join: t in subquery(type),
+        on: true,
         select: %{
           start_date: first_value(c.date) |> over(:w),
           end_date: last_value(c.date) |> over(:w),
@@ -376,7 +385,8 @@ defmodule TeslaMate.Log do
             ) -
               (first_value(c.charge_energy_added) |> over(:w)),
           duration_min:
-            duration_min(last_value(c.date) |> over(:w), first_value(c.date) |> over(:w))
+            duration_min(last_value(c.date) |> over(:w), first_value(c.date) |> over(:w)),
+          fast_charger_type: t.fast_charger_type
         },
         windows: [
           w: [
@@ -387,7 +397,7 @@ defmodule TeslaMate.Log do
         where: [charging_process_id: ^charging_process.id],
         limit: 1
       )
-      |> Repo.one() || %{end_date: DateTime.utc_now()}
+      |> Repo.one() || %{end_date: DateTime.utc_now(), charge_energy_added: nil}
 
     charge_energy_used = calculate_energy_used(charging_process)
 
@@ -395,6 +405,7 @@ defmodule TeslaMate.Log do
       stats
       |> Map.put(:charge_energy_used, charge_energy_used)
       |> Map.update(:charge_energy_added, nil, &if(&1 < 0, do: nil, else: &1))
+      |> put_cost(charging_process)
 
     with {:ok, cproc} <- charging_process |> ChargingProcess.changeset(attrs) |> Repo.update(),
          {:ok, _car} <- recalculate_efficiency(charging_process.car, settings) do
@@ -413,8 +424,6 @@ defmodule TeslaMate.Log do
 
     query =
       from c in Charge,
-        join: p in ChargingProcess,
-        on: [id: c.charging_process_id],
         select: %{
           energy_used:
             c_if is_nil(c.charger_phases) do
@@ -429,21 +438,15 @@ defmodule TeslaMate.Log do
         },
         where: c.charging_process_id == ^id
 
-    from(e in subquery(query),
-      select: {sum(e.energy_used)},
-      where: e.energy_used > 0
+    Repo.one(
+      from e in subquery(query),
+        select: sum(e.energy_used),
+        where: e.energy_used >= 0
     )
-    |> Repo.one()
-    |> case do
-      {charge_energy_used} -> charge_energy_used
-      _ -> nil
-    end
   end
 
   defp determine_phases(%ChargingProcess{id: id, car_id: car_id}) do
     from(c in Charge,
-      join: p in ChargingProcess,
-      on: [id: c.charging_process_id],
       select: {
         avg(c.charger_power * 1000 / nullif(c.charger_actual_current * c.charger_voltage, 0)),
         type(avg(c.charger_phases), :integer),
@@ -478,6 +481,29 @@ defmodule TeslaMate.Log do
       _ ->
         nil
     end
+  end
+
+  defp put_cost(stats, %ChargingProcess{} = charging_process) do
+    alias ChargingProcess, as: CP
+
+    cost =
+      case {stats, charging_process} do
+        {%{fast_charger_type: "Tesla" <> _},
+         %CP{car: %Car{settings: %CarSettings{free_supercharging: true}}}} ->
+          0.0
+
+        {%{charge_energy_used: kwh},
+         %CP{geofence: %GeoFence{cost_per_kwh: %Decimal{} = cost_per_kwh}}}
+        when is_number(kwh) ->
+          kwh
+          |> Decimal.from_float()
+          |> Decimal.mult(cost_per_kwh)
+
+        {_, _} ->
+          nil
+      end
+
+    Map.put(stats, :cost, cost)
   end
 
   defp recalculate_efficiency(car, settings, opts \\ [{5, 8}, {4, 5}, {3, 3}, {2, 2}])

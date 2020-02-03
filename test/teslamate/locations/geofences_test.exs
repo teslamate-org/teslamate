@@ -5,18 +5,26 @@ defmodule TeslaMate.LocationsGeofencesTest do
   alias TeslaMate.Locations.GeoFence
 
   describe "geofences" do
-    @valid_attrs %{name: "foo", latitude: 52.514521, longitude: 13.350144, radius: 42}
+    @valid_attrs %{
+      name: "foo",
+      latitude: 52.514521,
+      longitude: 13.350144,
+      radius: 42,
+      cost_per_kwh: nil
+    }
     @update_attrs %{
       name: "bar",
       latitude: 53.514521,
       longitude: 14.350144,
-      radius: 43
+      radius: 43,
+      cost_per_kwh: 0.79
     }
     @invalid_attrs %{
       name: nil,
       latitude: nil,
       longitude: nil,
       radius: nil,
+      cost_per_kwh: -0.01,
       sleep_mode_whitelist: nil,
       sleep_mode_blacklist: nil
     }
@@ -151,6 +159,7 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.latitude == 52.514521
       assert geofence.longitude == 13.350144
       assert geofence.radius == 42
+      assert geofence.cost_per_kwh == nil
       geofence = Repo.preload(geofence, [:sleep_mode_whitelist, :sleep_mode_blacklist])
       assert geofence.sleep_mode_blacklist == []
       assert geofence.sleep_mode_whitelist == []
@@ -163,7 +172,8 @@ defmodule TeslaMate.LocationsGeofencesTest do
                latitude: ["can't be blank"],
                longitude: ["can't be blank"],
                name: ["can't be blank"],
-               radius: ["can't be blank"]
+               radius: ["can't be blank"],
+               cost_per_kwh: ["must be greater than or equal to 0"]
              }
 
       assert {:error, %Ecto.Changeset{} = changeset} =
@@ -253,17 +263,19 @@ defmodule TeslaMate.LocationsGeofencesTest do
       attrs =
         Enum.into(%{sleep_mode_whitelist: [car], sleep_mode_blacklist: [car]}, @update_attrs)
 
-      assert {:ok, %GeoFence{} = geofence} = Locations.update_geofence(geofence, attrs)
+      assert {:ok, %GeoFence{id: id} = geofence} = Locations.update_geofence(geofence, attrs)
       assert geofence.name == "bar"
       assert geofence.latitude == 53.514521
       assert geofence.longitude == 14.350144
       assert geofence.radius == 43
+      assert geofence.cost_per_kwh == Decimal.from_float(0.79)
       assert geofence.sleep_mode_blacklist == [car]
       assert geofence.sleep_mode_whitelist == [car]
 
       assert {:ok, %GeoFence{} = geofence} =
-               Locations.update_geofence(geofence, %{sleep_mode_whitelist: []})
+               Locations.update_geofence(geofence, %{cost_per_kwh: nil, sleep_mode_whitelist: []})
 
+      assert geofence.cost_per_kwh == nil
       assert geofence.sleep_mode_blacklist == [car]
       assert geofence.sleep_mode_whitelist == []
     end

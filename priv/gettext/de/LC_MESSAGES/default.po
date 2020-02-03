@@ -110,23 +110,23 @@ msgid "unavailable"
 msgstr "nicht verfügbar"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:193
+#: lib/teslamate_web/templates/settings/index.html.leex:195
 msgid "Length"
 msgstr "Länge"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:208
+#: lib/teslamate_web/templates/settings/index.html.leex:210
 msgid "Temperature"
 msgstr "Temperatur"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:188
+#: lib/teslamate_web/templates/settings/index.html.leex:192
 msgid "Units"
 msgstr "Einheiten"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:108
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:119
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:131
 msgid "Back"
 msgstr "Zurück"
 
@@ -147,48 +147,48 @@ msgid "Geo-fences"
 msgstr "Geo-Fences"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:74
+#: lib/teslamate_web/templates/settings/index.html.leex:63
 msgid "Idle Time Before Trying to Sleep"
 msgstr "Leerlaufzeit vor dem Einschlafversuch"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:17
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:22 lib/teslamate_web/templates/geo_fence/index.html.leex:21
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:45
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:21
 msgid "Name"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:33
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:19
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:22
 msgid "Position"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:59
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:56
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:23
 msgid "Radius"
 msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:111
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:122
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:134
 msgid "Save"
 msgstr "Speichern"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:112
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:122 lib/teslamate_web/templates/signin/index.html.leex:33
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:134 lib/teslamate_web/templates/signin/index.html.leex:33
 msgid "Saving..."
 msgstr "Speichere..."
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:56
+#: lib/teslamate_web/templates/settings/index.html.leex:45
 msgid "Time to Try Sleeping"
 msgstr "Dauer des Schlafversuchs"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:64
-#: lib/teslamate_web/templates/settings/index.html.leex:83
+#: lib/teslamate_web/templates/settings/index.html.leex:53
+#: lib/teslamate_web/templates/settings/index.html.leex:72
 msgid "min"
 msgstr ""
 
@@ -245,17 +245,17 @@ msgid "for"
 msgstr "seit"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:103
+#: lib/teslamate_web/templates/settings/index.html.leex:92
 msgid "No shift state reading"
 msgstr "Kein Schaltzustand"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:109
+#: lib/teslamate_web/templates/settings/index.html.leex:98
 msgid "No temperature readings"
 msgstr "Keine Temperaturmesswerte"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:94
+#: lib/teslamate_web/templates/settings/index.html.leex:83
 msgid "Requirements"
 msgstr "Voraussetzungen"
 
@@ -265,12 +265,12 @@ msgid "Shift state present"
 msgstr "Schaltzustand vorhanden"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:122
+#: lib/teslamate_web/templates/settings/index.html.leex:111
 msgid "Some firmware versions stop reporting temperatures or the shift state before the car is ready to sleep. Enabling these options will wait for the readings to stop."
 msgstr "Einige Firmware-Versionen hören auf, Temperaturen oder den Schaltzustand zu melden, bevor das Fahrzeug bereit ist einzuschlafen. Wenn diese Optionen aktiviert sind, wird gewartet, bis die Messwerte nicht mehr gemeldet werden."
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:115
+#: lib/teslamate_web/templates/settings/index.html.leex:104
 msgid "Vehicle must be locked"
 msgstr "Fahrzeug muss verschlossen sein"
 
@@ -290,22 +290,22 @@ msgid "Charger Power"
 msgstr "Ladeleistung"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:140
+#: lib/teslamate_web/templates/settings/index.html.leex:150
 msgid "Preferred range"
 msgstr "Bevorzugte Reichweite"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:134
+#: lib/teslamate_web/templates/settings/index.html.leex:146
 msgid "Range"
 msgstr "Reichweite"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:149
+#: lib/teslamate_web/templates/settings/index.html.leex:159
 msgid "ideal"
 msgstr "ideal"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:149
+#: lib/teslamate_web/templates/settings/index.html.leex:159
 msgid "rated"
 msgstr "rated"
 
@@ -315,7 +315,7 @@ msgid "Range (ideal)"
 msgstr "Reichweite (ideal)"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:139
+#: lib/teslamate_web/templates/settings/index.html.leex:149
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
 msgstr "Die Schätzung der verbleibenden Reichweite basiert auf einem fixen Energieverbrauch in Wh/km. Der Wh/km-Faktor wird von Tesla bestimmt und ist nicht länderspezifisch, wohingegen die 'rated' Reichweite auf regulatorischen Tests in den verschiedenen Märkten für dieses Fahrzeug basiert."
 
@@ -371,7 +371,7 @@ msgstr "Restlaufzeit"
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/app.html.eex:45
-#: lib/teslamate_web/templates/settings/index.html.leex:247
+#: lib/teslamate_web/templates/settings/index.html.leex:245
 msgid "Dashboards"
 msgstr ""
 
@@ -381,17 +381,17 @@ msgid "URLs"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:233
+#: lib/teslamate_web/templates/settings/index.html.leex:231
 msgid "Web App"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:42
+#: lib/teslamate_web/templates/settings/index.html.leex:31
 msgid "Enabled"
 msgstr "Aktiviert"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:11
+#: lib/teslamate_web/templates/settings/index.html.leex:28
 msgid "Sleep Mode"
 msgstr "Schlafmodus"
 
@@ -401,7 +401,7 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geo-Fence \"%{name}\" aktualisiert"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:78
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:91
 msgid "Sleep Mode Enabled"
 msgstr "Schlafmodus aktiviert"
 
@@ -456,12 +456,12 @@ msgid "Fetching vehicle data ..."
 msgstr "Fahrzeugdaten werden abgerufen ..."
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:168
+#: lib/teslamate_web/templates/settings/index.html.leex:174
 msgid "Addresses"
 msgstr "Adressen"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:163
+#: lib/teslamate_web/templates/settings/index.html.leex:171
 msgid "Language"
 msgstr "Sprache"
 
@@ -511,3 +511,23 @@ msgstr "Anmelden"
 #: lib/teslamate_web/templates/signin/index.html.leex:11
 msgid "Email address"
 msgstr "E-Mail-Adresse"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:71
+msgid "Cost per kWh"
+msgstr "Kosten pro kWh"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:120
+msgid "Charge cost"
+msgstr "Ladekosten"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:123
+msgid "Free Supercharging"
+msgstr "Gratis Supercharger-Nutzung"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:140
+msgid "General Settings"
+msgstr "Allgemeine Einstellungen"

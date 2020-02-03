@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@mdi/font": "^4.8.95",
+    "bulma-divider": "^0.2.0",
     "bulma-switch": "^2.0.0",
     "bulma-tooltip": "^3.0.2",
     "leaflet": "^1.6.0",

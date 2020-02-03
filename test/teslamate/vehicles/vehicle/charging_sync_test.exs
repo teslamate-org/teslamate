@@ -35,7 +35,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
              assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
              refute_receive _
-           end) ==
+           end) =~
              """
              [warn] Invalid charge data: %{ideal_battery_range_km: [\"can't be blank\"]}
              [warn] Invalid charge data: %{ideal_battery_range_km: [\"can't be blank\"]}

@@ -8,8 +8,8 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
   alias TeslaMate.{Log, Locations, Settings, Convert}
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
-  alias TeslaMate.Log.{Car, Position}
   alias TeslaMate.Locations.GeoFence
+  alias TeslaMate.Log.{Car, Position}
 
   import TeslaMateWeb.Gettext
 

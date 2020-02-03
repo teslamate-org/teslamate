@@ -85,7 +85,9 @@ defmodule TeslaMate.Vehicles do
   defp fallback_vehicles do
     vehicles =
       Log.list_cars()
-      |> Enum.map(&%TeslaApi.Vehicle{id: &1.eid, vin: &1.vin, vehicle_id: &1.vid})
+      |> Enum.map(fn %Car{eid: eid, vid: vid, vin: vin, name: name} ->
+        %TeslaApi.Vehicle{id: eid, vin: vin, vehicle_id: vid, display_name: name}
+      end)
 
     if vehicles != [] do
       Logger.warn("Using fallback vehicles:\n\n#{inspect(vehicles, pretty: true)}")

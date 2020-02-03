@@ -14,6 +14,8 @@ defmodule TeslaMate.Settings.CarSettings do
     field :req_no_temp_reading, :boolean, default: false
     field :req_not_unlocked, :boolean, default: true
 
+    field :free_supercharging, :boolean, default: false
+
     has_one :car, Car, foreign_key: :settings_id
   end
 
@@ -23,7 +25,8 @@ defmodule TeslaMate.Settings.CarSettings do
     :suspend_after_idle_min,
     :req_no_shift_state_reading,
     :req_no_temp_reading,
-    :req_not_unlocked
+    :req_not_unlocked,
+    :free_supercharging
   ]
 
   @doc false
