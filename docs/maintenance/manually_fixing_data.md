@@ -20,9 +20,20 @@ First you need to find out the ID of the drive you want to delete:
 Afterwards run the following query:
 
 ```sql
-BEGIN;
-UPDATE drives SET start_position_id = NULL, end_position_id = NULL WHERE id = 9999;
-DELETE FROM positions WHERE drive_id = 9999;
 DELETE FROM drives WHERE id = 9999;
-COMMIT;
+```
+
+## Delete a specific charge
+
+If for some reason a charge was recorded incorrectly, you can delete it manually.
+
+First you need to find out the ID of the charge you want to delete:
+
+- Open the `Charges` dashboard and click on the start date of the charge.
+- The URL will contain the drive id, for example `&var-charging_process_id=9999`.
+
+Afterwards run the following query:
+
+```sql
+DELETE FROM charging_processes WHERE id = 9999;
 ```

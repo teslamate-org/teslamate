@@ -34,7 +34,7 @@ defmodule TeslaMate.Log.Drive do
 
     belongs_to :car, Car
 
-    has_many :positions, Position, on_delete: :delete_all
+    has_many :positions, Position
   end
 
   @doc false

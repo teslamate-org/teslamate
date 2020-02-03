@@ -238,8 +238,7 @@ defmodule TeslaMate.Locations do
 
   def delete_geofence(%GeoFence{} = geofence) do
     Repo.transaction(fn ->
-      with :ok <- remove_geofence(geofence),
-           {:ok, geofence} <- Repo.delete(geofence),
+      with {:ok, geofence} <- Repo.delete(geofence),
            :ok <- clear_cache() do
         geofence
       else

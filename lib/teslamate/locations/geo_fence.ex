@@ -13,12 +13,10 @@ defmodule TeslaMate.Locations.GeoFence do
     field :longitude, :float
     field :radius, :float
 
-    has_many :charging_processes, ChargingProcess,
-      foreign_key: :geofence_id,
-      on_delete: :nilify_all
+    has_many :charging_processes, ChargingProcess, foreign_key: :geofence_id
 
-    has_many :drives_start, Drive, foreign_key: :start_geofence_id, on_delete: :nilify_all
-    has_many :drives_end, Drive, foreign_key: :end_geofence_id, on_delete: :nilify_all
+    has_many :drives_start, Drive, foreign_key: :start_geofence_id
+    has_many :drives_end, Drive, foreign_key: :end_geofence_id
 
     many_to_many :sleep_mode_whitelist, Car,
       join_through: "geofence_sleep_mode_whitelist",
