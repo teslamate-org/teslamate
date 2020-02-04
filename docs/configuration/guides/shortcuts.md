@@ -8,8 +8,8 @@ Unfortunately, only couple of the useful events (like NFC on NFC enabled phones)
 
 These values are used in the screenshots. Whenever you see them, replace them with the actual values used on your system.
 
-- Your wake up endpoint is exposed at: **https://teslamate.example.com/wake** and proxied to something like `http://teslamate:4000/api/car/$car_id/logging/resume` where `$car_id` is 1 if you have only one car.
-- The Endpoint is protected by **Basic Authentication** with the user **mylogin** and password **mysecretpassword**. Note that this **IS NOT** your Tesla password.
+- Your TeslaMate instance is exposed at `https://teslamate.example.com`.
+- The endpoint is protected by **Basic Authentication** with the user **mylogin** and password **mysecretpassword**. Note that this **IS NOT** your Tesla password.
 
 ## Setup the automation
 
@@ -48,7 +48,7 @@ These values are used in the screenshots. Whenever you see them, replace them wi
 - Click the **+** icon below the actions. This brings you to the list of available actions.
 - Click the gray **X** to close Scripting category.
 - Select **Web** (cyan icon), go to **URLs** block and select **URL**.
-- Type in your endpoint public URL e.g. `https://mytm.myweb.com/wake`
+- Type in your endpoint public URL e.g. `https://teslamate.example.com/api/car/$car_id/logging/resume` where `$car_id` is 1 if there is only one car.
 
 ![](../../images/shortcuts/create_15_enc_added.png) ![](../../images/shortcuts/create_16_scripting_close.png) ![](../../images/shortcuts/create_17_action_categories.png)
 ![](../../images/shortcuts/create_17_url.png)
@@ -88,7 +88,6 @@ These values are used in the screenshots. Whenever you see them, replace them wi
 
 ## Running the Automation
 
-- Get into the car and wake it up by pressing the brake pedal (if needed).
 - Once the Bluetooth connects, you will see notification on your lock screen.
 - Click **Run** button.
 - Done.
