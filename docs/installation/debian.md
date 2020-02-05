@@ -5,15 +5,16 @@ This document provides the necessary steps for installation of TeslaMate on a va
 ## Install Required Packages
 
 ```bash
-sudo apt-get install -y git postgresql-11 screen wget
+sudo apt-get install -y git postgresql-12 screen wget
 ```
 
 In case postgresql-11 is not available on your system, add the PPA:
+
 ```bash
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 echo "deb http://apt.postgresql.org/pub/repos/apt/$(lsb_release -cs)"-pgdg main | sudo tee  /etc/apt/sources.list.d/pgdg.list
 sudo apt-get update
-sudo apt-get install -y postgresql-11
+sudo apt-get install -y postgresql-12
 ```
 
 ### Add Erlang repository and install
@@ -37,6 +38,7 @@ sudo systemctl enable grafana-server.service # to start Grafana at boot time
 ```
 
 Install the required Grafana plugins as well:
+
 ```bash
 sudo grafana-cli plugins install pr0ps-trackmap-panel
 sudo grafana-cli plugins install natel-discrete-panel
@@ -176,7 +178,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
     $ ./grafana/dashboards.sh restore
 
     URL:                  http://localhost:3000
-    LOGIN:                admin:admin # Change this to your actual credentials
+    LOGIN:                admin:admin             # Change this to your actual credentials
     DASHBOARDS_DIRECTORY: ./grafana/dashboards
 
     RESTORED locations.json
