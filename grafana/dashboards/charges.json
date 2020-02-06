@@ -70,6 +70,7 @@
       "styles": [
         {
           "alias": "Date",
+          "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "link": true,
           "linkTooltip": "View charge details",
@@ -79,6 +80,7 @@
         },
         {
           "alias": "Date",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -98,6 +100,7 @@
         },
         {
           "alias": "Added",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -114,6 +117,7 @@
         },
         {
           "alias": "% Start",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -130,6 +134,7 @@
         },
         {
           "alias": "% End",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -146,6 +151,7 @@
         },
         {
           "alias": "Duration",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -162,6 +168,7 @@
         },
         {
           "alias": "Temp",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -178,6 +185,7 @@
         },
         {
           "alias": "Cost",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -198,6 +206,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -214,6 +223,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -230,6 +240,7 @@
         },
         {
           "alias": "Location",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -250,6 +261,7 @@
         },
         {
           "alias": "Driven",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -266,6 +278,7 @@
         },
         {
           "alias": "kW",
+          "align": "auto",
           "colorMode": "value",
           "colors": [
             "#96D98D",
@@ -285,6 +298,7 @@
         },
         {
           "alias": "km / h",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -301,6 +315,7 @@
         },
         {
           "alias": "Temp",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -317,6 +332,7 @@
         },
         {
           "alias": "Driven",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -333,6 +349,7 @@
         },
         {
           "alias": "mi / h",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -349,6 +366,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -365,6 +383,7 @@
         },
         {
           "alias": "Used",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -384,6 +403,7 @@
         },
         {
           "alias": "Confidence",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -401,6 +421,7 @@
         },
         {
           "alias": "Efficiency",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -417,6 +438,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -433,6 +455,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -449,6 +472,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -468,7 +492,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date) - 10) * 1000) AS start_date_ts,\n        (round(extract(epoch FROM end_date) + 10) * 1000) AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        charge_energy_added,\n        charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        start_[[preferred_range]]_range_km,\n        end_[[preferred_range]]_range_km,\n        outside_temp_avg,\n        c.id,\n        lag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        c.car_id,\n        cost\n    FROM\n        charging_processes c\n    LEFT JOIN positions p ON p.id = c.position_id\n    LEFT JOIN cars ON cars.id = c.car_id\n    LEFT JOIN addresses ON addresses.id = c.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\nWHERE \n    c.car_id = $car_id AND\n    $__timeFilter(start_date)\nORDER BY\n    start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id,\n    id,\n    -- Columns\n    start_date as start_date_[[length_unit]],\n    end_date,\n    COALESCE(geofence_name, address) as address,    \n    duration_min,\n    cost,\n    charge_energy_added,\n    charge_energy_used,\n    CASE WHEN charge_energy_used IS NULL THEN NULL ELSE LEAST(charge_energy_added / charge_energy_used, 1.0) END as charging_efficiency,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km) * 60 / NULLIF (duration_min, 0), '$length_unit') AS range_added_per_hour_$length_unit,\n    start_battery_level,\n    end_battery_level,\n    convert_km(distance, '$length_unit') AS distance_$length_unit\n FROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL) AND (charge_energy_added IS NULL OR charge_energy_added > 0.1)\nORDER BY\n  start_date DESC;\n    ",
+          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date) - 10) * 1000) AS start_date_ts,\n        (round(extract(epoch FROM end_date) + 10) * 1000) AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        charge_energy_added,\n        charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        start_[[preferred_range]]_range_km,\n        end_[[preferred_range]]_range_km,\n        outside_temp_avg,\n        c.id,\n        lag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        c.car_id,\n        cost\n    FROM\n        charging_processes c\n    LEFT JOIN positions p ON p.id = c.position_id\n    LEFT JOIN cars ON cars.id = c.car_id\n    LEFT JOIN addresses ON addresses.id = c.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\nWHERE \n    c.car_id = $car_id AND\n    $__timeFilter(start_date)\nORDER BY\n    start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id,\n    id,\n    -- Columns\n    start_date as start_date_[[length_unit]],\n    end_date,\n    COALESCE(geofence_name, address) as address,    \n    duration_min,\n    cost,\n    charge_energy_added,\n    charge_energy_used,\n    CASE WHEN charge_energy_used IS NULL THEN NULL ELSE LEAST(charge_energy_added / NULLIF(charge_energy_used, 0), 1.0) END as charging_efficiency,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km) * 60 / NULLIF (duration_min, 0), '$length_unit') AS range_added_per_hour_$length_unit,\n    start_battery_level,\n    end_battery_level,\n    convert_km(distance, '$length_unit') AS distance_$length_unit\n FROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL) AND (charge_energy_added IS NULL OR charge_energy_added > 0.1)\nORDER BY\n  start_date DESC;\n    ",
           "refId": "A",
           "select": [
             [
@@ -720,7 +744,7 @@
       "valueName": "total"
     }
   ],
-  "schemaVersion": 21,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [
     "tesla"
