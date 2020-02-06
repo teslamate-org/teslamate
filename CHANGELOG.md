@@ -2,6 +2,33 @@
 
 ## [Unreleased]
 
+## [1.16.0-dev]
+
+### Enhancements
+
+- [Import from TeslaFi (BETA)](https://teslamate.readthedocs.io/en/latest/import/teslafi.html)
+- Calculate charge cost based on location and kWh
+- Automatically set charge cost to zero if free supercharging is enabled (configurable on the settings page)
+- Add French translation ([#397](https://github.com/adriankumpf/teslamate/pull/397) by [tomS3210](https://github.com/tomS3210))
+- Improve language detection
+- Show odometer on 'Drive Details' dashboard
+- Bump Grafana to 6.6.1
+- Bump Elixir to 1.10
+
+#### Documentation
+
+- New FAQ entry for adding API tokens directly into the database instead of using username/password ([#412](https://github.com/adriankumpf/teslamate/pull/412) by [wishbone1138](https://github.com/wishbone1138))
+- Improve standalone install documentation ([#416](https://github.com/adriankumpf/teslamate/pull/416) by [Niek](https://github.com/Niek))
+- Improve iOS Shortcuts guide ([#405](https://github.com/adriankumpf/teslamate/pull/405) by [DP19](https://github.com/DP19))
+
+### Bug Fixes
+
+- Re-add charge annotations to the 'Projected Range' dashboard ([#393](https://github.com/adriankumpf/teslamate/pull/393) by [ctraber](https://github.com/ctraber))
+- Correct typos in projected-range.json ([#395](https://github.com/adriankumpf/teslamate/pull/395) by [shagberg](https://github.com/shagberg))
+- Increase height of the pie charts panels
+- Address an issue where a drive would not be properly completed if the vehicle was suddenly reported as asleep after being offline for a while
+- Fix energy used in 'Drive Details'
+
 ## [1.15.1] - 2020-01-25
 
 ### Enhancements
