@@ -20,7 +20,8 @@ config :teslamate, TeslaMateWeb.Endpoint,
       ~r"priv/gettext/.*(po)$",
       ~r"lib/teslamate_web/{live,views}/.*(ex)$",
       ~r"lib/teslamate_web/templates/.*(eex)$",
-      ~r{lib/teslamate_web/live/.*(ex)$}
+      ~r{lib/teslamate_web/live/.*(ex)$},
+      ~r"grafana/dashboards/.*(json)$"
     ]
   ]
 

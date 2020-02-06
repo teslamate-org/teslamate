@@ -44,7 +44,7 @@
             <div class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link is-arrowless"><%= gettext "Dashboards" %></a>
               <div class="navbar-dropdown">
-              <%= for %{"title" => title, "uid" => uid} <- dashboards() do %>
+              <%= for %{"title" => title, "uid" => uid} <- list_dashboards() do %>
                 <%= link title, to: "#{grafana_url}/d/#{uid}", class: "navbar-item", target: "_blank" %>
               <% end %>
               </div>

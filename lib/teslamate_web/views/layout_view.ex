@@ -1,14 +1,16 @@
 defmodule TeslaMateWeb.LayoutView do
   use TeslaMateWeb, :view
 
-  @dashboards_path "./grafana/dashboards"
-  @dashboards File.ls!(@dashboards_path)
-              |> Enum.filter(&(Path.extname(&1) == ".json"))
-              |> Enum.map(&Path.join([@dashboards_path, &1]))
-              |> Enum.map(&File.read!/1)
-              |> Enum.map(&Jason.decode!/1)
-              |> Enum.map(&Map.take(&1, ["title", "uid"]))
-              |> Enum.sort_by(& &1["title"])
+  dashboards =
+    for dashboard_path <- Path.wildcard("grafana/dashboards/*.json") do
+      @external_resource Path.relative_to_cwd(dashboard_path)
 
-  defp dashboards, do: @dashboards
+      dashboard_path
+      |> File.read!()
+      |> Jason.decode!()
+      |> Map.take(["title", "uid"])
+    end
+
+  @dashboards Enum.sort_by(dashboards, & &1["title"])
+  defp list_dashboards, do: @dashboards
 end
