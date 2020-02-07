@@ -211,7 +211,7 @@ defmodule TeslaMate.Import do
 
   defp create_evennt_streams(%Data{files: files, timezone: tz}) do
     alias TeslaApi.Vehicle.State.Drive
-    alias TeslaApi.Vehicle, as: Vec
+    alias TeslaApi.Vehicle, as: Veh
 
     try do
       event_streams =
@@ -224,16 +224,16 @@ defmodule TeslaMate.Import do
             |> CSV.decode!(headers: true)
             |> Task.async_stream(&LineParser.parse(&1, tz), timeout: :infinity, ordered: true)
             |> Stream.filter(fn
-              {:ok, %Vec{state: "unknown"}} ->
+              {:ok, %Veh{state: "unknown"}} ->
                 false
 
-              {:ok, %Vec{state: "online", drive_state: %Drive{latitude: lat, longitude: lng}}} ->
+              {:ok, %Veh{drive_state: %Drive{timestamp: nil}}} ->
+                false
+
+              {:ok, %Veh{state: "online", drive_state: %Drive{latitude: lat, longitude: lng}}} ->
                 lat != nil and lng != nil
 
-              {:ok, %Vec{drive_state: %Drive{timestamp: nil}}} ->
-                false
-
-              {:ok, %Vec{}} ->
+              {:ok, %Veh{}} ->
                 true
             end)
 
@@ -250,10 +250,10 @@ defmodule TeslaMate.Import do
   defp create_car([]), do: raise("vehicle data is incomplete")
 
   defp create_car([{_date, %Stream{} = stream} | rest]) do
-    alias TeslaApi.Vehicle, as: Vec
+    alias TeslaApi.Vehicle, as: Veh
 
     stream
-    |> Enum.find(fn {:ok, %Vec{id: eid, vehicle_id: vid, vin: vin}} ->
+    |> Enum.find(fn {:ok, %Veh{id: eid, vehicle_id: vid, vin: vin}} ->
       vin != nil and vid != nil and eid != nil
     end)
     |> case do
