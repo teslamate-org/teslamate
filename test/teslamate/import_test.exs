@@ -28,7 +28,7 @@ defmodule TeslaMate.ImportTest do
       assert :ok = Import.run("America/Los_Angeles")
 
       for {f0, f1} <- [{false, false}, {false, false}, {true, false}, {true, true}] do
-        assert_receive %Status{files: [%{complete: ^f0}, %{complete: ^f1}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: ^f0}, %{complete: ^f1}], state: :running}, 3000
       end
 
       assert_receive %Status{
@@ -183,7 +183,7 @@ defmodule TeslaMate.ImportTest do
       assert :ok = Import.run("America/Los_Angeles")
 
       for {f0, f1} <- [{false, false}, {false, false}, {true, false}] do
-        assert_receive %Status{files: [%{complete: ^f0}, %{complete: ^f1}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: ^f0}, %{complete: ^f1}], state: :running}, 3000
       end
 
       assert_receive %Status{
@@ -259,10 +259,10 @@ defmodule TeslaMate.ImportTest do
         assert :ok = Import.subscribe()
         assert :ok = Import.run("America/Los_Angeles")
 
-        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
-        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
-        assert_receive %Status{files: [%{complete: true}], state: :running}, 1000
-        assert_receive %Status{files: [%{complete: true}], state: :complete}, 1000
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 3000
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 3000
+        assert_receive %Status{files: [%{complete: true}], state: :running}, 3000
+        assert_receive %Status{files: [%{complete: true}], state: :complete}, 3000
 
         assert_receive :trigger_run
         assert_receive :trigger_run
@@ -371,11 +371,11 @@ defmodule TeslaMate.ImportTest do
       assert :ok = Import.run("Europe/Berlin")
 
       {t, f} = {true, false}
-      assert_receive %Status{files: [%{complete: ^f}, %{complete: ^f}], state: :running}, 500
-      assert_receive %Status{files: [%{complete: ^f}, %{complete: ^f}], state: :running}, 500
-      assert_receive %Status{files: [%{complete: ^t}, %{complete: ^f}], state: :running}, 500
-      assert_receive %Status{files: [%{complete: ^t}, %{complete: ^t}], state: :running}, 500
-      assert_receive %Status{files: [%{complete: ^t}, %{complete: ^t}], state: :complete}, 500
+      assert_receive %Status{files: [%{complete: ^f}, %{complete: ^f}], state: :running}, 1500
+      assert_receive %Status{files: [%{complete: ^f}, %{complete: ^f}], state: :running}, 1500
+      assert_receive %Status{files: [%{complete: ^t}, %{complete: ^f}], state: :running}, 1500
+      assert_receive %Status{files: [%{complete: ^t}, %{complete: ^t}], state: :running}, 1500
+      assert_receive %Status{files: [%{complete: ^t}, %{complete: ^t}], state: :complete}, 1500
 
       assert_receive :trigger_run
       assert_receive :trigger_run
