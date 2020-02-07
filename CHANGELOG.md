@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [1.16.0-dev]
+## [1.16.0] - 2020-02-07
 
 ### Enhancements
 
@@ -758,7 +758,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.15.1...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.16.0...HEAD
+[1.16.0]: https://github.com/adriankumpf/teslamate/compare/v1.15.1...v1.16.0
 [1.15.1]: https://github.com/adriankumpf/teslamate/compare/v1.15.0...v1.15.1
 [1.15.0]: https://github.com/adriankumpf/teslamate/compare/v1.14.3...v1.15.0
 [1.14.3]: https://github.com/adriankumpf/teslamate/compare/v1.14.2...v1.14.3
