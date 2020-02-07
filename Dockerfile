@@ -1,4 +1,4 @@
-FROM elixir:1.9-alpine AS builder
+FROM elixir:1.10-alpine AS builder
 
 RUN apk add --update --no-cache nodejs yarn git build-base python && \
     mix local.rebar --force && \
@@ -25,7 +25,7 @@ RUN mkdir -p /opt/built && mix release --path /opt/built
 
 ########################################################################
 
-FROM alpine:3.10 AS app
+FROM alpine:3.11 AS app
 
 ENV LANG=C.UTF-8 \
     SRTM_CACHE=/opt/app/.srtm_cache \
@@ -34,15 +34,14 @@ ENV LANG=C.UTF-8 \
 RUN apk add --update --no-cache bash openssl tzdata
 
 WORKDIR $HOME
+RUN chown -R nobody: .
+USER nobody
 
 COPY --chown=nobody entrypoint.sh /
 COPY --from=builder --chown=nobody /opt/built .
-RUN mkdir .srtm_cache && chown -R nobody: .
-
-USER nobody
+RUN mkdir .srtm_cache
 
 EXPOSE 4000
 
 ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
-
 CMD ["bin/teslamate", "start"]
