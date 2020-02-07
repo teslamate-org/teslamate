@@ -21,7 +21,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     :ok = start_vehicle(name, events)
 
     start_date = DateTime.from_unix!(now_ts, :millisecond)
-    assert_receive {:start_state, car, :online, date: ^start_date}
+    assert_receive {:start_state, car, :online, date: ^start_date}, 400
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 

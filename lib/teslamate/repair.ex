@@ -73,6 +73,11 @@ defmodule TeslaMate.Repair do
   end
 
   @impl true
+  def handle_info(:repair, state) do
+    :ok = trigger_run()
+    {:noreply, state}
+  end
+
   def handle_info(msg, state) do
     Logger.warn("Unexpected message: #{inspect(msg, pretty: true)}")
     {:noreply, state}
