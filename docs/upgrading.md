@@ -25,8 +25,8 @@
 
    mix deps.get --only prod
    npm install --prefix ./assets && npm run deploy --prefix ./assets
-   mix phx.digest
-   MIX_ENV=prod mix release
+
+   MIX_ENV=prod mix do phx.digest, release --overwrite
    ```
 
 3. Most upgrades requires to run new database migrations. If so continue with the following command:

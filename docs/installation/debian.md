@@ -1,31 +1,40 @@
 # Installation on Debian/Ubuntu
 
-This document provides the necessary steps for installation of TeslaMate on a vanilla Debian or Ubuntu system. The recommended and most straightforward installation approach is through the use of [Docker](docker.md), however this walkthrough provides the necessary steps for manual installation in an aptitude (Debian/Ubuntu) environment.
+This document provides the necessary steps for installation of TeslaMate on a vanilla Debian or Ubuntu system. The **recommended and most straightforward installation approach is through the use of [Docker](docker.md)**, however this walkthrough provides the necessary steps for manual installation in an aptitude (Debian/Ubuntu) environment.
 
-## Install Required Packages
+## Requirements
 
-```bash
-sudo apt-get install -y git postgresql-12 screen wget
-```
+Click on the following items to view detailed installation steps.
 
-In case postgresql-11 is not available on your system, add the PPA:
+<details>
+  <summary>Postgres (v12+)</summary>
 
 ```bash
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-echo "deb http://apt.postgresql.org/pub/repos/apt/$(lsb_release -cs)"-pgdg main | sudo tee  /etc/apt/sources.list.d/pgdg.list
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee  /etc/apt/sources.list.d/pgdg.list
 sudo apt-get update
-sudo apt-get install -y postgresql-12
+sudo apt-get install -y postgresql-12 postgresql-client-12
 ```
 
-### Add Erlang repository and install
+Source: [postgresql.org/download](https://www.postgresql.org/download/)
+
+</details>
+
+<details>
+  <summary>Elixir (v1.10+)</summary>
 
 ```bash
-wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && sudo dpkg -i erlang-solutions_1.0_all.deb
+wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb && sudo dpkg -i erlang-solutions_2.0_all.deb
 sudo apt-get update
 sudo apt-get install -y elixir esl-erlang
 ```
 
-### Add Grafana repository and install Grafana
+Source: [elixir-lang.org/install](https://elixir-lang.org/install.html)
+
+</details>
+
+<details>
+  <summary>Grafana (v6.6+) & Plugins</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
@@ -37,6 +46,8 @@ sudo systemctl start grafana-server
 sudo systemctl enable grafana-server.service # to start Grafana at boot time
 ```
 
+Source: [grafana.com/docs/installation](https://grafana.com/docs/grafana/latest/installation/)
+
 Install the required Grafana plugins as well:
 
 ```bash
@@ -46,18 +57,32 @@ sudo grafana-cli plugins install grafana-piechart-panel
 sudo systemctl restart grafana-server
 ```
 
-### Install mosquitto MQTT Broker
+</details>
 
-_TBA_
-
-### Add nodesource (Node.js) repository and install node
+<details>
+  <summary>An MQTT Broker (e.g. Mosquitto)</summary>
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+sudo apt-get install -y mosquitto
+```
+
+Source: [mosquitto.org/download](https://mosquitto.org/download/)
+
+</details>
+
+<details>
+  <summary>Node.js (v12+)</summary>
+
+```bash
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
-### Clone TeslaMate git repository
+Source: [nodejs.org/en/download/package-manager](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions-enterprise-linux-fedora-and-snap-packages)
+
+</details>
+
+## Clone TeslaMate git repository
 
 The following command will clone the source files for the TeslaMate project. This should be run in an appropriate directory within which you would like to install TeslaMate. You should also record this path and provide them to the startup scripts proposed at the end of this guide.
 
@@ -67,42 +92,33 @@ cd /usr/src
 git clone https://github.com/adriankumpf/teslamate.git
 cd teslamate
 
-# Checkout the latest stable version
-git checkout $(git describe --tags)
+git checkout $(git describe --tags) # Checkout the latest stable version
 ```
 
-### Create PostgreSQL database
+## Create PostgreSQL database
 
 The following commands will create a database called `teslamate` on the PostgreSQL database server, and a user called `teslamate`. When creating the `teslamate` user, you will be prompted to enter a password for the user interactively. This password should be recorded and provided as an environment variable in the startup script at the end of this guide.
 
-```bash
-su -c "createdb teslamate" postgres
-su -c "createuser teslamate -W" postgres # use as password: secret
-su -c "ALTER USER teslamate WITH SUPERUSER;" postgres psql
+```console
+sudo -u postgres psql
+postgres=# create database teslamate;
+postgres=# create user teslamate with encrypted password 'secret';
+postgres=# grant all privileges on database teslamate to teslamate;
+postgres=# ALTER USER teslamate WITH SUPERUSER;
+postgres=# \q
 ```
 
-### Compile Elixir Project
+_Note: The superuser privileges can be revoked after running the initial database migrations._
+
+## Compile Elixir Project
 
 ```bash
-# download dependencies
-mix deps.get --only prod
+mix local.hex --force; mix local.rebar --force
 
+mix deps.get --only prod
 npm install --prefix ./assets && npm run deploy --prefix ./assets
 
-mix phx.digest
-MIX_ENV=prod mix release
-```
-
-### Create the database schema after the first-time installation
-
-The following command needs to be run once during the installation process in order to create the database schema for the TeslaMate installation:
-
-```bash
-export DATABASE_USER="teslamate"
-export DATABASE_PASS="secret"
-export DATABASE_HOST="127.0.0.1"
-export DATABASE_NAME="teslamate"
-_build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+MIX_ENV=prod mix do phx.digest, release --overwrite
 ```
 
 ### Set your system locale
@@ -114,13 +130,63 @@ sudo locale-gen en_US.UTF-8
 sudo localectl set-locale LANG=en_AU.UTF-8
 ```
 
-### Starting TeslaMate at boot time
+## Starting TeslaMate at boot time
 
 There are a number of approaches to start TeslaMate at boot time:
 
 #### Using systemd
 
-_TBA_
+Create a systemd service at `/etc/systemd/system/teslamate.service`:
+
+```
+[Unit]
+Description=TeslaMate
+After=network.target
+After=postgresql.service
+
+[Service]
+Type=simple
+# User=username
+# Group=groupname
+
+Restart=on-failure
+RestartSec=5
+
+Environment="HOME=/usr/src/teslamate"
+Environment="LANG=en_US.UTF-8"
+Environment="LC_CTYPE=en_US.UTF-8"
+Environment="TZ=Australia/Melbourne"
+Environment="PORT=4000"
+Environment="DATABASE_USER=teslamate"
+Environment="DATABASE_PASS=secret"
+Environment="DATABASE_NAME=teslamate"
+Environment="DATABASE_HOST=127.0.0.1"
+Environment="MQTT_HOST=127.0.0.1"
+
+WorkingDirectory=/usr/src/teslamate
+
+ExecStartPre=/usr/src/teslamate/_build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+ExecStart=/usr/src/teslamate/_build/prod/rel/teslamate/bin/teslamate start
+ExecStop=/usr/src/teslamate/_build/prod/rel/teslamate/bin/teslamate stop
+
+[Install]
+WantedBy=multi-user.target
+```
+
+- `MQTT_HOST` should be the IP address of your MQTT broker. If you do not have one installed, the MQTT functionality can be disabled with `DISABLE_MQTT=true`.
+- `TZ` should be your local timezone. Work out your timezone name using the [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) in the linked Wikipedia page.
+
+Start the service:
+
+```bash
+sudo systemctl start teslamate
+```
+
+And automatically get it to start on boot:
+
+```bash
+sudo systemctl enable teslamate
+```
 
 #### Using screen
 
@@ -147,6 +213,16 @@ export TESLAMATEPATH=/usr/src/teslamate
 $TESLAMATEPATH/_build/prod/rel/teslamate/bin/teslamate start
 ```
 
+The following command needs to be run once during the installation process in order to create the database schema for the TeslaMate installation:
+
+```bash
+export DATABASE_USER="teslamate"
+export DATABASE_PASS="secret"
+export DATABASE_HOST="127.0.0.1"
+export DATABASE_NAME="teslamate"
+_build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+```
+
 Add the following to /etc/rc.local, to start a screen session at boot time and run the TeslaMate server within a screen session. This lets you interactively connect to the session if needed.
 
 ```bash
@@ -157,7 +233,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
 
 ## Import Grafana Dashboards
 
-1.  Visit [localhost:3000](http://localhost:3000) and log in. The default credentials are: admin:admin.
+1.  Visit [localhost:3000](http://localhost:3000) and log in. The default credentials are: `admin:admin`.
 
 2.  Create a data source with the name "TeslaMate":
 
