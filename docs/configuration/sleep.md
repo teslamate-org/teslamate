@@ -17,11 +17,11 @@ Once the idle timer is reached, TeslaMate will try to allow the car to go to sle
 
 - You will know that the vehicle is in this state when the status in TeslaMate is _falling asleep for x minutes_.
 - At the end of this polling window, TeslaMate will poll the vehicle status.
-  - If the vehicle status is offline or asleep, this indicates that the sleep process succeeded and the car is no longer directly queryable.
+  - If the vehicle status is offline or asleep, this indicates that the sleep process succeeded.
   - If the vehicle is still online – which may sometimes happen due to e.g. background activity – TeslaMate will repeatedly halt polling for the configured time period until the vehicle is asleep.
 - Once the vehicle is offline/asleep **polling will continue twice per minute** so that TeslaMate knows when the vehicle is woken up.
 
-If you were to drive a vehicle that has just woken from Sleep Mode immediately after polling was halted, TeslaMate would miss 21 minutes (_by default_) of the drive session.
+If you were to drive a vehicle that has just woken from Sleep Mode immediately after polling was halted, TeslaMate would miss up to 21 minutes of the drive session.
 
 ## Providing wake-up hints to TeslaMate
 
@@ -29,6 +29,8 @@ To address this delay, interfaces are available to TeslaMate to instruct it to e
 
 - The vehicle to go to sleep, _or_
 - The vehicle to wake up
+
+These hints **are not required for the operation of TeslaMate**. Many other Tesla API-based loggers do not offer such an interface at all. However, the use of Bluetooth hints will improve logging in the long run, as no drives will be missed.
 
 ### Bluetooth Hints
 

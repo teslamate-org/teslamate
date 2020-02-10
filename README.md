@@ -62,7 +62,6 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
   - [Advanced Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker_advanced_apache.html) (Apache2, HTTPS, HTTP Basic Auth)
   - [Manual install](https://teslamate.readthedocs.io/en/latest/installation/debian.html) (on Debian/Ubuntu without Docker)
   - [Kubernetes install](https://hub.helm.sh/charts/billimek/teslamate) (opinionated helm chart; unofficial)
-  - [Upgrading to a new version](https://teslamate.readthedocs.io/en/latest/upgrading.html)
   - [Frequently Asked Questions](https://teslamate.readthedocs.io/en/latest/faq.html)
 - Sleep Mode
   - [Configuration](https://teslamate.readthedocs.io/en/latest/configuration/sleep.html)
@@ -77,6 +76,7 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
 - Advanced configuration
   - [Environment Variables](https://teslamate.readthedocs.io/en/latest/configuration/environment_variables.html)
 - Maintenance
+  - [Upgrading to a new version](https://teslamate.readthedocs.io/en/latest/upgrading.html)
   - [Backup and Restore](https://teslamate.readthedocs.io/en/latest/maintenance/backup_restore.html)
   - [Manually fixing data](https://teslamate.readthedocs.io/en/latest/maintenance/manually_fixing_data.html)
   - [Updating Postgres](https://teslamate.readthedocs.io/en/latest/maintenance/updating_postgres.html)

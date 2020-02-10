@@ -11,7 +11,6 @@ A powerful, self-hosted data logger for your Tesla.
    Advanced Docker install (Traefik, Let's Encrypt, HTTPS, HTTP Basic Auth) <installation/docker_advanced>
    Advanced Docker install (Apache2, HTTPS, HTTP Basic Auth) <installation/docker_advanced_apache.md>
    Manual install on Debian or Ubuntu <installation/debian>
-   upgrading
    faq
 
 .. toctree::
@@ -46,6 +45,7 @@ A powerful, self-hosted data logger for your Tesla.
    :maxdepth: 1
    :caption: Maintenance
 
+   upgrading
    maintenance/backup_restore.md
    maintenance/manually_fixing_data.md
    maintenance/updating_postgres.md
