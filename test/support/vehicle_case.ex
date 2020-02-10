@@ -5,8 +5,8 @@ defmodule TeslaMate.VehicleCase do
     quote do
       alias TeslaMate.Vehicles.Vehicle.Summary
       alias TeslaMate.Vehicles.Vehicle
-      alias TeslaMate.Settings.Settings
-      alias TeslaMate.Log.Car
+      alias TeslaMate.Settings.CarSettings
+      alias TeslaMate.Log.{Car, Update}
       alias TeslaApi.Vehicle.State
 
       import Ecto
@@ -14,50 +14,65 @@ defmodule TeslaMate.VehicleCase do
       import Ecto.Query
 
       def start_vehicle(name, events, opts \\ []) when length(events) > 0 do
+        mock_log? = Keyword.get(opts, :log, true)
+        last = Keyword.get(opts, :last_update, %Update{version: "9999.99.99.0 lasjas234"})
+
         log_name = :"log_#{name}"
         api_name = :"api_#{name}"
         settings_name = :"settings_#{name}"
+        locations_name = :"locations_#{name}"
         vehicles_name = :"vehicles_#{name}"
         pubsub_name = :"pubsub_#{name}"
 
-        {:ok, _pid} = start_supervised({LogMock, name: log_name, pid: self()})
+        {:ok, _pid} = start_supervised({LogMock, name: log_name, pid: self(), last_update: last})
         {:ok, _pid} = start_supervised({ApiMock, name: api_name, events: events, pid: self()})
         {:ok, _pid} = start_supervised({SettingsMock, name: settings_name, pid: self()})
         {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
         {:ok, _pid} = start_supervised({PubSubMock, name: pubsub_name, pid: self()})
 
-        opts =
-          Keyword.put_new_lazy(opts, :car, fn ->
-            %Car{id: :rand.uniform(65536), eid: 0, vid: 1000}
-          end)
-
-        opts =
-          case Keyword.pop(opts, :settings) do
-            {nil, opts} ->
-              opts
-
-            {settings, opts} ->
-              settings =
-                settings
-                |> Map.put_new(:req_no_shift_state_reading, false)
-                |> Map.put_new(:req_no_temp_reading, false)
-                |> Map.put_new(:req_not_unlocked, true)
-
-              [{:settings, struct(Settings, settings)} | opts]
-          end
-
         {:ok, _pid} =
           start_supervised(
-            {Vehicle,
-             Keyword.merge(opts,
-               name: name,
-               deps_log: {LogMock, log_name},
-               deps_api: {ApiMock, api_name},
-               deps_settings: {SettingsMock, settings_name},
-               deps_vehicles: {VehiclesMock, vehicles_name},
-               deps_pubsub: {PubSubMock, pubsub_name}
-             )}
+            {LocationsMock,
+             name: locations_name,
+             pid: self(),
+             blacklist: Keyword.get(opts, :blacklist, []),
+             whitelist: Keyword.get(opts, :whitelist, [])}
           )
+
+        opts =
+          Keyword.put_new_lazy(opts, :car, fn ->
+            settings =
+              Keyword.get(opts, :settings, %{})
+              |> Map.put_new(:req_no_shift_state_reading, false)
+              |> Map.put_new(:req_no_temp_reading, false)
+              |> Map.put_new(:req_not_unlocked, true)
+
+            %Car{
+              id: :rand.uniform(65536),
+              eid: 0,
+              vid: 1000,
+              vin: "1000",
+              model: "3",
+              settings: struct(CarSettings, settings)
+            }
+          end)
+
+        deps =
+          [
+            name: name,
+            deps_log: {LogMock, log_name},
+            deps_api: {ApiMock, api_name},
+            deps_settings: {SettingsMock, settings_name},
+            deps_locations: {LocationsMock, locations_name},
+            deps_vehicles: {VehiclesMock, vehicles_name},
+            deps_pubsub: {PubSubMock, pubsub_name}
+          ]
+          |> Enum.filter(fn
+            {:deps_log, _} -> mock_log?
+            _ -> true
+          end)
+
+        {:ok, _pid} = start_supervised({Vehicle, Keyword.merge(opts, deps)})
 
         assert_receive {SettingsMock, :subscribe_to_changes}
 
@@ -65,17 +80,19 @@ defmodule TeslaMate.VehicleCase do
       end
 
       def online_event(opts \\ []) do
-        drive_state =
-          Keyword.get(opts, :drive_state, %{
-            timestamp: 0,
-            latitude: 0.0,
-            longitude: 0.0
-          })
+        now = (DateTime.utc_now() |> DateTime.to_unix()) * 1000
 
-        charge_state = Keyword.get(opts, :charge_state, %{})
-        climate_state = Keyword.get(opts, :climate_state, %{})
-        vehicle_state = Keyword.get(opts, :vehicle_state, %{})
-        vehicle_config = Keyword.get(opts, :vehicle_config, %{car_type: "model3"})
+        drive_state =
+          Keyword.get(opts, :drive_state, %{latitude: 0.0, longitude: 0.0})
+          |> Map.update(:timestamp, now, fn
+            nil -> now
+            ts -> ts
+          end)
+
+        charge_state = Keyword.get(opts, :charge_state, %{timestamp: 0})
+        climate_state = Keyword.get(opts, :climate_state, %{timestamp: 0})
+        vehicle_state = Keyword.get(opts, :vehicle_state, %{timestamp: 0, car_version: ""})
+        vehicle_config = Keyword.get(opts, :vehicle_config, %{timestamp: 0, car_type: "model3"})
 
         %TeslaApi.Vehicle{
           state: "online",
@@ -111,18 +128,20 @@ defmodule TeslaMate.VehicleCase do
             ideal_battery_range: range,
             battery_range: range
           },
-          drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0}
         )
       end
 
-      defp update_event(state, version) do
+      defp update_event(ts, state, version) do
         alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
 
         online_event(
           vehicle_state: %{
+            timestamp: ts,
             car_version: version,
             software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: state}
-          }
+          },
+          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0}
         )
       end
     end

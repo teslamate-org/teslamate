@@ -4,12 +4,14 @@ defmodule TeslaMate.Api do
   require Logger
 
   alias TeslaMate.Auth.{Tokens, Credentials}
-  alias TeslaMate.Auth
   alias TeslaMate.Vehicles
+  alias TeslaApi.Auth
+
+  alias Mojito.Response
 
   import Core.Dependency, only: [call: 3, call: 2]
 
-  defstruct auth: nil, deps: %{}
+  defstruct name: nil, deps: %{}
   alias __MODULE__, as: State
 
   @name __MODULE__
@@ -17,153 +19,191 @@ defmodule TeslaMate.Api do
   # API
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
+    opts = Keyword.put_new(opts, :name, @name)
+    name = Keyword.fetch!(opts, :name)
+    GenServer.start_link(__MODULE__, opts, name: name)
   end
 
   ## State
 
   def list_vehicles(name \\ @name) do
-    GenServer.call(name, :list, 35_000)
+    with {:ok, auth} <- fetch_auth(name) do
+      TeslaApi.Vehicle.list(auth)
+      |> handle_result(auth, name)
+    end
   end
 
   def get_vehicle(name \\ @name, id) do
-    GenServer.call(name, {:get, id}, 35_000)
+    with {:ok, auth} <- fetch_auth(name) do
+      TeslaApi.Vehicle.get(auth, id)
+      |> handle_result(auth, name)
+    end
   end
 
   def get_vehicle_with_state(name \\ @name, id) do
-    GenServer.call(name, {:get_with_state, id}, 35_000)
+    with {:ok, auth} <- fetch_auth(name) do
+      TeslaApi.Vehicle.get_with_state(auth, id)
+      |> handle_result(auth, name)
+    end
   end
 
   ## Internals
 
-  def sign_in(name \\ @name, credentials) do
-    GenServer.call(name, {:sign_in, credentials})
+  def signed_in?(name \\ @name) do
+    case fetch_auth(name) do
+      {:error, :not_signed_in} -> false
+      {:ok, _} -> true
+    end
   end
 
-  def signed_in?(name \\ @name) do
-    GenServer.call(name, :signed_in?)
+  def sign_in(name \\ @name, credentials) do
+    case fetch_auth(name) do
+      {:error, :not_signed_in} -> GenServer.call(name, {:sign_in, credentials}, 15_000)
+      {:ok, %Auth{}} -> {:error, :already_signed_in}
+    end
   end
 
   # Callbacks
 
   @impl true
   def init(opts) do
+    name = Keyword.fetch!(opts, :name)
+
     deps = %{
-      auth: Keyword.get(opts, :auth, Auth),
-      vehicles: Keyword.get(opts, :vehicles, Vehicles),
-      tesla_api_auth: Keyword.get(opts, :tesla_api_auth, TeslaApi.Auth),
-      tesla_api_vehicle: Keyword.get(opts, :tesla_api_vehicle, TeslaApi.Vehicle)
+      auth: Keyword.get(opts, :auth, TeslaMate.Auth),
+      vehicles: Keyword.get(opts, :vehicles, Vehicles)
     }
 
-    {:ok, %State{deps: deps}, {:continue, :sign_in}}
+    ^name = :ets.new(name, [:named_table, :set, :public, read_concurrency: true])
+
+    with %Tokens{} = tokens <- call(deps.auth, :get_tokens),
+         {:ok, auth} <- refresh_tokens(tokens) do
+      :ok = call(deps.auth, :save, [auth])
+      true = insert_auth(name, auth)
+    else
+      {:error, reason} -> Logger.warn("Token refresh failed: #{inspect(reason, pretty: true)}")
+      nil -> nil
+    end
+
+    {:ok, %State{name: name, deps: deps}}
   end
 
   @impl true
-  def handle_call({:sign_in, %Credentials{}}, _from, %State{auth: auth} = state)
-      when not is_nil(auth) do
-    {:reply, {:error, :already_signed_in}, state}
-  end
-
   def handle_call({:sign_in, %Credentials{email: email, password: password}}, _from, state) do
-    case call(state.deps.tesla_api_auth, :login, [email, password]) do
-      {:ok, %TeslaApi.Auth{} = auth} ->
+    case Auth.login(email, password) do
+      {:ok, %Auth{} = auth} ->
+        true = insert_auth(state.name, auth)
         :ok = call(state.deps.auth, :save, [auth])
         :ok = call(state.deps.vehicles, :restart)
-        {:reply, :ok, %State{state | auth: auth}, {:continue, :schedule_refresh}}
+        :ok = schedule_refresh(auth)
+        {:reply, :ok, state}
 
-      {:error, %TeslaApi.Error{error: reason}} ->
+      {:error, %TeslaApi.Error{reason: reason}} ->
         {:reply, {:error, reason}, state}
-    end
-  end
-
-  def handle_call(:signed_in?, _from, %State{auth: auth} = state) do
-    {:reply, not is_nil(auth), state}
-  end
-
-  def handle_call(_command, _from, %State{auth: nil} = state) do
-    {:reply, {:error, :not_signed_in}, state}
-  end
-
-  def handle_call(:list, _from, state) do
-    case call(state.deps.tesla_api_vehicle, :list, [state.auth]) do
-      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
-        {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
-
-      {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
-        Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
-        {:reply, {:error, reason}, state}
-
-      {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
-        {:reply, {:error, reason}, state}
-
-      {:ok, vehicles} ->
-        {:reply, {:ok, vehicles}, state}
-    end
-  end
-
-  def handle_call({cmd, id}, _from, state) when cmd in [:get, :get_with_state] do
-    case call(state.deps.tesla_api_vehicle, cmd, [state.auth, id]) do
-      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 401}}} ->
-        {:reply, {:error, :not_signed_in}, %State{state | auth: nil}}
-
-      {:error, %TeslaApi.Error{env: %Tesla.Env{status: 404, body: %{"error" => "not_found"}}}} ->
-        {:reply, {:error, :vehicle_not_found}, state}
-
-      {:error, %TeslaApi.Error{error: reason, env: %Tesla.Env{status: status, body: body}}} ->
-        Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
-        {:reply, {:error, reason}, state}
-
-      {:error, %TeslaApi.Error{error: reason, message: _msg}} ->
-        {:reply, {:error, reason}, state}
-
-      {:ok, %TeslaApi.Vehicle{} = vehicle} ->
-        {:reply, {:ok, vehicle}, state}
     end
   end
 
   @impl true
-  def handle_info(:refresh_auth, state) do
-    case call(state.deps.tesla_api_auth, :refresh, [state.auth]) do
-      {:ok, %TeslaApi.Auth{} = auth} ->
-        :ok = call(state.deps.auth, :save, [auth])
-        {:noreply, %State{state | auth: auth}, {:continue, :schedule_refresh}}
+  def handle_info(:refresh_auth, %State{name: name} = state) do
+    Logger.info("Refreshing access token ...")
 
-      {:error, %TeslaApi.Error{error: error, message: reason, env: _}} ->
-        {:stop, {error, reason}}
-    end
-  end
+    {:ok, auth} = fetch_auth(name)
+    {:ok, auth} = Auth.refresh(auth)
 
-  def handle_info({:ssl_closed, _}, state) do
+    true = insert_auth(name, auth)
+    :ok = call(state.deps.auth, :save, [auth])
+    :ok = schedule_refresh(auth)
+
     {:noreply, state}
   end
 
-  @impl true
-  def handle_continue(:sign_in, %State{} = state) do
-    with %Tokens{access: access, refresh: refresh} <- call(state.deps.auth, :get_tokens),
-         api_auth = %TeslaApi.Auth{token: access, refresh_token: refresh},
-         {:ok, %TeslaApi.Auth{} = auth} <- call(state.deps.tesla_api_auth, :refresh, [api_auth]) do
-      :ok = call(state.deps.auth, :save, [auth])
-      {:noreply, %State{state | auth: auth}, {:continue, :schedule_refresh}}
-    else
-      nil ->
-        Logger.info("Please sign in.")
-        {:noreply, state}
+  def handle_info(msg, state) do
+    Logger.info("#{__MODULE__} / unhandled message: #{inspect(msg, pretty: true)}")
+    {:noreply, state}
+  end
 
-      {:error, %TeslaApi.Error{} = error} ->
-        Logger.warn("Please sign in again.\n\n" <> inspect(error, pretty: true))
-        {:noreply, state}
+  ## Private
+
+  defp refresh_tokens(%Tokens{access: at, refresh: rt}) do
+    current = %Auth{token: at, refresh_token: rt}
+
+    case Application.get_env(:teslamate, :disable_token_refresh, false) do
+      true ->
+        Logger.info("Token refresh is disabled")
+        {:ok, current}
+
+      false ->
+        with {:ok, %Auth{} = auth} <- Auth.refresh(current) do
+          Logger.info("Refreshed api tokens")
+          :ok = schedule_refresh(auth)
+          {:ok, auth}
+        end
     end
   end
 
-  def handle_continue(:schedule_refresh, %State{auth: auth} = state) do
+  defp schedule_refresh(%Auth{} = auth) do
     ms =
       auth.expires_in
-      |> Kernel.*(0.8)
+      |> Kernel.*(0.89)
       |> round()
       |> :timer.seconds()
 
+    Logger.info("Scheduling token refresh in #{round(ms / (24 * 60 * 60 * 1000))}d")
     Process.send_after(self(), :refresh_auth, ms)
 
-    {:noreply, state}
+    :ok
   end
+
+  defp insert_auth(name, %Auth{} = auth) do
+    :ets.insert(name, auth: auth)
+  end
+
+  defp fetch_auth(name) do
+    case :ets.lookup(name, :auth) do
+      [auth: %Auth{} = auth] -> {:ok, auth}
+      [] -> {:error, :not_signed_in}
+    end
+  rescue
+    _ in ArgumentError -> {:error, :not_signed_in}
+  end
+
+  defp handle_result(result, auth, name) do
+    case result do
+      {:error, %TeslaApi.Error{reason: :unauthorized}} ->
+        true = :ets.delete(name, :auth)
+        {:error, :not_signed_in}
+
+      {:error, %TeslaApi.Error{reason: reason, env: %Response{status_code: status, body: body}}} ->
+        Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
+        {:error, reason}
+
+      {:error, %TeslaApi.Error{reason: reason, message: msg}} ->
+        if is_binary(msg) and msg != "", do: Logger.warn("TeslaApi.Error / #{msg}")
+        {:error, reason}
+
+      {:ok, vehicles} when is_list(vehicles) ->
+        vehicles =
+          vehicles
+          |> Task.async_stream(&preload_vehicle(&1, auth), timeout: 32_500)
+          |> Enum.map(fn {:ok, vehicle} -> vehicle end)
+
+        {:ok, vehicles}
+
+      {:ok, %TeslaApi.Vehicle{} = vehicle} ->
+        {:ok, vehicle}
+    end
+  end
+
+  defp preload_vehicle(%TeslaApi.Vehicle{state: "online", id: id} = vehicle, auth) do
+    case TeslaApi.Vehicle.get_with_state(auth, id) do
+      {:ok, %TeslaApi.Vehicle{} = vehicle} ->
+        vehicle
+
+      {:error, reason} ->
+        Logger.warn("TeslaApi.Error / #{inspect(reason, pretty: true)}")
+        vehicle
+    end
+  end
+
+  defp preload_vehicle(%TeslaApi.Vehicle{} = vehicle, _state), do: vehicle
 end

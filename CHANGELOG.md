@@ -2,21 +2,330 @@
 
 ## [Unreleased]
 
-### New Features
-
-- Make :check_origin option configurable via environment variable
-  `CHECK_ORIGIN`
+## [1.16.0] - 2020-02-07
 
 ### Enhancements
 
+- [Import from TeslaFi (BETA)](https://teslamate.readthedocs.io/en/latest/import/teslafi.html)
+- Calculate charge cost based on location and kWh
+- Automatically set charge cost to zero if free supercharging is enabled (configurable on the settings page)
+- Add French translation ([#397](https://github.com/adriankumpf/teslamate/pull/397) by [tomS3210](https://github.com/tomS3210))
+- Improve language detection
+- Show odometer on 'Drive Details' dashboard
+- Bump Grafana to 6.6.1
+- Bump Elixir to 1.10
+
+#### Documentation
+
+- New FAQ entry for adding API tokens directly into the database instead of using username/password ([#412](https://github.com/adriankumpf/teslamate/pull/412) by [wishbone1138](https://github.com/wishbone1138))
+- Improve standalone install documentation ([#416](https://github.com/adriankumpf/teslamate/pull/416) by [Niek](https://github.com/Niek))
+- Improve iOS Shortcuts guide ([#405](https://github.com/adriankumpf/teslamate/pull/405) by [DP19](https://github.com/DP19))
+
+### Bug Fixes
+
+- Re-add charge annotations to the 'Projected Range' dashboard ([#393](https://github.com/adriankumpf/teslamate/pull/393) by [ctraber](https://github.com/ctraber))
+- Correct typos in projected-range.json ([#395](https://github.com/adriankumpf/teslamate/pull/395) by [shagberg](https://github.com/shagberg))
+- Increase height of the pie charts panels
+- Address an issue where a drive would not be properly completed if the vehicle was suddenly reported as asleep after being offline for a while
+- Fix energy used in 'Drive Details'
+
+## [1.15.1] - 2020-01-25
+
+### Enhancements
+
+- Tweak polling intervals
+- Make the web interface feel snappier
+
+### Bug Fixes
+
+- Fix an issue where distance, energy used and duration were missing on the Drive Details dashboard if the length unit was set to miles
+
+## [1.15.0] - 2020-01-23
+
+### Enhancements
+
+- Add charge cost interface
+- Display usable SOC and show snowflake icon on summary page ([#338](https://github.com/adriankumpf/teslamate/pull/338) by [ctraber](https://github.com/ctraber))
+- Log missed software updates
+- Add tooltip with the estimated range at 100%
+- Remove software version commit hash
+- Format remaining charge time
+- Add option to use a custom namespace for MQTT topics
+- Periodically store vehicle data while online
+- Use the Accept-Language HTTP header get the locale (Supported languages: English, German)
+- Add setting to change the preferred language of OpenStreetMap results
+- Show spinner while fetching vehicle data
+- Add dropdown with dashboard links to the navigation bar
+
+#### New MQTT Topics
+
+- `teslamate/cars/$car_id/usable_battery_level`
+
+#### Dashboards
+
+- Projected Range: Use `usable_battery_level` to calculate the projected range and add more panels ([#338](https://github.com/adriankumpf/teslamate/pull/338), [#367](https://github.com/adriankumpf/teslamate/pull/367) by [ctraber](https://github.com/ctraber))
+- Add `tesla` tag ([#369](https://github.com/adriankumpf/teslamate/pull/369) by [TechForze](https://github.com/TechForze))
+- Vampire Drain: show SOC difference and ❄ (reduced range)
+- Charging Stats: Show share of AC/DC charging
+- Charging Stats: Show top charging stations by cost
+- Overview dashboard: Use the preferred range
+- Overview dashboard: Always show latest voltage and power while charging
+- Add Charge Level dashboard
+- Add Drive Stats dashboard
+- Revamp Drives/Drive Details and Charges/Charge Details dashboards
+
+#### Documentation
+
+- Add docs for an advanced Docker install with Apache2 ([#361](https://github.com/adriankumpf/teslamate/pull/361) by [DrMichael](https://github.com/DrMichael))
+- Add docs for backup and restore ([#361](https://github.com/adriankumpf/teslamate/pull/361) by [DrMichael](https://github.com/DrMichael))
+- Update the macrodroid docs ([#359](https://github.com/adriankumpf/teslamate/pull/359) by [markusdd](https://github.com/markusdd))
+- Add docs for manually fixing data
+- Add docs for updating Postgres
+
+### Bug Fixes
+
+- Fix tooltips in Safari (iOS)
+- Always publish the shift state via MQTT
+- Fix an issue where he charge location was not be displayed
+- Fix an issue that could cause the added charge kWh to be shown as 0
+
+**⚠️ Please note:** Due to internal changes, all addresses will be recalculated on first startup. Depending on the amount of data, this process may take up to 30 minutes or longer.
+
+---
+
+```text
+TeslaMate is open source and completely free for everyone to use.
+
+If you like this project and want to support further development, please consider making a donation.
+```
+
+## [1.14.3] - 2020-01-06
+
+### Enhancements
+
+- Locations dashboard: Visualize cities and states with the most stored addresses
+
+### Bug Fixes
+
+- Fix an issue where a broken rear window sensor could cause the windows to always be displayed as open
+- Address an issue where a charge wouldn't be properly logged if the Tesla API reported invalid charge data
+- Fix a bug that could cause the geo-fence form to become unresponsive
+
+## [1.14.2] - 2020-01-03
+
+### Bug Fixes
+
+- Fix an issue where invalid or revoked tokens could cause the application to crash after startup
+- Change default time range in the 'Updates' dashboard
+
+## [1.14.1] - 2019-12-24
+
+### Bug Fixes
+
+- Fix an issue where the database migrations would not succeed if there were charges without any data points
+
+## [1.14.0] - 2019-12-22
+
+### Enhancements
+
+**Documentation**
+
+[@gundalow](https://github.com/gundalow) has revamped the docs ([#292](https://github.com/adriankumpf/teslamate/pull/292), [#314](https://github.com/adriankumpf/teslamate/pull/314)). The new documentation is available here: [teslamate.readthedocs.io](https://teslamate.readthedocs.io)
+
+**Automatic phase correction**
+
+The phase correction is now applied automatically.
+
+Background: some vehicles incorrectly report 2 instead of 1 or 3 phases when charging. This led to an incorrect calculation of the 'kWh used'. Furthermore, the calculation did not work reliably in three-phase networks with e.g. 127/220V. Therefore it was necessary in the past to manually activate a phase correction for specific geo-fences. With this update the correction is now applied automatically.
+
+**Other enhancements**
+
+- Refactored API module
+- Increased polling frequency in asleep state
+- New OSM aliases
+- ... and other minor improvements
+
+### Bug Fixes
+
+- Efficiency Dashboard: convert km/h to mph in the temperature efficiency table
+- Fix an issue where the application could crash because the database pool was too small
+- Fix an issue where a drive/charge could be split into two parts due to API timeouts
+
+---
+
+```text
+TeslaMate is open source and completely free for everyone to use.
+
+If you like this project and want to support further development, please consider making a donation.
+```
+
+## [1.13.2] - 2019-12-07
+
+### Enhancements
+
+- Enable the time range control in the "Charging Stats" dashboard ([#278](https://github.com/adriankumpf/teslamate/pull/278) by [@nnoally](https://github.com/nnoally))
+- Various docs improvements ([#285](https://github.com/adriankumpf/teslamate/pull/285) by [@gundalow](https://github.com/gundalow))
+
+### Bug Fixes
+
+- Fix issue where on a brand new installation suspending logging would only work after a restart
+- Fix the elevation scale in the Drive Details
+
+## [1.13.1] - 2019-11-26
+
+### Enhancements
+
+Add a database column that will allow tracking charge costs:
+
+- Merge 20191117042320_add_cost_field_to_charges.exs (Charge Cost field) ([#258](https://github.com/adriankumpf/teslamate/pull/258) by [@ngardiner](https://github.com/ngardiner))
+- Grafana Dashboard Integration for Charge Cost ([#273](https://github.com/adriankumpf/teslamate/pull/273) by [@ngardiner](https://github.com/ngardiner))
+
+Note: There is no charging cost interface either manual or automatic at this point but there will be in the future.
+
+### Bug Fixes
+
+- Downgrade the Grafana docker image to v6.3.7 because there are still issues with ARM-compatible images
+- Fix an issue where the selected car was not displayed when opening the drive or charging details
+
+## [1.13.0] - 2019-11-25
+
+### New Features
+
+- Display link "Dashboards" inside the navigation bar (it becomes visible after clicking an address in one of the Grafana dashboards. Alternatively the Grafana URL can be added manually on the settings page)
+- Enable or disable the sleep mode depending on the location. For example, the car can be allowed to sleep at home or work, but nowhere else.
+- Extend Charge Stats Dashboard with discharge stats, a charge delta graph and a charge heatmap ([#270](https://github.com/adriankumpf/teslamate/pull/270) by [@marcogabriel](https://github.com/marcogabriel))
+
+### Enhancements
+
+- Make sleep mode separately configurable for each car
+- Reduce default "Time to try sleeping" to 12 minutes for newer vehicles
+- The "States" dashboard now includes software updates
+- Automatically repair trips and charges with missing addresses (e.g. because OpenStreetMap was temporarily unavailable)
+- Update thresholds of the battery level gauge ([#256](https://github.com/adriankumpf/teslamate/pull/256) by [@marcogabriel](https://github.com/marcogabriel))
+
+### Bug Fixes
+
+- Fix issue where consumption values were displayed as 0
+- Fix issue where installing a software update when charging would produce an incomplete charge record
+
+---
+
+```text
+TeslaMate is open source and completely free for everyone to use.
+
+If you like this project and want to support further development, please consider making a donation.
+```
+
+## [1.12.2] - 2019-11-06
+
+### Bug Fixes
+
+- Fix an issue where the "states" graph would not show every drive/charge
+- Fix an issue where the application would not start if the vehicle was parked at a place with poor reception
+- Remove duplicate table row "Remaining Time"
+
+## [1.12.1] - 2019-11-03
+
+### Enhancements
+
+- Display remaining time while charging
+
+### New MQTT Topics
+
+- `teslamate/cars/$car_id/heading`
+
+### Bug Fixes
+
+- Consistent language for label of charging events ([#299](https://github.com/adriankumpf/teslamate/pull/229))
+- Cap charging efficiency to 100%
+
+## [1.12.0] - 2019-10-28
+
+We finally have **documentation**! Many thanks to [@ngardiner](https://github.com/ngardiner), who gave the impulse and did most of the work and also to [@krezac](https://github.com/krezac), who contributed a guide to creating iOS Shortcuts for TeslaMate!
+
+### New Features
+
+#### Vehicle Efficiency
+
+Previous versions of TeslaMate shipped with hard-coded efficiency values for the various Tesla models. These efficiency values are needed to calculate trip consumptions, because the Tesla API does not provide them directly.
+
+The hard-coded values were _probably_ pretty accurate, but it was impossible to ensure the correctness of all of them. In addition, the new Model S and X "Raven" could not be reliably identified because the Tesla API returns wrong option codes for both.
+
+This version eliminates the need to use these hard-coded values and instead calculates them based on the recorded charging data. It takes **at least two** charges to display the first estimate. Each subsequent charge will then continue to improve the accuracy of the estimate, which is applied retroactively to all data.
+
+#### Charge energy used
+
+In addition to the kWh added to the battery during the charge TeslaMate now calculates the actual energy used by the charger, which in most cases is higher than the energy added to the battery.
+
+Consider this feature somewhat experimental. Theoretically, however, it should be pretty accurate as long as the vehicle has a stable internet connection while charging (other paid Tesla loggers use the same calculation method).
+
+Currently, a firmware bug in some vehicles may cause the wrong number of phases to be reported when charging at some chargers. As a workaround, a phase correction can be activated per geo-fence.
+
+#### New MQTT Topics
+
+- `teslamate/cars/$car_id/update_available`
+- `teslamate/cars/$car_id/is_climate_on`
+- `teslamate/cars/$car_id/is_preconditioning`
+- `teslamate/cars/$car_id/is_user_present`
+
+### Enhancements
+
+- Show icon indicators for various states (sentry mode, vehicle locked, windows open, pre-conditioning etc.)
+- Various UI Tweaks
+- Grafana: show the precise duration of a trip in a tooltip
+- Serve gzipped assets
+- Disable origin check by default to simplify the installation of TeslaMate. (⚠️ For publicly exposed TeslaMate instances it is advisable to re-enable the check by adding the environment variable `CHECK_ORIGIN=true`.)
+
+### Bug Fixes
+
+- Set the correct end date for charges where the vehicle remains plugged in after completion
+- Fix an issue with vehicles that were removed from the Tesla Account
+- Correctly handle API responses which indicate that the vehicle is in service
+- Display effects of range gains (e.g. from supercharging pre-conditioning a cold battery) as NULL
+
+---
+
+```text
+TeslaMate is open source and completely free for everyone to use.
+
+If you like this project and want to support further development, please consider making a donation.
+```
+
+## [1.11.1] - 2019-10-13
+
+### Bug Fixes
+
+- Show all cars in the Overview dashboard
+
+## [1.11.0] - 2019-10-12
+
+### New Features
+
+- Add overview dashboard (by DBemis;
+  [#196](https://github.com/adriankumpf/teslamate/pull/196))
+- Make :check_origin option configurable via environment variable
+  `CHECK_ORIGIN`
+- Open GitHub release page when clicking the version tag in the navbar
+- Display the current software version
+
+### New MQTT topics
+
+- `teslamate/cars/$car_id/version`: Current software version
+
+### Enhancements
+
+- Tweak the mobile and desktop views
 - Add GIST index based on `ll_to_earth` to speed up geo-fence lookups
 - Improve accuracy of geo-fence lookups for some edge cases
+- Log option codes as well if the vehicle identification fails
 - Delete trips with less than 10m driven
 - Add/Update efficiency factors
 
 ### Bug Fixes
 
-- Exit early if the migrations fail
+- Fix an issue where postgres' automatic analyze couldn't succeed
+- Fix an issue where the derived efficiency factors could not be calculated
+- Exit early if migrations fail
 - Downgrade Grafana to v6.3.5
 
 ## [1.10.0] - 2019-10-05
@@ -296,8 +605,6 @@ Find the full example in the updated README.
 
 **2. Switch to imperial units**
 
-![Settings](screenshots/settings.png)
-
 There is a new settings view in the web interface. To use imperial measurements
 in grafana and on the status screen just tick the checkbox it shows!
 
@@ -451,7 +758,22 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.10.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.16.0...HEAD
+[1.16.0]: https://github.com/adriankumpf/teslamate/compare/v1.15.1...v1.16.0
+[1.15.1]: https://github.com/adriankumpf/teslamate/compare/v1.15.0...v1.15.1
+[1.15.0]: https://github.com/adriankumpf/teslamate/compare/v1.14.3...v1.15.0
+[1.14.3]: https://github.com/adriankumpf/teslamate/compare/v1.14.2...v1.14.3
+[1.14.2]: https://github.com/adriankumpf/teslamate/compare/v1.14.1...v1.14.2
+[1.14.1]: https://github.com/adriankumpf/teslamate/compare/v1.14.0...v1.14.1
+[1.14.0]: https://github.com/adriankumpf/teslamate/compare/v1.13.2...v1.14.0
+[1.13.2]: https://github.com/adriankumpf/teslamate/compare/v1.13.1...v1.13.2
+[1.13.1]: https://github.com/adriankumpf/teslamate/compare/v1.13.0...v1.13.1
+[1.13.0]: https://github.com/adriankumpf/teslamate/compare/v1.12.2...v1.13.0
+[1.12.2]: https://github.com/adriankumpf/teslamate/compare/v1.12.1...v1.12.2
+[1.12.1]: https://github.com/adriankumpf/teslamate/compare/v1.12.0...v1.12.1
+[1.12.0]: https://github.com/adriankumpf/teslamate/compare/v1.11.1...v1.12.0
+[1.11.1]: https://github.com/adriankumpf/teslamate/compare/v1.11.0...v1.11.1
+[1.11.0]: https://github.com/adriankumpf/teslamate/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/adriankumpf/teslamate/compare/v1.9.1...v1.10.0
 [1.9.1]: https://github.com/adriankumpf/teslamate/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/adriankumpf/teslamate/compare/v1.8.0...v1.9.0

@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": null,
   "iteration": 1568831110877,
   "links": [],
   "panels": [
@@ -44,7 +45,7 @@
       "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
-        "h": 21,
+        "h": 23,
         "w": 24,
         "x": 0,
         "y": 1
@@ -63,12 +64,12 @@
       "scroll": true,
       "showHeader": true,
       "sort": {
-        "col": 0,
+        "col": 2,
         "desc": true
       },
       "styles": [
         {
-          "alias": "Start Date",
+          "alias": "Start",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -81,13 +82,13 @@
           "linkTooltip": "",
           "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}",
           "mappingType": 1,
-          "pattern": "start_date",
+          "pattern": "start_date_km",
           "thresholds": [],
           "type": "date",
           "unit": "short"
         },
         {
-          "alias": "End Date",
+          "alias": "End",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -97,42 +98,10 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "end_date",
+          "pattern": "end_date_km",
           "thresholds": [],
           "type": "date",
           "unit": "short"
-        },
-        {
-          "alias": "TR Start",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
-          "mappingType": 1,
-          "pattern": "start_range_km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthkm"
-        },
-        {
-          "alias": "TR End",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
-          "mappingType": 1,
-          "pattern": "end_range_km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthkm"
         },
         {
           "alias": "TR Loss",
@@ -195,7 +164,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": ".*_ts",
+          "pattern": "/.*_ts/",
           "thresholds": [],
           "type": "hidden",
           "unit": "short"
@@ -220,7 +189,7 @@
           "unit": "percentunit"
         },
         {
-          "alias": "Consumption",
+          "alias": "kWh",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -252,7 +221,7 @@
           "unit": "watt"
         },
         {
-          "alias": "TR Start",
+          "alias": "TR Loss / h",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -260,31 +229,49 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
+          "decimals": 2,
           "mappingType": 1,
-          "pattern": "start_range_mi",
+          "pattern": "range_lost_per_hour_mi",
           "thresholds": [],
           "type": "number",
           "unit": "lengthmi"
         },
         {
-          "alias": "TR End",
+          "alias": "Start",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
+          "dateFormat": "MM/DD/YY h:mm:ss a",
+          "decimals": 2,
+          "link": true,
+          "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}",
           "mappingType": 1,
-          "pattern": "end_range_mi",
+          "pattern": "start_date_mi",
           "thresholds": [],
-          "type": "number",
-          "unit": "lengthmi"
+          "type": "date",
+          "unit": "short"
         },
         {
-          "alias": "TR Diff",
+          "alias": "End",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "MM/DD/YY h:mm:ss a",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "end_date_mi",
+          "thresholds": [],
+          "type": "date",
+          "unit": "short"
+        },
+        {
+          "alias": "TR Loss",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -300,7 +287,23 @@
           "unit": "lengthmi"
         },
         {
-          "alias": "TR Loss / h",
+          "alias": "SOC",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "soc_diff",
+          "thresholds": [],
+          "type": "number",
+          "unit": "percent"
+        },
+        {
+          "alias": "    ",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -309,11 +312,23 @@
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
+          "link": false,
           "mappingType": 1,
-          "pattern": "range_lost_per_hour_mi",
+          "pattern": "has_reduced_range",
+          "preserveFormat": false,
           "thresholds": [],
-          "type": "number",
-          "unit": "lengthmi"
+          "type": "string",
+          "unit": "short",
+          "valueMaps": [
+            {
+              "text": "❄",
+              "value": "1"
+            },
+            {
+              "text": "",
+              "value": "0"
+            }
+          ]
         }
       ],
       "targets": [
@@ -323,7 +338,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\textract(epoch FROM v.start_date) * 1000 AS start_date_ts,\n\textract(epoch FROM v.end_date) * 1000 AS end_date_ts,\n\tv.start_date,\n\tv.end_date,\n\tv.duration,\n\t(coalesce(s_asleep.sleep, 0) + coalesce(s_offline.sleep, 0)) / v.duration as standby,\n\tconvert_km(v.start_[[preferred_range]]_range - v.end_[[preferred_range]]_range, '$length_unit') AS range_diff_$length_unit,\n\t(v.start_ideal_range - v.end_ideal_range) * c.efficiency AS consumption,\n\t((v.start_ideal_range - v.end_ideal_range) * c.efficiency) / (v.duration / 3600) * 1000 as avg_power,\n\tconvert_km(v.start_[[preferred_range]]_range - v.end_[[preferred_range]]_range, '$length_unit') / (v.duration / 3600) AS range_lost_per_hour_$length_unit,\n\tconvert_km(v.start_[[preferred_range]]_range, '$length_unit') AS start_range_$length_unit,\n\tconvert_km(v.end_[[preferred_range]]_range, '$length_unit') AS end_range_$length_unit\nFROM (\n\tSELECT\n\t\tlag(t.end_date) OVER (ORDER BY t.id ASC) AS start_date,\n\t\tt.start_date AS end_date,\n\t\tlag(t.end_ideal_range_km) OVER (ORDER BY t.id ASC) AS start_ideal_range,\n\t\tt.start_ideal_range_km AS end_ideal_range,\n\t\tlag(t.end_rated_range_km) OVER (ORDER BY t.id ASC) AS start_rated_range,\n\t\tt.start_rated_range_km AS end_rated_range,\n\t\tlag(t.end_km) OVER (ORDER BY t.id ASC) AS start_km,\n\t\tt.start_km AS end_km,\n\t\tEXTRACT(EPOCH FROM age(t.start_date, lag(t.end_date) OVER (ORDER BY t.id ASC))) AS duration\n\tFROM\n\t\tdrives t\n\tWHERE\n\t\tcar_id = $car_id\n\tORDER BY\n\t\tid DESC) v,\n\t\tLATERAL (\n\t\t  SELECT\n\t\t    EXTRACT(EPOCH FROM sum(age(end_date, start_date))) as sleep\n\t\t  FROM\n\t\t\tstates s\n\t\t  WHERE\n\t\t\tstate = 'asleep' AND\n\t\t\tv.start_date <= s.start_date AND\n\t\t\ts.end_date <= v.end_date\n\t\t) s_asleep,\n\t\tLATERAL (\n\t\t  SELECT\n\t\t    EXTRACT(EPOCH FROM sum(age(end_date, start_date))) as sleep\n\t\t  FROM\n\t\t\tstates s\n\t\t  WHERE\n\t\t\tstate = 'offline' AND\n\t\t\tv.start_date <= s.start_date AND\n\t\t\ts.end_date <= v.end_date\n\t\t) s_offline,\n\t\tLATERAL (select efficiency from cars where id = $car_id) c\nWHERE\n\tv.duration > ($duration * 60 * 60)\n  AND v.start_ideal_range - v.end_ideal_range >= 0\n\tAND v.end_km - v.start_km < 1;",
+          "rawSql": "with v0 as (\n SELECT\n    lag(t.end_date) OVER w AS start_date,\n    t.start_date AS end_date,\n    lag(t.end_[[preferred_range]]_range_km) OVER w AS start_range,\n    t.start_[[preferred_range]]_range_km AS end_range,\n    lag(t.end_rated_range_km) OVER w AS start_rated_range,\n    t.start_rated_range_km AS end_rated_range,\n    lag(t.end_km) OVER w AS start_km,\n    t.start_km AS end_km,\n    EXTRACT(EPOCH FROM age(t.start_date, lag(t.end_date) OVER w)) AS duration,\n    lag(t.end_position_id) OVER w AS start_position_id,\n    t.start_position_id AS end_position_id\n  FROM drives t\n  WHERE car_id = $car_id AND $__timeFilter(start_date)\n  WINDOW w AS (ORDER BY t.id ASC)\n  ORDER BY id DESC\n),\nv as (\n  SELECT\n    *,\n    start_position.battery_level AS start_soc,\n    end_position.battery_level AS end_soc,\n    start_position.usable_battery_level AS start_usable_soc,\n    end_position.usable_battery_level AS end_usable_soc,\n    greatest(start_position.battery_level - end_position.battery_level, 0) AS soc_diff,\n\t\tend_position.battery_level > end_position.usable_battery_level AS has_reduced_range\n  FROM v0\n  JOIN positions start_position ON start_position_id = start_position.id\n  JOIN positions end_position ON end_position_id = end_position.id\n),\nc as (\n  select efficiency from cars\n)\n\nSELECT\n  round(extract(epoch FROM v.start_date)) * 1000 AS start_date_ts,\n  round(extract(epoch FROM v.end_date)) * 1000 AS end_date_ts,\n  -- Columns\n  v.start_date as start_date_[[length_unit]],\n  v.end_date as end_date_[[length_unit]],\n  v.duration,\n  (coalesce(s_asleep.sleep, 0) + coalesce(s_offline.sleep, 0)) / v.duration as standby,\n\t-soc_diff as soc_diff,\n\tCASE WHEN has_reduced_range THEN 1 ELSE 0 END as has_reduced_range,\n\tconvert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) END, '$length_unit') AS range_diff_$length_unit,\n  CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) * c.efficiency END AS consumption,\n  CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 END as avg_power,\n  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) / (v.duration / 3600) END, '$length_unit') AS range_lost_per_hour_km\nFROM v, c,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'asleep' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_asleep,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'offline' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_offline\nWHERE\n  v.duration > ($duration * 60 * 60)\n  AND v.start_range - v.end_range >= 0\n  AND v.end_km - v.start_km < 1;\n",
           "refId": "A",
           "select": [
             [
@@ -350,9 +365,11 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 19,
+  "schemaVersion": 21,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {
@@ -486,7 +503,7 @@
     ]
   },
   "time": {
-    "from": "now-3M",
+    "from": "now-90d",
     "to": "now"
   },
   "timepicker": {
@@ -517,5 +534,5 @@
   "timezone": "",
   "title": "Vampire Drain",
   "uid": "zhHx2Fggk",
-  "version": 2
+  "version": 1
 }

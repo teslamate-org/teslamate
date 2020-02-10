@@ -5,7 +5,7 @@ defmodule TeslaMate.Log.Position do
   alias TeslaMate.Log.{Car, Drive}
 
   schema "positions" do
-    field :date, :utc_datetime
+    field :date, :utc_datetime_usec
     field :latitude, :float
     field :longitude, :float
     field :elevation, :float
@@ -17,6 +17,7 @@ defmodule TeslaMate.Log.Position do
     field :est_battery_range_km, :float
     field :rated_battery_range_km, :float
     field :battery_level, :integer
+    field :usable_battery_level, :integer
     field :battery_heater, :boolean
     field :battery_heater_on, :boolean
     field :battery_heater_no_power, :boolean
@@ -49,6 +50,7 @@ defmodule TeslaMate.Log.Position do
       :est_battery_range_km,
       :rated_battery_range_km,
       :battery_level,
+      :usable_battery_level,
       :battery_heater_no_power,
       :battery_heater_on,
       :battery_heater,

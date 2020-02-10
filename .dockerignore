@@ -8,3 +8,5 @@ README*
 test/
 priv/static/
 **/node_modules
+import/
+teslamate.bck

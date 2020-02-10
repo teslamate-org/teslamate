@@ -1,13 +1,7 @@
 <div class="car card">
    <div class="card-image">
-    <figure>
-        <div
-          id="map"
-          style="height: 175px; position: relative;"
-          data-id="<%= @car.id %>"
-          phx-update="ignore"
-          phx-hook="SimpleMap"
-        />
+     <figure data-id="<%= @car.id %>" phx-update="ignore" phx-hook="SimpleMap">
+        <div id="map_<%= @car.id %>" class="map" style="height: 175px; position: relative;" />
     </figure>
     <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude}",
                                             phx_hook: "TriggerChange",
@@ -23,29 +17,58 @@
         <p class="subtitle is-6 has-text-weight-light">Model <%= @car.model %> <%= @car.trim_badging %></p>
         <% end %>
       </div>
-       <div class="ml-5">
-        <%=
-          cond do
-            @summary.healthy == false ->
-              raw """
-              <span class="health icon has-text-danger">
-                <span class="ion-ionic ion-md-warning"></span>
-              </span>
-              """
-
-            not is_nil(@error) ->
-              link @error, to: "#", class: "button is-danger is-small is-outlined", disabled: true
-
-            @summary.state == :online and !@summary.sentry_mode and @summary.locked->
-              link gettext("try to sleep"), to: "#", phx_click: "suspend_logging", class: "button is-info is-small is-outlined"
-
-            @summary.state == :suspended ->
-              link gettext("cancel sleep attempt"), to: "#", phx_click: "resume_logging", class: "button is-info is-small is-outlined"
-
-            true ->
-              nil
-          end
-        %>
+       <div class="icons ml-5">
+         <span
+           class="<%= if @fetch_status, do: '', else: 'is-hidden ' %>spinner tooltip has-tooltip-top has-tooltip-left-mobile"
+           data-tooltip='<%= gettext "Fetching vehicle data ..." %>'
+          >
+          <span class="is-loading"></span>
+        </span>
+      <%= if @summary.is_preconditioning do %>
+        <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Preconditioning" %>'>
+          <span class="mdi mdi-air-conditioner"></span>
+        </span>
+      <% end %>
+      <%= if not is_nil(@summary.battery_level) and not is_nil(@summary.usable_battery_level) and @summary.battery_level - @summary.usable_battery_level > 2 do %>
+        <span class="icon has-text-link tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Reduced Battery Range" %>'>
+          <span class="mdi mdi-snowflake"></span>
+        </span>
+      <% end %>
+      <%= if @summary.state != :driving and @summary.is_user_present do %>
+        <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Driver present" %>'>
+          <span class="mdi mdi-account"></span>
+        </span>
+      <% end %>
+      <%= if @summary.plugged_in do %>
+        <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Plugged in" %>'>
+          <span class="mdi mdi-power-plug"></span>
+        </span>
+      <% end %>
+      <%= if @summary.windows_open do %>
+        <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Windows open" %>'>
+          <span class="mdi mdi-window-open"></span>
+        </span>
+      <% end %>
+      <%= if @summary.sentry_mode do %>
+        <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Sentry Mode" %>'>
+          <span class="mdi mdi-shield-check"></span>
+        </span>
+      <% end %>
+      <%= unless is_nil(@summary.locked) do %>
+        <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= (if @summary.locked, do: gettext("Locked"), else: gettext("Unlocked")) %>'>
+          <%= content_tag(:span, nil, class: "mdi mdi-lock" <> (if @summary.locked, do: "", else: "-open-variant")) %>
+        </span>
+      <% end %>
+      <%= if @summary.update_available do %>
+        <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Software Update available" %>'>
+          <span class="mdi mdi-gift-outline"></span>
+        </span>
+      <% end %>
+      <%= if @summary.healthy == false do %>
+        <span class="icon has-text-danger tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Health check failed" %>'>
+          <span class="mdi mdi-alert-box"></span>
+        </span>
+      <% end %>
       </div>
     </div>
     <div class="content">
@@ -53,17 +76,35 @@
         <thead>
           <tr>
             <th></th>
-            <th style="max-width: 40%; width: 40%"></th>
+            <th></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody style="font-variant-numeric: tabular-nums;">
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Status" %></td>
+            <td><%= raw(
+              @translate_state.(@summary.state) <> unless is_nil(@duration) do
+                " #{gettext("for")} " <>
+                case  @duration do
+                  [a , b] -> "#{a}<span class=\"duration-extended\">, #{b}</span>"
+                  [a] -> a
+                end
+              else
+                ""
+              end
+            )%></td>
+          </tr>
+          <%= if @summary.state == :charging and not is_nil(@summary.time_to_full_charge) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Remaining Time" %></td>
             <td><%=
-              @translate_state.(@summary.state) <>
-              unless is_nil(@duration), do: " #{gettext("for")} #{@duration}", else: ""
+                round(@summary.time_to_full_charge * 60 * 60)
+                |> Convert.sec_to_str()
+                |> Enum.reject(&String.ends_with?(&1, "s"))
+                |> Enum.join(", ")
             %></td>
           </tr>
+          <% end %>
           <%= unless is_nil(@summary.ideal_battery_range_km) do %>
           <tr>
             <td class="has-text-weight-medium"><%=
@@ -98,7 +139,7 @@
             %></td>
           </tr>
           <% end %>
-          <%= if @summary.state in [:charging, :charging_complete] do %>
+          <%= if @summary.state == :charging do %>
             <%= unless is_nil(@summary.charge_energy_added) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Charged" %></td>
@@ -113,12 +154,6 @@
             <% end %>
           <% end %>
 
-          <%= if @summary.state != :driving and not is_nil(@summary.plugged_in) do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Plugged in" %></td>
-            <td><%= (if @summary.plugged_in, do: gettext("yes"), else: gettext("no"))  %></td>
-          </tr>
-          <% end %>
           <%= if @summary.plugged_in do %>
             <%= if not is_nil(@summary.scheduled_charging_start_time) do %>
             <tr>
@@ -137,27 +172,43 @@
             <% end %>
           <% end %>
           <%= unless is_nil(@summary.battery_level) do %>
+          <%
+            {soc_text, tooltip} = (fn ->
+              {text, tooltip_battery_level} =
+                case {@summary.battery_level, @summary.usable_battery_level} do
+                  {lvl, lvl} -> {"#{lvl}%", lvl}
+                  {lvl, nil} -> {"#{lvl}%", lvl}
+                  {lvl, usable_lvl} -> {"#{usable_lvl}% (#{lvl}%)", usable_lvl}
+                end
+
+              current_range =
+                case @settings.preferred_range do
+                  :ideal -> @summary.ideal_battery_range_km
+                  :rated -> @summary.rated_battery_range_km
+                end
+
+              tooltip =
+                unless is_nil(current_range) do
+                  r100 = current_range / tooltip_battery_level * 100
+
+                  r100_str =
+                    if @settings.unit_of_length == :mi do
+                      "#{round(r100 / 1.60934)} mi"
+                    else
+                      "#{round(r100)} km"
+                    end
+
+                  gettext("≈ %{range} at 100%", range: r100_str)
+                end
+
+              {text, tooltip}
+            end).()
+          %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "State of Charge" %></td>
-            <td><%= @summary.battery_level %>%</td>
-          </tr>
-          <% end %>
-          <%= unless is_nil(@summary.locked) do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Locked" %></td>
-            <td><%= (if @summary.locked, do: gettext("yes"), else: gettext("no"))  %></td>
-          </tr>
-          <% end %>
-          <%= if @summary.windows_open == true do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Windows open" %></td>
-            <td><%= (if @summary.windows_open, do: gettext("yes"), else: gettext("no"))  %></td>
-          </tr>
-          <% end %>
-          <%= if @summary.sentry_mode do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Sentry Mode" %></td>
-            <td><%= (if @summary.sentry_mode, do: gettext("yes"), else: gettext("no"))  %></td>
+            <td>
+              <span class="tooltip has-tooltip-top has-tooltip-right-desktop is-link has-dotted-underline" data-tooltip='<%= tooltip %>'><%= soc_text %></span>
+            </td>
           </tr>
           <% end %>
           <%= if @summary.state == :driving and not is_nil(@summary.speed) do %>
@@ -198,8 +249,43 @@
           </tr>
             <% end %>
           <% end %>
+          <%= unless is_nil(@summary.version) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Version" %></td>
+            <td><%= @summary.version %></td>
+          </tr>
+          <% end %>
         </tbody>
       </table>
+      <%=
+        cond do
+          not is_nil(@error) ->
+            link @error, to: "#", class: "button is-danger is-small is-outlined is-fullwidth", disabled: true
+
+          @car.settings.sleep_mode_enabled and
+          @summary.state == :online and
+          !@summary.sentry_mode and
+          !@summary.is_user_present and
+          !@summary.is_preconditioning and
+          @summary.locked->
+            disabled =
+              case Locations.may_fall_asleep_at?(@car, @summary) do
+                {:ok, may_fall_asleep?} -> not may_fall_asleep?
+                {:error, _reason} -> true
+              end
+
+            link gettext("try to sleep"), to: "#", phx_click: "suspend_logging",
+                                          class: "button is-info is-small is-outlined is-fullwidth" <> (if @loading, do: " is-loading", else: ""),
+                                          disabled: disabled
+
+          @summary.state == :suspended ->
+            link gettext("cancel sleep attempt"), to: "#", phx_click: "resume_logging",
+                                                  class: "button is-info is-small is-outlined is-fullwidth" <> (if @loading, do: " is-loading", else: "")
+
+          true ->
+            nil
+        end
+    %>
     </div>
   </div>
 </div>

@@ -1,7 +1,7 @@
 defmodule LogMock do
   use GenServer
 
-  defstruct [:pid]
+  defstruct [:pid, :last_update]
   alias __MODULE__, as: State
 
   alias TeslaMate.Log.{Drive, ChargingProcess, Update, Car, Position}
@@ -13,59 +13,72 @@ defmodule LogMock do
     GenServer.start_link(__MODULE__, opts, name: Keyword.fetch!(opts, :name))
   end
 
-  def start_state(name, car_id, state), do: GenServer.call(name, {:start_state, car_id, state})
-  def get_current_state(name, car_id), do: GenServer.call(name, {:get_current_state, car_id})
-
-  def start_drive(name, car_id), do: GenServer.call(name, {:start_drive, car_id})
-  def close_drive(name, drive_id), do: GenServer.call(name, {:close_drive, drive_id})
-
-  def start_update(name, car_id), do: GenServer.call(name, {:start_update, car_id})
-  def cancel_update(name, update_id), do: GenServer.call(name, {:cancel_update, update_id})
-
-  def finish_update(name, update_id, version),
-    do: GenServer.call(name, {:finish_update, update_id, version})
-
-  def start_charging_process(name, car_id, position_attrs, opts \\ []) do
-    GenServer.call(name, {:start_charging_process, car_id, position_attrs, opts})
+  def start_state(name, car, state, opts) do
+    GenServer.call(name, {:start_state, car, state, opts})
   end
 
-  def resume_charging_process(name, process_id) do
-    GenServer.call(name, {:resume_charging_process, process_id})
+  def get_current_state(name, car), do: GenServer.call(name, {:get_current_state, car})
+
+  def start_drive(name, car), do: GenServer.call(name, {:start_drive, car})
+  def close_drive(name, drive, opts), do: GenServer.call(name, {:close_drive, drive, opts})
+
+  def start_update(name, car, opts), do: GenServer.call(name, {:start_update, car, opts})
+  def cancel_update(name, update), do: GenServer.call(name, {:cancel_update, update})
+
+  def finish_update(name, update, vsn, opts) do
+    GenServer.call(name, {:finish_update, update, vsn, opts})
   end
 
-  def complete_charging_process(name, process_id, opts \\ []) do
-    GenServer.call(name, {:complete_charging_process, process_id, opts})
+  def get_latest_update(name, car) do
+    GenServer.call(name, {:get_latest_update, car})
   end
 
-  def insert_position(name, car_id, attrs) do
-    GenServer.call(name, {:insert_position, car_id, attrs})
+  def insert_missed_update(name, car, vsn, opts) do
+    GenServer.call(name, {:insert_missed_update, car, vsn, opts})
   end
 
-  def insert_charge(name, car_id, attrs) do
-    GenServer.call(name, {:insert_charge, car_id, attrs})
+  def start_charging_process(name, car, position_attrs, opts \\ []) do
+    GenServer.call(name, {:start_charging_process, car, position_attrs, opts})
+  end
+
+  def complete_charging_process(name, cproc) do
+    GenServer.call(name, {:complete_charging_process, cproc})
+  end
+
+  def insert_position(name, car_or_drive, attrs) do
+    GenServer.call(name, {:insert_position, car_or_drive, attrs})
+  end
+
+  def insert_charge(name, cproc, attrs) do
+    GenServer.call(name, {:insert_charge, cproc, attrs})
   end
 
   def get_positions_without_elevation(name, min_id, opts) do
     GenServer.call(name, {:get_positions_without_elevation, min_id, opts})
   end
 
-  def create_or_update_car(name, attrs) do
-    GenServer.call(name, {:create_or_update_car, attrs})
+  def update_car(name, car, attrs) do
+    GenServer.call(name, {:update_car, car, attrs})
   end
 
-  def get_latest_position(name, car_id) do
-    GenServer.call(name, {:get_latest_position, car_id})
+  def get_latest_position(name, car) do
+    GenServer.call(name, {:get_latest_position, car})
   end
 
   # Callbacks
 
   @impl true
   def init(opts) do
-    {:ok, %State{pid: Keyword.fetch!(opts, :pid)}}
+    state = %State{
+      pid: Keyword.fetch!(opts, :pid),
+      last_update: Keyword.fetch!(opts, :last_update)
+    }
+
+    {:ok, state}
   end
 
   @impl true
-  def handle_call({:start_state, _car_id, s} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:start_state, _car, s, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Log.State{state: s, start_date: DateTime.utc_now()}}, state}
   end
@@ -74,42 +87,57 @@ defmodule LogMock do
     {:reply, {:ok, %Log.State{state: :online, start_date: DateTime.from_unix!(0)}}, state}
   end
 
+  def handle_call({:insert_position, _, _attrs} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %Log.Position{id: 111}}, state}
+  end
+
+  def handle_call({:insert_charge, _, _attrs} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %Log.Charge{id: 222}}, state}
+  end
+
   def handle_call({:start_charging_process, _, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, 99}, state}
+    {:reply, {:ok, %ChargingProcess{id: 99, start_date: DateTime.utc_now()}}, state}
   end
 
-  def handle_call({:resume_charging_process, _pid} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:complete_charging_process, cproc} = action, _from, %State{} = state) do
+    send(state.pid, action)
+    new_cproc = %ChargingProcess{cproc | charge_energy_added: 45, end_date: DateTime.utc_now()}
+    {:reply, {:ok, new_cproc}, state}
+  end
+
+  def handle_call({:start_drive, _car} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %ChargingProcess{}}, state}
+    {:reply, {:ok, %Drive{id: 111}}, state}
   end
 
-  def handle_call({:complete_charging_process, _, _} = action, _from, %State{pid: pid} = state) do
-    send(pid, action)
-    {:reply, {:ok, %ChargingProcess{charge_energy_added: 45}}, state}
-  end
-
-  def handle_call({:start_drive, _car_id} = action, _from, %State{pid: pid} = state) do
-    send(pid, action)
-    {:reply, {:ok, 111}, state}
-  end
-
-  def handle_call({:close_drive, _drive_id} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:close_drive, _drive, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Drive{duration_min: 10, distance: 20.0}}, state}
   end
 
-  def handle_call({:start_update, _car_id} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:start_update, _car, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, 111}, state}
+    {:reply, {:ok, %Update{id: 111}}, state}
   end
 
-  def handle_call({:cancel_update, _update_id} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:cancel_update, _update} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Update{}}, state}
   end
 
-  def handle_call({:finish_update, _upd_id, _version} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:finish_update, _, _, _} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, %Update{}}, state}
+  end
+
+  def handle_call({:get_latest_update, _car}, _from, %State{last_update: update} = state) do
+    {:reply, update, state}
+  end
+
+  def handle_call({:insert_missed_update, _, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
     {:reply, {:ok, %Update{}}, state}
   end
@@ -119,13 +147,16 @@ defmodule LogMock do
     {:reply, {[], nil}, state}
   end
 
-  def handle_call({:create_or_update_car, attrs} = _action, _from, %State{pid: _pid} = state) do
-    # send(pid, action)
-    %Car{} = car = Ecto.Changeset.apply_changes(attrs)
-    {:reply, {:ok, car}, state}
+  def handle_call({:update_car, car, attrs} = _action, _from, %State{pid: _pid} = state) do
+    result =
+      car
+      |> Car.changeset(attrs)
+      |> Ecto.Changeset.apply_changes()
+
+    {:reply, {:ok, result}, state}
   end
 
-  def handle_call({:get_latest_position, _car_id}, _from, state) do
+  def handle_call({:get_latest_position, _car}, _from, state) do
     {:reply, %Position{latitude: 0.0, longitude: 0.0}, state}
   end
 

@@ -1,0 +1,118 @@
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><%= link gettext("Home"), to: "/" %></li>
+    <li class="is-active"><%= link gettext("Charge Cost"), to: "" %></li>
+  </ul>
+</nav>
+
+<%= f = form_for @changeset, "#", [ phx_submit: :save, class: "charging_process", id: @charging_process.id] %>
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field">
+        <div class="card-image">
+          <figure data-id="<%= @charging_process.id %>" phx-update="ignore" phx-hook="SimpleMap">
+            <div id="map_<%= @charging_process.id %>" class="map" style="height: 250px; position: relative;" />
+          </figure>
+          <%= text_input :position, "#{@charging_process.id}",
+                         value: "#{@charging_process.position.latitude},#{@charging_process.position.longitude}",
+                         phx_hook: "TriggerChange",
+                         class: "is-hidden",
+                         disabled: true
+          %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal" style="margin-top: -6px;">
+    <div class="field-label is-normal"></div>
+    <div class="field-body">
+      <div class="field is-grouped is-grouped-multiline">
+
+        <%= unless is_nil(@charging_process.end_date) do %>
+        <div class="control">
+          <div id="date-tag" class="tags has-addons">
+            <span class="tag is-primary is-light"><span class="icon"><span class="mdi mdi-calendar-range"></span></span></span>
+            <%= content_tag :span, "–", data: [start_date: DateTime.to_iso8601(@charging_process.start_date),
+                                              end_date: DateTime.to_iso8601(@charging_process.end_date)],
+                                        phx_hook: "LocalTimeRange",
+                                        class: "tag" %>
+          </div>
+        </div>
+        <% end %>
+
+        <div class="control">
+          <div id="car-tag" class="tags has-addons">
+            <span class="tag is-info is-light"><span class="icon"><span class="mdi mdi-car"></span></span></span>
+            <span class="tag"><%= @charging_process.car.name %></span>
+          </div>
+        </div>
+
+        <%= unless is_nil(@charging_process.charge_energy_added) do %>
+        <div class="control">
+          <div id="energy-tag" class="tags has-addons">
+            <span class="tag is-warning is-light"><span class="icon"><span class="mdi mdi-flash"></span></span></span>
+            <span class="tag"><%= Float.round(max(@charging_process.charge_energy_used || 0, @charging_process.charge_energy_added), 2) %> kWh</span>
+          </div>
+        </div>
+        <% end %>
+
+        <div class="control">
+          <div id="location-tag" class="tags has-addons">
+            <span class="tag is-danger is-light"><span class="icon"><span class="mdi mdi-map-marker"></span></span></span>
+            <span class="tag"><%=
+              case @charging_process do
+                %ChargingProcess{geofence: %GeoFence{name: name}} ->
+                  name
+
+                %ChargingProcess{address: %Address{name: name, road: road, house_number: no, city: city}} ->
+                  [name || [road, no], city]
+                  |> List.flatten()
+                  |> Enum.reject(&is_nil/1)
+                  |> Enum.join(", ")
+
+                _ ->
+                  "???"
+              end
+            %></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label f, :cost, gettext("Cost"), class: "label" %>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control is-expanded">
+          <%= text_input f, :cost, class: "input",
+                                   type: :number, inputmode: :decimal, min: 0.0, step: 0.01,
+                                   placeholder: gettext("Enter charge cost"),
+                                   phx_hook: "SetLangAttr" %>
+        </div>
+        <p class="help is-danger"><%= error_tag(f, :cost) %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal mt-25">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field is-grouped">
+        <div class="control">
+          <%= link gettext("Back"), to: @redirect_to, class: "button" %>
+        </div>
+        <div class="control""min-width: 300px;">
+          <%= submit (if is_nil(@notification), do: gettext("Save"), else: @notification.message),
+                phx_disable_with: gettext("Saving..."),
+                class: "button " <> (if is_nil(@notification), do: "is-info", else: "is-#{@notification.key}") %>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

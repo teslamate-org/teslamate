@@ -5,8 +5,8 @@ defmodule TeslaMate.Log.Update do
   alias TeslaMate.Log.Car
 
   schema "updates" do
-    field :start_date, :utc_datetime
-    field :end_date, :utc_datetime
+    field :start_date, :utc_datetime_usec
+    field :end_date, :utc_datetime_usec
     field :version, :string
 
     belongs_to :car, Car

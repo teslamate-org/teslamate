@@ -3,10 +3,10 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
   describe "starting" do
     @tag :capture_log
-    test "handles unkown and faulty states", %{test: name} do
+    test "handles unknown and faulty states", %{test: name} do
       events = [
         {:ok, %TeslaApi.Vehicle{state: "unknown"}},
-        {:error, %TeslaApi.Error{message: "boom"}}
+        {:error, %TeslaApi.Error{reason: :boom, message: "boom"}}
       ]
 
       :ok = start_vehicle(name, events)
@@ -24,8 +24,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
@@ -38,7 +38,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :offline}
+      assert_receive {:start_state, car, :offline, []}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :offline}}}
 
       refute_receive _
@@ -51,7 +51,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :asleep}
+      assert_receive {:start_state, car, :asleep, []}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :asleep}}}
 
       refute_receive _
@@ -61,61 +61,6 @@ defmodule TeslaMate.Vehicles.VehicleTest do
   describe "resume_logging/1" do
     alias TeslaMate.Vehicles.Vehicle
 
-    test "leaves suspended and restores previous state", %{test: name} do
-      events = [
-        {:ok, online_event()},
-        {:ok, charging_event(0, "Charging", 5.0)},
-        {:ok, charging_event(0, "Complete", 5.0)},
-        {:ok, charging_event(0, "Complete", 5.0)},
-        {:ok, charging_event(0, "Unplugged", 5.0)}
-      ]
-
-      :ok =
-        start_vehicle(name, events,
-          settings: %{
-            suspend_after_idle_min: round(1 / 60),
-            suspend_min: 10_000
-          }
-        )
-
-      # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
-      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
-
-      # Charging (start)
-      assert_receive {:start_charging_process, ^car_id, _, []}
-      assert_receive {:insert_charge, charging_id, %{charge_energy_added: 5.0}}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
-
-      # Charging (complete)
-      assert_receive {:complete_charging_process, ^charging_id, []}
-      assert_receive {:insert_charge, ^charging_id, %{charge_energy_added: 5.0}}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
-
-      # suspended
-      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
-
-      # Resuming
-      assert :ok = Vehicle.resume_logging(name)
-
-      # Charging continues
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging_complete}}}
-
-      # Unplugging
-      assert_receive {:complete_charging_process, ^charging_id, []}
-
-      # Online
-      assert_receive {:start_state, ^car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
-      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
-
-      # Suspended, again
-      assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
-
-      refute_receive _
-    end
-
     test "does nothing of already online", %{test: name} do
       events = [
         {:ok, online_event()}
@@ -123,8 +68,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}, 100
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online, date: _}, 100
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       assert :ok = Vehicle.resume_logging(name)
@@ -146,13 +91,13 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :asleep}
+      assert_receive {:start_state, car, :asleep, []}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :asleep}}}
 
       assert :ok = Vehicle.resume_logging(name)
 
-      assert_receive {:start_state, ^car_id, :online}, 100
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, ^car, :online, date: _}, 100
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
@@ -172,13 +117,13 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :offline}
+      assert_receive {:start_state, car, :offline, []}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :offline}}}
 
       assert :ok = Vehicle.resume_logging(name)
 
-      assert_receive {:start_state, ^car_id, :online}, 100
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, ^car, :online, date: _}, 100
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
@@ -187,7 +132,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
   describe "settings change" do
     alias TeslaMate.Vehicles.Vehicle
-    alias TeslaMate.Settings.Settings
+    alias TeslaMate.Settings.CarSettings
 
     test "applies new sleep settings", %{test: name} do
       events = [
@@ -201,15 +146,21 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         )
 
       # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, %Car{id: car_id} = car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
 
       refute_receive _, 500
 
       # Reduce suspend_after_idle_min
-      send(name, %Settings{suspend_after_idle_min: 1, suspend_min: 10_000})
+      send(name, %CarSettings{suspend_after_idle_min: 1, suspend_min: 10_000})
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :suspended}}}
+
+      assert_receive {:insert_position,
+                      %Car{
+                        id: ^car_id,
+                        settings: %CarSettings{suspend_after_idle_min: 1, suspend_min: 10_000}
+                      }, %{}}
 
       refute_receive _
     end
@@ -227,8 +178,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, events)
 
       # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
 
       # Too many errors
@@ -248,8 +199,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
 
       # ...
@@ -280,11 +231,35 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, events)
 
       # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
 
       refute_receive _, 100
+    end
+
+    @tag :capture_log
+    test "notices if vehicle is in service ", %{test: name} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event()},
+        {:error, :vehicle_in_service},
+        {:error, :vehicle_in_service},
+        {:error, :vehicle_in_service},
+        {:error, :vehicle_in_service},
+        {:error, :vehicle_in_service},
+        {:ok, online_event()},
+        {:ok, online_event()}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      # Online
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
+
+      refute_receive _, 400
     end
 
     @tag :capture_log
@@ -301,11 +276,139 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, events)
 
       # Online
-      assert_receive {:start_state, car_id, :online}
-      assert_receive {:insert_position, ^car_id, %{}}
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, healthy: true}}}
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :start, healthy: false}}}
+
+      refute_receive _
+    end
+  end
+
+  describe "summary" do
+    test "returns the summary if no api request was completed yet", %{test: name} do
+      events = [
+        fn ->
+          Process.sleep(10_000)
+          {:ok, online_event()}
+        end
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      for _ <- 1..10 do
+        assert %Vehicle.Summary{state: :unavailable, healthy: true} = Vehicle.summary(name)
+      end
+    end
+
+    test "returns the summary even if the api call is blocked", %{test: name} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event()},
+        fn ->
+          Process.sleep(10_000)
+          {:ok, online_event()}
+        end
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car, :online, date: _}
+
+      for _ <- 1..10 do
+        assert %Vehicle.Summary{state: :online, healthy: true} = Vehicle.summary(name)
+      end
+    end
+  end
+
+  describe "updates" do
+    test "logs the current software version at first startup", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events = [
+        {:ok,
+         online_event(vehicle_state: %{timestamp: now_ts, car_version: "42.42.42.0 b2ab650"})}
+      ]
+
+      :ok = start_vehicle(name, events, last_update: nil)
+      date = DateTime.from_unix!(now_ts, :millisecond)
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:insert_missed_update, ^car, "42.42.42.0 b2ab650", date: ^date}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
+
+    test "logs missing updates", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events = [
+        {:ok, online_event(vehicle_state: %{timestamp: now_ts, car_version: "2019.40.50.7"})}
+      ]
+
+      :ok = start_vehicle(name, events, last_update: %Update{version: "2019.40.2.6"})
+      date = DateTime.from_unix!(now_ts, :millisecond)
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:insert_missed_update, ^car, "2019.40.50.7", date: ^date}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
+
+    test "does not log updates <= current version", %{test: name} do
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.50.7 ad132c7b057e"})},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, online_event()},
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.50.6"})},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, online_event()},
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.2.6"})}
+      ]
+
+      :ok =
+        start_vehicle(name, events, last_update: %Update{version: "2019.40.50.7 ad132c7b057e"})
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      assert_receive {:start_state, ^car, :asleep, []}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
+
+      assert_receive {:start_state, ^car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      assert_receive {:start_state, ^car, :asleep, []}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
+
+      assert_receive {:start_state, ^car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
+
+    @tag :capture_log
+    test "handles unexpected :car_version's", %{test: name} do
+      events = [
+        {:ok, online_event(vehicle_state: %{car_version: nil})}
+      ]
+
+      :ok = start_vehicle(name, events, last_update: nil)
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
     end

@@ -3,14 +3,19 @@ defmodule TeslaMateWeb.CarController do
 
   require Logger
 
+  alias TeslaMate.Api, warn: false
   alias TeslaMate.{Log, Vehicles}
 
+  plug :redirect_if_importing when action in [:index]
+  plug :fetch_signed_in when action in [:index]
   plug :redirect_unless_signed_in when action in [:index]
 
   action_fallback TeslaMateWeb.FallbackController
 
   def index(conn, _) do
-    live_render(conn, TeslaMateWeb.CarLive.Index, session: %{})
+    live_render(conn, TeslaMateWeb.CarLive.Index,
+      session: %{"settings" => conn.assigns[:settings], "locale" => get_session(conn, :locale)}
+    )
   end
 
   def suspend_logging(conn, %{"id" => id}) do
@@ -35,8 +40,21 @@ defmodule TeslaMateWeb.CarController do
     send_resp(conn, :no_content, "")
   end
 
+  case Mix.env() do
+    :test -> defp fetch_signed_in(conn, _opts), do: conn
+    _____ -> defp fetch_signed_in(conn, _opts), do: assign(conn, :signed_in?, Api.signed_in?())
+  end
+
+  defp redirect_if_importing(conn, _) do
+    case Application.get_env(:teslamate, :import_directory) do
+      nil -> conn
+      ___ -> conn |> redirect(to: import_page(conn)) |> halt()
+    end
+  end
+
   defp redirect_unless_signed_in(%Plug.Conn{assigns: %{signed_in?: true}} = conn, _), do: conn
   defp redirect_unless_signed_in(conn, _opts), do: conn |> redirect(to: sign_in(conn)) |> halt()
 
   defp sign_in(conn), do: Routes.live_path(conn, TeslaMateWeb.SignInLive.Index)
+  defp import_page(conn), do: Routes.live_path(conn, TeslaMateWeb.ImportLive.Index)
 end

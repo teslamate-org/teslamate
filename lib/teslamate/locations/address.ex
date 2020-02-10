@@ -12,7 +12,8 @@ defmodule TeslaMate.Locations.Address do
     field :longitude, :float
     field :name, :string
     field :neighbourhood, :string
-    field :place_id, :integer
+    field :osm_id, :integer
+    field :osm_type, :string
     field :postcode, :string
     field :raw, :map
     field :road, :string
@@ -27,7 +28,8 @@ defmodule TeslaMate.Locations.Address do
     address
     |> cast(attrs, [
       :display_name,
-      :place_id,
+      :osm_id,
+      :osm_type,
       :latitude,
       :longitude,
       :name,
@@ -44,11 +46,12 @@ defmodule TeslaMate.Locations.Address do
     ])
     |> validate_required([
       :display_name,
-      :place_id,
+      :osm_id,
+      :osm_type,
       :latitude,
       :longitude,
       :raw
     ])
-    |> unique_constraint(:place_id)
+    |> unique_constraint(:osm_id, name: :addresses_osm_id_osm_type_index)
   end
 end

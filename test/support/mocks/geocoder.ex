@@ -1,9 +1,11 @@
 defmodule GeocoderMock do
-  def reverse_lookup(99.9, 99.9) do
+  alias TeslaMate.Locations.Address
+
+  def reverse_lookup(99.9, 99.9, _lang) do
     {:error, :induced_error}
   end
 
-  def reverse_lookup(lat, lng)
+  def reverse_lookup(lat, lng, _lang)
       when lat in [52.51599, 52.515, 52.514521] and lng in [13.35199, 13.351, 13.350144] do
     {:ok,
      %{
@@ -16,7 +18,8 @@ defmodule GeocoderMock do
        longitude: "13.3501101",
        name: nil,
        neighbourhood: "Tiergarten",
-       place_id: 89_721_012,
+       osm_id: 89_721_012,
+       osm_type: "way",
        postcode: "10787",
        raw: %{
          "city_district" => "Mitte",
@@ -34,7 +37,7 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(52.394246, 13.542552) do
+  def reverse_lookup(52.394246, 13.542552, _lang) do
     {:ok,
      %{
        city: nil,
@@ -47,7 +50,8 @@ defmodule GeocoderMock do
        longitude: "13.5425707",
        name: "Tesla Store & Service Center Berlin",
        neighbourhood: "Altglienicke",
-       place_id: 64_445_009,
+       osm_id: 64_445_009,
+       osm_type: "way",
        postcode: "12526",
        raw: %{
          "car" => "Tesla Store & Service Center Berlin",
@@ -66,7 +70,7 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(-25.066188, -130.100502) do
+  def reverse_lookup(-25.066188, -130.100502, _lang) do
     {:ok,
      %{
        city: "Adamstown",
@@ -78,7 +82,8 @@ defmodule GeocoderMock do
        longitude: "-130.100512324384",
        name: nil,
        neighbourhood: nil,
-       place_id: 246_879_822,
+       osm_id: 246_879_822,
+       osm_type: "way",
        postcode: nil,
        raw: %{
          "country" => "Pitcairn Islands",
@@ -91,7 +96,7 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(lat, lon) when is_number(lat) and is_number(lon) do
+  def reverse_lookup(lat, lon, _lang) when is_number(lat) and is_number(lon) do
     {:ok,
      %{
        city: "Bielefeld",
@@ -104,7 +109,8 @@ defmodule GeocoderMock do
        longitude: "8.52631835353143",
        name: "Von-der-Recke-Straße",
        neighbourhood: "Mitte",
-       place_id: 103_619_766,
+       osm_id: 103_619_766,
+       osm_type: "way",
        postcode: "33602",
        raw: %{
          "city" => "Bielefeld",
@@ -119,5 +125,21 @@ defmodule GeocoderMock do
        road: "Von-der-Recke-Straße",
        state: "Nordrhein-Westfalen"
      }}
+  end
+
+  def details(addresses, lang) do
+    {:ok,
+     Enum.map(addresses, fn
+       %Address{display_name: "error"} ->
+         kind = Enum.at([:error], 0)
+         {:ok, _} = {kind, :boom}
+
+       %Address{} = address ->
+         address
+         |> Map.from_struct()
+         |> Map.update(:name, "", fn val -> "#{val}_#{lang}" end)
+         |> Map.update(:state, "", fn val -> "#{val}_#{lang}" end)
+         |> Map.update(:country, "", fn _ -> "#{lang}" end)
+     end)}
   end
 end

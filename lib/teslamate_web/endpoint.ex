@@ -1,18 +1,21 @@
 defmodule TeslaMateWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :teslamate
 
-  socket "/live", TeslaMateWeb.LiveViewSocket
+  @session_options [
+    store: :cookie,
+    key: "_teslamate_key",
+    signing_salt: "yt5O3CAQ"
+  ]
 
-  # Serve at "/" the static files from "priv/static" directory.
-  #
-  # You should set gzip to true if you are running phx.digest
-  # when deploying your static files in production.
-  plug Plug.Static,
-    at: "/",
-    from: :teslamate,
-    gzip: false,
-    only:
-      ~w(css fonts images js favicon.ico robots.txt android-chrome-192x192.png android-chrome-512x512.png apple-touch-icon.png browserconfig.xml favicon-16x16.png favicon-32x32.png mstile-150x150.png safari-pinned-tab.svg site.webmanifest)
+  socket "/live", Phoenix.LiveView.Socket,
+    websocket: [connect_info: [session: @session_options], transport_log: :debug]
+
+  @only ~w(css fonts images js favicon.ico robots.txt android-chrome-192x192.png
+           android-chrome-512x512.png apple-touch-icon.png browserconfig.xml
+           favicon-16x16.png favicon-32x32.png mstile-150x150.png
+           safari-pinned-tab.svg site.webmanifest)
+
+  plug Plug.Static, at: "/", from: :teslamate, gzip: true, only: @only
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -36,10 +39,6 @@ defmodule TeslaMateWeb.Endpoint do
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
-  plug Plug.Session,
-    store: :cookie,
-    key: "_teslamate_key",
-    signing_salt: "yt5O3CAQ"
-
+  plug Plug.Session, @session_options
   plug TeslaMateWeb.Router
 end

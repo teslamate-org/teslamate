@@ -14,8 +14,10 @@
     <link rel="shortcut icon" href="/favicon.ico?v=5AB53N3ALo">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
+    <%= csrf_meta_tag() %>
+    <script defer src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </head>
-  <body>
+  <body tabIndex=0>
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
@@ -38,17 +40,34 @@
 
         <div id="navbar" class="navbar-menu">
           <div class="navbar-end">
+            <%= if grafana_url = @conn.assigns.settings.grafana_url do %>
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link is-arrowless"><%= gettext "Dashboards" %></a>
+              <div class="navbar-dropdown">
+              <%= for %{"title" => title, "uid" => uid} <- list_dashboards() do %>
+                <%= link title, to: "#{grafana_url}/d/#{uid}", class: "navbar-item", target: "_blank" %>
+              <% end %>
+              </div>
+            </div>
+            <% end %>
             <%= link(gettext("Geo-Fences"), to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item") %>
             <%= link(gettext("Settings"), to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5") %>
             <div class="navbar-item tags has-addons">
-              <span class="tag is-primary">v<%= Application.spec(:teslamate, :vsn) %></span>
+              <%= link "v#{Application.spec(:teslamate, :vsn) |> to_string() |> String.trim_trailing(".0")}",
+                        to: "https://github.com/adriankumpf/teslamate/releases",
+                        class: "tag is-primary",
+                        target: "_blank", rel: "noopener noreferrer"
+              %>
             </div>
           </div>
         </div>
       </div>
     </nav>
 
-    <main role="main" class="section">
+    <% show_doante_button = @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) %>
+
+    <%= content_tag :main, role: "main", style: "overflow: hidden;",
+                           class: ["section", to_string(if show_doante_button, do: " full-height")] do %>
       <div class="container">
         <%= Enum.map(get_flash(@conn), fn {flash_key, flash_message} -> %>
           <p class="notification is-<%= flash_key %>"><%= flash_message %></p>
@@ -56,8 +75,19 @@
 
         <%= render @view_module, @view_template, assigns %>
       </div>
-    </main>
+    <% end %>
 
-    <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+    <%= if @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) do %>
+    <footer class="footer">
+      <div class="content has-text-centered">
+          <%= link to: Routes.donate_path(@conn, :index),
+              class: "button is-rounded is-text is-small has-text-grey", type: "button",
+              target: "_blank", rel: "noopener noreferrer" do %>
+            <span class="icon"><i class="mdi mdi-heart"></i> </span>
+            <strong><%= gettext "Donate" %></strong>
+          <% end %>
+      </div>
+    </footer>
+    <% end %>
   </body>
 </html>

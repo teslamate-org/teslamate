@@ -4,6 +4,7 @@ defmodule TeslaMate.Vehicles do
   require Logger
 
   alias __MODULE__.Vehicle
+  alias TeslaMate.Settings.CarSettings
   alias TeslaMate.Log.Car
   alias TeslaMate.Log
 
@@ -13,10 +14,36 @@ defmodule TeslaMate.Vehicles do
     Supervisor.start_link(__MODULE__, opts, name: @name)
   end
 
+  def list do
+    Supervisor.which_children(@name)
+    |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
+      ordered: false,
+      max_concurrency: 10,
+      timeout: 2500
+    )
+    |> Enum.map(fn {:ok, vehicle} -> vehicle end)
+    |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id}} -> id end)
+  end
+
+  def kill do
+    Logger.warn("Restarting #{__MODULE__} supervisor")
+    __MODULE__ |> Process.whereis() |> Process.exit(:kill)
+  end
+
+  def restart do
+    with :ok <- Supervisor.stop(@name, :normal),
+         :ok <- block_until_started(250) do
+      :ok
+    end
+  end
+
   defdelegate summary(id), to: Vehicle
   defdelegate resume_logging(id), to: Vehicle
   defdelegate suspend_logging(id), to: Vehicle
-  defdelegate subscribe(id), to: Vehicle
+  defdelegate subscribe_to_summary(id), to: Vehicle
+  defdelegate subscribe_to_fetch(id), to: Vehicle
+
+  # Callbacks
 
   @impl true
   def init(opts) do
@@ -32,17 +59,7 @@ defmodule TeslaMate.Vehicles do
     )
   end
 
-  def kill do
-    Logger.warn("Restarting #{__MODULE__} supervisor")
-    __MODULE__ |> Process.whereis() |> Process.exit(:kill)
-  end
-
-  def restart do
-    with :ok <- Supervisor.stop(@name, :normal),
-         :ok <- block_until_started(250) do
-      :ok
-    end
-  end
+  # Private
 
   defp block_until_started(0), do: {:error, :restart_failed}
 
@@ -52,7 +69,7 @@ defmodule TeslaMate.Vehicles do
       :ok
     else
       _ ->
-        :timer.sleep(10)
+        Process.sleep(10)
         block_until_started(retries - 1)
     end
   end
@@ -68,7 +85,9 @@ defmodule TeslaMate.Vehicles do
   defp fallback_vehicles do
     vehicles =
       Log.list_cars()
-      |> Enum.map(&%TeslaApi.Vehicle{id: &1.eid, vin: &1.vin, vehicle_id: &1.vid})
+      |> Enum.map(fn %Car{eid: eid, vid: vid, vin: vin, name: name} ->
+        %TeslaApi.Vehicle{id: eid, vin: vin, vehicle_id: vid, display_name: name}
+      end)
 
     if vehicles != [] do
       Logger.warn("Using fallback vehicles:\n\n#{inspect(vehicles, pretty: true)}")
@@ -77,14 +96,26 @@ defmodule TeslaMate.Vehicles do
     vehicles
   end
 
-  defp create_or_update!(%TeslaApi.Vehicle{} = vehicle) do
-    Logger.info("Found '#{vehicle.display_name}'")
+  def create_or_update!(%TeslaApi.Vehicle{} = vehicle) do
+    unless is_nil(name = vehicle.display_name), do: Logger.info("Starting logger for '#{name}'")
 
     {:ok, car} =
       with nil <- Log.get_car_by(vin: vehicle.vin),
            nil <- Log.get_car_by(vid: vehicle.vehicle_id),
            nil <- Log.get_car_by(eid: vehicle.id) do
-        %Car{}
+        settings =
+          case Vehicle.identify(vehicle) do
+            {:ok, %{model: m, trim_badging: nil}} when m in ["S", "X"] ->
+              %CarSettings{suspend_min: 12}
+
+            {:ok, %{model: m}} when m in ["3", "Y"] ->
+              %CarSettings{suspend_min: 12}
+
+            _ ->
+              %CarSettings{}
+          end
+
+        %Car{settings: settings}
       end
       |> Car.changeset(%{
         name: vehicle.display_name,

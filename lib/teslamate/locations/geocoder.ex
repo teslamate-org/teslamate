@@ -1,9 +1,10 @@
 defmodule TeslaMate.Locations.Geocoder do
   alias Mojito.{Response, Error}
+  alias TeslaMate.Locations.Address
 
-  def reverse_lookup(lat, lon) do
+  def reverse_lookup(lat, lon, lang \\ "en") do
     with {:ok, address_raw} <-
-           fetch("https://nominatim.openstreetmap.org/reverse",
+           fetch("https://nominatim.openstreetmap.org/reverse", lang,
              format: :jsonv2,
              addressdetails: 1,
              extratags: 1,
@@ -16,10 +17,32 @@ defmodule TeslaMate.Locations.Geocoder do
     end
   end
 
-  defp fetch(url, params) do
+  def details(addresses, lang) when is_list(addresses) do
+    osm_ids =
+      addresses
+      |> Enum.reject(fn %Address{osm_id: id, osm_type: type} -> is_nil(id) or is_nil(type) end)
+      |> Enum.map(fn %Address{osm_id: id, osm_type: type} ->
+        "#{type |> String.at(0) |> String.upcase()}#{id}"
+      end)
+      |> Enum.join(",")
+
+    with {:ok, raw_addresses} <-
+           fetch("https://nominatim.openstreetmap.org/lookup", lang,
+             osm_ids: osm_ids,
+             format: :jsonv2,
+             addressdetails: 1,
+             extratags: 1,
+             namedetails: 1,
+             zoom: 19
+           ) do
+      {:ok, Enum.map(raw_addresses, &into_address/1)}
+    end
+  end
+
+  defp fetch(url, lang, params) do
     url = assemble_url(url, params)
 
-    case Mojito.get(url, headers()) do
+    case Mojito.get(url, headers(lang), timeout: 15_000) do
       {:ok, %Response{status_code: 200, body: body}} -> {:ok, Jason.decode!(body)}
       {:ok, %Response{body: body}} -> {:error, Jason.decode!(body) |> Map.get("error")}
       {:error, %Error{reason: reason}} -> {:error, reason}
@@ -33,17 +56,13 @@ defmodule TeslaMate.Locations.Geocoder do
     |> URI.to_string()
   end
 
-  defp headers do
+  defp headers(lang) do
     [
       {"User-Agent", "TeslaMate"},
       {"Content-Type", "application/json"},
-      {"Accept-Language", lang()},
+      {"Accept-Language", lang},
       {"Accept", "Application/json; Charset=utf-8"}
     ]
-  end
-
-  defp lang do
-    Application.fetch_env!(:gettext, :default_locale)
   end
 
   # Address Formatting
@@ -58,7 +77,9 @@ defmodule TeslaMate.Locations.Geocoder do
     "path",
     "pedestrian",
     "road_reference",
-    "road_reference_intl"
+    "road_reference_intl",
+    "square",
+    "place"
   ]
 
   @neighbourhood_aliases [
@@ -67,6 +88,8 @@ defmodule TeslaMate.Locations.Geocoder do
     "city_district",
     "district",
     "quarter",
+    "residential",
+    "commercial",
     "houses",
     "subdivision"
   ]
@@ -90,10 +113,13 @@ defmodule TeslaMate.Locations.Geocoder do
   defp into_address(raw) do
     %{
       display_name: Map.get(raw, "display_name"),
-      place_id: Map.get(raw, "place_id"),
+      osm_id: Map.get(raw, "osm_id"),
+      osm_type: Map.get(raw, "osm_type"),
       latitude: Map.get(raw, "lat"),
       longitude: Map.get(raw, "lon"),
-      name: Map.get(raw, "name"),
+      name:
+        Map.get(raw, "name") || get_in(raw, ["namedetails", "name"]) ||
+          get_in(raw, ["namedetails", "alt_name"]),
       house_number: raw["address"] |> get_first(["house_number", "street_number"]),
       road: raw["address"] |> get_first(@road_aliases),
       neighbourhood: raw["address"] |> get_first(@neighbourhood_aliases),
@@ -103,7 +129,7 @@ defmodule TeslaMate.Locations.Geocoder do
       state: raw["address"] |> get_first(["state", "province", "state_code"]),
       state_district: get_in(raw, ["address", "state_district"]),
       country: raw["address"] |> get_first(["country", "country_name"]),
-      raw: raw["address"]
+      raw: raw
     }
   end
 

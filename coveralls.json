@@ -1,0 +1,20 @@
+{
+  "coverage_options": {
+    "treat_no_relevant_lines_as_covered": true,
+    "output_dir": "cover/",
+    "minimum_coverage": 0
+  },
+
+  "terminal_options": {
+    "file_column_width": 40
+  },
+
+  "skip_files": [
+    "lib/tesla_api",
+    "lib/teslamate/release.ex",
+    "lib/teslamate/application.ex",
+    "lib/teslamate/custom_expressions.ex",
+    "lib/teslamate_web.ex"
+  ]
+}
+

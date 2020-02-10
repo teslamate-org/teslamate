@@ -33,6 +33,9 @@ npm-debug.log
 # this depending on your deployment strategy.
 /priv/static/
 
+# CDLR data repository
+/priv/cldr/
+
 # Files matching config/*.secret.exs pattern contain sensitive
 # data and you should not commit them into version control.
 #
@@ -43,7 +46,16 @@ npm-debug.log
 config/*.env
 
 /deploy/
+/import/
 conf/wizzy.json
 
 .env
 .srtm_cache/
+
+# Make sure IDE files don't get committed to the repo
+.idea/
+.eclipse/
+
+# other stuff created by my build env?!
+.elixir_ls/
+assets/package-lock.json

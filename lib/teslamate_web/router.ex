@@ -1,16 +1,19 @@
 defmodule TeslaMateWeb.Router do
   use TeslaMateWeb, :router
 
-  alias TeslaMate.Api, warn: false
+  alias TeslaMateWeb.Plugs.{SetLocale, Donate}
+  alias TeslaMate.Settings
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
+    plug SetLocale
     plug Phoenix.LiveView.Flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :fetch_signed_in
+    plug Donate
+    plug :fetch_settings
   end
 
   pipeline :api do
@@ -24,8 +27,11 @@ defmodule TeslaMateWeb.Router do
     live "/sign_in", SignInLive.Index
     live "/settings", SettingsLive.Index
     live "/geo-fences", GeoFenceLive.Index
-    live "/geo-fences/new", GeoFenceLive.New
-    live "/geo-fences/:id/edit", GeoFenceLive.Edit
+    live "/geo-fences/new", GeoFenceLive.Form
+    live "/geo-fences/:id/edit", GeoFenceLive.Form
+    live "/charge-cost/:id", ChargeLive.Cost
+    live "/import", ImportLive.Index
+    get "/donate", DonateController, :index
   end
 
   scope "/api", TeslaMateWeb do
@@ -35,8 +41,11 @@ defmodule TeslaMateWeb.Router do
     put "/car/:id/logging/suspend", CarController, :suspend_logging
   end
 
-  case Mix.env() do
-    :test -> defp fetch_signed_in(conn, _opts), do: conn
-    _____ -> defp fetch_signed_in(conn, _opts), do: assign(conn, :signed_in?, Api.signed_in?())
+  defp fetch_settings(conn, _opts) do
+    settings = Settings.get_global_settings!()
+
+    conn
+    |> assign(:settings, settings)
+    |> put_session(:settings, settings)
   end
 end

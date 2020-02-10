@@ -1,19 +1,22 @@
 import css from "../css/app.scss";
 
-//// Import dependencies
-
 import "phoenix_html";
-
-//// Import local files
-
 import { Socket } from "phoenix";
 import LiveSocket from "phoenix_live_view";
+
 import * as hooks from "./hooks";
 
-const liveSocket = new LiveSocket("/live", Socket, {
+const csrfToken = document
+  .querySelector("meta[name='csrf-token']")
+  .getAttribute("content");
+
+new LiveSocket("/live", Socket, {
   hooks,
-  params: { baseUrl: window.location.origin }
-});
-liveSocket.connect();
+  params: {
+    _csrf_token: csrfToken,
+    baseUrl: window.location.origin,
+    referrer: document.referrer
+  }
+}).connect();
 
 import "./main";
