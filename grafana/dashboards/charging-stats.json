@@ -208,6 +208,13 @@
           "to": "null"
         }
       ],
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
@@ -742,7 +749,7 @@
       "fontSize": "150%",
       "format": "kwatth",
       "gridPos": {
-        "h": 12,
+        "h": 13,
         "w": 12,
         "x": 0,
         "y": 10
@@ -755,7 +762,7 @@
         "show": true,
         "values": true
       },
-      "legendType": "On graph",
+      "legendType": "Under graph",
       "links": [],
       "maxDataPoints": 3,
       "nullPointMode": "connected",
@@ -818,7 +825,7 @@
       "fontSize": "150%",
       "format": "dtdurations",
       "gridPos": {
-        "h": 12,
+        "h": 13,
         "w": 12,
         "x": 12,
         "y": 10
@@ -831,12 +838,19 @@
         "show": true,
         "values": true
       },
-      "legendType": "On graph",
+      "legendType": "Under graph",
       "links": [],
       "maxDataPoints": 3,
       "nullPointMode": "connected",
       "options": {},
       "pieType": "pie",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "strokeWidth": 1,
       "targets": [
         {
@@ -882,7 +896,7 @@
         "h": 14,
         "w": 3,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 2,
       "links": [],
@@ -995,7 +1009,7 @@
         "h": 14,
         "w": 3,
         "x": 3,
-        "y": 22
+        "y": 23
       },
       "id": 13,
       "links": [],
@@ -1108,7 +1122,7 @@
         "h": 14,
         "w": 9,
         "x": 6,
-        "y": 22
+        "y": 23
       },
       "id": 4,
       "options": {},
@@ -1212,7 +1226,7 @@
         "h": 14,
         "w": 9,
         "x": 15,
-        "y": 22
+        "y": 23
       },
       "id": 6,
       "options": {},
@@ -1326,7 +1340,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 21,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [
     "tesla"
@@ -1336,6 +1350,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },
