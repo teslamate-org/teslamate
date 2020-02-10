@@ -9,7 +9,7 @@ Vehicle data will be published to the following topics (`$car_id` usually starts
 | Topic                                                  | Example              | Description                                                  |
 | ------------------------------------------------------ | -------------------- | ------------------------------------------------------------ |
 | `teslamate/cars/$car_id/display_name`                  | Blue Thunder         | Vehicle Name                                                 |
-| `teslamate/cars/$car_id/state`                         | asleep               | Status of the vehicle (e.g. `onlilne`, `asleep`, `charging`) |
+| `teslamate/cars/$car_id/state`                         | asleep               | Status of the vehicle (e.g. `online`, `asleep`, `charging`) |
 | `teslamate/cars/$car_id/since`                         | 2019-02-29T23:00:07Z | Date of the last status change                               |
 | `teslamate/cars/$car_id/healthy`                       | true                 | Health status of the logger for that vehicle                 |
 | `teslamate/cars/$car_id/version`                       | 2019.32.12.2         | Software Version                                             |
