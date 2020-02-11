@@ -343,30 +343,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
 
-    test "warn if a geo-fence already exists for a location", %{conn: conn} do
-      %GeoFence{} =
-        geofence_fixture(%{name: "Post office", latitude: -25.066188, longitude: -130.100502})
-
-      assert {:ok, view, html} = live(conn, "/geo-fences/new")
-
-      html =
-        render_submit(view, :save, %{
-          geo_fence: %{
-            name: "Post office 2",
-            latitude: -25.066188,
-            longitude: -130.100502,
-            radius: "20"
-          }
-        })
-        |> Floki.parse_document!()
-
-      assert [field_position, _field_name, _field_radius, _field_sleep_mode, _] =
-               Floki.find(html, ".field.is-horizontal")
-
-      assert ["is overlapping with other geo-fence"] =
-               field_position |> Floki.find("span") |> Enum.map(&Floki.text/1)
-    end
-
     test "allows creating of a geo-fence with radius being displayed in ft", %{conn: conn} do
       {:ok, _settings} =
         Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :mi})

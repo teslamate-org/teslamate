@@ -77,4 +77,16 @@ defmodule TeslaMate.CustomExpressions do
       )
     end
   end
+
+  defmacro distance(geofence, position) do
+    quote do
+      fragment(
+        "earth_distance(ll_to_earth(?, ?), ll_to_earth(?, ?))",
+        unquote(geofence).latitude,
+        unquote(geofence).longitude,
+        ^unquote(position).latitude,
+        ^unquote(position).longitude
+      )
+    end
+  end
 end

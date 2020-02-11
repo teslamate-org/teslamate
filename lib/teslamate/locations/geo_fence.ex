@@ -2,8 +2,6 @@ defmodule TeslaMate.Locations.GeoFence do
   use Ecto.Schema
 
   import Ecto.Changeset
-  import Ecto.Query
-  import TeslaMate.CustomExpressions, only: [within_geofence?: 3]
 
   alias TeslaMate.Log.Car
 
@@ -43,24 +41,8 @@ defmodule TeslaMate.Locations.GeoFence do
     |> put_assoc_if(attrs, :sleep_mode_blacklist)
     |> put_assoc_if(attrs, :sleep_mode_whitelist)
     |> validate_required([:name, :latitude, :longitude, :radius])
-    |> validate_number(:radius, greater_than: 0, less_than: 1000)
+    |> validate_number(:radius, greater_than: 0, less_than: 5000)
     |> validate_number(:cost_per_kwh, greater_than_or_equal_to: 0)
-    |> prepare_changes(fn changeset ->
-      self = apply_changes(changeset)
-
-      overlapping? =
-        __MODULE__
-        |> select(count())
-        |> where_exclude(self)
-        |> where([g], within_geofence?(self, g, :left))
-        |> changeset.repo.one() > 0
-
-      if overlapping? do
-        add_error(changeset, :latitude, "is overlapping with other geo-fence")
-      else
-        changeset
-      end
-    end)
   end
 
   defp put_assoc_if(changeset, attrs, key) do
@@ -69,7 +51,4 @@ defmodule TeslaMate.Locations.GeoFence do
       val -> put_assoc(changeset, key, val)
     end
   end
-
-  defp where_exclude(query, %__MODULE__{id: nil}), do: query
-  defp where_exclude(query, %__MODULE__{id: id}), do: where(query, [g], g.id != ^id)
 end

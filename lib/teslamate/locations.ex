@@ -9,7 +9,7 @@ defmodule TeslaMate.Locations do
   import TeslaMate.CustomExpressions
 
   alias __MODULE__.{Address, Geocoder, GeoFence, Cache}
-  alias TeslaMate.Log.{Drive, Position, ChargingProcess}
+  alias TeslaMate.Log.{Drive, ChargingProcess}
   alias TeslaMate.Settings.GlobalSettings
   alias TeslaMate.{Repo, Settings}
 
@@ -99,49 +99,35 @@ defmodule TeslaMate.Locations do
     |> Map.values()
   end
 
-  defp apply_geofence(%GeoFence{id: id} = geofence) do
-    {_n, nil} =
-      from(d in Drive,
-        join: p in Position,
-        on: [id: d.start_position_id],
-        where: within_geofence?(p, geofence)
-      )
-      |> Repo.update_all(set: [start_geofence_id: id])
+  defp apply_geofence(%GeoFence{latitude: lat, longitude: lng, radius: r}, opts \\ []) do
+    except_id = Keyword.get(opts, :except) || -1
+    args = [lat, lng, r, except_id]
 
-    {_n, nil} =
-      from(d in Drive,
-        join: p in Position,
-        on: [id: d.end_position_id],
-        where: within_geofence?(p, geofence)
-      )
-      |> Repo.update_all(set: [end_geofence_id: id])
+    q = fn module, geofence_field, position_field ->
+      """
+        UPDATE #{module.__schema__(:source)} m
+        SET #{geofence_field} = (
+          SELECT id
+          FROM geofences g
+          WHERE
+            earth_box(ll_to_earth(g.latitude, g.longitude), g.radius) @> ll_to_earth(p.latitude, p.longitude) AND
+            earth_distance(ll_to_earth(g.latitude, g.longitude), ll_to_earth(latitude, p.longitude)) < g.radius AND
+            g.id != $4
+          ORDER BY
+            earth_distance(ll_to_earth(g.latitude, g.longitude), ll_to_earth(latitude, p.longitude)) ASC
+          LIMIT 1
+        )
+        FROM positions p
+        WHERE
+          m.#{position_field} = p.id AND
+          earth_box(ll_to_earth($1, $2), $3) @> ll_to_earth(p.latitude, p.longitude) AND
+          earth_distance(ll_to_earth($1, $2), ll_to_earth(latitude, p.longitude)) < $3
+      """
+    end
 
-    {_n, nil} =
-      from(d in ChargingProcess,
-        join: p in Position,
-        on: [id: d.position_id],
-        where: within_geofence?(p, geofence)
-      )
-      |> Repo.update_all(set: [geofence_id: id])
-
-    :ok
-  end
-
-  defp remove_geofence(%GeoFence{id: id}) do
-    {_n, nil} =
-      Drive
-      |> where(start_geofence_id: ^id)
-      |> Repo.update_all(set: [start_geofence_id: nil])
-
-    {_n, nil} =
-      Drive
-      |> where(end_geofence_id: ^id)
-      |> Repo.update_all(set: [end_geofence_id: nil])
-
-    {_n, nil} =
-      ChargingProcess
-      |> where(geofence_id: ^id)
-      |> Repo.update_all(set: [geofence_id: nil])
+    Drive |> q.(:start_geofence_id, :start_position_id) |> Repo.query!(args)
+    Drive |> q.(:end_geofence_id, :end_position_id) |> Repo.query!(args)
+    ChargingProcess |> q.(:geofence_id, :position_id) |> Repo.query!(args)
 
     :ok
   end
@@ -162,9 +148,9 @@ defmodule TeslaMate.Locations do
 
   def find_geofence(%{latitude: _, longitude: _} = point) do
     GeoFence
-    |> select([:id])
+    |> select([:id, :name])
     |> where([geofence], within_geofence?(point, geofence, :left))
-    |> order_by(:id)
+    |> order_by([geofence], asc: distance(geofence, point))
     |> limit(1)
     |> Repo.one()
   end
@@ -223,10 +209,10 @@ defmodule TeslaMate.Locations do
     end)
   end
 
-  def update_geofence(%GeoFence{} = geofence, attrs) do
+  def update_geofence(%GeoFence{id: id} = geofence, attrs) do
     Repo.transaction(fn ->
-      with {:ok, geofence} <- geofence |> GeoFence.changeset(attrs) |> Repo.update(),
-           :ok <- remove_geofence(geofence),
+      with :ok <- apply_geofence(geofence, except: id),
+           {:ok, geofence} <- geofence |> GeoFence.changeset(attrs) |> Repo.update(),
            :ok <- apply_geofence(geofence),
            :ok <- clear_cache() do
         geofence
@@ -236,9 +222,10 @@ defmodule TeslaMate.Locations do
     end)
   end
 
-  def delete_geofence(%GeoFence{} = geofence) do
+  def delete_geofence(%GeoFence{id: id} = geofence) do
     Repo.transaction(fn ->
-      with {:ok, geofence} <- Repo.delete(geofence),
+      with :ok <- apply_geofence(geofence, except: id),
+           {:ok, geofence} <- Repo.delete(geofence),
            :ok <- clear_cache() do
         geofence
       else
