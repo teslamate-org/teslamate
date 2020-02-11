@@ -44,18 +44,12 @@ npm-debug.log
 # variables.
 /config/*.secret.exs
 config/*.env
-
-/deploy/
-/import/
-conf/wizzy.json
-
 .env
+
+/import/
 .srtm_cache/
 
 # Make sure IDE files don't get committed to the repo
 .idea/
 .eclipse/
-
-# other stuff created by my build env?!
 .elixir_ls/
-assets/package-lock.json

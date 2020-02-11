@@ -1,6 +1,6 @@
 FROM elixir:1.10-alpine AS builder
 
-RUN apk add --update --no-cache nodejs yarn git build-base python && \
+RUN apk add --update --no-cache nodejs npm git build-base && \
     mix local.rebar --force && \
     mix local.hex --force
 
@@ -9,17 +9,17 @@ ENV MIX_ENV=prod
 WORKDIR /opt/app
 
 COPY mix.exs mix.lock ./
-RUN mix do deps.get --only $MIX_ENV, deps.compile
+RUN mix "do" deps.get --only $MIX_ENV, deps.compile
 
 COPY assets assets
-RUN (cd assets && yarn install && yarn deploy)
+RUN npm ci --prefix ./assets && npm run deploy --prefix ./assets
 
 COPY config config
 COPY lib lib
 COPY priv priv
 COPY grafana/dashboards grafana/dashboards
 
-RUN mix do phx.digest, compile
+RUN mix "do" phx.digest, compile
 
 RUN mkdir -p /opt/built && mix release --path /opt/built
 

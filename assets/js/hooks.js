@@ -27,7 +27,7 @@ export const Dropdown = {
       $el.classList.toggle("is-active");
     });
 
-    document.addEventListener("click", e => {
+    document.addEventListener("click", () => {
       $el.classList.remove("is-active");
     });
   }
@@ -186,7 +186,7 @@ export const Map = {
     const marker = new Marker(location, { icon, draggable: true })
       .addTo(map)
       .on("dragstart", () => circle.setStyle({ opacity: 0, fill: false }))
-      .on("dragend", e => {
+      .on("dragend", () => {
         const { lat, lng } = marker.getLatLng();
 
         $latitude.value = lat;
