@@ -17,7 +17,7 @@ defmodule TeslaMate.LocationsGeofencesTest do
       latitude: 53.514521,
       longitude: 14.350144,
       radius: 43,
-      cost_per_kwh: 0.79
+      cost_per_kwh: 0.0079
     }
     @invalid_attrs %{
       name: nil,
@@ -268,7 +268,7 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.latitude == 53.514521
       assert geofence.longitude == 14.350144
       assert geofence.radius == 43
-      assert geofence.cost_per_kwh == Decimal.from_float(0.79)
+      assert geofence.cost_per_kwh == Decimal.from_float(0.0079)
       assert geofence.sleep_mode_blacklist == [car]
       assert geofence.sleep_mode_whitelist == [car]
 
