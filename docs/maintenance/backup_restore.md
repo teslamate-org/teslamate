@@ -4,11 +4,11 @@
 
 Create backup file `teslamate.bck`:
 
-Please check your docker configuration, if you did alter the name of the 'service'
-
 ```bash
-docker-compose exec db pg_dump -U teslamate teslamate > teslamate.bck
+docker-compose exec database pg_dump -U teslamate teslamate > teslamate.bck
 ```
+
+If you see the error `ERROR: No such service: database`, please update your _docker-compose.yml_ or use `db` instead of `database` in the above command.
 
 ## Restore
 
@@ -17,7 +17,7 @@ docker-compose exec db pg_dump -U teslamate teslamate > teslamate.bck
 docker-compose down teslamate
 
 # Drop existing data and reinitialize
-docker-compose exec -T db psql -U teslamate << .
+docker-compose exec -T database psql -U teslamate << .
 drop schema public cascade;
 create schema public;
 create extension cube;
@@ -31,5 +31,5 @@ CREATE OR REPLACE FUNCTION public.ll_to_earth(float8, float8)
 .
 
 # Restore
-docker-compose exec -T db psql -U teslamate -d teslamate < teslamate.bck
+docker-compose exec -T database psql -U teslamate -d teslamate < teslamate.bck
 ```
