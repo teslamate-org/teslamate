@@ -125,7 +125,7 @@ export const SimpleMap = {
 
     const map = createMap({
       elId: this.el.dataset.id,
-      zoomControl: false,
+      zoomControl: !!this.el.dataset.zoom,
       dragging: false,
       boxZoom: false,
       doubleClickZoom: false,
