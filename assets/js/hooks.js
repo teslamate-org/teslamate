@@ -80,7 +80,6 @@ export const ConfirmGeoFenceDeletion = {
   }
 };
 
-import "leaflet-control-geocoder";
 import {
   Map as M,
   TileLayer,
@@ -160,68 +159,97 @@ export const TriggerChange = {
 
 export const Map = {
   mounted() {
-    const $radius = document.querySelector("#geo_fence_radius");
-    const $latitude = document.querySelector("#geo_fence_latitude");
-    const $longitude = document.querySelector("#geo_fence_longitude");
+    Promise.all([
+      import(
+        /* webpackPreload: true, webpackChunkName: "geo" */ "leaflet-control-geocoder"
+      ),
+      import(
+        /* webpackPreload: true, webpackChunkName: "geo" */ "@geoman-io/leaflet-geoman-free"
+      )
+    ]).then(() => {
+      const $radius = document.querySelector("#geo_fence_radius");
+      const $latitude = document.querySelector("#geo_fence_latitude");
+      const $longitude = document.querySelector("#geo_fence_longitude");
 
-    let radius = $radius.value;
-    const location = new LatLng($latitude.value, $longitude.value);
+      const location = new LatLng($latitude.value, $longitude.value);
 
-    const map = createMap({ enableHybridLayer: true });
-    map.setView(location, 17);
+      const controlOpts = {
+        position: "topleft",
+        cutPolygon: false,
+        drawCircle: false,
+        drawCircleMarker: false,
+        drawMarker: false,
+        drawPolygon: false,
+        drawPolyline: false,
+        drawRectangle: false,
+        removalMode: false
+      };
 
-    $radius.addEventListener("input", e => {
-      const radius =
-        e.target.dataset.unit === "ft"
-          ? e.target.value / 3.28084
-          : e.target.value;
+      const editOpts = {
+        allowSelfIntersection: false,
+        preventMarkerRemoval: true
+      };
 
-      circle.setRadius(radius);
+      const map = createMap({ enableHybridLayer: true });
+      map.setView(location, 17, { animate: false });
+      map.pm.setLang(LANG);
+      map.pm.addControls(controlOpts);
+      map.pm.enableGlobalEditMode(editOpts);
 
-      return true;
+      const circle = new Circle(location, { radius: $radius.value })
+        .addTo(map)
+        .on("pm:edit", e => {
+          const { lat, lng } = e.target.getLatLng();
+          const radius = Math.round(e.target.getRadius());
+
+          $radius.value = radius;
+          $latitude.value = lat;
+          $longitude.value = lng;
+
+          const mBox = map.getBounds();
+          const cBox = circle.getBounds();
+          const bounds = mBox.contains(cBox) ? mBox : cBox;
+          map.fitBounds(bounds);
+
+          this._push({ lat, lng, radius });
+        });
+
+      new Control.geocoder({ defaultMarkGeocode: false })
+        .on("markgeocode", e => {
+          const { bbox, center } = e.geocode;
+
+          const poly = L.polygon([
+            bbox.getSouthEast(),
+            bbox.getNorthEast(),
+            bbox.getNorthWest(),
+            bbox.getSouthWest()
+          ]);
+
+          circle.setLatLng(center);
+
+          const lBox = poly.getBounds();
+          const cBox = circle.getBounds();
+          const bounds = cBox.contains(lBox) ? cBox : lBox;
+
+          map.fitBounds(bounds);
+          map.pm.enableGlobalEditMode();
+
+          const { lat, lng } = center;
+          const radius = Math.round(circle.getRadius());
+
+          $latitude.value = lat;
+          $longitude.value = lng;
+
+          this._push({ lat, lng, radius });
+        })
+        .addTo(map);
+
+      map.fitBounds(circle.getBounds(), { animate: false });
     });
+  },
 
-    const circle = new Circle(location, { radius }).addTo(map);
-
-    const marker = new Marker(location, { icon, draggable: true })
-      .addTo(map)
-      .on("dragstart", () => circle.setStyle({ opacity: 0, fill: false }))
-      .on("dragend", () => {
-        const { lat, lng } = marker.getLatLng();
-
-        $latitude.value = lat;
-        $longitude.value = lng;
-
-        this.pushEvent("move", { lat, lng });
-
-        circle.setLatLng(marker.getLatLng());
-        circle.setStyle({ opacity: 1, fill: true });
-      });
-
-    new Control.geocoder({ defaultMarkGeocode: false })
-      .on("markgeocode", e => {
-        const { bbox, center } = e.geocode;
-
-        const poly = L.polygon([
-          bbox.getSouthEast(),
-          bbox.getNorthEast(),
-          bbox.getNorthWest(),
-          bbox.getSouthWest()
-        ]);
-
-        map.fitBounds(poly.getBounds());
-
-        marker.setLatLng(center);
-        circle.setLatLng(center);
-
-        const { lat, lng } = center;
-
-        $latitude.value = lat;
-        $longitude.value = lng;
-
-        this.pushEvent("move", { lat, lng });
-      })
-      .addTo(map);
+  _push({ lat: latitude, lng: longitude, radius }) {
+    this.pushEvent("validate", { geo_fence: { latitude, longitude, radius } });
   }
 };
 

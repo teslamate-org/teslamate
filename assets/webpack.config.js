@@ -18,6 +18,7 @@ module.exports = (env, options) => ({
   },
   output: {
     filename: "app.js",
+    publicPath: "/js/",
     path: path.resolve(__dirname, "../priv/static/js")
   },
   module: {

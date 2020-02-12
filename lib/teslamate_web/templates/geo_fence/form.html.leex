@@ -18,16 +18,18 @@
     </div>
     <div class="field-body">
       <div class="field">
-        <div class="control">
+        <div class="control" phx-update="ignore">
           <div id="map" style="height: 400px; position: relative;" phx-update="ignore" phx-hook="Map"></div>
-          <%= text_input f, :latitude, class: "is-hidden" %>
-          <%= text_input f, :longitude, class: "is-hidden" %>
+          <%= hidden_input f, :latitude %>
+          <%= hidden_input f, :longitude %>
+          <%= hidden_input f, :radius %>
         </div>
         <%= if @show_errors do %>
           <p class="help is-danger">
             <%= error_tag(f, :address_id) %>
             <%= error_tag(f, :latitude) %>
             <%= error_tag(f, :longitude) %>
+            <%= error_tag(f, :radius) %>
           </p>
         <% end %>
       </div>
@@ -36,6 +38,7 @@
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
+      <%= label class: "label" do gettext("Name") end %>
     </div>
     <div class="field-body">
       <div class="field is-expanded">
@@ -44,21 +47,6 @@
         </div>
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :name) %></p>
-        <% end %>
-      </div>
-      <div class="field has-addons  is-narrow">
-        <div class="control is-expanded">
-          <%= text_input f, :radius, class: "input", type: :number, min: 0,
-                                     data: [unit: @unit_of_length],
-                                     phx_hook: "SetLangAttr",
-                                     placeholder: gettext("Radius")
-          %>
-        </div>
-        <div class="control addon">
-          <a class="button is-static"><%= @unit_of_length %></a>
-        </div>
-        <%= if @show_errors do %>
-          <p class="help is-danger"><%= error_tag(f, :radius) %></p>
         <% end %>
       </div>
     </div>
@@ -73,7 +61,7 @@
         <div class="control">
           <%= text_input f, :cost_per_kwh, class: "input",
                              type: :number, inputmode: :decimal, min: 0.0, step: 0.0001,
-                             placeholder: "0.0000",
+                             placeholder: "0.00",
                              phx_hook: "SetLangAttr"
           %>
         </div>

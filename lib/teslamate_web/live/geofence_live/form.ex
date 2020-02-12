@@ -6,7 +6,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   alias TeslaMateWeb.{GeoFenceLive, GeoFenceView}
   alias TeslaMateWeb.Router.Helpers, as: Routes
 
-  alias TeslaMate.{Log, Locations, Settings, Convert}
+  alias TeslaMate.{Log, Locations, Settings}
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Log.{Car, Position}
@@ -24,19 +24,9 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       Gettext.put_locale(locale)
     end
 
-    geofence = %GeoFence{radius: radius} = Locations.get_geofence!(id)
+    geofence = Locations.get_geofence!(id)
 
-    {unit_of_length, radius} =
-      case settings do
-        %GlobalSettings{unit_of_length: :km} -> {:m, radius}
-        %GlobalSettings{unit_of_length: :mi} -> {:ft, Convert.m_to_ft(radius)}
-      end
-
-    assigns =
-      base_assigns(geofence, %{radius: round(radius)})
-      |> Map.merge(%{action: :edit, settings: settings, unit_of_length: unit_of_length})
-
-    {:ok, assign(socket, assigns)}
+    {:ok, assign(socket, base_assigns(geofence, settings, :edit))}
   end
 
   def mount(%{"lat" => lat, "lng" => lng}, session, socket) do
@@ -48,25 +38,15 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
     {:ok, settings} = set_grafana_url(settings, socket)
 
-    {unit_of_length, radius} =
-      case settings do
-        %GlobalSettings{unit_of_length: :km} -> {:m, 20}
-        %GlobalSettings{unit_of_length: :mi} -> {:ft, 65}
-      end
-
     geofence = %GeoFence{
-      radius: radius,
+      radius: 20,
       latitude: lat,
       longitude: lng,
       sleep_mode_blacklist: [],
       sleep_mode_whitelist: []
     }
 
-    assigns =
-      base_assigns(geofence)
-      |> Map.merge(%{action: :new, settings: settings, unit_of_length: unit_of_length})
-
-    {:ok, assign(socket, assigns)}
+    {:ok, assign(socket, base_assigns(geofence, settings, :new))}
   end
 
   def mount(_params, session, socket) do
@@ -76,12 +56,6 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       Gettext.put_locale(locale)
     end
 
-    {unit_of_length, radius} =
-      case settings do
-        %GlobalSettings{unit_of_length: :km} -> {:m, 20}
-        %GlobalSettings{unit_of_length: :mi} -> {:ft, 65}
-      end
-
     %{latitude: lat, longitude: lng} =
       case Log.get_latest_position() do
         %Position{latitude: lat, longitude: lng} -> %{latitude: lat, longitude: lng}
@@ -89,29 +63,17 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       end
 
     geofence = %GeoFence{
-      radius: radius,
+      radius: 20,
       latitude: lat,
       longitude: lng,
       sleep_mode_blacklist: [],
       sleep_mode_whitelist: []
     }
 
-    assigns =
-      base_assigns(geofence)
-      |> Map.merge(%{action: :new, settings: settings, unit_of_length: unit_of_length})
-
-    {:ok, assign(socket, assigns)}
+    {:ok, assign(socket, base_assigns(geofence, settings, :new))}
   end
 
   @impl true
-  def handle_event("move", %{"lat" => lat, "lng" => lng}, socket) do
-    changeset =
-      socket.assigns.changeset
-      |> Ecto.Changeset.change(%{latitude: lat, longitude: lng})
-
-    {:noreply, assign(socket, changeset: changeset, show_errors: false)}
-  end
-
   def handle_event("validate", %{"geo_fence" => params}, socket) do
     changeset =
       socket.assigns.geofence
@@ -158,12 +120,6 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   def handle_event("save", %{"geo_fence" => params}, socket) do
     geofence_params =
       params
-      |> Map.update("radius", nil, fn radius ->
-        case socket.assigns.unit_of_length do
-          :ft -> with {radius, _} <- Float.parse(radius), do: Convert.ft_to_m(radius)
-          :m -> radius
-        end
-      end)
       |> Map.put("sleep_mode_blacklist", socket.assigns.sleep_mode_blacklist)
       |> Map.put("sleep_mode_whitelist", socket.assigns.sleep_mode_whitelist)
 
@@ -185,14 +141,17 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
   # Private
 
-  defp base_assigns(geofence, attrs \\ %{}) do
+  defp base_assigns(%GeoFence{} = geofence, %GlobalSettings{} = settings, action)
+       when action in [:new, :edit] do
     %{
+      settings: settings,
       geofence: geofence,
-      changeset: Locations.change_geofence(geofence, attrs),
+      changeset: Locations.change_geofence(geofence),
       car_settings: Settings.get_car_settings(),
       sleep_mode_whitelist: geofence.sleep_mode_whitelist,
       sleep_mode_blacklist: geofence.sleep_mode_blacklist,
-      show_errors: false
+      show_errors: false,
+      action: action
     }
   end
 

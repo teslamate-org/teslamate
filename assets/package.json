@@ -6,6 +6,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
+    "@geoman-io/leaflet-geoman-free": "^2.3.0",
     "@mdi/font": "^4.9.95",
     "bulma-divider": "^0.2.0",
     "bulma-switch": "^2.0.0",
