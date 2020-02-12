@@ -8,6 +8,8 @@ Create backup file `teslamate.bck`:
 docker-compose exec database pg_dump -U teslamate teslamate > teslamate.bck
 ```
 
+If you see the error `ERROR: No such service: database`, please update your _docker-compose.yml_ or use `db` instead of `database` in the above command.
+
 ## Restore
 
 ```bash
