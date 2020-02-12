@@ -6,6 +6,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   alias TeslaMate.Mqtt.Publisher
   alias TeslaMate.Vehicles.Vehicle.Summary
+  alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Vehicles
 
   defstruct [:car_id, :last_summary, :deps, :namespace]
@@ -45,11 +46,15 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   @blacklist [:car]
   @always_published ~w(charge_energy_added charger_actual_current charger_phases
                        charger_power charger_voltage scheduled_charging_start_time
-                       time_to_full_charge shift_state)a
+                       time_to_full_charge shift_state geofence)a
 
   def handle_info(%Summary{} = summary, state) do
     summary
     |> Map.from_struct()
+    |> Stream.map(fn
+      {key = :geofence, %GeoFence{name: name}} -> {key, name}
+      {key, val} -> {key, val}
+    end)
     |> Stream.filter(fn {key, value} ->
       not (key in @blacklist) and (not is_nil(value) or key in @always_published)
     end)

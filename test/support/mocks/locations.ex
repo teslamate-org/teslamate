@@ -5,6 +5,7 @@ defmodule LocationsMock do
   alias __MODULE__, as: State
 
   alias TeslaMate.Settings.CarSettings
+  alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Log.Car
 
   # API
@@ -15,6 +16,10 @@ defmodule LocationsMock do
 
   def may_fall_asleep_at?(name, car, position) do
     GenServer.call(name, {:may_fall_asleep_at?, car, position})
+  end
+
+  def find_geofence(name, point) do
+    GenServer.call(name, {:find_geofence, point})
   end
 
   # Callbacks
@@ -30,7 +35,6 @@ defmodule LocationsMock do
   end
 
   @impl true
-
   def handle_call({:may_fall_asleep_at?, %Car{settings: settings}, position}, _from, state) do
     %{latitude: lat, longitude: lng} = position
 
@@ -44,5 +48,14 @@ defmodule LocationsMock do
       end
 
     {:reply, {:ok, response}, state}
+  end
+
+  def handle_call({:find_geofence, %{latitude: 90, longitude: 45}}, _from, state) do
+    geofence = %GeoFence{id: 0, name: "South Pole", latitude: 90, longitude: 45, radius: 100}
+    {:reply, geofence, state}
+  end
+
+  def handle_call({:find_geofence, %{latitude: _, longitude: _}}, _from, state) do
+    {:reply, nil, state}
   end
 end

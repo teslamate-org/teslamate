@@ -16,6 +16,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             last_used: nil,
             last_response: nil,
             last_state_change: nil,
+            geofence: nil,
             deps: %{},
             task: nil,
             import?: false
@@ -154,6 +155,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         state: state,
         since: data.last_state_change,
         healthy?: healthy?(data.car.id),
+        geofence: data.geofence,
         car: data.car
       })
 
@@ -369,6 +371,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         state: state,
         since: data.last_state_change,
         healthy?: healthy?(data.car.id),
+        geofence: data.geofence,
         car: nil
       })
 
@@ -441,9 +444,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:ok, %Log.State{start_date: last_state_change}} =
       call(data.deps.log, :start_state, [car, :online, date_opts(vehicle)])
 
-    {:ok, _pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle)])
+    {:ok, pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle)])
+    geofence = call(data.deps.locations, :find_geofence, [pos])
 
-    {:next_state, :online, %Data{data | car: car, last_state_change: last_state_change},
+    {:next_state, :online,
+     %Data{data | car: car, last_state_change: last_state_change, geofence: geofence},
      [broadcast_summary(), {:next_event, :internal, evt}, schedule_position_storing()]}
   end
 
@@ -473,10 +478,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("Driving / Start", car_id: data.car.id)
 
         {:ok, drive} = call(data.deps.log, :start_drive, [data.car])
-        {:ok, _pos} = call(data.deps.log, :insert_position, [drive, create_position(vehicle)])
+        {:ok, pos} = call(data.deps.log, :insert_position, [drive, create_position(vehicle)])
+        geofence = call(data.deps.locations, :find_geofence, [pos])
+
+        now = DateTime.utc_now()
 
         {:next_state, {:driving, :available, drive},
-         %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
+         %Data{data | last_state_change: now, last_used: now, geofence: geofence},
          [broadcast_summary(), schedule_fetch(@driving_interval, data)]}
 
       %V{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
@@ -648,9 +656,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, :available, drv}, data) do
     case get(vehicle, [:drive_state, :shift_state]) do
       shift_state when shift_state in ["D", "R", "N"] ->
-        {:ok, _pos} = call(data.deps.log, :insert_position, [drv, create_position(vehicle)])
+        {:ok, pos} = call(data.deps.log, :insert_position, [drv, create_position(vehicle)])
+        geofence = call(data.deps.locations, :find_geofence, [pos])
 
-        {:next_state, {:driving, :available, drv}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:driving, :available, drv},
+         %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
          [broadcast_summary(), schedule_fetch(@driving_interval, data)]}
 
       shift_state when is_nil(shift_state) or shift_state == "P" ->

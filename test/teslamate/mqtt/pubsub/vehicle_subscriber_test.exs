@@ -3,6 +3,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
   alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
   alias TeslaMate.Vehicles.Vehicle.Summary
+  alias TeslaMate.Locations.GeoFence
 
   defp start_subscriber(name, car_id, namespace \\ nil) do
     publisher_name = :"mqtt_publisher_#{name}"
@@ -49,12 +50,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       update_available: false,
       is_preconditioning: true,
       is_user_present: false,
-      is_climate_on: true
+      is_climate_on: true,
+      geofence: %GeoFence{id: 0, name: "Home", latitude: 0.0, longitude: 0.0, radius: 20}
     }
 
     send(pid, summary)
 
-    for {key, val} <- Map.from_struct(summary), not is_nil(val) and key != :since do
+    for {key, val} <- Map.from_struct(summary),
+        not is_nil(val) and key not in [:since, :geofence] do
       topic = "teslamate/cars/0/#{key}"
       data = to_string(val)
       assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: true, qos: 1]}}
@@ -64,6 +67,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     assert_receive {MqttPublisherMock,
                     {:publish, "teslamate/cars/0/since", ^iso_time, [retain: true, qos: 1]}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/geofence", "Home", [retain: true, qos: 1]}}
 
     for key <- [
           :charge_energy_added,
@@ -124,6 +130,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert_receive {MqttPublisherMock,
                     {:publish, "teslamate/cars/0/shift_state", "", [retain: true, qos: 1]}}
 
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/geofence", "", [retain: true, qos: 1]}}
+
     refute_receive _
   end
 
@@ -156,7 +165,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
           :charger_voltage,
           :scheduled_charging_start_time,
           :time_to_full_charge,
-          :shift_state
+          :shift_state,
+          :geofence
         ] do
       topic = "teslamate/account_0/cars/0/#{key}"
       assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}

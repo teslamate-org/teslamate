@@ -87,9 +87,9 @@ defmodule LogMock do
     {:reply, {:ok, %Log.State{state: :online, start_date: DateTime.from_unix!(0)}}, state}
   end
 
-  def handle_call({:insert_position, _, _attrs} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:insert_position, _, attrs} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %Log.Position{id: 111}}, state}
+    {:reply, {:ok, struct!(Log.Position, attrs)}, state}
   end
 
   def handle_call({:insert_charge, _, _attrs} = action, _from, %State{pid: pid} = state) do

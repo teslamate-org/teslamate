@@ -416,4 +416,61 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       refute_receive _
     end
   end
+
+  describe "geofencing" do
+    alias TeslaMate.Locations.GeoFence
+
+    test "changes geofence when enterling or leaving", %{test: name} do
+      ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      drive_event = fn s, lat, lng ->
+        online_event(drive_state: %{timestamp: ts, shift_state: s, latitude: lat, longitude: lng})
+      end
+
+      events = [
+        {:ok, online_event()},
+        {:ok, drive_event.("D", 90, 45)},
+        {:ok, drive_event.("D", 90, 45.1)},
+        {:ok, drive_event.("D", 90, 45.2)},
+        {:ok, drive_event.("D", 90, 45.1)},
+        {:ok, drive_event.("P", 90, 45)}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{longitude: 45}}
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :online, geofence: %GeoFence{name: "South Pole"}}}}
+
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 45}}
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :driving, geofence: %GeoFence{name: "South Pole"}}}}
+
+      assert_receive {:insert_position, ^drive, %{longitude: 45.1}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, geofence: nil}}}
+
+      assert_receive {:insert_position, ^drive, %{longitude: 45.2}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, geofence: nil}}}
+
+      assert_receive {:insert_position, ^drive, %{longitude: 45.1}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, geofence: nil}}}
+
+      assert_receive {:close_drive, ^drive, lookup_address: true}
+
+      assert_receive {:start_state, ^car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{longitude: 45}}
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :online, geofence: %GeoFence{name: "South Pole"}}}}
+
+      refute_receive _
+    end
+  end
 end

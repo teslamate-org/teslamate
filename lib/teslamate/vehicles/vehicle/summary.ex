@@ -10,19 +10,20 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
-    charger_actual_current charger_voltage version update_available is_user_present
+    charger_actual_current charger_voltage version update_available is_user_present geofence
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
     %__MODULE__{state: :unavailable, healthy: healthy?, car: car}
   end
 
-  def into(vehicle, %{state: state, since: since, healthy?: healthy?, car: car}) do
+  def into(vehicle, %{state: state, since: since, healthy?: healthy?, car: car, geofence: gf}) do
     %__MODULE__{
       format_vehicle(vehicle)
       | state: format_state(state),
         since: since,
         healthy: healthy?,
+        geofence: gf,
         car: car
     }
   end
