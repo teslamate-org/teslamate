@@ -39,7 +39,8 @@ defmodule TeslaMateWeb.SignInLiveTest do
       credentials: %{email: "$email", password: "$password"}
     })
 
-    assert {:error, {:redirect, %{to: "/"}}} = render_submit(view, :save, %{})
+    render_submit(view, :save, %{})
+    assert_redirect(view, "/")
 
     assert_receive {ApiMock, {:sign_in, %Credentials{email: "$email", password: "$password"}}}
   end

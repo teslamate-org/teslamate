@@ -478,7 +478,10 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       # change car
 
-      assert html = render_click(view, :car, %{id: two.id})
+      render_click(view, :car, %{id: two.id})
+      assert_redirect(view, path = "/settings?car=" <> id)
+      assert id == to_string(two.id)
+      assert {:ok, view, html} = live(conn, path)
 
       assert two.name ==
                html
@@ -502,17 +505,20 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       # change back
 
-      assert html =
-               render_click(view, :car, %{id: one.id})
-               |> Floki.parse_document!()
+      render_click(view, :car, %{id: one.id})
+      assert_redirect(view, path = "/settings?car=" <> id)
+      assert id == to_string(one.id)
+      assert {:ok, view, html} = live(conn, path)
 
       assert one.name ==
                html
+               |> Floki.parse_document!()
                |> Floki.find(".tabs .is-active")
                |> Floki.text()
 
       assert [{"option", [{"value", "90"}, {"selected", "selected"}], ["90 min"]}] =
                html
+               |> Floki.parse_document!()
                |> Floki.find("#car_settings_#{one.id}_suspend_min option")
                |> Enum.filter(&match?({_, [_, {"selected", "selected"}], _}, &1))
     end

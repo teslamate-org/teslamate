@@ -153,10 +153,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       radius = Floki.find(html, "#geo_fence_radius")
       assert ["100.0"] = Floki.attribute(radius, "value")
 
-      assert {:error, {:redirect, %{to: "/geo-fences"}}} =
-               render_submit(view, :save, %{
-                 geo_fence: %{name: "Adamstown", longitude: 0, latitude: 0, radius: 20}
-               })
+      render_submit(view, :save, %{
+        geo_fence: %{name: "Adamstown", longitude: 0, latitude: 0, radius: 20}
+      })
+
+      assert_redirect(view, "/geo-fences")
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
@@ -281,15 +282,16 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
              |> Floki.find("#geo_fence_radius")
              |> Floki.attribute("value") == ["20"]
 
-      assert {:error, {:redirect, %{to: "/geo-fences"}}} =
-               render_submit(view, :save, %{
-                 geo_fence: %{
-                   name: "post office",
-                   latitude: -25.066188,
-                   longitude: -130.100502,
-                   radius: 25
-                 }
-               })
+      render_submit(view, :save, %{
+        geo_fence: %{
+          name: "post office",
+          latitude: -25.066188,
+          longitude: -130.100502,
+          radius: 25
+        }
+      })
+
+      assert_redirect(view, "/geo-fences")
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
@@ -303,15 +305,16 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
 
-      assert {:error, {:redirect, %{to: "/geo-fences"}}} =
-               render_submit(view, :save, %{
-                 geo_fence: %{
-                   name: "post office",
-                   latitude: -25.066188,
-                   longitude: -130.100502,
-                   radius: 15.2
-                 }
-               })
+      render_submit(view, :save, %{
+        geo_fence: %{
+          name: "post office",
+          latitude: -25.066188,
+          longitude: -130.100502,
+          radius: 15.2
+        }
+      })
+
+      assert_redirect(view, "/geo-fences")
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
@@ -362,15 +365,16 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
              |> Floki.find("#sleep_mode_#{another_car.id}")
              |> Floki.attribute("checked")
 
-    assert {:error, {:redirect, %{to: "/geo-fences"}}} =
-             render_submit(view, :save, %{
-               geo_fence: %{
-                 name: "post office",
-                 latitude: -25.066188,
-                 longitude: -130.100502,
-                 radius: 25
-               }
-             })
+    render_submit(view, :save, %{
+      geo_fence: %{
+        name: "post office",
+        latitude: -25.066188,
+        longitude: -130.100502,
+        radius: 25
+      }
+    })
+
+    assert_redirect(view, "/geo-fences")
 
     assert [
              %GeoFence{
@@ -410,8 +414,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
              |> Floki.find("#sleep_mode_#{another_car.id}")
              |> Floki.attribute("checked")
 
-    assert {:error, {:redirect, %{to: "/geo-fences"}}} =
-             render_submit(view, :save, %{geo_fence: %{name: "post_office", radius: 20}})
+    render_submit(view, :save, %{geo_fence: %{name: "post_office", radius: 20}})
+    assert_redirect(view, "/geo-fences")
 
     assert [
              %GeoFence{

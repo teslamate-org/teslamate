@@ -12,7 +12,7 @@
     <%= for {car_id, %{original: %{car: car}}} <- @car_settings do %>
       <%=
         content_tag :li, class: (if car_id == @car, do: "is-active") do
-          link car.name, to: "#", phx_click: "car", phx_value_id: car_id
+          link car.name || "???", to: "#", phx_click: "car", phx_value_id: car_id
         end
       %>
     <% end %>
