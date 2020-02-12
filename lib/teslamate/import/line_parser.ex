@@ -43,6 +43,8 @@ defmodule TeslaMate.Import.LineParser do
   defp map_value("state", "waking"), do: "online"
   defp map_value("state", "shutdown"), do: "online"
 
+  defp map_value("scheduled_charging_start_time", _val), do: nil
+
   @boolean ~w(battery_heater_on is_climate_on is_front_defroster_on is_rear_defroster_on
               fast_charger_present not_enough_power_to_heat)
 
