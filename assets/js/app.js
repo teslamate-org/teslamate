@@ -15,7 +15,8 @@ new LiveSocket("/live", Socket, {
   params: {
     _csrf_token: csrfToken,
     baseUrl: window.location.origin,
-    referrer: document.referrer
+    referrer: document.referrer,
+    tz: Intl && Intl.DateTimeFormat().resolvedOptions().timeZone
   }
 }).connect();
 

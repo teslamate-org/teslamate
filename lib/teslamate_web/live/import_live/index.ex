@@ -19,16 +19,21 @@ defmodule TeslaMateWeb.ImportLive.Index do
 
   @impl true
   def mount(_params, %{"settings" => _, "locale" => locale}, socket) do
-    if connected?(socket) do
-      Gettext.put_locale(locale)
-      :ok = Import.subscribe()
-    end
+    tz =
+      if connected?(socket) do
+        Gettext.put_locale(locale)
+        :ok = Import.subscribe()
+        get_connect_params(socket)["tz"]
+      end
+
+    timezones = Timex.timezones()
+    timezone = get_timezone() || Enum.find(timezones, &match?(^tz, &1))
 
     socket =
       socket
       |> assign(status: Import.get_status())
-      |> assign(changeset: Settings.changeset(%{timezone: get_time_zone()}))
-      |> assign(timezones: Timex.timezones())
+      |> assign(changeset: Settings.changeset(%{timezone: timezone}))
+      |> assign(timezones: timezones)
 
     {:ok, socket}
   end
@@ -61,7 +66,7 @@ defmodule TeslaMateWeb.ImportLive.Index do
 
   ## Private
 
-  defp get_time_zone do
+  defp get_timezone do
     case Timex.local() do
       %DateTime{time_zone: tz} -> tz
       _ -> nil
