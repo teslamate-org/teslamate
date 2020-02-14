@@ -6,6 +6,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   alias __MODULE__.Summary
   alias TeslaMate.{Vehicles, Api, Log, Locations, Settings, Convert}
   alias TeslaMate.Settings.CarSettings
+  alias TeslaMate.Locations.GeoFence
 
   alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge, VehicleConfig}
   alias TeslaApi.Vehicle
@@ -250,27 +251,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_response: vehicle},
          [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
 
-      {:ok, %Vehicle{state: "offline"} = vehicle} ->
+      {:ok, %Vehicle{state: state} = vehicle} when state in ["offline", "asleep"] ->
         data =
-          if is_nil(data.last_response) do
-            %Data{data | last_response: restore_last_knwon_values(vehicle, data)}
-          else
-            data
+          with %Data{last_response: nil} <- data do
+            {last_response, geofence} = restore_last_knwon_values(vehicle, data)
+            %Data{data | last_response: last_response, geofence: geofence}
           end
 
         {:keep_state, data,
-         [broadcast_fetch(false), {:next_event, :internal, {:update, {:offline, vehicle}}}]}
-
-      {:ok, %Vehicle{state: "asleep"} = vehicle} ->
-        data =
-          if is_nil(data.last_response) do
-            %Data{data | last_response: restore_last_knwon_values(vehicle, data)}
-          else
-            data
-          end
-
-        {:keep_state, data,
-         [broadcast_fetch(false), {:next_event, :internal, {:update, {:asleep, vehicle}}}]}
+         [
+           broadcast_fetch(false),
+           {:next_event, :internal, {:update, {String.to_atom(state), vehicle}}}
+         ]}
 
       {:ok, %Vehicle{state: state} = vehicle} ->
         Logger.warn(
@@ -489,8 +481,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       %V{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
       when charging_state in ["Starting", "Charging"] ->
-        alias Locations.GeoFence
-
         position = create_position(vehicle)
 
         {:ok, cproc} =
@@ -784,7 +774,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         ideal_battery_range: position.ideal_battery_range_km |> Convert.km_to_miles(10),
         est_battery_range: position.est_battery_range_km |> Convert.km_to_miles(10),
         battery_range: position.rated_battery_range_km |> Convert.km_to_miles(10),
-        battery_level: position.battery_level
+        battery_level: position.battery_level,
+        usable_battery_level: position.usable_battery_level
       }
 
       climate = %Climate{
@@ -792,9 +783,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
         inside_temp: position.inside_temp
       }
 
-      %Vehicle{vehicle | drive_state: drive, charge_state: charge, climate_state: climate}
+      vehicle = %Vehicle{
+        vehicle
+        | drive_state: drive,
+          charge_state: charge,
+          climate_state: climate
+      }
+
+      geofence = call(data.deps.locations, :find_geofence, [position])
+
+      {vehicle, geofence}
     else
-      _ -> vehicle
+      _ -> {vehicle, nil}
     end
   end
 
