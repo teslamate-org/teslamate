@@ -449,8 +449,7 @@ defmodule TeslaMate.ImportTest do
                 ],
                 data: %Log.Position{},
                 valid?: false
-              }}},
-            [{TeslaMate.Vehicles.Vehicle, :handle_event, 4, [file: _, line: _]}, _, _]} = msg
+              }}}, [_ | _]} = msg
 
     refute_receive _
   end

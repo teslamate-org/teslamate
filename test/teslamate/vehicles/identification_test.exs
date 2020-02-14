@@ -22,13 +22,31 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationTest do
   end
 
   test "changes the car name" do
+    ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     events = [
-      {:ok, online_event(display_name: "FooBar")},
-      {:ok, online_event(display_name: "FooBar")},
+      {:ok,
+       online_event(
+         display_name: "FooBar",
+         drive_state: %{timestamp: ts, latitude: 0, longitude: 0}
+       )},
+      {:ok,
+       online_event(
+         display_name: "FooBar",
+         drive_state: %{timestamp: ts + 1, latitude: 0, longitude: 0}
+       )},
       {:ok, %TeslaApi.Vehicle{state: "offline"}},
       {:ok, %TeslaApi.Vehicle{state: "offline"}},
-      {:ok, online_event(display_name: "Bar")},
-      {:ok, online_event(display_name: "Bar")}
+      {:ok,
+       online_event(
+         display_name: "Bar",
+         drive_state: %{timestamp: ts + 1_000_000, latitude: 0, longitude: 0}
+       )},
+      {:ok,
+       online_event(
+         display_name: "Bar",
+         drive_state: %{timestamp: ts + 1_000_001, latitude: 0, longitude: 0}
+       )}
     ]
 
     :ok = start_vehicles(events)

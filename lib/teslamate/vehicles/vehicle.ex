@@ -4,7 +4,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   require Logger
 
   alias __MODULE__.Summary
-  alias TeslaMate.{Vehicles, Api, Log, Locations, Settings, Convert}
+  alias TeslaMate.{Vehicles, Api, Log, Locations, Settings, Convert, Repo}
   alias TeslaMate.Settings.CarSettings
   alias TeslaMate.Locations.GeoFence
 
@@ -430,14 +430,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Logger.info("Start / :online", car_id: data.car.id)
 
     {:ok, attrs} = identify(vehicle)
-    {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs])
-    :ok = synchronize_updates(vehicle, data)
 
-    {:ok, %Log.State{start_date: last_state_change}} =
-      call(data.deps.log, :start_state, [car, :online, date_opts(vehicle)])
+    {:ok, {car, last_state_change, geofence}} =
+      Repo.transaction(fn ->
+        {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs])
 
-    {:ok, pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle)])
-    geofence = call(data.deps.locations, :find_geofence, [pos])
+        :ok = synchronize_updates(vehicle, data)
+
+        {:ok, %Log.State{start_date: last_state_change}} =
+          call(data.deps.log, :start_state, [car, :online, date_opts(vehicle)])
+
+        {:ok, pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle)])
+        geofence = call(data.deps.locations, :find_geofence, [pos])
+
+        {car, last_state_change, geofence}
+      end)
 
     {:next_state, :online,
      %Data{data | car: car, last_state_change: last_state_change, geofence: geofence},
@@ -469,9 +476,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
       when shift_state in ["D", "N", "R"] ->
         Logger.info("Driving / Start", car_id: data.car.id)
 
-        {:ok, drive} = call(data.deps.log, :start_drive, [data.car])
-        {:ok, pos} = call(data.deps.log, :insert_position, [drive, create_position(vehicle)])
-        geofence = call(data.deps.locations, :find_geofence, [pos])
+        {:ok, {drive, geofence}} =
+          Repo.transaction(fn ->
+            {:ok, drive} = call(data.deps.log, :start_drive, [data.car])
+            {:ok, pos} = call(data.deps.log, :insert_position, [drive, create_position(vehicle)])
+            geofence = call(data.deps.locations, :find_geofence, [pos])
+            {drive, geofence}
+          end)
 
         now = DateTime.utc_now()
 
@@ -484,13 +495,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
         position = create_position(vehicle)
 
         {:ok, cproc} =
-          call(data.deps.log, :start_charging_process, [
-            data.car,
-            position,
-            [lookup_address: !data.import?]
-          ])
+          Repo.transaction(fn ->
+            {:ok, cproc} =
+              call(data.deps.log, :start_charging_process, [
+                data.car,
+                position,
+                [lookup_address: !data.import?]
+              ])
 
-        :ok = insert_charge(cproc, vehicle, data)
+            :ok = insert_charge(cproc, vehicle, data)
+
+            cproc
+          end)
 
         ["Charging", "SOC: #{lvl}%", with(%GeoFence{name: name} <- cproc.geofence, do: name)]
         |> Enum.reject(&is_nil/1)
@@ -528,8 +544,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [broadcast_summary(), schedule_fetch(interval, data)]}
 
       state ->
-        {:ok, _pos} = call(data.deps.log, :insert_position, [data.car, create_position(vehicle)])
-        :ok = insert_charge(cproc, vehicle, data)
+        Repo.transaction(fn ->
+          {:ok, _} = call(data.deps.log, :insert_position, [data.car, create_position(vehicle)])
+          :ok = insert_charge(cproc, vehicle, data)
+        end)
 
         {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
           call(data.deps.log, :complete_charging_process, [cproc])
@@ -597,18 +615,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
       has_gained_range? and offline_min >= 5 ->
         unless is_nil(drv), do: timeout_drive(drv, data)
 
-        {:ok, cproc} =
-          call(data.deps.log, :start_charging_process, [
-            data.car,
-            create_position(last),
-            [lookup_address: !data.import?]
-          ])
-
-        :ok = insert_charge(cproc, put_charge_defaults(last), data)
-        :ok = insert_charge(cproc, put_charge_defaults(now), data)
-
         {:ok, %Log.ChargingProcess{charge_energy_added: added}} =
-          call(data.deps.log, :complete_charging_process, [cproc])
+          Repo.transaction(fn ->
+            {:ok, cproc} =
+              call(data.deps.log, :start_charging_process, [
+                data.car,
+                create_position(last),
+                [lookup_address: !data.import?]
+              ])
+
+            :ok = insert_charge(cproc, put_charge_defaults(last), data)
+            :ok = insert_charge(cproc, put_charge_defaults(now), data)
+            {:ok, cproc} = call(data.deps.log, :complete_charging_process, [cproc])
+
+            cproc
+          end)
 
         Logger.info("Vehicle was charged while being offline: #{added} kWh", car_id: data.car.id)
 
@@ -646,8 +667,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, :available, drv}, data) do
     case get(vehicle, [:drive_state, :shift_state]) do
       shift_state when shift_state in ["D", "R", "N"] ->
-        {:ok, pos} = call(data.deps.log, :insert_position, [drv, create_position(vehicle)])
-        geofence = call(data.deps.locations, :find_geofence, [pos])
+        geofence =
+          Repo.checkout(fn ->
+            {:ok, pos} = call(data.deps.log, :insert_position, [drv, create_position(vehicle)])
+            call(data.deps.locations, :find_geofence, [pos])
+          end)
 
         {:next_state, {:driving, :available, drv},
          %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
