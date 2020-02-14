@@ -26,6 +26,7 @@ defmodule TeslaMate.Release do
   end
 
   defp repos do
+    Application.ensure_all_started(:ssl)
     Application.load(@app)
     Application.fetch_env!(@app, :ecto_repos)
   end

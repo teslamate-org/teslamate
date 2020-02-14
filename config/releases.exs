@@ -46,6 +46,7 @@ config :teslamate, TeslaMate.Repo,
   database: System.fetch_env!("DATABASE_NAME"),
   hostname: System.fetch_env!("DATABASE_HOST"),
   port: System.get_env("DATABASE_PORT", "5432"),
+  ssl: System.get_env("DATABASE_SSL", "false") == "true",
   pool_size: System.get_env("DATABASE_POOL_SIZE", "10") |> String.to_integer(),
   timeout: System.get_env("DATABASE_TIMEOUT", "60000") |> String.to_integer()
 
