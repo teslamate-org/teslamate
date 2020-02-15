@@ -4,6 +4,7 @@ defmodule TeslaMateWeb.Plugs.Donate do
   alias TeslaMate.{Release, Import}
 
   @max_age 30 * 24 * 60 * 60
+  def max_age, do: @max_age
 
   def init(opts), do: opts
 
