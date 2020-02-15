@@ -46,9 +46,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert [
                _,
-               ["Victory Column", "52.51452, 13.35014", "100 m", _],
+               ["Post office", "-25.06619, -130.1005", "100 m", _],
                ["Service Center", "52.39425, 13.54255", "100 m", _],
-               ["Post office", "-25.06619, -130.1005", "100 m", _]
+               ["Victory Column", "52.51452, 13.35014", "100 m", _]
              ] =
                html
                |> Floki.parse_document!()

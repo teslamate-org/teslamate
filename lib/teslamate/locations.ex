@@ -136,7 +136,7 @@ defmodule TeslaMate.Locations do
 
   def list_geofences do
     GeoFence
-    |> order_by([g], fragment("? COLLATE \"C\" DESC", g.name))
+    |> order_by([g], fragment("? COLLATE \"C\" ASC", g.name))
     |> Repo.all()
   end
 
