@@ -210,8 +210,6 @@ export const Map = {
           const cBox = circle.getBounds();
           const bounds = mBox.contains(cBox) ? mBox : cBox;
           map.fitBounds(bounds);
-
-          this._push({ lat, lng, radius });
         });
 
       new Control.geocoder({ defaultMarkGeocode: false })
@@ -235,21 +233,13 @@ export const Map = {
           map.pm.enableGlobalEditMode();
 
           const { lat, lng } = center;
-          const radius = Math.round(circle.getRadius());
-
           $latitude.value = lat;
           $longitude.value = lng;
-
-          this._push({ lat, lng, radius });
         })
         .addTo(map);
 
       map.fitBounds(circle.getBounds(), { animate: false });
     });
-  },
-
-  _push({ lat: latitude, lng: longitude, radius }) {
-    this.pushEvent("validate", { geo_fence: { latitude, longitude, radius } });
   }
 };
 
