@@ -4,7 +4,7 @@ defmodule TeslaMate.MixProject do
   def project do
     [
       app: :teslamate,
-      version: "1.16.0",
+      version: "1.17.0-dev",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
