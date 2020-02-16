@@ -106,7 +106,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "time",
+      "tableColumn": "",
       "targets": [
         {
           "format": "table",
@@ -150,7 +150,7 @@
           "value": "null"
         }
       ],
-      "valueName": "current"
+      "valueName": "last_time"
     },
     {
       "cacheTimeout": null,
@@ -219,7 +219,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "state",
+      "tableColumn": "",
       "targets": [
         {
           "format": "table",
@@ -263,7 +263,7 @@
           "value": "null"
         }
       ],
-      "valueName": "avg"
+      "valueName": "first"
     },
     {
       "cacheTimeout": null,
@@ -332,7 +332,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "?column?",
+      "tableColumn": "",
       "targets": [
         {
           "format": "time_series",
@@ -573,7 +573,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 19,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [
     "tesla"
