@@ -27,6 +27,7 @@ A powerful, self-hosted data logger for your Tesla.
    :caption: Import
 
    import/teslafi.md
+   import/tesla_apiscraper.md
 
 .. toctree::
    :maxdepth: 1
