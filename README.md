@@ -70,6 +70,7 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
   - [MacroDroid Setup (Android)](https://teslamate.readthedocs.io/en/latest/configuration/guides/macro_droid.html)
 - Import
   - [TeslaFi](https://teslamate.readthedocs.io/en/latest/import/teslafi.html)
+  - [tesla-apiscraper](https://teslamate.readthedocs.io/en/latest/import/tesla_apiscraper.html)
 - Integrations
   - [HomeAssistant](https://teslamate.readthedocs.io/en/latest/integrations/home_assistant.html)
   - [MQTT](https://teslamate.readthedocs.io/en/latest/integrations/mqtt.html)

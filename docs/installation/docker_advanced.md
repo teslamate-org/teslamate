@@ -166,4 +166,4 @@ Start the stack with `docker-compose up`.
   - Make sure to setup your `.env` file so the login/password are exactly what you used in your recommended setup (e.g. `teslamate/secret`)
   - If you have difficulty logging into your Grafana i.e. you cannot login with the credentials from either the original recommended setup or the values stored in the `.env` file reset the admin password with the following command: `docker-compose exec grafana grafana-cli admin reset-admin-password`
 
-- Make sure that your are using the same Postgres version as before. To update to a new version see [Updating Postgres](../maintenance/updating_postgres.html).
+- Make sure that you are using the same Postgres version as before. To update to a new version see [Updating Postgres](../maintenance/updating_postgres.html).
