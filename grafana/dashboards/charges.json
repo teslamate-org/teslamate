@@ -540,7 +540,7 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 20
       },
@@ -648,8 +648,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 20
       },
       "id": 12,
@@ -704,6 +704,115 @@
           "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT start_date as \"time\", greatest(charge_energy_added, charge_energy_used)\nFROM charging_processes\nWHERE $__timeFilter(end_date) AND car_id = $car_id order by start_date;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "total"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "TeslaMate",
+      "decimals": 2,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 8,
+        "x": 16,
+        "y": 20
+      },
+      "id": 13,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "70%",
+      "prefix": "Cost:",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(242, 204, 12, 0.25)",
+        "full": false,
+        "lineColor": "#F2CC0C",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT start_date as \"time\", cost\nFROM charging_processes\nWHERE $__timeFilter(end_date) AND car_id = $car_id order by start_date;",
           "refId": "A",
           "select": [
             [
