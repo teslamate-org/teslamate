@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1579692136952,
+  "iteration": 1581967967294,
   "links": [],
   "panels": [
     {
@@ -331,7 +330,7 @@
         }
       },
       "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "fillColor": "rgba(242, 204, 12, 0.09)",
         "full": false,
         "lineColor": "#F2CC0C",
         "show": true,
@@ -345,7 +344,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(start_date),\n  NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency AS energy\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(inserted_at) AND car_id = $car_id\nORDER BY 1",
+          "rawSql": "SELECT\n  $__time(start_date),\n  NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency AS energy\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(start_date) AND car_id = $car_id\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -970,28 +969,35 @@
             "mean"
           ],
           "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
             "mappings": [],
             "max": 100,
             "min": 0,
-            "thresholds": [
-              {
-                "color": "semi-dark-blue",
-                "value": null
-              },
-              {
-                "color": "light-red",
-                "value": 50
-              }
-            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-blue",
+                  "value": null
+                },
+                {
+                  "color": "light-red",
+                  "value": 50
+                }
+              ]
+            },
             "title": "$__cell_0",
             "unit": "none"
           },
-          "override": {},
+          "overrides": [],
           "values": true
         },
-        "orientation": "horizontal"
+        "orientation": "horizontal",
+        "showUnfilled": true
       },
-      "pluginVersion": "6.5.3",
+      "pluginVersion": "6.6.1",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -1036,7 +1042,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 21,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [
     "tesla"
