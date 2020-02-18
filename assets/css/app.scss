@@ -209,6 +209,20 @@ $positions: ('top','left','bottom','right');
   }
 }
 
+@media screen and (max-width: $tablet) {
+  .navbar-item.has-dropdown {
+    .navbar-dropdown {
+      display: none;
+    }
+
+    &.active {
+      .navbar-dropdown {
+        display: block;
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 390px) {
   main.section {
     padding: 1.5rem 0.75rem;
