@@ -16,8 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1579715117268,
+  "iteration": 1582051102485,
   "links": [
     {
       "icon": "dashboard",
@@ -75,42 +74,48 @@
             "mean"
           ],
           "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
             "mappings": [],
             "max": 100,
             "min": 0,
-            "thresholds": [
-              {
-                "color": "light-red",
-                "value": null
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 10
-              },
-              {
-                "color": "semi-dark-green",
-                "value": 20
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 80
-              },
-              {
-                "color": "light-red",
-                "value": 90
-              }
-            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "light-red",
+                  "value": null
+                },
+                {
+                  "color": "semi-dark-yellow",
+                  "value": 10
+                },
+                {
+                  "color": "semi-dark-green",
+                  "value": 20
+                },
+                {
+                  "color": "semi-dark-yellow",
+                  "value": 80
+                },
+                {
+                  "color": "light-red",
+                  "value": 90
+                }
+              ]
+            },
             "title": "",
             "unit": "percent"
           },
-          "override": {},
+          "overrides": [],
           "values": false
         },
         "orientation": "auto",
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.5.3",
+      "pluginVersion": "6.6.1",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -124,7 +129,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  battery_level,\r\n       date\r\nFROM\r\n  positions\r\n  WHERE\r\n car_id = $car\r\nunion\r\nselect battery_level, date\r\nfrom charges c\r\njoin\r\n  charging_processes p ON p.id = c.charging_process_id \r\nWHERE\r\n  $__timeFilter(date) and\r\n  p.car_id = $car\r\norder by date desc\r\nlimit 1 ",
+          "rawSql": "(SELECT battery_level, date\nFROM positions\nWHERE car_id = $car\nORDER BY date DESC\nLIMIT 1)\nUNION\nSELECT battery_level, date\nFROM charges c\nJOIN charging_processes p ON p.id = c.charging_process_id\nWHERE $__timeFilter(date) AND p.car_id = $car\nORDER BY date DESC\nLIMIT 1",
           "refId": "A",
           "select": [
             [
@@ -163,26 +168,32 @@
             "firstNotNull"
           ],
           "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
             "decimals": 0,
             "mappings": [],
             "max": 260,
             "min": 0,
-            "thresholds": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              }
-            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-green",
+                  "value": null
+                }
+              ]
+            },
             "unit": "volt"
           },
-          "override": {},
+          "overrides": [],
           "values": false
         },
         "orientation": "auto",
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.5.3",
+      "pluginVersion": "6.6.1",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -240,26 +251,32 @@
             "firstNotNull"
           ],
           "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
             "decimals": 0,
             "mappings": [],
             "max": 250,
             "min": 0,
-            "thresholds": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              }
-            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-green",
+                  "value": null
+                }
+              ]
+            },
             "unit": "kwatt"
           },
-          "override": {},
+          "overrides": [],
           "values": false
         },
         "orientation": "auto",
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.5.3",
+      "pluginVersion": "6.6.1",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -507,7 +524,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT $__time(date), range\nFROM (\n\tSELECT date, convert_km([[preferred_range]]_battery_range_km, '$length_unit') AS range\n\tFROM positions\n\tWHERE car_id = $car\n\tUNION ALL\n\tSELECT date, convert_km([[preferred_range]]_battery_range_km, '$length_unit') AS range\n\tFROM charges c\n\tJOIN charging_processes p ON p.id = c.charging_process_id\n\tWHERE p.car_id = $car\n) AS data\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "SELECT $__time(date), range\nFROM (\n\t(SELECT date, convert_km([[preferred_range]]_battery_range_km, '$length_unit') AS range\n\tFROM positions\n\tWHERE car_id = $car\n  ORDER BY date DESC\n\tLIMIT 1)\n\tUNION ALL\n\t(SELECT date, convert_km([[preferred_range]]_battery_range_km, '$length_unit') AS range\n\tFROM charges c\n\tJOIN charging_processes p ON p.id = c.charging_process_id\n\tWHERE p.car_id = $car\n\tORDER BY date DESC\n\tLIMIT 1)\n) AS data\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -626,7 +643,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH summary AS (\n\tSELECT\n\t\tdate,\n\t\todometer,\n\t\trank() OVER (PARTITION BY date_trunc('hour', date) ORDER BY date DESC) AS rk\n\t\tFROM\n\t\t\tpositions\n\t\tWHERE\n\t\t\tcar_id = $car\n)\nSELECT\n date as time,\n convert_km(odometer, '$length_unit') as \"mileage [$length_unit]\"\nFROM\n\tsummary\nWHERE\n\trk = 1\n\torder by date DESC\n\tlimit 1",
+          "rawSql": "select $__time(date), odometer from positions where car_id = $car order by date desc limit 1;",
           "refId": "A",
           "select": [
             [
@@ -965,26 +982,32 @@
             "firstNotNull"
           ],
           "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
             "decimals": 0,
             "mappings": [],
             "max": 100,
             "min": 0,
-            "thresholds": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              }
-            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-green",
+                  "value": null
+                }
+              ]
+            },
             "unit": "degree"
           },
-          "override": {},
+          "overrides": [],
           "values": false
         },
         "orientation": "auto",
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.5.3",
+      "pluginVersion": "6.6.1",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -998,7 +1021,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM\n\tpositions\nWHERE\n car_id = $car\nORDER BY\n\tdate DESC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM\n\tpositions\nWHERE\n car_id = $car\nORDER BY\n\tdate DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -1042,26 +1065,32 @@
             "firstNotNull"
           ],
           "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
             "decimals": 0,
             "mappings": [],
             "max": 100,
             "min": 0,
-            "thresholds": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              }
-            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-green",
+                  "value": null
+                }
+              ]
+            },
             "unit": "degree"
           },
-          "override": {},
+          "overrides": [],
           "values": false
         },
         "orientation": "auto",
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.5.3",
+      "pluginVersion": "6.6.1",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -1119,26 +1148,32 @@
             "firstNotNull"
           ],
           "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
             "decimals": 0,
             "mappings": [],
             "max": 120,
             "min": -20,
-            "thresholds": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              }
-            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-green",
+                  "value": null
+                }
+              ]
+            },
             "unit": "degree"
           },
-          "override": {},
+          "overrides": [],
           "values": false
         },
         "orientation": "auto",
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.5.3",
+      "pluginVersion": "6.6.1",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -1183,7 +1218,7 @@
     }
   ],
   "refresh": "30s",
-  "schemaVersion": 21,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [
     "tesla"
