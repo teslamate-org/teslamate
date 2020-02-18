@@ -17,7 +17,25 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1568831183157,
-  "links": [],
+  "links": [
+    {
+      "icon": "dashboard",
+      "tags": [],
+      "title": "TeslaMate",
+      "tooltip": "",
+      "type": "link",
+      "url": "[[base_url:raw]]"
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "tags": [
+        "tesla"
+      ],
+      "title": "Dashboards",
+      "type": "dashboards"
+    }
+  ],
   "panels": [
     {
       "aliasColors": {},
