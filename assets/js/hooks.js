@@ -105,16 +105,21 @@ function createMap(opts) {
     { maxZoom: 19 }
   );
 
+  const osm_dark = new TileLayer(
+    "https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
+    { maxZoom: 19 }
+  );
+
   if (opts.enableHybridLayer) {
     const hybrid = new TileLayer(
       "http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
       { maxZoom: 20, subdomains: ["mt0", "mt1", "mt2", "mt3"] }
     );
 
-    new Control.Layers({ OSM: osm, Hybrid: hybrid }).addTo(map);
+    new Control.Layers({ OSM: osm, OSMDark: osm_dark, Hybrid: hybrid }).addTo(map);
   }
 
-  map.addLayer(osm);
+  map.addLayer(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? osm_dark : osm);
 
   return map;
 }
