@@ -45,7 +45,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
 
       :ok ->
         Process.sleep(250)
-        {:stop, redirect_to_carlive(socket)}
+        {:noreply, redirect_to_carlive(socket)}
     end
   end
 

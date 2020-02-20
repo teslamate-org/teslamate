@@ -9,7 +9,7 @@ defmodule TeslaMateWeb.Router do
     plug :fetch_session
     plug :fetch_flash
     plug SetLocale
-    plug Phoenix.LiveView.Flash
+    plug :fetch_live_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug Donate

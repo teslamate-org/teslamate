@@ -129,7 +129,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
     end
     |> case do
       {:ok, %GeoFence{name: name}} ->
-        {:stop,
+        {:noreply,
          socket
          |> put_flash(:success, flash_msg(socket.assigns.action, name))
          |> redirect(to: Routes.live_path(socket, GeoFenceLive.Index))}
