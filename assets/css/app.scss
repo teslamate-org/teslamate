@@ -271,3 +271,10 @@ main.full-height {
     text-decoration: initial;
   }
 }
+
+// Workaround untill bulma-prefer-dark supports selects: https://github.com/jloh/bulma-prefers-dark/issues/17
+.select > select {
+  border-color: #363636 !important;
+  background-color: #0a0a0a !important;
+  color: #dbdbdb !important;
+}
