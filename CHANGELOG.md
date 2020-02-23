@@ -2,9 +2,16 @@
 
 ## [Unreleased]
 
+## [1.17.1] - 2020-02-23
+
+### Bug Fixes
+
+- Fix an error that could prevent new users from logging in, among other things
+- Overview dashboard: Display odometer in desired units
+
 ## [1.17.0] - 2020-02-23
 
-## Enhancements
+### Enhancements
 
 [olexs](https://github.com/olexs) has developed a toolkit to export data from the [tesla-apiscraper](https://github.com/lephisto/tesla-apiscraper) InfluxDB backend and convert it to a CSV format that can be imported using the [TeslaFi Import](https://teslamate.readthedocs.io/en/latest/import/teslafi.html). Check it out if you want to migrate data to TeslaMate: [**Import from tesla-apiscraper (BETA)**](https://teslamate.readthedocs.io/en/latest/import/tesla_apiscraper.html)
 
@@ -17,7 +24,7 @@
 - Use 'rated' as default preferred range
 - Collapse 'Dashboards' dropdown on mobile
 
-### Dashboards
+#### Dashboards
 
 - Add **Trip dashboard**: This dashboard was built to visualize longer trips. It provides an overview of all drives and charges that were logged over a period of several hours or days.
 - _All:_ Link to the web interface and other dashboards
@@ -26,11 +33,11 @@
 - _Charge Details:_ Add cost overview ([#460](https://github.com/adriankumpf/teslamate/pull/460) by [Niek](https://github.com/Niek))
 - _Drive Details:_ Add usable battery level graph
 
-### New MQTT Topics
+#### New MQTT Topics
 
 - `teslamate/cars/$car_id/geofence`: The name of the geofence at the current position
 
-### Documentation
+#### Documentation
 
 - Add docs for tesla-apiscraper import ([#454](https://github.com/adriankumpf/teslamate/pull/454) by [olexs](https://github.com/olexs))
 - Update Backup & Restore docs ([#438](https://github.com/adriankumpf/teslamate/pull/438) by [AlwindB](https://github.com/AlwindB))
@@ -796,7 +803,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.17.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.17.1...HEAD
+[1.17.1]: https://github.com/adriankumpf/teslamate/compare/v1.17.0...v1.17.1
 [1.17.0]: https://github.com/adriankumpf/teslamate/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/adriankumpf/teslamate/compare/v1.15.1...v1.16.0
 [1.15.1]: https://github.com/adriankumpf/teslamate/compare/v1.15.0...v1.15.1
