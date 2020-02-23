@@ -643,7 +643,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select $__time(date), odometer from positions where car_id = $car order by date desc limit 1;",
+          "rawSql": "select $__time(date), convert_km(odometer, '$length_unit') from positions where car_id = $car order by date desc limit 1;",
           "refId": "A",
           "select": [
             [
