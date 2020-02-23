@@ -1,4 +1,4 @@
-Tesla Mate
+TeslaMate
 ----------
 
 A powerful, self-hosted data logger for your Tesla.
@@ -56,3 +56,5 @@ A powerful, self-hosted data logger for your Tesla.
    :caption: Development and Contributing
 
    development
+
+Report issues at `GitHub <https://github.com/adriankumpf/teslamate/issues>`_
