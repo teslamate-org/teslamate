@@ -4,13 +4,15 @@ document.querySelector(".navbar-burger").addEventListener("click", function() {
   this.classList.toggle("is-active");
 });
 
-document
-  .querySelector(".navbar-item.has-dropdown")
-  .addEventListener("click", function() {
+for (const navDropdown of document.querySelectorAll(
+  ".navbar-item.has-dropdown"
+)) {
+  navDropdown.addEventListener("click", function() {
     if (document.querySelector(".navbar-menu.is-active")) {
       this.classList.toggle("active");
     }
   });
+}
 
 // Fix sticky hover on iOS
 document.addEventListener("click", () => 0);
