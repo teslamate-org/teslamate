@@ -35,7 +35,7 @@ services:
       - MQTT_HOST=mosquitto
       - VIRTUAL_HOST=${FQDN_TM}
       - CHECK_ORIGIN=true
-      - TZ={$TM_TZ}
+      - TZ=${TM_TZ}
     volumes:
       - ./import:/opt/app/import
     labels:
