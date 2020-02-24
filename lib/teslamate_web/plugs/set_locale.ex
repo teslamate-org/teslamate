@@ -1,12 +1,14 @@
 defmodule TeslaMateWeb.Plugs.SetLocale do
   use Plug.Builder
 
+  alias TeslaMateWeb.Plugs.AcceptLanguage
+
   plug Cldr.Plug.SetLocale,
     apps: [:cldr, :gettext],
     gettext: TeslaMateWeb.Gettext,
     cldr: TeslaMateWeb.Cldr
 
-  plug Cldr.Plug.AcceptLanguage,
+  plug AcceptLanguage,
     cldr_backend: TeslaMateWeb.Cldr
 
   plug :put_locale
