@@ -9,38 +9,47 @@
 msgid ""
 msgstr ""
 "Language: sv\n"
-"Plural-Forms: nplurals=2\n"
 
+## From Ecto.Changeset.cast/4
 msgid "can't be blank"
 msgstr "får inte vara tom"
 
+## From Ecto.Changeset.unique_constraint/3
 msgid "has already been taken"
 msgstr "har redan blivit tagen"
 
+## From Ecto.Changeset.put_change/3
 msgid "is invalid"
 msgstr "är ogiltig"
 
+## From Ecto.Changeset.validate_acceptance/3
 msgid "must be accepted"
 msgstr "måste accepteras"
 
+## From Ecto.Changeset.validate_format/3
 msgid "has invalid format"
 msgstr "har ogiltigt format"
 
+## From Ecto.Changeset.validate_subset/3
 msgid "has an invalid entry"
 msgstr "har en ogiltig post"
 
+## From Ecto.Changeset.validate_exclusion/3
 msgid "is reserved"
 msgstr "är reserverad"
 
+## From Ecto.Changeset.validate_confirmation/3
 msgid "does not match confirmation"
 msgstr "stämmer inte med bekräftelsen"
 
+## From Ecto.Changeset.no_assoc_constraint/3
 msgid "is still associated with this entry"
 msgstr "är fortfarande associerad med den här posten"
 
 msgid "are still associated with this entry"
 msgstr "är fortfarande associerade med den här posten"
 
+## From Ecto.Changeset.validate_length/3
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
 msgstr[0] "bör vara %{count} tecken"
@@ -71,6 +80,7 @@ msgid_plural "should have at most %{count} item(s)"
 msgstr[0] "bör ha som mest %{count} artikel"
 msgstr[1] "bör ha som mest %{count} artiklar"
 
+## From Ecto.Changeset.validate_number/3
 msgid "must be less than %{number}"
 msgstr "måste vara mindre än %{number}"
 
