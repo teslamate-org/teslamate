@@ -807,11 +807,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
         inside_temp: position.inside_temp
       }
 
+      vehicle_state =
+        case call(data.deps.log, :get_latest_update, [data.car]) do
+          %Log.Update{version: version} -> %VehicleState{car_version: version}
+          _ -> nil
+        end
+
       vehicle = %Vehicle{
         vehicle
         | drive_state: drive,
           charge_state: charge,
-          climate_state: climate
+          climate_state: climate,
+          vehicle_state: vehicle_state
       }
 
       geofence = call(data.deps.locations, :find_geofence, [position])
