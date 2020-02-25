@@ -16,7 +16,7 @@
 4. Change the postgres version in docker-compose.yml and start the container
 
    ```bash
-   docker-compose up -d
+   docker-compose up -d database
    ```
 
 5. [Restore](backup_restore.html) the backup
