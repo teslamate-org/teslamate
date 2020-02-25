@@ -1,0 +1,533 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: sv\n"
+"Plural-Forms: nplurals=2\n"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:84
+msgid "Status"
+msgstr "Status"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:216
+msgid "Speed"
+msgstr "Hastighet"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:208
+msgid "State of Charge"
+msgstr "Laddningsnivå"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:145
+msgid "Charged"
+msgstr "Laddad"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:135
+msgid "asleep"
+msgstr "sover"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:130
+msgid "charging"
+msgstr "laddar"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:129
+msgid "driving"
+msgstr "kör"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:134
+msgid "offline"
+msgstr "offline"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:133
+msgid "online"
+msgstr "online"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:131
+msgid "updating"
+msgstr "uppdateras"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:58
+msgid "Locked"
+msgstr "Låst"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:53
+msgid "Sentry Mode"
+msgstr "Vaktläge"
+
+#, elixir-format
+#: lib/teslamate_web/templates/charge/cost.html.leex:3
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:3 lib/teslamate_web/templates/geo_fence/index.html.leex:3
+#: lib/teslamate_web/templates/import/index.html.leex:3 lib/teslamate_web/templates/settings/index.html.leex:3
+msgid "Home"
+msgstr "Hem"
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/app.html.eex:54
+#: lib/teslamate_web/templates/settings/index.html.leex:4
+msgid "Settings"
+msgstr "Inställningar"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:160
+msgid "Scheduled charging"
+msgstr "Schemalagd laddning"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:43
+msgid "Plugged in"
+msgstr "Inkopplad"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:169
+msgid "Charge limit"
+msgstr "Laddningsnivå"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:132
+msgid "falling asleep"
+msgstr "somnar"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:136
+msgid "unavailable"
+msgstr "inte tillgänglig"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:195
+msgid "Length"
+msgstr "Avstånd"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:210
+msgid "Temperature"
+msgstr "Temperatur"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:192
+msgid "Units"
+msgstr "Enheter"
+
+#, elixir-format
+#: lib/teslamate_web/templates/charge/cost.html.leex:108
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:131
+msgid "Back"
+msgstr "Tillbaka"
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/app.html.eex:53
+msgid "Geo-Fences"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:213
+msgid "Geo-fence \"%{name}\" created"
+msgstr "Geo-Fence \"%{name}\" skapat"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:4
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:4
+msgid "Geo-fences"
+msgstr "Geo-Fences"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:63
+msgid "Idle Time Before Trying to Sleep"
+msgstr "Inaktiv tid innan för att försöka sova"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:45
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:21
+msgid "Name"
+msgstr "Namn"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:19
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:22
+msgid "Position"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:56
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:23
+msgid "Radius"
+msgstr "Radie"
+
+#, elixir-format
+#: lib/teslamate_web/templates/charge/cost.html.leex:111
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:134
+msgid "Save"
+msgstr "Spara"
+
+#, elixir-format
+#: lib/teslamate_web/templates/charge/cost.html.leex:112
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:134 lib/teslamate_web/templates/signin/index.html.leex:33
+msgid "Saving..."
+msgstr "Sparar..."
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:45
+msgid "Time to Try Sleeping"
+msgstr "Tid för att försöka sova"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:53
+#: lib/teslamate_web/templates/settings/index.html.leex:72
+msgid "min"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:63
+msgid "Signed in successfully"
+msgstr "Inloggad"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:138
+msgid "Car is unlocked"
+msgstr "Bilen är olåst"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:9
+msgid "Create"
+msgstr "Skapa"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:142
+#: lib/teslamate_web/templates/car/summary.html.leex:28
+msgid "Preconditioning"
+msgstr "Förvärmning"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:139
+msgid "Sentry mode is enabled"
+msgstr "Vaktläge är aktiverad"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:143
+#: lib/teslamate_web/templates/car/summary.html.leex:38
+msgid "Driver present"
+msgstr "Förare närvarande"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:282
+msgid "cancel sleep attempt"
+msgstr "avbryt försök att sova"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:277
+msgid "try to sleep"
+msgstr "försök att sova"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:132
+msgid "Range (est.)"
+msgstr "Räckvidd (beräk.)"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:87
+msgid "for"
+msgstr "för"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:92
+msgid "No shift state reading"
+msgstr "Ingen avläsning av omkopplingstillstånd"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:98
+msgid "No temperature readings"
+msgstr "Ingen avläsning av temperaturen"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:83
+msgid "Requirements"
+msgstr "Krav"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:140
+msgid "Shift state present"
+msgstr "Omkopplingstillstånd tillgänglig"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:111
+msgid "Some firmware versions stop reporting temperatures or the shift state before the car is ready to sleep. Enabling these options will wait for the readings to stop."
+msgstr "Vissa programvaruversioner slutar rapportera temperaturen eller omkopplingstillstånd innan bilen är klar för att sova. Aktivering av dessa inställningar väntar på att avläsningarna upphör."
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:104
+msgid "Vehicle must be locked"
+msgstr "Fordonet måste vara låst"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:141
+msgid "Temperature readings"
+msgstr "Temperaturavläsningar"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:113
+msgid "Range (rated)"
+msgstr "Räckvidd (nominell)"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:151
+msgid "Charger Power"
+msgstr "Laddningskraft"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:150
+msgid "Preferred range"
+msgstr "Föredragen räckvidd"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:146
+msgid "Range"
+msgstr "Räckvidd"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:159
+msgid "ideal"
+msgstr "idealisk"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:159
+msgid "rated"
+msgstr "nominell"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:112
+msgid "Range (ideal)"
+msgstr "Räckvidd (idealisk)"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:149
+msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
+msgstr "Bilens uppskattning av återstående räckvidd baseras på en fast energiförbrukning i Wh/km. Wh/km-faktorn är bestämd av Tesla och är inte landsspecifik medan det nominella räckvidden är baserat på reglerande tester på de olika marknaderna för fordonet."
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:144
+msgid "Update in progress"
+msgstr "Uppdatering pågår"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:48
+msgid "Windows open"
+msgstr "Fönster öppna"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/index.html.leex:51
+msgid "Delete '%{geo_fence}'?"
+msgstr "Ta bort '%{geo_fence}'?"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:241
+msgid "Inside temperature"
+msgstr "Innertemperatur"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:229
+msgid "Outside temperature"
+msgstr "Utetemperatur"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:254
+msgid "Version"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:63
+msgid "Software Update available"
+msgstr "Mjukvaruuppdatering tillgänglig"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:68
+msgid "Health check failed"
+msgstr "Hälsokontroll misslyckades"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:58
+msgid "Unlocked"
+msgstr "Olåst"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:99
+msgid "Remaining Time"
+msgstr "Återstående tid"
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/app.html.eex:45
+#: lib/teslamate_web/templates/settings/index.html.leex:245
+msgid "Dashboards"
+msgstr "Instrumentbrädor"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:228
+msgid "URLs"
+msgstr "URLer"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:231
+msgid "Web App"
+msgstr "Webbapp"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:31
+msgid "Enabled"
+msgstr "Aktiverad"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:28
+msgid "Sleep Mode"
+msgstr "Viloläge"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:214
+msgid "Geo-fence \"%{name}\" updated"
+msgstr "Geo-Fence \"%{name}\" uppdaterad"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:91
+msgid "Sleep Mode Enabled"
+msgstr "Viloläge aktiverad"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:148
+msgid "Sleep Mode is disabled at current location"
+msgstr "Viloläge är inaktiverat på nuvarande position"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:150
+msgid "An error occurred"
+msgstr "Ett fel uppstod"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:145
+msgid "Timeout"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:33
+msgid "Reduced Battery Range"
+msgstr "Reducerad batteriräckvidd"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:201
+msgid "≈ %{range} at 100%"
+msgstr "≈ %{range} vid 100%"
+
+#, elixir-format
+#: lib/teslamate_web/templates/charge/cost.html.leex:4
+msgid "Charge Cost"
+msgstr "Laddningskostnad"
+
+#, elixir-format
+#: lib/teslamate_web/templates/charge/cost.html.leex:88
+msgid "Cost"
+msgstr "Kostnad"
+
+#, elixir-format
+#: lib/teslamate_web/templates/charge/cost.html.leex:95
+msgid "Enter charge cost"
+msgstr "Ange laddningskostnad"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.ex:48
+msgid "Saved!"
+msgstr "Sparat!"
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:23
+msgid "Fetching vehicle data ..."
+msgstr "Hämtar fordonsdata ..."
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:174
+msgid "Addresses"
+msgstr "Adresser"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:171
+msgid "Language"
+msgstr "Språk"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.ex:63
+msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
+msgstr "Det gick inte att hämta data från OpenStreetMap. Vänligen försök igen senare."
+
+#, elixir-format
+#: lib/teslamate_web/templates/import/index.html.leex:4
+msgid "TeslaFi Import"
+msgstr "TeslaFi import"
+
+#, elixir-format
+#: lib/teslamate_web/templates/import/index.html.leex:10
+msgid "Found %{count} file"
+msgid_plural "Found %{count} files"
+msgstr[0] "%{count} fil hittades"
+msgstr[1] "%{count} filer hittades"
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/app.html.eex:84
+msgid "Donate"
+msgstr "Donera"
+
+#, elixir-format
+#: lib/teslamate_web/templates/import/index.html.leex:68
+msgid "Import"
+msgstr "Importera"
+
+#, elixir-format
+#: lib/teslamate_web/templates/import/index.html.leex:58
+msgid "Time zone"
+msgstr "Tidszon"
+
+#, elixir-format
+#: lib/teslamate_web/templates/signin/index.html.leex:18
+msgid "Password"
+msgstr "Lösenord"
+
+#, elixir-format
+#: lib/teslamate_web/templates/signin/index.html.leex:30
+msgid "Sign in"
+msgstr "Logga in"
+
+#, elixir-format
+#: lib/teslamate_web/templates/signin/index.html.leex:11
+msgid "Email address"
+msgstr "E-postadress"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:71
+msgid "Cost per kWh"
+msgstr "Kostnad per kWh"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:120
+msgid "Charge cost"
+msgstr "Laddningskostnad"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:123
+msgid "Free Supercharging"
+msgstr "Gratis Supercharging"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:140
+msgid "General Settings"
+msgstr "Allmänna Inställningar"

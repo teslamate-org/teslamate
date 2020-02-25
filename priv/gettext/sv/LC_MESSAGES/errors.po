@@ -1,0 +1,87 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: sv\n"
+"Plural-Forms: nplurals=2\n"
+
+msgid "can't be blank"
+msgstr "får inte vara tom"
+
+msgid "has already been taken"
+msgstr "har redan blivit tagen"
+
+msgid "is invalid"
+msgstr "är ogiltig"
+
+msgid "must be accepted"
+msgstr "måste accepteras"
+
+msgid "has invalid format"
+msgstr "har ogiltigt format"
+
+msgid "has an invalid entry"
+msgstr "har en ogiltig post"
+
+msgid "is reserved"
+msgstr "är reserverad"
+
+msgid "does not match confirmation"
+msgstr "stämmer inte med bekräftelsen"
+
+msgid "is still associated with this entry"
+msgstr "är fortfarande associerad med den här posten"
+
+msgid "are still associated with this entry"
+msgstr "är fortfarande associerade med den här posten"
+
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "bör vara %{count} tecken"
+msgstr[1] "bör vara %{count} tecken"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[1] "bör ha %{count} artikel"
+msgstr[0] "bör ha %{count} artiklar"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "bör vara minst %{count} tecken"
+msgstr[1] "bör vara minst %{count} tecken"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "bör ha minst %{count} artikel"
+msgstr[1] "bör ha minst %{count} artiklar"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "bör vara högst %{count} tecken"
+msgstr[1] "bör vara högst %{count} tecken"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "bör ha som mest %{count} artikel"
+msgstr[1] "bör ha som mest %{count} artiklar"
+
+msgid "must be less than %{number}"
+msgstr "måste vara mindre än %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "måste vara större än %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "måste vara mindre eller lika med %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "måste vara större eller lika med %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "måste vara lika med %{number}"
