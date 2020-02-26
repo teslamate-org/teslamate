@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+### Enhancements
+
+- Add Swedish translation ([#485](https://github.com/adriankumpf/teslamate/pull/485) by [tobiasehlert](https://github.com/tobiasehlert))
+- Immediately display the current car software version after restarting TeslaMate
+- Charge Details: Hide empty series
+
+### Bug Fixes
+
+- Show stats in desired units in 'Drive Stats' dashboard ([#484](https://github.com/adriankumpf/teslamate/pull/484) by [pichalite](https://github.com/pichalite))
+- Suppress `Cldr.NoMatchingLocale` warnings
+- Trip Dashboard: Prevent 'division by zero' error
+
 ## [1.17.1] - 2020-02-23
 
 ### Bug Fixes
