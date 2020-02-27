@@ -35,4 +35,8 @@
     _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
    ```
 
-4. Finally, re-import the dashboards.
+4. Finally, re-import the Grafana dashboards:
+
+   ```bash
+   LOGIN="user:pass" ./grafana/dashboards.sh restore
+    ```
