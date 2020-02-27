@@ -21,7 +21,7 @@
 
    ```bash
    git pull
-   git checkout $(git describe --tags)
+   git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
 
    mix deps.get --only prod
    npm install --prefix ./assets && npm run deploy --prefix ./assets
