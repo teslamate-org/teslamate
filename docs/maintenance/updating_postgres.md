@@ -10,10 +10,15 @@
 3. Delete the database volume. **Be careful**, this will delete all your previously recorded data! Make sure that your backup can be restored before you start.
 
    ```bash
-   docker volume rm teslamate_teslamate-db
+   docker volume rm "$(basename "$PWD")_teslamate-db"
    ```
 
 4. Change the postgres version in docker-compose.yml and start the container
+
+   ```YAML
+     database:
+       image: postgres:xx
+   ```
 
    ```bash
    docker-compose up -d database
