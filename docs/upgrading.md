@@ -4,9 +4,7 @@
 
 1. Check out the [Changelog](https://github.com/adriankumpf/teslamate/releases) before upgrading!
 
-2. Ensure your credentials are correct in `docker-compose.yml` (or `.env` if you are using [Docker (advanced)](installation/docker_advanced))
-
-3. Pull the new images and restart the stack:
+2. Pull the new images and restart the stack:
 
    ```bash
    docker-compose pull
@@ -39,4 +37,4 @@
 
    ```bash
    LOGIN="user:pass" ./grafana/dashboards.sh restore
-    ```
+   ```

@@ -12,7 +12,7 @@ First you need to find out the ID of the drive or charge:
 ### Charge
 
 - Open the `Charges` dashboard and click on the start date of the charge.
-- The URL will contain the drive id, for example `&var-charging_process_id=9999`.
+- The URL will contain the charge id, for example `&var-charging_process_id=9999`.
 
 ## Terminate a drive or charge
 
