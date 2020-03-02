@@ -138,6 +138,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert_receive {MqttPublisherMock,
                     {:publish, "teslamate/cars/0/geofence", "", [retain: true, qos: 1]}}
 
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/trim_badging", "", [retain: true, qos: 1]}}
+
     refute_receive _
   end
 
@@ -171,7 +174,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
           :scheduled_charging_start_time,
           :time_to_full_charge,
           :shift_state,
-          :geofence
+          :geofence,
+          :trim_badging
         ] do
       topic = "teslamate/account_0/cars/0/#{key}"
       assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
