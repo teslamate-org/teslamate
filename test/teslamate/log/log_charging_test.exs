@@ -400,7 +400,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == 12.77
       assert cproc.charge_energy_used == 12.455230833333333
-      assert cproc.cost == Decimal.new("3.1138077083333332500")
+      assert cproc.cost == Decimal.new("3.192500")
     end
 
     test "charge cost can be zero" do
