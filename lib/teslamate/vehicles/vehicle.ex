@@ -33,7 +33,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def identify(%Vehicle{display_name: name, vehicle_config: config}) do
     case config do
-      %VehicleConfig{car_type: type, trim_badging: trim_badging} ->
+      %VehicleConfig{
+        car_type: type,
+        trim_badging: trim_badging,
+        exterior_color: exterior_color,
+        wheel_type: wheel_type,
+        spoiler_type: spoiler_type
+      } ->
         trim_badging =
           with str when is_binary(str) <- trim_badging do
             String.upcase(str)
@@ -50,7 +56,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
             end
           end
 
-        {:ok, %{trim_badging: trim_badging, model: model, name: name}}
+        {:ok,
+         %{
+           model: model,
+           name: name,
+           trim_badging: trim_badging,
+           exterior_color: exterior_color,
+           spoiler_type: spoiler_type,
+           wheel_type: wheel_type
+         }}
 
       nil ->
         {:error, :vehicle_config_not_available}
@@ -364,7 +378,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         since: data.last_state_change,
         healthy?: healthy?(data.car.id),
         geofence: data.geofence,
-        car: nil
+        car: data.car
       })
 
     :ok =

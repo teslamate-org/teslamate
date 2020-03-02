@@ -51,7 +51,12 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       is_preconditioning: true,
       is_user_present: false,
       is_climate_on: true,
-      geofence: %GeoFence{id: 0, name: "Home", latitude: 0.0, longitude: 0.0, radius: 20}
+      geofence: %GeoFence{id: 0, name: "Home", latitude: 0.0, longitude: 0.0, radius: 20},
+      model: "S",
+      trim_badging: "P100D",
+      exterior_color: "White",
+      spoiler_type: "None",
+      wheel_type: "AeroTurbine19"
     }
 
     send(pid, summary)

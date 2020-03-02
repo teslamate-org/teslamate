@@ -3,6 +3,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
   alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleState}
   alias TeslaApi.Vehicle
+  alias TeslaMate.Log.Car
 
   defstruct ~w(
     car display_name state since healthy latitude longitude heading battery_level usable_battery_level
@@ -11,10 +12,20 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available is_user_present geofence
+    model trim_badging exterior_color wheel_type spoiler_type
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
-    %__MODULE__{state: :unavailable, healthy: healthy?, car: car}
+    %__MODULE__{
+      state: :unavailable,
+      healthy: healthy?,
+      trim_badging: get_car_attr(car, :trim_badging),
+      exterior_color: get_car_attr(car, :exterior_color),
+      spoiler_type: get_car_attr(car, :spoiler_type),
+      wheel_type: get_car_attr(car, :wheel_type),
+      model: get_car_attr(car, :model),
+      car: car
+    }
   end
 
   def into(vehicle, %{state: state, since: since, healthy?: healthy?, car: car, geofence: gf}) do
@@ -24,6 +35,11 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         since: since,
         healthy: healthy?,
         geofence: gf,
+        trim_badging: get_car_attr(car, :trim_badging),
+        exterior_color: get_car_attr(car, :exterior_color),
+        spoiler_type: get_car_attr(car, :spoiler_type),
+        wheel_type: get_car_attr(car, :wheel_type),
+        model: get_car_attr(car, :model),
         car: car
     }
   end
@@ -32,6 +48,13 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp format_state({:driving, _state, _id}), do: :driving
   defp format_state({state, _}) when is_atom(state), do: state
   defp format_state(state) when is_atom(state), do: state
+
+  defp get_car_attr(%Car{exterior_color: v}, :exterior_color), do: v
+  defp get_car_attr(%Car{spoiler_type: v}, :spoiler_type), do: v
+  defp get_car_attr(%Car{trim_badging: v}, :trim_badging), do: v
+  defp get_car_attr(%Car{wheel_type: v}, :wheel_type), do: v
+  defp get_car_attr(%Car{model: v}, :model), do: v
+  defp get_car_attr(nil, _key), do: nil
 
   defp format_vehicle(%Vehicle{} = vehicle) do
     %__MODULE__{
