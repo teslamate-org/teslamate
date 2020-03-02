@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1579475776008,
+  "iteration": 1583173648060,
   "links": [
     {
       "icon": "dashboard",
@@ -393,6 +392,7 @@
         "#d44a3a"
       ],
       "datasource": "TeslaMate",
+      "decimals": 1,
       "format": "dtdurations",
       "gauge": {
         "maxValue": 100,
@@ -480,7 +480,7 @@
       "timeShift": null,
       "title": "Duration",
       "type": "singlestat",
-      "valueFontSize": "80%",
+      "valueFontSize": "70%",
       "valueMaps": [
         {
           "op": "=",
