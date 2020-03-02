@@ -15,6 +15,12 @@ Vehicle data will be published to the following topics (`$car_id` usually starts
 | `teslamate/cars/$car_id/version`                       | 2019.32.12.2         | Software Version                                                 |
 | `teslamate/cars/$car_id/update_available`              | false                | Indicates if a software update is available                      |
 |                                                        |                      |                                                                  |
+| `teslamate/cars/$car_id/model`                         | 3                    | Either "S", "3", "X" or "Y"                                      |
+| `teslamate/cars/$car_id/trim_badging`                  | P100D                | Trim badging                                                     |
+| `teslamate/cars/$car_id/exterior_color`                | DeepBlue             | The exterior color                                               |
+| `teslamate/cars/$car_id/wheel_type`                    | Pinwheel18           | The wheel type                                                   |
+| `teslamate/cars/$car_id/spoiler_type`                  | None                 | The spoiler type                                                 |
+|                                                        |                      |                                                                  |
 | `teslamate/cars/$car_id/geofence`                      | 🏡 Home              | The name of the Geo-fence, if one exists at the current position |
 |                                                        |                      |                                                                  |
 | `teslamate/cars/$car_id/latitude`                      | 35.278131            | Last reported car latitude                                       |
