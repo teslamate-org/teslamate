@@ -125,7 +125,7 @@ msgstr "Unités"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:108
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:131
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:137
 msgid "Back"
 msgstr "Retour"
 
@@ -135,7 +135,7 @@ msgid "Geo-Fences"
 msgstr "Géo-repérage"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:213
+#: lib/teslamate_web/live/geofence_live/form.ex:172
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Géo-repérage \"%{name}\" créé"
 
@@ -151,32 +151,31 @@ msgid "Idle Time Before Trying to Sleep"
 msgstr "Temps d'inactivité avant d'essayer de dormir"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:45
-#: lib/teslamate_web/templates/geo_fence/index.html.leex:21
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:41
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:46 lib/teslamate_web/templates/geo_fence/index.html.leex:21
 msgid "Name"
 msgstr "Nom"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:19
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:17
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:22
 msgid "Position"
 msgstr "Position"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:56
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:23
 msgid "Radius"
 msgstr "Rayon"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:111
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:134
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:140
 msgid "Save"
 msgstr "Enregistrer"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:112
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:134 lib/teslamate_web/templates/signin/index.html.leex:33
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:140 lib/teslamate_web/templates/signin/index.html.leex:33
 msgid "Saving..."
 msgstr "Enregistrement..."
 
@@ -395,12 +394,12 @@ msgid "Sleep Mode"
 msgstr "Mode veille"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:214
+#: lib/teslamate_web/live/geofence_live/form.ex:173
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "Géo-repérage \"%{name}\" mis à jour"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:91
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:97
 msgid "Sleep Mode Enabled"
 msgstr "Mode veille activé"
 
@@ -482,7 +481,7 @@ msgstr[0] "Trouvé %{count} fichier"
 msgstr[1] "Trouvé %{count} fichiers"
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/app.html.eex:84
+#: lib/teslamate_web/templates/layout/app.html.eex:87
 msgid "Donate"
 msgstr "Faire un don"
 
@@ -512,7 +511,7 @@ msgid "Email address"
 msgstr "Adresse e-mail"
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:71
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:57
 msgid "Cost per kWh"
 msgstr "Coût par kWh"
 
@@ -530,3 +529,8 @@ msgstr "Supercharge gratuite"
 #: lib/teslamate_web/templates/settings/index.html.leex:140
 msgid "General Settings"
 msgstr "Réglages généraux"
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:77
+msgid "Session fee"
+msgstr "Prix fixe"

@@ -199,7 +199,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             longitude: nil,
             latitude: nil,
             radius: "",
-            cost_per_kwh: "wat"
+            cost_per_kwh: "wat",
+            session_fee: "wat"
           }
         })
         |> Floki.parse_document!()
@@ -209,11 +210,13 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert [""] = html |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
       assert [""] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
       assert ["wat"] = html |> Floki.find("#geo_fence_cost_per_kwh") |> Floki.attribute("value")
+      assert ["wat"] = html |> Floki.find("#geo_fence_session_fee") |> Floki.attribute("value")
 
       assert [
                field_position,
                field_name,
                field_cost_per_kwh,
+               field_session_fee,
                field_sleep_mode,
                _
              ] = Floki.find(html, ".field.is-horizontal")
@@ -225,6 +228,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert "is invalid" =
                field_cost_per_kwh
+               |> Floki.find("span")
+               |> Floki.text()
+
+      assert "is invalid" =
+               field_session_fee
                |> Floki.find("span")
                |> Floki.text()
 
@@ -240,7 +248,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             longitude: "wot",
             latitude: "wat",
             radius: "40",
-            cost_per_kwh: 0.25
+            cost_per_kwh: 0.25,
+            session_fee: 4.79
           }
         })
         |> Floki.parse_document!()
@@ -250,11 +259,13 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["wot"] = html |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
       assert ["40.0"] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
       assert ["0.25"] = html |> Floki.find("#geo_fence_cost_per_kwh") |> Floki.attribute("value")
+      assert ["4.79"] = html |> Floki.find("#geo_fence_session_fee") |> Floki.attribute("value")
 
       assert [
                field_position,
                field_name,
                field_cost_per_kwh,
+               field_session_fee,
                _field_sleep_mode,
                _
              ] = Floki.find(html, ".field.is-horizontal")
@@ -269,6 +280,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert "" =
                field_cost_per_kwh
+               |> Floki.find("span")
+               |> Floki.text()
+
+      assert "" =
+               field_session_fee
                |> Floki.find("span")
                |> Floki.text()
     end

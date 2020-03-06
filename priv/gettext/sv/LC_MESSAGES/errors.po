@@ -57,8 +57,8 @@ msgstr[1] "bör vara %{count} tecken"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[1] "bör ha %{count} artikel"
 msgstr[0] "bör ha %{count} artiklar"
+msgstr[1] "bör ha %{count} artikel"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"

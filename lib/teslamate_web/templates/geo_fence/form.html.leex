@@ -52,7 +52,7 @@
     </div>
   </div>
 
-  <div class="field is-horizontal">
+  <div class="field is-horizontal mt-20">
     <div class="field-label is-normal">
       <%= label class: "label" do gettext("Cost per kWh") end %>
     </div>
@@ -73,6 +73,26 @@
   </div>
 
   <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label class: "label" do gettext("Session fee") end %>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <%= text_input f, :session_fee, class: "input",
+                             type: :number, inputmode: :decimal, min: 0.0, step: 0.01,
+                             placeholder: "0.00",
+                             phx_hook: "SetLangAttr"
+          %>
+        </div>
+        <%= if @show_errors do %>
+        <p class="help is-danger"><%= error_tag(f, :session_fee) %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal mt-20">
     <div class="field-label is-normal">
       <%= label class: "label" do gettext("Sleep Mode Enabled") end %>
     </div>
