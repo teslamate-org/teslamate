@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: no\n"
+"Language: nb\n"
 "Plural-Forms: nplurals=2\n"
 
 #, elixir-format
