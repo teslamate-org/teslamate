@@ -95,13 +95,13 @@ defmodule TeslaMate.Locations.Geocoder do
   ]
 
   @city_aliases [
+    "city",
+    "town",
+    "municipality",
     "village",
     "hamlet",
     "locality",
-    "croft",
-    "city",
-    "town",
-    "municipality"
+    "croft"
   ]
 
   @county_aliases [
