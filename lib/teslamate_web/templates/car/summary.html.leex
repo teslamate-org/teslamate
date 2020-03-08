@@ -49,6 +49,11 @@
           <span class="mdi mdi-window-open"></span>
         </span>
       <% end %>
+      <%= if @summary.doors_open do %>
+        <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Doors open" %>'>
+          <span class="mdi mdi-car-door"></span>
+        </span>
+      <% end %>
       <%= if @summary.sentry_mode do %>
         <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Sentry Mode" %>'>
           <span class="mdi mdi-shield-check"></span>

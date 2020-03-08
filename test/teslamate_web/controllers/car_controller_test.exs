@@ -149,6 +149,10 @@ defmodule TeslaMateWeb.CarControllerTest do
              fp_window: 0,
              rd_window: 0,
              rp_window: 0,
+             df: 0,
+             dr: 0,
+             pf: 1,
+             pr: 0,
              is_user_present: true
            },
            vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
@@ -173,6 +177,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Preconditioning", "air-conditioner")
       assert icon(html, "Sentry Mode", "shield-check")
       assert icon(html, "Windows open", "window-open")
+      assert icon(html, "Doors open", "car-door")
       assert icon(html, "Software Update available", "gift-outline")
       assert table_row(html, "Outside temperature", "24 °C")
       assert table_row(html, "Inside temperature", "23.2 °C")

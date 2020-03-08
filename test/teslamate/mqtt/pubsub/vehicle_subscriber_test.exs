@@ -34,6 +34,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       display_name: "Foo",
       odometer: 42_000,
       windows_open: true,
+      doors_open: true,
       shift_state: "D",
       state: :online,
       since: DateTime.utc_now(),

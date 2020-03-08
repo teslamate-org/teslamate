@@ -9,7 +9,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     car display_name state since healthy latitude longitude heading battery_level usable_battery_level
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
-    plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
+    plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open doors_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available is_user_present geofence
     model trim_badging exterior_color wheel_type spoiler_type
@@ -97,6 +97,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       locked: get_in_struct(vehicle, [:vehicle_state, :locked]),
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
       windows_open: window_open(vehicle),
+      doors_open: doors_open(vehicle),
       is_user_present: get_in_struct(vehicle, [:vehicle_state, :is_user_present]),
       version: version(vehicle),
       update_available: update_available(vehicle)
@@ -124,6 +125,17 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       %VehicleState{fd_window: fd, fp_window: fp, rd_window: rd, rp_window: rp}
       when is_number(fd) and is_number(fp) and is_number(rd) and is_number(rp) ->
         fd > 0 or fp > 0 or rd > 0 or rp > 0
+
+      _ ->
+        nil
+    end
+  end
+
+  defp doors_open(%Vehicle{vehicle_state: vehicle_state}) do
+    case vehicle_state do
+      %VehicleState{df: df, pf: pf, dr: dr, pr: pr}
+      when is_number(df) and is_number(pf) and is_number(dr) and is_number(pr) ->
+        df > 0 or pf > 0 or dr > 0 or pr > 0
 
       _ ->
         nil
