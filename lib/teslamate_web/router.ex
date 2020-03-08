@@ -10,6 +10,7 @@ defmodule TeslaMateWeb.Router do
     plug :fetch_flash
     plug SetLocale
     plug :fetch_live_flash
+    plug :put_live_layout, {TeslaMateWeb.LayoutView, "app.html"}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug Donate
