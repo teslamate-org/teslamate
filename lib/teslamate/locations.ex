@@ -237,4 +237,36 @@ defmodule TeslaMate.Locations do
   def change_geofence(%GeoFence{} = geofence, attrs \\ %{}) do
     GeoFence.changeset(geofence, attrs)
   end
+
+  alias TeslaMate.Log.ChargingProcess
+
+  def count_charging_processes_without_costs(%{latitude: _, longitude: _, radius: _} = geofence) do
+    Repo.one(
+      from c in ChargingProcess,
+        select: count(),
+        join: p in assoc(c, :position),
+        where: is_nil(c.cost) and within_geofence?(p, geofence, :right)
+    )
+  end
+
+  def calculate_charge_costs(%GeoFence{id: id}) do
+    query = """
+    UPDATE charging_processes cp
+    SET cost = (
+      SELECT
+        CASE WHEN g.session_fee IS NULL AND g.cost_per_kwh IS NULL THEN NULL
+             ELSE COALESCE(g.session_fee, 0) +
+                  COALESCE(g.cost_per_kwh * GREATEST(c.charge_energy_used, c.charge_energy_added), 0)
+        END
+      FROM charging_processes c
+      JOIN geofences g ON g.id = c.geofence_id
+      WHERE cp.id = c.id
+    )
+    WHERE cp.geofence_id = $1 AND cp.cost IS NULL;
+    """
+
+    with {:ok, %Postgrex.Result{num_rows: _}} <- Repo.query(query, [id]) do
+      :ok
+    end
+  end
 end

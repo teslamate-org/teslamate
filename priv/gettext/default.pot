@@ -124,8 +124,8 @@ msgid "Units"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:114
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:137
+#: lib/teslamate_web/templates/charge/cost.html.leex:113
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:135
 msgid "Back"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgid "Geo-Fences"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:172
+#: lib/teslamate_web/live/geofence_live/form.ex:242
 msgid "Geo-fence \"%{name}\" created"
 msgstr ""
 
@@ -168,14 +168,14 @@ msgid "Radius"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:117
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:140
+#: lib/teslamate_web/templates/charge/cost.html.leex:116
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:138
 msgid "Save"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:118
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:140 lib/teslamate_web/templates/signin/index.html.leex:33
+#: lib/teslamate_web/templates/charge/cost.html.leex:117
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:138 lib/teslamate_web/templates/signin/index.html.leex:33
 msgid "Saving..."
 msgstr ""
 
@@ -394,12 +394,12 @@ msgid "Sleep Mode"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:173
+#: lib/teslamate_web/live/geofence_live/form.ex:243
 msgid "Geo-fence \"%{name}\" updated"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:97
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:95
 msgid "Sleep Mode Enabled"
 msgstr ""
 
@@ -531,7 +531,7 @@ msgid "General Settings"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/geo_fence/form.html.leex:77
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:76
 msgid "Session fee"
 msgstr ""
 
@@ -548,4 +548,26 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:94
 msgid "Total"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:155
+msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
+msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
+msgstr[0] ""
+msgstr[1] ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:164
+msgid "Add costs retroactively"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:149
+msgid "Charging Costs"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/geo_fence/form.html.leex:163
+msgid "Continue"
 msgstr ""

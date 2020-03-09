@@ -61,8 +61,7 @@
         <div class="control">
           <%= text_input f, :cost_per_kwh, class: "input",
                              type: :number, inputmode: :decimal, min: 0.0, step: 0.0001,
-                             placeholder: "0.00",
-                             phx_hook: "SetLangAttr"
+                             placeholder: "0.00"
           %>
         </div>
         <%= if @show_errors do %>
@@ -81,8 +80,7 @@
         <div class="control">
           <%= text_input f, :session_fee, class: "input",
                              type: :number, inputmode: :decimal, min: 0.0, step: 0.01,
-                             placeholder: "0.00",
-                             phx_hook: "SetLangAttr"
+                             placeholder: "0.00"
           %>
         </div>
         <%= if @show_errors do %>
@@ -143,3 +141,27 @@
     </div>
   </div>
 </form>
+
+<div class="modal modal-fx-fadeInScale<%= if @show_modal, do: ' is-active' %>" phx-hook="Modal">
+  <div class="modal-background" phx-click="close-modal" <%= if @show_modal, do: "phx-window-keyup=keyup" %>></div>
+  <div class="modal-card modal-content">
+    <header class="modal-card-head">
+      <p class="modal-card-title"><%= gettext "Charging Costs" %></p>
+      <button class="button is-text is-rounded" aria-label="close" phx-click="close-modal">
+        <span class="icon is-small"><i class="mdi mdi-close"></i></span>
+      </button>
+    </header>
+    <section class="modal-card-body">
+      <p><%= raw ngettext(
+              "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet.",
+              "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet.",
+              @charges_without_costs,
+              n: @charges_without_costs
+      ) %></p>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button" phx-click="calc-costs" phx-value-result="no"><%= gettext "Continue" %></button>
+      <button class="button is-info" phx-click="calc-costs" phx-value-result="yes"><%= gettext "Add costs retroactively" %></button>
+    </footer>
+  </div>
+</div>

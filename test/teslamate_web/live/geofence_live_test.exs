@@ -5,6 +5,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Log.Car
 
+  import TestHelper, only: [decimal: 1]
+  import Ecto.Query
+
   def geofence_fixture(attrs \\ %{}) do
     {:ok, address} =
       attrs
@@ -99,7 +102,13 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   describe "Edit" do
     test "validates changes when editing of a geo-fence", %{conn: conn} do
       %GeoFence{id: id} =
-        geofence_fixture(%{name: "Post office", latitude: -25.066188, longitude: -130.100502})
+        geofence_fixture(%{
+          name: "Post office",
+          latitude: -25.066188,
+          longitude: -130.100502,
+          cost_per_kwh: 0.2599,
+          session_fee: 5.49
+        })
 
       assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
       html = Floki.parse_document!(html)
@@ -115,6 +124,12 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       radius = Floki.find(html, "#geo_fence_radius")
       assert ["100.0"] = Floki.attribute(radius, "value")
+
+      radius = Floki.find(html, "#geo_fence_cost_per_kwh")
+      assert ["0.2599"] = Floki.attribute(radius, "value")
+
+      radius = Floki.find(html, "#geo_fence_session_fee")
+      assert ["5.49"] = Floki.attribute(radius, "value")
 
       html =
         render_submit(view, :save, %{geo_fence: %{name: "", radius: ""}})
@@ -496,6 +511,327 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert %GlobalSettings{grafana_url: "https://grafana.example.com"} =
                Settings.get_global_settings!()
+    end
+  end
+
+  describe "charging cost" do
+    alias TeslaMate.Log.{ChargingProcess, Position}
+    alias TeslaMate.Log
+
+    test "shows modal if cost per kWh was entered", %{conn: conn} do
+      car = car_fixture()
+
+      lat = 47.81444104508753
+      lng = 12.367612123489382
+
+      params = %{
+        name: "Supercharger",
+        latitude: 47.814441,
+        longitude: 12.367768,
+        radius: 30,
+        cost_per_kwh: 0.33,
+        session_fee: nil
+      }
+
+      # Does not show modal if there aren't any charging sessions at this location
+
+      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+      render_submit(view, :save, %{geo_fence: params})
+      assert_redirect(view, "/geo-fences")
+
+      # Insert charging sessions ...
+
+      :ok = insert_charging_processes(car, {lat, lng})
+      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+
+      assert [] == html |> Floki.parse_document!() |> Floki.find(".modal.is-active")
+
+      html =
+        render_submit(view, :save, %{geo_fence: params})
+        |> Floki.parse_document!()
+
+      modal = Floki.find(html, ".modal.is-active")
+
+      assert "3 charging sessions" =
+               modal |> Floki.find(".modal-card-body strong") |> Floki.text()
+
+      assert ["Continue", "Add costs retroactively"] =
+               modal |> Floki.find(".modal-card-foot button") |> Enum.map(&Floki.text/1)
+    end
+
+    test "shows modal if a session fee was entered", %{conn: conn} do
+      car = car_fixture()
+      lat = 47.81444104508753
+      lng = 12.367612123489382
+      :ok = insert_charging_processes(car, {lat, lng})
+
+      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+
+      assert [] == html |> Floki.parse_document!() |> Floki.find(".modal.is-active")
+
+      html =
+        render_submit(view, :save, %{
+          geo_fence: %{
+            name: "Supercharger",
+            latitude: 47.814441,
+            longitude: 12.367768,
+            radius: 30,
+            cost_per_kwh: nil,
+            session_fee: 4.69
+          }
+        })
+        |> Floki.parse_document!()
+
+      modal = Floki.find(html, ".modal.is-active")
+
+      assert "3 charging sessions" =
+               modal |> Floki.find(".modal-card-body strong") |> Floki.text()
+
+      assert ["Continue", "Add costs retroactively"] =
+               modal |> Floki.find(".modal-card-foot button") |> Enum.map(&Floki.text/1)
+    end
+
+    test "shows modal if the position changed", %{conn: conn} do
+      car = car_fixture()
+
+      %GeoFence{id: id} =
+        geofence_fixture(%{
+          name: "Supercharger",
+          latitude: 47.814441,
+          longitude: 12.367768,
+          radius: 30,
+          cost_per_kwh: nil,
+          session_fee: 4.69
+        })
+
+      :ok = insert_charging_processes(car, {47.81444104508753, 12.367612123489382})
+
+      # Edit geofence
+
+      assert {:ok, view, h} = live(conn, "/geo-fences/#{id}/edit")
+      h = Floki.parse_document!(h)
+
+      assert [] == Floki.find(h, ".modal.is-active")
+      assert ["47.814441"] = h |> Floki.find("#geo_fence_latitude") |> Floki.attribute("value")
+      assert ["12.367768"] = h |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
+
+      html =
+        render_submit(view, :save, %{geo_fence: %{latitude: 47.814451, longitude: 12.367761}})
+        |> Floki.parse_document!()
+
+      modal = Floki.find(html, ".modal.is-active")
+
+      assert "3 charging sessions" =
+               modal |> Floki.find(".modal-card-body strong") |> Floki.text()
+
+      assert ["Continue", "Add costs retroactively"] =
+               modal |> Floki.find(".modal-card-foot button") |> Enum.map(&Floki.text/1)
+    end
+
+    test "shows modal if the radius changed", %{conn: conn} do
+      car = car_fixture()
+
+      %GeoFence{id: id} =
+        geofence_fixture(%{
+          name: "Supercharger",
+          latitude: 47.814441,
+          longitude: 12.367768,
+          radius: 30,
+          cost_per_kwh: 0.42,
+          session_fee: nil
+        })
+
+      :ok = insert_charging_processes(car, {47.81444104508753, 12.367612123489382})
+
+      # Edit geofence
+
+      assert {:ok, view, h} = live(conn, "/geo-fences/#{id}/edit")
+      h = Floki.parse_document!(h)
+
+      assert [] == Floki.find(h, ".modal.is-active")
+      assert ["47.814441"] = h |> Floki.find("#geo_fence_latitude") |> Floki.attribute("value")
+      assert ["12.367768"] = h |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
+
+      html =
+        render_submit(view, :save, %{geo_fence: %{radius: 50}})
+        |> Floki.parse_document!()
+
+      modal = Floki.find(html, ".modal.is-active")
+
+      assert "3 charging sessions" =
+               modal |> Floki.find(".modal-card-body strong") |> Floki.text()
+
+      assert ["Continue", "Add costs retroactively"] =
+               modal |> Floki.find(".modal-card-foot button") |> Enum.map(&Floki.text/1)
+    end
+
+    test "adds charging costs", %{conn: conn} do
+      %Car{id: car_id} = car = car_fixture()
+      :ok = insert_charging_processes(car, {47.81444104508753, 12.367612123489382})
+      :ok = insert_charging_processes(car, {42.0, 69.0})
+
+      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+      assert [] == html |> Floki.parse_document!() |> Floki.find(".modal.is-active")
+
+      html =
+        render_submit(view, :save, %{
+          geo_fence: %{
+            name: "Supercharger",
+            latitude: 47.814441,
+            longitude: 12.367768,
+            radius: 30,
+            cost_per_kwh: 0.33,
+            session_fee: 5.00
+          }
+        })
+        |> Floki.parse_document!()
+
+      assert [
+               {"button", [_, {"phx-click", "calc-costs"}, {"phx-value-result", "no"}],
+                ["Continue"]},
+               {"button", [_, {"phx-click", "calc-costs"}, {"phx-value-result", "yes"}],
+                ["Add costs retroactively"]}
+             ] = html |> Floki.find(".modal.is-active") |> Floki.find(".modal-card-foot button")
+
+      assert [] =
+               render_click(view, :toggle, %{checked: "false", car: to_string(car.id)})
+               |> Floki.parse_document!()
+               |> Floki.find("#sleep_mode_#{car.id}")
+               |> Floki.attribute("checked")
+
+      render_click(view, "calc-costs", %{"result" => "yes"})
+      assert_redirect(view, "/geo-fences")
+
+      assert [
+               %ChargingProcess{
+                 geofence_id: id,
+                 charge_energy_added: 50.63,
+                 charge_energy_used: nil,
+                 cost: decimal("99.00")
+               },
+               %ChargingProcess{
+                 geofence_id: id,
+                 charge_energy_added: 4.57,
+                 charge_energy_used: nil,
+                 cost: decimal(6.51)
+               },
+               %ChargingProcess{
+                 geofence_id: id,
+                 charge_energy_added: 11.82,
+                 charge_energy_used: nil,
+                 cost: decimal("8.90")
+               },
+               %ChargingProcess{
+                 geofence_id: id,
+                 charge_energy_added: 52.1,
+                 charge_energy_used: nil,
+                 cost: decimal(22.19)
+               },
+               %ChargingProcess{geofence_id: nil, cost: decimal("99.00")},
+               %ChargingProcess{geofence_id: nil, cost: nil},
+               %ChargingProcess{geofence_id: nil, cost: nil},
+               %ChargingProcess{geofence_id: nil, cost: nil}
+             ] = Repo.all(from c in ChargingProcess, order_by: c.id)
+
+      assert %GeoFence{
+               name: "Supercharger",
+               latitude: 47.814441,
+               longitude: 12.367768,
+               radius: 30.0,
+               cost_per_kwh: decimal("0.3300"),
+               session_fee: decimal("5.00"),
+               sleep_mode_blacklist: [%Car{id: ^car_id}],
+               sleep_mode_whitelist: []
+             } =
+               Repo.get(GeoFence, id)
+               |> Repo.preload([:sleep_mode_blacklist, :sleep_mode_whitelist])
+    end
+
+    test "skips adding charging costs", %{conn: conn} do
+      %Car{id: car_id} = car = car_fixture()
+      :ok = insert_charging_processes(car, {47.81444104508753, 12.367612123489382})
+
+      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+
+      html =
+        render_submit(view, :save, %{
+          geo_fence: %{
+            name: "Supercharger",
+            latitude: 47.814441,
+            longitude: 12.367768,
+            radius: 30,
+            cost_per_kwh: 0.33,
+            session_fee: 5.00
+          }
+        })
+        |> Floki.parse_document!()
+
+      assert [
+               {"button", [_, {"phx-click", "calc-costs"}, {"phx-value-result", "no"}],
+                ["Continue"]},
+               {"button", [_, {"phx-click", "calc-costs"}, {"phx-value-result", "yes"}],
+                ["Add costs retroactively"]}
+             ] = html |> Floki.find(".modal.is-active") |> Floki.find(".modal-card-foot button")
+
+      assert [] =
+               render_click(view, :toggle, %{checked: "false", car: to_string(car.id)})
+               |> Floki.parse_document!()
+               |> Floki.find("#sleep_mode_#{car.id}")
+               |> Floki.attribute("checked")
+
+      render_click(view, "calc-costs", %{"result" => "no"})
+      assert_redirect(view, "/geo-fences")
+
+      assert [
+               %ChargingProcess{geofence_id: id, cost: decimal("99.00")},
+               %ChargingProcess{geofence_id: id, cost: nil},
+               %ChargingProcess{geofence_id: id, cost: nil},
+               %ChargingProcess{geofence_id: id, cost: nil}
+             ] = Repo.all(from c in ChargingProcess, order_by: c.id)
+
+      assert %GeoFence{
+               name: "Supercharger",
+               latitude: 47.814441,
+               longitude: 12.367768,
+               radius: 30.0,
+               cost_per_kwh: decimal("0.3300"),
+               session_fee: decimal("5.00"),
+               sleep_mode_blacklist: [%Car{id: ^car_id}],
+               sleep_mode_whitelist: []
+             } =
+               Repo.get(GeoFence, id)
+               |> Repo.preload([:sleep_mode_blacklist, :sleep_mode_whitelist])
+    end
+
+    defp insert_charging_processes(car, {lat, lng}) do
+      {:ok, %Position{id: position_id}} =
+        Log.insert_position(car, %{date: DateTime.utc_now(), latitude: lat, longitude: lng})
+
+      data =
+        for {sir, eir, srr, err, ca, sl, el, d, c} <- [
+              {80.5, 412.4, nil, nil, 50.63, 16, 83, 70, 99.0},
+              {109.7, 139.7, 108.7, 139.7, 4.57, 22, 28, 26, nil},
+              {63.9, 142.3, 64.9, 142.3, 11.82, 13, 29, 221, nil},
+              {107.9, 450.1, 108.9, 450.1, 52.1, 22, 90, 40, nil}
+            ] do
+          %{
+            car_id: car.id,
+            position_id: position_id,
+            start_ideal_range_km: sir,
+            end_ideal_range_km: eir,
+            start_rated_range_km: srr,
+            end_rated_range_km: err,
+            charge_energy_added: ca,
+            start_battery_level: sl,
+            end_battery_level: el,
+            duration_min: d,
+            cost: c
+          }
+        end
+
+      {_, nil} = Repo.insert_all(ChargingProcess, data)
+
+      :ok
     end
   end
 end

@@ -243,19 +243,6 @@ export const Map = {
   }
 };
 
-export const SetLangAttr = {
-  exec() {
-    this.el.setAttribute("lang", LANG);
-  },
-
-  mounted() {
-    this.exec();
-  },
-  updated() {
-    this.exec();
-  }
-};
-
 export const UpdateCostMode = {
   mounted() {
     const $energy = document.querySelector("#energy-tag > span:nth-child(2)");
@@ -277,5 +264,27 @@ export const UpdateCostMode = {
         $cost.value = cost.toFixed(2);
       });
     }
+  }
+};
+
+export const Modal = {
+  _freeze() {
+    document.documentElement.classList.add("is-clipped");
+  },
+
+  _unfreeze() {
+    document.documentElement.classList.remove("is-clipped");
+  },
+
+  mounted() {
+    // assumption: 'is-active' is always added after the initial mount
+  },
+
+  updated() {
+    this.el.classList.contains("is-active") ? this._freeze() : this._unfreeze();
+  },
+
+  destroyed() {
+    this._unfreeze();
   }
 };

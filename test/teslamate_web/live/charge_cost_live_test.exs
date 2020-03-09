@@ -6,6 +6,8 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
   alias TeslaMate.Log.Car
   alias TeslaMate.{Log, Locations, Repo}
 
+  import TestHelper, only: [decimal: 1]
+
   describe "metadata" do
     test "hides the date if the charge has no end_date", %{conn: conn} do
       car = car_fixture()
@@ -188,7 +190,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
 
       assert ["42.12"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
-      assert Decimal.from_float(42.12) == Repo.get(ChargingProcess, id).cost
+      assert %ChargingProcess{cost: decimal("42.12")} = Repo.get(ChargingProcess, id)
 
       html =
         render_submit(view, :save, %{charging_process: %{cost: nil}})
@@ -222,7 +224,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
 
       assert ["1.20"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
-      assert Decimal.new("1.20") == Repo.get(ChargingProcess, id).cost
+      assert %ChargingProcess{cost: decimal("1.20")} = Repo.get(ChargingProcess, id)
 
       html =
         render_submit(view, :save, %{charging_process: %{cost: nil}})
