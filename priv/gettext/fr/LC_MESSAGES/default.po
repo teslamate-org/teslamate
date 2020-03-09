@@ -124,7 +124,7 @@ msgid "Units"
 msgstr "Unités"
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:108
+#: lib/teslamate_web/templates/charge/cost.html.leex:114
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:137
 msgid "Back"
 msgstr "Retour"
@@ -168,13 +168,13 @@ msgid "Radius"
 msgstr "Rayon"
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:111
+#: lib/teslamate_web/templates/charge/cost.html.leex:117
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:140
 msgid "Save"
 msgstr "Enregistrer"
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:112
+#: lib/teslamate_web/templates/charge/cost.html.leex:118
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:140 lib/teslamate_web/templates/signin/index.html.leex:33
 msgid "Saving..."
 msgstr "Enregistrement..."
@@ -439,12 +439,12 @@ msgid "Cost"
 msgstr "Coût"
 
 #, elixir-format
-#: lib/teslamate_web/templates/charge/cost.html.leex:95
+#: lib/teslamate_web/templates/charge/cost.html.leex:101
 msgid "Enter charge cost"
 msgstr "Entrez le coût de charge"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.ex:48
+#: lib/teslamate_web/live/charge_live/cost.ex:64
 msgid "Saved!"
 msgstr "Enregistré!"
 
@@ -539,3 +539,13 @@ msgstr "Prix fixe"
 #: lib/teslamate_web/templates/car/summary.html.leex:53
 msgid "Doors open"
 msgstr "Porte ouverte"
+
+#, elixir-format
+#: lib/teslamate_web/templates/charge/cost.html.leex:94
+msgid "Per kWh"
+msgstr "Par kWh"
+
+#, elixir-format
+#: lib/teslamate_web/templates/charge/cost.html.leex:94
+msgid "Total"
+msgstr "Total"

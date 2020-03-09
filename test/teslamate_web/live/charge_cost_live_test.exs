@@ -165,7 +165,12 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
   describe "editing" do
     test "saves the charge cost", %{conn: conn} do
-      %ChargingProcess{id: id} = charging_process_fixture(car_fixture(), %{cost: nil})
+      %ChargingProcess{id: id} =
+        charging_process_fixture(car_fixture(), %{
+          cost: nil,
+          charge_energy_added: 8,
+          charge_energy_used: 10
+        })
 
       assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
 
@@ -179,8 +184,45 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
         render_submit(view, :save, %{charging_process: %{cost: 42.12}})
         |> Floki.parse_document!()
 
+      assert "Total" =
+               html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
+
       assert ["42.12"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
       assert Decimal.from_float(42.12) == Repo.get(ChargingProcess, id).cost
+
+      html =
+        render_submit(view, :save, %{charging_process: %{cost: nil}})
+        |> Floki.parse_document!()
+
+      assert [] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert nil == Repo.get(ChargingProcess, id).cost
+    end
+
+    test "allows to enter the cost per kWh", %{conn: conn} do
+      %ChargingProcess{id: id} =
+        charging_process_fixture(car_fixture(), %{
+          cost: nil,
+          charge_energy_added: 8,
+          charge_energy_used: 10
+        })
+
+      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+
+      assert [] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#charging_process_cost")
+               |> Floki.attribute("value")
+
+      html =
+        render_submit(view, :save, %{charging_process: %{cost: 0.12, mode: "per_kwh"}})
+        |> Floki.parse_document!()
+
+      assert "Total" =
+               html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
+
+      assert ["1.20"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert Decimal.new("1.20") == Repo.get(ChargingProcess, id).cost
 
       html =
         render_submit(view, :save, %{charging_process: %{cost: nil}})
