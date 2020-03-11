@@ -30,14 +30,14 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                |> Floki.find("#global_settings_unit_of_temperature")
     end
 
-    test "shows :ideal by default", %{conn: conn} do
+    test "shows :rated by default", %{conn: conn} do
       assert {:ok, _view, html} = live(conn, "/settings")
 
       assert [
                {"select", _,
                 [
-                  {"option", [{"value", "ideal"}, {"selected", "selected"}], ["ideal"]},
-                  {"option", [{"value", "rated"}], ["rated"]}
+                  {"option", [{"value", "ideal"}], ["ideal"]},
+                  {"option", [{"value", "rated"}, {"selected", "selected"}], ["rated"]}
                 ]}
              ] =
                html
