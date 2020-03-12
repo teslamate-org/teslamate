@@ -16,7 +16,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1582051102485,
+  "id": 27,
+  "iteration": 1584004683196,
   "links": [
     {
       "icon": "dashboard",
@@ -52,7 +53,7 @@
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -115,11 +116,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.1",
+      "pluginVersion": "6.6.2",
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -193,11 +194,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.1",
+      "pluginVersion": "6.6.2",
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -276,11 +277,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.1",
+      "pluginVersion": "6.6.2",
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -326,23 +327,25 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 5,
       "gridPos": {
-        "h": 7,
+        "h": 4,
         "w": 15,
         "x": 9,
         "y": 1
       },
       "hiddenSeries": false,
+      "hideTimeOverride": false,
       "id": 13,
       "legend": {
         "alignAsTable": false,
         "avg": false,
-        "current": false,
+        "current": true,
         "hideEmpty": false,
         "hideZero": false,
         "max": true,
         "min": true,
+        "rightSide": false,
         "show": true,
         "total": false,
         "values": true
@@ -367,7 +370,7 @@
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -406,7 +409,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": "24h",
+      "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
       "title": "Charge Level",
@@ -505,7 +508,7 @@
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -571,7 +574,8 @@
         "#d44a3a"
       ],
       "datasource": "TeslaMate",
-      "decimals": 0,
+      "decimals": null,
+      "description": "",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -586,7 +590,7 @@
         "x": 4,
         "y": 5
       },
-      "id": 6,
+      "id": 19,
       "interval": null,
       "links": [
         {
@@ -610,7 +614,7 @@
       "nullPointMode": "connected",
       "nullText": null,
       "options": {},
-      "postfix": " $length_unit",
+      "postfix": "$length_unit",
       "postfixFontSize": "50%",
       "prefix": "",
       "prefixFontSize": "50%",
@@ -624,7 +628,7 @@
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -643,7 +647,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select $__time(date), convert_km(odometer, '$length_unit') from positions where car_id = $car order by date desc limit 1;",
+          "rawSql": "select $__time(date), convert_km(odometer, '$length_unit') from positions where car_id = $car order by date desc limit 1; ",
           "refId": "A",
           "select": [
             [
@@ -681,126 +685,6 @@
       "valueName": "first"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
-      "datasource": "TeslaMate",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 9,
-        "x": 0,
-        "y": 8
-      },
-      "id": 2,
-      "interval": null,
-      "links": [
-        {
-          "targetBlank": true,
-          "title": "Updates",
-          "url": "/d/IiC07mgWz/updates?orgId=1"
-        }
-      ],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
-      "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "scopedVars": {
-        "car": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
-      },
-      "tableColumn": "",
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "select version from updates where car_id = $car order by start_date desc limit 1",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "efficiency"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "cars",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "thresholds": "",
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Firmware",
-      "type": "singlestat",
-      "valueFontSize": "70%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "first"
-    },
-    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -809,10 +693,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 7,
+        "h": 4,
         "w": 15,
         "x": 9,
-        "y": 8
+        "y": 5
       },
       "hiddenSeries": false,
       "id": 15,
@@ -848,7 +732,7 @@
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -925,7 +809,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": "24h",
+      "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
       "title": "Charging Details",
@@ -968,12 +852,334 @@
       }
     },
     {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "TeslaMate",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 9,
+        "x": 0,
+        "y": 8
+      },
+      "id": 2,
+      "interval": null,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Updates",
+          "url": "/d/IiC07mgWz/updates?orgId=1"
+        }
+      ],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "scopedVars": {
+        "car": {
+          "selected": false,
+          "text": "K.I.T.T.",
+          "value": "1"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select version from updates where car_id = $car order by start_date desc limit 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "efficiency"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cars",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Firmware",
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "first"
+    },
+    {
+      "backgroundColor": "rgba(128,128,128,0.1)",
+      "cacheTimeout": null,
+      "colorMaps": [
+        {
+          "color": "#F2CC0C",
+          "text": "charging"
+        },
+        {
+          "color": "#6ED0E0",
+          "text": "online"
+        },
+        {
+          "color": "#8F3BB8",
+          "text": "driving"
+        },
+        {
+          "color": "#FFB357",
+          "text": "offline"
+        },
+        {
+          "color": "#56A64B",
+          "text": "asleep"
+        },
+        {
+          "color": "#E02F44",
+          "text": "updating"
+        }
+      ],
+      "crosshairColor": "#8F070C",
+      "datasource": "TeslaMate",
+      "display": "timeline",
+      "expandFromQueryS": 0,
+      "extendLastValue": true,
+      "gridPos": {
+        "h": 5,
+        "w": 15,
+        "x": 9,
+        "y": 9
+      },
+      "highlightOnMouseover": true,
+      "id": 20,
+      "interval": "1h",
+      "legendSortBy": "-ms",
+      "lineColor": "rgba(0,0,0,0.1)",
+      "links": [
+        {
+          "targetBlank": false,
+          "title": "States",
+          "url": "/d/xo4BNRkZz/states?orgId=1"
+        }
+      ],
+      "metricNameColor": "#000000",
+      "options": {},
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "rowHeight": 80,
+      "scopedVars": {
+        "car": {
+          "selected": false,
+          "text": "K.I.T.T.",
+          "value": "1"
+        }
+      },
+      "showDistinctCount": false,
+      "showLegend": true,
+      "showLegendCounts": true,
+      "showLegendNames": false,
+      "showLegendPercent": true,
+      "showLegendTime": true,
+      "showLegendValues": true,
+      "showTimeAxis": true,
+      "showTransitionCount": false,
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car\nUNION\n\tSELECT\n    unnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[6, 0]) AS state\n\tFROM\n\t\tupdates\n\tWHERE\n\t\tcar_id = $car\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nWHERE \n  date IS NOT NULL\nORDER BY\n\tdate ASC, state ASC;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "efficiency"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cars",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "textSize": 20,
+      "textSizeTime": 12,
+      "timeFrom": null,
+      "timeOptions": [
+        {
+          "name": "Years",
+          "value": "years"
+        },
+        {
+          "name": "Months",
+          "value": "months"
+        },
+        {
+          "name": "Weeks",
+          "value": "weeks"
+        },
+        {
+          "name": "Days",
+          "value": "days"
+        },
+        {
+          "name": "Hours",
+          "value": "hours"
+        },
+        {
+          "name": "Minutes",
+          "value": "minutes"
+        },
+        {
+          "name": "Seconds",
+          "value": "seconds"
+        },
+        {
+          "name": "Milliseconds",
+          "value": "milliseconds"
+        }
+      ],
+      "timePrecision": {
+        "name": "Minutes",
+        "value": "minutes"
+      },
+      "timeShift": null,
+      "timeTextColor": "#d8d9da",
+      "title": "States",
+      "type": "natel-discrete-panel",
+      "units": "short",
+      "useTimePrecision": false,
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        },
+        {
+          "op": "=",
+          "text": "online",
+          "value": "0"
+        },
+        {
+          "op": "=",
+          "text": "driving",
+          "value": "1"
+        },
+        {
+          "op": "=",
+          "text": "charging",
+          "value": "2"
+        },
+        {
+          "op": "=",
+          "text": "offline",
+          "value": "3"
+        },
+        {
+          "op": "=",
+          "text": "asleep",
+          "value": "4"
+        },
+        {
+          "op": "=",
+          "text": "online",
+          "value": "5"
+        },
+        {
+          "op": "=",
+          "text": "updating",
+          "value": "6"
+        }
+      ],
+      "valueTextColor": "#000000",
+      "writeAllValues": false,
+      "writeLastValue": true,
+      "writeMetricNames": false
+    },
+    {
       "datasource": "TeslaMate",
       "gridPos": {
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 11
+        "y": 10
       },
       "id": 16,
       "options": {
@@ -1007,11 +1213,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.1",
+      "pluginVersion": "6.6.2",
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -1056,7 +1262,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 11
+        "y": 10
       },
       "id": 8,
       "options": {
@@ -1090,11 +1296,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.1",
+      "pluginVersion": "6.6.2",
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -1139,7 +1345,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 11
+        "y": 10
       },
       "id": 9,
       "options": {
@@ -1173,11 +1379,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.1",
+      "pluginVersion": "6.6.2",
       "scopedVars": {
         "car": {
           "selected": false,
-          "text": "1",
+          "text": "K.I.T.T.",
           "value": "1"
         }
       },
@@ -1304,8 +1510,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "ideal",
-          "value": "ideal"
+          "text": "rated",
+          "value": "rated"
         },
         "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
@@ -1329,8 +1535,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "http://localhost:4000",
-          "value": "http://localhost:4000"
+          "text": "https://teslamate.schmidt-schmitten.com",
+          "value": "https://teslamate.schmidt-schmitten.com"
         },
         "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
@@ -1354,8 +1560,8 @@
     ]
   },
   "time": {
-    "from": "now/y",
-    "to": "now/y"
+    "from": "now-7d",
+    "to": "now"
   },
   "timepicker": {
     "hidden": false,
@@ -1385,6 +1591,6 @@
   },
   "timezone": "",
   "title": "Overview",
-  "uid": "kOuP_Fggz",
-  "version": 1
+  "uid": "MyllnnXZk",
+  "version": 22
 }
