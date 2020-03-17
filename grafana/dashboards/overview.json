@@ -1535,7 +1535,7 @@
       {
         "allValue": null,
         "current": {
-          "text": "https://teslamate.schmidt-schmitten.com",
+          "text": "http://localhost:4000", 
           "value": "https://teslamate.schmidt-schmitten.com"
         },
         "datasource": "TeslaMate",
