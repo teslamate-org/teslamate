@@ -224,12 +224,12 @@ msgid "Driver present"
 msgstr "Fører er til stede"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:287
+#: lib/teslamate_web/templates/car/summary.html.leex:299
 msgid "cancel sleep attempt"
 msgstr "avbryt dvale"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:282
+#: lib/teslamate_web/templates/car/summary.html.leex:294
 msgid "try to sleep"
 msgstr "forsøk på dvale"
 
@@ -344,7 +344,7 @@ msgid "Outside temperature"
 msgstr "Temperatur ute"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:259
+#: lib/teslamate_web/templates/car/summary.html.leex:271
 msgid "Version"
 msgstr "Versjon"
 
@@ -571,4 +571,9 @@ msgstr "Ladekost"
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:163
 msgid "Continue"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:258
+msgid "Mileage"
 msgstr ""

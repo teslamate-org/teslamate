@@ -153,7 +153,8 @@ defmodule TeslaMateWeb.CarControllerTest do
              dr: 0,
              pf: 1,
              pr: 0,
-             is_user_present: true
+             is_user_present: true,
+             odometer: 26097.59
            },
            vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
          )}
@@ -181,6 +182,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Software Update available", "gift-outline")
       assert table_row(html, "Outside temperature", "24 °C")
       assert table_row(html, "Inside temperature", "23.2 °C")
+      assert table_row(html, "Odometer", "42000 km")
       assert table_row(html, "Version", "2019.40.50.7")
     end
 
@@ -415,6 +417,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     @tag :signed_in
+    @tag :capture_log
     test "displays imperial units", %{conn: conn} do
       {:ok, _} =
         Settings.get_global_settings!()
@@ -438,7 +441,14 @@ defmodule TeslaMateWeb.CarControllerTest do
              usable_battery_level: 67,
              battery_level: 69
            },
-           climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2}
+           climate_state: %{
+             is_preconditioning: false,
+             outside_temp: 24,
+             inside_temp: 23.2
+           },
+           vehicle_state: %{
+             odometer: 42000
+           }
          )}
       ]
 
@@ -455,6 +465,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Speed", "30 mph")
       assert table_row(html, "Outside temperature", "75.2 °F")
       assert table_row(html, "Inside temperature", "73.8 °F")
+      assert table_row(html, "Odometer", "42000 mi")
     end
   end
 

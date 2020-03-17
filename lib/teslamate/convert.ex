@@ -1,18 +1,27 @@
 defmodule TeslaMate.Convert do
+  @km_factor 0.62137119223733
+  @ft_factor 3.28084
+
   def mph_to_kmh(nil), do: nil
-  def mph_to_kmh(mph), do: round(mph * 1.60934)
+  def mph_to_kmh(mph), do: round(mph / @km_factor)
 
   def miles_to_km(nil, _precision), do: nil
-  def miles_to_km(miles, precision), do: Float.round(miles / 0.62137, precision)
+  def miles_to_km(miles, 0), do: round(miles / @km_factor)
+  def miles_to_km(miles, precision), do: Float.round(miles / @km_factor, precision)
 
   def km_to_miles(nil, _precision), do: nil
-  def km_to_miles(km, precision), do: Float.round(km * 0.62137, precision)
+  def km_to_miles(km, 0), do: round(km * @km_factor)
+  def km_to_miles(km, precision), do: Float.round(km * @km_factor, precision)
 
   def m_to_ft(nil), do: nil
-  def m_to_ft(m), do: m * 3.28084
+  def m_to_ft(m), do: m * @ft_factor
 
   def ft_to_m(nil), do: nil
-  def ft_to_m(ft), do: ft / 3.28084
+  def ft_to_m(ft), do: ft / @ft_factor
+
+  def celsius_to_fahrenheit(nil, _precision), do: nil
+  def celsius_to_fahrenheit(c, 0), do: round(c * 9 / 5 + 32)
+  def celsius_to_fahrenheit(c, precision), do: Float.round(c * 9 / 5 + 32, precision)
 
   @minute 60
   @hour @minute * 60

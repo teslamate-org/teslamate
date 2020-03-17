@@ -223,12 +223,12 @@ msgid "Driver present"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:287
+#: lib/teslamate_web/templates/car/summary.html.leex:299
 msgid "cancel sleep attempt"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:282
+#: lib/teslamate_web/templates/car/summary.html.leex:294
 msgid "try to sleep"
 msgstr ""
 
@@ -343,7 +343,7 @@ msgid "Outside temperature"
 msgstr ""
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:259
+#: lib/teslamate_web/templates/car/summary.html.leex:271
 msgid "Version"
 msgstr ""
 
@@ -570,4 +570,9 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:163
 msgid "Continue"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/templates/car/summary.html.leex:258
+msgid "Mileage"
 msgstr ""
