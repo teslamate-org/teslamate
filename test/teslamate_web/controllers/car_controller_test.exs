@@ -182,7 +182,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Software Update available", "gift-outline")
       assert table_row(html, "Outside temperature", "24 °C")
       assert table_row(html, "Inside temperature", "23.2 °C")
-      assert table_row(html, "Odometer", "42000 km")
+      assert table_row(html, "Mileage", "42000 km")
       assert table_row(html, "Version", "2019.40.50.7")
     end
 
@@ -465,7 +465,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Speed", "30 mph")
       assert table_row(html, "Outside temperature", "75.2 °F")
       assert table_row(html, "Inside temperature", "73.8 °F")
-      assert table_row(html, "Odometer", "42000 mi")
+      assert table_row(html, "Mileage", "42000 mi")
     end
   end
 
