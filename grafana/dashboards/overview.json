@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1582051102485,
+  "iteration": 1584466048098,
   "links": [
     {
       "icon": "dashboard",
@@ -328,7 +328,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 15,
         "x": 9,
         "y": 1
@@ -406,7 +406,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": "24h",
+      "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
       "title": "Charge Level",
@@ -809,10 +809,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 7,
+        "h": 4,
         "w": 15,
         "x": 9,
-        "y": 8
+        "y": 6
       },
       "hiddenSeries": false,
       "id": 15,
@@ -925,7 +925,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": "24h",
+      "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
       "title": "Charging Details",
@@ -966,6 +966,203 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "backgroundColor": "rgba(128,128,128,0.1)",
+      "colorMaps": [
+        {
+          "color": "#F2CC0C",
+          "text": "charging"
+        },
+        {
+          "color": "#8F3BB8",
+          "text": "driving"
+        },
+        {
+          "color": "#56A64B",
+          "text": "asleep"
+        },
+        {
+          "color": "#6ED0E0",
+          "text": "online"
+        },
+        {
+          "color": "#FFB357",
+          "text": "offline"
+        },
+        {
+          "color": "#E02F44",
+          "text": "updating"
+        }
+      ],
+      "crosshairColor": "#8F070C",
+      "datasource": null,
+      "display": "timeline",
+      "expandFromQueryS": 0,
+      "extendLastValue": true,
+      "gridPos": {
+        "h": 5,
+        "w": 15,
+        "x": 9,
+        "y": 10
+      },
+      "highlightOnMouseover": true,
+      "id": 20,
+      "legendSortBy": "-ms",
+      "lineColor": "rgba(0,0,0,0.1)",
+      "links": [
+        {
+          "title": "States",
+          "url": "/d/xo4BNRkZz/states"
+        }
+      ],
+      "metricNameColor": "#000000",
+      "options": {},
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "rowHeight": 70,
+      "scopedVars": {
+        "car": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "showLegend": true,
+      "showLegendCounts": true,
+      "showLegendNames": false,
+      "showLegendPercent": true,
+      "showLegendTime": true,
+      "showLegendValues": true,
+      "showTimeAxis": true,
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car\nUNION\n\tSELECT\n    unnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[6, 0]) AS state\n\tFROM\n\t\tupdates\n\tWHERE\n\t\tcar_id = $car\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nWHERE \n  date IS NOT NULL\nORDER BY\n\tdate ASC, state ASC;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "geofences",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "textSize": 24,
+      "textSizeTime": 12,
+      "timeFrom": null,
+      "timeOptions": [
+        {
+          "name": "Years",
+          "value": "years"
+        },
+        {
+          "name": "Months",
+          "value": "months"
+        },
+        {
+          "name": "Weeks",
+          "value": "weeks"
+        },
+        {
+          "name": "Days",
+          "value": "days"
+        },
+        {
+          "name": "Hours",
+          "value": "hours"
+        },
+        {
+          "name": "Minutes",
+          "value": "minutes"
+        },
+        {
+          "name": "Seconds",
+          "value": "seconds"
+        },
+        {
+          "name": "Milliseconds",
+          "value": "milliseconds"
+        }
+      ],
+      "timePrecision": {
+        "name": "Minutes",
+        "value": "minutes"
+      },
+      "timeShift": null,
+      "timeTextColor": "#d8d9da",
+      "title": "States",
+      "type": "natel-discrete-panel",
+      "units": "short",
+      "useTimePrecision": false,
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        },
+        {
+          "op": "=",
+          "text": "online",
+          "value": "0"
+        },
+        {
+          "op": "=",
+          "text": "driving",
+          "value": "1"
+        },
+        {
+          "op": "=",
+          "text": "charging",
+          "value": "2"
+        },
+        {
+          "op": "=",
+          "text": "offline",
+          "value": "3"
+        },
+        {
+          "op": "=",
+          "text": "asleep",
+          "value": "4"
+        },
+        {
+          "op": "=",
+          "text": "online",
+          "value": "5"
+        },
+        {
+          "op": "=",
+          "text": "updating",
+          "value": "6"
+        }
+      ],
+      "valueTextColor": "#000000",
+      "writeAllValues": false,
+      "writeLastValue": true,
+      "writeMetricNames": false
     },
     {
       "datasource": "TeslaMate",
@@ -1354,8 +1551,8 @@
     ]
   },
   "time": {
-    "from": "now/y",
-    "to": "now/y"
+    "from": "now-7d",
+    "to": "now"
   },
   "timepicker": {
     "hidden": false,
@@ -1386,5 +1583,5 @@
   "timezone": "",
   "title": "Overview",
   "uid": "kOuP_Fggz",
-  "version": 1
+  "version": 6
 }
