@@ -253,7 +253,8 @@
             %></td>
           </tr>
             <% end %>
-            <%= unless is_nil(@summary.odometer) do %>
+          <% end %>
+          <%= unless is_nil(@summary.odometer) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Mileage" %></td>
             <td><%=
@@ -264,7 +265,6 @@
               end
             %></td>
           </tr>
-            <% end %>
           <% end %>
           <%= unless is_nil(@summary.version) do %>
           <tr>
