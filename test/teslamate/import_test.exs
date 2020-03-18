@@ -67,7 +67,7 @@ defmodule TeslaMate.ImportTest do
                distance: 1.2049430000006396,
                duration_min: 3,
                start_date: ~U[2016-06-26 18:12:28.000000Z],
-               end_date: ~U[2016-06-26 18:15:06.000000Z],
+               end_date: ~U[2016-06-26 18:15:28.000000Z],
                start_address_id: nil,
                end_address_id: nil,
                start_geofence_id: nil,
@@ -80,8 +80,8 @@ defmodule TeslaMate.ImportTest do
                end_position_id: _,
                start_rated_range_km: 247.2,
                end_rated_range_km: 247.2,
-               inside_temp_avg: 26.46666666666667,
-               outside_temp_avg: 19.400000000000002,
+               inside_temp_avg: 26.542857142857144,
+               outside_temp_avg: 19.342857142857145,
                power_avg: nil,
                power_max: nil,
                power_min: nil,
@@ -90,9 +90,9 @@ defmodule TeslaMate.ImportTest do
              %Drive{
                car_id: ^car_id,
                distance: 4.962514999999257,
-               duration_min: 11,
+               duration_min: 12,
                start_date: ~U[2016-06-26 19:22:28.000000Z],
-               end_date: ~U[2016-06-26 19:33:47.000000Z],
+               end_date: ~U[2016-06-26 19:34:09.000000Z],
                start_address_id: nil,
                end_address_id: nil,
                start_geofence_id: nil,
@@ -105,8 +105,8 @@ defmodule TeslaMate.ImportTest do
                end_rated_range_km: 239.1,
                start_ideal_range_km: 310.3,
                end_ideal_range_km: 301.4,
-               inside_temp_avg: 29.133333333333336,
-               outside_temp_avg: 20.133333333333336,
+               inside_temp_avg: 28.816000000000003,
+               outside_temp_avg: 20.104,
                power_avg: nil,
                power_max: nil,
                power_min: nil,
@@ -206,7 +206,7 @@ defmodule TeslaMate.ImportTest do
                car_id: ^car_id,
                duration_min: 3,
                start_date: ~U[2016-06-26 18:12:28.000000Z],
-               end_date: ~U[2016-06-26 18:15:06.000000Z]
+               end_date: ~U[2016-06-26 18:15:28.000000Z]
              }
            ] = all(Drive)
 
