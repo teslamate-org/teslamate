@@ -115,7 +115,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.1",
+      "pluginVersion": "6.6.2",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -193,7 +193,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.1",
+      "pluginVersion": "6.6.2",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -276,7 +276,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.1",
+      "pluginVersion": "6.6.2",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -328,7 +328,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 5,
+        "h": 7,
         "w": 15,
         "x": 9,
         "y": 1
@@ -809,10 +809,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 4,
+        "h": 7,
         "w": 15,
         "x": 9,
-        "y": 6
+        "y": 8
       },
       "hiddenSeries": false,
       "id": 15,
@@ -968,6 +968,255 @@
       }
     },
     {
+      "datasource": "TeslaMate",
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 11
+      },
+      "id": 16,
+      "options": {
+        "fieldOptions": {
+          "calcs": [
+            "firstNotNull"
+          ],
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 0,
+            "mappings": [],
+            "max": 100,
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "degree"
+          },
+          "overrides": [],
+          "values": false
+        },
+        "orientation": "auto",
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "6.6.2",
+      "scopedVars": {
+        "car": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM\n\tpositions\nWHERE\n car_id = $car\nORDER BY\n\tdate DESC\nLIMIT 1;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "outside_temp"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "positions",
+          "timeColumn": "date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Driver Temp",
+      "type": "gauge"
+    },
+    {
+      "datasource": "TeslaMate",
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 11
+      },
+      "id": 8,
+      "options": {
+        "fieldOptions": {
+          "calcs": [
+            "firstNotNull"
+          ],
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 0,
+            "mappings": [],
+            "max": 100,
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "degree"
+          },
+          "overrides": [],
+          "values": false
+        },
+        "orientation": "auto",
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "6.6.2",
+      "scopedVars": {
+        "car": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH last_position AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM positions\n\tWHERE car_id = $car AND outside_temp IS NOT NULL\n\tORDER BY date DESC\n\tLIMIT 1\n),\nlast_charge AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM charges\n\tJOIN charging_processes ON charges.charging_process_id = charging_processes.id\n\tWHERE car_id = $car AND outside_temp IS NOT NULL\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT * FROM last_position\nUNION ALL\nSELECT * FROM last_charge\nORDER BY date DESC\nLIMIT 1;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "outside_temp"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "positions",
+          "timeColumn": "date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Outside Temp",
+      "type": "gauge"
+    },
+    {
+      "datasource": "TeslaMate",
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 11
+      },
+      "id": 9,
+      "options": {
+        "fieldOptions": {
+          "calcs": [
+            "firstNotNull"
+          ],
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 0,
+            "mappings": [],
+            "max": 120,
+            "min": -20,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "semi-dark-green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "degree"
+          },
+          "overrides": [],
+          "values": false
+        },
+        "orientation": "auto",
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "6.6.2",
+      "scopedVars": {
+        "car": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\ndate,\n  convert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\"\nFROM\n  positions\nWHERE\n  car_id = $car\n  and inside_temp is not null\norder by date desc\nlimit 1 ",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "outside_temp"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "positions",
+          "timeColumn": "date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Inside Temp",
+      "type": "gauge"
+    },
+    {
       "backgroundColor": "rgba(128,128,128,0.1)",
       "colorMaps": [
         {
@@ -996,15 +1245,15 @@
         }
       ],
       "crosshairColor": "#8F070C",
-      "datasource": null,
+      "datasource": "TeslaMate",
       "display": "timeline",
       "expandFromQueryS": 0,
       "extendLastValue": true,
       "gridPos": {
         "h": 5,
-        "w": 15,
-        "x": 9,
-        "y": 10
+        "w": 24,
+        "x": 0,
+        "y": 15
       },
       "highlightOnMouseover": true,
       "id": 20,
@@ -1046,7 +1295,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car\nUNION\n\tSELECT\n    unnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[6, 0]) AS state\n\tFROM\n\t\tupdates\n\tWHERE\n\t\tcar_id = $car\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nWHERE \n  date IS NOT NULL\nORDER BY\n\tdate ASC, state ASC;",
+          "rawSql": "WITH states AS (\n    SELECT\n      unnest(ARRAY[start_date, end_date]) AS date,\n      unnest(ARRAY[2, 0]) AS state\n    FROM charging_processes\n    WHERE car_id = $car\n\tUNION\n\t\tSELECT\n\t\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\t\tunnest(ARRAY[1, 0]) AS state\n\t\tFROM drives\n\t\tWHERE car_id = $car\n\tUNION\n\t\tSELECT\n\t\t\tstart_date AS date,\n\t\t\tCASE WHEN state = 'offline' THEN 3\n\t\t\t     WHEN state = 'asleep'  THEN 4\n\t\t\t     WHEN state = 'online'  THEN 5\n\t\t\tEND AS state\n\t\tFROM states\n\t\tWHERE car_id = $car\n\tUNION\n\t\tSELECT\n\t    unnest(ARRAY[start_date, end_date]) AS date,\n\t\t\tunnest(ARRAY[6, 0]) AS state\n\t\tFROM updates\n\t\tWHERE car_id = $car\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND \n  date BETWEEN ($__timeFrom()::timestamp - interval '30 day') AND ($__timeTo()::timestamp + interval '30 day')\nORDER BY date ASC, state ASC;",
           "refId": "A",
           "select": [
             [
@@ -1070,7 +1319,7 @@
           ]
         }
       ],
-      "textSize": 24,
+      "textSize": 18,
       "textSizeTime": 12,
       "timeFrom": null,
       "timeOptions": [
@@ -1163,255 +1412,6 @@
       "writeAllValues": false,
       "writeLastValue": true,
       "writeMetricNames": false
-    },
-    {
-      "datasource": "TeslaMate",
-      "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 0,
-        "y": 11
-      },
-      "id": 16,
-      "options": {
-        "fieldOptions": {
-          "calcs": [
-            "firstNotNull"
-          ],
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "decimals": 0,
-            "mappings": [],
-            "max": 100,
-            "min": 0,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "semi-dark-green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "degree"
-          },
-          "overrides": [],
-          "values": false
-        },
-        "orientation": "auto",
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "6.6.1",
-      "scopedVars": {
-        "car": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM\n\tpositions\nWHERE\n car_id = $car\nORDER BY\n\tdate DESC\nLIMIT 1;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "outside_temp"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "positions",
-          "timeColumn": "date",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Driver Temp",
-      "type": "gauge"
-    },
-    {
-      "datasource": "TeslaMate",
-      "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 3,
-        "y": 11
-      },
-      "id": 8,
-      "options": {
-        "fieldOptions": {
-          "calcs": [
-            "firstNotNull"
-          ],
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "decimals": 0,
-            "mappings": [],
-            "max": 100,
-            "min": 0,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "semi-dark-green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "degree"
-          },
-          "overrides": [],
-          "values": false
-        },
-        "orientation": "auto",
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "6.6.1",
-      "scopedVars": {
-        "car": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH last_position AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM positions\n\tWHERE car_id = $car AND outside_temp IS NOT NULL\n\tORDER BY date DESC\n\tLIMIT 1\n),\nlast_charge AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM charges\n\tJOIN charging_processes ON charges.charging_process_id = charging_processes.id\n\tWHERE car_id = $car AND outside_temp IS NOT NULL\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT * FROM last_position\nUNION ALL\nSELECT * FROM last_charge\nORDER BY date DESC\nLIMIT 1;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "outside_temp"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "positions",
-          "timeColumn": "date",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Outside Temp",
-      "type": "gauge"
-    },
-    {
-      "datasource": "TeslaMate",
-      "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 6,
-        "y": 11
-      },
-      "id": 9,
-      "options": {
-        "fieldOptions": {
-          "calcs": [
-            "firstNotNull"
-          ],
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "decimals": 0,
-            "mappings": [],
-            "max": 120,
-            "min": -20,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "semi-dark-green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "degree"
-          },
-          "overrides": [],
-          "values": false
-        },
-        "orientation": "auto",
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "6.6.1",
-      "scopedVars": {
-        "car": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\ndate,\n  convert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\"\nFROM\n  positions\nWHERE\n  car_id = $car\n  and inside_temp is not null\norder by date desc\nlimit 1 ",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "outside_temp"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "positions",
-          "timeColumn": "date",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Inside Temp",
-      "type": "gauge"
     }
   ],
   "refresh": "30s",
@@ -1551,7 +1551,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1583,5 +1583,5 @@
   "timezone": "",
   "title": "Overview",
   "uid": "kOuP_Fggz",
-  "version": 6
+  "version": 1
 }
