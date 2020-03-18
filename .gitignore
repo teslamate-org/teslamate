@@ -54,4 +54,3 @@ config/*.env
 .eclipse/
 .elixir_ls/
 /.project
-/.gitignore
