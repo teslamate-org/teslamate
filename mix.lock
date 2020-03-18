@@ -57,4 +57,5 @@
   "tzdata": {:hex, :tzdata, "1.0.3", "73470ad29dde46e350c60a66e6b360d3b99d2d18b74c4c349dbebbc27a09a3eb", [:mix], [{:hackney, "~> 1.0", [hex: :hackney, repo: "hexpm", optional: false]}], "hexpm", "a6e1ee7003c4d04ecbd21dd3ec690d4c6662db5d3bbdd7262d53cdf5e7c746c1"},
   "unicode_util_compat": {:hex, :unicode_util_compat, "0.4.1", "d869e4c68901dd9531385bb0c8c40444ebf624e60b6962d95952775cac5e90cd", [:rebar3], [], "hexpm", "1d1848c40487cdb0b30e8ed975e34e025860c02e419cb615d255849f3427439d"},
   "unsafe": {:hex, :unsafe, "1.0.1", "a27e1874f72ee49312e0a9ec2e0b27924214a05e3ddac90e91727bc76f8613d8", [:mix], [], "hexpm", "6c7729a2d214806450d29766abc2afaa7a2cbecf415be64f36a6691afebb50e5"},
+  "websockex": {:hex, :websockex, "0.4.2", "9a3b7dc25655517ecd3f8ff7109a77fce94956096b942836cdcfbc7c86603ecc", [:mix], [], "hexpm", "803cd76e91544b56f0e655e36790be797fa6436db9224f7c303db9b9df2a3df4"},
 }

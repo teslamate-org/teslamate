@@ -3,7 +3,7 @@ defmodule TeslaMate.TerrainTest do
 
   alias TeslaMate.Terrain
 
-  def start_mapping(name, responses \\ %{}) do
+  def start_terrain(name, responses \\ %{}) do
     log_name = :"log_#{name}"
     srtm_name = :"srtm_#{name}"
 
@@ -25,7 +25,7 @@ defmodule TeslaMate.TerrainTest do
 
   describe "get_elevation/1" do
     test "return the elevation", %{test: name} do
-      :ok = start_mapping(name, %{{0, 0} => fn -> {:ok, 42} end})
+      :ok = start_terrain(name, %{{0, 0} => fn -> {:ok, 42} end})
 
       assert 42 == Terrain.get_elevation(name, {0, 0})
       assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
@@ -35,7 +35,7 @@ defmodule TeslaMate.TerrainTest do
 
     @tag :capture_log
     test "return nil if an error occured", %{test: name} do
-      :ok = start_mapping(name, %{{0, 0} => fn -> {:error, :kaputt} end})
+      :ok = start_terrain(name, %{{0, 0} => fn -> {:error, :kaputt} end})
 
       assert Terrain.get_elevation(name, {0, 0}) == nil
 
@@ -48,7 +48,7 @@ defmodule TeslaMate.TerrainTest do
 
     test "returns nil if the task takes longer than 100ms", %{test: name} do
       :ok =
-        start_mapping(name, %{
+        start_terrain(name, %{
           {0, 0} => fn ->
             Process.sleep(550)
             {:ok, 42}
@@ -70,7 +70,7 @@ defmodule TeslaMate.TerrainTest do
     @tag :capture_log
     test "handles long running tasks that return with an error", %{test: name} do
       :ok =
-        start_mapping(name, %{
+        start_terrain(name, %{
           {1, 1} => fn ->
             Process.sleep(101)
             {:error, :kaputt}
@@ -89,7 +89,7 @@ defmodule TeslaMate.TerrainTest do
     @tag :capture_log
     test "breakes circuit if too many queries fail", %{test: name} do
       :ok =
-        start_mapping(name, %{
+        start_terrain(name, %{
           {0, 0} => fn -> {:error, :kaputt} end
         })
 
@@ -115,7 +115,7 @@ defmodule TeslaMate.TerrainTest do
 
   describe "handle_info/2" do
     test "handles :purge_srtm_in_memory_cache message", %{test: name} do
-      :ok = start_mapping(name)
+      :ok = start_terrain(name)
 
       send(name, :purge_srtm_in_memory_cache)
 

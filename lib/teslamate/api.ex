@@ -47,6 +47,12 @@ defmodule TeslaMate.Api do
     end
   end
 
+  def stream(name \\ @name, vid, receiver) do
+    with {:ok, %Auth{} = auth} <- fetch_auth(name) do
+      TeslaApi.Stream.start_link(auth: auth, vehicle_id: vid, receiver: receiver)
+    end
+  end
+
   ## Internals
 
   def signed_in?(name \\ @name) do

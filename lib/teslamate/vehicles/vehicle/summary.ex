@@ -46,6 +46,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
   defp format_state({:driving, {:offline, _}, _id}), do: :offline
   defp format_state({:driving, _state, _id}), do: :driving
+  defp format_state({state, _, _}) when is_atom(state), do: state
   defp format_state({state, _}) when is_atom(state), do: state
   defp format_state(state) when is_atom(state), do: state
 

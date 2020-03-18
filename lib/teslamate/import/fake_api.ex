@@ -23,6 +23,10 @@ defmodule TeslaMate.Import.FakeApi do
     GenServer.call(name, :get_vehicle_with_state, :infinity)
   end
 
+  def stream(_name, _vid, _receiver) do
+    {:ok, nil}
+  end
+
   # Callbacks
 
   @impl true
