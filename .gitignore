@@ -53,3 +53,5 @@ config/*.env
 .idea/
 .eclipse/
 .elixir_ls/
+/.project
+/.gitignore
