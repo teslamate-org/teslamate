@@ -2,17 +2,41 @@
 
 ## [Unreleased]
 
+## [1.18.0-dev]
+
 ### Enhancements
 
 - Add Swedish translation ([#485](https://github.com/adriankumpf/teslamate/pull/485) by [tobiasehlert](https://github.com/tobiasehlert))
+- Add Norwegian translation ([#500](https://github.com/adriankumpf/teslamate/pull/500) by [spacecosmos](https://github.com/spacecosmos))
+- Add Spanish translation ([#519](https://github.com/adriankumpf/teslamate/pull/519) by [alceasan](https://github.com/alceasan))
+- Overview: Add states panel ([#520](https://github.com/adriankumpf/teslamate/pull/520) by [DrMichael](https://github.com/DrMichael))
 - Immediately display the current car software version after restarting TeslaMate
-- Charge Details: Hide empty series
+- Add mileage to the summary page
+- Add option to calculate charging costs retroactively
+- Allow to enter total cost or cost per KWh used
+- Indicate if any of the doors are open
+- Add support for session fees
+- Store more vehicle config attributes (`exterior_color`, `wheel_type`, `spoiler_type`)
+
+#### New MQTT Topics
+
+- `teslamate/cars/$car_id/doors_open`: Indicates if any of the doors are open
+- `teslamate/cars/$car_id/model`: Either "S", "3", "X" or "Y"
+- `teslamate/cars/$car_id/trim_badging`: Trim badging
+- `teslamate/cars/$car_id/exterior_color`: The exterior color
+- `teslamate/cars/$car_id/wheel_type`: The wheel type
+- `teslamate/cars/$car_id/spoiler_type`: The spoiler type
 
 ### Bug Fixes
 
-- Show stats in desired units in 'Drive Stats' dashboard ([#484](https://github.com/adriankumpf/teslamate/pull/484) by [pichalite](https://github.com/pichalite))
+- Drive Stats: Show stats in desired units ([#484](https://github.com/adriankumpf/teslamate/pull/484) by [pichalite](https://github.com/pichalite))
+- Drive Details: Fix odometer units ([#487](https://github.com/adriankumpf/teslamate/pull/487) by [pichalite](https://github.com/pichalite))
+- Update address formatting to avoid showing obscure names instead of towns/cities
+- Charge Details: Hide empty series
 - Suppress `Cldr.NoMatchingLocale` warnings
-- Trip Dashboard: Prevent 'division by zero' error
+- Trip: Prevent 'division by zero' error
+- Open dashboard links in a new tab to work around Grafana regression
+- Use the maximum kWh to calculate the charge cost
 
 ## [1.17.1] - 2020-02-23
 
