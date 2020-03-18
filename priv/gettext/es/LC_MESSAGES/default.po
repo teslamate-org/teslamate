@@ -231,7 +231,7 @@ msgstr "cancelar intento de poner en estado reposo"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:294
 msgid "try to sleep"
-msgstr "intentando poner en estado reposo""
+msgstr "intentando poner en estado reposo"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:137
