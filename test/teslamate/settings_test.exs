@@ -116,14 +116,16 @@ defmodule TeslaMate.SettingsTest do
     end
   end
 
-  describe "car_settings" do
+  describe "car settings" do
     @update_attrs %{
       suspend_min: 60,
       suspend_after_idle_min: 60,
       req_no_shift_state_reading: false,
       req_no_temp_reading: false,
       req_not_unlocked: true,
-      sleep_mode_enabled: false
+      sleep_mode_enabled: false,
+      free_supercharging: true,
+      use_streaming_api: true
     }
     @invalid_attrs %{
       suspend_min: nil,
@@ -131,7 +133,9 @@ defmodule TeslaMate.SettingsTest do
       req_no_shift_state_reading: nil,
       req_no_temp_reading: nil,
       req_not_unlocked: nil,
-      sleep_mode_enabled: nil
+      sleep_mode_enabled: nil,
+      free_supercharging: nil,
+      use_streaming_api: nil
     }
 
     test "get_car_settings/0 returns the settings" do
@@ -145,6 +149,8 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_no_temp_reading == false
       assert settings.req_not_unlocked == true
       assert settings.sleep_mode_enabled == true
+      assert settings.free_supercharging == false
+      assert settings.use_streaming_api == false
     end
 
     test "update_car_settings/2 with valid data updates the settings" do
@@ -163,6 +169,8 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_no_temp_reading == false
       assert settings.req_not_unlocked == true
       assert settings.sleep_mode_enabled == false
+      assert settings.free_supercharging == true
+      assert settings.use_streaming_api == true
     end
 
     test "update_car_settings/2 publishes the settings" do
@@ -192,7 +200,9 @@ defmodule TeslaMate.SettingsTest do
                req_not_unlocked: ["can't be blank"],
                suspend_after_idle_min: ["can't be blank"],
                suspend_min: ["can't be blank"],
-               sleep_mode_enabled: ["can't be blank"]
+               sleep_mode_enabled: ["can't be blank"],
+               free_supercharging: ["can't be blank"],
+               use_streaming_api: ["can't be blank"]
              }
 
       assert [^settings] = Settings.get_car_settings()

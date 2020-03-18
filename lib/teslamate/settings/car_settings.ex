@@ -16,6 +16,8 @@ defmodule TeslaMate.Settings.CarSettings do
 
     field :free_supercharging, :boolean, default: false
 
+    field :use_streaming_api, :boolean, default: false
+
     has_one :car, Car, foreign_key: :settings_id
   end
 
@@ -26,7 +28,8 @@ defmodule TeslaMate.Settings.CarSettings do
     :req_no_shift_state_reading,
     :req_no_temp_reading,
     :req_not_unlocked,
-    :free_supercharging
+    :free_supercharging,
+    :use_streaming_api
   ]
 
   @doc false

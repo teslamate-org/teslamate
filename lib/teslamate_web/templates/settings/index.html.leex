@@ -67,8 +67,8 @@
             <div class="control">
               <div class="select is-fullwidth">
                 <%= select(f, :suspend_after_idle_min,
-                              5..60
-                              |> Enum.filter(& rem(&1, 5) == 0)
+                              3..60
+                              |> Enum.filter(& &1 == 3 or rem(&1, 5) == 0)
                               |> Enum.map(&{"#{&1} #{gettext("min")}", &1}), disabled: disabled)
                 %>
               </div>
@@ -127,6 +127,25 @@
             <div class="control">
               <%= checkbox(f, :free_supercharging, class: "switch is-rounded is-success") %>
               <%= label f, :free_supercharging, nil %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns is-tablet is-centered">
+    <div class="column">
+      <h2 class="title is-4"><%= gettext("Streaming API") %></h2>
+      <div class="field is-horizontal center-vertically">
+        <div class="field-label is-normal is-paddingless">
+          <%= label f, :use_streaming_api, gettext("Enabled"), class: "label" %>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <%= checkbox(f, :use_streaming_api, class: "switch is-rounded is-success") %>
+              <%= label f, :use_streaming_api, nil %>
             </div>
           </div>
         </div>

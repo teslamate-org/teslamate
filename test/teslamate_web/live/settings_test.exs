@@ -320,6 +320,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert [
                {"select", _,
                 [
+                  {"option", [{"value", "3"}], ["3 min"]},
                   {"option", [{"value", "5"}], ["5 min"]},
                   {"option", [{"value", "10"}], ["10 min"]},
                   {"option", [{"value", "15"}, {"selected", "selected"}], ["15 min"]},
@@ -374,7 +375,8 @@ defmodule TeslaMateWeb.SettingsLiveTest do
             req_no_shift_state_reading: false,
             req_no_temp_reading: false,
             req_not_unlocked: true,
-            free_supercharging: false
+            free_supercharging: false,
+            use_streaming_api: false
           }
         )
 
@@ -451,6 +453,25 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert [settings] = Settings.get_car_settings()
       assert settings.free_supercharging == true
+
+      ## Streaming API
+
+      assert [] ==
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#car_settings_#{car.id}_use_streaming_api")
+               |> Floki.attribute("checked")
+
+      assert ["checked"] ==
+               render_change(view, :change, %{
+                 "car_settings_#{car.id}" => %{use_streaming_api: true}
+               })
+               |> Floki.parse_document!()
+               |> Floki.find("#car_settings_#{car.id}_use_streaming_api")
+               |> Floki.attribute("checked")
+
+      assert [settings] = Settings.get_car_settings()
+      assert settings.use_streaming_api == true
     end
 
     test "changes between cars", %{conn: conn} do

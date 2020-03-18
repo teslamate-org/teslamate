@@ -110,17 +110,17 @@ msgid "unavailable"
 msgstr "no disponible"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:195
+#: lib/teslamate_web/templates/settings/index.html.leex:214
 msgid "Length"
 msgstr "Longitud"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:210
+#: lib/teslamate_web/templates/settings/index.html.leex:229
 msgid "Temperature"
 msgstr "Temperatura"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:192
+#: lib/teslamate_web/templates/settings/index.html.leex:211
 msgid "Units"
 msgstr "Unidades"
 
@@ -289,22 +289,22 @@ msgid "Charger Power"
 msgstr "Potencia del cargador"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:150
+#: lib/teslamate_web/templates/settings/index.html.leex:169
 msgid "Preferred range"
 msgstr "Autonomía preferida"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:146
+#: lib/teslamate_web/templates/settings/index.html.leex:165
 msgid "Range"
 msgstr "Autonomía"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:159
+#: lib/teslamate_web/templates/settings/index.html.leex:178
 msgid "ideal"
 msgstr "ideal"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:159
+#: lib/teslamate_web/templates/settings/index.html.leex:178
 msgid "rated"
 msgstr "nominal"
 
@@ -314,7 +314,7 @@ msgid "Range (ideal)"
 msgstr "Autonomía (ideal)"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:149
+#: lib/teslamate_web/templates/settings/index.html.leex:168
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
 msgstr "La estimación de la autonomía restante del coche está basada en un consumo de energía en Wh/km fijo. El factor de Wh/km está determinado por Tesla y no es específico del país mientras que la autonomía nominal está basada en pruebas regulatorias de diferentes mercados para ese vehículo."
 
@@ -370,22 +370,23 @@ msgstr "Tiempo restante"
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/app.html.eex:45
-#: lib/teslamate_web/templates/settings/index.html.leex:245
+#: lib/teslamate_web/templates/settings/index.html.leex:264
 msgid "Dashboards"
 msgstr "Cuadros de mando"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:228
+#: lib/teslamate_web/templates/settings/index.html.leex:247
 msgid "URLs"
 msgstr "Direcciones"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:231
+#: lib/teslamate_web/templates/settings/index.html.leex:250
 msgid "Web App"
 msgstr "Aplicación web"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:31
+#: lib/teslamate_web/templates/settings/index.html.leex:142
 msgid "Enabled"
 msgstr "Habilitado"
 
@@ -455,12 +456,12 @@ msgid "Fetching vehicle data ..."
 msgstr "Obteniendo datos del vehículo ..."
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:174
+#: lib/teslamate_web/templates/settings/index.html.leex:193
 msgid "Addresses"
 msgstr "Direcciones"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:171
+#: lib/teslamate_web/templates/settings/index.html.leex:190
 msgid "Language"
 msgstr "Idioma"
 
@@ -527,7 +528,7 @@ msgid "Free Supercharging"
 msgstr "Supercarga Gratuita"
 
 #, elixir-format
-#: lib/teslamate_web/templates/settings/index.html.leex:140
+#: lib/teslamate_web/templates/settings/index.html.leex:159
 msgid "General Settings"
 msgstr "Ajustes Generales"
 
@@ -574,6 +575,11 @@ msgid "Continue"
 msgstr "Continuar"
 
 #, elixir-format
-#: lib/teslamate_web/templates/car/summary.html.leex:258
+#: lib/teslamate_web/templates/car/summary.html.leex:259
 msgid "Mileage"
 msgstr "Kilometraje"
+
+#, elixir-format
+#: lib/teslamate_web/templates/settings/index.html.leex:139
+msgid "Streaming API"
+msgstr ""
