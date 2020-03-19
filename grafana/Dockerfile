@@ -1,4 +1,4 @@
-FROM grafana/grafana:6.6.2
+FROM grafana/grafana:6.7.0
 
 ENV  GF_ANALYTICS_REPORTING_ENABLED=FALSE \
      GF_AUTH_BASIC_ENABLED=false \

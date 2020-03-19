@@ -377,7 +377,7 @@ defmodule TeslaMate.LogChargingTest do
       assert {:ok, %ChargingProcess{geofence_id: ^id}} = Log.complete_charging_process(cproc)
     end
 
-    test "calculates the charge costs based on the fees entered" do
+    test "calculates the charge costs based on the kwh fee" do
       car = car_fixture()
 
       assert %GeoFence{id: id} =
@@ -400,10 +400,10 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == 12.77
       assert cproc.charge_energy_used == 12.455230833333333
-      assert cproc.cost == Decimal.new("3.1138077083333332500")
+      assert cproc.cost == Decimal.new("3.19")
     end
 
-    test "charge cost can be zero" do
+    test "calculates the charge costs based on the session fee" do
       car = car_fixture()
 
       assert %GeoFence{id: id} =
@@ -411,7 +411,61 @@ defmodule TeslaMate.LogChargingTest do
                  latitude: 50.1121,
                  longitude: 11.597,
                  radius: 50,
-                 cost_per_kwh: 0.0
+                 session_fee: 7.00
+               })
+
+      assert {:ok, cproc} =
+               log_charging_process(charges_fixture(:phases_nil),
+                 car: car,
+                 attrs: %{
+                   date: DateTime.utc_now(),
+                   latitude: 50.112198,
+                   longitude: 11.597669
+                 }
+               )
+
+      assert cproc.charge_energy_added == 12.77
+      assert cproc.charge_energy_used == 12.455230833333333
+      assert cproc.cost == Decimal.new("7.00")
+    end
+
+    test "calculates the charge costs based on the session fee and energy used" do
+      car = car_fixture()
+
+      assert %GeoFence{id: id} =
+               geofence_fixture(%{
+                 latitude: 50.1121,
+                 longitude: 11.597,
+                 radius: 50,
+                 cost_per_kwh: 0.25,
+                 session_fee: 4.79
+               })
+
+      assert {:ok, cproc} =
+               log_charging_process(charges_fixture(:phases_nil),
+                 car: car,
+                 attrs: %{
+                   date: DateTime.utc_now(),
+                   latitude: 50.112198,
+                   longitude: 11.597669
+                 }
+               )
+
+      assert cproc.charge_energy_added == 12.77
+      assert cproc.charge_energy_used == 12.455230833333333
+      assert cproc.cost == Decimal.new("7.98")
+    end
+
+    test "fees can be zero" do
+      car = car_fixture()
+
+      assert %GeoFence{id: id} =
+               geofence_fixture(%{
+                 latitude: 50.1121,
+                 longitude: 11.597,
+                 radius: 50,
+                 cost_per_kwh: 0.0,
+                 session_fee: 0.0
                })
 
       assert {:ok, cproc} =
@@ -426,7 +480,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == nil
       assert cproc.charge_energy_used == 12.576319999999997
-      assert cproc.cost == Decimal.new("0E-19")
+      assert cproc.cost == Decimal.new("0.00")
     end
 
     test "sets charge cost to zero if free supercharging is enabled" do
@@ -459,7 +513,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == 12.77
       assert cproc.charge_energy_used == 12.455230833333333
-      assert cproc.cost == Decimal.new("0.0")
+      assert cproc.cost == Decimal.new("0.00")
     end
   end
 
@@ -596,7 +650,7 @@ defmodule TeslaMate.LogChargingTest do
       assert %Car{efficiency: nil} = Log.get_car!(car.id)
     end
 
-    defp insert_charging_process_fixtures(car, data, range \\ :ideal) do
+    defp insert_charging_process_fixtures(car, data, range \\ :rated) do
       {:ok, %Position{id: position_id}} = Log.insert_position(car, @valid_pos_attrs)
 
       {start_range, end_range} =

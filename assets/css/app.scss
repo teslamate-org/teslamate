@@ -13,10 +13,21 @@ $fullhd-enabled: false;
 
 @import "~bulma/sass/utilities/_all";
 @import "~bulma/sass/base/_all";
+
+// Modal customization
+$modal-z: 1010;
+$modal-content-width: 560px;
+$modal-card-head-padding: 15px;
+$modal-card-body-padding: 5px 15px 10px;
+$modal-card-head-background-color: $white;
+$modal-card-head-border-bottom: none;
+$modal-card-foot-border-top: none;
+
 @import "~bulma/sass/components/breadcrumb";
 @import "~bulma/sass/components/card";
 @import "~bulma/sass/components/dropdown";
 @import "~bulma/sass/components/message";
+@import "~bulma/sass/components/modal";
 @import "~bulma/sass/components/navbar";
 @import "~bulma/sass/components/tabs";
 @import "~bulma/sass/elements/box";
@@ -30,11 +41,12 @@ $fullhd-enabled: false;
 @import "~bulma/sass/form/_all";
 @import "~bulma/sass/layout/section";
 @import "~bulma/sass/grid/_all";
-// @import "~bulma/bulma";
 
 @import '~bulma-tooltip';
 @import '~bulma-switch';
 @import '~bulma-divider';
+
+@import './vendor/modal-fx';
 
 // @import "../../deps/phoenix_live_view/assets/css/live_view.css";
 .phx-disconnected {

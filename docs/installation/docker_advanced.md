@@ -5,6 +5,8 @@
 - Web services (`teslamate` and `grafana`) sit behind a reverse proxy (Traefik) which terminates HTTPS traffic
 - Custom configuration was moved into a separate `.env` file
 - All publicly accessible services use fully qualified domain name and automatically acquire a Let's Encrypt certificate
+- The TeslaMate service is protected by HTTP Basic Authentication.
+- Grafana is configured to require a login
 
 ## Requirements
 

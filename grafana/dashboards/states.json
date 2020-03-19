@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1568831189585,
+  "iteration": 1584540613040,
   "links": [
     {
       "icon": "dashboard",
@@ -38,6 +37,7 @@
   ],
   "panels": [
     {
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -49,7 +49,7 @@
       "repeat": "car_id",
       "scopedVars": {
         "car_id": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -113,7 +113,7 @@
       ],
       "scopedVars": {
         "car_id": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -226,7 +226,7 @@
       ],
       "scopedVars": {
         "car_id": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -339,7 +339,7 @@
       ],
       "scopedVars": {
         "car_id": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -451,7 +451,7 @@
       "rowHeight": 150,
       "scopedVars": {
         "car_id": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -471,7 +471,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car_id\nUNION\n\tSELECT\n    unnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[6, 0]) AS state\n\tFROM\n\t\tupdates\n\tWHERE\n\t\tcar_id = $car_id\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nWHERE \n  date IS NOT NULL\nORDER BY\n\tdate ASC, state ASC;",
+          "rawSql": "WITH states AS (\n    SELECT\n      unnest(ARRAY[start_date, end_date]) AS date,\n      unnest(ARRAY[2, 0]) AS state\n    FROM charging_processes\n    WHERE car_id = $car_id \n\tUNION\n\t\tSELECT\n\t\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\t\tunnest(ARRAY[1, 0]) AS state\n\t\tFROM drives\n\t\tWHERE car_id = $car_id\n\tUNION\n\t\tSELECT\n\t\t\tstart_date AS date,\n\t\t\tCASE WHEN state = 'offline' THEN 3\n\t\t\t     WHEN state = 'asleep'  THEN 4\n\t\t\t     WHEN state = 'online'  THEN 5\n\t\t\tEND AS state\n\t\tFROM states\n\t\tWHERE car_id = $car_id\n\tUNION\n\t\tSELECT\n\t    unnest(ARRAY[start_date, end_date]) AS date,\n\t\t\tunnest(ARRAY[6, 0]) AS state\n\t\tFROM updates\n\t\tWHERE car_id = $car_id\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND \n  date BETWEEN ($__timeFrom()::timestamp - interval '30 day') AND ($__timeTo()::timestamp + interval '30 day')\nORDER BY date ASC, state ASC;",
           "refId": "A",
           "select": [
             [
@@ -601,6 +601,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },

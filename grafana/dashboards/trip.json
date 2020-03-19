@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1582042013370,
+  "iteration": 1583172888944,
   "links": [
     {
       "icon": "doc",
@@ -1268,6 +1268,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "link": true,
+          "linkTargetBlank": true,
           "linkTooltip": "View drive details",
           "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_2}&var-drive_id=${__cell_6}",
           "mappingType": 1,
@@ -1594,6 +1595,7 @@
           "dateFormat": "MM/DD/YY h:mm:ss a",
           "decimals": 2,
           "link": true,
+          "linkTargetBlank": true,
           "linkTooltip": "View drive details",
           "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_2}&var-drive_id=${__cell_6}",
           "mappingType": 1,
@@ -1762,8 +1764,9 @@
           "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "link": true,
+          "linkTargetBlank": true,
           "linkTooltip": "View charge details",
-          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
+          "linkUrl": "d/BHhxFeZRz?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
           "pattern": "start_date_km",
           "type": "date"
         },
@@ -1779,8 +1782,9 @@
           "dateFormat": "MM/DD/YY h:mm:ss a",
           "decimals": 2,
           "link": true,
+          "linkTargetBlank": true,
           "linkTooltip": "View charge details",
-          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
+          "linkUrl": "d/BHhxFeZRz?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
           "mappingType": 1,
           "pattern": "start_date_mi",
           "thresholds": [],
@@ -2230,6 +2234,8 @@
         "alignAsTable": true,
         "avg": false,
         "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
         "max": true,
         "min": true,
         "show": true,
@@ -2246,7 +2252,19 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "/.*range.*/",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -2256,7 +2274,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "(\n  SELECT $__time(date), battery_level as \"battery level\"\n  FROM positions\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n) UNION ALL (\n  SELECT $__time(date), battery_level as \"battery level\"\n  FROM charges\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n)\nORDER BY 1",
+          "rawSql": "(\n  SELECT $__time(date), battery_level as \"battery level\", convert_km([[preferred_range]]_battery_range_km, '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM positions\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n) UNION ALL (\n  SELECT $__time(date), battery_level as \"battery level\", convert_km([[preferred_range]]_battery_range_km, '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM charges\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n)\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -2284,7 +2302,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Battery Level",
+      "title": "Battery Level & Range",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2309,16 +2327,17 @@
           "show": true
         },
         {
+          "decimals": null,
           "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": false
+          "show": true
         }
       ],
       "yaxis": {
-        "align": false,
+        "align": true,
         "alignLevel": null
       }
     },

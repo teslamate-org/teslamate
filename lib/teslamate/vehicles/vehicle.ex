@@ -33,7 +33,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def identify(%Vehicle{display_name: name, vehicle_config: config}) do
     case config do
-      %VehicleConfig{car_type: type, trim_badging: trim_badging} ->
+      %VehicleConfig{
+        car_type: type,
+        trim_badging: trim_badging,
+        exterior_color: exterior_color,
+        wheel_type: wheel_type,
+        spoiler_type: spoiler_type
+      } ->
         trim_badging =
           with str when is_binary(str) <- trim_badging do
             String.upcase(str)
@@ -50,7 +56,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
             end
           end
 
-        {:ok, %{trim_badging: trim_badging, model: model, name: name}}
+        {:ok,
+         %{
+           model: model,
+           name: name,
+           trim_badging: trim_badging,
+           exterior_color: exterior_color,
+           spoiler_type: spoiler_type,
+           wheel_type: wheel_type
+         }}
 
       nil ->
         {:error, :vehicle_config_not_available}
@@ -176,7 +190,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     {:next_state, prev_state,
      %Data{data | last_state_change: DateTime.utc_now(), last_used: DateTime.utc_now()},
-     [{:reply, from, :ok}, broadcast_summary(), schedule_fetch(5, data)]}
+     [{:reply, from, :ok}, broadcast_summary(), schedule_fetch(1, data)]}
   end
 
   def handle_event({:call, from}, :resume_logging, {state, _interval}, data)
@@ -364,7 +378,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         since: data.last_state_change,
         healthy?: healthy?(data.car.id),
         geofence: data.geofence,
-        car: nil
+        car: data.car
       })
 
     :ok =
@@ -678,12 +692,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [broadcast_summary(), schedule_fetch(@driving_interval, data)]}
 
       shift_state when is_nil(shift_state) or shift_state == "P" ->
-        {:ok, %Log.Drive{distance: km, duration_min: min}} =
-          call(data.deps.log, :close_drive, [drv, [lookup_address: !data.import?]])
+        {%Log.Drive{distance: km, duration_min: min}, geofence} =
+          Repo.checkout(fn ->
+            {:ok, pos} = call(data.deps.log, :insert_position, [drv, create_position(vehicle)])
+            geofence = call(data.deps.locations, :find_geofence, [pos])
+
+            {:ok, drive} =
+              call(data.deps.log, :close_drive, [drv, [lookup_address: !data.import?]])
+
+            {drive, geofence}
+          end)
 
         Logger.info("Driving / Ended / #{km && round(km)} km – #{min} min", car_id: data.car.id)
 
-        {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, :start, %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
          {:next_event, :internal, {:update, {:online, vehicle}}}}
     end
   end
@@ -807,11 +829,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
         inside_temp: position.inside_temp
       }
 
+      vehicle_state = %VehicleState{
+        odometer: position.odometer |> Convert.km_to_miles(10),
+        car_version:
+          case call(data.deps.log, :get_latest_update, [data.car]) do
+            %Log.Update{version: version} -> version
+            _ -> nil
+          end
+      }
+
       vehicle = %Vehicle{
         vehicle
         | drive_state: drive,
           charge_state: charge,
-          climate_state: climate
+          climate_state: climate,
+          vehicle_state: vehicle_state
       }
 
       geofence = call(data.deps.locations, :find_geofence, [position])

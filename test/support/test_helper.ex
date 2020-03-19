@@ -11,4 +11,11 @@ defmodule TestHelper do
       Process.sleep(delay)
       eventually(fun, attempts - 1, delay)
   end
+
+  defmacro decimal(value) do
+    value
+    |> to_string()
+    |> Decimal.new()
+    |> Macro.escape()
+  end
 end

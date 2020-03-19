@@ -492,12 +492,21 @@ defmodule TeslaMate.Log do
          %CP{car: %Car{settings: %CarSettings{free_supercharging: true}}}} ->
           0.0
 
-        {%{charge_energy_used: kwh},
-         %CP{geofence: %GeoFence{cost_per_kwh: %Decimal{} = cost_per_kwh}}}
-        when is_number(kwh) ->
-          kwh
-          |> Decimal.from_float()
-          |> Decimal.mult(cost_per_kwh)
+        {%{charge_energy_used: kwh_used, charge_energy_added: kwh_added},
+         %CP{geofence: %GeoFence{cost_per_kwh: cost_per_kwh, session_fee: session_fee}}}
+        when is_number(kwh_added) or is_number(kwh_used) ->
+          cost =
+            with %Decimal{} <- cost_per_kwh do
+              [kwh_added, kwh_used]
+              |> Enum.reject(&is_nil/1)
+              |> Enum.max()
+              |> Decimal.from_float()
+              |> Decimal.mult(cost_per_kwh)
+            end
+
+          if match?(%Decimal{}, cost) or match?(%Decimal{}, session_fee) do
+            Decimal.add(session_fee || 0, cost || 0)
+          end
 
         {_, _} ->
           nil

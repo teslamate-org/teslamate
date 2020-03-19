@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1571491749386,
+  "iteration": 1583945409960,
   "links": [
     {
       "icon": "dashboard",
@@ -50,7 +49,7 @@
       "repeat": "car_id",
       "scopedVars": {
         "car_id": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -91,8 +90,9 @@
           "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "link": true,
+          "linkTargetBlank": true,
           "linkTooltip": "View charge details",
-          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
+          "linkUrl": "d/BHhxFeZRz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
           "pattern": "start_date_km",
           "type": "date"
         },
@@ -108,8 +108,9 @@
           "dateFormat": "MM/DD/YY h:mm:ss a",
           "decimals": 2,
           "link": true,
+          "linkTargetBlank": true,
           "linkTooltip": "View charge details",
-          "linkUrl": "d/BHhxFeZRz/laden?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
+          "linkUrl": "d/BHhxFeZRz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
           "mappingType": 1,
           "pattern": "start_date_mi",
           "thresholds": [],
@@ -895,6 +896,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },

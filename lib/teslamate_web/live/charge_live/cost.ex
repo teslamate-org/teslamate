@@ -43,6 +43,22 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
 
   @impl true
   def handle_event("save", %{"charging_process" => params}, socket) do
+    kwh =
+      socket.assigns.charging_process
+      |> Map.take([:charge_energy_added, :charge_energy_used])
+      |> Map.values()
+      |> Enum.reject(&is_nil/1)
+      |> Enum.max(fn -> nil end)
+
+    params =
+      with kwh when is_number(kwh) <- kwh,
+           %{"cost" => cost, "mode" => "per_kwh"} when is_binary(cost) <- params,
+           {cost_per_kwh, ""} <- Float.parse(cost) do
+        Map.put(params, "cost", cost_per_kwh * kwh)
+      else
+        _ -> params
+      end
+
     case Log.update_charging_process(socket.assigns.charging_process, params) do
       {:ok, charging_process} ->
         notification = create_notification(:success, gettext("Saved!"))
@@ -61,7 +77,12 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
 
   @impl true
   def handle_info({:remove_notification, id}, %{assigns: %{notification: %{id: id}}} = socket) do
-    {:noreply, assign(socket, notification: nil)}
+    socket =
+      socket
+      |> assign(notification: nil)
+      |> assign_charging_process(socket.assigns.charging_process, nil)
+
+    {:noreply, socket}
   end
 
   def handle_info({:remove_notification, _id}, socket) do
@@ -70,8 +91,8 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
 
   # Private
 
-  defp assign_charging_process(socket, %ChargingProcess{} = c) do
-    assign(socket, charging_process: c, changeset: ChargingProcess.changeset(c, %{}))
+  defp assign_charging_process(socket, %ChargingProcess{} = c, mode \\ "total") do
+    assign(socket, charging_process: c, changeset: ChargingProcess.changeset(c, %{mode: mode}))
   end
 
   defp create_notification(key, msg) do

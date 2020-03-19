@@ -18,7 +18,7 @@ defmodule TeslaMate.Log.ChargingProcess do
     field :end_battery_level, :integer
     field :duration_min, :integer
     field :outside_temp_avg, :float
-    field :cost, :decimal
+    field :cost, :decimal, read_after_writes: true
 
     belongs_to(:car, Car)
     belongs_to(:position, Position)

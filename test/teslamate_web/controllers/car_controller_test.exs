@@ -100,9 +100,9 @@ defmodule TeslaMateWeb.CarControllerTest do
           date: DateTime.utc_now(),
           longitude: 0,
           latitude: 0,
-          ideal_battery_range_km: 380.25,
+          rated_battery_range_km: 380.25,
           est_battery_range_km: 401.52,
-          rated_battery_range_km: 175.1,
+          ideal_battery_range_km: 175.1,
           battery_level: 80,
           outside_temp: 20.1,
           inside_temp: 21.0
@@ -115,7 +115,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert table_row(html, "Status", "asleep")
-      assert table_row(html, "Range (ideal)", "380.25 km")
+      assert table_row(html, "Range (rated)", "380.25 km")
       assert table_row(html, "Range (est.)", "401.52 km")
       assert table_row(html, "State of Charge", "80%", tooltip: "≈ 475 km at 100%")
       assert table_row(html, "Outside temperature", "20.1 °C")
@@ -132,9 +132,9 @@ defmodule TeslaMateWeb.CarControllerTest do
            display_name: "FooCar",
            drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
            charge_state: %{
-             ideal_battery_range: 200,
+             battery_range: 200,
              est_battery_range: 180,
-             battery_range: 175,
+             ideal_battery_range: 175,
              usable_battery_level: 67,
              battery_level: 69
            },
@@ -149,7 +149,12 @@ defmodule TeslaMateWeb.CarControllerTest do
              fp_window: 0,
              rd_window: 0,
              rp_window: 0,
-             is_user_present: true
+             df: 0,
+             dr: 0,
+             pf: 1,
+             pr: 0,
+             is_user_present: true,
+             odometer: 26097.59
            },
            vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
          )}
@@ -165,7 +170,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert html =~ ~r/<p class="subtitle is-6 has-text-weight-light">Model S P90D<\/p>/
       assert table_row(html, "Status", "online")
-      assert table_row(html, "Range (ideal)", "321.87 km")
+      assert table_row(html, "Range (rated)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "State of Charge", "67% (69%)", tooltip: "≈ 480 km at 100%")
       assert icon(html, "Locked", "lock")
@@ -173,9 +178,11 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Preconditioning", "air-conditioner")
       assert icon(html, "Sentry Mode", "shield-check")
       assert icon(html, "Windows open", "window-open")
+      assert icon(html, "Doors open", "car-door")
       assert icon(html, "Software Update available", "gift-outline")
       assert table_row(html, "Outside temperature", "24 °C")
       assert table_row(html, "Inside temperature", "23.2 °C")
+      assert table_row(html, "Mileage", "42000 km")
       assert table_row(html, "Version", "2019.40.50.7")
     end
 
@@ -192,9 +199,9 @@ defmodule TeslaMateWeb.CarControllerTest do
              charger_phases: 3,
              charger_voltage: 229,
              charger_actual_current: 16,
-             ideal_battery_range: 200,
+             battery_range: 200,
              est_battery_range: 180,
-             battery_range: 175,
+             ideal_battery_range: 175,
              charging_state: "Charging",
              charge_energy_added: "4.32",
              charge_port_latch: "Engaged",
@@ -215,7 +222,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Status", "charging")
       assert table_row(html, "Remaining Time", "1 h, 49 min")
       assert icon(html, "Plugged in", "power-plug")
-      assert table_row(html, "Range (ideal)", "321.87 km")
+      assert table_row(html, "Range (rated)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "Charged", "4.32 kWh")
       assert table_row(html, "Charger Power", "11 kW")
@@ -410,6 +417,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     @tag :signed_in
+    @tag :capture_log
     test "displays imperial units", %{conn: conn} do
       {:ok, _} =
         Settings.get_global_settings!()
@@ -427,13 +435,20 @@ defmodule TeslaMateWeb.CarControllerTest do
              speed: 30
            },
            charge_state: %{
-             ideal_battery_range: 200,
+             battery_range: 200,
              est_battery_range: 180,
-             battery_range: 175,
+             ideal_battery_range: 175,
              usable_battery_level: 67,
              battery_level: 69
            },
-           climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2}
+           climate_state: %{
+             is_preconditioning: false,
+             outside_temp: 24,
+             inside_temp: 23.2
+           },
+           vehicle_state: %{
+             odometer: 42000
+           }
          )}
       ]
 
@@ -444,12 +459,13 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert table_row(html, "Status", "driving")
-      assert table_row(html, "Range (ideal)", "200.0 mi")
+      assert table_row(html, "Range (rated)", "200.0 mi")
       assert table_row(html, "Range (est.)", "180.0 mi")
       assert table_row(html, "State of Charge", "67% (69%)", tooltip: "≈ 299 mi at 100%")
       assert table_row(html, "Speed", "30 mph")
       assert table_row(html, "Outside temperature", "75.2 °F")
       assert table_row(html, "Inside temperature", "73.8 °F")
+      assert table_row(html, "Mileage", "42000 mi")
     end
   end
 

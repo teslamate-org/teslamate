@@ -34,6 +34,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       display_name: "Foo",
       odometer: 42_000,
       windows_open: true,
+      doors_open: true,
       shift_state: "D",
       state: :online,
       since: DateTime.utc_now(),
@@ -51,7 +52,12 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       is_preconditioning: true,
       is_user_present: false,
       is_climate_on: true,
-      geofence: %GeoFence{id: 0, name: "Home", latitude: 0.0, longitude: 0.0, radius: 20}
+      geofence: %GeoFence{id: 0, name: "Home", latitude: 0.0, longitude: 0.0, radius: 20},
+      model: "S",
+      trim_badging: "P100D",
+      exterior_color: "White",
+      spoiler_type: "None",
+      wheel_type: "AeroTurbine19"
     }
 
     send(pid, summary)
@@ -133,6 +139,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert_receive {MqttPublisherMock,
                     {:publish, "teslamate/cars/0/geofence", "", [retain: true, qos: 1]}}
 
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/trim_badging", "", [retain: true, qos: 1]}}
+
     refute_receive _
   end
 
@@ -166,7 +175,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
           :scheduled_charging_start_time,
           :time_to_full_charge,
           :shift_state,
-          :geofence
+          :geofence,
+          :trim_badging
         ] do
       topic = "teslamate/account_0/cars/0/#{key}"
       assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}

@@ -33,8 +33,8 @@ build() {
   local platforms=$3
 
   case $task in
-      build) echo "Building $tag" && docker buildx build --platform "$platforms" -t "$tag" .;;
-      push)  echo "Pushing $tag" && docker buildx build --platform "$platforms" -t "$tag" --push .;;
+      build) echo "Building $tag" && docker buildx build --pull --platform "$platforms" -t "$tag" .;;
+      push)  echo "Pushing $tag" && docker buildx build --pull --platform "$platforms" -t "$tag" --push .;;
       *)     exit 1;;
   esac
 }

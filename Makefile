@@ -9,9 +9,9 @@ help:
 	@perl -nle'print $& if m{^[a-zA-Z_-]+:.*?## .*$$}' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 teslamate: ## Build teslamate Docker image
-	@docker build \
+	@docker build --pull \
 			-t $(APP_NAME):$(APP_VSN)-$(BUILD) \
 			-t $(APP_NAME) .
 
 grafana: ## Build  teslamate-grafana Docker image
-	@cd grafana && docker build -t teslamate-grafana .
+	@cd grafana && docker build --pull -t teslamate-grafana .
