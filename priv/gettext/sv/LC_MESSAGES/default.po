@@ -534,12 +534,12 @@ msgstr "Allmänna Inställningar"
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:76
 msgid "Session fee"
-msgstr ""
+msgstr "Session avgift"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:53
 msgid "Doors open"
-msgstr ""
+msgstr "Dörrar öppna"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:94
@@ -555,13 +555,13 @@ msgstr "Total"
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:155
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Det finns <strong>%{n} laddningssession</strong> på denna position för vilken ingen kostnad har lagts till än."
+msgstr[1] "Det finns <strong>%{n} laddningssessioner</strong> på denna position för vilken inga kostnader har lagts till än."
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:164
 msgid "Add costs retroactively"
-msgstr ""
+msgstr "Lägg till kostnader retroaktivt"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:149
@@ -571,9 +571,9 @@ msgstr "Laddningskostnad"
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:163
 msgid "Continue"
-msgstr ""
+msgstr "Fortsätt"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:258
 msgid "Mileage"
-msgstr ""
+msgstr "Körsträcka"
