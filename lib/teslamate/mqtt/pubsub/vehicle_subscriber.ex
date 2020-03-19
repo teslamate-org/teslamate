@@ -56,7 +56,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       {key, val} -> {key, val}
     end)
     |> Stream.filter(fn {key, value} ->
-      not (key in @blacklist) and (not is_nil(value) or key in @always_published)
+      not (key in @blacklist) and
+        (not is_nil(value) or key in @always_published) and
+        (state.last_summary == nil or value != Map.get(state.last_summary, key))
     end)
     |> Task.async_stream(&publish(&1, state),
       max_concurrency: 10,
