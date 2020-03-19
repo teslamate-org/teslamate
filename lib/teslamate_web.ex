@@ -23,7 +23,7 @@ defmodule TeslaMateWeb do
 
       import Plug.Conn
       import TeslaMateWeb.Gettext
-      import Phoenix.LiveView.Controller, only: [live_render: 3]
+      import Phoenix.LiveView.Controller
       alias TeslaMateWeb.Router.Helpers, as: Routes
     end
   end

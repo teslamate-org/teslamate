@@ -7,10 +7,9 @@ defmodule TeslaMateWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
-    plug SetLocale
     plug :fetch_live_flash
-    plug :put_live_layout, {TeslaMateWeb.LayoutView, "app.html"}
+    plug SetLocale
+    plug :put_root_layout, {TeslaMateWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug Donate
