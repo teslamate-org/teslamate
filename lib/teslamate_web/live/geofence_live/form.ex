@@ -118,25 +118,39 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   end
 
   def handle_event("save", %{"geo_fence" => params}, socket) do
-    geofence_params =
-      params
-      |> Map.put("sleep_mode_blacklist", socket.assigns.sleep_mode_blacklist)
-      |> Map.put("sleep_mode_whitelist", socket.assigns.sleep_mode_whitelist)
-
-    case socket.assigns.action do
-      :new -> Locations.create_geofence(geofence_params)
-      :edit -> Locations.update_geofence(socket.assigns.geofence, geofence_params)
-    end
-    |> case do
-      {:ok, %GeoFence{name: name}} ->
-        {:noreply,
-         socket
-         |> put_flash(:success, flash_msg(socket.assigns.action, name))
-         |> redirect(to: Routes.live_path(socket, GeoFenceLive.Index))}
-
+    with {:ok, geofence, changeset} <- validate(params, socket),
+         {:ok, socket} <- show_modal_or_save(geofence, changeset, socket) do
+      {:noreply, socket}
+    else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset, show_errors: true)}
     end
+  end
+
+  def handle_event("calc-costs", %{"result" => result}, socket) do
+    case save(socket) do
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset, show_modal: false, show_errors: true)}
+
+      {:ok, socket} ->
+        if result == "yes" do
+          :ok = Locations.calculate_charge_costs(socket.assigns.geofence)
+        end
+
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("close-modal", _, socket) do
+    {:noreply, assign(socket, show_modal: false)}
+  end
+
+  def handle_event("keyup", %{"code" => "Escape"}, socket) do
+    {:noreply, assign(socket, show_modal: false)}
+  end
+
+  def handle_event("keyup", _, socket) do
+    {:noreply, socket}
   end
 
   # Private
@@ -150,9 +164,61 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       car_settings: Settings.get_car_settings(),
       sleep_mode_whitelist: geofence.sleep_mode_whitelist,
       sleep_mode_blacklist: geofence.sleep_mode_blacklist,
+      charges_without_costs: 0,
       show_errors: false,
+      show_modal: false,
       action: action
     }
+  end
+
+  defp validate(params, %{assigns: assigns}) do
+    changeset = Locations.change_geofence(assigns.geofence, params)
+
+    with {:ok, geofence} <- Ecto.Changeset.apply_action(changeset, :update) do
+      {:ok, geofence, changeset}
+    end
+  end
+
+  defp show_modal_or_save(%GeoFence{} = geofence, changeset, socket) do
+    has_cost = geofence.session_fee != nil or geofence.cost_per_kwh != nil
+
+    position_or_cost_changed =
+      has_changed?(changeset, [:cost_per_kwh, :session_fee, :latitude, :longitude, :radius])
+
+    with true <- has_cost and position_or_cost_changed,
+         n when n > 0 <- Locations.count_charging_processes_without_costs(geofence) do
+      socket =
+        assign(socket,
+          show_modal: true,
+          changeset: changeset,
+          charges_without_costs: n
+        )
+
+      {:ok, socket}
+    else
+      _ -> socket |> assign(changeset: changeset) |> save()
+    end
+  end
+
+  defp save(%{assigns: assigns} = socket) do
+    params =
+      assigns.changeset.changes
+      |> Map.put(:sleep_mode_blacklist, assigns.sleep_mode_blacklist)
+      |> Map.put(:sleep_mode_whitelist, assigns.sleep_mode_whitelist)
+
+    with {:ok, %GeoFence{name: name} = geofence} <-
+           (case assigns.action do
+              :new -> Locations.create_geofence(params)
+              :edit -> Locations.update_geofence(assigns.geofence, params)
+            end) do
+      socket =
+        socket
+        |> assign(geofence: geofence)
+        |> put_flash(:success, flash_msg(assigns.action, name))
+        |> redirect(to: Routes.live_path(socket, GeoFenceLive.Index))
+
+      {:ok, socket}
+    end
   end
 
   defp set_grafana_url(settings, socket) do
@@ -167,6 +233,10 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       {:error, reason} -> Logger.warn("Updating settings failed: #{inspect(reason)}")
       _ -> {:ok, settings}
     end
+  end
+
+  defp has_changed?(%Ecto.Changeset{changes: changes}, keys) do
+    length(keys -- Map.keys(changes)) < length(keys)
   end
 
   defp flash_msg(:new, name), do: gettext("Geo-fence \"%{name}\" created", name: name)

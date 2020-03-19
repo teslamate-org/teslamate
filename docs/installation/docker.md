@@ -8,7 +8,7 @@ This setup is recommended only if you are running TeslaMate on your home network
 - A Machine that's always on, so TeslaMate can continually fetch data
 - External internet access, to talk to tesla.com
 
-If you are new to Docker, see [Docker on Raspberry Pi](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl)
+If you are new to Docker, see [Installing Docker and Docker Compose](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl)
 
 ## Setup
 

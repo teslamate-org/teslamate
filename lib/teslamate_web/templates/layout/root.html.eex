@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="<%= Plug.Conn.get_session(@conn, :locale) %>">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>TeslaMate</title>
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5AB53N3ALo">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=5AB53N3ALo">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=5AB53N3ALo">
+    <link rel="manifest" href="/site.webmanifest?v=5AB53N3ALo">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg?v=5AB53N3ALo" color="#363636">
+    <link rel="shortcut icon" href="/favicon.ico?v=5AB53N3ALo">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    <%= csrf_meta_tag() %>
+    <script defer src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+  </head>
+  <body tabIndex=0>
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+      <div class="container">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="/">
+            <%= img_tag Routes.static_path(@conn, "/images/logo.svg"), alt: "TeslaMate", width: "90px" %>
+          </a>
+
+          <a
+            role="button"
+            class="navbar-burger burger"
+            aria-label="menu"
+            aria-expanded="false"
+            data-target="navbar"
+          >
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+
+        <div id="navbar" class="navbar-menu">
+          <div class="navbar-end">
+            <%= if grafana_url = @conn.assigns.settings.grafana_url do %>
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link is-arrowless"><%= gettext "Dashboards" %></a>
+              <div class="navbar-dropdown">
+              <%= for %{"title" => title, "uid" => uid} <- list_dashboards() do %>
+                <%= link title, to: "#{grafana_url}/d/#{uid}?kiosk=tv", class: "navbar-item", target: "_blank" %>
+              <% end %>
+              </div>
+            </div>
+            <% end %>
+            <%= link(gettext("Geo-Fences"), to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item") %>
+            <%= link(gettext("Settings"), to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5") %>
+            <div class="navbar-item tags has-addons">
+              <%= link "v#{Application.spec(:teslamate, :vsn) |> to_string() |> String.trim_trailing(".0")}",
+                        to: "https://github.com/adriankumpf/teslamate/releases",
+                        class: "tag is-primary",
+                        target: "_blank", rel: "noopener noreferrer"
+              %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <% show_doante_button = @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) %>
+
+    <%= content_tag :main, role: "main", style: "overflow: hidden;",
+                           class: ["section", to_string(if show_doante_button, do: " full-height")] do %>
+      <div class="container <%= Enum.at(@conn.path_info, 0) %>">
+        <%= Enum.map(get_flash(@conn), fn {flash_key, flash_message} -> %>
+        <p class="notification is-<%= flash_key %>"><%= flash_message %></p>
+        <% end) %>
+
+        <%= @inner_content %>
+      </div>
+    <% end %>
+
+    <%= if @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) do %>
+    <footer class="footer">
+      <div class="content has-text-centered">
+          <%= link to: Routes.donate_path(@conn, :index),
+              class: "button is-rounded is-text is-small has-text-grey", type: "button",
+              target: "_blank", rel: "noopener noreferrer" do %>
+            <span class="icon"><i class="mdi mdi-heart"></i> </span>
+            <strong><%= gettext "Donate" %></strong>
+          <% end %>
+      </div>
+    </footer>
+    <% end %>
+  </body>
+</html>

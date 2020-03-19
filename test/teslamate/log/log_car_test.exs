@@ -11,7 +11,10 @@ defmodule TeslaMate.LogCarTest do
     vid: 42,
     name: "foo",
     trim_badging: "P100D",
-    vin: "12345F"
+    vin: "12345F",
+    exterior_color: "White",
+    spoiler_type: "None",
+    wheel_type: "AeroTurbine19"
   }
   @update_attrs %{
     efficiency: 0.190,
@@ -20,7 +23,10 @@ defmodule TeslaMate.LogCarTest do
     vid: 43,
     name: "bar",
     trim_badging: "100D",
-    vin: "6789R"
+    vin: "6789R",
+    exterior_color: "MetallicBlack",
+    spoiler_type: "Passive",
+    wheel_type: "AeroTurbine20"
   }
   @invalid_attrs %{
     efficiency: nil,
@@ -29,7 +35,10 @@ defmodule TeslaMate.LogCarTest do
     vid: nil,
     name: 1,
     trim_badging: 2,
-    vin: 3
+    vin: 3,
+    exterior_color: 1,
+    spoiler_type: 2,
+    wheel_type: 3
   }
 
   def car_fixture(attrs \\ %{}) do
@@ -66,6 +75,9 @@ defmodule TeslaMate.LogCarTest do
     assert car.name == "foo"
     assert car.trim_badging == "P100D"
     assert car.vin == "12345F"
+    assert car.exterior_color == "White"
+    assert car.spoiler_type == "None"
+    assert car.wheel_type == "AeroTurbine19"
   end
 
   test "create_or_update_car/1 with invalid data returns error changeset" do
@@ -76,6 +88,9 @@ defmodule TeslaMate.LogCarTest do
              eid: ["can't be blank"],
              name: ["is invalid"],
              trim_badging: ["is invalid"],
+             exterior_color: ["is invalid"],
+             spoiler_type: ["is invalid"],
+             wheel_type: ["is invalid"],
              vid: ["can't be blank"],
              vin: ["is invalid"]
            } == errors_on(changeset)
@@ -93,6 +108,9 @@ defmodule TeslaMate.LogCarTest do
     assert car.name == "bar"
     assert car.trim_badging == "100D"
     assert car.vin == "6789R"
+    assert car.exterior_color == "MetallicBlack"
+    assert car.spoiler_type == "Passive"
+    assert car.wheel_type == "AeroTurbine20"
   end
 
   test "create_or_update_car/2 with invalid data returns error changeset" do

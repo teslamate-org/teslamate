@@ -43,7 +43,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings = Settings.get_global_settings!()
       assert settings.unit_of_length == :km
       assert settings.unit_of_temperature == :C
-      assert settings.preferred_range == :ideal
+      assert settings.preferred_range == :rated
       assert settings.base_url == nil
       assert settings.grafana_url == nil
       assert settings.language == "en"
@@ -372,21 +372,21 @@ defmodule TeslaMate.SettingsTest do
 
       # no change
       assert {:ok, settings} =
-               Settings.update_global_settings(settings, %{preferred_range: :ideal})
+               Settings.update_global_settings(settings, %{preferred_range: :rated})
 
       assert %Car{efficiency: nil} = Log.get_car!(car.id)
 
       # changed
       assert {:ok, settings} =
-               Settings.update_global_settings(settings, %{preferred_range: :rated})
-
-      assert %Car{efficiency: 0.15} = Log.get_car!(car.id)
-
-      # changed back
-      assert {:ok, settings} =
                Settings.update_global_settings(settings, %{preferred_range: :ideal})
 
       assert %Car{efficiency: 0.152} = Log.get_car!(car.id)
+
+      # changed back
+      assert {:ok, settings} =
+               Settings.update_global_settings(settings, %{preferred_range: :rated})
+
+      assert %Car{efficiency: 0.15} = Log.get_car!(car.id)
     end
 
     @valid_pos_attrs %{date: DateTime.utc_now(), latitude: 0.0, longitude: 0.0}

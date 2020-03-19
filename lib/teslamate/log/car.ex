@@ -8,11 +8,14 @@ defmodule TeslaMate.Log.Car do
   schema "cars" do
     field :name, :string
     field :efficiency, :float
-    field :eid, :integer
     field :model, :string
     field :trim_badging, :string
-    field :vid, :integer
+    field :exterior_color, :string
+    field :wheel_type, :string
+    field :spoiler_type, :string
 
+    field :eid, :integer
+    field :vid, :integer
     # TODO: with v2.0 mark as non nullable
     field :vin, :string
 
@@ -28,7 +31,18 @@ defmodule TeslaMate.Log.Car do
   @doc false
   def changeset(car, attrs) do
     car
-    |> cast(attrs, [:eid, :vid, :name, :model, :efficiency, :trim_badging, :vin])
+    |> cast(attrs, [
+      :eid,
+      :vid,
+      :vin,
+      :name,
+      :model,
+      :efficiency,
+      :trim_badging,
+      :exterior_color,
+      :wheel_type,
+      :spoiler_type
+    ])
     |> validate_required([:eid, :vid, :vin])
     |> unique_constraint(:settings_id)
     |> unique_constraint(:eid)

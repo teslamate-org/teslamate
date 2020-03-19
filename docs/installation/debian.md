@@ -57,6 +57,8 @@ sudo grafana-cli plugins install grafana-piechart-panel
 sudo systemctl restart grafana-server
 ```
 
+[Import the Grafana dashboards](#import-grafana-dashboards) after [cloning the TeslaMate git repository](#clone-teslamate-git-repository).
+
 </details>
 
 <details>

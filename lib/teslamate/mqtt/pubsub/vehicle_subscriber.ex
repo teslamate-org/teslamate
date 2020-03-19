@@ -46,7 +46,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   @blacklist [:car]
   @always_published ~w(charge_energy_added charger_actual_current charger_phases
                        charger_power charger_voltage scheduled_charging_start_time
-                       time_to_full_charge shift_state geofence)a
+                       time_to_full_charge shift_state geofence trim_badging)a
 
   def handle_info(%Summary{} = summary, state) do
     summary

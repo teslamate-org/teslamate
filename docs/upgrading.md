@@ -4,9 +4,7 @@
 
 1. Check out the [Changelog](https://github.com/adriankumpf/teslamate/releases) before upgrading!
 
-2. Ensure your credentials are correct in `docker-compose.yml` (or `.env` if you are using [Docker (advanced)](installation/docker_advanced))
-
-3. Pull the new images and restart the stack:
+2. Pull the new images and restart the stack:
 
    ```bash
    docker-compose pull
@@ -21,7 +19,7 @@
 
    ```bash
    git pull
-   git checkout $(git describe --tags)
+   git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
 
    mix deps.get --only prod
    npm install --prefix ./assets && npm run deploy --prefix ./assets
@@ -35,4 +33,8 @@
     _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
    ```
 
-4. Finally, re-import the dashboards.
+4. Finally, re-import the Grafana dashboards:
+
+   ```bash
+   LOGIN="user:pass" ./grafana/dashboards.sh restore
+   ```

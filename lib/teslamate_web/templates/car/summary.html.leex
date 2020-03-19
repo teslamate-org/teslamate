@@ -49,6 +49,11 @@
           <span class="mdi mdi-window-open"></span>
         </span>
       <% end %>
+      <%= if @summary.doors_open do %>
+        <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Doors open" %>'>
+          <span class="mdi mdi-car-door"></span>
+        </span>
+      <% end %>
       <%= if @summary.sentry_mode do %>
         <span class="icon has-text-grey-dark tooltip has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Sentry Mode" %>'>
           <span class="mdi mdi-shield-check"></span>
@@ -120,7 +125,7 @@
                 end
 
               if @settings.unit_of_length == :mi do
-                "#{Float.round(range / 1.60934, 1)} mi"
+                "#{Convert.km_to_miles(range, 1)} mi"
               else
                 "#{range} km"
               end
@@ -132,7 +137,7 @@
             <td class="has-text-weight-medium"><%= gettext "Range (est.)" %></td>
             <td><%=
               if @settings.unit_of_length == :mi do
-                "#{Float.round(@summary.est_battery_range_km / 1.60934, 1)} mi"
+                "#{Convert.km_to_miles(@summary.est_battery_range_km, 1)} mi"
               else
                 "#{@summary.est_battery_range_km} km"
               end
@@ -193,7 +198,7 @@
 
                   r100_str =
                     if @settings.unit_of_length == :mi do
-                      "#{round(r100 / 1.60934)} mi"
+                      "#{Convert.km_to_miles(r100, 0)} mi"
                     else
                       "#{round(r100)} km"
                     end
@@ -216,7 +221,7 @@
             <td class="has-text-weight-medium"><%= gettext "Speed" %></td>
             <td><%=
               if @settings.unit_of_length == :mi do
-                "#{round(@summary.speed / 1.60934)} mph"
+                "#{Convert.km_to_miles(@summary.speed, 0)} mph"
               else
                 "#{@summary.speed} km/h"
               end
@@ -229,7 +234,7 @@
             <td class="has-text-weight-medium"><%= gettext "Outside temperature" %></td>
             <td><%=
               if @settings.unit_of_temperature == :F do
-                "#{Float.round((@summary.outside_temp * 9/5) + 32, 1)} °F"
+                "#{Convert.celsius_to_fahrenheit(@summary.outside_temp, 1)} °F"
               else
                 "#{@summary.outside_temp} °C"
               end
@@ -241,13 +246,25 @@
             <td class="has-text-weight-medium"><%= gettext "Inside temperature" %></td>
             <td><%=
               if @settings.unit_of_temperature == :F do
-                "#{Float.round((@summary.inside_temp * 9/5) + 32, 1)} °F"
+                "#{Convert.celsius_to_fahrenheit(@summary.inside_temp, 1)} °F"
               else
                 "#{@summary.inside_temp} °C"
               end
             %></td>
           </tr>
             <% end %>
+          <% end %>
+          <%= unless is_nil(@summary.odometer) do %>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Mileage" %></td>
+            <td><%=
+              if @settings.unit_of_length == :mi do
+                "#{Convert.km_to_miles(@summary.odometer, 0)} mi"
+              else
+                "#{round(@summary.odometer)} km"
+              end
+            %></td>
+          </tr>
           <% end %>
           <%= unless is_nil(@summary.version) do %>
           <tr>

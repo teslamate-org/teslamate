@@ -7,7 +7,7 @@ defmodule TeslaMate.Repo.Migrations.AddRangeEnum do
     Range.create_type()
 
     alter table(:settings) do
-      add(:preferred_range, Range.type(), default: "ideal", null: false)
+      add(:preferred_range, Range.type(), default: "rated", null: false)
     end
   end
 end
