@@ -27,8 +27,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1579378185179,
+  "iteration": 1584627075107,
   "links": [
     {
       "icon": "dashboard",
@@ -51,6 +50,7 @@
   "panels": [
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -85,6 +85,7 @@
         "x": 0,
         "y": 1
       },
+      "hiddenSeries": false,
       "id": 2,
       "legend": {
         "alignAsTable": true,
@@ -133,7 +134,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, [[interval]]) AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected [[preferred_range]] range [$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date)\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, [[interval]]) AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected [[preferred_range]] range [$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "A",
           "select": [
             [
@@ -159,7 +160,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km(avg(odometer), '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC;",
+          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km(avg(odometer), '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id  and ideal_battery_range_km is not null\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC;",
           "refId": "B",
           "select": [
             [
@@ -241,6 +242,7 @@
         "x": 0,
         "y": 22
       },
+      "hiddenSeries": false,
       "id": 6,
       "legend": {
         "alignAsTable": true,
@@ -289,7 +291,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\",\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level)[$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date)\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\",\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level)[$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "A",
           "select": [
             [
@@ -315,7 +317,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select \n\t$__timeGroup(date,[[interval]]) AS time,\n  avg(battery_level) AS \"Battery Level [%]\", avg(coalesce(usable_battery_level, battery_level)) as \"Usable Battery Level [%]\"\nfrom\n    (SELECT\n    battery_level, usable_battery_level\n        , date\n    FROM\n    positions\n    WHERE\n    car_id = $car_id AND\n    $__timeFilter(date)\n    UNION ALL\n    select\n    battery_level, null as usable_battery_level\n        , date\n    from charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id) as data\n\nGROUP BY\n  1\nORDER BY\n    1 ASC",
+          "rawSql": "select \n\t$__timeGroup(date,[[interval]]) AS time,\n  avg(battery_level) AS \"Battery Level [%]\", avg(coalesce(usable_battery_level, battery_level)) as \"Usable Battery Level [%]\"\nfrom\n    (SELECT\n    battery_level, usable_battery_level\n        , date\n    FROM\n    positions\n    WHERE\n    car_id = $car_id AND\n    $__timeFilter(date) and ideal_battery_range_km is not null\n    UNION ALL\n    select\n    battery_level, null as usable_battery_level\n        , date\n    from charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id) as data\n\nGROUP BY\n  1\nORDER BY\n    1 ASC",
           "refId": "B",
           "select": [
             [
@@ -397,6 +399,7 @@
         "x": 0,
         "y": 43
       },
+      "hiddenSeries": false,
       "id": 5,
       "legend": {
         "alignAsTable": true,
@@ -453,7 +456,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\",\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level) [$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date)\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\",\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level) [$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "A",
           "select": [
             [
@@ -481,7 +484,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tavg(convert_celsius(outside_temp, '$temp_unit')) as \"Outdoor Temperature [°$temp_unit]\"\n\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tavg(convert_celsius(outside_temp, '$temp_unit')) as \"Outdoor Temperature [°$temp_unit]\"\n\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id and ideal_battery_range_km is not null\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "B",
           "select": [
             [
@@ -548,7 +551,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 19,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [
     "tesla"
@@ -558,6 +561,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },
@@ -685,6 +689,7 @@
         "auto_count": 30,
         "auto_min": "10s",
         "current": {
+          "selected": false,
           "text": "6h",
           "value": "6h"
         },

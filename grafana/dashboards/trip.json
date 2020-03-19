@@ -92,7 +92,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n\tlatitude AS lat,\n\tlongitude AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nORDER BY\n\t1 ASC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS lat,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
           "refId": "A",
           "select": [
             [
@@ -2244,7 +2244,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "dataLinks": []
       },
@@ -2274,7 +2274,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "(\n  SELECT $__time(date), battery_level as \"battery level\", convert_km([[preferred_range]]_battery_range_km, '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM positions\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n) UNION ALL (\n  SELECT $__time(date), battery_level as \"battery level\", convert_km([[preferred_range]]_battery_range_km, '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM charges\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n)\nORDER BY 1",
+          "rawSql": "(\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as \"battery level\", convert_km(avg([[preferred_range]]_battery_range_km), '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM positions\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n  GROUP BY 1\n) UNION ALL (\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as \"battery level\", convert_km(avg([[preferred_range]]_battery_range_km), '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM charges\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n  GROUP BY 1\n)\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -2369,7 +2369,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "dataLinks": []
       },
@@ -2399,7 +2399,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tROUND(convert_m(elevation, '$alternative_length_unit')) AS \"elevation [$alternative_length_unit]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, '5s'),\n\tROUND(convert_m(avg(elevation), '$alternative_length_unit')) AS \"elevation [$alternative_length_unit]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\nGROUP BY\n 1\nORDER BY\n 1 ASC",
           "refId": "A",
           "select": [
             [
