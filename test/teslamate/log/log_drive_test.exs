@@ -141,7 +141,6 @@ defmodule TeslaMate.LogDriveTest do
       assert drive.speed_max == 42
       assert drive.power_max == 36.0
       assert drive.power_min == -7.0
-      assert drive.power_avg == 8.2
       assert drive.start_km == 284.85156
       assert drive.end_km == 288.045561
       assert drive.distance == 3.1940010000000143

@@ -232,7 +232,6 @@ defmodule TeslaMate.Log do
           speed_max: max(p.speed) |> over(:w),
           power_max: max(p.power) |> over(:w),
           power_min: min(p.power) |> over(:w),
-          power_avg: avg(p.power) |> over(:w),
           start_date: first_value(p.date) |> over(:w),
           end_date: last_value(p.date) |> over(:w),
           start_km: first_value(p.odometer) |> over(:w),
