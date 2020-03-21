@@ -6,7 +6,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "@geoman-io/leaflet-geoman-free": "^2.4.0",
+    "@geoman-io/leaflet-geoman-free": "^2.5.0",
     "@mdi/font": "^5.0.45",
     "bulma-divider": "^0.2.0",
     "bulma-switch": "^2.0.0",
@@ -18,9 +18,9 @@
     "phoenix_live_view": "file:../deps/phoenix_live_view"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.7",
-    "@babel/preset-env": "^7.8.7",
-    "babel-loader": "^8.0.6",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "babel-loader": "^8.1.0",
     "bulma": "^0.8.0",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
