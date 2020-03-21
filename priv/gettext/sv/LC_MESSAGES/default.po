@@ -576,4 +576,4 @@ msgstr "Fortsätt"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:258
 msgid "Mileage"
-msgstr "Körsträcka"
+msgstr "Vägmätare"
