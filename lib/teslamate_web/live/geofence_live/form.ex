@@ -202,9 +202,9 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
   defp save(%{assigns: assigns} = socket) do
     params =
-      assigns.changeset.changes
-      |> Map.put(:sleep_mode_blacklist, assigns.sleep_mode_blacklist)
-      |> Map.put(:sleep_mode_whitelist, assigns.sleep_mode_whitelist)
+      assigns.changeset.params
+      |> Map.put("sleep_mode_blacklist", assigns.sleep_mode_blacklist)
+      |> Map.put("sleep_mode_whitelist", assigns.sleep_mode_whitelist)
 
     with {:ok, %GeoFence{name: name} = geofence} <-
            (case assigns.action do
