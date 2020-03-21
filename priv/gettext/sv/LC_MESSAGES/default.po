@@ -97,7 +97,7 @@ msgstr "Inkopplad"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:174
 msgid "Charge limit"
-msgstr "Laddningsnivå"
+msgstr "Laddningsgräns"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:132
