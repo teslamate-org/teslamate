@@ -2,11 +2,11 @@
 
 ## [Unreleased]
 
-## [1.18.0-dev]
+## [1.18.0] - 2020-03-21
 
 ### Enhancements
 
-- Add Swedish translation ([#485](https://github.com/adriankumpf/teslamate/pull/485) by [tobiasehlert](https://github.com/tobiasehlert))
+- Add Swedish translation ([#485](https://github.com/adriankumpf/teslamate/pull/485) and [#522](https://github.com/adriankumpf/teslamate/pull/522) by [tobiasehlert](https://github.com/tobiasehlert))
 - Add Norwegian translation ([#500](https://github.com/adriankumpf/teslamate/pull/500) by [spacecosmos](https://github.com/spacecosmos))
 - Add Spanish translation ([#519](https://github.com/adriankumpf/teslamate/pull/519) by [alceasan](https://github.com/alceasan))
 - Overview: Add states panel ([#520](https://github.com/adriankumpf/teslamate/pull/520) by [DrMichael](https://github.com/DrMichael))
@@ -17,15 +17,16 @@
 - Indicate if any of the doors are open
 - Add support for session fees
 - Store more vehicle config attributes (`exterior_color`, `wheel_type`, `spoiler_type`)
+- Bump Grafana to 6.7.1
 
 #### New MQTT Topics
 
-- `teslamate/cars/$car_id/doors_open`: Indicates if any of the doors are open
-- `teslamate/cars/$car_id/model`: Either "S", "3", "X" or "Y"
-- `teslamate/cars/$car_id/trim_badging`: Trim badging
-- `teslamate/cars/$car_id/exterior_color`: The exterior color
-- `teslamate/cars/$car_id/wheel_type`: The wheel type
-- `teslamate/cars/$car_id/spoiler_type`: The spoiler type
+- `teslamate/cars/$car_id/doors_open`
+- `teslamate/cars/$car_id/model`
+- `teslamate/cars/$car_id/trim_badging`
+- `teslamate/cars/$car_id/exterior_color`
+- `teslamate/cars/$car_id/wheel_type`
+- `teslamate/cars/$car_id/spoiler_type`
 
 ### Bug Fixes
 
@@ -172,14 +173,6 @@
 
 **⚠️ Please note:** Due to internal changes, all addresses will be recalculated on first startup. Depending on the amount of data, this process may take up to 30 minutes or longer.
 
----
-
-```text
-TeslaMate is open source and completely free for everyone to use.
-
-If you like this project and want to support further development, please consider making a donation.
-```
-
 ## [1.14.3] - 2020-01-06
 
 ### Enhancements
@@ -232,14 +225,6 @@ Background: some vehicles incorrectly report 2 instead of 1 or 3 phases when cha
 - Fix an issue where the application could crash because the database pool was too small
 - Fix an issue where a drive/charge could be split into two parts due to API timeouts
 
----
-
-```text
-TeslaMate is open source and completely free for everyone to use.
-
-If you like this project and want to support further development, please consider making a donation.
-```
-
 ## [1.13.2] - 2019-12-07
 
 ### Enhancements
@@ -288,14 +273,6 @@ Note: There is no charging cost interface either manual or automatic at this poi
 
 - Fix issue where consumption values were displayed as 0
 - Fix issue where installing a software update when charging would produce an incomplete charge record
-
----
-
-```text
-TeslaMate is open source and completely free for everyone to use.
-
-If you like this project and want to support further development, please consider making a donation.
-```
 
 ## [1.12.2] - 2019-11-06
 
@@ -363,14 +340,6 @@ Currently, a firmware bug in some vehicles may cause the wrong number of phases 
 - Fix an issue with vehicles that were removed from the Tesla Account
 - Correctly handle API responses which indicate that the vehicle is in service
 - Display effects of range gains (e.g. from supercharging pre-conditioning a cold battery) as NULL
-
----
-
-```text
-TeslaMate is open source and completely free for everyone to use.
-
-If you like this project and want to support further development, please consider making a donation.
-```
 
 ## [1.11.1] - 2019-10-13
 
@@ -839,7 +808,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.17.1...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.18.0...HEAD
+[1.18.0]: https://github.com/adriankumpf/teslamate/compare/v1.17.1...v1.18.0
 [1.17.1]: https://github.com/adriankumpf/teslamate/compare/v1.17.0...v1.17.1
 [1.17.0]: https://github.com/adriankumpf/teslamate/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/adriankumpf/teslamate/compare/v1.15.1...v1.16.0
