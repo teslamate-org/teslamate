@@ -97,7 +97,7 @@ msgstr "Inkopplad"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:174
 msgid "Charge limit"
-msgstr "Laddningsnivå"
+msgstr "Laddningsgräns"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:132
@@ -133,18 +133,18 @@ msgstr "Tillbaka"
 #, elixir-format
 #: lib/teslamate_web/templates/layout/app.html.eex:53
 msgid "Geo-Fences"
-msgstr ""
+msgstr "Geostaket"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:242
 msgid "Geo-fence \"%{name}\" created"
-msgstr "Geo-Fence \"%{name}\" skapat"
+msgstr "Geostaket \"%{name}\" skapat"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:4
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:4
 msgid "Geo-fences"
-msgstr "Geo-Fences"
+msgstr "Geostaket"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:63
@@ -397,7 +397,7 @@ msgstr "Viloläge"
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:243
 msgid "Geo-fence \"%{name}\" updated"
-msgstr "Geo-Fence \"%{name}\" uppdaterad"
+msgstr "Geostaket \"%{name}\" uppdaterad"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:95
@@ -576,4 +576,4 @@ msgstr "Fortsätt"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:258
 msgid "Mileage"
-msgstr "Körsträcka"
+msgstr "Vägmätare"
