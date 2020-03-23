@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.18.1] - 2020-03-23
+
+### Bug Fixes
+
+- Fix settings dropdown and Swedish translation ([#525](https://github.com/adriankumpf/teslamate/pull/525) by [tobiasehlert](https://github.com/tobiasehlert))
+
 ## [1.18.0] - 2020-03-21
 
 ### Enhancements
@@ -808,7 +814,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.18.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.18.1...HEAD
+[1.18.1]: https://github.com/adriankumpf/teslamate/compare/v1.18.0...v1.18.1
 [1.18.0]: https://github.com/adriankumpf/teslamate/compare/v1.17.1...v1.18.0
 [1.17.1]: https://github.com/adriankumpf/teslamate/compare/v1.17.0...v1.17.1
 [1.17.0]: https://github.com/adriankumpf/teslamate/compare/v1.16.0...v1.17.0
