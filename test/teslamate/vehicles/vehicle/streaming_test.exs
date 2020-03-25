@@ -2,6 +2,8 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
   use TeslaMate.VehicleCase, async: true
   use TeslaMate.DataCase, async: true
 
+  import ExUnit.CaptureLog
+
   alias TeslaMate.Log.Car
   alias TeslaApi.Stream
 
@@ -26,14 +28,19 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
   end
 
   describe "driving" do
+    @log_opts format: "[$level] $message
+",
+              colors: [enabled: false]
+
     @tag :capture_log
     test "starts a drive", %{test: name} do
       me = self()
       now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
 
       events = [
         {:ok, online_event()},
-        {:ok, online_event()},
+        {:ok, online_event(drive_state: %{timestamp: now_ts})},
         fn ->
           send(me, :continue?)
 
@@ -50,7 +57,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
         {:ok,
          online_event(
            drive_state: %{
-             timestamp: DateTime.to_unix(now, :millisecond),
+             timestamp: now_ts + 10,
              latitude: 42.91,
              longitude: 42.81,
              shift_state: "P",
@@ -113,6 +120,129 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       refute_receive _
     end
+
+    test "discards fetch result", %{test: name} do
+      me = self()
+      now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
+
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event(drive_state: %{timestamp: now_ts})},
+        fn ->
+          send(me, :continue?)
+
+          receive do
+            :continue ->
+              {:ok,
+               online_event(
+                 drive_state: %{
+                   timestamp: now_ts + 0,
+                   latitude: 42.91,
+                   longitude: 42.81,
+                   shift_state: "P",
+                   speed: 0,
+                   power: 0
+                 }
+               )}
+          after
+            5_000 -> raise "No :continue after 5s"
+          end
+        end,
+        fn ->
+          send(me, :continue?)
+
+          receive do
+            :continue ->
+              {:ok,
+               online_event(
+                 drive_state: %{
+                   timestamp: now_ts + 4,
+                   latitude: 42.91,
+                   longitude: 42.81,
+                   shift_state: "P",
+                   speed: 0,
+                   power: 0
+                 }
+               )}
+          after
+            5_000 -> raise "No :continue after 5s"
+          end
+        end,
+        fn -> Process.sleep(10_000) end
+      ]
+
+      d1 = DateTime.from_unix!(now_ts + 1, :millisecond)
+      d2 = DateTime.from_unix!(now_ts + 2, :millisecond)
+      d3 = DateTime.from_unix!(now_ts + 2, :millisecond)
+      d4 = DateTime.from_unix!(now_ts + 4, :millisecond)
+
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: true})
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {ApiMock, {:stream, _eid, func}} when is_function(func)
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      stream(name, %{shift_state: "D", time: d1})
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{date: ^d1}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+
+      stream(name, %{shift_state: "D", time: d2})
+      assert_receive {:insert_position, ^drive, %{date: ^d2}}
+
+      assert capture_log(@log_opts, fn ->
+               stream(name, %{shift_state: "P", speed: nil, power: nil, time: d3})
+               assert_receive :continue?
+               send(:"api_#{name}", :continue)
+
+               assert_receive :continue?
+               refute_receive _
+             end) =~ """
+             [warn] Discared outdated fetch result: %{
+               last: %TeslaApi.Vehicle.State.Drive{
+                 gps_as_of: nil,
+                 heading: 120,
+                 latitude: 42.1,
+                 longitude: 42.0,
+                 native_latitude: nil,
+                 native_location_supported: nil,
+                 native_longitude: nil,
+                 native_type: nil,
+                 power: nil,
+                 shift_state: \"D\",
+                 speed: 0,
+                 timestamp: #{DateTime.to_unix(d1, :millisecond)}
+               },
+               now: %TeslaApi.Vehicle.State.Drive{
+                 gps_as_of: nil,
+                 heading: nil,
+                 latitude: 42.91,
+                 longitude: 42.81,
+                 native_latitude: nil,
+                 native_location_supported: nil,
+                 native_longitude: nil,
+                 native_type: nil,
+                 power: 0,
+                 shift_state: \"P\",
+                 speed: 0,
+                 timestamp: #{now_ts}
+               }
+             }
+             """
+
+      send(:"api_#{name}", :continue)
+
+      assert_receive {:insert_position, ^drive, %{date: ^d4, speed: 0, power: 0.0}}
+      assert_receive {:close_drive, ^drive, lookup_address: true}
+
+      assert_receive {:start_state, ^car, :online, date: ^d4}
+      assert_receive {:insert_position, ^car, %{date: ^d4}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
   end
 
   describe "charging" do
@@ -120,10 +250,11 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     test "starts charging", %{test: name} do
       me = self()
       now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
 
       events = [
         {:ok, online_event()},
-        {:ok, online_event()},
+        {:ok, online_event(drive_state: %{timestamp: now_ts})},
         fn ->
           send(me, :continue?)
 
@@ -133,9 +264,10 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
             5_000 -> raise "No :continue after 5s"
           end
         end,
-        {:ok, charging_event(DateTime.to_unix(now, :millisecond), "Charging", 0.0)},
-        {:ok, charging_event(DateTime.to_unix(now, :millisecond), "Charging", 1.0)},
-        {:ok, charging_event(DateTime.to_unix(now, :millisecond), "Stopped", 1.1)}
+        {:ok, charging_event(now_ts + 1, "Charging", 0.0)},
+        {:ok, charging_event(now_ts + 2, "Charging", 1.0)},
+        {:ok, charging_event(now_ts + 3, "Stopped", 1.1)},
+        fn -> Process.sleep(10_000) end
       ]
 
       :ok = start_vehicle(name, events, settings: %{use_streaming_api: true})
@@ -262,16 +394,17 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
   test "resumes logging when starting to charge", %{test: name} do
     me = self()
     now = DateTime.utc_now()
+    now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, online_event()},
-      {:ok, online_event()},
-      {:ok, online_event()},
+      {:ok, online_event(drive_state: %{timestamp: now_ts})},
+      {:ok, online_event(drive_state: %{timestamp: now_ts + 1})},
+      {:ok, online_event(drive_state: %{timestamp: now_ts + 2})},
       fn ->
         send(me, :continue?)
 
         receive do
-          :continue -> {:ok, charging_event(DateTime.to_unix(now, :millisecond), "Charging", 0.0)}
+          :continue -> {:ok, charging_event(now_ts + 3, "Charging", 0.0)}
         after
           5_000 -> raise "No :continue after 5s"
         end
@@ -312,8 +445,8 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       events = [
         {:ok, online_event()},
-        {:ok, online_event()},
-        {:ok, update_event(now_ts, "installing", "2019.8.4 530d1d3")},
+        {:ok, online_event(drive_state: %{timestamp: now_ts})},
+        {:ok, update_event(now_ts + 10, "installing", "2019.8.4 530d1d3")},
         fn -> Process.sleep(10_000) end
       ]
 
@@ -329,7 +462,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :updating}}}
 
       # Handles unexpected stream messages
-      stream(name, %{time: now})
+      stream(name, %{time: DateTime.utc_now()})
 
       refute_receive _
     end

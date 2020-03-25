@@ -265,8 +265,25 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case fetch_result do
       {:ok, %Vehicle{state: "online"} = vehicle} ->
-        {:keep_state, %Data{data | last_response: vehicle},
-         [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
+        case {vehicle, data} do
+          {%Vehicle{drive_state: %Drive{timestamp: now}},
+           %Data{last_response: %Vehicle{drive_state: %Drive{timestamp: last}}}}
+          when is_number(now) and is_number(last) and now < last ->
+            Logger.warn(
+              "Discared outdated fetch result: #{
+                inspect(%{now: vehicle.drive_state, last: data.last_response.drive_state},
+                  pretty: true
+                )
+              }",
+              car_id: data.car.id
+            )
+
+            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(0, data)]}
+
+          {%Vehicle{}, %Data{}} ->
+            {:keep_state, %Data{data | last_response: vehicle},
+             [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
+        end
 
       {:ok, %Vehicle{state: state} = vehicle} when state in ["offline", "asleep"] ->
         data =
@@ -349,7 +366,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {drive, data} = start_drive(create_position(stream_data, data), data)
 
         {:next_state, {:driving, :available, drive},
-         %Data{data | last_response: merge(data.last_response, stream_data)},
+         %Data{data | last_response: merge(data.last_response, stream_data, time: true)},
          [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: nil, power: power} when is_number(power) and power < 0 ->
@@ -388,7 +405,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {drive, data} = start_drive(create_position(stream_data, data), data)
 
         {:next_state, {:driving, :available, drive},
-         %Data{data | last_response: merge(data.last_response, stream_data)},
+         %Data{data | last_response: merge(data.last_response, stream_data, time: true)},
          [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: s, power: power}
@@ -431,6 +448,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:info, {ref, result}, _state, data) when is_reference(ref) do
     Logger.info("Unhandled fetch result: #{inspect(result, pretty: true)}", car_id: data.car.id)
     :keep_state_and_data
+  end
+
+  def handle_event(:info, {:DOWN, r, :process, _, :normal}, _, %Data{task: %Task{ref: r}} = data) do
+    Logger.warn("Cleared data.task!", car_id: data.car.id)
+    {:keep_state, %Data{data | task: nil}}
   end
 
   def handle_event(:info, {:DOWN, _ref, :process, _pid, :normal}, _state, _data) do
@@ -480,13 +502,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ### Fetch
 
   @impl true
-  def handle_event(event, :fetch, state, data) when event in [:state_timeout, :internal] do
+  def handle_event(event, :fetch, state, %Data{task: nil} = data)
+      when event in [:state_timeout, :internal] do
     task =
       Task.async(fn ->
         fetch(data, expected_state: state)
       end)
 
     {:keep_state, %Data{data | task: task}, broadcast_fetch(true)}
+  end
+
+  def handle_event(event, :fetch, _state, %Data{task: %Task{}} = data)
+      when event in [:state_timeout, :internal] do
+    Logger.info("Fetch already in progress ...", car_id: data.car.id)
+    :keep_state_and_data
   end
 
   def handle_event(:internal, :fetch_state, _state, %Data{car: car} = data) do
@@ -1288,12 +1317,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Logger.info("Driving / Timeout / #{km && round(km)} km – #{min} min", car_id: data.car.id)
   end
 
-  defp merge(%Vehicle{} = vehicle, %Stream.Data{} = stream_data) do
+  defp merge(%Vehicle{} = vehicle, %Stream.Data{} = stream_data, opts \\ []) do
+    timestamp =
+      if Keyword.get(opts, :time, false) do
+        DateTime.to_unix(stream_data.time, :millisecond)
+      else
+        vehicle.drive_state.timestamp
+      end
+
     %Vehicle{
       vehicle
       | drive_state: %Drive{
           vehicle.drive_state
-          | latitude: stream_data.est_lat,
+          | timestamp: timestamp,
+            latitude: stream_data.est_lat,
             longitude: stream_data.est_lng,
             speed: stream_data.speed,
             heading: stream_data.est_heading,

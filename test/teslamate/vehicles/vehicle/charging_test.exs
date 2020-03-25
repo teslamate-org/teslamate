@@ -20,7 +20,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
       {:ok, charging_event(now_ts + 4, "Complete", 0.4, range: 4)},
       {:ok, charging_event(now_ts + 5, "Complete", 0.4, range: 4)},
       {:ok, charging_event(now_ts + 6, "Unplugged", 0.4, range: 4)},
-      {:ok, online_event(drive_state: %{timestamp: now_ts + 7, latitude: 0.2, longitude: 0.2})}
+      {:ok, online_event(drive_state: %{timestamp: now_ts + 7, latitude: 0.2, longitude: 0.2})},
+      fn -> Process.sleep(10_000) end
     ]
 
     :ok = start_vehicle(name, events)
@@ -77,7 +78,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     # Completed
     assert_receive {:complete_charging_process, ^cproc}
 
-    start_date = DateTime.from_unix!(0, :millisecond)
+    start_date = DateTime.from_unix!(now_ts + 4, :millisecond)
     assert_receive {:start_state, ^car, :online, date: ^start_date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
@@ -105,7 +106,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
       {:ok, charging_event(now_ts + 4, "Complete", 0.3)},
       {:ok, charging_event(now_ts + 5, "Complete", 0.3)},
       {:ok, charging_event(now_ts + 6, "Unplugged", 0.3)},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
+      {:ok, online_event(drive_state: %{timestamp: now_ts + 7, latitude: 0.2, longitude: 0.2})},
+      fn -> Process.sleep(10_000) end
     ]
 
     :ok = start_vehicle(name, events)
@@ -133,7 +135,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
     assert_receive {:complete_charging_process, ^cproc}
 
-    start_date = DateTime.from_unix!(0, :millisecond)
+    start_date = DateTime.from_unix!(now_ts + 4, :millisecond)
     assert_receive {:start_state, ^car, :online, date: ^start_date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -155,7 +157,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
       {:ok, %TeslaApi.Vehicle{state: "online", charge_state: nil}},
       {:ok, charging_event(now_ts + 3, "Charging", 0.3)},
       {:ok, charging_event(now_ts + 5, "Complete", 0.3)},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
+      {:ok, online_event(drive_state: %{timestamp: now_ts + 6, latitude: 0.2, longitude: 0.2})}
     ]
 
     :ok = start_vehicle(name, events)
@@ -180,7 +182,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
     assert_receive {:complete_charging_process, ^cproc}
 
-    start_date = DateTime.from_unix!(0, :millisecond)
+    start_date = DateTime.from_unix!(now_ts + 5, :millisecond)
     assert_receive {:start_state, ^car, :online, date: ^start_date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -200,7 +202,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     :ok = start_vehicle(name, events)
 
-    start_date = DateTime.from_unix!(0, :millisecond)
+    start_date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^start_date}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}

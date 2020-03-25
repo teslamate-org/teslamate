@@ -34,6 +34,7 @@ defmodule TeslaApi.Stream do
 
     WebSockex.start_link(@endpoint_url, __MODULE__, state,
       socket_recv_timeout: :timer.seconds(10),
+      name: :"stream_#{state.vehicle_id}",
       cacerts: @cacerts,
       insecure: false,
       async: true
@@ -76,7 +77,7 @@ defmodule TeslaApi.Stream do
   end
 
   def handle_info(:timeout, %State{receiver: receiver} = state) do
-    Logger.info("Streaming Timeout!")
+    Logger.info("Stream.Timeout / #{inspect(state.timeouts)}")
 
     if match?(%State{last_data: %Data{}}, state) and rem(state.timeouts, 10) == 4 do
       receiver.(:inactive)

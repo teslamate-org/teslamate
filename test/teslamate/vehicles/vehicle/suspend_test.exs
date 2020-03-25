@@ -80,8 +80,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   end
 
   test "suspends if sleep mode is disabled but enabled for location", %{test: name} do
-    suspendable =
-      online_event(drive_state: %{timestamp: 0, latitude: -50.606993, longitude: 165.972471})
+    suspendable = online_event(drive_state: %{latitude: -50.606993, longitude: 165.972471})
 
     events = [
       {:ok, online_event()},
@@ -267,7 +266,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         }
       )
 
-    d0 = DateTime.from_unix!(0, :millisecond)
+    d0 = DateTime.from_unix!(now_ts + 1, :millisecond)
     assert_receive {:start_state, car, :online, date: ^d0}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -302,7 +301,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
+      {:ok, charging_event(now_ts + 0, "Charging", 0.1)},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, charging_event(now_ts + 2, "Complete", 0.15)},
       {:ok, charging_event(now_ts + 3, "Complete", 0.15)},
@@ -323,7 +322,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         }
       )
 
-    d0 = DateTime.from_unix!(0, :millisecond)
+    d0 = DateTime.from_unix!(now_ts + 0, :millisecond)
     assert_receive {:start_state, car, :online, date: ^d0}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -337,7 +336,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:insert_charge, ^cproc_0, %{date: _, charge_energy_added: 0.15}}
     assert_receive {:complete_charging_process, ^cproc_0}
 
-    assert_receive {:start_state, ^car, :online, date: ^d0}
+    d1 = DateTime.from_unix!(now_ts + 2, :millisecond)
+    assert_receive {:start_state, ^car, :online, date: ^d1}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 

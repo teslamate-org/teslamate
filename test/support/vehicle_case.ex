@@ -80,7 +80,7 @@ defmodule TeslaMate.VehicleCase do
       end
 
       def online_event(opts \\ []) do
-        now = (DateTime.utc_now() |> DateTime.to_unix()) * 1000
+        now = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
         drive_state =
           Keyword.get(opts, :drive_state, %{latitude: 0.0, longitude: 0.0})
@@ -128,7 +128,7 @@ defmodule TeslaMate.VehicleCase do
             ideal_battery_range: range,
             battery_range: range
           },
-          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0}
+          drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
         )
       end
 
@@ -141,7 +141,7 @@ defmodule TeslaMate.VehicleCase do
             car_version: version,
             software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: state}
           },
-          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0}
+          drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
         )
       end
     end
