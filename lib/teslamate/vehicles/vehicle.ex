@@ -545,8 +545,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:internal, {:update, {:online, vehicle}}, {:charging, cproc}, data) do
-    case vehicle.charge_state.charging_state do
-      charging_state when charging_state in ["Starting", "Charging"] ->
+    data = %Data{data | last_used: DateTime.utc_now()}
+
+    case vehicle do
+      %Vehicle{charge_state: %Charge{charging_state: charging_state}}
+      when charging_state in ["Starting", "Charging"] ->
         :ok = insert_charge(cproc, vehicle, data)
 
         interval =
@@ -554,10 +557,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
           |> Map.get(:charger_power)
           |> determince_interval()
 
-        {:next_state, {:charging, cproc}, %Data{data | last_used: DateTime.utc_now()},
+        {:next_state, {:charging, cproc}, data,
          [broadcast_summary(), schedule_fetch(interval, data)]}
 
-      state ->
+      %Vehicle{charge_state: nil} ->
+        Logger.warn("Invalid charge_state: nil")
+
+        {:keep_state_and_data, schedule_fetch(15, data)}
+
+      %Vehicle{charge_state: %Charge{charging_state: state}} ->
         Repo.transaction(fn ->
           {:ok, _} = call(data.deps.log, :insert_position, [data.car, create_position(vehicle)])
           :ok = insert_charge(cproc, vehicle, data)
@@ -568,8 +576,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         Logger.info("Charging / #{state} / #{added} kWh – #{duration} min", car_id: data.car.id)
 
-        {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
-         {:next_event, :internal, {:update, {:online, vehicle}}}}
+        {:next_state, :start, data, {:next_event, :internal, {:update, {:online, vehicle}}}}
     end
   end
 
@@ -997,6 +1004,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
 
+      {:error, :cannot_determine_location} ->
+        Logger.warn("Cannot determine vehicle position", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
+
       :ok ->
         if suspend do
           Logger.info("Suspending logging", car_id: car.id)
@@ -1010,6 +1022,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
           {:keep_state_and_data, [broadcast_summary(), schedule_fetch(15, data)]}
         end
     end
+  end
+
+  defp can_fall_asleep(%Vehicle{drive_state: nil}, %Data{}) do
+    {:error, :cannot_determine_location}
   end
 
   defp can_fall_asleep(vehicle, %Data{car: car, deps: deps}) do

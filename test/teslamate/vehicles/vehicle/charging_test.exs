@@ -3,6 +3,11 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
   alias TeslaMate.Log.ChargingProcess
 
+  import ExUnit.CaptureLog
+
+  @log_opts format: "[$level] $message\n",
+            colors: [enabled: false]
+
   test "logs a full charging cycle", %{test: name} do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
@@ -123,6 +128,53 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
+
+    assert_receive {:insert_position, ^car, %{}}
+    assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
+    assert_receive {:complete_charging_process, ^cproc}
+
+    start_date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, ^car, :online, date: ^start_date}
+    assert_receive {:insert_position, ^car, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+    refute_receive _
+  end
+
+  test "handles a invalid charge data", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    events = [
+      {:ok, online_event()},
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
+      {:ok, %TeslaApi.Vehicle{state: "online", charge_state: nil}},
+      {:ok, %TeslaApi.Vehicle{state: "online", charge_state: nil}},
+      {:ok, %TeslaApi.Vehicle{state: "online", charge_state: nil}},
+      {:ok, charging_event(now_ts + 3, "Charging", 0.3)},
+      {:ok, charging_event(now_ts + 5, "Complete", 0.3)},
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.2, longitude: 0.2})}
+    ]
+
+    :ok = start_vehicle(name, events)
+
+    start_date = DateTime.from_unix!(now_ts, :millisecond)
+    assert_receive {:start_state, car, :online, date: ^start_date}
+    assert_receive {:insert_position, ^car, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+                    [lookup_address: true]}
+
+    assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: 0.1}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
+
+    assert capture_log(@log_opts, fn ->
+             assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
+             assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
+           end) =~ "[warn] Invalid charge_state: nil\n"
 
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
