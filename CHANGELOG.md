@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.18.2] - 2020-03-28
+
+### Bug Fixes
+
+- Fix an issue that could cause charging sessions not to be properly recorded if the API reported incomplete charge data
+- Fix a problem that could cause the TeslaFi import to fail
+
 ## [1.18.1] - 2020-03-23
 
 ### Bug Fixes

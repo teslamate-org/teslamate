@@ -547,10 +547,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:internal, {:update, {:asleep, _vehicle}} = event, {:charging, cproc}, data) do
     Logger.warn("Vehicle went asleep while charging (?)", car_id: data.car.id)
 
-    Repo.transaction(fn ->
-      {:ok, _} = call(data.deps.log, :complete_charging_process, [cproc])
-      Logger.info("Charging / Aborted", car_id: data.car.id)
-    end)
+    {:ok, _} = call(data.deps.log, :complete_charging_process, [cproc])
+    Logger.info("Charging / Aborted", car_id: data.car.id)
 
     {:next_state, :start, data, {:next_event, :internal, event}}
   end
