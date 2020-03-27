@@ -217,4 +217,43 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     refute_received _
   end
+
+  @tag :capture_log
+  test "transisitions into asleep state", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    events = [
+      {:ok, online_event()},
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
+      {:ok, charging_event(now_ts + 2, "Charging", 0.2)},
+      {:error, :vehicle_unavailable},
+      {:ok, %TeslaApi.Vehicle{state: "asleep"}}
+    ]
+
+    :ok = start_vehicle(name, events)
+
+    start_date = DateTime.from_unix!(now_ts, :millisecond)
+    assert_receive {:start_state, car, :online, date: ^start_date}
+    assert_receive {:insert_position, ^car, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+                    [lookup_address: true]}
+
+    assert_receive {:insert_charge, %ChargingProcess{id: cproc_id} = cproc,
+                    %{date: _, charge_energy_added: 0.1}}
+
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
+
+    assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.2}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
+
+    assert_receive {:complete_charging_process, ^cproc}
+
+    assert_receive {:start_state, ^car, :asleep, []}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
+
+    refute_receive _
+  end
 end

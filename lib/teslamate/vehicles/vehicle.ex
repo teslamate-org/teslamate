@@ -544,6 +544,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, schedule_fetch(data)}
   end
 
+  def handle_event(:internal, {:update, {:asleep, _vehicle}} = event, {:charging, cproc}, data) do
+    Logger.warn("Vehicle went asleep while charging (?)", car_id: data.car.id)
+
+    Repo.transaction(fn ->
+      {:ok, _} = call(data.deps.log, :complete_charging_process, [cproc])
+      Logger.info("Charging / Aborted", car_id: data.car.id)
+    end)
+
+    {:next_state, :start, data, {:next_event, :internal, event}}
+  end
+
   def handle_event(:internal, {:update, {:online, vehicle}}, {:charging, cproc}, data) do
     data = %Data{data | last_used: DateTime.utc_now()}
 
@@ -569,12 +580,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Repo.transaction(fn ->
           {:ok, _} = call(data.deps.log, :insert_position, [data.car, create_position(vehicle)])
           :ok = insert_charge(cproc, vehicle, data)
+
+          {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
+            call(data.deps.log, :complete_charging_process, [cproc])
+
+          Logger.info("Charging / #{state} / #{added} kWh – #{duration} min", car_id: data.car.id)
         end)
-
-        {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
-          call(data.deps.log, :complete_charging_process, [cproc])
-
-        Logger.info("Charging / #{state} / #{added} kWh – #{duration} min", car_id: data.car.id)
 
         {:next_state, :start, data, {:next_event, :internal, {:update, {:online, vehicle}}}}
     end
