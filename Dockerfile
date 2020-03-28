@@ -16,7 +16,8 @@ RUN npm ci --prefix ./assets && npm run deploy --prefix ./assets
 
 COPY config config
 COPY lib lib
-COPY priv priv
+COPY priv/repo/migrations priv/repo/migrations
+COPY priv/gettext priv/gettext
 COPY grafana/dashboards grafana/dashboards
 
 RUN mix "do" phx.digest, compile
