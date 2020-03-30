@@ -1,11 +1,12 @@
-## `msgid`s in this file come from POT (.pot) files.
+## This file is a PO Template file.
 ##
-## Do not add, change, or remove `msgid`s manually here as
-## they're tied to the ones in the corresponding POT file
-## (with the same domain).
+## `msgid`s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
 ##
-## Use `mix gettext.extract --merge` or `mix gettext.merge`
-## to merge POT files into PO files.
+## Run `mix gettext.extract` to bring this file up to
+## date. Leave `msgstr`s empty as changing them here as no
+## effect: edit them in PO (`.po`) files instead.
 msgid ""
 msgstr ""
 "Language: nb\n"
@@ -24,12 +25,12 @@ msgstr "Hastighet"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:213
 msgid "State of Charge"
-msgstr "Ladenivå"
+msgstr "Ladenivå nå"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:150
 msgid "Charged"
-msgstr "Ladet"
+msgstr "Ladet hittil"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:135
@@ -39,7 +40,7 @@ msgstr "dvale"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:130
 msgid "charging"
-msgstr "lader"
+msgstr "Ladet"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:129
@@ -49,7 +50,7 @@ msgstr "kjører"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:134
 msgid "offline"
-msgstr "offline"
+msgstr "Offline"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:133
@@ -97,12 +98,12 @@ msgstr "Koblet til"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:174
 msgid "Charge limit"
-msgstr "Ladenivå"
+msgstr "Ladelimit"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:132
 msgid "falling asleep"
-msgstr "går i dvale"
+msgstr "Dvale"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:136
@@ -189,7 +190,7 @@ msgstr "Tid for forsøk på dvale"
 #: lib/teslamate_web/templates/settings/index.html.leex:53
 #: lib/teslamate_web/templates/settings/index.html.leex:72
 msgid "min"
-msgstr ""
+msgstr "min"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:63
@@ -221,12 +222,12 @@ msgstr "Sentry Mode er aktivert"
 #: lib/teslamate_web/live/car_live/summary.ex:143
 #: lib/teslamate_web/templates/car/summary.html.leex:38
 msgid "Driver present"
-msgstr "Fører er til stede"
+msgstr "Fører er tilstede"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:299
 msgid "cancel sleep attempt"
-msgstr "avbryt dvale"
+msgstr "Avbryt dvale"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:294
@@ -241,7 +242,7 @@ msgstr "Rekkevidde (est.)"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:92
 msgid "for"
-msgstr "for"
+msgstr "i"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:92
@@ -321,7 +322,7 @@ msgstr "Kjøretøyets estimerte tilgjengelige rekkevidde er basert på et fast e
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:144
 msgid "Update in progress"
-msgstr "Oppdatering pågår"
+msgstr "Oppdaterer software"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:48
@@ -336,17 +337,17 @@ msgstr "Fjern '%{geo_fence}'?"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:246
 msgid "Inside temperature"
-msgstr "Temperatur inne"
+msgstr "Temperatur innvendig"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:234
 msgid "Outside temperature"
-msgstr "Temperatur ute"
+msgstr "Temperatur utvendig"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:271
 msgid "Version"
-msgstr "Versjon"
+msgstr "Software versjon"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:68
@@ -366,23 +367,23 @@ msgstr "Ulåst"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:104
 msgid "Remaining Time"
-msgstr "Gjenværende tid"
+msgstr "Gjenværende ladetid"
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/app.html.eex:45
 #: lib/teslamate_web/templates/settings/index.html.leex:264
 msgid "Dashboards"
-msgstr "Dashboard"
+msgstr "Grafana"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:247
 msgid "URLs"
-msgstr "URLer"
+msgstr "Nettadresser"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:250
 msgid "Web App"
-msgstr "Webapp"
+msgstr "Dashboard"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:31
@@ -418,7 +419,7 @@ msgstr "En feil har oppstått"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:145
 msgid "Timeout"
-msgstr ""
+msgstr "Timeout"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:33
@@ -433,17 +434,17 @@ msgstr "≈ %{range} ved 100%"
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:4
 msgid "Charge Cost"
-msgstr "Ladekost"
+msgstr "Lading"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:88
 msgid "Cost"
-msgstr "Kost"
+msgstr "Pris"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:101
 msgid "Enter charge cost"
-msgstr "Angi ladekost"
+msgstr "Angi ladepris"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.ex:64
@@ -453,12 +454,12 @@ msgstr "Lagret!"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:23
 msgid "Fetching vehicle data ..."
-msgstr "Henter data fra kjøretøy ..."
+msgstr "Henter data fra kjøretøy..."
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:193
 msgid "Addresses"
-msgstr "Adresser"
+msgstr "Adresser og gatenavn"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:190
@@ -515,17 +516,17 @@ msgstr "Epost"
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:57
 msgid "Cost per kWh"
-msgstr "Kost per kWh"
+msgstr "Pris per kWh"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:120
 msgid "Charge cost"
-msgstr "Ladekost"
+msgstr "Ladepris"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:123
 msgid "Free Supercharging"
-msgstr "Gratis Supercharging"
+msgstr "Gratis Superlading"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:159
@@ -535,22 +536,22 @@ msgstr "Generelle innstillinger"
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:76
 msgid "Session fee"
-msgstr ""
+msgstr "Øktpris"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:53
 msgid "Doors open"
-msgstr ""
+msgstr "Åpen dør"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:94
 msgid "Per kWh"
-msgstr "Per kWh"
+msgstr "Pr kWh"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:94
 msgid "Total"
-msgstr "Totale"
+msgstr "Total"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:155
@@ -562,24 +563,24 @@ msgstr[1] ""
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:164
 msgid "Add costs retroactively"
-msgstr ""
+msgstr "Legg til pris med tilbakevirkende kraft"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:149
 msgid "Charging Costs"
-msgstr "Ladekost"
+msgstr "Pris på lading"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:163
 msgid "Continue"
-msgstr ""
+msgstr "Fortsett"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:259
 msgid "Mileage"
-msgstr ""
+msgstr "Total kjørelengde"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:139
 msgid "Streaming API"
-msgstr ""
+msgstr "Streaming API"
