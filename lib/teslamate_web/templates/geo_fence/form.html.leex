@@ -142,7 +142,7 @@
   </div>
 </form>
 
-<div class="modal modal-fx-fadeInScale<%= if @show_modal, do: ' is-active' %>" phx-hook="Modal">
+<div class="modal modal-fx-fadeInScale<%= if @show_modal, do: ' is-active' %><%= if not @connected?, do: ' is-hidden' %>" phx-hook="Modal">
   <div class="modal-background" phx-click="close-modal" <%= if @show_modal, do: "phx-window-keyup=keyup" %>></div>
   <div class="modal-card modal-content">
     <header class="modal-card-head">

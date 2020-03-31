@@ -26,7 +26,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
     geofence = Locations.get_geofence!(id)
 
-    {:ok, assign(socket, base_assigns(geofence, settings, :edit))}
+    {:ok, base_assigns(socket, geofence, settings, :edit)}
   end
 
   def mount(%{"lat" => lat, "lng" => lng}, session, socket) do
@@ -46,7 +46,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       sleep_mode_whitelist: []
     }
 
-    {:ok, assign(socket, base_assigns(geofence, settings, :new))}
+    {:ok, base_assigns(socket, geofence, settings, :new)}
   end
 
   def mount(_params, session, socket) do
@@ -70,7 +70,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       sleep_mode_whitelist: []
     }
 
-    {:ok, assign(socket, base_assigns(geofence, settings, :new))}
+    {:ok, base_assigns(socket, geofence, settings, :new)}
   end
 
   @impl true
@@ -155,9 +155,9 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
   # Private
 
-  defp base_assigns(%GeoFence{} = geofence, %GlobalSettings{} = settings, action)
+  defp base_assigns(socket, %GeoFence{} = geofence, %GlobalSettings{} = settings, action)
        when action in [:new, :edit] do
-    %{
+    assigns = %{
       settings: settings,
       geofence: geofence,
       changeset: Locations.change_geofence(geofence),
@@ -167,8 +167,11 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       charges_without_costs: 0,
       show_errors: false,
       show_modal: false,
-      action: action
+      action: action,
+      connected?: connected?(socket)
     }
+
+    assign(socket, assigns)
   end
 
   defp validate(params, %{assigns: assigns}) do
