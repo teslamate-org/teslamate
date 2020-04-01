@@ -148,32 +148,41 @@ defmodule TeslaApi.Stream do
   end
 
   @impl true
-  def handle_disconnect(%{reason: {:remote, :closed}}, state) do
-    Logger.warn("WebSocket disconnected. Reconnecting …")
-    {:reconnect, %State{state | last_data: nil}}
-  end
+  def handle_disconnect(%{reason: reason, attempt_number: n}, state) do
+    case reason do
+      {:local, :normal} ->
+        Logger.debug("Reconnecting …")
+        {:reconnect, state}
 
-  def handle_disconnect(%{reason: {:local, :normal}}, state) do
-    Logger.debug("Reconnecting …")
-    {:reconnect, state}
-  end
+      {:remote, :closed} ->
+        Logger.warn("WebSocket disconnected. Reconnecting …")
+        {:reconnect, %State{state | last_data: nil}}
 
-  def handle_disconnect(status, state) do
-    Logger.warn("Disconnected! #{inspect(status)}}")
-    {:ok, state}
+      %WebSockex.ConnError{} = e ->
+        Logger.warn("Disconnected! #{Exception.message(e)} | #{n}")
+        {:reconnect, state}
+
+      %WebSockex.RequestError{} = e ->
+        Logger.warn("Disconnected! #{Exception.message(e)} | #{n}")
+        {:reconnect, state}
+
+      reason ->
+        Logger.warn("Disconnected! #{inspect(reason)}")
+        {:ok, state}
+    end
   end
 
   @impl true
-  def terminate({exception, stacktrace}, _state) do
+  def terminate(reason, _state) do
     # https://github.com/Azolo/websockex/issues/51
-    if Exception.exception?(exception) do
+    with {exception, stacktrace} <- reason, true <- Exception.exception?(exception) do
       Logger.error(fn -> Exception.format(:error, exception, stacktrace) end)
+    else
+      _ -> Logger.error("Terminating: #{inspect(reason)}")
     end
 
     :ok
   end
-
-  def terminate(_, _), do: :ok
 
   ## Private
 
