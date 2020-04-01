@@ -25,6 +25,7 @@
     <div class="column">
       <h2 class="title is-4"><%= gettext("Sleep Mode") %></h2>
 
+    <%= unless Ecto.Changeset.get_field(f.source, :use_streaming_api) do %>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
           <%= label f, :suspend_min, gettext("Time to Try Sleeping"), class: "label" %>
@@ -62,6 +63,7 @@
           </div>
         </div>
       </div>
+    <% end %>
 
       <div class="field is-horizontal mb-0">
         <div class="field-label is-normal is-paddingless">
