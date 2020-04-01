@@ -1198,9 +1198,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
     i = if streaming?(data), do: 2, else: 1
 
     case can_fall_asleep(vehicle, data) do
-      {:error, reason} when reason in [:sleep_mode_disabled, :sleep_mode_disabled_at_location] ->
-        {:keep_state_and_data, [broadcast_summary(), schedule_fetch(30 * i, data)]}
-
       {:error, :sentry_mode} ->
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
          [broadcast_summary(), schedule_fetch(30 * i, data)]}
@@ -1259,41 +1256,32 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:error, :cannot_determine_location}
   end
 
-  defp can_fall_asleep(vehicle, %Data{car: car, deps: deps}) do
-    {:ok, may_fall_asleep} =
-      call(deps.locations, :may_fall_asleep_at?, [car, vehicle.drive_state])
-
-    case {vehicle, car.settings, may_fall_asleep} do
-      {%Vehicle{}, %CarSettings{sleep_mode_enabled: false}, false} ->
-        {:error, :sleep_mode_disabled}
-
-      {%Vehicle{}, %CarSettings{sleep_mode_enabled: true}, false} ->
-        {:error, :sleep_mode_disabled_at_location}
-
-      {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _, true} ->
+  defp can_fall_asleep(vehicle, %Data{car: car}) do
+    case {vehicle, car.settings} do
+      {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _} ->
         {:error, :user_present}
 
-      {%Vehicle{climate_state: %Climate{is_preconditioning: true}}, _, true} ->
+      {%Vehicle{climate_state: %Climate{is_preconditioning: true}}, _} ->
         {:error, :preconditioning}
 
-      {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _, true} ->
+      {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _} ->
         {:error, :sentry_mode}
 
       {%Vehicle{vehicle_state: %VehicleState{locked: false}},
-       %CarSettings{req_not_unlocked: true}, true} ->
+       %CarSettings{req_not_unlocked: true}} ->
         {:error, :unlocked}
 
       {%Vehicle{drive_state: %Drive{shift_state: shift_state}},
-       %CarSettings{req_no_shift_state_reading: true}, true}
+       %CarSettings{req_no_shift_state_reading: true}}
       when not is_nil(shift_state) ->
         {:error, :shift_state}
 
       {%Vehicle{climate_state: %Climate{outside_temp: out_t, inside_temp: in_t}},
-       %CarSettings{req_no_temp_reading: true}, true}
+       %CarSettings{req_no_temp_reading: true}}
       when not is_nil(out_t) or not is_nil(in_t) ->
         {:error, :temp_reading}
 
-      {%Vehicle{}, %CarSettings{}, true} ->
+      {%Vehicle{}, %CarSettings{}} ->
         :ok
     end
   end

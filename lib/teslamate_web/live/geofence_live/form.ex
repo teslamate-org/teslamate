@@ -7,9 +7,9 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   alias TeslaMateWeb.Router.Helpers, as: Routes
 
   alias TeslaMate.{Log, Locations, Settings}
-  alias TeslaMate.Settings.{GlobalSettings, CarSettings}
+  alias TeslaMate.Settings.GlobalSettings
   alias TeslaMate.Locations.GeoFence
-  alias TeslaMate.Log.{Car, Position}
+  alias TeslaMate.Log.Position
 
   import TeslaMateWeb.Gettext
 
@@ -41,9 +41,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
     geofence = %GeoFence{
       radius: 20,
       latitude: lat,
-      longitude: lng,
-      sleep_mode_blacklist: [],
-      sleep_mode_whitelist: []
+      longitude: lng
     }
 
     {:ok, base_assigns(socket, geofence, settings, :new)}
@@ -65,9 +63,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
     geofence = %GeoFence{
       radius: 20,
       latitude: lat,
-      longitude: lng,
-      sleep_mode_blacklist: [],
-      sleep_mode_whitelist: []
+      longitude: lng
     }
 
     {:ok, base_assigns(socket, geofence, settings, :new)}
@@ -81,40 +77,6 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       |> Map.put(:action, :update)
 
     {:noreply, assign(socket, changeset: changeset, show_errors: false)}
-  end
-
-  def handle_event("toggle", %{"checked" => value, "car" => id}, socket) do
-    %{
-      car_settings: car_settings,
-      sleep_mode_blacklist: blacklist,
-      sleep_mode_whitelist: whitelist
-    } = socket.assigns
-
-    car_id = String.to_integer(id)
-
-    %CarSettings{sleep_mode_enabled: sleep_mode_enabled, car: car} =
-      Enum.find(car_settings, fn s -> s.car.id == car_id end)
-
-    assigns =
-      if sleep_mode_enabled do
-        blacklist =
-          case value do
-            "false" -> Enum.uniq([car | blacklist])
-            "true" -> Enum.reject(blacklist, &match?(%Car{id: ^car_id}, &1))
-          end
-
-        %{sleep_mode_blacklist: blacklist}
-      else
-        whitelist =
-          case value do
-            "false" -> Enum.reject(whitelist, &match?(%Car{id: ^car_id}, &1))
-            "true" -> Enum.uniq([car | whitelist])
-          end
-
-        %{sleep_mode_whitelist: whitelist}
-      end
-
-    {:noreply, assign(socket, assigns)}
   end
 
   def handle_event("save", %{"geo_fence" => params}, socket) do
@@ -162,8 +124,6 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       geofence: geofence,
       changeset: Locations.change_geofence(geofence),
       car_settings: Settings.get_car_settings(),
-      sleep_mode_whitelist: geofence.sleep_mode_whitelist,
-      sleep_mode_blacklist: geofence.sleep_mode_blacklist,
       charges_without_costs: 0,
       show_errors: false,
       show_modal: false,
@@ -204,20 +164,17 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   end
 
   defp save(%{assigns: assigns} = socket) do
-    params =
-      assigns.changeset.params
-      |> Map.put("sleep_mode_blacklist", assigns.sleep_mode_blacklist)
-      |> Map.put("sleep_mode_whitelist", assigns.sleep_mode_whitelist)
+    %{changeset: %{params: params}, action: action, geofence: geofence} = assigns
 
     with {:ok, %GeoFence{name: name} = geofence} <-
-           (case assigns.action do
+           (case action do
               :new -> Locations.create_geofence(params)
-              :edit -> Locations.update_geofence(assigns.geofence, params)
+              :edit -> Locations.update_geofence(geofence, params)
             end) do
       socket =
         socket
         |> assign(geofence: geofence)
-        |> put_flash(:success, flash_msg(assigns.action, name))
+        |> put_flash(:success, flash_msg(action, name))
         |> redirect(to: Routes.live_path(socket, GeoFenceLive.Index))
 
       {:ok, socket}

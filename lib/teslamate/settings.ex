@@ -46,7 +46,6 @@ defmodule TeslaMate.Settings do
   def update_car_settings(%CarSettings{car: %Car{}} = pre, attrs) do
     Repo.transaction(fn ->
       with {:ok, post} <- pre |> CarSettings.changeset(attrs) |> Repo.update(),
-           :ok <- on_sleep_mode_change(pre, post),
            :ok <- broadcast(pre.car, post) do
         post
       else
@@ -83,27 +82,6 @@ defmodule TeslaMate.Settings do
 
   defp on_language_change(%GlobalSettings{}, %GlobalSettings{language: lang}) do
     Locations.refresh_addresses(lang)
-  end
-
-  defp on_sleep_mode_change(%CarSettings{sleep_mode_enabled: m}, %CarSettings{
-         sleep_mode_enabled: m
-       }) do
-    :ok
-  end
-
-  defp on_sleep_mode_change(%CarSettings{}, %CarSettings{id: id}) do
-    %Car{id: car_id} =
-      Repo.one(from c in Car, select: [:id], where: c.settings_id == ^id, limit: 1)
-
-    {:ok, %Postgrex.Result{num_rows: _rows}} =
-      Repo.query("DELETE FROM geofence_sleep_mode_whitelist WHERE car_id = $1", [car_id])
-
-    {:ok, %Postgrex.Result{num_rows: _rows}} =
-      Repo.query("DELETE FROM geofence_sleep_mode_blacklist WHERE car_id = $1", [car_id])
-
-    :ok = Locations.clear_cache()
-
-    :ok
   end
 
   defp broadcast(car, settings) do

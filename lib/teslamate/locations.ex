@@ -8,14 +8,10 @@ defmodule TeslaMate.Locations do
   import Ecto.Query, warn: false
   import TeslaMate.CustomExpressions
 
-  alias __MODULE__.{Address, Geocoder, GeoFence, Cache}
+  alias __MODULE__.{Address, Geocoder, GeoFence}
   alias TeslaMate.Log.{Drive, ChargingProcess}
   alias TeslaMate.Settings.GlobalSettings
   alias TeslaMate.{Repo, Settings}
-
-  def child_spec(_arg) do
-    %{id: __MODULE__, start: {Cachex, :start_link, [Cache, [limit: 100]]}}
-  end
 
   ## Address
 
@@ -141,9 +137,7 @@ defmodule TeslaMate.Locations do
   end
 
   def get_geofence!(id) do
-    GeoFence
-    |> Repo.get!(id)
-    |> Repo.preload([:sleep_mode_blacklist, :sleep_mode_whitelist])
+    Repo.get!(GeoFence, id)
   end
 
   def find_geofence(%{latitude: _, longitude: _} = point) do
@@ -153,49 +147,6 @@ defmodule TeslaMate.Locations do
     |> order_by([geofence], asc: distance(geofence, point))
     |> limit(1)
     |> Repo.one()
-  end
-
-  alias TeslaMate.Settings.CarSettings
-  alias TeslaMate.Log.Car
-
-  def may_fall_asleep_at?(
-        %Car{id: id, settings: %CarSettings{sleep_mode_enabled: enabled}},
-        %{latitude: lat, longitude: lng} = position
-      ) do
-    key = {id, {lat, lng}, enabled}
-
-    result =
-      Cachex.fetch(Cache, key, fn ->
-        assoc = if enabled, do: :sleep_mode_blacklist, else: :sleep_mode_whitelist
-
-        query =
-          GeoFence
-          |> select([:id])
-          |> join(:left, [geofence], c in assoc(geofence, ^assoc))
-          |> where([geofence, c], c.id == ^id and within_geofence?(position, geofence, :left))
-          |> limit(1)
-
-        may_fall_asleep? =
-          if enabled do
-            Repo.one(query) == nil
-          else
-            Repo.one(query) != nil
-          end
-
-        {:commit, may_fall_asleep?}
-      end)
-
-    with {:commit, value} <- result do
-      Logger.debug("Inserted #{value} into #{Cache} for #{inspect(key)}")
-      {:ok, value}
-    end
-  end
-
-  def clear_cache do
-    with {:ok, n} <- Cachex.clear(Cache) do
-      Logger.debug("Removed #{n} entrie(s) from #{Cache}")
-      :ok
-    end
   end
 
   def create_geofence(attrs) do
@@ -213,8 +164,7 @@ defmodule TeslaMate.Locations do
     Repo.transaction(fn ->
       with :ok <- apply_geofence(geofence, except: id),
            {:ok, geofence} <- geofence |> GeoFence.changeset(attrs) |> Repo.update(),
-           :ok <- apply_geofence(geofence),
-           :ok <- clear_cache() do
+           :ok <- apply_geofence(geofence) do
         geofence
       else
         {:error, reason} -> Repo.rollback(reason)
@@ -225,8 +175,7 @@ defmodule TeslaMate.Locations do
   def delete_geofence(%GeoFence{id: id} = geofence) do
     Repo.transaction(fn ->
       with :ok <- apply_geofence(geofence, except: id),
-           {:ok, geofence} <- Repo.delete(geofence),
-           :ok <- clear_cache() do
+           {:ok, geofence} <- Repo.delete(geofence) do
         geofence
       else
         {:error, reason} -> Repo.rollback(reason)

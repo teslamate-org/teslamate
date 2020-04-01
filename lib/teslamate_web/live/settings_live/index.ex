@@ -85,17 +85,9 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   def handle_event("change", params, %{assigns: %{car_settings: settings, car: id}} = socket) do
     orig = get_in(settings, [id, :original])
 
-    # workaround #1: switching between cars caused leex to not be re-evaluated.
+    # workaround: switching between cars caused leex to not be re-evaluated.
     # Solution: custom ":as" attribute on form_for/4 for each CarSetting changeset
     params = params["car_settings_#{id}"]
-
-    # workaround #2: enableding sleep mode caused previously disabled checkbox to be disabled
-    params =
-      if params["sleep_mode_enabled"] == "true" and not orig.sleep_mode_enabled do
-        %{"sleep_mode_enabled" => "true"}
-      else
-        params
-      end
 
     settings =
       orig

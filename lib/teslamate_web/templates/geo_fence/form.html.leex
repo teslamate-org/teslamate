@@ -90,43 +90,6 @@
     </div>
   </div>
 
-  <div class="field is-horizontal mt-20">
-    <div class="field-label is-normal">
-      <%= label class: "label" do gettext("Sleep Mode Enabled") end %>
-    </div>
-    <div class="field-body">
-      <table class="table is-fullwidth">
-        <tbody>
-          <%= for settings <- @car_settings do %>
-            <tr>
-              <td class="has-text-weight-medium"><%= settings.car.name %></td>
-              <td align="right" style="padding-right: 0;">
-                <%
-                  car_id = settings.car.id
-
-                  value =
-                    if settings.sleep_mode_enabled do
-                      Enum.find(@sleep_mode_blacklist, &match?(%Car{id: ^car_id}, &1)) == nil
-                    else
-                      Enum.find(@sleep_mode_whitelist, &match?(%Car{id: ^car_id}, &1)) != nil
-                    end
-                %>
-
-                <%= checkbox :sleep_mode, :"#{settings.car.id}", class: "switch is-rounded is-success ",
-                                                                 phx_click: "toggle",
-                                                                 phx_value_car: settings.car.id,
-                                                                 phx_value_checked: to_string(not value),
-                                                                 value: value
-                %>
-                <%= label :sleep_mode, :"#{settings.car.id}", nil %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
   <div class="field is-horizontal mt-25">
     <div class="field-label"></div>
     <div class="field-body">

@@ -56,7 +56,6 @@ defmodule TeslaMate.MixProject do
       {:fuse, "~> 2.4"},
       {:mock, "~> 0.3", only: :test},
       {:castore, "~> 0.1"},
-      {:cachex, "~> 3.2"},
       {:ex_cldr, "~> 2.0"},
       {:csv, "~> 2.3"},
       {:timex, "~> 3.0"},

@@ -5,8 +5,6 @@ defmodule TeslaMate.Settings.CarSettings do
   alias TeslaMate.Log.Car
 
   schema "car_settings" do
-    field :sleep_mode_enabled, :boolean, default: true
-
     field :suspend_min, :integer, default: 21
     field :suspend_after_idle_min, :integer, default: 15
 
@@ -22,7 +20,6 @@ defmodule TeslaMate.Settings.CarSettings do
   end
 
   @all_fields [
-    :sleep_mode_enabled,
     :suspend_min,
     :suspend_after_idle_min,
     :req_no_shift_state_reading,

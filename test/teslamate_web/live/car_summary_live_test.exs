@@ -3,7 +3,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   use TeslaMate.VehicleCase
 
   alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
-  alias TeslaMate.{Locations, Settings, Log, Repo}
+  alias TeslaMate.{Settings, Log, Repo}
 
   defp table_row(html, key, value, opts \\ []) do
     assert {"tr", _, [{"td", _, [^key]}, {"td", [], [v]}]} =
@@ -150,68 +150,6 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                  |> Floki.parse_document!()
                  |> Floki.find(".button.is-danger")
       end
-    end
-
-    @tag :signed_in
-    test "hides suspend button if sleep mode is disabled", %{conn: conn} do
-      _car =
-        car_fixture(%{sleep_mode_enabled: false, suspend_min: 60, suspend_after_idle_min: 60})
-
-      now = now()
-
-      events = [
-        {:ok,
-         online_event(
-           display_name: "FooCar",
-           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
-           vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
-         )}
-      ]
-
-      :ok = start_vehicles(events)
-
-      assert {:ok, _view, html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
-
-      assert [] =
-               html
-               |> Floki.parse_document!()
-               |> Floki.find("a[phx-click=suspend_logging]")
-    end
-
-    @tag :signed_in
-    test "disables suspend button if sleep mode is disabled for locations", %{conn: conn} do
-      car = car_fixture(%{sleep_mode_enabled: true, suspend_min: 60, suspend_after_idle_min: 60})
-      now = now()
-
-      assert {:ok, _geofence} =
-               Locations.create_geofence(%{
-                 name: "foo",
-                 latitude: -50.606,
-                 longitude: 165.972,
-                 radius: 500,
-                 sleep_mode_blacklist: [car]
-               })
-
-      events = [
-        {:ok,
-         online_event(
-           display_name: "FooCar",
-           drive_state: %{timestamp: now, latitude: -50.606262, longitude: 165.972475},
-           vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
-         )}
-      ]
-
-      :ok = start_vehicles(events)
-
-      assert {:ok, _view, html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
-
-      assert ["disabled"] =
-               html
-               |> Floki.parse_document!()
-               |> Floki.find("a[phx-click=suspend_logging]")
-               |> Floki.attribute("disabled")
     end
   end
 
