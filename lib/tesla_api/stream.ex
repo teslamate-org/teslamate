@@ -148,7 +148,7 @@ defmodule TeslaApi.Stream do
   end
 
   @impl true
-  def handle_disconnect(%{reason: reason, attempt_number: n}, state) do
+  def handle_disconnect(%{reason: reason, attempt_number: n}, state) when is_number(n) do
     case reason do
       {:local, :normal} ->
         Logger.debug("Reconnecting …")
@@ -156,14 +156,29 @@ defmodule TeslaApi.Stream do
 
       {:remote, :closed} ->
         Logger.warn("WebSocket disconnected. Reconnecting …")
+
+        n
+        |> exp_backoff_ms(max_seconds: 10)
+        |> Process.sleep()
+
         {:reconnect, %State{state | last_data: nil}}
 
       %WebSockex.ConnError{} = e ->
         Logger.warn("Disconnected! #{Exception.message(e)} | #{n}")
+
+        n
+        |> exp_backoff_ms(min_seconds: 1)
+        |> Process.sleep()
+
         {:reconnect, state}
 
       %WebSockex.RequestError{} = e ->
         Logger.warn("Disconnected! #{Exception.message(e)} | #{n}")
+
+        n
+        |> exp_backoff_ms(min_seconds: 1)
+        |> Process.sleep()
+
         {:reconnect, state}
 
       reason ->
@@ -190,8 +205,8 @@ defmodule TeslaApi.Stream do
 
   defp exp_backoff_ms(n, opts) when is_number(n) and 0 <= n do
     base = Keyword.get(opts, :base, 2)
-    max = Keyword.get(opts, :max_seconds, 30)
     min = Keyword.get(opts, :min_seconds, 0)
+    max = Keyword.get(opts, :max_seconds, 30)
 
     :math.pow(base, n) |> min(max) |> max(min) |> round() |> :timer.seconds()
   end
