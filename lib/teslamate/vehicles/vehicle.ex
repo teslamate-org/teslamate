@@ -424,12 +424,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:next_event, :internal, :fetch_state}}
   end
 
-  def handle_event(:info, {_ref, {state, %Vehicle{display_name: n}} = evt}, {:suspended, _}, data) do
-    Logger.info("#{n} is #{state}", car_id: data.car.id)
-
+  def handle_event(:info, {_ref, {state, %Vehicle{}} = event}, {:suspended, _}, data) do
     case state do
       state when state in [:asleep, :offline] ->
-        {:next_state, :start, data, {:next_event, :internal, {:update, evt}}}
+        {:next_state, :start, data, {:next_event, :internal, {:update, event}}}
 
       :online ->
         :keep_state_and_data

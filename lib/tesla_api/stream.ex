@@ -53,7 +53,7 @@ defmodule TeslaApi.Stream do
 
   @impl true
   def handle_connect(_conn, state) do
-    Logger.debug("WebSocket connection established")
+    Logger.debug("Connection established")
     send(self(), :subscribe)
     {:ok, state}
   end
@@ -76,14 +76,14 @@ defmodule TeslaApi.Stream do
     {:reply, frame!(connect_message), %State{state | timer: timer}}
   end
 
-  def handle_info(:timeout, %State{receiver: receiver} = state) do
-    Logger.info("Stream.Timeout / #{inspect(state.timeouts)}")
+  def handle_info(:timeout, %State{timeouts: t, receiver: receiver} = state) do
+    Logger.log(if(t <= 4, do: :debug, else: :info), "Stream.Timeout / #{inspect(t)}")
 
-    if match?(%State{last_data: %Data{}}, state) and rem(state.timeouts, 10) == 4 do
+    if match?(%State{last_data: %Data{}}, state) and rem(t, 10) == 4 do
       receiver.(:inactive)
     end
 
-    {:close, %State{state | timeouts: state.timeouts + 1}}
+    {:close, %State{state | timeouts: t + 1}}
   end
 
   def handle_info(:exit, _state) do
@@ -142,7 +142,7 @@ defmodule TeslaApi.Stream do
         {:ok, state}
 
       {:error, reason} ->
-        Logger.error("Invalid JSON: #{inspect(reason)}")
+        Logger.error("Invalid data frame: #{inspect(reason)}")
         {:ok, state}
     end
   end
@@ -188,6 +188,8 @@ defmodule TeslaApi.Stream do
   end
 
   @impl true
+  def terminate(:normal, _state), do: :ok
+
   def terminate(reason, _state) do
     # https://github.com/Azolo/websockex/issues/51
     with {exception, stacktrace} <- reason, true <- Exception.exception?(exception) do
