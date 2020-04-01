@@ -1185,9 +1185,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
     DateTime.from_unix!(ts, :millisecond)
   end
 
-  defp try_to_suspend(vehicle, current_state, %Data{car: %{settings: settings} = car} = data) do
+  defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
+    {suspend_after_idle_min, suspend_min} =
+      case car.settings do
+        %CarSettings{use_streaming_api: true} -> {3, 30}
+        %CarSettings{suspend_after_idle_min: i, suspend_min: s} -> {i, s}
+      end
+
     idle_min = diff_seconds(DateTime.utc_now(), data.last_used) / 60
-    suspend = idle_min >= settings.suspend_after_idle_min
+    suspend? = idle_min >= suspend_after_idle_min
 
     i = if streaming?(data), do: 2, else: 1
 
@@ -1200,29 +1206,30 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [broadcast_summary(), schedule_fetch(30 * i, data)]}
 
       {:error, :preconditioning} ->
-        if suspend, do: Logger.warn("Preconditioning prevents car to go to sleep", car_id: car.id)
+        if suspend?,
+          do: Logger.warn("Preconditioning prevents car to go to sleep", car_id: car.id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30 * i, data)}
 
       {:error, :user_present} ->
-        if suspend, do: Logger.warn("Present user prevents car to go to sleep", car_id: car.id)
+        if suspend?, do: Logger.warn("Present user prevents car to go to sleep", car_id: car.id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
 
       {:error, :unlocked} ->
-        if suspend,
+        if suspend?,
           do: Logger.warn("Vehicle cannot to go to sleep because it is unlocked", car_id: car.id)
 
         {:keep_state_and_data, [broadcast_summary(), schedule_fetch(data)]}
 
       {:error, :shift_state} ->
-        if suspend,
+        if suspend?,
           do: Logger.warn("Shift state reading prevents car to go to sleep", car_id: car.id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
 
       {:error, :temp_reading} ->
-        if suspend,
+        if suspend?,
           do: Logger.warn("Temperature readings prevents car to go to sleep", car_id: car.id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
@@ -1233,7 +1240,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
 
       :ok ->
-        if suspend do
+        if suspend? do
           Logger.info("Suspending logging", car_id: car.id)
 
           {:ok, _pos} =
@@ -1241,7 +1248,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
           {:next_state, {:suspended, current_state},
            %Data{data | last_state_change: DateTime.utc_now()},
-           [broadcast_summary(), schedule_fetch(settings.suspend_min, :minutes, data)]}
+           [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]}
         else
           {:keep_state_and_data, [broadcast_summary(), schedule_fetch(15 * i, data)]}
         end
