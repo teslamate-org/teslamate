@@ -287,28 +287,11 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              ] = Floki.find(html, "#car_settings_#{car.id}_suspend_after_idle_min")
     end
 
-    test "shows false, false, true by default", %{conn: conn} do
-      car =
-        car_fixture(
-          settings: %{
-            req_no_shift_state_reading: false,
-            req_no_temp_reading: false,
-            req_not_unlocked: true
-          }
-        )
+    test "By default, the vehicle must be locked to fall asleep", %{conn: conn} do
+      car = car_fixture(settings: %{req_not_unlocked: true})
 
       assert {:ok, _view, html} = live(conn, "/settings")
       html = Floki.parse_document!(html)
-
-      assert [] =
-               html
-               |> Floki.find("#car_settings_#{car.id}_req_no_shift_state_reading")
-               |> Floki.attribute("checked")
-
-      assert [] =
-               html
-               |> Floki.find("#car_settings_#{car.id}_req_no_temp_reading")
-               |> Floki.attribute("checked")
 
       assert ["checked"] =
                html
@@ -322,8 +305,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
           settings: %{
             suspend_min: 21,
             suspend_after_idle_min: 15,
-            req_no_shift_state_reading: false,
-            req_no_temp_reading: false,
             req_not_unlocked: true,
             free_supercharging: false,
             use_streaming_api: false
@@ -351,28 +332,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert [settings] = Settings.get_car_settings()
       assert settings.suspend_after_idle_min == 30
-
-      assert ["checked"] =
-               render_change(view, :change, %{
-                 "car_settings_#{car.id}" => %{req_no_shift_state_reading: true}
-               })
-               |> Floki.parse_document!()
-               |> Floki.find("#car_settings_#{car.id}_req_no_shift_state_reading")
-               |> Floki.attribute("checked")
-
-      assert [settings] = Settings.get_car_settings()
-      assert settings.req_no_shift_state_reading == true
-
-      assert ["checked"] =
-               render_change(view, :change, %{
-                 "car_settings_#{car.id}" => %{req_no_temp_reading: true}
-               })
-               |> Floki.parse_document!()
-               |> Floki.find("#car_settings_#{car.id}_req_no_temp_reading")
-               |> Floki.attribute("checked")
-
-      assert [settings] = Settings.get_car_settings()
-      assert settings.req_no_temp_reading == true
 
       assert [] =
                render_change(view, :change, %{

@@ -1219,18 +1219,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:keep_state_and_data, [broadcast_summary(), schedule_fetch(data)]}
 
-      {:error, :shift_state} ->
-        if suspend?,
-          do: Logger.warn("Shift state reading prevents car to go to sleep", car_id: car.id)
-
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
-
-      {:error, :temp_reading} ->
-        if suspend?,
-          do: Logger.warn("Temperature readings prevents car to go to sleep", car_id: car.id)
-
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
-
       {:error, :cannot_determine_location} ->
         Logger.warn("Cannot determine vehicle position", car_id: car.id)
 
@@ -1270,16 +1258,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {%Vehicle{vehicle_state: %VehicleState{locked: false}},
        %CarSettings{req_not_unlocked: true}} ->
         {:error, :unlocked}
-
-      {%Vehicle{drive_state: %Drive{shift_state: shift_state}},
-       %CarSettings{req_no_shift_state_reading: true}}
-      when not is_nil(shift_state) ->
-        {:error, :shift_state}
-
-      {%Vehicle{climate_state: %Climate{outside_temp: out_t, inside_temp: in_t}},
-       %CarSettings{req_no_temp_reading: true}}
-      when not is_nil(out_t) or not is_nil(in_t) ->
-        {:error, :temp_reading}
 
       {%Vehicle{}, %CarSettings{}} ->
         :ok

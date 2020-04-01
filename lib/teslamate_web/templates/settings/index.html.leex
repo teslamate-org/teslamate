@@ -73,18 +73,6 @@
               <div class="columns is-multiline is-mobile is-gapless">
                 <div class="column is-full">
                   <label class="checkbox">
-                    <%= checkbox(f, :req_no_shift_state_reading) %>&nbsp;
-                    <%= gettext("No shift state reading") %>
-                  </label>
-                </div>
-                <div class="column is-full">
-                  <label class="checkbox">
-                    <%= checkbox(f, :req_no_temp_reading) %>&nbsp;
-                    <%= gettext("No temperature readings") %>
-                  </label>
-                </div>
-                <div class="column is-full">
-                  <label class="checkbox">
                     <%= checkbox(f, :req_not_unlocked) %>&nbsp;
                     <%= gettext("Vehicle must be locked") %>
                   </label>
@@ -92,9 +80,6 @@
               </div>
             </div>
           </div>
-          <p class="has-text-grey is-size-7 is-italic">
-            <%= gettext("Some firmware versions stop reporting temperatures or the shift state before the car is ready to sleep. Enabling these options will wait for the readings to stop.") %>
-          </p>
         </div>
       </div>
     </div>

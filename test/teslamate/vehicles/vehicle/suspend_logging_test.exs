@@ -220,46 +220,6 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert {:error, :charging_in_progress} = Vehicle.suspend_logging(name)
   end
 
-  test "cannot be suspended if outside_temp is not nil", %{test: name} do
-    not_supendable =
-      online_event(
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-        climate_state: %{outside_temp: 20.0}
-      )
-
-    events = [
-      {:ok, online_event()},
-      {:ok, not_supendable}
-    ]
-
-    :ok = start_vehicle(name, events, settings: %{req_no_temp_reading: true})
-
-    date = DateTime.from_unix!(0, :millisecond)
-    assert_receive {:start_state, _, :online, date: ^date}
-
-    assert {:error, :temp_reading} = Vehicle.suspend_logging(name)
-  end
-
-  test "cannot be suspended if inside_temp is not nil", %{test: name} do
-    not_supendable =
-      online_event(
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
-        climate_state: %{inside_temp: 20.0}
-      )
-
-    events = [
-      {:ok, online_event()},
-      {:ok, not_supendable}
-    ]
-
-    :ok = start_vehicle(name, events, settings: %{req_no_temp_reading: true})
-
-    date = DateTime.from_unix!(0, :millisecond)
-    assert_receive {:start_state, _, :online, date: ^date}
-
-    assert {:error, :temp_reading} = Vehicle.suspend_logging(name)
-  end
-
   test "suspends when charging is complete", %{test: name} do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 

@@ -8,8 +8,6 @@ defmodule TeslaMate.Settings.CarSettings do
     field :suspend_min, :integer, default: 21
     field :suspend_after_idle_min, :integer, default: 15
 
-    field :req_no_shift_state_reading, :boolean, default: false
-    field :req_no_temp_reading, :boolean, default: false
     field :req_not_unlocked, :boolean, default: true
 
     field :free_supercharging, :boolean, default: false
@@ -22,8 +20,6 @@ defmodule TeslaMate.Settings.CarSettings do
   @all_fields [
     :suspend_min,
     :suspend_after_idle_min,
-    :req_no_shift_state_reading,
-    :req_no_temp_reading,
     :req_not_unlocked,
     :free_supercharging,
     :use_streaming_api

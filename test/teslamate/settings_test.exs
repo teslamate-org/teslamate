@@ -120,8 +120,6 @@ defmodule TeslaMate.SettingsTest do
     @update_attrs %{
       suspend_min: 60,
       suspend_after_idle_min: 60,
-      req_no_shift_state_reading: false,
-      req_no_temp_reading: false,
       req_not_unlocked: true,
       free_supercharging: true,
       use_streaming_api: true
@@ -129,8 +127,6 @@ defmodule TeslaMate.SettingsTest do
     @invalid_attrs %{
       suspend_min: nil,
       suspend_after_idle_min: nil,
-      req_no_shift_state_reading: nil,
-      req_no_temp_reading: nil,
       req_not_unlocked: nil,
       free_supercharging: nil,
       use_streaming_api: nil
@@ -143,8 +139,6 @@ defmodule TeslaMate.SettingsTest do
       assert settings.id == car.settings_id
       assert settings.suspend_min == 21
       assert settings.suspend_after_idle_min == 15
-      assert settings.req_no_shift_state_reading == false
-      assert settings.req_no_temp_reading == false
       assert settings.req_not_unlocked == true
       assert settings.free_supercharging == false
       assert settings.use_streaming_api == false
@@ -162,8 +156,6 @@ defmodule TeslaMate.SettingsTest do
       assert settings.id == car.settings_id
       assert settings.suspend_min == 60
       assert settings.suspend_after_idle_min == 60
-      assert settings.req_no_shift_state_reading == false
-      assert settings.req_no_temp_reading == false
       assert settings.req_not_unlocked == true
       assert settings.free_supercharging == true
       assert settings.use_streaming_api == true
@@ -191,8 +183,6 @@ defmodule TeslaMate.SettingsTest do
                Settings.update_car_settings(settings, @invalid_attrs)
 
       assert errors_on(changeset) == %{
-               req_no_shift_state_reading: ["can't be blank"],
-               req_no_temp_reading: ["can't be blank"],
                req_not_unlocked: ["can't be blank"],
                suspend_after_idle_min: ["can't be blank"],
                suspend_min: ["can't be blank"],
