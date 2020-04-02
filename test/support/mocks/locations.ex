@@ -4,9 +4,7 @@ defmodule LocationsMock do
   defstruct [:pid]
   alias __MODULE__, as: State
 
-  alias TeslaMate.Settings.CarSettings
   alias TeslaMate.Locations.GeoFence
-  alias TeslaMate.Log.Car
 
   # API
 
