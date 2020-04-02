@@ -12,7 +12,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open doors_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available is_user_present geofence
-    model trim_badging exterior_color wheel_type spoiler_type
+    model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -99,6 +99,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
       windows_open: window_open(vehicle),
       doors_open: doors_open(vehicle),
+      trunk_open: trunk_open(vehicle),
+      frunk_open: frunk_open(vehicle),
       is_user_present: get_in_struct(vehicle, [:vehicle_state, :is_user_present]),
       version: version(vehicle),
       update_available: update_available(vehicle)
@@ -142,6 +144,12 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         nil
     end
   end
+
+  defp trunk_open(%Vehicle{vehicle_state: %VehicleState{rt: rt}}) when is_number(rt), do: rt > 0
+  defp trunk_open(_vehicle), do: nil
+
+  defp frunk_open(%Vehicle{vehicle_state: %VehicleState{ft: ft}}) when is_number(ft), do: ft > 0
+  defp frunk_open(_vehicle), do: nil
 
   defp version(vehicle) do
     with %Vehicle{vehicle_state: %VehicleState{car_version: v}} when is_binary(v) <- vehicle,

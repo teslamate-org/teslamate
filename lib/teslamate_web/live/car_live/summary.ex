@@ -136,17 +136,13 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp translate_state(:unavailable), do: gettext("unavailable")
 
   defp translate_error(:unlocked), do: gettext("Car is unlocked")
+  defp translate_error(:doors_open), do: gettext("Doors are open")
+  defp translate_error(:trunk_open), do: gettext("Trunk is open")
   defp translate_error(:sentry_mode), do: gettext("Sentry mode is enabled")
-  defp translate_error(:shift_state), do: gettext("Shift state present")
-  defp translate_error(:temp_reading), do: gettext("Temperature readings")
   defp translate_error(:preconditioning), do: gettext("Preconditioning")
   defp translate_error(:user_present), do: gettext("Driver present")
   defp translate_error(:update_in_progress), do: gettext("Update in progress")
   defp translate_error(:timeout), do: gettext("Timeout")
-
-  defp translate_error(:sleep_mode_disabled_at_location),
-    do: gettext("Sleep Mode is disabled at current location")
-
   defp translate_error(_other), do: gettext("An error occurred")
 
   defp cancel_timer(nil), do: :ok

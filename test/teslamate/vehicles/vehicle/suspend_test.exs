@@ -3,11 +3,6 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
   alias TeslaMate.Vehicles.Vehicle
 
-  import ExUnit.CaptureLog
-
-  @log_opts format: "[$level] $message\n",
-            colors: [enabled: false]
-
   test "suspends when idling", %{test: name} do
     suspendable =
       online_event(
@@ -139,6 +134,74 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:insert_position, ^car, %{}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, sentry_mode: true}}}
+
+    refute_receive _, round(suspend_ms * 0.5)
+
+    refute_receive _
+  end
+
+  @tag :capture_log
+  test "does not suspend if any of the doors are open", %{test: name} do
+    not_supendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        vehicle_state: %{df: 0, dr: 0, pf: 1, pr: 0, car_version: ""}
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, not_supendable}
+    ]
+
+    sudpend_after_idle_ms = 10
+    suspend_ms = 100
+
+    :ok =
+      start_vehicle(name, events,
+        settings: %{
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
+      )
+
+    assert_receive {:start_state, car, :online, date: _}
+    assert_receive {:insert_position, ^car, %{}}
+
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, doors_open: true}}}
+
+    refute_receive _, round(suspend_ms * 0.5)
+
+    refute_receive _
+  end
+
+  @tag :capture_log
+  test "does not suspend if the rear or front trunk is open", %{test: name} do
+    not_supendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        vehicle_state: %{rt: 0, ft: 1, car_version: ""}
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, not_supendable}
+    ]
+
+    sudpend_after_idle_ms = 10
+    suspend_ms = 100
+
+    :ok =
+      start_vehicle(name, events,
+        settings: %{
+          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
+      )
+
+    assert_receive {:start_state, car, :online, date: _}
+    assert_receive {:insert_position, ^car, %{}}
+
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, frunk_open: true}}}
 
     refute_receive _, round(suspend_ms * 0.5)
 
@@ -340,39 +403,6 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, sentry_mode: false}}}
 
     refute_receive _
-  end
-
-  test "does not suspend drive_state is not available", %{test: name} do
-    events = [
-      {:ok, online_event()},
-      {:ok, online_event()},
-      {:ok,
-       %TeslaApi.Vehicle{
-         state: "online",
-         drive_state: nil,
-         vehicle_state: %{sentry_mode: false, car_version: ""},
-         vehicle_config: %TeslaApi.Vehicle.State.VehicleConfig{
-           car_type: "model3",
-           trim_badging: nil,
-           exterior_color: "White",
-           wheel_type: "foo",
-           spoiler_type: "None"
-         }
-       }}
-    ]
-
-    assert capture_log(@log_opts, fn ->
-             :ok =
-               start_vehicle(name, events,
-                 settings: %{suspend_after_idle_min: 10, suspend_min: 10_000_000}
-               )
-
-             assert_receive {:start_state, car, :online, date: _}
-             assert_receive {:insert_position, ^car, %{}}
-             assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
-
-             refute_receive _
-           end) =~ "[warn] Cannot determine vehicle position\n"
   end
 
   describe "req_not_unlocked" do

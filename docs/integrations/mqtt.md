@@ -33,6 +33,8 @@ Vehicle data will be published to the following topics (`$car_id` usually starts
 | `teslamate/cars/$car_id/sentry_mode`                   | false                | Indicates if Sentry Mode is active                               |
 | `teslamate/cars/$car_id/windows_open`                  | false                | Indicates if any of the windows are open                         |
 | `teslamate/cars/$car_id/doors_open`                    | false                | Indicates if any of the doors are open                           |
+| `teslamate/cars/$car_id/trunk_open`                    | false                | Indicates if the trunk is open                                   |
+| `teslamate/cars/$car_id/frunk_open`                    | false                | Indicates if the frunk is open                                   |
 | `teslamate/cars/$car_id/is_user_present`               | false                | Indicates if a user is present in the vehicle                    |
 |                                                        |                      |                                                                  |
 | `teslamate/cars/$car_id/is_climate_on`                 | true                 | Indicates if the climate control is on                           |

@@ -1186,16 +1186,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
-    {suspend_after_idle_min, suspend_min} =
-      case car.settings do
-        %CarSettings{use_streaming_api: true} -> {3, 30}
-        %CarSettings{suspend_after_idle_min: i, suspend_min: s} -> {i, s}
+    {suspend_after_idle_min, suspend_min, i} =
+      case {car.settings, streaming?(data)} do
+        {%CarSettings{use_streaming_api: true}, true} -> {3, 30, 2}
+        {%CarSettings{suspend_after_idle_min: i, suspend_min: s}, _} -> {i, s, 1}
       end
 
-    idle_min = diff_seconds(DateTime.utc_now(), data.last_used) / 60
-    suspend? = idle_min >= suspend_after_idle_min
-
-    i = if streaming?(data), do: 2, else: 1
+    suspend? = diff_seconds(DateTime.utc_now(), data.last_used) / 60 >= suspend_after_idle_min
 
     case can_fall_asleep(vehicle, data) do
       {:error, :sentry_mode} ->
@@ -1203,26 +1200,32 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [broadcast_summary(), schedule_fetch(30 * i, data)]}
 
       {:error, :preconditioning} ->
-        if suspend?,
-          do: Logger.warn("Preconditioning prevents car to go to sleep", car_id: car.id)
+        if suspend?, do: Logger.warn("Preconditioning ...", car_id: car.id)
 
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30 * i, data)}
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         [broadcast_summary(), schedule_fetch(30 * i, data)]}
 
       {:error, :user_present} ->
-        if suspend?, do: Logger.warn("Present user prevents car to go to sleep", car_id: car.id)
+        if suspend?, do: Logger.warn("User present ...", car_id: car.id)
 
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         [broadcast_summary(), schedule_fetch(15, data)]}
+
+      {:error, :doors_open} ->
+        if suspend?, do: Logger.warn("Doors open ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         [broadcast_summary(), schedule_fetch(15 * i, data)]}
+
+      {:error, :trunk_open} ->
+        if suspend?, do: Logger.warn("Trunk open ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         [broadcast_summary(), schedule_fetch(15 * i, data)]}
 
       {:error, :unlocked} ->
-        if suspend?,
-          do: Logger.warn("Vehicle cannot to go to sleep because it is unlocked", car_id: car.id)
-
-        {:keep_state_and_data, [broadcast_summary(), schedule_fetch(data)]}
-
-      {:error, :cannot_determine_location} ->
-        Logger.warn("Cannot determine vehicle position", car_id: car.id)
-
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
+        if suspend?, do: Logger.warn("Unlocked ...", car_id: car.id)
+        {:keep_state_and_data, [broadcast_summary(), schedule_fetch(15 * i, data)]}
 
       :ok ->
         if suspend? do
@@ -1240,10 +1243,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp can_fall_asleep(%Vehicle{drive_state: nil}, %Data{}) do
-    {:error, :cannot_determine_location}
-  end
-
   defp can_fall_asleep(vehicle, %Data{car: car}) do
     case {vehicle, car.settings} do
       {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _} ->
@@ -1254,6 +1253,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _} ->
         {:error, :sentry_mode}
+
+      {%Vehicle{vehicle_state: %VehicleState{df: df, pf: pf, dr: dr, pr: pr}}, _}
+      when is_number(df) and is_number(pf) and is_number(dr) and is_number(pr) and
+             (df > 0 or pf > 0 or dr > 0 or pr > 0) ->
+        {:error, :doors_open}
+
+      {%Vehicle{vehicle_state: %VehicleState{ft: ft, rt: rt}}, _}
+      when is_number(ft) and is_number(rt) and (ft > 0 or rt > 0) ->
+        {:error, :trunk_open}
 
       {%Vehicle{vehicle_state: %VehicleState{locked: false}},
        %CarSettings{req_not_unlocked: true}} ->

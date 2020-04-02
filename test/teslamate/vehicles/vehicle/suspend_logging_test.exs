@@ -128,6 +128,44 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert {:error, :unlocked} = Vehicle.suspend_logging(name)
   end
 
+  test "cannot be suspended if any of the doors are open", %{test: name} do
+    not_supendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        vehicle_state: %{df: 0, dr: 0, pf: 1, pr: 0, car_version: ""}
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, not_supendable}
+    ]
+
+    :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
+
+    assert {:error, :doors_open} = Vehicle.suspend_logging(name)
+  end
+
+  test "cannot be suspended if the rear or front trunk is open", %{test: name} do
+    not_supendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        vehicle_state: %{rt: 1, ft: 1, car_version: ""}
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, not_supendable}
+    ]
+
+    :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
+
+    assert {:error, :trunk_open} = Vehicle.suspend_logging(name)
+  end
+
   test "cannot be suspended if shift_state is D", %{test: name} do
     not_supendable =
       online_event(drive_state: %{timestamp: 0, shift_state: "D", latitude: 0.0, longitude: 0.0})

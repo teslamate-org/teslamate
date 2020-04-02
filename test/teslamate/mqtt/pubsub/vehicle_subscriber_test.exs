@@ -57,7 +57,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       trim_badging: "P100D",
       exterior_color: "White",
       spoiler_type: "None",
-      wheel_type: "AeroTurbine19"
+      wheel_type: "AeroTurbine19",
+      frunk_open: true,
+      trunk_open: false
     }
 
     send(pid, summary)

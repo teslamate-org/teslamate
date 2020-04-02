@@ -83,15 +83,19 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       )
     end
 
-    for {msg, id, status, settings, attrs} <- [
-          {"Car is unlocked", 0, "online", %{},
+    for {msg, status, settings, attrs} <- [
+          {"Car is unlocked", "online", %{},
            vehicle_state: %{timestamp: 0, locked: false, car_version: ""}},
-          {"Sentry mode is enabled", 0, "online", %{req_not_unlocked: true},
+          {"Doors are open", "online", %{},
+           vehicle_state: %{timestamp: 0, df: 1, dr: 0, pf: 0, pr: 0, car_version: ""}},
+          {"Trunk is open", "online", %{},
+           vehicle_state: %{timestamp: 0, rt: 1, ft: 0, car_version: ""}},
+          {"Sentry mode is enabled", "online", %{req_not_unlocked: true},
            vehicle_state: %{timestamp: 0, sentry_mode: true, locked: true, car_version: ""}},
-          {"Preconditioning", 0, "online", %{}, climate_state: %{is_preconditioning: true}},
-          {"Driver present", 0, "online", %{},
+          {"Preconditioning", "online", %{}, climate_state: %{is_preconditioning: true}},
+          {"Driver present", "online", %{},
            vehicle_state: %{timestamp: 0, is_user_present: true, car_version: ""}},
-          {"Update in progress", 0, "updating", %{},
+          {"Update in progress", "updating", %{},
            vehicle_state: %{
              timestamp: 0,
              car_version: "v9",
@@ -99,7 +103,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
            }}
         ] do
       @tag :signed_in
-      test "shows warning if suspending is not possible [#{msg}#{id}]", %{conn: conn} do
+      test "shows warning if suspending is not possible [#{msg}]", %{conn: conn} do
         settings =
           Map.merge(
             %{suspend_min: 60_000, suspend_after_idle_min: 60_000},
