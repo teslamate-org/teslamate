@@ -59,7 +59,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       spoiler_type: "None",
       wheel_type: "AeroTurbine19",
       frunk_open: true,
-      trunk_open: false
+      trunk_open: false,
+      elevation: 100
     }
 
     send(pid, summary)

@@ -19,6 +19,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
               last_used: nil,
               last_response: nil,
               last_state_change: nil,
+              elevation: nil,
               geofence: nil,
               deps: %{},
               task: nil,
@@ -172,6 +173,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         state: state,
         since: data.last_state_change,
         healthy?: healthy?(data.car.id),
+        elevation: data.elevation,
         geofence: data.geofence,
         car: data.car
       })
@@ -363,10 +365,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, :online, data) do
     case stream_data do
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
-        {drive, data} = start_drive(create_position(stream_data, data), data)
+        %{elevation: elevation} = position = create_position(stream_data, data)
+        {drive, data} = start_drive(position, data)
+
+        vehicle = merge(data.last_response, stream_data, time: true)
 
         {:next_state, {:driving, :available, drive},
-         %Data{data | last_response: merge(data.last_response, stream_data, time: true)},
+         %Data{data | last_response: vehicle, elevation: elevation},
          [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: nil, power: power} when is_number(power) and power < 0 ->
@@ -384,13 +389,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, {:driving, status, drv}, data) do
     case {status, stream_data} do
       {:available, %Stream.Data{shift_state: shift_state}} when shift_state in ~w(D N R) ->
-        {:ok, _pos} =
+        {:ok, %{elevation: elevation}} =
           call(data.deps.log, :insert_position, [drv, create_position(stream_data, data)])
 
         vehicle = merge(data.last_response, stream_data)
         now = DateTime.utc_now()
 
-        {:keep_state, %Data{data | last_used: now, last_response: vehicle}, broadcast_summary()}
+        {:keep_state, %Data{data | last_used: now, last_response: vehicle, elevation: elevation},
+         broadcast_summary()}
 
       {_status, %Stream.Data{}} ->
         {:keep_state_and_data, schedule_fetch(0, data)}
@@ -402,10 +408,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, {:suspended, prev_state}, data) do
     case stream_data do
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
-        {drive, data} = start_drive(create_position(stream_data, data), data)
+        %{elevation: elevation} = position = create_position(stream_data, data)
+        {drive, data} = start_drive(position, data)
+
+        vehicle = merge(data.last_response, stream_data, time: true)
 
         {:next_state, {:driving, :available, drive},
-         %Data{data | last_response: merge(data.last_response, stream_data, time: true)},
+         %Data{data | last_response: vehicle, elevation: elevation},
          [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: s, power: power}
@@ -535,6 +544,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         state: state,
         since: data.last_state_change,
         healthy?: healthy?(data.car.id),
+        elevation: data.elevation,
         geofence: data.geofence,
         car: data.car
       })

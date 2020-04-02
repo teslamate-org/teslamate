@@ -12,7 +12,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open doors_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available is_user_present geofence
-    model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open
+    model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -28,12 +28,22 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     }
   end
 
-  def into(vehicle, %{state: state, since: since, healthy?: healthy?, car: car, geofence: gf}) do
+  def into(vehicle, attrs) do
+    %{
+      state: state,
+      since: since,
+      healthy?: healthy?,
+      car: car,
+      elevation: elevation,
+      geofence: gf
+    } = attrs
+
     %__MODULE__{
       format_vehicle(vehicle)
       | state: format_state(state),
         since: since,
         healthy: healthy?,
+        elevation: elevation,
         geofence: gf,
         trim_badging: get_car_attr(car, :trim_badging),
         exterior_color: get_car_attr(car, :exterior_color),
