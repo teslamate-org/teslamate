@@ -42,7 +42,9 @@
           <div class="navbar-end">
             <%= if grafana_url = @conn.assigns.settings.grafana_url do %>
             <div class="navbar-item has-dropdown is-hoverable">
-              <a class="navbar-link is-arrowless"><%= gettext "Dashboards" %></a>
+              <a class="navbar-link is-arrowless">
+                <span class="icon"><i class="mdi mdi-view-dashboard"></i></span>&nbsp;<span><%= gettext "Dashboards" %></span>
+              </a>
               <div class="navbar-dropdown">
               <%= for %{"title" => title, "uid" => uid} <- list_dashboards() do %>
                 <%= link title, to: "#{grafana_url}/d/#{uid}?kiosk=tv", class: "navbar-item", target: "_blank" %>
@@ -50,15 +52,12 @@
               </div>
             </div>
             <% end %>
-            <%= link(gettext("Geo-Fences"), to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item") %>
-            <%= link(gettext("Settings"), to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5") %>
-            <div class="navbar-item tags has-addons">
-              <%= link "v#{Application.spec(:teslamate, :vsn) |> to_string() |> String.trim_trailing(".0")}",
-                        to: "https://github.com/adriankumpf/teslamate/releases",
-                        class: "tag is-primary",
-                        target: "_blank", rel: "noopener noreferrer"
-              %>
-            </div>
+            <%= link [to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item  mr-5"] do %>
+              <span class="icon"><i class="mdi mdi-map-marker-radius"></i></span>&nbsp;<span><%= gettext("Geo-Fences") %></span>
+            <% end %>
+            <%= link [to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5"] do %>
+              <span class="icon"><i class="mdi mdi-cog"></i></span>&nbsp;<span><%= gettext("Settings") %></span>
+            <% end %>
           </div>
         </div>
       </div>

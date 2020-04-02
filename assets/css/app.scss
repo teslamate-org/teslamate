@@ -63,6 +63,12 @@ $modal-card-foot-border-top: none;
 
 nav.navbar {
   z-index: 401;
+
+  a.navbar-item,
+  a.navbar-link {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .car {
