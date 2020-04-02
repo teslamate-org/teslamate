@@ -7,7 +7,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   alias TeslaMateWeb.Router.Helpers, as: Routes
   alias TeslaMateWeb.SettingsView
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
-  alias TeslaMate.Settings
+  alias TeslaMate.{Settings, Updater}
 
   @impl true
   def render(assigns), do: SettingsView.render("index.html", assigns)
@@ -16,16 +16,17 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
     if connected?(socket), do: Gettext.put_locale(locale)
 
-    socket =
-      socket
-      |> assign_new(:addresses_migrated?, fn -> addresses_migrated?() end)
-      |> assign_new(:car_settings, fn -> Settings.get_car_settings() |> prepare() end)
-      |> assign_new(:car, fn -> nil end)
-      |> assign(:global_settings, settings |> prepare())
-      |> assign(:refreshing_addresses?, nil)
-      |> assign(:refresh_error, nil)
+    assigns = %{
+      addresses_migrated?: addresses_migrated?(),
+      car_settings: Settings.get_car_settings() |> prepare(),
+      car: nil,
+      global_settings: settings |> prepare(),
+      update: Updater.get_update(),
+      refreshing_addresses?: nil,
+      refresh_error: nil
+    }
 
-    {:ok, socket}
+    {:ok, assign(socket, assigns)}
   end
 
   @impl true

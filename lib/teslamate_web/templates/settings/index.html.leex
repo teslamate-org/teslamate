@@ -21,7 +21,7 @@
   <% end %>
 
 <%= f = form_for get_in(@car_settings, [@car, :changeset]), "#", [phx_change: :change, as: "car_settings_#{@car}"] %>
-  <div class="columns is-tablet is-centered">
+  <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Sleep Mode") %></h2>
 
@@ -87,7 +87,7 @@
     </div>
   </div>
 
-  <div class="columns is-tablet is-centered">
+  <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Charge cost") %></h2>
       <div class="field is-horizontal center-vertically">
@@ -106,7 +106,7 @@
     </div>
   </div>
 
-  <div class="columns is-tablet is-centered">
+  <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Streaming API") %></h2>
       <div class="field is-horizontal center-vertically">
@@ -132,7 +132,7 @@
 end %>
 
 <%= f = form_for @global_settings.changeset, "#", [phx_change: :change] %>
-  <div class="columns is-tablet is-centered">
+  <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Range") %></h2>
       <div class="field is-horizontal center-vertically">
@@ -157,7 +157,7 @@ end %>
     </div>
   </div>
 
-  <div class="columns is-tablet is-centered">
+  <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Language") %></h2>
       <div class="field is-horizontal">
@@ -178,7 +178,7 @@ end %>
     </div>
   </div>
 
-  <div class="columns is-tablet is-centered">
+  <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Units") %></h2>
       <div class="field is-horizontal">
@@ -214,7 +214,7 @@ end %>
     </div>
   </div>
 
-  <div class="columns is-tablet is-centered">
+  <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("URLs") %></h2>
       <div class="field is-horizontal center-vertically">
@@ -247,3 +247,31 @@ end %>
     </div>
   </div>
 </form>
+
+<div class="columns is-mobile is-centered">
+  <div class="column is-narrow table-container">
+        <table class="about table is-narrow is-fullwidth">
+          <tbody>
+            <tr>
+              <th align="right"><%= gettext("Version") %></th>
+              <td><%= Application.spec(:teslamate, :vsn) %><strong><%=
+                if @update do
+                  vsn = link @update, to: "https://github.com/adriankumpf/teslamate/releases",
+                                      target: "_blank", rel: "noopener noreferrer"
+
+                  [" (", gettext("Update available"), ": ", vsn, ")"]
+                end
+              %></strong></td>
+            </tr>
+            <tr>
+              <th align="right"><%= gettext("GitHub") %></th>
+              <td><%= link "github.com/adriankumpf/teslamate", to: "https://github.com/adriankumpf/teslamate", target: "_blank", rel: "noopener noreferrer" %></td>
+            </tr>
+            <tr>
+              <th align="right"><%= gettext("Documentation") %></th>
+              <td><%= link "teslamate.readthedocs.io", to: "https://teslamate.readthedocs.io/en/latest/", target: "_blank", rel: "noopener noreferrer" %></td>
+            </tr>
+          </tbody>
+        </table>
+  </div>
+</div>
