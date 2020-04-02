@@ -453,4 +453,39 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                |> Enum.filter(&match?({_, [_, {"selected", "selected"}], _}, &1))
     end
   end
+
+  describe "updates" do
+    alias TeslaMate.Updater
+
+    import Mock
+
+    def github_mock do
+      release = %{"tag_name" => "v1.1.3", "prerelease" => false, "draft" => false}
+      resp = %Mojito.Response{status_code: 200, body: Jason.encode!(release)}
+      {Mojito, [], get: fn _, _, _ -> {:ok, resp} end}
+    end
+
+    test "informs if an update is available", %{conn: conn} do
+      with_mocks [github_mock()] do
+        _pid = start_supervised!({Updater, version: "1.0.0", check_after: 0})
+
+        Process.sleep(1000)
+
+        assert {:ok, _view, html} = live(conn, "/settings")
+        html = Floki.parse_document!(html)
+
+        assert "#{Application.spec(:teslamate, :vsn)} (Update available: 1.1.3)" ==
+                 html
+                 |> Floki.find(".about tr:first-child td")
+                 |> Floki.text()
+
+        assert [
+                 {"a", [_, {"href", "/donate"}, _, _, _], [_, {_, _, ["Donate"]}]},
+                 {"a",
+                  [_, {"href", "https://github.com/adriankumpf/teslamate/releases"}, _, _, _],
+                  [_, {_, _, ["Update available: 1.1.3"]}]}
+               ] = Floki.find(html, ".footer a")
+      end
+    end
+  end
 end

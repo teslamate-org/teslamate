@@ -64,9 +64,10 @@
     </nav>
 
     <% show_doante_button = @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) %>
+    <% update = TeslaMate.Updater.get_update() %>
 
     <%= content_tag :main, role: "main", style: "overflow: hidden;",
-                           class: ["section", to_string(if show_doante_button, do: " full-height")] do %>
+                           class: ["section", to_string(if show_doante_button or update, do: " full-height")] do %>
       <div class="container <%= Enum.at(@conn.path_info, 0) %>">
         <%= Enum.map(get_flash(@conn), fn {flash_key, flash_message} -> %>
         <p class="notification is-<%= flash_key %>"><%= flash_message %></p>
@@ -76,17 +77,25 @@
       </div>
     <% end %>
 
-    <%= if @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) do %>
     <footer class="footer">
       <div class="content has-text-centered">
+        <%= if @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) do %>
           <%= link to: Routes.donate_path(@conn, :index),
               class: "button is-rounded is-text is-small has-text-grey", type: "button",
               target: "_blank", rel: "noopener noreferrer" do %>
             <span class="icon"><i class="mdi mdi-heart"></i> </span>
             <strong><%= gettext "Donate" %></strong>
           <% end %>
+        <% end %>
+        <%= if update do %>
+          <%= link to: "https://github.com/adriankumpf/teslamate/releases",
+              class: "button is-rounded is-text is-small has-text-grey", type: "button",
+              target: "_blank", rel: "noopener noreferrer" do %>
+            <span class="icon"><i class="mdi mdi-gift"></i> </span>
+            <strong><%= [gettext("Update available"), ": ", update] %></strong>
+          <% end %>
+        <% end %>
       </div>
     </footer>
-    <% end %>
   </body>
 </html>
