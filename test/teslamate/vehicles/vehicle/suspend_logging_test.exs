@@ -36,7 +36,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, online_event()}
     ]
 
-    :ok = start_vehicle(name, events, settings: %{suspend_min: 1000})
+    :ok = start_vehicle(name, events)
     assert_receive {:start_state, car, :online, date: _}
     assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
@@ -265,10 +265,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     events = [
       {:ok, online_event()},
       {:ok, charging_event(now_ts, "Charging", 1.5)},
-      {:ok, charging_event(now_ts + 1, "Complete", 1.5)}
+      {:ok, charging_event(now_ts + 1, "Complete", 1.5)},
+      {:ok, charging_event(now_ts + 2, "Complete", 1.5)},
+      fn -> Process.sleep(10_000) end
     ]
 
-    :ok = start_vehicle(name, events, settings: %{suspend_min: 1_000_000})
+    :ok = start_vehicle(name, events)
 
     d0 = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^d0}
@@ -308,13 +310,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, online_event()}
     ]
 
-    :ok =
-      start_vehicle(name, events,
-        settings: %{
-          suspend_after_idle_min: 100,
-          suspend_min: 1000
-        }
-      )
+    :ok = start_vehicle(name, events)
 
     assert_receive {:start_state, car, :online, date: _}
     assert_receive {ApiMock, {:stream, 1000, _}}
@@ -348,16 +344,11 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, online_event()},
       {:ok, unlocked},
       {:ok, unlocked},
-      {:ok, locked}
+      {:ok, locked},
+      fn -> Process.sleep(10_000) end
     ]
 
-    :ok =
-      start_vehicle(name, events,
-        settings: %{
-          suspend_after_idle_min: 100_000,
-          suspend_min: 1000
-        }
-      )
+    :ok = start_vehicle(name, events)
 
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, car, :online, date: ^date}

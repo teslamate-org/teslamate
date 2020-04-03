@@ -663,7 +663,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:next_state, :start, data, schedule_fetch(data)}
   end
 
-  def handle_event(:internal, {:update, {:online, vehicle}}, :online, data) do
+  def handle_event(:internal, {:update, {:online, vehicle}}, state, data)
+      when state == :online or (is_tuple(state) and elem(state, 0) == :suspended) do
     alias TeslaApi.Vehicle, as: V
 
     case vehicle do
@@ -723,8 +724,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
          }, [broadcast_summary(), schedule_fetch(5, data)]}
 
       _ ->
-        try_to_suspend(vehicle, :online, data)
+        try_to_suspend(vehicle, state, data)
     end
+  end
+
+  #### :suspended
+
+  def handle_event(:internal, {:update, {state, _}} = event, {:suspended, _}, data)
+      when state in [:asleep, :offline] do
+    {:next_state, :start, data, {:next_event, :internal, event}}
   end
 
   #### :charging
@@ -1007,17 +1015,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
      {:next_event, :internal, event}}
   end
 
-  #### :suspended
-
-  def handle_event(:internal, {:update, {:online, _}} = event, {:suspended, prev_state}, data) do
-    {:next_state, prev_state, data, {:next_event, :internal, event}}
-  end
-
-  def handle_event(:internal, {:update, {state, _}} = event, {:suspended, _}, data)
-      when state in [:asleep, :offline] do
-    {:next_state, :start, data, {:next_event, :internal, event}}
-  end
-
   # Private
 
   defp restore_last_knwon_values(vehicle, data) do
@@ -1244,9 +1241,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
           {:ok, _pos} =
             call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
 
-          {:next_state, {:suspended, current_state},
-           %Data{data | last_state_change: DateTime.utc_now()},
-           [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]}
+          case current_state do
+            {:suspended, _} ->
+              {:keep_state_and_data,
+               [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]}
+
+            _ ->
+              {:next_state, {:suspended, current_state},
+               %Data{data | last_state_change: DateTime.utc_now()},
+               [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]}
+          end
         else
           {:keep_state_and_data, [broadcast_summary(), schedule_fetch(15 * i, data)]}
         end

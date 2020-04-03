@@ -45,6 +45,70 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     refute_receive _
   end
 
+  test "counts how long it takes to fall asleep", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    suspendable = fn ts, t ->
+      online_event(
+        drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0},
+        climate_state: %{is_preconditioning: false, outside_temp: t}
+      )
+    end
+
+    events = [
+      {:ok, suspendable.(now_ts + 0, 10.0)},
+      {:ok, suspendable.(now_ts + 1, 10.1)},
+      {:ok, suspendable.(now_ts + 2, 10.2)},
+      {:ok, suspendable.(now_ts + 3, 10.3)},
+      {:ok, suspendable.(now_ts + 4, 10.4)},
+      {:ok, suspendable.(now_ts + 5, 10.5)},
+      {:ok, suspendable.(now_ts + 6, 10.6)},
+      {:ok, suspendable.(now_ts + 7, 10.7)},
+      {:ok, suspendable.(now_ts + 8, 10.8)},
+      {:ok, suspendable.(now_ts + 9, 10.9)},
+      fn -> Process.sleep(10_000) end
+    ]
+
+    :ok = start_vehicle(name, events)
+
+    assert_receive {:start_state, car, :online, date: _}
+    assert_receive {ApiMock, {:stream, 1000, _}}
+    assert_receive {:insert_position, ^car, %{}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _, %Summary{state: :online, since: s0, outside_temp: 10.1}}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _, %Summary{state: :online, since: ^s0, outside_temp: 10.2}}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _, %Summary{state: :online, since: ^s0, outside_temp: 10.3}}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _, %Summary{state: :online, since: ^s0, outside_temp: 10.4}}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _, %Summary{state: :online, since: ^s0, outside_temp: 10.5}}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _, %Summary{state: :online, since: ^s0, outside_temp: 10.6}}}
+
+    assert_receive {:insert_position, ^car, %{}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _, %Summary{state: :suspended, since: s1, outside_temp: 10.7}}}
+
+    assert DateTime.diff(s0, s1, :nanosecond) < 0
+
+    assert_receive {:insert_position, ^car, %{}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _,
+                     %Summary{state: :suspended, since: ^s1, outside_temp: 10.9}}}
+
+    refute_receive _
+  end
+
   @tag :capture_log
   test "does not suspend if preconditioning", %{test: name} do
     not_supendable =
@@ -445,49 +509,49 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     @tag :capture_log
     test "w/o does suspend if vehicle is unlocked", %{test: name} do
-      not_supendable =
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      not_supendable = fn ts ->
         online_event(
-          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+          drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0},
           vehicle_state: %{locked: false, car_version: ""}
         )
+      end
 
       events = [
-        {:ok, online_event()},
-        {:ok, not_supendable},
-        {:ok, not_supendable},
-        {:ok, not_supendable},
-        {:ok, not_supendable},
-        {:ok, not_supendable},
-        {:ok, not_supendable},
-        {:ok, not_supendable},
-        {:ok, not_supendable},
-        {:ok, not_supendable},
-        {:ok, not_supendable},
+        {:ok, not_supendable.(now_ts + 0)},
+        {:ok, not_supendable.(now_ts + 1)},
+        {:ok, not_supendable.(now_ts + 2)},
+        {:ok, not_supendable.(now_ts + 3)},
+        {:ok, not_supendable.(now_ts + 4)},
+        {:ok, not_supendable.(now_ts + 5)},
+        {:ok, not_supendable.(now_ts + 6)},
+        {:ok, not_supendable.(now_ts + 7)},
+        {:ok, not_supendable.(now_ts + 8)},
+        {:ok, not_supendable.(now_ts + 9)},
+        {:ok, not_supendable.(now_ts + 10)},
+        {:ok, not_supendable.(now_ts + 11)},
+        {:ok, not_supendable.(now_ts + 12)},
         fn -> Process.sleep(10_000) end
       ]
 
-      sudpend_after_idle_ms = 5
-      suspend_ms = 1_000_000
-
-      :ok =
-        start_vehicle(name, events,
-          settings: %{
-            req_not_unlocked: false,
-            suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
-            suspend_min: suspend_ms
-          }
-        )
+      :ok = start_vehicle(name, events, settings: %{req_not_unlocked: false})
 
       assert_receive {:start_state, car, :online, date: _}
       assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, locked: false}}}
+      d0 = DateTime.from_unix!(now_ts + 7, :millisecond)
+      assert_receive {:insert_position, ^car, %{date: ^d0}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, since: s1}}}
+      assert DateTime.diff(s0, s1, :nanosecond) < 0
 
-      for _ <- 1..2 do
-        assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, locked: false}}}
-        assert_receive {:insert_position, ^car, %{}}
-      end
+      d1 = DateTime.from_unix!(now_ts + 9, :millisecond)
+      assert_receive {:insert_position, ^car, %{date: ^d1}}
+
+      d2 = DateTime.from_unix!(now_ts + 11, :millisecond)
+      assert_receive {:insert_position, ^car, %{date: ^d2}}
 
       refute_receive _, 500
     end
