@@ -7,7 +7,7 @@
           </div>
         </div>
     </figure>
-    <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude}",
+    <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude},#{@summary.heading}",
                                             phx_hook: "TriggerChange",
                                             class: "is-hidden",
                                             disabled: true

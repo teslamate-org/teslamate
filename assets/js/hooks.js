@@ -22,7 +22,7 @@ export const Dropdown = {
   mounted() {
     const $el = this.el;
 
-    $el.querySelector("button").addEventListener("click", e => {
+    $el.querySelector("button").addEventListener("click", (e) => {
       e.stopPropagation();
       $el.classList.toggle("is-active");
     });
@@ -30,7 +30,7 @@ export const Dropdown = {
     document.addEventListener("click", () => {
       $el.classList.remove("is-active");
     });
-  }
+  },
 };
 
 export const LocalTime = {
@@ -40,7 +40,7 @@ export const LocalTime = {
 
   updated() {
     this.el.innerText = toLocalTime(this.el.dataset.date);
-  }
+  },
 };
 
 export const LocalTimeRange = {
@@ -48,11 +48,11 @@ export const LocalTimeRange = {
     const date = toLocalDate(this.el.dataset.startDate, {
       year: "numeric",
       month: "short",
-      day: "numeric"
+      day: "numeric",
     });
 
     const time = [this.el.dataset.startDate, this.el.dataset.endDate]
-      .map(date =>
+      .map((date) =>
         toLocalTime(date, { hour: "2-digit", minute: "2-digit", hour12: false })
       )
       .join(" – ");
@@ -65,7 +65,7 @@ export const LocalTimeRange = {
   },
   updated() {
     this.exec();
-  }
+  },
 };
 
 export const ConfirmGeoFenceDeletion = {
@@ -77,7 +77,7 @@ export const ConfirmGeoFenceDeletion = {
         this.pushEvent("delete", { id });
       }
     });
-  }
+  },
 };
 
 import {
@@ -87,14 +87,51 @@ import {
   Control,
   Marker,
   Icon,
-  Circle
+  Circle,
+  CircleMarker,
 } from "leaflet";
 
 const icon = new Icon({
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
   iconAnchor: [12, 40],
-  popupAnchor: [0, -25]
+  popupAnchor: [0, -25],
+});
+
+const DirectionArrow = CircleMarker.extend({
+  initialize(latLng, heading, options) {
+    this._heading = heading;
+    CircleMarker.prototype.initialize.call(this, latLng, {
+      fillOpacity: 1,
+      radius: heading === "" ? 5 : 10,
+      ...options,
+    });
+  },
+
+  setHeading(heading) {
+    this.setRadius(heading === "" ? 5 : 10);
+    this._heading = heading;
+    this.redraw();
+  },
+
+  _updatePath() {
+    const [{ x, y }, r] = [this._point, this._radius];
+
+    if (this._heading === "")
+      return CircleMarker.prototype._updatePath.call(this);
+
+    this.getElement().setAttributeNS(
+      null,
+      "transform",
+      `translate(${x},${y}) rotate(${this._heading})`
+    );
+
+    const path = this._empty()
+      ? ""
+      : `M0,${-r - 1} L-3,${-r} L0,${-r - 8} L3,${-r} z}`;
+
+    this._renderer._setPath(this, path);
+  },
 });
 
 function createMap(opts) {
@@ -133,28 +170,36 @@ export const SimpleMap = {
       scrollWheelZoom: false,
       tap: false,
       dragging: false,
-      touchZoom: false
+      touchZoom: false,
     });
 
-    let marker;
-    const setView = () => {
-      if (marker) map.removeLayer(marker);
-      const [lat, lng] = $position.value.split(",");
-      const location = new LatLng(lat, lng);
-      map.setView(location, 17);
-      marker = new Marker(location, { icon }).addTo(map);
-    };
+    const isArrow = this.el.dataset.marker === "arrow";
+    const [lat, lng, heading] = $position.value.split(",");
 
-    setView();
+    const marker = isArrow
+      ? new DirectionArrow([lat, lng], heading)
+      : new Marker([lat, lng], { icon });
 
-    $position.addEventListener("change", setView);
-  }
+    map.setView([lat, lng], 17);
+    marker.addTo(map);
+
+    if (isArrow) {
+      const setView = () => {
+        const [lat, lng, heading] = $position.value.split(",");
+        marker.setHeading(heading);
+        marker.setLatLng([lat, lng]);
+        map.setView([lat, lng], 17);
+      };
+
+      $position.addEventListener("change", setView);
+    }
+  },
 };
 
 export const TriggerChange = {
   updated() {
     this.el.dispatchEvent(new CustomEvent("change"));
-  }
+  },
 };
 
 export const Map = {
@@ -165,7 +210,7 @@ export const Map = {
       ),
       import(
         /* webpackPreload: true, webpackChunkName: "geo" */ "@geoman-io/leaflet-geoman-free"
-      )
+      ),
     ]).then(() => {
       const $radius = document.querySelector("#geo_fence_radius");
       const $latitude = document.querySelector("#geo_fence_latitude");
@@ -182,12 +227,12 @@ export const Map = {
         drawPolygon: false,
         drawPolyline: false,
         drawRectangle: false,
-        removalMode: false
+        removalMode: false,
       };
 
       const editOpts = {
         allowSelfIntersection: false,
-        preventMarkerRemoval: true
+        preventMarkerRemoval: true,
       };
 
       const map = createMap({ enableHybridLayer: true });
@@ -198,7 +243,7 @@ export const Map = {
 
       const circle = new Circle(location, { radius: $radius.value })
         .addTo(map)
-        .on("pm:edit", e => {
+        .on("pm:edit", (e) => {
           const { lat, lng } = e.target.getLatLng();
           const radius = Math.round(e.target.getRadius());
 
@@ -213,14 +258,14 @@ export const Map = {
         });
 
       new Control.geocoder({ defaultMarkGeocode: false })
-        .on("markgeocode", e => {
+        .on("markgeocode", (e) => {
           const { bbox, center } = e.geocode;
 
           const poly = L.polygon([
             bbox.getSouthEast(),
             bbox.getNorthEast(),
             bbox.getNorthWest(),
-            bbox.getSouthWest()
+            bbox.getSouthWest(),
           ]);
 
           circle.setLatLng(center);
@@ -240,7 +285,7 @@ export const Map = {
 
       map.fitBounds(circle.getBounds(), { animate: false });
     });
-  }
+  },
 };
 
 export const UpdateCostMode = {
@@ -251,7 +296,7 @@ export const UpdateCostMode = {
     if (kWh != null) {
       kWh = parseFloat(kWh, 10);
 
-      this.el.addEventListener("change", function() {
+      this.el.addEventListener("change", function () {
         const $cost = document.querySelector("#charging_process_cost");
 
         const cost =
@@ -264,7 +309,7 @@ export const UpdateCostMode = {
         $cost.value = cost.toFixed(2);
       });
     }
-  }
+  },
 };
 
 export const Modal = {
@@ -286,5 +331,5 @@ export const Modal = {
 
   destroyed() {
     this._unfreeze();
-  }
+  },
 };
