@@ -86,6 +86,10 @@ nav.navbar {
   }
 
   .map {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     .leaflet-control-attribution.leaflet-control {
       display: none;
     }
