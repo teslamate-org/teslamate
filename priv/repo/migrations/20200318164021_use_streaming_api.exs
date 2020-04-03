@@ -3,7 +3,7 @@ defmodule TeslaMate.Repo.Migrations.UseStreamingApi do
 
   def change do
     alter table(:car_settings) do
-      add :use_streaming_api, :boolean, default: false, null: false
+      add :use_streaming_api, :boolean, default: true, null: false
     end
   end
 end

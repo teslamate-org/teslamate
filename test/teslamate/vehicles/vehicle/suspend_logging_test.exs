@@ -38,6 +38,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok = start_vehicle(name, events, settings: %{suspend_min: 1000})
     assert_receive {:start_state, car, :online, date: _}
+    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
@@ -271,12 +272,14 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     d0 = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^d0}
+    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
     assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
                     [lookup_address: true]}
 
+    assert_receive {:"$websockex_cast", :disconnect}
     assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: 1.5}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: s1}}}
     assert DateTime.diff(s0, s1, :nanosecond) < 0
@@ -287,6 +290,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     d1 = DateTime.from_unix!(now_ts + 1, :millisecond)
     assert_receive {:start_state, ^car, :online, date: ^d1}
+    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
     assert DateTime.diff(s1, s2, :nanosecond) < 0
@@ -313,6 +317,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       )
 
     assert_receive {:start_state, car, :online, date: _}
+    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
@@ -356,6 +361,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, car, :online, date: ^date}
+    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
 
     assert {:error, :unlocked} = Vehicle.suspend_logging(name)

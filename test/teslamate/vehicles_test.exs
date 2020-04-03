@@ -1,8 +1,17 @@
 defmodule TeslaMate.VehiclesTest do
-  use TeslaMateWeb.ConnCase
   use TeslaMate.VehicleCase
+  use TeslaMate.DataCase
 
   alias TeslaMate.Vehicles
+
+  setup do
+    start_supervised!({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
+
+    # Wait for processes the exit
+    on_exit(fn -> Process.sleep(10) end)
+
+    :ok
+  end
 
   @tag :capture_log
   test "kill/0" do
@@ -35,10 +44,13 @@ defmodule TeslaMate.VehiclesTest do
          ]}
       )
 
+    assert_receive {ApiMock, {:stream, 4040, _}}
+
     ref = Process.monitor(Vehicles)
 
     assert :ok = Vehicles.restart()
     assert_receive {:DOWN, ^ref, :process, {Vehicles, :nonode@nohost}, :normal}
+    assert_receive {ApiMock, {:stream, 4040, _}}
 
     refute_receive _
   end
@@ -82,7 +94,7 @@ defmodule TeslaMate.VehiclesTest do
             {ApiMock, name: :api_vehicle, events: [{:ok, online_event()}], pid: self()}
           )
 
-        {:ok, _pid} = start_supervised({Vehicles, vehicle: VehicleMock})
+        start_supervised!({Vehicles, vehicle: VehicleMock})
 
         assert true = Vehicles.Vehicle.healthy?(id)
       end

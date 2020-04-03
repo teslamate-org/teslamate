@@ -34,14 +34,17 @@ defmodule TeslaMate.UpdaterTest do
     with_mocks MojitoMock.vsn("v5.1.2") do
       ## current_version > new_version
       {:ok, pid} = start_updater(name, "5.1.3-dev", id: 0)
+      Process.sleep(100)
       assert nil == Updater.get_update(pid)
 
       ## current_version == new_version
       {:ok, pid} = start_updater(name, "5.1.2", id: 1)
+      Process.sleep(100)
       assert nil == Updater.get_update(pid)
 
       ## current_version < new_version
       {:ok, pid} = start_updater(name, "4.99.0", id: 2)
+      Process.sleep(100)
       assert "5.1.2" == Updater.get_update(pid)
     end
   end

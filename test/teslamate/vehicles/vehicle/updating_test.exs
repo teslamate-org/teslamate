@@ -16,13 +16,14 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
       {:error, :vehicle_unavailable},
       {:ok, %TeslaApi.Vehicle{state: "offline"}},
       {:ok, update_event(now_ts + 5, "installing", "2019.8.4 530d1d3")},
-      {:ok, update_event(now_ts + 6, "", "2019.8.5 3aaa23d")}
+      {:ok, update_event(now_ts + 6, "", "2019.8.5 3aaa23d")},
+      fn -> Process.sleep(10_000) end
     ]
 
     start_date = DateTime.from_unix!(now_ts, :millisecond)
     end_date = DateTime.from_unix!(now_ts + 6, :millisecond)
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     d0 = DateTime.from_unix!(now_ts - 1, :millisecond)
     assert_receive {:start_state, car_id, :online, date: ^d0}, 600
@@ -63,16 +64,17 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
       {:ok, online_event()},
       {:ok, update_event(now_ts - 1, "available", nil)},
       {:ok, update_event(now_ts, "installing", "2019.8.4 530d1d3")},
-      {:ok, update_event(now_ts + 1, "foo", "2019.8.5 3aaa23d")}
+      {:ok, update_event(now_ts + 1, "foo", "2019.8.5 3aaa23d")},
+      fn -> Process.sleep(10_000) end
     ]
 
     start_date = DateTime.from_unix!(now_ts, :millisecond)
     end_date = DateTime.from_unix!(now_ts + 1, :millisecond)
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     d0 = DateTime.from_unix!(now_ts - 1, :millisecond)
-    assert_receive {:start_state, car_id, :online, date: ^d0}
+    assert_receive {:start_state, car_id, :online, date: ^d0}, 600
     assert_receive {:insert_position, ^car_id, %{}}
 
     assert_receive {:pubsub,
@@ -105,7 +107,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
       fn -> Process.sleep(10_000) end
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     d0 = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car_id, :online, date: ^d0}
@@ -121,7 +123,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
     assert_receive {:cancel_update, _upate_id}, 200
 
     d1 = DateTime.from_unix!(now_ts + 10, :millisecond)
-    assert_receive {:start_state, ^car_id, :online, date: ^d1}, 400
+    assert_receive {:start_state, ^car_id, :online, date: ^d1}, 600
     assert_receive {:insert_position, ^car_id, %{}}
 
     assert_receive {:pubsub,

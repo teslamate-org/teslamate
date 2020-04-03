@@ -122,7 +122,7 @@ defmodule TeslaMate.SettingsTest do
       suspend_after_idle_min: 60,
       req_not_unlocked: true,
       free_supercharging: true,
-      use_streaming_api: true
+      use_streaming_api: false
     }
     @invalid_attrs %{
       suspend_min: nil,
@@ -141,7 +141,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.suspend_after_idle_min == 15
       assert settings.req_not_unlocked == true
       assert settings.free_supercharging == false
-      assert settings.use_streaming_api == false
+      assert settings.use_streaming_api == true
     end
 
     test "update_car_settings/2 with valid data updates the settings" do
@@ -158,7 +158,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.suspend_after_idle_min == 60
       assert settings.req_not_unlocked == true
       assert settings.free_supercharging == true
-      assert settings.use_streaming_api == true
+      assert settings.use_streaming_api == false
     end
 
     test "update_car_settings/2 publishes the settings" do
