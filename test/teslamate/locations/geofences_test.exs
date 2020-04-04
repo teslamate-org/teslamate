@@ -27,18 +27,14 @@ defmodule TeslaMate.LocationsGeofencesTest do
     longitude: nil,
     radius: nil,
     cost_per_kwh: -0.01,
-    session_fee: -0.01,
-    sleep_mode_whitelist: nil,
-    sleep_mode_blacklist: nil
+    session_fee: -0.01
   }
 
   describe "geofences" do
     test "list_geofences/0 returns all geofences" do
       geofence = geofence_fixture()
 
-      geofences =
-        Locations.list_geofences()
-        |> Enum.map(&Repo.preload(&1, [:sleep_mode_blacklist, :sleep_mode_whitelist]))
+      geofences = Locations.list_geofences()
 
       assert geofences == [geofence]
     end
@@ -56,9 +52,6 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.radius == 42
       assert geofence.cost_per_kwh == nil
       assert geofence.session_fee == nil
-      geofence = Repo.preload(geofence, [:sleep_mode_whitelist, :sleep_mode_blacklist])
-      assert geofence.sleep_mode_blacklist == []
-      assert geofence.sleep_mode_whitelist == []
     end
 
     test "create_geofence/1 with invalid data returns error changeset" do
@@ -140,33 +133,23 @@ defmodule TeslaMate.LocationsGeofencesTest do
     end
 
     test "update_geofence/2 with valid data updates the geofence" do
-      car = car_fixture()
       geofence = geofence_fixture()
 
-      attrs =
-        Enum.into(%{sleep_mode_whitelist: [car], sleep_mode_blacklist: [car]}, @update_attrs)
+      assert {:ok, %GeoFence{id: id} = geofence} =
+               Locations.update_geofence(geofence, @update_attrs)
 
-      assert {:ok, %GeoFence{id: id} = geofence} = Locations.update_geofence(geofence, attrs)
       assert geofence.name == "bar"
       assert geofence.latitude == 53.514521
       assert geofence.longitude == 14.350144
       assert geofence.radius == 43
       assert geofence.cost_per_kwh == Decimal.from_float(0.0079)
       assert geofence.session_fee == Decimal.from_float(5.00)
-      assert geofence.sleep_mode_blacklist == [car]
-      assert geofence.sleep_mode_whitelist == [car]
 
       assert {:ok, %GeoFence{} = geofence} =
-               Locations.update_geofence(geofence, %{
-                 cost_per_kwh: nil,
-                 session_fee: nil,
-                 sleep_mode_whitelist: []
-               })
+               Locations.update_geofence(geofence, %{cost_per_kwh: nil, session_fee: nil})
 
       assert geofence.cost_per_kwh == nil
       assert geofence.session_fee == nil
-      assert geofence.sleep_mode_blacklist == [car]
-      assert geofence.sleep_mode_whitelist == []
     end
 
     test "update_geofence/2 with invalid data returns error changeset" do
@@ -443,7 +426,7 @@ defmodule TeslaMate.LocationsGeofencesTest do
       |> Enum.into(@valid_attrs)
       |> Locations.create_geofence()
 
-    Repo.preload(geofence, [:sleep_mode_whitelist, :sleep_mode_blacklist])
+    geofence
   end
 
   defp car_fixture(attrs \\ %{}) do

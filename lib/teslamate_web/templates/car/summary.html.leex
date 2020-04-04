@@ -1,9 +1,13 @@
 <div class="car card">
    <div class="card-image">
-     <figure data-id="<%= @car.id %>" phx-update="ignore" phx-hook="SimpleMap">
-        <div id="map_<%= @car.id %>" class="map" style="height: 175px; position: relative;" />
+     <figure data-id="<%= @car.id %>" data-marker="arrow" phx-hook="SimpleMap" phx-update="ignore">
+        <div id="map_<%= @car.id %>" class="map" style="height: 175px; position: relative;" >
+          <div class="spinner">
+            <span class="is-loading"/>
+          </div>
+        </div>
     </figure>
-    <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude}",
+    <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude},#{@summary.heading}",
                                             phx_hook: "TriggerChange",
                                             class: "is-hidden",
                                             disabled: true
@@ -279,21 +283,14 @@
           not is_nil(@error) ->
             link @error, to: "#", class: "button is-danger is-small is-outlined is-fullwidth", disabled: true
 
-          @car.settings.sleep_mode_enabled and
           @summary.state == :online and
           !@summary.sentry_mode and
           !@summary.is_user_present and
           !@summary.is_preconditioning and
           @summary.locked->
-            disabled =
-              case Locations.may_fall_asleep_at?(@car, @summary) do
-                {:ok, may_fall_asleep?} -> not may_fall_asleep?
-                {:error, _reason} -> true
-              end
-
             link gettext("try to sleep"), to: "#", phx_click: "suspend_logging",
-                                          class: "button is-info is-small is-outlined is-fullwidth" <> (if @loading, do: " is-loading", else: ""),
-                                          disabled: disabled
+                                          class: "button is-info is-small is-outlined is-fullwidth" <>
+                                                   (if @loading, do: " is-loading", else: "")
 
           @summary.state == :suspended ->
             link gettext("cancel sleep attempt"), to: "#", phx_click: "resume_logging",

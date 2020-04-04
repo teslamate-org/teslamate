@@ -9,7 +9,7 @@ defmodule TeslaMate.Log do
   import Ecto.Query, warn: false
 
   alias __MODULE__.{Car, Drive, Update, ChargingProcess, Charge, Position, State}
-  alias TeslaMate.{Repo, Locations, Terrain, Settings}
+  alias TeslaMate.{Repo, Locations, Settings}
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Settings.{CarSettings, GlobalSettings}
 
@@ -38,10 +38,11 @@ defmodule TeslaMate.Log do
     end
   end
 
-  def update_car(%Car{} = car, attrs) do
-    car
-    |> Car.changeset(attrs)
-    |> Repo.update()
+  def update_car(%Car{} = car, attrs, opts \\ []) do
+    with {:ok, car} <- car |> Car.changeset(attrs) |> Repo.update() do
+      preloads = Keyword.get(opts, :preload, [])
+      {:ok, Repo.preload(car, preloads, force: true)}
+    end
   end
 
   def recalculate_efficiencies(%GlobalSettings{} = settings) do
@@ -142,24 +143,13 @@ defmodule TeslaMate.Log do
 
   ## Position
 
-  @terrain (case Mix.env() do
-              :test -> TerrainMock
-              _____ -> Terrain
-            end)
-
   def insert_position(%Drive{id: id, car_id: car_id}, attrs) do
-    elevation = @terrain.get_elevation({attrs.latitude, attrs.longitude})
-    attrs = Map.put(attrs, :elevation, elevation)
-
     %Position{car_id: car_id, drive_id: id}
     |> Position.changeset(attrs)
     |> Repo.insert()
   end
 
   def insert_position(%Car{id: id}, attrs) do
-    elevation = @terrain.get_elevation({attrs.latitude, attrs.longitude})
-    attrs = Map.put(attrs, :elevation, elevation)
-
     %Position{car_id: id}
     |> Position.changeset(attrs)
     |> Repo.insert()
@@ -183,8 +173,25 @@ defmodule TeslaMate.Log do
   def get_positions_without_elevation(min_id \\ 0, opts \\ []) do
     limit = Keyword.get(opts, :limit, 100)
 
+    non_streamed_drives =
+      Repo.all(
+        from d in subquery(
+               from p in Position,
+                 select: %{
+                   drive_id: p.drive_id,
+                   streamed_count:
+                     count()
+                     |> filter(not is_nil(p.odometer) and is_nil(p.ideal_battery_range_km))
+                 },
+                 where: not is_nil(p.drive_id),
+                 group_by: p.drive_id
+             ),
+             select: d.drive_id,
+             where: d.streamed_count == 0
+      )
+
     Position
-    |> where([p], p.id > ^min_id and is_nil(p.elevation))
+    |> where([p], p.id > ^min_id and is_nil(p.elevation) and p.drive_id in ^non_streamed_drives)
     |> order_by(asc: :id)
     |> limit(^limit)
     |> Repo.all()
@@ -215,7 +222,7 @@ defmodule TeslaMate.Log do
   def close_drive(%Drive{id: id} = drive, opts \\ []) do
     drive = Repo.preload(drive, [:car])
 
-    query =
+    drive_data =
       from p in Position,
         select: %{
           count: count() |> over(:w),
@@ -226,22 +233,21 @@ defmodule TeslaMate.Log do
           speed_max: max(p.speed) |> over(:w),
           power_max: max(p.power) |> over(:w),
           power_min: min(p.power) |> over(:w),
-          power_avg: avg(p.power) |> over(:w),
           start_date: first_value(p.date) |> over(:w),
           end_date: last_value(p.date) |> over(:w),
           start_km: first_value(p.odometer) |> over(:w),
           end_km: last_value(p.odometer) |> over(:w),
-          start_ideal_range_km: first_value(p.ideal_battery_range_km) |> over(:w),
-          end_ideal_range_km: last_value(p.ideal_battery_range_km) |> over(:w),
-          start_rated_range_km: first_value(p.rated_battery_range_km) |> over(:w),
-          end_rated_range_km: last_value(p.rated_battery_range_km) |> over(:w),
           distance: (last_value(p.odometer) |> over(:w)) - (first_value(p.odometer) |> over(:w)),
           duration_min:
             fragment(
               "round(extract(epoch from (? - ?)) / 60)::integer",
               last_value(p.date) |> over(:w),
               first_value(p.date) |> over(:w)
-            )
+            ),
+          start_ideal_range_km: -1,
+          end_ideal_range_km: -1,
+          start_rated_range_km: -1,
+          end_rated_range_km: -1
         },
         windows: [
           w: [
@@ -249,8 +255,39 @@ defmodule TeslaMate.Log do
               fragment("? RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING", p.date)
           ]
         ],
-        where: [drive_id: ^id],
+        where: p.drive_id == ^id,
         limit: 1
+
+    non_streamed_drive_data =
+      from p in Position,
+        select: %{
+          start_ideal_range_km: first_value(p.ideal_battery_range_km) |> over(:w),
+          end_ideal_range_km: last_value(p.ideal_battery_range_km) |> over(:w),
+          start_rated_range_km: first_value(p.rated_battery_range_km) |> over(:w),
+          end_rated_range_km: last_value(p.rated_battery_range_km) |> over(:w)
+        },
+        windows: [
+          w: [
+            order_by:
+              fragment("? RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING", p.date)
+          ]
+        ],
+        where:
+          p.drive_id == ^id and
+            not is_nil(p.ideal_battery_range_km) and
+            not is_nil(p.odometer),
+        limit: 1
+
+    query =
+      from d0 in subquery(drive_data),
+        join: d1 in subquery(non_streamed_drive_data),
+        select: %{
+          d0
+          | start_ideal_range_km: d1.start_ideal_range_km,
+            end_ideal_range_km: d1.end_ideal_range_km,
+            start_rated_range_km: d1.start_rated_range_km,
+            end_rated_range_km: d1.end_rated_range_km
+        }
 
     case Repo.one(query) do
       %{count: count, distance: distance} = attrs when count >= 2 and distance >= 0.01 ->

@@ -4,7 +4,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
   alias TeslaMate.{Log, Terrain}
   alias TeslaMate.Log.Position
 
-  defp start_mapping(name, responses) do
+  defp start_terrain(name, responses) do
     srtm_name = :"srtm_#{name}"
 
     {:ok, _pid} = start_supervised({SRTMMock, name: srtm_name, pid: self(), responses: responses})
@@ -18,18 +18,20 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
   test "return the elevation", %{test: name} do
     car = car_fixture()
 
+    {:ok, drive} = Log.start_drive(car)
+
     positions =
       %{date: DateTime.utc_now(), latitude: 0, longitude: 0}
       |> List.duplicate(201)
       |> List.replace_at(50, %{date: DateTime.utc_now(), latitude: 1, longitude: 1})
       |> List.replace_at(150, %{date: DateTime.utc_now(), latitude: 1, longitude: 1})
       |> Enum.map(fn position ->
-        {:ok, pos} = Log.insert_position(car, position)
+        {:ok, pos} = Log.insert_position(drive, position)
         pos
       end)
 
     :ok =
-      start_mapping(name, %{
+      start_terrain(name, %{
         {0.0, 0.0} => fn -> {:ok, 42} end,
         {1.0, 1.0} => fn ->
           Process.sleep(100)
@@ -65,6 +67,8 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
   test "handles errors during update!", %{test: name} do
     car = car_fixture()
 
+    {:ok, drive} = Log.start_drive(car)
+
     [p0, p1, p2, p3, p4, p5] =
       [
         %{date: DateTime.utc_now(), latitude: 0, longitude: 0},
@@ -75,12 +79,20 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
         %{date: DateTime.utc_now(), latitude: 0, longitude: 0}
       ]
       |> Enum.map(fn position ->
-        {:ok, pos} = Log.insert_position(car, position)
+        {:ok, pos} = Log.insert_position(drive, position)
         pos
       end)
 
+    ## Does not get elevation for non-drive positions
+
+    {:ok, _pos} =
+      Log.insert_position(car, %{date: DateTime.utc_now(), latitude: 69, longitude: 69})
+
+    {:ok, _pos} =
+      Log.insert_position(car, %{date: DateTime.utc_now(), latitude: 99, longitude: 99})
+
     :ok =
-      start_mapping(name, %{
+      start_terrain(name, %{
         {0.0, 0.0} => fn -> {:ok, 42} end,
         {1.0, 1.0} => fn -> {:error, :boom} end,
         {42.0, 42.0} => fn ->

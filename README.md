@@ -84,20 +84,6 @@ The full TeslaMate documentation is available on [Read the Docs](https://teslama
 - Development and Contributing
   - [Development](https://teslamate.readthedocs.io/en/latest/development.html)
 
-## Donations
-
-TeslaMate is open source and completely free for everyone to use.
-
-Maintaining this project isn't effortless, or free. If you would like to
-support further development, that would be awesome. If you don't, no problem;
-just share your love and show your support.
-
-<p align="center">
-  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YE4CPXRAV9CVL&source=url">
-    <img src="docs/images/paypal-donate-button.png" alt="Donate with PayPal" />
-  </a>
-</p>
-
 ## Credits
 
 - Authors: Adrian Kumpf – [List of contributors](https://github.com/adriankumpf/teslamate/graphs/contributors)

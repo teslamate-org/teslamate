@@ -3,7 +3,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
   alias TeslaMate.{Locations, Settings, Log, Repo}
   alias TeslaMate.Locations.GeoFence
-  alias TeslaMate.Log.Car
 
   import TestHelper, only: [decimal: 1]
   import Ecto.Query
@@ -203,8 +202,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     end
 
     test "validates cahnges when creating a new geo-fence", %{conn: conn} do
-      %Car{id: car_id} = car_fixture()
-
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
 
       html =
@@ -232,7 +229,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                field_name,
                field_cost_per_kwh,
                field_session_fee,
-               field_sleep_mode,
                _
              ] = Floki.find(html, ".field.is-horizontal")
 
@@ -250,11 +246,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                field_session_fee
                |> Floki.find("span")
                |> Floki.text()
-
-      assert ["checked"] =
-               field_sleep_mode
-               |> Floki.find("#sleep_mode_#{car_id}")
-               |> Floki.attribute("checked")
 
       html =
         render_submit(view, :save, %{
@@ -281,7 +272,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                field_name,
                field_cost_per_kwh,
                field_session_fee,
-               _field_sleep_mode,
                _
              ] = Floki.find(html, ".field.is-horizontal")
 
@@ -360,103 +350,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["post office", "-25.06619, -130.1005", "15 m", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
-  end
-
-  test "toggles sleep mode status", %{conn: conn} do
-    %Car{id: car_id} = car = car_fixture()
-    %Car{id: another_car_id} = another_car = car_fixture(vid: 43, eid: 43, vin: "43")
-
-    {:ok, _settings} =
-      Settings.get_car_settings!(another_car)
-      |> Settings.update_car_settings(%{sleep_mode_enabled: false})
-
-    assert {:ok, view, html} = live(conn, "/geo-fences/new")
-
-    assert ["checked"] =
-             html
-             |> Floki.parse_document!()
-             |> Floki.find("#sleep_mode_#{car.id}")
-             |> Floki.attribute("checked")
-
-    assert [] =
-             html
-             |> Floki.parse_document!()
-             |> Floki.find("#sleep_mode_#{another_car.id}")
-             |> Floki.attribute("checked")
-
-    assert [] =
-             render_click(view, :toggle, %{checked: "false", car: to_string(car.id)})
-             |> Floki.parse_document!()
-             |> Floki.find("#sleep_mode_#{car.id}")
-             |> Floki.attribute("checked")
-
-    assert ["checked"] =
-             render_click(view, :toggle, %{checked: "true", car: to_string(another_car.id)})
-             |> Floki.parse_document!()
-             |> Floki.find("#sleep_mode_#{another_car.id}")
-             |> Floki.attribute("checked")
-
-    render_submit(view, :save, %{
-      geo_fence: %{
-        name: "post office",
-        latitude: -25.066188,
-        longitude: -130.100502,
-        radius: 25
-      }
-    })
-
-    assert_redirect(view, "/geo-fences")
-
-    assert [
-             %GeoFence{
-               id: id,
-               sleep_mode_blacklist: [%Car{id: ^car_id}],
-               sleep_mode_whitelist: [%Car{id: ^another_car_id}]
-             }
-           ] =
-             Locations.list_geofences()
-             |> Enum.map(&Repo.preload(&1, [:sleep_mode_blacklist, :sleep_mode_whitelist]))
-
-    # enable sleep mode(s)
-
-    assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
-
-    assert [] =
-             html
-             |> Floki.parse_document!()
-             |> Floki.find("#sleep_mode_#{car.id}")
-             |> Floki.attribute("checked")
-
-    assert ["checked"] =
-             html
-             |> Floki.parse_document!()
-             |> Floki.find("#sleep_mode_#{another_car.id}")
-             |> Floki.attribute("checked")
-
-    assert ["checked"] =
-             render_click(view, :toggle, %{checked: "true", car: to_string(car.id)})
-             |> Floki.parse_document!()
-             |> Floki.find("#sleep_mode_#{car.id}")
-             |> Floki.attribute("checked")
-
-    assert [] =
-             render_click(view, :toggle, %{checked: "false", car: to_string(another_car.id)})
-             |> Floki.parse_document!()
-             |> Floki.find("#sleep_mode_#{another_car.id}")
-             |> Floki.attribute("checked")
-
-    render_submit(view, :save, %{geo_fence: %{name: "post_office", radius: 20}})
-    assert_redirect(view, "/geo-fences")
-
-    assert [
-             %GeoFence{
-               id: ^id,
-               sleep_mode_blacklist: [],
-               sleep_mode_whitelist: []
-             }
-           ] =
-             Locations.list_geofences()
-             |> Enum.map(&Repo.preload(&1, [:sleep_mode_blacklist, :sleep_mode_whitelist]))
   end
 
   describe "grafana URL" do
@@ -666,7 +559,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     end
 
     test "adds charging costs", %{conn: conn} do
-      %Car{id: car_id} = car = car_fixture()
+      car = car_fixture()
       :ok = insert_charging_processes(car, {47.81444104508753, 12.367612123489382})
       :ok = insert_charging_processes(car, {42.0, 69.0})
 
@@ -692,12 +585,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                {"button", [_, {"phx-click", "calc-costs"}, {"phx-value-result", "yes"}],
                 ["Add costs retroactively"]}
              ] = html |> Floki.find(".modal.is-active") |> Floki.find(".modal-card-foot button")
-
-      assert [] =
-               render_click(view, :toggle, %{checked: "false", car: to_string(car.id)})
-               |> Floki.parse_document!()
-               |> Floki.find("#sleep_mode_#{car.id}")
-               |> Floki.attribute("checked")
 
       render_click(view, "calc-costs", %{"result" => "yes"})
       assert_redirect(view, "/geo-fences")
@@ -739,16 +626,12 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                longitude: 12.367768,
                radius: 30.0,
                cost_per_kwh: decimal("0.3300"),
-               session_fee: decimal("5.00"),
-               sleep_mode_blacklist: [%Car{id: ^car_id}],
-               sleep_mode_whitelist: []
-             } =
-               Repo.get(GeoFence, id)
-               |> Repo.preload([:sleep_mode_blacklist, :sleep_mode_whitelist])
+               session_fee: decimal("5.00")
+             } = Repo.get(GeoFence, id)
     end
 
     test "skips adding charging costs", %{conn: conn} do
-      %Car{id: car_id} = car = car_fixture()
+      car = car_fixture()
       :ok = insert_charging_processes(car, {47.81444104508753, 12.367612123489382})
 
       assert {:ok, view, html} = live(conn, "/geo-fences/new")
@@ -773,12 +656,6 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                 ["Add costs retroactively"]}
              ] = html |> Floki.find(".modal.is-active") |> Floki.find(".modal-card-foot button")
 
-      assert [] =
-               render_click(view, :toggle, %{checked: "false", car: to_string(car.id)})
-               |> Floki.parse_document!()
-               |> Floki.find("#sleep_mode_#{car.id}")
-               |> Floki.attribute("checked")
-
       render_click(view, "calc-costs", %{"result" => "no"})
       assert_redirect(view, "/geo-fences")
 
@@ -795,12 +672,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                longitude: 12.367768,
                radius: 30.0,
                cost_per_kwh: decimal("0.3300"),
-               session_fee: decimal("5.00"),
-               sleep_mode_blacklist: [%Car{id: ^car_id}],
-               sleep_mode_whitelist: []
-             } =
-               Repo.get(GeoFence, id)
-               |> Repo.preload([:sleep_mode_blacklist, :sleep_mode_whitelist])
+               session_fee: decimal("5.00")
+             } = Repo.get(GeoFence, id)
     end
 
     defp insert_charging_processes(car, {lat, lng}) do

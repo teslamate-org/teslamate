@@ -7,7 +7,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   alias TeslaMateWeb.Router.Helpers, as: Routes
   alias TeslaMateWeb.SettingsView
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
-  alias TeslaMate.Settings
+  alias TeslaMate.{Settings, Updater}
 
   @impl true
   def render(assigns), do: SettingsView.render("index.html", assigns)
@@ -16,16 +16,17 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
     if connected?(socket), do: Gettext.put_locale(locale)
 
-    socket =
-      socket
-      |> assign_new(:addresses_migrated?, fn -> addresses_migrated?() end)
-      |> assign_new(:car_settings, fn -> Settings.get_car_settings() |> prepare() end)
-      |> assign_new(:car, fn -> nil end)
-      |> assign(:global_settings, settings |> prepare())
-      |> assign(:refreshing_addresses?, nil)
-      |> assign(:refresh_error, nil)
+    assigns = %{
+      addresses_migrated?: addresses_migrated?(),
+      car_settings: Settings.get_car_settings() |> prepare(),
+      car: nil,
+      global_settings: settings |> prepare(),
+      update: Updater.get_update(),
+      refreshing_addresses?: nil,
+      refresh_error: nil
+    }
 
-    {:ok, socket}
+    {:ok, assign(socket, assigns)}
   end
 
   @impl true
@@ -85,17 +86,9 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   def handle_event("change", params, %{assigns: %{car_settings: settings, car: id}} = socket) do
     orig = get_in(settings, [id, :original])
 
-    # workaround #1: switching between cars caused leex to not be re-evaluated.
+    # workaround: switching between cars caused leex to not be re-evaluated.
     # Solution: custom ":as" attribute on form_for/4 for each CarSetting changeset
     params = params["car_settings_#{id}"]
-
-    # workaround #2: enableding sleep mode caused previously disabled checkbox to be disabled
-    params =
-      if params["sleep_mode_enabled"] == "true" and not orig.sleep_mode_enabled do
-        %{"sleep_mode_enabled" => "true"}
-      else
-        params
-      end
 
     settings =
       orig

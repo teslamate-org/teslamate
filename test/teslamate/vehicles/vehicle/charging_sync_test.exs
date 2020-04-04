@@ -11,7 +11,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
 
   @tag :capture_log
   test "handles invalid charge data", %{test: name} do
-    car = car_fixture()
+    %{eid: eid} = car = car_fixture()
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
@@ -30,9 +30,11 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
                |> Process.whereis()
                |> Process.link()
 
+             assert_receive {ApiMock, {:stream, ^eid, _}}
              assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
              assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
              assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
+             assert_receive {:"$websockex_cast", :disconnect}
 
              refute_receive _
            end) =~

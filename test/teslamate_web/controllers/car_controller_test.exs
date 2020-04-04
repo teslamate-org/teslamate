@@ -343,7 +343,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "renders current vehicle stats [:falling asleep]", %{conn: conn} do
-      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1, use_streaming_api: false})
 
       events = [
         {:ok,
@@ -475,7 +475,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     test "suspends logging", %{conn: conn} do
-      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60, use_streaming_api: false})
 
       events = [
         {:ok,
@@ -496,7 +496,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     test "returns error if suspending is not possible", %{conn: conn} do
-      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60, use_streaming_api: false})
 
       events = [
         {:ok,
@@ -520,7 +520,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     test "resumes logging", %{conn: conn} do
       alias TeslaMate.Vehicles.Vehicle.Summary
 
-      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1})
+      _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1, use_streaming_api: false})
 
       events = [
         {:ok,

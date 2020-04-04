@@ -57,8 +57,8 @@ defmodule LogMock do
     GenServer.call(name, {:get_positions_without_elevation, min_id, opts})
   end
 
-  def update_car(name, car, attrs) do
-    GenServer.call(name, {:update_car, car, attrs})
+  def update_car(name, car, attrs, opts) do
+    GenServer.call(name, {:update_car, car, attrs, opts})
   end
 
   def get_latest_position(name, car) do
@@ -147,7 +147,7 @@ defmodule LogMock do
     {:reply, {[], nil}, state}
   end
 
-  def handle_call({:update_car, car, attrs} = _action, _from, %State{pid: _pid} = state) do
+  def handle_call({:update_car, car, attrs, _opts} = _action, _from, %State{pid: _pid} = state) do
     result =
       car
       |> Car.changeset(attrs)

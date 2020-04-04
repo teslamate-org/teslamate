@@ -21,7 +21,7 @@ defmodule TeslaMate.Application do
         [
           TeslaMate.Repo,
           TeslaMate.Api,
-          TeslaMate.Locations,
+          TeslaMate.Updater,
           TeslaMateWeb.Endpoint,
           TeslaMate.Terrain,
           TeslaMate.Vehicles,
@@ -34,7 +34,7 @@ defmodule TeslaMate.Application do
         [
           TeslaMate.Repo,
           TeslaMate.Api,
-          TeslaMate.Locations,
+          TeslaMate.Updater,
           TeslaMateWeb.Endpoint,
           {TeslaMate.Terrain, disabled: true},
           {TeslaMate.Repair, limit: 250},

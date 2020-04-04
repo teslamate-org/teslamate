@@ -217,77 +217,48 @@ defmodule TeslaMateWeb.SettingsLiveTest do
   end
 
   describe "car settings" do
-    alias TeslaMate.Log
+    alias TeslaMate.{Log, Settings}
 
-    defp car_fixture(attrs \\ %{}) do
-      {:ok, car} =
-        attrs
-        |> Enum.into(%{
+    defp car_fixture(attrs) do
+      attrs =
+        Enum.into(attrs, %{
           efficiency: 0.153,
           eid: 42,
           model: "S",
           vid: 42,
           name: "foo",
           trim_badging: "P100D",
-          vin: "12345F"
+          vin: "12345F",
+          settings: %{}
         })
-        |> Log.create_car()
+
+      {:ok, car} = Log.create_car(attrs)
+
+      {:ok, _} =
+        car
+        |> Settings.get_car_settings!()
+        |> Settings.update_car_settings(attrs.settings)
 
       car
     end
 
-    test "Greys out input fields if sleep mode is disabled", %{conn: conn} do
-      car = car_fixture()
+    test "hides most of the sleep mode settings if streaming is enabled", %{conn: conn} do
+      car = car_fixture(settings: %{use_streaming_api: true})
 
-      ids = [
-        "#car_settings_#{car.id}_suspend_min",
-        "#car_settings_#{car.id}_suspend_after_idle_min",
-        "#car_settings_#{car.id}_req_no_shift_state_reading",
-        "#car_settings_#{car.id}_req_no_temp_reading",
-        "#car_settings_#{car.id}_req_not_unlocked"
-      ]
+      assert {:ok, _view, html} = live(conn, "/settings")
+      html = Floki.parse_document!(html)
 
-      assert {:ok, view, html} = live(conn, "/settings")
-
-      assert ["checked"] ==
-               html
-               |> Floki.parse_document!()
-               |> Floki.find("#car_settings_#{car.id}_sleep_mode_enabled")
-               |> Floki.attribute("checked")
-
-      html =
-        render_change(view, :change, %{"car_settings_#{car.id}" => %{sleep_mode_enabled: false}})
-
-      assert [] =
-               html
-               |> Floki.parse_document!()
-               |> Floki.find("#car_settings_#{car.id}_sleep_mode_enabled")
-               |> Floki.attribute("checked")
-
-      for id <- ids do
-        assert ["disabled"] =
-                 html
-                 |> Floki.parse_document!()
-                 |> Floki.find(id)
-                 |> Floki.attribute("disabled")
-      end
-
-      html =
-        render_change(view, :change, %{"car_settings_#{car.id}" => %{sleep_mode_enabled: true}})
-        |> Floki.parse_document!()
+      assert [] = Floki.find(html, "#car_settings_#{car.id}_suspend_min")
+      assert [] = Floki.find(html, "#car_settings_#{car.id}_suspend_after_idle_min")
 
       assert ["checked"] =
                html
-               |> Floki.find("#car_settings_#{car.id}_sleep_mode_enabled")
+               |> Floki.find("#car_settings_#{car.id}_req_not_unlocked")
                |> Floki.attribute("checked")
-
-      for id <- ids do
-        assert [] = html |> Floki.find(id) |> Floki.attribute("disabled")
-      end
     end
 
-    test "shows 21 and 15 minutes by default", %{conn: conn} do
-      car = car_fixture()
+    test "shows 21 and 15 minutes by default if streaming is disabled", %{conn: conn} do
+      car = car_fixture(settings: %{use_streaming_api: false})
 
       assert {:ok, _view, html} = live(conn, "/settings")
       html = Floki.parse_document!(html)
@@ -320,6 +291,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert [
                {"select", _,
                 [
+                  {"option", [{"value", "3"}], ["3 min"]},
                   {"option", [{"value", "5"}], ["5 min"]},
                   {"option", [{"value", "10"}], ["10 min"]},
                   {"option", [{"value", "15"}, {"selected", "selected"}], ["15 min"]},
@@ -336,28 +308,11 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              ] = Floki.find(html, "#car_settings_#{car.id}_suspend_after_idle_min")
     end
 
-    test "shows false, false, true by default", %{conn: conn} do
-      car =
-        car_fixture(
-          settings: %{
-            req_no_shift_state_reading: false,
-            req_no_temp_reading: false,
-            req_not_unlocked: true
-          }
-        )
+    test "By default, the vehicle must be locked to fall asleep", %{conn: conn} do
+      car = car_fixture(settings: %{req_not_unlocked: true})
 
       assert {:ok, _view, html} = live(conn, "/settings")
       html = Floki.parse_document!(html)
-
-      assert [] =
-               html
-               |> Floki.find("#car_settings_#{car.id}_req_no_shift_state_reading")
-               |> Floki.attribute("checked")
-
-      assert [] =
-               html
-               |> Floki.find("#car_settings_#{car.id}_req_no_temp_reading")
-               |> Floki.attribute("checked")
 
       assert ["checked"] =
                html
@@ -371,17 +326,18 @@ defmodule TeslaMateWeb.SettingsLiveTest do
           settings: %{
             suspend_min: 21,
             suspend_after_idle_min: 15,
-            req_no_shift_state_reading: false,
-            req_no_temp_reading: false,
             req_not_unlocked: true,
-            free_supercharging: false
+            free_supercharging: false,
+            use_streaming_api: false
           }
         )
 
       assert {:ok, view, html} = live(conn, "/settings")
 
       assert [{"option", [{"value", "90"}, {"selected", "selected"}], ["90 min"]}] =
-               render_change(view, :change, %{"car_settings_#{car.id}" => %{suspend_min: 90}})
+               render_change(view, :change, %{
+                 "car_settings_#{car.id}" => %{suspend_min: 90, use_streaming_api: false}
+               })
                |> Floki.parse_document!()
                |> Floki.find("#car_settings_#{car.id}_suspend_min option")
                |> Enum.filter(&match?({_, [_, {"selected", "selected"}], _}, &1))
@@ -391,7 +347,10 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert [{"option", [{"value", "30"}, {"selected", "selected"}], ["30 min"]}] =
                render_change(view, :change, %{
-                 "car_settings_#{car.id}" => %{suspend_after_idle_min: 30}
+                 "car_settings_#{car.id}" => %{
+                   suspend_after_idle_min: 30,
+                   use_streaming_api: false
+                 }
                })
                |> Floki.parse_document!()
                |> Floki.find("#car_settings_#{car.id}_suspend_after_idle_min option")
@@ -400,33 +359,12 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert [settings] = Settings.get_car_settings()
       assert settings.suspend_after_idle_min == 30
 
-      assert ["checked"] =
-               render_change(view, :change, %{
-                 "car_settings_#{car.id}" => %{req_no_shift_state_reading: true}
-               })
-               |> Floki.parse_document!()
-               |> Floki.find("#car_settings_#{car.id}_req_no_shift_state_reading")
-               |> Floki.attribute("checked")
-
-      assert [settings] = Settings.get_car_settings()
-      assert settings.req_no_shift_state_reading == true
-
-      assert ["checked"] =
-               render_change(view, :change, %{
-                 "car_settings_#{car.id}" => %{req_no_temp_reading: true}
-               })
-               |> Floki.parse_document!()
-               |> Floki.find("#car_settings_#{car.id}_req_no_temp_reading")
-               |> Floki.attribute("checked")
-
-      assert [settings] = Settings.get_car_settings()
-      assert settings.req_no_temp_reading == true
+      html =
+        render_change(view, :change, %{"car_settings_#{car.id}" => %{req_not_unlocked: false}})
+        |> Floki.parse_document!()
 
       assert [] =
-               render_change(view, :change, %{
-                 "car_settings_#{car.id}" => %{req_not_unlocked: false}
-               })
-               |> Floki.parse_document!()
+               html
                |> Floki.find("#car_settings_#{car.id}_req_not_unlocked")
                |> Floki.attribute("checked")
 
@@ -437,20 +375,38 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert [] ==
                html
-               |> Floki.parse_document!()
                |> Floki.find("#car_settings_#{car.id}_free_supercharging")
                |> Floki.attribute("checked")
 
+      html =
+        render_change(view, :change, %{"car_settings_#{car.id}" => %{free_supercharging: true}})
+        |> Floki.parse_document!()
+
       assert ["checked"] ==
-               render_change(view, :change, %{
-                 "car_settings_#{car.id}" => %{free_supercharging: true}
-               })
-               |> Floki.parse_document!()
+               html
                |> Floki.find("#car_settings_#{car.id}_free_supercharging")
                |> Floki.attribute("checked")
 
       assert [settings] = Settings.get_car_settings()
       assert settings.free_supercharging == true
+
+      ## Streaming API
+
+      assert [] ==
+               html
+               |> Floki.find("#car_settings_#{car.id}_use_streaming_api")
+               |> Floki.attribute("checked")
+
+      assert ["checked"] ==
+               render_change(view, :change, %{
+                 "car_settings_#{car.id}" => %{use_streaming_api: true}
+               })
+               |> Floki.parse_document!()
+               |> Floki.find("#car_settings_#{car.id}_use_streaming_api")
+               |> Floki.attribute("checked")
+
+      assert [settings] = Settings.get_car_settings()
+      assert settings.use_streaming_api == true
     end
 
     test "changes between cars", %{conn: conn} do
@@ -468,7 +424,9 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       # change settings of car "one"
 
       assert [{"option", [{"value", "90"}, {"selected", "selected"}], ["90 min"]}] =
-               render_change(view, :change, %{"car_settings_#{one.id}" => %{suspend_min: 90}})
+               render_change(view, :change, %{
+                 "car_settings_#{one.id}" => %{suspend_min: 90, use_streaming_api: false}
+               })
                |> Floki.parse_document!()
                |> Floki.find("#car_settings_#{one.id}_suspend_min option")
                |> Enum.filter(&match?({_, [_, {"selected", "selected"}], _}, &1))
@@ -489,7 +447,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                |> Floki.find(".tabs .is-active")
                |> Floki.text()
 
-      assert [{"option", [{"value", "21"}, {"selected", "selected"}], ["21 min"]}] =
+      assert [] =
                html
                |> Floki.parse_document!()
                |> Floki.find("#car_settings_#{two.id}_suspend_min option")
@@ -498,7 +456,9 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       # change settings of car "two"
 
       assert [{"option", [{"value", "60"}, {"selected", "selected"}], ["60 min"]}] =
-               render_click(view, :change, %{"car_settings_#{two.id}" => %{suspend_min: 60}})
+               render_click(view, :change, %{
+                 "car_settings_#{two.id}" => %{suspend_min: 60, use_streaming_api: false}
+               })
                |> Floki.parse_document!()
                |> Floki.find("#car_settings_#{two.id}_suspend_min option")
                |> Enum.filter(&match?({_, [_, {"selected", "selected"}], _}, &1))
@@ -521,6 +481,41 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                |> Floki.parse_document!()
                |> Floki.find("#car_settings_#{one.id}_suspend_min option")
                |> Enum.filter(&match?({_, [_, {"selected", "selected"}], _}, &1))
+    end
+  end
+
+  describe "updates" do
+    alias TeslaMate.Updater
+
+    import Mock
+
+    def github_mock do
+      release = %{"tag_name" => "v1.1.3", "prerelease" => false, "draft" => false}
+      resp = %Mojito.Response{status_code: 200, body: Jason.encode!(release)}
+      {Mojito, [], get: fn _, _, _ -> {:ok, resp} end}
+    end
+
+    test "informs if an update is available", %{conn: conn} do
+      with_mocks [github_mock()] do
+        _pid = start_supervised!({Updater, version: "1.0.0", check_after: 0})
+
+        Process.sleep(1000)
+
+        assert {:ok, _view, html} = live(conn, "/settings")
+        html = Floki.parse_document!(html)
+
+        assert "#{Application.spec(:teslamate, :vsn)} (Update available: 1.1.3)" ==
+                 html
+                 |> Floki.find(".about tr:first-child td")
+                 |> Floki.text()
+
+        assert [
+                 {"a", [_, {"href", "/donate"}, _, _, _], [_, {_, _, ["Donate"]}]},
+                 {"a",
+                  [_, {"href", "https://github.com/adriankumpf/teslamate/releases"}, _, _, _],
+                  [_, {_, _, ["Update available: 1.1.3"]}]}
+               ] = Floki.find(html, ".footer a")
+      end
     end
   end
 end

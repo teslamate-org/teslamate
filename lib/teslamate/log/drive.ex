@@ -13,7 +13,6 @@ defmodule TeslaMate.Log.Drive do
     field :speed_max, :integer
     field :power_max, :float
     field :power_min, :float
-    field :power_avg, :float
     field :start_ideal_range_km, :float
     field :end_ideal_range_km, :float
     field :start_rated_range_km, :float
@@ -54,7 +53,6 @@ defmodule TeslaMate.Log.Drive do
       :speed_max,
       :power_max,
       :power_min,
-      :power_avg,
       :start_ideal_range_km,
       :end_ideal_range_km,
       :start_rated_range_km,

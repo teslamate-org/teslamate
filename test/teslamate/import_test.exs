@@ -82,7 +82,6 @@ defmodule TeslaMate.ImportTest do
                end_rated_range_km: 247.2,
                inside_temp_avg: 26.542857142857144,
                outside_temp_avg: 19.342857142857145,
-               power_avg: nil,
                power_max: nil,
                power_min: nil,
                speed_max: 55
@@ -107,7 +106,6 @@ defmodule TeslaMate.ImportTest do
                end_ideal_range_km: 301.4,
                inside_temp_avg: 28.816000000000003,
                outside_temp_avg: 20.104,
-               power_avg: nil,
                power_max: nil,
                power_min: nil,
                speed_max: 58

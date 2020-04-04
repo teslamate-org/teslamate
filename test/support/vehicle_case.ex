@@ -29,15 +29,7 @@ defmodule TeslaMate.VehicleCase do
         {:ok, _pid} = start_supervised({SettingsMock, name: settings_name, pid: self()})
         {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
         {:ok, _pid} = start_supervised({PubSubMock, name: pubsub_name, pid: self()})
-
-        {:ok, _pid} =
-          start_supervised(
-            {LocationsMock,
-             name: locations_name,
-             pid: self(),
-             blacklist: Keyword.get(opts, :blacklist, []),
-             whitelist: Keyword.get(opts, :whitelist, [])}
-          )
+        {:ok, _pid} = start_supervised({LocationsMock, name: locations_name, pid: self()})
 
         opts =
           Keyword.put_new_lazy(opts, :car, fn ->
@@ -80,7 +72,7 @@ defmodule TeslaMate.VehicleCase do
       end
 
       def online_event(opts \\ []) do
-        now = (DateTime.utc_now() |> DateTime.to_unix()) * 1000
+        now = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
         drive_state =
           Keyword.get(opts, :drive_state, %{latitude: 0.0, longitude: 0.0})
@@ -128,7 +120,7 @@ defmodule TeslaMate.VehicleCase do
             ideal_battery_range: range,
             battery_range: range
           },
-          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0}
+          drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
         )
       end
 
@@ -141,7 +133,7 @@ defmodule TeslaMate.VehicleCase do
             car_version: version,
             software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: state}
           },
-          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0}
+          drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
         )
       end
     end
