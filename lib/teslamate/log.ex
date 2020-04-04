@@ -38,9 +38,10 @@ defmodule TeslaMate.Log do
     end
   end
 
-  def update_car(%Car{} = car, attrs) do
+  def update_car(%Car{} = car, attrs, opts \\ []) do
     with {:ok, car} <- car |> Car.changeset(attrs) |> Repo.update() do
-      {:ok, Repo.preload(car, [:settings], force: true)}
+      preloads = Keyword.get(opts, :preload, [])
+      {:ok, Repo.preload(car, preloads, force: true)}
     end
   end
 

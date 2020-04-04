@@ -259,7 +259,12 @@ defmodule TeslaMate.Import do
     |> case do
       {:ok, vehicle} ->
         car = Vehicles.create_or_update!(vehicle)
-        settings = %CarSettings{suspend_min: 0, suspend_after_idle_min: 99999}
+
+        settings = %CarSettings{
+          suspend_min: 0,
+          suspend_after_idle_min: 99999,
+          use_streaming_api: false
+        }
 
         %Car{car | settings: settings}
 

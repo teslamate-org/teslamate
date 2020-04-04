@@ -618,9 +618,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     {:ok, attrs} = identify(vehicle)
 
+    opts =
+      case data do
+        %Data{import?: true} -> [preload: []]
+        %Data{} -> [preload: [:settings]]
+      end
+
     {:ok, {car, last_state_change, geofence}} =
       Repo.transaction(fn ->
-        {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs])
+        {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs, opts])
 
         :ok = synchronize_updates(vehicle, data)
 
