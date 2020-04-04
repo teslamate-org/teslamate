@@ -552,7 +552,7 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:271
 msgid "Documentation"
-msgstr ""
+msgstr "Dokumentation"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:267
@@ -568,9 +568,9 @@ msgstr "Uppdatering tillgänglig"
 #, elixir-format, fuzzy
 #: lib/teslamate_web/live/car_live/summary.ex:139
 msgid "Doors are open"
-msgstr "Dörrar öppna"
+msgstr "Dörrar är öppna"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Trunk is open"
-msgstr ""
+msgstr "Bakluckan är öppen"
