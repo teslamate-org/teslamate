@@ -1,0 +1,102 @@
+---
+title: Manually fixing data
+---
+
+## Get the ID
+
+First you need to find out the ID of the drive or charge:
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+defaultValue="drive"
+groupId="type"
+values={[
+    { label: 'Drive', value: 'drive', },
+    { label: 'Charge', value: 'charge', },
+]}>
+<TabItem value="drive">
+
+- Open the `Drives` dashboard and click on the start date of the drive.
+- The URL will contain the drive ID, for example `&var-drive_id=9999`.
+
+</TabItem>
+<TabItem value="charge">
+
+- Open the `Charges` dashboard and click on the start date of the charge.
+- The URL will contain the charge id, for example `&var-charging_process_id=9999`.
+
+</TabItem>
+</Tabs>
+
+
+## Terminate a drive or charge
+
+If for some reason a drive or charge hasn't been fully recorded, for example due to a bug or an unexpected restart, you can terminate it manually. Among other things, this assigns an end date to the drive/charge.
+
+Replace `9999` with the actual ID then run the command while the TeslaMate container is running:
+
+<Tabs
+defaultValue="drive"
+groupId="type"
+values={[
+    { label: 'Drive', value: 'drive', },
+    { label: 'Charge', value: 'charge', },
+]}>
+<TabItem value="drive">
+
+```bash
+docker-compose exec teslamate bin/teslamate rpc \
+    "TeslaMate.Repo.get!(TeslaMate.Log.Drive, 9999) |> TeslaMate.Log.close_drive()"
+```
+
+</TabItem>
+<TabItem value="charge">
+
+```bash
+docker-compose exec teslamate bin/teslamate rpc \
+    "TeslaMate.Repo.get!(TeslaMate.Log.ChargingProcess, 9999) |> TeslaMate.Log.complete_charging_process()"
+```
+
+</TabItem>
+</Tabs>
+
+## Delete a drive or charge
+
+If for some reason a drive or charge was recorded incorrectly, you can delete it.
+
+1.  Attach to the **running** database container:
+
+    ```bash
+    docker-compose exec database psql teslamate teslamate
+    ```
+
+    :::note
+    If you get the error `No such service: database`, update your _docker-compose.yml_ or use `db` instead of `database` in the above command.
+    :::
+
+2.  Afterwards replace `9999` with the actual ID then run the query:
+
+    <Tabs
+    defaultValue="drive"
+    groupId="type"
+    values={[
+        { label: 'Drive', value: 'drive', },
+        { label: 'Charge', value: 'charge', },
+    ]}>
+    <TabItem value="drive">
+
+    ```sql
+    DELETE FROM drives WHERE id = 9999;
+    ```
+
+    </TabItem>
+    <TabItem value="charge">
+
+    ```sql
+    DELETE FROM charging_processes WHERE id = 9999;
+    ```
+
+    </TabItem>
+    </Tabs>
