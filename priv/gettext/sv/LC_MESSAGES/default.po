@@ -34,17 +34,17 @@ msgstr "Laddad"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:135
 msgid "asleep"
-msgstr "sover"
+msgstr "vilat"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:130
 msgid "charging"
-msgstr "laddar"
+msgstr "laddat"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:129
 msgid "driving"
-msgstr "kör"
+msgstr "kört"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:134
@@ -59,7 +59,7 @@ msgstr "online"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:131
 msgid "updating"
-msgstr "uppdateras"
+msgstr "uppdaterat"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:63
@@ -102,7 +102,7 @@ msgstr "Laddningsgräns"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:132
 msgid "falling asleep"
-msgstr "somnar"
+msgstr "gått ner i vila"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:136
@@ -149,7 +149,7 @@ msgstr "Geostaket"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:49
 msgid "Idle Time Before Trying to Sleep"
-msgstr "Inaktiv tid innan för att försöka sova"
+msgstr "Inaktiv tid innan försök att gå ner i vila"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:41
@@ -183,7 +183,7 @@ msgstr "Sparar..."
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:31
 msgid "Time to Try Sleeping"
-msgstr "Tid för att försöka sova"
+msgstr "Tid för försök att gå ner i vila"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:39
@@ -226,12 +226,12 @@ msgstr "Förare närvarande"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:292
 msgid "cancel sleep attempt"
-msgstr "avbryt försök att sova"
+msgstr "avbryt försök att vila"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:287
 msgid "try to sleep"
-msgstr "försök att sova"
+msgstr "försök att vila"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:137
@@ -241,7 +241,7 @@ msgstr "Räckvidd (beräk.)"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:92
 msgid "for"
-msgstr "för"
+msgstr "i"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:70
@@ -542,7 +542,7 @@ msgstr "Fortsätt"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:259
 msgid "Mileage"
-msgstr "Vägmätare"
+msgstr "Mätarställning"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:111
@@ -552,7 +552,7 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:271
 msgid "Documentation"
-msgstr ""
+msgstr "Dokumentation"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:267
@@ -568,9 +568,9 @@ msgstr "Uppdatering tillgänglig"
 #, elixir-format, fuzzy
 #: lib/teslamate_web/live/car_live/summary.ex:139
 msgid "Doors are open"
-msgstr "Dörrar öppna"
+msgstr "Dörrar är öppna"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Trunk is open"
-msgstr ""
+msgstr "Bakluckan är öppen"
