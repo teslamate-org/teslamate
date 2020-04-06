@@ -2,6 +2,7 @@
   "annotations": {
     "list": [
       {
+        "$$hashKey": "object:30",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": true,
@@ -77,7 +78,6 @@
       "id": 6,
       "lineColor": "red",
       "maxDataPoints": 500,
-      "options": {},
       "pointColor": "royalblue",
       "scopedVars": {
         "car_id": {
@@ -163,7 +163,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": " $length_unit",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -270,7 +269,6 @@
       "links": [],
       "maxDataPoints": 3,
       "nullPointMode": "connected",
-      "options": {},
       "pieType": "pie",
       "scopedVars": {
         "car_id": {
@@ -386,7 +384,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": " ${length_unit}/h",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -500,7 +497,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": " ${length_unit}/h",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -614,7 +610,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "Cost:",
@@ -733,7 +728,7 @@
         "orientation": "horizontal",
         "showUnfilled": false
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.2",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -847,7 +842,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": " / 100 $length_unit",
       "postfixFontSize": "30%",
       "prefix": "",
@@ -962,7 +956,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "  / 100 $length_unit",
       "postfixFontSize": "30%",
       "prefix": "",
@@ -1080,7 +1073,6 @@
       "legendSortBy": "-ms",
       "lineColor": "rgba(0,0,0,0.1)",
       "metricNameColor": "#000000",
-      "options": {},
       "rangeMaps": [
         {
           "from": "null",
@@ -1109,7 +1101,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH states AS (\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[2, 0]) AS state\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[1, 0]) AS state\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tcar_id = $car_id\n\tUNION\n\tSELECT\n\t\tstart_date AS date,\n\t\tCASE WHEN state = 'offline' THEN 3\n\t\t     WHEN state = 'asleep'  THEN 4\n\t\t     WHEN state = 'online'  THEN 5\n\t\tEND AS state\n\tFROM\n\t\tstates\n\tWHERE\n\t\tcar_id = $car_id\nUNION\n\tSELECT\n    unnest(ARRAY[start_date, end_date]) AS date,\n\t\tunnest(ARRAY[6, 0]) AS state\n\tFROM\n\t\tupdates\n\tWHERE\n\t\tcar_id = $car_id\n)\nSELECT\n\t$__time(date), \n\tstate\nFROM\n\tstates\nWHERE \n  date IS NOT NULL\nORDER BY\n\tdate ASC, state ASC;",
+          "rawSql": "WITH states AS (\n  SELECT\n    unnest(ARRAY [start_date, end_date]) AS date,\n    unnest(ARRAY [2, 0]) AS state\n  FROM charging_processes\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date, end_date]) AS date,\n    unnest(ARRAY [1, 0]) AS state\n  FROM drives\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    start_date AS date,\n    CASE\n      WHEN state = 'offline' THEN 3\n      WHEN state = 'asleep' THEN 4\n      WHEN state = 'online' THEN 5\n    END AS state\n  FROM states\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date, end_date]) AS date,\n    unnest(ARRAY [6, 0]) AS state\n  FROM updates\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND\n  ($__timeFrom() :: timestamp - interval '30 day') < date AND \n  date < ($__timeTo() :: timestamp + interval '30 day') \nORDER BY date ASC, state ASC;",
           "refId": "A",
           "select": [
             [
@@ -1240,7 +1232,6 @@
       },
       "id": 2,
       "links": [],
-      "options": {},
       "pageSize": 100,
       "scopedVars": {
         "car_id": {
@@ -1743,7 +1734,6 @@
       },
       "id": 36,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scopedVars": {
         "car_id": {
@@ -2484,6 +2474,7 @@
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
+        "index": -1,
         "label": "Car",
         "multi": false,
         "name": "car_id",
@@ -2509,6 +2500,7 @@
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "temperature unit",
         "multi": false,
         "name": "temp_unit",
@@ -2534,6 +2526,7 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "length unit",
         "multi": false,
         "name": "length_unit",
@@ -2559,6 +2552,7 @@
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "alternative_length_unit",
@@ -2584,6 +2578,7 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "preferred_range",
@@ -2609,6 +2604,7 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "base_url",
@@ -2634,6 +2630,7 @@
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": null,
         "multi": false,
         "name": "from",
@@ -2683,5 +2680,8 @@
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
+  "variables": {
+    "list": []
+  },
   "version": 1
 }
