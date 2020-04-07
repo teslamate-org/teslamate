@@ -130,11 +130,16 @@ defmodule TeslaApi.Stream do
 
         {:ok, %State{state | disconnects: state.disconnects + 1}}
 
+      {:ok,
+       %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "vehicle_error", "value" => v}} ->
+        Logger.error("Vehicle Error: #{v}")
+        {:ok, state}
+
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "client_error"} = msg} ->
         raise "Client Error: #{inspect(msg)}"
 
-      {:ok, %{"msg_type" => "data:error", "tag" => ^tag} = msg} ->
-        Logger.error("Error: #{inspect(msg)}")
+      {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => type, "value" => v}} ->
+        Logger.error("Error #{inspect(type)}: #{v}")
         {:ok, state}
 
       {:ok, msg} ->
