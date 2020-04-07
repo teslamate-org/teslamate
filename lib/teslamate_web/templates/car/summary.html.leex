@@ -18,7 +18,11 @@
       <div class="media-content">
         <p class="title is-5"><%= @summary.display_name %></p>
         <%= unless is_nil(@car.model) do %>
-        <p class="subtitle is-6 has-text-weight-light">Model <%= @car.model %> <%= @car.trim_badging %></p>
+        <p class="subtitle is-6 has-text-weight-light">
+          <span>Model <%= @car.model %> <%= @car.trim_badging %></span>
+          <br>
+          <span><%= @car.vin %></span>
+        </p>
         <% end %>
       </div>
        <div class="icons ml-5">
