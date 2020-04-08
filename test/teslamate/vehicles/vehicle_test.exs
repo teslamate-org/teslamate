@@ -297,6 +297,37 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       refute_receive _
     end
+
+    @tag :capture_log
+    test "broadcasts the summary when the health check succeeds again", %{test: name} do
+      events = [
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      fuse_name =
+        TestHelper.eventually(
+          fn ->
+            assert %Vehicle.Summary{state: :asleep, healthy: true, car: %Car{id: id}} =
+                     Vehicle.summary(name)
+
+            :"#{Vehicle}_#{id}_api_error"
+          end,
+          delay: 10
+        )
+
+      assert_receive {:start_state, car, :asleep, []}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep, healthy: true}}}
+
+      :ok = :fuse.circuit_disable(fuse_name)
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep, healthy: false}}}
+
+      :ok = :fuse.circuit_enable(fuse_name)
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep, healthy: true}}}
+
+      refute_receive _
+    end
   end
 
   describe "summary" do

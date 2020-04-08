@@ -1004,7 +1004,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {state, _}}, {state, @asleep_interval}, data)
       when state in [:asleep, :offline] do
-    {:keep_state_and_data, schedule_fetch(@asleep_interval, data)}
+    {:keep_state_and_data, [schedule_fetch(@asleep_interval, data), broadcast_summary()]}
   end
 
   def handle_event(:internal, {:update, {state, _}}, {state, interval}, data)
