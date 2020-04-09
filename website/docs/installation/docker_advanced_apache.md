@@ -112,7 +112,7 @@ LETSENCRYPT_EMAIL=yourperson@example.com
 
 This file contains the definition of the virtual hosts `teslamate.example.com` and `grafana.example.com`. It has to be enabled via `a2ensite teslamate`.
 
-This assumes, that you have the SSL certificate files residing in `/etc/letsencrypt/live/teslamate.example.com`. It it is somewhere else, you need to adapt the file accordingly.
+This assumes, that you have the SSL certificate files residing in `/etc/letsencrypt/live/teslamate.example.com`. If it is somewhere else, you need to adapt the file accordingly.
 
 ```apacheconf title="/etc/apache2/sites-available/teslamate.conf"
 Define MYDOMAIN example.com
