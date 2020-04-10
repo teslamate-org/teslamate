@@ -137,7 +137,7 @@ end %>
       <h2 class="title is-4"><%= gettext("Range") %></h2>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
-          <%= label f, :preferred_range, class: "label tooltip has-tooltip-multiline", data_tooltip: gettext("The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle.")  do %>
+          <%= label f, :preferred_range, class: "label has-tooltip-multiline", data_tooltip: gettext("The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle.")  do %>
             <%= gettext("Preferred range") %> <span class="icon is-small" >
               <span class="mdi mdi-information"></span>
             </span>

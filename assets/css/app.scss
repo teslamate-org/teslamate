@@ -42,7 +42,7 @@ $modal-card-foot-border-top: none;
 @import "~bulma/sass/layout/section";
 @import "~bulma/sass/grid/_all";
 
-@import '~bulma-tooltip';
+@import '~@creativebulma/bulma-tooltip';
 @import '~bulma-switch';
 @import '~bulma-divider';
 
@@ -96,11 +96,11 @@ nav.navbar {
   }
 
   .card-content {
-    // .icons {
-    //   .icon:not(last-child) {
-    //     margin-right: 8px;
-    //   }
-    // }
+    .icons {
+      span[data-tooltip] {
+        border-bottom: none;
+      }
+    }
 
     .media {
       padding: 0 0.25em;
@@ -265,11 +265,6 @@ $positions: ('top','left','bottom','right');
   &:not(:last-child) {
     margin-bottom: 1.5rem;
   }
-}
-
-.has-dotted-underline {
-  text-decoration-line: underline;
-  text-decoration-style: dotted;
 }
 
 .spinner {
