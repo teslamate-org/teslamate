@@ -86,17 +86,17 @@ msgstr "Einstellungen"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:165
-msgid "Scheduled charging"
+msgid "Scheduled Charging"
 msgstr "Ladezeitpunkt"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:43
-msgid "Plugged in"
+msgid "Plugged In"
 msgstr "Eingesteckt"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:174
-msgid "Charge limit"
+msgid "Charge Limit"
 msgstr "Ladelimit"
 
 #, elixir-format
@@ -131,11 +131,6 @@ msgid "Back"
 msgstr "Zurück"
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/root.html.eex:56
-msgid "Geo-Fences"
-msgstr ""
-
-#, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:202
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Geo-Fence \"%{name}\" erstellt"
@@ -143,7 +138,8 @@ msgstr "Geo-Fence \"%{name}\" erstellt"
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:4
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:4
-msgid "Geo-fences"
+#: lib/teslamate_web/templates/layout/root.html.eex:56
+msgid "Geo-Fences"
 msgstr "Geo-Fences"
 
 #, elixir-format
@@ -265,7 +261,7 @@ msgstr "Ladeleistung"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:141
-msgid "Preferred range"
+msgid "Preferred Range"
 msgstr "Bevorzugte Reichweite"
 
 #, elixir-format
@@ -310,12 +306,12 @@ msgstr "'%{geo_fence}' löschen?"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:246
-msgid "Inside temperature"
+msgid "Inside Temperature"
 msgstr "Innentemperatur"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:234
-msgid "Outside temperature"
+msgid "Outside Temperature"
 msgstr "Außentemperatur"
 
 #, elixir-format

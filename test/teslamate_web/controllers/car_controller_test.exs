@@ -118,8 +118,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Range (rated)", "380.25 km")
       assert table_row(html, "Range (est.)", "401.52 km")
       assert table_row(html, "State of Charge", "80%", tooltip: "≈ 475 km at 100%")
-      assert table_row(html, "Outside temperature", "20.1 °C")
-      assert table_row(html, "Inside temperature", "21.0 °C")
+      assert table_row(html, "Outside Temperature", "20.1 °C")
+      assert table_row(html, "Inside Temperature", "21.0 °C")
     end
 
     @tag :signed_in
@@ -180,8 +180,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Windows open", "window-open")
       assert icon(html, "Doors open", "car-door")
       assert icon(html, "Software Update available", "gift-outline")
-      assert table_row(html, "Outside temperature", "24 °C")
-      assert table_row(html, "Inside temperature", "23.2 °C")
+      assert table_row(html, "Outside Temperature", "24 °C")
+      assert table_row(html, "Inside Temperature", "23.2 °C")
       assert table_row(html, "Mileage", "42000 km")
       assert table_row(html, "Version", "2019.40.50.7")
     end
@@ -221,7 +221,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
       assert table_row(html, "Status", "charging")
       assert table_row(html, "Remaining Time", "1 h, 49 min")
-      assert icon(html, "Plugged in", "power-plug")
+      assert icon(html, "Plugged In", "power-plug")
       assert table_row(html, "Range (rated)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
       assert table_row(html, "Charged", "4.32 kWh")
@@ -229,11 +229,11 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert table_row(
                html,
-               "Scheduled charging",
+               "Scheduled Charging",
                {"span", [{"data-date", "2019-08-12T14:38:27Z"}, {"phx-hook", "LocalTime"}], []}
              )
 
-      assert table_row(html, "Charge limit", "85%")
+      assert table_row(html, "Charge Limit", "85%")
     end
 
     @tag :signed_in
@@ -463,8 +463,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Range (est.)", "180.0 mi")
       assert table_row(html, "State of Charge", "67% (69%)", tooltip: "≈ 299 mi at 100%")
       assert table_row(html, "Speed", "30 mph")
-      assert table_row(html, "Outside temperature", "75.2 °F")
-      assert table_row(html, "Inside temperature", "73.8 °F")
+      assert table_row(html, "Outside Temperature", "75.2 °F")
+      assert table_row(html, "Inside Temperature", "73.8 °F")
       assert table_row(html, "Mileage", "42000 mi")
     end
   end

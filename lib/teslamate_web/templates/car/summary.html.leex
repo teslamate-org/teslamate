@@ -44,7 +44,7 @@
         </span>
       <% end %>
       <%= if @summary.plugged_in do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Plugged in" %>'>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Plugged In" %>'>
           <span class="mdi mdi-power-plug"></span>
         </span>
       <% end %>
@@ -166,7 +166,7 @@
           <%= if @summary.plugged_in do %>
             <%= if not is_nil(@summary.scheduled_charging_start_time) do %>
             <tr>
-              <td class="has-text-weight-medium"><%= gettext "Scheduled charging" %></td>
+              <td class="has-text-weight-medium"><%= gettext "Scheduled Charging" %></td>
               <td><%=
                 tag :span, data: [date: @summary.scheduled_charging_start_time |> DateTime.to_iso8601()],
                            phx_hook: "LocalTime"
@@ -175,7 +175,7 @@
             <% end %>
             <%= if not is_nil(@summary.charge_limit_soc) do %>
             <tr>
-              <td class="has-text-weight-medium"><%= gettext "Charge limit" %></td>
+              <td class="has-text-weight-medium"><%= gettext "Charge Limit" %></td>
               <td><%= @summary.charge_limit_soc %>%</td>
             </tr>
             <% end %>
@@ -235,7 +235,7 @@
           <%= if @summary.state not in [:asleep, :offline, :suspended] or DateTime.diff(DateTime.utc_now(), @summary.since) < 30*60 do %>
             <%= unless is_nil(@summary.outside_temp) do %>
           <tr>
-            <td class="has-text-weight-medium"><%= gettext "Outside temperature" %></td>
+            <td class="has-text-weight-medium"><%= gettext "Outside Temperature" %></td>
             <td><%=
               if @settings.unit_of_temperature == :F do
                 "#{Convert.celsius_to_fahrenheit(@summary.outside_temp, 1)} °F"
@@ -247,7 +247,7 @@
             <% end %>
             <%= unless is_nil(@summary.inside_temp) do %>
           <tr>
-            <td class="has-text-weight-medium"><%= gettext "Inside temperature" %></td>
+            <td class="has-text-weight-medium"><%= gettext "Inside Temperature" %></td>
             <td><%=
               if @settings.unit_of_temperature == :F do
                 "#{Convert.celsius_to_fahrenheit(@summary.inside_temp, 1)} °F"

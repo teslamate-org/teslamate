@@ -1,7 +1,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li><%= link gettext("Home"), to: "/" %></li>
-    <li><%= link gettext("Geo-fences"), to: "/geo-fences" %></li>
+    <li><%= link gettext("Geo-Fences"), to: "/geo-fences" %></li>
     <li class="is-active"><a href="#"><%=
       case @action do
         :new -> Ecto.Changeset.get_field(@changeset, :name) || "…"
