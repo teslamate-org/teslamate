@@ -13,7 +13,7 @@ title: Advanced Docker install with Apache2, TLS, HTTP Basic Auth
 
 - docker, docker-compse and Apache2 with mod_proxy, mod_proxy_http, mod_proxy_wstunnel, mod_rewrite and mod_ssl running on a machine that's always on
 - Two FQDN (`teslamate.example.com` & `grafana.example.com`) pointing to that machine
-- An existing SSL certificate including the two above in /etc/letsencrypt/live/teslamate.<your domain>
+- An existing SSL certificate including the two above in `/etc/letsencrypt/live/teslamate.<your domain>`
 - External internet access, to talk to tesla.com
 
 ## Setup
