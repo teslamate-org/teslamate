@@ -2,6 +2,7 @@
   "annotations": {
     "list": [
       {
+        "$$hashKey": "object:286",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": true,
@@ -115,7 +116,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.2",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -193,7 +194,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.2",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -276,7 +277,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.2",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -490,7 +491,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": " $length_unit",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -609,7 +609,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": " $length_unit",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -727,7 +726,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -1007,7 +1005,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.2",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -1090,7 +1088,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.2",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -1173,7 +1171,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.2",
       "scopedVars": {
         "car": {
           "selected": false,
@@ -1266,7 +1264,6 @@
         }
       ],
       "metricNameColor": "#000000",
-      "options": {},
       "rangeMaps": [
         {
           "from": "null",
@@ -1295,7 +1292,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH states AS (\n    SELECT\n      unnest(ARRAY[start_date, end_date]) AS date,\n      unnest(ARRAY[2, 0]) AS state\n    FROM charging_processes\n    WHERE car_id = $car\n\tUNION\n\t\tSELECT\n\t\t\tunnest(ARRAY[start_date, end_date]) AS date,\n\t\t\tunnest(ARRAY[1, 0]) AS state\n\t\tFROM drives\n\t\tWHERE car_id = $car\n\tUNION\n\t\tSELECT\n\t\t\tstart_date AS date,\n\t\t\tCASE WHEN state = 'offline' THEN 3\n\t\t\t     WHEN state = 'asleep'  THEN 4\n\t\t\t     WHEN state = 'online'  THEN 5\n\t\t\tEND AS state\n\t\tFROM states\n\t\tWHERE car_id = $car\n\tUNION\n\t\tSELECT\n\t    unnest(ARRAY[start_date, end_date]) AS date,\n\t\t\tunnest(ARRAY[6, 0]) AS state\n\t\tFROM updates\n\t\tWHERE car_id = $car\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND \n  date BETWEEN ($__timeFrom()::timestamp - interval '30 day') AND ($__timeTo()::timestamp + interval '30 day')\nORDER BY date ASC, state ASC;",
+          "rawSql": "WITH states AS (\n  SELECT\n    unnest(ARRAY [start_date, end_date]) AS date,\n    unnest(ARRAY [2, 0]) AS state\n  FROM charging_processes\n  WHERE\n    car_id = $car AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date, end_date]) AS date,\n    unnest(ARRAY [1, 0]) AS state\n  FROM drives\n  WHERE\n    car_id = $car AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    start_date AS date,\n    CASE\n      WHEN state = 'offline' THEN 3\n      WHEN state = 'asleep' THEN 4\n      WHEN state = 'online' THEN 5\n    END AS state\n  FROM states\n  WHERE\n    car_id = $car AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date, end_date]) AS date,\n    unnest(ARRAY [6, 0]) AS state\n  FROM updates\n  WHERE\n    car_id = $car AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND\n  ($__timeFrom() :: timestamp - interval '30 day') < date AND \n  date < ($__timeTo() :: timestamp + interval '30 day') \nORDER BY date ASC, state ASC;",
           "refId": "A",
           "select": [
             [
@@ -1433,6 +1430,7 @@
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
+        "index": -1,
         "label": "Car",
         "multi": true,
         "name": "car",
@@ -1458,6 +1456,7 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": null,
         "multi": false,
         "name": "length_unit",
@@ -1483,6 +1482,7 @@
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": null,
         "multi": false,
         "name": "temp_unit",
@@ -1508,6 +1508,7 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "preferred_range",
@@ -1533,6 +1534,7 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "base_url",
@@ -1583,5 +1585,8 @@
   "timezone": "",
   "title": "Overview",
   "uid": "kOuP_Fggz",
+  "variables": {
+    "list": []
+  },
   "version": 1
 }

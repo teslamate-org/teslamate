@@ -14,7 +14,7 @@ If you see the error `ERROR: No such service: database`, please update your _doc
 
 ```bash
 # Stop the teslamate container to avoid write conflicts
-docker-compose down teslamate
+docker-compose stop teslamate
 
 # Drop existing data and reinitialize
 docker-compose exec -T database psql -U teslamate << .
