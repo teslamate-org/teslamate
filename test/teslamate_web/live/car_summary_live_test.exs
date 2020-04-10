@@ -284,8 +284,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           assert [
                    {"span",
                     [
-                      {"class",
-                       "spinner has-tooltip-top has-tooltip-left-mobile"},
+                      {"class", "spinner has-tooltip-top has-tooltip-left-mobile"},
                       {"data-tooltip", "Fetching vehicle data ..."}
                     ], _}
                  ] =
@@ -322,8 +321,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           assert [
                    {"span",
                     [
-                      {"class",
-                       "spinner has-tooltip-top has-tooltip-left-mobile"},
+                      {"class", "spinner has-tooltip-top has-tooltip-left-mobile"},
                       {"data-tooltip", "Fetching vehicle data ..."}
                     ], _}
                  ] =
