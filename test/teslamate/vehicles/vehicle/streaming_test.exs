@@ -446,8 +446,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       fn -> Process.sleep(10_000) end
     ]
 
-    :ok =
-      start_vehicle(name, events, settings: %{use_streaming_api: true, suspend_min: 999_999_999})
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: true})
 
     assert_receive {:start_state, car, :online, date: _}
     assert_receive {:insert_position, ^car, %{}}
@@ -457,8 +456,6 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     assert :ok = Vehicle.suspend_logging(name)
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended}}}
-
-    refute_receive _
 
     stream(name, %{shift_state: nil, power: -5, time: now})
     assert_receive :continue?

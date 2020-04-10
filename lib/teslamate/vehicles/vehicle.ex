@@ -242,13 +242,19 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:ok, _pos} =
         call(data.deps.log, :insert_position, [data.car, create_position(vehicle, data)])
 
+      suspend_min =
+        case {data.car.settings, streaming?(data)} do
+          {%CarSettings{use_streaming_api: true}, true} -> 30
+          {%CarSettings{suspend_min: s}, _} -> s
+        end
+
       {:next_state, {:suspended, :online},
        %Data{data | last_state_change: DateTime.utc_now(), last_response: vehicle, task: nil},
        [
          {:reply, from, :ok},
          broadcast_fetch(false),
          broadcast_summary(),
-         schedule_fetch(data.car.settings.suspend_min, :minutes, data)
+         schedule_fetch(suspend_min, :minutes, data)
        ]}
     else
       {:error, reason} ->
@@ -998,7 +1004,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {state, _}}, {state, @asleep_interval}, data)
       when state in [:asleep, :offline] do
-    {:keep_state_and_data, schedule_fetch(@asleep_interval, data)}
+    {:keep_state_and_data, [schedule_fetch(@asleep_interval, data), broadcast_summary()]}
   end
 
   def handle_event(:internal, {:update, {state, _}}, {state, interval}, data)

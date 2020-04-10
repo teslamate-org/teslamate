@@ -1,6 +1,5 @@
 # TeslaMate
 
-[![](https://readthedocs.org/projects/teslamate/badge/?version=latest)](https://teslamate.readthedocs.io/)
 [![](https://travis-ci.org/adriankumpf/teslamate.svg?branch=master)](https://travis-ci.org/adriankumpf/teslamate)
 [![](https://coveralls.io/repos/github/adriankumpf/teslamate/badge.svg?branch=master)](https://coveralls.io/github/adriankumpf/teslamate?branch=master)
 [![](https://images.microbadger.com/badges/version/teslamate/teslamate.svg)](https://hub.docker.com/r/teslamate/teslamate)
@@ -15,20 +14,24 @@ A powerful, self-hosted data logger for your Tesla.
 - Visualization and data analysis with **Grafana**
 - Vehicle data is published to a local **MQTT** Broker
 
+## Documentation
+
+The documentation is available at [docs.teslamate.org](https://docs.teslamate.org/).
+
 ## Features
 
 **Dashboards**
 
-- [Drive and charging reports](/docs/screenshots.md#charging-details)
-- [Driving efficiency report](/docs/screenshots.md#efficiency)
-- [Consumption (net / gross)](/docs/screenshots.md#efficiency)
-- [Charge energy added vs energy used](/docs/screenshots.md#charges)
-- [Vampire drain](/docs/screenshots.md#vampire-drain)
-- [Projected 100% range (battery degradation)](/docs/screenshots.md#projected-range)
-- [Charging Stats](/docs/screenshots.md#charging-stats)
-- [Drive Stats](/docs/screenshots.md#drive-stats)
-- [History of installed updates](/docs/screenshots.md#updates)
-- [See when your car was online or asleep](/docs/screenshots.md#states)
+- [Drive and charging reports](https://docs.teslamate.org/docs/screenshots#charging-details)
+- [Driving efficiency report](https://docs.teslamate.org/docs/screenshots#efficiency)
+- [Consumption (net / gross)](https://docs.teslamate.org/docs/screenshots#efficiency)
+- [Charge energy added vs energy used](https://docs.teslamate.org/docs/screenshots#charges)
+- [Vampire drain](https://docs.teslamate.org/docs/screenshots#vampire-drain)
+- [Projected 100% range (battery degradation)](https://docs.teslamate.org/docs/screenshots#projected-range)
+- [Charging Stats](https://docs.teslamate.org/docs/screenshots#charging-stats)
+- [Drive Stats](https://docs.teslamate.org/docs/screenshots#drive-stats)
+- [History of installed updates](https://docs.teslamate.org/docs/screenshots#updates)
+- [See when your car was online or asleep](https://docs.teslamate.org/docs/screenshots#states)
 - Lifetime driving map
 - Visited addresses
 
@@ -45,44 +48,12 @@ A powerful, self-hosted data logger for your Tesla.
 
 ## Screenshots
 
-![Drive Details](/docs/screenshots/drive.png)
-![Web Interface](/docs/screenshots/web_interface.png)
+![Drive Details](/website/static/screenshots/drive.png)
+![Web Interface](/website/static/screenshots/web_interface.png)
 
 <p align="center">
-  <strong><a href="/docs/screenshots.md">MORE SCREENSHOTS</a></strong>
+  <strong><a href="https://docs.teslamate.org/docs/screenshots">MORE SCREENSHOTS</a></strong>
 </p>
-
-## Documentation
-
-The full TeslaMate documentation is available on [Read the Docs](https://teslamate.readthedocs.io/).
-
-- Getting Started
-  - [Simple Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker.html) (inside your home network)
-  - [Advanced Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker_advanced.html) (Traefik, Let's Encrypt, HTTPS, HTTP Basic Auth)
-  - [Advanced Docker install](https://teslamate.readthedocs.io/en/latest/installation/docker_advanced_apache.html) (Apache2, HTTPS, HTTP Basic Auth)
-  - [Manual install](https://teslamate.readthedocs.io/en/latest/installation/debian.html) (on Debian/Ubuntu without Docker)
-  - [Kubernetes install](https://hub.helm.sh/charts/billimek/teslamate) (opinionated helm chart; unofficial)
-  - [Frequently Asked Questions](https://teslamate.readthedocs.io/en/latest/faq.html)
-- Sleep Mode
-  - [Configuration](https://teslamate.readthedocs.io/en/latest/configuration/sleep.html)
-  - [Shortcuts Setup (iOS)](https://teslamate.readthedocs.io/en/latest/configuration/guides/shortcuts.html)
-  - [Tasker Setup (Android)](https://teslamate.readthedocs.io/en/latest/configuration/guides/tasker.html)
-  - [MacroDroid Setup (Android)](https://teslamate.readthedocs.io/en/latest/configuration/guides/macro_droid.html)
-- Import
-  - [TeslaFi](https://teslamate.readthedocs.io/en/latest/import/teslafi.html)
-  - [tesla-apiscraper](https://teslamate.readthedocs.io/en/latest/import/tesla_apiscraper.html)
-- Integrations
-  - [HomeAssistant](https://teslamate.readthedocs.io/en/latest/integrations/home_assistant.html)
-  - [MQTT](https://teslamate.readthedocs.io/en/latest/integrations/mqtt.html)
-- Advanced configuration
-  - [Environment Variables](https://teslamate.readthedocs.io/en/latest/configuration/environment_variables.html)
-- Maintenance
-  - [Upgrading to a new version](https://teslamate.readthedocs.io/en/latest/upgrading.html)
-  - [Backup and Restore](https://teslamate.readthedocs.io/en/latest/maintenance/backup_restore.html)
-  - [Manually fixing data](https://teslamate.readthedocs.io/en/latest/maintenance/manually_fixing_data.html)
-  - [Updating Postgres](https://teslamate.readthedocs.io/en/latest/maintenance/updating_postgres.html)
-- Development and Contributing
-  - [Development](https://teslamate.readthedocs.io/en/latest/development.html)
 
 ## Credits
 
