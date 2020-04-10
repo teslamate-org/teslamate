@@ -28,8 +28,8 @@ defmodule TeslaMate.LogDriveTest do
       assert {:ok, %Position{} = position} = Log.insert_position(car, @valid_attrs)
       assert %DateTime{} = position.date
       assert position.car_id == car.id
-      assert position.longitude == 0.0
-      assert position.latitude == 0.0
+      assert position.longitude == Decimal.cast("0.000000")
+      assert position.latitude == Decimal.cast("0.000000")
     end
 
     test "with invalid data returns error changeset" do
@@ -136,18 +136,18 @@ defmodule TeslaMate.LogDriveTest do
       assert {:ok, drive} = Log.close_drive(drive)
 
       assert {:ok, drive.end_date, 0} == DateTime.from_iso8601("2019-04-06 10:23:25.000000Z")
-      assert drive.outside_temp_avg == 19.04
-      assert drive.inside_temp_avg == 21.04
+      assert drive.outside_temp_avg == Decimal.cast(19.0)
+      assert drive.inside_temp_avg == Decimal.cast(21.0)
       assert drive.speed_max == 42
       assert drive.power_max == 36.0
       assert drive.power_min == -7.0
       assert drive.start_km == 284.85156
       assert drive.end_km == 288.045561
       assert drive.distance == 3.1940010000000143
-      assert drive.start_ideal_range_km == 338.8
-      assert drive.end_ideal_range_km == 334.8
-      assert drive.start_rated_range_km == 308.8
-      assert drive.end_rated_range_km == 304.8
+      assert drive.start_ideal_range_km == Decimal.cast("338.80")
+      assert drive.end_ideal_range_km == Decimal.cast("334.80")
+      assert drive.start_rated_range_km == Decimal.cast("308.80")
+      assert drive.end_rated_range_km == Decimal.cast("304.80")
       assert drive.duration_min == 4
       assert is_number(drive.start_address_id)
       assert addr_id = drive.start_address_id

@@ -4,6 +4,8 @@ defmodule TeslaMate.SettingsTest do
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
   alias TeslaMate.{Settings, Log}
 
+  import TestHelper, only: [decimal: 1]
+
   defp car_fixture(attrs \\ %{}) do
     {:ok, car} =
       attrs
@@ -234,15 +236,15 @@ defmodule TeslaMate.SettingsTest do
                  name: "0",
                  state: "Berlin_nl",
                  country: "nl",
-                 latitude: 0.0,
-                 longitude: 0.0
+                 latitude: decimal("0.000000"),
+                 longitude: decimal("0.000000")
                },
                %Address{
                  name: "1",
                  state: "Berlin_nl",
                  country: "nl",
-                 latitude: 0.0,
-                 longitude: 0.0
+                 latitude: decimal("0.000000"),
+                 longitude: decimal("0.000000")
                }
              ] = Repo.all(from a in Address, order_by: 1)
     end
@@ -278,10 +280,10 @@ defmodule TeslaMate.SettingsTest do
 
       assert {:error, :boom} = Settings.update_global_settings(settings, %{language: "nl"})
 
-      a0 = %Address{a0 | latitude: 0.0, longitude: 0.0}
-      a1 = %Address{a1 | latitude: 0.0, longitude: 0.0}
-
-      assert [^a0, ^a1] = Repo.all(from a in Address, order_by: 1)
+      zero = Decimal.cast("0.000000")
+      assert [r0, r1] = Repo.all(from a in Address, order_by: 1)
+      assert r0 == %Address{a0 | latitude: zero, longitude: zero}
+      assert r1 == %Address{a1 | latitude: zero, longitude: zero}
     end
   end
 

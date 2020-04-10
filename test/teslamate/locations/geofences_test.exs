@@ -47,8 +47,8 @@ defmodule TeslaMate.LocationsGeofencesTest do
     test "create_geofence/1 with valid data creates a geofence" do
       assert {:ok, %GeoFence{} = geofence} = Locations.create_geofence(@valid_attrs)
       assert geofence.name == "foo"
-      assert geofence.latitude == 52.514521
-      assert geofence.longitude == 13.350144
+      assert geofence.latitude == Decimal.cast(52.514521)
+      assert geofence.longitude == Decimal.cast(13.350144)
       assert geofence.radius == 42
       assert geofence.cost_per_kwh == nil
       assert geofence.session_fee == nil
@@ -139,11 +139,11 @@ defmodule TeslaMate.LocationsGeofencesTest do
                Locations.update_geofence(geofence, @update_attrs)
 
       assert geofence.name == "bar"
-      assert geofence.latitude == 53.514521
-      assert geofence.longitude == 14.350144
+      assert geofence.latitude == Decimal.cast(53.514521)
+      assert geofence.longitude == Decimal.cast(14.350144)
       assert geofence.radius == 43
-      assert geofence.cost_per_kwh == Decimal.from_float(0.0079)
-      assert geofence.session_fee == Decimal.from_float(5.00)
+      assert geofence.cost_per_kwh == Decimal.cast(0.0079)
+      assert geofence.session_fee == Decimal.cast("5.00")
 
       assert {:ok, %GeoFence{} = geofence} =
                Locations.update_geofence(geofence, %{cost_per_kwh: nil, session_fee: nil})
@@ -214,29 +214,29 @@ defmodule TeslaMate.LocationsGeofencesTest do
   end
 
   describe "overlapping geo-fences" do
-    test "WIP" do
+    test "are handled correctly" do
       [
         %{
           name: "huge",
-          radius: 1658.0355001086434,
+          radius: 1658,
           latitude: 40.725633,
           longitude: -73.994207
         },
         %{
           name: "top",
-          radius: 544.3549949318283,
+          radius: 544,
           latitude: 40.734413,
           longitude: -73.983865
         },
         %{
           name: "middle",
-          radius: 358.68357531141675,
+          radius: 359,
           latitude: 40.724982,
           longitude: -73.999057
         },
         %{
           name: "bottom",
-          radius: 613.6058687415518,
+          radius: 614,
           latitude: 40.713728,
           longitude: -74.001288
         }

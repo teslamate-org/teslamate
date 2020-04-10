@@ -54,9 +54,9 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
 
     for {position, i} <- Enum.with_index(positions) do
       if i in [50, 150] do
-        assert %Position{elevation: 420.0} = TeslaMate.Repo.get(Position, position.id)
+        assert %Position{elevation: 420} = TeslaMate.Repo.get(Position, position.id)
       else
-        assert %Position{elevation: 42.0} = TeslaMate.Repo.get(Position, position.id)
+        assert %Position{elevation: 42} = TeslaMate.Repo.get(Position, position.id)
       end
     end
 
@@ -110,7 +110,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
 
     Process.sleep(300)
 
-    assert %Position{elevation: 42.0} = TeslaMate.Repo.get(Position, p0.id)
+    assert %Position{elevation: 42} = TeslaMate.Repo.get(Position, p0.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p1.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p2.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p3.id)

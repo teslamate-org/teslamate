@@ -41,8 +41,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                     %{
                       date: _,
                       charge_energy_added: 0.1,
-                      rated_battery_range_km: 1.6,
-                      ideal_battery_range_km: 1.6
+                      rated_battery_range_km: 1.61,
+                      ideal_battery_range_km: 1.61
                     }}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: s1}}}
@@ -52,8 +52,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                     %{
                       date: _,
                       charge_energy_added: 0.2,
-                      rated_battery_range_km: 3.2,
-                      ideal_battery_range_km: 3.2
+                      rated_battery_range_km: 3.22,
+                      ideal_battery_range_km: 3.22
                     }}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: ^s1}}}
@@ -62,8 +62,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                     %{
                       date: _,
                       charge_energy_added: 0.3,
-                      rated_battery_range_km: 4.8,
-                      ideal_battery_range_km: 4.8
+                      rated_battery_range_km: 4.83,
+                      ideal_battery_range_km: 4.83
                     }}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: ^s1}}}
@@ -74,8 +74,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                     %{
                       date: _,
                       charge_energy_added: 0.4,
-                      rated_battery_range_km: 6.4,
-                      ideal_battery_range_km: 6.4
+                      rated_battery_range_km: 6.44,
+                      ideal_battery_range_km: 6.44
                     }}
 
     # Completed

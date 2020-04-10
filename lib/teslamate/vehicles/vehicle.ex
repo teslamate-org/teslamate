@@ -1037,10 +1037,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
         longitude: position.longitude
       }
 
+      to_miles = fn km ->
+        with km when not is_nil(km) <- km do
+          km |> Convert.km_to_miles(2) |> Decimal.to_float()
+        end
+      end
+
       charge = %Charge{
-        ideal_battery_range: position.ideal_battery_range_km |> Convert.km_to_miles(10),
-        est_battery_range: position.est_battery_range_km |> Convert.km_to_miles(10),
-        battery_range: position.rated_battery_range_km |> Convert.km_to_miles(10),
+        ideal_battery_range: to_miles.(position.ideal_battery_range_km),
+        est_battery_range: to_miles.(position.est_battery_range_km),
+        battery_range: to_miles.(position.rated_battery_range_km),
         battery_level: position.battery_level,
         usable_battery_level: position.usable_battery_level
       }
@@ -1051,7 +1057,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       }
 
       vehicle_state = %VehicleState{
-        odometer: position.odometer |> Convert.km_to_miles(10),
+        odometer: position.odometer |> Convert.km_to_miles(6),
         car_version:
           case call(data.deps.log, :get_latest_update, [data.car]) do
             %Log.Update{version: version} -> version
@@ -1118,15 +1124,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
       latitude: vehicle.drive_state.latitude,
       longitude: vehicle.drive_state.longitude,
       speed: Convert.mph_to_kmh(vehicle.drive_state.speed),
-      power: with(n when is_number(n) <- vehicle.drive_state.power, do: n * 1.0),
+      power: vehicle.drive_state.power,
       battery_level: vehicle.charge_state.battery_level,
       usable_battery_level: vehicle.charge_state.usable_battery_level,
       outside_temp: vehicle.climate_state.outside_temp,
       inside_temp: vehicle.climate_state.inside_temp,
       odometer: Convert.miles_to_km(vehicle.vehicle_state.odometer, 6),
-      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
-      est_battery_range_km: Convert.miles_to_km(vehicle.charge_state.est_battery_range, 1),
-      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 1),
+      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 2),
+      est_battery_range_km: Convert.miles_to_km(vehicle.charge_state.est_battery_range, 2),
+      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 2),
       fan_status: vehicle.climate_state.fan_status,
       is_climate_on: vehicle.climate_state.is_climate_on,
       driver_temp_setting: vehicle.climate_state.driver_temp_setting,
@@ -1178,8 +1184,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       fast_charger_present: vehicle.charge_state.fast_charger_present,
       fast_charger_brand: vehicle.charge_state.fast_charger_brand,
       fast_charger_type: vehicle.charge_state.fast_charger_type,
-      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
-      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 1),
+      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 2),
+      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 2),
       not_enough_power_to_heat: vehicle.charge_state.not_enough_power_to_heat,
       outside_temp: vehicle.climate_state.outside_temp
     }

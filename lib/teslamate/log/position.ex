@@ -6,26 +6,26 @@ defmodule TeslaMate.Log.Position do
 
   schema "positions" do
     field :date, :utc_datetime_usec
-    field :latitude, :float
-    field :longitude, :float
-    field :elevation, :float
+    field :latitude, :decimal, read_after_writes: true
+    field :longitude, :decimal, read_after_writes: true
+    field :elevation, :integer
 
     field :speed, :integer
-    field :power, :float
+    field :power, :integer
     field :odometer, :float
-    field :ideal_battery_range_km, :float
-    field :est_battery_range_km, :float
-    field :rated_battery_range_km, :float
+    field :ideal_battery_range_km, :decimal, read_after_writes: true
+    field :est_battery_range_km, :decimal, read_after_writes: true
+    field :rated_battery_range_km, :decimal, read_after_writes: true
     field :battery_level, :integer
     field :usable_battery_level, :integer
     field :battery_heater, :boolean
     field :battery_heater_on, :boolean
     field :battery_heater_no_power, :boolean
-    field :outside_temp, :float
-    field :inside_temp, :float
+    field :outside_temp, :decimal, read_after_writes: true
+    field :inside_temp, :decimal, read_after_writes: true
     field :fan_status, :integer
-    field :driver_temp_setting, :float
-    field :passenger_temp_setting, :float
+    field :driver_temp_setting, :decimal, read_after_writes: true
+    field :passenger_temp_setting, :decimal, read_after_writes: true
     field :is_climate_on, :boolean
     field :is_rear_defroster_on, :boolean
     field :is_front_defroster_on, :boolean

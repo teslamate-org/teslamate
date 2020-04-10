@@ -142,7 +142,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       send(:"api_#{name}", :continue)
       stream(name, %{shift_state: "P", speed: nil, power: nil, elevation: 5, time: now})
 
-      assert_receive {:insert_position, ^drive, %{speed: 0, power: 0.0}}
+      assert_receive {:insert_position, ^drive, %{speed: 0, power: 0}}
       assert_receive {:close_drive, ^drive, lookup_address: true}
 
       assert_receive {:start_state, ^car, :online, date: _}
@@ -266,7 +266,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       send(:"api_#{name}", :continue)
 
-      assert_receive {:insert_position, ^drive, %{date: ^d4, speed: 0, power: 0.0}}
+      assert_receive {:insert_position, ^drive, %{date: ^d4, speed: 0, power: 0}}
       assert_receive {:close_drive, ^drive, lookup_address: true}
 
       assert_receive {:start_state, ^car, :online, date: ^d4}

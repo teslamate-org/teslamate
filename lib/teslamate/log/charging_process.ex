@@ -8,16 +8,16 @@ defmodule TeslaMate.Log.ChargingProcess do
   schema "charging_processes" do
     field :start_date, :utc_datetime_usec
     field :end_date, :utc_datetime_usec
-    field :charge_energy_added, :float
-    field :charge_energy_used, :float
-    field :start_ideal_range_km, :float
-    field :end_ideal_range_km, :float
-    field :start_rated_range_km, :float
-    field :end_rated_range_km, :float
+    field :charge_energy_added, :decimal, read_after_writes: true
+    field :charge_energy_used, :decimal, read_after_writes: true
+    field :start_ideal_range_km, :decimal, read_after_writes: true
+    field :end_ideal_range_km, :decimal, read_after_writes: true
+    field :start_rated_range_km, :decimal, read_after_writes: true
+    field :end_rated_range_km, :decimal, read_after_writes: true
     field :start_battery_level, :integer
     field :end_battery_level, :integer
     field :duration_min, :integer
-    field :outside_temp_avg, :float
+    field :outside_temp_avg, :decimal, read_after_writes: true
     field :cost, :decimal, read_after_writes: true
 
     belongs_to(:car, Car)

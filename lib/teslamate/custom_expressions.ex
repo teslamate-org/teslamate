@@ -40,8 +40,8 @@ defmodule TeslaMate.CustomExpressions do
     quote do
       fragment(
         """
-        earth_box(ll_to_earth(?, ?), ?) @> ll_to_earth(?, ?) AND
-        earth_distance(ll_to_earth(?, ?), ll_to_earth(?, ?)) < ?
+        earth_box(ll_to_earth(?::numeric, ?::numeric), ?) @> ll_to_earth(?::numeric, ?::numeric) AND
+        earth_distance(ll_to_earth(?::numeric, ?::numeric), ll_to_earth(?::numeric, ?::numeric)) < ?
         """,
         ^unquote(geofence).latitude,
         ^unquote(geofence).longitude,
@@ -61,8 +61,8 @@ defmodule TeslaMate.CustomExpressions do
     quote do
       fragment(
         """
-        earth_box(ll_to_earth(?, ?), ?) @> ll_to_earth(?, ?) AND
-        earth_distance(ll_to_earth(?, ?), ll_to_earth(?, ?)) < ?
+        earth_box(ll_to_earth(?::numeric, ?::numeric), ?) @> ll_to_earth(?::numeric, ?::numeric) AND
+        earth_distance(ll_to_earth(?::numeric, ?::numeric), ll_to_earth(?::numeric, ?::numeric)) < ?
         """,
         unquote(geofence).latitude,
         unquote(geofence).longitude,
@@ -81,7 +81,7 @@ defmodule TeslaMate.CustomExpressions do
   defmacro distance(geofence, position) do
     quote do
       fragment(
-        "earth_distance(ll_to_earth(?, ?), ll_to_earth(?, ?))",
+        "earth_distance(ll_to_earth(?::numeric, ?::numeric), ll_to_earth(?::numeric, ?::numeric))",
         unquote(geofence).latitude,
         unquote(geofence).longitude,
         ^unquote(position).latitude,

@@ -6,10 +6,12 @@ defmodule TeslaMate.Convert do
   def mph_to_kmh(mph), do: round(mph / @km_factor)
 
   def miles_to_km(nil, _precision), do: nil
+  def miles_to_km(miles = %Decimal{}, p), do: miles |> Decimal.div(Decimal.from_float(@km_factor)) |> Decimal.round(p)
   def miles_to_km(miles, 0), do: round(miles / @km_factor)
   def miles_to_km(miles, precision), do: Float.round(miles / @km_factor, precision)
 
   def km_to_miles(nil, _precision), do: nil
+  def km_to_miles(km = %Decimal{}, p), do: km |> Decimal.mult(Decimal.from_float(@km_factor)) |> Decimal.round(p)
   def km_to_miles(km, 0), do: round(km * @km_factor)
   def km_to_miles(km, precision), do: Float.round(km * @km_factor, precision)
 

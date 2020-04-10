@@ -47,9 +47,9 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
     test "shows either charge_energy_used or charge_energy_added", %{conn: conn} do
       cases = [
-        {%{charge_energy_used: 50.0, charge_energy_added: 48.1}, "50.0 kWh"},
-        {%{charge_energy_used: 50.0, charge_energy_added: 50.5}, "50.5 kWh"},
-        {%{charge_energy_used: nil, charge_energy_added: 50.0}, "50.0 kWh"}
+        {%{charge_energy_used: 50.0, charge_energy_added: 48.1}, "50.00 kWh"},
+        {%{charge_energy_used: 50.0, charge_energy_added: 50.5}, "50.50 kWh"},
+        {%{charge_energy_used: nil, charge_energy_added: 50.0}, "50.00 kWh"}
       ]
 
       for {attrs, tag_str} <- cases do

@@ -5,12 +5,12 @@ defmodule TeslaMate.Locations.GeoFence do
 
   schema "geofences" do
     field :name, :string
-    field :latitude, :float
-    field :longitude, :float
-    field :radius, :float
+    field :latitude, :decimal, read_after_writes: true
+    field :longitude, :decimal, read_after_writes: true
+    field :radius, :integer
 
-    field :cost_per_kwh, :decimal
-    field :session_fee, :decimal
+    field :cost_per_kwh, :decimal, read_after_writes: true
+    field :session_fee, :decimal, read_after_writes: true
 
     timestamps()
   end

@@ -28,7 +28,7 @@
 <%= for geofence <- @geofences do %>
     <tr>
       <td class="has-text-weight-medium is-truncated" style="min-width: 0; max-width: 180px"><%= geofence.name %></td>
-      <td class="is-hidden-mobile has-text-weight-light" style="width: 30%"><%= Float.round(geofence.latitude, 5) %>, <%= Float.round(geofence.longitude, 5) %></td>
+      <td class="is-hidden-mobile has-text-weight-light" style="width: 30%"><%= geofence.latitude %>, <%= geofence.longitude %></td>
       <td class="is-hidden-mobile has-text-weight-light" style="width: 10%"><%=
           case @unit_of_length do
             :ft -> geofence.radius |> m_to_ft() |> round()

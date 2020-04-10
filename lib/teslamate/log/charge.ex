@@ -11,20 +11,20 @@ defmodule TeslaMate.Log.Charge do
     field :battery_heater_no_power, :boolean
     field :battery_level, :integer
     field :usable_battery_level, :integer
-    field :charge_energy_added, :float
+    field :charge_energy_added, :decimal, read_after_writes: true
     field :charger_actual_current, :integer
     field :charger_phases, :integer, default: 1
     field :charger_pilot_current, :integer
-    field :charger_power, :float
+    field :charger_power, :integer
     field :charger_voltage, :integer
     field :conn_charge_cable, :string
     field :fast_charger_present, :boolean
     field :fast_charger_brand, :string
     field :fast_charger_type, :string
-    field :ideal_battery_range_km, :float
-    field :rated_battery_range_km, :float
+    field :ideal_battery_range_km, :decimal, read_after_writes: true
+    field :rated_battery_range_km, :decimal, read_after_writes: true
     field :not_enough_power_to_heat, :boolean
-    field :outside_temp, :float
+    field :outside_temp, :decimal, read_after_writes: true
 
     belongs_to :charging_process, ChargingProcess
   end

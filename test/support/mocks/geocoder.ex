@@ -1,9 +1,11 @@
 defmodule GeocoderMock do
   alias TeslaMate.Locations.Address
 
-  def reverse_lookup(99.9, 99.9, _lang) do
-    {:error, :induced_error}
+  def reverse_lookup(%Decimal{} = lat, %Decimal{} = lon, lang) do
+    reverse_lookup(Decimal.to_float(lat), Decimal.to_float(lon), lang)
   end
+
+  def reverse_lookup(99.9, 99.9, _lang), do: {:error, :induced_error}
 
   def reverse_lookup(lat, lng, _lang)
       when lat in [52.51599, 52.515, 52.514521] and lng in [13.35199, 13.351, 13.350144] do

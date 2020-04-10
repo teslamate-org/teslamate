@@ -48,9 +48,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert [
                _,
-               ["Post office", "-25.06619, -130.1005", "100 m", _],
-               ["Service Center", "52.39425, 13.54255", "100 m", _],
-               ["Victory Column", "52.51452, 13.35014", "100 m", _]
+               ["Post office", "-25.066188, -130.100502", "100 m", _],
+               ["Service Center", "52.394246, 13.542552", "100 m", _],
+               ["Victory Column", "52.514521, 13.350144", "100 m", _]
              ] =
                html
                |> Floki.parse_document!()
@@ -72,7 +72,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["Post office", "-25.06619, -130.1005", "328 ft", _] =
+      assert ["Post office", "-25.066188, -130.100502", "328 ft", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
 
@@ -82,7 +82,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["Victory Column", "52.51452, 13.35014", "100 m", _] =
+      assert ["Victory Column", "52.514521, 13.350144", "100 m", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
       assert [{"a", _, _}] =
@@ -122,7 +122,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["-130.100502"] = Floki.attribute(longitude, "value")
 
       radius = Floki.find(html, "#geo_fence_radius")
-      assert ["100.0"] = Floki.attribute(radius, "value")
+      assert ["100"] = Floki.attribute(radius, "value")
 
       radius = Floki.find(html, "#geo_fence_cost_per_kwh")
       assert ["0.2599"] = Floki.attribute(radius, "value")
@@ -165,7 +165,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["-130.100502"] = Floki.attribute(longitude, "value")
 
       radius = Floki.find(html, "#geo_fence_radius")
-      assert ["100.0"] = Floki.attribute(radius, "value")
+      assert ["100"] = Floki.attribute(radius, "value")
 
       render_submit(view, :save, %{
         geo_fence: %{name: "Adamstown", longitude: 0, latitude: 0, radius: 20}
@@ -175,7 +175,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["Adamstown", "0.0, 0.0", "20 m", _] =
+      assert ["Adamstown", "0.000000, 0.000000", "20 m", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
   end
@@ -263,7 +263,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["foo"] = html |> Floki.find("#geo_fence_name") |> Floki.attribute("value")
       assert ["wat"] = html |> Floki.find("#geo_fence_latitude") |> Floki.attribute("value")
       assert ["wot"] = html |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
-      assert ["40.0"] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
+      assert ["40"] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
       assert ["0.25"] = html |> Floki.find("#geo_fence_cost_per_kwh") |> Floki.attribute("value")
       assert ["4.79"] = html |> Floki.find("#geo_fence_session_fee") |> Floki.attribute("value")
 
@@ -316,7 +316,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["post office", "-25.06619, -130.1005", "25 m", _] =
+      assert ["post office", "-25.066188, -130.100502", "25 m", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
 
@@ -331,7 +331,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           name: "post office",
           latitude: -25.066188,
           longitude: -130.100502,
-          radius: 15.2
+          radius: 15
         }
       })
 
@@ -339,7 +339,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["post office", "-25.06619, -130.1005", "50 ft", _] =
+      assert ["post office", "-25.066188, -130.100502", "49 ft", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
 
       {:ok, _settings} =
@@ -347,7 +347,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
-      assert ["post office", "-25.06619, -130.1005", "15 m", _] =
+      assert ["post office", "-25.066188, -130.100502", "15 m", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
     end
   end
@@ -592,25 +592,25 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert [
                %ChargingProcess{
                  geofence_id: id,
-                 charge_energy_added: 50.63,
+                 charge_energy_added: decimal(50.63),
                  charge_energy_used: nil,
                  cost: decimal("99.00")
                },
                %ChargingProcess{
                  geofence_id: id,
-                 charge_energy_added: 4.57,
+                 charge_energy_added: decimal(4.57),
                  charge_energy_used: nil,
                  cost: decimal(6.51)
                },
                %ChargingProcess{
                  geofence_id: id,
-                 charge_energy_added: 11.82,
+                 charge_energy_added: decimal(11.82),
                  charge_energy_used: nil,
                  cost: decimal("8.90")
                },
                %ChargingProcess{
                  geofence_id: id,
-                 charge_energy_added: 52.1,
+                 charge_energy_added: decimal("52.10"),
                  charge_energy_used: nil,
                  cost: decimal(22.19)
                },
@@ -622,9 +622,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert %GeoFence{
                name: "Supercharger",
-               latitude: 47.814441,
-               longitude: 12.367768,
-               radius: 30.0,
+               latitude: decimal(47.814441),
+               longitude: decimal(12.367768),
+               radius: 30,
                cost_per_kwh: decimal("0.3300"),
                session_fee: decimal("5.00")
              } = Repo.get(GeoFence, id)
@@ -668,9 +668,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert %GeoFence{
                name: "Supercharger",
-               latitude: 47.814441,
-               longitude: 12.367768,
-               radius: 30.0,
+               latitude: decimal(47.814441),
+               longitude: decimal(12.367768),
+               radius: 30,
                cost_per_kwh: decimal("0.3300"),
                session_fee: decimal("5.00")
              } = Repo.get(GeoFence, id)

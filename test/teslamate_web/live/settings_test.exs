@@ -3,6 +3,8 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
   alias TeslaMate.{Settings, Locations, Repo}
 
+  import TestHelper, only: [decimal: 1]
+
   describe "global settings" do
     test "shows km and C by default", %{conn: conn} do
       assert {:ok, _view, html} = live(conn, "/settings")
@@ -206,8 +208,8 @@ defmodule TeslaMateWeb.SettingsLiveTest do
         assert %Address{
                  display_name: "error",
                  name: "bar",
-                 latitude: 0.0,
-                 longitude: 0.0,
+                 latitude: decimal("0.000000"),
+                 longitude: decimal("0.000000"),
                  osm_id: 0,
                  osm_type: "way",
                  raw: %{}
