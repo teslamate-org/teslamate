@@ -11,9 +11,9 @@ title: Advanced Docker install with Apache2, TLS, HTTP Basic Auth
 
 ## Requirements
 
-- Docker running on a machine that's always on
-- Two FQDN (`teslamate.example.com` & `grafana.example.com`)
-- An existing SSL certificate
+- docker, docker-compse and Apache2 with mod_proxy, mod_proxy_http, mod_proxy_wstunnel, mod_rewrite and mod_ssl running on a machine that's always on
+- Two FQDN (`teslamate.example.com` & `grafana.example.com`) pointing to that machine
+- An existing SSL certificate including the two above in /etc/letsencrypt/live/teslamate.<your domain>
 - External internet access, to talk to tesla.com
 
 ## Setup
@@ -112,7 +112,7 @@ LETSENCRYPT_EMAIL=yourperson@example.com
 
 This file contains the definition of the virtual hosts `teslamate.example.com` and `grafana.example.com`. It has to be enabled via `a2ensite teslamate`.
 
-This assumes, that you have the SSL certificate files residing in `/etc/letsencrypt/live/teslamate.example.com`.
+This assumes, that you have the SSL certificate files residing in `/etc/letsencrypt/live/teslamate.example.com`. If it is somewhere else, you need to adapt the file accordingly.
 
 ```apacheconf title="/etc/apache2/sites-available/teslamate.conf"
 Define MYDOMAIN example.com
@@ -122,6 +122,7 @@ Define LOG access.teslamate.log
     ProxyPreserveHost On
     ServerName teslamate.${MYDOMAIN}
     CustomLog /var/log/apache2/${LOG} combined
+    RewriteEngine on
     RewriteCond %{SERVER_NAME} =teslamate.${MYDOMAIN}
     RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </VirtualHost>
