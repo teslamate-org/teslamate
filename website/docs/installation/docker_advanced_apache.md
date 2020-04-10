@@ -122,6 +122,7 @@ Define LOG access.teslamate.log
     ProxyPreserveHost On
     ServerName teslamate.${MYDOMAIN}
     CustomLog /var/log/apache2/${LOG} combined
+    RewriteEngine on
     RewriteCond %{SERVER_NAME} =teslamate.${MYDOMAIN}
     RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </VirtualHost>
