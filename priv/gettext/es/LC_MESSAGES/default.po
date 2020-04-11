@@ -86,17 +86,17 @@ msgstr "Ajustes"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:165
-msgid "Scheduled charging"
+msgid "Scheduled Charging"
 msgstr "Carga programada"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:43
-msgid "Plugged in"
+msgid "Plugged In"
 msgstr "Enchufado"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:174
-msgid "Charge limit"
+msgid "Charge Limit"
 msgstr "Límite de carga"
 
 #, elixir-format
@@ -131,11 +131,6 @@ msgid "Back"
 msgstr "Atrás"
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/root.html.eex:56
-msgid "Geo-Fences"
-msgstr "Geovalla"
-
-#, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:202
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Geovalla \"%{name}\" creada"
@@ -143,7 +138,8 @@ msgstr "Geovalla \"%{name}\" creada"
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:4
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:4
-msgid "Geo-fences"
+#: lib/teslamate_web/templates/layout/root.html.eex:56
+msgid "Geo-Fences"
 msgstr "Geovalla"
 
 #, elixir-format
@@ -265,7 +261,7 @@ msgstr "Potencia del cargador"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:141
-msgid "Preferred range"
+msgid "Preferred Range"
 msgstr "Autonomía preferida"
 
 #, elixir-format
@@ -310,12 +306,12 @@ msgstr "¿Borrar '%{geo_fence}'?"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:246
-msgid "Inside temperature"
+msgid "Inside Temperature"
 msgstr "Temperatura en el interior"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:234
-msgid "Outside temperature"
+msgid "Outside Temperature"
 msgstr "Temperatura en el exterior"
 
 #, elixir-format
