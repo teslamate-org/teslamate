@@ -76,7 +76,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
      mosquitto-data:
    ```
 
-2. Start start the docker containers with `docker-compose up`. To run the containers in the background add the `-d` flag:
+2. Start the docker containers with `docker-compose up`. To run the containers in the background add the `-d` flag:
 
    ```bash
    docker-compose up -d
