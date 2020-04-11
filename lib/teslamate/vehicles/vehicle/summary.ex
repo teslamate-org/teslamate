@@ -173,6 +173,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp update_available(vehicle) do
     case get_in_struct(vehicle, [:vehicle_state, :software_update, :status]) do
       "available" -> true
+      "downloading_wifi_wait" -> true
       status when is_binary(status) -> false
       nil -> nil
     end
