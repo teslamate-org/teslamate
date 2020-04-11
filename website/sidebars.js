@@ -3,21 +3,19 @@ module.exports = {
     {
       type: "category",
       label: "Getting started",
-      items: ["installation/docker", "faq"],
-    },
-    {
-      type: "category",
-      label: "Installation (advanced)",
       items: [
-        "installation/debian",
-        "installation/docker_advanced",
-        "installation/docker_advanced_apache",
+        {
+          type: "category",
+          label: "Installation",
+          items: ["installation/docker", "installation/debian"],
+        },
+        "faq",
       ],
     },
     {
       type: "category",
-      label: "Advanced Configuration",
-      items: ["configuration/environment_variables"],
+      label: "Guides",
+      items: ["guides/traefik", "guides/apache"],
     },
     {
       type: "category",
@@ -28,6 +26,11 @@ module.exports = {
       type: "category",
       label: "Integrations",
       items: ["integrations/home_assistant", "integrations/mqtt"],
+    },
+    {
+      type: "category",
+      label: "Advanced Configuration",
+      items: ["configuration/environment_variables"],
     },
     {
       type: "category",

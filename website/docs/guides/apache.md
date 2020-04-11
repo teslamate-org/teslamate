@@ -1,22 +1,31 @@
 ---
-title: Advanced Docker install with Apache2, TLS, HTTP Basic Auth
+title: Advanced install with Apache2, TLS, HTTP Basic Auth
 ---
 
-**Differences to the basic setup:**
+In case you wish to make TeslaMate publicly available on the Internet, it is strongly recommended to secure the web interface and allow access to Grafana only with a password. This guide provides **an example** of a docker-compose file which differs from the simple installation in the following functions:
 
-- Web services (`teslamate` and `grafana`) sit behind a reverse proxy (Apache2) which terminates HTTPS traffic
+- Both publicly accessible services, TeslaMate and Grafana, sit behind a reverse proxy (Apache2) which terminates HTTPS traffic
+- Ports 3000 (Grafana) and 4000 (TeslaMate) are only exposed locally
+- The TeslaMate service is protected by HTTP Basic Authentication
 - Custom configuration was moved into a separate `.env` file
-- HTTP requests are redirected to HTTPS
-- Ports 3000 (grafana) and 4000 (teslamate) are only exposed locally
+- Grafana is configured to require a login
+
+:::note
+If you have problems or questions about the installation, please refer to the documentation of the respective projects directly.
+:::
 
 ## Requirements
 
-- docker, docker-compse and Apache2 with mod_proxy, mod_proxy_http, mod_proxy_wstunnel, mod_rewrite and mod_ssl running on a machine that's always on
-- Two FQDN (`teslamate.example.com` & `grafana.example.com`) pointing to that machine
+- An already installed Apache2 with the following modules:
+  - `mod_proxy`
+  - `mod_proxy_http`
+  - `mod_proxy_wstunnel`
+  - `mod_rewrite`
+  - `mod_ssl`
+- Two FQDN, for example `teslamate.example.com` and `grafana.example.com`
 - An existing SSL certificate including the two above in `/etc/letsencrypt/live/teslamate.<your domain>`
-- External internet access, to talk to tesla.com
 
-## Setup
+## Instructions
 
 Create the following files:
 
