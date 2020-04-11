@@ -89,6 +89,36 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     refute_receive _
   end
 
+  @tag :capture_log
+  test "handles an empty drive_state", %{test: name} do
+    now = DateTime.utc_now()
+    now_ts = DateTime.to_unix(now, :millisecond)
+
+    events = [
+      {:ok, online_event()},
+      {:ok, drive_event(now_ts + 0, "D", 5)},
+      {:ok, drive_event(now_ts + 1, "D", 50)},
+      {:ok, %TeslaApi.Vehicle{state: "online", drive_state: nil}},
+      fn -> Process.sleep(10_000) end
+    ]
+
+    :ok = start_vehicle(name, events)
+
+    start_date = DateTime.from_unix!(now_ts, :millisecond)
+    assert_receive {:start_state, car, :online, date: ^start_date}
+    assert_receive {ApiMock, {:stream, 1000, _}}
+    assert_receive {:insert_position, ^car, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+
+    assert_receive {:start_drive, ^car}
+    assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 8}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+    assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 80}}
+
+    refute_receive _
+  end
+
   test "transitions directly into driving state", %{test: name} do
     now = DateTime.utc_now()
     now_ts = DateTime.to_unix(now, :millisecond)

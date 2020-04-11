@@ -908,8 +908,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, :available, drv}, data) do
-    case get(vehicle, [:drive_state, :shift_state]) do
-      shift_state when shift_state in ~w(D N R) ->
+    interval = if streaming?(data), do: 15, else: @driving_interval
+
+    case vehicle do
+      %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
         geofence =
           Repo.checkout(fn ->
             {:ok, pos} =
@@ -918,13 +920,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
             call(data.deps.locations, :find_geofence, [pos])
           end)
 
-        interval = if streaming?(data), do: 15, else: @driving_interval
-
-        {:next_state, {:driving, :available, drv},
-         %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
+        {:keep_state, %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
          [broadcast_summary(), schedule_fetch(interval, data)]}
 
-      shift_state when shift_state in [nil, "P"] ->
+      %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in [nil, "P"] ->
         {:ok, {%Log.Drive{distance: km, duration_min: min}, geofence}} =
           Repo.transaction(fn ->
             {:ok, pos} =
@@ -942,6 +941,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
          {:next_event, :internal, {:update, {:online, vehicle}}}}
+
+      %Vehicle{drive_state: nil} ->
+        Logger.warn("drive_state is nil!", car_id: data.car.id)
+        {:keep_state_and_data, schedule_fetch(interval, data)}
     end
   end
 
@@ -1454,9 +1457,5 @@ defmodule TeslaMate.Vehicles.Vehicle do
   case(Mix.env()) do
     :test -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :millisecond)
     _____ -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :second)
-  end
-
-  defp get(struct, keys) do
-    Enum.reduce(keys, struct, fn key, acc -> if acc, do: Map.get(acc, key) end)
   end
 end
