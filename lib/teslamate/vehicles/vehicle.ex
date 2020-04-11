@@ -234,13 +234,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:reply, from, {:error, :charging_in_progress}}}
   end
 
-  def handle_event({:call, from}, :suspend_logging, _online, data) do
-    with {:ok, %Vehicle{} = vehicle} <- fetch(data, expected_state: :online),
+  def handle_event({:call, from}, :suspend_logging, _online, %Data{car: car} = data) do
+    with {:ok, vehicle} <- fetch_strict(car.eid, data.deps),
          :ok <- can_fall_asleep(vehicle, data) do
-      Logger.info("Suspending logging [Triggered manually]", car_id: data.car.id)
+      Logger.info("Suspending logging [Triggered manually]", car_id: car.id)
 
-      {:ok, _pos} =
-        call(data.deps.log, :insert_position, [data.car, create_position(vehicle, data)])
+      {:ok, _pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
 
       suspend_min =
         case {data.car.settings, streaming?(data)} do
@@ -259,9 +258,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
     else
       {:error, reason} ->
         {:keep_state_and_data, {:reply, from, {:error, reason}}}
-
-      {:ok, state} ->
-        {:keep_state_and_data, {:reply, from, {:error, state}}}
     end
   end
 
@@ -1113,6 +1109,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp fetch_with_unreachable_assumption(id, deps) do
     with {:ok, %Vehicle{state: "online"}} <- call(deps.api, :get_vehicle, [id]) do
       call(deps.api, :get_vehicle_with_state, [id])
+    end
+  end
+
+  defp fetch_strict(id, deps) do
+    alias Vehicle, as: V
+
+    case call(deps.api, :get_vehicle_with_state, [id]) do
+      {:ok, %V{drive_state: %Drive{}, charge_state: %Charge{}, climate_state: %Climate{}} = v} ->
+        {:ok, v}
+
+      {:ok, %V{}} ->
+        {:error, :gateway_error}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
