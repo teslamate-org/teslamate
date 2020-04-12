@@ -4,6 +4,8 @@ title: web based management of your docker installation
 
 To graphically manage your docker installation of teslamate you could use [portainer](https://www.portainer.io).
 
+## Installation
+
 Just include the following into the respective parts (`services` and `volumes`) of your `docker-compose.yml`:
 
 ```yml docker-compose.yml
