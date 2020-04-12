@@ -1,5 +1,5 @@
 ---
-title: web based management of your docker installation
+title: Web based management of your docker installation
 ---
 
 To graphically manage your docker installation of teslamate you could use [portainer](https://www.portainer.io).
