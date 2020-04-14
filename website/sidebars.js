@@ -15,7 +15,7 @@ module.exports = {
     {
       type: "category",
       label: "Guides",
-      items: ["guides/traefik", "guides/apache"],
+      items: ["guides/traefik", "guides/apache", "guides/portainer"],
     },
     {
       type: "category",
