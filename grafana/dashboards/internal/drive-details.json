@@ -2,6 +2,7 @@
   "annotations": {
     "list": [
       {
+        "$$hashKey": "object:31",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": true,
@@ -15,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1583173648060,
+  "iteration": 1586855689842,
   "links": [
     {
       "icon": "dashboard",
@@ -208,7 +209,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": " $length_unit",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -316,7 +316,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -413,10 +412,12 @@
       "mappingType": 1,
       "mappingTypes": [
         {
+          "$$hashKey": "object:144",
           "name": "value to text",
           "value": 1
         },
         {
+          "$$hashKey": "object:145",
           "name": "range to text",
           "value": 2
         }
@@ -424,7 +425,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -451,7 +451,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select duration_min * 60 from drives where id = $drive_id;",
+          "rawSql": "SELECT extract(epoch FROM (end_position.date - start_position.date))\nFROM drives\nLEFT JOIN positions start_position ON start_position_id = start_position.id\nLEFT JOIN positions end_position ON end_position_id = end_position.id\nWHERE drives.id = $drive_id;",
           "refId": "A",
           "select": [
             [
@@ -483,6 +483,7 @@
       "valueFontSize": "70%",
       "valueMaps": [
         {
+          "$$hashKey": "object:147",
           "op": "=",
           "text": "N/A",
           "value": "null"
@@ -503,7 +504,6 @@
       "lineColor": "red",
       "links": [],
       "maxDataPoints": 50000,
-      "options": {},
       "pointColor": "royalblue",
       "targets": [
         {
@@ -885,7 +885,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "pluginVersion": "6.6.0",
       "postfix": " $length_unit",
       "postfixFontSize": "50%",
@@ -990,6 +989,7 @@
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "temp_unit",
@@ -1015,6 +1015,7 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "length_unit",
@@ -1041,6 +1042,7 @@
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 0,
         "includeAll": false,
+        "index": -1,
         "label": "Car",
         "multi": false,
         "name": "car_id",
@@ -1066,6 +1068,7 @@
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "alternative_length_unit",
@@ -1091,6 +1094,7 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": null,
         "multi": false,
         "name": "preferred_range",
@@ -1116,6 +1120,7 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "base_url",
@@ -1165,5 +1170,8 @@
   "timezone": "",
   "title": "Drive Details",
   "uid": "zm7wN6Zgz",
+  "variables": {
+    "list": []
+  },
   "version": 1
 }
