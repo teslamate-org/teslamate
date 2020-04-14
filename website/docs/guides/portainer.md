@@ -2,7 +2,7 @@
 title: Web based management of your docker installation
 ---
 
-To graphically manage your docker installation of teslamate you could use [portainer](https://www.portainer.io).
+To graphically manage your docker installation of TeslaMate you could use [portainer](https://www.portainer.io).
 
 ## Installation
 
@@ -24,8 +24,8 @@ volumes:
   portainer_data:
 ```
 
-Then you can access the docker management console on http://<yourhost>:9000.
+Then you can access the docker management console on http://yourhost:9000.
 
 :::note
-It should be warned, that exposing the docker socket `docker.sock`always implies a security risk. For more information see [Do not expose the Docker daemon socket]https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html#rule-1---do-not-expose-the-docker-daemon-socket-even-to-the-containers).
+It should be warned, that exposing the docker socket `docker.sock` always implies a security risk. For more information see [Do not expose the Docker daemon socket](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html#rule-1---do-not-expose-the-docker-daemon-socket-even-to-the-containers).
 :::
