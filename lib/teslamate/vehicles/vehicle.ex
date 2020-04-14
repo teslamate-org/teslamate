@@ -1268,20 +1268,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       :ok ->
         if suspend? do
-          Logger.info("Suspending logging", car_id: car.id)
-
           {:ok, _pos} =
             call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
 
+          events = [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]
+
           case current_state do
             {:suspended, _} ->
-              {:keep_state_and_data,
-               [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]}
+              {:keep_state_and_data, events}
 
             _ ->
+              Logger.info("Suspending logging", car_id: car.id)
+
               {:next_state, {:suspended, current_state},
-               %Data{data | last_state_change: DateTime.utc_now()},
-               [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]}
+               %Data{data | last_state_change: DateTime.utc_now()}, events}
           end
         else
           {:keep_state_and_data, [broadcast_summary(), schedule_fetch(15 * i, data)]}
