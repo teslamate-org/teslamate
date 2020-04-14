@@ -84,9 +84,13 @@ defmodule TeslaMate.Import.LineParser do
           end
 
         ts =
-          case Timex.to_datetime(datetime, tz) do
-            %DateTime{} = dt ->
-              DateTime.to_unix(dt, :millisecond)
+          case DateTime.from_naive(datetime, tz) do
+            {:ok, datetime} ->
+              DateTime.to_unix(datetime, :millisecond)
+
+            {kind, _first_dt, _second_dt} when kind in [:ambiguous, :gap] ->
+              # To keep things simple, return nil to ignore these ambiguous responses
+              nil
 
             {:error, reason} ->
               Logger.warn(

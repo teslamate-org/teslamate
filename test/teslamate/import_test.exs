@@ -356,6 +356,51 @@ defmodule TeslaMate.ImportTest do
       assert [] = all(Drive)
       assert [] = all(ChargingProcess)
     end
+
+    test "DST change", %{pid: pid} do
+      {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/05_dst"})
+
+      assert %Import.Status{files: [f], message: nil, state: :idle} = Import.get_status()
+
+      assert f == %{
+               complete: false,
+               date: [2019, 10],
+               path: "#{@dir}/05_dst/TeslaFi102019.csv"
+             }
+
+      with_mock Repair, trigger_run: fn -> ok_fn(:trigger_run, pid) end do
+        assert :ok = Import.subscribe()
+        assert :ok = Import.run("Europe/Berlin")
+
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: true}], state: :running}, 10000
+        assert_receive %Status{files: [%{complete: true}], state: :complete}, 1000
+
+        assert_receive :trigger_run
+        assert_receive :trigger_run
+
+        refute_receive _
+      end
+
+      assert [
+               %TeslaMate.Log.State{
+                 car_id: car_id,
+                 start_date: ~U[2019-10-26 23:30:40.000000Z],
+                 end_date: ~U[2019-10-27 02:14:44.000000Z],
+                 state: :asleep
+               },
+               %TeslaMate.Log.State{
+                 car_id: car_id,
+                 start_date: ~U[2019-10-27 02:14:44.000000Z],
+                 end_date: nil,
+                 state: :online
+               }
+             ] = all(State)
+
+      assert [] = all(Drive)
+      assert [] = all(ChargingProcess)
+    end
   end
 
   test "car war permanently unreachable", %{pid: pid} do
