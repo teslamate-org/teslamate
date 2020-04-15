@@ -518,8 +518,8 @@ msgstr "Total"
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:118
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Det er <strong>%{n} ladeøkt</strong> på denne lokasjonen der pris ikke er definert."
+msgstr[1] "Det er <strong>%{n} ladeøkter</strong> på denne lokasjonen der priser ikke er definert."
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:127
@@ -549,12 +549,12 @@ msgstr "Streaming API"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:285
 msgid "Documentation"
-msgstr ""
+msgstr "Dokumentasjon"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:281
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.eex:95
@@ -570,4 +570,4 @@ msgstr "Åpen dør"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Trunk is open"
-msgstr ""
+msgstr "Bagasjeluken er åpen"
