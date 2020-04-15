@@ -103,19 +103,18 @@ const DirectionArrow = CircleMarker.extend({
     this._heading = heading;
     CircleMarker.prototype.initialize.call(this, latLng, {
       fillOpacity: 1,
-      radius: heading === "" ? 5 : 10,
+      radius: 5,
       ...options,
     });
   },
 
   setHeading(heading) {
-    this.setRadius(heading === "" ? 5 : 10);
     this._heading = heading;
     this.redraw();
   },
 
   _updatePath() {
-    const [{ x, y }, r] = [this._point, this._radius];
+    const { x, y } = this._point;
 
     if (this._heading === "")
       return CircleMarker.prototype._updatePath.call(this);
@@ -126,9 +125,7 @@ const DirectionArrow = CircleMarker.extend({
       `translate(${x},${y}) rotate(${this._heading})`
     );
 
-    const path = this._empty()
-      ? ""
-      : `M0,${-r - 1} L-3,${-r} L0,${-r - 8} L3,${-r} z}`;
+    const path = this._empty() ? "" : `M0,${3} L-4,${5} L0,${-5} L4,${5} z}`;
 
     this._renderer._setPath(this, path);
   },
