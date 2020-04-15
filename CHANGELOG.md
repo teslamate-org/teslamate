@@ -10,21 +10,22 @@ As the first and only Tesla logging app out there, TeslaMate now use the Tesla s
 
 - **High precision drive data**. Rather than active polling, the streaming API allows for passive consumption of a high frequency data stream with the most important drive data (position, heading, speed, power, elevation etc.).
 - **Actual elevation above sea level**. Up until now TeslaMate used satellite terrain data to get the elevation. Driving through tunnels or across a bridges therefore resulted in inaccurate recordings. This is no longer the case!
-- **Bluetooth hints are no longer needed!** Using the streaming API does not prevent the vehicle from falling asleep, thus enabling continuous monitoring. This enables the car to fall asleep more quickly (no more idle timer) and we don't miss up to 21 minutes of driving because of halted polling.
+- **Bluetooth hints are no longer needed!** Using the streaming API does not prevent the vehicle from falling asleep, thus enabling continuous monitoring. This allows the car to fall asleep more quickly (no more idle timer) and we don't miss up to 21 minutes of driving because of halted polling.
 
 Many thanks to everyone who participated in testing this release and contributed improvements!
 
 #### Other enhancements:
 
 - Add Danish translation ([#584](https://github.com/adriankumpf/teslamate/pull/584) by [MartinNielsen](https://github.com/MartinNielsen))
-- Update Norwegian translation ([#544](https://github.com/adriankumpf/teslamate/pull/544) by [spacecosmos](https://github.com/spacecosmos))
-- Update Swedish translation ([#522](https://github.com/adriankumpf/teslamate/pull/578) by [tobiasehlert](https://github.com/tobiasehlert))
+- Update Norwegian translation ([#544](https://github.com/adriankumpf/teslamate/pull/544) and [#591](https://github.com/adriankumpf/teslamate/pull/591) by [spacecosmos](https://github.com/spacecosmos))
+- Update Swedish translation ([#522](https://github.com/adriankumpf/teslamate/pull/522) by [tobiasehlert](https://github.com/tobiasehlert))
 - Updated Labels to Title Case ([#578](https://github.com/adriankumpf/teslamate/pull/578) by [jmiverson](https://github.com/jmiverson))
 - Send credentials with manifest request ([#555](https://github.com/adriankumpf/teslamate/pull/555) by [MaxG88](https://github.com/MaxG88))
+- Add option to change the language of the web interface
 - Reduce docker image size
-- Display arrow to indicate in which direction the vehicle is heading
+- Display an arrow instead of a generic marker to indicate in which direction the vehicle is heading
 - Show spinner before the map is initialized
-- Wait until the doors / trunk / frunk are closed before attempting to fall asleep
+- Wait until the doors/trunk/frunk are closed before attempting to fall asleep
 - Inform if a new TeslaMate update is available
 - Add icons to navbar items
 - Add 'About' section to settings page
@@ -39,7 +40,7 @@ Many thanks to everyone who participated in testing this release and contributed
 
 #### Documentation
 
-The docs were revised (once again). You can find them at [https://docs.teslamate.org] (docs.teslamate.org).
+The docs were revised (once again). You can find them at [docs.teslamate.org](https://docs.teslamate.org).
 
 - Add portainer guide to the documentation ([#581](https://github.com/adriankumpf/teslamate/pull/581) by [DrMichael](https://github.com/DrMichael))
 - Improve Apache2 guide ([#570](https://github.com/adriankumpf/teslamate/pull/570) by [DrMichael](https://github.com/DrMichael))
@@ -47,10 +48,12 @@ The docs were revised (once again). You can find them at [https://docs.teslamate
 ### Bug Fixes
 
 - Display vampire drain range loss per hour in the correct units ([#543](https://github.com/adriankumpf/teslamate/pull/543) by [ograff](https://github.com/ograff)).
+- Trip dashboard: Add title to table to allow sorting ([#592](https://github.com/adriankumpf/teslamate/pull/592) by [MaxG88](https://github.com/MaxG88))
 - Fix flashing modal on the geofence page
 - Publish an MQTT message when the health check succeeds again
 - Handle various invalid API responses that could previously cause problems
 - Fix an issue where ambiguous dates could cause the TeslaFi import to fail
+- Terminate an in progress drive when the car is put into service mode
 
 ### Removed
 

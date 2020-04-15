@@ -37,14 +37,14 @@ The documentation is available at [docs.teslamate.org](https://docs.teslamate.or
 
 **General**
 
-- Little to no additional vampire drain: the car will fall asleep after a certain idle time
+- High precision drive data recording
+- No additional vampire drain: the car will fall asleep as soon as possible
 - Automatic address lookup
-- Locally enriches positions with elevation data
 - Easy integration into Home Assistant (via MQTT)
 - Geo-fencing feature to create custom locations
 - Supports multiple vehicles per Tesla Account
 - Charge cost tracking
-- Import from TeslaFi
+- Import from TeslaFi and tesla-apiscraper
 
 ## Screenshots
 
