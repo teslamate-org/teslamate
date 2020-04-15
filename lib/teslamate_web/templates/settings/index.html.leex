@@ -138,9 +138,7 @@ end %>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
           <%= label f, :preferred_range, class: "label has-tooltip-multiline", data_tooltip: gettext("The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle.")  do %>
-            <%= gettext("Preferred Range") %> <span class="icon is-small" >
-              <span class="mdi mdi-information"></span>
-            </span>
+            <%= gettext("Preferred Range") %><span class="icon is-small">&nbsp;<span class="mdi mdi-information"></span></span>
           <% end %>
         </div>
         <div class="field-body">
@@ -160,6 +158,22 @@ end %>
   <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Language") %></h2>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <%= label f, :ui, gettext("Web App"), class: "label" %>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :ui, supported_ui_languages(), selected: @locale) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="field is-horizontal">
         <div class="field-label is-normal">
           <%= label f, :language, gettext("Addresses"), class: "label" %>
@@ -250,7 +264,7 @@ end %>
 
 <div class="columns is-mobile is-centered">
   <div class="column is-narrow table-container">
-        <table class="about table is-narrow is-fullwidth">
+        <table class="about table is-narrow">
           <tbody>
             <tr>
               <th align="right"><%= gettext("Version") %></th>
@@ -265,7 +279,7 @@ end %>
             </tr>
             <tr>
               <th align="right"><%= gettext("GitHub") %></th>
-              <td><%= link "github.com/adriankumpf/teslamate", to: "https://github.com/adriankumpf/teslamate", target: "_blank", rel: "noopener noreferrer" %></td>
+              <td><%= link "adriankumpf/teslamate", to: "https://github.com/adriankumpf/teslamate", target: "_blank", rel: "noopener noreferrer" %></td>
             </tr>
             <tr>
               <th align="right"><%= gettext("Documentation") %></th>

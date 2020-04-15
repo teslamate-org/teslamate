@@ -216,6 +216,25 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                } = Repo.get(Address, address_id)
       end)
     end
+
+    test "adds a query param when changing the UI language", %{conn: conn} do
+      assert {:ok, view, html} = live(conn, "/settings")
+
+      assert [{"option", [{"value", "en"}, {"selected", "selected"}], ["English"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_ui option[selected]")
+
+      render_change(view, :change, %{global_settings: %{ui: "de"}})
+      assert_redirect(view, path = "/settings?locale=de")
+
+      assert {:ok, _view, html} = live(conn, path)
+
+      assert [{"option", [{"value", "de"}, {"selected", "selected"}], ["German"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_ui option[selected]")
+    end
   end
 
   describe "car settings" do

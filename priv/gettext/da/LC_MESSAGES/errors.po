@@ -10,6 +10,7 @@ msgid ""
 msgstr ""
 "Language: da\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 # # From Ecto.Changeset.cast/4
 msgid "can't be blank"
 msgstr "skal udfyldes"
