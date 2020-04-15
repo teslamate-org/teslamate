@@ -316,7 +316,24 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       {:error, :vehicle_in_service} ->
         Logger.info("Vehicle is currently in service", car_id: data.car.id)
-        {:keep_state, data, [broadcast_fetch(false), schedule_fetch(60, data)]}
+
+        case state do
+          {:driving, _, %Log.Drive{} = drive} ->
+            {:ok, %Log.Drive{distance: km, duration_min: min}} =
+              call(data.deps.log, :close_drive, [drive])
+
+            :ok = disconnect_stream(data)
+
+            Logger.info("Driving / Aborted / #{km && round(km)} km – #{min} min",
+              car_id: data.car.id
+            )
+
+            {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+             [broadcast_fetch(false), broadcast_summary(), schedule_fetch(60, data)]}
+
+          _ ->
+            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(60, data)]}
+        end
 
       {:error, :not_signed_in} ->
         Logger.error("Error / unauthorized")
@@ -349,9 +366,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         interval =
           case state do
-            {:driving, _, _} -> 1
-            {:charging, _} -> 5
-            :online -> 15
+            {:driving, _, _} -> 10
+            {:charging, _} -> 15
+            :online -> 20
             _ -> 30
           end
 
