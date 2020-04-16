@@ -39,7 +39,7 @@ Many thanks to everyone who participated in testing this release and contributed
 
 #### Documentation
 
-The docs were revised (once again). You can find them at [docs.teslamate.org](docs.teslamate.org).
+The docs were revised (once again). You can find them at [https://docs.teslamate.org] (docs.teslamate.org).
 
 - Add portainer guide to the documentation ([#581](https://github.com/adriankumpf/teslamate/pull/581) by [DrMichael](https://github.com/DrMichael))
 - Improve Apache2 guide ([#570](https://github.com/adriankumpf/teslamate/pull/570) by [DrMichael](https://github.com/DrMichael))
