@@ -7,6 +7,7 @@ defmodule TeslaMate.ImportTest do
   alias TeslaMate.Import.Status
   alias TeslaMate.Import
 
+  import TestHelper, only: [decimal: 1]
   import Mock
 
   @dir "./test/fixtures/import"
@@ -72,16 +73,16 @@ defmodule TeslaMate.ImportTest do
                end_address_id: nil,
                start_geofence_id: nil,
                end_geofence_id: nil,
-               start_ideal_range_km: 311.7,
-               end_ideal_range_km: 311.7,
+               start_ideal_range_km: decimal(311.73),
+               end_ideal_range_km: decimal(311.73),
                start_km: 22414.090164,
                end_km: 22415.295107,
                start_position_id: _,
                end_position_id: _,
-               start_rated_range_km: 247.2,
-               end_rated_range_km: 247.2,
-               inside_temp_avg: 26.542857142857144,
-               outside_temp_avg: 19.342857142857145,
+               start_rated_range_km: decimal(247.24),
+               end_rated_range_km: decimal(247.24),
+               inside_temp_avg: decimal(26.5),
+               outside_temp_avg: decimal(19.3),
                power_max: nil,
                power_min: nil,
                speed_max: 55
@@ -100,12 +101,12 @@ defmodule TeslaMate.ImportTest do
                end_km: 22420.306617,
                start_position_id: _,
                end_position_id: _,
-               start_rated_range_km: 246.1,
-               end_rated_range_km: 239.1,
-               start_ideal_range_km: 310.3,
-               end_ideal_range_km: 301.4,
-               inside_temp_avg: 28.816000000000003,
-               outside_temp_avg: 20.104,
+               start_rated_range_km: decimal(246.07),
+               end_rated_range_km: decimal(239.05),
+               start_ideal_range_km: decimal(310.27),
+               end_ideal_range_km: decimal(301.41),
+               inside_temp_avg: decimal(28.8),
+               outside_temp_avg: decimal(20.1),
                power_max: nil,
                power_min: nil,
                speed_max: 58
@@ -115,8 +116,8 @@ defmodule TeslaMate.ImportTest do
     assert [
              %ChargingProcess{
                car_id: ^car_id,
-               charge_energy_added: 10.11,
-               charge_energy_used: 10.653244722222219,
+               charge_energy_added: decimal(10.11),
+               charge_energy_used: decimal(10.65),
                address_id: nil,
                cost: nil,
                duration_min: 70,
@@ -124,12 +125,12 @@ defmodule TeslaMate.ImportTest do
                end_battery_level: 70,
                start_date: ~U[2016-06-26 23:04:32.000000Z],
                end_date: ~U[2016-06-27 00:14:32.000000Z],
-               start_ideal_range_km: 298.4,
-               end_ideal_range_km: 369.2,
-               start_rated_range_km: 236.7,
-               end_rated_range_km: 292.8,
+               start_ideal_range_km: decimal(298.44),
+               end_ideal_range_km: decimal(369.17),
+               start_rated_range_km: decimal(236.69),
+               end_rated_range_km: decimal(292.79),
                geofence_id: nil,
-               outside_temp_avg: 23.5
+               outside_temp_avg: decimal(23.5)
              }
            ] = all(ChargingProcess)
 
@@ -355,6 +356,51 @@ defmodule TeslaMate.ImportTest do
       assert [] = all(Drive)
       assert [] = all(ChargingProcess)
     end
+
+    test "DST change", %{pid: pid} do
+      {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/05_dst"})
+
+      assert %Import.Status{files: [f], message: nil, state: :idle} = Import.get_status()
+
+      assert f == %{
+               complete: false,
+               date: [2019, 10],
+               path: "#{@dir}/05_dst/TeslaFi102019.csv"
+             }
+
+      with_mock Repair, trigger_run: fn -> ok_fn(:trigger_run, pid) end do
+        assert :ok = Import.subscribe()
+        assert :ok = Import.run("Europe/Berlin")
+
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: false}], state: :running}, 1000
+        assert_receive %Status{files: [%{complete: true}], state: :running}, 10000
+        assert_receive %Status{files: [%{complete: true}], state: :complete}, 1000
+
+        assert_receive :trigger_run
+        assert_receive :trigger_run
+
+        refute_receive _
+      end
+
+      assert [
+               %TeslaMate.Log.State{
+                 car_id: car_id,
+                 start_date: ~U[2019-10-26 23:30:40.000000Z],
+                 end_date: ~U[2019-10-27 02:14:44.000000Z],
+                 state: :asleep
+               },
+               %TeslaMate.Log.State{
+                 car_id: car_id,
+                 start_date: ~U[2019-10-27 02:14:44.000000Z],
+                 end_date: nil,
+                 state: :online
+               }
+             ] = all(State)
+
+      assert [] = all(Drive)
+      assert [] = all(ChargingProcess)
+    end
   end
 
   test "car war permanently unreachable", %{pid: pid} do
@@ -442,8 +488,8 @@ defmodule TeslaMate.ImportTest do
                 action: :insert,
                 changes: %{date: ~U[2017-12-01 13:36:14.000000Z]},
                 errors: [
-                  latitude: {"is invalid", [type: :float, validation: :cast]},
-                  longitude: {"is invalid", [type: :float, validation: :cast]}
+                  latitude: {"is invalid", [type: :decimal, validation: :cast]},
+                  longitude: {"is invalid", [type: :decimal, validation: :cast]}
                 ],
                 data: %Log.Position{},
                 valid?: false

@@ -116,8 +116,8 @@ defmodule TeslaMate.Locations do
         FROM positions p
         WHERE
           m.#{position_field} = p.id AND
-          earth_box(ll_to_earth($1, $2), $3) @> ll_to_earth(p.latitude, p.longitude) AND
-          earth_distance(ll_to_earth($1, $2), ll_to_earth(latitude, p.longitude)) < $3
+          earth_box(ll_to_earth($1::numeric, $2::numeric), $3) @> ll_to_earth(p.latitude, p.longitude) AND
+          earth_distance(ll_to_earth($1::numeric, $2::numeric), ll_to_earth(latitude, p.longitude)) < $3
       """
     end
 

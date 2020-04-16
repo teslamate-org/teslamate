@@ -48,13 +48,22 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
       |> Map.take([:charge_energy_added, :charge_energy_used])
       |> Map.values()
       |> Enum.reject(&is_nil/1)
-      |> Enum.max(fn -> nil end)
+      |> case do
+        [k0, k1] -> Decimal.max(k0, k1)
+        [kwh] -> kwh
+        [] -> nil
+      end
 
     params =
-      with kwh when is_number(kwh) <- kwh,
+      with %Decimal{} <- kwh,
            %{"cost" => cost, "mode" => "per_kwh"} when is_binary(cost) <- params,
            {cost_per_kwh, ""} <- Float.parse(cost) do
-        Map.put(params, "cost", cost_per_kwh * kwh)
+        cost =
+          cost_per_kwh
+          |> Decimal.from_float()
+          |> Decimal.mult(kwh)
+
+        Map.put(params, "cost", cost)
       else
         _ -> params
       end

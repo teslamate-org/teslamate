@@ -53,7 +53,7 @@
         <div class="control">
           <div id="energy-tag" class="tags has-addons">
             <span class="tag is-warning is-light"><span class="icon"><span class="mdi mdi-flash"></span></span></span>
-            <span class="tag"><%= Float.round(max(@charging_process.charge_energy_used || 0, @charging_process.charge_energy_added), 2) %> kWh</span>
+            <span class="tag"><%= Decimal.round(Decimal.max(@charging_process.charge_energy_used || 0, @charging_process.charge_energy_added), 2) %> kWh</span>
           </div>
         </div>
         <% end %>

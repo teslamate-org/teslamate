@@ -5,7 +5,7 @@ defmodule TeslaMate.MixProject do
     [
       app: :teslamate,
       version: "1.19.0-dev",
-      elixir: "~> 1.9",
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -59,7 +59,8 @@ defmodule TeslaMate.MixProject do
       {:ex_cldr, "~> 2.0"},
       {:csv, "~> 2.3"},
       {:timex, "~> 3.0"},
-      {:websockex, "~> 0.4"}
+      {:websockex, "~> 0.4"},
+      {:tzdata, "~> 1.0"}
     ]
   end
 

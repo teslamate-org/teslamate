@@ -11,7 +11,7 @@ defmodule TeslaMate.LocationsAddressesTest do
       country: "some country",
       display_name: "some display_name",
       house_number: "some house_number",
-      latitude: 120.5,
+      latitude: 20.5,
       longitude: 120.5,
       name: "some name",
       neighbourhood: "some neighbourhood",
@@ -29,8 +29,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       country: "some updated country",
       display_name: "some updated display_name",
       house_number: "some updated house_number",
-      latitude: 456.7,
-      longitude: 456.7,
+      latitude: -20.7,
+      longitude: -112.7,
       name: "some updated name",
       neighbourhood: "some updated neighbourhood",
       osm_id: 43,
@@ -76,8 +76,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       assert address.country == "some country"
       assert address.display_name == "some display_name"
       assert address.house_number == "some house_number"
-      assert address.latitude == 120.5
-      assert address.longitude == 120.5
+      assert address.latitude == Decimal.cast("20.500000")
+      assert address.longitude == Decimal.cast("120.500000")
       assert address.name == "some name"
       assert address.neighbourhood == "some neighbourhood"
       assert address.osm_id == 42
@@ -110,8 +110,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       assert address.country == "some updated country"
       assert address.display_name == "some updated display_name"
       assert address.house_number == "some updated house_number"
-      assert address.latitude == 456.7
-      assert address.longitude == 456.7
+      assert address.latitude == Decimal.cast("-20.700000")
+      assert address.longitude == Decimal.cast("-112.700000")
       assert address.name == "some updated name"
       assert address.neighbourhood == "some updated neighbourhood"
       assert address.osm_id == 43
@@ -137,7 +137,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       assert address.osm_id == 103_619_766
       assert address.city == "Bielefeld"
 
-      assert [^address] = Repo.all(Address)
+      assert [maddress] = Repo.all(Address)
+      assert address == maddress
 
       assert {:ok, %Address{} = ^address} =
                Locations.find_address(%{latitude: 52.019687, longitude: 8.526041})

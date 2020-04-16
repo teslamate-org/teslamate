@@ -1,22 +1,24 @@
 ---
-title: Advanced Docker install with Traefik, Let's Encrypt, HTTP Basic Auth
+title: Advanced install with Traefik, Let's Encrypt & HTTP Basic Auth
 ---
 
-**Differences to the basic setup:**
+In case you wish to make TeslaMate publicly available on the Internet, it is strongly recommended to secure the web interface and allow access to Grafana only with a password. This guide provides **an example** of a docker-compose file which differs from the simple installation in the following functions:
 
-- Web services (`teslamate` and `grafana`) sit behind a reverse proxy (Traefik) which terminates HTTPS traffic
+- Both publicly accessible services, TeslaMate and Grafana, sit behind a reverse proxy (Traefik) which terminates HTTPS traffic
+- The TeslaMate service is protected by HTTP Basic Authentication
 - Custom configuration was moved into a separate `.env` file
-- All publicly accessible services use fully qualified domain name and automatically acquire a Let's Encrypt certificate
-- The TeslaMate service is protected by HTTP Basic Authentication.
+- A Let's Encrypt certificate is acquired automatically
 - Grafana is configured to require a login
+
+:::note
+If you have problems or questions about the installation, please refer to the documentation of the respective projects directly.
+:::
 
 ## Requirements
 
-- Docker running on a machine that's always on
-- Two FQDN (`teslamate.example.com` & `grafana.example.com`)
-- External internet access, to talk to tesla.com
+- Two FQDN, for example `teslamate.example.com` and `grafana.example.com`
 
-## Setup
+## Instructions
 
 Create the following three files:
 
@@ -179,3 +181,4 @@ docker-compose exec grafana grafana-cli admin reset-admin-password
 ```
 
 :::
+

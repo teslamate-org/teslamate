@@ -3,6 +3,8 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
   alias TeslaMate.{Settings, Locations, Repo}
 
+  import TestHelper, only: [decimal: 1]
+
   describe "global settings" do
     test "shows km and C by default", %{conn: conn} do
       assert {:ok, _view, html} = live(conn, "/settings")
@@ -206,13 +208,32 @@ defmodule TeslaMateWeb.SettingsLiveTest do
         assert %Address{
                  display_name: "error",
                  name: "bar",
-                 latitude: 0.0,
-                 longitude: 0.0,
+                 latitude: decimal("0.000000"),
+                 longitude: decimal("0.000000"),
                  osm_id: 0,
                  osm_type: "way",
                  raw: %{}
                } = Repo.get(Address, address_id)
       end)
+    end
+
+    test "adds a query param when changing the UI language", %{conn: conn} do
+      assert {:ok, view, html} = live(conn, "/settings")
+
+      assert [{"option", [{"value", "en"}, {"selected", "selected"}], ["English"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_ui option[selected]")
+
+      render_change(view, :change, %{global_settings: %{ui: "de"}})
+      assert_redirect(view, path = "/settings?locale=de")
+
+      assert {:ok, _view, html} = live(conn, path)
+
+      assert [{"option", [{"value", "de"}, {"selected", "selected"}], ["German"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_ui option[selected]")
     end
   end
 

@@ -8,15 +8,15 @@ defmodule TeslaMate.Log.Drive do
   schema "drives" do
     field :start_date, :utc_datetime_usec
     field :end_date, :utc_datetime_usec
-    field :outside_temp_avg, :float
-    field :inside_temp_avg, :float
+    field :outside_temp_avg, :decimal, read_after_writes: true
+    field :inside_temp_avg, :decimal, read_after_writes: true
     field :speed_max, :integer
-    field :power_max, :float
-    field :power_min, :float
-    field :start_ideal_range_km, :float
-    field :end_ideal_range_km, :float
-    field :start_rated_range_km, :float
-    field :end_rated_range_km, :float
+    field :power_max, :integer
+    field :power_min, :integer
+    field :start_ideal_range_km, :decimal, read_after_writes: true
+    field :end_ideal_range_km, :decimal, read_after_writes: true
+    field :start_rated_range_km, :decimal, read_after_writes: true
+    field :end_rated_range_km, :decimal, read_after_writes: true
     field :start_km, :float
     field :end_km, :float
     field :distance, :float

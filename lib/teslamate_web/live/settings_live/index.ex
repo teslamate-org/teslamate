@@ -17,6 +17,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     if connected?(socket), do: Gettext.put_locale(locale)
 
     assigns = %{
+      locale: locale,
       addresses_migrated?: addresses_migrated?(),
       car_settings: Settings.get_car_settings() |> prepare(),
       car: nil,
@@ -48,6 +49,11 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   @impl true
   def handle_event("car", %{"id" => id}, socket) do
     {:noreply, add_params(socket, car: id)}
+  end
+
+  def handle_event("change", %{"global_settings" => %{"ui" => ui}}, %{assigns: %{locale: lo}} = s)
+      when ui != lo do
+    {:noreply, redirect(s, to: Routes.live_path(s, __MODULE__, locale: ui))}
   end
 
   def handle_event("change", %{"global_settings" => params}, %{assigns: assigns} = socket) do

@@ -398,7 +398,7 @@ defmodule TeslaMate.Log do
         select: %{
           fast_charger_type: fragment("mode() WITHIN GROUP (ORDER BY ?)", c.fast_charger_type)
         },
-        where: c.charging_process_id == ^charging_process.id and c.charger_power > 0.0
+        where: c.charging_process_id == ^charging_process.id and c.charger_power > 0
       )
 
     stats =
@@ -441,7 +441,12 @@ defmodule TeslaMate.Log do
     attrs =
       stats
       |> Map.put(:charge_energy_used, charge_energy_used)
-      |> Map.update(:charge_energy_added, nil, &if(&1 < 0, do: nil, else: &1))
+      |> Map.update(:charge_energy_added, nil, fn kwh ->
+        cond do
+          kwh == nil or Decimal.negative?(kwh) -> nil
+          true -> kwh
+        end
+      end)
       |> put_cost(charging_process)
 
     with {:ok, cproc} <- charging_process |> ChargingProcess.changeset(attrs) |> Repo.update(),
@@ -477,7 +482,7 @@ defmodule TeslaMate.Log do
 
     Repo.one(
       from e in subquery(query),
-        select: sum(e.energy_used),
+        select: sum(e.energy_used) |> type(:decimal),
         where: e.energy_used >= 0
     )
   end
@@ -485,9 +490,10 @@ defmodule TeslaMate.Log do
   defp determine_phases(%ChargingProcess{id: id, car_id: car_id}) do
     from(c in Charge,
       select: {
-        avg(c.charger_power * 1000 / nullif(c.charger_actual_current * c.charger_voltage, 0)),
-        type(avg(c.charger_phases), :integer),
-        type(avg(c.charger_voltage), :float),
+        avg(c.charger_power * 1000.0 / nullif(c.charger_actual_current * c.charger_voltage, 0))
+        |> type(:float),
+        avg(c.charger_phases) |> type(:integer),
+        avg(c.charger_voltage) |> type(:float),
         count()
       },
       group_by: c.charging_process_id,
@@ -530,19 +536,19 @@ defmodule TeslaMate.Log do
           0.0
 
         {%{charge_energy_used: kwh_used, charge_energy_added: kwh_added},
-         %CP{geofence: %GeoFence{cost_per_kwh: cost_per_kwh, session_fee: session_fee}}}
-        when is_number(kwh_added) or is_number(kwh_used) ->
-          cost =
-            with %Decimal{} <- cost_per_kwh do
-              [kwh_added, kwh_used]
-              |> Enum.reject(&is_nil/1)
-              |> Enum.max()
-              |> Decimal.from_float()
-              |> Decimal.mult(cost_per_kwh)
-            end
+         %CP{geofence: %GeoFence{cost_per_kwh: cost_per_kwh, session_fee: session_fee}}} ->
+          if match?(%Decimal{}, kwh_used) or match?(%Decimal{}, kwh_added) do
+            cost =
+              with %Decimal{} <- cost_per_kwh do
+                [kwh_added, kwh_used]
+                |> Enum.reject(&is_nil/1)
+                |> Enum.max(Decimal)
+                |> Decimal.mult(cost_per_kwh)
+              end
 
-          if match?(%Decimal{}, cost) or match?(%Decimal{}, session_fee) do
-            Decimal.add(session_fee || 0, cost || 0)
+            if match?(%Decimal{}, cost) or match?(%Decimal{}, session_fee) do
+              Decimal.add(session_fee || 0, cost || 0)
+            end
           end
 
         {_, _} ->

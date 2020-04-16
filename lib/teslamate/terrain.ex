@@ -102,7 +102,16 @@ defmodule TeslaMate.Terrain do
   end
 
   def handle_event(:cast, :process, {:update, [%Position{} = p | rest], next, nil}, data) do
-    task = Task.async(fn -> do_get_elevation({p.latitude, p.longitude}, data) end)
+    task =
+      Task.async(fn ->
+        do_get_elevation(
+          {
+            Decimal.to_float(p.latitude),
+            Decimal.to_float(p.longitude)
+          },
+          data
+        )
+      end)
 
     case Task.yield(task, data.timeout) do
       {:ok, {:ok, elevation, client}} ->

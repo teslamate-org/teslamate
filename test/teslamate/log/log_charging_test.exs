@@ -57,8 +57,8 @@ defmodule TeslaMate.LogChargingTest do
 
       assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
       assert cproc.car_id == car.id
-      assert cproc.position.latitude == @valid_pos_attrs.latitude
-      assert cproc.position.longitude == @valid_pos_attrs.longitude
+      assert cproc.position.latitude == Decimal.cast("0.000000")
+      assert cproc.position.longitude == Decimal.cast("0.000000")
       assert cproc.position.date == @valid_pos_attrs.date
       assert %DateTime{} = cproc.start_date
       assert cproc.address.city == "Bielefeld"
@@ -90,8 +90,8 @@ defmodule TeslaMate.LogChargingTest do
                })
 
       assert cproc.car_id == car.id
-      assert cproc.position.latitude == 99.9
-      assert cproc.position.longitude == 99.9
+      assert cproc.position.latitude == Decimal.cast("99.900000")
+      assert cproc.position.longitude == Decimal.cast("99.900000")
       assert cproc.address_id == nil
       assert cproc.address == nil
     end
@@ -108,8 +108,8 @@ defmodule TeslaMate.LogChargingTest do
       assert charge.date == @valid_attrs.date
       assert charge.charger_phases == @valid_attrs.charger_phases
       assert charge.charger_power == @valid_attrs.charger_power
-      assert charge.charge_energy_added == @valid_attrs.charge_energy_added
-      assert charge.ideal_battery_range_km == @valid_attrs.ideal_battery_range_km
+      assert charge.charge_energy_added == @valid_attrs.charge_energy_added |> Decimal.cast()
+      assert charge.ideal_battery_range_km == Decimal.cast("250.00")
     end
 
     test "with invalid data returns error changeset" do
@@ -198,15 +198,15 @@ defmodule TeslaMate.LogChargingTest do
 
       assert %DateTime{} = cproc.start_date
       assert %DateTime{} = cproc.end_date
-      assert cproc.charge_energy_added == 0.31
+      assert cproc.charge_energy_added == Decimal.cast(0.31)
       assert cproc.duration_min == 4
       assert cproc.end_battery_level == 54
       assert cproc.start_battery_level == 50
-      assert cproc.start_ideal_range_km == 266.6
-      assert cproc.end_ideal_range_km == 268.6
-      assert cproc.start_rated_range_km == 206.6
-      assert cproc.end_rated_range_km == 208.6
-      assert cproc.outside_temp_avg == 15.25
+      assert cproc.start_ideal_range_km == Decimal.cast("266.60")
+      assert cproc.end_ideal_range_km == Decimal.cast("268.60")
+      assert cproc.start_rated_range_km == Decimal.cast("206.60")
+      assert cproc.end_rated_range_km == Decimal.cast("208.60")
+      assert cproc.outside_temp_avg == Decimal.cast(15.3)
 
       Process.sleep(100)
 
@@ -229,7 +229,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert {:ok, cproc} = log_charging_process(charges)
       assert cproc.charge_energy_added == nil
-      assert cproc.charge_energy_used == 12.576319999999997
+      assert cproc.charge_energy_used == Decimal.cast(12.58)
       assert cproc.duration_min == 48
     end
 
@@ -309,8 +309,8 @@ defmodule TeslaMate.LogChargingTest do
       ]
 
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == 16.64
-      assert cproc.charge_energy_used == 18.589342471666672
+      assert cproc.charge_energy_added == Decimal.cast(16.64)
+      assert cproc.charge_energy_used == Decimal.cast(18.59)
       assert cproc.duration_min == 99
     end
   end
@@ -398,9 +398,9 @@ defmodule TeslaMate.LogChargingTest do
                  }
                )
 
-      assert cproc.charge_energy_added == 12.77
-      assert cproc.charge_energy_used == 12.455230833333333
-      assert cproc.cost == Decimal.new("3.19")
+      assert cproc.charge_energy_added == Decimal.cast(12.77)
+      assert cproc.charge_energy_used == Decimal.cast(12.46)
+      assert cproc.cost == Decimal.cast(3.19)
     end
 
     test "calculates the charge costs based on the session fee" do
@@ -424,9 +424,9 @@ defmodule TeslaMate.LogChargingTest do
                  }
                )
 
-      assert cproc.charge_energy_added == 12.77
-      assert cproc.charge_energy_used == 12.455230833333333
-      assert cproc.cost == Decimal.new("7.00")
+      assert cproc.charge_energy_added == Decimal.cast(12.77)
+      assert cproc.charge_energy_used == Decimal.cast(12.46)
+      assert cproc.cost == Decimal.cast("7.00")
     end
 
     test "calculates the charge costs based on the session fee and energy used" do
@@ -451,9 +451,9 @@ defmodule TeslaMate.LogChargingTest do
                  }
                )
 
-      assert cproc.charge_energy_added == 12.77
-      assert cproc.charge_energy_used == 12.455230833333333
-      assert cproc.cost == Decimal.new("7.98")
+      assert cproc.charge_energy_added == Decimal.cast(12.77)
+      assert cproc.charge_energy_used == Decimal.cast(12.46)
+      assert cproc.cost == Decimal.cast(7.98)
     end
 
     test "fees can be zero" do
@@ -479,8 +479,8 @@ defmodule TeslaMate.LogChargingTest do
                )
 
       assert cproc.charge_energy_added == nil
-      assert cproc.charge_energy_used == 12.576319999999997
-      assert cproc.cost == Decimal.new("0.00")
+      assert cproc.charge_energy_used == Decimal.cast(12.58)
+      assert cproc.cost == Decimal.cast("0.00")
     end
 
     test "sets charge cost to zero if free supercharging is enabled" do
@@ -511,9 +511,9 @@ defmodule TeslaMate.LogChargingTest do
                  }
                )
 
-      assert cproc.charge_energy_added == 12.77
-      assert cproc.charge_energy_used == 12.455230833333333
-      assert cproc.cost == Decimal.new("0.00")
+      assert cproc.charge_energy_added == Decimal.cast(12.77)
+      assert cproc.charge_energy_used == Decimal.cast(12.46)
+      assert cproc.cost == Decimal.cast("0.00")
     end
   end
 
@@ -721,47 +721,47 @@ defmodule TeslaMate.LogChargingTest do
       charges = charges_fixture(:phases_nil)
 
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == 12.77
-      assert cproc.charge_energy_used == 12.455230833333333
+      assert cproc.charge_energy_added == Decimal.cast(12.77)
+      assert cproc.charge_energy_used == Decimal.cast(12.46)
       assert cproc.duration_min == 19
-      assert cproc.start_ideal_range_km == 235.9
-      assert cproc.end_ideal_range_km == 320.5
+      assert cproc.start_ideal_range_km == Decimal.cast("235.90")
+      assert cproc.end_ideal_range_km == Decimal.cast("320.50")
     end
 
     test "calculates the energy used with phase correction" do
       charges = charges_fixture(:phase_correction_2_to_3)
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == 1.68
-      assert cproc.charge_energy_used == 1.7756899999999984
+      assert cproc.charge_energy_added == Decimal.cast(1.68)
+      assert cproc.charge_energy_used == Decimal.cast(1.78)
       assert cproc.duration_min == 13
-      assert cproc.start_ideal_range_km == 288.9
-      assert cproc.end_ideal_range_km == 299.9
+      assert cproc.start_ideal_range_km == Decimal.cast("288.90")
+      assert cproc.end_ideal_range_km == Decimal.cast("299.90")
 
       charges = charges_fixture(:phase_correction_2_to_1)
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == 12.64
-      assert cproc.charge_energy_used == 14.764401111111116
+      assert cproc.charge_energy_added == Decimal.cast(12.64)
+      assert cproc.charge_energy_used == Decimal.cast(14.76)
       assert cproc.duration_min == 640
-      assert cproc.start_ideal_range_km == 180.1
-      assert cproc.end_ideal_range_km == 262.5
+      assert cproc.start_ideal_range_km == Decimal.cast("180.10")
+      assert cproc.end_ideal_range_km == Decimal.cast("262.50")
     end
 
     test "calculates the energy used with voltage correction" do
       charges = charges_fixture(:voltage_correction_220_to_127_p1)
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == 8.48
-      assert cproc.charge_energy_used == 8.921638028730573
+      assert cproc.charge_energy_added == Decimal.cast(8.48)
+      assert cproc.charge_energy_used == Decimal.cast(8.92)
       assert cproc.duration_min == 74
-      assert cproc.start_ideal_range_km == 384.6
-      assert cproc.end_ideal_range_km == 440.3
+      assert cproc.start_ideal_range_km == Decimal.cast("384.60")
+      assert cproc.end_ideal_range_km == Decimal.cast("440.30")
 
       charges = charges_fixture(:voltage_correction_220_to_127_p2)
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == 38.44
-      assert cproc.charge_energy_used == 40.699905732815346
+      assert cproc.charge_energy_added == Decimal.cast(38.44)
+      assert cproc.charge_energy_used == Decimal.cast("40.70")
       assert cproc.duration_min == 330
-      assert cproc.start_ideal_range_km == 189.2
-      assert cproc.end_ideal_range_km == 441.7
+      assert cproc.start_ideal_range_km == Decimal.cast("189.20")
+      assert cproc.end_ideal_range_km == Decimal.cast("441.70")
     end
 
     test "handles a bad connection" do
@@ -772,11 +772,11 @@ defmodule TeslaMate.LogChargingTest do
         |> Enum.map(fn {c, _} -> c end)
 
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == 12.67
-      assert cproc.charge_energy_used == 12.45422888888889
+      assert cproc.charge_energy_added == Decimal.cast(12.67)
+      assert cproc.charge_energy_used == Decimal.cast(12.45)
       assert cproc.duration_min == 18
-      assert cproc.start_ideal_range_km == 235.9
-      assert cproc.end_ideal_range_km == 319.8
+      assert cproc.start_ideal_range_km == Decimal.cast("235.90")
+      assert cproc.end_ideal_range_km == Decimal.cast("319.80")
     end
 
     test "handles data gaps" do
@@ -801,8 +801,8 @@ defmodule TeslaMate.LogChargingTest do
           end)
 
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == 13.77
-      assert cproc.charge_energy_used == 13.8218975
+      assert cproc.charge_energy_added == Decimal.cast(13.77)
+      assert cproc.charge_energy_used == Decimal.cast(13.82)
       assert cproc.duration_min == 21
     end
 

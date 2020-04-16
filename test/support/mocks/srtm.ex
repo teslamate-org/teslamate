@@ -22,8 +22,11 @@ defmodule SRTMMock do
   end
 
   @impl true
-  def handle_call({:get_elevation, client, lat, lng} = action, _, %State{responses: r} = state) do
-    send(state.pid, {SRTM, action})
+  def handle_call({:get_elevation, client, lat, lng}, _, %State{responses: r} = state) do
+    lat = with %Decimal{} <- lat, do: Decimal.to_float(lat)
+    lng = with %Decimal{} <- lng, do: Decimal.to_float(lng)
+
+    send(state.pid, {SRTM, {:get_elevation, client, lat, lng}})
 
     response =
       with {:ok, elevation} <- Map.fetch!(r, {lat, lng}).() do

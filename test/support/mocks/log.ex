@@ -20,7 +20,7 @@ defmodule LogMock do
   def get_current_state(name, car), do: GenServer.call(name, {:get_current_state, car})
 
   def start_drive(name, car), do: GenServer.call(name, {:start_drive, car})
-  def close_drive(name, drive, opts), do: GenServer.call(name, {:close_drive, drive, opts})
+  def close_drive(name, drive, opts \\ []), do: GenServer.call(name, {:close_drive, drive, opts})
 
   def start_update(name, car, opts), do: GenServer.call(name, {:start_update, car, opts})
   def cancel_update(name, update), do: GenServer.call(name, {:cancel_update, update})

@@ -234,13 +234,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:reply, from, {:error, :charging_in_progress}}}
   end
 
-  def handle_event({:call, from}, :suspend_logging, _online, data) do
-    with {:ok, %Vehicle{} = vehicle} <- fetch(data, expected_state: :online),
+  def handle_event({:call, from}, :suspend_logging, _online, %Data{car: car} = data) do
+    with {:ok, vehicle} <- fetch_strict(car.eid, data.deps),
          :ok <- can_fall_asleep(vehicle, data) do
-      Logger.info("Suspending logging [Triggered manually]", car_id: data.car.id)
+      Logger.info("Suspending logging [Triggered manually]", car_id: car.id)
 
-      {:ok, _pos} =
-        call(data.deps.log, :insert_position, [data.car, create_position(vehicle, data)])
+      {:ok, _pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
 
       suspend_min =
         case {data.car.settings, streaming?(data)} do
@@ -259,9 +258,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
     else
       {:error, reason} ->
         {:keep_state_and_data, {:reply, from, {:error, reason}}}
-
-      {:ok, state} ->
-        {:keep_state_and_data, {:reply, from, {:error, state}}}
     end
   end
 
@@ -320,7 +316,24 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       {:error, :vehicle_in_service} ->
         Logger.info("Vehicle is currently in service", car_id: data.car.id)
-        {:keep_state, data, [broadcast_fetch(false), schedule_fetch(60, data)]}
+
+        case state do
+          {:driving, _, %Log.Drive{} = drive} ->
+            {:ok, %Log.Drive{distance: km, duration_min: min}} =
+              call(data.deps.log, :close_drive, [drive])
+
+            :ok = disconnect_stream(data)
+
+            Logger.info("Driving / Aborted / #{km && round(km)} km – #{min} min",
+              car_id: data.car.id
+            )
+
+            {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+             [broadcast_fetch(false), broadcast_summary(), schedule_fetch(60, data)]}
+
+          _ ->
+            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(60, data)]}
+        end
 
       {:error, :not_signed_in} ->
         Logger.error("Error / unauthorized")
@@ -353,9 +366,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         interval =
           case state do
-            {:driving, _, _} -> 1
-            {:charging, _} -> 5
-            :online -> 15
+            {:driving, _, _} -> 10
+            {:charging, _} -> 15
+            :online -> 20
             _ -> 30
           end
 
@@ -908,8 +921,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, :available, drv}, data) do
-    case get(vehicle, [:drive_state, :shift_state]) do
-      shift_state when shift_state in ~w(D N R) ->
+    interval = if streaming?(data), do: 15, else: @driving_interval
+
+    case vehicle do
+      %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
         geofence =
           Repo.checkout(fn ->
             {:ok, pos} =
@@ -918,13 +933,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
             call(data.deps.locations, :find_geofence, [pos])
           end)
 
-        interval = if streaming?(data), do: 15, else: @driving_interval
-
-        {:next_state, {:driving, :available, drv},
-         %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
+        {:keep_state, %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
          [broadcast_summary(), schedule_fetch(interval, data)]}
 
-      shift_state when shift_state in [nil, "P"] ->
+      %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in [nil, "P"] ->
         {:ok, {%Log.Drive{distance: km, duration_min: min}, geofence}} =
           Repo.transaction(fn ->
             {:ok, pos} =
@@ -942,6 +954,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
          {:next_event, :internal, {:update, {:online, vehicle}}}}
+
+      %Vehicle{drive_state: nil} ->
+        Logger.warn("drive_state is nil!", car_id: data.car.id)
+        {:keep_state_and_data, schedule_fetch(interval, data)}
     end
   end
 
@@ -1037,10 +1053,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
         longitude: position.longitude
       }
 
+      to_miles = fn km ->
+        with km when not is_nil(km) <- km do
+          km |> Convert.km_to_miles(2) |> Decimal.to_float()
+        end
+      end
+
       charge = %Charge{
-        ideal_battery_range: position.ideal_battery_range_km |> Convert.km_to_miles(10),
-        est_battery_range: position.est_battery_range_km |> Convert.km_to_miles(10),
-        battery_range: position.rated_battery_range_km |> Convert.km_to_miles(10),
+        ideal_battery_range: to_miles.(position.ideal_battery_range_km),
+        est_battery_range: to_miles.(position.est_battery_range_km),
+        battery_range: to_miles.(position.rated_battery_range_km),
         battery_level: position.battery_level,
         usable_battery_level: position.usable_battery_level
       }
@@ -1051,7 +1073,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       }
 
       vehicle_state = %VehicleState{
-        odometer: position.odometer |> Convert.km_to_miles(10),
+        odometer: position.odometer |> Convert.km_to_miles(6),
         car_version:
           case call(data.deps.log, :get_latest_update, [data.car]) do
             %Log.Update{version: version} -> version
@@ -1107,6 +1129,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
+  defp fetch_strict(id, deps) do
+    alias Vehicle, as: V
+
+    case call(deps.api, :get_vehicle_with_state, [id]) do
+      {:ok, %V{drive_state: %Drive{}, charge_state: %Charge{}, climate_state: %Climate{}} = v} ->
+        {:ok, v}
+
+      {:ok, %V{}} ->
+        {:error, :gateway_error}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
   @terrain (case Mix.env() do
               :test -> TerrainMock
               _____ -> Terrain
@@ -1118,15 +1155,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
       latitude: vehicle.drive_state.latitude,
       longitude: vehicle.drive_state.longitude,
       speed: Convert.mph_to_kmh(vehicle.drive_state.speed),
-      power: with(n when is_number(n) <- vehicle.drive_state.power, do: n * 1.0),
+      power: vehicle.drive_state.power,
       battery_level: vehicle.charge_state.battery_level,
       usable_battery_level: vehicle.charge_state.usable_battery_level,
       outside_temp: vehicle.climate_state.outside_temp,
       inside_temp: vehicle.climate_state.inside_temp,
       odometer: Convert.miles_to_km(vehicle.vehicle_state.odometer, 6),
-      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
-      est_battery_range_km: Convert.miles_to_km(vehicle.charge_state.est_battery_range, 1),
-      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 1),
+      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 2),
+      est_battery_range_km: Convert.miles_to_km(vehicle.charge_state.est_battery_range, 2),
+      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 2),
       fan_status: vehicle.climate_state.fan_status,
       is_climate_on: vehicle.climate_state.is_climate_on,
       driver_temp_setting: vehicle.climate_state.driver_temp_setting,
@@ -1178,8 +1215,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       fast_charger_present: vehicle.charge_state.fast_charger_present,
       fast_charger_brand: vehicle.charge_state.fast_charger_brand,
       fast_charger_type: vehicle.charge_state.fast_charger_type,
-      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 1),
-      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 1),
+      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 2),
+      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 2),
       not_enough_power_to_heat: vehicle.charge_state.not_enough_power_to_heat,
       outside_temp: vehicle.climate_state.outside_temp
     }
@@ -1248,20 +1285,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       :ok ->
         if suspend? do
-          Logger.info("Suspending logging", car_id: car.id)
-
           {:ok, _pos} =
             call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
 
+          events = [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]
+
           case current_state do
             {:suspended, _} ->
-              {:keep_state_and_data,
-               [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]}
+              {:keep_state_and_data, events}
 
             _ ->
+              Logger.info("Suspending logging", car_id: car.id)
+
               {:next_state, {:suspended, current_state},
-               %Data{data | last_state_change: DateTime.utc_now()},
-               [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]}
+               %Data{data | last_state_change: DateTime.utc_now()}, events}
           end
         else
           {:keep_state_and_data, [broadcast_summary(), schedule_fetch(15 * i, data)]}
@@ -1448,9 +1485,5 @@ defmodule TeslaMate.Vehicles.Vehicle do
   case(Mix.env()) do
     :test -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :millisecond)
     _____ -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :second)
-  end
-
-  defp get(struct, keys) do
-    Enum.reduce(keys, struct, fn key, acc -> if acc, do: Map.get(acc, key) end)
   end
 end

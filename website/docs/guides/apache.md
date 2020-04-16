@@ -1,22 +1,31 @@
 ---
-title: Advanced Docker install with Apache2, TLS, HTTP Basic Auth
+title: Advanced install with Apache2, TLS, HTTP Basic Auth
 ---
 
-**Differences to the basic setup:**
+In case you wish to make TeslaMate publicly available on the Internet, it is strongly recommended to secure the web interface and allow access to Grafana only with a password. This guide provides **an example** of a docker-compose file which differs from the simple installation in the following functions:
 
-- Web services (`teslamate` and `grafana`) sit behind a reverse proxy (Apache2) which terminates HTTPS traffic
+- Both publicly accessible services, TeslaMate and Grafana, sit behind a reverse proxy (Apache2) which terminates HTTPS traffic
+- Ports 3000 (Grafana) and 4000 (TeslaMate) are only exposed locally
+- The TeslaMate service is protected by HTTP Basic Authentication
 - Custom configuration was moved into a separate `.env` file
-- HTTP requests are redirected to HTTPS
-- Ports 3000 (grafana) and 4000 (teslamate) are only exposed locally
+- Grafana is configured to require a login
+
+:::note
+If you have problems or questions about the installation, please refer to the documentation of the respective projects directly.
+:::
 
 ## Requirements
 
-- Docker running on a machine that's always on
-- Two FQDN (`teslamate.example.com` & `grafana.example.com`)
-- An existing SSL certificate
-- External internet access, to talk to tesla.com
+- An already installed Apache2 with the following modules:
+  - `mod_proxy`
+  - `mod_proxy_http`
+  - `mod_proxy_wstunnel`
+  - `mod_rewrite`
+  - `mod_ssl`
+- Two FQDN, for example `teslamate.example.com` and `grafana.example.com`
+- An existing SSL certificate including the two above in `/etc/letsencrypt/live/teslamate.<your domain>`
 
-## Setup
+## Instructions
 
 Create the following files:
 
@@ -112,7 +121,7 @@ LETSENCRYPT_EMAIL=yourperson@example.com
 
 This file contains the definition of the virtual hosts `teslamate.example.com` and `grafana.example.com`. It has to be enabled via `a2ensite teslamate`.
 
-This assumes, that you have the SSL certificate files residing in `/etc/letsencrypt/live/teslamate.example.com`.
+This assumes, that you have the SSL certificate files residing in `/etc/letsencrypt/live/teslamate.example.com`. If it is somewhere else, you need to adapt the file accordingly.
 
 ```apacheconf title="/etc/apache2/sites-available/teslamate.conf"
 Define MYDOMAIN example.com
@@ -122,6 +131,7 @@ Define LOG access.teslamate.log
     ProxyPreserveHost On
     ServerName teslamate.${MYDOMAIN}
     CustomLog /var/log/apache2/${LOG} combined
+    RewriteEngine on
     RewriteCond %{SERVER_NAME} =teslamate.${MYDOMAIN}
     RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </VirtualHost>

@@ -259,6 +259,19 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert {:error, :charging_in_progress} = Vehicle.suspend_logging(name)
   end
 
+  test "cannot be suspended if the data is incomplete", %{test: name} do
+    events = [
+      {:ok, online_event()},
+      {:ok, online_event()},
+      {:ok, %TeslaApi.Vehicle{state: "online"}}
+    ]
+
+    :ok = start_vehicle(name, events)
+    assert_receive {:start_state, _, :online, date: _}
+
+    assert {:error, :gateway_error} = Vehicle.suspend_logging(name)
+  end
+
   test "suspends when charging is complete", %{test: name} do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 

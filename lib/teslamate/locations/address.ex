@@ -8,8 +8,8 @@ defmodule TeslaMate.Locations.Address do
     field :country, :string
     field :display_name, :string
     field :house_number, :string
-    field :latitude, :float
-    field :longitude, :float
+    field :latitude, :decimal, read_after_writes: true
+    field :longitude, :decimal, read_after_writes: true
     field :name, :string
     field :neighbourhood, :string
     field :osm_id, :integer
