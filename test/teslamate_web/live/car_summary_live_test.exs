@@ -43,7 +43,13 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   describe "suspend" do
     @tag :signed_in
     test "suspends logging", %{conn: conn} do
-      _car = car_fixture(%{suspend_min: 60_000, suspend_after_idle_min: 60_000})
+      _car =
+        car_fixture(%{
+          suspend_min: 60_000,
+          suspend_after_idle_min: 60_000,
+          use_streaming_api: false
+        })
+
       now = now()
 
       events = [
@@ -61,7 +67,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert {:ok, parent_view, _html} =
                live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
 
-      [view] = children(parent_view)
+      [view] = live_children(parent_view)
       html = render(view)
 
       assert table_row(html, "Status", "online")
@@ -73,7 +79,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                |> Floki.text()
 
       # Suspend
-      render_click(view, :suspend_logging)
+      view
+      |> element(".button", "try to sleep")
+      |> render_click()
 
       TestHelper.eventually(
         fn ->
@@ -106,7 +114,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       test "shows warning if suspending is not possible [#{msg}]", %{conn: conn} do
         settings =
           Map.merge(
-            %{suspend_min: 60_000, suspend_after_idle_min: 60_000},
+            %{suspend_min: 60_000, suspend_after_idle_min: 60_000, use_streaming_api: false},
             unquote(Macro.escape(settings))
           )
 
@@ -137,7 +145,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
         assert {:ok, parent_view, html} =
                  live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
 
-        [view] = children(parent_view)
+        [view] = live_children(parent_view)
         render_click(view, :suspend_logging)
 
         assert html = render(view)
@@ -154,7 +162,13 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
   describe "resume" do
     @tag :signed_in
     test "resumes logging", %{conn: conn} do
-      _car = car_fixture(%{suspend_min: 60_000, suspend_after_idle_min: 60_000})
+      _car =
+        car_fixture(%{
+          suspend_min: 60_000,
+          suspend_after_idle_min: 60_000,
+          use_streaming_api: false
+        })
+
       now = now()
 
       events = [
@@ -180,10 +194,12 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                |> Floki.find("a[phx-click=suspend_logging]")
                |> Floki.text()
 
-      [view] = children(parent_view)
+      [view] = live_children(parent_view)
 
       # Suspend
-      render_click(view, :suspend_logging)
+      view
+      |> element(".button", "try to sleep")
+      |> render_click()
 
       TestHelper.eventually(
         fn ->
@@ -200,7 +216,10 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       )
 
       # Resume
-      render_click(view, :resume_logging)
+      view
+      |> element(".button", "cancel sleep attempt")
+      |> render_click()
+
       assert html = render(view)
       assert table_row(html, "Status", "online")
     end

@@ -586,7 +586,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                 ["Add costs retroactively"]}
              ] = html |> Floki.find(".modal.is-active") |> Floki.find(".modal-card-foot button")
 
-      render_click(view, "calc-costs", %{"result" => "yes"})
+      view
+      |> element(".modal button", "Add costs retroactively")
+      |> render_click()
+
       assert_redirect(view, "/geo-fences")
 
       assert [
@@ -656,7 +659,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                 ["Add costs retroactively"]}
              ] = html |> Floki.find(".modal.is-active") |> Floki.find(".modal-card-foot button")
 
-      render_click(view, "calc-costs", %{"result" => "no"})
+      view
+      |> element(".modal button", "Continue")
+      |> render_click()
+
       assert_redirect(view, "/geo-fences")
 
       assert [
