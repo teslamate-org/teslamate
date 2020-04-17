@@ -132,7 +132,7 @@ msgstr "Retour"
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:202
 msgid "Geo-fence \"%{name}\" created"
-msgstr "Géo-Repérage \"%{name}\" créé"
+msgstr "Géorepérage \"%{name}\" créé"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:4
