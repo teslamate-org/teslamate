@@ -225,7 +225,7 @@ msgstr "Annuler la tentative de sommeil"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:291
 msgid "try to sleep"
-msgstr "Essayer de dormir"
+msgstr "Tentative de mise en veille"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:141
