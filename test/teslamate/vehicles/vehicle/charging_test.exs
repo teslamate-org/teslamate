@@ -188,7 +188,9 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert capture_log(@log_opts, fn ->
              assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
              assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
-           end) =~ "[warn] Invalid charge_state: nil\n"
+           end) =~ """
+           [warn] Discared incomplete fetch result: %TeslaApi.Vehicle{api_version: nil, backseat_token: nil, backseat_token_updated_at: nil, calendar_enabled: nil, charge_state: nil, climate_state: nil, color: nil, display_name: nil, drive_state: nil, gui_settings: nil, id: nil, in_service: false, option_codes: [], state: \"online\", tokens: [], vehicle_config: nil, vehicle_id: nil, vehicle_state: nil, vin: nil}
+           """
 
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}

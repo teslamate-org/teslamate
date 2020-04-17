@@ -284,9 +284,22 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
             {:keep_state, data, [broadcast_fetch(false), schedule_fetch(0, data)]}
 
-          {%Vehicle{}, %Data{}} ->
+          {%Vehicle{
+             drive_state: %Drive{},
+             charge_state: %Charge{},
+             climate_state: %Climate{},
+             vehicle_state: %VehicleState{},
+             vehicle_config: %VehicleConfig{}
+           }, %Data{}} ->
             {:keep_state, %Data{data | last_response: vehicle},
              [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
+
+          {%Vehicle{}, %Data{}} ->
+            Logger.warn("Discared incomplete fetch result: #{inspect(vehicle)}",
+              car_id: data.car.id
+            )
+
+            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(data)]}
         end
 
       {:ok, %Vehicle{state: state} = vehicle} when state in ["offline", "asleep"] ->
@@ -792,11 +805,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:next_state, {:charging, cproc}, data,
          [broadcast_summary(), schedule_fetch(interval, data)]}
-
-      %Vehicle{charge_state: nil} ->
-        Logger.warn("Invalid charge_state: nil")
-
-        {:keep_state_and_data, schedule_fetch(15, data)}
 
       %Vehicle{charge_state: %Charge{charging_state: state}} ->
         Repo.transaction(fn ->
