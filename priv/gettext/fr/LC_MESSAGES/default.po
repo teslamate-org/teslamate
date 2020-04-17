@@ -563,7 +563,7 @@ msgstr "Mise à jour disponible"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:139
 msgid "Doors are open"
-msgstr "Les Portes sont ouvertes"
+msgstr "Les portes sont ouvertes"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
