@@ -378,7 +378,7 @@ msgstr "Une erreur est survenue"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:145
 msgid "Timeout"
-msgstr "Délai maximum dépassé"
+msgstr "Délai maximum expiré"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:37
