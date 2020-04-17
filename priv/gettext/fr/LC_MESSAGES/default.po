@@ -516,7 +516,7 @@ msgstr "Total"
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:118
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
-msgstr[0] "Il existe une <strong>% {n} session de charge </strong> à cet endroit pour laquelle aucun coût n'a encore été ajouté."
+msgstr[0] "Il existe <strong>%{n} session de charge </strong> à cet endroit pour laquelle aucun coût n'a encore été ajouté."
 msgstr[1] "Il existe des <strong>% {n} sessions de charge </strong> à cet endroit pour lesquelles aucun coût n'a encore été ajouté."
 
 #, elixir-format
