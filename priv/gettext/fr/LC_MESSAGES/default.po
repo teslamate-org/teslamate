@@ -138,7 +138,7 @@ msgstr "Géorepérage \"%{name}\" créé"
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:4
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.eex:56
 msgid "Geo-Fences"
-msgstr "Géo-Repérages"
+msgstr "Géorepérages"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:49
