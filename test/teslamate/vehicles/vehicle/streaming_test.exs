@@ -232,7 +232,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                assert_receive :continue?
                refute_receive _
              end) =~ """
-             [warn] Discared outdated fetch result: %{
+             [warn] Discarded outdated fetch result: %{
                last: %TeslaApi.Vehicle.State.Drive{
                  gps_as_of: nil,
                  heading: 120,

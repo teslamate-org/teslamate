@@ -456,10 +456,11 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert settings.suspend_min == 90
 
       # change car
+      view
+      |> element(".tabs li a", two.name)
+      |> render_click()
 
-      render_click(view, :car, %{id: two.id})
-      assert_redirect(view, path = "/settings?car=" <> id)
-      assert id == to_string(two.id)
+      assert_redirect(view, path = "/settings?car=#{two.id}")
       assert {:ok, view, html} = live(conn, path)
 
       assert two.name ==
@@ -477,7 +478,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       # change settings of car "two"
 
       assert [{"option", [{"value", "60"}, {"selected", "selected"}], ["60 min"]}] =
-               render_click(view, :change, %{
+               render_change(view, :change, %{
                  "car_settings_#{two.id}" => %{suspend_min: 60, use_streaming_api: false}
                })
                |> Floki.parse_document!()
@@ -486,9 +487,11 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       # change back
 
-      render_click(view, :car, %{id: one.id})
-      assert_redirect(view, path = "/settings?car=" <> id)
-      assert id == to_string(one.id)
+      view
+      |> element(".tabs li a", one.name)
+      |> render_click()
+
+      assert_redirect(view, path = "/settings?car=#{one.id}")
       assert {:ok, view, html} = live(conn, path)
 
       assert one.name ==

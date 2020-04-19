@@ -1,17 +1,19 @@
 <div class="car card">
-   <div class="card-image">
-     <figure data-id="<%= @car.id %>" data-marker="arrow" phx-hook="SimpleMap" phx-update="ignore">
-        <div id="map_<%= @car.id %>" class="map" style="height: 175px; position: relative;" >
-          <div class="spinner">
-            <span class="is-loading"/>
-          </div>
+  <div class="card-image">
+    <figure id="map_<%= @car.id %>_container" data-id="<%= @car.id %>" data-marker="arrow" phx-hook="SimpleMap" phx-update="ignore">
+      <div id="map_<%= @car.id %>" class="map" style="height: 175px; position: relative;">
+        <div class="spinner">
+          <span class="is-loading"/>
         </div>
+      </div>
     </figure>
-    <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude},#{@summary.heading}",
-                                            phx_hook: "TriggerChange",
-                                            class: "is-hidden",
-                                            disabled: true
-    %>
+    <input
+      id="position_<%= @car.id %>"
+      type="text" value="<%= "#{@summary.latitude},#{@summary.longitude},#{@summary.heading}" %>"
+      class="is-hidden"
+      phx-hook="TriggerChange"
+      disabled
+    >
   </div>
   <div class="card-content">
     <div class="media is-flex mb-5">
