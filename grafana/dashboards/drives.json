@@ -81,7 +81,7 @@
       "scroll": true,
       "showHeader": true,
       "sort": {
-        "col": 16,
+        "col": 7,
         "desc": true
       },
       "styles": [
