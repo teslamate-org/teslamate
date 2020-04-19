@@ -14,12 +14,16 @@ As the first and only Tesla logging app out there, TeslaMate now use the Tesla s
 
 Many thanks to everyone who participated in testing this release and contributed improvements!
 
-#### Other enhancements:
+#### Translations
 
 - Add Danish translation ([#584](https://github.com/adriankumpf/teslamate/pull/584) by [MartinNielsen](https://github.com/MartinNielsen))
 - Update Norwegian translation ([#544](https://github.com/adriankumpf/teslamate/pull/544) and [#591](https://github.com/adriankumpf/teslamate/pull/591) by [spacecosmos](https://github.com/spacecosmos))
 - Update Swedish translation ([#522](https://github.com/adriankumpf/teslamate/pull/522) by [tobiasehlert](https://github.com/tobiasehlert))
+- Update French translation ([#598](https://github.com/adriankumpf/teslamate/pull/598) by [tomS3210](https://github.com/tomS3210) and [MaxG88](https://github.com/MaxG88))
 - Updated Labels to Title Case ([#578](https://github.com/adriankumpf/teslamate/pull/578) by [jmiverson](https://github.com/jmiverson))
+
+#### Other enhancements:
+
 - Send credentials with manifest request ([#555](https://github.com/adriankumpf/teslamate/pull/555) by [MaxG88](https://github.com/MaxG88))
 - Add option to change the language of the web interface
 - Reduce docker image size
@@ -44,11 +48,14 @@ The docs were revised (once again). You can find them at [docs.teslamate.org](ht
 
 - Add portainer guide to the documentation ([#581](https://github.com/adriankumpf/teslamate/pull/581) by [DrMichael](https://github.com/DrMichael))
 - Improve Apache2 guide ([#570](https://github.com/adriankumpf/teslamate/pull/570) by [DrMichael](https://github.com/DrMichael))
+- Bump traefik to v2.2 ([#603](https://github.com/adriankumpf/teslamate/pull/603) by [oittaa](https://github.com/oittaoittaaa))
 
 ### Bug Fixes
 
 - Display vampire drain range loss per hour in the correct units ([#543](https://github.com/adriankumpf/teslamate/pull/543) by [ograff](https://github.com/ograff)).
 - Trip dashboard: Add title to table to allow sorting ([#592](https://github.com/adriankumpf/teslamate/pull/592) by [MaxG88](https://github.com/MaxG88))
+- Add `tini` as the init process for the TeslaMate Docker container to avoid zombie processes ([#606](https://github.com/adriankumpf/teslamate/pull/606) by [dbussink](https://github.com/dbussink))
+- Sort "Drives" table properly by drive date ([#595](https://github.com/adriankumpf/teslamate/pull/595) by [Dulanic](https://github.com/Dulanic))
 - Fix flashing modal on the geofence page
 - Publish an MQTT message when the health check succeeds again
 - Handle various invalid API responses that could previously cause problems
