@@ -1,6 +1,6 @@
 FROM elixir:1.10-alpine AS builder
 
-RUN apk add --update --no-cache nodejs npm git build-base && \
+RUN apk add --update --no-cache nodejs npm git build-base python && \
     mix local.rebar --force && \
     mix local.hex --force
 
