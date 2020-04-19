@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.19.0-dev]
+## [1.19.0] - 2020-04-19
 
 ### Enhancements
 
@@ -12,7 +12,7 @@ As the first and only Tesla logging app out there, TeslaMate now use the Tesla s
 - **Actual elevation above sea level**. Up until now TeslaMate used satellite terrain data to get the elevation. Driving through tunnels or across a bridges therefore resulted in inaccurate recordings. This is no longer the case!
 - **Bluetooth hints are no longer needed!** Using the streaming API does not prevent the vehicle from falling asleep, thus enabling continuous monitoring. This allows the car to fall asleep more quickly (no more idle timer) and we don't miss up to 21 minutes of driving because of halted polling.
 
-Many thanks to everyone who participated in testing this release and contributed improvements!
+**Many thanks to everyone who participated in testing this release and contributed improvements!**
 
 #### Translations
 
@@ -32,7 +32,7 @@ Many thanks to everyone who participated in testing this release and contributed
 - Wait until the doors/trunk/frunk are closed before attempting to fall asleep
 - Inform if a new TeslaMate update is available
 - Add icons to navbar items
-- Add 'About' section to settings page
+- Add 'About' section to the settings page
 - Publish only those values via MQTT that have actually changed
 - Improve detection of available vehicle software updates
 
@@ -44,7 +44,7 @@ Many thanks to everyone who participated in testing this release and contributed
 
 #### Documentation
 
-The docs were revised (once again). You can find them at [docs.teslamate.org](https://docs.teslamate.org).
+The docs were revised (once again). You can find them at **[docs.teslamate.org](https://docs.teslamate.org)**.
 
 - Add portainer guide to the documentation ([#581](https://github.com/adriankumpf/teslamate/pull/581) by [DrMichael](https://github.com/DrMichael))
 - Improve Apache2 guide ([#570](https://github.com/adriankumpf/teslamate/pull/570) by [DrMichael](https://github.com/DrMichael))
@@ -53,7 +53,7 @@ The docs were revised (once again). You can find them at [docs.teslamate.org](ht
 ### Bug Fixes
 
 - Display vampire drain range loss per hour in the correct units ([#543](https://github.com/adriankumpf/teslamate/pull/543) by [ograff](https://github.com/ograff)).
-- Trip dashboard: Add title to table to allow sorting ([#592](https://github.com/adriankumpf/teslamate/pull/592) by [MaxG88](https://github.com/MaxG88))
+- Trip dashboard: Add title to the drives table to allow sorting ([#592](https://github.com/adriankumpf/teslamate/pull/592) by [MaxG88](https://github.com/MaxG88))
 - Add `tini` as the init process for the TeslaMate Docker container to avoid zombie processes ([#606](https://github.com/adriankumpf/teslamate/pull/606) by [dbussink](https://github.com/dbussink))
 - Sort "Drives" table properly by drive date ([#595](https://github.com/adriankumpf/teslamate/pull/595) by [Dulanic](https://github.com/Dulanic))
 - Fix flashing modal on the geofence page
@@ -61,6 +61,10 @@ The docs were revised (once again). You can find them at [docs.teslamate.org](ht
 - Handle various invalid API responses that could previously cause problems
 - Fix an issue where ambiguous dates could cause the TeslaFi import to fail
 - Terminate an in progress drive when the car is put into service mode
+
+### Changed
+
+- Increase the minimum Elixir version to 1.10
 
 ### Removed
 
@@ -886,7 +890,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[1.19.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.18.2...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.19.0...HEAD
+[1.19.0]: https://github.com/adriankumpf/teslamate/compare/v1.18.2...v1.19.0
 [1.18.2]: https://github.com/adriankumpf/teslamate/compare/v1.18.1...v1.18.2
 [1.18.1]: https://github.com/adriankumpf/teslamate/compare/v1.18.0...v1.18.1
 [1.18.0]: https://github.com/adriankumpf/teslamate/compare/v1.17.1...v1.18.0
