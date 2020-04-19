@@ -274,7 +274,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
            %Data{last_response: %Vehicle{drive_state: %Drive{timestamp: last}}}}
           when is_number(now) and is_number(last) and now < last ->
             Logger.warn(
-              "Discared outdated fetch result: #{
+              "Discarded outdated fetch result: #{
                 inspect(%{now: vehicle.drive_state, last: data.last_response.drive_state},
                   pretty: true
                 )
@@ -295,7 +295,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
              [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
 
           {%Vehicle{}, %Data{}} ->
-            Logger.warn("Discared incomplete fetch result: #{inspect(vehicle)}",
+            Logger.warn("Discarded incomplete fetch result: #{inspect(vehicle)}",
               car_id: data.car.id
             )
 

@@ -7,11 +7,13 @@
         </div>
       </div>
     </figure>
-    <%= text_input :position, "#{@car.id}", value: "#{@summary.latitude},#{@summary.longitude},#{@summary.heading}",
-                                            phx_hook: "TriggerChange",
-                                            class: "is-hidden",
-                                            disabled: true
-    %>
+    <input
+      id="position_<%= @car.id %>"
+      type="text" value="<%= "#{@summary.latitude},#{@summary.longitude},#{@summary.heading}" %>"
+      class="is-hidden"
+      phx-hook="TriggerChange"
+      disabled
+    >
   </div>
   <div class="card-content">
     <div class="media is-flex mb-5">
