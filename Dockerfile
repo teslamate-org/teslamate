@@ -32,7 +32,7 @@ ENV LANG=C.UTF-8 \
     SRTM_CACHE=/opt/app/.srtm_cache \
     HOME=/opt/app
 
-RUN apk add --update --no-cache bash openssl tzdata
+RUN apk add --update --no-cache bash tini openssl tzdata
 
 WORKDIR $HOME
 RUN chown -R nobody: .
@@ -44,5 +44,5 @@ RUN mkdir .srtm_cache
 
 EXPOSE 4000
 
-ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
+ENTRYPOINT ["/sbin/tini", "--", "/bin/sh", "/entrypoint.sh"]
 CMD ["bin/teslamate", "start"]
