@@ -14,14 +14,14 @@ services:
     image: portainer/portainer
     restart: always
     ports:
-      - "9000:9000"
+      - 9000:9000
     command: -H unix:///var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
+      - portainer-data:/data
 
 volumes:
-  portainer_data:
+  portainer-data:
 ```
 
 Then you can access the docker management console on http://yourhost:9000.

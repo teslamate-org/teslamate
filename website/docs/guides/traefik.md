@@ -55,6 +55,8 @@ services:
       - "traefik.http.routers.teslamate.middlewares=auth"
       - "traefik.http.routers.teslamate.entrypoints=websecure"
       - "traefik.http.routers.teslamate.tls.certresolver=tmhttpchallenge"
+    cap_drop:
+      - all
 
   database:
     image: postgres:12
@@ -181,4 +183,3 @@ docker-compose exec grafana grafana-cli admin reset-admin-password
 ```
 
 :::
-
