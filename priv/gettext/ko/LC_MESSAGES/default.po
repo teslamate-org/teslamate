@@ -112,7 +112,7 @@ msgstr "사용불가"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:200
 msgid "Length"
-msgstr "길이"
+msgstr "거리"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:215
@@ -122,7 +122,7 @@ msgstr "온도"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:197
 msgid "Units"
-msgstr "유닛"
+msgstr "단위"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:113
@@ -246,12 +246,12 @@ msgstr "필수"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:79
 msgid "Vehicle must be locked"
-msgstr "차량은 잠금되어야 합니다."
+msgstr "차량문은 모두 잠겨있어야 합니다."
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:122
 msgid "Range (rated)"
-msgstr ""
+msgstr "거리 (정규계산)"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:160
@@ -261,7 +261,7 @@ msgstr "충전장치 전력"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:141
 msgid "Preferred Range"
-msgstr ""
+msgstr "선호하는 계산방법"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:137
@@ -271,12 +271,12 @@ msgstr "거리"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:148
 msgid "ideal"
-msgstr "이상"
+msgstr "이상적인 거리"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:148
 msgid "rated"
-msgstr "정규"
+msgstr "정규계산된 거리"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:121
@@ -317,7 +317,7 @@ msgstr "실외 온도"
 #: lib/teslamate_web/templates/car/summary.html.leex:275
 #: lib/teslamate_web/templates/settings/index.html.leex:270
 msgid "Version"
-msgstr "버전"
+msgstr "소프트웨어 버전"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:72
@@ -348,7 +348,7 @@ msgstr "대시보드"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:233
 msgid "URLs"
-msgstr "URLs"
+msgstr "접속주소"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:164
@@ -538,7 +538,7 @@ msgstr "계속"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:263
 msgid "Mileage"
-msgstr "마일리지"
+msgstr "총주행거리"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:111
