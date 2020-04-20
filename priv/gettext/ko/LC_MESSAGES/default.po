@@ -8,28 +8,28 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: en\n"
+"Language: ko\n"
 "Plural-Forms: nplurals=2\n"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:93
 msgid "Status"
-msgstr ""
+msgstr "상태"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:225
 msgid "Speed"
-msgstr ""
+msgstr "속도"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:217
 msgid "State of Charge"
-msgstr ""
+msgstr "충전상태"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:154
 msgid "Charged"
-msgstr ""
+msgstr "충전됨"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:135
@@ -39,37 +39,37 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:130
 msgid "charging"
-msgstr ""
+msgstr "충전중"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:129
 msgid "driving"
-msgstr ""
+msgstr "주행"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:134
 msgid "offline"
-msgstr ""
+msgstr "오프라인"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:133
 msgid "online"
-msgstr ""
+msgstr "온라인"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:131
 msgid "updating"
-msgstr ""
+msgstr "업데이트"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:67
 msgid "Locked"
-msgstr ""
+msgstr "잠김"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:62
 msgid "Sentry Mode"
-msgstr ""
+msgstr "센트리 모드"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:3
@@ -82,22 +82,22 @@ msgstr ""
 #: lib/teslamate_web/templates/layout/root.html.eex:59
 #: lib/teslamate_web/templates/settings/index.html.leex:4
 msgid "Settings"
-msgstr ""
+msgstr "설정"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:169
 msgid "Scheduled Charging"
-msgstr ""
+msgstr "충전 예약됨"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:47
 msgid "Plugged In"
-msgstr ""
+msgstr "충전 준비됨"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:178
 msgid "Charge Limit"
-msgstr ""
+msgstr "충전 한계"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:132
@@ -112,12 +112,12 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:200
 msgid "Length"
-msgstr ""
+msgstr "길이"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:215
 msgid "Temperature"
-msgstr ""
+msgstr "온도"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:197
@@ -128,7 +128,7 @@ msgstr ""
 #: lib/teslamate_web/templates/charge/cost.html.leex:113
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:98
 msgid "Back"
-msgstr ""
+msgstr "뒤로"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:202
@@ -150,7 +150,7 @@ msgstr ""
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:41
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:46 lib/teslamate_web/templates/geo_fence/index.html.leex:21
 msgid "Name"
-msgstr ""
+msgstr "이름"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:17
@@ -167,13 +167,13 @@ msgstr ""
 #: lib/teslamate_web/templates/charge/cost.html.leex:116
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:101
 msgid "Save"
-msgstr ""
+msgstr "저장"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:117
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:101 lib/teslamate_web/templates/signin/index.html.leex:33
 msgid "Saving..."
-msgstr ""
+msgstr "저장 중..."
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:31
@@ -266,7 +266,7 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:137
 msgid "Range"
-msgstr ""
+msgstr "거리"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:148
@@ -291,12 +291,12 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:144
 msgid "Update in progress"
-msgstr ""
+msgstr "업데이트 진행 중"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:52
 msgid "Windows open"
-msgstr ""
+msgstr "창문 열림"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:51
@@ -306,23 +306,23 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:250
 msgid "Inside Temperature"
-msgstr ""
+msgstr "실내 온도"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:238
 msgid "Outside Temperature"
-msgstr ""
+msgstr "실외 온도"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:275
 #: lib/teslamate_web/templates/settings/index.html.leex:270
 msgid "Version"
-msgstr ""
+msgstr "버전"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:72
 msgid "Software Update available"
-msgstr ""
+msgstr "소프트웨어 업데이트 가능"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:77
@@ -337,13 +337,13 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:108
 msgid "Remaining Time"
-msgstr ""
+msgstr "남은 시간"
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.eex:46
 #: lib/teslamate_web/templates/settings/index.html.leex:250
 msgid "Dashboards"
-msgstr ""
+msgstr "대시보드"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:233
@@ -364,7 +364,7 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:26
 msgid "Sleep Mode"
-msgstr ""
+msgstr "절전 모드"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:203
@@ -394,12 +394,12 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:4
 msgid "Charge Cost"
-msgstr ""
+msgstr "충전비용"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:88
 msgid "Cost"
-msgstr ""
+msgstr "비용"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:101
@@ -419,12 +419,12 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:179
 msgid "Addresses"
-msgstr ""
+msgstr "주소"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:160
 msgid "Language"
-msgstr ""
+msgstr "언어"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.ex:70
@@ -434,7 +434,7 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/import/index.html.leex:4
 msgid "TeslaFi Import"
-msgstr ""
+msgstr "TeslaFi 가져오기"
 
 #, elixir-format
 #: lib/teslamate_web/templates/import/index.html.leex:10
@@ -451,7 +451,7 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/import/index.html.leex:68
 msgid "Import"
-msgstr ""
+msgstr "가져오기"
 
 #, elixir-format
 #: lib/teslamate_web/templates/import/index.html.leex:58
@@ -461,12 +461,12 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/signin/index.html.leex:18
 msgid "Password"
-msgstr ""
+msgstr "암호"
 
 #, elixir-format
 #: lib/teslamate_web/templates/signin/index.html.leex:30
 msgid "Sign in"
-msgstr ""
+msgstr "로그인"
 
 #, elixir-format
 #: lib/teslamate_web/templates/signin/index.html.leex:11
@@ -481,12 +481,12 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:92
 msgid "Charge cost"
-msgstr ""
+msgstr "충전비용"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:95
 msgid "Free Supercharging"
-msgstr ""
+msgstr "무료 슈퍼차징"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:131
@@ -528,17 +528,17 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:112
 msgid "Charging Costs"
-msgstr ""
+msgstr "충전비용"
 
 #, elixir-format
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:126
 msgid "Continue"
-msgstr ""
+msgstr "계속"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:263
 msgid "Mileage"
-msgstr ""
+msgstr "마일리지"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:111
@@ -548,12 +548,12 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:285
 msgid "Documentation"
-msgstr ""
+msgstr "참고문서"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:281
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.eex:95
