@@ -12,7 +12,7 @@ msgstr ""
 
 ## From Ecto.Changeset.cast/4
 msgid "can't be blank"
-msgstr ""
+msgstr "빈칸이면 안됩니다."
 
 ## From Ecto.Changeset.unique_constraint/3
 msgid "has already been taken"
@@ -20,15 +20,15 @@ msgstr ""
 
 ## From Ecto.Changeset.put_change/3
 msgid "is invalid"
-msgstr ""
+msgstr "은(는) 유효하지 않습니다."
 
 ## From Ecto.Changeset.validate_acceptance/3
 msgid "must be accepted"
-msgstr ""
+msgstr "반드시 허용되어야 합니다."
 
 ## From Ecto.Changeset.validate_format/3
 msgid "has invalid format"
-msgstr ""
+msgstr "잘못된 포맷입니다."
 
 ## From Ecto.Changeset.validate_subset/3
 msgid "has an invalid entry"
@@ -36,7 +36,7 @@ msgstr ""
 
 ## From Ecto.Changeset.validate_exclusion/3
 msgid "is reserved"
-msgstr ""
+msgstr "예약되어 있습니다."
 
 ## From Ecto.Changeset.validate_confirmation/3
 msgid "does not match confirmation"
@@ -82,16 +82,16 @@ msgstr[1] ""
 
 ## From Ecto.Changeset.validate_number/3
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "%{number} 보다 반드시 작어야 합니다."
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "%{number} 보다 반드시 커야 합니다."
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "%{number} 보다 반드시 작거나 같아야 합니다."
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "%{number} 보다 반드시 크거나 같아야 합니다."
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "%{number} 와 반드시 같아야 합니다."
