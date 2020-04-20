@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>TeslaMate</title>
+    <%= live_title_tag assigns[:page_title] || "Home", suffix: " · TeslaMate" %>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5AB53N3ALo">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=5AB53N3ALo">
@@ -52,10 +52,10 @@
               </div>
             </div>
             <% end %>
-            <%= link [to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item  mr-5"] do %>
+            <%= live_redirect [to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item  mr-5"] do %>
               <span class="icon"><i class="mdi mdi-map-marker-radius"></i></span>&nbsp;<span><%= gettext("Geo-Fences") %></span>
             <% end %>
-            <%= link [to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5"] do %>
+            <%= live_redirect [to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5"] do %>
               <span class="icon"><i class="mdi mdi-cog"></i></span>&nbsp;<span><%= gettext("Settings") %></span>
             <% end %>
           </div>
@@ -68,7 +68,7 @@
 
     <%= content_tag :main, role: "main", style: "overflow: hidden;",
                            class: ["section", to_string(if show_doante_button or update, do: " full-height")] do %>
-      <div class="container <%= Enum.at(@conn.path_info, 0) %>">
+      <div class="container">
         <%= Enum.map(get_flash(@conn), fn {flash_key, flash_message} -> %>
         <p class="notification is-<%= flash_key %>"><%= flash_message %></p>
         <% end) %>

@@ -144,7 +144,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           |> Floki.find("span")
           |> Floki.raw_html(encode: false)
 
-        assert error_html == "<span class=\"help is-danger pl-15\">can't be blank</span>"
+        assert error_html ==
+                 "<span class=\"help is-danger pl-15\" phx-feedback-for=\"geo_fence_#{id}\">can't be blank</span>"
       end
     end
 

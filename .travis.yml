@@ -4,9 +4,10 @@ services:
 elixir:
   - 1.10
 otp_release:
-  - 22.2
+  - 22.3
 env:
   - MIX_ENV=test
+  - ELIXIR_ASSERT_TIMEOUT=350
 cache:
   directories:
     - deps

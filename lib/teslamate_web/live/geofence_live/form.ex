@@ -1,20 +1,14 @@
 defmodule TeslaMateWeb.GeoFenceLive.Form do
-  use Phoenix.LiveView
+  use TeslaMateWeb, :live_view
 
   require Logger
 
-  alias TeslaMateWeb.{GeoFenceLive, GeoFenceView}
-  alias TeslaMateWeb.Router.Helpers, as: Routes
+  alias TeslaMateWeb.GeoFenceLive
 
   alias TeslaMate.{Log, Locations, Settings}
   alias TeslaMate.Settings.GlobalSettings
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Log.Position
-
-  import TeslaMateWeb.Gettext
-
-  @impl true
-  def render(assigns), do: GeoFenceView.render("form.html", assigns)
 
   @impl true
   def mount(%{"id" => id}, session, socket) do
@@ -128,7 +122,8 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
       show_errors: false,
       show_modal: false,
       action: action,
-      connected?: connected?(socket)
+      connected?: connected?(socket),
+      page_title: geofence.name || gettext("Geo-Fences")
     }
 
     assign(socket, assigns)
@@ -175,7 +170,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
         socket
         |> assign(geofence: geofence)
         |> put_flash(:success, flash_msg(action, name))
-        |> redirect(to: Routes.live_path(socket, GeoFenceLive.Index))
+        |> push_redirect(to: Routes.live_path(socket, GeoFenceLive.Index))
 
       {:ok, socket}
     end

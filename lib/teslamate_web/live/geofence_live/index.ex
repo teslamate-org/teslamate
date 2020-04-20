@@ -1,12 +1,10 @@
 defmodule TeslaMateWeb.GeoFenceLive.Index do
-  use Phoenix.LiveView
+  use TeslaMateWeb, :live_view
 
   alias TeslaMate.{Locations, Settings}
   alias Settings.GlobalSettings
-  alias TeslaMateWeb.GeoFenceView
 
-  @impl true
-  def render(assigns), do: GeoFenceView.render("index.html", assigns)
+  alias TeslaMate.Convert
 
   @impl true
   def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
@@ -20,7 +18,8 @@ defmodule TeslaMateWeb.GeoFenceLive.Index do
 
     assigns = %{
       geofences: Locations.list_geofences(),
-      unit_of_length: unit_of_length
+      unit_of_length: unit_of_length,
+      page_title: gettext("Geo-Fences")
     }
 
     {:ok, assign(socket, assigns)}

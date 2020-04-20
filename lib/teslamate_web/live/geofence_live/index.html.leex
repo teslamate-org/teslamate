@@ -1,17 +1,17 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= link gettext("Home"), to: "/" %></li>
-    <li class="is-active"><%= link gettext("Geo-Fences"), to: "/geo-fences" %></li>
+    <li><%= live_redirect gettext("Home"), to: "/" %></li>
+    <li class="is-active"><%= live_redirect gettext("Geo-Fences"), to: "/geo-fences" %></li>
   </ul>
 </nav>
 
-<%= link raw("""
+<%= live_redirect raw("""
       <span>#{gettext("Create")}</span>
       <span class="icon">
         <span class="mdi mdi-plus"></span>
       </span>
       """) ,
-      to: Routes.live_path(@socket, GeoFenceLive.Form),
+      to: Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form),
       class: "button is-info is-small is-rounded is-pulled-right mb-20"
 %>
 
@@ -31,15 +31,15 @@
       <td class="is-hidden-mobile has-text-weight-light" style="width: 30%"><%= geofence.latitude %>, <%= geofence.longitude %></td>
       <td class="is-hidden-mobile has-text-weight-light" style="width: 10%"><%=
           case @unit_of_length do
-            :ft -> geofence.radius |> m_to_ft() |> round()
+            :ft -> geofence.radius |> Convert.m_to_ft() |> round()
             :m -> geofence.radius |> round()
           end
         %> <%= @unit_of_length %></td>
       <td>
         <div class="field is-grouped is-pulled-right">
           <p class="control">
-            <%= link raw("<span class='icon'><span class='mdi mdi-square-edit-outline'></span></span>"),
-                  to: Routes.live_path(@socket, GeoFenceLive.Form, geofence, []),
+            <%= live_redirect raw("<span class='icon'><span class='mdi mdi-square-edit-outline'></span></span>"),
+                  to: Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form, geofence, []),
                   class: "button is-info is-small is-inverted is-light"
             %>
           </p>

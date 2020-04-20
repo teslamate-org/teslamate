@@ -1,17 +1,8 @@
 defmodule TeslaMateWeb.SignInLive.Index do
-  use Phoenix.LiveView
-
-  alias TeslaMateWeb.Router.Helpers, as: Routes
-  alias TeslaMateWeb.SigninView
-
-  alias TeslaMate.Auth
-  alias TeslaMate.Api
+  use TeslaMateWeb, :live_view
 
   import Core.Dependency, only: [call: 3]
-  import TeslaMateWeb.Gettext
-
-  @impl true
-  def render(assigns), do: SigninView.render("index.html", assigns)
+  alias TeslaMate.{Auth, Api}
 
   @impl true
   def mount(_params, %{"locale" => locale}, socket) do
@@ -20,7 +11,8 @@ defmodule TeslaMateWeb.SignInLive.Index do
     assigns = %{
       changeset: Auth.change_credentials(),
       error: nil,
-      api: get_api(socket)
+      api: get_api(socket),
+      page_title: gettext("Sign in")
     }
 
     {:ok, assign(socket, assigns)}
