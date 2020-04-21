@@ -14,7 +14,7 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:93
 msgid "Status"
-msgstr "상태"
+msgstr "현재 차량상태"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:225
@@ -236,12 +236,12 @@ msgstr "거리 (예상)"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:96
 msgid "for"
-msgstr ""
+msgstr "경과시간"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:70
 msgid "Requirements"
-msgstr "필수"
+msgstr "필수요구사항"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:79
@@ -538,7 +538,7 @@ msgstr "계속"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:263
 msgid "Mileage"
-msgstr "총주행거리"
+msgstr "누적주행거리"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:111
