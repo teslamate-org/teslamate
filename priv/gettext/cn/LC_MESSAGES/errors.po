@@ -1,90 +1,76 @@
-# # `msgid`s in this file come from POT (.pot) files.
-# #
-# # Do not add, change, or remove `msgid`s manually here as
-# # they're tied to the ones in the corresponding POT file
-# # (with the same domain).
-# #
-# # Use `mix gettext.extract --merge` or `mix gettext.merge`
-# # to merge POT files into PO files.
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Language-Team: \n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
-"Last-Translator: \n"
-"Language: zh_CN\n"
+"Language: cn\n"
 
-# # From Ecto.Changeset.cast/4
+## From Ecto.Changeset.cast/4
 msgid "can't be blank"
 msgstr "不可留白"
 
-# # From Ecto.Changeset.unique_constraint/3
+## From Ecto.Changeset.unique_constraint/3
 msgid "has already been taken"
 msgstr "已被使用"
 
-# # From Ecto.Changeset.put_change/3
+## From Ecto.Changeset.put_change/3
 msgid "is invalid"
 msgstr "无效"
 
-# # From Ecto.Changeset.validate_acceptance/3
+## From Ecto.Changeset.validate_acceptance/3
 msgid "must be accepted"
 msgstr "必须接受"
 
-# # From Ecto.Changeset.validate_format/3
+## From Ecto.Changeset.validate_format/3
 msgid "has invalid format"
 msgstr "为无效格式"
 
-# # From Ecto.Changeset.validate_subset/3
+## From Ecto.Changeset.validate_subset/3
 msgid "has an invalid entry"
 msgstr "为无效输入"
 
-# # From Ecto.Changeset.validate_exclusion/3
+## From Ecto.Changeset.validate_exclusion/3
 msgid "is reserved"
 msgstr "已被使用"
 
-# # From Ecto.Changeset.validate_confirmation/3
+## From Ecto.Changeset.validate_confirmation/3
 msgid "does not match confirmation"
-msgstr "与确认的不匹配"
+msgstr "与已确认的不匹配"
 
-# # From Ecto.Changeset.no_assoc_constraint/3
+## From Ecto.Changeset.no_assoc_constraint/3
 msgid "is still associated with this entry"
 msgstr "仍然与该输入相关联"
 
 msgid "are still associated with this entry"
 msgstr "仍然与该输入相关联"
 
-# # From Ecto.Changeset.validate_length/3
+## From Ecto.Changeset.validate_length/3
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
 msgstr[0] "应为 %{count}"
+msgstr[1] ""
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
 msgstr[0] "应有 %{count}"
+msgstr[1] ""
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
 msgstr[0] "应至少有 %{count}"
-
-msgid "should have at least %{count} item(s)"
-msgid_plural "should have at least %{count} item(s)"
-msgstr[0] "应至少有 %{count}"
+msgstr[1] ""
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
 msgstr[0] "应不超过 %{count}"
+msgstr[1] ""
 
-msgid "should have at most %{count} item(s)"
-msgid_plural "should have at most %{count} item(s)"
-msgstr[0] "应不超过 %{count}"
-
-# # From Ecto.Changeset.validate_number/3
+## From Ecto.Changeset.validate_number/3
 msgid "must be less than %{number}"
 msgstr "应少于 %{count}"
 
