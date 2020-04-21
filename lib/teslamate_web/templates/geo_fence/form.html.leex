@@ -19,7 +19,9 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <div id="map" style="height: 400px; position: relative;" phx-update="ignore" phx-hook="Map"></div>
+          <div id="map_container" phx-update="ignore">
+            <figure id="map" style="height: 400px; position: relative;" phx-hook="Map"></figure>
+          </div>
           <%= hidden_input f, :latitude %>
           <%= hidden_input f, :longitude %>
           <%= hidden_input f, :radius %>
