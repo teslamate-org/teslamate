@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1568831190064,
+  "iteration": 1587584463537,
   "links": [
     {
       "icon": "dashboard",
@@ -38,6 +38,7 @@
   ],
   "panels": [
     {
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -125,6 +126,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -144,7 +146,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select start_date, end_date, version from updates where $__timeFilter(start_date) and car_id = $car_id;",
+          "rawSql": "select start_date, end_date, date_trunc('second',end_date-start_date) as update_duration, date_trunc('second',start_date-lag(start_date) over ( order by start_date)) as since_last_update  , version from updates where $__timeFilter(start_date) and car_id = $car_id; ",
           "refId": "A",
           "select": [
             [
@@ -175,7 +177,7 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 19,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [
     "tesla"
