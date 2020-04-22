@@ -9,7 +9,7 @@
 ## effect: edit them in PO (`.po`) files instead.
 msgid ""
 msgstr ""
-"Language: cn\n"
+"Language: chs\n"
 "Plural-Forms: nplurals=2\n"
 
 #, elixir-format
