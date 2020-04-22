@@ -8,16 +8,6 @@
 # # to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Language-Team: \n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
-"Last-Translator: \n"
 "Language: zh_TW\n"
 
 # # From Ecto.Changeset.cast/4
