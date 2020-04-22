@@ -507,7 +507,7 @@ msgstr "未锁车"
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:94
 msgid "Per kWh"
-msgstr "/度"
+msgstr "每度电"
 
 #, elixir-format
 #: lib/teslamate_web/templates/charge/cost.html.leex:94
