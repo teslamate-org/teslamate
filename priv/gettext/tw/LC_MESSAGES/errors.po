@@ -1,0 +1,91 @@
+# # `msgid`s in this file come from POT (.pot) files.
+# #
+# # Do not add, change, or remove `msgid`s manually here as
+# # they're tied to the ones in the corresponding POT file
+# # (with the same domain).
+# #
+# # Use `mix gettext.extract --merge` or `mix gettext.merge`
+# # to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: zh_TW\n"
+
+# # From Ecto.Changeset.cast/4
+msgid "can't be blank"
+msgstr "不可留白"
+
+# # From Ecto.Changeset.unique_constraint/3
+msgid "has already been taken"
+msgstr "已被使用"
+
+# # From Ecto.Changeset.put_change/3
+msgid "is invalid"
+msgstr "無效"
+
+# # From Ecto.Changeset.validate_acceptance/3
+msgid "must be accepted"
+msgstr "必須接受"
+
+# # From Ecto.Changeset.validate_format/3
+msgid "has invalid format"
+msgstr "為無效格式"
+
+# # From Ecto.Changeset.validate_subset/3
+msgid "has an invalid entry"
+msgstr "為無效輸入"
+
+# # From Ecto.Changeset.validate_exclusion/3
+msgid "is reserved"
+msgstr "已被使用"
+
+# # From Ecto.Changeset.validate_confirmation/3
+msgid "does not match confirmation"
+msgstr "與確認的不匹配"
+
+# # From Ecto.Changeset.no_assoc_constraint/3
+msgid "is still associated with this entry"
+msgstr "仍然與該輸入相關聯"
+
+msgid "are still associated with this entry"
+msgstr "仍然與該輸入相關聯"
+
+# # From Ecto.Changeset.validate_length/3
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "應為 %{count}"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "應有 %{count}"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "應至少有 %{count}"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "應至少有 %{count}"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "應不超過 %{count}"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "應不超過 %{count}"
+
+# # From Ecto.Changeset.validate_number/3
+msgid "must be less than %{number}"
+msgstr "應少於 %{count}"
+
+msgid "must be greater than %{number}"
+msgstr "應大於 %{count}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "應小於或等於 %{count}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "應大於或等於 %{count}"
+
+msgid "must be equal to %{number}"
+msgstr "應為 %{count}"
