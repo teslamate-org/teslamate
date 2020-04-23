@@ -9,7 +9,7 @@
 ## effect: edit them in PO (`.po`) files instead.
 msgid ""
 msgstr ""
-"Language: chs\n"
+"Language: zh_Hans\n"
 "Plural-Forms: nplurals=2\n"
 
 #, elixir-format
@@ -554,7 +554,7 @@ msgstr "帮助文档"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:281
 msgid "GitHub"
-msgstr "Github"
+msgstr "GitHub"
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.eex:95
