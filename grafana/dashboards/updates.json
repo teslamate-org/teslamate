@@ -144,7 +144,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select start_date, end_date, version from updates where $__timeFilter(start_date) and car_id = $car_id;",
+          "rawSql": "select start_date, end_date, date_trunc('second',end_date-start_date) as update_duration, date_trunc('second',start_date-lag(start_date) over ( order by start_date)) as since_last_update  , version from updates where $__timeFilter(start_date) and car_id = $car_id; ",
           "refId": "A",
           "select": [
             [
