@@ -8,7 +8,7 @@
 # # to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: zh_TW\n"
+"Language: zh_Hant\n"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:93
 msgid "Status"
@@ -462,7 +462,7 @@ msgstr "說明文件"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:281
 msgid "GitHub"
-msgstr "Github"
+msgstr "GitHub"
 
 #: lib/teslamate_web/templates/layout/root.html.eex:95
 #: lib/teslamate_web/templates/settings/index.html.leex:276

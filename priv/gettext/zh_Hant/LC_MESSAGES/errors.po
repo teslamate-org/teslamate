@@ -10,7 +10,7 @@
 ## From Ecto.Changeset.cast/4
 msgid "can't be blank"
 msgstr ""
-"Language: \n"
+"Language: zh_Hant\n"
 
 ## From Ecto.Changeset.unique_constraint/3
 msgid "has already been taken"
