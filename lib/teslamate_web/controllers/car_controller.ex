@@ -2,6 +2,7 @@ defmodule TeslaMateWeb.CarController do
   use TeslaMateWeb, :controller
 
   require Logger
+  import Phoenix.LiveView.Controller
 
   alias TeslaMate.Api, warn: false
   alias TeslaMate.{Log, Vehicles}

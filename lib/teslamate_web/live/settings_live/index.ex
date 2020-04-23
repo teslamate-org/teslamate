@@ -1,16 +1,10 @@
 defmodule TeslaMateWeb.SettingsLive.Index do
-  use Phoenix.LiveView
+  use TeslaMateWeb, :live_view
 
-  import TeslaMateWeb.Gettext
   require Logger
 
-  alias TeslaMateWeb.Router.Helpers, as: Routes
-  alias TeslaMateWeb.SettingsView
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
   alias TeslaMate.{Settings, Updater}
-
-  @impl true
-  def render(assigns), do: SettingsView.render("index.html", assigns)
 
   @impl true
   def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
@@ -24,7 +18,8 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       global_settings: settings |> prepare(),
       update: Updater.get_update(),
       refreshing_addresses?: nil,
-      refresh_error: nil
+      refresh_error: nil,
+      page_title: gettext("Settings")
     }
 
     {:ok, assign(socket, assigns)}
@@ -90,14 +85,10 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   end
 
   def handle_event("change", params, %{assigns: %{car_settings: settings, car: id}} = socket) do
-    orig = get_in(settings, [id, :original])
-
-    # workaround: switching between cars caused leex to not be re-evaluated.
-    # Solution: custom ":as" attribute on form_for/4 for each CarSetting changeset
     params = params["car_settings_#{id}"]
 
     settings =
-      orig
+      get_in(settings, [id, :original])
       |> Settings.update_car_settings(params)
       |> case do
         {:error, changeset} ->
@@ -129,6 +120,23 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   end
 
   # Private
+
+  @language_tags (GlobalSettings.supported_languages() ++
+                    [
+                      {"Norwegian", "nb"},
+                      {"Chinese (simplified)", "zh_Hans"},
+                      {"Chinese (traditional)", "zh_Hant"}
+                    ])
+                 |> Enum.map(fn {key, val} -> {val, key} end)
+                 |> Enum.into(%{})
+
+  @supported_ui_languages TeslaMateWeb.Cldr.known_locale_names()
+                          |> Enum.reject(&(&1 in ["en-001", "root", "zh"]))
+                          |> Enum.map(&String.replace(&1, "-", "_"))
+                          |> Enum.sort()
+                          |> Enum.map(&{Map.get(@language_tags, &1, &1), &1})
+
+  defp supported_ui_languages, do: @supported_ui_languages
 
   defp addresses_migrated? do
     alias TeslaMate.Log.{Drive, ChargingProcess}

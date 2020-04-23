@@ -5,5 +5,7 @@ for app <- Application.spec(:teslamate, :applications) do
 end
 
 TeslaMate.Repo.start_link()
+Phoenix.PubSub.Supervisor.start_link(name: TeslaMate.PubSub)
 
-ExUnit.start(assert_receive_timeout: 300)
+assert_timeout = String.to_integer(System.get_env("ELIXIR_ASSERT_TIMEOUT") || "300")
+ExUnit.start(assert_receive_timeout: assert_timeout)

@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.19.1] - 2020-04-20
+
+### Enhancements
+
+#### Translations
+
+- Add Korean translation ([#614](https://github.com/adriankumpf/teslamate/pull/614) by [dongbum](https://github.com/dongbum))
+
+### Bug Fixes
+
+- Fix an issue where the map tiles would disappear when editing a geofence
+- Fix a few things in the docs ([#611](https://github.com/adriankumpf/teslamate/pull/611) by [tobiasehlert](https://github.com/tobiasehlert))
+
 ## [1.19.0] - 2020-04-19
 
 ### Enhancements
@@ -890,7 +903,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.19.0...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.19.1...HEAD
+[1.19.1]: https://github.com/adriankumpf/teslamate/compare/v1.19.0...v1.19.1
 [1.19.0]: https://github.com/adriankumpf/teslamate/compare/v1.18.2...v1.19.0
 [1.18.2]: https://github.com/adriankumpf/teslamate/compare/v1.18.1...v1.18.2
 [1.18.1]: https://github.com/adriankumpf/teslamate/compare/v1.18.0...v1.18.1

@@ -1,5 +1,5 @@
 defmodule TeslaMateWeb.ImportLive.Index do
-  use Phoenix.LiveView
+  use TeslaMateWeb, :live_view
 
   defmodule Settings do
     use Ecto.Schema
@@ -11,11 +11,7 @@ defmodule TeslaMateWeb.ImportLive.Index do
     def apply(changeset), do: apply_changes(changeset)
   end
 
-  alias TeslaMateWeb.ImportView
   alias TeslaMate.Import
-
-  @impl true
-  def render(assigns), do: ImportView.render("index.html", assigns)
 
   @impl true
   def mount(_params, %{"settings" => _, "locale" => locale}, socket) do
@@ -33,7 +29,7 @@ defmodule TeslaMateWeb.ImportLive.Index do
       socket
       |> assign(status: Import.get_status())
       |> assign(changeset: Settings.changeset(%{timezone: timezone}))
-      |> assign(timezones: timezones)
+      |> assign(timezones: timezones, page_title: gettext("Import"))
 
     {:ok, socket}
   end

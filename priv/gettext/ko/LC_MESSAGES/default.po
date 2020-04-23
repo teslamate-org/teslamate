@@ -1,76 +1,75 @@
-## This file is a PO Template file.
+## `msgid`s in this file come from POT (.pot) files.
 ##
-## `msgid`s here are often extracted from source code.
-## Add new translations manually only if they're dynamic
-## translations that can't be statically extracted.
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
 ##
-## Run `mix gettext.extract` to bring this file up to
-## date. Leave `msgstr`s empty as changing them here as no
-## effect: edit them in PO (`.po`) files instead.
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: nb\n"
+"Language: ko\n"
 "Plural-Forms: nplurals=2\n"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:95
 msgid "Status"
-msgstr "Status"
+msgstr "상태"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:227
 msgid "Speed"
-msgstr "Hastighet"
+msgstr "속도"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:219
 msgid "State of Charge"
-msgstr "Ladenivå nå"
+msgstr "충전상태"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:156
 msgid "Charged"
-msgstr "Ladet hittil"
+msgstr "충전됨"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:131
 msgid "asleep"
-msgstr "dvale"
+msgstr "절전"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:126
 msgid "charging"
-msgstr "Ladet"
+msgstr "충전중"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:125
 msgid "driving"
-msgstr "kjører"
+msgstr "주행"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:130
 msgid "offline"
-msgstr "Offline"
+msgstr "오프라인"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:129
 msgid "online"
-msgstr "online"
+msgstr "온라인"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:127
 msgid "updating"
-msgstr "oppdaterer"
+msgstr "업데이트"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:69
 msgid "Locked"
-msgstr "Låst"
+msgstr "잠김"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:64
 msgid "Sentry Mode"
-msgstr "Sentry Mode"
+msgstr "센트리 모드"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/index.ex:13
@@ -78,483 +77,483 @@ msgstr "Sentry Mode"
 #: lib/teslamate_web/live/geofence_live/index.html.leex:3 lib/teslamate_web/live/import_live/index.html.leex:3
 #: lib/teslamate_web/live/settings_live/index.html.leex:3
 msgid "Home"
-msgstr "Hjem"
+msgstr "홈"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.ex:22
 #: lib/teslamate_web/live/settings_live/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.leex:59
 msgid "Settings"
-msgstr "Innstillinger"
+msgstr "설정"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:171
 msgid "Scheduled Charging"
-msgstr "Tidsinnstilt lading"
+msgstr "충전 예약됨"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:49
 msgid "Plugged In"
-msgstr "Koblet til"
+msgstr "충전 준비됨"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:180
 msgid "Charge Limit"
-msgstr "Ladelimit"
+msgstr "충전 한계"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:128
 msgid "falling asleep"
-msgstr "Dvale"
+msgstr "절전 중"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:132
 msgid "unavailable"
-msgstr "ikke tilgjengelig"
+msgstr "사용불가"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:200
 msgid "Length"
-msgstr "Avstand"
+msgstr "길이"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:215
 msgid "Temperature"
-msgstr "Temperatur"
+msgstr "온도"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:197
 msgid "Units"
-msgstr "Enheter"
+msgstr "유닛"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.leex:119
 #: lib/teslamate_web/live/geofence_live/form.html.leex:100
 msgid "Back"
-msgstr "Tilbake"
+msgstr "뒤로"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:197
 msgid "Geo-fence \"%{name}\" created"
-msgstr "Geo-lokasjon \"%{name}\" opprettet"
+msgstr "지오펜스 \"%{name}\" 가 생성되었습니다."
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:126
 #: lib/teslamate_web/live/geofence_live/form.html.leex:4 lib/teslamate_web/live/geofence_live/index.ex:22
 #: lib/teslamate_web/live/geofence_live/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.leex:56
 msgid "Geo-Fences"
-msgstr "Geo-lokasjoner"
+msgstr "지오펜스"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:49
 msgid "Idle Time Before Trying to Sleep"
-msgstr "Inaktiv tid før dvale starter"
+msgstr "절전모드 시도까지 유휴시간"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:43
 #: lib/teslamate_web/live/geofence_live/form.html.leex:48 lib/teslamate_web/live/geofence_live/index.html.leex:21
 msgid "Name"
-msgstr "Navn"
+msgstr "이름"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:17
 #: lib/teslamate_web/live/geofence_live/index.html.leex:22
 msgid "Position"
-msgstr "Posisjon"
+msgstr "위치"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/index.html.leex:23
 msgid "Radius"
-msgstr "Radius"
+msgstr "반경"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.leex:122
 #: lib/teslamate_web/live/geofence_live/form.html.leex:103
 msgid "Save"
-msgstr "Lagre"
+msgstr "저장"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.leex:123
 #: lib/teslamate_web/live/geofence_live/form.html.leex:103 lib/teslamate_web/live/signin_live/index.html.leex:33
 msgid "Saving..."
-msgstr "Lagrer..."
+msgstr "저장 중..."
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:31
 msgid "Time to Try Sleeping"
-msgstr "Tid for forsøk på dvale"
+msgstr "잠자기 시도 시작"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:39
 #: lib/teslamate_web/live/settings_live/index.html.leex:58
 msgid "min"
-msgstr "min"
+msgstr "분"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:55
 msgid "Signed in successfully"
-msgstr "Innlogget"
+msgstr "로그인 성공"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:134
 msgid "Car is unlocked"
-msgstr "Bilen er ulåst"
+msgstr "차량 잠김해제"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/index.html.leex:9
 msgid "Create"
-msgstr "Opprett"
+msgstr "생성"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:138
 #: lib/teslamate_web/live/car_live/summary.html.leex:34
 msgid "Preconditioning"
-msgstr "Forvarming"
+msgstr "프리컨디셔닝"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:137
 msgid "Sentry mode is enabled"
-msgstr "Sentry Mode er aktivert"
+msgstr "센트리 모드가 활성화되었습니다."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #: lib/teslamate_web/live/car_live/summary.html.leex:44
 msgid "Driver present"
-msgstr "Fører er tilstede"
+msgstr "현재 운전자"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:298
 msgid "cancel sleep attempt"
-msgstr "Avbryt dvale"
+msgstr "절전모드 시도 취소"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:293
 msgid "try to sleep"
-msgstr "forsøk på dvale"
+msgstr "절전모드 시도"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:143
 msgid "Range (est.)"
-msgstr "Rekkevidde (est.)"
+msgstr "거리 (예상)"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:98
 msgid "for"
-msgstr "i"
+msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:70
 msgid "Requirements"
-msgstr "Krav"
+msgstr "필수"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:79
 msgid "Vehicle must be locked"
-msgstr "Kjøretøyet må være låst"
+msgstr "차량은 잠금되어야 합니다."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:124
 msgid "Range (rated)"
-msgstr "Rekkevidde (rated)"
+msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:162
 msgid "Charger Power"
-msgstr "Ladestyrke"
+msgstr "충전장치 전력"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:141
 msgid "Preferred Range"
-msgstr "Foretrukket rekkevidde"
+msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:137
 msgid "Range"
-msgstr "Rekkevidde"
+msgstr "거리"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "ideal"
-msgstr "ideell"
+msgstr "이상"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "rated"
-msgstr "rated"
+msgstr "정규"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:123
 msgid "Range (ideal)"
-msgstr "Rekkevidde (ideell)"
+msgstr "거리 (이상적인)"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:140
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
-msgstr "Kjøretøyets estimerte tilgjengelige rekkevidde er basert på et fast energiforbruk oppgitt i Wh/km. Wh/km-faktoren er bestemt av Tesla og er ikke landspesifikk, der oppgitt rekkevidde er basert på regulatoriske tester i de ulike markeder for det spesifikke kjøretøyet."
+msgstr "차량의 잔여거리 추정치는 고정 에너지 소비량(Wh/km)을 기준으로합니다. Wh/km 계수는 Tesla에 의해 결정되며 국가별로 다르지 않지만 정격 거리는 해당 차량의 다른 시장에서 규제 테스트를 기반으로합니다."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Update in progress"
-msgstr "Oppdaterer software"
+msgstr "업데이트 진행 중"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:54
 msgid "Windows open"
-msgstr "Åpent vindu"
+msgstr "창문 열림"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/index.html.leex:51
 msgid "Delete '%{geo_fence}'?"
-msgstr "Fjern '%{geo_fence}'?"
+msgstr "'%{geo_fence}'를 삭제하겠습니까?"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:252
 msgid "Inside Temperature"
-msgstr "Temperatur innvendig"
+msgstr "실내 온도"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:240
 msgid "Outside Temperature"
-msgstr "Temperatur utvendig"
+msgstr "실외 온도"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:277
 #: lib/teslamate_web/live/settings_live/index.html.leex:270
 msgid "Version"
-msgstr "Software versjon"
+msgstr "버전"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:74
 msgid "Software Update available"
-msgstr "Ny software tilgjengelig"
+msgstr "소프트웨어 업데이트 가능"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:79
 msgid "Health check failed"
-msgstr "Helsesjekk feilet"
+msgstr "상태확인 실패"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:69
 msgid "Unlocked"
-msgstr "Ulåst"
+msgstr "잠금 해제"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:110
 msgid "Remaining Time"
-msgstr "Gjenværende ladetid"
+msgstr "남은 시간"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:250
 #: lib/teslamate_web/templates/layout/root.html.leex:46
 msgid "Dashboards"
-msgstr "Grafana"
+msgstr "대시보드"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:233
 msgid "URLs"
-msgstr "Nettadresser"
+msgstr "URLs"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:164
 #: lib/teslamate_web/live/settings_live/index.html.leex:236
 msgid "Web App"
-msgstr "Dashboard"
+msgstr "웹 어플리케이션"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:114
 msgid "Enabled"
-msgstr "Aktivert"
+msgstr "활성화"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:26
 msgid "Sleep Mode"
-msgstr "Dvalemodus"
+msgstr "절전 모드"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:198
 msgid "Geo-fence \"%{name}\" updated"
-msgstr "Geo-lokasjon \"%{name}\" oppdatert"
+msgstr "지오펜스 \"%{name}\" 가 업데이트 되었습니다."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:142
 msgid "An error occurred"
-msgstr "En feil har oppstått"
+msgstr "오류가 발생하였습니다"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:141
 msgid "Timeout"
-msgstr "Timeout"
+msgstr "시간초과"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:39
 msgid "Reduced Battery Range"
-msgstr "Redusert batterirekkevidde"
+msgstr "감소된 배터리 거리"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:212
 msgid "≈ %{range} at 100%"
-msgstr "≈ %{range} ved 100%"
+msgstr "≈ 100%에서 %{range}"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.ex:20
 #: lib/teslamate_web/live/charge_live/cost.html.leex:4
 msgid "Charge Cost"
-msgstr "Lading"
+msgstr "충전비용"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.leex:94
 msgid "Cost"
-msgstr "Pris"
+msgstr "비용"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.leex:107
 msgid "Enter charge cost"
-msgstr "Angi ladepris"
+msgstr "충전비용 입력"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.ex:68
 msgid "Saved!"
-msgstr "Lagret!"
+msgstr "저장완료!"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:29
 msgid "Fetching vehicle data ..."
-msgstr "Henter data fra kjøretøy..."
+msgstr "차량데이터를 가져오는 중입니다."
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:179
 msgid "Addresses"
-msgstr "Adresser og gatenavn"
+msgstr "주소"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:160
 msgid "Language"
-msgstr "Språk"
+msgstr "언어"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.ex:65
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
-msgstr "Det var et problem med henting av data fra OpenStreetMap. Vennligst prøv igjen senere."
+msgstr "OpenStreetMap 데이터 검색 중 문제가 발생했습니다. 다시 시도해주세요."
 
 #, elixir-format
 #: lib/teslamate_web/live/import_live/index.html.leex:4
 msgid "TeslaFi Import"
-msgstr "TeslaFi import"
+msgstr "TeslaFi 가져오기"
 
 #, elixir-format
 #: lib/teslamate_web/live/import_live/index.html.leex:10
 msgid "Found %{count} file"
 msgid_plural "Found %{count} files"
-msgstr[0] "%{count} fil"
-msgstr[1] "%{count} filer"
+msgstr[0] ""
+msgstr[1] ""
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.leex:87
 msgid "Donate"
-msgstr "Donere"
+msgstr "후원"
 
 #, elixir-format
 #: lib/teslamate_web/live/import_live/index.ex:32
 #: lib/teslamate_web/live/import_live/index.html.leex:68
 msgid "Import"
-msgstr "Importere"
+msgstr "가져오기"
 
 #, elixir-format
 #: lib/teslamate_web/live/import_live/index.html.leex:58
 msgid "Time zone"
-msgstr "Tidssone"
+msgstr "시간대"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.leex:18
 msgid "Password"
-msgstr "Passord"
+msgstr "암호"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:15
 #: lib/teslamate_web/live/signin_live/index.html.leex:30
 msgid "Sign in"
-msgstr "Logg inn"
+msgstr "로그인"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.leex:11
 msgid "Email address"
-msgstr "Epost"
+msgstr "이메일 주소"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:59
 msgid "Cost per kWh"
-msgstr "Pris per kWh"
+msgstr "kWh당 비용"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:92
 msgid "Charge cost"
-msgstr "Ladepris"
+msgstr "충전비용"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:95
 msgid "Free Supercharging"
-msgstr "Gratis Superlading"
+msgstr "무료 슈퍼차징"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:131
 msgid "General Settings"
-msgstr "Generelle innstillinger"
+msgstr "일반설정"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:78
 msgid "Session fee"
-msgstr "Øktpris"
+msgstr "세션수수료"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:59
 msgid "Doors open"
-msgstr "Åpen dør"
+msgstr "차량문 열림"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.leex:100
 msgid "Per kWh"
-msgstr "Pr kWh"
+msgstr "kWh 당"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.leex:100
 msgid "Total"
-msgstr "Total"
+msgstr "총합"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:120
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
-msgstr[0] "Det er <strong>%{n} ladeøkt</strong> på denne lokasjonen der pris ikke er definert."
-msgstr[1] "Det er <strong>%{n} ladeøkter</strong> på denne lokasjonen der priser ikke er definert."
+msgstr[0] "이 위치에는 아직 비용이 추가되지 않은 <strong>%{n} 충전 세션</ strong>이 있습니다."
+msgstr[1] ""
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:129
 msgid "Add costs retroactively"
-msgstr "Legg til pris med tilbakevirkende kraft"
+msgstr "과거 요금 추가"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:114
 msgid "Charging Costs"
-msgstr "Pris på lading"
+msgstr "충전요금"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:128
 msgid "Continue"
-msgstr "Fortsett"
+msgstr "계속"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:265
 msgid "Mileage"
-msgstr "Total kjørelengde"
+msgstr "마일리지"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:111
 msgid "Streaming API"
-msgstr "Streaming API"
+msgstr "스트리밍 API"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:285
 msgid "Documentation"
-msgstr "Dokumentasjon"
+msgstr "참고문서"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:281
@@ -565,14 +564,14 @@ msgstr "GitHub"
 #: lib/teslamate_web/live/settings_live/index.html.leex:276
 #: lib/teslamate_web/templates/layout/root.html.leex:95
 msgid "Update available"
-msgstr "Ny software tilgjengelig"
+msgstr "업데이트 가능"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:135
 msgid "Doors are open"
-msgstr "Åpen dør"
+msgstr "문이 열려있습니다."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:136
 msgid "Trunk is open"
-msgstr "Bagasjeluken er åpen"
+msgstr "트렁크가 열려있습니다."
