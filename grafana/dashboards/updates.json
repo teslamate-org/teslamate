@@ -2,6 +2,7 @@
   "annotations": {
     "list": [
       {
+        "$$hashKey": "object:15",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": true,
@@ -15,8 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1568831190064,
+  "iteration": 1587641296811,
   "links": [
     {
       "icon": "dashboard",
@@ -38,6 +38,7 @@
   ],
   "panels": [
     {
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -49,7 +50,7 @@
       "repeat": "car_id",
       "scopedVars": {
         "car_id": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -58,22 +59,163 @@
       "type": "row"
     },
     {
+      "datasource": "TeslaMate",
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 0,
+        "y": 1
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "count"
+          ],
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "rgb(255, 255, 255)",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [],
+          "values": true
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "pluginVersion": "6.7.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*)\nFROM updates\nWHERE $__timeFilter(start_date)",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "start_km"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "drives",
+          "timeColumn": "start_date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Updates",
+      "type": "stat"
+    },
+    {
+      "datasource": "TeslaMate",
+      "gridPos": {
+        "h": 3,
+        "w": 16,
+        "x": 8,
+        "y": 1
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "defaults": {
+            "decimals": 1,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "rgb(255, 255, 255)",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "dtdurations"
+          },
+          "overrides": [],
+          "values": true
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "pluginVersion": "6.7.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT percentile_disc(0.5) WITHIN GROUP (ORDER BY since_last_update) FROM (\n\tSELECT extract(EPOCH FROM start_date - lag(start_date) OVER (ORDER BY start_date)) AS since_last_update\n\tFROM updates\n\tWHERE $__timeFilter(start_date) AND car_id = $car_id\n) d;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "start_km"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "drives",
+          "timeColumn": "start_date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Median time between updates",
+      "type": "stat"
+    },
+    {
       "columns": [],
       "datasource": "TeslaMate",
       "fontSize": "100%",
       "gridPos": {
-        "h": 26,
+        "h": 28,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 4
       },
       "id": 2,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scopedVars": {
         "car_id": {
-          "selected": true,
+          "selected": false,
           "text": "1",
           "value": "1"
         }
@@ -86,13 +228,17 @@
       },
       "styles": [
         {
-          "alias": "Start Date",
+          "$$hashKey": "object:68",
+          "alias": "Date",
+          "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "start_date",
           "type": "date"
         },
         {
+          "$$hashKey": "object:69",
           "alias": "End Date",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -104,11 +250,13 @@
           "mappingType": 1,
           "pattern": "end_date",
           "thresholds": [],
-          "type": "date",
+          "type": "hidden",
           "unit": "short"
         },
         {
+          "$$hashKey": "object:70",
           "alias": "Installed Version",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -124,7 +272,45 @@
           "unit": "short"
         },
         {
+          "$$hashKey": "object:202",
+          "alias": "Duration",
+          "align": "auto",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "update_duration",
+          "thresholds": [],
+          "type": "number",
+          "unit": "dtdurations"
+        },
+        {
+          "$$hashKey": "object:392",
+          "alias": "Since Last Update",
+          "align": "auto",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "since_last_update",
+          "thresholds": [],
+          "type": "number",
+          "unit": "dtdurations"
+        },
+        {
+          "$$hashKey": "object:71",
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -144,7 +330,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select start_date, end_date, date_trunc('second',end_date-start_date) as update_duration, date_trunc('second',start_date-lag(start_date) over ( order by start_date)) as since_last_update  , version from updates where $__timeFilter(start_date) and car_id = $car_id; ",
+          "rawSql": "SELECT\n\tstart_date,\n\tend_date,\n\textract(EPOCH FROM end_date - start_date) AS update_duration,\n\textract(EPOCH FROM start_date - lag(start_date) OVER (ORDER BY start_date)) AS since_last_update,\n\tsplit_part(version, ' ', 1) as version\nFROM\n  updates\nWHERE\n\t$__timeFilter(start_date)\n\tAND car_id = $car_id\nORDER BY\n  start_date DESC;",
           "refId": "A",
           "select": [
             [
@@ -175,7 +361,7 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 19,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [
     "tesla"
@@ -185,6 +371,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },
@@ -192,6 +379,7 @@
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
+        "index": -1,
         "label": "Car",
         "multi": true,
         "name": "car_id",
@@ -217,6 +405,7 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
+        "index": -1,
         "label": "",
         "multi": false,
         "name": "base_url",
@@ -235,7 +424,7 @@
     ]
   },
   "time": {
-    "from": "now-1y",
+    "from": "now-10y",
     "to": "now"
   },
   "timepicker": {
@@ -266,5 +455,8 @@
   "timezone": "",
   "title": "Updates",
   "uid": "IiC07mgWz",
+  "variables": {
+    "list": []
+  },
   "version": 1
 }
