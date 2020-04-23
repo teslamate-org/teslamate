@@ -40,7 +40,7 @@ msgstr "已被使用"
 
 # # From Ecto.Changeset.validate_confirmation/3
 msgid "does not match confirmation"
-msgstr "與確認的不匹配"
+msgstr "與確認的不相符"
 
 # # From Ecto.Changeset.no_assoc_constraint/3
 msgid "is still associated with this entry"
