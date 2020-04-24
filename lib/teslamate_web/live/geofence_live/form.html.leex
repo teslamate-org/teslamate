@@ -1,7 +1,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= link gettext("Home"), to: "/" %></li>
-    <li><%= link gettext("Geo-Fences"), to: "/geo-fences" %></li>
+    <li><%= live_redirect gettext("Home"), to: "/" %></li>
+    <li><%= live_redirect gettext("Geo-Fences"), to: "/geo-fences" %></li>
     <li class="is-active"><a href="#"><%=
       case @action do
         :new -> Ecto.Changeset.get_field(@changeset, :name) || "…"
@@ -97,7 +97,7 @@
     <div class="field-body">
       <div class="field is-grouped">
         <div class="control">
-          <%= link gettext("Back"), to: Routes.live_path(@socket, GeoFenceLive.Index), class: "button" %>
+          <%= live_redirect gettext("Back"), to: Routes.live_path(@socket, GeoFenceLive.Index), class: "button" %>
         </div>
         <div class="control">
           <%= submit gettext("Save"), phx_disable_with: gettext("Saving..."), class: "button is-info" %>

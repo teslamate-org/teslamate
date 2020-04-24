@@ -1,18 +1,13 @@
 defmodule TeslaMateWeb.ChargeLive.Cost do
-  use Phoenix.LiveView
+  use TeslaMateWeb, :live_view
 
   require Logger
 
-  alias TeslaMateWeb.ChargeView
-  alias TeslaMateWeb.Router.Helpers, as: Routes
-
+  alias TeslaMate.Locations.{GeoFence, Address}
   alias TeslaMate.Log.ChargingProcess
   alias TeslaMate.Log
 
   import TeslaMateWeb.Gettext
-
-  @impl true
-  def render(assigns), do: ChargeView.render("cost.html", assigns)
 
   @impl true
   def mount(%{"id" => id}, %{"locale" => locale}, socket) do
@@ -22,7 +17,7 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
 
     socket =
       socket
-      |> assign(notification: nil)
+      |> assign(notification: nil, page_title: gettext("Charge Cost"))
       |> assign_charging_process(charging_process)
 
     {:ok, socket}

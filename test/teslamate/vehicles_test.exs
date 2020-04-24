@@ -4,15 +4,6 @@ defmodule TeslaMate.VehiclesTest do
 
   alias TeslaMate.Vehicles
 
-  setup do
-    start_supervised!({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
-
-    # Wait for processes the exit
-    on_exit(fn -> Process.sleep(10) end)
-
-    :ok
-  end
-
   @tag :capture_log
   test "kill/0" do
     {:ok, _} = start_supervised({Vehicles, vehicles: []})

@@ -1,7 +1,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= link gettext("Home"), to: "/" %></li>
-    <li class="is-active"><%= link gettext("Settings"), to: "/settings" %></li>
+    <li><%= live_redirect gettext("Home"), to: "/" %></li>
+    <li class="is-active"><%= live_redirect gettext("Settings"), to: "/settings" %></li>
   </ul>
 </nav>
 

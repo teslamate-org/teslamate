@@ -13,7 +13,6 @@ defmodule TeslaMate.ImportTest do
   @dir "./test/fixtures/import"
 
   setup do
-    {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
     [pid: self()]
   end
 

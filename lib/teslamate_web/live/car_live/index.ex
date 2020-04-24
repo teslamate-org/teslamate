@@ -1,20 +1,16 @@
 defmodule TeslaMateWeb.CarLive.Index do
-  use Phoenix.LiveView
+  use TeslaMateWeb, :live_view
 
   require Logger
 
-  alias TeslaMateWeb.CarView
   alias TeslaMate.{Settings, Vehicles}
   alias TeslaMate.Settings.GlobalSettings
-
-  @impl true
-  def render(assigns), do: CarView.render("index.html", assigns)
 
   @impl true
   def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
     socket =
       socket
-      |> assign(:locale, locale)
+      |> assign(locale: locale, page_title: gettext("Home"))
       |> assign_new(:summaries, fn -> Vehicles.list() end)
       |> assign_new(:settings, fn -> update_base_url(settings, socket) end)
 

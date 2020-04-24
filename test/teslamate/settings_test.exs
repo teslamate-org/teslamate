@@ -147,8 +147,6 @@ defmodule TeslaMate.SettingsTest do
     end
 
     test "update_car_settings/2 with valid data updates the settings" do
-      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
-
       car = car_fixture()
       [settings] = Settings.get_car_settings()
 
@@ -164,8 +162,6 @@ defmodule TeslaMate.SettingsTest do
     end
 
     test "update_car_settings/2 publishes the settings" do
-      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
-
       car = car_fixture()
       :ok = Settings.subscribe_to_changes(car)
 
@@ -292,7 +288,6 @@ defmodule TeslaMate.SettingsTest do
     alias TeslaMate.Log
 
     test "triggers a recalculaten of efficiencies if the preferred range chages" do
-      {:ok, _pid} = start_supervised({Phoenix.PubSub.PG2, name: TeslaMate.PubSub})
       %Car{efficiency: nil} = car = car_fixture(%{efficiency: nil})
 
       data = [

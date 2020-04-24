@@ -18,9 +18,8 @@ config :teslamate, TeslaMateWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/teslamate_web/{live,views}/.*(ex)$",
-      ~r"lib/teslamate_web/templates/.*(eex)$",
-      ~r{lib/teslamate_web/live/.*(ex)$},
+      ~r"lib/test_web/(live|views)/.*(ex)$",
+      ~r"lib/test_web/templates/.*(eex)$",
       ~r"grafana/dashboards/.*(json)$"
     ]
   ]
@@ -35,6 +34,7 @@ config :teslamate, TeslaMate.Repo,
   password: "postgres",
   database: "teslamate_dev",
   hostname: "localhost",
+  show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
 config :teslamate, :mqtt,
