@@ -252,7 +252,7 @@ msgstr "Le véhicule doit être verouillé"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:124
 msgid "Range (rated)"
-msgstr "Autonomie téhorique"
+msgstr "Autonomie théorique"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:162
