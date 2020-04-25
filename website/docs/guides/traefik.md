@@ -2,7 +2,7 @@
 title: Advanced install with Traefik, Let's Encrypt & HTTP Basic Auth
 ---
 
-In case you wish to make TeslaMate publicly available on the Internet, it is strongly recommended to secure the web interface and allow access to Grafana only with a password. This guide provides **an example** of a docker-compose file which differs from the simple installation in the following functions:
+In case you wish to make TeslaMate publicly available on the Internet, it is strongly recommended to secure the web interface and allow access to Grafana only with a password. This guide provides a _[docker-compose.yml](#docker-composeyml)_ which differs from the basic installation in the following aspects:
 
 - Both publicly accessible services, TeslaMate and Grafana, sit behind a reverse proxy (Traefik) which terminates HTTPS traffic
 - The TeslaMate service is protected by HTTP Basic Authentication
@@ -11,7 +11,7 @@ In case you wish to make TeslaMate publicly available on the Internet, it is str
 - Grafana is configured to require a login
 
 :::note
-If you have problems or questions about the installation, please refer to the documentation of the respective projects directly.
+Please note that this is only **an example** of how TeslaMate can be used in a more advanced scenario. Depending on your use case, you may need to make some adjustments, primarily to the traefik configuration. For more information, see the [traefik docs](https://docs.traefik.io/).
 :::
 
 ## Requirements
