@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.19.2] - 2020-04-26
+
+### Enhancements
+
+#### Translations
+
+- Add Chinese (Simplified) translation ([#625](https://github.com/adriankumpf/teslamate/pull/625) by [edward4hgl](https://github.com/edward4hgl))
+- Add Chinese (Traditional) translation ([#633](https://github.com/adriankumpf/teslamate/pull/633) by [occultsound](https://github.com/occultsound))
+- Fix typo in French translation ([#638](https://github.com/adriankumpf/teslamate/pull/638) by [tobiasehlert](https://github.com/tobiasehlert))
+- Add Dutch translation ([#647](https://github.com/adriankumpf/teslamate/pull/647) by [wooter](https://github.com/wooter))
+
+#### Dashboards
+
+- Updates: Show update duration and time since last update ([#632](https://github.com/adriankumpf/teslamate/pull/632) by [Dulanic](https://github.com/Dulanic))
+- Charging Stats: Show kWh at non-decimal level and MWh at the 3 decimal point level ([#642](https://github.com/adriankumpf/teslamate/pull/642) and [#646](https://github.com/adriankumpf/teslamate/pull/646) by [Dulanic](https://github.com/Dulanic))
+
+### Bug Fixes
+
+- Do not publish NULL or incorrect values to MQTT topics if TM is restarted while the car is asleep
+
 ## [1.19.1] - 2020-04-20
 
 ### Enhancements
@@ -903,7 +923,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.19.1...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.19.2...HEAD
+[1.19.2]: https://github.com/adriankumpf/teslamate/compare/v1.19.1...v1.19.2
 [1.19.1]: https://github.com/adriankumpf/teslamate/compare/v1.19.0...v1.19.1
 [1.19.0]: https://github.com/adriankumpf/teslamate/compare/v1.18.2...v1.19.0
 [1.18.2]: https://github.com/adriankumpf/teslamate/compare/v1.18.1...v1.18.2
