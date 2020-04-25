@@ -1058,7 +1058,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          %Log.Position{} = position <- call(data.deps.log, :get_latest_position, [data.car]) do
       drive = %Drive{
         latitude: position.latitude,
-        longitude: position.longitude
+        longitude: position.longitude,
+        shift_state: :unknown
       }
 
       to_miles = fn km ->
@@ -1072,7 +1073,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
         est_battery_range: to_miles.(position.est_battery_range_km),
         battery_range: to_miles.(position.rated_battery_range_km),
         battery_level: position.battery_level,
-        usable_battery_level: position.usable_battery_level
+        usable_battery_level: position.usable_battery_level,
+        charge_energy_added: :unknown,
+        charger_actual_current: :unknown,
+        charger_phases: :unknown,
+        charger_power: :unknown,
+        charger_voltage: :unknown,
+        charge_port_door_open: :unknown,
+        scheduled_charging_start_time: :unknown,
+        time_to_full_charge: :unknown
       }
 
       climate = %Climate{

@@ -57,6 +57,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     end)
     |> Stream.filter(fn {key, value} ->
       not (key in @blacklist) and
+        value != :unknown and
         (not is_nil(value) or key in @always_published) and
         (state.last_summary == nil or value != Map.get(state.last_summary, key))
     end)

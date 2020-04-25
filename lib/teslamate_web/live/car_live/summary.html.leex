@@ -45,7 +45,7 @@
           <span class="mdi mdi-account"></span>
         </span>
       <% end %>
-      <%= if @summary.plugged_in do %>
+      <%= if @summary.plugged_in == true do %>
         <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Plugged In" %>'>
           <span class="mdi mdi-power-plug"></span>
         </span>
@@ -166,7 +166,7 @@
           <% end %>
 
           <%= if @summary.plugged_in do %>
-            <%= if not is_nil(@summary.scheduled_charging_start_time) do %>
+            <%= unless @summary.scheduled_charging_start_time in [nil, :unknown] do %>
             <tr>
               <td class="has-text-weight-medium"><%= gettext "Scheduled Charging" %></td>
               <td><%=
