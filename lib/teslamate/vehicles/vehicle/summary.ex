@@ -124,6 +124,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
   defp plugged_in(%Vehicle{charge_state: nil}), do: nil
   defp plugged_in(%Vehicle{vehicle_state: nil}), do: nil
+  defp plugged_in(%Vehicle{charge_state: %Charge{charge_port_door_open: :unknown}}), do: :unknown
 
   defp plugged_in(%Vehicle{
          charge_state: %Charge{charge_port_latch: "Engaged", charge_port_door_open: true}
@@ -179,7 +180,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     end
   end
 
-  defp to_datetime(nil), do: nil
+  defp to_datetime(val) when val in [nil, :unknown], do: val
   defp to_datetime(ts), do: DateTime.from_unix!(ts)
 
   defp get_in_struct(struct, keys) do
