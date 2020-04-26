@@ -110,13 +110,13 @@ msgstr "後退"
 
 #: lib/teslamate_web/live/geofence_live/form.ex:202
 msgid "Geo-fence \"%{name}\" created"
-msgstr "收藏點 \\”%{name}\\” 已建立"
+msgstr "收藏地點 \\”%{name}\\” 已建立"
 
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:4
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:4
 #: lib/teslamate_web/templates/layout/root.html.eex:56
 msgid "Geo-Fences"
-msgstr "收藏點"
+msgstr "收藏地點"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:49
 msgid "Idle Time Before Trying to Sleep"
