@@ -18,7 +18,7 @@
 
 ### Bug Fixes
 
-- Do not publish NULL or incorrect values to MQTT topics if TM is restarted while the car is asleep
+- Do not publish NULL or incorrect values to MQTT topics if TeslaMate is restarted while the car is asleep
 
 ## [1.19.1] - 2020-04-20
 
