@@ -1,15 +1,11 @@
 defmodule TeslaMateWeb.CarLive.Summary do
-  use Phoenix.LiveView
+  use TeslaMateWeb, :live_view
 
   import TeslaMateWeb.Gettext
 
-  alias TeslaMateWeb.CarView
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.{Vehicles, Convert}
-
-  @impl true
-  def render(assigns), do: CarView.render("summary.html", assigns)
 
   @impl true
   def mount(_params, %{"summary" => %Summary{car: car} = summary} = session, socket) do
@@ -71,7 +67,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
         {:error, reason} ->
           %{
-            error: translate_error(reason),
+            error: error_to_str(reason),
             error_timeout: Process.send_after(self(), :hide_error, 5_000),
             loading: false
           }
@@ -135,15 +131,15 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp translate_state(:asleep), do: gettext("asleep")
   defp translate_state(:unavailable), do: gettext("unavailable")
 
-  defp translate_error(:unlocked), do: gettext("Car is unlocked")
-  defp translate_error(:doors_open), do: gettext("Doors are open")
-  defp translate_error(:trunk_open), do: gettext("Trunk is open")
-  defp translate_error(:sentry_mode), do: gettext("Sentry mode is enabled")
-  defp translate_error(:preconditioning), do: gettext("Preconditioning")
-  defp translate_error(:user_present), do: gettext("Driver present")
-  defp translate_error(:update_in_progress), do: gettext("Update in progress")
-  defp translate_error(:timeout), do: gettext("Timeout")
-  defp translate_error(_other), do: gettext("An error occurred")
+  defp error_to_str(:unlocked), do: gettext("Car is unlocked")
+  defp error_to_str(:doors_open), do: gettext("Doors are open")
+  defp error_to_str(:trunk_open), do: gettext("Trunk is open")
+  defp error_to_str(:sentry_mode), do: gettext("Sentry mode is enabled")
+  defp error_to_str(:preconditioning), do: gettext("Preconditioning")
+  defp error_to_str(:user_present), do: gettext("Driver present")
+  defp error_to_str(:update_in_progress), do: gettext("Update in progress")
+  defp error_to_str(:timeout), do: gettext("Timeout")
+  defp error_to_str(_other), do: gettext("An error occurred")
 
   defp cancel_timer(nil), do: :ok
   defp cancel_timer(ref) when is_reference(ref), do: Process.cancel_timer(ref)

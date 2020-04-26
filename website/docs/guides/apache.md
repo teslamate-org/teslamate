@@ -2,17 +2,13 @@
 title: Advanced install with Apache2, TLS, HTTP Basic Auth
 ---
 
-In case you wish to make TeslaMate publicly available on the Internet, it is strongly recommended to secure the web interface and allow access to Grafana only with a password. This guide provides **an example** of a docker-compose file which differs from the simple installation in the following functions:
+In case you wish to make TeslaMate publicly available on the Internet, it is strongly recommended to secure the web interface and allow access to Grafana only with a password. This guide provides **an example** _[docker-compose.yml](#docker-composeyml)_ which differs from the simple installation in the following aspects:
 
 - Both publicly accessible services, TeslaMate and Grafana, sit behind a reverse proxy (Apache2) which terminates HTTPS traffic
 - Ports 3000 (Grafana) and 4000 (TeslaMate) are only exposed locally
 - The TeslaMate service is protected by HTTP Basic Authentication
 - Custom configuration was moved into a separate `.env` file
 - Grafana is configured to require a login
-
-:::note
-If you have problems or questions about the installation, please refer to the documentation of the respective projects directly.
-:::
 
 ## Requirements
 

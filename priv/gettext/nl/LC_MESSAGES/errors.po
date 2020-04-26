@@ -1,0 +1,98 @@
+# # `msgid`s in this file come from POT (.pot) files.
+# #
+# # Do not add, change, or remove `msgid`s manually here as
+# # they're tied to the ones in the corresponding POT file
+# # (with the same domain).
+# #
+# # Use `mix gettext.extract --merge` or `mix gettext.merge`
+# # to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: nl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# # From Ecto.Changeset.cast/4
+msgid "can't be blank"
+msgstr "kan niet leeg zijn"
+
+# # From Ecto.Changeset.unique_constraint/3
+msgid "has already been taken"
+msgstr "is al in gebruik"
+
+# # From Ecto.Changeset.put_change/3
+msgid "is invalid"
+msgstr "is ongeldig"
+
+# # From Ecto.Changeset.validate_acceptance/3
+msgid "must be accepted"
+msgstr "moet worden geaccepteerd"
+
+# # From Ecto.Changeset.validate_format/3
+msgid "has invalid format"
+msgstr "heeft een ongeldig formaat"
+
+# # From Ecto.Changeset.validate_subset/3
+msgid "has an invalid entry"
+msgstr "heeft een ongeldige invoer"
+
+# # From Ecto.Changeset.validate_exclusion/3
+msgid "is reserved"
+msgstr "is gereserveerd"
+
+# # From Ecto.Changeset.validate_confirmation/3
+msgid "does not match confirmation"
+msgstr "komt niet overeen met bevestiging"
+
+# # From Ecto.Changeset.no_assoc_constraint/3
+msgid "is still associated with this entry"
+msgstr "is nog steeds geassocieerd met dit item"
+
+msgid "are still associated with this entry"
+msgstr "zijn nog steeds gekoppeld aan dit item"
+
+# # From Ecto.Changeset.validate_length/3
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "moet %{count} karakter zijn"
+msgstr[1] "moeten %{count} karakters zijn"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "moet %{count} item hebben"
+msgstr[1] "moet %{count} items hebben"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "moet ten minste %{count} karakter zijn"
+msgstr[1] "moet ten minste %{count} karakters zijn"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "moet ten minste %{count} item bevatten"
+msgstr[1] "moet ten minste %{count} items bevatten"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "mag maximaal %{count} karakter zijn"
+msgstr[1] "mag maximaal %{count} karakters zijn"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "mag maximaal %{count} item bevatten"
+msgstr[1] "mag maximaal %{count} items bevatten"
+
+# # From Ecto.Changeset.validate_number/3
+msgid "must be less than %{number}"
+msgstr "moet kleiner zijn dan %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "moet groter zijn dan %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "moet kleiner zijn dan of gelijk zijn aan %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "moet groter zijn dan of gelijk zijn aan %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "moet gelijk zijn aan %{number}"
