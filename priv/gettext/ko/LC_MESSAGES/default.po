@@ -88,7 +88,7 @@ msgstr "설정"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:171
 msgid "Scheduled Charging"
-msgstr "충전 예약됨"
+msgstr "충전예약됨"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:49
@@ -98,7 +98,7 @@ msgstr "충전 준비됨"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:180
 msgid "Charge Limit"
-msgstr "충전 한계"
+msgstr "충전목표"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:128
