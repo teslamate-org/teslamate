@@ -20,8 +20,18 @@ defmodule TeslaMate.Auth do
 
   def get_tokens do
     case Repo.all(Tokens) do
-      [tokens] -> tokens
-      [] -> nil
+      [tokens] ->
+        tokens
+
+      [_ | _] = tokens ->
+        raise """
+        Found #{length(tokens)} token pairs!
+
+        Make sure that there is no more than ONE token pair in the table 'tokens'.
+        """
+
+      [] ->
+        nil
     end
   end
 

@@ -660,7 +660,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       Repo.transaction(fn ->
         {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs, opts])
 
-        :ok = synchronize_updates(vehicle, data)
+        synchronize_updates(vehicle, data)
 
         {:ok, %Log.State{start_date: last_state_change}} =
           call(data.deps.log, :start_state, [car, :online, date_opts(vehicle)])
@@ -1058,7 +1058,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          %Log.Position{} = position <- call(data.deps.log, :get_latest_position, [data.car]) do
       drive = %Drive{
         latitude: position.latitude,
-        longitude: position.longitude
+        longitude: position.longitude,
+        shift_state: :unknown
       }
 
       to_miles = fn km ->
@@ -1072,7 +1073,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
         est_battery_range: to_miles.(position.est_battery_range_km),
         battery_range: to_miles.(position.rated_battery_range_km),
         battery_level: position.battery_level,
-        usable_battery_level: position.usable_battery_level
+        usable_battery_level: position.usable_battery_level,
+        charge_energy_added: :unknown,
+        charger_actual_current: :unknown,
+        charger_phases: :unknown,
+        charger_power: :unknown,
+        charger_voltage: :unknown,
+        charge_port_door_open: :unknown,
+        scheduled_charging_start_time: :unknown,
+        time_to_full_charge: :unknown
       }
 
       climate = %Climate{
@@ -1412,35 +1421,37 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Map.put(vehicle, :charge_state, charge_state)
   end
 
-  def synchronize_updates(%Vehicle{vehicle_state: vehicle_state}, data) do
+  defp synchronize_updates(%Vehicle{vehicle_state: vehicle_state}, %Data{car: car} = data) do
     case vehicle_state do
       %VehicleState{timestamp: ts, car_version: vsn} when is_binary(vsn) ->
-        insert_update = fn ->
-          call(data.deps.log, :insert_missed_update, [data.car, vsn, [date: parse_timestamp(ts)]])
-        end
+        case call(data.deps.log, :get_latest_update, [car]) do
+          nil ->
+            {:ok, _} =
+              call(data.deps.log, :insert_missed_update, [car, vsn, [date: parse_timestamp(ts)]])
 
-        case call(data.deps.log, :get_latest_update, [data.car]) do
-          %Log.Update{version: last_vsn} when last_vsn < vsn ->
-            with {:ok, _update} <- insert_update.() do
-              Logger.info("Logged missing software udpate: #{vsn}", car_id: data.car.id)
-              :ok
+          %Log.Update{version: last_vsn} when is_binary(last_vsn) ->
+            if normalize_version(last_vsn) < normalize_version(vsn) do
+              Logger.info("Logged missing software udpate: #{vsn}", car_id: car.id)
+
+              {:ok, _} =
+                call(data.deps.log, :insert_missed_update, [car, vsn, [date: parse_timestamp(ts)]])
             end
 
-          nil ->
-            with {:ok, _update} <- insert_update.(), do: :ok
-
-          _ ->
-            Logger.debug("No missed updates", car_id: data.car.id)
-            :ok
+          %Log.Update{version: nil} ->
+            nil
         end
 
-      vehicle_state ->
-        Logger.warn("Unexpected software version: #{inspect(vehicle_state, pretty: true)}",
-          car_id: data.car.id
-        )
-
-        :ok
+      error ->
+        Logger.warn("Unexpected software version: #{inspect(error, pretty: true)}", car_id: car.id)
     end
+  end
+
+  defp normalize_version(vsn) when is_binary(vsn) do
+    vsn
+    |> String.split(" ", parts: 2)
+    |> hd()
+    |> String.split(".")
+    |> Enum.map(&String.pad_leading(&1, 4, "0"))
   end
 
   defp streaming?(%Data{stream_pid: pid}), do: is_pid(pid) and Process.alive?(pid)

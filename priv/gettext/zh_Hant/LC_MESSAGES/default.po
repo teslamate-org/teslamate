@@ -20,7 +20,7 @@ msgstr "速度"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:217
 msgid "State of Charge"
-msgstr "充電狀態"
+msgstr "目前電量"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:154
 msgid "Charged"
@@ -64,7 +64,7 @@ msgstr "哨兵模式"
 #: lib/teslamate_web/templates/import/index.html.leex:3
 #: lib/teslamate_web/templates/settings/index.html.leex:3
 msgid "Home"
-msgstr "家"
+msgstr "首頁"
 
 #: lib/teslamate_web/templates/layout/root.html.eex:59
 #: lib/teslamate_web/templates/settings/index.html.leex:4
@@ -73,11 +73,11 @@ msgstr "設定"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:169
 msgid "Scheduled Charging"
-msgstr "按計劃充電"
+msgstr "充電排程"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:47
 msgid "Plugged In"
-msgstr "連接充電器"
+msgstr "已連接充電埠"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:178
 msgid "Charge Limit"
@@ -93,7 +93,7 @@ msgstr "不可用"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:200
 msgid "Length"
-msgstr "長度"
+msgstr "距離"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:215
 msgid "Temperature"
@@ -110,13 +110,13 @@ msgstr "後退"
 
 #: lib/teslamate_web/live/geofence_live/form.ex:202
 msgid "Geo-fence \"%{name}\" created"
-msgstr "收藏點 \\”%{name}\\” 已建立"
+msgstr "收藏地點 \\”%{name}\\” 已建立"
 
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:4
 #: lib/teslamate_web/templates/geo_fence/index.html.leex:4
 #: lib/teslamate_web/templates/layout/root.html.eex:56
 msgid "Geo-Fences"
-msgstr "收藏點"
+msgstr "收藏地點"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:49
 msgid "Idle Time Before Trying to Sleep"
@@ -201,7 +201,7 @@ msgstr ""
 
 #: lib/teslamate_web/templates/settings/index.html.leex:70
 msgid "Requirements"
-msgstr "條件"
+msgstr "休眠條件"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:79
 msgid "Vehicle must be locked"
@@ -209,7 +209,7 @@ msgstr "車輛必須處於鎖車狀態"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:122
 msgid "Range (rated)"
-msgstr "額定里程"
+msgstr "續航里程 (表定)"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:160
 msgid "Charger Power"
@@ -225,15 +225,15 @@ msgstr "里程"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:148
 msgid "ideal"
-msgstr "典型"
+msgstr "理想狀態"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:148
 msgid "rated"
-msgstr "額定"
+msgstr "表定狀態"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:121
 msgid "Range (ideal)"
-msgstr "里程 (典型)"
+msgstr "續航里程 (理想狀態)"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:140
 msgid ""
@@ -268,7 +268,7 @@ msgstr "車外溫度"
 #: lib/teslamate_web/templates/car/summary.html.leex:275
 #: lib/teslamate_web/templates/settings/index.html.leex:270
 msgid "Version"
-msgstr "版本"
+msgstr "車輛軟體版本"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:72
 msgid "Software Update available"
@@ -450,11 +450,11 @@ msgstr "下一步"
 
 #: lib/teslamate_web/templates/car/summary.html.leex:263
 msgid "Mileage"
-msgstr "總里程"
+msgstr "里程表"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:111
 msgid "Streaming API"
-msgstr "特斯拉串流介面"
+msgstr "Tesla串接(預設)"
 
 #: lib/teslamate_web/templates/settings/index.html.leex:285
 msgid "Documentation"
