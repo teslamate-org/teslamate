@@ -41,13 +41,16 @@ defmodule Util do
 
   def choose_http_binding_address() do
     defaults = [transport_options: [socket_opts: [:inet6]]]
+
     case System.get_env("HTTP_BINDING_ADDRESS", "") do
       "" ->
         defaults
+
       address ->
         case :inet.parse_address(to_charlist(address)) do
           {:ok, ip} ->
             [ip: ip]
+
           {:error, reason} ->
             IO.puts("Cannot parse HTTP_BINDING_ADDRESS '#{address}': #{inspect(reason)}")
             defaults
