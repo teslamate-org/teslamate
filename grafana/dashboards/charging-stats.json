@@ -845,7 +845,7 @@
       "hideEmpty": false,
       "hideZero": false,
       "id": 24,
-      "initialZoom": 7,
+      "initialZoom": 2,
       "locationData": "table",
       "mapCenter": "(0°, 0°)",
       "mapCenterLatitude": 0,
