@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1588293358532,
+  "iteration": 1588349493771,
   "links": [
     {
       "icon": "dashboard",
@@ -824,17 +824,35 @@
       "valueName": "total"
     },
     {
-      "circleMaxSize": "30",
+      "autoPanLabels": true,
+      "autoWidthLabels": true,
+      "circleMaxSize": 30,
       "circleMinSize": 2,
+      "circleOptions": {
+        "strokeEnabled": false,
+        "strokeWeight": "2"
+      },
+      "clickthroughOptions": {
+        "windowName": null
+      },
+      "clickthroughUrl": "",
       "colors": [
-        "#C8F2C2",
-        "#37872D",
-        "#8AB8FF",
-        "#1F60C4"
+        "#f53636",
+        "#c05634",
+        "#976f32",
+        "#688b30",
+        "#32ac2d"
       ],
+      "customAttribution": false,
+      "customAttributionText": null,
       "datasource": "TeslaMate",
       "decimals": 2,
-      "esGeoPoint": "",
+      "description": "",
+      "doubleClickZoom": true,
+      "dragging": true,
+      "esGeoPoint": null,
+      "esLink": null,
+      "esLocationName": null,
       "esMetric": "Count",
       "gridPos": {
         "h": 13,
@@ -843,21 +861,40 @@
         "y": 10
       },
       "hideEmpty": false,
+      "hideTimepickerNavigation": false,
       "hideZero": false,
       "id": 24,
-      "initialZoom": 2,
+      "ignoreEmptyGeohashValues": false,
+      "ignoreEscapeKey": false,
+      "ignoreInvalidGeohashValues": false,
+      "initialZoom": 1,
+      "legendContainerSelector": "",
       "locationData": "table",
       "mapCenter": "(0°, 0°)",
       "mapCenterLatitude": 0,
       "mapCenterLongitude": 0,
+      "mapFitData": true,
+      "mapZoomByRadius": null,
       "maxDataPoints": 1,
+      "maximumZoom": "9",
       "mouseWheelZoom": true,
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "showAttribution": false,
       "showLegend": true,
+      "showZoomControl": true,
       "stickyLabels": false,
       "tableQueryOptions": {
         "geohashField": "geohash",
-        "labelField": "location",
+        "labelField": "loc_nm",
+        "labelLocationKeyField": null,
         "latitudeField": "lat",
+        "linkField": "",
         "longitudeField": "lng",
         "metricField": "pct",
         "queryType": "coordinates"
@@ -868,7 +905,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS LOCATION\r\n, AVG(position.latitude) AS lat \r\n, AVG(position.longitude) AS lng\r\n,COUNT(charge.id)\r\n,COUNT(charge.id) / totcharge.chg_ct * 100 AS pct\r\nFROM charging_processes charge\r\nJOIN (SELECT car_id, COUNT(*) * 1.0 AS chg_ct FROM charging_processes WHERE $__timeFilter(start_date) GROUP BY car_id) totcharge ON charge.car_id = totcharge.car_id\r\nLEFT JOIN addresses address ON charge.address_id = address.id\r\nLEFT JOIN positions position ON charge.position_id = position.id\r\nLEFT JOIN geofences geofence ON charge.geofence_id = geofence.id\r\nWHERE $__timeFilter(charge.start_date)\r\nAND charge.car_id = $car_id\r\nGROUP BY COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city))\r\n,totcharge.chg_ct\r\n\r\n",
+          "rawSql": "WITH charge_data AS (\r\nSELECT COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS loc_nm\r\n, AVG(position.latitude) AS lat \r\n, AVG(position.longitude) AS lng\r\n,sum(charge.charge_energy_added) AS chg_total\r\nFROM charging_processes charge\r\nLEFT JOIN addresses address ON charge.address_id = address.id\r\nLEFT JOIN positions position ON charge.position_id = position.id\r\nLEFT JOIN geofences geofence ON charge.geofence_id = geofence.id\r\nWHERE $__timeFilter(charge.start_date) \r\nAND charge.car_id = '1'\r\nGROUP BY COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city))\r\n) \r\nSELECT loc_nm\r\n\t,lat\r\n\t,lng\r\n\t,chg_total\r\n\t,(SELECT MAX(chg_total) FROM charge_data) AS maxct\r\n\t,chg_total * 1.0 / (SELECT MAX(chg_total) FROM charge_data) * 100   AS pct\r\nFROM charge_data",
           "refId": "A",
           "select": [
             [
@@ -892,13 +929,12 @@
           ]
         }
       ],
-      "thresholds": "25, 50, 75",
+      "thresholds": "0,25,50,75",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Charging heat map",
-      "type": "grafana-worldmap-panel",
+      "title": "Charging heat map by kWh",
+      "type": "grafana-map-panel",
       "unitPlural": "%",
-      "unitSingle": "",
       "unitSingular": "%",
       "valueName": "total"
     },
