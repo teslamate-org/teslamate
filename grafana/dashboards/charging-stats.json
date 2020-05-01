@@ -851,7 +851,7 @@
       "mapCenterLatitude": 0,
       "mapCenterLongitude": 0,
       "maxDataPoints": 1,
-      "mouseWheelZoom": false,
+      "mouseWheelZoom": true,
       "showLegend": true,
       "stickyLabels": false,
       "tableQueryOptions": {
