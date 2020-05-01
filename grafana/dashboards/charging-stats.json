@@ -762,7 +762,7 @@
       "format": "kwatth",
       "gridPos": {
         "h": 13,
-        "w": 6,
+        "w": 5,
         "x": 0,
         "y": 10
       },
@@ -856,8 +856,8 @@
       "esMetric": "Count",
       "gridPos": {
         "h": 13,
-        "w": 12,
-        "x": 6,
+        "w": 14,
+        "x": 5,
         "y": 10
       },
       "hideEmpty": false,
@@ -952,8 +952,8 @@
       "format": "dtdurations",
       "gridPos": {
         "h": 13,
-        "w": 6,
-        "x": 18,
+        "w": 5,
+        "x": 19,
         "y": 10
       },
       "id": 20,
