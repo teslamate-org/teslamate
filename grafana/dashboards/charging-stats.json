@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1574711546516,
+  "iteration": 1588349493771,
   "links": [
     {
       "icon": "dashboard",
@@ -99,7 +98,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -214,7 +212,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -328,7 +325,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -443,7 +439,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -543,7 +538,6 @@
       "legend": {
         "show": false
       },
-      "options": {},
       "reverseYBuckets": false,
       "scopedVars": {
         "car_id": {
@@ -768,7 +762,7 @@
       "format": "kwatth",
       "gridPos": {
         "h": 13,
-        "w": 12,
+        "w": 5,
         "x": 0,
         "y": 10
       },
@@ -784,7 +778,6 @@
       "links": [],
       "maxDataPoints": 3,
       "nullPointMode": "connected",
-      "options": {},
       "pieType": "pie",
       "scopedVars": {
         "car_id": {
@@ -831,6 +824,121 @@
       "valueName": "total"
     },
     {
+      "autoPanLabels": true,
+      "autoWidthLabels": true,
+      "circleMaxSize": 30,
+      "circleMinSize": 2,
+      "circleOptions": {
+        "strokeEnabled": false,
+        "strokeWeight": "2"
+      },
+      "clickthroughOptions": {
+        "windowName": null
+      },
+      "clickthroughUrl": "",
+      "colors": [
+        "#f53636",
+        "#c05634",
+        "#976f32",
+        "#688b30",
+        "#32ac2d"
+      ],
+      "customAttribution": false,
+      "customAttributionText": null,
+      "datasource": "TeslaMate",
+      "decimals": 2,
+      "description": "",
+      "doubleClickZoom": true,
+      "dragging": true,
+      "esGeoPoint": null,
+      "esLink": null,
+      "esLocationName": null,
+      "esMetric": "Count",
+      "gridPos": {
+        "h": 13,
+        "w": 14,
+        "x": 5,
+        "y": 10
+      },
+      "hideEmpty": false,
+      "hideTimepickerNavigation": false,
+      "hideZero": false,
+      "id": 24,
+      "ignoreEmptyGeohashValues": false,
+      "ignoreEscapeKey": false,
+      "ignoreInvalidGeohashValues": false,
+      "initialZoom": 1,
+      "legendContainerSelector": "",
+      "locationData": "table",
+      "mapCenter": "(0°, 0°)",
+      "mapCenterLatitude": 0,
+      "mapCenterLongitude": 0,
+      "mapFitData": true,
+      "mapZoomByRadius": null,
+      "maxDataPoints": 1,
+      "maximumZoom": "9",
+      "mouseWheelZoom": true,
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "showAttribution": false,
+      "showLegend": true,
+      "showZoomControl": true,
+      "stickyLabels": false,
+      "tableQueryOptions": {
+        "geohashField": "geohash",
+        "labelField": "loc_nm",
+        "labelLocationKeyField": null,
+        "latitudeField": "lat",
+        "linkField": "",
+        "longitudeField": "lng",
+        "metricField": "pct",
+        "queryType": "coordinates"
+      },
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH charge_data AS (\r\nSELECT COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS loc_nm\r\n, AVG(position.latitude) AS lat \r\n, AVG(position.longitude) AS lng\r\n,sum(charge.charge_energy_added) AS chg_total\r\nFROM charging_processes charge\r\nLEFT JOIN addresses address ON charge.address_id = address.id\r\nLEFT JOIN positions position ON charge.position_id = position.id\r\nLEFT JOIN geofences geofence ON charge.geofence_id = geofence.id\r\nWHERE $__timeFilter(charge.start_date) \r\nAND charge.car_id = '1'\r\nGROUP BY COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city))\r\n) \r\nSELECT loc_nm\r\n\t,lat\r\n\t,lng\r\n\t,chg_total\r\n\t,(SELECT MAX(chg_total) FROM charge_data) AS maxct\r\n\t,chg_total * 1.0 / (SELECT MAX(chg_total) FROM charge_data) * 100   AS pct\r\nFROM charge_data",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "efficiency"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cars",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "0,25,50,75",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Charging heat map by kWh",
+      "type": "grafana-map-panel",
+      "unitPlural": "%",
+      "unitSingular": "%",
+      "valueName": "total"
+    },
+    {
       "aliasColors": {},
       "breakPoint": "50%",
       "cacheTimeout": null,
@@ -844,8 +952,8 @@
       "format": "dtdurations",
       "gridPos": {
         "h": 13,
-        "w": 12,
-        "x": 12,
+        "w": 5,
+        "x": 19,
         "y": 10
       },
       "id": 20,
@@ -860,7 +968,6 @@
       "links": [],
       "maxDataPoints": 3,
       "nullPointMode": "connected",
-      "options": {},
       "pieType": "pie",
       "scopedVars": {
         "car_id": {
@@ -918,7 +1025,6 @@
       },
       "id": 2,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scopedVars": {
         "car_id": {
@@ -1031,7 +1137,6 @@
       },
       "id": 13,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scopedVars": {
         "car_id": {
@@ -1143,7 +1248,6 @@
         "y": 23
       },
       "id": 4,
-      "options": {},
       "pageSize": null,
       "scopedVars": {
         "car_id": {
@@ -1247,7 +1351,6 @@
         "y": 23
       },
       "id": 6,
-      "options": {},
       "pageSize": null,
       "scopedVars": {
         "car_id": {
@@ -1451,5 +1554,8 @@
   "timezone": "",
   "title": "Charging Stats",
   "uid": "-pkIkhmRz",
-  "version": 1
+  "variables": {
+    "list": []
+  },
+  "version": 2
 }
