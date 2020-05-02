@@ -14,7 +14,7 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:95
 msgid "Status"
-msgstr "상태"
+msgstr "현재 차량상태"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:227
@@ -88,7 +88,7 @@ msgstr "설정"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:171
 msgid "Scheduled Charging"
-msgstr "충전 예약됨"
+msgstr "충전예약됨"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:49
@@ -98,7 +98,7 @@ msgstr "충전 준비됨"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:180
 msgid "Charge Limit"
-msgstr "충전 한계"
+msgstr "충전목표"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:128
@@ -113,7 +113,7 @@ msgstr "사용불가"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:200
 msgid "Length"
-msgstr "길이"
+msgstr "거리"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:215
@@ -123,7 +123,7 @@ msgstr "온도"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:197
 msgid "Units"
-msgstr "유닛"
+msgstr "단위"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.leex:119
@@ -238,22 +238,22 @@ msgstr "거리 (예상)"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:98
 msgid "for"
-msgstr ""
+msgstr "경과시간"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:70
 msgid "Requirements"
-msgstr "필수"
+msgstr "필수요구사항"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:79
 msgid "Vehicle must be locked"
-msgstr "차량은 잠금되어야 합니다."
+msgstr "차량문은 모두 잠겨있어야 합니다."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:124
 msgid "Range (rated)"
-msgstr ""
+msgstr "거리 (정규계산)"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:162
@@ -263,7 +263,7 @@ msgstr "충전장치 전력"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:141
 msgid "Preferred Range"
-msgstr ""
+msgstr "선호하는 계산방법"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:137
@@ -273,12 +273,12 @@ msgstr "거리"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "ideal"
-msgstr "이상"
+msgstr "이상적인 거리"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "rated"
-msgstr "정규"
+msgstr "정규계산된 거리"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:123
@@ -319,7 +319,7 @@ msgstr "실외 온도"
 #: lib/teslamate_web/live/car_live/summary.html.leex:277
 #: lib/teslamate_web/live/settings_live/index.html.leex:270
 msgid "Version"
-msgstr "버전"
+msgstr "소프트웨어 버전"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:74
@@ -350,7 +350,7 @@ msgstr "대시보드"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:233
 msgid "URLs"
-msgstr "URLs"
+msgstr "접속주소"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:164
@@ -543,7 +543,7 @@ msgstr "계속"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:265
 msgid "Mileage"
-msgstr "마일리지"
+msgstr "누적주행거리"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:111
