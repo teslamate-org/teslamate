@@ -470,7 +470,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:next_state, :start, data, {:next_event, :internal, {:update, event}}}
   end
 
-  def handle_event(:info, {_ref, {:online, %Vehicle{}} = event}, {:suspended, _}, data) do
+  def handle_event(:info, {_ref, {:online, %Vehicle{}}}, {:suspended, _}, _data) do
     :keep_state_and_data
   end
 

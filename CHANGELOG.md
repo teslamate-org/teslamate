@@ -1,5 +1,32 @@
 # Changelog
 
+## [Unreleased]
+
+### Enhancements
+
+#### Translations
+
+- Improve Chinese (Traditional) translation accuracy ([#650](https://github.com/adriankumpf/teslamate/pull/650) by [occultsound](https://github.com/occultsound))
+- Improve Chinese (Simplified) translation accuracy ([#649](https://github.com/adriankumpf/teslamate/pull/649) by [edward4hgl](https://github.com/edward4hgl))
+- Improve Korean translation ([#663](https://github.com/adriankumpf/teslamate/pull/663) by [dongbum](https://github.com/dongbum))
+
+#### Dashboards
+
+- Overview: Update battery gauge thresholds ([#651](https://github.com/adriankumpf/teslamate/pull/651) by [wooter](https://github.com/wooter))
+- Drives: Add column header for reduced range ([#662](https://github.com/adriankumpf/teslamate/pull/662) by [Dulanic](https://github.com/Dulanic))
+- Charging Stats: Show map with frequently used chargers ([#666](https://github.com/adriankumpf/teslamate/pull/666) by [Dulanic](https://github.com/Dulanic))
+
+#### Other
+
+- Add option `HTTP_BINDING_ADDRESS` to control the bound IP address ([#665](https://github.com/adriankumpf/teslamate/pull/665) by [dyxyl](https://github.com/dyxyl))
+- Docker image: Pre-install Grafana plugins
+
+### Bug Fixes
+
+- Fix an issue that could cause a missed firmware update not to be logged retroactively
+- Fix an issue where the vehicle process could crash when logging was suspended manually
+- Improve error message for an invalid tokens table
+
 ## [1.19.2] - 2020-04-26
 
 ### Enhancements
