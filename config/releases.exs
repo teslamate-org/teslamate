@@ -38,6 +38,25 @@ defmodule Util do
         nil
     end
   end
+
+  def choose_http_binding_address() do
+    defaults = [transport_options: [socket_opts: [:inet6]]]
+
+    case System.get_env("HTTP_BINDING_ADDRESS", "") do
+      "" ->
+        defaults
+
+      address ->
+        case :inet.parse_address(to_charlist(address)) do
+          {:ok, ip} ->
+            [ip: ip]
+
+          {:error, reason} ->
+            IO.puts("Cannot parse HTTP_BINDING_ADDRESS '#{address}': #{inspect(reason)}")
+            defaults
+        end
+    end
+  end
 end
 
 config :teslamate, TeslaMate.Repo,
@@ -51,7 +70,7 @@ config :teslamate, TeslaMate.Repo,
   timeout: System.get_env("DATABASE_TIMEOUT", "60000") |> String.to_integer()
 
 config :teslamate, TeslaMateWeb.Endpoint,
-  http: [port: System.get_env("PORT", "4000"), transport_options: [socket_opts: [:inet6]]],
+  http: Util.choose_http_binding_address() ++ [port: System.get_env("PORT", "4000")],
   url: [host: System.get_env("VIRTUAL_HOST", "localhost"), port: 80],
   secret_key_base: System.get_env("SECRET_KEY_BASE", Util.random_string(64)),
   live_view: [signing_salt: System.get_env("SIGNING_SALT", Util.random_string(8))],
