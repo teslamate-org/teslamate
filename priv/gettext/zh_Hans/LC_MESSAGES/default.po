@@ -25,7 +25,8 @@ msgstr "速度"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:217
 msgid "State of Charge"
-msgstr "充电状态"
+msgstr "当前电量"
+
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:154
@@ -35,7 +36,7 @@ msgstr "已充满"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:135
 msgid "asleep"
-msgstr "休眠"
+msgstr "已休眠"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:130
@@ -77,7 +78,7 @@ msgstr "哨兵模式"
 #: lib/teslamate_web/templates/geo_fence/form.html.leex:3 lib/teslamate_web/templates/geo_fence/index.html.leex:3
 #: lib/teslamate_web/templates/import/index.html.leex:3 lib/teslamate_web/templates/settings/index.html.leex:3
 msgid "Home"
-msgstr "家"
+msgstr "主页"
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.eex:59
@@ -232,7 +233,7 @@ msgstr "尝试休眠"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:141
 msgid "Range (est.)"
-msgstr "续航 (预估)"
+msgstr "当前剩余里程 (预估)"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:96
@@ -242,7 +243,7 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:70
 msgid "Requirements"
-msgstr "条件"
+msgstr "休眠条件"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:79
@@ -282,7 +283,7 @@ msgstr "额定"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:121
 msgid "Range (ideal)"
-msgstr "里程 (典型)"
+msgstr "当前剩余里程 (典型)"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:140
@@ -318,7 +319,7 @@ msgstr "车外温度"
 #: lib/teslamate_web/templates/car/summary.html.leex:275
 #: lib/teslamate_web/templates/settings/index.html.leex:270
 msgid "Version"
-msgstr "版本"
+msgstr "当前固件版本"
 
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:72
@@ -544,7 +545,7 @@ msgstr "总里程"
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:111
 msgid "Streaming API"
-msgstr "特斯拉串流接口"
+msgstr "Tesla串流接口 (默认开启)"
 
 #, elixir-format
 #: lib/teslamate_web/templates/settings/index.html.leex:285

@@ -11,7 +11,11 @@ Unfortunately the Tesla API does not return consumption values for a trip. In or
 
 At the moment geo-fences are a way to create custom locations like `🏡 Home` or `🛠️ Work` That may be particularly useful if the addresses (which are provided by [OpenStreetMap](https://www.openstreetmap.org)) in your region are inaccurate or if you street-park at locations where the exact address may vary.
 
-## How do I use my API token instead of my Tesla username/password?
+## How do I use my API tokens instead of my Tesla username/password?
+
+First of all, from a security point of view, it makes no difference whether you create the tokens manually or via the login screen. The steps described below illustrate exactly what happens automatically when you sign in regularly via the web interface. Also, **TeslaMate only stores the API tokens, but not your credentials**.
+
+If you still do not want to enter your Tesla password under any circumstances and you know what you are doing, follow these steps:
 
 1. Run the following command on any linux/unix console that has curl installed replacing `YOURTESLAEMAIL@DOMAIN.COM` and `YOURPASSWORD` as appropriate:
 
@@ -23,12 +27,12 @@ At the moment geo-fences are a way to create custom locations like `🏡 Home` o
 
    Returns:
 
-   ```json
+   ```json {3-4}
    {
-     "access_token": "YOURACCESSTOKEN",
      "token_type": "bearer",
-     "expires_in": 3888000,
+     "access_token": "YOURACCESSTOKEN",
      "refresh_token": "YOURREFRESHTOKEN",
+     "expires_in": 3888000,
      "created_at": 1579971894
    }
    ```
@@ -46,17 +50,10 @@ At the moment geo-fences are a way to create custom locations like `🏡 Home` o
        VALUES(DEFAULT, 'YOURACCESSTOKEN', 'YOURREFRESHTOKEN', NOW(), NOW());
    ```
 
-3. Restart teslamate to pick up new values
+3. Restart TeslaMate to pick up new values
 
    ```bash
    docker-compose restart
    ```
 
-   OR if running in foreground
-
-   ```
-   CTRL-C
-   docker-compose up
-   ```
-
-At this point it should automatically pick up your token and bypass the login screen on the TeslaMate web interface. If it does not look for errors in the logs.
+At this point it should automatically pick up your tokens and bypass the login screen on the TeslaMate web interface. If it does not, look for errors in the logs.

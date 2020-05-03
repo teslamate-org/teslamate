@@ -423,16 +423,17 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
-        {:ok, online_event(vehicle_state: %{timestamp: now_ts, car_version: "2019.40.50.7"})}
+        {:ok,
+         online_event(vehicle_state: %{timestamp: now_ts, car_version: "2020.12.10 e0ccfda3d911"})}
       ]
 
-      :ok = start_vehicle(name, events, last_update: %Update{version: "2019.40.2.6"})
+      :ok = start_vehicle(name, events, last_update: %Update{version: "2020.12.5 e2179e0650f0"})
       date = DateTime.from_unix!(now_ts, :millisecond)
 
       assert_receive {:start_state, car, :online, date: _}
       assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
-      assert_receive {:insert_missed_update, ^car, "2019.40.50.7", date: ^date}
+      assert_receive {:insert_missed_update, ^car, "2020.12.10 e0ccfda3d911", date: ^date}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       refute_receive _
@@ -441,42 +442,35 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     test "does not log updates <= current version", %{test: name} do
       events = [
         {:ok, online_event()},
-        {:ok, online_event(vehicle_state: %{car_version: "2019.40.50.7 ad132c7b057e"})},
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.10.7 ad132c7b057e"})},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, online_event()},
-        {:ok, online_event(vehicle_state: %{car_version: "2019.40.50.6"})},
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.10.6"})},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, online_event()},
-        {:ok, online_event(vehicle_state: %{car_version: "2019.40.2.6"})}
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.2.6"})},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, online_event()},
+        {:ok, online_event(vehicle_state: %{car_version: "2019.40.9"})},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}},
+        {:ok, %TeslaApi.Vehicle{state: "asleep"}}
       ]
 
       :ok =
-        start_vehicle(name, events, last_update: %Update{version: "2019.40.50.7 ad132c7b057e"})
+        start_vehicle(name, events, last_update: %Update{version: "2019.40.10.7 ad132c7b057e"})
 
-      assert_receive {:start_state, car, :online, date: _}
-      assert_receive {ApiMock, {:stream, 1000, _}}
-      assert_receive {:insert_position, ^car, %{}}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
-
-      assert_receive {:start_state, ^car, :asleep, []}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
-      assert_receive {:"$websockex_cast", :disconnect}
-
-      assert_receive {:start_state, ^car, :online, date: _}
-      assert_receive {ApiMock, {:stream, 1000, _}}
-      assert_receive {:insert_position, ^car, %{}}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
-
-      assert_receive {:start_state, ^car, :asleep, []}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
-      assert_receive {:"$websockex_cast", :disconnect}
-
-      assert_receive {:start_state, ^car, :online, date: _}
-      assert_receive {ApiMock, {:stream, 1000, _}}
-      assert_receive {:insert_position, ^car, %{}}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+      for _ <- 1..4 do
+        assert_receive {:start_state, car, :online, date: _}
+        assert_receive {ApiMock, {:stream, 1000, _}}
+        assert_receive {:insert_position, ^car, %{}}
+        assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+        assert_receive {:start_state, ^car, :asleep, []}
+        assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
+        assert_receive {:"$websockex_cast", :disconnect}
+      end
 
       refute_receive _
     end
