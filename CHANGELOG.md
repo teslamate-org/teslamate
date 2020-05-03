@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.19.3] - 2020-05-03
 
 ### Enhancements
 
@@ -15,17 +15,23 @@
 - Overview: Update battery gauge thresholds ([#651](https://github.com/adriankumpf/teslamate/pull/651) by [wooter](https://github.com/wooter))
 - Drives: Add column header for reduced range ([#662](https://github.com/adriankumpf/teslamate/pull/662) by [Dulanic](https://github.com/Dulanic))
 - Charging Stats: Show map with frequently used chargers ([#666](https://github.com/adriankumpf/teslamate/pull/666) by [Dulanic](https://github.com/Dulanic))
+  - _Manual install: requires Grafana plugin **grafana-map-panel**_
+    ```bash
+    grafana-cli --pluginUrl https://github.com/panodata/grafana-map-panel/releases/download/0.9.0/grafana-map-panel-0.9.0.zip plugins install grafana-worldmap-panel-ng
+    ```
 
 #### Other
 
 - Add option `HTTP_BINDING_ADDRESS` to control the bound IP address ([#665](https://github.com/adriankumpf/teslamate/pull/665) by [dyxyl](https://github.com/dyxyl))
 - Docker image: Pre-install Grafana plugins
+- Drop unused indexes
 
 ### Bug Fixes
 
 - Fix an issue that could cause a missed firmware update not to be logged retroactively
 - Fix an issue where the vehicle process could crash when logging was suspended manually
 - Improve error message for an invalid tokens table
+- Fix `min. distance per drive` on Efficiency dashboard to filter correctly in miles ([#672](https://github.com/adriankumpf/teslamate/pull/672) by [Dulanic](https://github.com/Dulanic))
 
 ## [1.19.2] - 2020-04-26
 
@@ -950,7 +956,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.19.2...HEAD
+[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.19.3...HEAD
+[1.19.3]: https://github.com/adriankumpf/teslamate/compare/v1.19.2...v1.19.3
 [1.19.2]: https://github.com/adriankumpf/teslamate/compare/v1.19.1...v1.19.2
 [1.19.1]: https://github.com/adriankumpf/teslamate/compare/v1.19.0...v1.19.1
 [1.19.0]: https://github.com/adriankumpf/teslamate/compare/v1.18.2...v1.19.0
