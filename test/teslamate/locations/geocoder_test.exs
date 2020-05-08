@@ -6,10 +6,9 @@ defmodule TeslaMate.Locations.GeocoderTest do
   import Mock
 
   @response {:ok,
-             %Mojito.Response{
+             %Finch.Response{
                body:
                  "{\"place_id\":241575531,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright\",\"osm_type\":\"node\",\"osm_id\":5983038298,\"lat\":\"37.8895442\",\"lon\":\"41.1288167\",\"place_rank\":30,\"category\":\"amenity\",\"type\":\"cafe\",\"importance\":0,\"addresstype\":\"amenity\",\"name\":\"Kahve Deryası\",\"display_name\":\"Kahve Deryası, Cihan Kavşağı, Batman, Ziyagökalp Mahallesi, Batman merkez, Batman, Southeastern Anatolia Region, 72060, Turkey\",\"address\":{\"cafe\":\"Kahve Deryası\",\"road\":\"Cihan Kavşağı\",\"residential\":\"Batman\",\"suburb\":\"Ziyagökalp Mahallesi\",\"city\":\"Batman merkez\",\"state\":\"Southeastern Anatolia Region\",\"postcode\":\"72060\",\"country\":\"Turkey\",\"country_code\":\"tr\"},\"extratags\":{},\"namedetails\":{\"name\":\"Kahve Deryası\"},\"boundingbox\":[\"37.8894442\",\"37.8896442\",\"41.1287167\",\"41.1289167\"]}",
-               complete: true,
                headers: [
                  {"date", "Sun, 01 Sep 2019 21:03:23 GMT"},
                  {"server", "Apache/2.4.29 (Ubuntu)"},
@@ -20,11 +19,11 @@ defmodule TeslaMate.Locations.GeocoderTest do
                   "max-age=0, report-uri=\"https://openstreetmap.report-uri.com/r/d/ct/reportOnly\""},
                  {"content-type", "application/json; charset=UTF-8"}
                ],
-               status_code: 200
+               status: 200
              }}
 
   test "geocoders coordinates" do
-    with_mock Mojito,
+    with_mock TeslaMate.HTTP,
       get:
         fn "https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&extratags=1&namedetails=1&zoom=19&lat=37.889602&lon=41.129182",
            _headers,

@@ -51,7 +51,6 @@ defmodule TeslaMate.MixProject do
       {:floki, "~> 0.23", only: :test},
       {:tortoise, "~> 0.9"},
       {:excoveralls, "~> 0.10", only: :test},
-      {:mojito, "~> 0.5"},
       {:srtm, "~> 0.5"},
       {:fuse, "~> 2.4"},
       {:mock, "~> 0.3", only: :test},
@@ -60,7 +59,8 @@ defmodule TeslaMate.MixProject do
       {:csv, "~> 2.3"},
       {:timex, "~> 3.0"},
       {:websockex, "~> 0.4"},
-      {:tzdata, "~> 1.0"}
+      {:tzdata, "~> 1.0"},
+      {:finch, "~> 0.2"}
     ]
   end
 

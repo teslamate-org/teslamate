@@ -1,6 +1,6 @@
 defmodule TeslaApi do
-  alias Mojito.Response, as: Res
-  alias Mojito.Error, as: Err
+  alias Finch.Response, as: Res
+  alias TeslaMate.HTTP
   alias __MODULE__.Error
 
   @base_url URI.parse("https://owner-api.teslamotors.com/")
@@ -10,40 +10,40 @@ defmodule TeslaApi do
   def get(path, token, opts \\ []) when is_binary(token) do
     headers = [{"user-agent", @user_agent}, {"Authorization", "Bearer " <> token}]
 
-    case Mojito.get(url(path), headers, timeout: @timeout) do
+    case HTTP.get(url(path), headers, receive_timeout: @timeout) do
       {:ok, %Res{} = response} ->
         case decode_body(response) do
-          %Res{complete: false} = env ->
-            {:error, %Error{reason: :incomplete_response, env: env}}
-
-          %Res{status_code: status, body: %{"response" => res}} when status in 200..299 ->
+          %Res{status: status, body: %{"response" => res}} when status in 200..299 ->
             transform = Keyword.get(opts, :transform, & &1)
             {:ok, if(is_list(res), do: Enum.map(res, transform), else: transform.(res))}
 
-          %Res{status_code: 401} = env ->
+          %Res{status: 401} = env ->
             {:error, %Error{reason: :unauthorized, env: env}}
 
-          %Res{status_code: 404, body: %{"error" => "not_found"}} = env ->
+          %Res{status: 404, body: %{"error" => "not_found"}} = env ->
             {:error, %Error{reason: :vehicle_not_found, env: env}}
 
-          %Res{status_code: 405, body: %{"error" => "vehicle is curently in service"}} = env ->
+          %Res{status: 405, body: %{"error" => "vehicle is curently in service"}} = env ->
             {:error, %Error{reason: :vehicle_in_service, env: env}}
 
-          %Res{status_code: 408, body: %{"error" => "vehicle unavailable:" <> _}} = env ->
+          %Res{status: 408, body: %{"error" => "vehicle unavailable:" <> _}} = env ->
             {:error, %Error{reason: :vehicle_unavailable, env: env}}
 
-          %Res{status_code: 504} = env ->
+          %Res{status: 504} = env ->
             {:error, %Error{reason: :timeout, env: env}}
 
-          %Res{status_code: status, body: %{"error" => msg}} = env when status >= 500 ->
+          %Res{status: status, body: %{"error" => msg}} = env when status >= 500 ->
             {:error, %Error{reason: :unknown, message: msg, env: env}}
 
           %Res{body: body} = env ->
             {:error, %Error{reason: :unknown, message: inspect(body), env: env}}
         end
 
-      {:error, %Err{reason: reason, message: msg}} ->
-        {:error, %Error{reason: reason, message: msg}}
+      {:error, %Mint.TransportError{reason: reason} = transport_error} ->
+        {:error, %Error{reason: reason, message: Exception.message(transport_error)}}
+
+      {:error, %Mint.HTTPError{reason: reason} = transport_error} ->
+        {:error, %Error{reason: reason, message: Exception.message(transport_error)}}
     end
   end
 
@@ -56,7 +56,7 @@ defmodule TeslaApi do
       | if(is_nil(token), do: [], else: [{"Authorization", "Bearer " <> token}])
     ]
 
-    with {:ok, response} <- path |> url() |> Mojito.post(headers, body, timeout: @timeout) do
+    with {:ok, response} <- HTTP.post(url(path), headers, body, receive_timeout: @timeout) do
       {:ok, decode_body(response)}
     end
   end

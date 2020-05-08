@@ -1,7 +1,8 @@
 defmodule TeslaMate.Updater do
   use GenServer
 
-  alias Mojito.Response
+  alias Finch.Response
+  alias TeslaMate.HTTP
   require Logger
 
   defmodule State, do: defstruct([:update, :version])
@@ -80,8 +81,8 @@ defmodule TeslaMate.Updater do
   defp version, do: "#{Application.spec(:teslamate, :vsn)}"
 
   defp fetch_release do
-    case Mojito.get(@url, [], timeout: 30_000) do
-      {:ok, %Response{status_code: 200, body: body}} ->
+    case HTTP.get(@url, [], receive_timeout: 30_000) do
+      {:ok, %Response{status: 200, body: body}} ->
         with {:ok, release} <- Jason.decode(body) do
           parse_release(release)
         end

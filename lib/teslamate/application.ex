@@ -20,6 +20,7 @@ defmodule TeslaMate.Application do
       nil ->
         [
           TeslaMate.Repo,
+          TeslaMate.HTTP,
           TeslaMate.Api,
           TeslaMate.Updater,
           {Phoenix.PubSub, name: TeslaMate.PubSub},
@@ -34,6 +35,7 @@ defmodule TeslaMate.Application do
       import_directory ->
         [
           TeslaMate.Repo,
+          TeslaMate.HTTP,
           TeslaMate.Api,
           TeslaMate.Updater,
           {Phoenix.PubSub, name: TeslaMate.PubSub},

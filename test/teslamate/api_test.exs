@@ -148,7 +148,7 @@ defmodule TeslaMate.ApiTest do
 
     test "fails if api returns error", %{test: name} do
       login = fn _email, _password ->
-        {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+        {:error, %TeslaApi.Error{reason: :unauthorized, env: %Finch.Response{}}}
       end
 
       with_mock TeslaApi.Auth, login: login do
@@ -222,13 +222,13 @@ defmodule TeslaMate.ApiTest do
         {TeslaApi.Vehicle, [],
          [
            list: fn _ ->
-             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Finch.Response{}}}
            end,
            get: fn _, _ ->
-             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Finch.Response{}}}
            end,
            get_with_state: fn _, _ ->
-             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Finch.Response{}}}
            end
          ]}
 
@@ -255,13 +255,13 @@ defmodule TeslaMate.ApiTest do
         {TeslaApi.Vehicle, [],
          [
            list: fn _ ->
-             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Finch.Response{}}}
            end,
            get: fn _, _ ->
-             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Finch.Response{}}}
            end,
            get_with_state: fn _, _ ->
-             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Mojito.Response{}}}
+             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Finch.Response{}}}
            end
          ]}
 
@@ -281,7 +281,7 @@ defmodule TeslaMate.ApiTest do
 
     @tag :capture_log
     test ":vehicle_not_found", %{test: name} do
-      api_error = %TeslaApi.Error{reason: :vehicle_not_found, env: %Mojito.Response{}}
+      api_error = %TeslaApi.Error{reason: :vehicle_not_found, env: %Finch.Response{}}
 
       vehicle_mock =
         {TeslaApi.Vehicle, [],
@@ -304,7 +304,7 @@ defmodule TeslaMate.ApiTest do
       api_error = %TeslaApi.Error{
         reason: :unknown,
         message: "",
-        env: %Mojito.Response{status_code: 503, body: ""}
+        env: %Finch.Response{status: 503, body: ""}
       }
 
       vehicle_mock =

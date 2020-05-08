@@ -7,7 +7,7 @@ defmodule TeslaMate.Api do
   alias TeslaMate.Vehicles
   alias TeslaApi.Auth
 
-  alias Mojito.Response
+  alias Finch.Response
 
   import Core.Dependency, only: [call: 3, call: 2]
 
@@ -179,7 +179,7 @@ defmodule TeslaMate.Api do
         true = :ets.delete(name, :auth)
         {:error, :not_signed_in}
 
-      {:error, %TeslaApi.Error{reason: reason, env: %Response{status_code: status, body: body}}} ->
+      {:error, %TeslaApi.Error{reason: reason, env: %Response{status: status, body: body}}} ->
         Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
         {:error, reason}
 

@@ -4,7 +4,7 @@ defmodule TeslaMate.UpdaterTest do
   alias TeslaMate.Updater
   import Mock
 
-  defmodule MojitoMock do
+  defmodule HTTPMocck do
     def vsn(tag) do
       json(%{"tag_name" => tag, "prerelease" => false, "draft" => false})
     end
@@ -12,12 +12,12 @@ defmodule TeslaMate.UpdaterTest do
     def json(data) do
       data
       |> Jason.encode!()
-      |> (&{:ok, %Mojito.Response{status_code: 200, body: &1}}).()
+      |> (&{:ok, %Finch.Response{status: 200, body: &1}}).()
       |> response()
     end
 
     def response(resp) do
-      [{Mojito, [], get: fn _, _, _ -> resp end}]
+      [{TeslaMate.HTTP, [], get: fn _, _, _ -> resp end}]
     end
   end
 
@@ -31,7 +31,7 @@ defmodule TeslaMate.UpdaterTest do
   end
 
   test "informs if an update is available", %{test: name} do
-    with_mocks MojitoMock.vsn("v5.1.2") do
+    with_mocks HTTPMocck.vsn("v5.1.2") do
       ## current_version > new_version
       {:ok, pid} = start_updater(name, "5.1.3-dev", id: 0)
       Process.sleep(100)
@@ -50,7 +50,7 @@ defmodule TeslaMate.UpdaterTest do
   end
 
   test "returns early even though update check is still in progress", %{test: name} do
-    with_mocks [{Mojito, [], get: fn _, _, _ -> Process.sleep(1_000_000) end}] do
+    with_mocks [{TeslaMate.HTTP, [], get: fn _, _, _ -> Process.sleep(1_000_000) end}] do
       {:ok, pid} = start_updater(name, "1.0.0")
       assert nil == Updater.get_update(pid)
     end
@@ -58,7 +58,7 @@ defmodule TeslaMate.UpdaterTest do
 
   @tag :capture_log
   test "handles invalid tags", %{test: name} do
-    with_mocks MojitoMock.vsn("2.0.0") do
+    with_mocks HTTPMocck.vsn("2.0.0") do
       {:ok, pid} = start_updater(name, "1.0.0")
       assert nil == Updater.get_update(pid)
     end
@@ -66,7 +66,7 @@ defmodule TeslaMate.UpdaterTest do
 
   @tag :capture_log
   test "handles invalid json", %{test: name} do
-    with_mocks MojitoMock.json(%{foo: :bar}) do
+    with_mocks HTTPMocck.json(%{foo: :bar}) do
       {:ok, pid} = start_updater(name, "1.0.0")
       assert nil == Updater.get_update(pid)
     end
@@ -74,24 +74,24 @@ defmodule TeslaMate.UpdaterTest do
 
   @tag :capture_log
   test "handles HTTP errors", %{test: name} do
-    with_mocks MojitoMock.response({:ok, %Mojito.Response{status_code: 404}}) do
+    with_mocks HTTPMocck.response({:ok, %Finch.Response{status: 404}}) do
       {:ok, pid} = start_updater(name, "1.0.0", id: 0)
       assert nil == Updater.get_update(pid)
     end
 
-    with_mocks MojitoMock.response({:error, :timeout}) do
+    with_mocks HTTPMocck.response({:error, :timeout}) do
       {:ok, pid} = start_updater(name, "1.0.0", id: 1)
       assert nil == Updater.get_update(pid)
     end
   end
 
   test "handles prereleases and drafts", %{test: name} do
-    with_mocks MojitoMock.json(%{"tag_name" => "v99.0.0", "prerelease" => true, "draft" => false}) do
+    with_mocks HTTPMocck.json(%{"tag_name" => "v99.0.0", "prerelease" => true, "draft" => false}) do
       {:ok, pid} = start_updater(name, "1.0.0", id: 0)
       assert nil == Updater.get_update(pid)
     end
 
-    with_mocks MojitoMock.json(%{"tag_name" => "v99.0.0", "prerelease" => false, "draft" => true}) do
+    with_mocks HTTPMocck.json(%{"tag_name" => "v99.0.0", "prerelease" => false, "draft" => true}) do
       {:ok, pid} = start_updater(name, "1.0.0", id: 1)
       assert nil == Updater.get_update(pid)
     end
