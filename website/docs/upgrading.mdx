@@ -42,6 +42,7 @@ docker-compose up
    mix deps.get --only prod
    npm install --prefix ./assets && npm run deploy --prefix ./assets
 
+   rm -rf _build
    MIX_ENV=prod mix do phx.digest, release --overwrite
    ```
 
