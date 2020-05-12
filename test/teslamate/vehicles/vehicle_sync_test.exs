@@ -17,7 +17,7 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
          [
            name: name,
            car_id: car_id,
-           namespace: nil,
+           namespace: "teslamate",
            deps_publisher: {MqttPublisherMock, publisher_name}
          ]}
       )
