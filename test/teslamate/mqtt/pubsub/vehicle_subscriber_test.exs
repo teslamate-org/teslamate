@@ -5,7 +5,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Locations.GeoFence
 
-  defp start_subscriber(name, car_id, namespace \\ nil) do
+  defp start_subscriber(name, car_id, namespace \\ "teslamate") do
     publisher_name = :"mqtt_publisher_#{name}"
     vehicles_name = :"vehicles_#{name}"
 
@@ -149,7 +149,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   end
 
   test "allows namespaces", %{test: name} do
-    {:ok, pid} = start_subscriber(name, 0, "account_0")
+    {:ok, pid} = start_subscriber(name, 0, "teslamate/account_0")
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
 
