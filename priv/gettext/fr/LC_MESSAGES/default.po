@@ -247,7 +247,7 @@ msgstr "Exigences"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:79
 msgid "Vehicle must be locked"
-msgstr "Le véhicule doit être verouillé"
+msgstr "Le véhicule doit être verrouillé"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:124
