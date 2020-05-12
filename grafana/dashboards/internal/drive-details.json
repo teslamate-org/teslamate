@@ -956,7 +956,9 @@
   "refresh": false,
   "schemaVersion": 22,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {
