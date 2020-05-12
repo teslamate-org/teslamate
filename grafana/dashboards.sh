@@ -60,8 +60,7 @@ backup() {
 restore() {
   find "$DASHBOARDS_DIRECTORY" -type f -name \*.json -print0 |
       while IFS= read -r -d '' dashboard_path; do
-          dashboard=$(basename "$dashboard_path" .json)
-          folder_id=$(get_folder_id "$dashboard")
+          folder_id=$(get_folder_id "$(basename "$dashboard_path" .json)")
           curl \
             --silent --show-error --output /dev/null \
             --user "$LOGIN" \
@@ -75,7 +74,7 @@ restore() {
                                  \"value\":\"TeslaMate\"}]}" \
             "$URL/api/dashboards/import"
 
-        echo "RESTORED $(basename "$dashboard_path")"
+          echo "RESTORED $(basename "$dashboard_path")"
       done
 }
 
