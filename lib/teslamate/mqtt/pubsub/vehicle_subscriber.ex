@@ -76,7 +76,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   defp publish({key, value}, %State{car_id: car_id, namespace: namespace, deps: deps}) do
     topic =
-      ["teslamate", namespace, "cars", car_id, key]
+      [namespace, "cars", car_id, key]
       |> Enum.reject(&is_nil(&1))
       |> Enum.join("/")
 

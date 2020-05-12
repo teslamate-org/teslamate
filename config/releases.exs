@@ -83,7 +83,7 @@ if System.get_env("DISABLE_MQTT") != "true" do
     password: System.get_env("MQTT_PASSWORD"),
     tls: System.get_env("MQTT_TLS"),
     accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS"),
-    namespace: System.get_env("MQTT_NAMESPACE") |> Util.validate_namespace!()
+    namespace: System.get_env("MQTT_NAMESPACE", "teslamate") |> Util.validate_namespace!()
 end
 
 config :logger,
