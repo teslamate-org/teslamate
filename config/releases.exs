@@ -5,16 +5,6 @@ defmodule Util do
     :crypto.strong_rand_bytes(length) |> Base.encode64() |> binary_part(0, length)
   end
 
-  def validate_namespace!(nil), do: nil
-  def validate_namespace!(""), do: nil
-
-  def validate_namespace!(ns) when is_binary(ns) do
-    case String.contains?(ns, "/") do
-      true -> raise "MQTT_NAMESPACE must not contain '/'"
-      false -> ns
-    end
-  end
-
   def parse_check_origin!("true"), do: true
   def parse_check_origin!("false"), do: false
   def parse_check_origin!(hosts) when is_binary(hosts), do: String.split(hosts, ",")
@@ -83,7 +73,7 @@ if System.get_env("DISABLE_MQTT") != "true" do
     password: System.get_env("MQTT_PASSWORD"),
     tls: System.get_env("MQTT_TLS"),
     accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS"),
-    namespace: System.get_env("MQTT_NAMESPACE", "teslamate") |> Util.validate_namespace!()
+    namespace: System.get_env("MQTT_NAMESPACE", "teslamate")
 end
 
 config :logger,
