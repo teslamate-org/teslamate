@@ -17,7 +17,7 @@ set -o errexit
 readonly URL=${URL:-"http://localhost:3000"}
 readonly LOGIN=${LOGIN:-"admin:admin"}
 readonly DASHBOARDS_DIRECTORY=${DASHBOARDS_DIRECTORY:-"./grafana/dashboards"}
-
+readonly FOLDER_UID=${FOLDER_UID:-"NULL"}
 
 main() {
   local task=$1
@@ -58,21 +58,31 @@ backup() {
 
 
 restore() {
+  folder_id=$(get_folder_id "$FOLDER_UID")
+
+  if [[ "null" != "$folder_id" ]]; then
+    echo "Restoring into folder UID $FOLDER_UID (ID $folder_id)
+    "
+  fi
+
   find "$DASHBOARDS_DIRECTORY" -type f -name \*.json -print0 |
       while IFS= read -r -d '' dashboard; do
           curl \
             --silent --show-error --output /dev/null \
             --user "$LOGIN" \
             -X POST -H "Content-Type: application/json" \
-            -d "{\"dashboard\":$(cat "$dashboard"),\"overwrite\":true, \
-                    \"inputs\":[{\"name\":\"DS_CLOUDWATCH\",\"type\":\"datasource\", \
-                    \"pluginId\":\"cloudwatch\",\"value\":\"TeslaMate\"}]}" \
+            -d "{\"dashboard\":$(cat "$dashboard"), \
+                    \"overwrite\":true, \
+                    \"folderId\":$folder_id, \
+                    \"inputs\":[{\"name\":\"DS_CLOUDWATCH\", \
+                                 \"type\":\"datasource\", \
+                                 \"pluginId\":\"cloudwatch\", \
+                                 \"value\":\"TeslaMate\"}]}" \
             "$URL/api/dashboards/import"
 
         echo "RESTORED $(basename "$dashboard")"
       done
 }
-
 
 get_dashboard() {
   local dashboard=$1
@@ -89,6 +99,23 @@ get_dashboard() {
     --user "$LOGIN" \
     "$URL/api/dashboards/db/$dashboard" |
     jq '.dashboard | .id = null'
+}
+
+get_folder_id() {
+  local folder_uid=$1
+
+  if [[ -z "$folder_uid" ]]; then
+    echo "ERROR:
+  A folder UID must be specified.
+  "
+    exit 1
+  fi
+
+  curl \
+    --silent \
+    --user "$LOGIN" \
+    "$URL/api/folders/$folder_uid" |
+    jq '.id'
 }
 
 
