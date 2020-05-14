@@ -59,20 +59,24 @@ backup() {
 
 restore() {
   find "$DASHBOARDS_DIRECTORY" -type f -name \*.json -print0 |
-      while IFS= read -r -d '' dashboard; do
+      while IFS= read -r -d '' dashboard_path; do
+          folder_id=$(get_folder_id "$(basename "$dashboard_path" .json)")
           curl \
             --silent --show-error --output /dev/null \
             --user "$LOGIN" \
             -X POST -H "Content-Type: application/json" \
-            -d "{\"dashboard\":$(cat "$dashboard"),\"overwrite\":true, \
-                    \"inputs\":[{\"name\":\"DS_CLOUDWATCH\",\"type\":\"datasource\", \
-                    \"pluginId\":\"cloudwatch\",\"value\":\"TeslaMate\"}]}" \
+            -d "{\"dashboard\":$(cat "$dashboard_path"), \
+                    \"overwrite\":true, \
+                    \"folderId\":$folder_id, \
+                    \"inputs\":[{\"name\":\"DS_CLOUDWATCH\", \
+                                 \"type\":\"datasource\", \
+                                 \"pluginId\":\"cloudwatch\", \
+                                 \"value\":\"TeslaMate\"}]}" \
             "$URL/api/dashboards/import"
 
-        echo "RESTORED $(basename "$dashboard")"
+          echo "RESTORED $(basename "$dashboard_path")"
       done
 }
-
 
 get_dashboard() {
   local dashboard=$1
@@ -91,6 +95,22 @@ get_dashboard() {
     jq '.dashboard | .id = null'
 }
 
+get_folder_id() {
+  local dashboard=$1
+
+  if [[ -z "$dashboard" ]]; then
+    echo "ERROR:
+  A dashboard must be specified.
+  "
+    exit 1
+  fi
+
+  curl \
+    --silent \
+    --user "$LOGIN" \
+    "$URL/api/dashboards/db/$dashboard" |
+    jq '.meta | .folderId'
+}
 
 list_dashboards() {
   curl \
