@@ -482,7 +482,7 @@
           "pattern": "consumption_km",
           "thresholds": [],
           "type": "number",
-          "unit": "watth"
+          "unit": "Wh/km"
         },
         {
           "alias": "Speed",
@@ -546,7 +546,7 @@
           "pattern": "consumption_mi",
           "thresholds": [],
           "type": "number",
-          "unit": "watth"
+          "unit": "Wh/mi"
         },
         {
           "alias": "Speed",
