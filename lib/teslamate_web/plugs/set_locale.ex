@@ -1,6 +1,7 @@
 defmodule TeslaMateWeb.Plugs.SetLocale do
   use Plug.Builder
 
+  require TeslaMateWeb.Cldr
   alias TeslaMateWeb.Plugs.AcceptLanguage
 
   plug AcceptLanguage,

@@ -3,11 +3,19 @@ defmodule TeslaMateWeb.Plugs.AcceptLanguage do
   Parses the accept-language header if one is available and sets
   `conn.private[:cldr_locale]` accordingly.  The locale can
   be later retrieved by `Cldr.Plug.AcceptLanguage.get_cldr_locale/1`
-
+  ## Options
+  * `:cldr_backend` is any backend module. The default
+    is `Cldr.default_backend/0`. If no `:cldr_backend`
+    option is provided and no default backend is configured
+    then an exception will be raised.
   ## Example
-
+      # Using a specific backend to validate
+      # and match locales
       plug Cldr.Plug.AcceptLanguage,
         cldr_backend: MyApp.Cldr
+      # Using the default backend to validate
+      # and match locales
+      plug Cldr.Plug.AcceptLanguage
 
   Based on: https://github.com/elixir-cldr/cldr/blob/master/lib/cldr/plug/plug_accept_language.ex
   """
@@ -18,12 +26,8 @@ defmodule TeslaMateWeb.Plugs.AcceptLanguage do
   @language_header "accept-language"
 
   @doc false
-  def init(options) do
-    unless options[:cldr_backend] do
-      raise ArgumentError, "A Cldr backend module must be specified under the key :cldr_backend"
-    end
-
-    Keyword.get(options, :cldr_backend)
+  def init(options \\ []) do
+    Keyword.get_lazy(options, :cldr_backend, &Cldr.default_backend/0)
   end
 
   @doc false
