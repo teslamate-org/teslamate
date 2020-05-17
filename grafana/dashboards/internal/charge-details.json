@@ -234,7 +234,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT charge_energy_added from charging_processes where id = $charging_process_id;",
+          "rawSql": "SELECT charge_energy_added from charges where id = $charging_process_id order by date desc fetch first 1 row only ;",
           "refId": "A",
           "select": [
             [
