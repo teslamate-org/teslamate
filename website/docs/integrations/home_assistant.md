@@ -42,7 +42,6 @@ The following provides an automation to update the location of the `device_track
     - service: device_tracker.see
       data_template:
         dev_id: tesla_location
-        location_name: not_home
         gps:
           [
             "{{ states.sensor.tesla_latitude.state }}",
@@ -365,4 +364,140 @@ The below is the Lovelace UI configuration used to make the example screenshot a
           name: Tesla Temperature (outside)
         - entity: proximity.home_tesla
           name: Distance to Home
+```
+
+## Useful Automations
+
+The below automations leverage TeslaMate MQTT topics to provide some useful automations
+
+### Garage Door Automation based on Tesla location
+
+This automation triggers when the Tesla transitions from not_home to home. This means that the vehicle would have had to have been outside of the home zone previously, and returned home. You may want to add conditions here to improve accuracy, such as time of day.
+
+```yml title="automation.yaml"
+- alias: Open garage if car returns home
+  initial_state: on
+  trigger:
+    - platform: state
+      entity_id: switch.garage_door_switch
+      from: 'not_home'
+      to: 'home'
+  action:
+    - service: switch.turn_off
+      entity_id: switch.garage_door_switch
+```
+
+### Notification for Doors and Windows left open
+
+The following set of automations and scripts will detect when a Tesla door, frunk, trunk or window is left open. The script will notify you after the defined time period (by default, 5 minutes). If you would like to customize how the notification is performed, you can edit the ```notify_tesla_open``` script which is called by all of the four notifications.
+
+By default, the script will repeatedly notify every 5 minutes. Remove the recursive ```script.turn_on``` sequence in the ```notify_tesla_open``` script if you'd only like to be informed once.
+
+We add the random 30 second interval after each notification to avoid clobbering the notification script when we have multiple things open at once. For example, opening the door will open the door and the window. If we don't delay the calls, we will only get a message about the window (as it is the last call to the script) and if we then close the window, we won't get notifications about other things left open. This results in more notifications but less chance on missing out on knowing something was left open.
+
+#### automation.yaml
+
+```yml title="automation.yaml"
+- alias: Set timer if teslamate reports something is open to alert us
+  initial_state: on
+  trigger:
+    - platform: mqtt
+      topic: teslamate/cars/1/windows_open
+      payload: 'true'
+    - platform: mqtt
+      topic: teslamate/cars/1/doors_open
+      payload: 'true'
+    - platform: mqtt
+      topic: teslamate/cars/1/trunk_open
+      payload: 'true'
+    - platform: mqtt
+      topic: teslamate/cars/1/frunk_open
+      payload: 'true'
+  action:
+    - service: script.turn_on
+      data_template:
+        entity_id: script.notify_tesla_{{trigger.topic.split('/')[3]}}
+
+- alias: Cancel notification if said door/window is closed
+  initial_state: on
+  trigger:
+    - platform: mqtt
+      topic: teslamate/cars/1/windows_open
+      payload: 'false'
+    - platform: mqtt
+      topic: teslamate/cars/1/doors_open
+      payload: 'false'
+    - platform: mqtt
+      topic: teslamate/cars/1/trunk_open
+      payload: 'false'
+    - platform: mqtt
+      topic: teslamate/cars/1/frunk_open
+      payload: 'false'
+  action:
+    - service: script.turn_off
+      data_template:
+        entity_id: script.notify_tesla_{{trigger.topic.split('/')[3]}}
+```
+
+#### script.yaml
+
+```yml title="script.yaml"
+notify_tesla_open:
+  alias: "Notify when something on the tesla is left open"
+  sequence:
+    - service: notify.notify_group
+      data_template:
+        title: "Tesla Notification"
+        message: "You have left the {{ whatsopen }} open on the Tesla!"
+    - service: script.turn_on
+      data_template:
+        entity_id: script.notify_tesla_{{ whatsopen }}_open
+
+notify_tesla_doors_open:
+  sequence:
+    - delay:
+        minutes: 5
+    - delay:
+        seconds: "{{ range(0, 30)|random|int }}"
+    - service: script.turn_on
+      entity_id: script.notify_tesla_open
+      data:
+        variables:
+          whatsopen: "doors"
+
+notify_tesla_frunk_open:
+  sequence:
+    - delay:
+        minutes: 5
+    - delay:
+        seconds: "{{ range(0, 30)|random|int }}"
+    - service: script.turn_on
+      entity_id: script.notify_tesla_open
+      data:
+        variables:
+          whatsopen: "frunk"
+
+notify_tesla_trunk_open:
+  sequence:
+    - delay:
+        minutes: 5
+    - delay:
+        seconds: "{{ range(0, 30)|random|int }}"
+    - service: script.turn_on
+      entity_id: script.notify_tesla_open
+      data:
+        variables:
+          whatsopen: "trunk"
+
+notify_tesla_windows_open:
+  sequence:
+    - delay:
+        minutes: 5
+    - delay:
+        seconds: "{{ range(0, 30)|random|int }}"
+    - service: script.turn_on
+      entity_id: script.notify_tesla_open
+      data:
+        variables:
+          whatsopen: "windows"
 ```
