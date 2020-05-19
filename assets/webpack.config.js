@@ -10,16 +10,16 @@ module.exports = (env, options) => ({
     minimize: true,
     minimizer: [
       new TerserPlugin({ cache: true, parallel: true, sourceMap: false }),
-      new OptimizeCSSAssetsPlugin({})
-    ]
+      new OptimizeCSSAssetsPlugin({}),
+    ],
   },
   entry: {
-    app: glob.sync("./vendor/**/*.js").concat(["./js/app.js"])
+    app: glob.sync("./vendor/**/*.js").concat(["./js/app.js"]),
   },
   output: {
     filename: "[name].js",
     publicPath: "/js/",
-    path: path.resolve(__dirname, "../priv/static/js")
+    path: path.resolve(__dirname, "../priv/static/js"),
   },
   module: {
     rules: [
@@ -27,8 +27,8 @@ module.exports = (env, options) => ({
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
+          loader: "babel-loader",
+        },
       },
       {
         test: /\.s(c|a)ss$/,
@@ -38,10 +38,10 @@ module.exports = (env, options) => ({
           {
             loader: "sass-loader",
             options: {
-              implementation: require("sass")
-            }
-          }
-        ]
+              implementation: require("sass"),
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -49,8 +49,8 @@ module.exports = (env, options) => ({
         options: {
           limit: 10000,
           name: "../images/[name].[hash:7].[ext]",
-          esModule: false
-        }
+          esModule: false,
+        },
       },
 
       {
@@ -59,13 +59,13 @@ module.exports = (env, options) => ({
         options: {
           limit: 10000,
           name: "../fonts/[name].[hash:7].[ext]",
-          esModule: false
-        }
-      }
-    ]
+          esModule: false,
+        },
+      },
+    ],
   },
   plugins: [
     new MiniCssExtractPlugin({ filename: "../css/app.css" }),
-    new CopyWebpackPlugin([{ from: "static/", to: "../" }])
-  ]
+    new CopyWebpackPlugin({ patterns: [{ from: "static/", to: "../" }] }),
+  ],
 });
