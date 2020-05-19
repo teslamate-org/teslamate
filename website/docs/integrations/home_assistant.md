@@ -397,7 +397,7 @@ We add the random 30 second interval after each notification to avoid clobbering
 
 #### automation.yaml
 
-```
+```yml title="automation.yaml"
 - alias: Set timer if teslamate reports something is open to alert us
   initial_state: on
   trigger:
