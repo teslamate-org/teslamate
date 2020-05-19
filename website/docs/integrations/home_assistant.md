@@ -374,7 +374,7 @@ The below automations leverage TeslaMate MQTT topics to provide some useful auto
 
 This automation triggers when the Tesla transitions from not_home to home. This means that the vehicle would have had to have been outside of the home zone previously, and returned home. You may want to add conditions here to improve accuracy, such as time of day.
 
-```
+```yml title="automation.yaml"
 - alias: Open garage if car returns home
   initial_state: on
   trigger:
