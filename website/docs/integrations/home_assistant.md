@@ -441,7 +441,7 @@ We add the random 30 second interval after each notification to avoid clobbering
 
 #### script.yaml
 
-```
+```yml title="script.yaml"
 notify_tesla_open:
   alias: "Notify when something on the tesla is left open"
   sequence:
