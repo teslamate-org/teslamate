@@ -409,15 +409,9 @@
         "label": null,
         "multi": false,
         "name": "preferred_range",
-        "options": [
-          {
-            "selected": true,
-            "text": "ideal",
-            "value": "ideal"
-          }
-        ],
+        "options": [],
         "query": "select preferred_range from settings limit 1;",
-        "refresh": 0,
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
