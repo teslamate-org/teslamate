@@ -290,6 +290,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
     RESTORED mileage.json
     RESTORED charges.json
     RESTORED efficiency.json
+    RESTORED superchargers.json
     ```
 
     :::tip
