@@ -498,7 +498,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ###
 
   def handle_event(:info, {ref, result}, _state, data) when is_reference(ref) do
-    Logger.info("Unhandled fetch result: #{inspect(result, pretty: true)}", car_id: data.car.id)
+    unless match?({:ok, %Vehicle{}}, result) do
+      Logger.info("Unhandled fetch result: #{inspect(result, pretty: true)}", car_id: data.car.id)
+    end
+
     :keep_state_and_data
   end
 
