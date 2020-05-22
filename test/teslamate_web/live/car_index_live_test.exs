@@ -14,7 +14,9 @@ defmodule TeslaMateWeb.CarLive.Indextest do
       assert %GlobalSettings{base_url: nil} = Settings.get_global_settings!()
 
       assert {:ok, _parent_view, _html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://example.com "})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://example.com "})
+               |> live("/")
 
       assert %GlobalSettings{base_url: "http://example.com"} = Settings.get_global_settings!()
     end
@@ -28,7 +30,9 @@ defmodule TeslaMateWeb.CarLive.Indextest do
                |> Settings.update_global_settings(%{base_url: "https://example.com"})
 
       assert {:ok, _parent_view, _html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://foo.bar/ "})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://foo.bar/ "})
+               |> live("/")
 
       assert %GlobalSettings{base_url: "https://example.com"} = Settings.get_global_settings!()
     end
@@ -40,7 +44,9 @@ defmodule TeslaMateWeb.CarLive.Indextest do
 
       for base_url <- [nil, "udp://10.0.0.1", "", "example.com"] do
         assert {:ok, _parent_view, _html} =
-                 live(conn, "/", connect_params: %{"baseUrl" => base_url})
+                 conn
+                 |> put_connect_params(%{"baseUrl" => base_url})
+                 |> live("/")
       end
 
       assert %GlobalSettings{base_url: nil} = Settings.get_global_settings!()
