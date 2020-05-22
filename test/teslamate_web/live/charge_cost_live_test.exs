@@ -240,9 +240,9 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture())
 
       assert {:ok, _view, html} =
-               live(conn, "/charge-cost/#{id}",
-                 connect_params: %{"referrer" => "http://grafana.example.com/d/xyz/12"}
-               )
+               conn
+               |> put_connect_params(%{"referrer" => "http://grafana.example.com/d/xyz/12"})
+               |> live("/charge-cost/#{id}")
 
       assert ["http://grafana.example.com/d/xyz/12"] =
                html
@@ -255,7 +255,9 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture())
 
       assert {:ok, _view, html} =
-               live(conn, "/charge-cost/#{id}", connect_params: %{"referrer" => nil})
+               conn
+               |> put_connect_params(%{"referrer" => nil})
+               |> live("/charge-cost/#{id}")
 
       assert ["/"] =
                html

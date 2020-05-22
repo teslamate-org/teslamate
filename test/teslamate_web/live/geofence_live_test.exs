@@ -360,9 +360,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
 
       assert {:ok, _parent_view, _html} =
-               live(conn, "/geo-fences/new?lat=0.0&lng=0.0",
-                 connect_params: %{"referrer" => "http://grafana.example.com/d/xyz/12"}
-               )
+               conn
+               |> put_connect_params(%{"referrer" => "http://grafana.example.com/d/xyz/12"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
 
       assert %GlobalSettings{grafana_url: "http://grafana.example.com"} =
                Settings.get_global_settings!()
@@ -373,9 +373,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       for referrer <- [nil, "", "example.com", "http://example.com", "http://example.com/"] do
         assert {:ok, _parent_view, _html} =
-                 live(conn, "/geo-fences/new?lat=0.0&lng=0.0",
-                   connect_params: %{"referrer" => referrer}
-                 )
+                 conn
+                 |> put_connect_params(%{"referrer" => referrer})
+                 |> live("/geo-fences/new?lat=0.0&lng=0.0")
 
         assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
       end
@@ -385,9 +385,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
 
       assert {:ok, _parent_view, _html} =
-               live(conn, "/geo-fences/new?lat=0.0&lng=0.0",
-                 connect_params: %{"referrer" => "http://example.com:9090/grafana/d/xyz/12"}
-               )
+               conn
+               |> put_connect_params(%{"referrer" => "http://example.com:9090/grafana/d/xyz/12"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
 
       assert %GlobalSettings{grafana_url: "http://example.com:9090/grafana"} =
                Settings.get_global_settings!()
@@ -399,9 +399,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                |> Settings.update_global_settings(%{grafana_url: "https://grafana.example.com"})
 
       assert {:ok, _parent_view, _html} =
-               live(conn, "/geo-fences/new?lat=0.0&lng=0.0",
-                 connect_params: %{"referrer" => "http://grafana.foo.com/d/xyz/12"}
-               )
+               conn
+               |> put_connect_params(%{"referrer" => "http://grafana.foo.com/d/xyz/12"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
 
       assert %GlobalSettings{grafana_url: "https://grafana.example.com"} =
                Settings.get_global_settings!()

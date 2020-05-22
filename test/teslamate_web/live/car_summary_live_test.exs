@@ -65,7 +65,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       :ok = start_vehicles(events)
 
       assert {:ok, parent_view, _html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
 
       [view] = live_children(parent_view)
       html = render(view)
@@ -143,7 +145,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
         :ok = start_vehicles(events)
 
         assert {:ok, parent_view, html} =
-                 live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+                 conn
+                 |> put_connect_params(%{"baseUrl" => "http://localhost"})
+                 |> live("/")
 
         [view] = live_children(parent_view)
         render_click(view, :suspend_logging)
@@ -184,7 +188,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       :ok = start_vehicles(events)
 
       assert {:ok, parent_view, html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
 
       assert table_row(html, "Status", "online")
 
@@ -240,7 +246,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       Process.sleep(300)
 
       assert {:ok, _parent_view, html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
 
       assert {"span", _, [{"span", [{"class", "mdi mdi-alert-box"}], _}]} =
                html
@@ -266,7 +274,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       :ok = start_vehicles(events)
 
       assert {:ok, _view, html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
 
       assert [
                {"span",
@@ -294,7 +304,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       :ok = start_vehicles(events)
 
       assert {:ok, view, _html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
 
       TestHelper.eventually(
         fn ->
@@ -331,7 +343,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       :ok = start_vehicles(events)
 
       assert {:ok, view, _html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
 
       TestHelper.eventually(
         fn ->
@@ -366,7 +380,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       Process.sleep(300)
 
       assert {:ok, _parent_view, html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
 
       assert {"span", _, [{"span", [{"class", "mdi mdi-gift-outline"}], _}]} =
                html
@@ -391,7 +407,9 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       Process.sleep(300)
 
       assert {:ok, _parent_view, html} =
-               live(conn, "/", connect_params: %{"baseUrl" => "http://localhost"})
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
 
       assert {"span", _, [{"span", [{"class", "mdi mdi-snowflake"}], _}]} =
                html

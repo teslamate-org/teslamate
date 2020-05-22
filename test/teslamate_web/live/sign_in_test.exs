@@ -33,7 +33,10 @@ defmodule TeslaMateWeb.SignInLiveTest do
   test "signs in", %{conn: conn, test: name} do
     params = start_api(name)
 
-    assert {:ok, view, _html} = live(conn, "/sign_in", connect_params: params)
+    assert {:ok, view, _html} =
+             conn
+             |> put_connect_params(params)
+             |> live("/sign_in")
 
     render_change(view, :validate, %{
       credentials: %{email: "$email", password: "$password"}
