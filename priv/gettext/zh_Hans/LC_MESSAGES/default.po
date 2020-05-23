@@ -31,7 +31,7 @@ msgstr "当前电量"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:154
 msgid "Charged"
-msgstr "已充满"
+msgstr "已充入电量"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:135
@@ -339,7 +339,7 @@ msgstr "已解锁"
 #, elixir-format
 #: lib/teslamate_web/templates/car/summary.html.leex:108
 msgid "Remaining Time"
-msgstr "剩余时间"
+msgstr "充电剩余时间"
 
 #, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.eex:46
