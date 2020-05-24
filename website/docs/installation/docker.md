@@ -33,7 +33,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
        ports:
          - 4000:4000
        volumes:
-         - ./import:/opt/app/import
+         - import:/opt/app/import
        cap_drop:
          - all
 
