@@ -1216,8 +1216,8 @@
         }
       ],
       "valueTextColor": "#0f0f0f",
-      "writeAllValues": false,
-      "writeLastValue": false,
+      "writeAllValues": true,
+      "writeLastValue": true,
       "writeMetricNames": false
     },
     {
