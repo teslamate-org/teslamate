@@ -233,6 +233,40 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       assert [] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
       assert nil == Repo.get(ChargingProcess, id).cost
     end
+
+    test "allows negative charge cost", %{conn: conn} do
+      %ChargingProcess{id: id} =
+        charging_process_fixture(car_fixture(), %{
+          cost: nil,
+          charge_energy_added: 8,
+          charge_energy_used: 10
+        })
+
+      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+
+      assert [] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#charging_process_cost")
+               |> Floki.attribute("value")
+
+      html =
+        render_submit(view, :save, %{charging_process: %{cost: -0.029, mode: "per_kwh"}})
+        |> Floki.parse_document!()
+
+      assert "Total" =
+               html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
+
+      assert ["-0.29"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert %ChargingProcess{cost: decimal("-0.29")} = Repo.get(ChargingProcess, id)
+
+      html =
+        render_submit(view, :save, %{charging_process: %{cost: nil}})
+        |> Floki.parse_document!()
+
+      assert [] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert nil == Repo.get(ChargingProcess, id).cost
+    end
   end
 
   describe "back button" do
