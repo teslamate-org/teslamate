@@ -1019,7 +1019,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car AND date >= (NOw() - interval '10m')\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -1102,7 +1102,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH last_position AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM positions\n\tWHERE car_id = $car AND outside_temp IS NOT NULL\n\tORDER BY date DESC\n\tLIMIT 1\n),\nlast_charge AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM charges\n\tJOIN charging_processes ON charges.charging_process_id = charging_processes.id\n\tWHERE car_id = $car AND outside_temp IS NOT NULL\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT * FROM last_position\nUNION ALL\nSELECT * FROM last_charge\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "WITH last_position AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM positions\n\tWHERE car_id = $car AND outside_temp IS NOT NULL AND date >= (NOw() - interval '10m')\n\tORDER BY date DESC\n\tLIMIT 1\n),\nlast_charge AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM charges\n\tJOIN charging_processes ON charges.charging_process_id = charging_processes.id\n\tWHERE car_id = $car AND outside_temp IS NOT NULL AND date >= (NOw() - interval '10m')\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT * FROM last_position\nUNION ALL\nSELECT * FROM last_charge\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -1151,8 +1151,8 @@
             },
             "decimals": 0,
             "mappings": [],
-            "max": 120,
-            "min": -20,
+            "max": 100,
+            "min": 0,
             "thresholds": {
               "mode": "absolute",
               "steps": [
@@ -1185,7 +1185,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  date,\n  convert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\"\nFROM positions\nWHERE\n  car_id = $car\n  and inside_temp is not null\norder by date desc\nlimit 1 ",
+          "rawSql": "SELECT\n  date,\n  convert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\"\nFROM positions\nWHERE\n  car_id = $car\n  and inside_temp is not null AND date >= (NOw() - interval '10m')\norder by date desc\nlimit 1 ",
           "refId": "A",
           "select": [
             [
