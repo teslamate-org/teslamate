@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1595965501600,
+  "iteration": 1598013848072,
   "links": [
     {
       "icon": "dashboard",
@@ -50,7 +50,7 @@
       "repeat": "car_id",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -60,6 +60,22 @@
     },
     {
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(255, 255, 255)",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 3,
         "w": 8,
@@ -69,33 +85,22 @@
       "id": 8,
       "options": {
         "colorMode": "value",
-        "fieldOptions": {
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
           "calcs": [
             "count"
           ],
-          "defaults": {
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "rgb(255, 255, 255)",
-                  "value": null
-                }
-              ]
-            }
-          },
-          "overrides": [],
+          "fields": "",
           "values": true
         },
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto"
+        "textMode": "value"
       },
-      "pluginVersion": "6.7.4",
+      "pluginVersion": "7.1.4",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -137,6 +142,24 @@
     },
     {
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(255, 255, 255)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "dtdurations"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 3,
         "w": 16,
@@ -146,35 +169,22 @@
       "id": 6,
       "options": {
         "colorMode": "value",
-        "fieldOptions": {
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
           "calcs": [
             "mean"
           ],
-          "defaults": {
-            "decimals": 1,
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "rgb(255, 255, 255)",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "dtdurations"
-          },
-          "overrides": [],
+          "fields": "",
           "values": true
         },
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto"
+        "textMode": "value"
       },
-      "pluginVersion": "6.7.4",
+      "pluginVersion": "7.1.4",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -215,9 +225,164 @@
       "type": "stat"
     },
     {
-      "columns": [],
       "datasource": "TeslaMate",
-      "fontSize": "100%",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              },
+              {
+                "id": "displayName",
+                "value": "Date"
+              },
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "update_duration"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "displayName",
+                "value": "Duration"
+              },
+              {
+                "id": "unit",
+                "value": "dtdurations"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "since_last_update"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 140
+              },
+              {
+                "id": "displayName",
+                "value": "Since Last Update"
+              },
+              {
+                "id": "unit",
+                "value": "dtdurations"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "version"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Installed Version"
+              },
+              {
+                "id": "custom.align",
+                "value": "right"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "${__data.fields[version]} release notes",
+                    "url": "https://teslascope.com/teslapedia/software/${__data.fields[version]}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "chg_ct"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "displayName",
+                "value": "# of Charges"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg ideal range [mi]"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg ideal range [km]"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
       "gridPos": {
         "h": 28,
         "w": 24,
@@ -226,10 +391,19 @@
       },
       "id": 2,
       "links": [],
-      "pageSize": null,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Date"
+          }
+        ]
+      },
+      "pluginVersion": "7.1.4",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -348,7 +522,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "with u as (\r\n  select *, lag(start_date) over(order by start_date) as prior_start_date \r\n  from updates\r\n  where\r\n      car_id = $car_id and $__timeFilter(start_date)\r\n),\r\nrng as (SELECT\r\n\tto_timestamp(floor(extract(epoch from date)/21600)*21600) AS date,\r\n\t(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100 ) AS \"battery_rng\"\r\nFROM\r\n\t(\r\n    select battery_level, usable_battery_level, date,\r\n      rated_battery_range_km, ideal_battery_range_km\r\n    from positions\r\n    where\r\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\r\n    union all\r\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\r\n      rated_battery_range_km, ideal_battery_range_km\r\n    from charges c\r\n   left join\r\n      charging_processes p ON p.id = c.charging_process_id \r\n    where\r\n      $__timeFilter(date) and p.car_id = $car_id\r\n    ) as data\r\n\r\nGROUP BY\r\n\tto_timestamp(floor(extract(epoch from date)/21600)*21600)\r\n)\r\n\r\n\r\nselect\tu.start_date,\r\n\tu.end_date,\r\n\textract(EPOCH FROM u.end_date - u.start_date) AS update_duration,\r\n\textract(EPOCH FROM u.start_date - lag(u.start_date) OVER (ORDER BY u.start_date)) AS since_last_update,\r\n\tsplit_part(u.version, ' ', 1) as version,\r\n\tcount(distinct cp.id) as chg_ct,\r\n\tconvert_km(avg(r.battery_rng), '$length_unit')::numeric(6,2) AS \"Avg [[preferred_range]] range [$length_unit]\"\r\nfrom u u\r\nleft join charging_processes cp\r\n\tON u.car_id = cp.car_id\r\n \tand cp.start_date between u.prior_start_date and u.start_date\r\nleft join rng r\r\n\tON r.date between u.prior_start_date and u.start_date\r\ngroup by u.car_id,\r\n\tu.start_date,\r\n\tu.end_date,\r\n\tprior_start_date,\r\n\tsplit_part(u.version, ' ', 1)",
+          "rawSql": "with u as (\r\n  select *, lag(start_date) over(order by start_date) as prior_start_date \r\n  from updates\r\n  where car_id = $car_id and $__timeFilter(start_date)\r\n),\r\nrng as (\r\n  SELECT\r\n\t  to_timestamp(floor(extract(epoch from date)/21600)*21600) AS date,\r\n\t  (sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100 ) AS \"battery_rng\"\r\n  FROM (\r\n    select battery_level, usable_battery_level, date, rated_battery_range_km, ideal_battery_range_km\r\n    from positions\r\n    where car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\r\n    union all\r\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date, rated_battery_range_km, ideal_battery_range_km\r\n    from charges c\r\n    join charging_processes p ON p.id = c.charging_process_id \r\n    where $__timeFilter(date) and p.car_id = $car_id\r\n  ) as data\r\n  GROUP BY 1\r\n)\r\n\r\nselect\t\r\n  u.start_date as time,\r\n\textract(EPOCH FROM u.end_date - u.start_date) AS update_duration,\r\n\textract(EPOCH FROM u.start_date - lag(u.start_date) OVER (ORDER BY u.start_date)) AS since_last_update,\r\n\tsplit_part(u.version, ' ', 1) as version,\r\n\tcount(distinct cp.id) as chg_ct,\r\n\tconvert_km(avg(r.battery_rng), '$length_unit')::numeric(6,2) AS \"Avg [[preferred_range]] range [$length_unit]\"\r\nfrom u u\r\nleft join charging_processes cp\r\n\tON u.car_id = cp.car_id\r\n \tand cp.start_date between u.prior_start_date and u.start_date\r\nleft join rng r\r\n\tON r.date between u.prior_start_date and u.start_date\r\ngroup by u.car_id,\r\n\tu.start_date,\r\n\tu.end_date,\r\n\tprior_start_date,\r\n\tsplit_part(u.version, ' ', 1)",
           "refId": "A",
           "select": [
             [
@@ -375,11 +549,10 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Updates",
-      "transform": "table",
       "type": "table"
     }
   ],
-  "schemaVersion": 22,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [
     "tesla"
@@ -390,16 +563,15 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "text": "1",
+          "value": "1"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
-        "includeAll": true,
-        "index": -1,
+        "includeAll": false,
         "label": "Car",
-        "multi": true,
+        "multi": false,
         "name": "car_id",
         "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
@@ -416,6 +588,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "ideal",
           "value": "ideal"
         },
@@ -423,7 +596,6 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "index": -1,
         "label": null,
         "multi": false,
         "name": "preferred_range",
@@ -442,6 +614,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "km",
           "value": "km"
         },
@@ -449,7 +622,6 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "index": -1,
         "label": null,
         "multi": false,
         "name": "length_unit",
@@ -468,6 +640,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },
@@ -475,7 +648,6 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "index": -1,
         "label": "",
         "multi": false,
         "name": "base_url",
@@ -499,7 +671,6 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "5s",
       "10s",
       "30s",
       "1m",
@@ -525,8 +696,5 @@
   "timezone": "",
   "title": "Updates",
   "uid": "IiC07mgWz",
-  "variables": {
-    "list": []
-  },
   "version": 1
 }
