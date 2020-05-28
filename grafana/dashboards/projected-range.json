@@ -134,7 +134,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, [[interval]]) AS time,\n\tconvert_km(sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100, '$length_unit') AS \"Projected [[preferred_range]] range [$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, [[interval]]) AS time,\n\tconvert_km((sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100)::numeric, '$length_unit') AS \"Projected [[preferred_range]] range [$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "A",
           "select": [
             [
@@ -160,7 +160,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km(avg(odometer), '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id  and ideal_battery_range_km is not null\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC;",
+          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km(avg(odometer)::numeric, '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id  and ideal_battery_range_km is not null\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC;",
           "refId": "B",
           "select": [
             [
