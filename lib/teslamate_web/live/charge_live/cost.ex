@@ -38,29 +38,48 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
 
   @impl true
   def handle_event("save", %{"charging_process" => params}, socket) do
-    kwh =
-      socket.assigns.charging_process
-      |> Map.take([:charge_energy_added, :charge_energy_used])
-      |> Map.values()
-      |> Enum.reject(&is_nil/1)
-      |> case do
-        [k0, k1] -> Decimal.max(k0, k1)
-        [kwh] -> kwh
-        [] -> nil
-      end
-
     params =
-      with %Decimal{} <- kwh,
-           %{"cost" => cost, "mode" => "per_kwh"} when is_binary(cost) <- params,
-           {cost_per_kwh, ""} <- Float.parse(cost) do
-        cost =
-          cost_per_kwh
-          |> Decimal.from_float()
-          |> Decimal.mult(kwh)
+      case params do
+        %{"cost" => cost, "mode" => "per_kwh"} when is_binary(cost) ->
+          kwh =
+            socket.assigns.charging_process
+            |> Map.take([:charge_energy_added, :charge_energy_used])
+            |> Map.values()
+            |> Enum.reject(&is_nil/1)
+            |> case do
+              [k0, k1] -> Decimal.max(k0, k1)
+              [kwh] -> kwh
+              [] -> nil
+            end
 
-        Map.put(params, "cost", cost)
-      else
-        _ -> params
+          with true <- match?(%Decimal{}, kwh),
+               {cost_per_kwh, ""} <- Float.parse(cost) do
+            cost =
+              cost_per_kwh
+              |> Decimal.from_float()
+              |> Decimal.mult(kwh)
+
+            Map.put(params, "cost", cost)
+          else
+            _ -> params
+          end
+
+        %{"cost" => cost, "mode" => "per_minute"} when is_binary(cost) ->
+          with %ChargingProcess{duration_min: minutes} when is_number(minutes) <-
+                 socket.assigns.charging_process,
+               {cost_per_minute, ""} <- Float.parse(cost) do
+            cost =
+              cost_per_minute
+              |> Decimal.from_float()
+              |> Decimal.mult(minutes)
+
+            Map.put(params, "cost", cost)
+          else
+            _ -> params
+          end
+
+        %{"cost" => _} ->
+          params
       end
 
     case Log.update_charging_process(socket.assigns.charging_process, params) do

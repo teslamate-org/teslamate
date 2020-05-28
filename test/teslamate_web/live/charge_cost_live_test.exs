@@ -45,6 +45,22 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
              |> Floki.attribute("data-end-date") == [DateTime.to_iso8601(end_date)]
     end
 
+    test "shows the duration in minutes", %{conn: conn} do
+      %ChargingProcess{id: id} = charging_process_fixture(car_fixture(), %{duration_min: 30})
+      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+
+      assert [
+               {"div", _,
+                [
+                  {"span", _, [{"span", _, [{"span", [{"class", "mdi mdi-clock"}], _}]}]},
+                  {"span", _, ["30 min"]}
+                ]}
+             ] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#duration-tag")
+    end
+
     test "shows either charge_energy_used or charge_energy_added", %{conn: conn} do
       cases = [
         {%{charge_energy_used: 50.0, charge_energy_added: 48.1}, "50.00 kWh"},
@@ -266,6 +282,34 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert [] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
       assert nil == Repo.get(ChargingProcess, id).cost
+    end
+
+    test "allows to enter the cost per Minute", %{conn: conn} do
+      %ChargingProcess{id: id} =
+        charging_process_fixture(car_fixture(), %{
+          cost: nil,
+          charge_energy_added: 8,
+          charge_energy_used: 10,
+          duration_min: 15
+        })
+
+      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+
+      assert [] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#charging_process_cost")
+               |> Floki.attribute("value")
+
+      html =
+        render_submit(view, :save, %{charging_process: %{cost: 0.10, mode: "per_minute"}})
+        |> Floki.parse_document!()
+
+      assert "Total" =
+               html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
+
+      assert ["1.50"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert %ChargingProcess{cost: decimal("1.50")} = Repo.get(ChargingProcess, id)
     end
   end
 
