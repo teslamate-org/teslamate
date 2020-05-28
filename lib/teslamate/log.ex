@@ -536,7 +536,13 @@ defmodule TeslaMate.Log do
           0.0
 
         {%{charge_energy_used: kwh_used, charge_energy_added: kwh_added},
-         %CP{geofence: %GeoFence{cost_per_kwh: cost_per_kwh, session_fee: session_fee}}} ->
+         %CP{
+           geofence: %GeoFence{
+             billing_type: :per_kwh,
+             cost_per_unit: cost_per_kwh,
+             session_fee: session_fee
+           }
+         }} ->
           if match?(%Decimal{}, kwh_used) or match?(%Decimal{}, kwh_added) do
             cost =
               with %Decimal{} <- cost_per_kwh do
@@ -549,6 +555,21 @@ defmodule TeslaMate.Log do
             if match?(%Decimal{}, cost) or match?(%Decimal{}, session_fee) do
               Decimal.add(session_fee || 0, cost || 0)
             end
+          end
+
+        {%{duration_min: minutes},
+         %CP{
+           geofence: %GeoFence{
+             billing_type: :per_minute,
+             cost_per_unit: cost_per_minute,
+             session_fee: session_fee
+           }
+         }}
+        when is_number(minutes) ->
+          cost = Decimal.mult(minutes, cost_per_minute)
+
+          if match?(%Decimal{}, cost) or match?(%Decimal{}, session_fee) do
+            Decimal.add(session_fee || 0, cost || 0)
           end
 
         {_, _} ->

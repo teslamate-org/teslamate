@@ -105,7 +105,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           name: "Post office",
           latitude: -25.066188,
           longitude: -130.100502,
-          cost_per_kwh: 0.2599,
+          billing_type: :per_kwh,
+          cost_per_unit: 0.2599,
           session_fee: 5.49
         })
 
@@ -124,7 +125,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       radius = Floki.find(html, "#geo_fence_radius")
       assert ["100"] = Floki.attribute(radius, "value")
 
-      radius = Floki.find(html, "#geo_fence_cost_per_kwh")
+      radius = Floki.find(html, "#geo_fence_cost_per_unit")
       assert ["0.2599"] = Floki.attribute(radius, "value")
 
       radius = Floki.find(html, "#geo_fence_session_fee")
@@ -212,7 +213,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             longitude: nil,
             latitude: nil,
             radius: "",
-            cost_per_kwh: "wat",
+            billing_type: :per_kwh,
+            cost_per_unit: "wat",
             session_fee: "wat"
           }
         })
@@ -222,13 +224,13 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert [""] = html |> Floki.find("#geo_fence_latitude") |> Floki.attribute("value")
       assert [""] = html |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
       assert [""] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
-      assert ["wat"] = html |> Floki.find("#geo_fence_cost_per_kwh") |> Floki.attribute("value")
+      assert ["wat"] = html |> Floki.find("#geo_fence_cost_per_unit") |> Floki.attribute("value")
       assert ["wat"] = html |> Floki.find("#geo_fence_session_fee") |> Floki.attribute("value")
 
       assert [
                field_position,
                field_name,
-               field_cost_per_kwh,
+               field_cost_per_unit,
                field_session_fee,
                _
              ] = Floki.find(html, ".field.is-horizontal")
@@ -238,9 +240,14 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert ["can't be blank"] = field_name |> Floki.find("span") |> Enum.map(&Floki.text/1)
 
+      assert "Per kWh" =
+               field_cost_per_unit
+               |> Floki.find("#geo_fence_billing_type option[selected]")
+               |> Floki.text()
+
       assert "is invalid" =
-               field_cost_per_kwh
-               |> Floki.find("span")
+               field_cost_per_unit
+               |> Floki.find("span.help")
                |> Floki.text()
 
       assert "is invalid" =
@@ -255,7 +262,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             longitude: "wot",
             latitude: "wat",
             radius: "40",
-            cost_per_kwh: 0.25,
+            billing_type: :per_minute,
+            cost_per_unit: 0.25,
             session_fee: 4.79
           }
         })
@@ -265,13 +273,13 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["wat"] = html |> Floki.find("#geo_fence_latitude") |> Floki.attribute("value")
       assert ["wot"] = html |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
       assert ["40"] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
-      assert ["0.25"] = html |> Floki.find("#geo_fence_cost_per_kwh") |> Floki.attribute("value")
+      assert ["0.25"] = html |> Floki.find("#geo_fence_cost_per_unit") |> Floki.attribute("value")
       assert ["4.79"] = html |> Floki.find("#geo_fence_session_fee") |> Floki.attribute("value")
 
       assert [
                field_position,
                field_name,
-               field_cost_per_kwh,
+               field_cost_per_unit,
                field_session_fee,
                _
              ] = Floki.find(html, ".field.is-horizontal")
@@ -284,9 +292,14 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                |> Floki.find("span")
                |> Enum.map(&Floki.text/1)
 
+      assert "Per Minute" =
+               field_cost_per_unit
+               |> Floki.find("#geo_fence_billing_type option[selected]")
+               |> Floki.text()
+
       assert "" =
-               field_cost_per_kwh
-               |> Floki.find("span")
+               field_cost_per_unit
+               |> Floki.find("span.help")
                |> Floki.text()
 
       assert "" =
@@ -423,7 +436,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
         latitude: 47.814441,
         longitude: 12.367768,
         radius: 30,
-        cost_per_kwh: 0.33,
+        billing_type: :per_kwh,
+        cost_per_unit: 0.33,
         session_fee: nil
       }
 
@@ -470,7 +484,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             latitude: 47.814441,
             longitude: 12.367768,
             radius: 30,
-            cost_per_kwh: nil,
+            billing_type: :per_kwh,
+            cost_per_unit: nil,
             session_fee: 4.69
           }
         })
@@ -494,7 +509,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           latitude: 47.814441,
           longitude: 12.367768,
           radius: 30,
-          cost_per_kwh: nil,
+          billing_type: :per_kwh,
+          cost_per_unit: nil,
           session_fee: 4.69
         })
 
@@ -531,7 +547,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           latitude: 47.814441,
           longitude: 12.367768,
           radius: 30,
-          cost_per_kwh: 0.42,
+          billing_type: :per_kwh,
+          cost_per_unit: 0.42,
           session_fee: nil
         })
 
@@ -574,7 +591,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             latitude: 47.814441,
             longitude: 12.367768,
             radius: 30,
-            cost_per_kwh: 0.33,
+            billing_type: :per_kwh,
+            cost_per_unit: 0.33,
             session_fee: 5.00
           }
         })
@@ -629,7 +647,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                latitude: decimal(47.814441),
                longitude: decimal(12.367768),
                radius: 30,
-               cost_per_kwh: decimal("0.3300"),
+               billing_type: :per_kwh,
+               cost_per_unit: decimal("0.3300"),
                session_fee: decimal("5.00")
              } = Repo.get(GeoFence, id)
     end
@@ -647,7 +666,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             latitude: 47.814441,
             longitude: 12.367768,
             radius: 30,
-            cost_per_kwh: 0.33,
+            billing_type: :per_kwh,
+            cost_per_unit: 0.33,
             session_fee: 5.00
           }
         })
@@ -678,7 +698,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                latitude: decimal(47.814441),
                longitude: decimal(12.367768),
                radius: 30,
-               cost_per_kwh: decimal("0.3300"),
+               billing_type: :per_kwh,
+               cost_per_unit: decimal("0.3300"),
                session_fee: decimal("5.00")
              } = Repo.get(GeoFence, id)
     end

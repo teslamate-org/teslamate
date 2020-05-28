@@ -10,7 +10,8 @@ defmodule TeslaMate.LocationsGeofencesTest do
     latitude: 52.514521,
     longitude: 13.350144,
     radius: 42,
-    cost_per_kwh: nil,
+    billing_type: :per_kwh,
+    cost_per_unit: nil,
     session_fee: nil
   }
   @update_attrs %{
@@ -18,7 +19,8 @@ defmodule TeslaMate.LocationsGeofencesTest do
     latitude: 53.514521,
     longitude: 14.350144,
     radius: 43,
-    cost_per_kwh: 0.0079,
+    billing_type: :per_minute,
+    cost_per_unit: 0.0079,
     session_fee: 5.0
   }
   @invalid_attrs %{
@@ -26,7 +28,8 @@ defmodule TeslaMate.LocationsGeofencesTest do
     latitude: nil,
     longitude: nil,
     radius: nil,
-    cost_per_kwh: -0.01,
+    billing_type: :per_hour,
+    cost_per_unit: -0.01,
     session_fee: -0.01
   }
 
@@ -50,7 +53,8 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.latitude == Decimal.cast(52.514521)
       assert geofence.longitude == Decimal.cast(13.350144)
       assert geofence.radius == 42
-      assert geofence.cost_per_kwh == nil
+      assert geofence.billing_type == :per_kwh
+      assert geofence.cost_per_unit == nil
       assert geofence.session_fee == nil
     end
 
@@ -62,7 +66,8 @@ defmodule TeslaMate.LocationsGeofencesTest do
                longitude: ["can't be blank"],
                name: ["can't be blank"],
                radius: ["can't be blank"],
-               cost_per_kwh: ["must be greater than or equal to 0"],
+               billing_type: ["is invalid"],
+               cost_per_unit: ["must be greater than or equal to 0"],
                session_fee: ["must be greater than or equal to 0"]
              }
 
@@ -142,13 +147,14 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.latitude == Decimal.cast(53.514521)
       assert geofence.longitude == Decimal.cast(14.350144)
       assert geofence.radius == 43
-      assert geofence.cost_per_kwh == Decimal.cast(0.0079)
+      assert geofence.billing_type == :per_minute
+      assert geofence.cost_per_unit == Decimal.cast(0.0079)
       assert geofence.session_fee == Decimal.cast("5.00")
 
       assert {:ok, %GeoFence{} = geofence} =
-               Locations.update_geofence(geofence, %{cost_per_kwh: nil, session_fee: nil})
+               Locations.update_geofence(geofence, %{cost_per_unit: nil, session_fee: nil})
 
-      assert geofence.cost_per_kwh == nil
+      assert geofence.cost_per_unit == nil
       assert geofence.session_fee == nil
     end
 

@@ -56,18 +56,23 @@
 
   <div class="field is-horizontal mt-20">
     <div class="field-label is-normal">
-      <%= label class: "label" do gettext("Cost per kWh") end %>
+      <%= label class: "label" do gettext("Cost") end %>
     </div>
     <div class="field-body">
-      <div class="field">
-        <div class="control">
-          <%= text_input f, :cost_per_kwh, class: "input",
+
+      <div class="field has-addons">
+        <p class="control">
+          <span class="select">
+            <%= select f, :billing_type, [{gettext("Per kWh"), :per_kwh}, {gettext("Per Minute"), :per_minute}] %>
+          </span>
+        </p>
+        <p class="control is-expanded">
+          <%= text_input f, :cost_per_unit, class: "input",
                              type: :number, inputmode: :decimal, min: 0.0, step: 0.0001,
-                             placeholder: "0.00"
-          %>
-        </div>
+                             placeholder: "0.00" %>
+        </p>
         <%= if @show_errors do %>
-        <p class="help is-danger"><%= error_tag(f, :cost_per_kwh) %></p>
+        <p class="help is-danger"><%= error_tag(f, :cost_per_unit) %></p>
         <% end %>
       </div>
     </div>
