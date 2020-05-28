@@ -138,10 +138,17 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   end
 
   defp show_modal_or_save(%GeoFence{} = geofence, changeset, socket) do
-    has_cost = geofence.session_fee != nil or geofence.cost_per_kwh != nil
+    has_cost = geofence.session_fee != nil or geofence.cost_per_unit != nil
 
     position_or_cost_changed =
-      has_changed?(changeset, [:cost_per_kwh, :session_fee, :latitude, :longitude, :radius])
+      has_changed?(changeset, [
+        :cost_per_unit,
+        :session_fee,
+        :billing_type,
+        :latitude,
+        :longitude,
+        :radius
+      ])
 
     with true <- has_cost and position_or_cost_changed,
          n when n > 0 <- Locations.count_charging_processes_without_costs(geofence) do

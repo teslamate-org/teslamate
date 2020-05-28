@@ -203,9 +203,14 @@ defmodule TeslaMate.Locations do
     UPDATE charging_processes cp
     SET cost = (
       SELECT
-        CASE WHEN g.session_fee IS NULL AND g.cost_per_kwh IS NULL THEN NULL
-             ELSE COALESCE(g.session_fee, 0) +
-                  COALESCE(g.cost_per_kwh * GREATEST(c.charge_energy_used, c.charge_energy_added), 0)
+        CASE WHEN g.session_fee IS NULL AND g.cost_per_unit IS NULL THEN
+               NULL
+             WHEN g.billing_type = 'per_kwh' THEN
+               COALESCE(g.session_fee, 0) +
+               COALESCE(g.cost_per_unit * GREATEST(c.charge_energy_used, c.charge_energy_added), 0)
+             WHEN g.billing_type = 'per_minute' THEN
+               COALESCE(g.session_fee, 0) +
+               COALESCE(g.cost_per_unit * c.duration_min, 0)
         END
       FROM charging_processes c
       JOIN geofences g ON g.id = c.geofence_id

@@ -377,7 +377,7 @@ defmodule TeslaMate.LogChargingTest do
       assert {:ok, %ChargingProcess{geofence_id: ^id}} = Log.complete_charging_process(cproc)
     end
 
-    test "calculates the charge costs based on the kwh fee" do
+    test "calculates the charge costs based on the price per kwh" do
       car = car_fixture()
 
       assert %GeoFence{id: id} =
@@ -385,7 +385,8 @@ defmodule TeslaMate.LogChargingTest do
                  latitude: 50.1121,
                  longitude: 11.597,
                  radius: 50,
-                 cost_per_kwh: 0.25
+                 cost_per_unit: 0.25,
+                 billing_type: :per_kwh
                })
 
       assert {:ok, cproc} =
@@ -401,6 +402,34 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.charge_energy_added == Decimal.cast(12.77)
       assert cproc.charge_energy_used == Decimal.cast(12.46)
       assert cproc.cost == Decimal.cast(3.19)
+    end
+
+    test "calculates the charge costs based on the price per minute" do
+      car = car_fixture()
+
+      assert %GeoFence{id: id} =
+               geofence_fixture(%{
+                 latitude: 50.1121,
+                 longitude: 11.597,
+                 radius: 50,
+                 cost_per_unit: 0.33,
+                 billing_type: :per_minute
+               })
+
+      assert {:ok, cproc} =
+               log_charging_process(charges_fixture(:phases_nil),
+                 car: car,
+                 attrs: %{
+                   date: DateTime.utc_now(),
+                   latitude: 50.112198,
+                   longitude: 11.597669
+                 }
+               )
+
+      assert cproc.charge_energy_added == Decimal.cast(12.77)
+      assert cproc.charge_energy_used == Decimal.cast(12.46)
+      assert cproc.duration_min == 19
+      assert cproc.cost == Decimal.cast(6.27)
     end
 
     test "calculates the charge costs based on the session fee" do
@@ -437,7 +466,7 @@ defmodule TeslaMate.LogChargingTest do
                  latitude: 50.1121,
                  longitude: 11.597,
                  radius: 50,
-                 cost_per_kwh: 0.25,
+                 cost_per_unit: 0.25,
                  session_fee: 4.79
                })
 
@@ -464,7 +493,7 @@ defmodule TeslaMate.LogChargingTest do
                  latitude: 50.1121,
                  longitude: 11.597,
                  radius: 50,
-                 cost_per_kwh: 0.0,
+                 cost_per_unit: 0.0,
                  session_fee: 0.0
                })
 
@@ -498,7 +527,7 @@ defmodule TeslaMate.LogChargingTest do
                  latitude: 50.1121,
                  longitude: 11.597,
                  radius: 50,
-                 cost_per_kwh: 0.33
+                 cost_per_unit: 0.33
                })
 
       assert {:ok, cproc} =
