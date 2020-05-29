@@ -1019,7 +1019,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car AND date >= (NOw() - interval '10m')\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM positions\nWHERE driver_temp_setting IS NOT NULL AND car_id = $car AND date >= (NOw() - interval '10m')\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
