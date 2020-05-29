@@ -601,7 +601,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ### Store Position
 
-  def handle_event({:timeout, :store_position}, :store_position, :online, data) do
+  def handle_event({:timeout, :store_position}, :store_position, state, data)
+      when state == :online or (is_tuple(state) and elem(state, 0) == :charging) do
     Logger.debug("Storing position ...", car_id: data.car.id)
 
     {:ok, _pos} =
@@ -758,7 +759,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
            | last_state_change: DateTime.utc_now(),
              last_used: DateTime.utc_now(),
              stream_pid: nil
-         }, [broadcast_summary(), schedule_fetch(5, data)]}
+         }, [broadcast_summary(), schedule_fetch(5, data), schedule_position_storing()]}
 
       _ ->
         try_to_suspend(vehicle, state, data)
