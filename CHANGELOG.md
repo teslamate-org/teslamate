@@ -1,5 +1,47 @@
 # Changelog
 
+## [Unreleased]
+
+### Enhancements
+
+#### Dashboards
+
+- Update Consumption Unit to Watt-hour to match In-Car Unit (#717)
+- Charges: Show all charging sessions, including very short ones
+- Charging Details: Show kWh even if still charging (#744)
+- Charging Stats: Visualize % of sum instead of max kWh in charging heat map (#680)
+- Drives: Updated reduced_range to be consistent (#702)
+- Overview: Hide stale temperatures
+- Overview: Show most recent driver temp setting while driving
+- Overview: Add 'total energy added' to chart (#690)
+- States: Display all states names (#755)
+- Updates: Show average range and number of chargers per software version to identify if an update had a bigger than expected impact on range (#731) and (#762)
+- Vampire Drain: Utilize charges as additional anchor points (#769)
+
+#### Translations
+
+- Update Chinese (Simplified) translation (#747)
+- Update French translation (#693)
+
+#### Documentation
+
+- Update HomeAssistant documentation (#705)
+- Step 4 about emptying the import forward was not clear (#703)
+
+#### Other
+
+- Optimize conversion helper functions
+- Allow to set a cost by the minute per geo-fence
+- Allow to set charge cost by minute
+- Allow negative charge costs
+- Periodically store vehicle data while charging
+- Use a more performant HTTP client
+
+### Bug Fixes
+
+- Vampire Drain: Fix duplicate values with multiple cars (#726)
+- Tooling: Ensure dashboards are restored into the same folder as they currently belong to (#712)
+
 ## [1.19.3] - 2020-05-03
 
 ### Enhancements
