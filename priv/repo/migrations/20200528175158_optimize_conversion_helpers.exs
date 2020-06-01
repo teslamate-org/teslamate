@@ -2,7 +2,7 @@ defmodule TeslaMate.Repo.Migrations.OptimizeConversionHelpers do
   use Ecto.Migration
 
   def change do
-    execute("DROP FUNCTION public.convert_km(double precision, text);", &noop/0)
+    execute("DROP FUNCTION IF EXISTS public.convert_km(double precision, text);", &noop/0)
 
     execute(
       """
@@ -21,7 +21,7 @@ defmodule TeslaMate.Repo.Migrations.OptimizeConversionHelpers do
       &noop/0
     )
 
-    execute("DROP FUNCTION public.convert_celsius(double precision, text);", &noop/0)
+    execute("DROP FUNCTION IF EXISTS public.convert_celsius(double precision, text);", &noop/0)
 
     execute(
       """
