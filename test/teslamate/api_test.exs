@@ -56,7 +56,7 @@ defmodule TeslaMate.ApiTest do
          {:ok, %TeslaApi.Auth{token: "$token", refresh_token: "$token", expires_in: 10_000_000}}
        end,
        refresh: fn
-         %{token: nil, refresh_token: nil} = auth ->
+         %{token: "cannot_be_refreshed", refresh_token: "cannot_be_refreshed"} = auth ->
            send(pid, {TeslaApi.Auth, {:refresh, auth}})
            {:error, %TeslaApi.Error{reason: :induced_error, message: "foo"}}
 
@@ -68,7 +68,7 @@ defmodule TeslaMate.ApiTest do
   end
 
   @valid_tokens %Tokens{access: "$access", refresh: "$refresh"}
-  @invalid_tokens %Tokens{access: nil, refresh: nil}
+
   @valid_credentials %Credentials{email: "teslamate", password: "foo"}
 
   describe "sign in" do
@@ -101,13 +101,21 @@ defmodule TeslaMate.ApiTest do
     end
 
     @tag :capture_log
-    test "starts anyway if tokens are invalid ", %{test: name} do
+    test "uses the tokens from the database if the refresh fails", %{test: name} do
       with_mocks [auth_mock(self()), vehicle_mock(self())] do
-        :ok = start_api(name, tokens: @invalid_tokens)
+        :ok =
+          start_api(name,
+            tokens: %Tokens{access: "cannot_be_refreshed", refresh: "cannot_be_refreshed"}
+          )
 
-        assert_receive {TeslaApi.Auth, {:refresh, %TeslaApi.Auth{refresh_token: nil, token: nil}}}
+        assert_receive {TeslaApi.Auth,
+                        {:refresh,
+                         %TeslaApi.Auth{
+                           refresh_token: "cannot_be_refreshed",
+                           token: "cannot_be_refreshed"
+                         }}}
 
-        assert false == Api.signed_in?(name)
+        assert true == Api.signed_in?(name)
 
         refute_receive _
       end

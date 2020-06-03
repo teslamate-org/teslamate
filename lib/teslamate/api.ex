@@ -4,7 +4,7 @@ defmodule TeslaMate.Api do
   require Logger
 
   alias TeslaMate.Auth.{Tokens, Credentials}
-  alias TeslaMate.Vehicles
+  alias TeslaMate.{Vehicles, Convert}
   alias TeslaApi.Auth
 
   alias Finch.Response
@@ -82,13 +82,21 @@ defmodule TeslaMate.Api do
 
     ^name = :ets.new(name, [:named_table, :set, :public, read_concurrency: true])
 
-    with %Tokens{} = tokens <- call(deps.auth, :get_tokens),
-         {:ok, auth} <- refresh_tokens(tokens) do
-      :ok = call(deps.auth, :save, [auth])
-      true = insert_auth(name, auth)
-    else
-      {:error, reason} -> Logger.warn("Token refresh failed: #{inspect(reason, pretty: true)}")
-      nil -> nil
+    with %Tokens{access: at, refresh: rt} when is_binary(at) and is_binary(rt) <-
+           call(deps.auth, :get_tokens) do
+      restored_tokens = %Auth{token: at, refresh_token: rt, expires_in: 1.12 * 60 * 60}
+
+      case refresh_tokens(restored_tokens) do
+        {:ok, refreshed_tokens} ->
+          :ok = call(deps.auth, :save, [refreshed_tokens])
+          true = insert_auth(name, refreshed_tokens)
+          :ok = schedule_refresh(refreshed_tokens)
+
+        {:error, reason} ->
+          Logger.warn("Token refresh failed: #{inspect(reason, pretty: true)}")
+          true = insert_auth(name, restored_tokens)
+          :ok = schedule_refresh(restored_tokens)
+      end
     end
 
     {:ok, %State{name: name, deps: deps}}
@@ -111,14 +119,19 @@ defmodule TeslaMate.Api do
 
   @impl true
   def handle_info(:refresh_auth, %State{name: name} = state) do
-    Logger.info("Refreshing access token ...")
+    case fetch_auth(name) do
+      {:ok, tokens} ->
+        Logger.info("Refreshing access token ...")
 
-    {:ok, auth} = fetch_auth(name)
-    {:ok, auth} = Auth.refresh(auth)
+        {:ok, refreshed_tokens} = Auth.refresh(tokens)
 
-    true = insert_auth(name, auth)
-    :ok = call(state.deps.auth, :save, [auth])
-    :ok = schedule_refresh(auth)
+        true = insert_auth(name, refreshed_tokens)
+        :ok = call(state.deps.auth, :save, [refreshed_tokens])
+        :ok = schedule_refresh(refreshed_tokens)
+
+      {:error, reason} ->
+        Logger.warn("Cannot refresh access token: #{inspect(reason)}")
+    end
 
     {:noreply, state}
   end
@@ -130,19 +143,16 @@ defmodule TeslaMate.Api do
 
   ## Private
 
-  defp refresh_tokens(%Tokens{access: at, refresh: rt}) do
-    current = %Auth{token: at, refresh_token: rt}
-
+  defp refresh_tokens(%Auth{} = tokens) do
     case Application.get_env(:teslamate, :disable_token_refresh, false) do
       true ->
         Logger.info("Token refresh is disabled")
-        {:ok, current}
+        {:ok, tokens}
 
       false ->
-        with {:ok, %Auth{} = auth} <- Auth.refresh(current) do
+        with {:ok, %Auth{} = refresh_tokens} <- Auth.refresh(tokens) do
           Logger.info("Refreshed api tokens")
-          :ok = schedule_refresh(auth)
-          {:ok, auth}
+          {:ok, refresh_tokens}
         end
     end
   end
@@ -150,11 +160,18 @@ defmodule TeslaMate.Api do
   defp schedule_refresh(%Auth{} = auth) do
     ms =
       auth.expires_in
-      |> Kernel.*(0.89)
+      |> Kernel.*(0.9)
       |> round()
       |> :timer.seconds()
 
-    Logger.info("Scheduling token refresh in #{round(ms / (24 * 60 * 60 * 1000))}d")
+    duration =
+      ms
+      |> div(1000)
+      |> Convert.sec_to_str()
+      |> Enum.reject(&String.ends_with?(&1, "s"))
+      |> Enum.join(" ")
+
+    Logger.info("Scheduling token refresh in #{duration}")
     Process.send_after(self(), :refresh_auth, ms)
 
     :ok
