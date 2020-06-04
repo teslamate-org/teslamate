@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.20.0-dev] - unreleased
 
 ### Enhancements
 
@@ -41,6 +41,10 @@
 
 - Vampire Drain: Fix duplicate values with multiple cars (#726)
 - Tooling: Ensure dashboards are restored into the same folder as they currently belong to (#712)
+
+## [1.19.4] - 2020-06-04
+
+- Bump Grafana to 6.7.4 which includes an [important security patch](https://grafana.com/blog/2020/06/03/grafana-6.7.4-and-7.0.2-released-with-important-security-fix)
 
 ## [1.19.3] - 2020-05-03
 
@@ -998,7 +1002,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/adriankumpf/teslamate/compare/v1.19.3...HEAD
+[1.20.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.19.4...HEAD
+[1.19.4]: https://github.com/adriankumpf/teslamate/compare/v1.19.3...v1.19.4
 [1.19.3]: https://github.com/adriankumpf/teslamate/compare/v1.19.2...v1.19.3
 [1.19.2]: https://github.com/adriankumpf/teslamate/compare/v1.19.1...v1.19.2
 [1.19.1]: https://github.com/adriankumpf/teslamate/compare/v1.19.0...v1.19.1
