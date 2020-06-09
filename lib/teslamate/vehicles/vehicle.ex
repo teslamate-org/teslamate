@@ -295,10 +295,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
              [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
 
           {%Vehicle{}, %Data{}} ->
-            Logger.warn("Discarded incomplete fetch result: #{inspect(vehicle)}",
-              car_id: data.car.id
-            )
-
+            Logger.warn("Discarded incomplete fetch result", car_id: data.car.id)
             {:keep_state, data, [broadcast_fetch(false), schedule_fetch(data)]}
         end
 
