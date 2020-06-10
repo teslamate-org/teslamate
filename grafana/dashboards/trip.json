@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1583172888944,
+  "iteration": 1594302704102,
   "links": [
     {
       "icon": "doc",
@@ -69,9 +69,16 @@
     {
       "autoZoom": true,
       "datasource": "TeslaMate",
+      "defaultLayer": "OpenStreetMap",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 15,
-        "w": 14,
+        "h": 13,
+        "w": 13,
         "x": 0,
         "y": 1
       },
@@ -86,6 +93,8 @@
           "value": "1"
         }
       },
+      "scrollWheelZoom": false,
+      "showLayerChanger": true,
       "targets": [
         {
           "format": "time_series",
@@ -124,56 +133,88 @@
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "TeslaMate",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "distance_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "km"
+              },
+              {
+                "id": "displayName",
+                "value": "Distance"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "distance_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "mi"
+              },
+              {
+                "id": "displayName",
+                "value": "Distance"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 3,
+        "h": 2,
         "w": 6,
-        "x": 14,
+        "x": 13,
         "y": 1
       },
       "id": 10,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " $length_unit",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.1.1",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -181,22 +222,13 @@
           "value": "1"
         }
       },
-      "sparkline": {
-        "fillColor": "rgba(86, 166, 75, 0.25)",
-        "full": false,
-        "lineColor": "#56A64B",
-        "show": true,
-        "ymax": null,
-        "ymin": null
-      },
-      "tableColumn": "",
       "targets": [
         {
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit') as distance\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)\nORDER BY 1;",
+          "rawSql": "SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)\nORDER BY 1;",
           "refId": "A",
           "select": [
             [
@@ -220,20 +252,10 @@
           ]
         }
       ],
-      "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
       "title": "",
-      "type": "singlestat",
-      "valueFontSize": "60%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "aliasColors": {
@@ -249,12 +271,18 @@
       },
       "datasource": "TeslaMate",
       "decimals": 1,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "80%",
       "format": "dtdurations",
       "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 20,
+        "h": 8,
+        "w": 5,
+        "x": 19,
         "y": 1
       },
       "id": 38,
@@ -344,57 +372,97 @@
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "TeslaMate",
       "description": "",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "speed_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              },
+              {
+                "id": "displayName",
+                "value": "excl. breaks"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "speed_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocitymph"
+              },
+              {
+                "id": "displayName",
+                "value": "excl. breaks"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 3,
+        "h": 2,
         "w": 6,
-        "x": 14,
-        "y": 4
+        "x": 13,
+        "y": 3
       },
       "id": 26,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " ${length_unit}/h",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "7.1.1",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -402,22 +470,13 @@
           "value": "1"
         }
       },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
-      },
-      "tableColumn": "",
       "targets": [
         {
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  convert_km(sum(end_position.odometer - start_position.odometer)::numeric, '$length_unit') / (sum(extract(epoch FROM end_position.date - start_position.date)) / 3600)\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date)",
+          "rawSql": "SELECT\n  convert_km(sum(end_position.odometer - start_position.odometer)::numeric, '$length_unit') / (sum(extract(epoch FROM end_position.date - start_position.date)) / 3600) as \"speed_$length_unit\"\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date)",
           "refId": "A",
           "select": [
             [
@@ -441,73 +500,95 @@
           ]
         }
       ],
-      "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "(excl. breaks)",
-      "type": "singlestat",
-      "valueFontSize": "60%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "title": "",
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "TeslaMate",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "speed_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              },
+              {
+                "id": "displayName",
+                "value": "incl. DC charging"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "speed_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocitymph"
+              },
+              {
+                "id": "displayName",
+                "value": "incl. DC charging"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 3,
+        "h": 2,
         "w": 6,
-        "x": 14,
-        "y": 7
+        "x": 13,
+        "y": 5
       },
       "id": 28,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " ${length_unit}/h",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "30%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "7.1.1",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -515,22 +596,13 @@
           "value": "1"
         }
       },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
-      },
-      "tableColumn": "",
       "targets": [
         {
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH dc_charges AS (\n  SELECT\n\t\tcp.id,\n    extract(epoch FROM cp.end_date - cp.start_date) as duration_sec,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.charge_energy_added > 0\n    AND ($__timeFilter(start_date) OR $__timeFilter(end_date))\n  GROUP BY 1,2\n),\n\ndata AS (\n  (\n  SELECT\n    sum(end_position.odometer - start_position.odometer) as distance, \n    sum(extract(epoch FROM end_position.date - start_position.date)) as duration_sec\n  FROM\n    drives\n    JOIN positions start_position ON start_position_id = start_position.id\n    JOIN positions end_position ON end_position_id = end_position.id\n  WHERE\n    drives.car_id = $car_id\n    AND $__timeFilter(start_date)\n  ) UNION ALL (\n  SELECT\n    NULL as distance,\n    sum(duration_sec)\n  FROM\n    dc_charges\n  WHERE\n   current = 'DC'\n  )\n)\n\nSELECT convert_km(sum(distance)::numeric, '$length_unit') / (sum(duration_sec) / 3600) from data",
+          "rawSql": "WITH dc_charges AS (\n  SELECT\n\t\tcp.id,\n    extract(epoch FROM cp.end_date - cp.start_date) as duration_sec,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.charge_energy_added > 0\n    AND ($__timeFilter(start_date) OR $__timeFilter(end_date))\n  GROUP BY 1,2\n),\n\ndata AS (\n  (\n  SELECT\n    sum(end_position.odometer - start_position.odometer) as distance, \n    sum(extract(epoch FROM end_position.date - start_position.date)) as duration_sec\n  FROM\n    drives\n    JOIN positions start_position ON start_position_id = start_position.id\n    JOIN positions end_position ON end_position_id = end_position.id\n  WHERE\n    drives.car_id = $car_id\n    AND $__timeFilter(start_date)\n  ) UNION ALL (\n  SELECT\n    NULL as distance,\n    sum(duration_sec)\n  FROM\n    dc_charges\n  WHERE\n   current = 'DC'\n  )\n)\n\nSELECT convert_km(sum(distance)::numeric, '$length_unit') / (sum(duration_sec) / 3600) as \"speed_$length_unit\"\nfrom data",
           "refId": "A",
           "select": [
             [
@@ -554,73 +626,328 @@
           ]
         }
       ],
-      "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "(incl. DC charging)",
-      "type": "singlestat",
-      "valueFontSize": "60%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "title": "",
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "TeslaMate",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "displayName",
+                "value": "net"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/mi"
+              },
+              {
+                "id": "displayName",
+                "value": "net"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 13,
+        "y": 7
+      },
+      "id": 30,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "7.1.1",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sum(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit') as \"consumption_$length_unit\"\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(start_date) AND car_id = $car_id",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "TeslaMate",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "displayName",
+                "value": "gross"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/mi"
+              },
+              {
+                "id": "displayName",
+                "value": "gross"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 16,
+        "y": 7
+      },
+      "id": 32,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "7.1.1",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH d AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM charging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id AND\n\t  $__timeFilter(start_date)\n\tORDER BY start_date\n),\n\nrange_loss_between_charges AS (\n  SELECT sum(range_loss) AS range_loss\n  FROM d\n  WHERE distance >= 0 AND range_loss >= 0\n  GROUP BY car_id\n),\n\ncharge_dates AS (\n\tSELECT\n\t\tmin(start_date) as first_charge,\n\t\tmax(end_date) as last_charge\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tend_date IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND $__timeFilter(start_date)\n),\n\nrange_loss_before_first_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND ((select first_charge from charge_dates) is null OR date < (select first_charge from charge_dates))\n),\n\nrange_loss_after_last_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND date > (select last_charge from charge_dates)\t\n),\n\ntotal_range_loss AS (\n  SELECT sum(range_loss) as range_loss\n  FROM (\n    SELECT range_loss FROM range_loss_between_charges\n    UNION ALL\n    SELECT range_loss FROM range_loss_before_first_charge\n    UNION ALL\n    SELECT range_loss FROM range_loss_after_last_charge\n  ) r\n),\n\ndistance AS (\n  SELECT max(odometer) - min(odometer) as distance\n  FROM positions\n  WHERE car_id = $car_id AND $__timeFilter(date)\n)\n\nSELECT \n  NULLIF(range_loss, 0) * (c.efficiency * 1000) / convert_km(NULLIF(distance::numeric, 0), '$length_unit') as \"consumption_$length_unit\"\nFROM total_range_loss, distance\nLEFT JOIN cars c ON c.id = $car_id",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "TeslaMate",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "displayName": "Cost",
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 2,
-        "w": 4,
-        "x": 20,
-        "y": 8
+        "w": 5,
+        "x": 19,
+        "y": 9
       },
       "id": 22,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "Cost:",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "7.1.1",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -628,22 +955,13 @@
           "value": "1"
         }
       },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
-      },
-      "tableColumn": "",
       "targets": [
         {
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select sum(cost) from charging_processes where $__timeFilter(start_date);",
+          "rawSql": "select sum(cost) as \"Cost\" from charging_processes where $__timeFilter(start_date);",
           "refId": "A",
           "select": [
             [
@@ -667,68 +985,62 @@
           ]
         }
       ],
-      "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
       "title": "",
-      "type": "singlestat",
-      "valueFontSize": "60%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 1,
+          "displayName": "${__cell_0}",
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-yellow",
+                "value": null
+              },
+              {
+                "color": "semi-dark-yellow",
+                "value": 10
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 100
+              }
+            ]
+          },
+          "unit": "kwatth"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 3,
-        "w": 10,
-        "x": 14,
-        "y": 10
+        "w": 11,
+        "x": 13,
+        "y": 11
       },
       "id": 40,
       "options": {
         "displayMode": "gradient",
-        "fieldOptions": {
+        "orientation": "horizontal",
+        "reduceOptions": {
           "calcs": [
             "mean"
           ],
-          "defaults": {
-            "decimals": 1,
-            "links": [],
-            "mappings": [],
-            "min": 0,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "light-yellow",
-                  "value": null
-                },
-                {
-                  "color": "semi-dark-yellow",
-                  "value": 10
-                },
-                {
-                  "color": "semi-dark-orange",
-                  "value": 100
-                }
-              ]
-            },
-            "title": "${__cell_0}",
-            "unit": "kwatth"
-          },
-          "overrides": [],
+          "fields": "",
           "values": true
         },
-        "orientation": "horizontal",
         "showUnfilled": false
       },
-      "pluginVersion": "6.7.2",
+      "pluginVersion": "7.1.1",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -801,234 +1113,6 @@
       "type": "bargauge"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
-      "datasource": "TeslaMate",
-      "decimals": 0,
-      "format": "watth",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 5,
-        "x": 14,
-        "y": 13
-      },
-      "id": 30,
-      "interval": null,
-      "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
-      "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " /  $length_unit",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "20%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
-      },
-      "tableColumn": "",
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  sum(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit')\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(start_date) AND car_id = $car_id",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "thresholds": "",
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "(net)",
-      "type": "singlestat",
-      "valueFontSize": "60%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
-    },
-    {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
-      "datasource": "TeslaMate",
-      "decimals": 0,
-      "format": "watth",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 5,
-        "x": 19,
-        "y": 13
-      },
-      "id": 32,
-      "interval": null,
-      "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
-      "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "  / $length_unit",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "20%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
-      },
-      "tableColumn": "",
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH d AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM charging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id AND\n\t  $__timeFilter(start_date)\n\tORDER BY start_date\n),\n\nrange_loss_between_charges AS (\n  SELECT sum(range_loss) AS range_loss\n  FROM d\n  WHERE distance >= 0 AND range_loss >= 0\n  GROUP BY car_id\n),\n\ncharge_dates AS (\n\tSELECT\n\t\tmin(start_date) as first_charge,\n\t\tmax(end_date) as last_charge\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tend_date IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND $__timeFilter(start_date)\n),\n\nrange_loss_before_first_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND ((select first_charge from charge_dates) is null OR date < (select first_charge from charge_dates))\n),\n\nrange_loss_after_last_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND date > (select last_charge from charge_dates)\t\n),\n\ntotal_range_loss AS (\n  SELECT sum(range_loss) as range_loss\n  FROM (\n    SELECT range_loss FROM range_loss_between_charges\n    UNION ALL\n    SELECT range_loss FROM range_loss_before_first_charge\n    UNION ALL\n    SELECT range_loss FROM range_loss_after_last_charge\n  ) r\n),\n\ndistance AS (\n  SELECT max(odometer) - min(odometer) as distance\n  FROM positions\n  WHERE car_id = $car_id AND $__timeFilter(date)\n)\n\nSELECT \n  NULLIF(range_loss, 0) * (c.efficiency * 1000) / convert_km(NULLIF(distance::numeric, 0), '$length_unit')\nFROM total_range_loss, distance\nLEFT JOIN cars c ON c.id = $car_id",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "thresholds": "",
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "(gross)",
-      "type": "singlestat",
-      "valueFontSize": "60%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
-    },
-    {
       "backgroundColor": "rgba(128,128,128,0.01)",
       "colorMaps": [
         {
@@ -1062,11 +1146,17 @@
       "display": "timeline",
       "expandFromQueryS": 0,
       "extendLastValue": true,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 14
       },
       "highlightOnMouseover": false,
       "id": 20,
@@ -1223,12 +1313,18 @@
     {
       "columns": [],
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 16
       },
       "id": 2,
       "links": [],
@@ -1738,17 +1834,23 @@
       ],
       "title": "Drives",
       "transform": "table",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "columns": [],
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 27
       },
       "id": 36,
       "links": [],
@@ -2219,7 +2321,7 @@
       "timeShift": null,
       "title": "Charges",
       "transform": "table",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "aliasColors": {},
@@ -2228,13 +2330,19 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 2,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 37
+        "y": 35
       },
       "hiddenSeries": false,
       "id": 42,
@@ -2253,10 +2361,8 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.1.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2355,13 +2461,19 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 2,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 37
+        "y": 35
       },
       "hiddenSeries": false,
       "id": 8,
@@ -2378,10 +2490,8 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.1.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2474,7 +2584,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 22,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [
     "tesla"
@@ -2492,7 +2602,6 @@
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
-        "index": -1,
         "label": "Car",
         "multi": false,
         "name": "car_id",
@@ -2511,6 +2620,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "C",
           "value": "C"
         },
@@ -2518,7 +2628,6 @@
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "index": -1,
         "label": "temperature unit",
         "multi": false,
         "name": "temp_unit",
@@ -2537,6 +2646,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "km",
           "value": "km"
         },
@@ -2544,7 +2654,6 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "index": -1,
         "label": "length unit",
         "multi": false,
         "name": "length_unit",
@@ -2563,6 +2672,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "m",
           "value": "m"
         },
@@ -2570,7 +2680,6 @@
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "index": -1,
         "label": "",
         "multi": false,
         "name": "alternative_length_unit",
@@ -2589,6 +2698,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "ideal",
           "value": "ideal"
         },
@@ -2596,7 +2706,6 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "index": -1,
         "label": "",
         "multi": false,
         "name": "preferred_range",
@@ -2615,6 +2724,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },
@@ -2622,7 +2732,6 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "index": -1,
         "label": "",
         "multi": false,
         "name": "base_url",
@@ -2641,14 +2750,14 @@
       {
         "allValue": null,
         "current": {
-          "text": "1581864388329",
-          "value": "1581864388329"
+          "selected": false,
+          "text": "1591702206015",
+          "value": "1591702206015"
         },
         "datasource": "TeslaMate",
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "hide": 2,
         "includeAll": false,
-        "index": -1,
         "label": null,
         "multi": false,
         "name": "from",
@@ -2698,8 +2807,5 @@
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
-  "variables": {
-    "list": []
-  },
   "version": 1
 }
