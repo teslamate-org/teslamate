@@ -71,11 +71,14 @@
         "x": 0,
         "y": 1
       },
+      "hiddenSeries": false,
       "id": 2,
       "legend": {
         "alignAsTable": true,
         "avg": false,
         "current": false,
+        "hideEmpty": false,
+        "hideZero": false,						   				  
         "max": true,
         "min": true,
         "rightSide": false,
@@ -86,7 +89,7 @@
       "lines": true,
       "linewidth": 1,
       "links": [],
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "dataLinks": []
       },
@@ -113,7 +116,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH summary AS (\n\tSELECT\n\t\tdate,\n\t\todometer,\n\t\trank() OVER (PARTITION BY date_trunc('hour', date) ORDER BY date DESC) AS rk\n\t\tFROM\n\t\t\tpositions\n\t\tWHERE\n\t\t\tcar_id = $car_id AND\n\t\t\t$__timeFilter(date)\n)\nSELECT\n date as time,\n convert_km(odometer::numeric, '$length_unit') as \"mileage [$length_unit]\"\nFROM\n\tsummary\nWHERE\n\trk = 1\n\torder by date;",
+          "rawSql": "WITH odo\nAS (SELECT\n  start_date AS time,\n  car_id,\n  start_km  AS \"odometer\"\nFROM drives\nUNION ALL\nSELECT\n  end_date ,\n  car_id,\n  end_km \nFROM drives)\n\nSELECT\n  time\n  ,convert_km(odometer::numeric, '$length_unit') as \"mileage [$length_unit]\"\nFROM odo\nWHERE\n\tcar_id = $car_id AND\n\t$__timeFilter(time)\norder by 1\n",
           "refId": "A",
           "select": [
             [
