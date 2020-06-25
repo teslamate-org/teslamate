@@ -516,7 +516,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
     def github_mock do
       release = %{"tag_name" => "v1.1.3", "prerelease" => false, "draft" => false}
       resp = %Finch.Response{status: 200, body: Jason.encode!(release)}
-      {TeslaMate.HTTP, [], get: fn _, _, _ -> {:ok, resp} end}
+      {TeslaMate.HTTP, [], get: fn _, _ -> {:ok, resp} end}
     end
 
     test "informs if an update is available", %{conn: conn} do
@@ -534,11 +534,12 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                  |> Floki.text()
 
         assert [
-                 {"a", [_, {"href", "/donate"}, _, _, _], [_, {_, _, ["Donate"]}]},
                  {"a",
                   [_, {"href", "https://github.com/adriankumpf/teslamate/releases"}, _, _, _],
                   [_, {_, _, ["Update available: 1.1.3"]}]}
-               ] = Floki.find(html, ".footer a")
+               ] =
+                 Floki.find(html, ".footer a")
+                 |> Enum.reject(&match?({"a", [_, _, _, _, _], [_, {_, _, ["Donate"]}]}, &1))
       end
     end
   end

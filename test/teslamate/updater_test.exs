@@ -17,7 +17,7 @@ defmodule TeslaMate.UpdaterTest do
     end
 
     def response(resp) do
-      [{TeslaMate.HTTP, [], get: fn _, _, _ -> resp end}]
+      [{TeslaMate.HTTP, [], get: fn _, _ -> resp end}]
     end
   end
 
@@ -50,7 +50,7 @@ defmodule TeslaMate.UpdaterTest do
   end
 
   test "returns early even though update check is still in progress", %{test: name} do
-    with_mocks [{TeslaMate.HTTP, [], get: fn _, _, _ -> Process.sleep(1_000_000) end}] do
+    with_mocks [{TeslaMate.HTTP, [], get: fn _, _ -> Process.sleep(1_000_000) end}] do
       {:ok, pid} = start_updater(name, "1.0.0")
       assert nil == Updater.get_update(pid)
     end
