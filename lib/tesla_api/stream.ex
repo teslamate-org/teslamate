@@ -33,7 +33,8 @@ defmodule TeslaApi.Stream do
     }
 
     WebSockex.start_link(@endpoint_url, __MODULE__, state,
-      socket_recv_timeout: :timer.seconds(10),
+      socket_connect_timeout: :timer.seconds(6),
+      socket_recv_timeout: :timer.seconds(15),
       name: :"stream_#{state.vehicle_id}",
       cacerts: @cacerts,
       insecure: false,
@@ -100,7 +101,7 @@ defmodule TeslaApi.Stream do
 
     case Jason.decode(msg) do
       {:ok, %{"msg_type" => "control:hello", "connection_timeout" => t}} ->
-        Logger.debug("control:hello – #{t}")
+        Logger.info("control:hello – #{t}")
         {:ok, state}
 
       {:ok, %{"msg_type" => "data:update", "tag" => ^tag, "value" => data}}
@@ -115,20 +116,25 @@ defmodule TeslaApi.Stream do
         {:ok, %State{state | last_data: data, timeouts: 0, disconnects: 0}}
 
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "vehicle_disconnected"}} ->
-        Logger.debug("Vehicle disconnected")
+        case state.disconnects do
+          d when d != 0 and rem(d, 10) == 0 ->
+            {:close, %State{state | disconnects: d + 1}}
 
-        ms =
-          case state do
-            %State{last_data: %Data{shift_state: s}} when s in ~w(P D N R) ->
-              exp_backoff_ms(state.disconnects, base: 1.3, max_seconds: 8)
+          d ->
+            ms =
+              case state do
+                %State{last_data: %Data{shift_state: s}} when s in ~w(P D N R) ->
+                  exp_backoff_ms(d, base: 1.3, max_seconds: 8)
 
-            %State{} ->
-              :timer.seconds(15)
-          end
+                %State{} ->
+                  exp_backoff_ms(d, min_seconds: 15, max_seconds: 30)
+              end
 
-        Process.send_after(self(), :subscribe, ms)
+            cancel_timer(state.timer)
+            timer = Process.send_after(self(), :subscribe, ms)
 
-        {:ok, %State{state | disconnects: state.disconnects + 1}}
+            {:ok, %State{state | timer: timer, disconnects: d + 1}}
+        end
 
       {:ok,
        %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "vehicle_error", "value" => v}} ->
@@ -154,9 +160,14 @@ defmodule TeslaApi.Stream do
 
   @impl true
   def handle_disconnect(%{reason: reason, attempt_number: n}, state) when is_number(n) do
+    cancel_timer(state.timer)
+
     case reason do
       {:local, :normal} ->
-        Logger.debug("Reconnecting …")
+        Logger.info(
+          "Connction was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}). Reconnecting …"
+        )
+
         {:reconnect, state}
 
       {:remote, :closed} ->
@@ -185,10 +196,6 @@ defmodule TeslaApi.Stream do
         |> Process.sleep()
 
         {:reconnect, state}
-
-      reason ->
-        Logger.warn("Disconnected! #{inspect(reason)}")
-        {:ok, state}
     end
   end
 

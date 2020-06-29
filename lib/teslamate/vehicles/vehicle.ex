@@ -702,6 +702,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
       when state == :online or (is_tuple(state) and elem(state, 0) == :suspended) do
     alias TeslaApi.Vehicle, as: V
 
+    if match?({:suspended, _}, state) do
+      temp = vehicle.climate_state && vehicle.climate_state.outside_temp
+      Logger.info("Vehicle is (still) online: #{temp} °C")
+    end
+
     case vehicle do
       %V{vehicle_state: %VehicleState{timestamp: ts, software_update: %{status: "installing"}}} ->
         Logger.info("Update / Start", car_id: data.car.id)
