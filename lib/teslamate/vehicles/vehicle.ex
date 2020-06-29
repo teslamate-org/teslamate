@@ -473,6 +473,23 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   #### Rest
 
+  def handle_event(:info, {:stream, :too_many_disconnects}, _state, data) do
+    Logger.info("Creating new connection … ", car_id: data.car.id)
+
+    ref = Process.monitor(data.stream_pid)
+    :ok = disconnect_stream(data)
+
+    receive do
+      {:DOWN, ^ref, :process, _object, _reason} -> :ok
+    after
+      1000 -> :continue
+    end
+
+    {:ok, pid} = connect_stream(data)
+
+    {:keep_state, %Data{data | stream_pid: pid}}
+  end
+
   def handle_event(:info, {:stream, stream_data}, _state, data) do
     Logger.info("Received stream data: #{inspect(stream_data)}", car_id: data.car.id)
     :keep_state_and_data
@@ -703,8 +720,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
     alias TeslaApi.Vehicle, as: V
 
     if match?({:suspended, _}, state) do
-      temp = vehicle.climate_state && vehicle.climate_state.outside_temp
-      Logger.info("Vehicle is (still) online: #{temp} °C")
+      duration_str =
+        DateTime.utc_now()
+        |> diff_seconds(data.last_used)
+        |> Convert.sec_to_str()
+        |> Enum.reject(&String.ends_with?(&1, "s"))
+        |> Enum.join(" ")
+
+      Logger.info("Vehicle is still online. Falling asleep for: #{duration_str}",
+        car_id: data.car.id
+      )
     end
 
     case vehicle do

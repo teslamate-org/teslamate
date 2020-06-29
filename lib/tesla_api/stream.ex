@@ -118,7 +118,12 @@ defmodule TeslaApi.Stream do
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "vehicle_disconnected"}} ->
         case state.disconnects do
           d when d != 0 and rem(d, 10) == 0 ->
-            {:close, %State{state | disconnects: d + 1}}
+            Logger.warn("Too many disconnects …")
+
+            cancel_timer(state.timer)
+            state.receiver.(:too_many_disconnects)
+
+            {:ok, %State{state | disconnects: d + 1}}
 
           d ->
             ms =
