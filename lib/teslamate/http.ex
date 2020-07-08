@@ -21,11 +21,25 @@ defmodule TeslaMate.HTTP do
     }
   end
 
-  def get(url, headers \\ [], opts \\ []) do
-    Finch.request(__MODULE__, :get, url, headers, nil, opts)
+  @pool_timeout 10_000
+
+  def get(url, opts \\ []) do
+    {headers, opts} =
+      opts
+      |> Keyword.put_new(:pool_timeout, @pool_timeout)
+      |> Keyword.pop(:headers, [])
+
+    Finch.build(:get, url, headers, nil)
+    |> Finch.request(__MODULE__, opts)
   end
 
-  def post(url, headers \\ [], body \\ nil, opts \\ []) do
-    Finch.request(__MODULE__, :post, url, headers, body, opts)
+  def post(url, body \\ nil, opts \\ []) do
+    {headers, opts} =
+      opts
+      |> Keyword.put_new(:pool_timeout, @pool_timeout)
+      |> Keyword.pop(:headers, [])
+
+    Finch.build(:post, url, headers, body)
+    |> Finch.request(__MODULE__, opts)
   end
 end

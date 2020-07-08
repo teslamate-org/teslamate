@@ -10,7 +10,7 @@ defmodule TeslaApi do
   def get(path, token, opts \\ []) when is_binary(token) do
     headers = [{"user-agent", @user_agent}, {"Authorization", "Bearer " <> token}]
 
-    case HTTP.get(url(path), headers, receive_timeout: @timeout) do
+    case HTTP.get(url(path), headers: headers, receive_timeout: @timeout) do
       {:ok, %Res{} = response} ->
         case decode_body(response) do
           %Res{status: status, body: %{"response" => res}} when status in 200..299 ->
@@ -56,7 +56,8 @@ defmodule TeslaApi do
       | if(is_nil(token), do: [], else: [{"Authorization", "Bearer " <> token}])
     ]
 
-    with {:ok, response} <- HTTP.post(url(path), headers, body, receive_timeout: @timeout) do
+    with {:ok, response} <-
+           HTTP.post(url(path), body, headers: headers, receive_timeout: @timeout) do
       {:ok, decode_body(response)}
     end
   end

@@ -6,27 +6,30 @@
 
 #### Dashboards
 
-- Update Consumption Unit to Watt-hour to match In-Car Unit (#717)
-- Charges: Show all charging sessions, including very short ones
-- Charging Details: Show kWh even if still charging (#744)
-- Charging Stats: Visualize % of sum instead of max kWh in charging heat map (#680)
-- Drives: Updated reduced_range to be consistent (#702)
+- Update consumption unit to Watt-hour to match in-car unit ([#717](https://github.com/adriankumpf/teslamate/pull/717) by [mattw01](https://github.com/mattw01))
+- Charges: Show very short charging sessions
+- Charging Details: Show kWh even if still charging ([#744](https://github.com/adriankumpf/teslamate/pull/744) by [Dulanic](https://github.com/Dulanic))
+- Charging Stats: Visualize % of sum instead of max kWh in charging heat map ([#680](https://github.com/adriankumpf/teslamate/pull/680) by [Dulanic](https://github.com/Dulanic))
+- Drives: Update possible values for the "cold" column to be consistent ([#702](https://github.com/adriankumpf/teslamate/pull/702) by [Dulanic](https://github.com/Dulanic))
+- Mileage: Optimize query to get odometer ([#804](https://github.com/adriankumpf/teslamate/pull/804) by [Dulanic](https://github.com/Dulanic))
+- Overview: Add 'total energy added' to chart ([#690](https://github.com/adriankumpf/teslamate/pull/690) by [Dulanic](https://github.com/Dulanic))
 - Overview: Hide stale temperatures
 - Overview: Show most recent driver temp setting while driving
-- Overview: Add 'total energy added' to chart (#690)
-- States: Display all states names (#755)
-- Updates: Show average range and number of chargers per software version to identify if an update had a bigger than expected impact on range (#731) and (#762)
-- Vampire Drain: Utilize charges as additional anchor points (#769)
+- States: Display all states names ([#755](https://github.com/adriankumpf/teslamate/pull/755) by [DrMichael](https://github.com/DrMichael))
+- Updates: Add links to release notes ([#797](https://github.com/adriankumpf/teslamate/pull/797) by [pmboothby](https://github.com/pmboothby))
+- Updates: Show average range and number of chargers per software version to identify if an update had a bigger than expected impact on range ([#731](https://github.com/adriankumpf/teslamate/pull/731) and [#762](https://github.com/adriankumpf/teslamate/pull/762) by [Dulanic](https://github.com/Dulanic))
+- Vampire Drain: Utilize charges as additional anchor points ([#769](https://github.com/adriankumpf/teslamate/pull/769) by [tacotran](https://github.com/tacotran))
 
 #### Translations
 
-- Update Chinese (Simplified) translation (#747)
-- Update French translation (#693)
+- Update Chinese (Simplified) translation ([#747](https://github.com/adriankumpf/teslamate/pull/747) by [edward4hgl](https://github.com/edward4hgl))
+- Update French translation ([#693](https://github.com/adriankumpf/teslamate/pull/693) by [tomS3210](https://github.com/tomS3210))
 
 #### Documentation
 
-- Update HomeAssistant documentation (#705)
-- Step 4 about emptying the import forward was not clear (#703)
+- Update HomeAssistant documentation ([#705](https://github.com/adriankumpf/teslamate/pull/705) by [ngardiner](https://github.com/ngardiner))
+- TeslaFi Import: Clarify steps 3 and 4 about emptying the import folder ([#703](https://github.com/adriankumpf/teslamate/pull/703) by [ramonsmits](https://github.com/ramonsmits))
+- Update Upgrade documentation ([#790](https://github.com/adriankumpf/teslamate/pull/790) by [roadrash2108](https://github.com/roadrash2108))
 
 #### Other
 
@@ -36,11 +39,12 @@
 - Allow negative charge costs
 - Periodically store vehicle data while charging
 - Use a more performant HTTP client
+- Try to keep using API tokens if initial refresh at startup fails
 
 ### Bug Fixes
 
-- Vampire Drain: Fix duplicate values with multiple cars (#726)
-- Tooling: Ensure dashboards are restored into the same folder as they currently belong to (#712)
+- Vampire Drain: Fix duplicate values with multiple cars ([#726](https://github.com/adriankumpf/teslamate/pull/726) by [Dulanic](https://github.com/Dulanic))
+- Tooling: Ensure dashboards are restored into the same folder as they currently belong to ([#712](https://github.com/adriankumpf/teslamate/pull/712) by [sumnerboy12](https://github.com/sumnerboy12))
 
 ## [1.19.4] - 2020-06-04
 

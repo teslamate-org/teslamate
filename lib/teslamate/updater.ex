@@ -81,7 +81,7 @@ defmodule TeslaMate.Updater do
   defp version, do: "#{Application.spec(:teslamate, :vsn)}"
 
   defp fetch_release do
-    case HTTP.get(@url, [], receive_timeout: 30_000) do
+    case HTTP.get(@url, receive_timeout: 30_000) do
       {:ok, %Response{status: 200, body: body}} ->
         with {:ok, release} <- Jason.decode(body) do
           parse_release(release)

@@ -44,6 +44,10 @@ module.exports = {
     },
     {
       type: "doc",
+      id: "projects",
+    },
+    {
+      type: "doc",
       id: "development",
     },
   ],
