@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1568831183157,
+  "iteration": 1594304652394,
   "links": [
     {
       "icon": "dashboard",
@@ -44,11 +43,18 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "decimals": 2,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 1,
       "gridPos": {
         "h": 20,
-        "w": 16,
+        "w": 17,
         "x": 0,
         "y": 0
       },
@@ -69,24 +75,25 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.1.0-beta2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [
         {
+          "$$hashKey": "object:307",
           "alias": "/Range.*/",
           "yaxis": 2
         },
         {
-          "alias": "Charging Voltage  [V]",
+          "$$hashKey": "object:308",
+          "alias": "Charging Voltage [V]",
           "fill": 0,
           "yaxis": 2
         },
         {
+          "$$hashKey": "object:309",
           "alias": "SOC [%]",
           "yaxis": 1
         }
@@ -144,6 +151,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:289",
           "format": "none",
           "label": null,
           "logBase": 1,
@@ -152,6 +160,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:290",
           "format": "none",
           "label": null,
           "logBase": 1,
@@ -167,67 +176,60 @@
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "TeslaMate",
-      "decimals": 1,
-      "format": "kwatth",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 1,
+          "displayName": "Added",
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "kwatth"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 3,
         "w": 4,
-        "x": 16,
+        "x": 17,
         "y": 0
       },
       "id": 8,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.1.0-beta2",
       "targets": [
         {
           "format": "table",
@@ -258,44 +260,46 @@
           ]
         }
       ],
-      "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Added",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "title": "",
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "TeslaMate",
-      "decimals": 2,
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 2,
+          "displayName": "Cost",
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 3,
-        "w": 4,
-        "x": 20,
+        "w": 3,
+        "x": 21,
         "y": 0
       },
       "id": 6,
@@ -306,41 +310,22 @@
           "url": "[[base_url:raw]]/charge-cost/${charging_process_id}"
         }
       ],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.1.0-beta2",
       "targets": [
         {
           "format": "table",
@@ -372,20 +357,10 @@
           ]
         }
       ],
-      "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Cost",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "title": "",
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -397,6 +372,12 @@
         "#d44a3a"
       ],
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -407,8 +388,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 8,
-        "x": 16,
+        "w": 7,
+        "x": 17,
         "y": 3
       },
       "id": 10,
@@ -428,7 +409,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -497,17 +477,22 @@
     {
       "autoZoom": true,
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 15,
-        "w": 8,
-        "x": 16,
+        "w": 7,
+        "x": 17,
         "y": 5
       },
       "id": 4,
       "lineColor": "red",
       "links": [],
       "maxDataPoints": 500,
-      "options": {},
       "pointColor": "royalblue",
       "targets": [
         {
@@ -538,12 +523,12 @@
           ]
         }
       ],
-      "title": "Map",
+      "title": "",
       "type": "pr0ps-trackmap-panel"
     }
   ],
   "refresh": false,
-  "schemaVersion": 22,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -564,13 +549,14 @@
             "value": "NULL"
           }
         ],
-        "query": "NULL",
+        "query": "128",
         "skipUrlSync": false,
         "type": "textbox"
       },
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "C",
           "value": "C"
         },
@@ -596,6 +582,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "1",
           "value": "1"
         },
@@ -621,6 +608,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "km",
           "value": "km"
         },
@@ -646,6 +634,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "ideal",
           "value": "ideal"
         },
@@ -671,6 +660,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },
