@@ -55,6 +55,4 @@ jobs:
         run: mix test
       - name: Check Coverage
         run: mix coveralls.github
-      - name: Catch Coverage Failures
-        if: ${{ failure() }}
-        run: echo OK
+        continue-on-error: true
