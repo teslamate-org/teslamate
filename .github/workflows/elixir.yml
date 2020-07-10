@@ -54,5 +54,6 @@ jobs:
       - name: Run Tests
         run: mix test
       - name: Check Coverage
+        if: github.ref == 'refs/heads/master'
         run: mix coveralls.github
         continue-on-error: true
