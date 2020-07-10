@@ -1281,10 +1281,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp parse_timestamp(ts) do
-    DateTime.from_unix!(ts, :millisecond)
-  end
-
   defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
     {suspend_after_idle_min, suspend_min, i} =
       case {car.settings, streaming?(data)} do
@@ -1520,6 +1516,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp date_opts(%Vehicle{drive_state: %Drive{timestamp: nil}}), do: []
   defp date_opts(%Vehicle{drive_state: %Drive{timestamp: ts}}), do: [date: parse_timestamp(ts)]
   defp date_opts(%Vehicle{}), do: []
+
+  defp parse_timestamp(ts), do: DateTime.from_unix!(ts, :millisecond)
 
   defp schedule_fetch(%Data{} = data), do: schedule_fetch(10, :seconds, data)
   defp schedule_fetch(n, %Data{} = data), do: schedule_fetch(n, :seconds, data)
