@@ -7,7 +7,7 @@ defmodule TeslaMate.Settings.CarSettings do
   schema "car_settings" do
     field :suspend_min, :integer, default: 21
     field :suspend_after_idle_min, :integer, default: 15
-    field :req_not_unlocked, :boolean, default: true
+    field :req_not_unlocked, :boolean, default: false
     field :free_supercharging, :boolean, default: false
     field :use_streaming_api, :boolean, default: true
 

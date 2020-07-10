@@ -94,13 +94,13 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     end
 
     for {msg, status, settings, attrs} <- [
-          {"Car is unlocked", "online", %{},
+          {"Car is unlocked", "online", %{req_not_unlocked: true},
            vehicle_state: %{timestamp: 0, locked: false, car_version: ""}},
           {"Doors are open", "online", %{},
            vehicle_state: %{timestamp: 0, df: 1, dr: 0, pf: 0, pr: 0, car_version: ""}},
           {"Trunk is open", "online", %{},
            vehicle_state: %{timestamp: 0, rt: 1, ft: 0, car_version: ""}},
-          {"Sentry mode is enabled", "online", %{req_not_unlocked: true},
+          {"Sentry mode is enabled", "online", %{},
            vehicle_state: %{timestamp: 0, sentry_mode: true, locked: true, car_version: ""}},
           {"Preconditioning", "online", %{}, climate_state: %{is_preconditioning: true}},
           {"Driver present", "online", %{},

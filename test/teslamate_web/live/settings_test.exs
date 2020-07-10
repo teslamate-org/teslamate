@@ -272,7 +272,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert [] = Floki.find(html, "#car_settings_#{car.id}_suspend_min")
       assert [] = Floki.find(html, "#car_settings_#{car.id}_suspend_after_idle_min")
 
-      assert ["checked"] =
+      assert [] =
                html
                |> Floki.find("#car_settings_#{car.id}_req_not_unlocked")
                |> Floki.attribute("checked")
