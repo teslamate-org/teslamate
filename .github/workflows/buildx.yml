@@ -44,7 +44,7 @@ jobs:
           echo ::set-output name=docker_image::${DOCKER_IMAGE}
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
-            --pull ${TAGS} --file Dockerfile .
+            ${TAGS} --file Dockerfile .
       - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v3
       - name: Checkout
@@ -60,6 +60,7 @@ jobs:
       - name: Docker Buildx (build)
         run: |
           docker buildx build \
+            --pull \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
             --output "type=image,push=false" \
@@ -75,7 +76,6 @@ jobs:
         run: |
           docker buildx build \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
-            --cache-to "type=local,dest=/tmp/.buildx-cache" \
             --output "type=image,push=true" \
             ${{ steps.prepare.outputs.buildx_args }}
       - name: Clear
@@ -108,7 +108,7 @@ jobs:
           echo ::set-output name=docker_image::${DOCKER_IMAGE}
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
-            --pull ${TAGS} --file Dockerfile .
+            ${TAGS} --file Dockerfile .
       - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v3
       - name: Checkout
@@ -125,6 +125,7 @@ jobs:
         run: |
           cd grafana && \
           docker buildx build \
+            --pull \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
             --output "type=image,push=false" \
@@ -141,7 +142,6 @@ jobs:
           cd grafana && \
           docker buildx build \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
-            --cache-to "type=local,dest=/tmp/.buildx-cache" \
             --output "type=image,push=true" \
             ${{ steps.prepare.outputs.buildx_args }}
       - name: Clear
