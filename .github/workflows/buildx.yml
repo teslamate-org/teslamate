@@ -31,13 +31,13 @@ jobs:
           VERSION=edge
 
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            TAG=${GITHUB_REF#refs/tags/v}
-            VERSION=${TAG%-*}
+            VERSION=${GITHUB_REF#refs/tags/v}
+            MINOR_VERSION=${VERSION%.*}
           fi
 
           TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
           if [ "$VERSION" != "edge" ]; then
-            TAGS="$TAGS --tag ${DOCKER_IMAGE}:latest"
+            TAGS="$TAGS --tag ${DOCKER_IMAGE}:${MINOR_VERSION} --tag ${DOCKER_IMAGE}:latest"
           fi
 
           echo ::set-output name=docker_username::${DOCKER_USERNAME}
@@ -95,13 +95,13 @@ jobs:
           VERSION=edge
 
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            TAG=${GITHUB_REF#refs/tags/v}
-            VERSION=${TAG%-*}
+            VERSION=${GITHUB_REF#refs/tags/v}
+            MINOR_VERSION=${VERSION%.*}
           fi
 
           TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
           if [ "$VERSION" != "edge" ]; then
-            TAGS="$TAGS --tag ${DOCKER_IMAGE}:latest"
+            TAGS="$TAGS --tag ${DOCKER_IMAGE}:${MINOR_VERSION} --tag ${DOCKER_IMAGE}:latest"
           fi
 
           echo ::set-output name=docker_username::${DOCKER_USERNAME}
