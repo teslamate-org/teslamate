@@ -54,9 +54,9 @@ jobs:
         id: cache
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-teslamate
+          key: ${{ runner.os }}-buildx-teslamate-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-teslamate
+            ${{ runner.os }}-buildx-teslamate-
       - name: Docker Buildx (build)
         run: |
           docker buildx build \
@@ -117,9 +117,9 @@ jobs:
         id: cache
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-grafana
+          key: ${{ runner.os }}-buildx-grafana-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-grafana
+            ${{ runner.os }}-buildx-grafana-
       - name: Docker Buildx (build)
         run: |
           cd grafana && \
