@@ -60,7 +60,6 @@ jobs:
       - name: Docker Buildx (build)
         run: |
           docker buildx build \
-            --pull \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
             --output "type=image,push=false" \
@@ -125,7 +124,6 @@ jobs:
         run: |
           cd grafana && \
           docker buildx build \
-            --pull \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
             --output "type=image,push=false" \
