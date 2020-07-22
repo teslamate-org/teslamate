@@ -1,10 +1,17 @@
 defmodule TeslaMate.Repo.Migrations.UnitOfLegnthAndTemperature do
   use Ecto.Migration
 
-  alias TeslaMate.Settings.Units
   alias TeslaMate.Repo
 
   import Ecto.Query
+
+  defmodule Units.Length do
+    use EctoEnum.Postgres, type: :length, enums: [:km, :mi]
+  end
+
+  defmodule Units.Temperature do
+    use EctoEnum.Postgres, type: :temperature, enums: [:C, :F]
+  end
 
   def up do
     [use_imperial_units?] =

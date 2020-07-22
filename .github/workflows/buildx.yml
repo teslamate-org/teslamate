@@ -1,0 +1,148 @@
+name: buildx
+
+on:
+  push:
+    branches:
+      - "master"
+    tags:
+      - "v*"
+    paths:
+      - ".github/workflows/buildx.yml"
+      - "grafana/**"
+      - "assets/**"
+      - "config/**"
+      - "lib/**"
+      - "priv/**"
+      - "mix.exs"
+      - "mix.lock"
+      - "entrypoint.sh"
+      - "Dockerfile"
+
+jobs:
+  teslamate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare
+        id: prepare
+        run: |
+          DOCKER_USERNAME=teslamate
+          DOCKER_IMAGE=teslamate/teslamate
+          DOCKER_PLATFORMS=linux/amd64,linux/arm/v7,linux/arm64
+          VERSION=edge
+
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            MINOR_VERSION=${VERSION%.*}
+          fi
+
+          TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
+          if [ "$VERSION" != "edge" ]; then
+            TAGS="$TAGS --tag ${DOCKER_IMAGE}:${MINOR_VERSION} --tag ${DOCKER_IMAGE}:latest"
+          fi
+
+          echo ::set-output name=docker_username::${DOCKER_USERNAME}
+          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
+            ${TAGS} --file Dockerfile .
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v3
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-teslamate-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-teslamate-
+      - name: Docker Buildx (build)
+        run: |
+          docker buildx build \
+            --cache-from "type=local,src=/tmp/.buildx-cache" \
+            --cache-to "type=local,dest=/tmp/.buildx-cache,mode=max" \
+            --output "type=image,push=false" \
+            ${{ steps.prepare.outputs.buildx_args }}
+      - name: Docker Login
+        if: success() && github.event_name != 'pull_request' && (endsWith(github.ref, github.event.repository.default_branch) || startsWith(github.ref, 'refs/tags/'))
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login --username "${{ steps.prepare.outputs.docker_username }}" --password-stdin
+      - name: Docker Buildx (push)
+        if: success() && github.event_name != 'pull_request' && (endsWith(github.ref, github.event.repository.default_branch) || startsWith(github.ref, 'refs/tags/'))
+        run: |
+          docker buildx build \
+            --cache-from "type=local,src=/tmp/.buildx-cache" \
+            --output "type=image,push=true" \
+            ${{ steps.prepare.outputs.buildx_args }}
+      - name: Clear
+        if: always()
+        run: |
+          rm -f ${HOME}/.docker/config.json
+
+  grafana:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare
+        id: prepare
+        run: |
+          DOCKER_USERNAME=teslamate
+          DOCKER_IMAGE=teslamate/grafana
+          DOCKER_PLATFORMS=linux/amd64,linux/arm/v7,linux/arm64
+          VERSION=edge
+
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            MINOR_VERSION=${VERSION%.*}
+          fi
+
+          TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
+          if [ "$VERSION" != "edge" ]; then
+            TAGS="$TAGS --tag ${DOCKER_IMAGE}:${MINOR_VERSION} --tag ${DOCKER_IMAGE}:latest"
+          fi
+
+          echo ::set-output name=docker_username::${DOCKER_USERNAME}
+          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
+            ${TAGS} --file Dockerfile .
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v3
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-grafana-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-grafana-
+      - name: Docker Buildx (build)
+        run: |
+          cd grafana && \
+          docker buildx build \
+            --cache-from "type=local,src=/tmp/.buildx-cache" \
+            --cache-to "type=local,dest=/tmp/.buildx-cache,mode=max" \
+            --output "type=image,push=false" \
+            ${{ steps.prepare.outputs.buildx_args }}
+      - name: Docker Login
+        if: success() && github.event_name != 'pull_request' && (endsWith(github.ref, github.event.repository.default_branch) || startsWith(github.ref, 'refs/tags/'))
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login --username "${{ steps.prepare.outputs.docker_username }}" --password-stdin
+      - name: Docker Buildx (push)
+        if: success() && github.event_name != 'pull_request' && (endsWith(github.ref, github.event.repository.default_branch) || startsWith(github.ref, 'refs/tags/'))
+        run: |
+          cd grafana && \
+          docker buildx build \
+            --cache-from "type=local,src=/tmp/.buildx-cache" \
+            --output "type=image,push=true" \
+            ${{ steps.prepare.outputs.buildx_args }}
+      - name: Clear
+        if: always()
+        run: |
+          rm -f ${HOME}/.docker/config.json

@@ -57,3 +57,12 @@ If you still do not want to enter your Tesla password under any circumstances an
    ```
 
 At this point it should automatically pick up your tokens and bypass the login screen on the TeslaMate web interface. If it does not, look for errors in the logs.
+
+:::note
+Make sure that there is only one pair of tokens in the `tokens` table. To start over, you can safely delete all tokens and then sign in again:
+
+```sql
+DELETE FROM tokens;
+```
+
+:::

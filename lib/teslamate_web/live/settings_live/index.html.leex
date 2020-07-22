@@ -127,8 +127,8 @@
 </form>
 <% end %>
 
-<%= content_tag :div, class: ["is-divider", to_string(if Enum.count(@car_settings) <= 1, do: " is-invisible")],
-                      data_content: gettext("General Settings") do
+<%= content_tag :div, class: ["divider", to_string(if Enum.count(@car_settings) <= 1, do: " is-invisible")] do
+  gettext("General Settings")
 end %>
 
 <%= f = form_for @global_settings.changeset, "#", [phx_change: :change] %>

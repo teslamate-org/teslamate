@@ -127,13 +127,13 @@ msgid "Units"
 msgstr "Enheter"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:119
-#: lib/teslamate_web/live/geofence_live/form.html.leex:100
+#: lib/teslamate_web/live/charge_live/cost.html.leex:131
+#: lib/teslamate_web/live/geofence_live/form.html.leex:105
 msgid "Back"
 msgstr "Tilbake"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:197
+#: lib/teslamate_web/live/geofence_live/form.ex:204
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Geo-lokasjon \"%{name}\" opprettet"
 
@@ -167,14 +167,14 @@ msgid "Radius"
 msgstr "Radius"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:122
-#: lib/teslamate_web/live/geofence_live/form.html.leex:103
+#: lib/teslamate_web/live/charge_live/cost.html.leex:134
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108
 msgid "Save"
 msgstr "Lagre"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:123
-#: lib/teslamate_web/live/geofence_live/form.html.leex:103 lib/teslamate_web/live/signin_live/index.html.leex:33
+#: lib/teslamate_web/live/charge_live/cost.html.leex:135
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108 lib/teslamate_web/live/signin_live/index.html.leex:33
 msgid "Saving..."
 msgstr "Lagrer..."
 
@@ -370,7 +370,7 @@ msgid "Sleep Mode"
 msgstr "Dvalemodus"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:198
+#: lib/teslamate_web/live/geofence_live/form.ex:205
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geo-lokasjon \"%{name}\" oppdatert"
 
@@ -401,17 +401,18 @@ msgid "Charge Cost"
 msgstr "Lading"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:94
+#: lib/teslamate_web/live/charge_live/cost.html.leex:103
+#: lib/teslamate_web/live/geofence_live/form.html.leex:59
 msgid "Cost"
 msgstr "Pris"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:107
+#: lib/teslamate_web/live/charge_live/cost.html.leex:119
 msgid "Enter charge cost"
 msgstr "Angi ladepris"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.ex:68
+#: lib/teslamate_web/live/charge_live/cost.ex:87
 msgid "Saved!"
 msgstr "Lagret!"
 
@@ -480,11 +481,6 @@ msgid "Email address"
 msgstr "Epost"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:59
-msgid "Cost per kWh"
-msgstr "Pris per kWh"
-
-#, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:92
 msgid "Charge cost"
 msgstr "Ladepris"
@@ -500,7 +496,7 @@ msgid "General Settings"
 msgstr "Generelle innstillinger"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:78
+#: lib/teslamate_web/live/geofence_live/form.html.leex:83
 msgid "Session fee"
 msgstr "Øktpris"
 
@@ -510,34 +506,35 @@ msgid "Doors open"
 msgstr "Åpen dør"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:100
+#: lib/teslamate_web/live/charge_live/cost.html.leex:111
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
 msgid "Per kWh"
 msgstr "Pr kWh"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:100
+#: lib/teslamate_web/live/charge_live/cost.html.leex:110
 msgid "Total"
 msgstr "Total"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:120
+#: lib/teslamate_web/live/geofence_live/form.html.leex:125
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "Det er <strong>%{n} ladeøkt</strong> på denne lokasjonen der pris ikke er definert."
 msgstr[1] "Det er <strong>%{n} ladeøkter</strong> på denne lokasjonen der priser ikke er definert."
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:129
+#: lib/teslamate_web/live/geofence_live/form.html.leex:134
 msgid "Add costs retroactively"
 msgstr "Legg til pris med tilbakevirkende kraft"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:114
+#: lib/teslamate_web/live/geofence_live/form.html.leex:119
 msgid "Charging Costs"
 msgstr "Pris på lading"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:128
+#: lib/teslamate_web/live/geofence_live/form.html.leex:133
 msgid "Continue"
 msgstr "Fortsett"
 
@@ -576,3 +573,9 @@ msgstr "Åpen dør"
 #: lib/teslamate_web/live/car_live/summary.ex:136
 msgid "Trunk is open"
 msgstr "Bagasjeluken er åpen"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:112
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
+msgid "Per Minute"
+msgstr ""

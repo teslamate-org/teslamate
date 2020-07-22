@@ -51,7 +51,6 @@ defmodule TeslaMate.Log.ChargingProcess do
     |> validate_required([:car_id, :start_date])
     |> validate_number(:charge_energy_added, greater_than_or_equal_to: 0)
     |> validate_number(:charge_energy_used, greater_than_or_equal_to: 0)
-    |> validate_number(:cost, greater_than_or_equal_to: 0)
     |> foreign_key_constraint(:car_id)
     |> foreign_key_constraint(:position_id)
     |> foreign_key_constraint(:address_id)

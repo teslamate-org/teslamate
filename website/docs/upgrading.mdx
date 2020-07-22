@@ -23,11 +23,14 @@ values={[
 ]}>
 <TabItem value="docker">
 
-Pull the new images and restart the stack:
+Pull the new images:
 
 ```bash
 docker-compose pull
-docker-compose up
+```
+and restart the stack with `docker-compose up`. To run the containers in the background add the `-d` flag:
+```bash
+docker-compose up -d
 ```
 
 </TabItem>
@@ -42,6 +45,7 @@ docker-compose up
    mix deps.get --only prod
    npm install --prefix ./assets && npm run deploy --prefix ./assets
 
+   rm -rf _build
    MIX_ENV=prod mix do phx.digest, release --overwrite
    ```
 

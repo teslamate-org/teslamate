@@ -36,13 +36,13 @@ defmodule TeslaApi.Auth do
 
   defp handle_response(response) do
     case response do
-      {:ok, %Mojito.Response{status_code: 200, body: body}} when body == %{} ->
+      {:ok, %Finch.Response{status: 200, body: body}} when body == %{} ->
         :ok
 
-      {:ok, %Mojito.Response{status_code: 200, body: %{"response" => true}}} ->
+      {:ok, %Finch.Response{status: 200, body: %{"response" => true}}} ->
         :ok
 
-      {:ok, %Mojito.Response{status_code: 200, body: body}} when is_map(body) ->
+      {:ok, %Finch.Response{status: 200, body: body}} when is_map(body) ->
         auth = %__MODULE__{
           token: body["access_token"],
           type: body["token_type"],
@@ -53,7 +53,7 @@ defmodule TeslaApi.Auth do
 
         {:ok, auth}
 
-      {:ok, %Mojito.Response{status_code: 401} = e} ->
+      {:ok, %Finch.Response{status: 401} = e} ->
         error = %Error{
           reason: :authentication_failure,
           message: "Failed to authenticate.",
@@ -62,10 +62,10 @@ defmodule TeslaApi.Auth do
 
         {:error, error}
 
-      {:ok, %Mojito.Response{} = e} ->
+      {:ok, %Finch.Response{} = e} ->
         {:error, %Error{reason: :unknown, message: "An unknown error has occurred.", env: e}}
 
-      {:error, %Mojito.Error{reason: reason} = e} ->
+      {:error, %{reason: reason} = e} ->
         error = %Error{
           reason: :unknown,
           message: "An unknown error has occurred: #{inspect(reason)}",

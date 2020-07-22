@@ -126,13 +126,13 @@ msgid "Units"
 msgstr "단위"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:119
-#: lib/teslamate_web/live/geofence_live/form.html.leex:100
+#: lib/teslamate_web/live/charge_live/cost.html.leex:131
+#: lib/teslamate_web/live/geofence_live/form.html.leex:105
 msgid "Back"
 msgstr "뒤로"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:197
+#: lib/teslamate_web/live/geofence_live/form.ex:204
 msgid "Geo-fence \"%{name}\" created"
 msgstr "지오펜스 \"%{name}\" 가 생성되었습니다."
 
@@ -166,14 +166,14 @@ msgid "Radius"
 msgstr "반경"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:122
-#: lib/teslamate_web/live/geofence_live/form.html.leex:103
+#: lib/teslamate_web/live/charge_live/cost.html.leex:134
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108
 msgid "Save"
 msgstr "저장"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:123
-#: lib/teslamate_web/live/geofence_live/form.html.leex:103 lib/teslamate_web/live/signin_live/index.html.leex:33
+#: lib/teslamate_web/live/charge_live/cost.html.leex:135
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108 lib/teslamate_web/live/signin_live/index.html.leex:33
 msgid "Saving..."
 msgstr "저장 중..."
 
@@ -369,7 +369,7 @@ msgid "Sleep Mode"
 msgstr "절전 모드"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.ex:198
+#: lib/teslamate_web/live/geofence_live/form.ex:205
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "지오펜스 \"%{name}\" 가 업데이트 되었습니다."
 
@@ -400,17 +400,18 @@ msgid "Charge Cost"
 msgstr "충전비용"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:94
+#: lib/teslamate_web/live/charge_live/cost.html.leex:103
+#: lib/teslamate_web/live/geofence_live/form.html.leex:59
 msgid "Cost"
 msgstr "비용"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:107
+#: lib/teslamate_web/live/charge_live/cost.html.leex:119
 msgid "Enter charge cost"
 msgstr "충전비용 입력"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.ex:68
+#: lib/teslamate_web/live/charge_live/cost.ex:87
 msgid "Saved!"
 msgstr "저장완료!"
 
@@ -479,11 +480,6 @@ msgid "Email address"
 msgstr "이메일 주소"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:59
-msgid "Cost per kWh"
-msgstr "kWh당 비용"
-
-#, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:92
 msgid "Charge cost"
 msgstr "충전비용"
@@ -499,7 +495,7 @@ msgid "General Settings"
 msgstr "일반설정"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:78
+#: lib/teslamate_web/live/geofence_live/form.html.leex:83
 msgid "Session fee"
 msgstr "세션수수료"
 
@@ -509,34 +505,35 @@ msgid "Doors open"
 msgstr "차량문 열림"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:100
+#: lib/teslamate_web/live/charge_live/cost.html.leex:111
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
 msgid "Per kWh"
 msgstr "kWh 당"
 
 #, elixir-format
-#: lib/teslamate_web/live/charge_live/cost.html.leex:100
+#: lib/teslamate_web/live/charge_live/cost.html.leex:110
 msgid "Total"
 msgstr "총합"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:120
+#: lib/teslamate_web/live/geofence_live/form.html.leex:125
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "이 위치에는 아직 비용이 추가되지 않은 <strong>%{n} 충전 세션</ strong>이 있습니다."
 msgstr[1] ""
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:129
+#: lib/teslamate_web/live/geofence_live/form.html.leex:134
 msgid "Add costs retroactively"
 msgstr "과거 요금 추가"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:114
+#: lib/teslamate_web/live/geofence_live/form.html.leex:119
 msgid "Charging Costs"
 msgstr "충전요금"
 
 #, elixir-format
-#: lib/teslamate_web/live/geofence_live/form.html.leex:128
+#: lib/teslamate_web/live/geofence_live/form.html.leex:133
 msgid "Continue"
 msgstr "계속"
 
@@ -575,3 +572,9 @@ msgstr "문이 열려있습니다."
 #: lib/teslamate_web/live/car_live/summary.ex:136
 msgid "Trunk is open"
 msgstr "트렁크가 열려있습니다."
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:112
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
+msgid "Per Minute"
+msgstr ""

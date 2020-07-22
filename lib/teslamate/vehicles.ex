@@ -76,9 +76,18 @@ defmodule TeslaMate.Vehicles do
 
   defp list_vehicles! do
     case TeslaMate.Api.list_vehicles() do
-      {:error, :not_signed_in} -> fallback_vehicles()
-      {:ok, []} -> fallback_vehicles()
-      {:ok, vehicles} -> vehicles
+      {:error, :not_signed_in} ->
+        fallback_vehicles()
+
+      {:error, reason} ->
+        Logger.warn("Could not get vehicles: #{inspect(reason)}")
+        fallback_vehicles()
+
+      {:ok, []} ->
+        fallback_vehicles()
+
+      {:ok, vehicles} ->
+        vehicles
     end
   end
 

@@ -141,7 +141,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.id == car.settings_id
       assert settings.suspend_min == 21
       assert settings.suspend_after_idle_min == 15
-      assert settings.req_not_unlocked == true
+      assert settings.req_not_unlocked == false
       assert settings.free_supercharging == false
       assert settings.use_streaming_api == true
     end

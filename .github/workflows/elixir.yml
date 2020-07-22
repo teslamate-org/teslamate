@@ -1,0 +1,59 @@
+name: CI
+
+on: [pull_request, push]
+
+jobs:
+  mix_test:
+    name: mix test (Elixir ${{ matrix.elixir }} OTP ${{ matrix.otp }})
+
+    strategy:
+      matrix:
+        elixir: ["1.10.4"]
+        include:
+          - elixir: "1.10.4"
+            otp: "23.x"
+
+    runs-on: ubuntu-18.04
+
+    services:
+      db:
+        image: postgres:12
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      MIX_ENV: test
+      ELIXIR_ASSERT_TIMEOUT: 350
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            deps
+            _build
+            priv/cldr/locales
+          key: ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-mix-
+      - uses: actions/setup-elixir@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+      - name: Install Dependencies
+        run: mix do deps.get, compile
+      - name: Check Formatting
+        run: mix format --check-formatted
+      - name: Run Tests
+        run: mix test
+      - name: Check Coverage
+        if: github.ref == 'refs/heads/master'
+        run: mix coveralls.github
+        continue-on-error: true

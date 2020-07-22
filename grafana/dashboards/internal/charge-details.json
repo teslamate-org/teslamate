@@ -234,7 +234,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT charge_energy_added from charging_processes where id = $charging_process_id;",
+          "rawSql": "select coalesce(cp.charge_energy_added, c.charge_energy_added)\r\nfrom charging_processes cp\r\njoin charges c\r\n\ton cp.id = c.charging_process_id\r\nwhere car_id = $car_id\r\nAND cp.id = $charging_process_id\r\nORDER BY c.date desc\r\nfetch first row only",
           "refId": "A",
           "select": [
             [

@@ -285,30 +285,6 @@ export const Map = {
   },
 };
 
-export const UpdateCostMode = {
-  mounted() {
-    const $energy = document.querySelector("#energy-tag > span:nth-child(2)");
-    let kWh = $energy && $energy.textContent.split(" ")[0];
-
-    if (kWh != null) {
-      kWh = parseFloat(kWh, 10);
-
-      this.el.addEventListener("change", function () {
-        const $cost = document.querySelector("#charging_process_cost");
-
-        const cost =
-          this.value == "per_kwh"
-            ? $cost.value / kWh
-            : this.value == "total"
-            ? $cost.value * kWh
-            : 0.0;
-
-        $cost.value = cost.toFixed(2);
-      });
-    }
-  },
-};
-
 export const Modal = {
   _freeze() {
     document.documentElement.classList.add("is-clipped");
