@@ -99,7 +99,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT count(*)\nFROM updates\nWHERE $__timeFilter(start_date)",
+          "rawSql": "SELECT count(*)\nFROM updates\nWHERE $__timeFilter(start_date) AND car_id = $car_id",
           "refId": "A",
           "select": [
             [
