@@ -38,7 +38,7 @@
   ],
   "panels": [
     {
-      "datasource": null,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,

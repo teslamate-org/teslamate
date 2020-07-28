@@ -38,7 +38,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -67,7 +67,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": null,
+      "datasource": "TeslaMate",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -972,7 +972,7 @@
       "valueName": "current"
     },
     {
-      "datasource": null,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 11,
         "w": 24,
