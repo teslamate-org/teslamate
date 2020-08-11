@@ -18,6 +18,7 @@ sidebar_label: TeslaFi
   ```
 
 - Export your TeslaFi data (for one car) as CSV by month: `Settings -> Account -> Download TeslaFi Data`.
+  - If you have a ton of TeslaFi data and don't want to deal with the UI, you can run this python script to export all data: [Export from TeslaFi #563](https://github.com/adriankumpf/teslamate/issues/563)
 
 ## Instructions
 
