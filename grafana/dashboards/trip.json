@@ -46,7 +46,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2282,7 +2282,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "(\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as \"battery level\", convert_km(avg([[preferred_range]]_battery_range_km), '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM positions\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n  GROUP BY 1\n) UNION ALL (\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as \"battery level\", convert_km(avg([[preferred_range]]_battery_range_km), '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM charges\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\n  GROUP BY 1\n)\nORDER BY 1",
+          "rawSql": "(\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as \"battery level\", convert_km(avg([[preferred_range]]_battery_range_km), '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM positions\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day') AND car_id = $car_id\n  GROUP BY 1\n) UNION ALL (\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as \"battery level\", convert_km(avg([[preferred_range]]_battery_range_km), '$length_unit') as \"$preferred_range range [$length_unit]\"\n  FROM charges c\n  LEFT JOIN charging_processes p ON c.charging_process_id = p.id\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day') AND p.car_id = $car_id\n  GROUP BY 1\n)\nORDER BY 1",
           "refId": "A",
           "select": [
             [

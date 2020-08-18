@@ -135,7 +135,7 @@ volumes:
 ```
 
 :::note
-If you are upgrading from the [simple Docker setup](docker) make sure that you are using the same Postgres version as before. To upgrade to a new version see [Upgrading PostgreSQL](../maintenance/upgrading_postgres).
+If you are upgrading from the [simple Docker setup](../installation/docker.md) make sure that you are using the same Postgres version as before. To upgrade to a new version see [Upgrading PostgreSQL](../maintenance/upgrading_postgres.md).
 :::
 
 ### .env
@@ -157,7 +157,7 @@ LETSENCRYPT_EMAIL=yourperson@example.com
 ```
 
 :::note
-If you are upgrading from the [simple Docker setup](docker) make sure to use the same database and Grafana credentials as before.
+If you are upgrading from the [simple Docker setup](../installation/docker.md) make sure to use the same database and Grafana credentials as before.
 :::
 
 ### .htpasswd

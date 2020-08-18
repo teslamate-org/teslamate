@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1587641296811,
+  "iteration": 1595965501600,
   "links": [
     {
       "icon": "dashboard",
@@ -38,7 +38,7 @@
   ],
   "panels": [
     {
-      "datasource": null,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -92,14 +92,21 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.7.2",
+      "pluginVersion": "6.7.4",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "targets": [
         {
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT count(*)\nFROM updates\nWHERE $__timeFilter(start_date)",
+          "rawSql": "SELECT count(*)\nFROM updates\nWHERE $__timeFilter(start_date) AND car_id = $car_id",
           "refId": "A",
           "select": [
             [
@@ -164,7 +171,14 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.7.2",
+      "pluginVersion": "6.7.4",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
       "targets": [
         {
           "format": "table",
@@ -407,7 +421,7 @@
         },
         "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
         "index": -1,
         "label": null,
@@ -428,12 +442,12 @@
       {
         "allValue": null,
         "current": {
-          "text": "mi",
-          "value": "mi"
+          "text": "km",
+          "value": "km"
         },
         "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
         "index": -1,
         "label": null,
@@ -449,7 +463,7 @@
         "tags": [],
         "tagsQuery": "",
         "type": "query",
-        "useTags": false        
+        "useTags": false
       },
       {
         "allValue": null,

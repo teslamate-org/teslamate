@@ -7,8 +7,12 @@ title: Backup and Restore
 Create backup file `teslamate.bck`:
 
 ```bash
-docker-compose exec database pg_dump -U teslamate teslamate > /backuplocation/teslamate.bck
+docker-compose exec -T database pg_dump -U teslamate teslamate > /backuplocation/teslamate.bck
 ```
+
+:::note
+`-T` is important if you add this line a crontab or the backup will not work because docker will generate this error `the input device is not a TTY`
+:::
 
 :::note
 Be absolutely certain to move the `teslamate.bck` file to another safe location, as you may loose that backup file if you use a docker-compose GUI to upgrade your teslamate configuration. Some GUIs delete the folder that holds the `docker-compose.yml` when updating.

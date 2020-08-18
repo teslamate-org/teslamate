@@ -13,7 +13,7 @@ module.exports = {
         alt: "TeslaMate Logo",
         src: "img/logo.svg",
       },
-      links: [
+      items: [
         {
           to: "docs/installation/docker",
           activeBasePath: "docs",
@@ -30,7 +30,7 @@ module.exports = {
     },
     // footer: {
     //   style: "dark",
-    //   links: [
+    //   items: [
     //     {
     //       title: "Community",
     //       items: [
