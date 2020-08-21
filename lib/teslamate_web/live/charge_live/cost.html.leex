@@ -23,7 +23,7 @@
           <%= text_input :position, "#{@charging_process.id}",
                          value: "#{@charging_process.position.latitude},#{@charging_process.position.longitude}",
                          phx_hook: "TriggerChange",
-                         class: "is-hidden",
+                         id: "position_#{@charging_process.id}",class: "is-hidden",
                          disabled: true
           %>
         </div>
@@ -43,7 +43,7 @@
             <%= content_tag :span, "–", data: [start_date: DateTime.to_iso8601(@charging_process.start_date),
                                               end_date: DateTime.to_iso8601(@charging_process.end_date)],
                                         phx_hook: "LocalTimeRange",
-                                        class: "tag" %>
+                                        id: "date_range_#{@charging_process.id}", class: "tag" %>
           </div>
         </div>
         <% end %>

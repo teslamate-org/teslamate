@@ -188,6 +188,8 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "renders current vehicle stats [:charging]", %{conn: conn} do
+      car = car_fixture(%{})
+
       events = [
         {:ok,
          online_event(
@@ -230,7 +232,12 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(
                html,
                "Scheduled Charging",
-               {"span", [{"data-date", "2019-08-12T14:38:27Z"}, {"phx-hook", "LocalTime"}], []}
+               {"span",
+                [
+                  {"data-date", "2019-08-12T14:38:27Z"},
+                  {"id", "scheduled_start_time_#{car.id}"},
+                  {"phx-hook", "LocalTime"}
+                ], []}
              )
 
       assert table_row(html, "Charge Limit", "85%")
