@@ -12,15 +12,10 @@ defmodule TeslaMateWeb.Plugs.Donate do
   def call(conn, _opts), do: put_donate_cookie(conn)
 
   defp put_donate_cookie(conn) do
-    cond do
-      importing_data?() ->
-        put_resp_cookie(conn, "donate", "0", max_age: @max_age)
-
-      Release.seconds_since_last_migration() < @max_age / 2 ->
-        put_resp_cookie(conn, "donate", "0", max_age: @max_age)
-
-      true ->
-        conn
+    if importing_data?() or Release.seconds_since_last_migration() < @max_age / 2 do
+      put_resp_cookie(conn, "donate", "0", max_age: @max_age, same_site: "Strict")
+    else
+      conn
     end
   end
 
