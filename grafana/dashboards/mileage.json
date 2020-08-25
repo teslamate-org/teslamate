@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1568831188317,
+  "iteration": 1598013363539,
   "links": [
     {
       "icon": "dashboard",
@@ -38,6 +37,7 @@
   ],
   "panels": [
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -63,6 +63,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 4,
       "gridPos": {
@@ -78,7 +85,7 @@
         "avg": false,
         "current": false,
         "hideEmpty": false,
-        "hideZero": false,						   				  
+        "hideZero": false,
         "max": true,
         "min": true,
         "rightSide": false,
@@ -90,10 +97,8 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "connected",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.1.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -182,7 +187,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 19,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [
     "tesla"
@@ -192,15 +197,16 @@
       {
         "allValue": null,
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "selected": false,
+          "text": "1",
+          "value": "1"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": true,
+        "multi": false,
         "name": "car_id",
         "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
@@ -217,6 +223,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "km",
           "value": "km"
         },
@@ -242,6 +249,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },

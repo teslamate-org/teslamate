@@ -27,7 +27,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1584627075107,
+  "iteration": 1598013680918,
   "links": [
     {
       "icon": "dashboard",
@@ -62,7 +62,7 @@
       "repeat": "car_id",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -77,6 +77,13 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "decimals": 2,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 3,
       "gridPos": {
@@ -102,16 +109,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.1.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -234,6 +239,13 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "decimals": 2,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 3,
       "gridPos": {
@@ -259,16 +271,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.1.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -391,6 +401,13 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "decimals": 2,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 3,
       "gridPos": {
@@ -416,16 +433,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "connected",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.1.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -551,7 +566,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 22,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [
     "tesla"
@@ -562,15 +577,15 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "text": "1",
+          "value": "1"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": true,
+        "multi": false,
         "name": "car_id",
         "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
@@ -587,6 +602,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "km",
           "value": "km"
         },
@@ -612,8 +628,9 @@
       {
         "allValue": null,
         "current": {
-          "text": "rated",
-          "value": "rated"
+          "selected": false,
+          "text": "ideal",
+          "value": "ideal"
         },
         "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
@@ -637,6 +654,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "C",
           "value": "C"
         },
@@ -662,6 +680,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },

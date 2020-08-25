@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1579330423173,
+  "iteration": 1598012324627,
   "links": [
     {
       "icon": "dashboard",
@@ -39,6 +38,7 @@
   "panels": [
     {
       "collapsed": false,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -50,7 +50,7 @@
       "repeat": "car_id",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -65,6 +65,13 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "decimals": 2,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 3,
       "gridPos": {
@@ -73,6 +80,7 @@
         "x": 0,
         "y": 1
       },
+      "hiddenSeries": false,
       "id": 2,
       "legend": {
         "alignAsTable": true,
@@ -89,16 +97,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.1.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -182,7 +188,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 19,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [
     "tesla"
@@ -192,15 +198,16 @@
       {
         "allValue": null,
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "selected": false,
+          "text": "1",
+          "value": "1"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": true,
+        "multi": false,
         "name": "car_id",
         "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
@@ -217,6 +224,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },

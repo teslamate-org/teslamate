@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1568831110877,
+  "iteration": 1598013901953,
   "links": [
     {
       "icon": "dashboard",
@@ -39,6 +38,7 @@
   "panels": [
     {
       "collapsed": false,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -61,6 +61,12 @@
     {
       "columns": [],
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 23,
@@ -70,7 +76,6 @@
       },
       "id": 2,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scopedVars": {
         "car_id": {
@@ -88,6 +93,7 @@
       "styles": [
         {
           "alias": "Start",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -108,6 +114,7 @@
         },
         {
           "alias": "End",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -124,6 +131,7 @@
         },
         {
           "alias": "TR Loss",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -140,6 +148,7 @@
         },
         {
           "alias": "Period",
+          "align": "auto",
           "colorMode": "value",
           "colors": [
             "rgb(133, 142, 133)",
@@ -158,6 +167,7 @@
         },
         {
           "alias": "TR Loss / h",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -174,6 +184,7 @@
         },
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -190,6 +201,7 @@
         },
         {
           "alias": "Standby",
+          "align": "auto",
           "colorMode": "value",
           "colors": [
             "#FF7383",
@@ -209,6 +221,7 @@
         },
         {
           "alias": "kWh",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -225,6 +238,7 @@
         },
         {
           "alias": "Ø-Power",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -241,6 +255,7 @@
         },
         {
           "alias": "TR Loss / h",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -257,6 +272,7 @@
         },
         {
           "alias": "Start",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -276,6 +292,7 @@
         },
         {
           "alias": "End",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -292,6 +309,7 @@
         },
         {
           "alias": "TR Loss",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -308,6 +326,7 @@
         },
         {
           "alias": "SOC",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -324,6 +343,7 @@
         },
         {
           "alias": "    ",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -382,10 +402,10 @@
       ],
       "title": "Vampire Drain",
       "transform": "table",
-      "type": "table"
+      "type": "table-old"
     }
   ],
-  "schemaVersion": 21,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [
     "tesla"
@@ -395,15 +415,16 @@
       {
         "allValue": null,
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "selected": false,
+          "text": "1",
+          "value": "1"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": true,
+        "multi": false,
         "name": "car_id",
         "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
@@ -473,6 +494,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "km",
           "value": "km"
         },
@@ -498,6 +520,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "ideal",
           "value": "ideal"
         },
@@ -523,6 +546,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },
