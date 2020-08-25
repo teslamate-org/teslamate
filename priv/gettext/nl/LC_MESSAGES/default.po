@@ -238,7 +238,7 @@ msgstr "Bereik (geschat)"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:98
 msgid "for"
-msgstr "voor"
+msgstr "sinds"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:70
