@@ -98,7 +98,7 @@ cd /usr/src
 git clone https://github.com/adriankumpf/teslamate.git
 cd teslamate
 
-git checkout $(git describe --tags) # Checkout the latest stable version
+git checkout $(git describe --tags `git rev-list --tags --max-count=1`) # Checkout the latest stable version
 ```
 
 ## Create PostgreSQL database
