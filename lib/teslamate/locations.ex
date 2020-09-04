@@ -33,12 +33,17 @@ defmodule TeslaMate.Locations do
              end)
 
   def find_address(%{latitude: lat, longitude: lng}) do
-    with %GlobalSettings{language: lang} <- Settings.get_global_settings!(),
-         {:ok, %{osm_id: id, osm_type: type} = attrs} <- @geocoder.reverse_lookup(lat, lng, lang) do
-      case Repo.get_by(Address, osm_id: id, osm_type: type) do
-        %Address{} = address -> {:ok, address}
-        nil -> create_address(attrs)
-      end
+    %GlobalSettings{language: lang} = Settings.get_global_settings!()
+
+    case @geocoder.reverse_lookup(lat, lng, lang) do
+      {:ok, %{osm_id: id, osm_type: type} = attrs} ->
+        case Repo.get_by(Address, osm_id: id, osm_type: type) do
+          %Address{} = address -> {:ok, address}
+          nil -> create_address(attrs)
+        end
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
@@ -54,7 +59,10 @@ defmodule TeslaMate.Locations do
 
       addresses
       |> merge_addresses(attrs)
-      |> Enum.map(fn
+      |> Enum.each(fn
+        {%Address{osm_type: "unknown"}, _attrs} ->
+          :ignore
+
         {%Address{osm_id: id, osm_type: type} = address, attrs} ->
           attrs =
             with nil <- attrs do

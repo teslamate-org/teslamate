@@ -95,6 +95,34 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.address_id == nil
       assert cproc.address == nil
     end
+
+    test "saves dummy address if geocoding failed" do
+      car = car_fixture()
+
+      assert {:ok, cproc} =
+               Log.start_charging_process(car, %{
+                 date: DateTime.utc_now(),
+                 latitude: -99.9,
+                 longitude: -99.9
+               })
+
+      assert cproc.car_id == car.id
+      assert cproc.position.latitude == Decimal.cast("-99.900000")
+      assert cproc.position.longitude == Decimal.cast("-99.900000")
+      assert not is_nil(cproc.address_id)
+
+      assert %Locations.Address{
+               osm_id: 0,
+               osm_type: "unknown",
+               display_name: "Unknown",
+               latitude: latitude,
+               longitude: longitude,
+               raw: %{"error" => "Unable to geocode"}
+             } = cproc.address
+
+      assert latitude == Decimal.cast("0.000000")
+      assert longitude == Decimal.cast("0.000000")
+    end
   end
 
   describe "insert_charge/2" do

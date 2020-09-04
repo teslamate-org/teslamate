@@ -122,6 +122,10 @@ defmodule TeslaMate.Repair do
         Process.sleep(1500)
 
         case Locations.find_address(position) do
+          {:error, {:geocoding_failed, reason}} ->
+            Logger.warn("Geocoding failed: #{reason}")
+            nil
+
           {:error, reason} ->
             :fuse.melt(:addr_fuse)
             Logger.warn("Address not found: #{inspect(reason)}")

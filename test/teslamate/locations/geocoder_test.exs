@@ -22,7 +22,7 @@ defmodule TeslaMate.Locations.GeocoderTest do
                status: 200
              }}
 
-  test "geocoders coordinates" do
+  test "geocoder coordinates" do
     with_mock TeslaMate.HTTP,
       get:
         fn "https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&extratags=1&namedetails=1&zoom=19&lat=37.889602&lon=41.129182",
@@ -80,6 +80,39 @@ defmodule TeslaMate.Locations.GeocoderTest do
                     "type" => "cafe"
                   }
                 }}
+    end
+  end
+
+  test "returns a dummy address if the location cannot be geocoded" do
+    with_mock TeslaMate.HTTP,
+      get:
+        fn "https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&extratags=1&namedetails=1&zoom=19&lat=37.889602&lon=41.129182",
+           _opts ->
+          {:ok,
+           %Finch.Response{body: "{\"error\": \"Unable to geocode\"}", headers: [], status: 200}}
+        end do
+      assert Geocoder.reverse_lookup(37.889602, 41.129182) ==
+               {:ok,
+                %{
+                  display_name: "Unknown",
+                  raw: %{"error" => "Unable to geocode"},
+                  latitude: 0.0,
+                  longitude: 0.0,
+                  osm_id: 0,
+                  osm_type: "unknown"
+                }}
+    end
+  end
+
+  test "handles errors" do
+    with_mock TeslaMate.HTTP,
+      get:
+        fn "https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&extratags=1&namedetails=1&zoom=19&lat=37.889602&lon=41.129182",
+           _opts ->
+          {:ok, %Finch.Response{body: "{\"error\": \"failure\"}", headers: [], status: 200}}
+        end do
+      assert Geocoder.reverse_lookup(37.889602, 41.129182) ==
+               {:error, {:geocoding_failed, "failure"}}
     end
   end
 end

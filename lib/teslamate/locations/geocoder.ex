@@ -4,24 +4,28 @@ defmodule TeslaMate.Locations.Geocoder do
   alias TeslaMate.Locations.Address
 
   def reverse_lookup(lat, lon, lang \\ "en") do
-    with {:ok, address_raw} <-
-           fetch("https://nominatim.openstreetmap.org/reverse", lang,
-             format: :jsonv2,
-             addressdetails: 1,
-             extratags: 1,
-             namedetails: 1,
-             zoom: 19,
-             lat: lat,
-             lon: lon
-           ) do
-      {:ok, into_address(address_raw)}
+    opts = [
+      format: :jsonv2,
+      addressdetails: 1,
+      extratags: 1,
+      namedetails: 1,
+      zoom: 19,
+      lat: lat,
+      lon: lon
+    ]
+
+    with {:ok, address_raw} <- fetch("https://nominatim.openstreetmap.org/reverse", lang, opts),
+         {:ok, address} <- into_address(address_raw) do
+      {:ok, address}
     end
   end
 
   def details(addresses, lang) when is_list(addresses) do
     osm_ids =
       addresses
-      |> Enum.reject(fn %Address{osm_id: id, osm_type: type} -> is_nil(id) or is_nil(type) end)
+      |> Enum.reject(fn %Address{osm_id: id, osm_type: type} ->
+        id == nil or type in [nil, "unknown"]
+      end)
       |> Enum.map(fn %Address{osm_id: id, osm_type: type} ->
         "#{type |> String.at(0) |> String.upcase()}#{id}"
       end)
@@ -111,8 +115,25 @@ defmodule TeslaMate.Locations.Geocoder do
     "county_code"
   ]
 
+  defp into_address(%{"error" => "Unable to geocode"} = raw) do
+    unknown_address = %{
+      display_name: "Unknown",
+      osm_type: "unknown",
+      osm_id: 0,
+      latitude: 0.0,
+      longitude: 0.0,
+      raw: raw
+    }
+
+    {:ok, unknown_address}
+  end
+
+  defp into_address(%{"error" => reason}) do
+    {:error, {:geocoding_failed, reason}}
+  end
+
   defp into_address(raw) do
-    %{
+    address = %{
       display_name: Map.get(raw, "display_name"),
       osm_id: Map.get(raw, "osm_id"),
       osm_type: Map.get(raw, "osm_type"),
@@ -132,8 +153,11 @@ defmodule TeslaMate.Locations.Geocoder do
       country: raw["address"] |> get_first(["country", "country_name"]),
       raw: raw
     }
+
+    {:ok, address}
   end
 
+  defp get_first(nil, _aliases), do: nil
   defp get_first(_address, []), do: nil
 
   defp get_first(address, [key | aliases]) do
