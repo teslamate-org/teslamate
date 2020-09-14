@@ -276,7 +276,7 @@ defmodule TeslaMate.SettingsTest do
 
       assert {:error, :boom} = Settings.update_global_settings(settings, %{language: "nl"})
 
-      zero = Decimal.cast("0.000000")
+      zero = Decimal.new("0.000000")
       assert [r0, r1] = Repo.all(from a in Address, order_by: 1)
       assert r0 == %Address{a0 | latitude: zero, longitude: zero}
       assert r1 == %Address{a1 | latitude: zero, longitude: zero}

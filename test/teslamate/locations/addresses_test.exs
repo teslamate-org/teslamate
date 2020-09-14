@@ -76,8 +76,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       assert address.country == "some country"
       assert address.display_name == "some display_name"
       assert address.house_number == "some house_number"
-      assert address.latitude == Decimal.cast("20.500000")
-      assert address.longitude == Decimal.cast("120.500000")
+      assert address.latitude == Decimal.new("20.500000")
+      assert address.longitude == Decimal.new("120.500000")
       assert address.name == "some name"
       assert address.neighbourhood == "some neighbourhood"
       assert address.osm_id == 42
@@ -110,8 +110,8 @@ defmodule TeslaMate.LocationsAddressesTest do
       assert address.country == "some updated country"
       assert address.display_name == "some updated display_name"
       assert address.house_number == "some updated house_number"
-      assert address.latitude == Decimal.cast("-20.700000")
-      assert address.longitude == Decimal.cast("-112.700000")
+      assert address.latitude == Decimal.new("-20.700000")
+      assert address.longitude == Decimal.new("-112.700000")
       assert address.name == "some updated name"
       assert address.neighbourhood == "some updated neighbourhood"
       assert address.osm_id == 43
