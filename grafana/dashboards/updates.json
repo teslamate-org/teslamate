@@ -322,6 +322,10 @@
                 "value": "right"
               },
               {
+                "id": "decimals",
+                "value": 2
+              },
+              {
                 "id": "links",
                 "value": [
                   {
