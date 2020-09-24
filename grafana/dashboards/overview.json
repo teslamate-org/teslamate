@@ -16,7 +16,7 @@
   "description": "A high level overview of your car",
   "editable": true,
   "gnetId": null,
-  "graphTooltip": 0,
+  "graphTooltip": 1,
   "iteration": 1598013499831,
   "links": [
     {
