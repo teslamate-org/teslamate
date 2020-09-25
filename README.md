@@ -1,3 +1,4 @@
+![Logo TeslaMate](/logo.svg)
 # TeslaMate
 
 [![CI](https://github.com/adriankumpf/teslamate/workflows/CI/badge.svg?branch=master)](https://github.com/adriankumpf/teslamate/actions?query=workflow%3ACI)
