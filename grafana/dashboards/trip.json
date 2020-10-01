@@ -1,4 +1,70 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_TESLAMATE",
+      "label": "TeslaMate",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "7.2.0"
+    },
+    {
+      "type": "panel",
+      "id": "grafana-piechart-panel",
+      "name": "Pie Chart",
+      "version": "1.6.1"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "natel-discrete-panel",
+      "name": "Discrete",
+      "version": "0.1.0"
+    },
+    {
+      "type": "datasource",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "pr0ps-trackmap-panel",
+      "name": "TrackMap",
+      "version": "2.1.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table-old",
+      "name": "Table (old)",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -16,7 +82,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1600098484532,
+  "id": null,
+  "iteration": 1601021020035,
   "links": [
     {
       "icon": "doc",
@@ -46,7 +113,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -56,19 +123,12 @@
       "id": 4,
       "panels": [],
       "repeat": "car_id",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "title": "$car_id",
       "type": "row"
     },
     {
       "autoZoom": true,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "defaultLayer": "OpenStreetMap",
       "fieldConfig": {
         "defaults": {
@@ -86,13 +146,6 @@
       "lineColor": "red",
       "maxDataPoints": 500,
       "pointColor": "royalblue",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "scrollWheelZoom": false,
       "showLayerChanger": true,
       "targets": [
@@ -133,7 +186,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -214,14 +267,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "7.2.0",
       "targets": [
         {
           "format": "table",
@@ -259,9 +305,9 @@
     },
     {
       "aliasColors": {
-        "charging (AC)": "#37872D",
+        "charging (AC)": "#FFEE52",
         "charging (DC)": "#f2cc0c",
-        "driving": "#8f3bb8"
+        "driving": "#37872D"
       },
       "breakPoint": "50%",
       "cacheTimeout": null,
@@ -269,7 +315,7 @@
         "label": "Others",
         "threshold": 0
       },
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "decimals": 1,
       "fieldConfig": {
         "defaults": {
@@ -298,13 +344,6 @@
       "maxDataPoints": 3,
       "nullPointMode": "connected",
       "pieType": "pie",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "strokeWidth": "1",
       "targets": [
         {
@@ -372,7 +411,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -462,14 +501,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "7.2.0",
       "targets": [
         {
           "format": "table",
@@ -507,7 +539,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -588,14 +620,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "7.2.0",
       "targets": [
         {
           "format": "table",
@@ -633,7 +658,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -716,14 +741,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "7.2.0",
       "targets": [
         {
           "format": "table",
@@ -761,7 +779,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -844,14 +862,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "7.2.0",
       "targets": [
         {
           "format": "table",
@@ -889,7 +900,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -947,14 +958,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "7.2.0",
       "targets": [
         {
           "format": "table",
@@ -991,7 +995,7 @@
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1040,14 +1044,7 @@
         },
         "showUnfilled": false
       },
-      "pluginVersion": "7.1.5",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "7.2.0",
       "targets": [
         {
           "format": "table",
@@ -1141,7 +1138,7 @@
         }
       ],
       "crosshairColor": "#8F070C",
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "description": "",
       "display": "timeline",
       "expandFromQueryS": 0,
@@ -1171,13 +1168,6 @@
         }
       ],
       "rowHeight": 30,
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "showLegend": false,
       "showLegendCounts": false,
       "showLegendNames": false,
@@ -1312,7 +1302,7 @@
     },
     {
       "columns": [],
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1329,13 +1319,6 @@
       "id": 2,
       "links": [],
       "pageSize": 100,
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "scroll": true,
       "showHeader": true,
       "sort": {
@@ -1838,7 +1821,7 @@
     },
     {
       "columns": [],
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1855,13 +1838,6 @@
       "id": 36,
       "links": [],
       "pageSize": null,
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "scroll": false,
       "showHeader": true,
       "sort": {
@@ -2328,7 +2304,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "decimals": 0,
       "fieldConfig": {
         "defaults": {
@@ -2362,17 +2338,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "seriesOverrides": [
         {
           "alias": "/.*range.*/",
@@ -2460,7 +2429,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -2491,17 +2460,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "seriesOverrides": [
         {
           "alias": "/elevation.*/",
@@ -2593,12 +2555,8 @@
     "list": [
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": "TeslaMate",
+        "current": {},
+        "datasource": "${DS_TESLAMATE}",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
@@ -2619,12 +2577,8 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "C",
-          "value": "C"
-        },
-        "datasource": "TeslaMate",
+        "current": {},
+        "datasource": "${DS_TESLAMATE}",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2645,12 +2599,8 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "km",
-          "value": "km"
-        },
-        "datasource": "TeslaMate",
+        "current": {},
+        "datasource": "${DS_TESLAMATE}",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2671,12 +2621,8 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "m",
-          "value": "m"
-        },
-        "datasource": "TeslaMate",
+        "current": {},
+        "datasource": "${DS_TESLAMATE}",
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2697,12 +2643,8 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "ideal",
-          "value": "ideal"
-        },
-        "datasource": "TeslaMate",
+        "current": {},
+        "datasource": "${DS_TESLAMATE}",
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2723,12 +2665,8 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "http://localhost:4000",
-          "value": "http://localhost:4000"
-        },
-        "datasource": "TeslaMate",
+        "current": {},
+        "datasource": "${DS_TESLAMATE}",
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2749,12 +2687,8 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "1591702206015",
-          "value": "1591702206015"
-        },
-        "datasource": "TeslaMate",
+        "current": {},
+        "datasource": "${DS_TESLAMATE}",
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "hide": 2,
         "includeAll": false,
@@ -2806,6 +2740,6 @@
   },
   "timezone": "",
   "title": "Trip",
-  "uid": "FkUpJpQZk",
-  "version": 1
+  "uid": "T_dr9MFMk",
+  "version": 2
 }
