@@ -153,7 +153,12 @@ Define LOG access.teslamate.log
             Authtype Basic
             Authname "Password Required"
             AuthUserFile /etc/apache2/.htpasswd
-            Require valid-user
+            <RequireAny>
+                <RequireAll>
+                    Require expr %{REQUEST_URI} =~ m#^/live/websocket.*#
+                </RequireAll>
+                Require valid-user
+            </RequireAny>
         </Proxy>
         SSLCertificateFile /etc/letsencrypt/live/teslamate.${MYDOMAIN}/fullchain.pem
         SSLCertificateKeyFile /etc/letsencrypt/live/teslamate.${MYDOMAIN}/privkey.pem
