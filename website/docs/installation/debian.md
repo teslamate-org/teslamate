@@ -37,7 +37,7 @@ Source: [elixir-lang.org/install](https://elixir-lang.org/install)
 </details>
 
 <details>
-  <summary>Grafana (v6.6+) & Plugins</summary>
+  <summary>Grafana (v7.2+) & Plugins</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
