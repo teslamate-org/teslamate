@@ -29,7 +29,6 @@ defmodule TeslaMate.LocationsGeofencesTest do
     longitude: nil,
     radius: nil,
     billing_type: :per_hour,
-    cost_per_unit: -0.01,
     session_fee: -0.01
   }
 
@@ -67,7 +66,6 @@ defmodule TeslaMate.LocationsGeofencesTest do
                name: ["can't be blank"],
                radius: ["can't be blank"],
                billing_type: ["is invalid"],
-               cost_per_unit: ["must be greater than or equal to 0"],
                session_fee: ["must be greater than or equal to 0"]
              }
 
