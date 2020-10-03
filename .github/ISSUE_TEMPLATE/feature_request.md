@@ -1,12 +1,12 @@
 ---
-name: Enhancement request
-about: Suggest an enhancement or new feature for the TeslaMate project
+name: Feature idea
+about: Suggest a feature for improving TeslaMate
 title: ""
-labels: request
+labels: idea
 assignees: ""
 ---
 
-<!-- Please only use this template for submitting feature requests -->
+<!-- Please only use this template for submitting feature ideas -->
 
 **What would you like to be added**:
 
@@ -14,4 +14,4 @@ assignees: ""
 
 **Additional context**:
 
-<!-- Add any other context or screenshots about the feature request here. -->
+<!-- Add any other context or screenshots about the feature ideas here. -->
