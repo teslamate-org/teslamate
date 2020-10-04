@@ -53,7 +53,7 @@
       "repeat": "car_id",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -124,7 +124,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -206,7 +206,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -293,7 +293,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -387,7 +387,7 @@
       "renderer": "flot",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -556,7 +556,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -661,7 +661,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -768,7 +768,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -867,7 +867,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -992,7 +992,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -1084,7 +1084,7 @@
       "renderer": "flot",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -1251,7 +1251,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -1338,7 +1338,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -1425,7 +1425,7 @@
       "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -1531,7 +1531,7 @@
       "rowHeight": 70,
       "scopedVars": {
         "car_id": {
-          "selected": false,
+          "selected": true,
           "text": "1",
           "value": "1"
         }
@@ -1679,7 +1679,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "All",
           "value": "$__all"
         },
@@ -1705,7 +1705,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "km",
           "value": "km"
         },
@@ -1731,7 +1731,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "C",
           "value": "C"
         },
@@ -1757,9 +1757,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "rated",
-          "value": "rated"
+          "selected": true,
+          "text": "ideal",
+          "value": "ideal"
         },
         "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
@@ -1783,9 +1783,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "https://teslamate.schmidt-schmitten.com",
-          "value": "https://teslamate.schmidt-schmitten.com"
+          "selected": true,
+          "text": "http://localhost:4000",
+          "value": "http://localhost:4000"
         },
         "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
@@ -1840,6 +1840,6 @@
   },
   "timezone": "",
   "title": "Overview",
-  "uid": "vUAsCGFMz",
+  "uid": "kOuP_Fggz",
   "version": 5
 }
