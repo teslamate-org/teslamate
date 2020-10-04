@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1600098484532,
+  "iteration": 1601800053898,
   "links": [
     {
       "icon": "doc",
@@ -214,7 +214,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -259,9 +259,9 @@
     },
     {
       "aliasColors": {
-        "charging (AC)": "#37872D",
+        "charging (AC)": "#FFEE52",
         "charging (DC)": "#f2cc0c",
-        "driving": "#8f3bb8"
+        "driving": "#37872D"
       },
       "breakPoint": "50%",
       "cacheTimeout": null,
@@ -462,7 +462,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -588,7 +588,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -716,7 +716,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -844,7 +844,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -947,7 +947,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -1040,7 +1040,7 @@
         },
         "showUnfilled": false
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -2362,7 +2362,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2491,7 +2491,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2751,8 +2751,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "1591702206015",
-          "value": "1591702206015"
+          "text": "1600620965194",
+          "value": "1600620965194"
         },
         "datasource": "TeslaMate",
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
@@ -2807,5 +2807,5 @@
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
-  "version": 1
+  "version": 2
 }
