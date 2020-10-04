@@ -31,7 +31,7 @@
 ##### Note
 
 - The dashboards require **Grafana 7**. Make sure you are running the latest version of Grafana if you are not using the Docker installation.
-- The time zone displayed at the top of the new "Statistics" dashboard is the one used by Postgres to figure out the start and end dates. To change it to your local time zone set the `TZ` environment variable using the [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones):
+- The time zone displayed at the top of the new "Statistics" dashboard is the one used by Postgres to figure out the start and end dates. To change it to your local time zone set the `PGTZ` environment variable using the [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones):
 
   ```yaml
   database:
@@ -41,7 +41,7 @@
       - POSTGRES_USER=teslamate
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=teslamate
-      - TZ=Europe/Berlin # your local time zone
+      - PGTZ=Europe/Berlin # your local time zone
     volumes:
       - teslamate-db:/var/lib/postgresql/data
   ```

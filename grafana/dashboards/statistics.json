@@ -15,8 +15,25 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1601716843630,
-  "links": [],
+  "iteration": 1601801931193,
+  "links": [
+    {
+      "icon": "dashboard",
+      "tags": [],
+      "title": "TelsaMate",
+      "type": "link",
+      "url": "[[base_url:raw]]"
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "tags": [
+        "tesla"
+      ],
+      "title": "Dashboards",
+      "type": "dashboards"
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -477,7 +494,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "for $period",
+      "title": "",
       "transformations": [
         {
           "id": "merge",
@@ -703,6 +720,32 @@
         "name": "timezone",
         "options": [],
         "query": "SELECT current_setting('TIMEZONE');",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "http://localhost:4000",
+          "value": "http://localhost:4000"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select base_url from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "base_url",
+        "options": [],
+        "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
