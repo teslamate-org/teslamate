@@ -543,6 +543,33 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.cost == Decimal.new("0.00")
     end
 
+    test "cost per unit can be negative" do
+      car = car_fixture()
+
+      assert %GeoFence{id: id} =
+               geofence_fixture(%{
+                 latitude: 50.1121,
+                 longitude: 11.597,
+                 radius: 50,
+                 cost_per_unit: -0.15,
+                 session_fee: 0.0
+               })
+
+      assert {:ok, cproc} =
+               log_charging_process(charges_fixture(:phases_nil),
+                 car: car,
+                 attrs: %{
+                   date: DateTime.utc_now(),
+                   latitude: 50.112198,
+                   longitude: 11.597669
+                 }
+               )
+
+      assert cproc.charge_energy_added == Decimal.from_float(12.77)
+      assert cproc.charge_energy_used == Decimal.from_float(12.46)
+      assert cproc.cost == Decimal.new("-1.92")
+    end
+
     test "sets charge cost to zero if free supercharging is enabled" do
       alias TeslaMate.Settings
 
