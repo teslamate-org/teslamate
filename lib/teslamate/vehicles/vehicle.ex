@@ -1526,8 +1526,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp schedule_fetch(n, %Data{} = data), do: schedule_fetch(n, :seconds, data)
 
   defp schedule_fetch(_n, _unit, %Data{import?: true}), do: {:state_timeout, 0, :fetch}
-  if Mix.env() == :test, do: defp(schedule_fetch(n, _, _), do: {:state_timeout, round(n), :fetch})
-  defp schedule_fetch(n, unit, _), do: {:state_timeout, round(apply(:timer, unit, [n])), :fetch}
+  defp schedule_fetch(n, unit, _), do: {:state_timeout, fetch_timeout(n, unit), :fetch}
+
+  case(Mix.env()) do
+    :test -> defp fetch_timeout(n, _), do: round(n)
+    _____ -> defp fetch_timeout(n, unit), do: round(apply(:timer, unit, [n]))
+  end
 
   case(Mix.env()) do
     :test -> defp diff_seconds(a, b), do: DateTime.diff(a, b, :millisecond)
