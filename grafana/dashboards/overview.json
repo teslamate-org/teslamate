@@ -377,9 +377,6 @@
         }
       ],
       "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
       "percentage": false,
       "pluginVersion": "7.2.0",
       "pointradius": 2,
@@ -1074,9 +1071,6 @@
         }
       ],
       "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
       "percentage": false,
       "pluginVersion": "7.2.0",
       "pointradius": 2,
@@ -1679,9 +1673,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "text": "All",
-          "value": "$__all"
+          "selected": false,
+          "text": "1",
+          "value": "1"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
