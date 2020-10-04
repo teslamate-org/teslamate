@@ -4,7 +4,7 @@ defmodule TeslaMate.MixProject do
   def project do
     [
       app: :teslamate,
-      version: "1.20.0",
+      version: version(),
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -80,5 +80,12 @@ defmodule TeslaMate.MixProject do
         applications: [runtime_tools: :permanent]
       ]
     ]
+  end
+
+  defp version do
+    case File.read("VERSION") do
+      {:ok, version} -> String.trim(version)
+      {:error, _reason} -> "0.0.0"
+    end
   end
 end

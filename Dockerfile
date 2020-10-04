@@ -25,6 +25,7 @@ COPY lib lib
 COPY priv/repo/migrations priv/repo/migrations
 COPY priv/gettext priv/gettext
 COPY grafana/dashboards grafana/dashboards
+COPY VERSION VERSION
 
 RUN mkdir -p /opt/built && \
     mix "do" compile, release --path /opt/built
