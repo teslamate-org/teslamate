@@ -8,7 +8,7 @@ defmodule TeslaMate.Import do
   alias TeslaMate.{Vehicles, Repair, Log}
   alias TeslaMate.Log.{Car, State}
 
-  alias __MODULE__.{Status, LineParser, FakeApi}
+  alias __MODULE__.{Status, LineParser, FakeApi, CSV}
 
   defstruct(
     path: nil,
@@ -218,26 +218,36 @@ defmodule TeslaMate.Import do
         files
         |> Enum.sort_by(fn %{date: date} -> date end)
         |> Enum.map(fn %{date: date, path: path} ->
-          stream =
-            path
-            |> File.stream!(read_ahead: 64 * 4096)
-            |> CSV.decode!(headers: true)
-            |> Task.async_stream(&LineParser.parse(&1, tz), timeout: :infinity, ordered: true)
-            |> Stream.filter(fn
-              {:ok, %Veh{state: "unknown"}} ->
-                false
+          path
+          |> File.stream!(read_ahead: 64 * 4096)
+          |> CSV.parse()
+          |> case do
+            {:error, :unsupported_delimiter} ->
+              raise "Unsupported delimiter"
 
-              {:ok, %Veh{drive_state: %Drive{timestamp: nil}}} ->
-                false
+            {:error, :no_contents} ->
+              {date, Stream.map([], & &1)}
 
-              {:ok, %Veh{state: "online", drive_state: %Drive{latitude: lat, longitude: lng}}} ->
-                lat != nil and lng != nil
+            {:ok, rows} ->
+              stream =
+                rows
+                |> Task.async_stream(&LineParser.parse(&1, tz), timeout: :infinity, ordered: true)
+                |> Stream.filter(fn
+                  {:ok, %Veh{state: "unknown"}} ->
+                    false
 
-              {:ok, %Veh{}} ->
-                true
-            end)
+                  {:ok, %Veh{drive_state: %Drive{timestamp: nil}}} ->
+                    false
 
-          {date, stream}
+                  {:ok, %Veh{state: "online", drive_state: %Drive{latitude: lat, longitude: lng}}} ->
+                    lat != nil and lng != nil
+
+                  {:ok, %Veh{}} ->
+                    true
+                end)
+
+              {date, stream}
+          end
         end)
 
       {:ok, event_streams}
