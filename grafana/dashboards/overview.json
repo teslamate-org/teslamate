@@ -1698,7 +1698,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "km",
           "value": "km"
         },
@@ -1724,7 +1724,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "C",
           "value": "C"
         },
@@ -1750,7 +1750,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "ideal",
           "value": "ideal"
         },
@@ -1776,7 +1776,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false	,
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },
