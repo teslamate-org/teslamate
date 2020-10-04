@@ -817,7 +817,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "net",
+      "title": "Net",
       "type": "stat"
     },
     {
@@ -924,7 +924,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "gross",
+      "title": "Gross",
       "type": "stat"
     },
     {
