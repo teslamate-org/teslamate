@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1601800053898,
+  "iteration": 1601807708629,
   "links": [
     {
       "icon": "doc",
@@ -259,9 +259,9 @@
     },
     {
       "aliasColors": {
-        "charging (AC)": "#FFEE52",
-        "charging (DC)": "#f2cc0c",
-        "driving": "#37872D"
+        "charging (AC)": "#F2CC0C",
+        "charging (DC)": "#ffe74d",
+        "driving": "#A352CC"
       },
       "breakPoint": "50%",
       "cacheTimeout": null,
@@ -2361,6 +2361,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
       "pluginVersion": "7.2.0",
       "pointradius": 2,
@@ -2490,6 +2493,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
       "pluginVersion": "7.2.0",
       "pointradius": 2,
@@ -2807,5 +2813,5 @@
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
-  "version": 2
+  "version": 1
 }
