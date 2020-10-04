@@ -9,8 +9,10 @@ ENV MIX_ENV=prod
 WORKDIR /opt/app
 
 COPY mix.exs mix.lock ./
+RUN mix deps.get --only $MIX_ENV
+
 COPY config config
-RUN mix "do" deps.get --only $MIX_ENV, deps.compile
+RUN mix deps.compile
 
 COPY assets/package.json assets/package-lock.json ./assets/
 RUN npm ci --prefix ./assets --progress=false --no-audit --loglevel=error
