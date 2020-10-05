@@ -15,7 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1601808426715,
+  "id": 31,
+  "iteration": 1601887874542,
   "links": [
     {
       "icon": "dashboard",
@@ -37,7 +38,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_TESLAMATE}",
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -114,6 +115,16 @@
               {
                 "id": "custom.width",
                 "value": 195
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Trip",
+                    "url": "d/FkUpJpQZk/trip?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}"
+                  }
+                ]
               }
             ]
           },
@@ -165,7 +176,13 @@
               },
               {
                 "id": "links",
-                "value": []
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Charging stats",
+                    "url": "d/-pkIkhmRz/charging-stats?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}"
+                  }
+                ]
               },
               {
                 "id": "unit",
@@ -209,7 +226,13 @@
             "properties": [
               {
                 "id": "links",
-                "value": []
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Charges",
+                    "url": "d/TSmNYvRRk/charges?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}"
+                  }
+                ]
               }
             ]
           },
@@ -221,7 +244,13 @@
             "properties": [
               {
                 "id": "links",
-                "value": []
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Drives",
+                    "url": "d/Y8upc6ZRk/drives?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}"
+                  }
+                ]
               }
             ]
           },
@@ -362,12 +391,36 @@
                 "value": "fahrenheit"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "date_from"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 25
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "date_to"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 26
+              }
+            ]
           }
         ]
       },
       "gridPos": {
-        "h": 18,
-        "w": 23,
+        "h": 17,
+        "w": 21,
         "x": 0,
         "y": 1
       },
@@ -478,7 +531,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "",
+      "title": "per ${period}",
       "transformations": [
         {
           "id": "merge",
@@ -494,26 +547,26 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "date": true,
+              "date": false,
               "date_from": false,
               "date_to": false,
               "timezone": true
             },
             "indexByName": {
-              "avg_consumption_kwh": 10,
-              "avg_outside_temp_c": 6,
-              "cnt": 7,
-              "cnt_charges": 12,
-              "cost_charges": 11,
-              "date": 3,
-              "date_from": 1,
-              "date_to": 2,
+              "avg_consumption_kwh": 8,
+              "avg_outside_temp_c": 4,
+              "cnt": 5,
+              "cnt_charges": 10,
+              "cost_charges": 9,
+              "date": 1,
+              "date_from": 12,
+              "date_to": 13,
               "display": 0,
-              "efficiency": 8,
-              "efficiency_net_km": 13,
-              "sum_consumption_kwh": 9,
-              "sum_distance_km": 5,
-              "sum_duration_h": 4
+              "efficiency": 6,
+              "efficiency_net_km": 11,
+              "sum_consumption_kwh": 7,
+              "sum_distance_km": 3,
+              "sum_duration_h": 2
             },
             "renameByName": {
               "avg_consumption_kwh": "Avg charged",
@@ -521,9 +574,9 @@
               "cnt": "# drives",
               "cnt_charges": "# charges",
               "cost_charges": "Costs",
-              "date": "",
-              "date_from": "Starting at",
-              "date_to": "Ending at",
+              "date": "Starting at",
+              "date_from": "",
+              "date_to": "",
               "display": "Period",
               "efficiency": "Efficiency",
               "efficiency_net_km": "",
@@ -666,8 +719,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "ideal",
-          "value": "ideal"
+          "text": "rated",
+          "value": "rated"
         },
         "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
@@ -692,20 +745,20 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "GMT",
-          "value": "GMT"
+          "text": "Europe/Berlin",
+          "value": "Europe/Berlin"
         },
         "datasource": "TeslaMate",
-        "definition": "select name from pg_timezone_names where name like 'posix/%';",
+        "definition": "SELECT current_setting('TIMEZONE');",
         "hide": 0,
         "includeAll": false,
         "label": "Time zone",
         "multi": false,
         "name": "timezone",
         "options": [],
-        "query": "select name from pg_timezone_names where name like 'posix/%';",
+        "query": "SELECT current_setting('TIMEZONE');",
         "refresh": 1,
-        "regex": "/posix\\/(.*)/",
+        "regex": "",
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
@@ -718,8 +771,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "http://localhost:4000",
-          "value": "http://localhost:4000"
+          "text": "https://teslamate.schmidt-schmitten.com",
+          "value": "https://teslamate.schmidt-schmitten.com"
         },
         "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
@@ -762,6 +815,6 @@
   },
   "timezone": "browser",
   "title": "Statistics",
-  "uid": "1EZnXszMk",
-  "version": 1
+  "uid": "3MhVw9FMk",
+  "version": 11
 }
