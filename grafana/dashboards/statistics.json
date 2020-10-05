@@ -15,7 +15,6 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 31,
   "iteration": 1601887874542,
   "links": [
     {
@@ -38,7 +37,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "TeslaMate",
+      "datasource": "${DS_TESLAMATE}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -419,8 +418,8 @@
         ]
       },
       "gridPos": {
-        "h": 17,
-        "w": 21,
+        "h": 18,
+        "w": 23,
         "x": 0,
         "y": 1
       },
