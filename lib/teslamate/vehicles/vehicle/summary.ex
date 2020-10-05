@@ -11,7 +11,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open doors_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
-    charger_actual_current charger_voltage version update_available is_user_present geofence
+    charger_actual_current charger_voltage version update_available update_version is_user_present geofence
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation
   )a
 
@@ -113,7 +113,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       frunk_open: frunk_open(vehicle),
       is_user_present: get_in_struct(vehicle, [:vehicle_state, :is_user_present]),
       version: version(vehicle),
-      update_available: update_available(vehicle)
+      update_available: update_available(vehicle),
+      update_version: update_version(vehicle)
     }
   end
 
@@ -175,6 +176,13 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     case get_in_struct(vehicle, [:vehicle_state, :software_update, :status]) do
       status when status in ["available", "downloading", "downloading_wifi_wait"] -> true
       status when is_binary(status) -> false
+      nil -> nil
+    end
+  end
+
+  defp update_version(vehicle) do
+    case get_in_struct(vehicle, [:vehicle_state, :software_update, :version]) do
+      version when is_binary(version) -> List.first(String.split(version, " "))
       nil -> nil
     end
   end
