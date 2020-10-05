@@ -76,6 +76,7 @@ nav.navbar {
   display: flex;
   flex-direction: column;
   margin-bottom: 25px;
+  overflow: visible;
 
   .card-content {
     padding: 0.8rem 0.4rem;
