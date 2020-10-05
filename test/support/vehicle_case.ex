@@ -133,7 +133,11 @@ defmodule TeslaMate.VehicleCase do
           vehicle_state: %{
             timestamp: ts,
             car_version: car_version,
-            software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: state, version: update_version}
+            software_update: %SoftwareUpdate{
+              expected_duration_sec: 2700,
+              status: state,
+              version: update_version
+            }
           },
           drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
         )
