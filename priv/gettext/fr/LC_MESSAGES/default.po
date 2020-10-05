@@ -220,12 +220,12 @@ msgid "Driver present"
 msgstr "Conducteur présent"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:298
+#: lib/teslamate_web/live/car_live/summary.html.leex:297
 msgid "cancel sleep attempt"
 msgstr "Annuler la tentative de sommeil"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:293
+#: lib/teslamate_web/live/car_live/summary.html.leex:292
 msgid "try to sleep"
 msgstr "Tentative de mise en veille"
 
@@ -319,11 +319,6 @@ msgstr "Température extérieure"
 #: lib/teslamate_web/live/settings_live/index.html.leex:270
 msgid "Version"
 msgstr "Version"
-
-#, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:74
-msgid "Software Update available"
-msgstr "Mise à jour disponible"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:79
@@ -577,3 +572,8 @@ msgstr "Le coffre est ouvert"
 #: lib/teslamate_web/live/geofence_live/form.html.leex:66
 msgid "Per Minute"
 msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/live/car_live/summary.html.leex:74
+msgid "Software Update available (%{version})"
+msgstr "Mise à jour disponible (%{version})"
