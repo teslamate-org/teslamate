@@ -547,7 +547,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "date": false,
+              "date": true,
               "date_from": false,
               "date_to": false,
               "timezone": true
@@ -719,8 +719,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "rated",
-          "value": "rated"
+          "text": "ideal",
+          "value": "ideal"
         },
         "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
@@ -745,8 +745,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "Europe/Berlin",
-          "value": "Europe/Berlin"
+          "text": "GMT",
+          "value": "GMT"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT current_setting('TIMEZONE');",
@@ -771,8 +771,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "https://teslamate.schmidt-schmitten.com",
-          "value": "https://teslamate.schmidt-schmitten.com"
+          "text": "http://localhost:4000",
+          "value": "http://localhost:4000"
         },
         "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
@@ -815,6 +815,6 @@
   },
   "timezone": "browser",
   "title": "Statistics",
-  "uid": "3MhVw9FMk",
+  "uid": "1EZnXszMk",
   "version": 11
 }
