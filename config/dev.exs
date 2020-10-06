@@ -33,12 +33,12 @@ config :teslamate, TeslaMate.Repo,
   username: "postgres",
   password: "postgres",
   database: "teslamate_dev",
-  hostname: "localhost",
+  hostname: System.get_env("DATABASE_HOST", "localhost"),
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
 config :teslamate, :mqtt,
-  host: "localhost",
+  host: System.get_env("MQTT_HOST", "localhost"),
   username: "dev",
   password: "dev"
 

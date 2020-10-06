@@ -1,0 +1,18 @@
+FROM elixir:1.10-alpine
+
+WORKDIR /app
+
+RUN apk add --update --no-cache nodejs npm git build-base python inotify-tools && \
+    mix local.rebar --force && \
+    mix local.hex --force
+
+COPY mix.exs mix.lock ./
+RUN mix deps.get
+
+COPY assets/package.json assets/package-lock.json ./assets/
+RUN npm install --prefix ./assets/
+
+EXPOSE 4000
+
+COPY entrypoint.dev.sh /
+ENTRYPOINT [ "/entrypoint.dev.sh" ]

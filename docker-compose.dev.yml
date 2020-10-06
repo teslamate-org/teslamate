@@ -1,0 +1,39 @@
+version: '3'
+volumes:
+  db_dev:
+  mosquitto-conf_dev:
+  mosquitto-data_dev:
+services:
+  db:
+    image: postgres:alpine
+    environment: 
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: teslamate_dev
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - db_dev:/var/lib/postgresql/data 
+    
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    depends_on: 
+      - db
+      - mqtt
+    environment: 
+      MIX_ENV: dev
+      DATABASE_HOST: db
+      MQTT_HOST: mqtt
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/app
+
+  mqtt:
+    image: eclipse-mosquitto:1.6
+    volumes:
+      - mosquitto-conf_dev:/mosquitto/config
+      - mosquitto-data_dev:/mosquitto/data
+
+
+  
