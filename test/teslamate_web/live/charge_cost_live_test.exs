@@ -17,7 +17,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       {:ok, %ChargingProcess{id: id} = cp} =
         Log.start_charging_process(car, %{date: DateTime.utc_now(), latitude: 0, longitude: 0})
 
-      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+      assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
 
       assert [] ==
                html
@@ -29,7 +29,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       assert {:ok, %ChargingProcess{start_date: start_date, end_date: end_date}} =
                Log.complete_charging_process(cp)
 
-      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+      assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
 
       assert [tag] =
                html
@@ -47,7 +47,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
     test "shows the duration in minutes", %{conn: conn} do
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture(), %{duration_min: 30})
-      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+      assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
 
       assert [
                {"div", _,
@@ -73,7 +73,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
         car = car_fixture(eid: rnd, vid: rnd, vin: to_string(rnd))
         %ChargingProcess{id: id} = charging_process_fixture(car, attrs)
 
-        assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+        assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
 
         assert [
                  {"div", _,
@@ -91,7 +91,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       attrs = %{charge_energy_used: nil, charge_energy_added: nil}
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture(), attrs)
-      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+      assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
 
       assert [] =
                html
@@ -101,7 +101,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
     test "shows the car name", %{conn: conn} do
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture(name: "joe"))
-      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+      assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
 
       assert [
                {"div", _,
@@ -127,7 +127,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       %ChargingProcess{id: id} =
         charging_process_fixture(car_fixture(), %{geofence_id: geofence.id})
 
-      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+      assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
 
       assert [
                {"div", _,
@@ -166,7 +166,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       %ChargingProcess{id: id} =
         charging_process_fixture(car_fixture(), %{address_id: address.id})
 
-      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+      assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
 
       assert [
                {"div", _,

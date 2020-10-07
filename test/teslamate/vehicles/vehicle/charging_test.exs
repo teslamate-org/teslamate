@@ -37,7 +37,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:"$websockex_cast", :disconnect}
 
-    assert_receive {:insert_charge, %ChargingProcess{id: process_id} = cproc,
+    assert_receive {:insert_charge, %ChargingProcess{id: _process_id} = cproc,
                     %{
                       date: _,
                       charge_energy_added: 0.1,
@@ -127,7 +127,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:"$websockex_cast", :disconnect}
 
-    assert_receive {:insert_charge, %ChargingProcess{id: cproc_id} = cproc,
+    assert_receive {:insert_charge, %ChargingProcess{id: _cproc_id} = cproc,
                     %{date: _, charge_energy_added: 0.1}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
@@ -227,7 +227,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:"$websockex_cast", :disconnect}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
-    assert_receive {:insert_charge, charging_event, %{date: _, charge_energy_added: 22}}
+    assert_receive {:insert_charge, _charging_event, %{date: _, charge_energy_added: 22}}
 
     refute_received _
   end
@@ -259,7 +259,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:"$websockex_cast", :disconnect}
 
-    assert_receive {:insert_charge, %ChargingProcess{id: cproc_id} = cproc,
+    assert_receive {:insert_charge, %ChargingProcess{id: _cproc_id} = cproc,
                     %{date: _, charge_energy_added: 0.1}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}

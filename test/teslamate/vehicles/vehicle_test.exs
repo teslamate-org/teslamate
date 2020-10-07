@@ -39,7 +39,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car, :offline, []}
+      assert_receive {:start_state, _car, :offline, []}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :offline}}}
 
       refute_receive _
@@ -52,7 +52,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car, :asleep, []}
+      assert_receive {:start_state, _car, :asleep, []}
       assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :asleep}}}
 
       refute_receive _
@@ -348,7 +348,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
           delay: 10
         )
 
-      assert_receive {:start_state, car, :asleep, []}
+      assert_receive {:start_state, _car, :asleep, []}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep, healthy: true}}}
 
       :ok = :fuse.circuit_disable(fuse_name)
@@ -389,7 +389,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:start_state, _car, :online, date: _}
       assert_receive {ApiMock, {:stream, 1000, _}}
 
       for _ <- 1..10 do

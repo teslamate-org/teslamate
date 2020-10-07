@@ -144,7 +144,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
         :ok = start_vehicles(events)
 
-        assert {:ok, parent_view, html} =
+        assert {:ok, parent_view, _html} =
                  conn
                  |> put_connect_params(%{"baseUrl" => "http://localhost"})
                  |> live("/")

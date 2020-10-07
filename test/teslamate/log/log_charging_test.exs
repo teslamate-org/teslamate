@@ -222,7 +222,7 @@ defmodule TeslaMate.LogChargingTest do
       ]
 
       for c <- charges do
-        assert {:ok, %Charge{} = charge} = Log.insert_charge(cproc, c)
+        assert {:ok, %Charge{} = _charge} = Log.insert_charge(cproc, c)
       end
 
       assert {:ok, %ChargingProcess{} = cproc} = Log.complete_charging_process(cproc)
@@ -411,7 +411,7 @@ defmodule TeslaMate.LogChargingTest do
     test "calculates the charge costs based on the price per kwh" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -438,7 +438,7 @@ defmodule TeslaMate.LogChargingTest do
     test "calculates the charge costs based on the price per minute" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -466,7 +466,7 @@ defmodule TeslaMate.LogChargingTest do
     test "calculates the charge costs based on the session fee" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -492,7 +492,7 @@ defmodule TeslaMate.LogChargingTest do
     test "calculates the charge costs based on the session fee and energy used" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -519,7 +519,7 @@ defmodule TeslaMate.LogChargingTest do
     test "fees can be zero" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -546,7 +546,7 @@ defmodule TeslaMate.LogChargingTest do
     test "cost per unit can be negative" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -580,7 +580,7 @@ defmodule TeslaMate.LogChargingTest do
         |> Settings.get_car_settings!()
         |> Settings.update_car_settings(%{free_supercharging: true})
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
