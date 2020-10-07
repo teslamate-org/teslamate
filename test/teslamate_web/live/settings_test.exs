@@ -353,7 +353,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
           }
         )
 
-      assert {:ok, view, html} = live(conn, "/settings")
+      assert {:ok, view, _html} = live(conn, "/settings")
 
       assert [{"option", [{"value", "90"}, {"selected", "selected"}], ["90 min"]}] =
                render_change(view, :change, %{
@@ -492,7 +492,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       |> render_click()
 
       assert_redirect(view, path = "/settings?car=#{one.id}")
-      assert {:ok, view, html} = live(conn, path)
+      assert {:ok, _view, html} = live(conn, path)
 
       assert one.name ==
                html

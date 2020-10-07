@@ -44,7 +44,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       _gf3 =
         geofence_fixture(%{name: "Victory Column", latitude: 52.514521, longitude: 13.350144})
 
-      assert {:ok, view, html} = live(conn, "/geo-fences")
+      assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert [
                _,
@@ -70,7 +70,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           radius: 100
         })
 
-      assert {:ok, view, html} = live(conn, "/geo-fences")
+      assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["Post office", "-25.066188, -130.100502", "328 ft", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
@@ -175,7 +175,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert_redirect(view, "/geo-fences")
 
-      assert {:ok, view, html} = live(conn, "/geo-fences")
+      assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["Adamstown", "0.000000, 0.000000", "20 m", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
@@ -193,7 +193,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                  longitude: 12.862226
                })
 
-      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+      assert {:ok, _view, html} = live(conn, "/geo-fences/new")
       html = Floki.parse_document!(html)
 
       latitude = Floki.find(html, "#geo_fence_latitude")
@@ -204,7 +204,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     end
 
     test "validates cahnges when creating a new geo-fence", %{conn: conn} do
-      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+      assert {:ok, view, _html} = live(conn, "/geo-fences/new")
 
       html =
         render_submit(view, :save, %{
@@ -328,7 +328,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert_redirect(view, "/geo-fences")
 
-      assert {:ok, view, html} = live(conn, "/geo-fences")
+      assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["post office", "-25.066188, -130.100502", "25 m", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
@@ -338,7 +338,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       {:ok, _settings} =
         Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :mi})
 
-      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+      assert {:ok, view, _html} = live(conn, "/geo-fences/new")
 
       render_submit(view, :save, %{
         geo_fence: %{
@@ -351,7 +351,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert_redirect(view, "/geo-fences")
 
-      assert {:ok, view, html} = live(conn, "/geo-fences")
+      assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["post office", "-25.066188, -130.100502", "49 ft", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
@@ -359,7 +359,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       {:ok, _settings} =
         Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :km})
 
-      assert {:ok, view, html} = live(conn, "/geo-fences")
+      assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["post office", "-25.066188, -130.100502", "15 m", _] =
                html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
@@ -443,7 +443,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       # Does not show modal if there aren't any charging sessions at this location
 
-      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+      assert {:ok, view, _html} = live(conn, "/geo-fences/new")
       render_submit(view, :save, %{geo_fence: params})
       assert_redirect(view, "/geo-fences")
 
@@ -657,7 +657,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       car = car_fixture()
       :ok = insert_charging_processes(car, {47.81444104508753, 12.367612123489382})
 
-      assert {:ok, view, html} = live(conn, "/geo-fences/new")
+      assert {:ok, view, _html} = live(conn, "/geo-fences/new")
 
       html =
         render_submit(view, :save, %{

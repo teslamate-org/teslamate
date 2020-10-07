@@ -4,7 +4,7 @@ defmodule TeslaMateWeb.SignInLiveTest do
   alias TeslaMate.Auth.Credentials
 
   test "renders sign in form", %{conn: conn} do
-    assert {:ok, view, html} = live(conn, "/sign_in")
+    assert {:ok, _view, html} = live(conn, "/sign_in")
 
     assert html =~ ~r(<input .* type="username"/>)
     assert html =~ ~r(<input .* type="password"/>)

@@ -406,7 +406,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
     stream(name, %{shift_state: "D", speed: 50, power: 5, elevation: 50, time: now})
     assert_receive {:start_drive, ^car}
-    assert_receive {:insert_position, drive, position}
+    assert_receive {:insert_position, _drive, position}
 
     assert_receive {:pubsub,
                     {:broadcast, _, _, %Summary{state: :driving, speed: 80, elevation: 50}}}
@@ -462,7 +462,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     send(:"api_#{name}", :continue)
 
     assert_receive {:start_charging_process, ^car, %{latitude: 0.0}, [lookup_address: true]}, 1000
-    assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: 0.0}}
+    assert_receive {:insert_charge, _cproc, %{date: _, charge_energy_added: 0.0}}
     assert_receive {:"$websockex_cast", :disconnect}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
