@@ -112,9 +112,9 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
 
     assert_receive {:start_drive, ^car}
-    assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 8}}
+    assert_receive {:insert_position, _drive, %{longitude: 0.1, speed: 8}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
-    assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 80}}
+    assert_receive {:insert_position, _drive, %{longitude: 0.1, speed: 80}}
 
     refute_receive _
   end
@@ -362,7 +362,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       # Timeout
       assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
-      assert_receive {:start_state, car, :asleep, []}
+      assert_receive {:start_state, _car, :asleep, []}
       assert_receive {:"$websockex_cast", :disconnect}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
@@ -418,7 +418,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       assert_receive {:start_drive, ^car}
-      assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
+      assert_receive {:insert_position, _drive, %{longitude: 0.2, speed: 32}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
       assert_receive {:insert_position, drive, %{longitude: 0.3}}
       assert_receive {:close_drive, ^drive, lookup_address: true}
@@ -473,7 +473,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
       assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
-      assert_receive {:insert_position, drive, %{longitude: 0.3}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.3}}
       assert_receive {:close_drive, ^drive, lookup_address: true}
 
       d1 = DateTime.from_unix!(now_ts + :timer.minutes(4) + 1, :millisecond)

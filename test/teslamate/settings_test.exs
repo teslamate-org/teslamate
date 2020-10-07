@@ -328,7 +328,7 @@ defmodule TeslaMate.SettingsTest do
       assert %Car{efficiency: 0.152} = Log.get_car!(car.id)
 
       # changed back
-      assert {:ok, settings} =
+      assert {:ok, _settings} =
                Settings.update_global_settings(settings, %{preferred_range: :rated})
 
       assert %Car{efficiency: 0.15} = Log.get_car!(car.id)
