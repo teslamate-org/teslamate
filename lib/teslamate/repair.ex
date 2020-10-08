@@ -79,7 +79,7 @@ defmodule TeslaMate.Repair do
   end
 
   def handle_info(msg, state) do
-    Logger.warn("Unexpected message: #{inspect(msg, pretty: true)}")
+    Logger.warning("Unexpected message: #{inspect(msg, pretty: true)}")
     {:noreply, state}
   end
 
@@ -107,7 +107,7 @@ defmodule TeslaMate.Repair do
         |> Repo.update()
     end
     |> case do
-      {:error, reason} -> Logger.warn("Failure: #{inspect(reason, pretty: true)}")
+      {:error, reason} -> Logger.warning("Failure: #{inspect(reason, pretty: true)}")
       {:ok, _entity} -> Logger.info("OK")
     end
 
@@ -123,12 +123,12 @@ defmodule TeslaMate.Repair do
 
         case Locations.find_address(position) do
           {:error, {:geocoding_failed, reason}} ->
-            Logger.warn("Geocoding failed: #{reason}")
+            Logger.warning("Geocoding failed: #{reason}")
             nil
 
           {:error, reason} ->
             :fuse.melt(:addr_fuse)
-            Logger.warn("Address not found: #{inspect(reason)}")
+            Logger.warning("Address not found: #{inspect(reason)}")
             nil
 
           {:ok, %Address{display_name: _name, id: id}} ->

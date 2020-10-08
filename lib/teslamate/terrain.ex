@@ -203,7 +203,7 @@ defmodule TeslaMate.Terrain do
   end
 
   defp log_warning(reason) do
-    Logger.warn("Elevation query failed: #{inspect(reason)}")
+    Logger.warning("Elevation query failed: #{inspect(reason)}")
   end
 
   defp cache_path do

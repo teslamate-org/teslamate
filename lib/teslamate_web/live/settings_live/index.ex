@@ -58,7 +58,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
           %{global_settings: Map.put(assigns.global_settings, :changeset, changeset)}
 
         {:error, reason} ->
-          Logger.warn("Updating settings failed: #{inspect(reason, pretty: true)}")
+          Logger.warning("Updating settings failed: #{inspect(reason, pretty: true)}")
 
           %{
             refresh_error:
@@ -92,7 +92,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       |> Settings.update_car_settings(params)
       |> case do
         {:error, changeset} ->
-          Logger.warn(inspect(changeset))
+          Logger.warning(inspect(changeset))
           put_in(settings, [id, :changeset], changeset)
 
         {:ok, car_settings} ->

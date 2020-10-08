@@ -84,7 +84,7 @@ defmodule TeslaMate.Import.FakeApi do
         {event, %State{state | events: events, event_streams: streams, current_chunk: chunk}}
 
       [] ->
-        Logger.warn("Processed empty chunk: #{inspect(chunk)}")
+        Logger.warning("Processed empty chunk: #{inspect(chunk)}")
         pop(%State{state | events: [], event_streams: streams, current_chunk: chunk})
     end
   end

@@ -10,18 +10,18 @@ defmodule TeslaMate.Mqtt.Handler do
   end
 
   def connection(:down, state) do
-    Logger.warn("MQTT connection has been dropped")
+    Logger.warning("MQTT connection has been dropped")
     {:ok, state}
   end
 
   def connection(:terminating, state) do
-    Logger.warn("MQTT connection is terminating")
+    Logger.warning("MQTT connection is terminating")
     {:ok, state}
   end
 
   @impl true
   def terminate(reason, _state) do
-    Logger.warn("MQTT Client has been terminated with reason: #{inspect(reason)}")
+    Logger.warning("MQTT Client has been terminated with reason: #{inspect(reason)}")
     :ok
   end
 end

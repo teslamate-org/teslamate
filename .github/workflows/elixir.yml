@@ -8,9 +8,8 @@ jobs:
 
     strategy:
       matrix:
-        elixir: ["1.10.4"]
         include:
-          - elixir: "1.10.4"
+          - elixir: "1.11.0"
             otp: "23.x"
 
     runs-on: ubuntu-18.04
@@ -29,7 +28,7 @@ jobs:
 
     env:
       MIX_ENV: test
-      ELIXIR_ASSERT_TIMEOUT: 350
+      ELIXIR_ASSERT_TIMEOUT: 1000
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
