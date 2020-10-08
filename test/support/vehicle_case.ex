@@ -124,14 +124,20 @@ defmodule TeslaMate.VehicleCase do
         )
       end
 
-      defp update_event(ts, state, version) do
+      defp update_event(ts, state, car_version, opts \\ []) do
         alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
+
+        update_version = Keyword.get(opts, :update_version)
 
         online_event(
           vehicle_state: %{
             timestamp: ts,
-            car_version: version,
-            software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: state}
+            car_version: car_version,
+            software_update: %SoftwareUpdate{
+              expected_duration_sec: 2700,
+              status: state,
+              version: update_version
+            }
           },
           drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0}
         )

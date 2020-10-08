@@ -71,7 +71,7 @@
         </span>
       <% end %>
       <%= if @summary.update_available do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Software Update available" %>'>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Software Update available (%{version})", version: @summary.update_version %>'>
           <span class="mdi mdi-gift-outline"></span>
         </span>
       <% end %>
