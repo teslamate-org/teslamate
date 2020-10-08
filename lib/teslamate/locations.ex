@@ -29,7 +29,7 @@ defmodule TeslaMate.Locations do
 
   @geocoder (case Mix.env() do
                :test -> GeocoderMock
-               _____ -> Geocoder
+               _ -> Geocoder
              end)
 
   def find_address(%{latitude: lat, longitude: lng}) do

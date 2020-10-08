@@ -181,7 +181,7 @@ defmodule TeslaMate.Import do
   def handle_event(:info, {:EXIT, _from, :killed}, _state, _data), do: :keep_state_and_data
 
   def handle_event(:info, {:EXIT, _from, reason}, _state, data) do
-    Logger.warn("Import failed: #{inspect(reason, pretty: true)}")
+    Logger.warning("Import failed: #{inspect(reason, pretty: true)}")
     {:next_state, {:error, reason}, data, {:next_event, :internal, :broadcast}}
   end
 

@@ -61,7 +61,7 @@ defmodule TeslaMate.Updater do
         {:noreply, state}
 
       {:error, reason} ->
-        Logger.warn("Update check failed: #{inspect(reason, pretty: true)}")
+        Logger.warning("Update check failed: #{inspect(reason, pretty: true)}")
         {:noreply, state}
     end
   end

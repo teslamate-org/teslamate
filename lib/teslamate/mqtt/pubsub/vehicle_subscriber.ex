@@ -67,8 +67,11 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       ordered: false
     )
     |> Enum.each(fn
-      {_, reason} when reason != :ok -> Logger.warn("MQTT publishing failed: #{inspect(reason)}")
-      _ok -> nil
+      {_, reason} when reason != :ok ->
+        Logger.warning("MQTT publishing failed: #{inspect(reason)}")
+
+      _ok ->
+        nil
     end)
 
     {:noreply, %State{state | last_summary: summary}}
