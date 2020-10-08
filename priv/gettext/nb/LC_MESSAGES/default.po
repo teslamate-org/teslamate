@@ -222,12 +222,12 @@ msgid "Driver present"
 msgstr "Fører er tilstede"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:298
+#: lib/teslamate_web/live/car_live/summary.html.leex:297
 msgid "cancel sleep attempt"
 msgstr "Avbryt dvale"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:293
+#: lib/teslamate_web/live/car_live/summary.html.leex:292
 msgid "try to sleep"
 msgstr "forsøk på dvale"
 
@@ -321,11 +321,6 @@ msgstr "Temperatur utvendig"
 #: lib/teslamate_web/live/settings_live/index.html.leex:270
 msgid "Version"
 msgstr "Software versjon"
-
-#, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:74
-msgid "Software Update available"
-msgstr "Ny software tilgjengelig"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:79
@@ -579,3 +574,8 @@ msgstr "Bagasjeluken er åpen"
 #: lib/teslamate_web/live/geofence_live/form.html.leex:66
 msgid "Per Minute"
 msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/live/car_live/summary.html.leex:74
+msgid "Software Update available (%{version})"
+msgstr "Ny software tilgjengelig (%{version})"
