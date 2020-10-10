@@ -232,17 +232,18 @@ defmodule TeslaMate.Import do
               stream =
                 rows
                 |> Task.async_stream(&LineParser.parse(&1, tz), timeout: :infinity, ordered: true)
+                |> Stream.map(fn {:ok, vehicle} -> vehicle end)
                 |> Stream.filter(fn
-                  {:ok, %Veh{state: "unknown"}} ->
+                  %Veh{state: "unknown"} ->
                     false
 
-                  {:ok, %Veh{drive_state: %Drive{timestamp: nil}}} ->
+                  %Veh{drive_state: %Drive{timestamp: nil}} ->
                     false
 
-                  {:ok, %Veh{state: "online", drive_state: %Drive{latitude: lat, longitude: lng}}} ->
-                    lat != nil and lng != nil
+                  %Veh{state: "online", drive_state: %Drive{} = d} ->
+                    d.latitude != nil and d.longitude != nil
 
-                  {:ok, %Veh{}} ->
+                  %Veh{} ->
                     true
                 end)
 
@@ -263,11 +264,12 @@ defmodule TeslaMate.Import do
     alias TeslaApi.Vehicle, as: Veh
 
     stream
-    |> Enum.find(fn {:ok, %Veh{id: eid, vehicle_id: vid, vin: vin}} ->
-      vin != nil and vid != nil and eid != nil
-    end)
+    |> Enum.find(fn %Veh{} = v -> v.vin != nil and v.vehicle_id != nil and v.id != nil end)
     |> case do
-      {:ok, vehicle} ->
+      nil ->
+        create_car(rest)
+
+      vehicle ->
         car = Vehicles.create_or_update!(vehicle)
 
         settings = %CarSettings{
@@ -277,9 +279,6 @@ defmodule TeslaMate.Import do
         }
 
         %Car{car | settings: settings}
-
-      nil ->
-        create_car(rest)
     end
   end
 end
