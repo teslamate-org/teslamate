@@ -11,5 +11,5 @@ config :logger,
   compile_time_purge_matching: [[level_lower_than: :info]]
 
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
+  format: "$date $time $metadata[$level] $message\n",
   metadata: [:car_id]
