@@ -118,7 +118,7 @@ defmodule TeslaMate.Import do
   def handle_event(:internal, :import, :running, %Data{files: files} = data) do
     Logger.info("Importing #{length(files)} file(s) ...")
 
-    case create_evennt_streams(data) do
+    case create_event_streams(data) do
       {:error, reason} ->
         {:next_state, {:error, reason}, {:next_event, :internal, :broadcast}}
 
@@ -209,7 +209,7 @@ defmodule TeslaMate.Import do
     end
   end
 
-  defp create_evennt_streams(%Data{files: files, timezone: tz}) do
+  defp create_event_streams(%Data{files: files, timezone: tz}) do
     alias TeslaApi.Vehicle.State.Drive
     alias TeslaApi.Vehicle, as: Veh
 
