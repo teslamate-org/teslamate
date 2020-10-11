@@ -309,12 +309,12 @@ msgstr "Fjern '%{geo_fence}'?"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:252
 msgid "Inside Temperature"
-msgstr "Temperatur innvendig"
+msgstr "Temperatur inne"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:240
 msgid "Outside Temperature"
-msgstr "Temperatur utvendig"
+msgstr "Temperatur ute"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:277
@@ -341,7 +341,7 @@ msgstr "Gjenværende ladetid"
 #: lib/teslamate_web/live/settings_live/index.html.leex:250
 #: lib/teslamate_web/templates/layout/root.html.leex:46
 msgid "Dashboards"
-msgstr "Grafana"
+msgstr "Dashboard - Grafana"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:233
@@ -573,7 +573,7 @@ msgstr "Bagasjeluken er åpen"
 #: lib/teslamate_web/live/charge_live/cost.html.leex:112
 #: lib/teslamate_web/live/geofence_live/form.html.leex:66
 msgid "Per Minute"
-msgstr ""
+msgstr "Per minutt"
 
 #, elixir-format, fuzzy
 #: lib/teslamate_web/live/car_live/summary.html.leex:74
