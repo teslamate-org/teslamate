@@ -80,6 +80,10 @@ config :teslamate, TeslaMate.Repo,
   pool_size: System.get_env("DATABASE_POOL_SIZE", "10") |> String.to_integer(),
   timeout: System.get_env("DATABASE_TIMEOUT", "60000") |> String.to_integer()
 
+if System.get_env("DATABASE_IPV6") == "true" do
+  config :teslamate, TeslaMate.Repo, socket_options: [:inet6]
+end
+
 config :teslamate, TeslaMateWeb.Endpoint,
   http:
     Util.choose_http_binding_address() ++
