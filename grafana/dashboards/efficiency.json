@@ -134,7 +134,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.2.1",
       "scopedVars": {
         "car_id": {
           "selected": true,
@@ -253,7 +253,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.2.1",
       "scopedVars": {
         "car_id": {
           "selected": true,
@@ -372,7 +372,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.2.1",
       "scopedVars": {
         "car_id": {
           "selected": true,
@@ -420,7 +420,8 @@
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": null
+            "align": null,
+            "filterable": false
           },
           "mappings": [],
           "thresholds": {
@@ -494,7 +495,7 @@
               },
               {
                 "id": "custom.displayMode",
-                "value": "gradient-gauge"
+                "value": "lcd-gauge"
               },
               {
                 "id": "thresholds",
@@ -515,6 +516,10 @@
                     }
                   ]
                 }
+              },
+              {
+                "id": "max",
+                "value": 1.15
               }
             ]
           },
@@ -657,7 +662,7 @@
           }
         ]
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.2.1",
       "scopedVars": {
         "car_id": {
           "selected": true,
@@ -776,7 +781,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.2.1",
       "scopedVars": {
         "car_id": {
           "selected": true,
@@ -824,7 +829,8 @@
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": null
+            "align": null,
+            "filterable": false
           },
           "mappings": [],
           "thresholds": {
@@ -882,7 +888,7 @@
       "options": {
         "showHeader": true
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.2.1",
       "scopedVars": {
         "car_id": {
           "selected": true,
@@ -930,7 +936,8 @@
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": null
+            "align": null,
+            "filterable": false
           },
           "mappings": [],
           "thresholds": {
@@ -988,7 +995,7 @@
       "options": {
         "showHeader": true
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.2.1",
       "scopedVars": {
         "car_id": {
           "selected": true,
