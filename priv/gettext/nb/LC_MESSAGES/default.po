@@ -254,7 +254,7 @@ msgstr "Kjøretøyet må være låst"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:124
 msgid "Range (rated)"
-msgstr "Rekkevidde (rated)"
+msgstr "Rekkevidde klass."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:162
@@ -274,17 +274,17 @@ msgstr "Rekkevidde"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "ideal"
-msgstr "ideell"
+msgstr "typisk"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "rated"
-msgstr "rated"
+msgstr "klassifisert"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:123
 msgid "Range (ideal)"
-msgstr "Rekkevidde (ideell)"
+msgstr "Rekkevidde typisk"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:140
@@ -325,7 +325,7 @@ msgstr "Software versjon"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:79
 msgid "Health check failed"
-msgstr "Helsesjekk feilet"
+msgstr "Helsesjekk feilet. Sjekk at mobil tilkobling er aktivert i bilen."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:69
@@ -536,7 +536,7 @@ msgstr "Fortsett"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:265
 msgid "Mileage"
-msgstr "Total kjørelengde"
+msgstr "Kilometerstand"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:111
