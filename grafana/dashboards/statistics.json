@@ -743,19 +743,17 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "text": "GMT",
-          "value": "GMT"
+          "selected": false
         },
         "datasource": "TeslaMate",
-        "definition": "SELECT current_setting('TIMEZONE');",
+        "definition": "select current_setting('TIMEZONE'), replace(name, 'posix/', '') from pg_timezone_names where name like 'posix/%';",
         "hide": 0,
         "includeAll": false,
         "label": "Time zone",
         "multi": false,
         "name": "timezone",
         "options": [],
-        "query": "SELECT current_setting('TIMEZONE');",
+        "query": "select current_setting('TIMEZONE'), replace(name, 'posix/', '') from pg_timezone_names where name like 'posix/%';",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -815,5 +813,5 @@
   "timezone": "browser",
   "title": "Statistics",
   "uid": "1EZnXszMk",
-  "version": 11
+  "version": 1
 }
