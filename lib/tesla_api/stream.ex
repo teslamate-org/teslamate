@@ -170,7 +170,7 @@ defmodule TeslaApi.Stream do
     case reason do
       {:local, :normal} ->
         Logger.info(
-          "Connction was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}). Reconnecting …"
+          "Connection was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}). Reconnecting …"
         )
 
         {:reconnect, state}
