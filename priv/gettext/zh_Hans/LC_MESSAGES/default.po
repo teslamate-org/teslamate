@@ -222,12 +222,12 @@ msgid "Driver present"
 msgstr "当前驾驶员"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:298
+#: lib/teslamate_web/live/car_live/summary.html.leex:297
 msgid "cancel sleep attempt"
 msgstr "取消休眠"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:293
+#: lib/teslamate_web/live/car_live/summary.html.leex:292
 msgid "try to sleep"
 msgstr "尝试休眠"
 
@@ -321,11 +321,6 @@ msgstr "车外温度"
 #: lib/teslamate_web/live/settings_live/index.html.leex:270
 msgid "Version"
 msgstr "当前固件版本"
-
-#, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:74
-msgid "Software Update available"
-msgstr "有可用更新"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:79
@@ -579,3 +574,8 @@ msgstr "行李箱已打开"
 #: lib/teslamate_web/live/geofence_live/form.html.leex:66
 msgid "Per Minute"
 msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/live/car_live/summary.html.leex:74
+msgid "Software Update available (%{version})"
+msgstr "有可用更新 (%{version})"

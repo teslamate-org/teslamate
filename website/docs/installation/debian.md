@@ -37,7 +37,7 @@ Source: [elixir-lang.org/install](https://elixir-lang.org/install)
 </details>
 
 <details>
-  <summary>Grafana (v6.6+) & Plugins</summary>
+  <summary>Grafana (v7.2+) & Plugins</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
@@ -98,7 +98,7 @@ cd /usr/src
 git clone https://github.com/adriankumpf/teslamate.git
 cd teslamate
 
-git checkout $(git describe --tags) # Checkout the latest stable version
+git checkout $(git describe --tags `git rev-list --tags --max-count=1`) # Checkout the latest stable version
 ```
 
 ## Create PostgreSQL database

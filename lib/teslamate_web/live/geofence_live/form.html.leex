@@ -68,7 +68,7 @@
         </p>
         <p class="control is-expanded">
           <%= text_input f, :cost_per_unit, class: "input",
-                             type: :number, inputmode: :decimal, min: 0.0, step: 0.0001,
+                             type: :number, inputmode: :decimal, step: 0.0001,
                              placeholder: "0.00" %>
         </p>
         <%= if @show_errors do %>
@@ -112,7 +112,7 @@
   </div>
 </form>
 
-<div class="modal modal-fx-fadeInScale<%= if @show_modal, do: ' is-active' %><%= if not @connected?, do: ' is-hidden' %>" phx-hook="Modal">
+<div id="charging_cost_modal" class="modal modal-fx-fadeInScale<%= if @show_modal, do: ' is-active' %><%= if not @connected?, do: ' is-hidden' %>" phx-hook="Modal">
   <div class="modal-background" phx-click="close-modal" <%= if @show_modal, do: "phx-window-keyup=keyup" %>></div>
   <div class="modal-card modal-content">
     <header class="modal-card-head">

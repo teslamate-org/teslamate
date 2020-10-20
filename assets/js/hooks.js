@@ -91,9 +91,12 @@ import {
   CircleMarker,
 } from "leaflet";
 
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
 const icon = new Icon({
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
   iconAnchor: [12, 40],
   popupAnchor: [0, -25],
 });
@@ -209,9 +212,12 @@ export const Map = {
         /* webpackPreload: true, webpackChunkName: "geo" */ "@geoman-io/leaflet-geoman-free"
       ),
     ]).then(() => {
-      const $radius = document.querySelector("#geo_fence_radius");
-      const $latitude = document.querySelector("#geo_fence_latitude");
-      const $longitude = document.querySelector("#geo_fence_longitude");
+      const geoFence = (name) =>
+        document.querySelector(`input[name='geo_fence[${name}]']`);
+
+      const $radius = geoFence("radius");
+      const $latitude = geoFence("latitude");
+      const $longitude = geoFence("longitude");
 
       const location = new LatLng($latitude.value, $longitude.value);
 

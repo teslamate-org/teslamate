@@ -3,7 +3,7 @@ title: Upgrading PostgreSQL to a new major version
 sidebar_label: Upgrading PostgreSQL
 ---
 
-1. Create a [backup](backup_restore)
+1. Create a [backup](backup_restore.md)
 2. Stop all TeslaMate containers
 
    ```bash
@@ -27,4 +27,4 @@ sidebar_label: Upgrading PostgreSQL
    docker-compose up -d database
    ```
 
-5. [Restore](backup_restore) the backup
+5. [Restore](backup_restore.md) the backup

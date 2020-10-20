@@ -141,7 +141,7 @@ msgstr "Geo-hek \"%{name}\" aangemaakt"
 #: lib/teslamate_web/live/geofence_live/form.html.leex:4 lib/teslamate_web/live/geofence_live/index.ex:22
 #: lib/teslamate_web/live/geofence_live/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.leex:56
 msgid "Geo-Fences"
-msgstr "Geo-Hekken"
+msgstr "Geofences"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:49
@@ -221,12 +221,12 @@ msgid "Driver present"
 msgstr "Bestuurder aanwezig"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:298
+#: lib/teslamate_web/live/car_live/summary.html.leex:297
 msgid "cancel sleep attempt"
 msgstr "annuleer slaap-poging"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:293
+#: lib/teslamate_web/live/car_live/summary.html.leex:292
 msgid "try to sleep"
 msgstr "probeer te slapen"
 
@@ -238,7 +238,7 @@ msgstr "Bereik (geschat)"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:98
 msgid "for"
-msgstr "voor"
+msgstr "sinds"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:70
@@ -320,11 +320,6 @@ msgstr "Buitentemperatuur"
 #: lib/teslamate_web/live/settings_live/index.html.leex:270
 msgid "Version"
 msgstr "Versie"
-
-#, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:74
-msgid "Software Update available"
-msgstr "Software-update beschikbaar"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:79
@@ -571,10 +566,15 @@ msgstr "Deuren zijn open"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:136
 msgid "Trunk is open"
-msgstr "Kofferklep is open"
+msgstr "Kofferbak is open"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.leex:112
 #: lib/teslamate_web/live/geofence_live/form.html.leex:66
 msgid "Per Minute"
-msgstr ""
+msgstr "Per minuut"
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/live/car_live/summary.html.leex:74
+msgid "Software Update available (%{version})"
+msgstr "Software-update beschikbaar (%{version})"

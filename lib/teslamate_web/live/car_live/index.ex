@@ -26,7 +26,7 @@ defmodule TeslaMateWeb.CarLive.Index do
 
       case Settings.update_global_settings(settings, %{base_url: base_url}) do
         {:error, reason} ->
-          Logger.warn("Updating settings failed: #{inspect(reason)}")
+          Logger.warning("Updating settings failed: #{inspect(reason)}")
           settings
 
         {:ok, settings} ->

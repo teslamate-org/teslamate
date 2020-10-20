@@ -57,8 +57,8 @@ defmodule TeslaMate.LogChargingTest do
 
       assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
       assert cproc.car_id == car.id
-      assert cproc.position.latitude == Decimal.cast("0.000000")
-      assert cproc.position.longitude == Decimal.cast("0.000000")
+      assert cproc.position.latitude == Decimal.new("0.000000")
+      assert cproc.position.longitude == Decimal.new("0.000000")
       assert cproc.position.date == @valid_pos_attrs.date
       assert %DateTime{} = cproc.start_date
       assert cproc.address.city == "Bielefeld"
@@ -90,10 +90,38 @@ defmodule TeslaMate.LogChargingTest do
                })
 
       assert cproc.car_id == car.id
-      assert cproc.position.latitude == Decimal.cast("99.900000")
-      assert cproc.position.longitude == Decimal.cast("99.900000")
+      assert cproc.position.latitude == Decimal.new("99.900000")
+      assert cproc.position.longitude == Decimal.new("99.900000")
       assert cproc.address_id == nil
       assert cproc.address == nil
+    end
+
+    test "saves dummy address if geocoding failed" do
+      car = car_fixture()
+
+      assert {:ok, cproc} =
+               Log.start_charging_process(car, %{
+                 date: DateTime.utc_now(),
+                 latitude: -99.9,
+                 longitude: -99.9
+               })
+
+      assert cproc.car_id == car.id
+      assert cproc.position.latitude == Decimal.new("-99.900000")
+      assert cproc.position.longitude == Decimal.new("-99.900000")
+      assert not is_nil(cproc.address_id)
+
+      assert %Locations.Address{
+               osm_id: 0,
+               osm_type: "unknown",
+               display_name: "Unknown",
+               latitude: latitude,
+               longitude: longitude,
+               raw: %{"error" => "Unable to geocode"}
+             } = cproc.address
+
+      assert latitude == Decimal.new("0.000000")
+      assert longitude == Decimal.new("0.000000")
     end
   end
 
@@ -108,8 +136,11 @@ defmodule TeslaMate.LogChargingTest do
       assert charge.date == @valid_attrs.date
       assert charge.charger_phases == @valid_attrs.charger_phases
       assert charge.charger_power == @valid_attrs.charger_power
-      assert charge.charge_energy_added == @valid_attrs.charge_energy_added |> Decimal.cast()
-      assert charge.ideal_battery_range_km == Decimal.cast("250.00")
+
+      assert charge.charge_energy_added ==
+               @valid_attrs.charge_energy_added |> Decimal.from_float()
+
+      assert charge.ideal_battery_range_km == Decimal.new("250.00")
     end
 
     test "with invalid data returns error changeset" do
@@ -191,22 +222,22 @@ defmodule TeslaMate.LogChargingTest do
       ]
 
       for c <- charges do
-        assert {:ok, %Charge{} = charge} = Log.insert_charge(cproc, c)
+        assert {:ok, %Charge{} = _charge} = Log.insert_charge(cproc, c)
       end
 
       assert {:ok, %ChargingProcess{} = cproc} = Log.complete_charging_process(cproc)
 
       assert %DateTime{} = cproc.start_date
       assert %DateTime{} = cproc.end_date
-      assert cproc.charge_energy_added == Decimal.cast(0.31)
+      assert cproc.charge_energy_added == Decimal.from_float(0.31)
       assert cproc.duration_min == 4
       assert cproc.end_battery_level == 54
       assert cproc.start_battery_level == 50
-      assert cproc.start_ideal_range_km == Decimal.cast("266.60")
-      assert cproc.end_ideal_range_km == Decimal.cast("268.60")
-      assert cproc.start_rated_range_km == Decimal.cast("206.60")
-      assert cproc.end_rated_range_km == Decimal.cast("208.60")
-      assert cproc.outside_temp_avg == Decimal.cast(15.3)
+      assert cproc.start_ideal_range_km == Decimal.new("266.60")
+      assert cproc.end_ideal_range_km == Decimal.new("268.60")
+      assert cproc.start_rated_range_km == Decimal.new("206.60")
+      assert cproc.end_rated_range_km == Decimal.new("208.60")
+      assert cproc.outside_temp_avg == Decimal.from_float(15.3)
 
       Process.sleep(100)
 
@@ -229,7 +260,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert {:ok, cproc} = log_charging_process(charges)
       assert cproc.charge_energy_added == nil
-      assert cproc.charge_energy_used == Decimal.cast(12.58)
+      assert cproc.charge_energy_used == Decimal.from_float(12.58)
       assert cproc.duration_min == 48
     end
 
@@ -309,8 +340,8 @@ defmodule TeslaMate.LogChargingTest do
       ]
 
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == Decimal.cast(16.64)
-      assert cproc.charge_energy_used == Decimal.cast(18.59)
+      assert cproc.charge_energy_added == Decimal.from_float(16.64)
+      assert cproc.charge_energy_used == Decimal.from_float(18.59)
       assert cproc.duration_min == 99
     end
   end
@@ -380,7 +411,7 @@ defmodule TeslaMate.LogChargingTest do
     test "calculates the charge costs based on the price per kwh" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -399,15 +430,15 @@ defmodule TeslaMate.LogChargingTest do
                  }
                )
 
-      assert cproc.charge_energy_added == Decimal.cast(12.77)
-      assert cproc.charge_energy_used == Decimal.cast(12.46)
-      assert cproc.cost == Decimal.cast(3.19)
+      assert cproc.charge_energy_added == Decimal.from_float(12.77)
+      assert cproc.charge_energy_used == Decimal.from_float(12.46)
+      assert cproc.cost == Decimal.from_float(3.19)
     end
 
     test "calculates the charge costs based on the price per minute" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -426,16 +457,16 @@ defmodule TeslaMate.LogChargingTest do
                  }
                )
 
-      assert cproc.charge_energy_added == Decimal.cast(12.77)
-      assert cproc.charge_energy_used == Decimal.cast(12.46)
+      assert cproc.charge_energy_added == Decimal.from_float(12.77)
+      assert cproc.charge_energy_used == Decimal.from_float(12.46)
       assert cproc.duration_min == 19
-      assert cproc.cost == Decimal.cast(6.27)
+      assert cproc.cost == Decimal.from_float(6.27)
     end
 
     test "calculates the charge costs based on the session fee" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -453,15 +484,15 @@ defmodule TeslaMate.LogChargingTest do
                  }
                )
 
-      assert cproc.charge_energy_added == Decimal.cast(12.77)
-      assert cproc.charge_energy_used == Decimal.cast(12.46)
-      assert cproc.cost == Decimal.cast("7.00")
+      assert cproc.charge_energy_added == Decimal.from_float(12.77)
+      assert cproc.charge_energy_used == Decimal.from_float(12.46)
+      assert cproc.cost == Decimal.new("7.00")
     end
 
     test "calculates the charge costs based on the session fee and energy used" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -480,15 +511,15 @@ defmodule TeslaMate.LogChargingTest do
                  }
                )
 
-      assert cproc.charge_energy_added == Decimal.cast(12.77)
-      assert cproc.charge_energy_used == Decimal.cast(12.46)
-      assert cproc.cost == Decimal.cast(7.98)
+      assert cproc.charge_energy_added == Decimal.from_float(12.77)
+      assert cproc.charge_energy_used == Decimal.from_float(12.46)
+      assert cproc.cost == Decimal.from_float(7.98)
     end
 
     test "fees can be zero" do
       car = car_fixture()
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -508,8 +539,35 @@ defmodule TeslaMate.LogChargingTest do
                )
 
       assert cproc.charge_energy_added == nil
-      assert cproc.charge_energy_used == Decimal.cast(12.58)
-      assert cproc.cost == Decimal.cast("0.00")
+      assert cproc.charge_energy_used == Decimal.from_float(12.58)
+      assert cproc.cost == Decimal.new("0.00")
+    end
+
+    test "cost per unit can be negative" do
+      car = car_fixture()
+
+      assert %GeoFence{id: _id} =
+               geofence_fixture(%{
+                 latitude: 50.1121,
+                 longitude: 11.597,
+                 radius: 50,
+                 cost_per_unit: -0.15,
+                 session_fee: 0.0
+               })
+
+      assert {:ok, cproc} =
+               log_charging_process(charges_fixture(:phases_nil),
+                 car: car,
+                 attrs: %{
+                   date: DateTime.utc_now(),
+                   latitude: 50.112198,
+                   longitude: 11.597669
+                 }
+               )
+
+      assert cproc.charge_energy_added == Decimal.from_float(12.77)
+      assert cproc.charge_energy_used == Decimal.from_float(12.46)
+      assert cproc.cost == Decimal.new("-1.92")
     end
 
     test "sets charge cost to zero if free supercharging is enabled" do
@@ -522,7 +580,7 @@ defmodule TeslaMate.LogChargingTest do
         |> Settings.get_car_settings!()
         |> Settings.update_car_settings(%{free_supercharging: true})
 
-      assert %GeoFence{id: id} =
+      assert %GeoFence{id: _id} =
                geofence_fixture(%{
                  latitude: 50.1121,
                  longitude: 11.597,
@@ -540,9 +598,9 @@ defmodule TeslaMate.LogChargingTest do
                  }
                )
 
-      assert cproc.charge_energy_added == Decimal.cast(12.77)
-      assert cproc.charge_energy_used == Decimal.cast(12.46)
-      assert cproc.cost == Decimal.cast("0.00")
+      assert cproc.charge_energy_added == Decimal.from_float(12.77)
+      assert cproc.charge_energy_used == Decimal.from_float(12.46)
+      assert cproc.cost == Decimal.new("0.00")
     end
   end
 
@@ -750,47 +808,47 @@ defmodule TeslaMate.LogChargingTest do
       charges = charges_fixture(:phases_nil)
 
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == Decimal.cast(12.77)
-      assert cproc.charge_energy_used == Decimal.cast(12.46)
+      assert cproc.charge_energy_added == Decimal.from_float(12.77)
+      assert cproc.charge_energy_used == Decimal.from_float(12.46)
       assert cproc.duration_min == 19
-      assert cproc.start_ideal_range_km == Decimal.cast("235.90")
-      assert cproc.end_ideal_range_km == Decimal.cast("320.50")
+      assert cproc.start_ideal_range_km == Decimal.new("235.90")
+      assert cproc.end_ideal_range_km == Decimal.new("320.50")
     end
 
     test "calculates the energy used with phase correction" do
       charges = charges_fixture(:phase_correction_2_to_3)
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == Decimal.cast(1.68)
-      assert cproc.charge_energy_used == Decimal.cast(1.78)
+      assert cproc.charge_energy_added == Decimal.from_float(1.68)
+      assert cproc.charge_energy_used == Decimal.from_float(1.78)
       assert cproc.duration_min == 13
-      assert cproc.start_ideal_range_km == Decimal.cast("288.90")
-      assert cproc.end_ideal_range_km == Decimal.cast("299.90")
+      assert cproc.start_ideal_range_km == Decimal.new("288.90")
+      assert cproc.end_ideal_range_km == Decimal.new("299.90")
 
       charges = charges_fixture(:phase_correction_2_to_1)
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == Decimal.cast(12.64)
-      assert cproc.charge_energy_used == Decimal.cast(14.76)
+      assert cproc.charge_energy_added == Decimal.from_float(12.64)
+      assert cproc.charge_energy_used == Decimal.from_float(14.76)
       assert cproc.duration_min == 640
-      assert cproc.start_ideal_range_km == Decimal.cast("180.10")
-      assert cproc.end_ideal_range_km == Decimal.cast("262.50")
+      assert cproc.start_ideal_range_km == Decimal.new("180.10")
+      assert cproc.end_ideal_range_km == Decimal.new("262.50")
     end
 
     test "calculates the energy used with voltage correction" do
       charges = charges_fixture(:voltage_correction_220_to_127_p1)
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == Decimal.cast(8.48)
-      assert cproc.charge_energy_used == Decimal.cast(8.92)
+      assert cproc.charge_energy_added == Decimal.from_float(8.48)
+      assert cproc.charge_energy_used == Decimal.from_float(8.92)
       assert cproc.duration_min == 74
-      assert cproc.start_ideal_range_km == Decimal.cast("384.60")
-      assert cproc.end_ideal_range_km == Decimal.cast("440.30")
+      assert cproc.start_ideal_range_km == Decimal.new("384.60")
+      assert cproc.end_ideal_range_km == Decimal.new("440.30")
 
       charges = charges_fixture(:voltage_correction_220_to_127_p2)
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == Decimal.cast(38.44)
-      assert cproc.charge_energy_used == Decimal.cast("40.70")
+      assert cproc.charge_energy_added == Decimal.new("38.44")
+      assert cproc.charge_energy_used == Decimal.new("40.70")
       assert cproc.duration_min == 330
-      assert cproc.start_ideal_range_km == Decimal.cast("189.20")
-      assert cproc.end_ideal_range_km == Decimal.cast("441.70")
+      assert cproc.start_ideal_range_km == Decimal.new("189.20")
+      assert cproc.end_ideal_range_km == Decimal.new("441.70")
     end
 
     test "handles a bad connection" do
@@ -801,11 +859,11 @@ defmodule TeslaMate.LogChargingTest do
         |> Enum.map(fn {c, _} -> c end)
 
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == Decimal.cast(12.67)
-      assert cproc.charge_energy_used == Decimal.cast(12.45)
+      assert cproc.charge_energy_added == Decimal.from_float(12.67)
+      assert cproc.charge_energy_used == Decimal.from_float(12.45)
       assert cproc.duration_min == 18
-      assert cproc.start_ideal_range_km == Decimal.cast("235.90")
-      assert cproc.end_ideal_range_km == Decimal.cast("319.80")
+      assert cproc.start_ideal_range_km == Decimal.new("235.90")
+      assert cproc.end_ideal_range_km == Decimal.new("319.80")
     end
 
     test "handles data gaps" do
@@ -830,8 +888,8 @@ defmodule TeslaMate.LogChargingTest do
           end)
 
       assert {:ok, cproc} = log_charging_process(charges)
-      assert cproc.charge_energy_added == Decimal.cast(13.77)
-      assert cproc.charge_energy_used == Decimal.cast(13.82)
+      assert cproc.charge_energy_added == Decimal.from_float(13.77)
+      assert cproc.charge_energy_used == Decimal.from_float(13.82)
       assert cproc.duration_min == 21
     end
 

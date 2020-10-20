@@ -43,13 +43,13 @@ defmodule TeslaMateWeb.CarController do
 
   case Mix.env() do
     :test -> defp fetch_signed_in(conn, _opts), do: conn
-    _____ -> defp fetch_signed_in(conn, _opts), do: assign(conn, :signed_in?, Api.signed_in?())
+    _ -> defp fetch_signed_in(conn, _opts), do: assign(conn, :signed_in?, Api.signed_in?())
   end
 
   defp redirect_if_importing(conn, _) do
     case Application.get_env(:teslamate, :import_directory) do
       nil -> conn
-      ___ -> conn |> redirect(to: import_page(conn)) |> halt()
+      _ -> conn |> redirect(to: import_page(conn)) |> halt()
     end
   end
 

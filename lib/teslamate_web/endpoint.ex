@@ -4,7 +4,8 @@ defmodule TeslaMateWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_teslamate_key",
-    signing_salt: "yt5O3CAQ"
+    signing_salt: "yt5O3CAQ",
+    same_site: "Strict"
   ]
 
   socket "/live", Phoenix.LiveView.Socket,

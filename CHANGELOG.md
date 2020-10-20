@@ -1,35 +1,52 @@
 # Changelog
 
-## [1.20.0-dev] - unreleased
+## [1.20.0] - 2020-10-04
 
 ### Enhancements
 
 #### Dashboards
 
 - Update consumption unit to Watt-hour to match in-car unit ([#717](https://github.com/adriankumpf/teslamate/pull/717) by [mattw01](https://github.com/mattw01))
+- Update dashboards to use the new components from Grafana 7
 - Charges: Show very short charging sessions
+- Charges: Add filter for voltage ([#857](https://github.com/adriankumpf/teslamate/pull/857) by [Dulanic](https://github.com/Dulanic))
 - Charging Details: Show kWh even if still charging ([#744](https://github.com/adriankumpf/teslamate/pull/744) by [Dulanic](https://github.com/Dulanic))
 - Charging Stats: Visualize % of sum instead of max kWh in charging heat map ([#680](https://github.com/adriankumpf/teslamate/pull/680) by [Dulanic](https://github.com/Dulanic))
+- Charging Stats: Show cost per 100 km/mi (Charging Stats)
 - Drives: Update possible values for the "cold" column to be consistent ([#702](https://github.com/adriankumpf/teslamate/pull/702) by [Dulanic](https://github.com/Dulanic))
+- Drive Details: Show drive efficiency
 - Mileage: Optimize query to get odometer ([#804](https://github.com/adriankumpf/teslamate/pull/804) by [Dulanic](https://github.com/Dulanic))
 - Overview: Add 'total energy added' to chart ([#690](https://github.com/adriankumpf/teslamate/pull/690) by [Dulanic](https://github.com/Dulanic))
 - Overview: Hide stale temperatures
 - Overview: Show most recent driver temp setting while driving
+- Overview: Add efficiency ([#970](https://github.com/adriankumpf/teslamate/pull/970) by [DrMichael](https://github.com/DrMichael))
 - States: Display all states names ([#755](https://github.com/adriankumpf/teslamate/pull/755) by [DrMichael](https://github.com/DrMichael))
-- Updates: Add links to release notes ([#797](https://github.com/adriankumpf/teslamate/pull/797) by [pmboothby](https://github.com/pmboothby))
+- Updates: Add links to release notes ([#797](https://github.com/adriankumpf/teslamate/pull/797) and [#823](https://github.com/adriankumpf/teslamate/pull/823) by [pmboothby](https://github.com/pmboothby))
 - Updates: Show average range and number of chargers per software version to identify if an update had a bigger than expected impact on range ([#731](https://github.com/adriankumpf/teslamate/pull/731) and [#762](https://github.com/adriankumpf/teslamate/pull/762) by [Dulanic](https://github.com/Dulanic))
+- Updates: Fix up the version display when it only has a week value and no point release ([#925](https://github.com/adriankumpf/teslamate/pull/925) by [pyjamasam](https://github.com/pyjamasam))
 - Vampire Drain: Utilize charges as additional anchor points ([#769](https://github.com/adriankumpf/teslamate/pull/769) by [tacotran](https://github.com/tacotran))
+- Add new Statistics dashboard ([#965](https://github.com/adriankumpf/teslamate/pull/965) by [DrMichael](https://github.com/DrMichael))
+- Add the "shared crosshair" setting to some of the dashboards ([#932](https://github.com/adriankumpf/teslamate/pull/932) and [#962](https://github.com/adriankumpf/teslamate/pull/936) by [Kosta-Github](https://github.com/Kosta-Github))
+- "Customize" Grafana logo ([#890](https://github.com/adriankumpf/teslamate/pull/890) by [https://github.com/fatbasstard](https://github.com/fatbasstard))
+
+##### Note
+
+- The dashboards require **Grafana 7**. Make sure you are running the latest version of Grafana if you are not using the Docker installation.
 
 #### Translations
 
 - Update Chinese (Simplified) translation ([#747](https://github.com/adriankumpf/teslamate/pull/747) by [edward4hgl](https://github.com/edward4hgl))
 - Update French translation ([#693](https://github.com/adriankumpf/teslamate/pull/693) by [tomS3210](https://github.com/tomS3210))
+- Tweak Dutch translation ([#880](https://github.com/adriankumpf/teslamate/pull/880) and[#881](https://github.com/adriankumpf/teslamate/pull/881) by [https://github.com/fatbasstard](https://github.com/fatbasstard))
 
 #### Documentation
 
 - Update HomeAssistant documentation ([#705](https://github.com/adriankumpf/teslamate/pull/705) by [ngardiner](https://github.com/ngardiner))
 - TeslaFi Import: Clarify steps 3 and 4 about emptying the import folder ([#703](https://github.com/adriankumpf/teslamate/pull/703) by [ramonsmits](https://github.com/ramonsmits))
 - Update Upgrade documentation ([#790](https://github.com/adriankumpf/teslamate/pull/790) by [roadrash2108](https://github.com/roadrash2108))
+- Add a page that lists projects that use TeslaMate: [docs.teslamate.org/docs/projects](https://docs.teslamate.org/docs/projects)
+- An note about moving the backup file ([#813](https://github.com/adriankumpf/teslamate/pull/813) by [traviscollins](https://github.com/traviscollins))
+- Add `-T` flag to backup command ([#851](https://github.com/adriankumpf/teslamate/pull/851) by [acemtp](https://github.com/acemtp))
 
 #### Other
 
@@ -40,11 +57,21 @@
 - Periodically store vehicle data while charging
 - Use a more performant HTTP client
 - Try to keep using API tokens if initial refresh at startup fails
+- Tweak streaming timeouts and create a new connection after too many disconnects
+- Change default sleep requirements to not require the car to be locked
+- Use GitHub Actions to build docker images and publish them to DockerHub
+- For those who want to help **testing the latest development version**: the docker images with the `edge` tag (`teslamate/teslamate:edge` and `teslamate/grafana:edge`) are for you.
+- Allow negative cost_per_unit for geofences ([#968](https://github.com/adriankumpf/teslamate/pull/968) by [ayonix](https://github.com/ayonix))
+- Speed up parsing of CSV files (data import)
 
 ### Bug Fixes
 
 - Vampire Drain: Fix duplicate values with multiple cars ([#726](https://github.com/adriankumpf/teslamate/pull/726) by [Dulanic](https://github.com/Dulanic))
 - Tooling: Ensure dashboards are restored into the same folder as they currently belong to ([#712](https://github.com/adriankumpf/teslamate/pull/712) by [sumnerboy12](https://github.com/sumnerboy12))
+- Battery Level & Range: fix wrongly displayed values for multiple cars ([#843](https://github.com/adriankumpf/teslamate/issues/843) by [lemmerk](https://github.com/lemmerk))
+- Fix handling of locations that cannot be geocoded
+- Show in progress charging sessions
+- Handle API errors during initialization
 
 ## [1.19.4] - 2020-06-04
 
@@ -1006,7 +1033,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[1.20.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.19.4...HEAD
+[1.20.0]: https://github.com/adriankumpf/teslamate/compare/v1.19.4...v1.20.0
 [1.19.4]: https://github.com/adriankumpf/teslamate/compare/v1.19.3...v1.19.4
 [1.19.3]: https://github.com/adriankumpf/teslamate/compare/v1.19.2...v1.19.3
 [1.19.2]: https://github.com/adriankumpf/teslamate/compare/v1.19.1...v1.19.2

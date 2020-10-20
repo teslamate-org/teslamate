@@ -327,7 +327,7 @@ defmodule TeslaMate.Log do
         Map.put(attrs, key, id)
 
       {:error, reason} ->
-        Logger.warn("Address not found: #{inspect(reason)}")
+        Logger.warning("Address not found: #{inspect(reason)}")
         attrs
     end
   end
@@ -365,7 +365,7 @@ defmodule TeslaMate.Log do
             id
 
           {:error, reason} ->
-            Logger.warn("Address not found: #{inspect(reason)}")
+            Logger.warning("Address not found: #{inspect(reason)}")
             nil
         end
       end

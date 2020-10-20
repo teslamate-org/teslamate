@@ -14,6 +14,16 @@ for (const navDropdown of document.querySelectorAll(
   });
 }
 
+// Open Statistics dashboard with the browser time zone
+const statistics = document.querySelector("a[data-uid='1EZnXszMk']");
+const tz = Intl && Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+if (statistics && tz)
+  statistics.href = `${statistics.href}?var-timezone=${decodeURIComponent(tz)}`;
+
+// Fix sticky hover on iOS
+document.addEventListener("click", () => 0);
+
 // Fix sticky hover on iOS
 document.addEventListener("click", () => 0);
 

@@ -142,7 +142,7 @@ defmodule TeslaMateWeb.CarControllerTest do
            vehicle_state: %{
              timestamp: 0,
              car_version: "2019.40.50.7 ad132c7b057e",
-             software_update: %{status: "available"},
+             software_update: %{status: "available", version: "2020.4.1 4a4ad401858f"},
              locked: true,
              sentry_mode: true,
              fd_window: 1,
@@ -179,7 +179,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Sentry Mode", "shield-check")
       assert icon(html, "Windows open", "window-open")
       assert icon(html, "Doors open", "car-door")
-      assert icon(html, "Software Update available", "gift-outline")
+      assert icon(html, "Software Update available (2020.4.1)", "gift-outline")
       assert table_row(html, "Outside Temperature", "24 °C")
       assert table_row(html, "Inside Temperature", "23.2 °C")
       assert table_row(html, "Mileage", "42000 km")
@@ -188,6 +188,8 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "renders current vehicle stats [:charging]", %{conn: conn} do
+      car = car_fixture(%{})
+
       events = [
         {:ok,
          online_event(
@@ -230,7 +232,12 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(
                html,
                "Scheduled Charging",
-               {"span", [{"data-date", "2019-08-12T14:38:27Z"}, {"phx-hook", "LocalTime"}], []}
+               {"span",
+                [
+                  {"data-date", "2019-08-12T14:38:27Z"},
+                  {"id", "scheduled_start_time_#{car.id}"},
+                  {"phx-hook", "LocalTime"}
+                ], []}
              )
 
       assert table_row(html, "Charge Limit", "85%")

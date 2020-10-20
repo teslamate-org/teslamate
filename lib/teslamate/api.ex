@@ -93,7 +93,7 @@ defmodule TeslaMate.Api do
           :ok = schedule_refresh(refreshed_tokens)
 
         {:error, reason} ->
-          Logger.warn("Token refresh failed: #{inspect(reason, pretty: true)}")
+          Logger.warning("Token refresh failed: #{inspect(reason, pretty: true)}")
           true = insert_auth(name, restored_tokens)
           :ok = schedule_refresh(restored_tokens)
       end
@@ -130,7 +130,7 @@ defmodule TeslaMate.Api do
         :ok = schedule_refresh(refreshed_tokens)
 
       {:error, reason} ->
-        Logger.warn("Cannot refresh access token: #{inspect(reason)}")
+        Logger.warning("Cannot refresh access token: #{inspect(reason)}")
     end
 
     {:noreply, state}
@@ -201,7 +201,7 @@ defmodule TeslaMate.Api do
         {:error, reason}
 
       {:error, %TeslaApi.Error{reason: reason, message: msg}} ->
-        if is_binary(msg) and msg != "", do: Logger.warn("TeslaApi.Error / #{msg}")
+        if is_binary(msg) and msg != "", do: Logger.warning("TeslaApi.Error / #{msg}")
         {:error, reason}
 
       {:ok, vehicles} when is_list(vehicles) ->
@@ -223,7 +223,7 @@ defmodule TeslaMate.Api do
         vehicle
 
       {:error, reason} ->
-        Logger.warn("TeslaApi.Error / #{inspect(reason, pretty: true)}")
+        Logger.warning("TeslaApi.Error / #{inspect(reason, pretty: true)}")
         vehicle
     end
   end

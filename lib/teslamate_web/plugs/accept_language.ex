@@ -55,7 +55,7 @@ defmodule TeslaMateWeb.Plugs.AcceptLanguage do
         nil
 
       {:error, {exception, reason}} ->
-        Logger.warn("#{exception}: #{reason}")
+        Logger.warning("#{exception}: #{reason}")
         nil
     end
   end

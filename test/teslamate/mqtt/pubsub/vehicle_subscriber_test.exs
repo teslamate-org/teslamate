@@ -49,6 +49,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       plugged_in: false,
       version: "2019.42",
       update_available: false,
+      update_version: "2019.43",
       is_preconditioning: true,
       is_user_present: false,
       is_climate_on: true,

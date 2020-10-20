@@ -144,7 +144,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
         :ok = start_vehicles(events)
 
-        assert {:ok, parent_view, html} =
+        assert {:ok, parent_view, _html} =
                  conn
                  |> put_connect_params(%{"baseUrl" => "http://localhost"})
                  |> live("/")
@@ -371,7 +371,8 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     test "shows tag if update is available ", %{conn: conn} do
       events = [
         {:ok, online_event()},
-        {:ok, update_event(0, "available", nil)},
+        {:ok,
+         update_event(0, "available", "2019.8.4 530d1d3", update_version: "2019.8.5 3aaad23")},
         {:error, :unknown}
       ]
 
@@ -389,7 +390,10 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                |> Floki.parse_document!()
                |> Floki.find(".icons .icon")
                |> Enum.find(
-                 &match?({"span", [_, {"data-tooltip", "Software Update available"}], _}, &1)
+                 &match?(
+                   {"span", [_, {"data-tooltip", "Software Update available (2019.8.5)"}], _},
+                   &1
+                 )
                )
     end
 

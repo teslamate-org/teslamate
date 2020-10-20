@@ -1,4 +1,4 @@
-FROM grafana/grafana:6.7.4
+FROM grafana/grafana:7.2.1
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=FALSE \
     GF_AUTH_ANONYMOUS_ENABLED=true \
@@ -15,14 +15,19 @@ USER root
 
 RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install pr0ps-trackmap-panel 2.1.0 && \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install natel-discrete-panel 0.1.0 && \
-    grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install grafana-piechart-panel 1.5.0 && \
+    grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install grafana-piechart-panel 1.6.1 && \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/panodata/grafana-map-panel/releases/download/0.9.0/grafana-map-panel-0.9.0.zip plugins install grafana-worldmap-panel-ng
 
 USER grafana
 
+COPY logo.svg /usr/share/grafana/public/img/grafana_icon.svg
+COPY favicon.png /usr/share/grafana/public/img/fav32.png
+COPY apple-touch-icon.png /usr/share/grafana/public/img/apple-touch-icon.png
+
 COPY datasource.yml /etc/grafana/provisioning/datasources/
 COPY dashboards.yml /etc/grafana/provisioning/dashboards/
 COPY dashboards/internal/*.json /dashboards_internal/
+COPY dashboards/reports/*.json /dashboards_reports/
 COPY dashboards/*.json /dashboards/
 
 EXPOSE 3000

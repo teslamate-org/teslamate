@@ -5,7 +5,21 @@ defmodule GeocoderMock do
     reverse_lookup(Decimal.to_float(lat), Decimal.to_float(lon), lang)
   end
 
-  def reverse_lookup(99.9, 99.9, _lang), do: {:error, :induced_error}
+  def reverse_lookup(99.9, 99.9, _lang) do
+    {:error, :induced_error}
+  end
+
+  def reverse_lookup(-99.9, -99.9, _lang) do
+    {:ok,
+     %{
+       display_name: "Unknown",
+       osm_type: "unknown",
+       osm_id: 0,
+       latitude: 0.0,
+       longitude: 0.0,
+       raw: %{"error" => "Unable to geocode"}
+     }}
+  end
 
   def reverse_lookup(lat, lng, _lang)
       when lat in [52.51599, 52.515, 52.514521] and lng in [13.35199, 13.351, 13.350144] do

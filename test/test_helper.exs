@@ -1,3 +1,8 @@
+# FIXME Workaround to apply the logger config when running the tests with
+# "--no-start". This looks like a bug in Elixir v1.11.0
+Application.stop(:logger)
+Application.start(:logger)
+
 Application.load(:teslamate)
 
 for app <- Application.spec(:teslamate, :applications) do

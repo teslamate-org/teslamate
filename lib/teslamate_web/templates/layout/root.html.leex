@@ -47,7 +47,7 @@
               </a>
               <div class="navbar-dropdown">
               <%= for %{"title" => title, "uid" => uid} <- list_dashboards() do %>
-                <%= link title, to: "#{grafana_url}/d/#{uid}?kiosk=tv", class: "navbar-item", target: "_blank" %>
+                <%= link title, to: "#{grafana_url}/d/#{uid}", class: "navbar-item", data_uid: uid, target: "_blank" %>
               <% end %>
               </div>
             </div>

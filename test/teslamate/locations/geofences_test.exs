@@ -29,7 +29,6 @@ defmodule TeslaMate.LocationsGeofencesTest do
     longitude: nil,
     radius: nil,
     billing_type: :per_hour,
-    cost_per_unit: -0.01,
     session_fee: -0.01
   }
 
@@ -50,8 +49,8 @@ defmodule TeslaMate.LocationsGeofencesTest do
     test "create_geofence/1 with valid data creates a geofence" do
       assert {:ok, %GeoFence{} = geofence} = Locations.create_geofence(@valid_attrs)
       assert geofence.name == "foo"
-      assert geofence.latitude == Decimal.cast(52.514521)
-      assert geofence.longitude == Decimal.cast(13.350144)
+      assert geofence.latitude == Decimal.from_float(52.514521)
+      assert geofence.longitude == Decimal.from_float(13.350144)
       assert geofence.radius == 42
       assert geofence.billing_type == :per_kwh
       assert geofence.cost_per_unit == nil
@@ -67,7 +66,6 @@ defmodule TeslaMate.LocationsGeofencesTest do
                name: ["can't be blank"],
                radius: ["can't be blank"],
                billing_type: ["is invalid"],
-               cost_per_unit: ["must be greater than or equal to 0"],
                session_fee: ["must be greater than or equal to 0"]
              }
 
@@ -140,16 +138,16 @@ defmodule TeslaMate.LocationsGeofencesTest do
     test "update_geofence/2 with valid data updates the geofence" do
       geofence = geofence_fixture()
 
-      assert {:ok, %GeoFence{id: id} = geofence} =
+      assert {:ok, %GeoFence{id: _id} = geofence} =
                Locations.update_geofence(geofence, @update_attrs)
 
       assert geofence.name == "bar"
-      assert geofence.latitude == Decimal.cast(53.514521)
-      assert geofence.longitude == Decimal.cast(14.350144)
+      assert geofence.latitude == Decimal.from_float(53.514521)
+      assert geofence.longitude == Decimal.from_float(14.350144)
       assert geofence.radius == 43
       assert geofence.billing_type == :per_minute
-      assert geofence.cost_per_unit == Decimal.cast(0.0079)
-      assert geofence.session_fee == Decimal.cast("5.00")
+      assert geofence.cost_per_unit == Decimal.from_float(0.0079)
+      assert geofence.session_fee == Decimal.new("5.00")
 
       assert {:ok, %GeoFence{} = geofence} =
                Locations.update_geofence(geofence, %{cost_per_unit: nil, session_fee: nil})
@@ -383,12 +381,12 @@ defmodule TeslaMate.LocationsGeofencesTest do
 
       # decrease radius of geo-fences
 
-      assert {:ok, straße} = Locations.update_geofence(straße, %{radius: 20})
+      assert {:ok, _straße} = Locations.update_geofence(straße, %{radius: 20})
       assert %ChargingProcess{geofence_id: ^t_id} = Repo.get!(ChargingProcess, c0_id)
       assert %ChargingProcess{geofence_id: ^t_id} = Repo.get!(ChargingProcess, c1_id)
       assert %Drive{start_geofence_id: ^t_id, end_geofence_id: ^t_id} = Repo.get!(Drive, d0_id)
 
-      assert {:ok, tiergarten} = Locations.update_geofence(tiergarten, %{radius: 20})
+      assert {:ok, _tiergarten} = Locations.update_geofence(tiergarten, %{radius: 20})
       assert %ChargingProcess{geofence_id: nil} = Repo.get!(ChargingProcess, c0_id)
       assert %ChargingProcess{geofence_id: nil} = Repo.get!(ChargingProcess, c1_id)
       assert %Drive{start_geofence_id: nil, end_geofence_id: nil} = Repo.get!(Drive, d0_id)
@@ -421,7 +419,7 @@ defmodule TeslaMate.LocationsGeofencesTest do
 
       assert %ChargingProcess{geofence_id: ^id} = Repo.get!(ChargingProcess, cproc_id)
 
-      assert %Drive{id: drive_id, start_geofence_id: ^id, end_geofence_id: ^id} =
+      assert %Drive{id: _drive_id, start_geofence_id: ^id, end_geofence_id: ^id} =
                create_drive(car, position, position)
     end
   end

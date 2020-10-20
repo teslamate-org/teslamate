@@ -192,7 +192,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
          {:ok, settings} <- Settings.update_global_settings(settings, %{grafana_url: url}) do
       {:ok, settings}
     else
-      {:error, reason} -> Logger.warn("Updating settings failed: #{inspect(reason)}")
+      {:error, reason} -> Logger.warning("Updating settings failed: #{inspect(reason)}")
       _ -> {:ok, settings}
     end
   end

@@ -118,7 +118,7 @@ defmodule TeslaApi.Stream do
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "vehicle_disconnected"}} ->
         case state.disconnects do
           d when d != 0 and rem(d, 10) == 0 ->
-            Logger.warn("Too many disconnects …")
+            Logger.warning("Too many disconnects …")
 
             cancel_timer(state.timer)
             state.receiver.(:too_many_disconnects)
@@ -154,7 +154,7 @@ defmodule TeslaApi.Stream do
         {:ok, state}
 
       {:ok, msg} ->
-        Logger.warn("Unkown Message: #{inspect(msg, pretty: true)}")
+        Logger.warning("Unkown Message: #{inspect(msg, pretty: true)}")
         {:ok, state}
 
       {:error, reason} ->
@@ -170,13 +170,13 @@ defmodule TeslaApi.Stream do
     case reason do
       {:local, :normal} ->
         Logger.info(
-          "Connction was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}). Reconnecting …"
+          "Connection was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}). Reconnecting …"
         )
 
         {:reconnect, state}
 
       {:remote, :closed} ->
-        Logger.warn("WebSocket disconnected. Reconnecting …")
+        Logger.warning("WebSocket disconnected. Reconnecting …")
 
         n
         |> exp_backoff_ms(max_seconds: 10)
@@ -185,7 +185,7 @@ defmodule TeslaApi.Stream do
         {:reconnect, %State{state | last_data: nil}}
 
       %WebSockex.ConnError{} = e ->
-        Logger.warn("Disconnected! #{Exception.message(e)} | #{n}")
+        Logger.warning("Disconnected! #{Exception.message(e)} | #{n}")
 
         n
         |> exp_backoff_ms(min_seconds: 1)
@@ -194,7 +194,7 @@ defmodule TeslaApi.Stream do
         {:reconnect, state}
 
       %WebSockex.RequestError{} = e ->
-        Logger.warn("Disconnected! #{Exception.message(e)} | #{n}")
+        Logger.warning("Disconnected! #{Exception.message(e)} | #{n}")
 
         n
         |> exp_backoff_ms(min_seconds: 1)

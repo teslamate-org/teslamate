@@ -222,12 +222,12 @@ msgid "Driver present"
 msgstr "Fører er tilstede"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:298
+#: lib/teslamate_web/live/car_live/summary.html.leex:297
 msgid "cancel sleep attempt"
 msgstr "Avbryt dvale"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:293
+#: lib/teslamate_web/live/car_live/summary.html.leex:292
 msgid "try to sleep"
 msgstr "forsøk på dvale"
 
@@ -254,7 +254,7 @@ msgstr "Kjøretøyet må være låst"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:124
 msgid "Range (rated)"
-msgstr "Rekkevidde (rated)"
+msgstr "Rekkevidde klass."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:162
@@ -274,17 +274,17 @@ msgstr "Rekkevidde"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "ideal"
-msgstr "ideell"
+msgstr "typisk"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "rated"
-msgstr "rated"
+msgstr "klassifisert"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:123
 msgid "Range (ideal)"
-msgstr "Rekkevidde (ideell)"
+msgstr "Rekkevidde typisk"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:140
@@ -309,12 +309,12 @@ msgstr "Fjern '%{geo_fence}'?"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:252
 msgid "Inside Temperature"
-msgstr "Temperatur innvendig"
+msgstr "Temperatur inne"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:240
 msgid "Outside Temperature"
-msgstr "Temperatur utvendig"
+msgstr "Temperatur ute"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:277
@@ -323,14 +323,9 @@ msgid "Version"
 msgstr "Software versjon"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.html.leex:74
-msgid "Software Update available"
-msgstr "Ny software tilgjengelig"
-
-#, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:79
 msgid "Health check failed"
-msgstr "Helsesjekk feilet"
+msgstr "Helsesjekk feilet. Sjekk at mobil tilkobling er aktivert i bilen."
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:69
@@ -346,7 +341,7 @@ msgstr "Gjenværende ladetid"
 #: lib/teslamate_web/live/settings_live/index.html.leex:250
 #: lib/teslamate_web/templates/layout/root.html.leex:46
 msgid "Dashboards"
-msgstr "Grafana"
+msgstr "Dashboard - Grafana"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:233
@@ -541,7 +536,7 @@ msgstr "Fortsett"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:265
 msgid "Mileage"
-msgstr "Total kjørelengde"
+msgstr "Kilometerstand"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:111
@@ -578,4 +573,9 @@ msgstr "Bagasjeluken er åpen"
 #: lib/teslamate_web/live/charge_live/cost.html.leex:112
 #: lib/teslamate_web/live/geofence_live/form.html.leex:66
 msgid "Per Minute"
-msgstr ""
+msgstr "Per minutt"
+
+#, elixir-format, fuzzy
+#: lib/teslamate_web/live/car_live/summary.html.leex:74
+msgid "Software Update available (%{version})"
+msgstr "Ny software tilgjengelig (%{version})"

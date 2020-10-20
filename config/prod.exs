@@ -6,4 +6,10 @@ config :teslamate, TeslaMateWeb.Endpoint,
   server: true,
   version: Application.spec(:teslamate, :vsn)
 
-config :logger, level: :info
+config :logger,
+  level: :info,
+  compile_time_purge_matching: [[level_lower_than: :info]]
+
+config :logger, :console,
+  format: "$date $time $metadata[$level] $message\n",
+  metadata: [:car_id]

@@ -8,7 +8,7 @@ defmodule TeslaMate.Import do
   alias TeslaMate.{Vehicles, Repair, Log}
   alias TeslaMate.Log.{Car, State}
 
-  alias __MODULE__.{Status, LineParser, FakeApi}
+  alias __MODULE__.{Status, LineParser, FakeApi, CSV}
 
   defstruct(
     path: nil,
@@ -118,7 +118,7 @@ defmodule TeslaMate.Import do
   def handle_event(:internal, :import, :running, %Data{files: files} = data) do
     Logger.info("Importing #{length(files)} file(s) ...")
 
-    case create_evennt_streams(data) do
+    case create_event_streams(data) do
       {:error, reason} ->
         {:next_state, {:error, reason}, {:next_event, :internal, :broadcast}}
 
@@ -181,7 +181,7 @@ defmodule TeslaMate.Import do
   def handle_event(:info, {:EXIT, _from, :killed}, _state, _data), do: :keep_state_and_data
 
   def handle_event(:info, {:EXIT, _from, reason}, _state, data) do
-    Logger.warn("Import failed: #{inspect(reason, pretty: true)}")
+    Logger.warning("Import failed: #{inspect(reason, pretty: true)}")
     {:next_state, {:error, reason}, data, {:next_event, :internal, :broadcast}}
   end
 
@@ -209,7 +209,7 @@ defmodule TeslaMate.Import do
     end
   end
 
-  defp create_evennt_streams(%Data{files: files, timezone: tz}) do
+  defp create_event_streams(%Data{files: files, timezone: tz}) do
     alias TeslaApi.Vehicle.State.Drive
     alias TeslaApi.Vehicle, as: Veh
 
@@ -218,26 +218,37 @@ defmodule TeslaMate.Import do
         files
         |> Enum.sort_by(fn %{date: date} -> date end)
         |> Enum.map(fn %{date: date, path: path} ->
-          stream =
-            path
-            |> File.stream!(read_ahead: 64 * 4096)
-            |> CSV.decode!(headers: true)
-            |> Task.async_stream(&LineParser.parse(&1, tz), timeout: :infinity, ordered: true)
-            |> Stream.filter(fn
-              {:ok, %Veh{state: "unknown"}} ->
-                false
+          path
+          |> File.stream!(read_ahead: 64 * 4096)
+          |> CSV.parse()
+          |> case do
+            {:error, :unsupported_delimiter} ->
+              raise "Unsupported delimiter"
 
-              {:ok, %Veh{drive_state: %Drive{timestamp: nil}}} ->
-                false
+            {:error, :no_contents} ->
+              {date, Stream.map([], & &1)}
 
-              {:ok, %Veh{state: "online", drive_state: %Drive{latitude: lat, longitude: lng}}} ->
-                lat != nil and lng != nil
+            {:ok, rows} ->
+              stream =
+                rows
+                |> Task.async_stream(&LineParser.parse(&1, tz), timeout: :infinity, ordered: true)
+                |> Stream.map(fn {:ok, vehicle} -> vehicle end)
+                |> Stream.filter(fn
+                  %Veh{state: "unknown"} ->
+                    false
 
-              {:ok, %Veh{}} ->
-                true
-            end)
+                  %Veh{drive_state: %Drive{timestamp: nil}} ->
+                    false
 
-          {date, stream}
+                  %Veh{state: "online", drive_state: %Drive{} = d} ->
+                    d.latitude != nil and d.longitude != nil
+
+                  %Veh{} ->
+                    true
+                end)
+
+              {date, stream}
+          end
         end)
 
       {:ok, event_streams}
@@ -253,11 +264,12 @@ defmodule TeslaMate.Import do
     alias TeslaApi.Vehicle, as: Veh
 
     stream
-    |> Enum.find(fn {:ok, %Veh{id: eid, vehicle_id: vid, vin: vin}} ->
-      vin != nil and vid != nil and eid != nil
-    end)
+    |> Enum.find(fn %Veh{} = v -> v.vin != nil and v.vehicle_id != nil and v.id != nil end)
     |> case do
-      {:ok, vehicle} ->
+      nil ->
+        create_car(rest)
+
+      vehicle ->
         car = Vehicles.create_or_update!(vehicle)
 
         settings = %CarSettings{
@@ -267,9 +279,6 @@ defmodule TeslaMate.Import do
         }
 
         %Car{car | settings: settings}
-
-      nil ->
-        create_car(rest)
     end
   end
 end

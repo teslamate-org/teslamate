@@ -26,7 +26,7 @@ defmodule TeslaMate.Vehicles do
   end
 
   def kill do
-    Logger.warn("Restarting #{__MODULE__} supervisor")
+    Logger.warning("Restarting #{__MODULE__} supervisor")
     __MODULE__ |> Process.whereis() |> Process.exit(:kill)
   end
 
@@ -80,7 +80,7 @@ defmodule TeslaMate.Vehicles do
         fallback_vehicles()
 
       {:error, reason} ->
-        Logger.warn("Could not get vehicles: #{inspect(reason)}")
+        Logger.warning("Could not get vehicles: #{inspect(reason)}")
         fallback_vehicles()
 
       {:ok, []} ->
@@ -99,7 +99,7 @@ defmodule TeslaMate.Vehicles do
       end)
 
     if vehicles != [] do
-      Logger.warn("Using fallback vehicles:\n\n#{inspect(vehicles, pretty: true)}")
+      Logger.warning("Using fallback vehicles:\n\n#{inspect(vehicles, pretty: true)}")
     end
 
     vehicles

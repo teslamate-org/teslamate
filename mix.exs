@@ -4,8 +4,8 @@ defmodule TeslaMate.MixProject do
   def project do
     [
       app: :teslamate,
-      version: "1.20.0-dev",
-      elixir: "~> 1.10",
+      version: version(),
+      elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -56,7 +56,7 @@ defmodule TeslaMate.MixProject do
       {:mock, "~> 0.3", only: :test},
       {:castore, "~> 0.1"},
       {:ex_cldr, "~> 2.0"},
-      {:csv, "~> 2.3"},
+      {:nimble_csv, "~> 1.1"},
       {:timex, "~> 3.0"},
       {:websockex, "~> 0.4"},
       {:tzdata, "~> 1.0"},
@@ -80,5 +80,12 @@ defmodule TeslaMate.MixProject do
         applications: [runtime_tools: :permanent]
       ]
     ]
+  end
+
+  defp version do
+    case File.read("VERSION") do
+      {:ok, version} -> String.trim(version)
+      {:error, _reason} -> "0.0.0"
+    end
   end
 end

@@ -21,3 +21,13 @@ providers:
   updateIntervalSeconds: 86400
   options:
     path: /dashboards_internal
+- name: 'teslamate_reports'
+  orgId: 1
+  folder: Reports
+  folderUid: Nr6ofiDZk
+  type: file
+  disableDeletion: false
+  editable: true
+  updateIntervalSeconds: 86400
+  options:
+    path: /dashboards_reports

@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1568831696165,
+  "iteration": 1598014142171,
   "links": [
     {
       "icon": "dashboard",
@@ -39,6 +38,7 @@
   "panels": [
     {
       "collapsed": false,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -61,6 +61,13 @@
     {
       "autoZoom": true,
       "datasource": "TeslaMate",
+      "defaultLayer": "OpenStreetMap",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 21,
         "w": 24,
@@ -71,7 +78,6 @@
       "lineColor": "red",
       "links": [],
       "maxDataPoints": 10000000,
-      "options": {},
       "pointColor": "royalblue",
       "scopedVars": {
         "car_id": {
@@ -80,13 +86,15 @@
           "value": "1"
         }
       },
+      "scrollWheelZoom": false,
+      "showLayerChanger": true,
       "targets": [
         {
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tto_timestamp(floor((extract('epoch' FROM date) / 30)) * 30) AT TIME ZONE 'UTC' AS time,\n\tavg(latitude) AS lat,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "rawSql": "SELECT\n\tto_timestamp(floor((extract('epoch' FROM date) / 60)) * 60) AT TIME ZONE 'UTC' AS time,\n\tavg(latitude) AS lat,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
           "refId": "A",
           "select": [
             [
@@ -115,7 +123,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 19,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [
     "tesla"
@@ -125,15 +133,16 @@
       {
         "allValue": null,
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "selected": false,
+          "text": "1",
+          "value": "1"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": true,
+        "multi": false,
         "name": "car_id",
         "options": [],
         "query": "SELECT name AS __text, id AS __value FROM cars;",
@@ -150,6 +159,7 @@
       {
         "allValue": null,
         "current": {
+          "selected": false,
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },

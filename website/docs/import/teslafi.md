@@ -7,7 +7,7 @@ sidebar_label: TeslaFi
 
 - **CREATE A [BACKUP](../maintenance/backup_restore.md) OF YOUR DATA‼️**
 
-- If you have been using TeslaMate since before the 1.16 release, the [docker-compose.yml](../installation/docker) needs to be updated. Add the following volume mapping to the `teslamate` service:
+- If you have been using TeslaMate since before the 1.16 release, the [docker-compose.yml](../installation/docker.md) needs to be updated. Add the following volume mapping to the `teslamate` service:
 
   ```yml {4-5}
   services:
@@ -18,6 +18,7 @@ sidebar_label: TeslaFi
   ```
 
 - Export your TeslaFi data (for one car) as CSV by month: `Settings -> Account -> Download TeslaFi Data`.
+  - If you have a ton of TeslaFi data and don't want to deal with the UI, you can run this python script to export all data: [Export from TeslaFi #563](https://github.com/adriankumpf/teslamate/issues/563)
 
 ## Instructions
 
@@ -35,7 +36,7 @@ sidebar_label: TeslaFi
    ```
 
    :::tip
-   The path of the import directory can be customized with the **IMPORT_DIR** [environment variable](../configuration/environment_variables).
+   The path of the import directory can be customized with the **IMPORT_DIR** [environment variable](../configuration/environment_variables.md).
    :::
 
 2. **Restart** the teslamate service and open the TeslaMate admin interface. Now the import form should be displayed instead of the vehicle summary.

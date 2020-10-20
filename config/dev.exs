@@ -1,7 +1,6 @@
 import Config
 
 config :teslamate, TeslaMateWeb.Endpoint,
-  http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -10,7 +9,9 @@ config :teslamate, TeslaMateWeb.Endpoint,
       "node_modules/webpack/bin/webpack.js",
       "--mode",
       "development",
-      "--watch-stdin",
+      "--stats-colors",
+      "--watch",
+      "--watch-options-stdin",
       cd: Path.expand("../assets", __DIR__)
     ]
   ],
@@ -29,19 +30,5 @@ config :logger, :console, format: "$metadata[$level] $message\n"
 config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
-config :teslamate, TeslaMate.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "teslamate_dev",
-  hostname: "localhost",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-
-config :teslamate, :mqtt,
-  host: "localhost",
-  username: "dev",
-  password: "dev"
-
+config :teslamate, TeslaMate.Repo, show_sensitive_data_on_connection_error: true
 config :teslamate, disable_token_refresh: true
-
-config :teslamate, :srtm_cache, "./.srtm_cache"

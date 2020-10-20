@@ -17,6 +17,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/healthy`                       | true                 | Health status of the logger for that vehicle                     |
 | `teslamate/cars/$car_id/version`                       | 2019.32.12.2         | Software Version                                                 |
 | `teslamate/cars/$car_id/update_available`              | false                | Indicates if a software update is available                      |
+| `teslamate/cars/$car_id/update_version`                | 2019.32.12.3         | Software version of the available update                         |
 |                                                        |                      |                                                                  |
 | `teslamate/cars/$car_id/model`                         | 3                    | Either "S", "3", "X" or "Y"                                      |
 | `teslamate/cars/$car_id/trim_badging`                  | P100D                | Trim badging                                                     |

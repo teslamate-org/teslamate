@@ -3,9 +3,9 @@ title: Docker install
 sidebar_label: Docker
 ---
 
-This document provides the necessary steps for installation of TeslaMate on a any system that runs Docker. For a walkthrough that provides the necessary steps for manual installation see [Manual Install](debian).
+This document provides the necessary steps for installation of TeslaMate on a any system that runs Docker. For a walkthrough that provides the necessary steps for manual installation see [Manual Install](debian.md).
 
-This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk. If you intend to expose TeslaMate directly to the internet check out the [advanced guides](../guides/traefik).
+This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk. If you intend to expose TeslaMate directly to the internet check out the [advanced guides](../guides/traefik.md).
 
 ## Requirements
 
@@ -38,7 +38,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
          - all
 
      database:
-       image: postgres:12
+       image: postgres:13
        restart: always
        environment:
          - POSTGRES_USER=teslamate
