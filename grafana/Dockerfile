@@ -22,10 +22,12 @@ USER grafana
 
 COPY logo.svg /usr/share/grafana/public/img/grafana_icon.svg
 COPY favicon.png /usr/share/grafana/public/img/fav32.png
+COPY apple-touch-icon.png /usr/share/grafana/public/img/apple-touch-icon.png
 
 COPY datasource.yml /etc/grafana/provisioning/datasources/
 COPY dashboards.yml /etc/grafana/provisioning/dashboards/
 COPY dashboards/internal/*.json /dashboards_internal/
+COPY dashboards/reports/*.json /dashboards_reports/
 COPY dashboards/*.json /dashboards/
 
 EXPOSE 3000

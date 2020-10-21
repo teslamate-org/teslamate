@@ -447,7 +447,7 @@
           "label": null,
           "logBase": 1,
           "max": "100",
-          "min": null,
+          "min": "0",
           "show": true
         },
         {

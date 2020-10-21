@@ -91,9 +91,12 @@ import {
   CircleMarker,
 } from "leaflet";
 
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
 const icon = new Icon({
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
   iconAnchor: [12, 40],
   popupAnchor: [0, -25],
 });

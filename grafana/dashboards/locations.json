@@ -86,7 +86,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.0-beta2",
+      "pluginVersion": "7.2.1",
       "targets": [
         {
           "format": "table",
@@ -172,7 +172,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.0-beta2",
+      "pluginVersion": "7.2.1",
       "targets": [
         {
           "format": "table",
@@ -258,7 +258,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.0-beta2",
+      "pluginVersion": "7.2.1",
       "targets": [
         {
           "format": "table",
@@ -344,7 +344,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.0-beta2",
+      "pluginVersion": "7.2.1",
       "targets": [
         {
           "format": "table",
@@ -427,7 +427,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.1.0-beta2",
+      "pluginVersion": "7.2.1",
       "targets": [
         {
           "format": "table",
@@ -508,7 +508,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.1.0-beta2",
+      "pluginVersion": "7.2.1",
       "targets": [
         {
           "format": "table",
@@ -545,6 +545,124 @@
       "type": "bargauge"
     },
     {
+      "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              },
+              {
+                "color": "light-red",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Date"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              },
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "City"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 22,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.2.1",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  max(end_date) as \"Date\",\n  count(*) as visited,\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"Address\",\n\tCOALESCE(city, neighbourhood) as \"City\"\nFROM drives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%'\nGROUP BY 3,4\nORDER BY visited DESC\nLIMIT 100",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Last visited",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "visited": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
       "columns": [],
       "datasource": "TeslaMate",
       "fieldConfig": {
@@ -558,7 +676,7 @@
         "h": 11,
         "w": 18,
         "x": 0,
-        "y": 11
+        "y": 22
       },
       "id": 2,
       "links": [],
@@ -705,7 +823,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT('new?lat=', latitude, '&lng=', longitude) as path,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry,\n\tupdated_at\nFROM\n\taddresses\nWHERE\n\t$__timeFilter(inserted_at)\nORDER BY inserted_at DESC;",
+          "rawSql": "SELECT\n  CONCAT('new?lat=', latitude, '&lng=', longitude) as path,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry\nFROM addresses\nWHERE display_name ilike '%$address_filter%'\nORDER BY inserted_at DESC\nLIMIT 100;",
           "refId": "A",
           "select": [
             [
@@ -749,7 +867,7 @@
         "h": 11,
         "w": 6,
         "x": 18,
-        "y": 11
+        "y": 22
       },
       "id": 6,
       "pageSize": null,
@@ -827,7 +945,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  id,\n\tname\nFROM\n\tgeofences\nORDER BY\n\tinserted_at DESC;",
+          "rawSql": "SELECT id, name \nFROM geofences \nORDER BY inserted_at DESC\nLIMIT 512;",
           "refId": "A",
           "select": [
             [
@@ -867,7 +985,9 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "All",
+          "text": [
+            "All"
+          ],
           "value": [
             "$__all"
           ]
@@ -916,6 +1036,26 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "hide": 0,
+        "label": "Address",
+        "name": "address_filter",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
       }
     ]
   },
