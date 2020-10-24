@@ -24,6 +24,10 @@ If you get the error `No such service: database`, update your _docker-compose.ym
 
 ## Restore
 
+:::note
+Replace the default `teslamate` value below with the value defined in the .env file if you have one (TM_DB_USER and TM_DB_NAME)
+:::
+
 ```bash
 # Stop the teslamate container to avoid write conflicts
 docker-compose stop teslamate
@@ -44,4 +48,7 @@ CREATE OR REPLACE FUNCTION public.ll_to_earth(float8, float8)
 
 # Restore
 docker-compose exec -T database psql -U teslamate -d teslamate < teslamate.bck
+
+# Restart the teslamate container
+docker-compose start teslamate
 ```
