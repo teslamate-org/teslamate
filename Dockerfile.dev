@@ -1,18 +1,25 @@
-FROM elixir:1.10-alpine
+FROM hexpm/elixir:1.11.0-erlang-23.1-alpine-3.12.0
+
+ARG UID=1000
+ARG GID=1000
+
+RUN addgroup --gid $GID user
+RUN adduser -D -g '' -u $UID -G user user
+
+RUN mkdir /app && chown -R user:user /app
 
 WORKDIR /app
 
-RUN apk add --update --no-cache nodejs npm git build-base python inotify-tools && \
-    mix local.rebar --force && \
+RUN apk add --update --no-cache nodejs npm git build-base inotify-tools
+   
+USER user
+
+RUN mix local.rebar --force && \
     mix local.hex --force
 
-COPY mix.exs mix.lock ./
-RUN mix deps.get
-
-COPY assets/package.json assets/package-lock.json ./assets/
-RUN npm install --prefix ./assets/
-
 EXPOSE 4000
+
+VOLUME "/app"
 
 COPY entrypoint.dev.sh /
 ENTRYPOINT [ "/entrypoint.dev.sh" ]

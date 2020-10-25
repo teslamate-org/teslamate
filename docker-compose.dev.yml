@@ -3,6 +3,8 @@ volumes:
   db_dev:
   mosquitto-conf_dev:
   mosquitto-data_dev:
+networks:
+  net:
 services:
   db:
     image: postgres:alpine
@@ -12,11 +14,16 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - db_dev:/var/lib/postgresql/data 
+    networks:
+      - net
     
   app:
     build:
       context: .
       dockerfile: Dockerfile.dev
+      args: 
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
     depends_on: 
       - db
       - mqtt
@@ -28,12 +35,16 @@ services:
       - 4000:4000
     volumes:
       - .:/app
+    networks:
+      - net
 
   mqtt:
     image: eclipse-mosquitto:1.6
     volumes:
       - mosquitto-conf_dev:/mosquitto/config
       - mosquitto-data_dev:/mosquitto/data
+    networks:
+      - net
 
 
   
