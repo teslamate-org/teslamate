@@ -55,7 +55,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/battery_level`                 | 88                   | Battery Level Percentage                                         |
 | `teslamate/cars/$car_id/usable_battery_level`          | 85                   | Usable battery level percentage                                  |
 | `teslamate/cars/$car_id/plugged_in`                    | true                 | If car is currently plugged into a charger                       |
-| `teslamate/cars/$car_id/charge_energy_added`           | 5.06                 | Last added energy in kW                                          |
+| `teslamate/cars/$car_id/charge_energy_added`           | 5.06                 | Last added energy in kWh                                         |
 | `teslamate/cars/$car_id/charge_limit_soc`              | 90                   | Charge Limit Configured in Percentage                            |
 | `teslamate/cars/$car_id/charge_port_door_open`         | true                 | Indicates if the charger door is open                            |
 | `teslamate/cars/$car_id/charger_actual_current`        | 2.05                 | Current amperage supplied by charger                             |
