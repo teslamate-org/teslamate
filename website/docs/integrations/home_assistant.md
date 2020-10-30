@@ -101,7 +101,7 @@ tesla_location:
 - platform: mqtt
   name: tesla_charge_energy_added
   state_topic: "teslamate/cars/1/charge_energy_added"
-  unit_of_measurement: "kW"
+  unit_of_measurement: "kWh"
   icon: mdi:battery-80
 
 - platform: mqtt
