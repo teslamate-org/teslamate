@@ -22,17 +22,17 @@
     "@babel/preset-env": "^7.12.1",
     "babel-loader": "^8.1.0",
     "bulma": "^0.9.1",
-    "copy-webpack-plugin": "^6.2.1",
-    "css-loader": "^5.0.0",
+    "copy-webpack-plugin": "^6.3.0",
+    "css-loader": "^5.0.1",
     "css-minimizer-webpack-plugin": "^1.1.5",
-    "file-loader": "^6.1.1",
+    "file-loader": "^6.2.0",
     "mini-css-extract-plugin": "^1.2.1",
-    "sass": "^1.27.0",
-    "sass-loader": "^10.0.4",
-    "terser-webpack-plugin": "^5.0.2",
+    "sass": "^1.29.0",
+    "sass-loader": "^10.0.5",
+    "terser-webpack-plugin": "^5.0.3",
     "url-loader": "^4.1.1",
-    "webpack": "^5.3.0",
-    "webpack-cli": "^4.1.0"
+    "webpack": "^5.4.0",
+    "webpack-cli": "^4.2.0"
   },
   "name": "assets"
 }
