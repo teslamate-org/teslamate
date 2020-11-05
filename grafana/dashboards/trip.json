@@ -214,7 +214,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.2.2",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -259,9 +259,9 @@
     },
     {
       "aliasColors": {
-        "charging (AC)": "#F2CC0C",
-        "charging (DC)": "#ffe74d",
-        "driving": "#A352CC"
+        "charging (AC)": "#73BF69",
+        "charging (DC)": "#FADE2A",
+        "driving": "#5794F2"
       },
       "breakPoint": "50%",
       "cacheTimeout": null,
@@ -462,7 +462,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.2.2",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -588,7 +588,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.2.2",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -716,7 +716,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.2.2",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -844,7 +844,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.2.2",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -947,7 +947,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.2.2",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -1040,7 +1040,7 @@
         },
         "showUnfilled": false
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.2.2",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -2365,7 +2365,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2497,7 +2497,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
