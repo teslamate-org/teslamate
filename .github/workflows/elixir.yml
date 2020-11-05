@@ -50,6 +50,8 @@ jobs:
         run: mix do deps.get, compile
       - name: Check Formatting
         run: mix format --check-formatted
+      - name: Check unused dependencies
+        run: mix deps.unlock --check-unused
       - name: Run Tests
         run: mix test
       - name: Check Coverage
