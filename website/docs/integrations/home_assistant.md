@@ -101,7 +101,7 @@ tesla_location:
 - platform: mqtt
   name: tesla_charge_energy_added
   state_topic: "teslamate/cars/1/charge_energy_added"
-  unit_of_measurement: "kW"
+  unit_of_measurement: "kWh"
   icon: mdi:battery-80
 
 - platform: mqtt
@@ -379,11 +379,11 @@ This automation triggers when the Tesla transitions from not_home to home. This 
   initial_state: on
   trigger:
     - platform: state
-      entity_id: switch.garage_door_switch
+      entity_id: device_tracker.tesla_location
       from: 'not_home'
       to: 'home'
   action:
-    - service: switch.turn_off
+    - service: switch.turn_on
       entity_id: switch.garage_door_switch
 ```
 

@@ -671,7 +671,10 @@
       }
     },
     {
-      "aliasColors": {},
+      "aliasColors": {
+        "AC": "#73BF69",
+        "DC": "#FADE2A"
+      },
       "breakPoint": "50%",
       "cacheTimeout": null,
       "combine": {
@@ -873,7 +876,10 @@
       "valueName": "total"
     },
     {
-      "aliasColors": {},
+      "aliasColors": {
+        "AC": "#73BF69",
+        "DC": "#FADE2A"
+      },
       "breakPoint": "50%",
       "cacheTimeout": null,
       "combine": {

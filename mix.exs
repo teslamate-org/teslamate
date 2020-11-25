@@ -49,7 +49,7 @@ defmodule TeslaMate.MixProject do
       {:ecto_enum, "~> 1.0"},
       {:phoenix_live_view, "~> 0.1"},
       {:floki, "~> 0.23", only: :test},
-      {:tortoise, "~> 0.9"},
+      {:tortoise, "== 0.9.4"},
       {:excoveralls, "~> 0.10", only: :test},
       {:srtm, "~> 0.5"},
       {:fuse, "~> 2.4"},

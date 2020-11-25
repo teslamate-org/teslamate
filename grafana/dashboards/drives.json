@@ -596,7 +596,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n  SELECT\n    round(extract(epoch FROM start_date)) * 1000 AS start_date_ts,\n    round(extract(epoch FROM end_date)) * 1000 AS end_date_ts,\n    car.id as car_id,\n    CASE WHEN start_geofence.id IS NULL THEN CONCAT('new?lat=', start_position.latitude, '&lng=', start_position.longitude)\n         WHEN start_geofence.id IS NOT NULL THEN CONCAT(start_geofence.id, '/edit')\n    END as start_path,\n    CASE WHEN end_geofence.id IS NULL THEN CONCAT('new?lat=', end_position.latitude, '&lng=', end_position.longitude)\n         WHEN end_geofence.id IS NOT NULL THEN CONCAT(end_geofence.id, '/edit')\n    END as end_path,\n    TO_CHAR((duration_min * INTERVAL '1 minute'), 'HH24:MI') as duration_str,\n    drives.id as drive_id,\n    -- Columns\n    start_date,\n    COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS start_address,\n    COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS end_address,\n    duration_min,\n    distance,\n    start_position.usable_battery_level as start_usable_battery_level,\n    start_position.battery_level as start_battery_level,\n    end_position.usable_battery_level as end_usable_battery_level,\n    end_position.battery_level as end_battery_level,\n   case when (start_position.battery_level != start_position.usable_battery_level OR end_position.battery_level != end_position.usable_battery_level) = true then true else false end  as reduced_range,\n    duration_min > 1 AND distance > 1 AND ( \n      start_position.usable_battery_level IS NULL OR end_position.usable_battery_level IS NULL\tOR\n      (end_position.battery_level - end_position.usable_battery_level) = 0 \n    ) as is_sufficiently_precise,\n    NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) as range_diff,\n    car.efficiency as car_efficiency,\n    outside_temp_avg,\n    distance / NULLIF(duration_min, 0) * 60 AS avg_speed,\n    power_max\n  FROM drives\n  LEFT JOIN addresses start_address ON start_address_id = start_address.id\n  LEFT JOIN addresses end_address ON end_address_id = end_address.id\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id\n  LEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n  LEFT JOIN cars car ON car.id = drives.car_id\n  WHERE $__timeFilter(start_date) AND drives.car_id = $car_id\n  ORDER BY start_date DESC\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    car_id,\n    start_path,\n    end_path,\n    duration_str,\n    drive_id,\n    -- Columns\n    start_date as start_date_[[length_unit]],\n    start_address,\n    end_address,\n    duration_min,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit,\n    start_battery_level as \"% Start\",\n    end_battery_level as \"% End\",\n    convert_celsius(outside_temp_avg, '$temp_unit') AS outside_temp_$temp_unit,\n    convert_km(avg_speed::numeric, '$length_unit') AS speed_avg_$length_unit,\n    power_max,\n    reduced_range as has_reduced_range,\n    range_diff * car_efficiency as \"consumption_kWh\",\n    CASE WHEN is_sufficiently_precise THEN range_diff * car_efficiency / distance * 1000 * CASE WHEN '$length_unit' = 'km' THEN 1\n                                                                                                WHEN '$length_unit' = 'mi' THEN 1.60934\n                                                                                           END\n    END AS consumption_kWh_$length_unit,\n    CASE WHEN is_sufficiently_precise THEN distance / range_diff\n         ELSE NULL\n    END AS efficiency\nFROM data;",
+          "rawSql": "WITH data AS (\n  SELECT\n    round(extract(epoch FROM start_date)) * 1000 AS start_date_ts,\n    round(extract(epoch FROM end_date)) * 1000 AS end_date_ts,\n    car.id as car_id,\n    CASE WHEN start_geofence.id IS NULL THEN CONCAT('new?lat=', start_position.latitude, '&lng=', start_position.longitude)\n         WHEN start_geofence.id IS NOT NULL THEN CONCAT(start_geofence.id, '/edit')\n    END as start_path,\n    CASE WHEN end_geofence.id IS NULL THEN CONCAT('new?lat=', end_position.latitude, '&lng=', end_position.longitude)\n         WHEN end_geofence.id IS NOT NULL THEN CONCAT(end_geofence.id, '/edit')\n    END as end_path,\n    TO_CHAR((duration_min * INTERVAL '1 minute'), 'HH24:MI') as duration_str,\n    drives.id as drive_id,\n    -- Columns\n    start_date,\n    COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS start_address,\n    COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS end_address,\n    duration_min,\n    distance,\n    start_position.usable_battery_level as start_usable_battery_level,\n    start_position.battery_level as start_battery_level,\n    end_position.usable_battery_level as end_usable_battery_level,\n    end_position.battery_level as end_battery_level,\n   case when (start_position.battery_level != start_position.usable_battery_level OR end_position.battery_level != end_position.usable_battery_level) = true then true else false end  as reduced_range,\n    duration_min > 1 AND distance > 1 AND ( \n      start_position.usable_battery_level IS NULL OR end_position.usable_battery_level IS NULL\tOR\n      (end_position.battery_level - end_position.usable_battery_level) = 0 \n    ) as is_sufficiently_precise,\n    NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) as range_diff,\n    car.efficiency as car_efficiency,\n    outside_temp_avg,\n    distance / NULLIF(duration_min, 0) * 60 AS avg_speed,\n    power_max\n  FROM drives\n  LEFT JOIN addresses start_address ON start_address_id = start_address.id\n  LEFT JOIN addresses end_address ON end_address_id = end_address.id\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id\n  LEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n  LEFT JOIN cars car ON car.id = drives.car_id\n  WHERE $__timeFilter(start_date) AND drives.car_id = $car_id AND convert_km(distance::numeric, '$length_unit') >= $min_dist AND convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min, 0) * 60 >= $min_speed\n  ORDER BY start_date DESC\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    car_id,\n    start_path,\n    end_path,\n    duration_str,\n    drive_id,\n    -- Columns\n    start_date as start_date_[[length_unit]],\n    start_address,\n    end_address,\n    duration_min,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit,\n    start_battery_level as \"% Start\",\n    end_battery_level as \"% End\",\n    convert_celsius(outside_temp_avg, '$temp_unit') AS outside_temp_$temp_unit,\n    convert_km(avg_speed::numeric, '$length_unit') AS speed_avg_$length_unit,\n    power_max,\n    reduced_range as has_reduced_range,\n    range_diff * car_efficiency as \"consumption_kWh\",\n    CASE WHEN is_sufficiently_precise THEN range_diff * car_efficiency / distance * 1000 * CASE WHEN '$length_unit' = 'km' THEN 1\n                                                                                                WHEN '$length_unit' = 'mi' THEN 1.60934\n                                                                                           END\n    END AS consumption_kWh_$length_unit,\n    CASE WHEN is_sufficiently_precise THEN distance / range_diff\n         ELSE NULL\n    END AS efficiency\nFROM data;",
           "refId": "A",
           "select": [
             [
@@ -760,6 +760,38 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "includeAll": false,
+        "current": {
+          "selected": false,
+          "text": "0",
+          "value": "0"
+        },
+        "hide": 0,
+        "label": "Enter min distance here",
+        "name": "min_dist",
+        "options": [],
+        "query": "0",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "includeAll": false,
+        "current": {
+          "selected": false,
+          "text": "0",
+          "value": "0"
+        },
+        "hide": 0,
+        "label": "Enter min speed here",
+        "name": "min_speed",
+        "options": [],
+        "query": "0",
+        "skipUrlSync": false,
+        "type": "textbox"
       }
     ]
   },

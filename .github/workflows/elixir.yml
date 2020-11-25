@@ -9,14 +9,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.11.0"
+          - elixir: "1.11.1"
             otp: "23.x"
 
     runs-on: ubuntu-18.04
 
     services:
       db:
-        image: postgres:12
+        image: postgres:13
         ports: ["5432:5432"]
         env:
           POSTGRES_PASSWORD: postgres
@@ -50,6 +50,8 @@ jobs:
         run: mix do deps.get, compile
       - name: Check Formatting
         run: mix format --check-formatted
+      - name: Check unused dependencies
+        run: mix deps.unlock --check-unused
       - name: Run Tests
         run: mix test
       - name: Check Coverage

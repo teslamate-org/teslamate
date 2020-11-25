@@ -143,7 +143,24 @@
           ]
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "ok",
+          "fill": false,
+          "line": true,
+          "op": "gt",
+          "value": 80,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "ok",
+          "fill": false,
+          "line": true,
+          "op": "lt",
+          "value": 20,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
