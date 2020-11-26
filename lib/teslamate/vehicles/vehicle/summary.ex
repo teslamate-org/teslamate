@@ -133,6 +133,12 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     true
   end
 
+  defp plugged_in(%Vehicle{charge_state: %Charge{charging_state: charging_state}}) do
+    if charging_state != "Disconnected" do
+      true
+    end
+  end
+
   defp plugged_in(_vehicle), do: false
 
   defp window_open(%Vehicle{vehicle_state: vehicle_state}) do
