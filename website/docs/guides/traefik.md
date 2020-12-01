@@ -1,5 +1,5 @@
 ---
-Title: Advanced installation with Traefik, Let's Encrypt & HTTP Basic Auth
+title: Advanced installation with Traefik, Let's Encrypt & HTTP Basic Auth
 ---
 
 In case you wish to make TeslaMate publicly available on the Internet, it is strongly recommended to secure the web interface and allow access to Grafana only with a password. This guide provides a _[docker-compose.yml](#docker-composeyml)_ which differs from the basic installation in the following aspects:
@@ -173,7 +173,7 @@ Start the stack with `docker-compose up -d`.
 
 1. Open the web interface https://teslamate.example.com
 2. Sign in with your Tesla account
-3. In the *Settings* page, update the *URLs* fields. Set *Web App* to https://teslamate.example.com and *Dashboards* to https://teslamate.example.com/grafana
+3. In the _Settings_ page, update the _URLs_ fields. Set _Web App_ to https://teslamate.example.com and _Dashboards_ to https://teslamate.example.com/grafana
 
 > If you have difficulty logging into your Grafana, e.g. you cannot login with the credentials from either the simple setup or the values stored in the .env file, reset the admin password with the following command:
 
