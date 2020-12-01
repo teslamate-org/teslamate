@@ -100,7 +100,8 @@ if System.get_env("DISABLE_MQTT") != "true" or config_env() == :test do
     password: System.get_env("MQTT_PASSWORD"),
     tls: System.get_env("MQTT_TLS"),
     accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS"),
-    namespace: System.get_env("MQTT_NAMESPACE") |> Util.validate_namespace!()
+    namespace: System.get_env("MQTT_NAMESPACE") |> Util.validate_namespace!(),
+    ipv6: System.get_env("MQTT_IPV6") == "true"
 end
 
 if config_env() != :test do

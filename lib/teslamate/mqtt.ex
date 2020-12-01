@@ -30,6 +30,13 @@ defmodule TeslaMate.Mqtt do
     opts = Application.get_env(:teslamate, :mqtt)
     host = Keyword.get(opts, :host)
 
+    socket_opts =
+      if opts[:ipv6] do
+        [:inet6]
+      else
+        []
+      end
+
     server =
       if Keyword.get(opts, :tls) == "true" do
         verify =
@@ -39,9 +46,14 @@ defmodule TeslaMate.Mqtt do
             :verify_peer
           end
 
-        {Transport.SSL, host: host, port: 8883, cacertfile: CAStore.file_path(), verify: verify}
+        {Transport.SSL,
+         host: host,
+         port: 8883,
+         cacertfile: CAStore.file_path(),
+         verify: verify,
+         opts: socket_opts}
       else
-        {Transport.Tcp, host: host, port: 1883}
+        {Transport.Tcp, host: host, port: 1883, opts: socket_opts}
       end
 
     [
