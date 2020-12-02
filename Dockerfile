@@ -11,7 +11,8 @@ WORKDIR /opt/app
 COPY mix.exs mix.lock ./
 RUN mix deps.get --only $MIX_ENV
 
-COPY config config
+COPY config/$MIX_ENV.exs config/$MIX_ENV.exs
+COPY config/config.exs config/config.exs
 RUN mix deps.compile
 
 COPY assets/package.json assets/package-lock.json ./assets/
@@ -21,6 +22,7 @@ COPY assets assets
 RUN npm run deploy --prefix ./assets
 RUN mix phx.digest
 
+COPY config/runtime.exs config/runtime.exs
 COPY lib lib
 COPY priv/repo/migrations priv/repo/migrations
 COPY priv/gettext priv/gettext
