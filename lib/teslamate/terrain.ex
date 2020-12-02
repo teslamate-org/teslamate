@@ -25,7 +25,10 @@ defmodule TeslaMate.Terrain do
 
   @impl true
   def init(opts) do
-    {:ok, client} = SRTM.Client.new(cache_path())
+    {:ok, client} =
+      SRTM.Client.new(cache_path(),
+        adapter: {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000}
+      )
 
     data = %Data{
       timeout: Keyword.get(opts, :timeout, 100),

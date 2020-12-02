@@ -1,27 +1,16 @@
 defmodule TeslaMate.HTTP do
-  def child_spec(arg) do
-    %{
-      id: __MODULE__,
-      start:
-        {Finch, :start_link,
-         [
-           Keyword.merge(
-             [
-               name: __MODULE__,
-               pools: %{
-                 :default => [size: 5],
-                 "https://owner-api.teslamotors.com" => [size: 10],
-                 "https://nominatim.openstreetmap.org" => [size: 3],
-                 "https://api.github.com" => [size: 1]
-               }
-             ],
-             arg
-           )
-         ]}
-    }
-  end
+  @pools %{
+    "https://owner-api.teslamotors.com" => [size: 10],
+    "https://nominatim.openstreetmap.org" => [size: 3],
+    "https://api.github.com" => [size: 1],
+    :default => [size: 5]
+  }
 
   @pool_timeout 10_000
+
+  def child_spec(_arg) do
+    Finch.child_spec(name: __MODULE__, pools: @pools)
+  end
 
   def get(url, opts \\ []) do
     {headers, opts} =
