@@ -208,6 +208,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              charge_energy_added: "4.32",
              charge_port_latch: "Engaged",
              charge_port_door_open: true,
+             charge_port_cold_weather_mode: false,
              scheduled_charging_start_time: 1_565_620_707,
              charge_limit_soc: 85,
              time_to_full_charge: 1.83

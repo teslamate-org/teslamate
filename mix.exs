@@ -73,7 +73,7 @@ defmodule TeslaMate.MixProject do
     ]
   end
 
-  defp releases() do
+  defp releases do
     [
       teslamate: [
         include_executables_for: [:unix],
