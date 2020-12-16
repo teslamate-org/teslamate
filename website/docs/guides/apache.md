@@ -172,8 +172,8 @@ Define LOG access.teslamate.log
         ProxyPass / http://127.0.0.1:3000/
         ProxyPassReverse / http://127.0.0.1:3000/
         CustomLog /var/log/apache2/${LOG} combined
-        SSLCertificateFile /etc/letsencrypt/live/teslamate.${MYDOMAIN}/fullchain.pem
-        SSLCertificateKeyFile /etc/letsencrypt/live/teslamate.${MYDOMAIN}/privkey.pem
+        SSLCertificateFile /etc/letsencrypt/live/grafana.${MYDOMAIN}/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/grafana.${MYDOMAIN}/privkey.pem
         Include /etc/letsencrypt/options-ssl-apache.conf
     </VirtualHost>
 </IfModule>
