@@ -20,3 +20,8 @@ A TeslaMate integration for calculating cost of charges. This app will automatic
 
 LINK: [github.com/MattJeanes/TeslaMateAgile](https://github.com/MattJeanes/TeslaMateAgile)
 
+## [TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot)
+
+This is a telegram bot written in Python to notify by Telegram message when a new SW update for your Tesla is available. It uses the MQTT topic which TeslaMate offers.
+
+LINK: [github.com/JakobLichterfeld/TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot))
