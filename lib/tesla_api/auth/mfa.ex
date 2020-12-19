@@ -68,7 +68,7 @@ defmodule TeslaApi.Auth.MFA do
         {:error, %Error{reason: :invalid_credentials, env: env}}
 
       error ->
-        handle_response(error, :authorization_request_failed)
+        handle_error(error, :authorization_request_failed)
     end
   end
 
@@ -99,7 +99,7 @@ defmodule TeslaApi.Auth.MFA do
         {:ok, env}
 
       error ->
-        handle_response(error, :authorization_failed)
+        handle_error(error, :authorization_failed)
     end
   end
 
@@ -125,7 +125,7 @@ defmodule TeslaApi.Auth.MFA do
                     {:ok, env}
 
                   error ->
-                    handle_response(error)
+                    handle_error(error)
                 end
 
               %{"data" => %{"valid" => false}} ->
@@ -136,11 +136,11 @@ defmodule TeslaApi.Auth.MFA do
             end
 
           error ->
-            handle_response(error, :mfa_verification_failed)
+            handle_error(error, :mfa_verification_failed)
         end
 
       error ->
-        handle_response(error, :mfa_factor_lookup_failed)
+        handle_error(error, :mfa_factor_lookup_failed)
     end
   end
 
@@ -170,7 +170,7 @@ defmodule TeslaApi.Auth.MFA do
         {:ok, access_token}
 
       error ->
-        handle_response(error, :web_token_error)
+        handle_error(error, :web_token_error)
     end
   end
 
@@ -196,13 +196,13 @@ defmodule TeslaApi.Auth.MFA do
         {:ok, auth}
 
       error ->
-        handle_response(error, :api_token_error)
+        handle_error(error, :api_token_error)
     end
   end
 
-  defp handle_response(response, reason \\ :unknown)
+  defp handle_error(response, reason \\ :unknown)
 
-  defp handle_response({:ok, %Tesla.Env{} = env}, reason) do
+  defp handle_error({:ok, %Tesla.Env{} = env}, reason) do
     message =
       case env.body do
         %{"error" => %{"message" => message}} when is_binary(message) ->
@@ -221,11 +221,11 @@ defmodule TeslaApi.Auth.MFA do
     {:error, %Error{reason: reason, message: message, env: env}}
   end
 
-  defp handle_response({:error, reason}, _reason) when is_atom(reason) do
+  defp handle_error({:error, reason}, _reason) when is_atom(reason) do
     {:error, %Error{reason: reason}}
   end
 
-  defp handle_response({:error, error}, reason) do
+  defp handle_error({:error, error}, reason) do
     {:error, %Error{reason: reason, message: error}}
   end
 

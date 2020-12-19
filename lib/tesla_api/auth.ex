@@ -1,7 +1,8 @@
 defmodule TeslaApi.Auth do
   require Logger
 
-  alias TeslaApi.{Auth, Error}
+  alias __MODULE__.MFA
+  alias TeslaApi.Error
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
 
@@ -9,7 +10,7 @@ defmodule TeslaApi.Auth do
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
 
   def login(email, password) do
-    __MODULE__.MFA.login(email, password)
+    MFA.login(email, password)
   rescue
     e in RuntimeError ->
       if e.message == "MFA passcode required" do
@@ -33,7 +34,7 @@ defmodule TeslaApi.Auth do
     |> handle_response()
   end
 
-  def refresh(%Auth{token: token, refresh_token: refresh_token}) do
+  def refresh(%__MODULE__{token: token, refresh_token: refresh_token}) do
     data = %{
       grant_type: "refresh_token",
       client_id: @client_id,
@@ -45,7 +46,7 @@ defmodule TeslaApi.Auth do
     |> handle_response()
   end
 
-  def revoke(%Auth{token: token}) do
+  def revoke(%__MODULE__{token: token}) do
     TeslaApi.post("/oauth/revoke", %{token: token}, opts: [access_token: token])
     |> handle_response()
   end
