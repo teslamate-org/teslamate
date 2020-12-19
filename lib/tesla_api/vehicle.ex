@@ -1,6 +1,6 @@
 defmodule TeslaApi.Vehicle do
   alias __MODULE__.State.{Charge, Climate, Drive, VehicleConfig, VehicleState}
-  alias TeslaApi.Auth
+  alias TeslaApi.{Auth, Error}
 
   defstruct id: nil,
             vehicle_id: nil,
@@ -23,15 +23,18 @@ defmodule TeslaApi.Vehicle do
             vehicle_state: nil
 
   def list(%Auth{token: token}) do
-    TeslaApi.get("/api/1/vehicles", token, transform: &result/1)
+    TeslaApi.get("/api/1/vehicles", opts: [access_token: token])
+    |> handle_response(transform: &result/1)
   end
 
   def get(%Auth{token: token}, id) do
-    TeslaApi.get("/api/1/vehicles/#{id}", token, transform: &result/1)
+    TeslaApi.get("/api/1/vehicles/#{id}", opts: [access_token: token])
+    |> handle_response(transform: &result/1)
   end
 
   def get_with_state(%Auth{token: token}, id) do
-    TeslaApi.get("/api/1/vehicles/#{id}/vehicle_data", token, transform: &result/1)
+    TeslaApi.get("/api/1/vehicles/#{id}/vehicle_data", opts: [access_token: token])
+    |> handle_response(transform: &result/1)
   end
 
   def result(v) do
@@ -55,5 +58,42 @@ defmodule TeslaApi.Vehicle do
       vehicle_config: if(v["vehicle_config"], do: VehicleConfig.result(v["vehicle_config"])),
       vehicle_state: if(v["vehicle_state"], do: VehicleState.result(v["vehicle_state"]))
     }
+  end
+
+  defp handle_response({:ok, %Tesla.Env{} = env}, opts) do
+    case env do
+      %Tesla.Env{status: status, body: %{"response" => res}} when status in 200..299 ->
+        transform = Keyword.get(opts, :transform, & &1)
+        {:ok, if(is_list(res), do: Enum.map(res, transform), else: transform.(res))}
+
+      %Tesla.Env{status: 401} = env ->
+        {:error, %Error{reason: :unauthorized, env: env}}
+
+      %Tesla.Env{status: 404, body: %{"error" => "not_found"}} = env ->
+        {:error, %Error{reason: :vehicle_not_found, env: env}}
+
+      %Tesla.Env{status: 405, body: %{"error" => "vehicle is curently in service"}} = env ->
+        {:error, %Error{reason: :vehicle_in_service, env: env}}
+
+      %Tesla.Env{status: 408, body: %{"error" => "vehicle unavailable:" <> _}} = env ->
+        {:error, %Error{reason: :vehicle_unavailable, env: env}}
+
+      %Tesla.Env{status: 504} = env ->
+        {:error, %Error{reason: :timeout, env: env}}
+
+      %Tesla.Env{status: status, body: %{"error" => msg}} = env when status >= 500 ->
+        {:error, %Error{reason: :unknown, message: msg, env: env}}
+
+      %Tesla.Env{body: body} = env ->
+        {:error, %Error{reason: :unknown, message: inspect(body), env: env}}
+    end
+  end
+
+  defp handle_response({:error, reason}, _opts) when is_atom(reason) do
+    {:error, %Error{reason: reason}}
+  end
+
+  defp handle_response({:error, reason}, _opts) do
+    {:error, %Error{reason: :unknown, message: reason}}
   end
 end

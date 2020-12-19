@@ -1,6 +1,4 @@
 defmodule TeslaApi.Auth do
-  import TeslaApi
-
   require Logger
 
   alias TeslaApi.{Auth, Error}
@@ -23,40 +21,44 @@ defmodule TeslaApi.Auth do
   end
 
   def legacy_login(email, password) do
-    post("/oauth/token", nil, %{
-      "grant_type" => "password",
-      "client_id" => @client_id,
-      "client_secret" => @client_secret,
-      "email" => email,
-      "password" => password
-    })
+    data = %{
+      grant_type: "password",
+      client_id: @client_id,
+      client_secret: @client_secret,
+      email: email,
+      password: password
+    }
+
+    TeslaApi.post("/oauth/token", data)
     |> handle_response()
   end
 
   def refresh(%Auth{token: token, refresh_token: refresh_token}) do
-    post("/oauth/token", token, %{
-      "grant_type" => "refresh_token",
-      "client_id" => @client_id,
-      "client_secret" => @client_secret,
-      "refresh_token" => refresh_token
-    })
+    data = %{
+      grant_type: "refresh_token",
+      client_id: @client_id,
+      client_secret: @client_secret,
+      refresh_token: refresh_token
+    }
+
+    TeslaApi.post("/oauth/token", data, opts: [access_token: token])
     |> handle_response()
   end
 
   def revoke(%Auth{token: token}) do
-    post("/oauth/revoke", token, %{"token" => token})
+    TeslaApi.post("/oauth/revoke", %{token: token}, opts: [access_token: token])
     |> handle_response()
   end
 
   defp handle_response(response) do
     case response do
-      {:ok, %Finch.Response{status: 200, body: body}} when body == %{} ->
+      {:ok, %Tesla.Env{status: 200, body: body}} when body == %{} ->
         :ok
 
-      {:ok, %Finch.Response{status: 200, body: %{"response" => true}}} ->
+      {:ok, %Tesla.Env{status: 200, body: %{"response" => true}}} ->
         :ok
 
-      {:ok, %Finch.Response{status: 200, body: body}} when is_map(body) ->
+      {:ok, %Tesla.Env{status: 200, body: body}} when is_map(body) ->
         auth = %__MODULE__{
           token: body["access_token"],
           type: body["token_type"],
@@ -67,7 +69,7 @@ defmodule TeslaApi.Auth do
 
         {:ok, auth}
 
-      {:ok, %Finch.Response{status: 401} = e} ->
+      {:ok, %Tesla.Env{status: 401} = e} ->
         error = %Error{
           reason: :authentication_failure,
           message: "Failed to authenticate.",
@@ -76,7 +78,7 @@ defmodule TeslaApi.Auth do
 
         {:error, error}
 
-      {:ok, %Finch.Response{} = e} ->
+      {:ok, %Tesla.Env{} = e} ->
         {:error, %Error{reason: :unknown, message: "An unknown error has occurred.", env: e}}
 
       {:error, %{reason: reason} = e} ->
