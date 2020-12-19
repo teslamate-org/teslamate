@@ -48,7 +48,7 @@ defmodule TeslaMate.MixProject do
       {:gen_state_machine, "~> 2.0"},
       {:ecto_enum, "~> 1.0"},
       {:phoenix_live_view, "~> 0.1"},
-      {:floki, "~> 0.23", only: :test},
+      {:floki, "~> 0.23"},
       {:tortoise, "~> 0.9.4"},
       {:excoveralls, "~> 0.10", only: :test},
       {:srtm, "~> 0.5"},
@@ -60,7 +60,8 @@ defmodule TeslaMate.MixProject do
       {:timex, "~> 3.0"},
       {:websockex, "~> 0.4"},
       {:tzdata, "~> 1.0"},
-      {:finch, "~> 0.3"}
+      {:finch, "~> 0.3"},
+      {:tesla, "~> 1.3"}
     ]
   end
 

@@ -1,6 +1,8 @@
 defmodule TeslaApi.Auth do
   import TeslaApi
 
+  require Logger
+
   alias TeslaApi.{Auth, Error}
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
@@ -9,6 +11,18 @@ defmodule TeslaApi.Auth do
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
 
   def login(email, password) do
+    __MODULE__.MFA.login(email, password)
+  rescue
+    e in RuntimeError ->
+      if e.message == "MFA passcode required" do
+        Logger.warn("Tesla Account requires MFA passcode. Using legacy login …")
+        legacy_login(email, password)
+      else
+        reraise e, __STACKTRACE__
+      end
+  end
+
+  def legacy_login(email, password) do
     post("/oauth/token", nil, %{
       "grant_type" => "password",
       "client_id" => @client_id,
