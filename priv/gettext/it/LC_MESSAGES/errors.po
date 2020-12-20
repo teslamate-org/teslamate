@@ -57,8 +57,9 @@ msgid_plural "should have %{count} item(s)"
 msgstr[0] "dovrebbe avere %{count} elemento(i)"
 msgstr[1] "dovrebbe avere %{count} elemento(i)"
 
+#, fuzzy
 msgid "should be at least %{count} character(s)"
-msgid_plural "should be at least %{count} carattere(i)"
+msgid_plural "should be at least %{count} character(s)"
 msgstr[0] "dovrebbe essere almeno %{count} carattere(i)"
 msgstr[1] ""
 
