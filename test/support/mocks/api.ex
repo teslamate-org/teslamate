@@ -1,8 +1,11 @@
 defmodule ApiMock do
   use GenServer
 
-  defstruct [:pid, :events]
-  alias __MODULE__, as: State
+  alias TeslaMate.Auth.Credentials
+
+  defmodule State do
+    defstruct [:pid, :events]
+  end
 
   # API
 
@@ -15,6 +18,9 @@ defmodule ApiMock do
   def stream(name, vid, receiver), do: GenServer.call(name, {:stream, vid, receiver})
 
   def sign_in(name, credentials), do: GenServer.call(name, {:sign_in, credentials})
+
+  def sign_in(name, device_id, passcode, ctx),
+    do: GenServer.call(name, {:sign_in, device_id, passcode, ctx})
 
   # Callbacks
 
@@ -34,7 +40,22 @@ defmodule ApiMock do
     {:reply, exec(event), %State{state | events: events}}
   end
 
-  def handle_call({:sign_in, _} = event, _from, %State{pid: pid} = state) do
+  def handle_call({:sign_in, %Credentials{email: "mfa"}} = event, _from, %State{pid: pid} = state) do
+    send(pid, {ApiMock, event})
+    devices = [%{"id" => "000", "name" => "Device #1"}, %{"id" => "111", "name" => "Device #2"}]
+    {:reply, {:ok, {:mfa, devices, %TeslaApi.Auth.MFA.Ctx{}}}, state}
+  end
+
+  def handle_call({:sign_in, _credentials} = event, _from, %State{pid: pid} = state) do
+    send(pid, {ApiMock, event})
+    {:reply, :ok, state}
+  end
+
+  def handle_call(
+        {:sign_in, _device_id, _passcode, _ctx} = event,
+        _from,
+        %State{pid: pid} = state
+      ) do
     send(pid, {ApiMock, event})
     {:reply, :ok, state}
   end

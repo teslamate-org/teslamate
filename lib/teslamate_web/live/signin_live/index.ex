@@ -9,39 +9,84 @@ defmodule TeslaMateWeb.SignInLive.Index do
     if connected?(socket), do: Gettext.put_locale(locale)
 
     assigns = %{
-      changeset: Auth.change_credentials(),
-      error: nil,
       api: get_api(socket),
-      page_title: gettext("Sign in")
+      page_title: gettext("Sign in"),
+      error: nil,
+      task: nil,
+      state: {:credentials, Auth.change_credentials()}
     }
 
     {:ok, assign(socket, assigns)}
   end
 
   @impl true
-  def handle_event("validate", %{"credentials" => credentials}, socket) do
+  def handle_event("validate", %{"credentials" => c}, %{assigns: %{state: {:credentials, _}}} = s) do
     changeset =
-      credentials
+      c
       |> Auth.change_credentials()
       |> Map.put(:action, :update)
 
-    {:noreply, assign(socket, changeset: changeset, error: nil)}
+    {:noreply, assign(s, state: {:credentials, changeset}, error: nil)}
   end
 
-  def handle_event("save", _params, socket) do
-    credentials = Ecto.Changeset.apply_changes(socket.assigns.changeset)
+  def handle_event("validate", %{"mfa" => mfa}, %{assigns: %{state: {:mfa, data}}} = socket) do
+    {_, devices, ctx} = data
 
-    case call(socket.assigns.api, :sign_in, [credentials]) do
-      {:error, reason} ->
-        {:noreply, assign(socket, error: reason)}
+    changeset =
+      mfa
+      |> mfa_changeset()
+      |> Map.put(:action, :update)
 
+    task =
+      if changeset.valid? do
+        %{passcode: passcode, device_id: device_id} = Ecto.Changeset.apply_changes(changeset)
+
+        Task.async(fn ->
+          call(socket.assigns.api, :sign_in, [device_id, passcode, ctx])
+        end)
+      end
+
+    {:noreply, assign(socket, state: {:mfa, {changeset, devices, ctx}}, task: task, error: nil)}
+  end
+
+  def handle_event("sign_in", _params, %{assigns: %{state: {:credentials, changeset}}} = socket) do
+    credentials = Ecto.Changeset.apply_changes(changeset)
+
+    task =
+      Task.async(fn ->
+        call(socket.assigns.api, :sign_in, [credentials])
+      end)
+
+    {:noreply, assign(socket, task: task)}
+  end
+
+  @impl true
+  def handle_info({ref, result}, %{assigns: %{task: %Task{ref: ref}}} = socket) do
+    Process.demonitor(ref, [:flush])
+
+    case result do
       :ok ->
         Process.sleep(250)
         {:noreply, redirect_to_carlive(socket)}
+
+      {:ok, {:mfa, devices, ctx}} ->
+        devices = Enum.map(devices, fn %{"name" => name, "id" => id} -> {name, id} end)
+        {:noreply, assign(socket, state: {:mfa, {mfa_changeset(), devices, ctx}}, task: nil)}
+
+      {:error, %TeslaApi.Error{} = e} ->
+        {:noreply, assign(socket, error: Exception.message(e), task: nil)}
     end
   end
 
-  ## Private
+  defp mfa_changeset(attrs \\ %{}) do
+    import Ecto.Changeset
+
+    {%{}, %{passcode: :string, device_id: :string}}
+    |> cast(attrs, [:passcode, :device_id])
+    |> validate_required([:passcode, :device_id])
+    |> validate_length(:passcode, is: 6)
+    |> validate_format(:passcode, ~r/\d{6}/)
+  end
 
   defp get_api(socket) do
     case get_connect_params(socket) do

@@ -1,6 +1,4 @@
 defmodule TeslaApi.Auth do
-  require Logger
-
   alias __MODULE__.MFA
   alias TeslaApi.Error
 
@@ -9,17 +7,8 @@ defmodule TeslaApi.Auth do
   @client_id "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384"
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
 
-  def login(email, password) do
-    MFA.login(email, password)
-  rescue
-    e in RuntimeError ->
-      if e.message == "MFA passcode required" do
-        Logger.warn("Tesla Account requires MFA passcode. Using legacy login …")
-        legacy_login(email, password)
-      else
-        reraise e, __STACKTRACE__
-      end
-  end
+  defdelegate login(email, password), to: MFA
+  defdelegate login(device_id, mfa_passcode, ctx), to: MFA
 
   def legacy_login(email, password) do
     data = %{

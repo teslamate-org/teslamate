@@ -312,3 +312,12 @@ export const Modal = {
     this._unfreeze();
   },
 };
+
+export const NumericInput = {
+  mounted() {
+    this.el.onkeypress = (evt) => {
+      const charCode = evt.which ? evt.which : evt.keyCode;
+      return !(charCode > 31 && (charCode < 48 || charCode > 57));
+    };
+  },
+};

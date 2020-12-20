@@ -161,7 +161,9 @@ defmodule TeslaMate.ApiTest do
 
       with_mock TeslaApi.Auth, login: login do
         :ok = start_api(name, start_auth: false)
-        assert {:error, :unauthorized} = Api.sign_in(name, @valid_credentials)
+
+        assert {:error, %TeslaApi.Error{reason: :unauthorized}} =
+                 Api.sign_in(name, @valid_credentials)
       end
     end
   end

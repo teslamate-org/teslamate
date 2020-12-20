@@ -64,8 +64,18 @@ defmodule TeslaMate.Api do
 
   def sign_in(name \\ @name, credentials) do
     case fetch_auth(name) do
-      {:error, :not_signed_in} -> GenServer.call(name, {:sign_in, credentials}, 15_000)
+      {:error, :not_signed_in} -> GenServer.call(name, {:sign_in, [credentials]}, 30_000)
       {:ok, %Auth{}} -> {:error, :already_signed_in}
+    end
+  end
+
+  def sign_in(name \\ @name, device_id, mfa_passcode, %Auth.MFA.Ctx{} = ctx) do
+    case fetch_auth(name) do
+      {:error, :not_signed_in} ->
+        GenServer.call(name, {:sign_in, [device_id, mfa_passcode, ctx]}, 30_000)
+
+      {:ok, %Auth{}} ->
+        {:error, :already_signed_in}
     end
   end
 
@@ -103,8 +113,12 @@ defmodule TeslaMate.Api do
   end
 
   @impl true
-  def handle_call({:sign_in, %Credentials{email: email, password: password}}, _from, state) do
-    case Auth.login(email, password) do
+  def handle_call({:sign_in, args}, _, state) do
+    case args do
+      [%Credentials{email: email, password: password}] -> Auth.login(email, password)
+      [device_id, passcode, ctx] -> Auth.login(device_id, passcode, ctx)
+    end
+    |> case do
       {:ok, %Auth{} = auth} ->
         true = insert_auth(state.name, auth)
         :ok = call(state.deps.auth, :save, [auth])
@@ -112,8 +126,11 @@ defmodule TeslaMate.Api do
         :ok = schedule_refresh(auth)
         {:reply, :ok, state}
 
-      {:error, %TeslaApi.Error{reason: reason}} ->
-        {:reply, {:error, reason}, state}
+      {:ok, {:mfa, _devices, _ctx} = mfa} ->
+        {:reply, {:ok, mfa}, state}
+
+      {:error, %TeslaApi.Error{} = e} ->
+        {:reply, {:error, e}, state}
     end
   end
 

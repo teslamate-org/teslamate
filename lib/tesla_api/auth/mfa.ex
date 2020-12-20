@@ -1,7 +1,7 @@
 defmodule TeslaApi.Auth.MFA do
   use Tesla
 
-  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 25_000
+  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 15_000
 
   plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
   plug Tesla.Middleware.Headers, [{"x-requested-with", "com.teslamotors.tesla"}]
@@ -13,24 +13,35 @@ defmodule TeslaApi.Auth.MFA do
   @client_id "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384"
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
 
+  defmodule Ctx do
+    defstruct [:state, :code_verifier, :transaction_id, :headers, :devices]
+  end
+
   def login(email, password) do
-    login(email, password, fn _devices -> raise "MFA passcode required" end)
-  end
-
-  def login(email, password, mfa_passcode) when is_binary(mfa_passcode) do
-    login(email, password, fn [%{"name" => _, "id" => id} | _devices] -> {id, mfa_passcode} end)
-  end
-
-  def login(email, password, mfa_passcode_fun) when is_function(mfa_passcode_fun, 1) do
     state = random_string(15)
     code_verifier = random_code_verifier()
 
     with {:ok, form_data} <- load_form(state, code_verifier),
-         {:ok, response} <- submit_form(form_data, email, password, mfa_passcode_fun),
-         {:ok, {redirect_uri, code}} <- parse_location_header(response, state),
+         {:ok, env = %Tesla.Env{}} <- submit_form(form_data, email, password),
+         {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
          {:ok, access_token} <- get_web_token(code, code_verifier, redirect_uri, state),
          {:ok, auth} <- get_api_tokens(access_token) do
       {:ok, auth}
+    end
+  end
+
+  def login(device_id, mfa_passcode, %Ctx{} = ctx) do
+    with {:ok, env} <- verify_passcode(device_id, mfa_passcode, ctx),
+         {:ok, {redirect_uri, code}} <- parse_location_header(env, ctx.state),
+         {:ok, access_token} <- get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state),
+         {:ok, auth} <- get_api_tokens(access_token) do
+      {:ok, auth}
+    end
+  end
+
+  def login(email, password, mfa_passcode) when is_binary(mfa_passcode) do
+    with {:ok, {:mfa, [%{"id" => id} | _], ctx}} <- login(email, password) do
+      login(id, mfa_passcode, ctx)
     end
   end
 
@@ -62,17 +73,17 @@ defmodule TeslaApi.Auth.MFA do
             {key, value}
           end)
 
-        {:ok, {form, cookies}}
+        {:ok, {form, cookies, state, code_verifier}}
 
       {:ok, %Tesla.Env{status: 200} = env} ->
-        {:error, %Error{reason: :invalid_credentials, env: env}}
+        {:error, %Error{reason: :invalid_credentials, message: "Invalid credentials", env: env}}
 
       error ->
         handle_error(error, :authorization_request_failed)
     end
   end
 
-  defp submit_form({form, cookies}, username, password, mfa_passcode_fun) do
+  defp submit_form({form, cookies, state, code_verifier}, username, password) do
     transaction_id = Map.fetch!(form, "transaction_id")
 
     encoded_form =
@@ -90,7 +101,18 @@ defmodule TeslaApi.Auth.MFA do
       {:ok, %Tesla.Env{status: 200, body: body} = env} ->
         if String.contains?(body, "/oauth2/v3/authorize/mfa/verify") do
           headers = [{"referer", env.url}, {"cookie", cookies}]
-          verify_passcode(transaction_id, mfa_passcode_fun, headers)
+
+          with {:ok, devices} <- list_devices(transaction_id, headers) do
+            ctx = %Ctx{
+              state: state,
+              code_verifier: code_verifier,
+              transaction_id: transaction_id,
+              headers: headers,
+              devices: devices
+            }
+
+            {:ok, {:mfa, devices, ctx}}
+          end
         else
           {:error, %Error{reason: :mfa_input_not_found, env: env}}
         end
@@ -103,44 +125,51 @@ defmodule TeslaApi.Auth.MFA do
     end
   end
 
-  defp verify_passcode(transaction_id, mfa_passcode_fun, headers) do
+  defp list_devices(transaction_id, headers) do
     params = [transaction_id: transaction_id]
 
     case get("/oauth2/v3/authorize/mfa/factors", query: params, headers: headers) do
       {:ok, %Tesla.Env{status: 200, body: %{"data" => devices}}} ->
-        {device_id, mfa_passcode} = mfa_passcode_fun.(devices)
-
-        data = %{
-          transaction_id: transaction_id,
-          factor_id: device_id,
-          passcode: mfa_passcode
-        }
-
-        case post("/oauth2/v3/authorize/mfa/verify", data, headers: headers) do
-          {:ok, %Tesla.Env{status: 200, body: body} = env} ->
-            case body do
-              %{"data" => %{"approved" => true, "valid" => true}} ->
-                case get("/oauth2/v3/authorize", query: params, headers: headers) do
-                  {:ok, %Tesla.Env{status: 302} = env} ->
-                    {:ok, env}
-
-                  error ->
-                    handle_error(error)
-                end
-
-              %{"data" => %{"valid" => false}} ->
-                {:error, %Error{reason: :mfa_passcode_expired, env: env}}
-
-              %{"data" => %{}} ->
-                {:error, %Error{reason: :mfa_passcode_invalid, env: env}}
-            end
-
-          error ->
-            handle_error(error, :mfa_verification_failed)
-        end
+        {:ok, devices}
 
       error ->
         handle_error(error, :mfa_factor_lookup_failed)
+    end
+  end
+
+  defp verify_passcode(device_id, mfa_passcode, %Ctx{} = ctx) do
+    params = [transaction_id: ctx.transaction_id]
+
+    data = %{
+      transaction_id: ctx.transaction_id,
+      factor_id: device_id,
+      passcode: mfa_passcode
+    }
+
+    case post("/oauth2/v3/authorize/mfa/verify", data, headers: ctx.headers) do
+      {:ok, %Tesla.Env{status: 200, body: body} = env} ->
+        case body do
+          %{"data" => %{"approved" => true, "valid" => true}} ->
+            case get("/oauth2/v3/authorize", query: params, headers: ctx.headers) do
+              {:ok, %Tesla.Env{status: 302} = env} ->
+                {:ok, env}
+
+              error ->
+                handle_error(error)
+            end
+
+          %{"data" => %{}} ->
+            error = %Error{
+              reason: :mfa_passcode_invalid,
+              message: "Incorrect verfification code",
+              env: env
+            }
+
+            {:error, error}
+        end
+
+      error ->
+        handle_error(error, :mfa_verification_failed)
     end
   end
 
