@@ -27,6 +27,14 @@
       "url": "[[base_url:raw]]"
     },
     {
+      "icon": "",
+      "tags": [],
+      "title": "GpxExport",
+      "tooltip": "",
+      "type": "link",
+      "url": "[[base_url:raw]]/drive/$drive_id/gpx"
+    },
+    {
       "asDropdown": true,
       "icon": "external link",
       "tags": [
@@ -1268,5 +1276,5 @@
   "timezone": "",
   "title": "Drive Details",
   "uid": "zm7wN6Zgz",
-  "version": 1
+  "version": 4
 }

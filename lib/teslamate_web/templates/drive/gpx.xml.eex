@@ -1,0 +1,13 @@
+<gpx version="1.1">
+    <trk>
+        <name><%= DateTime.to_iso8601(@drive.start_date) %></name>
+        <trkseg>
+            <%= for position <- @drive.positions do %>
+            <trkpt lat="<%= position.latitude %>" lon="<%= position.longitude %>">
+                <ele><%= position.elevation %></ele>
+                <time><%= DateTime.to_iso8601(position.date) %></time>
+            </trkpt>
+            <% end %>
+        </trkseg>
+    </trk>
+</gpx>
