@@ -30,6 +30,13 @@ defmodule TeslaMateWeb.DriveControllerTest do
       elevation: 200
     })
 
+    Log.insert_position(drive, %{
+      date: DateTime.utc_now() |> DateTime.add(-3600, :second),
+      latitude: 0.0,
+      longitude: 0.0,
+      elevation: 50
+    })
+
     drive |> Repo.preload(:positions)
   end
 
@@ -52,7 +59,7 @@ defmodule TeslaMateWeb.DriveControllerTest do
       document = Floki.parse_document!(xml)
       xml_trackpoints = get_trackpoints(document)
 
-      drive_trackpoints = drive_trackpoints_to_trackpoints(drive)
+      drive_trackpoints = drive_trackpoints_to_trackpoints(drive) |> Enum.sort_by(& &1.time)
 
       assert xml_trackpoints == drive_trackpoints
 
