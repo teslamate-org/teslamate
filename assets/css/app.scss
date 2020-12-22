@@ -313,15 +313,6 @@ main.full-height {
 }
 
 .mfa {
-  .security-codes {
-    input {
-      font-size: 24px;
-      width: 45px;
-      height: 45px;
-      padding: 0
-    }
-  }
-
   .device .select select[disabled] {
     background-color: initial;
   }
