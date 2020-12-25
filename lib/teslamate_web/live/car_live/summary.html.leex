@@ -199,7 +199,8 @@
                 end
 
               tooltip =
-                if is_number(current_range) and is_number(tooltip_battery_level) do
+                if is_number(current_range) and
+                   is_number(tooltip_battery_level) and tooltip_battery_level > 0 do
                   r100 = current_range / tooltip_battery_level * 100
 
                   r100_str =
