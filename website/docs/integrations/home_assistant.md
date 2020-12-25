@@ -129,7 +129,7 @@ tesla_location:
 - platform: mqtt
   name: tesla_charger_power
   state_topic: "teslamate/cars/1/charger_power"
-  unit_of_measurement: "W"
+  unit_of_measurement: "kW"
   icon: mdi:power-plug
 
 - platform: mqtt
@@ -380,8 +380,8 @@ This automation triggers when the Tesla transitions from not_home to home. This 
   trigger:
     - platform: state
       entity_id: device_tracker.tesla_location
-      from: 'not_home'
-      to: 'home'
+      from: "not_home"
+      to: "home"
   action:
     - service: switch.turn_on
       entity_id: switch.garage_door_switch
@@ -389,9 +389,9 @@ This automation triggers when the Tesla transitions from not_home to home. This 
 
 ### Notification for Doors and Windows left open
 
-The following set of automations and scripts will detect when a Tesla door, frunk, trunk or window is left open. The script will notify you after the defined time period (by default, 5 minutes). If you would like to customize how the notification is performed, you can edit the ```notify_tesla_open``` script which is called by all of the four notifications.
+The following set of automations and scripts will detect when a Tesla door, frunk, trunk or window is left open. The script will notify you after the defined time period (by default, 5 minutes). If you would like to customize how the notification is performed, you can edit the `notify_tesla_open` script which is called by all of the four notifications.
 
-By default, the script will repeatedly notify every 5 minutes. Remove the recursive ```script.turn_on``` sequence in the ```notify_tesla_open``` script if you'd only like to be informed once.
+By default, the script will repeatedly notify every 5 minutes. Remove the recursive `script.turn_on` sequence in the `notify_tesla_open` script if you'd only like to be informed once.
 
 We add the random 30 second interval after each notification to avoid clobbering the notification script when we have multiple things open at once. For example, opening the door will open the door and the window. If we don't delay the calls, we will only get a message about the window (as it is the last call to the script) and if we then close the window, we won't get notifications about other things left open. This results in more notifications but less chance on missing out on knowing something was left open.
 
@@ -403,16 +403,16 @@ We add the random 30 second interval after each notification to avoid clobbering
   trigger:
     - platform: mqtt
       topic: teslamate/cars/1/windows_open
-      payload: 'true'
+      payload: "true"
     - platform: mqtt
       topic: teslamate/cars/1/doors_open
-      payload: 'true'
+      payload: "true"
     - platform: mqtt
       topic: teslamate/cars/1/trunk_open
-      payload: 'true'
+      payload: "true"
     - platform: mqtt
       topic: teslamate/cars/1/frunk_open
-      payload: 'true'
+      payload: "true"
   action:
     - service: script.turn_on
       data_template:
@@ -423,16 +423,16 @@ We add the random 30 second interval after each notification to avoid clobbering
   trigger:
     - platform: mqtt
       topic: teslamate/cars/1/windows_open
-      payload: 'false'
+      payload: "false"
     - platform: mqtt
       topic: teslamate/cars/1/doors_open
-      payload: 'false'
+      payload: "false"
     - platform: mqtt
       topic: teslamate/cars/1/trunk_open
-      payload: 'false'
+      payload: "false"
     - platform: mqtt
       topic: teslamate/cars/1/frunk_open
-      payload: 'false'
+      payload: "false"
   action:
     - service: script.turn_off
       data_template:
@@ -501,3 +501,4 @@ notify_tesla_windows_open:
         variables:
           whatsopen: "windows"
 ```
+
