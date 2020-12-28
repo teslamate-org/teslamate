@@ -120,6 +120,10 @@ defmodule TeslaApi.Auth.MFA do
       {:ok, %Tesla.Env{status: 302} = env} ->
         {:ok, env}
 
+      {:ok, %Tesla.Env{status: 401} = env} ->
+        message = "Invalid email address and password combination"
+        {:error, %Error{reason: :invalid_credentials, message: message, env: env}}
+
       error ->
         handle_error(error, :authorization_failed)
     end

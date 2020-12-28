@@ -13,24 +13,26 @@ defmodule TeslaMateWeb.SignInLive.Index do
       page_title: gettext("Sign in"),
       error: nil,
       task: nil,
-      state: {:credentials, Auth.change_credentials()}
+      state: {:credentials, {Auth.change_credentials(), _show_checkbox = false}}
     }
 
     {:ok, assign(socket, assigns)}
   end
 
   @impl true
-  def handle_event("validate", %{"credentials" => c}, %{assigns: %{state: {:credentials, _}}} = s) do
+  def handle_event("validate", %{"credentials" => c}, %{assigns: %{state: {:credentials, d}}} = s) do
+    {_changeset, show_checkbox?} = d
+
     changeset =
       c
       |> Auth.change_credentials()
       |> Map.put(:action, :update)
 
-    {:noreply, assign(s, state: {:credentials, changeset}, error: nil)}
+    {:noreply, assign(s, state: {:credentials, {changeset, show_checkbox?}}, error: nil)}
   end
 
   def handle_event("validate", %{"mfa" => mfa}, %{assigns: %{state: {:mfa, data}}} = socket) do
-    {_, devices, ctx} = data
+    {_changeset, devices, ctx, show_button?} = data
 
     changeset =
       mfa
@@ -46,10 +48,12 @@ defmodule TeslaMateWeb.SignInLive.Index do
         end)
       end
 
-    {:noreply, assign(socket, state: {:mfa, {changeset, devices, ctx}}, task: task, error: nil)}
+    state = {:mfa, {changeset, devices, ctx, show_button?}}
+
+    {:noreply, assign(socket, state: state, task: task, error: nil)}
   end
 
-  def handle_event("sign_in", _params, %{assigns: %{state: {:credentials, changeset}}} = socket) do
+  def handle_event("sign_in", _, %{assigns: %{state: {:credentials, {changeset, _}}}} = socket) do
     credentials = Ecto.Changeset.apply_changes(changeset)
 
     task =
@@ -58,6 +62,11 @@ defmodule TeslaMateWeb.SignInLive.Index do
       end)
 
     {:noreply, assign(socket, task: task)}
+  end
+
+  def handle_event("use_legacy_login", _params, %{assigns: %{state: {:mfa, _data}}} = socket) do
+    state = {:credentials, {Auth.change_credentials(%{use_legacy_auth: true}), true}}
+    {:noreply, assign(socket, state: state)}
   end
 
   @impl true
@@ -71,10 +80,20 @@ defmodule TeslaMateWeb.SignInLive.Index do
 
       {:ok, {:mfa, devices, ctx}} ->
         devices = Enum.map(devices, fn %{"name" => name, "id" => id} -> {name, id} end)
-        {:noreply, assign(socket, state: {:mfa, {mfa_changeset(), devices, ctx}}, task: nil)}
+        state = {:mfa, {mfa_changeset(), devices, ctx, false}}
+        {:noreply, assign(socket, state: state, task: nil)}
 
       {:error, %TeslaApi.Error{} = e} ->
-        {:noreply, assign(socket, error: Exception.message(e), task: nil)}
+        state =
+          case socket.assigns.state do
+            {:credentials, {changeset, _show_checkbox}} ->
+              {:credentials, {changeset, true}}
+
+            {:mfa, {changeset, devices, ctx, _show_button}} ->
+              {:mfa, {changeset, devices, ctx, true}}
+          end
+
+        {:noreply, assign(socket, state: state, error: Exception.message(e), task: nil)}
     end
   end
 

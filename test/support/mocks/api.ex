@@ -46,16 +46,21 @@ defmodule ApiMock do
     {:reply, {:ok, {:mfa, devices, %TeslaApi.Auth.MFA.Ctx{}}}, state}
   end
 
+  def handle_call({:sign_in, %Credentials{email: "error"}}, _from, %State{} = state) do
+    {:reply, {:error, %TeslaApi.Error{reason: :unknown, env: nil}}, state}
+  end
+
   def handle_call({:sign_in, _credentials} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
     {:reply, :ok, state}
   end
 
-  def handle_call(
-        {:sign_in, _device_id, _passcode, _ctx} = event,
-        _from,
-        %State{pid: pid} = state
-      ) do
+  def handle_call({:sign_in, "error", _code, _ctx} = event, _from, %State{pid: pid} = state) do
+    send(pid, {ApiMock, event})
+    {:reply, {:error, %TeslaApi.Error{reason: :unknown, env: nil}}, state}
+  end
+
+  def handle_call({:sign_in, _device_id, _code, _ctx} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
     {:reply, :ok, state}
   end

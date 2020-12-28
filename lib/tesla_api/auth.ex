@@ -61,8 +61,8 @@ defmodule TeslaApi.Auth do
 
       {:ok, %Tesla.Env{status: 401} = e} ->
         error = %Error{
-          reason: :authentication_failure,
-          message: "Failed to authenticate.",
+          reason: :invalid_credentials,
+          message: "Invalid email address and password combination",
           env: e
         }
 
