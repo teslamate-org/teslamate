@@ -98,7 +98,7 @@ defmodule TeslaMate.Import do
   def handle_event(:internal, :read_directory, :idle, %Data{path: path} = data) do
     case File.ls(path) do
       {:error, reason} ->
-        {:next_state, {:error, reason}, {:next_event, :internal, :broadcast}}
+        {:next_state, {:error, reason}, data, {:next_event, :internal, :broadcast}}
 
       {:ok, files} ->
         files =
@@ -120,7 +120,7 @@ defmodule TeslaMate.Import do
 
     case create_event_streams(data) do
       {:error, reason} ->
-        {:next_state, {:error, reason}, {:next_event, :internal, :broadcast}}
+        {:next_state, {:error, reason}, data, {:next_event, :internal, :broadcast}}
 
       {:ok, streams} ->
         car = create_car(streams)
