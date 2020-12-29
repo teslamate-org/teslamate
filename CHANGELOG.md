@@ -6,28 +6,28 @@
 
 #### Dashboards
 
-- Drive Details: Add button to download a drive as a GPX file ([#993](https://github.com/adriankumpf/teslamate/pull/993) by [ayonix](https://github.com/ayonix))
+- Drive Details: Add button to download a drive as GPX file ([#993](https://github.com/adriankumpf/teslamate/pull/993) by [ayonix](https://github.com/ayonix))
 - New dashboard for reporting to Dutch tax ([#998](https://github.com/adriankumpf/teslamate/pull/998) and [#1051](https://github.com/adriankumpf/teslamate/pull/1051) by [roadrash2108](https://github.com/roadrash2108))
 - Locations: Add panel to see when an address was last visited
-- Charges/Drives: add more filtering capabilities ([#1016](https://github.com/adriankumpf/teslamate/pull/1016) by [Kosta-Github](https://github.com/Kosta-Github))
+- Charges/Drives: Add more filtering capabilities ([#1016](https://github.com/adriankumpf/teslamate/pull/1016) by [Kosta-Github](https://github.com/Kosta-Github))
 - Overview: Fix unit of measurement for charge energy added ([#1061](https://github.com/adriankumpf/teslamate/pull/1061) by [landler](https://github.com/landler))
 - Charge Level: Add green bars (20/80%) to match "Charge Delta" graph ([#1059](https://github.com/adriankumpf/teslamate/pull/1059) by [roadrash2108](https://github.com/roadrash2108))
-- Charging-Stats/Trip: change colors of AC/DC ([#1058](https://github.com/adriankumpf/teslamate/pull/1058) by [roadrash2108](https://github.com/roadrash2108))
-- Statistics: Resolve issue with month groupings dashboard ([#1082](https://github.com/adriankumpf/teslamate/pull/1082) by [leewillis77](https://github.com/leewillis77))
-- Updates: Apply number of charges and avg rated range to the correct update ([#1147](https://github.com/adriankumpf/teslamate/pull/1147) by [tlj](https://github.com/tlj))
+- Charging-Stats/Trip: Change colors of AC/DC ([#1058](https://github.com/adriankumpf/teslamate/pull/1058) by [roadrash2108](https://github.com/roadrash2108))
+- Statistics: Resolve issue with month groupings ([#1082](https://github.com/adriankumpf/teslamate/pull/1082) by [leewillis77](https://github.com/leewillis77))
+- Updates: Apply number of charges and average rated range to the correct update ([#1147](https://github.com/adriankumpf/teslamate/pull/1147) by [tlj](https://github.com/tlj))
 
 #### Other
 
-- Add support Tesla’s new authentication process (two factor authentication)
+- Add support for Tesla’s new authentication process (two-factor authentication)
 - Optimize TeslaFi CSV file import: reduced memory usage and increased performance
-- Require **Elixir v1.11**
+- Require [Elixir v1.11](https://docs.teslamate.org/docs/installation/debian#requirements)
 - Allow to connect to Postgres via IPv6 (via [DATABASE_IPV6](https://docs.teslamate.org/docs/configuration/environment_variables))
 - Allow to connect to MQTT broker via IPv6 (via [MQTT_IPV6](https://docs.teslamate.org/docs/configuration/environment_variables))
-- Determine if the car is plugged in (cold weather)
+- Improve detection of whether the vehicle is plugged in during cold weather
 - Use connection pooling for SRTM downloads
 - Optimize Docker layer caching to speed up image build times
 - Battery level tooltip: Prevent division by zero error if car is totally down to 0%
-- Display the actual errors if the import directory is not accessible
+- Display the actual error if the import directory is not accessible
 
 #### Translations
 
