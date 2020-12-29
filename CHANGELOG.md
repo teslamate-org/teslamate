@@ -1,24 +1,48 @@
 # Changelog
 
-## 1.21.0-dev
+## [1.21.0-dev]
 
 ### Enhancements
 
 #### Dashboards
 
-- New dashboard for reporting to Dutch tax ([#998](https://github.com/adriankumpf/teslamate/pull/998) by [roadrash2108](https://github.com/roadrash2108))
+- Drive Details: Add button to download a drive as a GPX file ([#993](https://github.com/adriankumpf/teslamate/pull/993) by [ayonix](https://github.com/ayonix))
+- New dashboard for reporting to Dutch tax ([#998](https://github.com/adriankumpf/teslamate/pull/998) and [#1051](https://github.com/adriankumpf/teslamate/pull/1051) by [roadrash2108](https://github.com/roadrash2108))
 - Locations: Add panel to see when an address was last visited
+- Charges/Drives: add more filtering capabilities ([#1016](https://github.com/adriankumpf/teslamate/pull/1016) by [Kosta-Github](https://github.com/Kosta-Github))
+- Overview: Fix unit of measurement for charge energy added ([#1061](https://github.com/adriankumpf/teslamate/pull/1061) by [landler](https://github.com/landler))
+- Charge Level: Add green bars (20/80%) to match "Charge Delta" graph ([#1059](https://github.com/adriankumpf/teslamate/pull/1059) by [roadrash2108](https://github.com/roadrash2108))
+- Charging-Stats/Trip: change colors of AC/DC ([#1058](https://github.com/adriankumpf/teslamate/pull/1058) by [roadrash2108](https://github.com/roadrash2108))
+- Statistics: Resolve issue with month groupings dashboard ([#1082](https://github.com/adriankumpf/teslamate/pull/1082) by [leewillis77](https://github.com/leewillis77))
+- Updates: Apply number of charges and avg rated range to the correct update ([#1147](https://github.com/adriankumpf/teslamate/pull/1147) by [tlj](https://github.com/tlj))
 
 #### Other
 
+- Add support Tesla’s new authentication process (two factor authentication)
 - Optimize TeslaFi CSV file import: reduced memory usage and increased performance
-- Bump Elixir to v1.11
-- Logs: Print the date as well, next to the time
+- Require **Elixir v1.11**
+- Allow to connect to Postgres via IPv6 (via [DATABASE_IPV6](https://docs.teslamate.org/docs/configuration/environment_variables))
+- Allow to connect to MQTT broker via IPv6 (via [MQTT_IPV6](https://docs.teslamate.org/docs/configuration/environment_variables))
+- Determine if the car is plugged in (cold weather)
+- Use connection pooling for SRTM downloads
+- Optimize Docker layer caching to speed up image build times
+- Battery level tooltip: Prevent division by zero error if car is totally down to 0%
+- Display the actual errors if the import directory is not accessible
+
+#### Translations
+
+- Add Italian translation ([#1095](https://github.com/adriankumpf/teslamate/pull/1095) and [#1096](https://github.com/adriankumpf/teslamate/pull/1096) by [HavanaMan](https://github.com/HavanaMan))
 
 #### Documentation
 
 - Fix version info on development guide & minor spelling fix ([#994](https://github.com/adriankumpf/teslamate/pull/994) by [techgaun](https://github.com/techgaun))
 - Update backup_restore.md ([#1027](https://github.com/adriankumpf/teslamate/pull/1027) by [pihomeserver](https://github.com/pihomeserver))
+- Improve garage door automation example ([#1039](https://github.com/adriankumpf/teslamate/pull/1039) by [andrewfoster](https://github.com/andrewfoster))
+- Update traefik guide to use a single public hostname instead of two ([#1101](https://github.com/adriankumpf/teslamate/pull/1101) by [pmboothby](https://github.com/pmboothby))
+- Projects using TeslaMate:
+  - [TeslaMateAgile](https://github.com/MattJeanes/TeslaMateAgile): mention Tibber support ([#1097](https://github.com/adriankumpf/teslamate/pull/1097) by [tobiasehlert](https://github.com/tobiasehlert))
+  - Add [TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot) ([#1122](https://github.com/adriankumpf/teslamate/pull/1122) by [JakobLichterfeld](https://github.com/JakobLichterfeld))
+- Update installation instructions for Apache ([#1124](https://github.com/adriankumpf/teslamate/pull/1124) by [juankymoral](https://github.com/juankymoral))
 
 ## [1.20.1] - 2020-10-24
 
@@ -1084,6 +1108,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.21.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.20.1...HEAD
 [1.20.1]: https://github.com/adriankumpf/teslamate/compare/v1.20.0...v1.20.1
 [1.20.0]: https://github.com/adriankumpf/teslamate/compare/v1.19.4...v1.20.0
 [1.19.4]: https://github.com/adriankumpf/teslamate/compare/v1.19.3...v1.19.4
