@@ -98,7 +98,8 @@
 
           <div class="field">
             <div class="control">
-              <button type="button" class="button is-warning is-light is-small is-rounded is-fullwidth" phx-click="use_legacy_login">
+              <button type="button" class="button is-warning is-light is-small is-rounded is-fullwidth" 
+                      phx-click="use_legacy_login" <%= if !!@task, do: "disabled" %>>
                 <span class="icon"><i class="mdi mdi-login"></i></span>&nbsp;<span><%= 
                   gettext "Use legacy authentication API" 
                 %></span>
