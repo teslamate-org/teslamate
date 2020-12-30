@@ -3,14 +3,15 @@ defmodule TeslaMateWeb.DriveController do
 
   require Logger
   import Ecto.Query
-  alias TeslaMate.Log.Drive
+
+  alias TeslaMate.Log.{Drive, Position}
   alias TeslaMate.Repo
 
   def gpx(conn, %{"id" => id}) do
     drive =
       Drive
       |> Repo.get(id)
-      |> Repo.preload(positions: from(p in TeslaMate.Log.Position, order_by: p.date))
+      |> Repo.preload(positions: from(p in Position, order_by: p.date))
 
     case drive do
       nil -> conn |> send_resp(404, "Drive not found")

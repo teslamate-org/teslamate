@@ -4,7 +4,7 @@
 @import "~leaflet-control-geocoder/dist/Control.Geocoder.css";
 @import "~@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
-$mdi-font-path: '~@mdi/font/fonts';
+$mdi-font-path: "~@mdi/font/fonts";
 @import "~@mdi/font/scss/materialdesignicons.scss";
 
 $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
@@ -43,11 +43,11 @@ $modal-card-foot-border-top: none;
 @import "~bulma/sass/layout/section";
 @import "~bulma/sass/grid/_all";
 
-@import '~@creativebulma/bulma-tooltip';
-@import '~@creativebulma/bulma-divider';
-@import '~bulma-switch';
+@import "~@creativebulma/bulma-tooltip";
+@import "~@creativebulma/bulma-divider";
+@import "~bulma-switch";
 
-@import './vendor/modal-fx';
+@import "./vendor/modal-fx";
 
 // @import "../../deps/phoenix_live_view/assets/css/live_view.css";
 .phx-disconnected {
@@ -117,7 +117,6 @@ nav.navbar {
       th:first-of-type {
         width: 50%;
       }
-
     }
 
     @media screen and (max-width: 900px) {
@@ -126,7 +125,6 @@ nav.navbar {
       }
     }
   }
-
 
   @media screen and (min-width: $tablet) {
     flex-direction: row;
@@ -151,7 +149,7 @@ nav.navbar {
     }
   }
 
-  button[phx-click=suspend_logging]:disabled {
+  button[phx-click="suspend_logging"]:disabled {
     pointer-events: none;
   }
 }
@@ -182,7 +180,6 @@ nav.navbar {
   .field-label {
     min-width: 165px;
 
-
     .tooltip:before {
       text-align: left !important;
     }
@@ -197,8 +194,8 @@ nav.navbar {
   }
 }
 
-$sizes: (0,5,10,15,20,25,30,50);
-$positions: ('top','left','bottom','right');
+$sizes: (0, 5, 10, 15, 20, 25, 30, 50);
+$positions: ("top", "left", "bottom", "right");
 
 @each $size in $sizes {
   @each $position in $positions {
@@ -215,20 +212,19 @@ $positions: ('top','left','bottom','right');
   font-size: 1.25em;
 }
 
-@media screen and (orientation: landscape) and (max-width:  $desktop - 1) {
-  body{
+@media screen and (orientation: landscape) and (max-width: $desktop - 1) {
+  body {
     -webkit-text-size-adjust: none;
   }
 
   .navbar .navbar-brand,
   .navbar .navbar-end,
-  main.section .container{
+  main.section .container {
     max-width: 95%;
   }
 
   .navbar .navbar-brand,
-  .navbar .navbar-end
-  {
+  .navbar .navbar-end {
     margin: 0 auto;
   }
 }
@@ -272,17 +268,17 @@ $positions: ('top','left','bottom','right');
 .spinner {
   display: inline-flex;
   justify-content: center;
-  height: 1.0rem;
-  width: 1.0rem;
+  height: 1rem;
+  width: 1rem;
 
   .is-loading {
-      position: relative;
-      pointer-events: none;
-      &:after {
-        @extend %loader;
-        @include center(1em);
-        position: absolute !important;
-      }
+    position: relative;
+    pointer-events: none;
+    &:after {
+      @extend %loader;
+      @include center(1em);
+      position: absolute !important;
+    }
   }
 }
 
@@ -307,7 +303,8 @@ main.full-height {
 .about {
   margin-top: 50px;
 
-  th, td {
+  th,
+  td {
     border: none;
   }
 }

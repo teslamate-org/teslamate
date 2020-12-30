@@ -1,42 +1,41 @@
 // source: https://github.com/postare/bulma-modal-fx/blob/master/src/_scss/components/_modal-fx.scss
 
-$transition-duration: .3s;
+$transition-duration: 0.3s;
 
 .modal {
-    display: flex;
-    visibility: hidden;
+  display: flex;
+  visibility: hidden;
 
-    .modal-content {
-      max-width: 95%;
-    }
+  .modal-content {
+    max-width: 95%;
+  }
 
+  .modal-background {
+    transition: all $transition-duration;
+    opacity: 0;
+  }
+
+  &.is-active {
+    visibility: visible;
     .modal-background {
-        transition: all $transition-duration;
+      opacity: 1;
+    }
+  }
+
+  &.modal-fx {
+    &-fadeInScale {
+      .modal-content {
+        transform: scale(0.7);
         opacity: 0;
-    }
+        transition: all $transition-duration;
+      }
 
-    &.is-active {
-        visibility: visible;
-        .modal-background {
-            opacity: 1;
+      &.is-active {
+        .modal-content {
+          transform: scale(1);
+          opacity: 1;
         }
+      }
     }
-
-   &.modal-fx {
-        &-fadeInScale {
-            .modal-content {
-                transform: scale(0.7);
-                opacity: 0;
-                transition: all $transition-duration;
-            }
-
-            &.is-active {
-                .modal-content {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-            }
-        }
-    }
+  }
 }
-
