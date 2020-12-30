@@ -135,6 +135,10 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     c.charging_state != "Disconnected"
   end
 
+  defp plugged_in(%Vehicle{charge_state: %Charge{charge_port_cold_weather_mode: nil} = c}) do
+    c.charge_port_latch == "Engaged" and c.charge_port_door_open
+  end
+
   defp plugged_in(_vehicle), do: nil
 
   defp window_open(%Vehicle{vehicle_state: vehicle_state}) do
