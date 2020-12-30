@@ -127,16 +127,13 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp plugged_in(%Vehicle{vehicle_state: nil}), do: nil
   defp plugged_in(%Vehicle{charge_state: %Charge{charge_port_door_open: :unknown}}), do: :unknown
 
-  defp plugged_in(%Vehicle{charge_state: %Charge{charge_port_cold_weather_mode: false} = c}) do
+  defp plugged_in(%Vehicle{charge_state: %Charge{} = c})
+       when c.charge_port_cold_weather_mode in [false, nil] do
     c.charge_port_latch == "Engaged" and c.charge_port_door_open
   end
 
   defp plugged_in(%Vehicle{charge_state: %Charge{charge_port_cold_weather_mode: true} = c}) do
     c.charging_state != "Disconnected"
-  end
-
-  defp plugged_in(%Vehicle{charge_state: %Charge{charge_port_cold_weather_mode: nil} = c}) do
-    c.charge_port_latch == "Engaged" and c.charge_port_door_open
   end
 
   defp plugged_in(_vehicle), do: nil
