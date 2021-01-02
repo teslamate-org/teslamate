@@ -1,6 +1,8 @@
 defmodule TeslaApi.Auth.MFA do
   use Tesla
 
+  require Logger
+
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 15_000
 
   plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
@@ -28,6 +30,10 @@ defmodule TeslaApi.Auth.MFA do
          {:ok, auth} <- get_api_tokens(access_token) do
       {:ok, auth}
     end
+  rescue
+    e ->
+      Logger.error(Exception.format(:error, e, __STACKTRACE__))
+      {:error, %Error{reason: e, message: "An unexpected error occurred"}}
   end
 
   def login(device_id, mfa_passcode, %Ctx{} = ctx) do
@@ -37,6 +43,10 @@ defmodule TeslaApi.Auth.MFA do
          {:ok, auth} <- get_api_tokens(access_token) do
       {:ok, auth}
     end
+  rescue
+    e ->
+      Logger.error(Exception.format(:error, e, __STACKTRACE__))
+      {:error, %Error{reason: e, message: "An unexpected error occurred"}}
   end
 
   def login(email, password, mfa_passcode) when is_binary(mfa_passcode) do
