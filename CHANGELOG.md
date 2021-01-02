@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.21.0-dev]
+## [1.21.0] - 2021-01-02
 
 ### Enhancements
 
@@ -23,7 +23,7 @@
 - Require [Elixir v1.11](https://docs.teslamate.org/docs/installation/debian#requirements)
 - Allow to connect to Postgres via IPv6 (via [DATABASE_IPV6](https://docs.teslamate.org/docs/configuration/environment_variables))
 - Allow to connect to MQTT broker via IPv6 (via [MQTT_IPV6](https://docs.teslamate.org/docs/configuration/environment_variables))
-- Improve detection of whether the vehicle is plugged in during cold weather
+- Improve detection of whether the vehicle is plugged in during cold weather (+ fix [#1154](https://github.com/adriankumpf/teslamate/pull/1154) by [virtualm2000](https://github.com/virtualm2000))
 - Use connection pooling for SRTM downloads
 - Optimize Docker layer caching to speed up image build times
 - Battery level tooltip: Prevent division by zero error if car is totally down to 0%
@@ -1108,7 +1108,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[1.21.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.20.1...HEAD
+[1.21.0]: https://github.com/adriankumpf/teslamate/compare/v1.20.1...v1.21.0
 [1.20.1]: https://github.com/adriankumpf/teslamate/compare/v1.20.0...v1.20.1
 [1.20.0]: https://github.com/adriankumpf/teslamate/compare/v1.19.4...v1.20.0
 [1.19.4]: https://github.com/adriankumpf/teslamate/compare/v1.19.3...v1.19.4
