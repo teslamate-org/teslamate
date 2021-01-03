@@ -14,7 +14,7 @@ defmodule TeslaMate.Application do
   end
 
   defp children do
-    mqtt_enabled? = !is_nil(Application.get_env(:teslamate, :mqtt))
+    mqtt_config = Application.get_env(:teslamate, :mqtt)
 
     case Application.get_env(:teslamate, :import_directory) do
       nil ->
@@ -27,7 +27,7 @@ defmodule TeslaMate.Application do
           TeslaMateWeb.Endpoint,
           TeslaMate.Terrain,
           TeslaMate.Vehicles,
-          if(mqtt_enabled?, do: TeslaMate.Mqtt),
+          if(mqtt_config != nil, do: {TeslaMate.Mqtt, mqtt_config}),
           TeslaMate.Repair
         ]
         |> Enum.reject(&is_nil/1)
