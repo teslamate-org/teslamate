@@ -30,16 +30,15 @@ defmodule TeslaMate.Mqtt.Publisher do
 
   @impl true
   def handle_call({:publish, topic, msg, opts}, from, %State{client_id: id, refs: refs} = state) do
+    opts = Keyword.put_new(opts, :timeout, round(@timeout * 0.95))
+
     case Keyword.get(opts, :qos, 0) do
       0 ->
-        :ok = Tortoise.publish(id, topic, msg, Keyword.put_new(opts, :timeout, @timeout * 0.95))
-
+        :ok = Tortoise.publish(id, topic, msg, opts)
         {:reply, :ok, state}
 
       _ ->
-        {:ok, ref} =
-          Tortoise.publish(id, topic, msg, Keyword.put_new(opts, :timeout, @timeout * 0.95))
-
+        {:ok, ref} = Tortoise.publish(id, topic, msg, opts)
         {:noreply, %State{state | refs: Map.put(refs, ref, from)}}
     end
   end

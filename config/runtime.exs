@@ -5,6 +5,9 @@ defmodule Util do
     :crypto.strong_rand_bytes(length) |> Base.encode64() |> binary_part(0, length)
   end
 
+  def to_integer(nil), do: nil
+  def to_integer(str), do: String.to_integer(str)
+
   def validate_namespace!(nil), do: nil
   def validate_namespace!(""), do: nil
 
@@ -96,10 +99,11 @@ config :teslamate, TeslaMateWeb.Endpoint,
 if System.get_env("DISABLE_MQTT") != "true" or config_env() == :test do
   config :teslamate, :mqtt,
     host: Util.fetch_env!("MQTT_HOST", all: "localhost"),
+    port: System.get_env("MQTT_PORT") |> Util.to_integer(),
     username: System.get_env("MQTT_USERNAME"),
     password: System.get_env("MQTT_PASSWORD"),
-    tls: System.get_env("MQTT_TLS"),
-    accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS"),
+    tls: System.get_env("MQTT_TLS") == "true",
+    accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS") == "true",
     namespace: System.get_env("MQTT_NAMESPACE") |> Util.validate_namespace!(),
     ipv6: System.get_env("MQTT_IPV6") == "true"
 end
