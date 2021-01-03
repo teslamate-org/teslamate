@@ -68,7 +68,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgb(255, 255, 255)",
+                "color": "#c7d0d9",
                 "value": null
               }
             ]
@@ -151,7 +151,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgb(255, 255, 255)",
+                "color": "#c7d0d9",
                 "value": null
               }
             ]
