@@ -2,13 +2,11 @@ defmodule TeslaMate.Settings.GlobalSettings do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias TeslaMate.Settings.{Units, Range}
-
   schema "settings" do
-    field :unit_of_length, Units.Length
-    field :unit_of_temperature, Units.Temperature
+    field :unit_of_length, Ecto.Enum, values: [:km, :mi]
+    field :unit_of_temperature, Ecto.Enum, values: [:C, :F]
 
-    field :preferred_range, Range
+    field :preferred_range, Ecto.Enum, values: [:ideal, :rated]
 
     field :base_url, :string
     field :grafana_url, :string

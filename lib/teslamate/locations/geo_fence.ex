@@ -3,17 +3,13 @@ defmodule TeslaMate.Locations.GeoFence do
 
   import Ecto.Changeset
 
-  defmodule BillingType do
-    use EctoEnum.Postgres, type: :billing_type, enums: [:per_kwh, :per_minute]
-  end
-
   schema "geofences" do
     field :name, :string
     field :latitude, :decimal, read_after_writes: true
     field :longitude, :decimal, read_after_writes: true
     field :radius, :integer
 
-    field :billing_type, BillingType, read_after_writes: true
+    field :billing_type, Ecto.Enum, values: [:per_kwh, :per_minute], read_after_writes: true
     field :cost_per_unit, :decimal, read_after_writes: true
     field :session_fee, :decimal, read_after_writes: true
 
