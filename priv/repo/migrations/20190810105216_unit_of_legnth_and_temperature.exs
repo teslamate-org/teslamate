@@ -5,25 +5,17 @@ defmodule TeslaMate.Repo.Migrations.UnitOfLegnthAndTemperature do
 
   import Ecto.Query
 
-  defmodule Units.Length do
-    use EctoEnum.Postgres, type: :length, enums: [:km, :mi]
-  end
-
-  defmodule Units.Temperature do
-    use EctoEnum.Postgres, type: :temperature, enums: [:C, :F]
-  end
-
   def up do
     [use_imperial_units?] =
       from(s in "settings", select: s.use_imperial_units)
       |> Repo.all()
 
-    Units.Length.create_type()
-    Units.Temperature.create_type()
+    execute("CREATE TYPE length AS ENUM ('km', 'mi')")
+    execute("CREATE TYPE temperature AS ENUM ('C', 'F')")
 
     alter table(:settings) do
-      add(:unit_of_length, Units.Length.type(), default: "km", null: false)
-      add(:unit_of_temperature, Units.Temperature.type(), default: "C", null: false)
+      add(:unit_of_length, :length, default: "km", null: false)
+      add(:unit_of_temperature, :temperature, default: "C", null: false)
       remove(:use_imperial_units)
     end
 
@@ -53,7 +45,7 @@ defmodule TeslaMate.Repo.Migrations.UnitOfLegnthAndTemperature do
       add(:use_imperial_units, :boolean, default: false, null: false)
     end
 
-    execute("DROP TYPE Length")
+    execute("DROP TYPE length")
     execute("DROP TYPE temperature")
   end
 end

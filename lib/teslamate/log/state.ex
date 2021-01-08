@@ -2,11 +2,10 @@ defmodule TeslaMate.Log.State do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias __MODULE__.State
   alias TeslaMate.Log.Car
 
   schema "states" do
-    field :state, State
+    field :state, Ecto.Enum, values: [:online, :offline, :asleep]
 
     field :start_date, :utc_datetime_usec
     field :end_date, :utc_datetime_usec

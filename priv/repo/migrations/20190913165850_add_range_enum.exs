@@ -1,13 +1,11 @@
 defmodule TeslaMate.Repo.Migrations.AddRangeEnum do
   use Ecto.Migration
 
-  alias TeslaMate.Settings.Range
-
   def change do
-    Range.create_type()
+    execute "CREATE TYPE range AS ENUM ('ideal', 'rated')", "DROP TYPE range"
 
     alter table(:settings) do
-      add(:preferred_range, Range.type(), default: "rated", null: false)
+      add :preferred_range, :range, default: "rated", null: false
     end
   end
 end
