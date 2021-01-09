@@ -28,4 +28,4 @@ LINK: [github.com/JakobLichterfeld/TeslaMate_Telegram_Bot](https://github.com/Ja
 
 ## [Home Assistant Addon](https://github.com/matt-FFFFFF/hassio-addon-teslamate)
 
-An unofficial Home Assistant addon for TeslaMate, with a PostgreSQL addon too. Works with the existing community `Grafana` and `Mosquitto` addons to provide a complete solution.
+An unofficial Home Assistant addon for TeslaMate, with a PostgreSQL addon too. Works with the existing community Grafana and Mosquitto addons to provide a complete solution.
