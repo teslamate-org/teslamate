@@ -364,7 +364,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT extract(epoch FROM (end_position.date - start_position.date))\nFROM drives\nLEFT JOIN positions start_position ON start_position_id = start_position.id\nLEFT JOIN positions end_position ON end_position_id = end_position.id\nWHERE drives.id = $drive_id;",
+          "rawSql": "SELECT duration_min * 60\nFROM drives\nWHERE drives.id = $drive_id;",
           "refId": "A",
           "select": [
             [
