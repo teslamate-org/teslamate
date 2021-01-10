@@ -1,0 +1,595 @@
+## This file is a PO Template file.
+##
+## `msgid`s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
+##
+## Run `mix gettext.extract` to bring this file up to
+## date. Leave `msgstr`s empty as changing them here as no
+## effect: edit them in PO (`.po`) files instead.
+msgid ""
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:95
+msgid "Status"
+msgstr "Tila"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:228
+msgid "Speed"
+msgstr "Nopeus"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:220
+msgid "State of Charge"
+msgstr "Lataustaso"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:156
+msgid "Charged"
+msgstr "Ladattu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:131
+msgid "asleep"
+msgstr "lepotilassa"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:126
+msgid "charging"
+msgstr "lataa"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:125
+msgid "driving"
+msgstr "ajossa"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:130
+msgid "offline"
+msgstr "offline-tilassa"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:129
+msgid "online"
+msgstr "yhteydessä"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:127
+msgid "updating"
+msgstr "päivittää"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:69
+msgid "Locked"
+msgstr "Lukittu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:64
+msgid "Sentry Mode"
+msgstr "Sentry-moodi"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/index.ex:13
+#: lib/teslamate_web/live/charge_live/cost.html.leex:3 lib/teslamate_web/live/geofence_live/form.html.leex:3
+#: lib/teslamate_web/live/geofence_live/index.html.leex:3 lib/teslamate_web/live/import_live/index.html.leex:3
+#: lib/teslamate_web/live/settings_live/index.html.leex:3
+msgid "Home"
+msgstr "Koti"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.ex:22
+#: lib/teslamate_web/live/settings_live/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.leex:59
+msgid "Settings"
+msgstr "Asetukset"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:171
+msgid "Scheduled Charging"
+msgstr "Aikataulutettu lataus"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:49
+msgid "Plugged In"
+msgstr "Kytketty johtoon"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:180
+msgid "Charge Limit"
+msgstr "Latausraja"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:128
+msgid "falling asleep"
+msgstr "menossa lepotilaan"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:132
+msgid "unavailable"
+msgstr "ei saatavilla"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:200
+msgid "Length"
+msgstr "Matka"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:215
+msgid "Temperature"
+msgstr "Lämpötila"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:197
+msgid "Units"
+msgstr "Mittayksiköt"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:131
+#: lib/teslamate_web/live/geofence_live/form.html.leex:105
+msgid "Back"
+msgstr "Takaisin"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:204
+msgid "Geo-fence \"%{name}\" created"
+msgstr "Georajaus \"%{name}\" luotu"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:126
+#: lib/teslamate_web/live/geofence_live/form.html.leex:4 lib/teslamate_web/live/geofence_live/index.ex:22
+#: lib/teslamate_web/live/geofence_live/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.leex:56
+msgid "Geo-Fences"
+msgstr "Georajaukset"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:49
+msgid "Idle Time Before Trying to Sleep"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:43
+#: lib/teslamate_web/live/geofence_live/form.html.leex:48 lib/teslamate_web/live/geofence_live/index.html.leex:21
+msgid "Name"
+msgstr "Nimi"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:17
+#: lib/teslamate_web/live/geofence_live/index.html.leex:22
+msgid "Position"
+msgstr "Sijainti"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/index.html.leex:23
+msgid "Radius"
+msgstr "Säde"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:134
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108
+msgid "Save"
+msgstr "Tallenna"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:135
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108 lib/teslamate_web/live/signin_live/index.html.leex:52
+msgid "Saving..."
+msgstr "Tallentaa..."
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:31
+msgid "Time to Try Sleeping"
+msgstr "Lepotilaan menon kesto"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:39
+#: lib/teslamate_web/live/settings_live/index.html.leex:58
+msgid "min"
+msgstr "min"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:119
+msgid "Signed in successfully"
+msgstr "Kirjauduttu sisään onnistuneesti"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:134
+msgid "Car is unlocked"
+msgstr "Auto ei ole lukittu"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/index.html.leex:9
+msgid "Create"
+msgstr "Luo"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:138
+#: lib/teslamate_web/live/car_live/summary.html.leex:34
+msgid "Preconditioning"
+msgstr "Esilämmitys"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:137
+msgid "Sentry mode is enabled"
+msgstr "Sentry-moodi on päällä"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:139
+#: lib/teslamate_web/live/car_live/summary.html.leex:44
+msgid "Driver present"
+msgstr "Kuljettaja paikalla"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:298
+msgid "cancel sleep attempt"
+msgstr "peru lepotilaan meno"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:293
+msgid "try to sleep"
+msgstr "pyydä lepotilaan menoa"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:143
+msgid "Range (est.)"
+msgstr "Range (arvioitu)"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:98
+msgid "for"
+msgstr "viimeiset"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:70
+msgid "Requirements"
+msgstr "Vaatimukset"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:79
+msgid "Vehicle must be locked"
+msgstr "Auton tulee olla lukittu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:124
+msgid "Range (rated)"
+msgstr "Range (arvioitu)"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:162
+msgid "Charger Power"
+msgstr "Laturin virta"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:141
+msgid "Preferred Range"
+msgstr "Valittu range-tyyppi"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:137
+msgid "Range"
+msgstr "Range"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:148
+msgid "ideal"
+msgstr "ihanteellinen"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:148
+msgid "rated"
+msgstr "arvioitu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:123
+msgid "Range (ideal)"
+msgstr "Range (ihanteellinen)"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:140
+msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
+msgstr "Auton arvio jäljellä olevasta rangesta perustuu kiinteään Wh/km kulutukseen. Tämä kiinteä kulutus on Teslan määrittelemä eikä se riipu maasta, toisin kuin rated-range, joka pohjautuu testeihin eri markkina-alueilla."
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:140
+msgid "Update in progress"
+msgstr "Päivitys käynnissä"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:54
+msgid "Windows open"
+msgstr "Ikkunoita avoinna"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/index.html.leex:51
+msgid "Delete '%{geo_fence}'?"
+msgstr "Poista '%{geo_fence}'?"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:253
+msgid "Inside Temperature"
+msgstr "Sisälämpötila"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:241
+msgid "Outside Temperature"
+msgstr "Ulkolämpötila"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:278
+#: lib/teslamate_web/live/settings_live/index.html.leex:270
+msgid "Version"
+msgstr "Versio"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:79
+msgid "Health check failed"
+msgstr "Kuntotarkistus epäonnistui"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:69
+msgid "Unlocked"
+msgstr "Lukitus avattu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:110
+msgid "Remaining Time"
+msgstr "Jäljellä oleva aika"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:250
+#: lib/teslamate_web/templates/layout/root.html.leex:46
+msgid "Dashboards"
+msgstr "Datanäkymät"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:233
+msgid "URLs"
+msgstr "URLit"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:164
+#: lib/teslamate_web/live/settings_live/index.html.leex:236
+msgid "Web App"
+msgstr "Verkkosivu"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:114
+msgid "Enabled"
+msgstr "Käytössä"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:26
+msgid "Sleep Mode"
+msgstr "Lepotila"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:205
+msgid "Geo-fence \"%{name}\" updated"
+msgstr "Georajaus \"%{name}\" päivitetty"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:142
+msgid "An error occurred"
+msgstr "Virhe tapahtui"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:141
+msgid "Timeout"
+msgstr "Aikakatkaisu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:39
+msgid "Reduced Battery Range"
+msgstr "Pienennetty akun range"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:213
+msgid "≈ %{range} at 100%"
+msgstr "≈ %{range} 100%:ssa"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.ex:20
+#: lib/teslamate_web/live/charge_live/cost.html.leex:4
+msgid "Charge Cost"
+msgstr "Lataushinta"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:103
+#: lib/teslamate_web/live/geofence_live/form.html.leex:59
+msgid "Cost"
+msgstr "Hinta"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:119
+msgid "Enter charge cost"
+msgstr "Syötä latauskustannukset"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.ex:87
+msgid "Saved!"
+msgstr "Tallennettu!"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:29
+msgid "Fetching vehicle data ..."
+msgstr "Noutaa ajoneuvon dataa..."
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:179
+msgid "Addresses"
+msgstr "Osoitteet"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:160
+msgid "Language"
+msgstr "Kieli"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.ex:65
+msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
+msgstr "OpenSTreetMapista datan lataaminen epäonnistui. Yritä hetken päästä uudelleen."
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.html.leex:4
+msgid "TeslaFi Import"
+msgstr "Tuonti TeslaFi:stä"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.html.leex:10
+msgid "Found %{count} file"
+msgid_plural "Found %{count} files"
+msgstr[0] "Löytyi %{count} tiedosto"
+msgstr[1] "Löytyi %{count} tiedostoa"
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/root.html.leex:87
+msgid "Donate"
+msgstr "Lahjoita"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.ex:32
+#: lib/teslamate_web/live/import_live/index.html.leex:68
+msgid "Import"
+msgstr "Tuo"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.html.leex:58
+msgid "Time zone"
+msgstr "Aikavyöhyke"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:27
+msgid "Password"
+msgstr "Salasana"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:13
+#: lib/teslamate_web/live/signin_live/index.html.leex:50
+msgid "Sign in"
+msgstr "Kirjaudu sisään"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:13
+msgid "Email address"
+msgstr "Sähköpostiosoite"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:92
+msgid "Charge cost"
+msgstr "Lataushinta"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:95
+msgid "Free Supercharging"
+msgstr "Maksuton Supercharging"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:131
+msgid "General Settings"
+msgstr "Yleiset asetukset"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:83
+msgid "Session fee"
+msgstr "Aloituskustannus"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:59
+msgid "Doors open"
+msgstr "Ovia auki"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:111
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
+msgid "Per kWh"
+msgstr "Per kWh"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:110
+msgid "Total"
+msgstr "Yhteensä"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:125
+msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
+msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
+msgstr[0] "Lataustapahtumissa on <strong>yksi lataus</strong> johon ei ole lisätty kustannuksia."
+msgstr[1] "Lataustapahtumissa on <strong>%{n} latausta</strong> joihin ei ole lisätty kustannuksia."
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:134
+msgid "Add costs retroactively"
+msgstr "Lisää kustannuksia jälkikäteen"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:119
+msgid "Charging Costs"
+msgstr "Latauskustannukset"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:133
+msgid "Continue"
+msgstr "Jatka"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:266
+msgid "Mileage"
+msgstr "Mittarilukema"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:111
+msgid "Streaming API"
+msgstr "Streamaus-API"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:285
+msgid "Documentation"
+msgstr "Ohjeet"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:281
+msgid "GitHub"
+msgstr "GitHub"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:276
+#: lib/teslamate_web/templates/layout/root.html.leex:95
+msgid "Update available"
+msgstr "Päivitys saatavilla"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:135
+msgid "Doors are open"
+msgstr "Ovia on auki"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:136
+msgid "Trunk is open"
+msgstr "Takakontti on auki"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:112
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
+msgid "Per Minute"
+msgstr "Per minuutti"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:74
+msgid "Software Update available (%{version})"
+msgstr "Päivitys saatavilla (%{version})"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:81
+msgid "Enter the verification code generated by your authenticator app."
+msgstr "Syötä vahvistuskoodi jonka sovellus antoi"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:61
+msgid "Two-Factor Authentication"
+msgstr "Kaksimenetelmäinen tunnistus"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:42
+#: lib/teslamate_web/live/signin_live/index.html.leex:103
+msgid "Use legacy authentication API"
+msgstr "Käytä legacy autentikointi-APIa"
