@@ -2,6 +2,8 @@
 
 ## [1.22.0-dev]
 
+## [1.21.1] - 2021-01-10
+
 ### Enhancements
 
 #### Translations
@@ -1134,7 +1136,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[1.22.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.21.0...HEAD
+[1.22.0-dev]: https://github.com/adriankumpf/teslamate/compare/v1.21.1...HEAD
+[1.21.1]: https://github.com/adriankumpf/teslamate/compare/v1.21.0...v1.21.1
 [1.21.0]: https://github.com/adriankumpf/teslamate/compare/v1.20.1...v1.21.0
 [1.20.1]: https://github.com/adriankumpf/teslamate/compare/v1.20.0...v1.20.1
 [1.20.0]: https://github.com/adriankumpf/teslamate/compare/v1.19.4...v1.20.0
