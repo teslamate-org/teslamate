@@ -2,6 +2,30 @@
 
 ## [1.22.0-dev]
 
+### Enhancements
+
+#### Translations
+
+- Add Finnish translation ([#1190](https://github.com/adriankumpf/teslamate/pull/1190) by [puppee](https://github.com/puppee))
+
+#### Documentation
+
+- Add some documentation about updating TeslaMate when installed with Docker ([#1170](https://github.com/adriankumpf/teslamate/pull/1170) by [fatbasstard](https://github.com/fatbasstard))
+- Update "Import from tesla-apiscraper" documentation: Give an example how to get the vehicle_id from TeslaMate ([#1174](https://github.com/adriankumpf/teslamate/pull/1174) by [Bdot42](https://github.com/Bdot42))
+- Add link to unofficial Home Assistant addon ([#1188](https://github.com/adriankumpf/teslamate/pull/1188) by [matt-FFFFFF](https://github.com/matt-FFFFFF))
+
+#### Other
+
+- Allow to use non-standard MQTT ports (via [MQTT_PORT](https://docs.teslamate.org/docs/configuration/environment_variables))
+- Refactoring: Use built-in Ecto enum type
+- Guard against unexpected MFA errors
+
+### Bug Fixes
+
+- Update drive duration query to avoid displaying different times for drives (Details vs Overview) ([#1191](https://github.com/adriankumpf/teslamate/pull/1191) by [fatbasstard](https://github.com/fatbasstard))
+- Fix font colors for light theme (Updates dashboard) ([#1169](https://github.com/adriankumpf/teslamate/pull/1169) by [fatbasstard](https://github.com/fatbasstard))
+- Fix typo (Statistics dashboard) ([#1185](https://github.com/adriankumpf/teslamate/pull/1185) by [rogiervandergeer](https://github.com/rogiervandergeer))
+
 ## [1.21.0] - 2021-01-02
 
 ### Enhancements
@@ -104,7 +128,7 @@
 - Vampire Drain: Utilize charges as additional anchor points ([#769](https://github.com/adriankumpf/teslamate/pull/769) by [tacotran](https://github.com/tacotran))
 - Add new Statistics dashboard ([#965](https://github.com/adriankumpf/teslamate/pull/965) by [DrMichael](https://github.com/DrMichael))
 - Add the "shared crosshair" setting to some of the dashboards ([#932](https://github.com/adriankumpf/teslamate/pull/932) and [#962](https://github.com/adriankumpf/teslamate/pull/936) by [Kosta-Github](https://github.com/Kosta-Github))
-- "Customize" Grafana logo ([#890](https://github.com/adriankumpf/teslamate/pull/890) by [https://github.com/fatbasstard](https://github.com/fatbasstard))
+- "Customize" Grafana logo ([#890](https://github.com/adriankumpf/teslamate/pull/890) by [fatbasstard](https://github.com/fatbasstard))
 
 ##### Note
 
