@@ -24,4 +24,10 @@ LINK: [github.com/MattJeanes/TeslaMateAgile](https://github.com/MattJeanes/Tesla
 
 This is a telegram bot written in Python to notify by Telegram message when a new SW update for your Tesla is available. It uses the MQTT topic which TeslaMate offers.
 
-LINK: [github.com/JakobLichterfeld/TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot))
+LINK: [github.com/JakobLichterfeld/TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot)
+
+## [Home Assistant Addon](https://github.com/matt-FFFFFF/hassio-addon-teslamate)
+
+An unofficial Home Assistant addon for TeslaMate, with a PostgreSQL addon too. Works with the existing community Grafana and Mosquitto addons to provide a complete solution.
+
+LINK: [github.com/matt-FFFFFF/hassio-addon-teslamate](https://github.com/matt-FFFFFF/hassio-addon-teslamate)
