@@ -1,0 +1,95 @@
+  
+## This is a PO Template file.
+##
+## `msgid`s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
+##
+## Run `mix gettext.extract` to bring this file up to
+## date. Leave `msgstr`s empty as changing them here has no
+## effect: edit them in PO (`.po`) files instead.
+## From Ecto.Changeset.cast/4
+msgid "can't be blank"
+msgstr "ei voi olla tyhjä"
+
+## From Ecto.Changeset.unique_constraint/3
+msgid "has already been taken"
+msgstr "on jo käytössä"
+
+## From Ecto.Changeset.put_change/3
+msgid "is invalid"
+msgstr "ei ole kunnollinen"
+
+## From Ecto.Changeset.validate_acceptance/3
+msgid "must be accepted"
+msgstr "tulee olla hyväksytty"
+
+## From Ecto.Changeset.validate_format/3
+msgid "has invalid format"
+msgstr "on väärässä muodossa"
+
+## From Ecto.Changeset.validate_subset/3
+msgid "has an invalid entry"
+msgstr "on virheellinen syöte"
+
+## From Ecto.Changeset.validate_exclusion/3
+msgid "is reserved"
+msgstr "on varattu"
+
+## From Ecto.Changeset.validate_confirmation/3
+msgid "does not match confirmation"
+msgstr "ei vastaa vahvistettua"
+
+## From Ecto.Changeset.no_assoc_constraint/3
+msgid "is still associated with this entry"
+msgstr "on yhä kytkettynä tähän syötteeseen"
+
+msgid "are still associated with this entry"
+msgstr "ovat yhä kytkettyinä tähän syötteeseen"
+
+## From Ecto.Changeset.validate_length/3
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "tulisi olla yhden merkin"
+msgstr[1] "tulisi olla %{count} merkkiä"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "tulisi olla yhden kappaleen"
+msgstr[1] "tulisi olla %{count} kappaletta"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "tulisi olla vähintään yhden merkin"
+msgstr[1] "tulisi olla vähintään %{count} merkkiä"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "tulisi olla vähintään yhden kappaleen"
+msgstr[1] "tulisi olla vähintään %{count} kappaletta"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "tulisi olla vähintään yhden merkin"
+msgstr[1] "tulisi olla vähintään %{count} merkkiä"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "tulisi olla enintään yhden kappaleen"
+msgstr[1] "tulisi olla enintään %{count} kappaletta"
+
+## From Ecto.Changeset.validate_number/3
+msgid "must be less than %{number}"
+msgstr "tulee olla alle %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "tulee olla yli %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "tulee olla alle %{number} tai yhtä suuri"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "tulee olla yli %{number} tai yhtä suuri"
+
+msgid "must be equal to %{number}"
+msgstr "tulee olla yhtä suuri kuin %{number}"
