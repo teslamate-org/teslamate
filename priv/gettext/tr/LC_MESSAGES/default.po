@@ -1,0 +1,595 @@
+## This file is a PO Template file.
+##
+## `msgid`s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
+##
+## Run `mix gettext.extract` to bring this file up to
+## date. Leave `msgstr`s empty as changing them here as no
+## effect: edit them in PO (`.po`) files instead.
+msgid ""
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:95
+msgid "Status"
+msgstr "Durum"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:228
+msgid "Speed"
+msgstr "Hız"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:220
+msgid "State of Charge"
+msgstr "Şarj Durumu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:156
+msgid "Charged"
+msgstr "Şarj Oldu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:131
+msgid "asleep"
+msgstr "uykuda"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:126
+msgid "charging"
+msgstr "şarj oluyor"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:125
+msgid "driving"
+msgstr "sürüş"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:130
+msgid "offline"
+msgstr "çevrimdışı"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:129
+msgid "online"
+msgstr "çevrimiçi"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:127
+msgid "updating"
+msgstr "güncelleniyor"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:69
+msgid "Locked"
+msgstr "Kilitli"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:64
+msgid "Sentry Mode"
+msgstr "Sentry-modu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/index.ex:13
+#: lib/teslamate_web/live/charge_live/cost.html.leex:3 lib/teslamate_web/live/geofence_live/form.html.leex:3
+#: lib/teslamate_web/live/geofence_live/index.html.leex:3 lib/teslamate_web/live/import_live/index.html.leex:3
+#: lib/teslamate_web/live/settings_live/index.html.leex:3
+msgid "Home"
+msgstr "Anasayfa"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.ex:22
+#: lib/teslamate_web/live/settings_live/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.leex:59
+msgid "Settings"
+msgstr "Ayarlar"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:171
+msgid "Scheduled Charging"
+msgstr "Zamanlanmış Şarj"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:49
+msgid "Plugged In"
+msgstr "Prize Takılı"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:180
+msgid "Charge Limit"
+msgstr "Şarj Sınırı"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:128
+msgid "falling asleep"
+msgstr "uykuya dalıyor"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:132
+msgid "unavailable"
+msgstr "mevcut değil"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:200
+msgid "Length"
+msgstr "Uzunluk"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:215
+msgid "Temperature"
+msgstr "Sıcaklık"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:197
+msgid "Units"
+msgstr "Birimler"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:131
+#: lib/teslamate_web/live/geofence_live/form.html.leex:105
+msgid "Back"
+msgstr "Geri"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:204
+msgid "Geo-fence \"%{name}\" created"
+msgstr "Coğrafi-sınır \"%{name}\" oluşturuldu"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:126
+#: lib/teslamate_web/live/geofence_live/form.html.leex:4 lib/teslamate_web/live/geofence_live/index.ex:22
+#: lib/teslamate_web/live/geofence_live/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.leex:56
+msgid "Geo-Fences"
+msgstr "Coğrafi-Sınırlar"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:49
+msgid "Idle Time Before Trying to Sleep"
+msgstr "Uykuya Dalmadan Önce Boşta Geçen Zaman"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:43
+#: lib/teslamate_web/live/geofence_live/form.html.leex:48 lib/teslamate_web/live/geofence_live/index.html.leex:21
+msgid "Name"
+msgstr "İsim"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:17
+#: lib/teslamate_web/live/geofence_live/index.html.leex:22
+msgid "Position"
+msgstr "Konum"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/index.html.leex:23
+msgid "Radius"
+msgstr "Yarıçap"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:134
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108
+msgid "Save"
+msgstr "Kaydet"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:135
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108 lib/teslamate_web/live/signin_live/index.html.leex:52
+msgid "Saving..."
+msgstr "Kaydediliyor..."
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:31
+msgid "Time to Try Sleeping"
+msgstr "Uykuya Dalmayı Deneme Zamanı"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:39
+#: lib/teslamate_web/live/settings_live/index.html.leex:58
+msgid "min"
+msgstr "min"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:119
+msgid "Signed in successfully"
+msgstr "Oturum başarıyla açıldı"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:134
+msgid "Car is unlocked"
+msgstr "Araba kilitli değil"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/index.html.leex:9
+msgid "Create"
+msgstr "Oluştur"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:138
+#: lib/teslamate_web/live/car_live/summary.html.leex:34
+msgid "Preconditioning"
+msgstr "Batarya şarja hazırlanıyor"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:137
+msgid "Sentry mode is enabled"
+msgstr "Sentry-modu devrede"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:139
+#: lib/teslamate_web/live/car_live/summary.html.leex:44
+msgid "Driver present"
+msgstr "Sürücü araçta"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:298
+msgid "cancel sleep attempt"
+msgstr "Uykuya dalmaktan vazgeç"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:293
+msgid "try to sleep"
+msgstr "uyumaya çalış"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:143
+msgid "Range (est.)"
+msgstr "Menzil (tahmini)"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:98
+msgid "for"
+msgstr "için"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:70
+msgid "Requirements"
+msgstr "Gereksinimler"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:79
+msgid "Vehicle must be locked"
+msgstr "Araç kilitli olmalı"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:124
+msgid "Range (rated)"
+msgstr "Menzil (hesaplanan)"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:162
+msgid "Charger Power"
+msgstr "Şarj Cihazı Gücü"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:141
+msgid "Preferred Range"
+msgstr "Tercih Edilen Menzil"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:137
+msgid "Range"
+msgstr "Menzil"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:148
+msgid "ideal"
+msgstr "ideal"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:148
+msgid "rated"
+msgstr "hesaplanan"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:123
+msgid "Range (ideal)"
+msgstr "Menzil (ideal)"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:140
+msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
+msgstr "Aracın kalan menzil tahmini Wh/km cinsinden belirlenmiş sabit bir enerji tüketimine göre temel alınmıştır. Hesaplanan menzil, düzenliyici kurumların ilgili piyasalarda bu araç için yaptığı testlere göre temel alınırken Wh/km çarpanı Tesla tarafından belirlenir ve ülkeye özgü değildir."
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:140
+msgid "Update in progress"
+msgstr "Güncelleniyor"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:54
+msgid "Windows open"
+msgstr "Pencereler açık"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/index.html.leex:51
+msgid "Delete '%{geo_fence}'?"
+msgstr "Sil '%{geo_fence}'?"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:253
+msgid "Inside Temperature"
+msgstr "İç Ortam Sıcaklığı"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:241
+msgid "Outside Temperature"
+msgstr "Dış Ortam Sıcaklığı"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:278
+#: lib/teslamate_web/live/settings_live/index.html.leex:270
+msgid "Version"
+msgstr "Sürüm"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:79
+msgid "Health check failed"
+msgstr "Sağlık kontrolü başarısız"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:69
+msgid "Unlocked"
+msgstr "Kilit açıldı"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:110
+msgid "Remaining Time"
+msgstr "Kalan Süre"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:250
+#: lib/teslamate_web/templates/layout/root.html.leex:46
+msgid "Dashboards"
+msgstr "Gösterge Paneli"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:233
+msgid "URLs"
+msgstr "Bağlantılar"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:164
+#: lib/teslamate_web/live/settings_live/index.html.leex:236
+msgid "Web App"
+msgstr "Web Uygulaması"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:114
+msgid "Enabled"
+msgstr "Devrede"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:26
+msgid "Sleep Mode"
+msgstr "Uyku Modu"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:205
+msgid "Geo-fence \"%{name}\" updated"
+msgstr "Coğrafi-sınır \"%{name}\" güncellendi"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:142
+msgid "An error occurred"
+msgstr "Bir hata oluştu"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:141
+msgid "Timeout"
+msgstr "Zamanaşımı"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:39
+msgid "Reduced Battery Range"
+msgstr "Kısıtlı Batarya Menzili"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:213
+msgid "≈ %{range} at 100%"
+msgstr "≈ %100'de %{range}"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.ex:20
+#: lib/teslamate_web/live/charge_live/cost.html.leex:4
+msgid "Charge Cost"
+msgstr "Şarj Tutarı"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:103
+#: lib/teslamate_web/live/geofence_live/form.html.leex:59
+msgid "Cost"
+msgstr "Tutar"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:119
+msgid "Enter charge cost"
+msgstr "Şarj tutarını girin"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.ex:87
+msgid "Saved!"
+msgstr "Kaydedildi!"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:29
+msgid "Fetching vehicle data ..."
+msgstr "Araç verisi alınıyor..."
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:179
+msgid "Addresses"
+msgstr "Adresler"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:160
+msgid "Language"
+msgstr "Dil"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.ex:65
+msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
+msgstr "OpenSTreetMap'den veriler alınırken bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.html.leex:4
+msgid "TeslaFi Import"
+msgstr "TeslaFi'den İçe Aktarma"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.html.leex:10
+msgid "Found %{count} file"
+msgid_plural "Found %{count} files"
+msgstr[0] "%{count} dosya bulundu"
+msgstr[1] "%{count} dosya bulundu"
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/root.html.leex:87
+msgid "Donate"
+msgstr "Bağış Yap"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.ex:32
+#: lib/teslamate_web/live/import_live/index.html.leex:68
+msgid "Import"
+msgstr "İçe Aktar"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.html.leex:58
+msgid "Time zone"
+msgstr "Saat dilimi"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:27
+msgid "Password"
+msgstr "Parola"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:13
+#: lib/teslamate_web/live/signin_live/index.html.leex:50
+msgid "Sign in"
+msgstr "Oturum aç"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:13
+msgid "Email address"
+msgstr "E-posta adresi"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:92
+msgid "Charge cost"
+msgstr "Şarj Tutarı"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:95
+msgid "Free Supercharging"
+msgstr "Bedava Supercharging"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:131
+msgid "General Settings"
+msgstr "Genel Ayarlar"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:83
+msgid "Session fee"
+msgstr "Oturum ücreti"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:59
+msgid "Doors open"
+msgstr "Kapılar açık"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:111
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
+msgid "Per kWh"
+msgstr "kWh başına"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:110
+msgid "Total"
+msgstr "Toplam"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:125
+msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
+msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
+msgstr[0] "Bu konumdaki <strong>%{n} şarj işlemi</strong> için henüz bir ücret yansıtılmadı."
+msgstr[1] "Bu konumdaki <strong>%{n} şarj işlemi</strong> için henüz bir ücret yansıtılmadı."
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:134
+msgid "Add costs retroactively"
+msgstr "Tutarları geçmişe dönük olarak ekle"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:119
+msgid "Charging Costs"
+msgstr "Şarj Tutarları"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:133
+msgid "Continue"
+msgstr "Devam Et"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:266
+msgid "Mileage"
+msgstr "Mesafe"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:111
+msgid "Streaming API"
+msgstr "Eşzamanlı-API"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:285
+msgid "Documentation"
+msgstr "Dökümantasyon"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:281
+msgid "GitHub"
+msgstr "GitHub"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:276
+#: lib/teslamate_web/templates/layout/root.html.leex:95
+msgid "Update available"
+msgstr "Güncelleme mevcut"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:135
+msgid "Doors are open"
+msgstr "Kapılar açık"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:136
+msgid "Trunk is open"
+msgstr "Bağaj açık"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:112
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
+msgid "Per Minute"
+msgstr "Dakika Başına"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:74
+msgid "Software Update available (%{version})"
+msgstr "Yazılım Güncellemesi mevcut (%{version})"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:81
+msgid "Enter the verification code generated by your authenticator app."
+msgstr "Kimlik denetimi uygulamanızda üretilen onay kodunu girin"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:61
+msgid "Two-Factor Authentication"
+msgstr "İki-Aşamalı Kimlik Denetimi"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:42
+#: lib/teslamate_web/live/signin_live/index.html.leex:103
+msgid "Use legacy authentication API"
+msgstr "Eski kimlik denetimi-API'sini kullan"
