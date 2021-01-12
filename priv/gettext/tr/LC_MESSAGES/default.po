@@ -144,8 +144,8 @@ msgstr "Coğrafi-Sınırlar"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:49
-msgid "Uykuya Dalmadan Önce Boşta Geçen Zaman"
-msgstr ""
+msgid "Idle Time Before Trying to Sleep"
+msgstr "Uykuya Dalmadan Önce Boşta Geçen Zaman"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:43
@@ -281,7 +281,7 @@ msgstr "hesaplanan"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:123
-msgid "Menzil (ideal)"
+msgid "Range (ideal)"
 msgstr "Menzil (ideal)"
 
 #, elixir-format
