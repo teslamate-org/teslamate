@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1610795073311,
+  "iteration": 1583945409960,
   "links": [
     {
       "icon": "dashboard",
@@ -188,20 +188,17 @@
         {
           "alias": "Temp",
           "align": "auto",
-          "colorMode": "value",
+          "colorMode": null,
           "colors": [
-            "#C0D8FF",
-            "#C8F2C2",
-            "#FFA6B0"
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 1,
           "mappingType": 1,
           "pattern": "outside_temp_avg_c",
-          "thresholds": [
-            "10",
-            "20"
-          ],
+          "thresholds": [],
           "type": "number",
           "unit": "celsius"
         },
@@ -299,7 +296,7 @@
           "unit": "lengthkm"
         },
         {
-          "alias": "kW / h",
+          "alias": "kW",
           "align": "auto",
           "colorMode": "value",
           "colors": [
@@ -1123,5 +1120,5 @@
   "timezone": "",
   "title": "Charges",
   "uid": "TSmNYvRRk",
-  "version": 2
+  "version": 1
 }
