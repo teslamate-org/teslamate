@@ -1,8 +1,6 @@
 defmodule TeslaMate.Repo.Migrations.UseRatedAsDefaultPreferredRange do
   use Ecto.Migration
 
-  alias TeslaMate.Settings.Range
-
   def up do
     alter table(:settings) do
       modify :preferred_range, :range, default: "rated", null: false
