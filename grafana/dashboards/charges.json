@@ -188,17 +188,20 @@
         {
           "alias": "Temp",
           "align": "auto",
-          "colorMode": null,
+          "colorMode": "value",
           "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
+            "#C0D8FF",
+            "#C8F2C2",
+            "#FFA6B0"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 1,
           "mappingType": 1,
           "pattern": "outside_temp_avg_c",
-          "thresholds": [],
+          "thresholds": [
+            "10",
+            "20"
+          ],
           "type": "number",
           "unit": "celsius"
         },
