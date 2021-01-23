@@ -34,7 +34,7 @@ RUN mkdir -p /opt/built && \
 
 ########################################################################
 
-FROM alpine:3.13.0 AS app
+FROM alpine:3.12 AS app
 
 ENV LANG=C.UTF-8 \
     SRTM_CACHE=/opt/app/.srtm_cache \
