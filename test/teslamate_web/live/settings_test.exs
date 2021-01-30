@@ -543,4 +543,22 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       end
     end
   end
+
+  describe "sign-out" do
+    import Mock
+
+    test "tba", %{conn: conn} do
+      with_mocks [{TeslaMate.Api, [], signed_in?: fn  -> true end, sign_out: fn -> :ok end}] do
+        assert {:ok, view, _html} = live(conn, "/settings")
+
+        view
+        |> element("button", "Sign out")
+        |> render_click()
+
+        assert_redirect(view, "/")
+
+        assert_called TeslaMate.Api.sign_out()
+      end
+    end
+  end
 end
