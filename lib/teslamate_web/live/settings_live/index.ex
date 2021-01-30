@@ -4,7 +4,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   require Logger
 
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
-  alias TeslaMate.{Settings, Updater}
+  alias TeslaMate.{Settings, Updater, Api}
 
   @impl true
   def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
@@ -102,6 +102,11 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       end
 
     {:noreply, assign(socket, :car_settings, settings)}
+  end
+
+  def handle_event("sign_out", _params, socket) do
+    :ok = Api.sign_out()
+    {:noreply, redirect(socket, to: Routes.car_path(socket, :index))}
   end
 
   @impl true

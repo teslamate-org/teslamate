@@ -79,6 +79,13 @@ defmodule TeslaMate.Api do
     end
   end
 
+  def sign_out(name \\ @name) do
+    true = :ets.delete(name, :auth)
+    :ok
+  rescue
+    _ in ArgumentError -> {:error, :not_signed_in}
+  end
+
   # Callbacks
 
   @impl true
