@@ -1,7 +1,7 @@
 <div class="mfa columns is-tablet is-centered">
   <div class="column is-half">
     <%= case @state do %>
-      <% {:credentials, {changeset, show_checkbox?}} -> %>
+      <% {:credentials, changeset} -> %>
         <%= f = form_for changeset, "#", [phx_change: :validate, phx_submit: :sign_in, class: "box"] %>
           <%= if @error do %>
             <div class="notification is-danger">
@@ -34,17 +34,6 @@
             </div>
           </div>
 
-        <%= if show_checkbox? do %>
-          <div class="field">
-            <div class="control">
-              <label class="checkbox">
-                <%= checkbox f, :use_legacy_auth, disabled: !!@task %>
-                <%= gettext "Use legacy authentication API" %>
-              </label>
-            </div>
-          </div>
-        <% end %>
-
           <div class="field mt-20">
             <div class="control">
               <%= submit gettext("Sign in"), class: "button is-rounded is-fullwidth is-link#{if !!@task, do: " is-loading" }",
@@ -55,7 +44,7 @@
           </div>
         </form>
 
-      <% {:mfa, {changeset, devices, _ctx, show_button?}} -> %>
+      <% {:mfa, {changeset, devices, _ctx}} -> %>
         <%= f = form_for changeset, "#", [phx_change: :validate, class: "box", as: :mfa] %>
           <h3 class="title is-4 is-spaced has-text-centered">
             <%= gettext "Two-Factor Authentication" %>
@@ -92,21 +81,6 @@
               </div>
             </div>
           </div>
-
-        <%= if show_button? do %>
-          <hr style="margin-top: 0;"/>
-
-          <div class="field">
-            <div class="control">
-              <button type="button" class="button is-warning is-light is-small is-rounded is-fullwidth" 
-                      phx-click="use_legacy_login" <%= if !!@task, do: "disabled" %>>
-                <span class="icon"><i class="mdi mdi-login"></i></span>&nbsp;<span><%= 
-                  gettext "Use legacy authentication API" 
-                %></span>
-              </button>
-            </div>
-          </div>
-        <% end %>
         </form>
     <% end %>
   </div>

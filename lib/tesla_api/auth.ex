@@ -10,19 +10,6 @@ defmodule TeslaApi.Auth do
   defdelegate login(email, password), to: MFA
   defdelegate login(device_id, mfa_passcode, ctx), to: MFA
 
-  def legacy_login(email, password) do
-    data = %{
-      grant_type: "password",
-      client_id: @client_id,
-      client_secret: @client_secret,
-      email: email,
-      password: password
-    }
-
-    TeslaApi.post("/oauth/token", data)
-    |> handle_response()
-  end
-
   def refresh(%__MODULE__{token: token, refresh_token: refresh_token}) do
     data = %{
       grant_type: "refresh_token",
@@ -32,11 +19,6 @@ defmodule TeslaApi.Auth do
     }
 
     TeslaApi.post("/oauth/token", data, opts: [access_token: token])
-    |> handle_response()
-  end
-
-  def revoke(%__MODULE__{token: token}) do
-    TeslaApi.post("/oauth/revoke", %{token: token}, opts: [access_token: token])
     |> handle_response()
   end
 
