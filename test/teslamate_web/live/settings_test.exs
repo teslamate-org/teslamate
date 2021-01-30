@@ -548,7 +548,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
     import Mock
 
     test "tba", %{conn: conn} do
-      with_mocks [{TeslaMate.Api, [], signed_in?: fn  -> true end, sign_out: fn -> :ok end}] do
+      with_mocks [{TeslaMate.Api, [], signed_in?: fn -> true end, sign_out: fn -> :ok end}] do
         assert {:ok, view, _html} = live(conn, "/settings")
 
         view
@@ -557,7 +557,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
         assert_redirect(view, "/")
 
-        assert_called TeslaMate.Api.sign_out()
+        assert_called(TeslaMate.Api.sign_out())
       end
     end
   end
