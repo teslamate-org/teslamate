@@ -8,6 +8,8 @@
 >
 > **To immediately obtain new tokens after upgrading**, go to the TeslaMate settings page, **sign out via the button** at the bottom of the page and then sign in again.
 
+> **⚠️ NOTE**: This release changes TeslaMate's base Docker image to Debian. If you have any customizations on top of TeslaMate (like healthchecks), they could need updates to work on top of this new image.
+
 ### Enhancements
 
 - Use the new Tesla authentication endpoint for refreshing access tokens
