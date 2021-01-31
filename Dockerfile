@@ -1,11 +1,12 @@
-FROM elixir:1.11.3-alpine AS builder
+FROM elixir:1.11.3 AS builder
 
-RUN apk add --update --no-cache nodejs npm git build-base && \
-    mix local.rebar --force && \
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get update && apt-get install -y --no-install-recommends nodejs
+
+RUN mix local.rebar --force && \
     mix local.hex --force
 
 ENV MIX_ENV=prod
-
 WORKDIR /opt/app
 
 COPY mix.exs mix.lock ./
@@ -22,35 +23,44 @@ COPY assets assets
 RUN npm run deploy --prefix ./assets
 RUN mix phx.digest
 
-COPY config/runtime.exs config/runtime.exs
 COPY lib lib
 COPY priv/repo/migrations priv/repo/migrations
 COPY priv/gettext priv/gettext
 COPY grafana/dashboards grafana/dashboards
 COPY VERSION VERSION
+RUN mix compile
 
-RUN mkdir -p /opt/built && \
-    mix "do" compile, release --path /opt/built
+COPY config/runtime.exs config/runtime.exs
+RUN mix release --path /opt/built
 
 ########################################################################
 
-FROM alpine:3.12 AS app
+FROM debian:buster-slim AS app
 
 ENV LANG=C.UTF-8 \
     SRTM_CACHE=/opt/app/.srtm_cache \
     HOME=/opt/app
 
-RUN apk add --no-cache ncurses-libs openssl tini tzdata
+RUN apt-get update && apt-get install -y --no-install-recommends \ 
+    libodbc1  \
+    libsctp1  \
+    libssl1.1  \
+    netcat \
+    tini  \
+    tzdata 
+
+RUN addgroup --gid 10001 --system nonroot && \ 
+    adduser  --uid 10000 --system --ingroup nonroot --home /home/nonroot nonroot
 
 WORKDIR $HOME
-RUN chown -R nobody:nobody .
-USER nobody:nobody
+RUN chown -R nonroot:nonroot .
+USER nonroot:nonroot
 
-COPY --chown=nobody:nobody entrypoint.sh /
-COPY --from=builder --chown=nobody:nobody /opt/built .
-RUN mkdir .srtm_cache
+COPY --chown=nonroot:nonroot entrypoint.sh /
+COPY --from=builder --chown=nonroot:nonroot /opt/built .
+RUN mkdir $SRTM_CACHE
 
 EXPOSE 4000
 
-ENTRYPOINT ["/sbin/tini", "--", "/bin/sh", "/entrypoint.sh"]
+ENTRYPOINT ["tini", "--", "/bin/sh", "/entrypoint.sh"]
 CMD ["bin/teslamate", "start"]
