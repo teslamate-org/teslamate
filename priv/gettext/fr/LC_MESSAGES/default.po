@@ -33,7 +33,7 @@ msgstr "Chargée"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:131
 msgid "asleep"
-msgstr "Endormie"
+msgstr "En veille"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:126
@@ -102,7 +102,7 @@ msgstr "Limite de charge"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:128
 msgid "falling asleep"
-msgstr "S'endort"
+msgstr "mise en veille"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:132
@@ -145,7 +145,7 @@ msgstr "Géorepérages"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:49
 msgid "Idle Time Before Trying to Sleep"
-msgstr "Temps d'inactivité avant d'essayer de dormir"
+msgstr "Temps d'inactivité avant mise en veille"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.leex:43
@@ -179,7 +179,7 @@ msgstr "Enregistrement..."
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:31
 msgid "Time to Try Sleeping"
-msgstr "Temps avant d'essayer de dormir"
+msgstr "Temps avant mise en veille"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:39
@@ -222,7 +222,7 @@ msgstr "Conducteur présent"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:298
 msgid "cancel sleep attempt"
-msgstr "Annuler la tentative de sommeil"
+msgstr "Annuler la tentative de mise en veille"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:293
