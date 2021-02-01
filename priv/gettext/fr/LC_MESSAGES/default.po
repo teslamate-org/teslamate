@@ -252,7 +252,7 @@ msgstr "Le véhicule doit être verrouillé"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:124
 msgid "Range (rated)"
-msgstr "Autonomie théorique"
+msgstr "Autonomie normalisée"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:162
@@ -262,7 +262,7 @@ msgstr "Puissance de charge"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:141
 msgid "Preferred Range"
-msgstr "Autonomie préférée"
+msgstr "Mode de calcul d'autonomie préféré"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:137
@@ -272,22 +272,22 @@ msgstr "Autonomie"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "ideal"
-msgstr "Estimée"
+msgstr "standard (Tesla)"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:148
 msgid "rated"
-msgstr "Théorique"
+msgstr "normalisée selon pays (WLTP, EPA, ...)"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:123
 msgid "Range (ideal)"
-msgstr "Autonomie Estimée"
+msgstr "Autonomie standard"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:140
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
-msgstr "Théorique = Autonomie indiquée par Tesla. Estimée = Autonomie norme WLTP Europe"
+msgstr "L'autonomie est calculée sur base de l'énergie restante dans la batterie et d'une consommation moyenne en Wh/km. En standard, cette consommation moyenne est fournie par Tesla. En mode normalisé elle s'appuie sur la norme applicable dans votre pays (WLTP, EPA...)"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
