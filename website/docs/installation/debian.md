@@ -133,7 +133,7 @@ You may need to set your system locale. If you get an error when running the Tes
 
 ```bash
 sudo locale-gen en_US.UTF-8
-sudo localectl set-locale LANG=en_AU.UTF-8
+sudo localectl set-locale LANG=en_US.UTF-8
 ```
 
 ## Starting TeslaMate at boot time
@@ -168,7 +168,7 @@ RestartSec=5
 Environment="HOME=/usr/src/teslamate"
 Environment="LANG=en_US.UTF-8"
 Environment="LC_CTYPE=en_US.UTF-8"
-Environment="TZ=Australia/Melbourne"
+Environment="TZ=Europe/Berlin"
 Environment="PORT=4000"
 Environment="DATABASE_USER=teslamate"
 Environment="DATABASE_PASS=secret"
@@ -221,7 +221,7 @@ export MQTT_HOST="127.0.0.1"
 export MQTT_USERNAME="teslamate"
 export MQTT_PASSWORD="teslamate"
 export MQTT_TLS="false"
-export TZ="Australia/Melbourne"
+export TZ="Europe/Berlin"
 export TESLAMATEPATH=/usr/src/teslamate
 
 $TESLAMATEPATH/_build/prod/rel/teslamate/bin/teslamate start

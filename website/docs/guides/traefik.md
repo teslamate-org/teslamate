@@ -73,7 +73,6 @@ services:
   grafana:
     image: teslamate/grafana:latest
     restart: always
-    user: "472"
     environment:
       - DATABASE_USER=${TM_DB_USER}
       - DATABASE_PASS=${TM_DB_PASS}
@@ -150,7 +149,7 @@ GRAFANA_PW=admin
 
 FQDN_TM=teslamate.example.com
 
-TM_TZ=Australia/Sydney
+TM_TZ=Europe/Berlin
 
 LETSENCRYPT_EMAIL=yourperson@example.com
 ```
