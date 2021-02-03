@@ -73,7 +73,6 @@ services:
   grafana:
     image: teslamate/grafana:latest
     restart: always
-    user: "472"
     environment:
       - DATABASE_USER=${TM_DB_USER}
       - DATABASE_PASS=${TM_DB_PASS}
