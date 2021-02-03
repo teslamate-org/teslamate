@@ -149,7 +149,7 @@ GRAFANA_PW=admin
 
 FQDN_TM=teslamate.example.com
 
-TM_TZ=Australia/Sydney
+TM_TZ=Europe/Berlin
 
 LETSENCRYPT_EMAIL=yourperson@example.com
 ```
