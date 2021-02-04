@@ -54,14 +54,14 @@ defmodule TeslaApi.Stream do
 
   @impl true
   def handle_connect(_conn, state) do
-    Logger.debug("Connection established")
+    Logger.info("Connection established")
     send(self(), :subscribe)
     {:ok, state}
   end
 
   @impl true
   def handle_info(:subscribe, %State{auth: %Auth{token: token}, vehicle_id: vid} = state) do
-    Logger.debug("Subscribing …")
+    Logger.info("Subscribing …")
 
     cancel_timer(state.timer)
     ms = exp_backoff_ms(state.timeouts, min_seconds: 10, max_seconds: 30)
