@@ -5,6 +5,6 @@ defmodule TeslaApi do
 
   plug Tesla.Middleware.BaseUrl, "https://owner-api.teslamotors.com"
   plug Tesla.Middleware.Headers, [{"user-agent", "github.com/adriankumpf/teslamate"}]
-  plug TeslaApi.Auth.Middleware
+  plug TeslaApi.Middleware.TokenAuth
   plug Tesla.Middleware.JSON
 end

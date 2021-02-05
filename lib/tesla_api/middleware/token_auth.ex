@@ -1,4 +1,4 @@
-defmodule TeslaApi.Auth.Middleware do
+defmodule TeslaApi.Middleware.TokenAuth do
   @behaviour Tesla.Middleware
 
   @impl Tesla.Middleware
