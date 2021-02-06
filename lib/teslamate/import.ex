@@ -49,6 +49,8 @@ defmodule TeslaMate.Import do
 
   def run(timezone), do: GenStateMachine.call(@name, {:run, timezone})
   def running?, do: GenStateMachine.call(@name, :running?)
+  def enabled?, do: is_pid(Process.whereis(@name))
+  def valid_file_name?(fname), do: parse_fname(fname) != nil
   def get_status, do: GenStateMachine.call(@name, :get_status)
   def reload_directory, do: GenStateMachine.call(@name, :reload_directory)
   def subscribe, do: Phoenix.PubSub.subscribe(TeslaMate.PubSub, @topic)

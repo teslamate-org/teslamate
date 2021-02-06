@@ -30,8 +30,12 @@ defmodule Util do
 
     case File.ls(path) do
       {:ok, [_ | _] = files} ->
-        IO.puts("[info] Found #{length(files)} file(s) at '#{path}'. Starting in import mode!")
-        path
+        if Enum.any?(files, &TeslaMate.Import.valid_file_name?/1) do
+          IO.puts("[info] Found #{length(files)} file(s) at '#{path}'. Starting in import mode!")
+          path
+        else
+          nil
+        end
 
       {:ok, []} ->
         nil
