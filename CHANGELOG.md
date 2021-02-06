@@ -1,17 +1,28 @@
 # Changelog
 
+## [1.21.3] - 2021-02-06
+
+- Add support for v3 API tokens in China
+- Detect if TeslaFi CSV files contain data for more than one car
+- Change log level for streaming timeouts to debug
+
 ## [1.21.2] - 2021-01-31
 
-> **⚠️ NOTE**: Any previously stored API refresh tokens will no longer function, as Tesla has deprecated the existing authentication endpoint. Existing access tokens will continue to work **until they expire**. Eventually a full login will be needed to obtain new refresh tokens.
+> **⚠️ NOTE**: Any previously stored API refresh tokens will no longer function, as Tesla has deprecated the existing authentication endpoint. Existing access tokens will continue to work **until they expire**. Eventually, a full login will be needed to obtain new refresh tokens.
 >
 > **To immediately obtain new tokens after upgrading**, go to the TeslaMate settings page, **sign out via the button** at the bottom of the page and then sign in again.
+
+> **⚠️ NOTE**: This release changes TeslaMate's base Docker image to Debian. If you have any customizations on top of TeslaMate (like healthchecks), they could need updates to work on top of this new image.
 
 ### Enhancements
 
 - Use the new Tesla authentication endpoint for refreshing access tokens
 - Drop support for the `/oauth/token` endpoint
 - Add a sign-out button at the bottom of the settings page
-- Use Debian as Docker base image
+
+#### Translations
+
+- Add Turkish Language Support ([#1194](https://github.com/adriankumpf/teslamate/pull/1194) by [neocorp](https://github.com/neocorp))
 
 #### Dashboards
 
@@ -1151,6 +1162,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.21.3]: https://github.com/adriankumpf/teslamate/compare/v1.21.2...v1.21.3
 [1.21.2]: https://github.com/adriankumpf/teslamate/compare/v1.21.1...v1.21.2
 [1.21.1]: https://github.com/adriankumpf/teslamate/compare/v1.21.0...v1.21.1
 [1.21.0]: https://github.com/adriankumpf/teslamate/compare/v1.20.1...v1.21.0
