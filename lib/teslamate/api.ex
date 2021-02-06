@@ -14,6 +14,7 @@ defmodule TeslaMate.Api do
   defstruct name: nil, deps: %{}
   alias __MODULE__, as: State
 
+  @timeout :timer.minutes(2)
   @name __MODULE__
 
   # API
@@ -64,7 +65,7 @@ defmodule TeslaMate.Api do
 
   def sign_in(name \\ @name, credentials) do
     case fetch_auth(name) do
-      {:error, :not_signed_in} -> GenServer.call(name, {:sign_in, [credentials]}, 30_000)
+      {:error, :not_signed_in} -> GenServer.call(name, {:sign_in, [credentials]}, @timeout)
       {:ok, %Auth{}} -> {:error, :already_signed_in}
     end
   end
@@ -72,7 +73,7 @@ defmodule TeslaMate.Api do
   def sign_in(name \\ @name, device_id, mfa_passcode, %Auth.MFA.Ctx{} = ctx) do
     case fetch_auth(name) do
       {:error, :not_signed_in} ->
-        GenServer.call(name, {:sign_in, [device_id, mfa_passcode, ctx]}, 30_000)
+        GenServer.call(name, {:sign_in, [device_id, mfa_passcode, ctx]}, @timeout)
 
       {:ok, %Auth{}} ->
         {:error, :already_signed_in}

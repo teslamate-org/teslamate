@@ -3,18 +3,19 @@ defmodule TeslaApi.Auth do
 
   require Logger
 
-  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 15_000
-
-  plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
-  plug Tesla.Middleware.JSON
-
   alias TeslaApi.Error
 
   @web_client_id "ownerapi"
   @client_id "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384"
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
+  @redirect_uri "https://auth.tesla.com/void/callback"
 
-  @base_url "https://owner-api.teslamotors.com"
+  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000
+
+  plug TeslaApi.Middleware.FollowRedirects, except: [@redirect_uri]
+  plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
+  plug Tesla.Middleware.JSON
+  plug Tesla.Middleware.Logger, debug: false, log_level: &log_level/1
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
 
@@ -22,8 +23,9 @@ defmodule TeslaApi.Auth do
     defstruct [:state, :code_verifier, :transaction_id, :headers, :devices]
   end
 
-  def refresh(%__MODULE__{refresh_token: refresh_token}) do
-    with {:ok, %{access_token: _} = tokens} <- refresh_oauth_access_token(refresh_token),
+  def refresh(%__MODULE__{} = auth) do
+    with {:ok, %{access_token: _} = tokens} <-
+           refresh_oauth_access_token(auth.token, auth.refresh_token),
          {:ok, auth} <- get_api_tokens(tokens) do
       {:ok, auth}
     else
@@ -32,7 +34,7 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp refresh_oauth_access_token(refresh_token) do
+  defp refresh_oauth_access_token(access_token, refresh_token) do
     data = %{
       grant_type: "refresh_token",
       scope: "openid email offline_access",
@@ -40,7 +42,13 @@ defmodule TeslaApi.Auth do
       refresh_token: refresh_token
     }
 
-    case post("/oauth2/v3/token", data) do
+    base_url =
+      case access_token do
+        "cn-" <> _ -> "https://auth.tesla.cn"
+        _qts -> nil
+      end
+
+    case post("#{base_url}/oauth2/v3/token", data) do
       {:ok,
        %Tesla.Env{
          status: 200,
@@ -57,10 +65,10 @@ defmodule TeslaApi.Auth do
     state = random_string(15)
     code_verifier = random_code_verifier()
 
-    with {:ok, form_data} <- load_form(state, code_verifier),
-         {:ok, env = %Tesla.Env{}} <- submit_form(form_data, email, password),
+    with {:ok, form_data, base_url} <- load_form(email, state, code_verifier),
+         {:ok, env = %Tesla.Env{}} <- submit_form(form_data, email, password, base: base_url),
          {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
-         {:ok, tokens} <- get_web_token(code, code_verifier, redirect_uri, state),
+         {:ok, tokens} <- get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
          {:ok, auth} <- get_api_tokens(tokens) do
       {:ok, auth}
     end
@@ -83,25 +91,20 @@ defmodule TeslaApi.Auth do
       {:error, %Error{reason: e, message: "An unexpected error occurred"}}
   end
 
-  def login(email, password, mfa_passcode) when is_binary(mfa_passcode) do
-    with {:ok, {:mfa, [%{"id" => id} | _], ctx}} <- login(email, password) do
-      login(id, mfa_passcode, ctx)
-    end
-  end
-
-  defp load_form(state, code_verifier) do
+  defp load_form(email, state, code_verifier) do
     params = [
       client_id: @web_client_id,
-      redirect_uri: "https://auth.tesla.com/void/callback",
+      redirect_uri: @redirect_uri,
       response_type: "code",
       scope: "openid email offline_access",
       code_challenge: challenge(code_verifier),
       code_challenge_method: "S265",
-      state: state
+      state: state,
+      login_hint: email
     ]
 
     case get("/oauth2/v3/authorize", query: params) do
-      {:ok, %Tesla.Env{status: 200, headers: resp_headers, body: resp_body}} ->
+      {:ok, %Tesla.Env{status: 200, headers: resp_headers, body: resp_body} = env} ->
         cookies =
           resp_headers
           |> Enum.filter(&match?({"set-cookie", _}, &1))
@@ -117,7 +120,13 @@ defmodule TeslaApi.Auth do
             {key, value}
           end)
 
-        {:ok, {form, cookies, state, code_verifier}}
+        base_url =
+          URI.parse(env.url)
+          |> Map.put(:path, nil)
+          |> Map.put(:query, nil)
+          |> URI.to_string()
+
+        {:ok, {form, cookies, state, code_verifier}, base_url}
 
       {:ok, %Tesla.Env{status: 200} = env} ->
         {:error, %Error{reason: :invalid_credentials, message: "Invalid credentials", env: env}}
@@ -127,7 +136,7 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp submit_form({form, cookies, state, code_verifier}, username, password) do
+  defp submit_form({form, cookies, state, code_verifier}, username, password, opts) do
     transaction_id = Map.fetch!(form, "transaction_id")
 
     encoded_form =
@@ -141,7 +150,7 @@ defmodule TeslaApi.Auth do
       {"Cookie", cookies}
     ]
 
-    case post("/oauth2/v3/authorize", encoded_form, headers: headers) do
+    case post("#{opts[:base]}/oauth2/v3/authorize", encoded_form, headers: headers) do
       {:ok, %Tesla.Env{status: 200, body: body} = env} ->
         if String.contains?(body, "/oauth2/v3/authorize/mfa/verify") do
           headers = [{"referer", env.url}, {"cookie", cookies}]
@@ -233,7 +242,7 @@ defmodule TeslaApi.Auth do
     {:ok, {URI.to_string(uri), code}}
   end
 
-  defp get_web_token(code, code_verifier, redirect_uri, state) do
+  defp get_web_token(code, code_verifier, redirect_uri, state, opts \\ []) do
     data = %{
       grant_type: "authorization_code",
       client_id: @web_client_id,
@@ -242,7 +251,7 @@ defmodule TeslaApi.Auth do
       redirect_uri: redirect_uri
     }
 
-    case post("/oauth2/v3/token", data) do
+    case post("#{opts[:base]}/oauth2/v3/token", data) do
       {:ok,
        %Tesla.Env{
          status: 200,
@@ -268,7 +277,7 @@ defmodule TeslaApi.Auth do
 
     headers = [{"Authorization", "Bearer #{access_token}"}]
 
-    case post("#{@base_url}/oauth/token", data, headers: headers) do
+    case post("https://owner-api.teslamotors.com/oauth/token", data, headers: headers) do
       {:ok, %Tesla.Env{status: 200, body: body}} ->
         auth = %__MODULE__{
           token: body["access_token"],
@@ -336,4 +345,7 @@ defmodule TeslaApi.Auth do
     |> String.replace("+", "-")
     |> String.replace("/", "_")
   end
+
+  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :error
+  defp log_level(%Tesla.Env{}), do: :info
 end
