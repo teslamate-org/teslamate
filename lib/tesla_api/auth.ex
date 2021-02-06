@@ -3,6 +3,8 @@ defmodule TeslaApi.Auth do
 
   require Logger
 
+  alias TeslaApi.Error
+
   @web_client_id "ownerapi"
   @client_id "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384"
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
@@ -14,8 +16,6 @@ defmodule TeslaApi.Auth do
   plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
   plug Tesla.Middleware.JSON
   plug Tesla.Middleware.Logger, debug: false, log_level: &log_level/1
-
-  alias TeslaApi.Error
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
 
@@ -45,7 +45,7 @@ defmodule TeslaApi.Auth do
     base_url =
       case access_token do
         "cn-" <> _ -> "https://auth.tesla.cn"
-        _other -> ""
+        _qts -> nil
       end
 
     case post("#{base_url}/oauth2/v3/token", data) do
@@ -89,12 +89,6 @@ defmodule TeslaApi.Auth do
     e ->
       Logger.error(Exception.format(:error, e, __STACKTRACE__))
       {:error, %Error{reason: e, message: "An unexpected error occurred"}}
-  end
-
-  def login(email, password, mfa_passcode) when is_binary(mfa_passcode) do
-    with {:ok, {:mfa, [%{"id" => id} | _], ctx}} <- login(email, password) do
-      login(id, mfa_passcode, ctx)
-    end
   end
 
   defp load_form(email, state, code_verifier) do
@@ -283,9 +277,7 @@ defmodule TeslaApi.Auth do
 
     headers = [{"Authorization", "Bearer #{access_token}"}]
 
-    base_url = "https://owner-api.teslamotors.com"
-
-    case post("#{base_url}/oauth/token", data, headers: headers) do
+    case post("https://owner-api.teslamotors.com/oauth/token", data, headers: headers) do
       {:ok, %Tesla.Env{status: 200, body: body}} ->
         auth = %__MODULE__{
           token: body["access_token"],
