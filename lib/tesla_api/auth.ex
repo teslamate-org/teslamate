@@ -13,7 +13,7 @@ defmodule TeslaApi.Auth do
   plug TeslaApi.Middleware.FollowRedirects, except: [@redirect_uri]
   plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
   plug Tesla.Middleware.JSON
-  plug Tesla.Middleware.Logger
+  plug Tesla.Middleware.Logger, debug: false, log_level: &log_level/1
 
   alias TeslaApi.Error
 
@@ -353,4 +353,7 @@ defmodule TeslaApi.Auth do
     |> String.replace("+", "-")
     |> String.replace("/", "_")
   end
+
+  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :error
+  defp log_level(%Tesla.Env{}), do: :info
 end
