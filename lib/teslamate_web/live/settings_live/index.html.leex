@@ -290,7 +290,7 @@ end %>
   </div>
 </div>
 
-<%= if TeslaMate.Api.signed_in? do %>
+<%= if TeslaMate.Api.signed_in?() and not TeslaMate.Import.enabled?() do %>
 <div class="columns is-mobile is-centered">
   <div class="column is-narrow table-container">
     <button class="button is-text is-rounded" aria-label="sign out" phx-click="sign_out">

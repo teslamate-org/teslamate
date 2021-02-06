@@ -22,16 +22,20 @@ defmodule TeslaMateWeb.ImportLive.Index do
         get_connect_params(socket)["tz"]
       end
 
-    timezones = Timex.timezones()
-    timezone = get_timezone() || Enum.find(timezones, &match?(^tz, &1))
+    if Import.enabled?() do
+      timezones = Timex.timezones()
+      timezone = get_timezone() || Enum.find(timezones, &match?(^tz, &1))
 
-    socket =
-      socket
-      |> assign(status: Import.get_status())
-      |> assign(changeset: Settings.changeset(%{timezone: timezone}))
-      |> assign(timezones: timezones, page_title: gettext("Import"))
+      socket =
+        socket
+        |> assign(status: Import.get_status())
+        |> assign(changeset: Settings.changeset(%{timezone: timezone}))
+        |> assign(timezones: timezones, page_title: gettext("Import"))
 
-    {:ok, socket}
+      {:ok, socket}
+    else
+      {:ok, redirect(socket, to: Routes.car_path(socket, :index))}
+    end
   end
 
   @impl true
