@@ -101,6 +101,10 @@ defmodule TeslaMate.Import.FakeApi do
     end
   end
 
+  def handle_info(:abort, %State{} = state) do
+    {:noreply, %State{state | events: [], event_chunks: {%{}, 0, 0}, event_streams: []}}
+  end
+
   ## Private
 
   defp pop(%State{events: [], event_chunks: {chunks, i, i}, event_streams: []} = state)
@@ -115,20 +119,27 @@ defmodule TeslaMate.Import.FakeApi do
     parent = self()
 
     spawn_link(fn ->
-      s
-      |> Stream.chunk_every(500)
-      |> Stream.with_index()
-      |> Enum.reduce(-1, fn {event_chunk, idx}, _ ->
-        send(parent, {:events, event_chunk, idx})
-        idx
-      end)
-      |> case do
-        -1 -> send(parent, :no_events)
-        max_idx -> send(parent, {:processed_events, max_idx})
+      try do
+        s
+        |> Stream.chunk_every(500)
+        |> Stream.with_index()
+        |> Enum.reduce(-1, fn {event_chunk, idx}, _ ->
+          send(parent, {:events, event_chunk, idx})
+          idx
+        end)
+        |> case do
+          -1 -> send(parent, :no_events)
+          max_idx -> send(parent, {:processed_events, max_idx})
+        end
+      catch
+        :vehicle_changed -> send(parent, :abort)
       end
     end)
 
     receive do
+      :abort ->
+        pop(%State{state | events: [], event_chunks: {%{}, 0, 0}, event_streams: []})
+
       :no_events ->
         Logger.warning("Processed empty chunk: #{inspect(c)}")
         pop(%State{state | events: [], event_chunks: {%{}, nil, nil}})

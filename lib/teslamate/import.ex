@@ -124,6 +124,7 @@ defmodule TeslaMate.Import do
 
       {:ok, streams} ->
         car = create_car(streams)
+        {:ok, streams} = create_event_streams(data, car)
 
         :ok = Log.complete_current_state(car)
 
@@ -209,7 +210,7 @@ defmodule TeslaMate.Import do
     end
   end
 
-  defp create_event_streams(%Data{files: files, timezone: tz}) do
+  defp create_event_streams(%Data{files: files, timezone: tz}, car \\ nil) do
     alias TeslaApi.Vehicle.State.Drive
     alias TeslaApi.Vehicle, as: Veh
 
@@ -239,6 +240,16 @@ defmodule TeslaMate.Import do
 
                   %Veh{drive_state: %Drive{timestamp: nil}} ->
                     false
+
+                  %Veh{vin: vin, vehicle_id: vid, id: eid} = v
+                  when car != nil and nil not in [vin, vid, eid] and
+                         vin != car.vin and vid != car.vid and eid != car.eid ->
+                    Logger.warn(
+                      "'#{path}' contains data for more than one vehicle: #{car.name}" <>
+                        " -> #{v.display_name}!"
+                    )
+
+                    throw(:vehicle_changed)
 
                   %Veh{state: "online", drive_state: %Drive{} = d} ->
                     d.latitude != nil and d.longitude != nil
