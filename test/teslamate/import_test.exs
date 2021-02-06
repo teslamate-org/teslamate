@@ -447,6 +447,31 @@ defmodule TeslaMate.ImportTest do
   end
 
   @tag :capture_log
+  test "detects if file contains data for more than one car", %{pid: pid} do
+    {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/06_two_cars"})
+
+    assert %Import.Status{files: [f0], message: nil, state: :idle} = Import.get_status()
+    assert f0 == %{complete: false, date: [2020, 6], path: "#{@dir}/06_two_cars/TeslaFi62020.csv"}
+
+    with_mock Repair, trigger_run: fn -> ok_fn(:trigger_run, pid) end do
+      assert :ok = Import.subscribe()
+      assert :ok = Import.run("America/New_York")
+
+      assert_receive %Status{files: [%{complete: false}], state: :running}, 1500
+      assert_receive %Status{files: [%{complete: false}], state: :running}, 1500
+      assert_receive %Status{files: [%{complete: true}], state: :running}, 1500
+      assert_receive %Status{files: [%{complete: true}], state: :complete}, 1500
+
+      assert_receive :trigger_run
+      assert_receive :trigger_run
+
+      refute_receive _
+    end
+
+    assert [] = all(State)
+  end
+
+  @tag :capture_log
   test "captures errors of the vehicle process", %{pid: _pid} do
     {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/04_error"})
 
