@@ -26,8 +26,11 @@ defmodule Util do
   def validate_import_dir(nil), do: nil
 
   def validate_import_dir(path) do
+    path = Path.absname(path)
+
     case File.ls(path) do
-      {:ok, [_ | _]} ->
+      {:ok, [_ | _] = files} ->
+        IO.puts("[info] Found #{length(files)} file(s) at '#{path}'. Starting in import mode!")
         path
 
       {:ok, []} ->
@@ -37,7 +40,7 @@ defmodule Util do
         nil
 
       {:error, reason} ->
-        IO.puts("Cannot access directory '#{path}': #{inspect(reason)}")
+        IO.puts("[warn] Cannot access directory '#{path}': #{inspect(reason)}")
         nil
     end
   end
