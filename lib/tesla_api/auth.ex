@@ -23,8 +23,9 @@ defmodule TeslaApi.Auth do
     defstruct [:state, :code_verifier, :transaction_id, :headers, :devices]
   end
 
-  def refresh(%__MODULE__{refresh_token: refresh_token}) do
-    with {:ok, %{access_token: _} = tokens} <- refresh_oauth_access_token(refresh_token),
+  def refresh(%__MODULE__{} = auth) do
+    with {:ok, %{access_token: _} = tokens} <-
+           refresh_oauth_access_token(auth.token, auth.refresh_token),
          {:ok, auth} <- get_api_tokens(tokens) do
       {:ok, auth}
     else
@@ -33,7 +34,7 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp refresh_oauth_access_token(refresh_token) do
+  defp refresh_oauth_access_token(access_token, refresh_token) do
     data = %{
       grant_type: "refresh_token",
       scope: "openid email offline_access",
@@ -41,7 +42,13 @@ defmodule TeslaApi.Auth do
       refresh_token: refresh_token
     }
 
-    case post("/oauth2/v3/token", data) do
+    base_url =
+      case access_token do
+        "cn-" <> _ -> "https://auth.tesla.cn"
+        _other -> ""
+      end
+
+    case post("#{base_url}/oauth2/v3/token", data) do
       {:ok,
        %Tesla.Env{
          status: 200,
