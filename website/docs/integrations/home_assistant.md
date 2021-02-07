@@ -395,104 +395,197 @@ tesla_location:
 The below is the Lovelace UI configuration used to make the example screenshot above. You will obviously want to configure this to your liking, however the example contains all of the sensors and values presented via MQTT and could be used as the basis of UI configuration.
 
 ```yml title="ui-lovelace.yaml"
-- path: car
-  title: Car
-  badges: []
-  icon: "mdi:car-connected"
-  cards:
-    - type: vertical-stack
-      cards:
-        - type: glance
-          entities:
-            - entity: sensor.tesla_battery_level
-              name: Battery Level
-            - entity: sensor.tesla_state
-              name: Car State
-            - entity: sensor.tesla_plugged_in
-              name: Plugged In
-        - type: glance
-          entities:
-            - entity: sensor.tesla_park_brake
-              name: Park Brake
-            - entity: sensor.tesla_sentry_mode
-              name: Sentry Mode
-            - entity: sensor.tesla_speed
-              name: Speed
-        - type: glance
-          entities:
-            - entity: sensor.tesla_healthy
-              name: Car Health
-            - entity: sensor.tesla_windows_open
-              name: Window Status
-        - type: horizontal-stack
-          cards:
-            - type: "custom:button-card"
-              entity: sensor.tesla_locked
-              name: Charger Door
-              show_state: true
-              state:
-                - value: locked
-                  icon: "mdi:lock"
-                  color: green
-                  tap_action:
-                    action: call-service
-                    service: lock.unlock
-                    service_data:
-                      entity_id: lock.tesla_model_3_charger_door_lock
-                - value: unlocked
-                  icon: "mdi:lock-open"
-                  color: red
-                  tap_action:
-                    action: call-service
-                    service: lock.lock
-                    service_data:
-                      entity_id: lock.tesla_model_3_charger_door_lock
-            - type: "custom:button-card"
-              entity: lock.tesla_door_lock
-              name: Car Door
-              show_state: true
-              state:
-                - value: locked
-                  icon: "mdi:lock"
-                  color: green
-                  tap_action:
-                    action: call-service
-                    service: lock.unlock
-                    service_data:
-                      entity_id: lock.tesla_model_3_door_lock
-                - value: unlocked
-                  icon: "mdi:lock-open"
-                  color: red
-                  tap_action:
-                    action: call-service
-                    service: lock.lock
-                    service_data:
-                      entity_id: lock.tesla_model_3_door_lock
-    - type: vertical-stack
-      cards:
-        - type: map
-          entities:
-            - device_tracker.tesla_location
-        - type: thermostat
-          entity: climate.tesla_model_3_hvac_climate_system
-    - type: entities
-      entities:
-        - entity: sensor.tesla_charge_limit
-          name: SOC Charge Limit
-        - entity: sensor.tesla_charge_energy_added
-          name: Last Charge Energy Added
-        - entity: sensor.tesla_odometer
-          name: Odometer
-        - entity: sensor.tesla_estimated_range
-          name: Estimated Range
-        - entity: sensor.tesla_rated_range
-          name: Rated Range
-        - entity: sensor.tesla_inside_temp
-          name: Tesla Temperature (inside)
-        - entity: sensor.tesla_outside_temp
-          name: Tesla Temperature (outside)
-        - entity: proximity.home_tesla
-          name: Distance to Home
+  - path: car
+    title: Car
+    badges: []
+    icon: 'mdi:car-connected'
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: glance
+            entities:
+              - entity: sensor.tesla_battery_level
+                name: Battery Level
+              - entity: sensor.tesla_state
+                name: Car State
+              - entity: sensor.tesla_plugged_in
+                name: Plugged In
+          - type: glance
+            entities:
+              - entity: sensor.tesla_park_brake
+                name: Park Brake
+              - entity: sensor.tesla_sentry_mode
+                name: Sentry Mode
+              - entity: sensor.tesla_speed
+                name: Speed
+          - type: glance
+            entities:
+              - entity: sensor.tesla_healthy
+                name: Car Health
+              - entity: sensor.tesla_windows_open
+                name: Window Status
+          - type: horizontal-stack
+            cards:
+              - type: button
+                entity: sensor.tesla_locked
+                name: Charger Door
+                show_state: true
+                state:
+                  - value: locked
+                    icon: 'mdi:lock'
+                    color: green
+                    tap_action:
+                      action: call-service
+                      service: lock.unlock
+                      service_data:
+                        entity_id: lock.tesla_model_3_charger_door_lock
+                  - value: unlocked
+                    icon: 'mdi:lock-open'
+                    color: red
+                    tap_action:
+                      action: call-service
+                      service: lock.lock
+                      service_data:
+                        entity_id: lock.tesla_model_3_charger_door_lock
+              - type: button
+                entity: lock.tesla_door_lock
+                name: Car Door
+                show_state: true
+                state:
+                  - value: locked
+                    icon: 'mdi:lock'
+                    color: green
+                    tap_action:
+                      action: call-service
+                      service: lock.unlock
+                      service_data:
+                        entity_id: lock.tesla_model_3_door_lock
+                  - value: unlocked
+                    icon: 'mdi:lock-open'
+                    color: red
+                    tap_action:
+                      action: call-service
+                      service: lock.lock
+                      service_data:
+                        entity_id: lock.tesla_model_3_door_lock
+      - type: vertical-stack
+        cards:
+          - type: map
+            dark_mode: true
+            default_zoom: 12
+            entities:
+              - device_tracker.tesla_location
+          - type: thermostat
+            entity: climate.tesla_model_3_hvac_climate_system
+      - type: entities
+        entities:
+          - entity: sensor.tesla_display_name
+            name: Name
+          - entity: sensor.tesla_state
+            name: Status
+          - entity: sensor.tesla_since
+            name: Last Status Change
+          - entity: sensor.tesla_healthy
+            name: Logger Healthy
+          - entity: sensor.tesla_version
+            name: Software Version
+          - entity: sensor.tesla_update_available
+            name: Available Update Status
+          - entity: sensor.tesla_update_version
+            name: Available Update Version
+          - entity: sensor.tesla_model
+            name: Tesla Model
+          - entity: sensor.tesla_trim_badging
+            name: Trim Badge
+          - entity: sensor.tesla_exterior_color
+            name: Exterior Color
+          - entity: sensor.tesla_wheel_type
+            name: Wheel Type
+          - entity: sensor.tesla_spoiler_type
+            name: Spoiler Type
+          - entity: sensor.tesla_geofence
+            name: Geo-fence Name
+          - entity: proximity.home_tesla
+            name: Distance to Home
+          - entity: sensor.tesla_latitude
+            name: Latitude
+          - entity: sensor.tesla_longitude
+            name: Longitude
+          - entity: sensor.tesla_shift_state
+            name: Shifter State
+          - entity: sensor.tesla_speed
+            name: Speed
+          - entity: sensor.tesla_speed_mph
+            name: Speed (MPH)
+          - entity: sensor.tesla_heading
+            name: Heading
+          - entity: sensor.tesla_elevation
+            name: Elevation (m)
+          - entity: sensor.tesla_elevation_ft
+            name: Elevation (ft)
+          - entity: sensor.tesla_locked
+            name: Locked
+          - entity: sensor.tesla_sentry_mode
+            name: Sentry Mode Enabled
+          - entity: sensor.tesla_windows_open
+            name: Windows Open
+          - entity: sensor.tesla_doors_open
+            name: Doors Open
+          - entity: sensor.tesla_trunk_open
+            name: Trunk Open
+          - entity: sensor.tesla_frunk_open
+            name: Frunk Open
+          - entity: sensor.tesla_is_user_present
+            name: User Present
+          - entity: sensor.tesla_is_climate_on
+            name: Climate On
+          - entity: sensor.tesla_inside_temp
+            name: Inside Temperature
+          - entity: sensor.tesla_outside_temp
+            name: Outside Temperature
+          - entity: sensor.tesla_is_preconditioning
+            name: Preconditioning
+          - entity: sensor.tesla_odometer
+            name: Odometer
+          - entity: sensor.tesla_odometer_mi
+            name: Odometer (miles)
+          - entity: sensor.tesla_est_battery_range_km
+            name: Battery Range (km)
+          - entity: sensor.tesla_est_battery_range_mi
+            name: Estimated Battery Range (mi)
+          - entity: sensor.tesla_rated_battery_range_km
+            name: Rated Battery Range (km)
+          - entity: sensor.tesla_rated_battery_range_mi
+            name: Rated Battery Range (mi)
+          - entity: sensor.tesla_ideal_battery_range_km
+            name: Ideal Battery Range (km)
+          - entity: sensor.tesla_ideal_battery_range_mi
+            name: Ideal Battery Range (mi)
+          - entity: sensor.tesla_battery_level
+            name: Battery Level
+          - entity: sensor.tesla_usable_battery_level
+            name: Usable Battery Level
+          - entity: sensor.tesla_plugged_in
+            name: Plugged In
+          - entity: sensor.tesla_charge_energy_added
+            name: Charge Energy Added
+          - entity: sensor.tesla_charge_limit_soc
+            name: Charge Limit
+          - entity: sensor.tesla_charge_port_door_open
+            name: Charge Port Door Open
+          - entity: sensor.tesla_charger_actual_current
+            name: Charger Current
+          - entity: sensor.tesla_charger_phases
+            name: Charger Phases
+          - entity: sensor.tesla_charger_power
+            name: Charger Power
+          - entity: sensor.tesla_charger_voltage
+            name: Charger Voltage
+          - entity: sensor.tesla_scheduled_charging_start_time
+            name: Scheduled Charging Start Time
+          - entity: sensor.tesla_time_to_full_charge
+            name: Time To Full Charge
+
 ```
 
 ## Useful Automations
