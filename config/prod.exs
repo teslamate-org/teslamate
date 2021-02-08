@@ -7,8 +7,7 @@ config :teslamate, TeslaMateWeb.Endpoint,
   version: Application.spec(:teslamate, :vsn)
 
 config :logger,
-  level: :info,
-  compile_time_purge_matching: [[level_lower_than: :info]]
+  level: :info
 
 config :logger, :console,
   format: "$date $time $metadata[$level] $message\n",
