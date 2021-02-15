@@ -2,6 +2,16 @@
 title: Projects using TeslaMate
 ---
 
+Here is a list of projects using TeslaMate.
+
+- [Gaussmeter](#gaussmeter)
+- [Home Assistant Addon](#home-assistant-addon)
+- [MMM-Teslamate](#mmm-teslamate)
+- [TeslaMateAgile](#teslamateagile)
+- [TeslaMateApi](#teslamateapi)
+- [TeslaMate_Telegraf_Bot](#teslamate_telegram_bot)
+
+---
 
 ## [Gaussmeter](https://github.com/gaussmeter/gaussmeter)
 
