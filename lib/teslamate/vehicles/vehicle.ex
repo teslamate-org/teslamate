@@ -901,7 +901,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     offline_min = DateTime.diff(offline_end, offline_start, :second) / 60
 
     has_gained_range? =
-      now.charge_state.ideal_battery_range - last.charge_state.ideal_battery_range > 5
+      nil not in [now.charge_state.ideal_battery_range, last.charge_state.ideal_battery_range] and
+        now.charge_state.ideal_battery_range - last.charge_state.ideal_battery_range > 5
 
     Logger.info("Vehicle came back online after #{round(offline_min)} min", car_id: data.car.id)
 
