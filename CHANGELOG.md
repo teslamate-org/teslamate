@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.21.4] - 2021-02-16
+
+### Enhancements and Bug Fixes
+
+- Point out more clearly when starting into import mode
+- Hide sign-out button in import mode
+- Don't purge debug log statements from production release
+- Handle non-existing range values after the car was offline
+
+#### Dashboards
+
+- Statistics: Show "Starting at" column and fix timezone issue ([#1254](https://github.com/adriankumpf/teslamate/pull/1254) by [DrMichael](https://github.com/DrMichael))
+- Charge Level: Fix usable battery level alternating between usable battery level and regular battery level
+- Bump Grafana to v7.4.1
+
+#### Documentation
+
+- Add [TeslaMateApi](https://github.com/tobiasehlert/TeslaMateApi) to the list of projects using TeslaMate ([#1350](https://github.com/adriankumpf/teslamate/pull/1350) by [tobiasehlert](https://github.com/tobiasehlert))
+- Update installation docks ([#1287](https://github.com/adriankumpf/teslamate/pull/1287) by [tobiasehlert](https://github.com/tobiasehlert))
+- Update HomeAssistant documentation ([#1321](https://github.com/adriankumpf/teslamate/pull/1321) by [jschollenberger](https://github.com/jschollenberger))
+
 ## [1.21.3] - 2021-02-06
 
 - Add support for v3 API tokens in China
@@ -1162,6 +1183,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.21.4]: https://github.com/adriankumpf/teslamate/compare/v1.21.3...v1.21.4
 [1.21.3]: https://github.com/adriankumpf/teslamate/compare/v1.21.2...v1.21.3
 [1.21.2]: https://github.com/adriankumpf/teslamate/compare/v1.21.1...v1.21.2
 [1.21.1]: https://github.com/adriankumpf/teslamate/compare/v1.21.0...v1.21.1
