@@ -28,9 +28,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -96,9 +94,12 @@
       "lines": true,
       "linewidth": 1,
       "links": [],
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.4.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -121,14 +122,12 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select $__time(date), \n  battery_level AS \"Battery Level [%]\", coalesce(usable_battery_level, battery_level) as \"Usable Battery Level [%]\"\nfrom\n    (SELECT\n    battery_level, usable_battery_level\n        , date\n    FROM\n    positions\n    WHERE\n    car_id = $car_id AND\n    $__timeFilter(date)\n    UNION ALL\n    select\n    battery_level, null as usable_battery_level\n        , date\n    from charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id) as data\n\nORDER BY\n    1 ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tbattery_level AS \"Battery Level [%]\",\n\tusable_battery_level AS \"Usable Battery Level [%]\"\nFROM (\n\tSELECT date, battery_level, usable_battery_level\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date)\n\tUNION ALL\n\tSELECT date, battery_level, NULL AS usable_battery_level\n\tFROM charges c\n\tJOIN charging_processes p ON p.id = c.charging_process_id\n\tWHERE $__timeFilter(date) AND p.car_id = $car_id\n) AS data\nORDER BY\n\t1 ASC;",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -205,11 +204,9 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 26,
+  "schemaVersion": 27,
   "style": "dark",
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -221,6 +218,8 @@
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "Car",
@@ -247,6 +246,8 @@
         },
         "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "",
@@ -283,17 +284,7 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
   "title": "Charge Level",
