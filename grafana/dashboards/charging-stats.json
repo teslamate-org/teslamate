@@ -518,7 +518,7 @@
       },
       "yBucketBound": "auto",
       "yBucketNumber": null,
-      "yBucketSize": null
+      "yBucketSize": 10.00001
     },
     {
       "aliasColors": {},
