@@ -10,12 +10,16 @@ defmodule TeslaApi.Auth do
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
   @redirect_uri "https://auth.tesla.com/void/callback"
 
+  # For some reason requests with this user agent go through …
+  @default_headers [{"user-agent", "hackney/1.17.0"}]
+
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000
 
   plug TeslaApi.Middleware.FollowRedirects, except: [@redirect_uri]
   plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
+  plug Tesla.Middleware.Headers, @default_headers
   plug Tesla.Middleware.JSON
-  plug Tesla.Middleware.Logger, debug: false, log_level: &log_level/1
+  plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
 
