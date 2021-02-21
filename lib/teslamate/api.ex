@@ -148,11 +148,17 @@ defmodule TeslaMate.Api do
       {:ok, tokens} ->
         Logger.info("Refreshing access token ...")
 
-        {:ok, refreshed_tokens} = Auth.refresh(tokens)
+        case Auth.refresh(tokens) do
+          {:ok, refreshed_tokens} ->
+            true = insert_auth(name, refreshed_tokens)
+            :ok = call(state.deps.auth, :save, [refreshed_tokens])
+            :ok = schedule_refresh(refreshed_tokens)
 
-        true = insert_auth(name, refreshed_tokens)
-        :ok = call(state.deps.auth, :save, [refreshed_tokens])
-        :ok = schedule_refresh(refreshed_tokens)
+          {:error, reason} ->
+            Logger.warning("Token refresh failed: #{inspect(reason, pretty: true)}")
+            Logger.warning("Retrying in 1 hour...")
+            Process.send_after(self(), :refresh_auth, :timer.hours(1))
+        end
 
       {:error, reason} ->
         Logger.warning("Cannot refresh access token: #{inspect(reason)}")
