@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.21.5] - 2021-02-21
+
+### Improvements and Bug Fixes
+
+- Implement a workaround for login requests timing out
+- Handle failed token refresh requests gracefully
+
+#### Dashboards
+
+- Overview: Fix Gross Panel font size ([#1363](https://github.com/adriankumpf/teslamate/pull/1363) by [DrMichael](https://github.com/DrMichael))
+- Charging Stats: Set bucket size on charging heatmap ([#1355](https://github.com/adriankumpf/teslamate/pull/1355) by [leewillis77](https://github.com/leewillis77))
+- Downgrade Grafana to 7.3.7 because of an incompatibility with the Trackmap plugin
+
 ## [1.21.4] - 2021-02-16
 
 ### Enhancements and Bug Fixes
@@ -1183,6 +1196,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.21.5]: https://github.com/adriankumpf/teslamate/compare/v1.21.4...v1.21.5
 [1.21.4]: https://github.com/adriankumpf/teslamate/compare/v1.21.3...v1.21.4
 [1.21.3]: https://github.com/adriankumpf/teslamate/compare/v1.21.2...v1.21.3
 [1.21.2]: https://github.com/adriankumpf/teslamate/compare/v1.21.1...v1.21.2
