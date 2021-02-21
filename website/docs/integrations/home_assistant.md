@@ -342,7 +342,7 @@ tesla_location:
  - platform: mqtt
    name: tesla_charge_energy_added
    state_topic: "teslamate/cars/1/charge_energy_added"
-   unit_of_measurement: "%"
+   unit_of_measurement: "kWh"
    icon: mdi:battery-charging
 
  - platform: mqtt
@@ -387,6 +387,7 @@ tesla_location:
  - platform: mqtt
    name: tesla_time_to_full_charge
    state_topic: "teslamate/cars/1/time_to_full_charge"
+   unit_of_measurement: "h"
    icon: mdi:clock-outline
 ```
 
