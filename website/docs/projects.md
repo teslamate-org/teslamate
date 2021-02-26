@@ -35,7 +35,9 @@ LINK: [github.com/matt-FFFFFF/hassio-addon-teslamate](https://github.com/matt-FF
 
 ## [TeslaMateAgile](https://github.com/MattJeanes/TeslaMateAgile)
 
-A TeslaMate integration for calculating cost of charges. This app will automatically update your cost for charge sessions in TeslaMate within a specified geofence (usually home) using data from either the [Octopus Agile](https://octopus.energy/agile/) or [Tibber](https://tibber.com/en/) tariff.
+A TeslaMate integration for calculating cost of charges. This application will automatically update your cost for charge sessions in TeslaMate within a specified geofence (usually home) using data from your smart electricity tariff.
+
+The supported energy providers / tarriffs are either [Octopus Agile](https://octopus.energy/agile/), [Tibber](https://tibber.com/en/) or fixed pricing (manually specified).
 
 LINK: [github.com/MattJeanes/TeslaMateAgile](https://github.com/MattJeanes/TeslaMateAgile)
 
