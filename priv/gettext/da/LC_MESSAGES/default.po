@@ -572,7 +572,7 @@ msgstr "Bagklap åben"
 #: lib/teslamate_web/live/charge_live/cost.html.leex:112
 #: lib/teslamate_web/live/geofence_live/form.html.leex:66
 msgid "Per Minute"
-msgstr "Pr. Minute"
+msgstr "Pr. minut"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.leex:74
@@ -587,7 +587,7 @@ msgstr "Indtast verifikationskoden genereret af din authentikator app."
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.leex:50
 msgid "Two-Factor Authentication"
-msgstr "To-faktor authentikation"
+msgstr "To-faktor autentifikation"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:297
