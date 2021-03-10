@@ -40,7 +40,13 @@ defmodule TeslaMate.Locations.Geocoder do
              namedetails: 1,
              zoom: 19
            ) do
-      {:ok, Enum.map(raw_addresses, &into_address/1)}
+      addresses =
+        Enum.map(raw_addresses, fn attrs ->
+          {:ok, address} = into_address(attrs)
+          address
+        end)
+
+      {:ok, addresses}
     end
   end
 
