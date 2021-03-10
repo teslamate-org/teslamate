@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.21.6] - 2021-03-10
+
+### Improvements and Bug Fixes
+
+- Change HTTP headers again to avoid auth requests timing out
+- Fix changing the address language
+- Add health check route ([#1422](https://github.com/adriankumpf/teslamate/pull/1422) by [brianmay](https://github.com/brianmay))
+
+#### Translations
+
+- Update Korean translation ([#1381](https://github.com/adriankumpf/teslamate/pull/1381) by [dongbum](https://github.com/dongbum))
+- Updated Danish translation ([#1404](https://github.com/adriankumpf/teslamate/pull/1404) by [larskochhansen](https://github.com/larskochhansen))
+
+#### Documentation
+
+- Add fixed pricing information to [TeslaMateApi](https://github.com/tobiasehlert/TeslaMateApi) project description ([#1399](https://github.com/adriankumpf/teslamate/pull/1399) by [tobiasehlert](https://github.com/tobiasehlert))
+
 ## [1.21.5] - 2021-02-21
 
 ### Improvements and Bug Fixes
@@ -1196,6 +1213,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.21.6]: https://github.com/adriankumpf/teslamate/compare/v1.21.5...v1.21.6
 [1.21.5]: https://github.com/adriankumpf/teslamate/compare/v1.21.4...v1.21.5
 [1.21.4]: https://github.com/adriankumpf/teslamate/compare/v1.21.3...v1.21.4
 [1.21.3]: https://github.com/adriankumpf/teslamate/compare/v1.21.2...v1.21.3
