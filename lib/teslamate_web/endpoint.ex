@@ -8,6 +8,8 @@ defmodule TeslaMateWeb.Endpoint do
     same_site: "Strict"
   ]
 
+  plug TeslaMateWeb.HealthCheck
+
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options], transport_log: :debug]
 
