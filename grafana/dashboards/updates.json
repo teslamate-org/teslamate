@@ -295,11 +295,11 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 140
+                "value": 160
               },
               {
                 "id": "displayName",
-                "value": "Since Last Update"
+                "value": "Since Previous Update"
               },
               {
                 "id": "unit",
@@ -487,7 +487,7 @@
         },
         {
           "$$hashKey": "object:392",
-          "alias": "Since Last Update",
+          "alias": "Since Previous Update",
           "align": "auto",
           "colorMode": null,
           "colors": [
