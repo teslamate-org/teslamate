@@ -10,8 +10,9 @@ defmodule TeslaApi.Auth do
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
   @redirect_uri "https://auth.tesla.com/void/callback"
 
+  @version Mix.Project.config()[:version]
   @default_headers [
-    {"user-agent", "TeslaMate/#{Application.spec(:teslamate, :vsn)}"},
+    {"user-agent", "TeslaMate/#{@version}"},
     {"Accept", "*/*"},
     {"Accept-Encoding", "gzip, deflate, br"},
     {"Connection", "keep-alive"}
