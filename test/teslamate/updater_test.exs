@@ -10,14 +10,17 @@ defmodule TeslaMate.UpdaterTest do
     end
 
     def json(data) do
-      data
-      |> Jason.encode!()
-      |> (&{:ok, %Finch.Response{status: 200, body: &1}}).()
-      |> response()
+      response({:ok, %Tesla.Env{status: 200, body: data}})
     end
 
     def response(resp) do
-      [{TeslaMate.HTTP, [], get: fn _, _ -> resp end}]
+      [
+        {Tesla.Adapter.Finch, [],
+         call: fn %Tesla.Env{} = env, _opts ->
+           assert env.url == "https://api.github.com/repos/adriankumpf/teslamate/releases/latest"
+           resp
+         end}
+      ]
     end
   end
 
@@ -50,7 +53,7 @@ defmodule TeslaMate.UpdaterTest do
   end
 
   test "returns early even though update check is still in progress", %{test: name} do
-    with_mocks [{TeslaMate.HTTP, [], get: fn _, _ -> Process.sleep(1_000_000) end}] do
+    with_mocks [{Tesla.Adapter.Finch, [], call: fn _, _ -> Process.sleep(1_000_000) end}] do
       {:ok, pid} = start_updater(name, "1.0.0")
       assert nil == Updater.get_update(pid)
     end
@@ -66,7 +69,7 @@ defmodule TeslaMate.UpdaterTest do
 
   @tag :capture_log
   test "handles invalid json", %{test: name} do
-    with_mocks HTTPMocck.json(%{foo: :bar}) do
+    with_mocks HTTPMocck.json(%{"foo" => "bar"}) do
       {:ok, pid} = start_updater(name, "1.0.0")
       assert nil == Updater.get_update(pid)
     end
@@ -74,7 +77,7 @@ defmodule TeslaMate.UpdaterTest do
 
   @tag :capture_log
   test "handles HTTP errors", %{test: name} do
-    with_mocks HTTPMocck.response({:ok, %Finch.Response{status: 404}}) do
+    with_mocks HTTPMocck.response({:ok, %Tesla.Env{status: 404}}) do
       {:ok, pid} = start_updater(name, "1.0.0", id: 0)
       assert nil == Updater.get_update(pid)
     end
