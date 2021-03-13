@@ -147,8 +147,7 @@ defmodule GeocoderMock do
     {:ok,
      Enum.map(addresses, fn
        %Address{display_name: "error"} ->
-         kind = Enum.at([:error], 0)
-         {:ok, _} = {kind, :boom}
+         throw({:error, :boom})
 
        %Address{} = address ->
          address
@@ -157,5 +156,8 @@ defmodule GeocoderMock do
          |> Map.update(:state, "", fn val -> "#{val}_#{lang}" end)
          |> Map.update(:country, "", fn _ -> "#{lang}" end)
      end)}
+  catch
+    {:error, :boom} ->
+      {:error, :boom}
   end
 end
