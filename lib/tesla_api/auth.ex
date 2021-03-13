@@ -11,7 +11,7 @@ defmodule TeslaApi.Auth do
   @redirect_uri "https://auth.tesla.com/void/callback"
 
   @default_headers [
-    {"user-agent", "TeslaMate/" <> Mix.Project.config()[:version]},
+    {"user-agent", "TeslaMate/#{Application.spec(:teslamate, :vsn)}"},
     {"Accept", "*/*"},
     {"Accept-Encoding", "gzip, deflate, br"},
     {"Connection", "keep-alive"}
