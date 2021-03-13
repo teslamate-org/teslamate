@@ -1101,7 +1101,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  charger_power as \"Power [kW]\",\n  charger_actual_current as \"Current [A]\",\n  c.charge_energy_added as \"kWh Added\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n  charger_power as \"Power [kW]\",\n  (case when battery_heater_on then 1 else 0 end) as \"Battery heater\",\n  charger_actual_current as \"Current [A]\",\n  c.charge_energy_added as \"kWh Added\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id\nORDER BY\n  date ASC",
           "refId": "B",
           "select": [
             [
