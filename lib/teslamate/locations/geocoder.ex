@@ -1,7 +1,7 @@
 defmodule TeslaMate.Locations.Geocoder do
   use Tesla, only: [:get]
 
-  @version Application.spec(:teslamate, :vsn)
+  @version Mix.Project.config()[:version]
 
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000
 

@@ -1,7 +1,7 @@
 defmodule TeslaApi do
   use Tesla
 
-  @version Application.spec(:teslamate, :vsn)
+  @version Mix.Project.config()[:version]
 
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 35_000
 

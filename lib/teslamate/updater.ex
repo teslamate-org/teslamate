@@ -4,7 +4,7 @@ defmodule TeslaMate.Updater do
 
   require Logger
 
-  @version Application.spec(:teslamate, :vsn)
+  @version Mix.Project.config()[:version]
   @name __MODULE__
 
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP
