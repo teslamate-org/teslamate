@@ -515,8 +515,8 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
     def github_mock do
       release = %{"tag_name" => "v1.1.3", "prerelease" => false, "draft" => false}
-      resp = %Finch.Response{status: 200, body: Jason.encode!(release)}
-      {TeslaMate.HTTP, [], get: fn _, _ -> {:ok, resp} end}
+      resp = %Tesla.Env{status: 200, body: release}
+      {Tesla.Adapter.Finch, [], call: fn _, _ -> {:ok, resp} end}
     end
 
     test "informs if an update is available", %{conn: conn} do

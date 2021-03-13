@@ -1,15 +1,21 @@
 defmodule TeslaMate.Updater do
   use GenServer
+  use Tesla, only: [:get]
 
-  alias Finch.Response
-  alias TeslaMate.HTTP
   require Logger
+
+  @version Application.spec(:teslamate, :vsn)
+  @name __MODULE__
+
+  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP
+
+  plug Tesla.Middleware.BaseUrl, "https://api.github.com"
+  plug Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]
+  plug Tesla.Middleware.JSON
+  plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
 
   defmodule State, do: defstruct([:update, :version])
   defmodule Release, do: defstruct([:version, :prerelease])
-
-  @url "https://api.github.com/repos/adriankumpf/teslamate/releases/latest"
-  @name __MODULE__
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
@@ -22,11 +28,11 @@ defmodule TeslaMate.Updater do
     :exit, {:noproc, _} -> nil
   end
 
-  @impl true
+  @impl GenServer
   def init(opts) do
-    check_after = Keyword.get(opts, :check_after, :timer.minutes(5))
-    interval = Keyword.get(opts, :interval, :timer.hours(72))
-    version = Keyword.get_lazy(opts, :version, &version/0)
+    check_after = opts[:check_after] || :timer.minutes(5)
+    interval = opts[:interval] || :timer.hours(72)
+    version = opts[:version] || @version
 
     {:ok, _} = :timer.send_interval(interval, :check_for_updates)
 
@@ -40,7 +46,7 @@ defmodule TeslaMate.Updater do
     end
   end
 
-  @impl true
+  @impl GenServer
   def handle_continue(:check_for_updates, %State{version: current_vsv} = state) do
     Logger.debug("Checking for updates …")
 
@@ -66,29 +72,25 @@ defmodule TeslaMate.Updater do
     end
   end
 
-  @impl true
+  @impl GenServer
   def handle_info(:check_for_updates, state) do
     {:noreply, state, {:continue, :check_for_updates}}
   end
 
-  @impl true
+  @impl GenServer
   def handle_call(:get_update, _from, %State{update: update} = state) do
     {:reply, update, state}
   end
 
   ## Private
 
-  defp version, do: "#{Application.spec(:teslamate, :vsn)}"
-
   defp fetch_release do
-    case HTTP.get(@url, receive_timeout: 30_000) do
-      {:ok, %Response{status: 200, body: body}} ->
-        with {:ok, release} <- Jason.decode(body) do
-          parse_release(release)
-        end
+    case get("/repos/adriankumpf/teslamate/releases/latest", receive_timeout: 30_000) do
+      {:ok, %Tesla.Env{status: 200, body: body}} ->
+        parse_release(body)
 
-      {:ok, %Response{} = response} ->
-        {:error, response}
+      {:ok, %Tesla.Env{} = env} ->
+        {:error, reason: "Unexpected response", env: env}
 
       {:error, reason} ->
         {:error, reason}
@@ -110,4 +112,7 @@ defmodule TeslaMate.Updater do
         {:error, :invalid_response}
     end
   end
+
+  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warn
+  defp log_level(%Tesla.Env{}), do: :debug
 end
