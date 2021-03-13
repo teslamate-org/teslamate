@@ -1,6 +1,15 @@
 defmodule TeslaMate.Locations.Geocoder do
-  alias Finch.Response
-  alias TeslaMate.HTTP
+  use Tesla, only: [:get]
+
+  @version Application.spec(:teslamate, :vsn)
+
+  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000
+
+  plug Tesla.Middleware.BaseUrl, "https://nominatim.openstreetmap.org"
+  plug Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]
+  plug Tesla.Middleware.JSON
+  plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
+
   alias TeslaMate.Locations.Address
 
   def reverse_lookup(lat, lon, lang \\ "en") do
@@ -14,7 +23,7 @@ defmodule TeslaMate.Locations.Geocoder do
       lon: lon
     ]
 
-    with {:ok, address_raw} <- fetch("https://nominatim.openstreetmap.org/reverse", lang, opts),
+    with {:ok, address_raw} <- query("/reverse", lang, opts),
          {:ok, address} <- into_address(address_raw) do
       {:ok, address}
     end
@@ -23,57 +32,42 @@ defmodule TeslaMate.Locations.Geocoder do
   def details(addresses, lang) when is_list(addresses) do
     osm_ids =
       addresses
-      |> Enum.reject(fn %Address{osm_id: id, osm_type: type} ->
-        id == nil or type in [nil, "unknown"]
-      end)
-      |> Enum.map(fn %Address{osm_id: id, osm_type: type} ->
-        "#{type |> String.at(0) |> String.upcase()}#{id}"
-      end)
+      |> Enum.reject(fn %Address{} = a -> a.osm_id == nil or a.osm_type in [nil, "unknown"] end)
+      |> Enum.map(fn %Address{} = a -> "#{String.upcase(String.at(a.osm_type, 0))}#{a.osm_id}" end)
       |> Enum.join(",")
 
-    with {:ok, raw_addresses} <-
-           fetch("https://nominatim.openstreetmap.org/lookup", lang,
-             osm_ids: osm_ids,
-             format: :jsonv2,
-             addressdetails: 1,
-             extratags: 1,
-             namedetails: 1,
-             zoom: 19
-           ) do
+    params = [
+      osm_ids: osm_ids,
+      format: :jsonv2,
+      addressdetails: 1,
+      extratags: 1,
+      namedetails: 1,
+      zoom: 19
+    ]
+
+    with {:ok, raw_addresses} <- query("/lookup", lang, params) do
       addresses =
         Enum.map(raw_addresses, fn attrs ->
-          {:ok, address} = into_address(attrs)
-          address
+          case into_address(attrs) do
+            {:ok, address} -> address
+            {:error, reason} -> throw({:invalid_address, reason})
+          end
         end)
 
       {:ok, addresses}
     end
+  catch
+    {:invalid_address, reason} ->
+      {:error, reason}
   end
 
-  defp fetch(url, lang, params) do
-    url = assemble_url(url, params)
-
-    case HTTP.get(url, headers: headers(lang), receive_timeout: 15_000) do
-      {:ok, %Response{status: 200, body: body}} -> {:ok, Jason.decode!(body)}
-      {:ok, %Response{body: body}} -> {:error, Jason.decode!(body) |> Map.get("error")}
-      {:error, %{reason: reason}} -> {:error, reason}
+  defp query(url, lang, params) do
+    case get(url, query: params, headers: [{"Accept-Language", lang}]) do
+      {:ok, %Tesla.Env{status: 200, body: body}} -> {:ok, body}
+      {:ok, %Tesla.Env{body: %{"error" => reason}}} -> {:error, reason}
+      {:ok, %Tesla.Env{} = env} -> {:error, reason: "Unexpected response", env: env}
+      {:error, reason} -> {:error, reason}
     end
-  end
-
-  defp assemble_url(url, params) do
-    url
-    |> URI.parse()
-    |> Map.put(:query, URI.encode_query(params))
-    |> URI.to_string()
-  end
-
-  defp headers(lang) do
-    [
-      {"User-Agent", "TeslaMate"},
-      {"Content-Type", "application/json"},
-      {"Accept-Language", lang},
-      {"Accept", "Application/json; Charset=utf-8"}
-    ]
   end
 
   # Address Formatting
@@ -169,4 +163,7 @@ defmodule TeslaMate.Locations.Geocoder do
   defp get_first(address, [key | aliases]) do
     with nil <- Map.get(address, key), do: get_first(address, aliases)
   end
+
+  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warn
+  defp log_level(%Tesla.Env{}), do: :info
 end

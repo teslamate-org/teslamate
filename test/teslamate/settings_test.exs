@@ -245,6 +245,7 @@ defmodule TeslaMate.SettingsTest do
              ] = Repo.all(from a in Address, order_by: 1)
     end
 
+    @tag :capture_log
     test "returns error tuple" do
       settings = Settings.get_global_settings!()
 
