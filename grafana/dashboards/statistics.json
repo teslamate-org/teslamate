@@ -333,7 +333,26 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Avg consumption"
+                "value": "Avg consumption (drives)"
+              },
+              {
+                "id": "unit",
+                "value": "Wh/mi"
+              },
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/efficiency_charged_net_mi/"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Avg consumption (charges)"
               },
               {
                 "id": "unit",
@@ -367,7 +386,26 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Avg consumption"
+                "value": "Avg consumption (drives)"
+              },
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/efficiency_charged_net_km/"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Avg consumption (charges)"
               },
               {
                 "id": "unit",
@@ -417,6 +455,21 @@
                 "value": 26
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg consumption from charges"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "custom.width"
+              }
+            ]
           }
         ]
       },
@@ -454,7 +507,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\nSELECT\n  duration_min > 1 AND\n  distance > 1 AND\n  ( \n    start_position.usable_battery_level IS NULL OR\n    (end_position.battery_level - end_position.usable_battery_level) = 0 \n  ) AS is_sufficiently_precise,\n  NULLIF(GREATEST(start_ideal_range_km - end_ideal_range_km, 0), 0) AS range_diff,\n  -- with Postgres 12:\n  -- date_trunc('$period', start_date::TIMESTAMP WITHOUT TIME ZONE, '$timezone') as local_period,\n  date_trunc('$period', (start_date::TIMESTAMP WITHOUT TIME ZONE) AT TIME ZONE '$timezone') as local_period,\n  drives.*\nFROM drives\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id)\nSELECT\n  EXTRACT(EPOCH FROM date_trunc('$period', local_period))*1000 AS date_from,\n  EXTRACT(EPOCH FROM date_trunc('$period', local_period + ('1 ' || '$period')::INTERVAL))*1000 AS date_to,\n  CASE '$period'\n    WHEN 'month' THEN to_char(local_period, 'YYYY Month')\n    WHEN 'year' THEN to_char(local_period, 'YYYY')\n    WHEN 'week' THEN 'week ' || to_char(local_period, 'WW') || ' starting ' || to_char(local_period, 'YYYY-MM-DD')\n    ELSE to_char(local_period, 'YYYY-MM-DD')\n  END AS display,\n  local_period AS date,\n  sum(duration_min)*60 AS sum_duration_h, \n  convert_km(sum(distance)::numeric, '$length_unit') AS sum_distance_$length_unit,\n  convert_celsius(avg(outside_temp_avg), '$temp_unit') AS avg_outside_temp_$temp_unit,\n  count(*) AS cnt,\n  sum(distance)/sum(range_diff) AS efficiency\nFROM data WHERE\n  car_id = $car_id AND\n  $__timeFilter(start_date)\nGROUP BY date\nORDER BY date",
+          "rawSql": "WITH data AS (\nSELECT\n  duration_min > 1 AND\n  distance > 1 AND\n  ( \n    start_position.usable_battery_level IS NULL OR\n    (end_position.battery_level - end_position.usable_battery_level) = 0 \n  ) AS is_sufficiently_precise,\n  NULLIF(GREATEST(start_ideal_range_km - end_ideal_range_km, 0), 0) AS range_diff,\n  -- with Postgres 12:\n  -- date_trunc('$period', start_date::TIMESTAMP WITHOUT TIME ZONE, '$timezone') as local_period,\n  date_trunc('$period', (start_date::TIMESTAMP WITHOUT TIME ZONE) AT TIME ZONE '$timezone') as local_period,\n  drives.*\nFROM drives\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id)\nSELECT\n  EXTRACT(EPOCH FROM date_trunc('$period', local_period))*1000 AS date_from,\n  EXTRACT(EPOCH FROM date_trunc('$period', local_period + ('1 ' || '$period')::INTERVAL))*1000 AS date_to,\n  CASE '$period'\n    WHEN 'month' THEN to_char(local_period, 'YYYY Month')\n    WHEN 'year' THEN to_char(local_period, 'YYYY')\n    WHEN 'week' THEN 'week ' || to_char(local_period, 'WW') || ' starting ' || to_char(local_period, 'YYYY-MM-DD')\n    ELSE to_char(local_period, 'YYYY-MM-DD')\n  END AS display,\n  local_period AS date,\n  sum(duration_min)*60 AS sum_duration_h, \n  convert_km(max(end_km)::integer - min(start_km)::integer, '$length_unit') AS sum_distance_$length_unit,\n  convert_celsius(avg(outside_temp_avg), '$temp_unit') AS avg_outside_temp_$temp_unit,\n  count(*) AS cnt,\n  sum(distance)/sum(range_diff) AS efficiency\nFROM data WHERE\n  car_id = $car_id AND\n  $__timeFilter(start_date)\nGROUP BY date\nORDER BY date",
           "refId": "A",
           "select": [
             [
@@ -546,13 +599,81 @@
           }
         },
         {
+          "id": "calculateField",
+          "options": {
+            "alias": "efficiency_charged_net_km_temp",
+            "binary": {
+              "left": "sum_consumption_kwh",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "sum_distance_km"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "efficiency_charged_net_km",
+            "binary": {
+              "left": "efficiency_charged_net_km_temp",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "1000"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "efficiency_charged_net_mi_temp",
+            "binary": {
+              "left": "sum_consumption_kwh",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "sum_distance_mi"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "efficiency_charged_net_mi",
+            "binary": {
+              "left": "efficiency_charged_net_mi_temp",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "1000"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {
               "date": false,
               "date_from": false,
               "date_to": false,
-              "timezone": true
+              "timezone": true,
+              "efficiency_charged_net_km_temp": true,
+              "efficiency_charged_net_mi_temp": true
             },
             "indexByName": {
               "avg_consumption_kwh": 9,
@@ -561,12 +682,14 @@
               "cnt_charges": 11,
               "cost_charges": 10,
               "date": 1,
-              "date_from": 14,
-              "date_to": 15,
+              "date_from": 16,
+              "date_to": 17,
               "display": 0,
               "efficiency": 7,
               "efficiency_net_km": 12,
               "efficiency_net_mi": 13,
+              "efficiency_charged_net_km": 14,
+              "efficiency_charged_net_mi": 15,
               "sum_consumption_kwh": 8,
               "sum_distance_km": 3,
               "sum_distance_mi": 4,
