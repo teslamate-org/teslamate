@@ -333,11 +333,14 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Consumption"
+                "value": "Avg consumption"
               },
               {
                 "id": "unit",
                 "value": "Wh/mi"
+              },
+              {
+                "id": "custom.width"
               }
             ]
           },
@@ -552,19 +555,21 @@
               "timezone": true
             },
             "indexByName": {
-              "avg_consumption_kwh": 8,
-              "avg_outside_temp_c": 4,
-              "cnt": 5,
-              "cnt_charges": 10,
-              "cost_charges": 9,
+              "avg_consumption_kwh": 9,
+              "avg_outside_temp_c": 5,
+              "cnt": 6,
+              "cnt_charges": 11,
+              "cost_charges": 10,
               "date": 1,
-              "date_from": 12,
-              "date_to": 13,
+              "date_from": 14,
+              "date_to": 15,
               "display": 0,
-              "efficiency": 6,
-              "efficiency_net_km": 11,
-              "sum_consumption_kwh": 7,
+              "efficiency": 7,
+              "efficiency_net_km": 12,
+              "efficiency_net_mi": 13,
+              "sum_consumption_kwh": 8,
               "sum_distance_km": 3,
+              "sum_distance_mi": 4,
               "sum_duration_h": 2
             },
             "renameByName": {
