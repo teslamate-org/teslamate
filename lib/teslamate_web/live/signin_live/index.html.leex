@@ -1,7 +1,7 @@
 <div class="mfa columns is-tablet is-centered">
   <div class="column is-half">
     <%= case @state do %>
-      <% {:credentials, changeset} -> %>
+      <% {type, changeset} when type in [:credentials, :tokens]-> %>
         <%= f = form_for changeset, "#", [phx_change: :validate, phx_submit: :sign_in, class: "box"] %>
           <%= if @error do %>
             <div class="notification is-danger">
@@ -9,6 +9,8 @@
             </div>
           <% end %>
 
+          <%= case type do %>
+            <% :credentials -> %>
           <div class="field">
             <%= label f, :email, gettext("Email address"), class: "label" %>
             <div class="control has-icons-left">
@@ -34,6 +36,34 @@
             </div>
           </div>
 
+            <% :tokens -> %>
+          <div class="field">
+            <%= label f, :access, gettext("Access Token"), class: "label" %>
+            <div class="control has-icons-left">
+              <%= text_input f, :access, class: "input is-rounded", autocorrect: "off",
+                                         autocapitalize: "none", spellcheck: "false",
+                                         disabled: !!@task
+              %>
+              <span class="icon is-small is-left">
+                <i class="mdi mdi-api"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="field">
+            <%= label f, :refresh, gettext("Refresh Token"), class: "label" %>
+            <div class="control has-icons-left">
+              <%= text_input f, :refresh, class: "input is-rounded", autocorrect: "off",
+                                          autocapitalize: "none", spellcheck: "false",
+                                          disabled: !!@task
+              %>
+              <span class="icon is-small is-left">
+                <i class="mdi mdi-cloud-refresh"></i>
+              </span>
+            </div>
+          </div>
+          <% end %>
+
           <div class="field mt-20">
             <div class="control">
               <%= submit gettext("Sign in"), class: "button is-rounded is-fullwidth is-link#{if !!@task, do: " is-loading" }",
@@ -42,6 +72,21 @@
               %>
             </div>
           </div>
+
+          <%= if type == :credentials do %>
+           <hr style=""/>
+
+           <div class="field">
+             <div class="control">
+               <button type="button" class="button is-text is-small is-fullwidth"
+                       phx-click="use_api_tokens" <%= if !!@task, do: "disabled" %>>
+                 <span class="icon"><i class="mdi mdi-login"></i></span>&nbsp;<span><%=
+                   gettext "Use existing API tokens (advanced)"
+                 %></span>
+               </button>
+             </div>
+           </div>
+          <% end %>
         </form>
 
       <% {:mfa, {changeset, devices, _ctx}} -> %>

@@ -18,6 +18,10 @@ defmodule TeslaMate.Auth do
 
   alias TeslaMate.Auth.Tokens
 
+  def change_tokens(attrs \\ %{}) do
+    %Tokens{} |> Tokens.changeset(attrs)
+  end
+
   def get_tokens do
     case Repo.all(Tokens) do
       [tokens] ->
