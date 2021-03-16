@@ -24,6 +24,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
     socket =
       case params["use_api_tokens"] do
         "true" -> assign(socket, state: {:tokens, Auth.change_tokens()})
+        "false" -> assign(socket, state: {:credentials, Auth.change_credentials()})
         _ -> socket
       end
 
@@ -84,8 +85,13 @@ defmodule TeslaMateWeb.SignInLive.Index do
   end
 
   def handle_event("use_api_tokens", _params, socket) do
-    {:noreply,
-     push_patch(socket, to: Routes.live_path(socket, __MODULE__, %{use_api_tokens: true}))}
+    path = Routes.live_path(socket, __MODULE__, %{use_api_tokens: true})
+    {:noreply, push_patch(socket, to: path)}
+  end
+
+  def handle_event("use_credentials", _params, socket) do
+    path = Routes.live_path(socket, __MODULE__, %{use_api_tokens: false})
+    {:noreply, push_patch(socket, to: path)}
   end
 
   @impl true

@@ -73,20 +73,26 @@
             </div>
           </div>
 
-          <%= if type == :credentials do %>
+          <% 
+            {click_event, label} = 
+              case type do
+                :credentials -> {"use_api_tokens", gettext("Use existing API tokens (advanced)")}
+                :tokens -> {"use_credentials", gettext("Use email and password")}
+              end
+          %>
+
            <hr style=""/>
 
            <div class="field">
              <div class="control">
                <button type="button" class="button is-text is-small is-fullwidth"
-                       phx-click="use_api_tokens" <%= if !!@task, do: "disabled" %>>
+                       phx-click=<%= click_event %> <%= if !!@task, do: "disabled" %>>
                  <span class="icon"><i class="mdi mdi-login"></i></span>&nbsp;<span><%=
-                   gettext "Use existing API tokens (advanced)"
+                  label
                  %></span>
                </button>
              </div>
            </div>
-          <% end %>
         </form>
 
       <% {:mfa, {changeset, devices, _ctx}} -> %>
