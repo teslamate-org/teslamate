@@ -124,6 +124,7 @@ defmodule TeslaMate.Api do
   def handle_call({:sign_in, args}, _, state) do
     case args do
       [%Credentials{} = c] -> Auth.login(c.email, c.password)
+      [%Tokens{} = t] -> Auth.refresh(%Auth{token: t.access, refresh_token: t.refresh})
       [device_id, passcode, ctx] -> Auth.login(device_id, passcode, ctx)
     end
     |> case do

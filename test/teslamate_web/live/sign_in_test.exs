@@ -89,4 +89,25 @@ defmodule TeslaMateWeb.SignInLiveTest do
     assert_receive {ApiMock, {:sign_in, "111", "123456", %TeslaApi.Auth.MFA.Ctx{}}}
     assert_redirect(view, "/", 1000)
   end
+
+  test "signs in with api tokens", %{conn: conn, test: name} do
+    params = start_api(name)
+
+    assert {:ok, view, _html} =
+             conn
+             |> put_connect_params(params)
+             |> live("/sign_in")
+
+    assert view
+           |> element("form button", "Use existing API tokens (advanced)")
+           |> render_click() =~ "Access Token"
+
+    render_change(view, :validate, %{tokens: %{access: "$access", refresh: "$refresh"}})
+    render_submit(view, :sign_in, %{})
+
+    assert_receive {ApiMock,
+                    {:sign_in, %TeslaMate.Auth.Tokens{access: "$access", refresh: "$refresh"}}}
+
+    assert_redirect(view, "/", 1000)
+  end
 end

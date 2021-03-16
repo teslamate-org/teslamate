@@ -20,6 +20,18 @@ defmodule TeslaMateWeb.SignInLive.Index do
   end
 
   @impl true
+  def handle_params(params, _uri, socket) do
+    socket =
+      case params["use_api_tokens"] do
+        "true" -> assign(socket, state: {:tokens, Auth.change_tokens()})
+        "false" -> assign(socket, state: {:credentials, Auth.change_credentials()})
+        _ -> socket
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("validate", %{"credentials" => c}, %{assigns: %{state: {:credentials, _}}} = s) do
     changeset =
       c
@@ -27,6 +39,15 @@ defmodule TeslaMateWeb.SignInLive.Index do
       |> Map.put(:action, :update)
 
     {:noreply, assign(s, state: {:credentials, changeset}, error: nil)}
+  end
+
+  def handle_event("validate", %{"tokens" => c}, %{assigns: %{state: {:tokens, _}}} = s) do
+    changeset =
+      c
+      |> Auth.change_tokens()
+      |> Map.put(:action, :update)
+
+    {:noreply, assign(s, state: {:tokens, changeset}, error: nil)}
   end
 
   def handle_event("validate", %{"mfa" => mfa}, %{assigns: %{state: {:mfa, data}}} = socket) do
@@ -51,7 +72,8 @@ defmodule TeslaMateWeb.SignInLive.Index do
     {:noreply, assign(socket, state: state, task: task, error: nil)}
   end
 
-  def handle_event("sign_in", _, %{assigns: %{state: {:credentials, changeset}}} = socket) do
+  def handle_event("sign_in", _, %{assigns: %{state: {type, changeset}}} = socket)
+      when type in [:credentials, :tokens] do
     credentials = Ecto.Changeset.apply_changes(changeset)
 
     task =
@@ -60,6 +82,16 @@ defmodule TeslaMateWeb.SignInLive.Index do
       end)
 
     {:noreply, assign(socket, task: task)}
+  end
+
+  def handle_event("use_api_tokens", _params, socket) do
+    path = Routes.live_path(socket, __MODULE__, %{use_api_tokens: true})
+    {:noreply, push_patch(socket, to: path)}
+  end
+
+  def handle_event("use_credentials", _params, socket) do
+    path = Routes.live_path(socket, __MODULE__, %{use_api_tokens: false})
+    {:noreply, push_patch(socket, to: path)}
   end
 
   @impl true
@@ -77,7 +109,13 @@ defmodule TeslaMateWeb.SignInLive.Index do
         {:noreply, assign(socket, state: state, task: nil)}
 
       {:error, %TeslaApi.Error{} = e} ->
-        {:noreply, assign(socket, error: Exception.message(e), task: nil)}
+        message =
+          case e.reason do
+            :token_refresh -> gettext("Tokens are invalid")
+            _ -> Exception.message(e)
+          end
+
+        {:noreply, assign(socket, error: message, task: nil)}
     end
   end
 
