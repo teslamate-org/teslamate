@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.22.0] - 2021-03-17
+
+### Improvements and Bug Fixes
+
+- Add option to sign in with existing API tokens
+- Avoid false `plugged_in` events ([#1423](https://github.com/adriankumpf/teslamate/pull/1423) by [brianmay](https://github.com/brianmay))
+- Handle distinct OSM IDs gracefully when chaning the address language
+- Set another user agent for auth requests.
+  - ⚠️ _This fixes timeouts when signing in for the time being. Most users who are affected reported using a cloud hosting service. Expect this to break anytime Tesla decides to block this type of traffic coming from these providers._
+- Update user agent used for API requests to GitHub and OpenStreetMap
+
+#### Dashboards
+
+- Add battery heater info to Overview / Charging Details and Charge Details dashboards ([#1428](https://github.com/adriankumpf/teslamate/pull/1428) by [ToniA](https://github.com/ToniA))
+- Statistics: Calculate efficiency from charged energy ([#1445](https://github.com/adriankumpf/teslamate/pull/1445) by [ToniA](https://github.com/ToniA))
+- Make Statistics dashboard look the same on both kilometers and miles ([#1439](https://github.com/adriankumpf/teslamate/pull/1439) by [ToniA](https://github.com/ToniA))
+- Updates: Rename column to "Since Previous Update"
+
+#### Translations
+
+- Update Spanish translation ([#1446](https://github.com/adriankumpf/teslamate/pull/1446) by [alceasan](https://github.com/alceasan))
+
+#### Documentation
+
+- Explaing the asleep mode with MCU1 and the non-streaming mode ([#1453](https://github.com/adriankumpf/teslamate/pull/1453) by [ToniA](https://github.com/ToniA))
+
 ## [1.21.6] - 2021-03-10
 
 ### Improvements and Bug Fixes
@@ -1213,6 +1239,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.22.0]: https://github.com/adriankumpf/teslamate/compare/v1.21.6...v1.22.0
 [1.21.6]: https://github.com/adriankumpf/teslamate/compare/v1.21.5...v1.21.6
 [1.21.5]: https://github.com/adriankumpf/teslamate/compare/v1.21.4...v1.21.5
 [1.21.4]: https://github.com/adriankumpf/teslamate/compare/v1.21.3...v1.21.4
