@@ -149,6 +149,30 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive _
   end
 
+  test "publishes geofence only if it has changed", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    geofence = %GeoFence{id: 0, name: "Home", latitude: 0.0, longitude: 0.0, radius: 20}
+    other_geofence = %GeoFence{id: 0, name: "Work", latitude: 0.0, longitude: 0.0, radius: 20}
+
+    # Send geofence 
+    send(pid, %Summary{geofence: geofence, version: "1"})
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/geofence", "Home", _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "1", _}}
+
+    # Send geofence again and expect no message
+    send(pid, %Summary{geofence: geofence, version: "2"})
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/geofence", _, _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "2", _}}
+
+    # Send another geofence
+    send(pid, %Summary{geofence: other_geofence, version: "3"})
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/geofence", "Work", _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "3", _}}
+  end
+
   test "allows namespaces", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0, "account_0")
 

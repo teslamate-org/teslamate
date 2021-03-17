@@ -43,7 +43,6 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     {:noreply, state}
   end
 
-  @blacklist [:car]
   @always_published ~w(charge_energy_added charger_actual_current charger_phases
                        charger_power charger_voltage scheduled_charging_start_time
                        time_to_full_charge shift_state geofence trim_badging)a
@@ -51,15 +50,15 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   def handle_info(%Summary{} = summary, state) do
     summary
     |> Map.from_struct()
+    |> Map.drop([:car])
+    |> Stream.reject(&match?({_key, :unknown}, &1))
+    |> Stream.filter(fn {key, value} ->
+      (key in @always_published or value != nil) and
+        (state.last_summary == nil or Map.get(state.last_summary, key) != value)
+    end)
     |> Stream.map(fn
       {key = :geofence, %GeoFence{name: name}} -> {key, name}
       {key, val} -> {key, val}
-    end)
-    |> Stream.filter(fn {key, value} ->
-      not (key in @blacklist) and
-        value != :unknown and
-        (not is_nil(value) or key in @always_published) and
-        (state.last_summary == nil or value != Map.get(state.last_summary, key))
     end)
     |> Task.async_stream(&publish(&1, state),
       max_concurrency: 10,
