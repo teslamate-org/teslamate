@@ -31,8 +31,10 @@ defmodule TeslaApi.Auth do
     user_agent =
       case System.get_env("AUTH_USER_AGENT") do
         nil ->
-          %DateTime{minute: minute} = DateTime.utc_now()
-          "curl/#{:erlang.phash2(minute, 10)}.#{:erlang.phash2(minute, 100)}.0"
+          dt = %DateTime{} = DateTime.utc_now()
+          term = {self(), dt.day, dt.hour, dt.minute}
+
+          "curl/#{:erlang.phash2(term, 6) + 2}.#{:erlang.phash2(term, 100)}.0"
 
         ua ->
           ua
