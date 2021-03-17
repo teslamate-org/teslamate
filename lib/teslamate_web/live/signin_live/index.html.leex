@@ -75,7 +75,10 @@
 
           <%= if type == :tokens do %>
             <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
-              <%= raw(gettext "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}.", here: safe_to_string(link(gettext("here"), to: "https://tesla-api.timdorr.com/api-basics/authentication"))) %>
+            <% here_link = link gettext("here"), to: "https://tesla-api.timdorr.com/api-basics/authentication",
+                                                 target: "_blank", rel: "noopener noreferrer"%>
+
+              <%= raw(gettext "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}.", here: safe_to_string(here_link)) %>
             </p>
           <% end %>
 
