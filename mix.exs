@@ -57,7 +57,7 @@ defmodule TeslaMate.MixProject do
       {:ex_cldr, "~> 2.0"},
       {:nimble_csv, "~> 1.1"},
       {:timex, "~> 3.0"},
-      {:websockex, "~> 0.4"},
+      {:websockex, "~> 0.4", github: "Azolo/websockex"},
       {:tzdata, "~> 1.1", override: true},
       {:finch, "~> 0.3"},
       {:tesla, "~> 1.3"}

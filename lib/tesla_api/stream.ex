@@ -33,8 +33,8 @@ defmodule TeslaApi.Stream do
     }
 
     WebSockex.start_link(@endpoint_url, __MODULE__, state,
-      socket_connect_timeout: :timer.seconds(6),
-      socket_recv_timeout: :timer.seconds(15),
+      socket_connect_timeout: :timer.seconds(15),
+      socket_recv_timeout: :timer.seconds(30),
       name: :"stream_#{state.vehicle_id}",
       cacerts: @cacerts,
       insecure: false,
