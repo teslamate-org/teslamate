@@ -874,7 +874,7 @@
           "selected": false
         },
         "datasource": "TeslaMate",
-        "definition": "select current_setting('TIMEZONE'), replace(name, 'posix/', '') from pg_timezone_names where name like 'posix/%';",
+        "definition": "select current_setting('TIMEZONE'), name from pg_timezone_names where abbrev ~ '^[a-zA-Z]{3,4}$' and name not like 'posix%' order by 2;",
         "hide": 0,
         "includeAll": false,
         "label": "Time zone",
