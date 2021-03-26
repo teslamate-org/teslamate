@@ -22,141 +22,105 @@ jobs:
   teslamate:
     runs-on: ubuntu-latest
     steps:
-      - name: Prepare
-        id: prepare
-        run: |
-          DOCKER_USERNAME=teslamate
-          DOCKER_IMAGE=teslamate/teslamate
-          DOCKER_PLATFORMS=linux/amd64,linux/arm/v7,linux/arm64
-          VERSION=edge
-
-          if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-            MINOR_VERSION=${VERSION%.*}
-          fi
-
-          TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
-          if [ "$VERSION" != "edge" ]; then
-            TAGS="$TAGS --tag ${DOCKER_IMAGE}:${MINOR_VERSION} --tag ${DOCKER_IMAGE}:latest"
-          fi
-
-          echo ::set-output name=docker_username::${DOCKER_USERNAME}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
-          echo ::set-output name=version::${VERSION}
-          echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
-            ${TAGS} --file Dockerfile .
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: all
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-        with:
-          version: latest
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: teslamate/teslamate
+          tag-edge: true
+          tag-semver: |
+            {{version}}
+            {{major}}.{{minor}}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
       - name: Cache Docker layers
-        uses: actions/cache@v2.1.4
-        id: cache
+        uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-teslamate-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-teslamate-
-      - name: Docker Buildx (build)
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: teslamate
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      - name: Update repo description
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: teslamate
+          password: ${{ secrets.DOCKER_PASSWORD  }}
+          repository: teslamate/teslamate
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
         run: |
-          docker buildx build \
-            --cache-from "type=local,src=/tmp/.buildx-cache" \
-            --cache-to "type=local,dest=/tmp/.buildx-cache,mode=max" \
-            --output "type=image,push=false" \
-            ${{ steps.prepare.outputs.buildx_args }}
-      - name: Docker Login
-        if: success() && github.event_name != 'pull_request' && (endsWith(github.ref, github.event.repository.default_branch) || startsWith(github.ref, 'refs/tags/'))
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          echo "${DOCKER_PASSWORD}" | docker login --username "${{ steps.prepare.outputs.docker_username }}" --password-stdin
-      - name: Docker Buildx (push)
-        if: success() && github.event_name != 'pull_request' && (endsWith(github.ref, github.event.repository.default_branch) || startsWith(github.ref, 'refs/tags/'))
-        run: |
-          docker buildx build \
-            --cache-from "type=local,src=/tmp/.buildx-cache" \
-            --output "type=image,push=true" \
-            ${{ steps.prepare.outputs.buildx_args }}
-      - name: Clear
-        if: always()
-        run: |
-          rm -f ${HOME}/.docker/config.json
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
   grafana:
     runs-on: ubuntu-latest
     steps:
-      - name: Prepare
-        id: prepare
-        run: |
-          DOCKER_USERNAME=teslamate
-          DOCKER_IMAGE=teslamate/grafana
-          DOCKER_PLATFORMS=linux/amd64,linux/arm/v7,linux/arm64
-          VERSION=edge
-
-          if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-            MINOR_VERSION=${VERSION%.*}
-          fi
-
-          TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
-          if [ "$VERSION" != "edge" ]; then
-            TAGS="$TAGS --tag ${DOCKER_IMAGE}:${MINOR_VERSION} --tag ${DOCKER_IMAGE}:latest"
-          fi
-
-          echo ::set-output name=docker_username::${DOCKER_USERNAME}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
-          echo ::set-output name=version::${VERSION}
-          echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
-            ${TAGS} --file Dockerfile .
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: all
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-        with:
-          version: latest
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: teslamate/grafana
+          tag-edge: true
+          tag-semver: |
+            {{version}}
+            {{major}}.{{minor}}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
       - name: Cache Docker layers
-        uses: actions/cache@v2.1.4
-        id: cache
+        uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-grafana-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-grafana-
-      - name: Docker Buildx (build)
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: teslamate
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: grafana
+          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      - name: Update repo description
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: teslamate
+          password: ${{ secrets.DOCKER_PASSWORD  }}
+          repository: teslamate/grafana
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
         run: |
-          cd grafana && \
-          docker buildx build \
-            --cache-from "type=local,src=/tmp/.buildx-cache" \
-            --cache-to "type=local,dest=/tmp/.buildx-cache,mode=max" \
-            --output "type=image,push=false" \
-            ${{ steps.prepare.outputs.buildx_args }}
-      - name: Docker Login
-        if: success() && github.event_name != 'pull_request' && (endsWith(github.ref, github.event.repository.default_branch) || startsWith(github.ref, 'refs/tags/'))
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          echo "${DOCKER_PASSWORD}" | docker login --username "${{ steps.prepare.outputs.docker_username }}" --password-stdin
-      - name: Docker Buildx (push)
-        if: success() && github.event_name != 'pull_request' && (endsWith(github.ref, github.event.repository.default_branch) || startsWith(github.ref, 'refs/tags/'))
-        run: |
-          cd grafana && \
-          docker buildx build \
-            --cache-from "type=local,src=/tmp/.buildx-cache" \
-            --output "type=image,push=true" \
-            ${{ steps.prepare.outputs.buildx_args }}
-      - name: Clear
-        if: always()
-        run: |
-          rm -f ${HOME}/.docker/config.json
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
