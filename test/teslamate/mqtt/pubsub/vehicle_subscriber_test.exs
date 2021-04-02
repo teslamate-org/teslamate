@@ -40,6 +40,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       since: DateTime.utc_now(),
       latitude: 37.889602,
       longitude: 41.129182,
+      power: -9,
       speed: 40,
       heading: 340,
       outside_temp: 15,

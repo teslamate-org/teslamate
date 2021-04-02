@@ -224,6 +224,12 @@ tesla_location:
    state_topic: "teslamate/cars/1/shift_state"
    icon: mdi:car-shift-pattern
 
+- platform: mqtt
+   name: tesla_power
+   state_topic: "teslamate/cars/1/power"
+   unit_of_measurement: W
+   icon: mdi:electricity
+
  - platform: mqtt
    name: tesla_speed
    state_topic: "teslamate/cars/1/speed"
