@@ -29,10 +29,10 @@ jobs:
         uses: crazy-max/ghaction-docker-meta@v2.3.0
         with:
           images: teslamate/teslamate
-          tag-edge: true
-          tag-semver: |
-            {{version}}
-            {{major}}.{{minor}}
+          tags: |
+            type=edge,
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -76,10 +76,10 @@ jobs:
         uses: crazy-max/ghaction-docker-meta@v2.3.0
         with:
           images: teslamate/grafana
-          tag-edge: true
-          tag-semver: |
-            {{version}}
-            {{major}}.{{minor}}
+          tags: |
+            type=edge,
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
