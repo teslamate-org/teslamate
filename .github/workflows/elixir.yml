@@ -46,6 +46,8 @@ jobs:
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
+      - name: Remove locales
+        run: rm -rf priv/cldr/locales/*
       - name: Install Dependencies
         run: mix do deps.get, compile
       - name: Check Formatting
