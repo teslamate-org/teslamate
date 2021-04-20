@@ -881,7 +881,7 @@
         "multi": false,
         "name": "timezone",
         "options": [],
-        "query": "select current_setting('TIMEZONE'), replace(name, 'posix/', '') from pg_timezone_names where name like 'posix/%';",
+        "query": "select current_setting('TIMEZONE'), name from pg_timezone_names where abbrev ~ '^[a-zA-Z]{3,4}$' and name not like 'posix%' order by 2;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
