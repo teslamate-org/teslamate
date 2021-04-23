@@ -15,7 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1594301176676,
+  "id": 9,
+  "iteration": 1617727063189,
   "links": [
     {
       "icon": "dashboard",
@@ -86,7 +87,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.2.1",
+      "pluginVersion": "7.3.7",
       "targets": [
         {
           "format": "table",
@@ -172,7 +173,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.2.1",
+      "pluginVersion": "7.3.7",
       "targets": [
         {
           "format": "table",
@@ -258,7 +259,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.2.1",
+      "pluginVersion": "7.3.7",
       "targets": [
         {
           "format": "table",
@@ -344,7 +345,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.2.1",
+      "pluginVersion": "7.3.7",
       "targets": [
         {
           "format": "table",
@@ -427,7 +428,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.2.1",
+      "pluginVersion": "7.3.7",
       "targets": [
         {
           "format": "table",
@@ -508,7 +509,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.2.1",
+      "pluginVersion": "7.3.7",
       "targets": [
         {
           "format": "table",
@@ -577,19 +578,44 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Date"
+              "options": "date_american"
             },
             "properties": [
               {
                 "id": "unit",
-                "value": "dateTimeAsLocal"
+                "value": "dateTimeAsUS"
               },
               {
                 "id": "custom.width",
-                "value": 160
+                "value": 170
+              },
+              {
+                "id": "displayName",
+                "value": "Date"
               }
             ]
           },
+           {
+            "matcher": {
+              "id": "byName",
+              "options": "date_european"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.width",
+                "value": 159
+              },
+              {
+                "id": "displayName",
+                "value": "Date"
+              }
+            ]
+          },         
+          
           {
             "matcher": {
               "id": "byName",
@@ -600,6 +626,12 @@
                 "id": "custom.width"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName"
+            },
+            "properties": []
           }
         ]
       },
@@ -614,14 +646,14 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.2.1",
+      "pluginVersion": "7.3.7",
       "targets": [
         {
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  max(end_date) as \"Date\",\n  count(*) as visited,\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"Address\",\n\tCOALESCE(city, neighbourhood) as \"City\"\nFROM drives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%'\nGROUP BY 3,4\nORDER BY visited DESC\nLIMIT 100",
+          "rawSql": "SELECT\n  max(end_date) as date_[[date_format]],\n  count(*) as visited,\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"Address\",\n\tCOALESCE(city, neighbourhood) as \"City\"\nFROM drives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%'\nGROUP BY 3,4\nORDER BY visited DESC\nLIMIT 100",
           "refId": "A",
           "select": [
             [
@@ -994,6 +1026,7 @@
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "Car",
@@ -1015,11 +1048,12 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "http://localhost:4000",
-          "value": "http://localhost:4000"
+          "text": "http://jupiter.dalestech.net:4000",
+          "value": "http://jupiter.dalestech.net:4000"
         },
         "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "",
@@ -1043,6 +1077,7 @@
           "text": "",
           "value": ""
         },
+        "error": null,
         "hide": 0,
         "label": "Address",
         "name": "address_filter",
@@ -1056,6 +1091,33 @@
         "query": "",
         "skipUrlSync": false,
         "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "American",
+          "value": "American"
+        },
+        "datasource": "TeslaMate",
+        "definition": "SELECT date_format from settings limit 1;",
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "date_format",
+        "options": [],
+        "query": "SELECT date_format from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },

@@ -491,7 +491,7 @@
           }
         ]
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.3.7",
       "repeat": null,
       "repeatDirection": "h",
       "scopedVars": {
@@ -881,7 +881,7 @@
         "multi": false,
         "name": "timezone",
         "options": [],
-        "query": "select current_setting('TIMEZONE'), replace(name, 'posix/', '') from pg_timezone_names where name like 'posix/%';",
+		"query": "select current_setting('TIMEZONE'), name from pg_timezone_names where abbrev ~ '^[a-zA-Z]{3,4}$' and name not like 'posix%' order by 2;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -908,6 +908,33 @@
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "American",
+          "value": "American"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select date_format from settings limit 1;",
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "length unit",
+        "multi": false,
+        "name": "date_format",
+        "options": [],
+        "query": "select date_format from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

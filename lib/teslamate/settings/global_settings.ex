@@ -6,6 +6,8 @@ defmodule TeslaMate.Settings.GlobalSettings do
     field :unit_of_length, Ecto.Enum, values: [:km, :mi]
     field :unit_of_temperature, Ecto.Enum, values: [:C, :F]
 
+  field :date_format, Ecto.Enum, values: [:European, :American]
+
     field :preferred_range, Ecto.Enum, values: [:ideal, :rated]
 
     field :base_url, :string
@@ -86,6 +88,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
     |> cast(attrs, [
       :unit_of_length,
       :unit_of_temperature,
+	  :date_format,
       :preferred_range,
       :base_url,
       :grafana_url,
@@ -94,6 +97,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
     |> validate_required([
       :unit_of_length,
       :unit_of_temperature,
+	  :date_format,	  
       :preferred_range,
       :language
     ])
