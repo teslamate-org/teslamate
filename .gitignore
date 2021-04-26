@@ -54,10 +54,3 @@ config/*.env
 .eclipse/
 .elixir_ls/
 /.project
-assets/package-lock.json
-start.bat
-assets/package-lock.json
-assets/package-lock.json
-assets/package-lock.json
-grafana/dashboards/updates.json.bak
-grafana/Dockerfile

@@ -79,8 +79,8 @@
       "pageSize": null,
       "scopedVars": {
         "car_id": {
-          "selected": false,
-          "text": "Terry",
+          "selected": true,
+          "text": "1",
           "value": "1"
         }
       },
@@ -568,8 +568,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "http://jupiter.dalestech.net:4000",
-          "value": "http://jupiter.dalestech.net:4000"
+          "text": "http://localhost:4000",
+          "value": "http://localhost:4000"
         },
         "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
