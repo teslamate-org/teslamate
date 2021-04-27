@@ -50,8 +50,8 @@
       "repeat": "car_id",
       "scopedVars": {
         "car_id": {
-          "selected": false,
-          "text": "Terry",
+          "selected": true,
+          "text": "1",
           "value": "1"
         }
       },
