@@ -12,7 +12,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open doors_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available update_version is_user_present geofence
-    model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation
+    model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -75,6 +75,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       # Drive State
       latitude: get_in_struct(vehicle, [:drive_state, :latitude]),
       longitude: get_in_struct(vehicle, [:drive_state, :longitude]),
+      power: get_in_struct(vehicle, [:drive_state, :power]),
       speed: speed(vehicle),
       shift_state: get_in_struct(vehicle, [:drive_state, :shift_state]),
       heading: get_in_struct(vehicle, [:drive_state, :heading]),

@@ -124,7 +124,7 @@ defmodule TeslaApi.Auth do
       response_type: "code",
       scope: "openid email offline_access",
       code_challenge: challenge(code_verifier),
-      code_challenge_method: "S265",
+      code_challenge_method: "S256",
       state: state,
       login_hint: email
     ]
