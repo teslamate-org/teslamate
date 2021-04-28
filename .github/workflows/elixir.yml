@@ -12,7 +12,7 @@ jobs:
           - elixir: "1.11.1"
             otp: "23.x"
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     services:
       db:
