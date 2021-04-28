@@ -16,7 +16,7 @@ jobs:
 
     services:
       db:
-        image: postgres:13
+        image: postgres:13-alpine
         ports: ["5432:5432"]
         env:
           POSTGRES_PASSWORD: postgres
