@@ -9,10 +9,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.11.1"
+          - elixir: "1.11.4"
             otp: "23.x"
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     services:
       db:
@@ -42,7 +42,7 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-mix-
-      - uses: actions/setup-elixir@v1
+      - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
