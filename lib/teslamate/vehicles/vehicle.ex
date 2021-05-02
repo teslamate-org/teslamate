@@ -1421,6 +1421,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             latitude: stream_data.est_lat,
             longitude: stream_data.est_lng,
             speed: stream_data.speed,
+            power: stream_data.power,
             heading: stream_data.est_heading,
             shift_state: stream_data.shift_state
         },
