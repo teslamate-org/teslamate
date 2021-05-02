@@ -93,26 +93,40 @@ defmodule TeslaMate.Locations.Geocoder do
     "city_district",
     "district",
     "quarter",
+    "borough",
+    "city_block",
     "residential",
     "commercial",
     "houses",
-    "subdivision"
+    "subdistrict",
+    "subdivision",
+    "ward"
   ]
 
-  @city_aliases [
-    "city",
-    "town",
+  @municipality_aliases [
     "municipality",
+    "local_administrative_area",
+    "subcounty"
+  ]
+
+  @village_aliases [
     "village",
+    "municipality",
     "hamlet",
     "locality",
     "croft"
   ]
 
+  @city_aliases [
+                  "city",
+                  "town",
+                  "township"
+                ] ++ @village_aliases ++ @municipality_aliases
+
   @county_aliases [
     "county",
-    "local_administrative_area",
-    "county_code"
+    "county_code",
+    "department"
   ]
 
   defp into_address(%{"error" => "Unable to geocode"} = raw) do
