@@ -20,7 +20,7 @@ sidebar_label: Upgrading PostgreSQL
 
    ```yml {2}
    database:
-     image: postgres:xx-alpine
+     image: postgres:xx
    ```
 
    ```bash
