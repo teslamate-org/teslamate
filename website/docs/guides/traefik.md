@@ -99,8 +99,9 @@ services:
       - "traefik.http.routers.grafana.tls.certresolver=tmhttpchallenge"
 
   mosquitto:
-    image: eclipse-mosquitto:1.6
+    image: eclipse-mosquitto:2
     restart: always
+    command: mosquitto -c /mosquitto-no-auth.conf
     ports:
       - 127.0.0.1:1883:1883
     volumes:
