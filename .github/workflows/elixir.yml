@@ -11,6 +11,9 @@ jobs:
         include:
           - elixir: "1.11.4"
             otp: "23.x"
+            report_coverage: true
+          - elixir: "1.12.0-rc.1"
+            otp: "24.0-rc3"
 
     runs-on: ubuntu-20.04
 
@@ -55,6 +58,6 @@ jobs:
       - name: Run Tests
         run: mix test
       - name: Check Coverage
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master' && matrix.report_coverage
         run: mix coveralls.github
         continue-on-error: true

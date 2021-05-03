@@ -93,11 +93,10 @@ defmodule TeslaMate.Import.LineParser do
               nil
 
             {:error, reason} ->
-              Logger.warning(
-                "Could not convert date #{inspect(datetime)} w/ time zone #{inspect(tz)}: #{
-                  inspect(reason)
-                }"
-              )
+              Logger.warning("""
+              Could not convert date #{inspect(datetime)} w/ time zone #{inspect(tz)}: 
+              #{inspect(reason)}
+              """)
 
               nil
           end
