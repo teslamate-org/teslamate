@@ -60,7 +60,9 @@ defmodule TeslaMate.MixProject do
       {:websockex, "~> 0.4"},
       {:tzdata, "~> 1.1"},
       {:finch, "~> 0.3"},
-      {:tesla, "~> 1.3"}
+      {:tesla, "~> 1.4"},
+      # TODO: Remove this once v1.2.2 is out
+      {:mint, "~> 1.2", github: "elixir-mint/mint", override: true}
     ]
   end
 
