@@ -84,7 +84,8 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive {:insert_position, drive, position}
 
       assert_receive {:pubsub,
-                      {:broadcast, _, _, %Summary{state: :driving, speed: 16, elevation: 1}}}
+                      {:broadcast, _, _,
+                       %Summary{state: :driving, speed: 16, power: 5, elevation: 1}}}
 
       assert position == %{
                latitude: 42.1,
@@ -109,7 +110,8 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive {:insert_position, ^drive,
                       %{speed: 24, power: 10, latitude: 42.31, elevation: 2}}
 
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, speed: 24}}}
+      assert_receive {:pubsub,
+                      {:broadcast, _, _, %Summary{state: :driving, speed: 24, power: 10}}}
 
       stream(name, %{
         shift_state: "N",
@@ -123,7 +125,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive {:insert_position, ^drive,
                       %{speed: 32, power: 2, latitude: 42.32, elevation: 3}}
 
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, speed: 32}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, speed: 32, power: 2}}}
 
       stream(name, %{
         shift_state: "R",
@@ -137,7 +139,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive {:insert_position, ^drive,
                       %{speed: 5, power: 1, latitude: 42.33, elevation: 4}}
 
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, speed: 5}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, speed: 5, power: 1}}}
 
       send(:"api_#{name}", :continue)
       stream(name, %{shift_state: "P", speed: nil, power: nil, elevation: 5, time: now})
@@ -242,7 +244,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                  native_location_supported: nil,
                  native_longitude: nil,
                  native_type: nil,
-                 power: nil,
+                 power: 0,
                  shift_state: \"D\",
                  speed: 0,
                  timestamp: #{DateTime.to_unix(d1, :millisecond)}
