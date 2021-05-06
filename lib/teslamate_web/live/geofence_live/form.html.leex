@@ -61,7 +61,7 @@
     <div class="field-body">
       
         <div class="control">
-          <%= checkbox f, :active, class: "input", placeholder: gettext("Active") %>
+          <%= checkbox f, :active,  placeholder: gettext("Active") %>
         </div>
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :active) %></p>
@@ -77,7 +77,7 @@
     <div class="field-body">
       <div class="field is-expanded">
         <div class="control">
-          <%= text_input f, :supercharger, class: "input", placeholder: gettext("Supercharger") %>
+          <%= checkbox f, :supercharger, placeholder: gettext("Supercharger") %>
         </div>
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :supercharger) %></p>
@@ -88,12 +88,12 @@
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <%= label class: "label" do gettext("Provider") end %>
+      <%= label class: "label" do gettext("Charging Provider") end %>
     </div>
     <div class="field-body">
       <div class="field is-expanded">
         <div class="control">
-          <%= text_input f, :provider, class: "input", placeholder: gettext("Provider") %>
+          <%= text_input f, :provider, class: "input", maxlength: "60", placeholder: gettext("Provider") %>
         </div>
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :provider) %></p>
@@ -108,7 +108,7 @@
     </div>
     <div class="field-body">
         <div class="control">
-          <%= text_input f, :country_code, class: "input", placeholder: gettext("Country Code") %>
+          <%= text_input f, :country_code, class: "input", size: 5, minlength: "2", maxlength: "2", placeholder: gettext("Country Code") %>
         </div>
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :country_code) %></p>
@@ -167,7 +167,7 @@
     </div>
     <div class="field-body">
         <div class="control">
-          <%= text_input f, :currency_code, class: "input", placeholder: gettext("Currency Code") %>
+          <%= text_input f, :currency_code, class: "input", minlength: "3", maxlength: "3", size: 5, placeholder: gettext("Currency Code") %>
         </div>
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :currency_code) %></p>

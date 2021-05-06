@@ -2,6 +2,7 @@ defmodule TeslaMate.Locations.GeoFence do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import TeslaMateWeb.Gettext
 
   schema "geofences" do
     field :name, :string
@@ -39,19 +40,14 @@ defmodule TeslaMate.Locations.GeoFence do
       :provider,
       :active
     ])
-  #  |> capitalized(attrs, :currency_code)
     |> validate_required([:name, :latitude, :longitude, :radius, :country_code, :currency_code])
     |> validate_number(:radius, greater_than: 0, less_than: 5000)
     |> validate_number(:session_fee, greater_than_or_equal_to: 0)
-
- 
-
+    |> validate_length(:country_code, is: 2)
+    |> validate_length(:currency_code, is: 3)
+    |> validate_format(:country_code, ~r/^[[:upper:]]+/, message: gettext("should be uppercase"))
+    |> validate_format(:currency_code, ~r/^[[:upper:]]+/, message: gettext("should be uppercase"))
+    |> foreign_key_constraint(:country_code, message: gettext("country code does not exist"))
+    |> foreign_key_constraint(:currency_code, message: gettext("currency code does not exist"))
   end
-
-   defp capitalized(changeset, attrs, field) do
-    if not is_nil(attrs) do
-      Map.update!(attrs, field, &String.capitalize/1)
-    end
-  end 
-
 end
