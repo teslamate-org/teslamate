@@ -60,7 +60,7 @@ defmodule TeslaMate.MixProject do
       {:websockex, "~> 0.4"},
       {:tzdata, "~> 1.1"},
       {:finch, "~> 0.3"},
-      {:tesla, "~> 1.3"}
+      {:tesla, "~> 1.4"}
     ]
   end
 

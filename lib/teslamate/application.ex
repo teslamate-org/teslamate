@@ -4,6 +4,7 @@ defmodule TeslaMate.Application do
   require Logger
 
   def start(_type, _args) do
+    Logger.info("System Info: #{system_info()}")
     Logger.info("Version: #{Application.spec(:teslamate, :vsn) || "???"}")
 
     # Disable log entries
@@ -45,6 +46,25 @@ defmodule TeslaMate.Application do
           {TeslaMate.Import, directory: import_directory}
         ]
     end
+  end
+
+  defp system_info do
+    case otp_release() do
+      vsn when vsn <= 23 -> "Erlang/OTP #{vsn}"
+      vsn -> "Erlang/OTP #{vsn} (#{emu_flavor()})"
+    end
+  end
+
+  defp otp_release do
+    :erlang.system_info(:otp_release) |> to_string() |> String.to_integer()
+  rescue
+    _ -> nil
+  end
+
+  defp emu_flavor do
+    :erlang.system_info(:emu_flavor)
+  rescue
+    ArgumentError -> nil
   end
 
   # Tell Phoenix to update the endpoint configuration

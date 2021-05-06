@@ -36,7 +36,7 @@ defmodule TeslaApi.Middleware.FollowRedirects do
 
   defp redirect(env, next, _except, left) when left == 0 do
     case Tesla.run(env, next) do
-      {:ok, %{status: status} = env} when not (status in @redirect_statuses) ->
+      {:ok, %{status: status} = env} when status not in @redirect_statuses ->
         {:ok, env}
 
       {:ok, _env} ->

@@ -61,8 +61,9 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
          - teslamate-grafana-data:/var/lib/grafana
 
      mosquitto:
-       image: eclipse-mosquitto:1.6
+       image: eclipse-mosquitto:2
        restart: always
+       command: mosquitto -c /mosquitto-no-auth.conf
        ports:
          - 1883:1883
        volumes:

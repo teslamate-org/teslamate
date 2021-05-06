@@ -273,12 +273,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
           {%Vehicle{drive_state: %Drive{timestamp: now}},
            %Data{last_response: %Vehicle{drive_state: %Drive{timestamp: last}}}}
           when is_number(now) and is_number(last) and now < last ->
+            drive_states = %{now: vehicle.drive_state, last: data.last_response.drive_state}
+
             Logger.warning(
-              "Discarded outdated fetch result: #{
-                inspect(%{now: vehicle.drive_state, last: data.last_response.drive_state},
-                  pretty: true
-                )
-              }",
+              "Discarded outdated fetch result: #{inspect(drive_states, pretty: true)}",
               car_id: data.car.id
             )
 
@@ -1038,9 +1036,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %VehicleState{timestamp: ts, car_version: vsn, software_update: %SW{} = software_update} ->
         if software_update.status != "" do
           Logger.error(
-            "Unexpected update status: #{software_update.status}\n\n#{
-              inspect(software_update, pretty: true)
-            }",
+            """
+            Unexpected update status: #{software_update.status}
+
+            #{inspect(software_update, pretty: true)}
+            """,
             car_id: data.car.id
           )
         end
@@ -1421,6 +1421,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             latitude: stream_data.est_lat,
             longitude: stream_data.est_lng,
             speed: stream_data.speed,
+            power: stream_data.power,
             heading: stream_data.est_heading,
             shift_state: stream_data.shift_state
         },
