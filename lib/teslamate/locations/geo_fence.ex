@@ -13,7 +13,7 @@ defmodule TeslaMate.Locations.GeoFence do
     field :billing_type, Ecto.Enum, values: [:per_kwh, :per_minute], read_after_writes: true
     field :cost_per_unit, :decimal, read_after_writes: true
     field :session_fee, :decimal, read_after_writes: true
-    field :active, :boolean, read_after_writes: true
+    field :active, :boolean, read_after_writes: true, default: true
     field :supercharger, :boolean, read_after_writes: true
     field :provider, :string, read_after_writes: true
     field :country_code, :string, read_after_writes: true
