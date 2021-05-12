@@ -4,16 +4,18 @@ on: [pull_request, push]
 
 jobs:
   mix_test:
-    name: mix test (Elixir ${{ matrix.elixir }} OTP ${{ matrix.otp }})
-
     strategy:
+      fail-fast: false
       matrix:
         include:
-          - elixir: "1.11.4"
-            otp: "23.x"
+          - pair:
+              elixir: "1.11.4"
+              otp: "23.x"
             report_coverage: true
-          - elixir: "1.12.0-rc.1"
-            otp: "24.0-rc3"
+            lint: true
+          - pair:
+              elixir: "1.12.0-rc.1"
+              otp: "24.0-rc3"
 
     runs-on: ubuntu-20.04
 
@@ -36,25 +38,32 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.3.4
+      - uses: erlef/setup-beam@v1.7
+        with:
+          otp-version: ${{ matrix.pair.otp }}
+          elixir-version: ${{ matrix.pair.elixir }}
       - uses: actions/cache@v2.1.5
         with:
           path: |
             deps
             _build
             priv/cldr/locales
-          key: ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: ${{ runner.os }}-${{ matrix.pair.elixir }}-${{ matrix.pair.otp }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-mix-
-      - uses: erlef/setup-beam@v1.7
-        with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
+            ${{ runner.os }}-${{ matrix.pair.elixir }}-${{ matrix.pair.otp }}-mix-
       - name: Install Dependencies
-        run: mix do deps.get, compile
+        run: mix deps.get
       - name: Check Formatting
         run: mix format --check-formatted
+        if: ${{ matrix.lint }}
       - name: Check unused dependencies
         run: mix deps.unlock --check-unused
+        if: ${{ matrix.lint }}
+      - name: Compile dependencies
+        run: mix deps.compile
+      - name: Check for compilation warnings
+        run: mix compile --warnings-as-errors
+        if: ${{ matrix.lint }}
       - name: Run Tests
         run: mix test
       - name: Check Coverage
