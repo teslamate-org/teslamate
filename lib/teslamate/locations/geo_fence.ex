@@ -19,7 +19,6 @@ defmodule TeslaMate.Locations.GeoFence do
     field :country_code, :string, read_after_writes: true
     field :currency_code, :string, read_after_writes: true
 
-
     timestamps()
   end
 
