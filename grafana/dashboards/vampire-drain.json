@@ -108,7 +108,7 @@
           "linkTooltip": "",
           "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}",
           "mappingType": 1,
-          "pattern": "start_date_european",
+          "pattern": "start_date_iso",
           "thresholds": [],
           "type": "date",
           "unit": "short"
@@ -126,7 +126,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "end_date_european",
+          "pattern": "end_date_iso",
           "thresholds": [],
           "type": "date",
           "unit": "short"
@@ -296,7 +296,7 @@
           "linkTargetBlank": false,
           "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}",
           "mappingType": 1,
-          "pattern": "start_date_american",
+          "pattern": "start_date_us",
           "thresholds": [],
           "type": "date",
           "unit": "short"
@@ -314,7 +314,7 @@
           "dateFormat": "MM/DD/YY h:mm:ss a",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "end_date_american",
+          "pattern": "end_date_us",
           "thresholds": [],
           "type": "date",
           "unit": "short"
@@ -595,8 +595,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "American",
-          "value": "American"
+          "text": "us",
+          "value": "us"
         },
         "datasource": "TeslaMate",
         "definition": "select date_format from settings limit 1;",
