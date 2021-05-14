@@ -250,7 +250,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "date_american"
+              "options": "date_us"
             },
             "properties": [
               {
@@ -361,7 +361,7 @@
            {
             "matcher": {
               "id": "byName",
-              "options": "date_european"
+              "options": "date_iso"
             },
             "properties": [
               {
@@ -700,8 +700,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "American",
-          "value": "American"
+          "text": "us",
+          "value": "us"
         },
         "datasource": "TeslaMate",
         "definition": "select date_format from settings limit 1;",

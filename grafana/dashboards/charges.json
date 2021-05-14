@@ -100,7 +100,7 @@
           "linkTargetBlank": false,
           "linkTooltip": "View charge details",
           "linkUrl": "d/BHhxFeZRz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
-          "pattern": "start_date_european",
+          "pattern": "start_date_iso",
           "type": "date"
         },
         {
@@ -119,7 +119,7 @@
           "linkTooltip": "View charge details",
           "linkUrl": "d/BHhxFeZRz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
           "mappingType": 1,
-          "pattern": "start_date_american",
+          "pattern": "start_date_us",
           "thresholds": [],
           "type": "date",
           "unit": "short"
@@ -1128,8 +1128,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "European",
-          "value": "European"
+          "text": "ISO",
+          "value": "ISO"
         },
         "datasource": "TeslaMate",
         "definition": "select date_format from settings limit 1;",
