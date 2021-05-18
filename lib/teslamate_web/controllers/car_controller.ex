@@ -15,7 +15,10 @@ defmodule TeslaMateWeb.CarController do
 
   def index(conn, _) do
     live_render(conn, TeslaMateWeb.CarLive.Index,
-      session: %{"settings" => conn.assigns[:settings], "locale" => get_session(conn, :locale)}
+      session: %{
+        "settings" => conn.assigns[:settings],
+        "cldr_locale" => get_session(conn, :cldr_locale)
+      }
     )
   end
 

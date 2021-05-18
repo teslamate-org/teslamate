@@ -10,7 +10,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
   @impl true
   def mount(_params, %{"summary" => %Summary{car: car} = summary} = session, socket) do
     if connected?(socket) do
-      Gettext.put_locale(session["locale"])
+      Gettext.put_locale(session["cldr_locale"])
 
       send(self(), :update_duration)
       send(self(), {:status, Vehicle.busy?(car.id)})
