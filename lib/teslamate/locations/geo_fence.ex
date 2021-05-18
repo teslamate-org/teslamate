@@ -14,7 +14,7 @@ defmodule TeslaMate.Locations.GeoFence do
     field :cost_per_unit, :decimal, read_after_writes: true
     field :session_fee, :decimal, read_after_writes: true
     field :active, :boolean, read_after_writes: true, default: true
-    field :supercharger, :boolean, read_after_writes: true
+    field :supercharger, :boolean, read_after_writes: true, default: false
     field :provider, :string, read_after_writes: true
     field :country_code, :string, read_after_writes: true
     field :currency_code, :string, read_after_writes: true

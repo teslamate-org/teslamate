@@ -147,11 +147,6 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
         :billing_type,
         :latitude,
         :longitude,
-        :provider,
-        :active,
-        :supercharger,
-        :country_code,
-        :currency_code,
         :radius
       ])
 
