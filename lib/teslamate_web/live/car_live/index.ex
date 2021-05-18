@@ -7,7 +7,7 @@ defmodule TeslaMateWeb.CarLive.Index do
   alias TeslaMate.Settings.GlobalSettings
 
   @impl true
-  def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
+  def mount(_params, %{"settings" => settings, "cldr_locale" => locale}, socket) do
     socket =
       socket
       |> assign(locale: locale, page_title: gettext("Home"))

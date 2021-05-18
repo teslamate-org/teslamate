@@ -7,7 +7,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   alias TeslaMate.{Settings, Updater, Api}
 
   @impl true
-  def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
+  def mount(_params, %{"settings" => settings, "cldr_locale" => locale}, socket) do
     if connected?(socket), do: Gettext.put_locale(locale)
 
     assigns = %{
