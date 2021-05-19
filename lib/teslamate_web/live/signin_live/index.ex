@@ -5,7 +5,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
   alias TeslaMate.{Auth, Api}
 
   @impl true
-  def mount(_params, %{"locale" => locale}, socket) do
+  def mount(_params, %{"cldr_locale" => locale}, socket) do
     if connected?(socket), do: Gettext.put_locale(locale)
 
     assigns = %{

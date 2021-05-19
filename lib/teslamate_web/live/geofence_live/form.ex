@@ -12,7 +12,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
   @impl true
   def mount(%{"id" => id}, session, socket) do
-    %{"settings" => settings, "locale" => locale} = session
+    %{"settings" => settings, "cldr_locale" => locale} = session
 
     if connected?(socket) do
       Gettext.put_locale(locale)
@@ -24,7 +24,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   end
 
   def mount(%{"lat" => lat, "lng" => lng}, session, socket) do
-    %{"settings" => settings, "locale" => locale} = session
+    %{"settings" => settings, "cldr_locale" => locale} = session
 
     if connected?(socket) do
       Gettext.put_locale(locale)
@@ -42,7 +42,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   end
 
   def mount(_params, session, socket) do
-    %{"settings" => settings, "locale" => locale} = session
+    %{"settings" => settings, "cldr_locale" => locale} = session
 
     if connected?(socket) do
       Gettext.put_locale(locale)
