@@ -15,9 +15,35 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 42,
-  "iteration": 1621416734779,
-  "links": [],
+  "iteration": 1621520453899,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "dashboard",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "TeslaMate",
+      "tooltip": "",
+      "type": "link",
+      "url": "[[base_url:raw]]"
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "tesla"
+      ],
+      "targetBlank": false,
+      "title": "Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -33,8 +59,8 @@
       "repeat": "car_id",
       "scopedVars": {
         "car_id": {
-          "selected": true,
-          "text": "none",
+          "selected": false,
+          "text": "1",
           "value": "1"
         }
       },
@@ -420,8 +446,8 @@
       "pluginVersion": "7.5.4",
       "scopedVars": {
         "car_id": {
-          "selected": true,
-          "text": "none",
+          "selected": false,
+          "text": "1",
           "value": "1"
         }
       },
@@ -431,7 +457,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tstart_date AS \"Start\",\n\tend_date AS \"End\",\n\tROUND(EXTRACT(EPOCH FROM start_date))*1000 AS start_date_ts,\n\tROUND(EXTRACT(EPOCH FROM end_date))*1000 AS end_date_ts,\n\t'🚗 Driving' AS \"Action\",\n\tdrives.duration_min AS \"Duration\",\n\tCASE WHEN start_geofence_id IS NULL THEN CONCAT('new?lat=', TP1.latitude, '&lng=', TP1.longitude)\n\t\tWHEN start_geofence_id IS NOT NULL THEN CONCAT(start_geofence_id, '/edit')\n\tEND AS start_path,\n\tCASE WHEN end_geofence_id IS NULL THEN CONCAT('new?lat=', TP2.latitude, '&lng=', TP2.longitude)\n\t\tWHEN start_geofence_id IS NOT NULL THEN CONCAT(end_geofence_id, '/edit')\n\tEND AS end_path,\n\tCOALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS \"Start Address\",\n\tCOALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS \"End Address\",\n\tconvert_km(TP1.odometer::INTEGER, '$length_unit') AS odometer_$length_unit,\n\tconvert_km(distance::INTEGER, '$length_unit') AS distance_$length_unit,\n\tconvert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::INTEGER, '$length_unit') * cars.efficiency AS \"kWh\",\n\tconvert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::INTEGER, '$length_unit') AS range_diff_$length_unit,\n\tTP2.battery_level AS \"SoC\",\n\tTP2.battery_level-TP1.battery_level AS \"SoC Diff\",\n\toutside_temp_avg AS outside_temp_avg_$temp_unit\nFROM drives\n\tLEFT OUTER JOIN positions AS TP1 on drives.start_position_id = TP1.id\n\tLEFT OUTER JOIN positions AS TP2 on drives.end_position_id = TP2.id\n\tLEFT JOIN addresses start_address ON start_address_id = start_address.id\n\tLEFT JOIN addresses end_address ON  end_address_id = end_address.id\n\tLEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n\tLEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n\tJOIN cars ON cars.id = drives.car_id\nWHERE \n\t$__timeFilter(drives.start_date)\n\tAND\tdrives.car_id = $car_id\n\tAND\t'🚗 Drive' in ($action_filter)\n--\tAND\t(\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n\tstart_date AS \"Start\",\n\tend_date AS \"End\",\n\tROUND(EXTRACT(EPOCH FROM start_date))*1000 AS start_date_ts,\n\tROUND(EXTRACT(EPOCH FROM end_date))*1000 AS end_date_ts,\n\t'🔋 Charging' AS \"Action\",\n\tcharging_processes.duration_min AS \"Duration\",\n\tCASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', address.latitude, '&lng=', address.longitude)\n\t\tWHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n\tEND AS start_path,\n\tnull AS end_path,\n\tCOALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS \"Start Address\",\n\t'' AS \"End Address\",\n\tconvert_km(position.odometer::INTEGER, '$length_unit') AS odometer_$length_unit,\n\tnull AS distance_$length_unit,\n\tconvert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::INTEGER, '$length_unit') * cars.efficiency AS \"kWh\",\n\tconvert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::INTEGER, '$length_unit') AS range_diff_$length_unit, \n\tend_battery_level AS \"SoC\",\n\tend_battery_level - start_battery_level AS \"SoC Diff\",\n\toutside_temp_avg AS outside_temp_avg_$temp_unit\nFROM charging_processes\n\tINNER JOIN positions AS position ON position_id = position.id\n\tLEFT JOIN addresses address ON address_id = address.id\n\tLEFT JOIN geofences geofence ON geofence_id = geofence.id\n\tLEFT JOIN cars on cars.id = charging_processes.car_id\nWHERE\n\t$__timeFilter(charging_processes.start_date)\n\tAND charging_processes.car_id = $car_id\n\tAND '🔋 charges' in ($action_filter)\n--\tAND\t(\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n\tT1.end_date AS \"Start\",\n\tT2.start_date AS \"End\",\n\tROUND(EXTRACT(EPOCH FROM T1.end_date)) * 1000 AS start_date_ts,\n\tROUND(EXTRACT(EPOCH FROM T2.start_date))*1000 AS end_date_ts,\n\t'🅿️ Parking' AS \"Action\",\n\tEXTRACT(EPOCH FROM T2.start_date - T1.end_date)/60 AS \"Duration\",\n\tCASE WHEN T1.end_geofence_id IS NULL THEN CONCAT('new?lat=', TP1.latitude, '&lng=', TP1.longitude)\n\t\tWHEN T1.end_geofence_id IS NOT NULL THEN CONCAT(T1.end_geofence_id, '/edit')\n\tEND AS start_path,\n\tnull AS end_path,\n\tCOALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS \"Start Address\",\n\t'' AS \"End Address\",\n\tconvert_km(TP1.odometer::INTEGER, '$length_unit') AS odometer_$length_unit,\n\tnull AS distance_$length_unit,\n\tconvert_km(((TP2.ideal_battery_range_km + (TP2.odometer - TP1.odometer)) - TP1.ideal_battery_range_km)::INTEGER, '$length_unit') * efficiency AS \"kWh\",\n\tconvert_km(((TP2.ideal_battery_range_km + (TP2.odometer - TP1.odometer)) - TP1.ideal_battery_range_km)::INTEGER, '$length_unit') AS range_diff_$length_unit,\n\tTP2.battery_level AS \"SoC\",\n\tTP2.battery_level-TP1.battery_level AS \"SoC Diff\",\n\tT1.outside_temp_avg AS outside_temp_avg_$temp_unit\nFROM\n\tdrives AS T1\n\tLEFT OUTER JOIN drives AS T2 on T1.id + 1 = T2.id\n\tLEFT OUTER JOIN positions AS TP1 on T1.end_position_id = TP1.id\n\tLEFT OUTER JOIN positions AS TP2 on T2.start_position_id = TP2.id\n\tLEFT JOIN addresses start_address ON T1.end_address_id = start_address.id\n\tLEFT JOIN addresses end_address ON T2.start_address_id = end_address.id\n\tLEFT JOIN geofences start_geofence ON T1.end_geofence_id = start_geofence.id\n\tLEFT JOIN geofences end_geofence ON T2.start_geofence_id = end_geofence.id\n\tJOIN cars ON cars.id = T2.car_id\nWHERE\n\t$__timeFilter(T1.end_date)\n\tAND T1.car_id=$car_id\n\tAND TP1.ideal_battery_range_km <> TP2.ideal_battery_range_km\n\tAND TP2.car_id=$car_id\n\tAND TP1.car_id=$car_id\n\tAND '🅿️ Parking' in ($action_filter)\n--\tAND\t(\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n\tT1.end_date AS \"Start\",\n\tT2.start_date AS \"End\",\n\tROUND(EXTRACT(EPOCH FROM T2.start_date)) * 1000 - 1 AS start_date_ts,\n\tROUND(EXTRACT(EPOCH FROM T2.start_date))*1000 - 1 AS end_date_ts,\n\t'❓ Missing' AS \"Action\",\n\tEXTRACT(EPOCH FROM T2.start_date - T1.end_date)/60 AS \"Duration\",\n\tCASE WHEN T1.end_geofence_id IS NULL THEN CONCAT('new?lat=', TP1.latitude, '&lng=', TP1.longitude)\n\t\tWHEN T1.end_geofence_id IS NOT NULL THEN CONCAT(T1.end_geofence_id, '/edit')\n\tEND AS start_path,\n\tCASE WHEN T2.start_geofence_id IS NULL THEN CONCAT('new?lat=', TP2.latitude, '&lng=', TP2.longitude)\n\t\tWHEN T2.start_geofence_id IS NOT NULL THEN CONCAT(T2.start_geofence_id, '/edit')\n\tEND AS end_path,\n\tCOALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS \"Start Address\",\n\tCOALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS \"End Address\",\n\tconvert_km(TP1.odometer::INTEGER, '$length_unit') AS odometer_$length_unit,\n\tconvert_km((TP2.odometer - TP1.odometer)::INTEGER, '$length_unit') AS distance_$length_unit,\n\tconvert_km(((TP2.ideal_battery_range_km + (TP2.odometer - TP1.odometer)) - TP1.ideal_battery_range_km)::INTEGER, '$length_unit')::INTEGER * efficiency AS \"kWh\",\n\tconvert_km(((TP2.ideal_battery_range_km + (TP2.odometer - TP1.odometer)) - TP1.ideal_battery_range_km)::INTEGER, '$length_unit') AS range_diff_$length_unit,\n\tTP2.battery_level AS \"SoC\",\n\tTP2.battery_level-TP1.battery_level AS \"SoC Diff\",\n\tT1.outside_temp_avg AS outside_temp_avg_$temp_unit\nFROM\n\tdrives AS T1\n\tLEFT OUTER JOIN drives AS T2 on T1.id + 1 = T2.id\n\tLEFT OUTER JOIN positions AS TP1 on T1.end_position_id = TP1.id\n\tLEFT OUTER JOIN positions AS TP2 on T2.start_position_id = TP2.id\n\tLEFT JOIN addresses start_address ON T1.end_address_id = start_address.id\n\tLEFT JOIN addresses end_address ON T2.start_address_id = end_address.id\n\tLEFT JOIN geofences start_geofence ON T1.end_geofence_id = start_geofence.id\n\tLEFT JOIN geofences end_geofence ON T2.start_geofence_id = end_geofence.id\n\tJOIN cars ON cars.id = T2.car_id\nWHERE\n\t$__timeFilter(T1.end_date)\n\tAND T1.car_id=$car_id \n\tAND T2.car_id=$car_id \n\tAND TP2.car_id=$car_id \n\tAND TP1.car_id=$car_id \n\tAND TP2.odometer - TP1.odometer > 0.5\n\tAND T1.end_address_id <> T2.start_address_id AND T1.end_geofence_id <> T2.start_geofence_id\n\tAND '❓ Missing' in ($action_filter)\n--\tAND\t(\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n\tstart_date AS \"Start\",\n\tstart_date AS \"End\",\n\tROUND(EXTRACT(EPOCH FROM start_date))*1000 AS start_date_ts, \n\tROUND(EXTRACT(EPOCH FROM start_date))*1000 AS end_date_ts, \n\t'💾 Updating' AS \"Action\",\n\tnull AS distance_$length_unit,\n\tnull AS start_path,\n\tnull AS end_path,\n\tversion AS \"Start Address\",\n\t'' AS \"End Address\",\n\tnull AS odometer_$length_unit,\n\tnull AS \"Distance\", \n\tnull AS \"kWh\",\n\tnull AS range_diff_$length_unit,\n\tnull AS \"SoC\",\n\tnull AS \"SoC Diff\",\n\tnull AS outside_temp_avg_$temp_unit\nFROM updates\nWHERE \n\t$__timeFilter(start_date)\n\tAND car_id = $car_id \n\tAND '💾 Update' in ($action_filter)\n\nORDER BY \"Start\" DESC\n",
+          "rawSql": "SELECT\n  start_date AS \"Start\",\n  end_date AS \"End\",\n  ROUND(EXTRACT(EPOCH FROM start_date))*1000 AS start_date_ts,\n  ROUND(EXTRACT(EPOCH FROM end_date))*1000 AS end_date_ts,\n  '🚗 Driving' AS \"Action\",\n  drives.duration_min AS \"Duration\",\n  CASE WHEN start_geofence_id IS NULL THEN CONCAT('new?lat=', TP1.latitude, '&lng=', TP1.longitude)\n       WHEN start_geofence_id IS NOT NULL THEN CONCAT(start_geofence_id, '/edit')\n  END AS start_path,\n  CASE WHEN end_geofence_id IS NULL THEN CONCAT('new?lat=', TP2.latitude, '&lng=', TP2.longitude)\n       WHEN start_geofence_id IS NOT NULL THEN CONCAT(end_geofence_id, '/edit')\n  END AS end_path,\n  COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS \"Start Address\",\n  COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS \"End Address\",\n  convert_km(TP1.odometer::INTEGER, '$length_unit') AS odometer_$length_unit,\n  convert_km(distance::INTEGER, '$length_unit') AS distance_$length_unit,\n  convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::INTEGER, '$length_unit') * cars.efficiency AS \"kWh\",\n  convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::INTEGER, '$length_unit') AS range_diff_$length_unit,\n  TP2.battery_level AS \"SoC\",\n  TP2.battery_level-TP1.battery_level AS \"SoC Diff\",\n  outside_temp_avg AS outside_temp_avg_$temp_unit\nFROM drives\n  LEFT OUTER JOIN positions AS TP1 on drives.start_position_id = TP1.id\n  LEFT OUTER JOIN positions AS TP2 on drives.end_position_id = TP2.id\n  LEFT JOIN addresses start_address ON start_address_id = start_address.id\n  LEFT JOIN addresses end_address ON  end_address_id = end_address.id\n  LEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n  JOIN cars ON cars.id = drives.car_id\nWHERE \n  $__timeFilter(drives.start_date)\n  AND drives.car_id = $car_id\n  AND '🚗 Driving' in ($action_filter)\n--  AND (\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n  start_date AS \"Start\",\n  end_date AS \"End\",\n  ROUND(EXTRACT(EPOCH FROM start_date))*1000 AS start_date_ts,\n  ROUND(EXTRACT(EPOCH FROM end_date))*1000 AS end_date_ts,\n  '🔋 Charging' AS \"Action\",\n  charging_processes.duration_min AS \"Duration\",\n  CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', address.latitude, '&lng=', address.longitude)\n       WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n  END AS start_path,\n  null AS end_path,\n  COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS \"Start Address\",\n  '' AS \"End Address\",\n  convert_km(position.odometer::INTEGER, '$length_unit') AS odometer_$length_unit,\n  null AS distance_$length_unit,\n  convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::INTEGER, '$length_unit') * cars.efficiency AS \"kWh\",\n  convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::INTEGER, '$length_unit') AS range_diff_$length_unit, \n  end_battery_level AS \"SoC\",\n  end_battery_level - start_battery_level AS \"SoC Diff\",\n  outside_temp_avg AS outside_temp_avg_$temp_unit\nFROM charging_processes\n  INNER JOIN positions AS position ON position_id = position.id\n  LEFT JOIN addresses address ON address_id = address.id\n  LEFT JOIN geofences geofence ON geofence_id = geofence.id\n  LEFT JOIN cars on cars.id = charging_processes.car_id\nWHERE\n  $__timeFilter(charging_processes.start_date)\n  AND charging_processes.car_id = $car_id\n  AND '🔋 Charging' in ($action_filter)\n--  AND (\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n  T1.end_date AS \"Start\",\n  T2.start_date AS \"End\",\n  ROUND(EXTRACT(EPOCH FROM T1.end_date)) * 1000 AS start_date_ts,\n  ROUND(EXTRACT(EPOCH FROM T2.start_date))*1000 AS end_date_ts,\n  '🅿️ Parking' AS \"Action\",\n  EXTRACT(EPOCH FROM T2.start_date - T1.end_date)/60 AS \"Duration\",\n  CASE WHEN T1.end_geofence_id IS NULL THEN CONCAT('new?lat=', TP1.latitude, '&lng=', TP1.longitude)\n       WHEN T1.end_geofence_id IS NOT NULL THEN CONCAT(T1.end_geofence_id, '/edit')\n  END AS start_path,\n  null AS end_path,\n  COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS \"Start Address\",\n  '' AS \"End Address\",\n  convert_km(TP1.odometer::INTEGER, '$length_unit') AS odometer_$length_unit,\n  null AS distance_$length_unit,\n  convert_km(((TP2.ideal_battery_range_km + (TP2.odometer - TP1.odometer)) - TP1.ideal_battery_range_km)::INTEGER, '$length_unit') * efficiency AS \"kWh\",\n  convert_km(((TP2.ideal_battery_range_km + (TP2.odometer - TP1.odometer)) - TP1.ideal_battery_range_km)::INTEGER, '$length_unit') AS range_diff_$length_unit,\n  TP2.battery_level AS \"SoC\",\n  TP2.battery_level-TP1.battery_level AS \"SoC Diff\",\n  T1.outside_temp_avg AS outside_temp_avg_$temp_unit\nFROM\n  drives AS T1\n  LEFT OUTER JOIN drives AS T2 on T1.id + 1 = T2.id\n  LEFT OUTER JOIN positions AS TP1 on T1.end_position_id = TP1.id\n  LEFT OUTER JOIN positions AS TP2 on T2.start_position_id = TP2.id\n  LEFT JOIN addresses start_address ON T1.end_address_id = start_address.id\n  LEFT JOIN addresses end_address ON T2.start_address_id = end_address.id\n  LEFT JOIN geofences start_geofence ON T1.end_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON T2.start_geofence_id = end_geofence.id\n  JOIN cars ON cars.id = T2.car_id\nWHERE\n  $__timeFilter(T1.end_date)\n  AND T1.car_id=$car_id\n  AND TP1.ideal_battery_range_km <> TP2.ideal_battery_range_km\n  AND TP2.car_id=$car_id\n  AND TP1.car_id=$car_id\n  AND '🅿️ Parking' in ($action_filter)\n--  AND (\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n  T1.end_date AS \"Start\",\n  T2.start_date AS \"End\",\n  ROUND(EXTRACT(EPOCH FROM T2.start_date)) * 1000 - 1 AS start_date_ts,\n  ROUND(EXTRACT(EPOCH FROM T2.start_date))*1000 - 1 AS end_date_ts,\n  '❓ Missing' AS \"Action\",\n  EXTRACT(EPOCH FROM T2.start_date - T1.end_date)/60 AS \"Duration\",\n  CASE WHEN T1.end_geofence_id IS NULL THEN CONCAT('new?lat=', TP1.latitude, '&lng=', TP1.longitude)\n       WHEN T1.end_geofence_id IS NOT NULL THEN CONCAT(T1.end_geofence_id, '/edit')\n  END AS start_path,\n  CASE WHEN T2.start_geofence_id IS NULL THEN CONCAT('new?lat=', TP2.latitude, '&lng=', TP2.longitude)\n       WHEN T2.start_geofence_id IS NOT NULL THEN CONCAT(T2.start_geofence_id, '/edit')\n  END AS end_path,\n  COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS \"Start Address\",\n  COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS \"End Address\",\n  convert_km(TP1.odometer::INTEGER, '$length_unit') AS odometer_$length_unit,\n  convert_km((TP2.odometer - TP1.odometer)::INTEGER, '$length_unit') AS distance_$length_unit,\n  convert_km(((TP2.ideal_battery_range_km + (TP2.odometer - TP1.odometer)) - TP1.ideal_battery_range_km)::INTEGER, '$length_unit')::INTEGER * efficiency AS \"kWh\",\n  convert_km(((TP2.ideal_battery_range_km + (TP2.odometer - TP1.odometer)) - TP1.ideal_battery_range_km)::INTEGER, '$length_unit') AS range_diff_$length_unit,\n  TP2.battery_level AS \"SoC\",\n  TP2.battery_level-TP1.battery_level AS \"SoC Diff\",\n  T1.outside_temp_avg AS outside_temp_avg_$temp_unit\nFROM\n  drives AS T1\n  LEFT OUTER JOIN drives AS T2 on T1.id + 1 = T2.id\n  LEFT OUTER JOIN positions AS TP1 on T1.end_position_id = TP1.id\n  LEFT OUTER JOIN positions AS TP2 on T2.start_position_id = TP2.id\n  LEFT JOIN addresses start_address ON T1.end_address_id = start_address.id\n  LEFT JOIN addresses end_address ON T2.start_address_id = end_address.id\n  LEFT JOIN geofences start_geofence ON T1.end_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON T2.start_geofence_id = end_geofence.id\n  JOIN cars ON cars.id = T2.car_id\nWHERE\n  $__timeFilter(T1.end_date)\n  AND T1.car_id=$car_id \n  AND T2.car_id=$car_id \n  AND TP2.car_id=$car_id \n  AND TP1.car_id=$car_id \n  AND TP2.odometer - TP1.odometer > 0.5\n  AND T1.end_address_id <> T2.start_address_id AND T1.end_geofence_id <> T2.start_geofence_id\n  AND '❓ Missing' in ($action_filter)\n--  AND (\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n  start_date AS \"Start\",\n  start_date AS \"End\",\n  ROUND(EXTRACT(EPOCH FROM start_date))*1000 AS start_date_ts, \n  ROUND(EXTRACT(EPOCH FROM start_date))*1000 AS end_date_ts, \n  '💾 Updating' AS \"Action\",\n  null AS distance_$length_unit,\n  null AS start_path,\n  null AS end_path,\n  version AS \"Start Address\",\n  '' AS \"End Address\",\n  null AS odometer_$length_unit,\n  null AS \"Distance\", \n  null AS \"kWh\",\n  null AS range_diff_$length_unit,\n  null AS \"SoC\",\n  null AS \"SoC Diff\",\n  null AS outside_temp_avg_$temp_unit\nFROM updates\nWHERE \n  $__timeFilter(start_date)\n  AND car_id = $car_id \n  AND '💾 Updating' in ($action_filter)\n\nORDER BY \"Start\" DESC;",
           "refId": "A",
           "select": [
             [
@@ -521,8 +547,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "none",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": null,
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
@@ -576,7 +602,8 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
+          "tags": [],
           "text": [
             "All"
           ],
@@ -599,13 +626,13 @@
           },
           {
             "selected": false,
-            "text": "🚗 Drive",
-            "value": "🚗 Drive"
+            "text": "🚗 Driving",
+            "value": "🚗 Driving"
           },
           {
             "selected": false,
-            "text": "🔋 charges",
-            "value": "🔋 charges"
+            "text": "🔋 Charging",
+            "value": "🔋 Charging"
           },
           {
             "selected": false,
@@ -619,11 +646,11 @@
           },
           {
             "selected": false,
-            "text": "💾 Update",
-            "value": "💾 Update"
+            "text": "💾 Updating",
+            "value": "💾 Updating"
           }
         ],
-        "query": "🚗 Drive,🔋 charges,🅿️ Parking,❓ Missing,💾 Update",
+        "query": "🚗 Driving,🔋 Charging,🅿️ Parking,❓ Missing,💾 Updating",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
@@ -710,8 +737,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "rated",
-          "value": "rated"
+          "text": "ideal",
+          "value": "ideal"
         },
         "datasource": null,
         "definition": "select preferred_range from settings limit 1;",
@@ -744,5 +771,5 @@
   "timezone": "",
   "title": "Timeline",
   "uid": "SUBgwtigz",
-  "version": 39
+  "version": 1
 }
