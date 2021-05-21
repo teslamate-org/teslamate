@@ -1,14 +1,26 @@
 defmodule TeslaMateWeb.Router do
   use TeslaMateWeb, :router
 
-  alias TeslaMateWeb.Plugs.{SetLocale, Donate}
+  alias TeslaMateWeb.Plugs.Donate
   alias TeslaMate.Settings
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug SetLocale
+
+    plug Cldr.Plug.AcceptLanguage,
+      cldr_backend: TeslaMateWeb.Cldr,
+      no_match_log_level: :debug
+
+    plug Cldr.Plug.SetLocale,
+      apps: [:cldr, :gettext],
+      from: [:query, :session, :accept_language],
+      gettext: TeslaMateWeb.Gettext,
+      cldr: TeslaMateWeb.Cldr
+
+    plug Cldr.Plug.PutSession
+
     plug :put_root_layout, {TeslaMateWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers

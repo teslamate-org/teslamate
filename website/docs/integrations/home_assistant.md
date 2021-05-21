@@ -340,7 +340,7 @@ tesla_location:
 
 ```yml title="binary_sensor.yaml"
  - platform: template
-   binary_sensors:
+   sensors:
     tesla_park_brake:
       friendly_name: Parking Brake
       icon_template: mdi:car-brake-parking
