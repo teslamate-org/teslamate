@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # The script assumes that basic authentication is configured
 # (change the login credentials with `LOGIN`).
