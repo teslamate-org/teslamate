@@ -48,6 +48,23 @@ docker-compose up -d
    rm -rf _build
    MIX_ENV=prod mix do phx.digest, release --overwrite
    ```
+   
+   :::tip
+   FreeBSD
+   
+   ```bash
+   bash
+   git pull
+   git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
+
+   mix deps.get --only prod
+   npm install --prefix ./assets && npm run deploy --prefix ./assets
+
+   rm -rf _build
+   export MIX_ENV=prod
+   mix do phx.digest, release --overwrite
+   ```
+   :::
 
 2. Most upgrades requires to run new database migrations. If so continue with the following command:
 
@@ -60,6 +77,14 @@ docker-compose up -d
    ```bash
    LOGIN="user:pass" ./grafana/dashboards.sh restore
    ```
-
+   :::tip
+   FreeBSD
+   
+   ```bash
+   bash
+   export LOGIN="user:pass"
+   ./grafana/dashboards.sh restore
+   ```
+   :::
 </TabItem>
 </Tabs>
