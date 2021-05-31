@@ -102,16 +102,9 @@ defmodule TeslaApi.Auth do
       scope: "openid email offline_access",
       code_challenge: challenge(code_verifier),
       code_challenge_method: "S256",
-      state: state
-      # login_hint: email
+      state: state,
+      login_hint: nil
     ]
-
-    # TODO 
-    # remove
-    # test CN
-    # test no mfa
-    Tesla.build_url("https://auth.tesla.com/oauth2/v3/authorize", params)
-    |> IO.puts()
 
     case get("/oauth2/v3/authorize", query: params) do
       {:ok, %Tesla.Env{status: 200, headers: resp_headers, body: resp_body} = env} ->
