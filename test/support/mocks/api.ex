@@ -1,8 +1,6 @@
 defmodule ApiMock do
   use GenServer
 
-  alias TeslaMate.Auth.Credentials
-
   defmodule State do
     defstruct [:pid, :events]
   end
@@ -17,10 +15,8 @@ defmodule ApiMock do
   def get_vehicle_with_state(name, id), do: GenServer.call(name, {:get_vehicle_with_state, id})
   def stream(name, vid, receiver), do: GenServer.call(name, {:stream, vid, receiver})
 
-  def sign_in(name, credentials), do: GenServer.call(name, {:sign_in, credentials})
-
-  def sign_in(name, device_id, passcode, ctx),
-    do: GenServer.call(name, {:sign_in, device_id, passcode, ctx})
+  def sign_in(name, tokens), do: GenServer.call(name, {:sign_in, tokens})
+  def prepare_sign_in(name), do: GenServer.call(name, :prepare_sign_in)
 
   # Callbacks
 
@@ -40,27 +36,35 @@ defmodule ApiMock do
     {:reply, exec(event), %State{state | events: events}}
   end
 
-  def handle_call({:sign_in, %Credentials{email: "mfa"}} = event, _from, %State{pid: pid} = state) do
-    send(pid, {ApiMock, event})
-    devices = [%{"id" => "000", "name" => "Device #1"}, %{"id" => "111", "name" => "Device #2"}]
-    {:reply, {:ok, {:mfa, devices, %TeslaApi.Auth.MFA.Ctx{}}}, state}
+  def handle_call(:prepare_sign_in, _from, %State{} = state) do
+    callback = fn
+      "mfa" = email, password, captcha ->
+        send(state.pid, {ApiMock, :sign_in_callback, email, password, captcha})
+        :ok
+
+        devices = [
+          %{"id" => "000", "name" => "Device #1"},
+          %{"id" => "111", "name" => "Device #2"}
+        ]
+
+        callback = fn device_id, passcode ->
+          send(state.pid, {ApiMock, :mfa_callback, [device_id, passcode]})
+          :ok
+        end
+
+        {:ok, {:mfa, devices, callback}}
+
+      email, password, captcha ->
+        send(state.pid, {ApiMock, :sign_in_callback, email, password, captcha})
+        :ok
+    end
+
+    captcha = ~S(<svg xmlns="http://www.w3.org/2000/svg">)
+
+    {:reply, {:ok, {:captcha, captcha, callback}}, state}
   end
 
-  def handle_call({:sign_in, %Credentials{email: "error"}}, _from, %State{} = state) do
-    {:reply, {:error, %TeslaApi.Error{reason: :unknown, env: nil}}, state}
-  end
-
-  def handle_call({:sign_in, _credentials} = event, _from, %State{pid: pid} = state) do
-    send(pid, {ApiMock, event})
-    {:reply, :ok, state}
-  end
-
-  def handle_call({:sign_in, "error", _code, _ctx} = event, _from, %State{pid: pid} = state) do
-    send(pid, {ApiMock, event})
-    {:reply, {:error, %TeslaApi.Error{reason: :unknown, env: nil}}, state}
-  end
-
-  def handle_call({:sign_in, _device_id, _code, _ctx} = event, _from, %State{pid: pid} = state) do
+  def handle_call({:sign_in, _tokens} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
     {:reply, :ok, state}
   end

@@ -1,8 +1,10 @@
 defmodule TeslaMateWeb.SignInLive.Index do
   use TeslaMateWeb, :live_view
 
-  import Core.Dependency, only: [call: 3]
+  import Core.Dependency, only: [call: 2, call: 3]
   alias TeslaMate.{Auth, Api}
+
+  defp initial_state, do: {:credentials, credentials_changeset()}
 
   @impl true
   def mount(_params, %{"cldr_locale" => locale}, socket) do
@@ -11,10 +13,14 @@ defmodule TeslaMateWeb.SignInLive.Index do
     assigns = %{
       api: get_api(socket),
       page_title: gettext("Sign in"),
+      captcha: nil,
+      callback: fn _, _, _ -> :error end,
       error: nil,
       task: nil,
-      state: {:credentials, Auth.change_credentials()}
+      state: initial_state()
     }
+
+    send(self(), :prepare_sign_in)
 
     {:ok, assign(socket, assigns)}
   end
@@ -24,7 +30,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
     socket =
       case params["use_api_tokens"] do
         "true" -> assign(socket, state: {:tokens, Auth.change_tokens()})
-        "false" -> assign(socket, state: {:credentials, Auth.change_credentials()})
+        "false" -> assign(socket, state: initial_state())
         _ -> socket
       end
 
@@ -35,7 +41,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
   def handle_event("validate", %{"credentials" => c}, %{assigns: %{state: {:credentials, _}}} = s) do
     changeset =
       c
-      |> Auth.change_credentials()
+      |> credentials_changeset()
       |> Map.put(:action, :update)
 
     {:noreply, assign(s, state: {:credentials, changeset}, error: nil)}
@@ -51,7 +57,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
   end
 
   def handle_event("validate", %{"mfa" => mfa}, %{assigns: %{state: {:mfa, data}}} = socket) do
-    {_changeset, devices, ctx} = data
+    {_changeset, devices, callback} = data
 
     changeset =
       mfa
@@ -63,22 +69,32 @@ defmodule TeslaMateWeb.SignInLive.Index do
         %{passcode: passcode, device_id: device_id} = Ecto.Changeset.apply_changes(changeset)
 
         Task.async(fn ->
-          call(socket.assigns.api, :sign_in, [device_id, passcode, ctx])
+          callback.(device_id, passcode)
         end)
       end
 
-    state = {:mfa, {changeset, devices, ctx}}
+    state = {:mfa, {changeset, devices, callback}}
 
     {:noreply, assign(socket, state: state, task: task, error: nil)}
   end
 
-  def handle_event("sign_in", _, %{assigns: %{state: {type, changeset}}} = socket)
-      when type in [:credentials, :tokens] do
+  def handle_event("sign_in", _, %{assigns: %{state: {:credentials, changeset}}} = socket) do
     credentials = Ecto.Changeset.apply_changes(changeset)
 
     task =
       Task.async(fn ->
-        call(socket.assigns.api, :sign_in, [credentials])
+        socket.assigns.callback.(credentials.email, credentials.password, credentials.captcha)
+      end)
+
+    {:noreply, assign(socket, task: task)}
+  end
+
+  def handle_event("sign_in", _, %{assigns: %{state: {:tokens, changeset}}} = socket) do
+    tokens = Ecto.Changeset.apply_changes(changeset)
+
+    task =
+      Task.async(fn ->
+        call(socket.assigns.api, :sign_in, [tokens])
       end)
 
     {:noreply, assign(socket, task: task)}
@@ -95,6 +111,16 @@ defmodule TeslaMateWeb.SignInLive.Index do
   end
 
   @impl true
+  def handle_info(:prepare_sign_in, socket) do
+    case call(socket.assigns.api, :prepare_sign_in) do
+      {:ok, {:captcha, captcha, callback}} ->
+        {:noreply, assign(socket, captcha: captcha, callback: callback, task: nil)}
+
+      {:error, %TeslaApi.Error{} = e} ->
+        {:noreply, assign(socket, error: Exception.message(e), task: nil)}
+    end
+  end
+
   def handle_info({ref, result}, %{assigns: %{task: %Task{ref: ref}}} = socket) do
     Process.demonitor(ref, [:flush])
 
@@ -103,20 +129,40 @@ defmodule TeslaMateWeb.SignInLive.Index do
         Process.sleep(250)
         {:noreply, redirect_to_carlive(socket)}
 
-      {:ok, {:mfa, devices, ctx}} ->
+      {:ok, {:mfa, devices, callback}} ->
         devices = Enum.map(devices, fn %{"name" => name, "id" => id} -> {name, id} end)
-        state = {:mfa, {mfa_changeset(), devices, ctx}}
+        state = {:mfa, {mfa_changeset(), devices, callback}}
         {:noreply, assign(socket, state: state, task: nil)}
 
       {:error, %TeslaApi.Error{} = e} ->
         message =
           case e.reason do
+            :captcha_does_not_match -> gettext("Captcha does not match")
+            :invalid_credentials -> gettext("Invalid email address and password combination")
             :token_refresh -> gettext("Tokens are invalid")
             _ -> Exception.message(e)
           end
 
-        {:noreply, assign(socket, error: message, task: nil)}
+        captcha =
+          cond do
+            e.reason in [:captcha_does_not_match, :invalid_credentials] ->
+              send(self(), :prepare_sign_in)
+              nil
+
+            :else ->
+              socket.assigns.captcha
+          end
+
+        {:noreply, assign(socket, captcha: captcha, error: message, task: nil)}
     end
+  end
+
+  defp credentials_changeset(attrs \\ %{}) do
+    import Ecto.Changeset
+
+    {%{}, %{email: :string, password: :string, captcha: :string}}
+    |> cast(attrs, [:email, :password, :captcha])
+    |> validate_required([:email, :password, :captcha])
   end
 
   defp mfa_changeset(attrs \\ %{}) do

@@ -14,7 +14,7 @@ defmodule TeslaApi.Auth do
   @default_headers [
     # {"user-agent", "TeslaMate/#{@version}"},
     {"Accept", "*/*"},
-    {"Accept-Encoding", "gzip, deflate, br"},
+    # {"Accept-Encoding", "gzip, deflate, br"},
     {"Connection", "keep-alive"}
   ]
 
@@ -24,7 +24,7 @@ defmodule TeslaApi.Auth do
   plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
   plug Tesla.Middleware.Headers, [user_agent_header() | @default_headers]
   plug Tesla.Middleware.JSON
-  plug Tesla.Middleware.Compression, format: "gzip"
+  # plug Tesla.Middleware.Compression, format: "gzip"
   plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
 
   defp user_agent_header do
@@ -47,6 +47,10 @@ defmodule TeslaApi.Auth do
 
   defmodule MFA.Ctx do
     defstruct [:state, :code_verifier, :transaction_id, :headers, :devices]
+  end
+
+  defmodule Login.Ctx do
+    defstruct [:captcha, :callback]
   end
 
   def refresh(%__MODULE__{} = auth) do
@@ -87,37 +91,10 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  def login(email, password) do
+  def prepare_login do
     state = random_string(15)
     code_verifier = random_code_verifier()
 
-    with {:ok, form_data, base_url} <- load_form(email, state, code_verifier),
-         {:ok, env = %Tesla.Env{}} <- submit_form(form_data, email, password, base: base_url),
-         {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
-         {:ok, tokens} <- get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
-         {:ok, auth} <- get_api_tokens(tokens) do
-      {:ok, auth}
-    end
-  rescue
-    e ->
-      Logger.error(Exception.format(:error, e, __STACKTRACE__))
-      {:error, %Error{reason: e, message: "An unexpected error occurred"}}
-  end
-
-  def login(device_id, mfa_passcode, %MFA.Ctx{} = ctx) do
-    with {:ok, env} <- verify_passcode(device_id, mfa_passcode, ctx),
-         {:ok, {redirect_uri, code}} <- parse_location_header(env, ctx.state),
-         {:ok, tokens} <- get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state),
-         {:ok, auth} <- get_api_tokens(tokens) do
-      {:ok, auth}
-    end
-  rescue
-    e ->
-      Logger.error(Exception.format(:error, e, __STACKTRACE__))
-      {:error, %Error{reason: e, message: "An unexpected error occurred"}}
-  end
-
-  defp load_form(email, state, code_verifier) do
     params = [
       client_id: @web_client_id,
       redirect_uri: @redirect_uri,
@@ -125,34 +102,67 @@ defmodule TeslaApi.Auth do
       scope: "openid email offline_access",
       code_challenge: challenge(code_verifier),
       code_challenge_method: "S256",
-      state: state,
-      login_hint: email
+      state: state
+      # login_hint: email
     ]
+
+    # TODO 
+    # remove
+    # test CN
+    # test no mfa
+    Tesla.build_url("https://auth.tesla.com/oauth2/v3/authorize", params)
+    |> IO.puts()
 
     case get("/oauth2/v3/authorize", query: params) do
       {:ok, %Tesla.Env{status: 200, headers: resp_headers, body: resp_body} = env} ->
+        document = Floki.parse_document!(resp_body)
+
         cookies =
           resp_headers
           |> Enum.filter(&match?({"set-cookie", _}, &1))
           |> Enum.map(fn {_, cookie} -> cookie |> String.split(";") |> hd() end)
           |> Enum.join("; ")
 
-        form =
-          Floki.parse_document!(resp_body)
-          |> Floki.find("form input")
-          |> Map.new(fn input ->
-            [key] = input |> Floki.attribute("name")
-            value = input |> Floki.attribute("value") |> List.first()
-            {key, value}
-          end)
+        with {:ok, captcha} <- load_captcha_image(document, cookies) do
+          base_url =
+            URI.parse(env.url)
+            |> Map.put(:path, nil)
+            |> Map.put(:query, nil)
+            |> URI.to_string()
 
-        base_url =
-          URI.parse(env.url)
-          |> Map.put(:path, nil)
-          |> Map.put(:query, nil)
-          |> URI.to_string()
+          form =
+            document
+            |> Floki.find("form input")
+            |> Map.new(fn input ->
+              [key] = input |> Floki.attribute("name")
+              value = input |> Floki.attribute("value") |> List.first()
+              {key, value}
+            end)
 
-        {:ok, {form, cookies, state, code_verifier}, base_url}
+          callback = fn email, password, captcha ->
+            try do
+              form =
+                form
+                |> Map.replace!("identity", email)
+                |> Map.replace!("credential", password)
+
+              with {:ok, env = %Tesla.Env{}} <-
+                     submit_form({form, cookies}, state, code_verifier, captcha, base: base_url),
+                   {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
+                   {:ok, tokens} <-
+                     get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
+                   {:ok, auth} <- get_api_tokens(tokens) do
+                {:ok, auth}
+              end
+            rescue
+              e ->
+                Logger.error(Exception.format(:error, e, __STACKTRACE__))
+                {:error, %Error{reason: e, message: "An unexpected error occurred"}}
+            end
+          end
+
+          {:ok, %Login.Ctx{captcha: captcha, callback: callback}}
+        end
 
       {:ok, %Tesla.Env{status: 200} = env} ->
         {:error, %Error{reason: :invalid_credentials, message: "Invalid credentials", env: env}}
@@ -162,13 +172,27 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp submit_form({form, cookies, state, code_verifier}, username, password, opts) do
+  defp load_captcha_image(document, cookies) do
+    [captcha] =
+      document
+      |> Floki.find("[data-id=\"captcha\"]")
+      |> Floki.attribute("src")
+
+    case get(captcha, headers: [{"Cookie", cookies}]) do
+      {:ok, %Tesla.Env{status: 200, body: captcha}} ->
+        {:ok, captcha}
+
+      error ->
+        handle_error(error, :captcha_could_not_be_loaded)
+    end
+  end
+
+  defp submit_form({form, cookies}, state, code_verifier, captcha, opts) do
     transaction_id = Map.fetch!(form, "transaction_id")
 
     encoded_form =
       form
-      |> Map.replace!("identity", username)
-      |> Map.replace!("credential", password)
+      |> Map.put("captcha", captcha)
       |> URI.encode_query()
 
     headers = [
@@ -178,22 +202,43 @@ defmodule TeslaApi.Auth do
 
     case post("#{opts[:base]}/oauth2/v3/authorize", encoded_form, headers: headers) do
       {:ok, %Tesla.Env{status: 200, body: body} = env} ->
-        if String.contains?(body, "/oauth2/v3/authorize/mfa/verify") do
-          headers = [{"referer", env.url}, {"cookie", cookies}]
+        cond do
+          String.contains?(body, "Captcha does not match") ->
+            {:error, %Error{reason: :captcha_does_not_match, env: env}}
 
-          with {:ok, devices} <- list_devices(transaction_id, headers) do
-            ctx = %MFA.Ctx{
-              state: state,
-              code_verifier: code_verifier,
-              transaction_id: transaction_id,
-              headers: headers,
-              devices: devices
-            }
+          String.contains?(body, "/oauth2/v3/authorize/mfa/verify") ->
+            headers = [{"referer", env.url}, {"cookie", cookies}]
 
-            {:ok, {:mfa, devices, ctx}}
-          end
-        else
-          {:error, %Error{reason: :mfa_input_not_found, env: env}}
+            with {:ok, devices} <- list_devices(transaction_id, headers) do
+              ctx = %MFA.Ctx{
+                state: state,
+                code_verifier: code_verifier,
+                transaction_id: transaction_id,
+                headers: headers,
+                devices: devices
+              }
+
+              callback = fn device_id, mfa_passcode ->
+                try do
+                  with {:ok, env} <- verify_passcode(device_id, mfa_passcode, ctx),
+                       {:ok, {redirect_uri, code}} <- parse_location_header(env, ctx.state),
+                       {:ok, tokens} <-
+                         get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state),
+                       {:ok, auth} <- get_api_tokens(tokens) do
+                    {:ok, auth}
+                  end
+                rescue
+                  e ->
+                    Logger.error(Exception.format(:error, e, __STACKTRACE__))
+                    {:error, %Error{reason: e, message: "An unexpected error occurred"}}
+                end
+              end
+
+              {:ok, {:mfa, devices, callback}}
+            end
+
+          true ->
+            {:error, %Error{reason: :mfa_input_not_found, env: env}}
         end
 
       {:ok, %Tesla.Env{status: 302} = env} ->

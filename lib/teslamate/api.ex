@@ -3,7 +3,7 @@ defmodule TeslaMate.Api do
 
   require Logger
 
-  alias TeslaMate.Auth.{Tokens, Credentials}
+  alias TeslaMate.Auth.Tokens
   alias TeslaMate.{Vehicles, Convert}
   alias TeslaApi.Auth
 
@@ -63,20 +63,17 @@ defmodule TeslaMate.Api do
     end
   end
 
-  def sign_in(name \\ @name, credentials) do
+  def sign_in(name \\ @name, %Tokens{} = tokens) do
     case fetch_auth(name) do
-      {:error, :not_signed_in} -> GenServer.call(name, {:sign_in, [credentials]}, @timeout)
+      {:error, :not_signed_in} -> GenServer.call(name, {:sign_in, [tokens]}, @timeout)
       {:ok, %Auth{}} -> {:error, :already_signed_in}
     end
   end
 
-  def sign_in(name \\ @name, device_id, mfa_passcode, %Auth.MFA.Ctx{} = ctx) do
+  def prepare_sign_in(name \\ @name) do
     case fetch_auth(name) do
-      {:error, :not_signed_in} ->
-        GenServer.call(name, {:sign_in, [device_id, mfa_passcode, ctx]}, @timeout)
-
-      {:ok, %Auth{}} ->
-        {:error, :already_signed_in}
+      {:error, :not_signed_in} -> GenServer.call(name, :prepare_sign_in, @timeout)
+      {:ok, %Auth{}} -> {:error, :already_signed_in}
     end
   end
 
@@ -121,11 +118,25 @@ defmodule TeslaMate.Api do
   end
 
   @impl true
-  def handle_call({:sign_in, args}, _, state) do
+  def handle_call(:prepare_sign_in, _, %State{} = state) do
+    case Auth.prepare_login() do
+      {:ok, %Auth.Login.Ctx{} = ctx} ->
+        wrapped_callback = fn email, password, captcha ->
+          args = [email, password, captcha]
+          GenServer.call(state.name, {:sign_in, [args, ctx.callback]}, @timeout)
+        end
+
+        {:reply, {:ok, {:captcha, ctx.captcha, wrapped_callback}}, state}
+
+      {:error, %TeslaApi.Error{} = e} ->
+        {:reply, {:error, e}, state}
+    end
+  end
+
+  def handle_call({:sign_in, args}, _, %State{} = state) do
     case args do
-      [%Credentials{} = c] -> Auth.login(c.email, c.password)
       [%Tokens{} = t] -> Auth.refresh(%Auth{token: t.access, refresh_token: t.refresh})
-      [device_id, passcode, ctx] -> Auth.login(device_id, passcode, ctx)
+      [args, callback] when is_function(callback) -> apply(callback, args)
     end
     |> case do
       {:ok, %Auth{} = auth} ->
@@ -135,8 +146,12 @@ defmodule TeslaMate.Api do
         :ok = schedule_refresh(auth)
         {:reply, :ok, state}
 
-      {:ok, {:mfa, _devices, _ctx} = mfa} ->
-        {:reply, {:ok, mfa}, state}
+      {:ok, {:mfa, devices, callback}} ->
+        wrapped_callback = fn device_id, mfa_passcode ->
+          GenServer.call(state.name, {:sign_in, [[device_id, mfa_passcode], callback]}, @timeout)
+        end
+
+        {:reply, {:ok, {:mfa, devices, wrapped_callback}}, state}
 
       {:error, %TeslaApi.Error{} = e} ->
         {:reply, {:error, e}, state}
