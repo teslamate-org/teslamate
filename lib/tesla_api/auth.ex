@@ -206,6 +206,9 @@ defmodule TeslaApi.Auth do
           String.contains?(body, "Captcha does not match") ->
             {:error, %Error{reason: :captcha_does_not_match, env: env}}
 
+          String.contains?(body, "Your account has been locked") ->
+            {:error, %Error{reason: :account_locked, env: env}}
+
           String.contains?(body, "/oauth2/v3/authorize/mfa/verify") ->
             headers = [{"referer", env.url}, {"cookie", cookies}]
 

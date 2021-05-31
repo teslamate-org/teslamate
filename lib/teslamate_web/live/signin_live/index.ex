@@ -137,10 +137,22 @@ defmodule TeslaMateWeb.SignInLive.Index do
       {:error, %TeslaApi.Error{} = e} ->
         message =
           case e.reason do
-            :captcha_does_not_match -> gettext("Captcha does not match")
-            :invalid_credentials -> gettext("Invalid email address and password combination")
-            :token_refresh -> gettext("Tokens are invalid")
-            _ -> Exception.message(e)
+            :captcha_does_not_match ->
+              gettext("Captcha does not match")
+
+            :invalid_credentials ->
+              gettext("Invalid email address and password combination")
+
+            :token_refresh ->
+              gettext("Tokens are invalid")
+
+            :account_locked ->
+              gettext("""
+              Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password
+              """)
+
+            _ ->
+              Exception.message(e)
           end
 
         captcha =
