@@ -14,7 +14,6 @@ defmodule TeslaApi.Auth do
   @default_headers [
     # {"user-agent", "TeslaMate/#{@version}"},
     {"Accept", "*/*"},
-    # {"Accept-Encoding", "gzip, deflate, br"},
     {"Connection", "keep-alive"}
   ]
 
@@ -24,7 +23,6 @@ defmodule TeslaApi.Auth do
   plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
   plug Tesla.Middleware.Headers, [user_agent_header() | @default_headers]
   plug Tesla.Middleware.JSON
-  # plug Tesla.Middleware.Compression, format: "gzip"
   plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
 
   defp user_agent_header do
