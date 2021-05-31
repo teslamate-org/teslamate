@@ -147,9 +147,10 @@ defmodule TeslaMateWeb.SignInLive.Index do
               gettext("Tokens are invalid")
 
             :account_locked ->
-              gettext("""
-              Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password
-              """)
+              gettext(
+                "Your Tesla account is locked due to too many failed sign in attempts. " <>
+                  "To unlock your account, reset your password"
+              )
 
             _ ->
               Exception.message(e)
