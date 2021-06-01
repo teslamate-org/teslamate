@@ -1,0 +1,777 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "iteration": 1621520453899,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "dashboard",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "TeslaMate",
+      "tooltip": "",
+      "type": "link",
+      "url": "[[base_url:raw]]"
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "tesla"
+      ],
+      "targetBlank": false,
+      "title": "Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "panels": [],
+      "repeat": "car_id",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "title": "$car_id",
+      "type": "row"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Start"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "d/FkUpJpQZk/trip?orgId=1&from=${__data.fields.start_date_ts}&to=${__data.fields.end_date_ts}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SoC"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SoC Diff"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_path"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end_path"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Action"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "kWh"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "unit",
+                "value": "kwatth"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "End"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              },
+              {
+                "id": "custom.width",
+                "value": 152
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "m"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Start Address"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Create or edit geo-fence",
+                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.start_path}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "End Address"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Create or edit geo-fence",
+                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.end_path}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_date_ts"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end_date_ts"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "odometer_km"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_km/"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "km"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_mi/"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "mi"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_c/"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "celsius"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_f/"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "fahrenheit"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/odometer_.*/"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Odometer"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/distance_.*/"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Distance"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/range_diff_.*/"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Range Diff"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/outside_temp_avg_.*/"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Temperature"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 22,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Start"
+          }
+        ]
+      },
+      "pluginVersion": "7.5.4",
+      "scopedVars": {
+        "car_id": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  start_date AS \"Start\",\n  end_date AS \"End\",\n  ROUND(EXTRACT(EPOCH FROM start_date))*1000 AS start_date_ts,\n  ROUND(EXTRACT(EPOCH FROM end_date))*1000 AS end_date_ts,\n  '🚗 Driving' AS \"Action\",\n  drives.duration_min AS \"Duration\",\n  CASE WHEN start_geofence_id IS NULL THEN CONCAT('new?lat=', TP1.latitude, '&lng=', TP1.longitude)\n       WHEN start_geofence_id IS NOT NULL THEN CONCAT(start_geofence_id, '/edit')\n  END AS start_path,\n  CASE WHEN end_geofence_id IS NULL THEN CONCAT('new?lat=', TP2.latitude, '&lng=', TP2.longitude)\n       WHEN start_geofence_id IS NOT NULL THEN CONCAT(end_geofence_id, '/edit')\n  END AS end_path,\n  COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS \"Start Address\",\n  COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS \"End Address\",\n  convert_km(start_km::NUMERIC, '$length_unit') AS odometer_$length_unit,\n  convert_km(distance::NUMERIC, '$length_unit') AS distance_$length_unit,\n  convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::NUMERIC, '$length_unit') * cars.efficiency AS \"kWh\",\n  convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::NUMERIC, '$length_unit') AS range_diff_$length_unit,\n  TP2.battery_level AS \"SoC\",\n  TP2.battery_level-TP1.battery_level AS \"SoC Diff\",\n  convert_celsius(outside_temp_avg, '$temp_unit') AS outside_temp_avg_$temp_unit\nFROM drives\n  LEFT OUTER JOIN positions AS TP1 on drives.start_position_id = TP1.id\n  LEFT OUTER JOIN positions AS TP2 on drives.end_position_id = TP2.id\n  LEFT JOIN addresses start_address ON start_address_id = start_address.id\n  LEFT JOIN addresses end_address ON  end_address_id = end_address.id\n  LEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n  JOIN cars ON cars.id = drives.car_id\nWHERE \n  $__timeFilter(drives.start_date)\n  AND drives.car_id = $car_id\n  AND '🚗 Driving' in ($action_filter)\n--  AND (\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n  start_date AS \"Start\",\n  end_date AS \"End\",\n  ROUND(EXTRACT(EPOCH FROM start_date))*1000 AS start_date_ts,\n  ROUND(EXTRACT(EPOCH FROM end_date))*1000 AS end_date_ts,\n  '🔋 Charging' AS \"Action\",\n  charging_processes.duration_min AS \"Duration\",\n  CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', address.latitude, '&lng=', address.longitude)\n       WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n  END AS start_path,\n  NULL AS end_path,\n  COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS \"Start Address\",\n  '' AS \"End Address\",\n  convert_km(position.odometer::NUMERIC, '$length_unit') AS odometer_$length_unit,\n  NULL AS distance_$length_unit,\n  convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::NUMERIC, '$length_unit') * cars.efficiency AS \"kWh\",\n  convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km)::NUMERIC, '$length_unit') AS range_diff_$length_unit, \n  end_battery_level AS \"SoC\",\n  end_battery_level - start_battery_level AS \"SoC Diff\",\n  convert_celsius(outside_temp_avg, '$temp_unit') AS outside_temp_avg_$temp_unit\nFROM charging_processes\n  INNER JOIN positions AS position ON position_id = position.id\n  LEFT JOIN addresses address ON address_id = address.id\n  LEFT JOIN geofences geofence ON geofence_id = geofence.id\n  LEFT JOIN cars on cars.id = charging_processes.car_id\nWHERE\n  $__timeFilter(charging_processes.start_date)\n  AND charging_processes.car_id = $car_id\n  AND '🔋 Charging' in ($action_filter)\n--  AND (\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\n\nUNION\nSELECT\n  d.end_date AS \"Start\",\n  LEAD(d.start_date) over w AS \"End\",\n  ROUND(EXTRACT(EPOCH FROM d.end_date)) * 1000 AS start_date_ts,\n  ROUND(EXTRACT(EPOCH FROM LEAD(d.start_date) over w))*1000 AS end_date_ts,\n  '🅿️ Parking' AS \"Action\",\n  EXTRACT(EPOCH FROM LEAD(d.start_date) over w - d.end_date)/60 AS \"Duration\",\n  CASE WHEN d.end_geofence_id IS NULL THEN CONCAT('new?lat=', end_position.latitude, '&lng=', end_position.longitude)\n       WHEN d.end_geofence_id IS NOT NULL THEN CONCAT(d.end_geofence_id, '/edit')\n  END AS start_path,\n  NULL AS end_path,\n  COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS \"Start Address\",\n  '' AS \"End Address\",\n  convert_km(end_position.odometer::NUMERIC, '$length_unit') AS odometer_$length_unit,\n  NULL AS distance_$length_unit,\n  convert_km(((LEAD(d.start_[[preferred_range]]_range_km) over w + (LEAD(d.start_km) over w - d.end_km)) - d.end_[[preferred_range]]_range_km)::NUMERIC, '$length_unit') * efficiency AS \"kWh\",\n  convert_km(((LEAD(d.start_[[preferred_range]]_range_km) over w + (LEAD(d.start_km) over w - d.end_km)) - d.end_[[preferred_range]]_range_km)::NUMERIC, '$length_unit') AS range_diff_$length_unit,\n  LEAD(start_position.battery_level) over w AS \"SoC\",\n  LEAD(start_position.battery_level) over w - end_position.battery_level AS \"SoC Diff\",\n  convert_celsius(outside_temp_avg, '$temp_unit') AS outside_temp_avg_$temp_unit\nFROM\n  drives AS d\n  LEFT OUTER JOIN positions start_position on d.start_position_id = start_position.id\n  LEFT OUTER JOIN positions end_position on d.end_position_id = end_position.id\n  LEFT JOIN addresses address ON d.end_address_id = address.id\n  LEFT JOIN geofences geofence ON d.end_geofence_id = geofence.id\n  JOIN cars ON cars.id = d.car_id\nWHERE\n  $__timeFilter(d.end_date)\n  AND d.car_id=$car_id\n  AND '🅿️ Parking' in ($action_filter)\n  -- AND (\"Start Address\"::TEXT like '%$text_filter%' or \"End Address\"::TEXT like '%$text_filter%')\nWINDOW w as (ORDER BY d.id ASC)\n\nUNION\nSELECT\n  start_date AS \"Start\",\n  start_date AS \"End\",\n  ROUND(EXTRACT(EPOCH FROM start_date))*1000 AS start_date_ts, \n  ROUND(EXTRACT(EPOCH FROM start_date))*1000 AS end_date_ts, \n  '💾 Updating' AS \"Action\",\n  NULL AS distance_$length_unit,\n  NULL AS start_path,\n  NULL AS end_path,\n  version AS \"Start Address\",\n  '' AS \"End Address\",\n  NULL AS odometer_$length_unit,\n  NULL AS \"Distance\", \n  NULL AS \"kWh\",\n  NULL AS range_diff_$length_unit,\n  NULL AS \"SoC\",\n  NULL AS \"SoC Diff\",\n  NULL AS outside_temp_avg_$temp_unit\nFROM updates\nWHERE \n  $__timeFilter(start_date)\n  AND car_id = $car_id \n  AND '💾 Updating' in ($action_filter)\n\nORDER BY \"Start\" DESC;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "candata",
+          "timeColumn": "datum",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Timeline",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "End": true,
+              "start_date_ts": false
+            },
+            "indexByName": {
+              "Action": 2,
+              "Duration": 7,
+              "End": 1,
+              "End Address": 4,
+              "SoC": 13,
+              "SoC Diff": 14,
+              "Start": 0,
+              "Start Address": 3,
+              "distance_km": 8,
+              "distance_mi": 9,
+              "end_date_ts": 20,
+              "end_path": 18,
+              "kWh": 12,
+              "odometer_km": 5,
+              "odometer_mi": 6,
+              "outside_temp_avg_c": 15,
+              "outside_temp_avg_f": 16,
+              "range_diff_km": 10,
+              "range_diff_mi": 11,
+              "start_date_ts": 19,
+              "start_path": 17
+            },
+            "renameByName": {
+              "action": "",
+              "end_address": "End",
+              "km_diff": "Km",
+              "kwh": "",
+              "minutediff": "Time",
+              "odometer": "",
+              "outside_temp_avg": "Temperature",
+              "rangediff": "Range Difference",
+              "soc": "",
+              "soc_diff": "SoC Difference",
+              "start_address": "Start",
+              "start_date": "Date",
+              "start_date_ts": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [
+    "tesla"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": null,
+        "definition": "SELECT name AS __text, id AS __value FROM cars;",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": "Car",
+        "multi": false,
+        "name": "car_id",
+        "options": [],
+        "query": "SELECT name AS __text, id AS __value FROM cars;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "http://localhost:4000",
+          "value": "http://localhost:4000"
+        },
+        "datasource": null,
+        "definition": "select base_url from settings limit 1;",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "base_url",
+        "options": [],
+        "query": "select base_url from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Action",
+        "multi": true,
+        "name": "action_filter",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "🚗 Driving",
+            "value": "🚗 Driving"
+          },
+          {
+            "selected": false,
+            "text": "🔋 Charging",
+            "value": "🔋 Charging"
+          },
+          {
+            "selected": false,
+            "text": "🅿️ Parking",
+            "value": "🅿️ Parking"
+          },
+          {
+            "selected": false,
+            "text": "💾 Updating",
+            "value": "💾 Updating"
+          }
+        ],
+        "query": "🚗 Driving,🔋 Charging,🅿️ Parking,💾 Updating",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "",
+          "value": ""
+        },
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "label": "Text Filter",
+        "name": "text_filter",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "km",
+          "value": "km"
+        },
+        "datasource": null,
+        "definition": "select unit_of_length from settings limit 1;",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "length unit",
+        "multi": false,
+        "name": "length_unit",
+        "options": [],
+        "query": "select unit_of_length from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "C",
+          "value": "C"
+        },
+        "datasource": null,
+        "definition": "select unit_of_temperature from settings limit 1;",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "temperature unit",
+        "multi": false,
+        "name": "temp_unit",
+        "options": [],
+        "query": "select unit_of_temperature from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "ideal",
+          "value": "ideal"
+        },
+        "datasource": null,
+        "definition": "select preferred_range from settings limit 1;",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "preferred_range",
+        "options": [],
+        "query": "select preferred_range from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-14d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Timeline",
+  "uid": "SUBgwtigz",
+  "version": 1
+}
