@@ -637,14 +637,14 @@ msgstr ""
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:141
 msgid "Captcha does not match"
-msgstr ""
+msgstr "Captcha matchar inte"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:144
 msgid "Invalid email address and password combination"
-msgstr ""
+msgstr "Ogiltig kombination av e-postadress och lösenord"
 
 #, elixir-format, fuzzy
 #: lib/teslamate_web/live/signin_live/index.ex:150
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr ""
+msgstr "Ditt Tesla-konto är låst på grund av för många misslyckade inloggningsförsök. Återställ ditt lösenord för att låsa upp ditt konto"
