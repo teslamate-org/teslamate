@@ -17,7 +17,7 @@
 #### Dashboards
 
 - Add a new Timeline dashboard ([#1621](https://github.com/adriankumpf/teslamate/pull/1621) by [DrMichael](https://github.com/DrMichael))
-- Statistics: Fix `pq: time zone "" not recognized` error ([#1470](https://github.com/adriankumpf/teslamate/pull/1470) by [Dulanic](https://github.com/Dulanic))
+- Statistics: Fix `pq: time zone "" not recognized` error ([#1470](https://github.com/adriankumpf/teslamate/pull/1470) and [#1559](https://github.com/adriankumpf/teslamate/pull/1559) by [Dulanic](https://github.com/Dulanic))
 
 #### Translations
 
