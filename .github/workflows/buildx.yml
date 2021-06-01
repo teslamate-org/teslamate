@@ -17,6 +17,7 @@ on:
       - "mix.lock"
       - "entrypoint.sh"
       - "Dockerfile"
+      - "VERSION"
 
 jobs:
   teslamate:
