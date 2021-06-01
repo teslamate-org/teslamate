@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.23.0] - 2021-06-01
+
+### Improvements and Bug Fixes
+
+- Support Tesla's new captcha verification
+- Improve naming of addresses (city aliases)
+- Add `power` to published MQTT topics ([#1504](https://github.com/adriankumpf/teslamate/pull/1504) by [mnadvornik](https://github.com/mnadvornik))
+- The Docker image now ships with Erlang/OTP 24 which comes with a JIT-compiler (enabled on most x86 64-bit platforms)
+- Only publish geofence via MQTT if it has changed
+- Fix calculation of gross consumption while charging
+- Fix service mode detection
+- Fix typo in code_challenge_method ([#1571](https://github.com/adriankumpf/teslamate/pull/1571) by [tuxbox](https://github.com/tuxbox))
+- Make `dashboards.sh` script portable e.g. to BSD ([#1645](https://github.com/adriankumpf/teslamate/pull/1645) by [tuxbox](https://github.com/tuxbox))
+
+#### Dashboards
+
+- Add a new Timeline dashboard ([#1621](https://github.com/adriankumpf/teslamate/pull/1621) by [DrMichael](https://github.com/DrMichael))
+- Statistics: Fix `pq: time zone "" not recognized` error ([#1470](https://github.com/adriankumpf/teslamate/pull/1470) by [Dulanic](https://github.com/Dulanic))
+
+#### Translations
+
+- Update Swedish translations ([#1461](https://github.com/adriankumpf/teslamate/pull/1461) by [tobiasehlert](https://github.com/tobiasehlert))
+- Update French translations ([#1473](https://github.com/adriankumpf/teslamate/pull/1473) by [ranaud80](https://github.com/ranaud80))
+- Update German translations
+
+#### Documentation
+
+- Update Mosquitto version used in docker-compose examples
+- Add device classes and binary sensors to documented Home Assistant config ([#1597](https://github.com/adriankumpf/teslamate/pull/1597) by [flacjacket](https://github.com/flacjacket) and [#1634](https://github.com/adriankumpf/teslamate/pull/1634) by [ffeingol](https://github.com/ffeingol))
+
 ## [1.22.0] - 2021-03-17
 
 ### Improvements and Bug Fixes
@@ -1239,6 +1269,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.23.0]: https://github.com/adriankumpf/teslamate/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/adriankumpf/teslamate/compare/v1.21.6...v1.22.0
 [1.21.6]: https://github.com/adriankumpf/teslamate/compare/v1.21.5...v1.21.6
 [1.21.5]: https://github.com/adriankumpf/teslamate/compare/v1.21.4...v1.21.5
