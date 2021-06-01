@@ -155,17 +155,28 @@ defmodule TeslaApi.Auth do
   end
 
   defp load_captcha_image(document, cookies) do
-    [captcha] =
-      document
-      |> Floki.find("[data-id=\"captcha\"]")
-      |> Floki.attribute("src")
+    document
+    |> Floki.find("[data-id=\"captcha\"]")
+    |> Floki.attribute("src")
+    |> case do
+      [captcha] ->
+        case get(captcha, headers: [{"Cookie", cookies}]) do
+          {:ok, %Tesla.Env{status: 200, body: captcha}} ->
+            case Floki.parse_fragment(captcha) do
+              {:ok, [{"svg", _, _}]} ->
+                {:ok, captcha}
 
-    case get(captcha, headers: [{"Cookie", cookies}]) do
-      {:ok, %Tesla.Env{status: 200, body: captcha}} ->
-        {:ok, captcha}
+              {:error, reason} ->
+                Logger.error("Invalid captcha: #{reason}")
+                {:error, %Error{reason: :invalid_captcha}}
+            end
 
-      error ->
-        handle_error(error, :captcha_could_not_be_loaded)
+          error ->
+            handle_error(error, :captcha_could_not_be_loaded)
+        end
+
+      _ ->
+        {:error, %Error{reason: :no_captcha_found}}
     end
   end
 
