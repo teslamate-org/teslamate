@@ -120,13 +120,13 @@ defmodule TeslaMate.Api do
   @impl true
   def handle_call(:prepare_sign_in, _, %State{} = state) do
     case Auth.prepare_login() do
-      {:ok, %Auth.Login.Ctx{} = ctx} ->
+      {:ok, {:captcha, captcha, callback}} ->
         wrapped_callback = fn email, password, captcha ->
           args = [email, password, captcha]
-          GenServer.call(state.name, {:sign_in, [args, ctx.callback]}, @timeout)
+          GenServer.call(state.name, {:sign_in, [args, callback]}, @timeout)
         end
 
-        {:reply, {:ok, {:captcha, ctx.captcha, wrapped_callback}}, state}
+        {:reply, {:ok, {:captcha, captcha, wrapped_callback}}, state}
 
       {:error, %TeslaApi.Error{} = e} ->
         {:reply, {:error, e}, state}

@@ -13,8 +13,6 @@ defmodule TeslaApi.Auth do
   # @version Mix.Project.config()[:version]
   @default_headers [
     # {"user-agent", "TeslaMate/#{@version}"},
-    {"Accept", "*/*"},
-    {"Connection", "keep-alive"}
   ]
 
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000
@@ -42,14 +40,6 @@ defmodule TeslaApi.Auth do
   end
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
-
-  defmodule MFA.Ctx do
-    defstruct [:state, :code_verifier, :transaction_id, :headers, :devices]
-  end
-
-  defmodule Login.Ctx do
-    defstruct [:captcha, :callback]
-  end
 
   def refresh(%__MODULE__{} = auth) do
     with {:ok, %{access_token: _} = tokens} <-
@@ -136,9 +126,10 @@ defmodule TeslaApi.Auth do
                 form
                 |> Map.replace!("identity", email)
                 |> Map.replace!("credential", password)
+                |> Map.replace!("captcha", captcha)
 
-              with {:ok, env = %Tesla.Env{}} <-
-                     submit_form({form, cookies}, state, code_verifier, captcha, base: base_url),
+              with {:ok, %Tesla.Env{} = env} <-
+                     submit_form(form, cookies, state, code_verifier, base: base_url),
                    {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
                    {:ok, tokens} <-
                      get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
@@ -152,7 +143,7 @@ defmodule TeslaApi.Auth do
             end
           end
 
-          {:ok, %Login.Ctx{captcha: captcha, callback: callback}}
+          {:ok, {:captcha, captcha, callback}}
         end
 
       {:ok, %Tesla.Env{status: 200} = env} ->
@@ -178,13 +169,9 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp submit_form({form, cookies}, state, code_verifier, captcha, opts) do
+  defp submit_form(form, cookies, state, code_verifier, opts) do
     transaction_id = Map.fetch!(form, "transaction_id")
-
-    encoded_form =
-      form
-      |> Map.put("captcha", captcha)
-      |> URI.encode_query()
+    encoded_form = URI.encode_query(form)
 
     headers = [
       {"Content-Type", "application/x-www-form-urlencoded"},
@@ -204,20 +191,13 @@ defmodule TeslaApi.Auth do
             headers = [{"referer", env.url}, {"cookie", cookies}]
 
             with {:ok, devices} <- list_devices(transaction_id, headers) do
-              ctx = %MFA.Ctx{
-                state: state,
-                code_verifier: code_verifier,
-                transaction_id: transaction_id,
-                headers: headers,
-                devices: devices
-              }
-
               callback = fn device_id, mfa_passcode ->
                 try do
-                  with {:ok, env} <- verify_passcode(device_id, mfa_passcode, ctx),
-                       {:ok, {redirect_uri, code}} <- parse_location_header(env, ctx.state),
+                  with {:ok, env} <-
+                         verify_passcode(device_id, mfa_passcode, transaction_id, headers),
+                       {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
                        {:ok, tokens} <-
-                         get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state),
+                         get_web_token(code, code_verifier, redirect_uri, state),
                        {:ok, auth} <- get_api_tokens(tokens) do
                     {:ok, auth}
                   end
@@ -259,20 +239,20 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp verify_passcode(device_id, mfa_passcode, %MFA.Ctx{} = ctx) do
-    params = [transaction_id: ctx.transaction_id]
+  defp verify_passcode(device_id, mfa_passcode, transaction_id, headers) do
+    params = [transaction_id: transaction_id]
 
     data = %{
-      transaction_id: ctx.transaction_id,
+      transaction_id: transaction_id,
       factor_id: device_id,
       passcode: mfa_passcode
     }
 
-    case post("/oauth2/v3/authorize/mfa/verify", data, headers: ctx.headers) do
+    case post("/oauth2/v3/authorize/mfa/verify", data, headers: headers) do
       {:ok, %Tesla.Env{status: 200, body: body} = env} ->
         case body do
           %{"data" => %{"approved" => true, "valid" => true}} ->
-            case get("/oauth2/v3/authorize", query: params, headers: ctx.headers) do
+            case get("/oauth2/v3/authorize", query: params, headers: headers) do
               {:ok, %Tesla.Env{status: 302} = env} ->
                 {:ok, env}
 

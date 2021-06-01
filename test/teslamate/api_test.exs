@@ -57,7 +57,7 @@ defmodule TeslaMate.ApiTest do
            {:ok, %TeslaApi.Auth{token: "$token", refresh_token: "$token", expires_in: 10_000_000}}
          end
 
-         {:ok, %TeslaApi.Auth.Login.Ctx{captcha: "", callback: callback}}
+         {:ok, {:captcha, "", callback}}
        end,
        refresh: fn
          %{token: "cannot_be_refreshed", refresh_token: "cannot_be_refreshed"} = auth ->
@@ -196,7 +196,7 @@ defmodule TeslaMate.ApiTest do
             {:error, %TeslaApi.Error{reason: :unauthorized, env: %Finch.Response{}}}
           end
 
-          {:ok, %TeslaApi.Auth.Login.Ctx{captcha: "", callback: callback}}
+          {:ok, {:captcha, "", callback}}
         end do
         :ok = start_api(name, start_auth: false)
 
