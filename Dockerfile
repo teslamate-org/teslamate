@@ -1,23 +1,6 @@
-FROM erlang:24 AS builder
+FROM elixir:1.12 AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-ENV ELIXIR_VERSION="v1.12.0-rc.1" \
-    LANG=C.UTF-8
-
-RUN set -xe \
-    && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" \
-    && ELIXIR_DOWNLOAD_SHA256="f04142fb0a6c3f27a342109308085aaa75b95dbf4782d9c7be12446150b2b4be" \
-    && curl -fSL -o elixir-src.tar.gz $ELIXIR_DOWNLOAD_URL \
-    && echo "$ELIXIR_DOWNLOAD_SHA256  elixir-src.tar.gz" | sha256sum -c - \
-    && mkdir -p /usr/local/src/elixir \
-    && tar -xzC /usr/local/src/elixir --strip-components=1 -f elixir-src.tar.gz \
-    && rm elixir-src.tar.gz \
-    && cd /usr/local/src/elixir \
-    && make install clean
-
-RUN apt-get update && apt-get install -y --no-install-recommends \ 
-    curl ca-certificates git
 
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt-get update && apt-get install -y --no-install-recommends nodejs
@@ -39,8 +22,8 @@ COPY assets/package.json assets/package-lock.json ./assets/
 RUN npm ci --prefix ./assets --progress=false --no-audit --loglevel=error
 
 COPY assets assets
-RUN npm run deploy --prefix ./assets
-RUN mix phx.digest
+RUN npm run deploy --prefix ./assets && \
+    mix phx.digest
 
 COPY lib lib
 COPY priv/repo/migrations priv/repo/migrations
@@ -62,7 +45,7 @@ ENV LANG=C.UTF-8 \
 
 WORKDIR $HOME
 
-RUN apt-get update && apt-get install -y --no-install-recommends \ 
+RUN apt-get update && apt-get install -y --no-install-recommends \
         libodbc1  \
         libsctp1  \
         libssl1.1  \
@@ -71,7 +54,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         tini  \
         tzdata && \
     rm -rf /var/lib/apt/lists/* && \
-    addgroup --gid 10001 --system nonroot && \ 
+    addgroup --gid 10001 --system nonroot && \
     adduser  --uid 10000 --system --ingroup nonroot --home /home/nonroot nonroot && \
     chown -R nonroot:nonroot .
 
