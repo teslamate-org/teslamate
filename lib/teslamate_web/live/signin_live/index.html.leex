@@ -2,7 +2,7 @@
   <div class="column is-half">
     <%= case @state do %>
       <% {type, changeset} when type in [:credentials, :tokens]-> %>
-        <%= f = form_for changeset, "#", [phx_change: :validate, phx_submit: :sign_in, class: "box", as: :credentials] %>
+        <%= f = form_for changeset, "#", [phx_change: :validate, phx_submit: :sign_in, class: "box", as: type] %>
           <%= if @error do %>
             <div class="notification is-danger">
               Error: <%= @error %>
