@@ -7,7 +7,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
   defp initial_state, do: {:credentials, credentials_changeset()}
 
   @impl true
-  def mount(_params, %{"cldr_locale" => locale}, socket) do
+  def mount(_params, %{"locale" => locale}, socket) do
     if connected?(socket), do: Gettext.put_locale(locale)
 
     assigns = %{
