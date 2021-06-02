@@ -1,7 +1,7 @@
 defmodule TeslaMateWeb.Router do
   use TeslaMateWeb, :router
 
-  alias TeslaMateWeb.Plugs.Donate
+  alias TeslaMateWeb.Plugs.{Donate, PutLocaleInSession}
   alias TeslaMate.Settings
 
   pipeline :browser do
@@ -19,7 +19,7 @@ defmodule TeslaMateWeb.Router do
       gettext: TeslaMateWeb.Gettext,
       cldr: TeslaMateWeb.Cldr
 
-    plug Cldr.Plug.PutSession
+    plug PutLocaleInSession
 
     plug :put_root_layout, {TeslaMateWeb.LayoutView, :root}
     plug :protect_from_forgery

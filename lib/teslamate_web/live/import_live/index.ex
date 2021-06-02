@@ -14,7 +14,7 @@ defmodule TeslaMateWeb.ImportLive.Index do
   alias TeslaMate.Import
 
   @impl true
-  def mount(_params, %{"settings" => _, "cldr_locale" => locale}, socket) do
+  def mount(_params, %{"settings" => _, "locale" => locale}, socket) do
     tz =
       if connected?(socket) do
         Gettext.put_locale(locale)

@@ -7,7 +7,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Index do
   alias TeslaMate.Convert
 
   @impl true
-  def mount(_params, %{"settings" => settings, "cldr_locale" => locale}, socket) do
+  def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
     if connected?(socket), do: Gettext.put_locale(locale)
 
     unit_of_length =
