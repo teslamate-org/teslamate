@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.23.2] - 2021-06-02
+
+### Bug Fixes
+
+- Fix sign-in for Chinese accounts
+
+## [1.23.1] - 2021-06-02
+
+### Improvements and Bug Fixes
+
+- Tesla has removed the captcha again …
+- Fix error when changing the language to Chinese
+
+#### Translations
+
+- Update Swedish translations ([#1655](https://github.com/adriankumpf/teslamate/pull/1655) by [tobiasehlert](https://github.com/tobiasehlert))
+
 ## [1.23.0] - 2021-06-01
 
 ### Improvements and Bug Fixes
@@ -1269,6 +1286,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.23.2]: https://github.com/adriankumpf/teslamate/compare/v1.23.1...v1.23.2
+[1.23.1]: https://github.com/adriankumpf/teslamate/compare/v1.23.0...v1.23.1
 [1.23.0]: https://github.com/adriankumpf/teslamate/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/adriankumpf/teslamate/compare/v1.21.6...v1.22.0
 [1.21.6]: https://github.com/adriankumpf/teslamate/compare/v1.21.5...v1.21.6
