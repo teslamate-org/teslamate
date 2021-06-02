@@ -94,7 +94,61 @@ defmodule TeslaApi.Auth do
       login_hint: nil
     ]
 
-    case get("/oauth2/v3/authorize", query: params) do
+    with {:ok, {_form, captcha, cookies, _base_url}} <- load_form(params) do
+      callback = fn email, password, captcha_code ->
+        try do
+          params = Keyword.put(params, :login_hint, email)
+
+          case load_form(params, cookies) do
+            {:ok, {form, nil, cookies, base_url}} ->
+              form =
+                form
+                |> Map.replace!("identity", email)
+                |> Map.replace!("credential", password)
+
+              form =
+                case captcha_code do
+                  nil -> form
+                  code -> Map.replace!(form, "captcha", code)
+                end
+
+              with {:ok, %Tesla.Env{} = env} <-
+                     submit_form(form, cookies, state, code_verifier, base: base_url),
+                   {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
+                   {:ok, tokens} <-
+                     get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
+                   {:ok, auth} <- get_api_tokens(tokens) do
+                {:ok, auth}
+              end
+
+            {:error, reason} ->
+              {:error, reason}
+          end
+        rescue
+          e ->
+            Logger.error(Exception.format(:error, e, __STACKTRACE__))
+            {:error, %Error{reason: e, message: "An unexpected error occurred"}}
+        end
+      end
+
+      case captcha do
+        nil ->
+          {:ok, fn email, password -> callback.(email, password, nil) end}
+
+        captcha ->
+          {:ok, {:captcha, captcha, callback}}
+      end
+    end
+  end
+
+  defp load_form(params, cookies \\ nil) do
+    headers =
+      case cookies do
+        nil -> []
+        cookies -> [{"Cookie", cookies}]
+      end
+
+    case get("/oauth2/v3/authorize", query: params, headers: headers) do
       {:ok, %Tesla.Env{status: 200, headers: resp_headers, body: resp_body} = env} ->
         document = Floki.parse_document!(resp_body)
 
@@ -119,48 +173,17 @@ defmodule TeslaApi.Auth do
             {key, value}
           end)
 
-        callback = fn email, password, captcha ->
-          try do
-            form =
-              form
-              |> Map.replace!("identity", email)
-              |> Map.replace!("credential", password)
-
-            form =
-              case captcha do
-                nil -> form
-                captcha -> Map.replace!(form, "captcha", captcha)
-              end
-
-            with {:ok, %Tesla.Env{} = env} <-
-                   submit_form(form, cookies, state, code_verifier, base: base_url),
-                 {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
-                 {:ok, tokens} <-
-                   get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
-                 {:ok, auth} <- get_api_tokens(tokens) do
-              {:ok, auth}
-            end
-          rescue
-            e ->
-              Logger.error(Exception.format(:error, e, __STACKTRACE__))
-              {:error, %Error{reason: e, message: "An unexpected error occurred"}}
-          end
-        end
-
         case Floki.find(document, "[data-id=\"captcha\"]") do
           [] ->
-            {:ok, fn email, password -> callback.(email, password, nil) end}
+            {:ok, {form, nil, cookies, base_url}}
 
           [captcha] ->
-            captcha_path = Floki.attribute(captcha, "src")
+            path = Floki.attribute(captcha, "src")
 
-            with {:ok, captcha} <- load_captcha_image(captcha_path, cookies) do
-              {:ok, {:captcha, captcha, callback}}
+            with {:ok, captcha} <- load_captcha_image(path, cookies) do
+              {:ok, {form, captcha, cookies, base_url}}
             end
         end
-
-      {:ok, %Tesla.Env{status: 200} = env} ->
-        {:error, %Error{reason: :invalid_credentials, message: "Invalid credentials", env: env}}
 
       error ->
         handle_error(error, :authorization_request_failed)
