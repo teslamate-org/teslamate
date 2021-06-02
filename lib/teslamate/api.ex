@@ -128,6 +128,13 @@ defmodule TeslaMate.Api do
 
         {:reply, {:ok, {:captcha, captcha, wrapped_callback}}, state}
 
+      {:ok, callback} ->
+        wrapped_callback = fn email, password ->
+          GenServer.call(state.name, {:sign_in, [[email, password], callback]}, @timeout)
+        end
+
+        {:reply, {:ok, wrapped_callback}, state}
+
       {:error, %TeslaApi.Error{} = e} ->
         {:reply, {:error, e}, state}
     end

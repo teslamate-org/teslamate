@@ -36,6 +36,7 @@
             </div>
           </div>
 
+          <%= if @captcha != nil do %>
           <div class="field">
             <%= label f, :captcha, gettext("Captcha"), class: "label" %>
             <div class="field has-addons">
@@ -57,7 +58,7 @@
               </p>
             </div>
           </div>
-
+          <% end %>
 
             <% :tokens -> %>
           <div class="field">

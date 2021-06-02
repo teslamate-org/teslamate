@@ -83,7 +83,13 @@ defmodule TeslaMateWeb.SignInLive.Index do
 
     task =
       Task.async(fn ->
-        socket.assigns.callback.(credentials.email, credentials.password, credentials.captcha)
+        case socket.assigns.captcha do
+          nil ->
+            socket.assigns.callback.(credentials.email, credentials.password)
+
+          _ ->
+            socket.assigns.callback.(credentials.email, credentials.password, credentials.captcha)
+        end
       end)
 
     {:noreply, assign(socket, task: task)}
@@ -115,6 +121,9 @@ defmodule TeslaMateWeb.SignInLive.Index do
     case call(socket.assigns.api, :prepare_sign_in) do
       {:ok, {:captcha, captcha, callback}} ->
         {:noreply, assign(socket, captcha: captcha, callback: callback, task: nil)}
+
+      {:ok, callback} ->
+        {:noreply, assign(socket, captcha: nil, callback: callback, task: nil)}
 
       {:error, %TeslaApi.Error{} = e} ->
         {:noreply, assign(socket, error: Exception.message(e), task: nil)}
@@ -175,7 +184,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
 
     {%{}, %{email: :string, password: :string, captcha: :string}}
     |> cast(attrs, [:email, :password, :captcha])
-    |> validate_required([:email, :password, :captcha])
+    |> validate_required([:email, :password])
   end
 
   defp mfa_changeset(attrs \\ %{}) do

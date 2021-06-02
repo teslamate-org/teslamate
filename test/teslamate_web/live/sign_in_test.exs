@@ -1,18 +1,22 @@
 defmodule TeslaMateWeb.SignInLiveTest do
   use TeslaMateWeb.ConnCase
 
-  defp start_api(name) do
+  defp start_api(name, opts) do
     api_name = :"api_#{name}"
-    {:ok, _pid} = start_supervised({ApiMock, name: api_name, pid: self()})
+
+    {:ok, _pid} =
+      start_supervised({ApiMock, name: api_name, pid: self(), captcha: opts[:captcha]})
+
     %{api: {ApiMock, api_name}}
   end
 
-  setup %{test: name, conn: conn} do
-    params = start_api(name)
+  setup %{test: name, conn: conn} = ctx do
+    params = start_api(name, captcha: Map.get(ctx, :captcha, true))
     conn = put_connect_params(conn, params)
     [conn: conn]
   end
 
+  @tag captcha: true
   test "renders sign in form", %{conn: conn} do
     assert {:ok, _view, html} = live(conn, "/sign_in")
 
@@ -33,6 +37,7 @@ defmodule TeslaMateWeb.SignInLiveTest do
            ] = doc |> Floki.find("[type=submit]")
   end
 
+  @tag captcha: false
   test "validates credentials", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
 
@@ -46,20 +51,19 @@ defmodule TeslaMateWeb.SignInLiveTest do
     assert "Sign in" == doc |> Floki.find("[type=submit]") |> Floki.text()
   end
 
+  @tag captcha: false
   test "signs in", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
 
-    render_change(view, :validate, %{
-      credentials: %{email: "$email", password: "$password", captcha: "$captcha"}
-    })
-
+    render_change(view, :validate, %{credentials: %{email: "$email", password: "$password"}})
     render_submit(view, :sign_in, %{})
 
-    assert_receive {ApiMock, :sign_in_callback, "$email", "$password", "$captcha"}
+    assert_receive {ApiMock, :sign_in_callback, "$email", "$password"}
 
     assert_redirect(view, "/", 1000)
   end
 
+  @tag captcha: true
   test "signs in with captcha", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
 
@@ -80,6 +84,7 @@ defmodule TeslaMateWeb.SignInLiveTest do
     assert_redirect(view, "/", 1000)
   end
 
+  @tag captcha: true
   test "signs in with second factor", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
 
