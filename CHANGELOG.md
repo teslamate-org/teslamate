@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.23.3] - 2021-06-02
+
+### Bug Fixes
+
+- Fix API tokens form
+
 ## [1.23.2] - 2021-06-02
 
 ### Bug Fixes
@@ -1286,6 +1292,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.23.3]: https://github.com/adriankumpf/teslamate/compare/v1.23.2...v1.23.3
 [1.23.2]: https://github.com/adriankumpf/teslamate/compare/v1.23.1...v1.23.2
 [1.23.1]: https://github.com/adriankumpf/teslamate/compare/v1.23.0...v1.23.1
 [1.23.0]: https://github.com/adriankumpf/teslamate/compare/v1.22.0...v1.23.0
