@@ -104,46 +104,59 @@ defmodule TeslaApi.Auth do
           |> Enum.map(fn {_, cookie} -> cookie |> String.split(";") |> hd() end)
           |> Enum.join("; ")
 
-        with {:ok, captcha} <- load_captcha_image(document, cookies) do
-          base_url =
-            URI.parse(env.url)
-            |> Map.put(:path, nil)
-            |> Map.put(:query, nil)
-            |> URI.to_string()
+        base_url =
+          URI.parse(env.url)
+          |> Map.put(:path, nil)
+          |> Map.put(:query, nil)
+          |> URI.to_string()
 
-          form =
-            document
-            |> Floki.find("form input")
-            |> Map.new(fn input ->
-              [key] = input |> Floki.attribute("name")
-              value = input |> Floki.attribute("value") |> List.first()
-              {key, value}
-            end)
+        form =
+          document
+          |> Floki.find("form input")
+          |> Map.new(fn input ->
+            [key] = input |> Floki.attribute("name")
+            value = input |> Floki.attribute("value") |> List.first()
+            {key, value}
+          end)
 
-          callback = fn email, password, captcha ->
-            try do
-              form =
-                form
-                |> Map.replace!("identity", email)
-                |> Map.replace!("credential", password)
-                |> Map.replace!("captcha", captcha)
+        callback = fn email, password, captcha ->
+          try do
+            form =
+              form
+              |> Map.replace!("identity", email)
+              |> Map.replace!("credential", password)
 
-              with {:ok, %Tesla.Env{} = env} <-
-                     submit_form(form, cookies, state, code_verifier, base: base_url),
-                   {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
-                   {:ok, tokens} <-
-                     get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
-                   {:ok, auth} <- get_api_tokens(tokens) do
-                {:ok, auth}
+            form =
+              case captcha do
+                nil -> form
+                captcha -> Map.replace!(form, "captcha", captcha)
               end
-            rescue
-              e ->
-                Logger.error(Exception.format(:error, e, __STACKTRACE__))
-                {:error, %Error{reason: e, message: "An unexpected error occurred"}}
-            end
-          end
 
-          {:ok, {:captcha, captcha, callback}}
+            with {:ok, %Tesla.Env{} = env} <-
+                   submit_form(form, cookies, state, code_verifier, base: base_url),
+                 {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
+                 {:ok, tokens} <-
+                   get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
+                 {:ok, auth} <- get_api_tokens(tokens) do
+              {:ok, auth}
+            end
+          rescue
+            e ->
+              Logger.error(Exception.format(:error, e, __STACKTRACE__))
+              {:error, %Error{reason: e, message: "An unexpected error occurred"}}
+          end
+        end
+
+        case Floki.find(document, "[data-id=\"captcha\"]") do
+          [] ->
+            {:ok, fn email, password -> callback.(email, password, nil) end}
+
+          [captcha] ->
+            captcha_path = Floki.attribute(captcha, "src")
+
+            with {:ok, captcha} <- load_captcha_image(captcha_path, cookies) do
+              {:ok, {:captcha, captcha, callback}}
+            end
         end
 
       {:ok, %Tesla.Env{status: 200} = env} ->
@@ -154,29 +167,20 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp load_captcha_image(document, cookies) do
-    document
-    |> Floki.find("[data-id=\"captcha\"]")
-    |> Floki.attribute("src")
-    |> case do
-      [captcha] ->
-        case get(captcha, headers: [{"Cookie", cookies}]) do
-          {:ok, %Tesla.Env{status: 200, body: captcha}} ->
-            case Floki.parse_fragment(captcha) do
-              {:ok, [{"svg", _, _}]} ->
-                {:ok, captcha}
+  defp load_captcha_image(path, cookies) do
+    case get(path, headers: [{"Cookie", cookies}]) do
+      {:ok, %Tesla.Env{status: 200, body: captcha}} ->
+        case Floki.parse_fragment(captcha) do
+          {:ok, [{"svg", _, _}]} ->
+            {:ok, captcha}
 
-              {:error, reason} ->
-                Logger.error("Invalid captcha: #{reason}")
-                {:error, %Error{reason: :invalid_captcha}}
-            end
-
-          error ->
-            handle_error(error, :captcha_could_not_be_loaded)
+          {:error, reason} ->
+            Logger.error("Invalid captcha: #{reason}")
+            {:error, %Error{reason: :invalid_captcha}}
         end
 
-      _ ->
-        {:error, %Error{reason: :no_captcha_found}}
+      error ->
+        handle_error(error, :captcha_could_not_be_loaded)
     end
   end
 

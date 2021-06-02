@@ -145,6 +145,46 @@ defmodule TeslaMate.ApiTest do
       end
     end
 
+    test "does not require captcha to be present", %{test: name} do
+      pid = self()
+
+      with_mocks [
+        {TeslaApi.Auth, [],
+         [
+           prepare_login: fn ->
+             callback = fn email, password ->
+               send(pid, {TeslaApi.Auth, {:login, email, password}})
+
+               auth = %TeslaApi.Auth{
+                 token: "$token",
+                 refresh_token: "$token",
+                 expires_in: 10_000_000
+               }
+
+               {:ok, auth}
+             end
+
+             {:ok, callback}
+           end
+         ]},
+        vehicle_mock(self())
+      ] do
+        :ok = start_api(name, tokens: nil)
+
+        assert false == Api.signed_in?(name)
+
+        assert {:ok, callback} = Api.prepare_sign_in(name)
+        assert :ok == callback.(@valid_credentials.email, @valid_credentials.password)
+
+        assert_receive {TeslaApi.Auth, {:login, "teslamate", "foo"}}
+        assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
+        assert_receive {VehiclesMock, :restart}
+        assert true == Api.signed_in?(name)
+
+        refute_receive _
+      end
+    end
+
     test "allows sign in with API tokens", %{test: name} do
       with_mocks [auth_mock(self()), vehicle_mock(self())] do
         :ok = start_api(name, tokens: nil)

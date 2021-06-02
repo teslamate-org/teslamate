@@ -2,7 +2,7 @@ defmodule ApiMock do
   use GenServer
 
   defmodule State do
-    defstruct [:pid, :events]
+    defstruct [:pid, :events, :captcha]
   end
 
   # API
@@ -22,7 +22,13 @@ defmodule ApiMock do
 
   @impl true
   def init(opts) do
-    {:ok, %State{pid: Keyword.fetch!(opts, :pid), events: Keyword.get(opts, :events, [])}}
+    state = %State{
+      pid: Keyword.fetch!(opts, :pid),
+      events: Keyword.get(opts, :events, []),
+      captcha: Keyword.get(opts, :captcha, true)
+    }
+
+    {:ok, state}
   end
 
   @impl true
@@ -36,7 +42,17 @@ defmodule ApiMock do
     {:reply, exec(event), %State{state | events: events}}
   end
 
-  def handle_call(:prepare_sign_in, _from, %State{} = state) do
+  def handle_call(:prepare_sign_in, _from, %State{captcha: false} = state) do
+    callback = fn
+      email, password ->
+        send(state.pid, {ApiMock, :sign_in_callback, email, password})
+        :ok
+    end
+
+    {:reply, {:ok, callback}, state}
+  end
+
+  def handle_call(:prepare_sign_in, _from, %State{captcha: true} = state) do
     callback = fn
       "mfa" = email, password, captcha ->
         send(state.pid, {ApiMock, :sign_in_callback, email, password, captcha})
