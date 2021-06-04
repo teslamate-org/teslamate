@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <div class="field is-horizontal mt-4">
+  <div class="field is-horizontal mt-20">
     <div class="field-label is-normal">
       <%= label class: "label" do gettext("Cost") end %>
     </div>
@@ -68,7 +68,7 @@
         </p>
         <p class="control is-expanded">
           <%= text_input f, :cost_per_unit, class: "input",
-                             type: :number, inputmode: :decimal, step: 0.0001,
+                             type: :number, inputmode: :decimal, min: 0.0, step: 0.0001,
                              placeholder: "0.00" %>
         </p>
         <%= if @show_errors do %>
@@ -97,7 +97,7 @@
     </div>
   </div>
 
-  <div class="field is-horizontal mt-5">
+  <div class="field is-horizontal mt-25">
     <div class="field-label"></div>
     <div class="field-body">
       <div class="field is-grouped">

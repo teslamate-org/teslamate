@@ -115,7 +115,7 @@
         </p>
         <p class="control is-expanded">
           <%= text_input f, :cost, class: "input",
-                                   type: :number, inputmode: :decimal, step: 0.01,
+                                   type: :number, inputmode: :decimal, step: 0.0001,
                                    placeholder: gettext("Enter charge cost"), autofocus: true %>
         </p>
         <p class="help is-danger"><%= error_tag(f, :cost) %></p>
@@ -123,7 +123,7 @@
     </div>
   </div>
 
-  <div class="field is-horizontal mt-5">
+  <div class="field is-horizontal mt-25">
     <div class="field-label"></div>
     <div class="field-body">
       <div class="field is-grouped">
