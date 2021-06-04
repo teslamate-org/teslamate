@@ -12,14 +12,15 @@ Check out the [release notes](https://github.com/adriankumpf/teslamate/releases)
 Create a [backup](maintenance/backup_restore.md) before updating.
 :::
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 <Tabs
 defaultValue="docker"
 values={[
 { label: 'Docker', value: 'docker', },
-{ label: 'Manual install', value: 'manual', },
+{ label: 'Manual install (Debian)', value: 'manual_debian', },
+{ label: 'Manual install (FreeBSD)', value: 'manual_freebsd', },
 ]}>
 <TabItem value="docker">
 
@@ -28,13 +29,15 @@ Pull the new images:
 ```bash
 docker-compose pull
 ```
+
 and restart the stack with `docker-compose up`. To run the containers in the background add the `-d` flag:
+
 ```bash
 docker-compose up -d
 ```
 
 </TabItem>
-<TabItem value="manual">
+<TabItem value="manual_debian">
 
 1. Pull the new changes from the git repository, checkout the new version and then build the new release:
 
@@ -59,6 +62,39 @@ docker-compose up -d
 
    ```bash
    LOGIN="user:pass" ./grafana/dashboards.sh restore
+   ```
+
+</TabItem>
+<TabItem value="manual_freebsd">
+
+1. Pull the new changes from the git repository, checkout the new version and then build the new release:
+
+   ```bash
+   bash
+
+   git pull
+   git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
+
+   mix deps.get --only prod
+   npm install --prefix ./assets && npm run deploy --prefix ./assets
+
+   rm -rf _build
+   export MIX_ENV=prod
+   mix do phx.digest, release --overwrite
+   ```
+
+2. Most upgrades requires to run new database migrations. If so continue with the following command:
+
+   ```bash
+    _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+   ```
+
+3. Finally, re-import the Grafana dashboards:
+
+   ```bash
+   bash
+   export LOGIN="user:pass"
+   ./grafana/dashboards.sh restore
    ```
 
 </TabItem>
