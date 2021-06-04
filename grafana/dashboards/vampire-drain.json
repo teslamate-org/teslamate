@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1598013901953,
+  "iteration": 1617663619325,
   "links": [
     {
       "icon": "dashboard",
@@ -92,6 +92,7 @@
       },
       "styles": [
         {
+          "$$hashKey": "object:142",
           "alias": "Start",
           "align": "auto",
           "colorMode": null,
@@ -107,12 +108,13 @@
           "linkTooltip": "",
           "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}",
           "mappingType": 1,
-          "pattern": "start_date_km",
+          "pattern": "start_date_iso",
           "thresholds": [],
           "type": "date",
           "unit": "short"
         },
         {
+          "$$hashKey": "object:143",
           "alias": "End",
           "align": "auto",
           "colorMode": null,
@@ -124,12 +126,13 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "end_date_km",
+          "pattern": "end_date_iso",
           "thresholds": [],
           "type": "date",
           "unit": "short"
         },
         {
+          "$$hashKey": "object:144",
           "alias": "TR Loss",
           "align": "auto",
           "colorMode": null,
@@ -147,6 +150,7 @@
           "unit": "lengthkm"
         },
         {
+          "$$hashKey": "object:145",
           "alias": "Period",
           "align": "auto",
           "colorMode": "value",
@@ -166,6 +170,7 @@
           "unit": "s"
         },
         {
+          "$$hashKey": "object:146",
           "alias": "TR Loss / h",
           "align": "auto",
           "colorMode": null,
@@ -183,6 +188,7 @@
           "unit": "lengthkm"
         },
         {
+          "$$hashKey": "object:147",
           "alias": "",
           "align": "auto",
           "colorMode": null,
@@ -200,6 +206,7 @@
           "unit": "short"
         },
         {
+          "$$hashKey": "object:148",
           "alias": "Standby",
           "align": "auto",
           "colorMode": "value",
@@ -220,6 +227,7 @@
           "unit": "percentunit"
         },
         {
+          "$$hashKey": "object:149",
           "alias": "kWh",
           "align": "auto",
           "colorMode": null,
@@ -237,6 +245,7 @@
           "unit": "kwatth"
         },
         {
+          "$$hashKey": "object:150",
           "alias": "Ø-Power",
           "align": "auto",
           "colorMode": null,
@@ -254,6 +263,7 @@
           "unit": "watt"
         },
         {
+          "$$hashKey": "object:151",
           "alias": "TR Loss / h",
           "align": "auto",
           "colorMode": null,
@@ -271,6 +281,7 @@
           "unit": "lengthmi"
         },
         {
+          "$$hashKey": "object:152",
           "alias": "Start",
           "align": "auto",
           "colorMode": null,
@@ -285,12 +296,13 @@
           "linkTargetBlank": false,
           "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}",
           "mappingType": 1,
-          "pattern": "start_date_mi",
+          "pattern": "start_date_us",
           "thresholds": [],
           "type": "date",
           "unit": "short"
         },
         {
+          "$$hashKey": "object:153",
           "alias": "End",
           "align": "auto",
           "colorMode": null,
@@ -302,12 +314,13 @@
           "dateFormat": "MM/DD/YY h:mm:ss a",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "end_date_mi",
+          "pattern": "end_date_us",
           "thresholds": [],
           "type": "date",
           "unit": "short"
         },
         {
+          "$$hashKey": "object:154",
           "alias": "TR Loss",
           "align": "auto",
           "colorMode": null,
@@ -325,6 +338,7 @@
           "unit": "lengthmi"
         },
         {
+          "$$hashKey": "object:155",
           "alias": "SOC",
           "align": "auto",
           "colorMode": null,
@@ -342,6 +356,7 @@
           "unit": "percent"
         },
         {
+          "$$hashKey": "object:156",
           "alias": "    ",
           "align": "auto",
           "colorMode": null,
@@ -361,10 +376,12 @@
           "unit": "short",
           "valueMaps": [
             {
+              "$$hashKey": "object:326",
               "text": "❄",
               "value": "1"
             },
             {
+              "$$hashKey": "object:327",
               "text": "",
               "value": "0"
             }
@@ -378,7 +395,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "with merge as (\n SELECT \n    c.start_date AS start_date,\n    c.end_date AS end_date,\n    c.start_ideal_range_km AS start_ideal_range_km,\n    c.end_ideal_range_km AS end_ideal_range_km,\n    c.start_rated_range_km AS start_rated_range_km,\n    c.end_rated_range_km AS end_rated_range_km,\n    start_battery_level,\n    end_battery_level,\n    p.usable_battery_level AS start_usable_battery_level,\n    NULL AS end_usable_battery_level,\n    p.odometer AS start_km,\n    p.odometer AS end_km\n FROM charging_processes c\n JOIN positions p ON c.position_id = p.id\n WHERE c.car_id = $car_id AND $__timeFilter(start_date)\n UNION\n SELECT \n    d.start_date AS start_date,\n    d.end_date AS end_date,\n    d.start_ideal_range_km AS start_ideal_range_km,\n    d.end_ideal_range_km AS end_ideal_range_km,\n    d.start_rated_range_km AS start_rated_range_km,\n    d.end_rated_range_km AS end_rated_range_km,\n    start_position.battery_level AS start_battery_level,\n    end_position.battery_level AS end_battery_level,\n    start_position.usable_battery_level AS start_usable_battery_level,\n    end_position.usable_battery_level AS end_usable_battery_level,\n    d.start_km AS start_km,\n    d.end_km AS end_km\n FROM drives d\n JOIN positions start_position ON d.start_position_id = start_position.id\n JOIN positions end_position ON d.end_position_id = end_position.id\n WHERE d.car_id = $car_id AND $__timeFilter(start_date)\n), \nv as (\n SELECT\n    lag(t.end_date) OVER w AS start_date,\n    t.start_date AS end_date,\n    lag(t.end_[[preferred_range]]_range_km) OVER w AS start_range,\n    t.start_[[preferred_range]]_range_km AS end_range,\n    lag(t.end_km) OVER w AS start_km,\n    t.start_km AS end_km,\n    EXTRACT(EPOCH FROM age(t.start_date, lag(t.end_date) OVER w)) AS duration,\n    lag(t.end_battery_level) OVER w AS start_battery_level,\n    lag(t.end_usable_battery_level) OVER w AS start_usable_battery_level,\n\t\tstart_battery_level AS end_battery_level,\n\t\tstart_usable_battery_level AS end_usable_battery_level,\n\t\tstart_battery_level > COALESCE(start_usable_battery_level, start_battery_level) AS has_reduced_range\n  FROM merge t\n  WINDOW w AS (ORDER BY t.start_date ASC)\n  ORDER BY start_date DESC\n)\n\nSELECT\n  round(extract(epoch FROM v.start_date)) * 1000 AS start_date_ts,\n  round(extract(epoch FROM v.end_date)) * 1000 AS end_date_ts,\n  -- Columns\n  v.start_date as start_date_[[length_unit]],\n  v.end_date as end_date_[[length_unit]],\n  v.duration,\n  (coalesce(s_asleep.sleep, 0) + coalesce(s_offline.sleep, 0)) / v.duration as standby,\n\t-greatest(v.start_battery_level - v.end_battery_level, 0) as soc_diff,\n\tCASE WHEN has_reduced_range THEN 1 ELSE 0 END as has_reduced_range,\n\tconvert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, '$length_unit') AS range_diff_$length_unit,\n  CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) * c.efficiency END AS consumption,\n  CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 END as avg_power,\n  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) / (v.duration / 3600))::numeric END, '$length_unit') AS range_lost_per_hour_[[length_unit]]\nFROM v,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'asleep' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_asleep,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'offline' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_offline\nJOIN cars c ON c.id = $car_id\nWHERE\n  v.duration > ($duration * 60 * 60)\n  AND v.start_range - v.end_range >= 0\n  AND v.end_km - v.start_km < 1;",
+          "rawSql": "with merge as (\n SELECT \n    c.start_date AS start_date,\n    c.end_date AS end_date,\n    c.start_ideal_range_km AS start_ideal_range_km,\n    c.end_ideal_range_km AS end_ideal_range_km,\n    c.start_rated_range_km AS start_rated_range_km,\n    c.end_rated_range_km AS end_rated_range_km,\n    start_battery_level,\n    end_battery_level,\n    p.usable_battery_level AS start_usable_battery_level,\n    NULL AS end_usable_battery_level,\n    p.odometer AS start_km,\n    p.odometer AS end_km\n FROM charging_processes c\n JOIN positions p ON c.position_id = p.id\n WHERE c.car_id = $car_id AND $__timeFilter(start_date)\n UNION\n SELECT \n    d.start_date AS start_date,\n    d.end_date AS end_date,\n    d.start_ideal_range_km AS start_ideal_range_km,\n    d.end_ideal_range_km AS end_ideal_range_km,\n    d.start_rated_range_km AS start_rated_range_km,\n    d.end_rated_range_km AS end_rated_range_km,\n    start_position.battery_level AS start_battery_level,\n    end_position.battery_level AS end_battery_level,\n    start_position.usable_battery_level AS start_usable_battery_level,\n    end_position.usable_battery_level AS end_usable_battery_level,\n    d.start_km AS start_km,\n    d.end_km AS end_km\n FROM drives d\n JOIN positions start_position ON d.start_position_id = start_position.id\n JOIN positions end_position ON d.end_position_id = end_position.id\n WHERE d.car_id = $car_id AND $__timeFilter(start_date)\n), \nv as (\n SELECT\n    lag(t.end_date) OVER w AS start_date,\n    t.start_date AS end_date,\n    lag(t.end_[[preferred_range]]_range_km) OVER w AS start_range,\n    t.start_[[preferred_range]]_range_km AS end_range,\n    lag(t.end_km) OVER w AS start_km,\n    t.start_km AS end_km,\n    EXTRACT(EPOCH FROM age(t.start_date, lag(t.end_date) OVER w)) AS duration,\n    lag(t.end_battery_level) OVER w AS start_battery_level,\n    lag(t.end_usable_battery_level) OVER w AS start_usable_battery_level,\n\t\tstart_battery_level AS end_battery_level,\n\t\tstart_usable_battery_level AS end_usable_battery_level,\n\t\tstart_battery_level > COALESCE(start_usable_battery_level, start_battery_level) AS has_reduced_range\n  FROM merge t\n  WINDOW w AS (ORDER BY t.start_date ASC)\n  ORDER BY start_date DESC\n)\n\nSELECT\n  round(extract(epoch FROM v.start_date)) * 1000 AS start_date_ts,\n  round(extract(epoch FROM v.end_date)) * 1000 AS end_date_ts,\n  -- Columns\n  v.start_date as start_date_[[date_format]],\n  v.end_date as end_date_[[date_format]],\n  v.duration,\n  (coalesce(s_asleep.sleep, 0) + coalesce(s_offline.sleep, 0)) / v.duration as standby,\n\t-greatest(v.start_battery_level - v.end_battery_level, 0) as soc_diff,\n\tCASE WHEN has_reduced_range THEN 1 ELSE 0 END as has_reduced_range,\n\tconvert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, '$length_unit') AS range_diff_$length_unit,\n  CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) * c.efficiency END AS consumption,\n  CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 END as avg_power,\n  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) / (v.duration / 3600))::numeric END, '$length_unit') AS range_lost_per_hour_[[length_unit]]\nFROM v,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'asleep' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_asleep,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'offline' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_offline\nJOIN cars c ON c.id = $car_id\nWHERE\n  v.duration > ($duration * 60 * 60)\n  AND v.start_range - v.end_range >= 0\n  AND v.end_km - v.start_km < 1;",
           "refId": "A",
           "select": [
             [
@@ -416,11 +433,12 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "Car",
@@ -445,6 +463,7 @@
           "text": "6",
           "value": "6"
         },
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "min. Idle Time (h)",
@@ -495,11 +514,12 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "km",
-          "value": "km"
+          "text": "mi",
+          "value": "mi"
         },
         "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "",
@@ -521,11 +541,12 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "ideal",
-          "value": "ideal"
+          "text": "rated",
+          "value": "rated"
         },
         "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": null,
@@ -552,6 +573,7 @@
         },
         "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "",
@@ -559,6 +581,33 @@
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "us",
+          "value": "us"
+        },
+        "datasource": "TeslaMate",
+        "definition": "select date_format from settings limit 1;",
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "date_format",
+        "options": [],
+        "query": "select date_format from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
