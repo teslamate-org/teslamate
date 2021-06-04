@@ -54,7 +54,69 @@
     </div>
   </div>
 
-  <div class="field is-horizontal mt-4">
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label class: "label" do gettext("Active") end %>
+    </div>
+    <div class="field-body">
+      
+        <div class="control">
+          <%= checkbox f, :active,  placeholder: gettext("Active") %>
+        </div>
+        <%= if @show_errors do %>
+          <p class="help is-danger"><%= error_tag(f, :active) %></p>
+        <% end %>
+      
+    </div>
+  </div>  
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label class: "label" do gettext("Supercharger") end %>
+    </div>
+    <div class="field-body">
+      <div class="field is-expanded">
+        <div class="control">
+          <%= checkbox f, :supercharger, placeholder: gettext("Supercharger") %>
+        </div>
+        <%= if @show_errors do %>
+          <p class="help is-danger"><%= error_tag(f, :supercharger) %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>  
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label class: "label" do gettext("Charging Provider") end %>
+    </div>
+    <div class="field-body">
+      <div class="field is-expanded">
+        <div class="control">
+          <%= text_input f, :provider, class: "input", maxlength: "60", placeholder: gettext("Provider") %>
+        </div>
+        <%= if @show_errors do %>
+          <p class="help is-danger"><%= error_tag(f, :provider) %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>  
+
+    <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label class: "label" do gettext("Country Code") end %>
+    </div>
+    <div class="field-body">
+        <div class="control">
+          <%= text_input f, :country_code, class: "input", size: 5, minlength: "2", maxlength: "2", placeholder: gettext("Country Code") %>
+        </div>
+        <%= if @show_errors do %>
+          <p class="help is-danger"><%= error_tag(f, :country_code) %></p>
+        <% end %>
+    </div>
+  </div>  
+
+  <div class="field is-horizontal mt-20">
     <div class="field-label is-normal">
       <%= label class: "label" do gettext("Cost") end %>
     </div>
@@ -68,7 +130,7 @@
         </p>
         <p class="control is-expanded">
           <%= text_input f, :cost_per_unit, class: "input",
-                             type: :number, inputmode: :decimal, step: 0.0001,
+                             type: :number, inputmode: :decimal, min: 0.0, step: 0.0001,
                              placeholder: "0.00" %>
         </p>
         <%= if @show_errors do %>
@@ -97,7 +159,23 @@
     </div>
   </div>
 
-  <div class="field is-horizontal mt-5">
+
+
+    <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label class: "label" do gettext("Currency Code") end %>
+    </div>
+    <div class="field-body">
+        <div class="control">
+          <%= text_input f, :currency_code, class: "input", minlength: "3", maxlength: "3", size: 5, placeholder: gettext("Currency Code") %>
+        </div>
+        <%= if @show_errors do %>
+          <p class="help is-danger"><%= error_tag(f, :currency_code) %></p>
+        <% end %>
+    </div>
+  </div>   
+
+  <div class="field is-horizontal mt-25">
     <div class="field-label"></div>
     <div class="field-body">
       <div class="field is-grouped">
