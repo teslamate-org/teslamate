@@ -7,7 +7,11 @@ module.exports = {
         {
           type: "category",
           label: "Installation",
-          items: ["installation/docker", "installation/debian"],
+          items: [
+            "installation/docker",
+            "installation/debian",
+            "installation/freebsd",
+          ],
         },
         "faq",
       ],
