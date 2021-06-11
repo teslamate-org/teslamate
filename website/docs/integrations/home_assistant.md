@@ -209,7 +209,7 @@ tesla_location:
    state_topic: "teslamate/cars/1/shift_state"
    icon: mdi:car-shift-pattern
 
-- platform: mqtt
+ - platform: mqtt
    name: tesla_power
    state_topic: "teslamate/cars/1/power"
    device_class: power
@@ -455,6 +455,7 @@ tesla_location:
 The below is the Lovelace UI configuration used to make the example screenshot above. You will obviously want to configure this to your liking, however the example contains all of the sensors and values presented via MQTT and could be used as the basis of UI configuration.
 
 ```yml title="ui-lovelace.yaml"
+views:
   - path: car
     title: Car
     badges: []
