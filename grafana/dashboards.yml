@@ -31,3 +31,13 @@ providers:
   updateIntervalSeconds: 86400
   options:
     path: /dashboards_reports
+- name: 'teslamate_preview'
+  orgId: 1
+  folder: Preview
+  folderUid: Nr7ofiDZk
+  type: file
+  disableDeletion: false
+  editable: true
+  updateIntervalSeconds: 86400
+  options:
+    path: /dashboards_preview

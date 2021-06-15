@@ -28,6 +28,7 @@ COPY datasource.yml /etc/grafana/provisioning/datasources/
 COPY dashboards.yml /etc/grafana/provisioning/dashboards/
 COPY dashboards/internal/*.json /dashboards_internal/
 COPY dashboards/reports/*.json /dashboards_reports/
+COPY dashboards/preview/*.json /dashboards_preview/
 COPY dashboards/*.json /dashboards/
 
 EXPOSE 3000
