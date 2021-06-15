@@ -66,9 +66,8 @@
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :active) %></p>
         <% end %>
-      
     </div>
-  </div>  
+  </div>   
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
@@ -85,6 +84,22 @@
       </div>
     </div>
   </div>  
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label class: "label" do gettext("Charger ID") end %>
+    </div>
+    <div class="field-body">
+      <div class="field is-expanded">
+        <div class="control">
+          <%= text_input f, :geo_code, class: "input", size: 5, minlength: "5", maxlength: "5", placeholder: gettext("Charger ID") %>
+        </div>
+        <%= if @show_errors do %>
+          <p class="help is-danger"><%= error_tag(f, :geo_code) %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>   
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">

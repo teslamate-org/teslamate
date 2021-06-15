@@ -12,6 +12,7 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       add :supercharger, :boolean, default: true
       add :provider, :string, null: true
       add :active, :boolean, default: true
+      add :geo_code, :string, size: 5, null: false, default: "CH001" 
     end
   end
 
@@ -22,6 +23,7 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       remove_if_exists(:supercharger, :boolean)
       remove_if_exists(:provider, :string)
       remove_if_exists(:active, :boolean)
+      remove_if_exists(:geo_code, :string)
     end
   end
 end
