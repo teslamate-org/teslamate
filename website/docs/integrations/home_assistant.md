@@ -209,7 +209,7 @@ tesla_location:
    state_topic: "teslamate/cars/1/shift_state"
    icon: mdi:car-shift-pattern
 
-- platform: mqtt
+ - platform: mqtt
    name: tesla_power
    state_topic: "teslamate/cars/1/power"
    device_class: power
@@ -455,10 +455,11 @@ tesla_location:
 The below is the Lovelace UI configuration used to make the example screenshot above. You will obviously want to configure this to your liking, however the example contains all of the sensors and values presented via MQTT and could be used as the basis of UI configuration.
 
 ```yml title="ui-lovelace.yaml"
+views:
   - path: car
     title: Car
     badges: []
-    icon: 'mdi:car-connected'
+    icon: mdi:car-connected
     cards:
       - type: vertical-stack
         cards:
@@ -468,31 +469,31 @@ The below is the Lovelace UI configuration used to make the example screenshot a
                 name: Battery Level
               - entity: sensor.tesla_state
                 name: Car State
-              - entity: sensor.tesla_plugged_in
+              - entity: binary_sensor.tesla_plugged_in
                 name: Plugged In
           - type: glance
             entities:
-              - entity: sensor.tesla_park_brake
+              - entity: binary_sensor.tesla_park_brake
                 name: Park Brake
-              - entity: sensor.tesla_sentry_mode
+              - entity: binary_sensor.tesla_sentry_mode
                 name: Sentry Mode
               - entity: sensor.tesla_speed
                 name: Speed
           - type: glance
             entities:
-              - entity: sensor.tesla_healthy
+              - entity: binary_sensor.tesla_healthy
                 name: Car Health
-              - entity: sensor.tesla_windows_open
+              - entity: binary_sensor.tesla_windows_open
                 name: Window Status
           - type: horizontal-stack
             cards:
               - type: button
-                entity: sensor.tesla_locked
+                entity: binary_sensor.tesla_locked
                 name: Charger Door
                 show_state: true
                 state:
                   - value: locked
-                    icon: 'mdi:lock'
+                    icon: mdi:lock
                     color: green
                     tap_action:
                       action: call-service
@@ -500,7 +501,7 @@ The below is the Lovelace UI configuration used to make the example screenshot a
                       service_data:
                         entity_id: lock.tesla_model_3_charger_door_lock
                   - value: unlocked
-                    icon: 'mdi:lock-open'
+                    icon: mdi:lock-open
                     color: red
                     tap_action:
                       action: call-service
@@ -513,7 +514,7 @@ The below is the Lovelace UI configuration used to make the example screenshot a
                 show_state: true
                 state:
                   - value: locked
-                    icon: 'mdi:lock'
+                    icon: mdi:lock
                     color: green
                     tap_action:
                       action: call-service
@@ -521,7 +522,7 @@ The below is the Lovelace UI configuration used to make the example screenshot a
                       service_data:
                         entity_id: lock.tesla_model_3_door_lock
                   - value: unlocked
-                    icon: 'mdi:lock-open'
+                    icon: mdi:lock-open
                     color: red
                     tap_action:
                       action: call-service
@@ -545,11 +546,11 @@ The below is the Lovelace UI configuration used to make the example screenshot a
             name: Status
           - entity: sensor.tesla_since
             name: Last Status Change
-          - entity: sensor.tesla_healthy
+          - entity: binary_sensor.tesla_healthy
             name: Logger Healthy
           - entity: sensor.tesla_version
             name: Software Version
-          - entity: sensor.tesla_update_available
+          - entity: binary_sensor.tesla_update_available
             name: Available Update Status
           - entity: sensor.tesla_update_version
             name: Available Update Version
@@ -583,27 +584,27 @@ The below is the Lovelace UI configuration used to make the example screenshot a
             name: Elevation (m)
           - entity: sensor.tesla_elevation_ft
             name: Elevation (ft)
-          - entity: sensor.tesla_locked
+          - entity: binary_sensor.tesla_locked
             name: Locked
-          - entity: sensor.tesla_sentry_mode
+          - entity: binary_sensor.tesla_sentry_mode
             name: Sentry Mode Enabled
-          - entity: sensor.tesla_windows_open
+          - entity: binary_sensor.tesla_windows_open
             name: Windows Open
-          - entity: sensor.tesla_doors_open
+          - entity: binary_sensor.tesla_doors_open
             name: Doors Open
-          - entity: sensor.tesla_trunk_open
+          - entity: binary_sensor.tesla_trunk_open
             name: Trunk Open
-          - entity: sensor.tesla_frunk_open
+          - entity: binary_sensor.tesla_frunk_open
             name: Frunk Open
-          - entity: sensor.tesla_is_user_present
+          - entity: binary_sensor.tesla_is_user_present
             name: User Present
-          - entity: sensor.tesla_is_climate_on
+          - entity: binary_sensor.tesla_is_climate_on
             name: Climate On
           - entity: sensor.tesla_inside_temp
             name: Inside Temperature
           - entity: sensor.tesla_outside_temp
             name: Outside Temperature
-          - entity: sensor.tesla_is_preconditioning
+          - entity: binary_sensor.tesla_is_preconditioning
             name: Preconditioning
           - entity: sensor.tesla_odometer
             name: Odometer
@@ -625,13 +626,13 @@ The below is the Lovelace UI configuration used to make the example screenshot a
             name: Battery Level
           - entity: sensor.tesla_usable_battery_level
             name: Usable Battery Level
-          - entity: sensor.tesla_plugged_in
+          - entity: binary_sensor.tesla_plugged_in
             name: Plugged In
           - entity: sensor.tesla_charge_energy_added
             name: Charge Energy Added
           - entity: sensor.tesla_charge_limit_soc
             name: Charge Limit
-          - entity: sensor.tesla_charge_port_door_open
+          - entity: binary_sensor.tesla_charge_port_door_open
             name: Charge Port Door Open
           - entity: sensor.tesla_charger_actual_current
             name: Charger Current
@@ -645,7 +646,6 @@ The below is the Lovelace UI configuration used to make the example screenshot a
             name: Scheduled Charging Start Time
           - entity: sensor.tesla_time_to_full_charge
             name: Time To Full Charge
-
 ```
 
 ## Useful Automations
