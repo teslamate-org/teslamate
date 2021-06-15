@@ -179,7 +179,14 @@ MQTT_HOST=${teslamate_mqtt_host-"localhost"}; export MQTT_HOST
 VIRTUAL_HOST=${teslamate_virtual_host-"teslamate.example.com"}; export VIRTUAL_HOST
 
 COMMAND=${teslamate_command-"${HOME}/_build/prod/rel/teslamate/bin/teslamate"}
-start_cmd="${COMMAND} daemon"
+
+teslamate_start()
+{
+  ${COMMAND} eval "TeslaMate.Release.migrate"
+  ${COMMAND} daemon 
+}
+
+start_cmd="${name}_start"
 stop_cmd="${COMMAND} stop"
 status_cmd="${COMMAND} pid"
 
