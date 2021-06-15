@@ -12,9 +12,13 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       add :supercharger, :boolean, default: true
       add :provider, :string, null: true
       add :active, :boolean, default: true
-      add :geo_code, :string, size: 5, null: false, default: "CH001" 
+      add :geo_code, :string, size: 5 
     end
+
+    create unique_index(:geofences, [:geo_code])
   end
+
+
 
   def down do
     alter table(:geofences) do
