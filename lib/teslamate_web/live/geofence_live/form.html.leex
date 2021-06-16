@@ -92,10 +92,10 @@
     <div class="field-body">
       <div class="field is-expanded">
         <div class="control">
-          <%= text_input f, :geo_code, class: "input", size: 5, minlength: "5", maxlength: "5", placeholder: gettext("Charger ID") %>
+          <%= text_input f, :charger_code, class: "input", size: 5, minlength: "5", maxlength: "5", placeholder: gettext("Charger ID") %>
         </div>
         <%= if @show_errors do %>
-          <p class="help is-danger"><%= error_tag(f, :geo_code) %></p>
+          <p class="help is-danger"><%= error_tag(f, :charger_code) %></p>
         <% end %>
       </div>
     </div>

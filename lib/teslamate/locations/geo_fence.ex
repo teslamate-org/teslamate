@@ -18,7 +18,7 @@ defmodule TeslaMate.Locations.GeoFence do
     field :provider, :string, read_after_writes: true
     field :country_code, :string, read_after_writes: true
     field :currency_code, :string, read_after_writes: true
-    field :geo_code, :string, read_after_writes: true
+    field :charger_code, :string, read_after_writes: true
 
 
     timestamps()
@@ -40,16 +40,16 @@ defmodule TeslaMate.Locations.GeoFence do
       :supercharger,
       :provider,
       :active,
-      :geo_code
+      :charger_code
     ])
-    |> validate_required([:name, :latitude, :longitude, :radius, :country_code, :currency_code, :geo_code])
+    |> validate_required([:name, :latitude, :longitude, :radius, :country_code, :currency_code, :charger_code])
     |> validate_number(:radius, greater_than: 0, less_than: 5000)
     |> validate_number(:session_fee, greater_than_or_equal_to: 0)
     |> validate_length(:country_code, is: 2)
     |> validate_length(:currency_code, is: 3)
-    |> validate_length(:geo_code, is: 5)
-    |> unique_constraint(:geo_code)
-    |> validate_format(:geo_code, ~r/^[[:upper:]]+/, message: gettext("should be uppercase"))
+    |> validate_length(:charger_code, is: 5)
+    |> unique_constraint(:charger_code)
+    |> validate_format(:charger_code, ~r/^[[:upper:]]+/, message: gettext("should be uppercase"))
     |> validate_format(:country_code, ~r/^[[:upper:]]+/, message: gettext("should be uppercase"))
     |> validate_format(:currency_code, ~r/^[[:upper:]]+/, message: gettext("should be uppercase"))
     |> foreign_key_constraint(:country_code, message: gettext("country code does not exist"))

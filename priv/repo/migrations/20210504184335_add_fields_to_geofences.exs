@@ -14,18 +14,18 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       add :supercharger, :boolean, default: true
       add :provider, :string, null: true
       add :active, :boolean, default: true
-      add :geo_code, :string, size: 5 
+      add :charger_code, :string, size: 5 
     end
 
     flush()
 
-    from(g in "geofences", update: [set: [geo_code: g.id]])
+    from(g in "geofences", update: [set: [charger_code: g.id]])
     |> TeslaMate.Repo.update_all([])
 
-    create unique_index(:geofences, [:geo_code])
+    create unique_index(:geofences, [:charger_code])
 
     alter table(:geofences) do
-      modify :geo_code, :string, null: false
+      modify :charger_code, :string, null: false
     end
   end
 
@@ -38,9 +38,9 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       remove_if_exists(:supercharger, :boolean)
       remove_if_exists(:provider, :string)
       remove_if_exists(:active, :boolean)
-      remove_if_exists(:geo_code, :string)
+      remove_if_exists(:charger_code, :string)
     end
 
-    drop_if_exists unique_index(:geofences, [:geo_code])
+    drop_if_exists unique_index(:geofences, [:charger_code])
   end
 end
