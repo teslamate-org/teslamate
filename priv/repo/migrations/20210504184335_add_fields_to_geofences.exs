@@ -1,6 +1,8 @@
 defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
   use Ecto.Migration
 
+  import Ecto.Query, only: [from: 2]
+
   def up do
     alter table(:geofences) do
       add :currency_code, references(:currencies, column: :currency_code, type: :string, size: 3),
@@ -15,7 +17,16 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       add :geo_code, :string, size: 5 
     end
 
+    flush()
+
+    from(g in "geofences", update: [set: [geo_code: g.id]])
+    |> TeslaMate.Repo.update_all([])
+
     create unique_index(:geofences, [:geo_code])
+
+    alter table(:geofences) do
+      modify :geo_code, :string, null: false
+    end
   end
 
 
@@ -29,5 +40,7 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       remove_if_exists(:active, :boolean)
       remove_if_exists(:geo_code, :string)
     end
+
+    drop_if_exists unique_index(:geofences, [:geo_code])
   end
 end
