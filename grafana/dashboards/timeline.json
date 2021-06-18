@@ -47,7 +47,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_TESLAMATE}",
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
