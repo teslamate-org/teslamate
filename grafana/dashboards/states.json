@@ -76,7 +76,7 @@
               }
             ]
           },
-          "unit": "dateTimeAsIso"
+          "unit": "dateTimeAsLocal"
         },
         "overrides": []
       },
@@ -109,7 +109,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.5.4",
       "scopedVars": {
         "car_id": {
           "selected": true,
@@ -203,7 +203,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.5.4",
       "scopedVars": {
         "car_id": {
           "selected": true,
@@ -305,7 +305,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.1.4",
+      "pluginVersion": "7.5.4",
       "scopedVars": {
         "car_id": {
           "selected": true,
@@ -548,7 +548,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 26,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [
     "tesla"
