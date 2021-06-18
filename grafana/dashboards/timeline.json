@@ -47,7 +47,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -68,7 +68,7 @@
       "type": "row"
     },
     {
-      "datasource": null,
+      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -558,7 +558,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars;",
         "description": null,
         "error": null,
@@ -586,7 +586,7 @@
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
         "description": null,
         "error": null,
@@ -686,7 +686,7 @@
           "text": "km",
           "value": "km"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "description": null,
         "error": null,
@@ -714,7 +714,7 @@
           "text": "C",
           "value": "C"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select unit_of_temperature from settings limit 1;",
         "description": null,
         "error": null,
@@ -742,7 +742,7 @@
           "text": "ideal",
           "value": "ideal"
         },
-        "datasource": null,
+        "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
         "description": null,
         "error": null,
