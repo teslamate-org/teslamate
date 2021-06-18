@@ -371,7 +371,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "time:YYYY-MM-DD HH:mm"
+                "value": "dateTimeAsLocal"
               },
               {
                 "id": "custom.width"
@@ -491,7 +491,7 @@
           }
         ]
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "7.5.4",
       "repeat": null,
       "repeatDirection": "h",
       "scopedVars": {
@@ -718,7 +718,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 26,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [
     "tesla"
