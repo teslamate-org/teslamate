@@ -122,7 +122,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tbattery_level AS \"Battery Level [%]\",\n\tusable_battery_level AS \"Usable Battery Level [%]\"\nFROM (\n\tSELECT date, battery_level, usable_battery_level\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date)\n\tUNION ALL\n\tSELECT date, battery_level, NULL AS usable_battery_level\n\tFROM charges c\n\tJOIN charging_processes p ON p.id = c.charging_process_id\n\tWHERE $__timeFilter(date) AND p.car_id = $car_id\n) AS data\nORDER BY\n\t1 ASC;",
+          "rawSql": "SELECT\n\t$__time(date),\n\tbattery_level AS \"Battery Level [%]\",\n\tusable_battery_level AS \"Usable Battery Level [%]\"\nfrom positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id\n;",
           "refId": "A",
           "select": [
             [
