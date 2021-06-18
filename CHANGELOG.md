@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.23.4] - 2021-06-18
+
+### Improvements and Bug Fixes
+
+#### Dashboards
+
+- Drive Details: Don't round down duration ([#1677](https://github.com/adriankumpf/teslamate/pull/1677) by [Dulanic](https://github.com/Dulanic))
+- Projected Range: Prevent division by zero ([#1678](https://github.com/adriankumpf/teslamate/pull/1678) by [Dulanic](https://github.com/Dulanic))
+- Updates / States / Stastistics: Use local browser time ([#1685](https://github.com/adriankumpf/teslamate/pull/1685) by [Ed-M72](https://github.com/Ed-M72))
+- Charge Level: Simplify database query ([#1693](https://github.com/adriankumpf/teslamate/pull/1693) by [Dulanic](https://github.com/Dulanic))
+- Timeline: Add new category `Missing` and other some adjustments ([#1708](https://github.com/adriankumpf/teslamate/pull/1708) by [DrMichael](https://github.com/DrMichael))
+- Timeline: Fix missing datasources ([#1730](https://github.com/adriankumpf/teslamate/pull/1730) by [nickbock](https://github.com/nickbock))
+- Bump Grafana to 7.5.8 (Docker image)
+
+#### Documentation
+
+- Fix Home Assistant Lovelace UI and sensors ([#1711](https://github.com/adriankumpf/teslamate/pull/1711) by [JakobLichterfeld](https://github.com/JakobLichterfeld))
+- Add FreeBSD guide ([#1646](https://github.com/adriankumpf/teslamate/pull/1646) and [#1712](https://github.com/adriankumpf/teslamate/pull/1712) by [tuxbox](https://github.com/tuxbox))
+
+## [1.23.3] - 2021-06-02
+
+### Bug Fixes
+
+- Fix API tokens form
+
 ## [1.23.2] - 2021-06-02
 
 ### Bug Fixes
@@ -1286,6 +1311,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.23.4]: https://github.com/adriankumpf/teslamate/compare/v1.23.3...v1.23.4
+[1.23.3]: https://github.com/adriankumpf/teslamate/compare/v1.23.2...v1.23.3
 [1.23.2]: https://github.com/adriankumpf/teslamate/compare/v1.23.1...v1.23.2
 [1.23.1]: https://github.com/adriankumpf/teslamate/compare/v1.23.0...v1.23.1
 [1.23.0]: https://github.com/adriankumpf/teslamate/compare/v1.22.0...v1.23.0
