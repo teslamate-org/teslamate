@@ -721,9 +721,9 @@ We add the random 30 second interval after each notification to avoid clobbering
         entity_id: script.notify_tesla_{{trigger.topic.split('/')[3]}}
 ```
 
-#### script.yaml
+#### scripts.yaml
 
-```yml title="script.yaml"
+```yml title="scripts.yaml"
 notify_tesla_open:
   alias: "Notify when something on the tesla is left open"
   sequence:
