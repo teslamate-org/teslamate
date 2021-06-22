@@ -237,8 +237,8 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
 
       assert "Total" = html |> Floki.find("##{id}_mode option[selected]") |> Floki.text()
 
-      assert ["1.20"] = html |> Floki.find("##{id}_cost") |> Floki.attribute("value")
-      assert %ChargingProcess{cost: decimal("1.20")} = Repo.get(ChargingProcess, id)
+      assert ["1.2000"] = html |> Floki.find("##{id}_cost") |> Floki.attribute("value")
+      assert %ChargingProcess{cost: decimal("1.2000")} = Repo.get(ChargingProcess, id)
 
       html =
         render_submit(view, :save, %{charging_process: %{cost: nil}})
