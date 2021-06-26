@@ -20,7 +20,6 @@ defmodule TeslaMate.Locations.GeoFence do
     field :currency_code, :string, read_after_writes: true
     field :charger_code, :string, read_after_writes: true
 
-
     timestamps()
   end
 
@@ -42,7 +41,15 @@ defmodule TeslaMate.Locations.GeoFence do
       :active,
       :charger_code
     ])
-    |> validate_required([:name, :latitude, :longitude, :radius, :country_code, :currency_code, :charger_code])
+    |> validate_required([
+      :name,
+      :latitude,
+      :longitude,
+      :radius,
+      :country_code,
+      :currency_code,
+      :charger_code
+    ])
     |> validate_number(:radius, greater_than: 0, less_than: 5000)
     |> validate_number(:session_fee, greater_than_or_equal_to: 0)
     |> validate_length(:country_code, is: 2)

@@ -14,7 +14,7 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       add :supercharger, :boolean, default: true
       add :provider, :string, null: true
       add :active, :boolean, default: true
-      add :charger_code, :string, size: 5 
+      add :charger_code, :string, size: 5
     end
 
     flush()
@@ -28,8 +28,6 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       modify :charger_code, :string, null: false
     end
   end
-
-
 
   def down do
     alter table(:geofences) do
