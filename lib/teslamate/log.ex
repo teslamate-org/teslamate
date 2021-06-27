@@ -535,6 +535,10 @@ defmodule TeslaMate.Log do
          %CP{car: %Car{settings: %CarSettings{free_supercharging: true}}}} ->
           0.0
 
+        {%CP{car: %Car{settings: %CarSettings{free_supercharging: true}}},
+         %GeoFence{supercharger: true}} ->
+          0.0
+
         {%{charge_energy_used: kwh_used, charge_energy_added: kwh_added},
          %CP{
            geofence: %GeoFence{

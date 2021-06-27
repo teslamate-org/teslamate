@@ -556,6 +556,6 @@ defmodule TeslaMate.Repo.Migrations.CreateCurrenciesTexts do
   end
 
   def down do
-    drop(table(:currencies))
+    drop(table(:currencies_t))
   end
 end
