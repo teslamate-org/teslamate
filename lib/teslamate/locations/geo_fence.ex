@@ -37,13 +37,11 @@ defmodule TeslaMate.Locations.GeoFence do
       :name,
       :latitude,
       :longitude,
-      :radius,
-      :currency_code
+      :radius
     ])
     |> validate_number(:radius, greater_than: 0, less_than: 5000)
     |> validate_number(:session_fee, greater_than_or_equal_to: 0)
     |> validate_length(:currency_code, is: 3)
     |> validate_format(:currency_code, ~r/^[[:upper:]]+/, message: gettext("should be uppercase"))
-    |> foreign_key_constraint(:currency_code, message: gettext("currency code does not exist"))
   end
 end
