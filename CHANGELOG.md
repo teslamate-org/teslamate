@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.23.5] - 2021-07-08
+
+### Improvements and Bug Fixes
+
+- Fix login with captcha
+
+#### Dashboards
+
+- Timeline: Make added kWh more accurate
+
 ## [1.23.4] - 2021-06-18
 
 ### Improvements and Bug Fixes
@@ -1311,6 +1321,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.23.5]: https://github.com/adriankumpf/teslamate/compare/v1.23.4...v1.23.5
 [1.23.4]: https://github.com/adriankumpf/teslamate/compare/v1.23.3...v1.23.4
 [1.23.3]: https://github.com/adriankumpf/teslamate/compare/v1.23.2...v1.23.3
 [1.23.2]: https://github.com/adriankumpf/teslamate/compare/v1.23.1...v1.23.2
