@@ -100,7 +100,7 @@ defmodule TeslaApi.Auth do
           params = Keyword.put(params, :login_hint, email)
 
           case load_form(params, cookies) do
-            {:ok, {form, nil, cookies, base_url}} ->
+            {:ok, {form, _captcha, cookies, base_url}} ->
               form =
                 form
                 |> Map.replace!("identity", email)
@@ -178,7 +178,7 @@ defmodule TeslaApi.Auth do
             {:ok, {form, nil, cookies, base_url}}
 
           [captcha] ->
-            path = Floki.attribute(captcha, "src")
+            [path] = Floki.attribute(captcha, "src")
 
             with {:ok, captcha} <- load_captcha_image(path, cookies) do
               {:ok, {form, captcha, cookies, base_url}}
