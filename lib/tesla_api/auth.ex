@@ -100,16 +100,17 @@ defmodule TeslaApi.Auth do
           params = Keyword.put(params, :login_hint, email)
 
           case load_form(params, cookies) do
-            {:ok, {form, _captcha, cookies, base_url}} ->
+            {:ok, {form, captcha, cookies, base_url}} ->
               form =
                 form
                 |> Map.replace!("identity", email)
                 |> Map.replace!("credential", password)
 
               form =
-                case captcha_code do
-                  nil -> form
-                  code -> Map.replace!(form, "captcha", code)
+                if captcha == nil or captcha_code == nil do
+                  form
+                else
+                  Map.replace!(form, "captcha", captcha_code)
                 end
 
               with {:ok, %Tesla.Env{} = env} <-
