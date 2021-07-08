@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.6] - 2021-07-08
+
+### Improvements and Bug Fixes
+
+- Disable sign-in button if captcha code is missing
+- Fix login for Chinese accounts
+
 ## [1.23.5] - 2021-07-08
 
 ### Improvements and Bug Fixes
@@ -1321,6 +1328,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.23.6]: https://github.com/adriankumpf/teslamate/compare/v1.23.5...v1.23.6
 [1.23.5]: https://github.com/adriankumpf/teslamate/compare/v1.23.4...v1.23.5
 [1.23.4]: https://github.com/adriankumpf/teslamate/compare/v1.23.3...v1.23.4
 [1.23.3]: https://github.com/adriankumpf/teslamate/compare/v1.23.2...v1.23.3
