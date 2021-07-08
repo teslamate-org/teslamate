@@ -85,6 +85,37 @@ defmodule TeslaMateWeb.SignInLiveTest do
   end
 
   @tag captcha: true
+  test "disables sign-in button if captcha code is empty", %{conn: conn} do
+    assert {:ok, view, _html} = live(conn, "/sign_in")
+
+    # Captcha code missing
+
+    render_change(view, :validate, %{
+      credentials: %{email: "captcha", password: "$password"}
+    })
+
+    doc =
+      view
+      |> render()
+      |> Floki.parse_document!()
+
+    assert ["disabled"] == doc |> Floki.find("[type=submit]") |> Floki.attribute("disabled")
+
+    # With Captcha code
+
+    render_change(view, :validate, %{
+      credentials: %{email: "captcha", password: "$password", captcha: "XYZ1jk"}
+    })
+
+    doc =
+      view
+      |> render()
+      |> Floki.parse_document!()
+
+    assert [] == doc |> Floki.find("[type=submit]") |> Floki.attribute("disabled")
+  end
+
+  @tag captcha: true
   test "signs in with second factor", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
 

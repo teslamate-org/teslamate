@@ -41,7 +41,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
   def handle_event("validate", %{"credentials" => c}, %{assigns: %{state: {:credentials, _}}} = s) do
     changeset =
       c
-      |> credentials_changeset()
+      |> credentials_changeset(captcha: s.assigns.captcha != nil)
       |> Map.put(:action, :update)
 
     {:noreply, assign(s, state: {:credentials, changeset}, error: nil)}
@@ -179,12 +179,19 @@ defmodule TeslaMateWeb.SignInLive.Index do
     end
   end
 
-  defp credentials_changeset(attrs \\ %{}) do
+  defp credentials_changeset(attrs \\ %{}, opts \\ []) do
     import Ecto.Changeset
+
+    required_fields =
+      if opts[:captcha] do
+        [:email, :password, :captcha]
+      else
+        [:email, :password]
+      end
 
     {%{}, %{email: :string, password: :string, captcha: :string}}
     |> cast(attrs, [:email, :password, :captcha])
-    |> validate_required([:email, :password])
+    |> validate_required(required_fields)
   end
 
   defp mfa_changeset(attrs \\ %{}) do
