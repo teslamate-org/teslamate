@@ -336,7 +336,7 @@ tesla_location:
    icon: mdi:clock-outline
 ```
 
-### binary_sensor.yaml (sensor: section of configuration.yaml)
+### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
 
 ```yml title="binary_sensor.yaml"
  - platform: template
