@@ -32,8 +32,9 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
          - MQTT_HOST=mosquitto
        ports:
          - 4000:4000
-       volumes:
-         - ./import:/opt/app/import
+# Uncomment the following lines if you have an "import" folder in the same folder as the docker-compose.yaml file
+#       volumes:
+#         - ./import:/opt/app/import
        cap_drop:
          - all
 
