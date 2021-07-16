@@ -80,36 +80,28 @@ defmodule TeslaApi.Auth do
       login_hint: nil
     ]
 
-    with {:ok, {_form, captcha, cookies, _base_url}} <- load_form(params) do
+    with {:ok, {form, captcha, cookies, base_url}} <- load_form(params) do
       callback = fn email, password, captcha_code ->
         try do
-          params = Keyword.put(params, :login_hint, email)
+          form =
+            form
+            |> Map.replace!("identity", email)
+            |> Map.replace!("credential", password)
 
-          case load_form(params, cookies) do
-            {:ok, {form, captcha, cookies, base_url}} ->
-              form =
-                form
-                |> Map.replace!("identity", email)
-                |> Map.replace!("credential", password)
+          form =
+            if captcha == nil or captcha_code == nil do
+              form
+            else
+              Map.replace!(form, "captcha", captcha_code)
+            end
 
-              form =
-                if captcha == nil or captcha_code == nil do
-                  form
-                else
-                  Map.replace!(form, "captcha", captcha_code)
-                end
-
-              with {:ok, %Tesla.Env{} = env} <-
-                     submit_form(form, cookies, state, code_verifier, base: base_url),
-                   {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
-                   {:ok, tokens} <-
-                     get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
-                   {:ok, auth} <- get_api_tokens(tokens) do
-                {:ok, auth}
-              end
-
-            {:error, reason} ->
-              {:error, reason}
+          with {:ok, %Tesla.Env{} = env} <-
+                 submit_form(form, cookies, state, code_verifier, base: base_url),
+               {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
+               {:ok, tokens} <-
+                 get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
+               {:ok, auth} <- get_api_tokens(tokens) do
+            {:ok, auth}
           end
         rescue
           e ->
