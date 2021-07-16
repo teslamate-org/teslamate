@@ -58,7 +58,7 @@ defmodule TeslaMateWeb.SignInLiveTest do
     render_change(view, :validate, %{credentials: %{email: "$email", password: "$password"}})
     render_submit(view, :sign_in, %{})
 
-    assert_receive {ApiMock, :sign_in_callback, "$email", "$password"}
+    assert_receive {ApiMock, :sign_in, "$email", "$password"}
 
     assert_redirect(view, "/", 1000)
   end
@@ -67,9 +67,10 @@ defmodule TeslaMateWeb.SignInLiveTest do
   test "signs in with captcha", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
 
-    render_change(view, :validate, %{
-      credentials: %{email: "captcha", password: "$password", captcha: "ABCD3f"}
-    })
+    render_change(view, :validate, %{credentials: %{email: "captcha", password: "$password"}})
+    render_submit(view, :sign_in, %{})
+
+    render_change(view, :validate, %{captcha: %{code: "ABCD3f"}})
 
     doc =
       view
@@ -77,55 +78,25 @@ defmodule TeslaMateWeb.SignInLiveTest do
       |> Floki.parse_document!()
 
     assert [{"span", _, [{"svg", _, []}]}] = Floki.find(doc, "#captcha")
-    assert ["ABCD3f"] == Floki.attribute(doc, "#credentials_captcha", "value")
+    assert ["ABCD3f"] == Floki.attribute(doc, "#captcha_code", "value")
 
     render_submit(view, :sign_in, %{})
+
     assert_receive {ApiMock, :sign_in_callback, "captcha", "$password", "ABCD3f"}
     assert_redirect(view, "/", 1000)
-  end
-
-  @tag captcha: true
-  test "disables sign-in button if captcha code is empty", %{conn: conn} do
-    assert {:ok, view, _html} = live(conn, "/sign_in")
-
-    # Captcha code missing
-
-    render_change(view, :validate, %{
-      credentials: %{email: "captcha", password: "$password"}
-    })
-
-    doc =
-      view
-      |> render()
-      |> Floki.parse_document!()
-
-    assert ["disabled"] == doc |> Floki.find("[type=submit]") |> Floki.attribute("disabled")
-
-    # With Captcha code
-
-    render_change(view, :validate, %{
-      credentials: %{email: "captcha", password: "$password", captcha: "XYZ1jk"}
-    })
-
-    doc =
-      view
-      |> render()
-      |> Floki.parse_document!()
-
-    assert [] == doc |> Floki.find("[type=submit]") |> Floki.attribute("disabled")
   end
 
   @tag captcha: true
   test "signs in with second factor", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
 
-    render_change(view, :validate, %{
-      credentials: %{email: "mfa", password: "$password", captcha: "$captcha"}
-    })
-
+    render_change(view, :validate, %{credentials: %{email: "$email", password: "$password"}})
     render_submit(view, :sign_in, %{})
 
-    assert_receive {ApiMock, :sign_in_callback, "mfa", "$password", "$captcha"}
+    render_change(view, :validate, %{captcha: %{code: "mfa"}})
+    render_submit(view, :sign_in, %{})
+
+    assert_receive {ApiMock, :sign_in_callback, "$email", "$password", "mfa"}
 
     assert [
              {"option", [{"value", "000"}], ["Device #1"]},

@@ -65,7 +65,7 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  def prepare_login do
+  def login(email, password) do
     state = random_string(15)
     code_verifier = random_code_verifier()
 
@@ -77,11 +77,11 @@ defmodule TeslaApi.Auth do
       code_challenge: challenge(code_verifier),
       code_challenge_method: "S256",
       state: state,
-      login_hint: nil
+      login_hint: email
     ]
 
     with {:ok, {form, captcha, cookies, base_url}} <- load_form(params) do
-      callback = fn email, password, captcha_code ->
+      callback = fn captcha_code ->
         try do
           form =
             form
@@ -112,7 +112,7 @@ defmodule TeslaApi.Auth do
 
       case captcha do
         nil ->
-          {:ok, fn email, password -> callback.(email, password, nil) end}
+          callback.(:no_captcha)
 
         captcha ->
           {:ok, {:captcha, captcha, callback}}
