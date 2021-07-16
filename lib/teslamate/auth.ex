@@ -6,14 +6,6 @@ defmodule TeslaMate.Auth do
   import Ecto.Query, warn: false
   alias TeslaMate.Repo
 
-  ### Credentials
-
-  alias TeslaMate.Auth.Credentials
-
-  def change_credentials(attrs \\ %{}) do
-    %Credentials{} |> Credentials.changeset(attrs)
-  end
-
   ### Tokens
 
   alias TeslaMate.Auth.Tokens

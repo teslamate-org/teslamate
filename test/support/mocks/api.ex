@@ -16,7 +16,6 @@ defmodule ApiMock do
   def stream(name, vid, receiver), do: GenServer.call(name, {:stream, vid, receiver})
 
   def sign_in(name, tokens), do: GenServer.call(name, {:sign_in, tokens})
-  def prepare_sign_in(name), do: GenServer.call(name, :prepare_sign_in)
 
   # Callbacks
 
@@ -42,19 +41,14 @@ defmodule ApiMock do
     {:reply, exec(event), %State{state | events: events}}
   end
 
-  def handle_call(:prepare_sign_in, _from, %State{captcha: false} = state) do
-    callback = fn
-      email, password ->
-        send(state.pid, {ApiMock, :sign_in_callback, email, password})
-        :ok
-    end
-
-    {:reply, {:ok, callback}, state}
+  def handle_call({:sign_in, {email, password}}, _from, %State{captcha: false} = state) do
+    send(state.pid, {ApiMock, :sign_in, email, password})
+    {:reply, :ok, state}
   end
 
-  def handle_call(:prepare_sign_in, _from, %State{captcha: true} = state) do
+  def handle_call({:sign_in, {email, password}}, _from, %State{captcha: true} = state) do
     callback = fn
-      "mfa" = email, password, captcha ->
+      "mfa" = captcha ->
         send(state.pid, {ApiMock, :sign_in_callback, email, password, captcha})
         :ok
 
@@ -70,7 +64,7 @@ defmodule ApiMock do
 
         {:ok, {:mfa, devices, callback}}
 
-      email, password, captcha ->
+      captcha ->
         send(state.pid, {ApiMock, :sign_in_callback, email, password, captcha})
         :ok
     end
