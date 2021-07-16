@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.23.7] - 2021-07-16
+
+### Improvements and Bug Fixes
+
+- Since Tesla have once again made changes to the login with captcha, this version fixes the problems caused by it
+- Update permissions to the Grafana plugin directory ([#1814](https://github.com/adriankumpf/teslamate/pull/1814) by [letienne](https://github.com/letienne))
+
+#### Documentation
+
+- Fix heading of the Home Assistant binary_sensor config ([#1756](https://github.com/adriankumpf/teslamate/pull/1756) by [mrzeldaguy](https://github.com/mrzeldaguy))
+
 ## [1.23.6] - 2021-07-08
 
 ### Improvements and Bug Fixes
@@ -1328,6 +1339,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.23.7]: https://github.com/adriankumpf/teslamate/compare/v1.23.6...v1.23.7
 [1.23.6]: https://github.com/adriankumpf/teslamate/compare/v1.23.5...v1.23.6
 [1.23.5]: https://github.com/adriankumpf/teslamate/compare/v1.23.4...v1.23.5
 [1.23.4]: https://github.com/adriankumpf/teslamate/compare/v1.23.3...v1.23.4
