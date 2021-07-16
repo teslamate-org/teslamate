@@ -4,8 +4,8 @@
 
 ### Improvements and Bug Fixes
 
-- Since Tesal has once again made changes to the login with captcha, this version fixes the problems caused by it
-- Update permissions to the grafana plugin directory ([#1814](https://github.com/adriankumpf/teslamate/pull/1814) by [letienne](https://github.com/letienne))
+- Since Tesla have once again made changes to the login with captcha, this version fixes the problems caused by it
+- Update permissions to the Grafana plugin directory ([#1814](https://github.com/adriankumpf/teslamate/pull/1814) by [letienne](https://github.com/letienne))
 
 #### Documentation
 
