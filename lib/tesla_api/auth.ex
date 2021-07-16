@@ -10,34 +10,20 @@ defmodule TeslaApi.Auth do
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
   @redirect_uri "https://auth.tesla.com/void/callback"
 
-  # @version Mix.Project.config()[:version]
+  @version Mix.Project.config()[:version]
   @default_headers [
-    # {"user-agent", "TeslaMate/#{@version}"},
+    {"user-agent", "TeslaMate/#{@version}"},
+    {"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"},
+    {"Accept-Language", "en-US,de-DE;q=0.5"}
   ]
 
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000
 
   plug TeslaApi.Middleware.FollowRedirects, except: [@redirect_uri]
   plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
-  plug Tesla.Middleware.Headers, [user_agent_header() | @default_headers]
+  plug Tesla.Middleware.Headers, @default_headers
   plug Tesla.Middleware.JSON
   plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
-
-  defp user_agent_header do
-    user_agent =
-      case System.get_env("AUTH_USER_AGENT") do
-        nil ->
-          dt = %DateTime{} = DateTime.utc_now()
-          term = {self(), dt.day, dt.hour, dt.minute}
-
-          "curl/#{:erlang.phash2(term, 6) + 2}.#{:erlang.phash2(term, 100)}.0"
-
-        ua ->
-          ua
-      end
-
-    {"user-agent", user_agent}
-  end
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
 
