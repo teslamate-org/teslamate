@@ -147,7 +147,14 @@ defmodule TeslaApi.Stream do
         {:ok, state}
 
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "client_error"} = msg} ->
-        raise "Client Error: #{inspect(msg)}"
+        case msg do
+          %{"value" => "owner_api error:" <> _ = error} ->
+            Logger.warn("Streaming API Client Error: #{error}")
+            {:close, state}
+
+          _ ->
+            raise "Client Error: #{inspect(msg)}"
+        end
 
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => type, "value" => v}} ->
         Logger.error("Error #{inspect(type)}: #{v}")
