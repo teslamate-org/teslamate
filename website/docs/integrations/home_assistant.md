@@ -214,7 +214,7 @@ tesla_location:
    state_topic: "teslamate/cars/1/power"
    device_class: power
    unit_of_measurement: W
-   icon: mdi:electricity
+   icon: mdi:flash
 
  - platform: mqtt
    name: tesla_speed
