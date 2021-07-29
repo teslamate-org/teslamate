@@ -574,6 +574,7 @@
       "type": "table"
     }
   ],
+  "refresh": "1h",
   "schemaVersion": 27,
   "style": "dark",
   "tags": [
