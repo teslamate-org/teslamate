@@ -12,7 +12,8 @@ defmodule TeslaApi.Auth do
 
   @version Mix.Project.config()[:version]
   @default_headers [
-    {"user-agent", "TeslaMate/#{@version}"},
+    # {"user-agent", "TeslaMate/#{@version}"},
+    {"user-agent", "TeslaMate-#{@version}" |> String.replace(".", "_")},
     {"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"},
     {"Accept-Language", "en-US,de-DE;q=0.5"}
   ]
