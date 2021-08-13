@@ -443,7 +443,7 @@ defmodule TeslaMate.LogChargingTest do
                  latitude: 50.1121,
                  longitude: 11.597,
                  radius: 50,
-                 cost_per_unit: 0.33,
+                 cost_per_unit: 0.3300,
                  billing_type: :per_minute
                })
 
@@ -460,7 +460,7 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.charge_energy_added == Decimal.from_float(12.77)
       assert cproc.charge_energy_used == Decimal.from_float(12.46)
       assert cproc.duration_min == 19
-      assert cproc.cost == Decimal.from_float(6.27)
+      assert cproc.cost == Decimal.from_float(6.2700)
     end
 
     test "calculates the charge costs based on the session fee" do
@@ -471,7 +471,7 @@ defmodule TeslaMate.LogChargingTest do
                  latitude: 50.1121,
                  longitude: 11.597,
                  radius: 50,
-                 session_fee: 7.00
+                 session_fee: 7.0000
                })
 
       assert {:ok, cproc} =
@@ -486,7 +486,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == Decimal.from_float(12.77)
       assert cproc.charge_energy_used == Decimal.from_float(12.46)
-      assert cproc.cost == Decimal.new("7.00")
+      assert cproc.cost == Decimal.new("7.0000")
     end
 
     test "calculates the charge costs based on the session fee and energy used" do
@@ -524,7 +524,7 @@ defmodule TeslaMate.LogChargingTest do
                  latitude: 50.1121,
                  longitude: 11.597,
                  radius: 50,
-                 cost_per_unit: 0.0,
+                 cost_per_unit: 0.000,
                  session_fee: 0.0
                })
 
@@ -567,7 +567,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == Decimal.from_float(12.77)
       assert cproc.charge_energy_used == Decimal.from_float(12.46)
-      assert cproc.cost == Decimal.new("-1.92")
+      assert cproc.cost == Decimal.new("-1.9155")
     end
 
     test "sets charge cost to zero if free supercharging is enabled" do
@@ -600,7 +600,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == Decimal.from_float(12.77)
       assert cproc.charge_energy_used == Decimal.from_float(12.46)
-      assert cproc.cost == Decimal.new("0.00")
+      assert cproc.cost == Decimal.new("0.0000")
     end
   end
 
