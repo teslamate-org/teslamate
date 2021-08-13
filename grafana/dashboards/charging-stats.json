@@ -752,7 +752,7 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "AC/DC – kWh",
-      "type": "grafana-piechart-panel",
+      "type": "piechart",
       "valueName": "total"
     },
     {
@@ -957,7 +957,7 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "AC/DC – Duration",
-      "type": "grafana-piechart-panel",
+      "type": "piechart",
       "valueName": "total"
     },
     {
