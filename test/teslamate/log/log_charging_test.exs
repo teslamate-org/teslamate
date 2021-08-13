@@ -432,7 +432,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == Decimal.from_float(12.77)
       assert cproc.charge_energy_used == Decimal.from_float(12.46)
-      assert cproc.cost == Decimal.from_float(3.19)
+      assert cproc.cost == Decimal.from_float(3.1925)
     end
 
     test "calculates the charge costs based on the price per minute" do
@@ -513,7 +513,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == Decimal.from_float(12.77)
       assert cproc.charge_energy_used == Decimal.from_float(12.46)
-      assert cproc.cost == Decimal.from_float(7.98)
+      assert cproc.cost == Decimal.from_float(7.9825)
     end
 
     test "fees can be zero" do
@@ -540,7 +540,7 @@ defmodule TeslaMate.LogChargingTest do
 
       assert cproc.charge_energy_added == nil
       assert cproc.charge_energy_used == Decimal.from_float(12.58)
-      assert cproc.cost == Decimal.new("0.00")
+      assert cproc.cost == Decimal.new("0.0000")
     end
 
     test "cost per unit can be negative" do

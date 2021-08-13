@@ -616,7 +616,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                  geofence_id: id,
                  charge_energy_added: decimal(50.63),
                  charge_energy_used: nil,
-                 cost: decimal("99.00")
+                 cost: decimal("99.0000")
                },
                %ChargingProcess{
                  geofence_id: id,
@@ -636,7 +636,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                  charge_energy_used: nil,
                  cost: decimal(22.19)
                },
-               %ChargingProcess{geofence_id: nil, cost: decimal("99.00")},
+               %ChargingProcess{geofence_id: nil, cost: decimal("99.0000")},
                %ChargingProcess{geofence_id: nil, cost: nil},
                %ChargingProcess{geofence_id: nil, cost: nil},
                %ChargingProcess{geofence_id: nil, cost: nil}
@@ -687,7 +687,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert_redirect(view, "/geo-fences")
 
       assert [
-               %ChargingProcess{geofence_id: id, cost: decimal("99.00")},
+               %ChargingProcess{geofence_id: id, cost: decimal("99.0000")},
                %ChargingProcess{geofence_id: id, cost: nil},
                %ChargingProcess{geofence_id: id, cost: nil},
                %ChargingProcess{geofence_id: id, cost: nil}
