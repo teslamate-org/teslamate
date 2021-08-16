@@ -622,19 +622,19 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                  geofence_id: id,
                  charge_energy_added: decimal(4.57),
                  charge_energy_used: nil,
-                 cost: decimal(6.5100)
+                 cost: decimal(6.5081)
                },
                %ChargingProcess{
                  geofence_id: id,
                  charge_energy_added: decimal(11.82),
                  charge_energy_used: nil,
-                 cost: decimal("8.9000")
+                 cost: decimal("8.9006")
                },
                %ChargingProcess{
                  geofence_id: id,
                  charge_energy_added: decimal("52.10"),
                  charge_energy_used: nil,
-                 cost: decimal(22.1900)
+                 cost: decimal(22.1930)
                },
                %ChargingProcess{geofence_id: nil, cost: decimal("99.0000")},
                %ChargingProcess{geofence_id: nil, cost: nil},

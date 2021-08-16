@@ -4,6 +4,8 @@ defmodule TeslaMate.LogChargingTest do
   alias TeslaMate.Log.{Car, ChargingProcess, Charge, Position}
   alias TeslaMate.{Log, Repo, Locations}
 
+  import TestHelper, only: [decimal: 1]
+
   @valid_attrs %{
     date: DateTime.utc_now(),
     charger_power: 50,
@@ -460,7 +462,7 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.charge_energy_added == Decimal.from_float(12.77)
       assert cproc.charge_energy_used == Decimal.from_float(12.46)
       assert cproc.duration_min == 19
-      assert cproc.cost == Decimal.from_float(6.2700)
+      assert cproc.cost == decimal("6.2700")
     end
 
     test "calculates the charge costs based on the session fee" do
