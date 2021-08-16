@@ -109,7 +109,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           billing_type: :per_kwh,
           cost_per_unit: 0.2599,
           session_fee: 5.49,
-          currency_code: "GBP",
+          currency_code: "GBP"
         })
 
       assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
@@ -128,7 +128,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["100"] = Floki.attribute(radius, "value")
 
       radius = Floki.find(html, "##{id}_supercharger")
-      assert ["true"] = Floki.attribute(radius, "value")      
+      assert ["true"] = Floki.attribute(radius, "value")
 
       radius = Floki.find(html, "##{id}_cost_per_unit")
       assert ["0.2599"] = Floki.attribute(radius, "value")
@@ -137,7 +137,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["5.49"] = Floki.attribute(radius, "value")
 
       radius = Floki.find(html, "##{id}_currency_code")
-      assert ["GBP"] = Floki.attribute(radius, "value")            
+      assert ["GBP"] = Floki.attribute(radius, "value")
 
       html =
         render_submit(view, :save, %{geo_fence: %{name: "", radius: ""}})
