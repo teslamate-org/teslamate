@@ -7,7 +7,7 @@ defmodule TeslaMate.Repo.Migrations.AddFieldsToGeofences do
       add :supercharger, :boolean, default: true
     end
   end
-  
+
   def down do
     alter table(:geofences) do
       remove_if_exists(:currency_code, :string)
