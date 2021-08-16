@@ -217,7 +217,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             cost_per_unit: "wat",
             session_fee: "wat",
             supercharger: false,
-            currency_code: "boo",
+            currency_code: "boo"
           }
         })
         |> Floki.parse_document!()
@@ -229,7 +229,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["wat"] = html |> Floki.find("#geo_fence_cost_per_unit") |> Floki.attribute("value")
       assert ["wat"] = html |> Floki.find("#geo_fence_session_fee") |> Floki.attribute("value")
       assert [false] = html |> Floki.find("#geo_fence_supercharger") |> Floki.attribute("value")
-      assert ["boo"] = html |> Floki.find("#geo_fence_currency_code") |> Floki.attribute("value")      
+      assert ["boo"] = html |> Floki.find("#geo_fence_currency_code") |> Floki.attribute("value")
 
       assert [
                field_position,
@@ -270,7 +270,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             cost_per_unit: 0.25,
             session_fee: 4.79,
             supercharger: true,
-            currency_code: "boo",
+            currency_code: "boo"
           }
         })
         |> Floki.parse_document!()
@@ -282,7 +282,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["0.25"] = html |> Floki.find("#geo_fence_cost_per_unit") |> Floki.attribute("value")
       assert ["4.79"] = html |> Floki.find("#geo_fence_session_fee") |> Floki.attribute("value")
       assert [true] = html |> Floki.find("#geo_fence_supercharger") |> Floki.attribute("value")
-      assert ["boo"] = html |> Floki.find("#geo_fence_currency_code") |> Floki.attribute("value")        
+      assert ["boo"] = html |> Floki.find("#geo_fence_currency_code") |> Floki.attribute("value")
 
       assert [
                field_position,
