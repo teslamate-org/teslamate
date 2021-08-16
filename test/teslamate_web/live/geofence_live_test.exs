@@ -236,6 +236,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                field_name,
                field_cost_per_unit,
                field_session_fee,
+               _field_supercharger,
+               _field_currency_code,
                _
              ] = Floki.find(html, ".field.is-horizontal")
 
@@ -289,6 +291,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                field_name,
                field_cost_per_unit,
                field_session_fee,
+               field_supercharger,
+               field_currency_code,
                _
              ] = Floki.find(html, ".field.is-horizontal")
 
@@ -312,6 +316,16 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert "" =
                field_session_fee
+               |> Floki.find("span")
+               |> Floki.text()
+
+      assert "" =
+               field_supercharger
+               |> Floki.find("span")
+               |> Floki.text()
+
+      assert "" =
+               field_currency_code
                |> Floki.find("span")
                |> Floki.text()
     end
