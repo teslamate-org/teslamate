@@ -203,7 +203,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["12.862226"] = Floki.attribute(longitude, "value")
     end
 
-    test "validates cahnges when creating a new geo-fence", %{conn: conn} do
+    test "validates changes when creating a new geo-fence", %{conn: conn} do
       assert {:ok, view, _html} = live(conn, "/geo-fences/new")
 
       html =
@@ -215,7 +215,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             radius: "",
             billing_type: :per_kwh,
             cost_per_unit: "wat",
-            session_fee: "wat"
+            session_fee: "wat",
+            supercharger: false,
+            currency_code: "boo",
           }
         })
         |> Floki.parse_document!()
@@ -226,6 +228,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert [""] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
       assert ["wat"] = html |> Floki.find("#geo_fence_cost_per_unit") |> Floki.attribute("value")
       assert ["wat"] = html |> Floki.find("#geo_fence_session_fee") |> Floki.attribute("value")
+      assert [false] = html |> Floki.find("#geo_fence_supercharger") |> Floki.attribute("value")
+      assert ["boo"] = html |> Floki.find("#geo_fence_currency_code") |> Floki.attribute("value")      
 
       assert [
                field_position,
@@ -264,7 +268,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
             radius: "40",
             billing_type: :per_minute,
             cost_per_unit: 0.25,
-            session_fee: 4.79
+            session_fee: 4.79,
+            supercharger: true,
+            currency_code: "boo",
           }
         })
         |> Floki.parse_document!()
@@ -275,6 +281,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["40"] = html |> Floki.find("#geo_fence_radius") |> Floki.attribute("value")
       assert ["0.25"] = html |> Floki.find("#geo_fence_cost_per_unit") |> Floki.attribute("value")
       assert ["4.79"] = html |> Floki.find("#geo_fence_session_fee") |> Floki.attribute("value")
+      assert [true] = html |> Floki.find("#geo_fence_supercharger") |> Floki.attribute("value")
+      assert ["boo"] = html |> Floki.find("#geo_fence_currency_code") |> Floki.attribute("value")        
 
       assert [
                field_position,
