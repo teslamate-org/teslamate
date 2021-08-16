@@ -10,34 +10,21 @@ defmodule TeslaApi.Auth do
   @client_secret "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
   @redirect_uri "https://auth.tesla.com/void/callback"
 
-  # @version Mix.Project.config()[:version]
+  @version Mix.Project.config()[:version]
   @default_headers [
     # {"user-agent", "TeslaMate/#{@version}"},
+    {"user-agent", "TeslaMate-#{@version}" |> String.replace(".", "_")},
+    {"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"},
+    {"Accept-Language", "en-US,de-DE;q=0.5"}
   ]
 
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000
 
   plug TeslaApi.Middleware.FollowRedirects, except: [@redirect_uri]
   plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
-  plug Tesla.Middleware.Headers, [user_agent_header() | @default_headers]
+  plug Tesla.Middleware.Headers, @default_headers
   plug Tesla.Middleware.JSON
   plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
-
-  defp user_agent_header do
-    user_agent =
-      case System.get_env("AUTH_USER_AGENT") do
-        nil ->
-          dt = %DateTime{} = DateTime.utc_now()
-          term = {self(), dt.day, dt.hour, dt.minute}
-
-          "curl/#{:erlang.phash2(term, 6) + 2}.#{:erlang.phash2(term, 100)}.0"
-
-        ua ->
-          ua
-      end
-
-    {"user-agent", user_agent}
-  end
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
 
@@ -79,7 +66,7 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  def prepare_login do
+  def login(email, password) do
     state = random_string(15)
     code_verifier = random_code_verifier()
 
@@ -91,38 +78,31 @@ defmodule TeslaApi.Auth do
       code_challenge: challenge(code_verifier),
       code_challenge_method: "S256",
       state: state,
-      login_hint: nil
+      login_hint: email
     ]
 
-    with {:ok, {_form, captcha, cookies, _base_url}} <- load_form(params) do
-      callback = fn email, password, captcha_code ->
+    with {:ok, {form, captcha, cookies, base_url}} <- load_form(params) do
+      callback = fn captcha_code ->
         try do
-          params = Keyword.put(params, :login_hint, email)
+          form =
+            form
+            |> Map.replace!("identity", email)
+            |> Map.replace!("credential", password)
 
-          case load_form(params, cookies) do
-            {:ok, {form, nil, cookies, base_url}} ->
-              form =
-                form
-                |> Map.replace!("identity", email)
-                |> Map.replace!("credential", password)
+          form =
+            if captcha == nil or captcha_code == nil do
+              form
+            else
+              Map.replace!(form, "captcha", captcha_code)
+            end
 
-              form =
-                case captcha_code do
-                  nil -> form
-                  code -> Map.replace!(form, "captcha", code)
-                end
-
-              with {:ok, %Tesla.Env{} = env} <-
-                     submit_form(form, cookies, state, code_verifier, base: base_url),
-                   {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
-                   {:ok, tokens} <-
-                     get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
-                   {:ok, auth} <- get_api_tokens(tokens) do
-                {:ok, auth}
-              end
-
-            {:error, reason} ->
-              {:error, reason}
+          with {:ok, %Tesla.Env{} = env} <-
+                 submit_form(form, cookies, state, code_verifier, base: base_url),
+               {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
+               {:ok, tokens} <-
+                 get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
+               {:ok, auth} <- get_api_tokens(tokens) do
+            {:ok, auth}
           end
         rescue
           e ->
@@ -133,7 +113,7 @@ defmodule TeslaApi.Auth do
 
       case captcha do
         nil ->
-          {:ok, fn email, password -> callback.(email, password, nil) end}
+          callback.(:no_captcha)
 
         captcha ->
           {:ok, {:captcha, captcha, callback}}
@@ -178,7 +158,7 @@ defmodule TeslaApi.Auth do
             {:ok, {form, nil, cookies, base_url}}
 
           [captcha] ->
-            path = Floki.attribute(captcha, "src")
+            [path] = Floki.attribute(captcha, "src")
 
             with {:ok, captcha} <- load_captcha_image(path, cookies) do
               {:ok, {form, captcha, cookies, base_url}}
