@@ -99,7 +99,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   end
 
   describe "Edit" do
-    test "validates changes when editing a geo-fence", %{conn: conn} do
+    test "validates changes when editing of a geo-fence", %{conn: conn} do
       %GeoFence{id: id} =
         geofence_fixture(%{
           name: "Post office",
