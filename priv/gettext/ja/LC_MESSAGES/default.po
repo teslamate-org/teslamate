@@ -1,0 +1,650 @@
+## This file is a PO Template file.
+##
+## `msgid`s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
+##
+## Run `mix gettext.extract` to bring this file up to
+## date. Leave `msgstr`s empty as changing them here as no
+## effect: edit them in PO (`.po`) files instead.
+msgid ""
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:95
+msgid "Status"
+msgstr "ステータス"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:228
+msgid "Speed"
+msgstr "速度"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:220
+msgid "State of Charge"
+msgstr "充電状態"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:156
+msgid "Charged"
+msgstr "充電完了"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:131
+msgid "asleep"
+msgstr "スリープ"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:126
+msgid "charging"
+msgstr "充電中"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:125
+msgid "driving"
+msgstr "運転中"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:130
+msgid "offline"
+msgstr "オフライン"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:129
+msgid "online"
+msgstr "オンライン"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:127
+msgid "updating"
+msgstr "アップデート中"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:69
+msgid "Locked"
+msgstr "ロック"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:64
+msgid "Sentry Mode"
+msgstr "セントリーモード"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/index.ex:13
+#: lib/teslamate_web/live/charge_live/cost.html.leex:3 lib/teslamate_web/live/geofence_live/form.html.leex:3
+#: lib/teslamate_web/live/geofence_live/index.html.leex:3 lib/teslamate_web/live/import_live/index.html.leex:3
+#: lib/teslamate_web/live/settings_live/index.html.leex:3
+msgid "Home"
+msgstr "ホーム"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.ex:22
+#: lib/teslamate_web/live/settings_live/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.leex:59
+msgid "Settings"
+msgstr "設定"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:171
+msgid "Scheduled Charging"
+msgstr "予約充電中"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:49
+msgid "Plugged In"
+msgstr "電源に差し込み済"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:180
+msgid "Charge Limit"
+msgstr "充電制限"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:128
+msgid "falling asleep"
+msgstr "スリープ中"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:132
+msgid "unavailable"
+msgstr "利用不可"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:200
+msgid "Length"
+msgstr "距離"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:215
+msgid "Temperature"
+msgstr "温度"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:197
+msgid "Units"
+msgstr "単位"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:131
+#: lib/teslamate_web/live/geofence_live/form.html.leex:105
+msgid "Back"
+msgstr "戻る"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:204
+msgid "Geo-fence \"%{name}\" created"
+msgstr "ジオフェンス \"%{name}\" が作成されました"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:126
+#: lib/teslamate_web/live/geofence_live/form.html.leex:4 lib/teslamate_web/live/geofence_live/index.ex:22
+#: lib/teslamate_web/live/geofence_live/index.html.leex:4 lib/teslamate_web/templates/layout/root.html.leex:56
+msgid "Geo-Fences"
+msgstr "ジオフェンス"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:49
+msgid "Idle Time Before Trying to Sleep"
+msgstr "スリープ状態移行までのアイドルタイム"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:43
+#: lib/teslamate_web/live/geofence_live/form.html.leex:48 lib/teslamate_web/live/geofence_live/index.html.leex:21
+msgid "Name"
+msgstr "名前"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:17
+#: lib/teslamate_web/live/geofence_live/index.html.leex:22
+msgid "Position"
+msgstr "位置"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/index.html.leex:23
+msgid "Radius"
+msgstr "半径"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:134
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108
+msgid "Save"
+msgstr "保存"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:135
+#: lib/teslamate_web/live/geofence_live/form.html.leex:108 lib/teslamate_web/live/signin_live/index.html.leex:76
+#: lib/teslamate_web/live/signin_live/index.html.leex:143
+msgid "Saving..."
+msgstr "保存中…"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:31
+msgid "Time to Try Sleeping"
+msgstr "スリープ実行時間"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:39
+#: lib/teslamate_web/live/settings_live/index.html.leex:58
+msgid "min"
+msgstr "分"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:294
+msgid "Signed in successfully"
+msgstr "サインイン成功"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:134
+msgid "Car is unlocked"
+msgstr "車両のロックが解除されました"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/index.html.leex:9
+msgid "Create"
+msgstr "作成"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:138
+#: lib/teslamate_web/live/car_live/summary.html.leex:34
+msgid "Preconditioning"
+msgstr "プリコンディショニング"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:137
+msgid "Sentry mode is enabled"
+msgstr "セントリーモードが有効化されました"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:139
+#: lib/teslamate_web/live/car_live/summary.html.leex:44
+msgid "Driver present"
+msgstr "ドライバー乗車中"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:298
+msgid "cancel sleep attempt"
+msgstr "スリープ設定をキャンセルする"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:293
+msgid "try to sleep"
+msgstr "スリープ中です"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:143
+msgid "Range (est.)"
+msgstr "予想距離"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:98
+msgid "for"
+msgstr ""
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:70
+msgid "Requirements"
+msgstr "要件"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:79
+msgid "Vehicle must be locked"
+msgstr "車両がロックされていないといけません"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:124
+msgid "Range (rated)"
+msgstr "想定距離"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:162
+msgid "Charger Power"
+msgstr "充電電流値"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:141
+msgid "Preferred Range"
+msgstr "推奨距離"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:137
+msgid "Range"
+msgstr "距離"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:148
+msgid "ideal"
+msgstr "理想"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:148
+msgid "rated"
+msgstr "想定"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:123
+msgid "Range (ideal)"
+msgstr "想定距離"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:140
+msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
+msgstr "車の残存距離の推定値は、Wh / km単位の固定エネルギー消費量に基づいています。 Wh / km係数はテスラによって決定され、国固有ではありませんが、定格範囲はその車両のさまざまな市場での規制テストに基づいています。"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:140
+msgid "Update in progress"
+msgstr "アップデート中"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:54
+msgid "Windows open"
+msgstr "窓開放中"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/index.html.leex:51
+msgid "Delete '%{geo_fence}'?"
+msgstr "'%{geo_fence}' を削除しますか？"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:253
+msgid "Inside Temperature"
+msgstr "車内温度"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:241
+msgid "Outside Temperature"
+msgstr "外気温度"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:278
+#: lib/teslamate_web/live/settings_live/index.html.leex:270
+msgid "Version"
+msgstr "バージョン"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:79
+msgid "Health check failed"
+msgstr "ヘルスチェックが失敗しました"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:69
+msgid "Unlocked"
+msgstr "解除"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:110
+msgid "Remaining Time"
+msgstr "残り時間"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:250
+#: lib/teslamate_web/templates/layout/root.html.leex:46
+msgid "Dashboards"
+msgstr "ダッシュボード"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:233
+msgid "URLs"
+msgstr "URL"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:164
+#: lib/teslamate_web/live/settings_live/index.html.leex:236
+msgid "Web App"
+msgstr "ウェブアプリ"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:114
+msgid "Enabled"
+msgstr "有効"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:26
+msgid "Sleep Mode"
+msgstr "スリープモード"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.ex:205
+msgid "Geo-fence \"%{name}\" updated"
+msgstr "ジオフェンス \"%{name}\" がアップデートされました"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:142
+msgid "An error occurred"
+msgstr "エラーが発生しました"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:141
+msgid "Timeout"
+msgstr "タイムアウト"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:39
+msgid "Reduced Battery Range"
+msgstr "バッテリー範囲の縮小"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:213
+msgid "≈ %{range} at 100%"
+msgstr "100% チャージ時"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.ex:20
+#: lib/teslamate_web/live/charge_live/cost.html.leex:4
+msgid "Charge Cost"
+msgstr "充電コスト"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:103
+#: lib/teslamate_web/live/geofence_live/form.html.leex:59
+msgid "Cost"
+msgstr "コスト"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:119
+msgid "Enter charge cost"
+msgstr "充電コストを入力"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.ex:87
+msgid "Saved!"
+msgstr "保存しました"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:29
+msgid "Fetching vehicle data ..."
+msgstr "車両データを取得中…"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:179
+msgid "Addresses"
+msgstr "住所"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:160
+msgid "Language"
+msgstr "言語"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.ex:65
+msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
+msgstr "OpenStreetMapからデータを取得する際に問題が発生しました。 後でもう一度やり直してください。"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.html.leex:4
+msgid "TeslaFi Import"
+msgstr "TeslaFi からインポート"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.html.leex:10
+msgid "Found %{count} file"
+msgid_plural "Found %{count} files"
+msgstr[0] "%{count} 個のファイルが見つかりました"
+msgstr[1] "%{count} 個のファイルが見つかりました"
+
+#, elixir-format
+#: lib/teslamate_web/templates/layout/root.html.leex:87
+msgid "Donate"
+msgstr "寄付"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.ex:33
+#: lib/teslamate_web/live/import_live/index.html.leex:68
+msgid "Import"
+msgstr "インポート"
+
+#, elixir-format
+#: lib/teslamate_web/live/import_live/index.html.leex:58
+msgid "Time zone"
+msgstr "タイムゾーン"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:34
+msgid "Password"
+msgstr "パスワード"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:108
+#: lib/teslamate_web/live/signin_live/index.html.leex:74 lib/teslamate_web/live/signin_live/index.html.leex:141
+msgid "Sign in"
+msgstr "サインイン"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:20
+msgid "Email address"
+msgstr "メールアドレス"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:92
+msgid "Charge cost"
+msgstr "充電コスト"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:95
+msgid "Free Supercharging"
+msgstr "無料スーパーチャージ中"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:131
+msgid "General Settings"
+msgstr "一般設定"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:83
+msgid "Session fee"
+msgstr "セッション費用"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:59
+msgid "Doors open"
+msgstr "ドアが開いています"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:111
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
+msgid "Per kWh"
+msgstr "kWh毎"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:110
+msgid "Total"
+msgstr "合計"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:125
+msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
+msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
+msgstr[0] "この場所には、<strong>まだ費用が追加されていない%{n}つの課金セッション</strong>があります。"
+msgstr[1] "この場所には、<strong>まだ費用が追加されていない%{n}つの課金セッション</strong>があります。"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:134
+msgid "Add costs retroactively"
+msgstr "さかのぼってにコストを追加する"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:119
+msgid "Charging Costs"
+msgstr "充電費用"
+
+#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.leex:133
+msgid "Continue"
+msgstr "続ける"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:266
+msgid "Mileage"
+msgstr "マイレージ"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:111
+msgid "Streaming API"
+msgstr "Streaming API"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:285
+msgid "Documentation"
+msgstr "Documentation"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:281
+msgid "GitHub"
+msgstr "GitHub"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:276
+#: lib/teslamate_web/templates/layout/root.html.leex:95
+msgid "Update available"
+msgstr "アップデート可能"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:135
+msgid "Doors are open"
+msgstr "ドアが開いています"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.ex:136
+msgid "Trunk is open"
+msgstr "トランクが開いています"
+
+#, elixir-format
+#: lib/teslamate_web/live/charge_live/cost.html.leex:112
+#: lib/teslamate_web/live/geofence_live/form.html.leex:66
+msgid "Per Minute"
+msgstr "毎分"
+
+#, elixir-format
+#: lib/teslamate_web/live/car_live/summary.html.leex:74
+msgid "Software Update available (%{version})"
+msgstr "ソフトウェアアップデートが可能です (%{version})"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:172
+msgid "Enter the verification code generated by your authenticator app."
+msgstr "アプリによって生成された確認コードを入力します。"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:152
+msgid "Two-Factor Authentication"
+msgstr "2段階認証"
+
+#, elixir-format
+#: lib/teslamate_web/live/settings_live/index.html.leex:297
+msgid "Sign out"
+msgstr "サインアウト"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:46
+msgid "Access Token"
+msgstr "Access Token"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:59
+msgid "Refresh Token"
+msgstr "Refresh Token"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:255
+msgid "Tokens are invalid"
+msgstr "トークンが無効です"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:93
+msgid "Use existing API tokens (advanced)"
+msgstr "既存のAPI tokenを使用する (上級者向け)"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:94
+msgid "Use email and password"
+msgstr "メールアドレスとパスワードを使用する"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:86
+msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
+msgstr "Tesla APIを介してトークンを取得するには、プログラミングの経験またはサードパーティのサービスが必要です。 情報は %{here} にあります"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:83
+msgid "here"
+msgstr "ここ"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.html.leex:115
+msgid "Captcha"
+msgstr "Captcha"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:249
+msgid "Captcha does not match"
+msgstr "Captchaが一致しません"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:252
+msgid "Invalid email address and password combination"
+msgstr "メールアドレスとパスワードの組み合わせが無効です"
+
+#, elixir-format
+#: lib/teslamate_web/live/signin_live/index.ex:258
+msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
+msgstr "サインインの試行に失敗した回数が多すぎるため、Teslaアカウントがロックされています。 アカウントのロックを解除するには、パスワードをリセットしてください"
