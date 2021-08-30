@@ -264,21 +264,24 @@ defmodule TeslaMateWeb.SignInLive.Index do
               Exception.message(e)
           end
 
-        task =
-          case {socket.assigns.state, e.reason} do
-            {%State.Captcha{prev_state: %State.Credentials{} = prev_state}, reason}
-            when reason in [:captcha_does_not_match, :invalid_credentials] ->
-              credentials = Ecto.Changeset.apply_changes(prev_state.changeset)
+        case {socket.assigns.state, e.reason} do
+          {%State.Captcha{prev_state: %State.Credentials{} = prev_state}, :captcha_does_not_match} ->
+            credentials = Ecto.Changeset.apply_changes(prev_state.changeset)
 
+            task =
               Task.async(fn ->
+                # "Sign In" again to retrieve the new captcha image
                 call(socket.assigns.api, :sign_in, [{credentials.email, credentials.password}])
               end)
 
-            _ ->
-              nil
-          end
+            {:noreply, assign(socket, error: message, task: task)}
 
-        {:noreply, assign(socket, error: message, task: task)}
+          {%State.Captcha{prev_state: %State.Credentials{} = prev_state}, _reason} ->
+            {:noreply, assign(socket, state: prev_state, error: message, task: nil)}
+
+          {_state, _reason} ->
+            {:noreply, assign(socket, error: message, task: nil)}
+        end
     end
   end
 
