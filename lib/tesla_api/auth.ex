@@ -12,8 +12,7 @@ defmodule TeslaApi.Auth do
 
   @version Mix.Project.config()[:version]
   @default_headers [
-    # {"user-agent", "TeslaMate/#{@version}"},
-    {"user-agent", "TeslaMate-#{@version}" |> String.replace(".", "_")},
+    {"user-agent", "TeslaMate/#{@version}"},
     {"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"},
     {"Accept-Language", "en-US,de-DE;q=0.5"}
   ]
@@ -66,107 +65,124 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  def login(email, password) do
-    state = random_string(15)
-    code_verifier = random_code_verifier()
+  defmodule LoginCtx do
+    @derive {Inspect, except: [:password]}
+    defstruct [:email, :password, :state, :code_verifier, :cookies, :base_url]
+  end
 
+  def login(email, password) do
+    ctx = %LoginCtx{
+      email: email,
+      password: password,
+      state: random_string(15),
+      code_verifier: random_code_verifier(),
+      cookies: nil,
+      base_url: nil
+    }
+
+    case load_form(ctx) do
+      {:ok, {form, nil, ctx}} ->
+        authorize(form, ctx)
+
+      {:ok, {form, captcha, ctx}} ->
+        callback = fn captcha_code -> authorize(form, captcha_code, ctx) end
+        {:ok, {:captcha, captcha, callback}}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  defp authorize(form, captcha_code \\ nil, %LoginCtx{} = ctx) do
+    form =
+      form
+      |> Map.replace!("identity", ctx.email)
+      |> Map.replace!("credential", ctx.password)
+
+    form =
+      if Map.has_key?(form, "captcha") and is_binary(captcha_code) do
+        Map.replace!(form, "captcha", captcha_code)
+      else
+        form
+      end
+
+    with {:ok, %Tesla.Env{} = env} <- submit_form(form, ctx),
+         {:ok, {redirect_uri, code}} <- parse_location_header(env, ctx.state),
+         {:ok, tokens} <-
+           get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state, base: ctx.base_url),
+         {:ok, auth} <- get_api_tokens(tokens) do
+      {:ok, auth}
+    end
+  rescue
+    e ->
+      Logger.error(Exception.format(:error, e, __STACKTRACE__))
+      {:error, %Error{reason: e, message: "An unexpected error occurred"}}
+  end
+
+  defp load_form(%LoginCtx{} = ctx) do
     params = [
       client_id: @web_client_id,
       redirect_uri: @redirect_uri,
       response_type: "code",
       scope: "openid email offline_access",
-      code_challenge: challenge(code_verifier),
+      code_challenge: challenge(ctx.code_verifier),
       code_challenge_method: "S256",
-      state: state,
-      login_hint: email
+      state: ctx.state,
+      login_hint: ctx.email
     ]
 
-    with {:ok, {form, captcha, cookies, base_url}} <- load_form(params) do
-      callback = fn captcha_code ->
-        try do
-          form =
-            form
-            |> Map.replace!("identity", email)
-            |> Map.replace!("credential", password)
-
-          form =
-            if captcha == nil or captcha_code == nil do
-              form
-            else
-              Map.replace!(form, "captcha", captcha_code)
-            end
-
-          with {:ok, %Tesla.Env{} = env} <-
-                 submit_form(form, cookies, state, code_verifier, base: base_url),
-               {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
-               {:ok, tokens} <-
-                 get_web_token(code, code_verifier, redirect_uri, state, base: base_url),
-               {:ok, auth} <- get_api_tokens(tokens) do
-            {:ok, auth}
-          end
-        rescue
-          e ->
-            Logger.error(Exception.format(:error, e, __STACKTRACE__))
-            {:error, %Error{reason: e, message: "An unexpected error occurred"}}
-        end
-      end
-
-      case captcha do
-        nil ->
-          callback.(:no_captcha)
-
-        captcha ->
-          {:ok, {:captcha, captcha, callback}}
-      end
-    end
-  end
-
-  defp load_form(params, cookies \\ nil) do
-    headers =
-      case cookies do
-        nil -> []
-        cookies -> [{"Cookie", cookies}]
-      end
-
-    case get("/oauth2/v3/authorize", query: params, headers: headers) do
-      {:ok, %Tesla.Env{status: 200, headers: resp_headers, body: resp_body} = env} ->
-        document = Floki.parse_document!(resp_body)
-
-        cookies =
-          resp_headers
-          |> Enum.filter(&match?({"set-cookie", _}, &1))
-          |> Enum.map(fn {_, cookie} -> cookie |> String.split(";") |> hd() end)
-          |> Enum.join("; ")
-
-        base_url =
-          URI.parse(env.url)
-          |> Map.put(:path, nil)
-          |> Map.put(:query, nil)
-          |> URI.to_string()
-
-        form =
-          document
-          |> Floki.find("form input")
-          |> Map.new(fn input ->
-            [key] = input |> Floki.attribute("name")
-            value = input |> Floki.attribute("value") |> List.first()
-            {key, value}
-          end)
-
-        case Floki.find(document, "[data-id=\"captcha\"]") do
-          [] ->
-            {:ok, {form, nil, cookies, base_url}}
-
-          [captcha] ->
-            [path] = Floki.attribute(captcha, "src")
-
-            with {:ok, captcha} <- load_captcha_image(path, cookies) do
-              {:ok, {form, captcha, cookies, base_url}}
-            end
-        end
+    case get("/oauth2/v3/authorize", query: params) do
+      {:ok, %Tesla.Env{status: 200} = env} ->
+        handle_form(env, ctx)
 
       error ->
         handle_error(error, :authorization_request_failed)
+    end
+  end
+
+  defp handle_form(%Tesla.Env{status: 200} = env, %LoginCtx{} = ctx) do
+    document = Floki.parse_document!(env.body)
+
+    cookies =
+      env.headers
+      |> Enum.filter(&match?({"set-cookie", _}, &1))
+      |> Enum.map(fn {_, cookie} -> cookie |> String.split(";") |> hd() end)
+      |> Enum.join("; ")
+
+    base_url =
+      URI.parse(env.url)
+      |> Map.put(:path, nil)
+      |> Map.put(:query, nil)
+      |> URI.to_string()
+
+    form =
+      document
+      |> Floki.find("form input")
+      |> Map.new(fn input ->
+        [key] = input |> Floki.attribute("name")
+        value = input |> Floki.attribute("value") |> List.first()
+        {key, value}
+      end)
+
+    ctx = %LoginCtx{ctx | cookies: cookies, base_url: base_url}
+
+    case get_captcha_element(document) do
+      nil ->
+        {:ok, {form, nil, ctx}}
+
+      captcha ->
+        [path] = Floki.attribute(captcha, "src")
+
+        with {:ok, captcha} <- load_captcha_image(path, cookies) do
+          {:ok, {form, captcha, ctx}}
+        end
+    end
+  end
+
+  defp get_captcha_element(document) do
+    case Floki.find(document, "[data-id=\"captcha\"]") do
+      [] -> nil
+      [captcha] -> captcha
     end
   end
 
@@ -187,18 +203,30 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp submit_form(form, cookies, state, code_verifier, opts) do
+  defp submit_form(form, %LoginCtx{} = ctx) do
     transaction_id = Map.fetch!(form, "transaction_id")
     encoded_form = URI.encode_query(form)
 
     headers = [
       {"Content-Type", "application/x-www-form-urlencoded"},
-      {"Cookie", cookies}
+      {"Cookie", ctx.cookies}
     ]
 
-    case post("#{opts[:base]}/oauth2/v3/authorize", encoded_form, headers: headers) do
+    case post("#{ctx.base_url}/oauth2/v3/authorize", encoded_form, headers: headers) do
       {:ok, %Tesla.Env{status: 200, body: body} = env} ->
+        document = Floki.parse_document!(body)
+
         cond do
+          get_captcha_element(document) != nil ->
+            case handle_form(env, ctx) do
+              {:ok, {form, captcha, ctx}} when captcha != nil ->
+                callback = fn captcha_code -> authorize(form, captcha_code, ctx) end
+                {:ok, {:captcha, captcha, callback}}
+
+              {:error, reason} ->
+                {:error, reason}
+            end
+
           String.contains?(body, "Captcha does not match") ->
             {:error, %Error{reason: :captcha_does_not_match, env: env}}
 
@@ -206,16 +234,16 @@ defmodule TeslaApi.Auth do
             {:error, %Error{reason: :account_locked, env: env}}
 
           String.contains?(body, "/oauth2/v3/authorize/mfa/verify") ->
-            headers = [{"referer", env.url}, {"cookie", cookies}]
+            headers = [{"referer", env.url}, {"cookie", ctx.cookies}]
 
             with {:ok, devices} <- list_devices(transaction_id, headers) do
               callback = fn device_id, mfa_passcode ->
                 try do
                   with {:ok, env} <-
                          verify_passcode(device_id, mfa_passcode, transaction_id, headers),
-                       {:ok, {redirect_uri, code}} <- parse_location_header(env, state),
+                       {:ok, {redirect_uri, code}} <- parse_location_header(env, ctx.state),
                        {:ok, tokens} <-
-                         get_web_token(code, code_verifier, redirect_uri, state),
+                         get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state),
                        {:ok, auth} <- get_api_tokens(tokens) do
                     {:ok, auth}
                   end
