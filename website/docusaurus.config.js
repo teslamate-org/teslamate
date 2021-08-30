@@ -43,7 +43,6 @@ module.exports = {
     //   ],
     //   copyright: `Copyright © ${new Date().getFullYear()} Adrian Kumpf`,
     // },
-    sidebarCollapsible: false,
     prism: {
       additionalLanguages: ["apacheconf", "sql"],
     },
@@ -54,6 +53,7 @@ module.exports = {
       {
         docs: {
           // routeBasePath: "", // Docs-only
+          sidebarCollapsible: false,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl:
             "https://github.com/adriankumpf/teslamate/edit/master/website/",

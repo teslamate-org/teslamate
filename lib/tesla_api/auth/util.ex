@@ -27,7 +27,7 @@ defmodule TeslaApi.Auth.Util do
     |> binary_part(0, length)
   end
 
-  def base64_url_encode(data) do
+  defp base64_url_encode(data) do
     data
     |> Base.encode64(padding: false)
     |> String.replace("+", "-")
