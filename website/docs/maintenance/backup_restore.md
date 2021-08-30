@@ -22,6 +22,10 @@ Be absolutely certain to move the `teslamate.bck` file to another safe location,
 If you get the error `No such service: database`, update your _docker-compose.yml_ or use `db` instead of `database` in the above command.
 :::
 
+:::note
+If you changed `TM_DB_USER` in the .env file from one of the advanced guides, make sure to replace the first instance of `teslamate` to the value of `TM_DB_USER` in the above command. 
+:::
+
 ## Restore
 
 :::note
