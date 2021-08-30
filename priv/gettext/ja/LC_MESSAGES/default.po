@@ -189,7 +189,7 @@ msgid "min"
 msgstr "分"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:288
+#: lib/teslamate_web/live/signin_live/index.ex:294
 msgid "Signed in successfully"
 msgstr "サインイン成功"
 
@@ -605,7 +605,7 @@ msgid "Refresh Token"
 msgstr "Refresh Token"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:249
+#: lib/teslamate_web/live/signin_live/index.ex:255
 msgid "Tokens are invalid"
 msgstr "トークンが無効です"
 
@@ -635,16 +635,16 @@ msgid "Captcha"
 msgstr "Captcha"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:243
+#: lib/teslamate_web/live/signin_live/index.ex:249
 msgid "Captcha does not match"
 msgstr "Captchaが一致しません"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:246
+#: lib/teslamate_web/live/signin_live/index.ex:252
 msgid "Invalid email address and password combination"
 msgstr "メールアドレスとパスワードの組み合わせが無効です"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:252
+#: lib/teslamate_web/live/signin_live/index.ex:258
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
 msgstr "サインインの試行に失敗した回数が多すぎるため、Teslaアカウントがロックされています。 アカウントのロックを解除するには、パスワードをリセットしてください"
