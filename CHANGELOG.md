@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.24.0] - 2021-08-31
+
+### Improvements and Bug Fixes
+
+- Tesla have once again made changes to the login: TeslaMate can now handle a delayed captcha that first appears after submitting the login form …
+- Handle Tesla OwnerAPI errors returned by streaming API
+- Lay the groundwork for the ability to customize the displayed order of vehicles ([#1904](https://github.com/adriankumpf/teslamate/pull/1904) by [leewillis77](https://github.com/leewillis77))
+  - The order can currently be customized by manually updating the `display_priority` column in the `cars` database table
+
+#### Dashboards
+
+- Charging Stats: Use the full range of colors in the heatmap ([#1821](https://github.com/adriankumpf/teslamate/pull/1821) by [dyxyl](https://github.com/dyxyl))
+- Projected Range: Change right y-axis battery level range max from 200% to 100% ([#1840](https://github.com/adriankumpf/teslamate/pull/1840) by [toneus](https://github.com/toneus))
+- Timeline: Fix for missing drives and add links to the Action column ([1818](https://github.com/adriankumpf/teslamate/pull/1818) and [#1872](https://github.com/adriankumpf/teslamate/pull/1872) by [DrMichael](https://github.com/DrMichael))
+- Charge Level: Fix diagram glitch ([#1936](https://github.com/adriankumpf/teslamate/pull/1936) by [DrMichael](https://github.com/DrMichael))
+
+#### Translations
+
+- Add Japanese translation ([#1909](https://github.com/adriankumpf/teslamate/pull/1909) by [kuma](https://github.com/kuma))
+
+#### Documentation
+
+- Add a note about RAM needed after having issues, also a small clarification on where to place the .env file in the advanced guide ([#1857](https://github.com/adriankumpf/teslamate/pull/1857) by [billerby](https://github.com/billerby))
+- Add note with custom TM_DB_USER when backing up ([#1931](https://github.com/adriankumpf/teslamate/pull/1931) by [kyleawayan](https://github.com/kyleawayan))
+- Advanced installation with Traefik: Update Grafana rule to limit to TeslaMate host ([#1937](https://github.com/adriankumpf/teslamate/pull/1937) by [benoitm974](https://github.com/benoitm974))
+
 ## [1.23.7] - 2021-07-16
 
 ### Improvements and Bug Fixes
@@ -1339,6 +1365,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.24.0]: https://github.com/adriankumpf/teslamate/compare/v1.23.7...v1.24.0
 [1.23.7]: https://github.com/adriankumpf/teslamate/compare/v1.23.6...v1.23.7
 [1.23.6]: https://github.com/adriankumpf/teslamate/compare/v1.23.5...v1.23.6
 [1.23.5]: https://github.com/adriankumpf/teslamate/compare/v1.23.4...v1.23.5
