@@ -3,7 +3,7 @@ defmodule TeslaMate.Repo.Migrations.CarPriorities do
 
   def change do
     alter table(:cars) do
-      add(:display_priority, :int, default: 1)
+      add(:display_priority, :smallint, default: 1)
     end
   end
 end
