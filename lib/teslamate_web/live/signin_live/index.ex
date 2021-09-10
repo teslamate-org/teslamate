@@ -248,6 +248,9 @@ defmodule TeslaMateWeb.SignInLive.Index do
             :captcha_does_not_match ->
               gettext("Captcha does not match")
 
+            :recaptcha_required ->
+              gettext("Recaptcha is required")
+
             :invalid_credentials ->
               gettext("Invalid email address and password combination")
 
