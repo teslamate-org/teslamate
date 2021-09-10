@@ -210,12 +210,24 @@ defmodule TeslaMateWeb.SignInLive.Index do
 
   def handle_event("use_api_tokens", _params, socket) do
     path = Routes.live_path(socket, __MODULE__, %{use_api_tokens: true})
-    {:noreply, push_patch(socket, to: path)}
+
+    socket =
+      socket
+      |> push_patch(to: path)
+      |> assign(error: nil)
+
+    {:noreply, socket}
   end
 
   def handle_event("use_credentials", _params, socket) do
     path = Routes.live_path(socket, __MODULE__, %{use_api_tokens: false})
-    {:noreply, push_patch(socket, to: path)}
+
+    socket =
+      socket
+      |> push_patch(to: path)
+      |> assign(error: nil)
+
+    {:noreply, socket}
   end
 
   @impl true
