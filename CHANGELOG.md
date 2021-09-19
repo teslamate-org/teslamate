@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.24.1] - 2021-09-19
+
+- Update error message that is shown if reCAPTCHA is required
+- Update Erlang/OTP version to [prevent possible outages due to DST Root CA expiry on Sep 30th](https://elixirforum.com/t/psa-preventing-outages-due-to-dst-root-ca-expiry-on-sep-30th/42247)
+
+**⚠️ NOTE:** Tesla have tightened the captcha security once again and now require Google reCAPTCHA to generate API tokens. reCAPTCHA is implemented in a way that makes it impossible to bypass for applications like TeslaMate. There are third-party services that offer to fill these captchas (by having humans solve them manually), but they're slow and can be pricey if you're making a large a mount of requests.
+
+So if you are having issues signing in to your Tesla account via TeslaMate, the only remaining **workaround** right now is to sign in using `existing API tokens` (there is a button on the TeslaMate sign-in form). There are multiple apps available to securely generate access tokens yourself, for example:
+
+- [Auth app for Tesla (iOS)](https://apps.apple.com/us/app/auth-app-for-tesla/id1552058613#?platform=iphone)
+- [Tesla Tokens (Android)](https://play.google.com/store/apps/details?id=net.leveugle.teslatokens)
+- [Tesla Auth (macOS, Linux)](https://github.com/adriankumpf/tesla_auth)
+
+Users who are already signed in in do not have to worry about it. TeslaMate will continue to be able to access the Tesla API.
+
 ## [1.24.0] - 2021-08-31
 
 ### Improvements and Bug Fixes
@@ -1365,6 +1380,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.24.1]: https://github.com/adriankumpf/teslamate/compare/v1.24.0...v1.24.1
 [1.24.0]: https://github.com/adriankumpf/teslamate/compare/v1.23.7...v1.24.0
 [1.23.7]: https://github.com/adriankumpf/teslamate/compare/v1.23.6...v1.23.7
 [1.23.6]: https://github.com/adriankumpf/teslamate/compare/v1.23.5...v1.23.6
