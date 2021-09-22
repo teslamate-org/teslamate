@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="<%= Plug.Conn.get_session(@conn, :locale) %>">
+<html lang={Plug.Conn.get_session(@conn, :locale)}>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <%= live_title_tag assigns[:page_title] || "Home", suffix: " · TeslaMate" %>
-    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <link rel="stylesheet" href={Routes.static_path(@conn, "/css/app.css")}/>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5AB53N3ALo">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=5AB53N3ALo">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=5AB53N3ALo">
@@ -15,9 +15,9 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
     <%= csrf_meta_tag() %>
-    <script defer src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+    <script defer src={Routes.static_path(@conn, "/js/app.js")}></script>
   </head>
-  <body tabIndex=0>
+  <body tabIndex="0">
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
@@ -66,16 +66,15 @@
     <% show_doante_button = @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) %>
     <% update = TeslaMate.Updater.get_update() %>
 
-    <%= content_tag :main, role: "main", style: "overflow: hidden;",
-                           class: ["section", to_string(if show_doante_button or update, do: " full-height")] do %>
+    <main role="main" style="overflow: hidden;" class={["section", (if show_doante_button or update, do: " full-height")]}>
       <div class="container">
         <%= Enum.map(get_flash(@conn), fn {flash_key, flash_message} -> %>
-        <p class="notification is-<%= flash_key %>"><%= flash_message %></p>
+        <p class={"notification is-#{flash_key}"}><%= flash_message %></p>
         <% end) %>
 
         <%= @inner_content %>
       </div>
-    <% end %>
+    </main>
 
     <footer class="footer">
       <div class="content has-text-centered">

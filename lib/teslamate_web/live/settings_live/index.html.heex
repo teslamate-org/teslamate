@@ -10,17 +10,15 @@
   <div class="tabs is-centered is-boxed">
     <ul>
     <%= for {car_id, %{original: %{car: car}}} <- @car_settings do %>
-      <%=
-        content_tag :li, class: (if car_id == @car, do: "is-active") do
-          link car.name || "???", to: "#", phx_click: "car", phx_value_id: car_id
-        end
-      %>
+      <li class={if car_id == @car, do: "is-active"}>
+        <%= link car.name || "???", to: "#", phx_click: "car", phx_value_id: car_id %>
+      </li>
     <% end %>
     </ul>
   </div>
   <% end %>
 
-<%= f = form_for get_in(@car_settings, [@car, :changeset]), "#", [phx_change: :change, as: "car_settings_#{@car}"] %>
+<.form let={f} for={get_in(@car_settings, [@car, :changeset])} phx_change="change" as={"car_settings_#{@car}"}>
   <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Sleep Mode") %></h2>
@@ -124,14 +122,14 @@
       </div>
     </div>
   </div>
-</form>
+</.form>
 <% end %>
 
-<%= content_tag :div, class: ["divider", to_string(if Enum.count(@car_settings) <= 1, do: " is-invisible")] do
-  gettext("General Settings")
-end %>
+<div class={["divider", (if Enum.count(@car_settings) <= 1, do: " is-invisible")]}>
+  <%= gettext("General Settings") %>
+</div>
 
-<%= f = form_for @global_settings.changeset, "#", [phx_change: :change] %>
+<.form let={f} for={@global_settings.changeset} phx_change="change">
   <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Range") %></h2>
@@ -181,7 +179,7 @@ end %>
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <div class="select is-fullwidth<%= if @refreshing_addresses?, do: ' is-loading' %>">
+              <div class={["select", "is-fullwidth", (if @refreshing_addresses?, do: "is-loading")]}>
                 <%= select(f, :language, GlobalSettings.supported_languages(), disabled: !@addresses_migrated? or @refreshing_addresses?) %>
               </div>
             </div>
@@ -260,7 +258,7 @@ end %>
       </div>
     </div>
   </div>
-</form>
+</.form>
 
 <div class="columns is-mobile is-centered">
   <div class="column is-narrow table-container">

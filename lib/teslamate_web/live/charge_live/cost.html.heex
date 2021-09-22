@@ -5,20 +5,20 @@
   </ul>
 </nav>
 
-<%= f = form_for @changeset, "#", [ phx_submit: :save, class: "charging_process", id: @charging_process.id] %>
+<.form let={f} for={@changeset} phx_submit="save" class="charging_process" id={@charging_process.id}>
   <div class="field is-horizontal">
     <div class="field-label"></div>
     <div class="field-body">
       <div class="field">
         <div class="card-image">
           <figure
-            id="map_<%= @charging_process.id %>_container"
-            data-id="<%= @charging_process.id %>"
+            id={"map_#{@charging_process.id}_container"}
+            data-id={@charging_process.id}
             data-zoom="1"
             phx-update="ignore"
             phx-hook="SimpleMap"
           >
-            <div id="map_<%= @charging_process.id %>" class="map" style="height: 250px; position: relative;" />
+            <div id={"map_#{@charging_process.id}"} class="map" style="height: 250px; position: relative;" />
           </figure>
           <%= text_input :position, "#{@charging_process.id}",
                          value: "#{@charging_process.position.latitude},#{@charging_process.position.longitude}",
@@ -138,4 +138,4 @@
       </div>
     </div>
   </div>
-</form>
+</.form>
