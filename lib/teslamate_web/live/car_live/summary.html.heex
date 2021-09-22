@@ -1,15 +1,15 @@
 <div class="car card">
   <div class="card-image">
-    <figure id="map_<%= @car.id %>_container" data-id="<%= @car.id %>" data-marker="arrow" phx-hook="SimpleMap" phx-update="ignore">
-      <div id="map_<%= @car.id %>" class="map" style="height: 175px; position: relative;">
+    <figure id={"map_#{@car.id}_container"} data-id={@car.id} data-marker="arrow" phx-hook="SimpleMap" phx-update="ignore">
+      <div id={"map_#{@car.id}"} class="map" style="height: 175px; position: relative;">
         <div class="spinner">
           <span class="is-loading"/>
         </div>
       </div>
     </figure>
     <input
-      id="position_<%= @car.id %>"
-      type="text" value="<%= "#{@summary.latitude},#{@summary.longitude},#{@summary.heading}" %>"
+      id={"position_#{@car.id}"}
+      type="text" value={"#{@summary.latitude},#{@summary.longitude},#{@summary.heading}"}
       class="is-hidden"
       phx-hook="TriggerChange"
       disabled
@@ -25,58 +25,58 @@
       </div>
        <div class="icons ml-5">
          <span
-           class="<%= if @fetch_status, do: '', else: 'is-hidden ' %>spinner has-tooltip-top has-tooltip-left-mobile"
-           data-tooltip='<%= gettext "Fetching vehicle data ..." %>'
+           class={"#{if @fetch_status, do: '', else: 'is-hidden '}spinner has-tooltip-top has-tooltip-left-mobile"}
+           data-tooltip={gettext "Fetching vehicle data ..."}
           >
           <span class="is-loading"></span>
         </span>
       <%= if @summary.is_preconditioning do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Preconditioning" %>'>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Preconditioning"}>
           <span class="mdi mdi-air-conditioner"></span>
         </span>
       <% end %>
       <%= if not is_nil(@summary.battery_level) and not is_nil(@summary.usable_battery_level) and @summary.battery_level - @summary.usable_battery_level > 2 do %>
-        <span class="icon has-text-link has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Reduced Battery Range" %>'>
+        <span class="icon has-text-link has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Reduced Battery Range"}>
           <span class="mdi mdi-snowflake"></span>
         </span>
       <% end %>
       <%= if @summary.state != :driving and @summary.is_user_present do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Driver present" %>'>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Driver present"}>
           <span class="mdi mdi-account"></span>
         </span>
       <% end %>
       <%= if @summary.plugged_in == true do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Plugged In" %>'>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Plugged In"}>
           <span class="mdi mdi-power-plug"></span>
         </span>
       <% end %>
       <%= if @summary.windows_open do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Windows open" %>'>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Windows open"}>
           <span class="mdi mdi-window-open"></span>
         </span>
       <% end %>
       <%= if @summary.doors_open do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Doors open" %>'>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Doors open"}>
           <span class="mdi mdi-car-door"></span>
         </span>
       <% end %>
       <%= if @summary.sentry_mode do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Sentry Mode" %>'>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Sentry Mode"}>
           <span class="mdi mdi-shield-check"></span>
         </span>
       <% end %>
       <%= unless is_nil(@summary.locked) do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= (if @summary.locked, do: gettext("Locked"), else: gettext("Unlocked")) %>'>
-          <%= content_tag(:span, nil, class: "mdi mdi-lock" <> (if @summary.locked, do: "", else: "-open-variant")) %>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={(if @summary.locked, do: gettext("Locked"), else: gettext("Unlocked"))}>
+          <span class={["mdi", (if @summary.locked, do: "mdi-lock", else: "mdi-lock-open-variant")]}></span>
         </span>
       <% end %>
       <%= if @summary.update_available do %>
-        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Software Update available (%{version})", version: @summary.update_version %>'>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Software Update available (%{version})", version: @summary.update_version}>
           <span class="mdi mdi-gift-outline"></span>
         </span>
       <% end %>
       <%= if @summary.healthy == false do %>
-        <span class="icon has-text-danger has-tooltip-top has-tooltip-left-mobile" data-tooltip='<%= gettext "Health check failed" %>'>
+        <span class="icon has-text-danger has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Health check failed"}>
           <span class="mdi mdi-alert-box"></span>
         </span>
       <% end %>
@@ -219,7 +219,7 @@
           <tr>
             <td class="has-text-weight-medium"><%= gettext "State of Charge" %></td>
             <td>
-              <span class="has-tooltip-top has-tooltip-right-desktop" data-tooltip='<%= tooltip %>'><%= soc_text %></span>
+              <span class="has-tooltip-top has-tooltip-right-desktop" data-tooltip={tooltip}><%= soc_text %></span>
             </td>
           </tr>
           <% end %>

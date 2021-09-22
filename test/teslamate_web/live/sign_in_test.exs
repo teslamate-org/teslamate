@@ -30,9 +30,9 @@ defmodule TeslaMateWeb.SignInLiveTest do
              {"button",
               [
                 {"class", _},
+                {"disabled", "disabled"},
                 {"phx-disable-with", "Saving..."},
-                {"type", "submit"},
-                {"disabled", "disabled"}
+                {"type", "submit"}
               ], ["Sign in"]}
            ] = doc |> Floki.find("[type=submit]")
   end
@@ -114,13 +114,16 @@ defmodule TeslaMateWeb.SignInLiveTest do
 
     assert [
              {"option", [{"value", "000"}], ["Device #1"]},
-             {"option", [{"value", "111"}, {"selected", "selected"}], ["Device #2"]}
+             {"option", [{"selected", "selected"}, {"value", "111"}], ["Device #2"]}
            ] == Floki.find(doc, "#mfa_device_id option")
 
     assert "12345" ==
              doc |> Floki.find("#mfa_passcode") |> Floki.attribute("value") |> Floki.text()
 
-    assert [{"div", _, [{"select", [{"id", "mfa_device_id"} | _], _options}]}] =
+    assert [
+             {"div", _,
+              [{"select", [{"disabled", "disabled"}, {"id", "mfa_device_id"} | _], _options}]}
+           ] =
              view
              |> render_change(:validate, %{mfa: %{device_id: "111", passcode: "123456"}})
              |> Floki.parse_document!()

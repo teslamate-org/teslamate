@@ -53,7 +53,7 @@
 </div>
 
 <%= if @status.state == :idle do %>
-<%= f = form_for @changeset, "#", [phx_change: :change, phx_submit: :import] %>
+<.form let={f} for={@changeset} phx_change="change" phx_submit="import">
   <div class="field mb-6">
     <%= label f, :timezone, gettext("Time zone"), class: "label is-medium " %>
     <div class="control">
@@ -72,9 +72,11 @@
               phx_loading_class: "is-loading" %>
     </div>
   </div>
-</form>
+</.form>
 <% end %>
 
 <%= if @status.state == :error do %>
-<%= content_tag :code, inspect(@status.message, pretty: true),  class: "box has-text-danger" %>
+<code class="box has-text-danger">
+  <%= inspect(@status.message, pretty: true) %>
+</code>
 <% end %>

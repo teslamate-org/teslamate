@@ -11,7 +11,7 @@
   </ul>
 </nav>
 
-<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save, class: "geofence", id: @geofence.id] %>
+<.form let={f} for={@changeset} phx_change="validate" phx_submit="save" class="geofence" id={@geofence.id}>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <%= label f, :position, gettext("Position"), class: "label" %>
@@ -110,10 +110,10 @@
       </div>
     </div>
   </div>
-</form>
+</.form>
 
-<div id="charging_cost_modal" class="modal modal-fx-fadeInScale<%= if @show_modal, do: ' is-active' %><%= if not @connected?, do: ' is-hidden' %>" phx-hook="Modal">
-  <div class="modal-background" phx-click="close-modal" <%= if @show_modal, do: "phx-window-keyup=keyup" %>></div>
+<div id="charging_cost_modal" class={["modal modal-fx-fadeInScale", (if @show_modal, do: "is-active"), (if not @connected?, do: "is-hidden")]} phx-hook="Modal">
+  <div class="modal-background" phx-click="close-modal" {if @show_modal, do: [phx_window_keyup: "keyup"], else: []}></div>
   <div class="modal-card modal-content">
     <header class="modal-card-head">
       <p class="modal-card-title"><%= gettext "Charging Costs" %></p>

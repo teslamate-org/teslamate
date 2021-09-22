@@ -23,14 +23,10 @@ defmodule TeslaMateWeb.ImportLiveTest do
 
     # Time Zone
 
-    assert [{"select", _, options}] =
-             html
-             |> Floki.parse_document!()
-             |> Floki.find("#settings_timezone")
-
-    assert Enum.find(options, fn {"option", [{"value", _} | _], [label]} ->
-             label == "Europe/Berlin"
-           end)
+    assert html
+           |> Floki.parse_document!()
+           |> Floki.find("#settings_timezone option")
+           |> Enum.find(fn {"option", _, [label]} -> label == "Europe/Berlin" end)
 
     assert render_change(view, :change, %{settings: %{timezone: "America/Los_Angeles"}})
            |> Floki.parse_document!()
