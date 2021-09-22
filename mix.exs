@@ -40,14 +40,14 @@ defmodule TeslaMate.MixProject do
       {:ex_cldr, "~> 2.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:finch, "~> 0.3"},
-      {:floki, "~> 0.23"},
+      {:floki, "~> 0.23", only: :test},
       {:fuse, "~> 2.4"},
       {:gen_state_machine, "~> 3.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:mock, "~> 0.3", only: :test},
       {:nimble_csv, "~> 1.1"},
-      {:phoenix, "~> 1.6-rc", override: true},
+      {:phoenix, "~> 1.6.0-rc", override: true},
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
@@ -58,7 +58,7 @@ defmodule TeslaMate.MixProject do
       {:srtm, "~> 0.5"},
       {:tesla, "~> 1.4"},
       {:timex, "~> 3.0"},
-      {:tortoise, "~> 0.10.0"},
+      {:tortoise, "~> 0.10"},
       {:tzdata, "~> 1.1"},
       {:websockex, "~> 0.4"}
     ]
@@ -71,7 +71,7 @@ defmodule TeslaMate.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "assets.deploy": ["cmd --cd assets npm run deploy", "phx.digest"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test --no-start"],
-      ci: ["format --check-formatted", "test --raise"]
+      ci: ["format --check-formatted", "deps.unlock --check-unused", "test --raise"]
     ]
   end
 
