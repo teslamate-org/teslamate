@@ -870,7 +870,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {:offline, _}}, {:driving, {:unavailable, _n}, drv}, data) do
     {:next_state, {:driving, {:offline, data.last_response}, drv},
-     %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30, data)}
+     %Data{data | last_used: DateTime.utc_now()}, [broadcast_summary(), schedule_fetch(30, data)]}
   end
 
   def handle_event(:internal, {:update, {:offline, _}}, {:driving, {:offline, _last}, nil}, data) do
@@ -885,7 +885,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         timeout_drive(drive, data)
 
         {:next_state, {:driving, {:offline, last}, nil},
-         %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30, data)}
+         %Data{data | last_used: DateTime.utc_now()},
+         [broadcast_summary(), schedule_fetch(30, data)]}
 
       _min ->
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30, data)}

@@ -261,6 +261,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
 
       refute_receive _, 50
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
 
       # Logs previous drive because of timeout
       assert_receive {:close_drive, ^drive, lookup_address: true}, 300
@@ -332,6 +333,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
 
       # Timeout
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}, 200
       assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
 
       refute_receive _
@@ -408,6 +410,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
 
       refute_receive _, 100
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
 
       # Logs previous drive
       assert_receive {:close_drive, ^drive, lookup_address: true}, 250
