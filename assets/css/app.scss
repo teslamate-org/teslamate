@@ -1,19 +1,19 @@
 @charset "utf-8";
 
-@import "~leaflet/dist/leaflet.css";
-@import "~leaflet-control-geocoder/dist/Control.Geocoder.css";
-@import "~@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+@import "leaflet/dist/leaflet.css";
+@import "leaflet-control-geocoder/dist/Control.Geocoder.css";
+@import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
-$mdi-font-path: "~@mdi/font/fonts";
-@import "~@mdi/font/scss/materialdesignicons.scss";
+$mdi-font-path: "@mdi/font/fonts";
+@import "@mdi/font/scss/materialdesignicons.scss";
 
 $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
 $widescreen-enabled: false;
 $fullhd-enabled: false;
 
-@import "~bulma/sass/utilities/_all";
-@import "~bulma/sass/base/_all";
-@import "~bulma/sass/helpers/_all.sass";
+@import "bulma/sass/utilities/_all";
+@import "bulma/sass/base/_all";
+@import "bulma/sass/helpers/_all.sass";
 
 // Modal customization
 $modal-z: 1010;
@@ -24,28 +24,28 @@ $modal-card-head-background-color: $white;
 $modal-card-head-border-bottom: none;
 $modal-card-foot-border-top: none;
 
-@import "~bulma/sass/components/breadcrumb";
-@import "~bulma/sass/components/card";
-@import "~bulma/sass/components/dropdown";
-@import "~bulma/sass/components/message";
-@import "~bulma/sass/components/modal";
-@import "~bulma/sass/components/navbar";
-@import "~bulma/sass/components/tabs";
-@import "~bulma/sass/elements/box";
-@import "~bulma/sass/elements/button";
-@import "~bulma/sass/elements/container";
-@import "~bulma/sass/elements/icon";
-@import "~bulma/sass/elements/notification";
-@import "~bulma/sass/elements/table";
-@import "~bulma/sass/elements/tag";
-@import "~bulma/sass/elements/title";
-@import "~bulma/sass/form/_all";
-@import "~bulma/sass/layout/section";
-@import "~bulma/sass/grid/_all";
+@import "bulma/sass/components/breadcrumb";
+@import "bulma/sass/components/card";
+@import "bulma/sass/components/dropdown";
+@import "bulma/sass/components/message";
+@import "bulma/sass/components/modal";
+@import "bulma/sass/components/navbar";
+@import "bulma/sass/components/tabs";
+@import "bulma/sass/elements/box";
+@import "bulma/sass/elements/button";
+@import "bulma/sass/elements/container";
+@import "bulma/sass/elements/icon";
+@import "bulma/sass/elements/notification";
+@import "bulma/sass/elements/table";
+@import "bulma/sass/elements/tag";
+@import "bulma/sass/elements/title";
+@import "bulma/sass/form/_all";
+@import "bulma/sass/layout/section";
+@import "bulma/sass/grid/_all";
 
-@import "~@creativebulma/bulma-tooltip";
-@import "~@creativebulma/bulma-divider";
-@import "~bulma-switch";
+@import "@creativebulma/bulma-tooltip";
+@import "@creativebulma/bulma-divider";
+@import "bulma-switch";
 
 @import "./vendor/modal-fx";
 

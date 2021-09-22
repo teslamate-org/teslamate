@@ -77,10 +77,10 @@ Source: [mosquitto.org/download](https://mosquitto.org/download/)
 </details>
 
 <details>
-  <summary>Node.js (v12+)</summary>
+  <summary>Node.js (v14+)</summary>
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 

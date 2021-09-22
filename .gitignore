@@ -31,7 +31,7 @@ npm-debug.log
 # Since we are building assets from assets/,
 # we ignore priv/static. You may want to comment
 # this depending on your deployment strategy.
-/priv/static/
+/priv/static/assets
 
 # CDLR data repository
 /priv/cldr/

@@ -22,8 +22,8 @@ COPY assets/package.json assets/package-lock.json ./assets/
 RUN npm ci --prefix ./assets --progress=false --no-audit --loglevel=error
 
 COPY assets assets
-RUN npm run deploy --prefix ./assets && \
-    mix phx.digest
+COPY priv/static priv/static
+RUN mix assets.deploy
 
 COPY lib lib
 COPY priv/repo/migrations priv/repo/migrations

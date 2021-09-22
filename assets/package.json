@@ -1,17 +1,16 @@
 {
   "repository": {},
+  "description": "...",
   "license": "MIT",
   "scripts": {
-    "deploy": "webpack --mode production --stats-colors",
-    "watch": " webpack --mode development --watch --watch-options-stdin --stats-colors"
+    "deploy": "node scripts/build.js"
   },
   "dependencies": {
     "@creativebulma/bulma-divider": "^1.1.0",
     "@creativebulma/bulma-tooltip": "^1.2.0",
     "@geoman-io/leaflet-geoman-free": "^2.11.2",
-    "@mdi/font": "^5.9.55",
+    "@mdi/font": "^6.1.95",
     "bulma-switch": "^2.0.0",
-    "glob": "^7.1.7",
     "leaflet": "^1.7.1",
     "leaflet-control-geocoder": "^2.3.0",
     "phoenix": "file:../deps/phoenix",
@@ -19,21 +18,10 @@
     "phoenix_live_view": "file:../deps/phoenix_live_view"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.6",
-    "@babel/preset-env": "^7.14.7",
-    "babel-loader": "^8.2.2",
     "bulma": "^0.9.3",
-    "copy-webpack-plugin": "^9.0.1",
-    "css-loader": "^5.2.6",
-    "css-minimizer-webpack-plugin": "^3.0.2",
-    "file-loader": "^6.2.0",
-    "mini-css-extract-plugin": "^1.6.2",
-    "sass": "^1.35.1",
-    "sass-loader": "^12.1.0",
-    "terser-webpack-plugin": "^5.1.4",
-    "url-loader": "^4.1.1",
-    "webpack": "^5.41.1",
-    "webpack-cli": "^4.7.2"
+    "esbuild": "^0.13.0",
+    "esbuild-sass-plugin": "^1.5.5",
+    "sass": "^1.42.1"
   },
   "name": "assets"
 }
