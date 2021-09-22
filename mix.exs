@@ -35,18 +35,18 @@ defmodule TeslaMate.MixProject do
 
   defp deps do
     [
-      {:phoenix, "~> 1.5.0"},
+      {:phoenix, "~> 1.5.12"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 2.11"},
+      {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:gen_state_machine, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.1"},
+      {:phoenix_live_view, "~> 0.16"},
       {:floki, "~> 0.23"},
       {:tortoise, "~> 0.10.0"},
       {:excoveralls, "~> 0.10", only: :test},
