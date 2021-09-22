@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <%= live_title_tag assigns[:page_title] || "Home", suffix: " · TeslaMate" %>
-    <link rel="stylesheet" href={Routes.static_path(@conn, "/css/app.css")}/>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5AB53N3ALo">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=5AB53N3ALo">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=5AB53N3ALo">
@@ -15,7 +15,7 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
     <%= csrf_meta_tag() %>
-    <script defer src={Routes.static_path(@conn, "/js/app.js")}></script>
+    <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
   <body tabIndex="0">
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">

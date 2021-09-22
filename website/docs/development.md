@@ -6,26 +6,21 @@ sidebar_label: Development and Contributing
 
 ## Requirements
 
-- **Elixir** >= 1.11
+- **Elixir** >= 1.12
 - **Postgres** >= 10
 - An **MQTT broker** e.g. mosquitto (_optional_)
+- **NodeJS** >= 14
 
 ## Initial Setup
 
 To run the TeslaMate test suite you need a database named `teslamate_test`:
 
 ```bash
-# download dependencies
-mix deps.get
-
-# create the dev database and run migrations
-mix ecto.setup
+# download dependencies, create the dev database and run migrations
+mix setup
 
 # create the test database
 MIX_ENV=test mix ecto.setup
-
-# download JavaScript dependencies
-npm install --prefix ./assets
 ```
 
 ## Running locally

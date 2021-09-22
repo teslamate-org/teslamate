@@ -17,8 +17,9 @@ Click on the following items to view detailed installation steps.
 pkg install bash
 bash
 ```
-  
-  For simplicity reasons, follow the rest of the tutorial in bash rather the csh.
+
+For simplicity reasons, follow the rest of the tutorial in bash rather the csh.
+
 </details>
 
 <details>
@@ -27,6 +28,7 @@ bash
 ```bash
 pkg install git
 ```
+
 </details>
 
 <details>
@@ -35,6 +37,7 @@ pkg install git
 ```bash
 pkg install erlang
 ```
+
 </details>
 
 <details>
@@ -43,12 +46,12 @@ pkg install erlang
 Unfortunately the Elixir part is not well updated in FreeBSD ports.
 Hence the latest supported version for Erlang 21 (latest in FreeBSD ports)
 is Elixir 1.11.
-  
+
 We will need to compile it from source, which is pretty easy though.
 
 ```bash
 pkg install gmake
-  
+
 cd /usr/local/src
 git clone https://github.com/elixir-lang/elixir.git
 cd elixir
@@ -57,6 +60,7 @@ gmake clean test
 gmake install
 elixir --version
 ```
+
 </details>
 
 <details>
@@ -66,7 +70,7 @@ elixir --version
 pkg install postgressql(12|13)-server
 echo postgres_enable="yes" >> /etc/rc.conf
 ```
-  
+
 </details>
 
 <details>
@@ -76,6 +80,7 @@ echo postgres_enable="yes" >> /etc/rc.conf
 pkg install grafana7
 echo grafana_enable="yes" >> /etc/rc.conf
 ```
+
 </details>
 
 <details>
@@ -89,11 +94,12 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
 </details>
 
 <details>
-  <summary>Node.js (v12+)</summary>
+  <summary>Node.js (v14+)</summary>
 
 ```bash
 pkg install node(12|14|)
 ```
+
 </details>
 
 ## Clone TeslaMate git repository
@@ -139,6 +145,7 @@ mix do phx.digest, release --overwrite
 ## Starting TeslaMate at boot time
 
 ### Create FreeBSD service definition _/usr/local/etc/rc.d/teslamate_
+
 ```console
 # PROVIDE: teslamate
 # REQUIRE: DAEMON
@@ -183,7 +190,7 @@ COMMAND=${teslamate_command-"${HOME}/_build/prod/rel/teslamate/bin/teslamate"}
 teslamate_start()
 {
   ${COMMAND} eval "TeslaMate.Release.migrate"
-  ${COMMAND} daemon 
+  ${COMMAND} daemon
 }
 
 start_cmd="${name}_start"
@@ -196,6 +203,7 @@ run_rc_command "$1"
 ```
 
 ### Update _/etc/rc.conf_
+
 ```bash
 echo teslamate_enable="YES" >> /etc/rc.conf
 echo teslamate_db_host="localhost"  >> /etc/rc.conf
@@ -205,6 +213,7 @@ echo teslamate_disable_mqtt="true" >> /etc/rc.conf
 ```
 
 ### Start service
+
 ```bash
 service teslamate start
 ```
@@ -261,4 +270,3 @@ service teslamate start
     ```
 
     :::
-  
