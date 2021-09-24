@@ -1,9 +1,9 @@
 defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
-  use TeslaMate.DataCase
-  use TeslaMate.VehicleCase
+  use TeslaMate.VehicleCase, async: false
 
   import ExUnit.CaptureLog
 
+  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Log
 
   @log_opts format: "[$level] $message\n",

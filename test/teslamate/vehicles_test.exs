@@ -2,6 +2,7 @@ defmodule TeslaMate.VehiclesTest do
   use TeslaMate.VehicleCase
   use TeslaMate.DataCase
 
+  alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.Vehicles
 
   @tag :capture_log
@@ -68,7 +69,7 @@ defmodule TeslaMate.VehiclesTest do
 
         {:ok, _pid} = start_supervised({Vehicles, vehicle: VehicleMock})
 
-        assert true = Vehicles.Vehicle.healthy?(id)
+        assert true = Vehicle.healthy?(id)
       end
     end
 
@@ -87,12 +88,13 @@ defmodule TeslaMate.VehiclesTest do
 
         start_supervised!({Vehicles, vehicle: VehicleMock})
 
-        assert true = Vehicles.Vehicle.healthy?(id)
+        assert true = Vehicle.healthy?(id)
       end
     end
   end
 
   describe "car settings" do
+    alias TeslaMate.Settings.CarSettings
     alias TeslaApi.Vehicle.State.VehicleConfig
     alias TeslaMate.{Log, Repo}
     alias TeslaMate.Vehicles.Vehicle.Summary

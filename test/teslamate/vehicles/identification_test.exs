@@ -1,6 +1,5 @@
 defmodule TeslaMate.Vehicles.Vehicle.IdentificationTest do
   use TeslaMate.VehicleCase, async: false
-  use TeslaMateWeb.ConnCase
 
   alias TeslaMate.Log.Car
   alias TeslaMate.Log
