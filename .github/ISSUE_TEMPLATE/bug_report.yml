@@ -53,6 +53,20 @@ body:
         Please copy and paste any relevant log output of the TeslaMate Docker container or application. This will be automatically formatted into code, so no need for backticks.
 
         To retrieve the TeslaMate Docker container logs, run `docker-compose logs teslamate`.
+      placeholder: |
+        2021-09-22 23:20:50.468 [info] Migrations already up
+        2021-09-22 23:20:52.822 [info] System Info: Erlang/OTP 24 (jit)
+        2021-09-22 23:20:52.823 [info] Version: 1.24.1
+        2021-09-22 23:20:53.184 [info] POST https://auth.tesla.com/oauth2/v3/token -> 200 (327.809 ms)
+        2021-09-22 23:20:54.129 [info] POST https://owner-api.teslamotors.com/oauth/token -> 200 (944.031 ms)
+        2021-09-22 23:20:54.129 [info] Refreshed api tokens
+        2021-09-22 23:20:54.140 [info] Scheduling token refresh in 5 wk 5 d
+        2021-09-22 23:20:54.145 [info] Running TeslaMateWeb.Endpoint with cowboy 2.9.0 at :::4000 (http)
+        2021-09-22 23:20:54.148 [info] Access TeslaMateWeb.Endpoint at http://localhost
+        2021-09-22 23:20:54.226 [info] Starting logger for 'Tesla'
+        2021-09-22 23:20:54.251 [info] MQTT connection has been established
+        2021-09-22 23:20:54.334 car_id=1 [info] Start / :asleep
+        2021-09-22 23:20:56.721 [info] GET /
       render: shell
     validations:
       required: true
@@ -61,7 +75,7 @@ body:
     attributes:
       label: Screenshots
       description: If applicable, add screenshots to help explain the problem.
-      placeholder: Upload screenshots
+      placeholder: Upload screenshot files here by dragging & dropping
     validations:
       required: false
 
@@ -90,15 +104,14 @@ body:
         $ docker-compose exec database psql teslamate teslamate -c \
            "COPY (select * from drives where start_date > '2020-01-01') TO STDOUT WITH CSV HEADER" > drives.csv
         ```
-      placeholder: Upload additional data
+      placeholder: Upload exported data here by dragging & dropping
     validations:
       required: false
 
   - type: dropdown
     id: installation
     attributes:
-      label: Version
-      description: Type of installation
+      label: Type of installation
       options:
         - Docker
         - Manual
