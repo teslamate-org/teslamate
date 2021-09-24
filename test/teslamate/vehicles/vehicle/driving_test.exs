@@ -1,7 +1,8 @@
 defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
   use TeslaMate.VehicleCase, async: true
 
-  alias TeslaMate.Log.{Drive, Car}
+  alias TeslaMate.Vehicles.Vehicle.Summary
+  alias TeslaMate.Log.Drive
 
   test "logs a full drive", %{test: name} do
     now = DateTime.utc_now()

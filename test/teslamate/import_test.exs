@@ -481,30 +481,35 @@ defmodule TeslaMate.ImportTest do
     assert :ok = Import.run("Europe/Berlin")
 
     assert_receive %Status{
-      files: [%{complete: false}, %{complete: false}, %{complete: false}],
-      state: :running
-    }
+                     files: [%{complete: false}, %{complete: false}, %{complete: false}],
+                     state: :running
+                   },
+                   1000
 
     assert_receive %Status{
-      files: [%{complete: false}, %{complete: false}, %{complete: false}],
-      state: :running
-    }
+                     files: [%{complete: false}, %{complete: false}, %{complete: false}],
+                     state: :running
+                   },
+                   1000
 
     assert_receive %Status{
-      files: [%{complete: true}, %{complete: false}, %{complete: false}],
-      state: :running
-    }
+                     files: [%{complete: true}, %{complete: false}, %{complete: false}],
+                     state: :running
+                   },
+                   1000
 
     assert_receive %Status{
-      files: [%{complete: true}, %{complete: true}, %{complete: false}],
-      state: :running
-    }
+                     files: [%{complete: true}, %{complete: true}, %{complete: false}],
+                     state: :running
+                   },
+                   1000
 
     assert_receive %Status{
-      files: [%{complete: true}, %{complete: true}, %{complete: false}],
-      state: :error,
-      message: msg
-    }
+                     files: [%{complete: true}, %{complete: true}, %{complete: false}],
+                     state: :error,
+                     message: msg
+                   },
+                   1000
 
     assert {{:badmatch,
              {:error,

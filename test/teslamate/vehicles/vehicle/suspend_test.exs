@@ -1,7 +1,7 @@
 defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   use TeslaMate.VehicleCase, async: true
 
-  alias TeslaMate.Vehicles.Vehicle
+  alias TeslaMate.Vehicles.Vehicle.Summary
 
   test "suspends when idling", %{test: name} do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)

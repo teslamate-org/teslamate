@@ -1,6 +1,10 @@
 defmodule TeslaMate.Vehicles.VehicleTest do
   use TeslaMate.VehicleCase, async: true
 
+  alias TeslaMate.Vehicles.Vehicle.Summary
+  alias TeslaMate.Vehicles.Vehicle
+  alias TeslaMate.Log.{Car, Update}
+
   describe "starting" do
     @tag :capture_log
     test "handles unknown and faulty states", %{test: name} do
@@ -340,7 +344,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       fuse_name =
         TestHelper.eventually(
           fn ->
-            assert %Vehicle.Summary{state: :asleep, healthy: true, car: %Car{id: id}} =
+            assert %Summary{state: :asleep, healthy: true, car: %Car{id: id}} =
                      Vehicle.summary(name)
 
             :"#{Vehicle}_#{id}_api_error"
@@ -373,7 +377,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       :ok = start_vehicle(name, events)
 
       for _ <- 1..10 do
-        assert %Vehicle.Summary{state: :unavailable, healthy: true} = Vehicle.summary(name)
+        assert %Summary{state: :unavailable, healthy: true} = Vehicle.summary(name)
       end
     end
 
@@ -393,7 +397,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {ApiMock, {:stream, 1000, _}}
 
       for _ <- 1..10 do
-        assert %Vehicle.Summary{state: :online, healthy: true} = Vehicle.summary(name)
+        assert %Summary{state: :online, healthy: true} = Vehicle.summary(name)
       end
     end
   end

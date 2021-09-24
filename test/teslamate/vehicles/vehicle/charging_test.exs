@@ -1,6 +1,7 @@
 defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
   use TeslaMate.VehicleCase, async: true
 
+  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Log.ChargingProcess
 
   import ExUnit.CaptureLog

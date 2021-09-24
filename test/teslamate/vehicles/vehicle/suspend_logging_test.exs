@@ -1,8 +1,7 @@
 defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   use TeslaMate.VehicleCase, async: true
 
-  alias TeslaMate.Vehicles.Vehicle
-
+  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle
 
   test "immediately returns :ok if asleep", %{test: name} do
