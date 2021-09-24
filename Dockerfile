@@ -46,6 +46,8 @@ ENV LANG=C.UTF-8 \
 WORKDIR $HOME
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl \
+        jq \
         libodbc1  \
         libsctp1  \
         libssl1.1  \
