@@ -392,6 +392,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, :online, data) do
     case stream_data do
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
+        Logger.info("Start of drive initiated by: #{inspect(stream_data, limit: :infinity)}")
+
         %{elevation: elevation} = position = create_position(stream_data, data)
         {drive, data} = start_drive(position, data)
 
@@ -751,6 +753,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          }, [broadcast_summary(), schedule_fetch(15, data)]}
 
       %V{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
+        Logger.info("Start of drive initiated by: #{inspect(vehicle, limit: :infinity)}")
+
         {drive, data} = start_drive(create_position(vehicle, data), data)
 
         {:next_state, {:driving, :available, drive}, data,
@@ -988,6 +992,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             {drive, geofence}
           end)
 
+        Logger.info("End of drive initiated by: #{inspect(vehicle, limit: :infinity)}")
         Logger.info("Driving / Ended / #{km && round(km)} km – #{min} min", car_id: data.car.id)
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
