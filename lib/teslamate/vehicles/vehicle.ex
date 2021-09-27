@@ -276,7 +276,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             drive_states = %{now: vehicle.drive_state, last: data.last_response.drive_state}
 
             Logger.warning(
-              "Discarded outdated fetch result: #{inspect(drive_states, pretty: true)}",
+              "Discarded stale fetch result: #{inspect(drive_states, pretty: true)}",
               car_id: data.car.id
             )
 
@@ -397,10 +397,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
         _ -> nil
       end
 
-    outdated_stream_data? = t0 != nil and DateTime.compare(t0, stream_data.time) == :gt
+    stale_stream_data? = t0 != nil and DateTime.compare(t0, stream_data.time) == :gt
 
     case stream_data do
-      %Stream.Data{} when outdated_stream_data? ->
+      %Stream.Data{} when stale_stream_data? ->
         Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
         :keep_state_and_data
 
