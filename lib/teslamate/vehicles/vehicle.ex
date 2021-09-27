@@ -390,7 +390,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
   #### Online
 
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, :online, data) do
+    t0 =
+      case data.last_response do
+        %Vehicle{drive_state: %Drive{timestamp: t}} when is_number(t) -> parse_timestamp(t)
+        %Vehicle{drive_state: %Drive{timestamp: %DateTime{} = t}} -> t
+        _ -> nil
+      end
+
+    outdated_stream_data? = t0 != nil and DateTime.compare(t0, stream_data.time) == :gt
+
     case stream_data do
+      %Stream.Data{} when outdated_stream_data? ->
+        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        :keep_state_and_data
+
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
         Logger.info("Start of drive initiated by: #{inspect(stream_data, limit: :infinity)}")
 

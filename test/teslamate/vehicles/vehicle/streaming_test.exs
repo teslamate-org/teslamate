@@ -277,6 +277,30 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       refute_receive _
     end
+
+    @tag :capture_log
+    test "discards stale stream data", %{test: name} do
+      now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
+
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event(drive_state: %{timestamp: now_ts})},
+        fn -> Process.sleep(10_000) end
+      ]
+
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: true})
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {ApiMock, {:stream, _eid, func}} when is_function(func)
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      assert capture_log(@log_opts, fn ->
+               stream(name, %{shift_state: "P", time: DateTime.add(now, -1, :second)})
+               refute_receive _
+             end) =~ "[warn] Received stale stream data"
+    end
   end
 
   describe "charging" do
