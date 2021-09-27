@@ -234,7 +234,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                assert_receive :continue?
                refute_receive _
              end) =~ """
-             [warn] Discarded outdated fetch result: %{
+             [warn] Discarded stale fetch result: %{
                last: %TeslaApi.Vehicle.State.Drive{
                  gps_as_of: nil,
                  heading: 120,
@@ -281,11 +281,10 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     @tag :capture_log
     test "discards stale stream data", %{test: name} do
       now = DateTime.utc_now()
-      now_ts = DateTime.to_unix(now, :millisecond)
 
       events = [
         {:ok, online_event()},
-        {:ok, online_event(drive_state: %{timestamp: now_ts})},
+        {:ok, online_event(drive_state: %{timestamp: DateTime.to_unix(now, :millisecond)})},
         fn -> Process.sleep(10_000) end
       ]
 
