@@ -332,7 +332,8 @@
                   {
                     "targetBlank": true,
                     "title": "${__data.fields[version]} release notes",
-                    "url": "https://teslascope.com/teslapedia/software/${__data.fields[version]}"
+                    "url": "https://www.notateslaapp.com/software-updates/version/${__data.fields[version]}/release-notes"
+
                   }
                 ]
               }
@@ -461,7 +462,7 @@
           "link": true,
           "linkTargetBlank": true,
           "linkTooltip": "${__cell} release info",
-          "linkUrl": "https://teslascope.com/teslapedia/software/${__cell}\" rel=\"noreferrer",
+          "linkUrl": "https://www.notateslaapp.com/software-updates/version/${__cell}/release-notes",
           "mappingType": 1,
           "pattern": "version",
           "thresholds": [],
