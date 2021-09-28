@@ -87,6 +87,11 @@ defmodule TeslaApi.Stream do
     {:close, %State{state | timeouts: t + 1}}
   end
 
+  def handle_info({:ssl, _, _} = msg, state) do
+    Logger.warn("Received unexpected message: #{inspect(msg)}")
+    {:ok, state}
+  end
+
   def handle_info(:exit, _state) do
     exit(:normal)
   end
