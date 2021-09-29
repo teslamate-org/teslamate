@@ -1,6 +1,17 @@
 # Changelog
 
-## [1.24.1] - 2021-09-19
+## [1.24.2] - 2021-09-29
+
+### Improvements and Bug Fixes
+
+- Discard stale data originating from the Tesla Streaming API
+- Broadcast offline state via MQTT when car goes offline while driving
+
+#### Dashboards
+
+- Updates and Timeline: Link to [notateslaapp.com](https://www.notateslaapp.com/software-updates/history/) for release notes
+
+## [1.24.1] - 2021-09-29
 
 - Update error message that is shown if reCAPTCHA is required
 - Update Erlang/OTP version to [prevent possible outages due to DST Root CA expiry on Sep 30th](https://elixirforum.com/t/psa-preventing-outages-due-to-dst-root-ca-expiry-on-sep-30th/42247)
@@ -1380,6 +1391,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.24.2]: https://github.com/adriankumpf/teslamate/compare/v1.24.1...v1.24.2
 [1.24.1]: https://github.com/adriankumpf/teslamate/compare/v1.24.0...v1.24.1
 [1.24.0]: https://github.com/adriankumpf/teslamate/compare/v1.23.7...v1.24.0
 [1.23.7]: https://github.com/adriankumpf/teslamate/compare/v1.23.6...v1.23.7
