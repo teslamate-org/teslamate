@@ -390,14 +390,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   #### Online
 
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, :online, data) do
-    t0 =
-      case data.last_response do
-        %Vehicle{drive_state: %Drive{timestamp: t}} when is_number(t) -> parse_timestamp(t)
-        %Vehicle{drive_state: %Drive{timestamp: %DateTime{} = t}} -> t
-        _ -> nil
-      end
-
-    stale_stream_data? = t0 != nil and DateTime.compare(t0, stream_data.time) == :gt
+    stale_stream_data? = stale?(stream_data, data.last_response)
 
     case stream_data do
       %Stream.Data{} when stale_stream_data? ->
@@ -405,7 +398,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         :keep_state_and_data
 
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
-        Logger.info("Start of drive initiated by: #{inspect(stream_data, limit: :infinity)}")
+        Logger.info("Start of drive initiated by: #{inspect(stream_data)}")
 
         %{elevation: elevation} = position = create_position(stream_data, data)
         {drive, data} = start_drive(position, data)
@@ -448,8 +441,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
   #### Suspended
 
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, {:suspended, prev_state}, data) do
+    stale_stream_data? = stale?(stream_data, data.last_response)
+
     case stream_data do
+      %Stream.Data{} when stale_stream_data? ->
+        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        :keep_state_and_data
+
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
+        Logger.info("Start of drive initiated by: #{inspect(stream_data)}")
+
         %{elevation: elevation} = position = create_position(stream_data, data)
         {drive, data} = start_drive(position, data)
 
@@ -766,7 +767,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          }, [broadcast_summary(), schedule_fetch(15, data)]}
 
       %V{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
-        Logger.info("Start of drive initiated by: #{inspect(vehicle, limit: :infinity)}")
+        Logger.info("Start of drive initiated by: #{inspect(vehicle.drive_state)}")
 
         {drive, data} = start_drive(create_position(vehicle, data), data)
 
@@ -1005,7 +1006,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             {drive, geofence}
           end)
 
-        Logger.info("End of drive initiated by: #{inspect(vehicle, limit: :infinity)}")
+        Logger.info("End of drive initiated by: #{inspect(vehicle.drive_state)}")
         Logger.info("Driving / Ended / #{km && round(km)} km – #{min} min", car_id: data.car.id)
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
@@ -1503,6 +1504,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
     |> hd()
     |> String.split(".")
     |> Enum.map(&String.pad_leading(&1, 4, "0"))
+  end
+
+  defp stale?(%Stream.Data{} = stream_data, %Vehicle{} = last_response) do
+    last_response_time =
+      case last_response do
+        %Vehicle{drive_state: %Drive{timestamp: t}} when is_number(t) -> parse_timestamp(t)
+        %Vehicle{drive_state: %Drive{timestamp: %DateTime{} = t}} -> t
+        _ -> nil
+      end
+
+    last_response_time != nil and DateTime.compare(last_response_time, stream_data.time) == :gt
   end
 
   defp streaming?(%Data{stream_pid: pid}), do: is_pid(pid) and Process.alive?(pid)
