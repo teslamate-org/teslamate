@@ -101,7 +101,7 @@ defmodule TeslaMate.Api do
 
     with %Tokens{access: at, refresh: rt} when is_binary(at) and is_binary(rt) <-
            call(deps.auth, :get_tokens) do
-      restored_tokens = %Auth{token: at, refresh_token: rt, expires_in: 1.12 * 60 * 60}
+      restored_tokens = %Auth{token: at, refresh_token: rt, expires_in: 20 * 60}
 
       case refresh_tokens(restored_tokens) do
         {:ok, refreshed_tokens} ->
@@ -167,8 +167,8 @@ defmodule TeslaMate.Api do
 
           {:error, reason} ->
             Logger.warning("Token refresh failed: #{inspect(reason, pretty: true)}")
-            Logger.warning("Retrying in 1 hour...")
-            Process.send_after(self(), :refresh_auth, :timer.hours(1))
+            Logger.warning("Retrying in 5 minutes...")
+            Process.send_after(self(), :refresh_auth, :timer.minutes(5))
         end
 
       {:error, reason} ->
@@ -202,7 +202,7 @@ defmodule TeslaMate.Api do
   defp schedule_refresh(%Auth{} = auth) do
     ms =
       auth.expires_in
-      |> Kernel.*(0.9)
+      |> Kernel.*(0.5)
       |> round()
       |> :timer.seconds()
 

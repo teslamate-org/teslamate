@@ -2,45 +2,62 @@ defmodule TeslaApi.Auth.Refresh do
   import TeslaApi.Auth, only: [post: 2]
 
   alias TeslaApi.{Auth, Error}
-  alias TeslaApi.Auth.OwnerApi
 
   @web_client_id TeslaApi.Auth.web_client_id()
 
   def refresh(%Auth{} = auth) do
-    with {:ok, %{access_token: _} = tokens} <-
-           refresh_oauth_access_token(auth.token, auth.refresh_token),
-         {:ok, auth} <- OwnerApi.get_api_tokens(tokens) do
-      {:ok, auth}
-    else
+    issuer_url =
+      case derive_issuer_url_from_oat(auth.token) do
+        {:ok, issuer_url} ->
+          issuer_url
+
+        :error ->
+          case decode_jwt_payload(auth.token) do
+            {:ok, %{"iss" => iss}} -> URI.parse(iss)
+            _ -> "https://auth.tesla.com/oauth2/v3"
+          end
+      end
+
+    data = %{
+      grant_type: "refresh_token",
+      scope: "openid email offline_access",
+      client_id: @web_client_id,
+      refresh_token: auth.refresh_token
+    }
+
+    case post("#{issuer_url}/token", data) do
+      {:ok, %Tesla.Env{status: 200, body: body}} ->
+        auth = %Auth{
+          token: body["access_token"],
+          type: body["token_type"],
+          expires_in: body["expires_in"],
+          refresh_token: body["refresh_token"],
+          created_at: body["created_at"]
+        }
+
+        {:ok, auth}
+
       error ->
         Error.into(error, :token_refresh)
     end
   end
 
-  defp refresh_oauth_access_token(access_token, refresh_token) do
-    data = %{
-      grant_type: "refresh_token",
-      scope: "openid email offline_access",
-      client_id: @web_client_id,
-      refresh_token: refresh_token
-    }
+  defp derive_issuer_url_from_oat("qts-" <> _), do: {:ok, "https://auth.tesla.com/oauth2/v3"}
+  defp derive_issuer_url_from_oat("eu-" <> _), do: {:ok, "https://auth.tesla.com/oauth2/v3"}
+  defp derive_issuer_url_from_oat("cn-" <> _), do: {:ok, "https://auth.tesla.cn/oauth2/v3"}
+  defp derive_issuer_url_from_oat(_), do: :error
 
-    base_url =
-      case access_token do
-        "cn-" <> _ -> "https://auth.tesla.cn"
-        _qts -> nil
-      end
-
-    case post("#{base_url}/oauth2/v3/token", data) do
-      {:ok,
-       %Tesla.Env{
-         status: 200,
-         body: %{"access_token" => access_token, "refresh_token" => refresh_token}
-       }} ->
-        {:ok, %{access_token: access_token, refresh_token: refresh_token}}
+  defp decode_jwt_payload(jwt) do
+    with [_algo, payload, _signature] <- String.split(jwt, "."),
+         {:ok, payload} <- Base.decode64(payload, padding: false),
+         {:ok, payload} <- Jason.decode(payload) do
+      {:ok, payload}
+    else
+      l when is_list(l) ->
+        Error.into({:error, :invalid_jwt}, :invalid_access_token)
 
       error ->
-        error
+        Error.into(error, :invalid_access_token)
     end
   end
 end
