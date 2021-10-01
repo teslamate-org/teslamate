@@ -101,7 +101,7 @@ defmodule TeslaMate.Api do
 
     with %Tokens{access: at, refresh: rt} when is_binary(at) and is_binary(rt) <-
            call(deps.auth, :get_tokens) do
-      restored_tokens = %Auth{token: at, refresh_token: rt, expires_in: 20 * 60}
+      restored_tokens = %Auth{token: at, refresh_token: rt, expires_in: 10 * 60}
 
       case refresh_tokens(restored_tokens) do
         {:ok, refreshed_tokens} ->
@@ -202,7 +202,7 @@ defmodule TeslaMate.Api do
   defp schedule_refresh(%Auth{} = auth) do
     ms =
       auth.expires_in
-      |> Kernel.*(0.5)
+      |> Kernel.*(0.75)
       |> round()
       |> :timer.seconds()
 
