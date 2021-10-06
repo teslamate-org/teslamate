@@ -123,6 +123,34 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     @tag :signed_in
+    test "displays the friendly name", %{conn: conn} do
+      now = (DateTime.utc_now() |> DateTime.to_unix()) * 1000
+
+      events = [
+        {:ok,
+         online_event(
+           display_name: "FooCar",
+           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
+           vehicle_config: %{car_type: "model3", trim_badging: "p74d"}
+         )}
+      ]
+
+      :ok = start_vehicles(events)
+
+      Process.sleep(250)
+
+      conn = get(conn, Routes.car_path(conn, :index))
+
+      assert html = response(conn, 200)
+
+      assert "Model 3 LR AWD Performance" ==
+               html
+               |> Floki.parse_document!()
+               |> Floki.find(".car .subtitle")
+               |> Floki.text()
+    end
+
+    @tag :signed_in
     test "renders current vehicle stats [:online]", %{conn: conn} do
       now = (DateTime.utc_now() |> DateTime.to_unix()) * 1000
 
@@ -168,7 +196,13 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
-      assert html =~ ~r/<p class="subtitle is-6 has-text-weight-light">Model S P90D<\/p>/
+
+      assert "Model S P90D" ==
+               html
+               |> Floki.parse_document!()
+               |> Floki.find(".car .subtitle")
+               |> Floki.text()
+
       assert table_row(html, "Status", "online")
       assert table_row(html, "Range (rated)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
