@@ -63,6 +63,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp friendly_name("3", "P74D"), do: "LR AWD Performance"
   defp friendly_name("3", "74D"), do: "LR AWD"
   defp friendly_name("3", "74"), do: "LR"
+  defp friendly_name("3", "62"), do: "MR"
   defp friendly_name("3", "50"), do: "SR+"
   defp friendly_name(_model, _trim), do: nil
 
