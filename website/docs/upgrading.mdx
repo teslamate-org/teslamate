@@ -57,6 +57,11 @@ docker-compose up -d
    ```bash
     _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
    ```
+   Note, you may need to include environment variables when running this step:
+   
+   ```bash
+    DATABASE_USER=teslamate DATABASE_PASS=super_secret_password DATABASE_NAME=teslamate DATABASE_HOST=localhost MQTT_HOST=your_MQTT_host(HomeAssistant in my case) _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+   ```
 
 3. Finally, re-import the Grafana dashboards:
 
@@ -87,6 +92,12 @@ docker-compose up -d
 
    ```bash
     _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+   ```
+  
+   Note: you may need to include environment variables as part of this step:
+   
+   ```bash
+    DATABASE_USER=teslamate DATABASE_PASS=super_secret_password DATABASE_NAME=teslamate DATABASE_HOST=localhost MQTT_HOST=your_MQTT_host(HomeAssistant in my case) _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
    ```
 
 3. Finally, re-import the Grafana dashboards:
