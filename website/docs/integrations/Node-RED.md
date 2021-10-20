@@ -8,13 +8,21 @@ From the Node-RED website:
 
 > It provides a browser-based editor that makes it easy to wire together flows using the wide range of nodes in the palette that can be deployed to its runtime in a single-click.
 
+The high-level logic "flow" is coded by wiring "nodes" in the user interface. Low-level logic can be coded in JavaScript. Visit the [Node-RED website]([https://nodered.org) for a good introduction on its homepage.
+
 This integration guide includes Node-RED flows with two examples:
-- Simple dashboard with Car Status and Charging Status panels
+- A simple dashboard with Car Status and Charging Status panels
 - Notification logic for state changes, entering/exiting geofences and time remaining to charge. The example sends notifications to Telegram, but this can easily be replaced with a node sending the text elsewhere.
 
 |<b>Node-RED Dashboard</b>|
 |:--:|
 |![Node-RED Dashboard example](./Node-RED-dashboard.PNG)|
+
+
+|<b>Example Telegram Notifications</b>|
+|:--:|
+|![Node-RED Dashboard example](./Node-RED-Telegram.PNG)|
+
 
 # Docker Entries
 ```
