@@ -10,7 +10,9 @@ From the Node-RED website:
 
 The high-level logic "flow" is coded by wiring "nodes" in the user interface. Low-level logic can be coded in JavaScript. Visit the [Node-RED website](https://nodered.org) for a good introduction on its homepage.
 
-This integration guide includes Node-RED flows with two examples:
+This integration guide assumes that Teslamate is deployed on docker and that Node-RED is not exposed to the internet. 
+
+Included are Node-RED flows with two examples:
 - A simple dashboard with Car Status and Charging Status panels
 - Notification logic for state changes, entering/exiting geofences and time remaining to charge. The example sends notifications to Telegram, but this can easily be replaced with a node sending the text elsewhere.
 
