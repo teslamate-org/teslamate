@@ -48,7 +48,7 @@ There are two flows in the example flow export. The first flow createsa a simple
 The flow names are "Car Dashboard" and "Notifications".
 ## Configuration
 ### MQTT
-TBC
+If you are using the standard MQTT docker configuration, then after you import the flows Node-RED should automatically connect. Otherwise, open the ????node, select the ???? icon in the panel, edit the MQTT server's parameters, save and Deploy. 
 ### Telsgram
 TBC
 
