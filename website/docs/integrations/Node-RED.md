@@ -1,6 +1,6 @@
 ---
-title: HomeAssistant Integration
-sidebar_label: HomeAssistant
+title: Node-RED Integration
+sidebar_label: Node-RED
 ---
 # Overview
 From the Node-RED website:
@@ -8,7 +8,7 @@ From the Node-RED website:
 
 > It provides a browser-based editor that makes it easy to wire together flows using the wide range of nodes in the palette that can be deployed to its runtime in a single-click.
 
-The high-level logic "flow" is coded by wiring "nodes" in the user interface. Low-level logic can be coded in JavaScript. Visit the [Node-RED website]([https://nodered.org) for a good introduction on its homepage.
+The high-level logic "flow" is coded by wiring "nodes" in the user interface. Low-level logic can be coded in JavaScript. Visit the [Node-RED website](https://nodered.org) for a good introduction on its homepage.
 
 This integration guide includes Node-RED flows with two examples:
 - A simple dashboard with Car Status and Charging Status panels
