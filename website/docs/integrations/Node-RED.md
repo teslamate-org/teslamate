@@ -24,7 +24,13 @@ Included are Node-RED flows with two examples:
 |<b>Example Telegram Notifications</b>|
 |:--:|
 |![Node-RED Dashboard example](./Node-RED-Telegram.PNG)|
+#Requirements
 
+- Teslmate, preferably installed in Docker (if you are new to Docker, see Installing Docker and Docker Compose)
+- External internet access, to send Telegram messages
+- A mobile with [Telegram](https://telegram.org/) client installed or you can use Telegram's browser interface
+- your own Telegram Bot, see [Creating a new telegram bot](https://core.telegram.org/bots#6-botfather)
+- your own Telegram chat id, see get your telegram chat id
 
 # Docker Entries
 Add the following parameters to your `docker-compose.yml` file. It's assume that your timezone in set in the .env file's TM_TZ environment variable.
