@@ -43,13 +43,12 @@ services:
 volumes:
   node-red-data:
 ```
-# Node-RED Flows
+# Node-RED Configuration
 There are two flows in the example flow export. The first flow createsa a simple dashboard with some of the MQTT values. The second flow sends notifications to Telegram. 
 The flow names are "Car Dashboard" and "Notifications".
-## Configuration
-### MQTT
+## MQTT
 If you are using the standard MQTT docker configuration, then after you import the flows Node-RED should automatically connect. Otherwise, open the ????node, select the ???? icon in the panel, edit the MQTT server's parameters, save and Deploy. 
-### Telsgram
+## Telsgram
 TBC
 
 Download the Node-RED flows export here to import into your instance: 
