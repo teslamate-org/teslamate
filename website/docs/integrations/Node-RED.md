@@ -27,6 +27,7 @@ Included are Node-RED flows with two examples:
 
 
 # Docker Entries
+Add the following parameters to your `docker-compose.yml` file. It's assume that your timezone in set in the .env file's TZ environment variable.
 ```
 services:
   node-red:
