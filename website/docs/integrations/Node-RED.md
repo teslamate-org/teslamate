@@ -13,11 +13,11 @@ The high-level logic "flow" is coded by wiring "nodes" in the user interface. Lo
 |:--:|
 |![Node-RED Flow example](./Node-RED-example-flow.PNG)|
 
-This integration guide assumes that Teslamate is deployed on docker and that Node-RED is not exposed to the internet. Configuration of the Telegram bot is not covered in this guide; there is plenty of documetnation on the net explaining how to do this. However, the configuration of the Telgram node in Node-RED is described below.
+This integration guide assumes that Teslamate is deployed on docker and that Node-RED is not exposed to the internet. Of course, you can install Node-RED outside of Docker and on another server, it that suits. Configuration of the Telegram bot is not covered in this guide; there is plenty of documentation on the net explaining how to do this (links are provided in the *Requirements* section below). However, the configuration of the Telgram node in Node-RED is described below.
 
 Included are Node-RED flows with two examples:
 - A simple dashboard with Car Status and Charge Status panels
-- Notification logic for state changes, entering/exiting geofences and time remaining to charge. The example sends notifications to Telegram, but this can easily be replaced with a node sending the text elsewhere.
+- Notification logic for state changes, entering/exiting geofences and time remaining to charge. The example sends notifications to Telegram, but this can easily be replaced with a node sending the text elsewhere (an empty email node is included).
 
 |<b>Node-RED Dashboard</b>|
 |:--:|
@@ -28,9 +28,9 @@ Included are Node-RED flows with two examples:
 |:--:|
 |![Node-RED Telegram example](./Node-RED-Telegram.PNG)|
 # Requirements
-- Teslmate, preferably installed in Docker (if you are new to Docker, see Installing Docker and Docker Compose)
-- External internet access, to send Telegram messages
-- A mobile with [Telegram](https://telegram.org/) client installed or you can use Telegram's browser interface
+- Teslmate environment, preferably installed in Docker (if you are new to Docker, see Installing Docker and Docker Compose)
+- Access by Node-RED to the internet to send Telegram messages
+- A mobile device with [Telegram](https://telegram.org/) client installed or use Telegram's browser interface
 - your own Telegram Bot, see [Creating a new telegram bot](https://core.telegram.org/bots#6-botfather)
 - your own Telegram chat id, see get your telegram chat id
 
@@ -73,10 +73,12 @@ docker-compose stop node-red
 docker-compose start node-red
 ```
 ## Import Flows
-
-## MQTT
+- Download the example JSON file [Node-RED-Teslamate-flows.json](./Node-RED-Teslamate-flows.json)
+- Go to Node-RED's hamburber menu in the upper right corner and select `Import`
+- Use the `select file to import` button on the pop-up to upload the JSON file.
+## MQTT Configuration
 If you are using the standard MQTT docker configuration as per the Teslamate installation guide, after you import the flows Node-RED should automatically connect. Otherwise, open the `teslamate/cars/1/#` node in the Car Dashboard flow, select the pencil icon next to the `Server` field in the panel, then edit the MQTT server's parameters, click Update, Done and Deploy.
-## Telegram
+## Telegram Configuration
 To enter your Telegram Bot's parameters:
 - Double-click the `Status Messages` Telegram node in the Notifications flow, then click the pencil icon next to the `Bot` name.
 - Replace the `Bot` field with the name of your Telegram bot
@@ -86,3 +88,5 @@ To enter your Telegram Bot's parameters:
 - Replace the value for `chatId` with the chatId that you obtained setting up the bot.
 - Click `Done`
 - Click `Deploy` to re-deploy your flows. "Connected" should now display beneath the `Status Messages` node. 
+## Notes
+- When you re-deploy your flows, a *Tesla entered Geofence ...* message and a *Tesla Driver is present:* message may be sent to Telegram
