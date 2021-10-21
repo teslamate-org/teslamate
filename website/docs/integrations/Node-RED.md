@@ -9,6 +9,9 @@ From the Node-RED website:
 > It provides a browser-based editor that makes it easy to wire together flows using the wide range of nodes in the palette that can be deployed to its runtime in a single-click.
 
 The high-level logic "flow" is coded by wiring "nodes" in the user interface. Low-level logic can be coded in JavaScript. Visit the [Node-RED website](https://nodered.org) for a good introduction on its homepage.
+|<b>Node-RED UI</b>|
+|:--:|
+|![Node-RED Flow example](./Node-RED-example-flow.PNG)|
 
 This integration guide assumes that Teslamate is deployed on docker and that Node-RED is not exposed to the internet. Configuration of the Telegram bot is not covered in this guide; there is plenty of documetnation on the net explaining how to do this. However, the configuration of the Telgram node in Node-RED is described below.
 
@@ -23,7 +26,7 @@ Included are Node-RED flows with two examples:
 
 |<b>Example Telegram Notifications</b>|
 |:--:|
-|![Node-RED Dashboard example](./Node-RED-Telegram.PNG)|
+|![Node-RED Telegram example](./Node-RED-Telegram.PNG)|
 # Requirements
 - Teslmate, preferably installed in Docker (if you are new to Docker, see Installing Docker and Docker Compose)
 - External internet access, to send Telegram messages
