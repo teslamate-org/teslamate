@@ -52,6 +52,24 @@ volumes:
 # Node-RED Configuration
 There are two flows in the example exports provided. The first flow creates a simple dashboard with some of the MQTT values. The second flow sends notifications to Telegram. 
 The flow names are "Car Dashboard" and "Notifications".
+## Required Modules
+After bringing up the Node-RED container the first time, run the following shell script to add modules required for the example flows:
+```
+:
+MODULES="node-red-contrib-calc
+node-red-contrib-simpletime
+node-red-dashboard
+node-red-node-email
+node-red-contrib-telegrambot
+node-red-node-ui-table"
+for MODULE in $MODULES
+do
+echo docker-compose exec -T node-red npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production $MODULE
+docker-compose exec -T node-red npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production $MODULE
+done
+docker-compose stop node-red
+docker-compose start node-red
+```
 ## MQTT
 If you are using the standard MQTT docker configuration, then after you import the flows Node-RED should automatically connect. Otherwise, open the ????node, select the ???? icon in the panel, edit the MQTT server's parameters, save and Deploy. 
 ## Telegram
