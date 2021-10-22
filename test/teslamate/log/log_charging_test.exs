@@ -750,6 +750,7 @@ defmodule TeslaMate.LogChargingTest do
         for {sr, er, ca, sl, el, d} <- data do
           %{
             car_id: car.id,
+            start_date: DateTime.utc_now(),
             position_id: position_id,
             charge_energy_added: ca,
             start_battery_level: sl,
