@@ -19,7 +19,7 @@ defmodule TeslaMate.Release do
   def seconds_since_last_migration do
     Repo.one(
       from m in "schema_migrations",
-        select: fragment("EXTRACT(EPOCH FROM age(NOW(), ?::timestamp))::integer", m.inserted_at),
+        select: fragment("EXTRACT(EPOCH FROM age(NOW(), ?::timestamp))::BIGINT", m.inserted_at),
         order_by: [desc: m.inserted_at],
         limit: 1
     )
