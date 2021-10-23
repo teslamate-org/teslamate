@@ -121,7 +121,7 @@
                   {
                     "targetBlank": true,
                     "title": "Trip",
-                    "url": "d/FkUpJpQZk/trip?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}"
+                    "url": "d/FkUpJpQZk/trip?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}&var-car_id=$car_id"
                   }
                 ]
               }
@@ -179,7 +179,7 @@
                   {
                     "targetBlank": true,
                     "title": "Charging stats",
-                    "url": "d/-pkIkhmRz/charging-stats?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}"
+                    "url": "d/-pkIkhmRz/charging-stats?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}&var-car_id=$car_id"
                   }
                 ]
               },
@@ -229,7 +229,7 @@
                   {
                     "targetBlank": true,
                     "title": "Charges",
-                    "url": "d/TSmNYvRRk/charges?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}"
+                    "url": "d/TSmNYvRRk/charges?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}&var-car_id=$car_id"
                   }
                 ]
               }
@@ -247,7 +247,7 @@
                   {
                     "targetBlank": true,
                     "title": "Drives",
-                    "url": "d/Y8upc6ZRk/drives?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}"
+                    "url": "d/Y8upc6ZRk/drives?orgId=1&from=${__data.fields.date_from}&to=${__data.fields.date_to}&var-car_id=$car_id"
                   }
                 ]
               }
