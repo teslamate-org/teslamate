@@ -90,7 +90,7 @@ If you are using the standard MQTT docker configuration as per the Teslamate ins
 ## Telegram Configuration
 To enter your Telegram Bot's parameters:
 - Edit the `Status Messages` Telegram node in the Notifications flow, then select the pencil icon next to the `Bot` name.
-- Replace the `Bot` field with the name of your Telegram bot
+- Replace the `Bot-Name` field with the name of your Telegram bot
 - Fill the `Token` field with the value that you copied from setting up your bot.
 
 |<b>Telegram configuration pop-up</b>|
@@ -105,4 +105,4 @@ To enter your Telegram Bot's parameters:
 ## Email configuration
 If you want to quickly try out this implementation without Telegram, you can simply remove the connection between the `Format Messages` and `Status Messages` nodes, then connect `Format Messages` with the `email` node. Edit the email node to set your parameters to send emails. After you re-deploy you should get at least one message as per the note below.
 ## Notes
-- When you re-deploy your flows, a *Tesla entered Geofence ...* message and a *Tesla Driver is present:* message may be sent to Telegram. 
+- When you re-deploy your flows, a *Tesla entered Geofence ...* message and a *Tesla Driver is present:* notification may be sent. Some might consider this a bug. Or a test that the notification channel is working. :)
