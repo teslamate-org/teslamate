@@ -587,7 +587,7 @@ msgstr "Saisissez le code de vérification généré par votre application d'aut
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.leex:152
 msgid "Two-Factor Authentication"
-msgstr "Two-Factor Authentication"
+msgstr "Authentification à deux facteurs"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.leex:297
@@ -632,19 +632,19 @@ msgstr "ici"
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.leex:115
 msgid "Captcha"
-msgstr ""
+msgstr "Captcha"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:243
 msgid "Captcha does not match"
-msgstr ""
+msgstr "Le captcha ne correspond pas"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:246
 msgid "Invalid email address and password combination"
-msgstr ""
+msgstr "Combinaison adresse e-mail et mot de passe invalide"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:252
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr ""
+msgstr "Votre compte Tesla est verrouillé en raison d'un trop grand nombre de tentatives de connexion infructueuses. Pour déverrouiller votre compte, réinitialisez votre mot de passe"
