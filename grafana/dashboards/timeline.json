@@ -111,7 +111,7 @@
                   {
                     "targetBlank": true,
                     "title": "",
-                    "url": "d/FkUpJpQZk/trip?orgId=1&from=${__data.fields.start_date_ts}&to=${__data.fields.end_date_ts}"
+                    "url": "d/FkUpJpQZk/trip?orgId=1&from=${__data.fields.start_date_ts}&to=${__data.fields.end_date_ts}&var-car_id=$car_id"
                   }
                 ]
               }
