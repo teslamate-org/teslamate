@@ -50,7 +50,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if vehicle is preconditioning", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         climate_state: %{is_preconditioning: true}
@@ -58,7 +58,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -70,7 +70,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if user is present", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{is_user_present: true, car_version: ""}
@@ -78,7 +78,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -90,7 +90,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if sentry mode is active", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{sentry_mode: true, car_version: ""}
@@ -98,7 +98,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -110,7 +110,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if vehicle is unlocked", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: false, car_version: ""}
@@ -118,7 +118,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
@@ -129,7 +129,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if any of the doors are open", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{df: 0, dr: 0, pf: 1, pr: 0, car_version: ""}
@@ -137,7 +137,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
@@ -148,7 +148,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if the rear or front trunk is open", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{rt: 1, ft: 1, car_version: ""}
@@ -156,7 +156,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
@@ -167,12 +167,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if shift_state is D", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(drive_state: %{timestamp: 0, shift_state: "D", latitude: 0.0, longitude: 0.0})
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -183,12 +183,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if shift_state is R", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(drive_state: %{timestamp: 0, shift_state: "R", latitude: 0.0, longitude: 0.0})
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -199,12 +199,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if shift_state is N", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(drive_state: %{timestamp: 0, shift_state: "N", latitude: 0.0, longitude: 0.0})
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
