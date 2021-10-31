@@ -2,7 +2,7 @@ defmodule TeslaApi.Auth.Login do
   import TeslaApi.Auth, only: [get: 2, post: 2, post: 3]
 
   alias TeslaApi.Error
-  alias TeslaApi.Auth.{MFA, Util}
+  alias TeslaApi.Auth.{MFA, OwnerApi, Util}
 
   require Logger
 
@@ -57,7 +57,8 @@ defmodule TeslaApi.Auth.Login do
     with {:ok, %Tesla.Env{} = env} <- submit_form(form, ctx),
          {:ok, {redirect_uri, code}} <- Util.parse_location_header(env, ctx.state),
          {:ok, auth} <-
-           get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state, base: ctx.base_url) do
+           get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state, base: ctx.base_url),
+         {:ok, auth} <- maybe_exchange_sso_tokens(auth) do
       {:ok, auth}
     end
   rescue
@@ -193,7 +194,8 @@ defmodule TeslaApi.Auth.Login do
                          MFA.verify_passcode(device_id, mfa_passcode, transaction_id, headers),
                        {:ok, {redirect_uri, code}} <- Util.parse_location_header(env, ctx.state),
                        {:ok, auth} <-
-                         get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state) do
+                         get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state),
+                       {:ok, auth} <- maybe_exchange_sso_tokens(auth) do
                     {:ok, auth}
                   end
                 rescue
@@ -245,6 +247,16 @@ defmodule TeslaApi.Auth.Login do
 
       error ->
         Error.into(error, :web_token_error)
+    end
+  end
+
+  defp maybe_exchange_sso_tokens(%TeslaApi.Auth{} = auth) do
+    case TeslaApi.Auth.region(auth) do
+      :chinese ->
+        OwnerApi.exchange_sso_token(auth)
+
+      _other ->
+        {:ok, auth}
     end
   end
 end

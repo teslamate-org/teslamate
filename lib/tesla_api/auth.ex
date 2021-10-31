@@ -1,6 +1,8 @@
 defmodule TeslaApi.Auth do
   use Tesla
 
+  alias TeslaApi.Error
+
   @web_client_id "ownerapi"
   @redirect_uri "https://auth.tesla.com/void/callback"
 
@@ -25,6 +27,54 @@ defmodule TeslaApi.Auth do
 
   defdelegate login(email, password), to: __MODULE__.Login
   defdelegate refresh(auth), to: __MODULE__.Refresh
+
+  def issuer_url(%__MODULE__{token: access_token}) do
+    case derive_issuer_url_from_oat(access_token) do
+      {:ok, issuer_url} ->
+        issuer_url
+
+      :error ->
+        case decode_jwt_payload(access_token) do
+          {:ok, %{"iss" => iss}} -> URI.parse(iss)
+          _ -> "https://auth.tesla.com/oauth2/v3"
+        end
+    end
+  end
+
+  def region(%__MODULE__{} = auth) do
+    tld =
+      auth
+      |> issuer_url()
+      |> URI.parse()
+      |> Map.fetch!(:host)
+      |> String.split(".")
+      |> List.last()
+
+    case tld do
+      "cn" -> :chinese
+      "com" -> :global
+      _other -> :other
+    end
+  end
+
+  defp derive_issuer_url_from_oat("qts-" <> _), do: {:ok, "https://auth.tesla.com/oauth2/v3"}
+  defp derive_issuer_url_from_oat("eu-" <> _), do: {:ok, "https://auth.tesla.com/oauth2/v3"}
+  defp derive_issuer_url_from_oat("cn-" <> _), do: {:ok, "https://auth.tesla.cn/oauth2/v3"}
+  defp derive_issuer_url_from_oat(_), do: :error
+
+  defp decode_jwt_payload(jwt) do
+    with [_algo, payload, _signature] <- String.split(jwt, "."),
+         {:ok, payload} <- Base.decode64(payload, padding: false),
+         {:ok, payload} <- Jason.decode(payload) do
+      {:ok, payload}
+    else
+      l when is_list(l) ->
+        Error.into({:error, :invalid_jwt}, :invalid_access_token)
+
+      error ->
+        Error.into(error, :invalid_access_token)
+    end
+  end
 
   defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :error
   defp log_level(%Tesla.Env{}), do: :info
