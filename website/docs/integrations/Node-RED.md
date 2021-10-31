@@ -64,7 +64,7 @@ docker-compose up -d
 There are two flows in the example exports provided. The first flow creates a simple dashboard with some of the MQTT values. The second flow sends notifications to Telegram. 
 The flow names are "Car Dashboard" and "Notifications".
 ## Required Modules
-After bringing up the Node-RED container the first time, run the following shell script to add modules required for the example flows:
+After bringing up the Node-RED container the first time, save the following shell script to a file (e.g.  named *add-nr-modules.sh*, then run `bash ./add-nr-modules.sh`) to install modules required for the example flows:
 ```
 :
 MODULES="node-red-contrib-calc
