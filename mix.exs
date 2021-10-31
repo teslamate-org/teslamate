@@ -37,7 +37,7 @@ defmodule TeslaMate.MixProject do
     [
       {:castore, "~> 0.1"},
       {:ecto_sql, "~> 3.0"},
-      {:ex_cldr, "~> 2.0"},
+      {:ex_cldr, "~> 2.23.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:finch, "~> 0.3"},
       {:floki, "~> 0.23"},
@@ -51,7 +51,7 @@ defmodule TeslaMate.MixProject do
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.16.0"},
+      {:phoenix_live_view, "~> 0.17.0"},
       {:phoenix_pubsub, "~> 2.0"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},

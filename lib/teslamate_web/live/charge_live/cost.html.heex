@@ -130,10 +130,10 @@
         <div class="control">
           <%= link gettext("Back"), to: @redirect_to, class: "button" %>
         </div>
-        <div class="control""min-width: 300px;">
+        <div class="control" style="min-width: 300px;">
           <%= submit (if is_nil(@notification), do: gettext("Save"), else: @notification.message),
                 phx_disable_with: gettext("Saving..."),
-                class: "button " <> (if is_nil(@notification), do: "is-info", else: "is-#{@notification.key}") %>
+                class: ["button", (if is_nil(@notification), do: "is-info", else: "is-#{@notification.key}")] %>
         </div>
       </div>
     </div>

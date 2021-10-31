@@ -50,7 +50,7 @@ $modal-card-foot-border-top: none;
 @import "./vendor/modal-fx";
 
 // @import "../../deps/phoenix_live_view/assets/css/live_view.css";
-.phx-disconnected {
+.phx-loading {
   cursor: wait;
 
   * {
