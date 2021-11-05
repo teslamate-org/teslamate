@@ -15,7 +15,7 @@ The high-level logic "flow" is coded by wiring "nodes" in the user interface. Lo
 
 |                    **Node-RED UI**                    |
 | :---------------------------------------------------: |
-| ![Node-RED Flow example](./Node-RED-example-flow.PNG) |
+| ![Node-RED Flow example](./Node-RED/example-flow.png) |
 
 This integration guide assumes that Teslamate is deployed on docker and that Node-RED will not be exposed to the internet. Of course, you can install Node-RED outside of Docker and on another server, it that suits. The integration with Teslamate is entirely via MQTT. Notifications included in the examples are sent using available Node-RED modules for email and Telegram. Other notifications (e.g. Slack) are relatively simple by replacing the final node in the Notifications flow. One could also integrate with public tools such as IFTT. Or get really creative and integrate with Alexa or Google Assistant to control the car by voice. :)
 
@@ -28,11 +28,11 @@ Included are Node-RED flows with two examples:
 
 |                 **Node-RED Dashboard**                  |
 | :-----------------------------------------------------: |
-| ![Node-RED Dashboard example](./Node-RED-dashboard.PNG) |
+| ![Node-RED Dashboard example](./Node-RED/dashboard.png) |
 
 |          **Example Telegram Notifications**           |
 | :---------------------------------------------------: |
-| ![Node-RED Telegram example](./Node-RED-Telegram.PNG) |
+| ![Node-RED Telegram example](./Node-RED/Telegram.png) |
 
 # Requirements
 
@@ -100,7 +100,7 @@ docker-compose start node-red
 
 ## Import Flows
 
-- Download the example JSON file [Node-RED-Teslamate-flows.json](./Node-RED-Teslamate-flows.json.example)
+- Download the example JSON file [Node-RED-Teslamate-flows.json](./Node-RED/Teslamate-flows.json.example)
 - Go to Node-RED's hamburber menu in the upper right corner and select `Import`
 - Use the `select file to import` button on the pop-up to upload the JSON file.
 
@@ -118,7 +118,7 @@ To enter your Telegram Bot's parameters:
 
 |                     **Telegram configuration pop-up**                      |
 | :------------------------------------------------------------------------: |
-| ![Node-RED Telegram configuration example](./Node-RED-telegram-wizard.PNG) |
+| ![Node-RED Telegram configuration example](./Node-RED/telegram-wizard.png) |
 
 - Click `Update`, then `Done`
 - Edit the `Format messages` node in the Notifications flow
