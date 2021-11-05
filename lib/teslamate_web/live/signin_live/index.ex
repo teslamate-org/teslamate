@@ -99,10 +99,10 @@ defmodule TeslaMateWeb.SignInLive.Index do
     end
   end
 
-  @impl true
-  def mount(_params, %{"locale" => locale}, socket) do
-    if connected?(socket), do: Gettext.put_locale(locale)
+  on_mount {TeslaMateWeb.InitAssigns, :locale}
 
+  @impl true
+  def mount(_params, _session, socket) do
     assigns = %{
       api: get_api(socket),
       page_title: gettext("Sign in"),
