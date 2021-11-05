@@ -11,8 +11,9 @@ defmodule TeslaMate.Api do
 
   import Core.Dependency, only: [call: 3, call: 2]
 
-  defstruct name: nil, deps: %{}
-  alias __MODULE__, as: State
+  defmodule State do
+    defstruct name: nil, deps: %{}, refresh_timer: nil
+  end
 
   @timeout :timer.minutes(2)
   @name __MODULE__
@@ -97,26 +98,40 @@ defmodule TeslaMate.Api do
       vehicles: Keyword.get(opts, :vehicles, Vehicles)
     }
 
+    :ok =
+      :fuse.install(
+        fuse_name(name),
+        {{:standard, 5, :timer.minutes(10)}, {:reset, :timer.hours(9999)}}
+      )
+
     ^name = :ets.new(name, [:named_table, :set, :public, read_concurrency: true])
+    state = %State{name: name, deps: deps}
 
-    with %Tokens{access: at, refresh: rt} when is_binary(at) and is_binary(rt) <-
-           call(deps.auth, :get_tokens) do
-      restored_tokens = %Auth{token: at, refresh_token: rt, expires_in: 10 * 60}
+    state =
+      case call(deps.auth, :get_tokens) do
+        %Tokens{access: at, refresh: rt} when is_binary(at) and is_binary(rt) ->
+          restored_tokens = %Auth{token: at, refresh_token: rt, expires_in: 10 * 60}
 
-      case refresh_tokens(restored_tokens) do
-        {:ok, refreshed_tokens} ->
-          :ok = call(deps.auth, :save, [refreshed_tokens])
-          true = insert_auth(name, refreshed_tokens)
-          :ok = schedule_refresh(refreshed_tokens)
+          {:ok, state} =
+            case refresh_tokens(restored_tokens) do
+              {:ok, refreshed_tokens} ->
+                :ok = call(deps.auth, :save, [refreshed_tokens])
+                true = insert_auth(name, refreshed_tokens)
+                schedule_refresh(refreshed_tokens, state)
 
-        {:error, reason} ->
-          Logger.warning("Token refresh failed: #{inspect(reason, pretty: true)}")
-          true = insert_auth(name, restored_tokens)
-          :ok = schedule_refresh(restored_tokens)
+              {:error, reason} ->
+                Logger.warning("Token refresh failed: #{inspect(reason, pretty: true)}")
+                true = insert_auth(name, restored_tokens)
+                schedule_refresh(restored_tokens, state)
+            end
+
+          state
+
+        _ ->
+          state
       end
-    end
 
-    {:ok, %State{name: name, deps: deps}}
+    {:ok, state}
   end
 
   @impl true
@@ -131,7 +146,9 @@ defmodule TeslaMate.Api do
         true = insert_auth(state.name, auth)
         :ok = call(state.deps.auth, :save, [auth])
         :ok = call(state.deps.vehicles, :restart)
-        :ok = schedule_refresh(auth)
+        {:ok, state} = schedule_refresh(auth, state)
+        :ok = :fuse.reset(fuse_name(state.name))
+
         {:reply, :ok, state}
 
       {:ok, {:captcha, captcha, callback}} ->
@@ -163,19 +180,24 @@ defmodule TeslaMate.Api do
           {:ok, refreshed_tokens} ->
             true = insert_auth(name, refreshed_tokens)
             :ok = call(state.deps.auth, :save, [refreshed_tokens])
-            :ok = schedule_refresh(refreshed_tokens)
+            {:ok, state} = schedule_refresh(refreshed_tokens, state)
+            :ok = :fuse.reset(fuse_name(name))
+            {:noreply, state}
 
           {:error, reason} ->
             Logger.warning("Token refresh failed: #{inspect(reason, pretty: true)}")
             Logger.warning("Retrying in 5 minutes...")
-            Process.send_after(self(), :refresh_auth, :timer.minutes(5))
+
+            if is_reference(state.refresh_timer), do: Process.cancel_timer(state.refresh_timer)
+            refresh_timer = Process.send_after(self(), :refresh_auth, :timer.minutes(5))
+
+            {:noreply, %State{state | refresh_timer: refresh_timer}}
         end
 
       {:error, reason} ->
         Logger.warning("Cannot refresh access token: #{inspect(reason)}")
+        {:noreply, state}
     end
-
-    {:noreply, state}
   end
 
   def handle_info(msg, state) do
@@ -199,7 +221,7 @@ defmodule TeslaMate.Api do
     end
   end
 
-  defp schedule_refresh(%Auth{} = auth) do
+  defp schedule_refresh(%Auth{} = auth, %State{} = state) do
     ms =
       auth.expires_in
       |> Kernel.*(0.75)
@@ -214,9 +236,11 @@ defmodule TeslaMate.Api do
       |> Enum.join(" ")
 
     Logger.info("Scheduling token refresh in #{duration}")
-    Process.send_after(self(), :refresh_auth, ms)
 
-    :ok
+    if is_reference(state.refresh_timer), do: Process.cancel_timer(state.refresh_timer)
+    refresh_timer = Process.send_after(self(), :refresh_auth, ms)
+
+    {:ok, %State{state | refresh_timer: refresh_timer}}
   end
 
   defp insert_auth(name, %Auth{} = auth) do
@@ -235,8 +259,17 @@ defmodule TeslaMate.Api do
   defp handle_result(result, auth, name) do
     case result do
       {:error, %TeslaApi.Error{reason: :unauthorized}} ->
-        true = :ets.delete(name, :auth)
-        {:error, :not_signed_in}
+        :ok = :fuse.melt(fuse_name(name))
+
+        case :fuse.ask(fuse_name(name), :sync) do
+          :blown ->
+            true = :ets.delete(name, :auth)
+            {:error, :not_signed_in}
+
+          :ok ->
+            send(name, :refresh_auth)
+            {:error, :unauthorized}
+        end
 
       {:error, %TeslaApi.Error{reason: reason, env: %Response{status: status, body: body}}} ->
         Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
@@ -271,4 +304,6 @@ defmodule TeslaMate.Api do
   end
 
   defp preload_vehicle(%TeslaApi.Vehicle{} = vehicle, _state), do: vehicle
+
+  defp fuse_name(name), do: :"#{name}.unauthorized"
 end
