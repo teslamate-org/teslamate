@@ -13,11 +13,12 @@ defmodule TeslaMateWeb.ImportLive.Index do
 
   alias TeslaMate.Import
 
+  on_mount {TeslaMateWeb.InitAssigns, :locale}
+
   @impl true
-  def mount(_params, %{"settings" => _, "locale" => locale}, socket) do
+  def mount(_params, %{"settings" => _}, socket) do
     tz =
       if connected?(socket) do
-        Gettext.put_locale(locale)
         :ok = Import.subscribe()
         get_connect_params(socket)["tz"]
       end

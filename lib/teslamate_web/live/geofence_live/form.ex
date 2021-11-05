@@ -10,26 +10,16 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Log.Position
 
+  on_mount {TeslaMateWeb.InitAssigns, :locale}
+
   @impl true
-  def mount(%{"id" => id}, session, socket) do
-    %{"settings" => settings, "locale" => locale} = session
-
-    if connected?(socket) do
-      Gettext.put_locale(locale)
-    end
-
+  def mount(%{"id" => id}, %{"settings" => settings}, socket) do
     geofence = Locations.get_geofence!(id)
 
     {:ok, base_assigns(socket, geofence, settings, :edit)}
   end
 
-  def mount(%{"lat" => lat, "lng" => lng}, session, socket) do
-    %{"settings" => settings, "locale" => locale} = session
-
-    if connected?(socket) do
-      Gettext.put_locale(locale)
-    end
-
+  def mount(%{"lat" => lat, "lng" => lng}, %{"settings" => settings}, socket) do
     {:ok, settings} = set_grafana_url(settings, socket)
 
     geofence = %GeoFence{
@@ -41,13 +31,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
     {:ok, base_assigns(socket, geofence, settings, :new)}
   end
 
-  def mount(_params, session, socket) do
-    %{"settings" => settings, "locale" => locale} = session
-
-    if connected?(socket) do
-      Gettext.put_locale(locale)
-    end
-
+  def mount(_params, %{"settings" => settings}, socket) do
     %{latitude: lat, longitude: lng} =
       case Log.get_latest_position() do
         %Position{latitude: lat, longitude: lng} -> %{latitude: lat, longitude: lng}

@@ -6,10 +6,10 @@ defmodule TeslaMateWeb.GeoFenceLive.Index do
 
   alias TeslaMate.Convert
 
-  @impl true
-  def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
-    if connected?(socket), do: Gettext.put_locale(locale)
+  on_mount {TeslaMateWeb.InitAssigns, :locale}
 
+  @impl true
+  def mount(_params, %{"settings" => settings}, socket) do
     unit_of_length =
       case settings do
         %GlobalSettings{unit_of_length: :km} -> :m

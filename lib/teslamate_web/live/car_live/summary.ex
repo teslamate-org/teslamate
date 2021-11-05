@@ -7,11 +7,11 @@ defmodule TeslaMateWeb.CarLive.Summary do
   alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.{Vehicles, Convert}
 
+  on_mount {TeslaMateWeb.InitAssigns, :locale}
+
   @impl true
   def mount(_params, %{"summary" => %Summary{car: car} = summary} = session, socket) do
     if connected?(socket) do
-      Gettext.put_locale(session["locale"])
-
       send(self(), :update_duration)
       send(self(), {:status, Vehicle.busy?(car.id)})
 

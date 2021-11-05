@@ -9,10 +9,10 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
 
   import TeslaMateWeb.Gettext
 
-  @impl true
-  def mount(%{"id" => id}, %{"locale" => locale}, socket) do
-    if connected?(socket), do: Gettext.put_locale(locale)
+  on_mount {TeslaMateWeb.InitAssigns, :locale}
 
+  @impl true
+  def mount(%{"id" => id}, _session, socket) do
     charging_process = Log.get_charging_process!(id)
 
     socket =
