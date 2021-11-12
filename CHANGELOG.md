@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.25.0] - 2021-11-12
+
+### Improvements and Bug Fixes
+
+- Add Apple mobile web app capable meta tag ([#2128](https://github.com/adriankumpf/teslamate/pull/2128))
+- Add NOT NULL constraint to the charging_processes.start_date column
+- Add workaround for an error that occured when the OS does not return the current date and time
+- Display marketing names (again). This was necessary due to an API change.
+  - Add Mid-Range Model 3 ([#2057](https://github.com/adriankumpf/teslamate/pull/2057) by [RickyRomero](https://github.com/RickyRomero))
+- Show the token sign-up form by default
+- Sign out if the Tesla API repeatedly returns 401 responses
+- Use SSO access tokens instead of Owner API tokens (except for Chinese accounts)
+
+#### Dashboards
+
+- Timeline: bugfixes and improvements ([#2125](https://github.com/adriankumpf/teslamate/pull/2125), [#2092](https://github.com/adriankumpf/teslamate/pull/2092), [#2061](https://github.com/adriankumpf/teslamate/pull/2061) by [DrMichael](https://github.com/DrMichael))
+
+#### Translations
+
+- Update French translation ([#2091](https://github.com/adriankumpf/teslamate/pull/2091) by [ranaud80](https://github.com/ranaud80))
+
+#### Documentation
+
+- Add integration Guide for Node-RED, with examples ([#2098](https://github.com/adriankumpf/teslamate/pull/2098) by [pmboothby](https://github.com/pmboothby))
+- Update upgrade guide ([#2043](https://github.com/adriankumpf/teslamate/pull/2043) by [withanhdammit](https://github.com/withanhdammit))
+
 ## [1.24.2] - 2021-09-29
 
 ### Improvements and Bug Fixes
@@ -1391,6 +1417,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.25.0]: https://github.com/adriankumpf/teslamate/compare/v1.24.2...v1.25.0
 [1.24.2]: https://github.com/adriankumpf/teslamate/compare/v1.24.1...v1.24.2
 [1.24.1]: https://github.com/adriankumpf/teslamate/compare/v1.24.0...v1.24.1
 [1.24.0]: https://github.com/adriankumpf/teslamate/compare/v1.23.7...v1.24.0
