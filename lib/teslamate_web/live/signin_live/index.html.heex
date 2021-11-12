@@ -81,7 +81,7 @@
 
           <%= if type == Tokens do %>
             <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
-            <% here_link = link gettext("here"), to: "https://tesla-api.timdorr.com/api-basics/authentication",
+            <% here_link = link gettext("here"), to: "https://docs.teslamate.org/docs/faq#how-to-generate-your-own-tokens",
                                                  target: "_blank", rel: "noopener noreferrer"%>
 
               <%= raw(gettext "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}.", here: safe_to_string(here_link)) %>
@@ -91,7 +91,7 @@
           <%
             {click_event, label} =
               case type do
-                Credentials -> {"use_api_tokens", gettext("Use existing API tokens (advanced)")}
+                Credentials -> {"use_api_tokens", gettext("Use existing API tokens")}
                 Tokens -> {"use_credentials", gettext("Use email and password")}
               end
           %>
@@ -127,7 +127,7 @@
                   </span>
               </p>
               <p class="control">
-                <a class={["button", "is-static is-rounded", (if captcha == nil, do: "is-loading")]} 
+                <a class={["button", "is-static is-rounded", (if captcha == nil, do: "is-loading")]}
                    style="min-width: 152px; padding: 0;">
                     <span id="captcha" style="scale: 0.8">
                     <%= raw captcha %>

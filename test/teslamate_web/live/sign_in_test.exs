@@ -41,6 +41,10 @@ defmodule TeslaMateWeb.SignInLiveTest do
   test "validates credentials", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
 
+    assert view
+           |> element("form button", "Use email and password")
+           |> render_click() =~ "Email address"
+
     assert doc =
              view
              |> render_change(:validate, %{credentials: %{email: "$email", password: "$password"}})
@@ -55,6 +59,10 @@ defmodule TeslaMateWeb.SignInLiveTest do
   test "signs in", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
 
+    assert view
+           |> element("form button", "Use email and password")
+           |> render_click() =~ "Email address"
+
     render_change(view, :validate, %{credentials: %{email: "$email", password: "$password"}})
     render_submit(view, :sign_in, %{})
 
@@ -66,6 +74,10 @@ defmodule TeslaMateWeb.SignInLiveTest do
   @tag captcha: true
   test "signs in with captcha", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
+
+    assert view
+           |> element("form button", "Use email and password")
+           |> render_click() =~ "Email address"
 
     render_change(view, :validate, %{credentials: %{email: "captcha", password: "$password"}})
     render_submit(view, :sign_in, %{})
@@ -89,6 +101,10 @@ defmodule TeslaMateWeb.SignInLiveTest do
   @tag captcha: true
   test "signs in with second factor", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
+
+    assert view
+           |> element("form button", "Use email and password")
+           |> render_click() =~ "Email address"
 
     render_change(view, :validate, %{credentials: %{email: "$email", password: "$password"}})
     render_submit(view, :sign_in, %{})
@@ -135,10 +151,6 @@ defmodule TeslaMateWeb.SignInLiveTest do
 
   test "signs in with api tokens", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, "/sign_in")
-
-    assert view
-           |> element("form button", "Use existing API tokens (advanced)")
-           |> render_click() =~ "Access Token"
 
     render_change(view, :validate, %{tokens: %{access: "$access", refresh: "$refresh"}})
     render_submit(view, :sign_in, %{})

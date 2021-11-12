@@ -109,7 +109,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
       callback: fn _, _, _ -> :error end,
       error: nil,
       task: nil,
-      state: State.Credentials.init()
+      state: State.Tokens.init()
     }
 
     {:ok, assign(socket, assigns)}
