@@ -989,12 +989,14 @@
           "xaxis": {
             "rangemode": "normal",
             "showgrid": true,
+            "title": "SOC %",
             "type": "auto",
             "zeroline": false
           },
           "yaxis": {
             "rangemode": "normal",
             "showgrid": true,
+            "title": "kW",
             "type": "linear",
             "zeroline": false
           },
@@ -1055,7 +1057,7 @@
       "scopedVars": {
         "car_id": {
           "selected": false,
-          "text": "White TARDIS",
+          "text": "1",
           "value": "1"
         }
       },

@@ -555,7 +555,7 @@
           "xaxis": {
             "rangemode": "normal",
             "showgrid": true,
-            "title": "Charge %",
+            "title": "SOC %",
             "type": "linear",
             "zeroline": false
           },
