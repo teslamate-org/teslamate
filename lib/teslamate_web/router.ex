@@ -19,7 +19,7 @@ defmodule TeslaMateWeb.Router do
       gettext: TeslaMateWeb.Gettext,
       cldr: TeslaMateWeb.Cldr
 
-    plug Cldr.Plug.PutSession
+    plug TeslaMateWeb.Plugs.PutSession
 
     plug :put_root_layout, {TeslaMateWeb.LayoutView, :root}
     plug :protect_from_forgery

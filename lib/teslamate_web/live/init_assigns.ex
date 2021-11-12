@@ -5,7 +5,7 @@ defmodule TeslaMateWeb.InitAssigns do
 
   import Phoenix.LiveView
 
-  def on_mount(:locale, _params, %{"cldr_locale" => locale}, socket) do
+  def on_mount(:locale, _params, %{"gettext_locale" => locale}, socket) do
     Gettext.put_locale(locale)
     {:cont, assign(socket, :locale, locale)}
   end
