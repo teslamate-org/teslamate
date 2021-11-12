@@ -671,7 +671,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  battery_level as \"SOC [%]\",\n  charger_power as \"Power [kW]\",\n  (case when battery_heater_on then 1 else 0 end) as \"Battery heater\",\n  convert_km([[preferred_range]]_battery_range_km, '$length_unit') as \"Range [$length_unit]\",\n  charger_voltage as \"Charging Voltage [V]\",\n  charger_phases as \"Phases\",\n  charger_actual_current as \"Current [A]\",\n  charger_pilot_current as \"Current (pilot) [A]\",\n  convert_celsius(outside_temp, '$temp_unit') as \"Outdoor Temperature [°$temp_unit]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  battery_level as \"SOC [%]\",\n  CASE\n    WHEN fast_charger_present THEN charger_power \n    ELSE 0.001 * charger_voltage * charger_actual_current\n  END as \"Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nORDER BY\n  date ASC",
           "refId": "A",
           "select": [
             [
@@ -698,7 +698,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  battery_level as \"avg SOC [%]\",\n  avg(charger_power) as \"avg Power [kW]\",\n  avg(charger_voltage) as \"avg Charging Voltage [V]\",\n  convert_celsius(avg(outside_temp), '$temp_unit') as \"avg Outdoor Temperature [°$temp_unit]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nGROUP BY\n  battery_level\nORDER BY\n  battery_level ASC",
+          "rawSql": "SELECT\n  battery_level as \"avg SOC [%]\",\n  CASE\n    WHEN fast_charger_present THEN avg(charger_power) \n    ELSE avg(0.001 * charger_voltage * charger_actual_current)\n  END as \"avg Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nGROUP BY\n  battery_level, fast_charger_present\nORDER BY\n  battery_level ASC  ",
           "refId": "B",
           "select": [
             [
