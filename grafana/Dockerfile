@@ -22,7 +22,6 @@ RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install pr0ps-trackma
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install natel-discrete-panel 0.1.0 && \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install grafana-piechart-panel 1.6.1 && \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install natel-plotly-panel 0.0.7 && \
-    grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install michaeldmoore-scatter-panel 1.0.0 && \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/panodata/grafana-map-panel/releases/download/0.15.0/grafana-map-panel-0.15.0.zip plugins install grafana-worldmap-panel-ng
 
 COPY logo.svg /usr/share/grafana/public/img/grafana_icon.svg
