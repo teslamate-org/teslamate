@@ -187,7 +187,7 @@ export const SimpleMap = {
         const [lat, lng, heading] = $position.value.split(",");
         marker.setHeading(heading);
         marker.setLatLng([lat, lng]);
-        map.setView([lat, lng], 17);
+        map.setView([lat, lng], map.getZoom());
       };
 
       $position.addEventListener("change", setView);
