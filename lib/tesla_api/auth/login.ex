@@ -219,6 +219,9 @@ defmodule TeslaApi.Auth.Login do
         message = "Invalid email address and password combination"
         {:error, %Error{reason: :invalid_credentials, message: message, env: env}}
 
+      {:ok, %Tesla.Env{status: 403}} = error ->
+        Error.into(error, :access_denied)
+
       error ->
         Error.into(error, :authorization_failed)
     end
