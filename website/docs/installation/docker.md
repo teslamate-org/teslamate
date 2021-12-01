@@ -16,6 +16,19 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 
 ## Instructions
 
+________________________________
+
+IF YOU INSTALL ON QNAP WITH ARM32 ALPINE-KERNEL YOU MODIFY THE IMAGE OF DATABASE FROM
+ 
+ -->   database:
+       image: postgres:13
+       
+       TO
+ 
+ -->     database:
+       image: postgres:13-alpine
+________________________________
+
 1. Create a file called `docker-compose.yml` with the following content:
 
    ```yml title="docker-compose.yml"
