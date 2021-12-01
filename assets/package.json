@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "bulma": "^0.9.3",
-    "esbuild": "^0.13.12",
+    "esbuild": "^0.14.1",
     "esbuild-sass-plugin": "^1.7.0",
     "sass": "^1.43.4"
   },
