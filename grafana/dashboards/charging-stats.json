@@ -1023,7 +1023,7 @@
               "y": "B - Avg Power [kW]",
               "z": null
             },
-            "name": "Trace 1",
+            "name": "Median Power",
             "settings": {
               "color_option": "ramp",
               "line": {
@@ -1062,7 +1062,7 @@
               "y": "Power [kW]",
               "z": null
             },
-            "name": "Trace 2",
+            "name": "Power",
             "settings": {
               "color_option": "ramp",
               "line": {

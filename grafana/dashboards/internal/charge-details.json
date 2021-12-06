@@ -589,7 +589,7 @@
               "y": "Power [kW]",
               "z": null
             },
-            "name": "Trace 1",
+            "name": "Power",
             "settings": {
               "color_option": "ramp",
               "line": {
@@ -629,7 +629,7 @@
               "y": "avg Power [kW]",
               "z": null
             },
-            "name": "Trace 2",
+            "name": "Average Power",
             "settings": {
               "color_option": "ramp",
               "line": {
