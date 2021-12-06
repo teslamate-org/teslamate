@@ -1019,8 +1019,8 @@
               "color": "Power [kW]",
               "size": null,
               "text": null,
-              "x": "SOC [%]",
-              "y": "Power [kW]",
+              "x": "B - SOC [%]",
+              "y": "B - Avg Power [kW]",
               "z": null
             },
             "name": "Trace 1",
@@ -1030,7 +1030,7 @@
                 "color": "#005f81",
                 "dash": "solid",
                 "shape": "linear",
-                "width": 6
+                "width": 3
               },
               "marker": {
                 "color": "#33B5E5",
@@ -1041,6 +1041,45 @@
                 },
                 "showscale": false,
                 "size": 5,
+                "sizemin": 3,
+                "sizemode": "diameter",
+                "sizeref": 0.2,
+                "symbol": "circle"
+              }
+            },
+            "show": {
+              "line": true,
+              "lines": true,
+              "markers": false
+            }
+          },
+          {
+            "mapping": {
+              "color": "Power [kW]",
+              "size": null,
+              "text": null,
+              "x": "SOC [%]",
+              "y": "Power [kW]",
+              "z": null
+            },
+            "name": "Trace 2",
+            "settings": {
+              "color_option": "ramp",
+              "line": {
+                "color": "#005f81",
+                "dash": "solid",
+                "shape": "linear",
+                "width": 6
+              },
+              "marker": {
+                "color": "#808080",
+                "colorscale": "YlOrRd",
+                "line": {
+                  "color": "#DDD",
+                  "width": 0
+                },
+                "showscale": false,
+                "size": 3,
                 "sizemin": 3,
                 "sizemode": "diameter",
                 "sizeref": 0.2,
@@ -1080,6 +1119,35 @@
             ]
           ],
           "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  battery_level as \"B - SOC [%]\",\n  avg(charger_power) as \"B - Avg Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\n AND c.fast_charger_present\nGROUP BY battery_level",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "odometer"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "positions",
+          "timeColumn": "date",
+          "timeColumnType": "timestamp",
           "where": [
             {
               "name": "$__timeFilter",
