@@ -602,7 +602,7 @@ msgstr "Jeton d'accès"
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:60
 msgid "Refresh Token"
-msgstr "Actualiser le jeton"
+msgstr "Jeton d'actualisation"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:270
