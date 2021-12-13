@@ -25,7 +25,7 @@ defmodule TeslaApi.Vehicle do
   def list(%Auth{} = auth) do
     endpoint_url =
       case Auth.region(auth) do
-        :chinese -> "https://owner-api.teslamotors.cn"
+        :chinese -> "https://owner-api.vn.cloud.tesla.cn"
         _global -> "https://owner-api.teslamotors.com"
       end
 
@@ -36,7 +36,7 @@ defmodule TeslaApi.Vehicle do
   def get(%Auth{} = auth, id) do
     endpoint_url =
       case Auth.region(auth) do
-        :chinese -> "https://owner-api.teslamotors.cn"
+        :chinese -> "https://owner-api.vn.cloud.tesla.cn"
         _global -> "https://owner-api.teslamotors.com"
       end
 
@@ -47,7 +47,7 @@ defmodule TeslaApi.Vehicle do
   def get_with_state(%Auth{} = auth, id) do
     endpoint_url =
       case Auth.region(auth) do
-        :chinese -> "https://owner-api.teslamotors.cn"
+        :chinese -> "https://owner-api.vn.cloud.tesla.cn"
         _global -> "https://owner-api.teslamotors.com"
       end
 

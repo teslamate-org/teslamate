@@ -32,7 +32,7 @@ defmodule TeslaApi.Stream do
 
     endpoint_url =
       case Auth.region(state.auth) do
-        :chinese -> "wss://streaming.vn.teslamotors.cn/streaming/"
+        :chinese -> "wss://streaming.vn.cloud.tesla.cn/streaming/"
         _global -> "wss://streaming.vn.teslamotors.com/streaming/"
       end
 
