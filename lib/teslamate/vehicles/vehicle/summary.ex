@@ -88,12 +88,12 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       display_name: vehicle.display_name,
 
       # Drive State
-      latitude: get_nested(vehicle, [:drive_state, :latitude]),
-      longitude: get_nested(vehicle, [:drive_state, :longitude]),
-      power: get_nested(vehicle, [:drive_state, :power]),
+      latitude: get_in_struct(vehicle, [:drive_state, :latitude]),
+      longitude: get_in_struct(vehicle, [:drive_state, :longitude]),
+      power: get_in_struct(vehicle, [:drive_state, :power]),
       speed: speed(vehicle),
-      shift_state: get_nested(vehicle, [:drive_state, :shift_state]),
-      heading: get_nested(vehicle, [:drive_state, :heading]),
+      shift_state: get_in_struct(vehicle, [:drive_state, :shift_state]),
+      heading: get_in_struct(vehicle, [:drive_state, :heading]),
 
       # Charge State
       plugged_in: plugged_in(vehicle),
@@ -114,27 +114,27 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         charge(vehicle, :scheduled_charging_start_time) |> to_datetime(),
 
       # Climate State
-      is_climate_on: get_nested(vehicle, [:climate_state, :is_climate_on]),
-      is_preconditioning: get_nested(vehicle, [:climate_state, :is_preconditioning]),
-      outside_temp: get_nested(vehicle, [:climate_state, :outside_temp]),
-      inside_temp: get_nested(vehicle, [:climate_state, :inside_temp]),
+      is_climate_on: get_in_struct(vehicle, [:climate_state, :is_climate_on]),
+      is_preconditioning: get_in_struct(vehicle, [:climate_state, :is_preconditioning]),
+      outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),
+      inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp]),
 
       # Vehicle State
-      odometer: get_nested(vehicle, [:vehicle_state, :odometer]) |> miles_to_km(2),
-      locked: get_nested(vehicle, [:vehicle_state, :locked]),
-      sentry_mode: get_nested(vehicle, [:vehicle_state, :sentry_mode]),
+      odometer: get_in_struct(vehicle, [:vehicle_state, :odometer]) |> miles_to_km(2),
+      locked: get_in_struct(vehicle, [:vehicle_state, :locked]),
+      sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
       windows_open: window_open(vehicle),
       doors_open: doors_open(vehicle),
       trunk_open: trunk_open(vehicle),
       frunk_open: frunk_open(vehicle),
-      is_user_present: get_nested(vehicle, [:vehicle_state, :is_user_present]),
+      is_user_present: get_in_struct(vehicle, [:vehicle_state, :is_user_present]),
       version: version(vehicle),
       update_available: update_available(vehicle),
       update_version: update_version(vehicle)
     }
   end
 
-  defp charge(vehicle, key), do: get_nested(vehicle, [:charge_state, key])
+  defp charge(vehicle, key), do: get_in_struct(vehicle, [:charge_state, key])
 
   defp speed(%Vehicle{drive_state: %Drive{speed: s}}) when not is_nil(s), do: mph_to_kmh(s)
   defp speed(_vehicle), do: nil
@@ -186,7 +186,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   end
 
   defp update_available(vehicle) do
-    case get_nested(vehicle, [:vehicle_state, :software_update, :status]) do
+    case get_in_struct(vehicle, [:vehicle_state, :software_update, :status]) do
       status when status in ["available", "downloading", "downloading_wifi_wait"] -> true
       status when is_binary(status) -> false
       nil -> nil
@@ -194,7 +194,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   end
 
   defp update_version(vehicle) do
-    case get_nested(vehicle, [:vehicle_state, :software_update, :version]) do
+    case get_in_struct(vehicle, [:vehicle_state, :software_update, :version]) do
       version when is_binary(version) -> List.first(String.split(version, " "))
       nil -> nil
     end
@@ -203,7 +203,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp to_datetime(val) when val in [nil, :unknown], do: val
   defp to_datetime(ts), do: DateTime.from_unix!(ts)
 
-  defp get_nested(struct, keys) do
-    get_in(struct, Enum.map(keys, &Access.key/1))
+  defp get_in_struct(struct, keys) do
+    Enum.reduce(keys, struct, fn key, acc -> if acc, do: Map.get(acc, key) end)
   end
 end
