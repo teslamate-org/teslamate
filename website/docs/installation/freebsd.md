@@ -11,10 +11,10 @@ It assumes that pre-requisites are met and only basic instructions are provided 
 Click on the following items to view detailed installation steps.
 
 <details>
-  <summary>bash</summary>
+  <summary>bash & jq</summary>
 
 ```bash
-pkg install bash
+pkg install bash jq
 bash
 ```
 
@@ -52,6 +52,7 @@ We will need to compile it from source, which is pretty easy though.
 ```bash
 pkg install gmake
 
+mkdir /usr/local/src
 cd /usr/local/src
 git clone https://github.com/elixir-lang/elixir.git
 cd elixir
@@ -67,7 +68,8 @@ elixir --version
   <summary>Postgres (v12+)</summary>
 
 ```bash
-pkg install postgressql(12|13)-server
+pkg install postgresql(12|13)-server
+pkg install postgresql(12|13)-contrib
 echo postgres_enable="yes" >> /etc/rc.conf
 ```
 
@@ -97,7 +99,8 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
   <summary>Node.js (v14+)</summary>
 
 ```bash
-pkg install node(12|14|)
+pkg install node14
+pkg install npm-node14  
 ```
 
 </details>
@@ -117,7 +120,7 @@ git checkout $(git describe --tags `git rev-list --tags --max-count=1`) # Checko
 
 ## Create PostgreSQL database
 
-The following commands will create a database called `teslamate` on the PostgreSQL database server, and a user called `teslamate`. When creating the `teslamate` user, you will be prompted to enter a password for the user interactively. This password should be recorded and provided as an environment variable in the startup script at the end of this guide.
+The following commands will create a database called `teslamate` on the PostgreSQL database server, and a user called `teslamate`. When creating the `teslamate` user, you will be prompted to enter a password for the user interactively. This password should be recorded and provided as an environment variable in the startup script at the end of this guide. Use 'su - postgres' if unable to enter psql console from current user.
 
 ```console
 psql
@@ -210,11 +213,13 @@ echo teslamate_db_host="localhost"  >> /etc/rc.conf
 echo teslamate_port="5432"  >> /etc/rc.conf
 echo teslamate_db_pass="<super secret>" >> /etc/rc.conf
 echo teslamate_disable_mqtt="true" >> /etc/rc.conf
+echo teslamate_timezone="<TZ Database>" >> /etc/rc.conf #i.e. Europe/Berlin
 ```
 
 ### Start service
 
 ```bash
+chmod +x /usr/local/etc/rc.d/teslamate
 service teslamate start
 ```
 
