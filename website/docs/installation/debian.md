@@ -37,7 +37,7 @@ Source: [elixir-lang.org/install](https://elixir-lang.org/install)
 </details>
 
 <details>
-  <summary>Grafana (v7.2+) & Plugins</summary>
+  <summary>Grafana (v7.5+) & Plugins</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
@@ -56,7 +56,6 @@ Install the required Grafana plugins as well:
 ```bash
 sudo grafana-cli plugins install pr0ps-trackmap-panel
 sudo grafana-cli plugins install natel-discrete-panel
-sudo grafana-cli plugins install grafana-piechart-panel
 sudo grafana-cli --pluginUrl https://github.com/panodata/grafana-map-panel/releases/download/0.9.0/grafana-map-panel-0.9.0.zip plugins install grafana-worldmap-panel-ng
 sudo systemctl restart grafana-server
 ```

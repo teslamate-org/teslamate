@@ -74,7 +74,7 @@ echo postgres_enable="yes" >> /etc/rc.conf
 </details>
 
 <details>
-  <summary>Grafana (v7.2+) & Plugins</summary>
+  <summary>Grafana (v7.5+) & Plugins</summary>
 
 ```bash
 pkg install grafana7

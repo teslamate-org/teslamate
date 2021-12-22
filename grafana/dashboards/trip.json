@@ -367,7 +367,7 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "",
-      "type": "grafana-piechart-panel",
+      "type": "piechart",
       "valueName": "current"
     },
     {
