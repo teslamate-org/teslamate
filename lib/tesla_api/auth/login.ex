@@ -181,6 +181,9 @@ defmodule TeslaApi.Auth.Login do
           String.contains?(body, "Captcha does not match") ->
             {:error, %Error{reason: :captcha_does_not_match, env: env}}
 
+          String.contains?(body, "Tesla SSO - Sign In") ->
+            {:error, %Error{reason: :twofactor_not_supported, env: env}}
+
           String.contains?(body, "Recaptcha is required") ->
             {:error, %Error{reason: :recaptcha_required, env: env}}
 

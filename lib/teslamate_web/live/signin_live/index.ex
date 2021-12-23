@@ -260,6 +260,9 @@ defmodule TeslaMateWeb.SignInLive.Index do
             :captcha_does_not_match ->
               gettext("Captcha does not match")
 
+            :twofactor_not_supported ->
+              gettext("MFA is not supported")
+
             :recaptcha_required ->
               gettext("Recaptcha is required")
 
