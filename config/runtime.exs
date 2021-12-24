@@ -103,6 +103,18 @@ config :teslamate, TeslaMateWeb.Endpoint,
   live_view: [signing_salt: System.get_env("SIGNING_SALT", Util.random_string(8))],
   check_origin: System.get_env("CHECK_ORIGIN", "false") |> Util.parse_check_origin!()
 
+if System.get_env("HTTPS_KEYFILE") != "" or config_env() == :dev do
+  config :teslamate, TeslaMateWeb.Endpoint,
+    https:
+      Util.choose_http_binding_address() ++
+        [
+          port: Util.get_env("HTTPS_PORT", prod: "4040", dev: "4040", test: "4042"),
+          cipher_suite: :strong,
+          keyfile: Util.fetch_env!("HTTPS_KEYFILE", all: "priv/cert/selfsigned_key.pem"),
+          certfile: Util.fetch_env!("HTTPS_CERTFILE", dev: "priv/cert/selfsigned.pem")
+        ]
+end
+
 if System.get_env("DISABLE_MQTT") != "true" or config_env() == :test do
   config :teslamate, :mqtt,
     host: Util.fetch_env!("MQTT_HOST", all: "localhost"),

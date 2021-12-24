@@ -66,7 +66,7 @@ defmodule TeslaMate.MixProject do
 
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "cmd --cd assets npm ci --no-audit --loglevel=error"],
+      setup: ["deps.get", "ecto.setup", "phx.gen.cert", "cmd --cd assets npm ci --no-audit --loglevel=error"],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "assets.deploy": ["cmd --cd assets npm run deploy", "phx.digest"],
