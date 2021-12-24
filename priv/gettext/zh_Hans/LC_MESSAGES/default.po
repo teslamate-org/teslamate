@@ -619,7 +619,7 @@ msgstr "使用邮箱和密码"
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:87
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr "通过 Tesla API 获得 tokens 需要有编程经验或者借助第三方服务。更多信息可以查看"
+msgstr "通过 Tesla API 获得令牌需要有编程经验或者借助第三方服务。更多信息可以查看 %{here}。"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:84
