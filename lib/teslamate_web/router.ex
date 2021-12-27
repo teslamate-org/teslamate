@@ -32,6 +32,10 @@ defmodule TeslaMateWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :grafana do
+    plug :put_secure_browser_headers
+  end
+
   scope "/", TeslaMateWeb do
     pipe_through :browser
 
@@ -48,6 +52,17 @@ defmodule TeslaMateWeb.Router do
       live "/charge-cost/:id", ChargeLive.Cost
       live "/import", ImportLive.Index
     end
+  end
+
+  scope "/d" do
+    pipe_through :grafana
+
+    forward "/", ReverseProxyPlug,
+      [
+        upstream: "http://localhost:3000/",
+        response_mode: :buffer,
+        client_options: [tesla_client: Tesla.client([], {Tesla.Adapter.Finch, [name: TeslaMate.HTTP]})]
+      ]
   end
 
   scope "/api", TeslaMateWeb do
