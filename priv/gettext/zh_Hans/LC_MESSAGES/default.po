@@ -589,12 +589,12 @@ msgstr "输入两步验证APP上的验证码"
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:153
 msgid "Two-Factor Authentication"
-msgstr "两步验证"
+msgstr "多重认证"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:295
 msgid "Sign out"
-msgstr "退出"
+msgstr "退出登陆"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:47
