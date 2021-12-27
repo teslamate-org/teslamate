@@ -15,7 +15,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       car_settings: Settings.get_car_settings() |> prepare(),
       car: nil,
       global_settings: settings |> prepare(),
-      update: Updater.get_update(),
+      update: Updater.Worker.get_update(),
       refreshing_addresses?: nil,
       refresh_error: nil,
       page_title: gettext("Settings")

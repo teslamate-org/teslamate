@@ -65,7 +65,7 @@
     </nav>
 
     <% show_doante_button = @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) %>
-    <% update = TeslaMate.Updater.get_update() %>
+    <% update = TeslaMate.Updater.Worker.get_update() %>
 
     <main role="main" style="overflow: hidden;" class={["section", (if show_doante_button or update, do: " full-height")]}>
       <div class="container">

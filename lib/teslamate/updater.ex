@@ -1,11 +1,9 @@
 defmodule TeslaMate.Updater do
-  use GenServer
   use Tesla, only: [:get]
 
   require Logger
 
   @version Mix.Project.config()[:version]
-  @name __MODULE__
 
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP
 
@@ -17,37 +15,13 @@ defmodule TeslaMate.Updater do
   defmodule State, do: defstruct([:update, :version])
   defmodule Release, do: defstruct([:version, :prerelease])
 
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
-  end
-
-  def get_update(name \\ @name) do
-    GenServer.call(name, :get_update, 50)
-  catch
-    :exit, {:timeout, _} -> nil
-    :exit, {:noproc, _} -> nil
-  end
-
-  @impl GenServer
   def init(opts) do
-    check_after = opts[:check_after] || :timer.minutes(5)
-    interval = opts[:interval] || :timer.hours(72)
     version = opts[:version] || @version
 
-    {:ok, _} = :timer.send_interval(interval, :check_for_updates)
-
-    case check_after do
-      0 ->
-        {:ok, %State{version: version}, {:continue, :check_for_updates}}
-
-      t when is_number(t) and 0 < t ->
-        Process.send_after(self(), :check_for_updates, t)
-        {:ok, %State{version: version}}
-    end
+    {:ok, %State{version: version}}
   end
 
-  @impl GenServer
-  def handle_continue(:check_for_updates, %State{version: current_vsv} = state) do
+  def check_for_updates(%State{version: current_vsv} = state) do
     Logger.debug("Checking for updates …")
 
     case fetch_release() do
@@ -55,32 +29,24 @@ defmodule TeslaMate.Updater do
         case Version.compare(current_vsv, version) do
           :lt ->
             Logger.info("Update available: #{current_vsv} -> #{version}")
-            {:noreply, %State{state | update: version}}
+            %State{state | update: version}
 
           _ ->
-            Logger.debug("No update availble")
-            {:noreply, state}
+            Logger.debug("No update available")
+            state
         end
 
       {:ok, %Release{version: version, prerelease: true}} ->
-        Logger.debug("Prerelease availble: #{version}")
-        {:noreply, state}
+        Logger.debug("Prerelease available: #{version}")
+        state
 
       {:error, reason} ->
         Logger.warning("Update check failed: #{inspect(reason, pretty: true)}")
-        {:noreply, state}
+        state
     end
   end
 
-  @impl GenServer
-  def handle_info(:check_for_updates, state) do
-    {:noreply, state, {:continue, :check_for_updates}}
-  end
-
-  @impl GenServer
-  def handle_call(:get_update, _from, %State{update: update} = state) do
-    {:reply, update, state}
-  end
+  def get_update(%State{update: update}), do: update
 
   ## Private
 

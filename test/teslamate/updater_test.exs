@@ -24,79 +24,80 @@ defmodule TeslaMate.UpdaterTest do
     end
   end
 
-  defp start_updater(name, version, opts \\ []) do
-    id = Keyword.get(opts, :id, 0)
+  defp create_updater(version) do
+    {:ok, updater} = Updater.init(version: version)
 
-    start_supervised(
-      {Updater, [name: :"updater#{id}_#{name}}", version: version, check_after: 0]},
-      id: id
-    )
+    updater
   end
 
-  test "informs if an update is available", %{test: name} do
+  defp create_updater_and_check_for_updates(version) do
+    {:ok, updater} = Updater.init(version: version)
+
+    updater
+    |> Updater.check_for_updates()
+  end
+
+  test "informs if an update is available" do
     with_mocks HTTPMocck.vsn("v5.1.2") do
       ## current_version > new_version
-      {:ok, pid} = start_updater(name, "5.1.3-dev", id: 0)
-      Process.sleep(100)
-      assert nil == Updater.get_update(pid)
+      updater = create_updater_and_check_for_updates("5.1.3-dev")
+      assert nil == Updater.get_update(updater)
 
       ## current_version == new_version
-      {:ok, pid} = start_updater(name, "5.1.2", id: 1)
-      Process.sleep(100)
-      assert nil == Updater.get_update(pid)
+      updater = create_updater_and_check_for_updates("5.1.2")
+      assert nil == Updater.get_update(updater)
 
       ## current_version < new_version
-      {:ok, pid} = start_updater(name, "4.99.0", id: 2)
-      Process.sleep(100)
-      assert "5.1.2" == Updater.get_update(pid)
+      updater = create_updater_and_check_for_updates("4.99.0")
+      assert "5.1.2" == Updater.get_update(updater)
     end
   end
 
-  test "returns early even though update check is still in progress", %{test: name} do
+  test "returns early even though update check is still in progress" do
     with_mocks [{Tesla.Adapter.Finch, [], call: fn _, _ -> Process.sleep(1_000_000) end}] do
-      {:ok, pid} = start_updater(name, "1.0.0")
-      assert nil == Updater.get_update(pid)
+      updater = create_updater("1.0.0")
+      assert nil == Updater.get_update(updater)
     end
   end
 
   @tag :capture_log
-  test "handles invalid tags", %{test: name} do
+  test "handles invalid tags" do
     with_mocks HTTPMocck.vsn("2.0.0") do
-      {:ok, pid} = start_updater(name, "1.0.0")
-      assert nil == Updater.get_update(pid)
+      updater = create_updater("1.0.0")
+      assert nil == Updater.get_update(updater)
     end
   end
 
   @tag :capture_log
-  test "handles invalid json", %{test: name} do
+  test "handles invalid json" do
     with_mocks HTTPMocck.json(%{"foo" => "bar"}) do
-      {:ok, pid} = start_updater(name, "1.0.0")
-      assert nil == Updater.get_update(pid)
+      updater = create_updater("1.0.0")
+      assert nil == Updater.get_update(updater)
     end
   end
 
   @tag :capture_log
-  test "handles HTTP errors", %{test: name} do
+  test "handles HTTP errors" do
     with_mocks HTTPMocck.response({:ok, %Tesla.Env{status: 404}}) do
-      {:ok, pid} = start_updater(name, "1.0.0", id: 0)
-      assert nil == Updater.get_update(pid)
+      updater = create_updater("1.0.0")
+      assert nil == Updater.get_update(updater)
     end
 
     with_mocks HTTPMocck.response({:error, :timeout}) do
-      {:ok, pid} = start_updater(name, "1.0.0", id: 1)
-      assert nil == Updater.get_update(pid)
+      updater = create_updater("1.0.0")
+      assert nil == Updater.get_update(updater)
     end
   end
 
-  test "handles prereleases and drafts", %{test: name} do
+  test "handles prereleases and drafts" do
     with_mocks HTTPMocck.json(%{"tag_name" => "v99.0.0", "prerelease" => true, "draft" => false}) do
-      {:ok, pid} = start_updater(name, "1.0.0", id: 0)
-      assert nil == Updater.get_update(pid)
+      updater = create_updater("1.0.0")
+      assert nil == Updater.get_update(updater)
     end
 
     with_mocks HTTPMocck.json(%{"tag_name" => "v99.0.0", "prerelease" => false, "draft" => true}) do
-      {:ok, pid} = start_updater(name, "1.0.0", id: 1)
-      assert nil == Updater.get_update(pid)
+      updater = create_updater("1.0.0")
+      assert nil == Updater.get_update(updater)
     end
   end
 end

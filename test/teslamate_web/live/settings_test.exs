@@ -509,7 +509,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
     test "informs if an update is available", %{conn: conn} do
       with_mocks [github_mock()] do
-        _pid = start_supervised!({Updater, version: "1.0.0", check_after: 0})
+        _pid = start_supervised!({Updater.Worker, version: "1.0.0", check_after: 0})
 
         Process.sleep(1000)
 
