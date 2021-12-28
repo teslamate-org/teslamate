@@ -110,7 +110,7 @@ if System.get_env("HTTPS_KEYFILE") != "" or config_env() == :dev do
         [
           port: Util.get_env("HTTPS_PORT", prod: "4040", dev: "4040", test: "4042"),
           cipher_suite: :strong,
-          keyfile: Util.fetch_env!("HTTPS_KEYFILE", all: "priv/cert/selfsigned_key.pem"),
+          keyfile: Util.fetch_env!("HTTPS_KEYFILE", dev: "priv/cert/selfsigned_key.pem"),
           certfile: Util.fetch_env!("HTTPS_CERTFILE", dev: "priv/cert/selfsigned.pem")
         ]
 end
