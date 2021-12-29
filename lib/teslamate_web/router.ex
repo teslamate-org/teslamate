@@ -54,12 +54,12 @@ defmodule TeslaMateWeb.Router do
     end
   end
 
-  scope "/d" do
+  scope "/grafana" do
     pipe_through :grafana
 
     forward "/", ReverseProxyPlug,
       [
-        upstream: "http://localhost:3000/",
+        upstream: "http://localhost:3000/grafana/",
         response_mode: :buffer,
         client_options: [tesla_client: Tesla.client([], {Tesla.Adapter.Finch, [name: TeslaMate.HTTP]})]
       ]

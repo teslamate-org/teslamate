@@ -9,6 +9,8 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=FALSE \
     GF_SECURITY_ALLOW_EMBEDDING=true \
     GF_SECURITY_DISABLE_GRAVATAR=true \
     GF_USERS_ALLOW_SIGN_UP=false \
+    GF_SERVER_ROOT_URL="%(protocol)s://%(domain)s:%(http_port)s/grafana/" \
+    GF_SERVER_SERVE_FROM_SUB_PATH=true \
     DATABASE_PORT=5432
 
 USER root
