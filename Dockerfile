@@ -37,7 +37,7 @@ RUN mix release --path /opt/built
 
 ########################################################################
 
-FROM debian:buster-slim AS app
+FROM debian:bullseye-slim AS app
 
 ENV LANG=C.UTF-8 \
     SRTM_CACHE=/opt/app/.srtm_cache \
