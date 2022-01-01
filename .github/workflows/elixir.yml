@@ -56,13 +56,13 @@ jobs:
       - name: Check unused dependencies
         run: mix deps.unlock --check-unused
         if: ${{ matrix.lint }}
-      - name: Verify that POT files are up to date
-        run: mix gettext.extract --check-up-to-date
-        if: ${{ matrix.lint }}
       - name: Compile dependencies
         run: mix deps.compile
       - name: Check for compilation warnings
         run: mix compile --warnings-as-errors
+        if: ${{ matrix.lint }}
+      - name: Verify that POT files are up to date
+        run: mix gettext.extract --check-up-to-date
         if: ${{ matrix.lint }}
       - name: Run Tests
         run: mix test
