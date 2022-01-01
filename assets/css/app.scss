@@ -43,9 +43,9 @@ $modal-card-foot-border-top: none;
 @import "bulma/sass/layout/section";
 @import "bulma/sass/grid/_all";
 
-@import "@creativebulma/bulma-tooltip";
-@import "@creativebulma/bulma-divider";
-@import "bulma-switch";
+@import "@creativebulma/bulma-tooltip/dist/bulma-tooltip.css";
+@import "@creativebulma/bulma-divider/dist/bulma-divider.css";
+@import "bulma-switch/dist/css/bulma-switch.min.css";
 
 @import "./vendor/modal-fx";
 
