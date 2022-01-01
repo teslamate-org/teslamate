@@ -184,17 +184,25 @@ defmodule TeslaApi.Auth.Login do
           String.contains?(body, "Recaptcha is required") ->
             {:error, %Error{reason: :recaptcha_required, env: env}}
 
-          String.contains?(body, "/oauth2/v3/authorize/mfa/verify") ->
+          String.contains?(body, "/authorize/mfa/verify") ->
             headers = [{"referer", env.url}, {"cookie", ctx.cookies}]
 
-            with {:ok, devices} <- MFA.list_devices(transaction_id, headers) do
+            with {:ok, devices} <- MFA.list_devices(ctx.base_url, transaction_id, headers) do
               callback = fn device_id, mfa_passcode ->
                 try do
                   with {:ok, env} <-
-                         MFA.verify_passcode(device_id, mfa_passcode, transaction_id, headers),
+                         MFA.verify_passcode(
+                           ctx.base_url,
+                           device_id,
+                           mfa_passcode,
+                           transaction_id,
+                           headers
+                         ),
                        {:ok, {redirect_uri, code}} <- Util.parse_location_header(env, ctx.state),
                        {:ok, auth} <-
-                         get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state),
+                         get_web_token(code, ctx.code_verifier, redirect_uri, ctx.state,
+                           base: ctx.base_url
+                         ),
                        {:ok, auth} <- maybe_exchange_sso_tokens(auth) do
                     {:ok, auth}
                   end
@@ -227,7 +235,7 @@ defmodule TeslaApi.Auth.Login do
     end
   end
 
-  defp get_web_token(code, code_verifier, redirect_uri, state, opts \\ []) do
+  defp get_web_token(code, code_verifier, redirect_uri, state, opts) do
     data = %{
       grant_type: "authorization_code",
       client_id: @web_client_id,

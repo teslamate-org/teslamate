@@ -3,10 +3,10 @@ defmodule TeslaApi.Auth.MFA do
 
   alias TeslaApi.{Error}
 
-  def list_devices(transaction_id, headers) do
+  def list_devices(base_url, transaction_id, headers) do
     params = [transaction_id: transaction_id]
 
-    case get("/oauth2/v3/authorize/mfa/factors", query: params, headers: headers) do
+    case get("#{base_url}/oauth2/v3/authorize/mfa/factors", query: params, headers: headers) do
       {:ok, %Tesla.Env{status: 200, body: %{"data" => devices}}} ->
         {:ok, devices}
 
@@ -15,7 +15,7 @@ defmodule TeslaApi.Auth.MFA do
     end
   end
 
-  def verify_passcode(device_id, mfa_passcode, transaction_id, headers) do
+  def verify_passcode(base_url, device_id, mfa_passcode, transaction_id, headers) do
     params = [transaction_id: transaction_id]
 
     data = %{
@@ -24,11 +24,11 @@ defmodule TeslaApi.Auth.MFA do
       passcode: mfa_passcode
     }
 
-    case post("/oauth2/v3/authorize/mfa/verify", data, headers: headers) do
+    case post("#{base_url}/oauth2/v3/authorize/mfa/verify", data, headers: headers) do
       {:ok, %Tesla.Env{status: 200, body: body} = env} ->
         case body do
           %{"data" => %{"approved" => true, "valid" => true}} ->
-            case get("/oauth2/v3/authorize", query: params, headers: headers) do
+            case get("#{base_url}/oauth2/v3/authorize", query: params, headers: headers) do
               {:ok, %Tesla.Env{status: 302} = env} ->
                 {:ok, env}
 
