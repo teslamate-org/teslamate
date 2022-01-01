@@ -255,7 +255,7 @@ msgstr "车辆必须处于锁车状态"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:133
 msgid "Range (rated)"
-msgstr "额定里程"
+msgstr "典型里程"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:171
@@ -275,17 +275,17 @@ msgstr "里程"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "ideal"
-msgstr "典型"
+msgstr "额定"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "rated"
-msgstr "额定"
+msgstr "典型"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:132
 msgid "Range (ideal)"
-msgstr "当前剩余里程 (典型)"
+msgstr "当前剩余里程 (额定)"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:138
