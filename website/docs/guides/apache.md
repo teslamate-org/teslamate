@@ -102,7 +102,7 @@ This file should reside in the same folder as the docker-compose.yml file.
 
 ```plaintext title=".env"
 TM_DB_USER=teslamate
-TM_DB_PASS=secret
+TM_DB_PASS= #your secure password!
 TM_DB_NAME=teslamate
 
 GRAFANA_USER=admin
