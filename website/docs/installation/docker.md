@@ -90,7 +90,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 
 1. Open the web interface [http://your-ip-address:4000](http://localhost:4000)
 2. Sign in with your Tesla account
-3. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000).
+3. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000). Log in with the default user `admin` (inital password `admin`) and enter a secure password.
 
 ## [Update](../upgrading.mdx)
 
