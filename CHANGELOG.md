@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.25.2] - 2022-01-12
+
+- Bump app base image to Debian 11 to fix `GLIBC_2.29' not found` error
+- Bump Grafana to 7.5.12
+
 ## [1.25.1] - 2022-01-12
 
 - Disable anonymous logins to Grafana (when using the `teslamate/grafana` Docker image)
