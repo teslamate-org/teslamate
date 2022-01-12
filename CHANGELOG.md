@@ -7,9 +7,11 @@
 
 ## [1.25.1] - 2022-01-12
 
-- Disable anonymous logins to Grafana (when using the `teslamate/grafana` Docker image)
-    - The first time you visit Grafana, you will be asked to log in. Use the default user `admin` with the password `admin`. After successful login, you will be prompted to change the password.
-    - To allow anonymous logins set the environment variable of the Grafana image `GF_AUTH_ANONYMOUS_ENABLED` to `true` (use only if your Grafana instance is not exposed to the internet!)
+Disable anonymous logins to Grafana by default (when using the `teslamate/grafana` Docker image)
+ - The first time you visit Grafana, you will be asked to log in. Use the default user `admin` with the password `admin`. After successful login, you will be prompted to change the password.
+- To allow anonymous logins set the environment variable of the Grafana image `GF_AUTH_ANONYMOUS_ENABLED` to `true` (use only if your Grafana instance is not exposed to the internet!)
+
+> This change only affects users who followed the [basic Docker installation guide](https://docs.teslamate.org/docs/installation/docker) which, as mentioned in the guide, is intended for home network use only and not for exposure to the internet. Users who followed one of the [advanced installation guides](https://docs.teslamate.org/docs/guides/traefik) are not affected as their Grafana instances always had anonymous logins disabled.
 
 ## [1.25.0] - 2021-11-12
 
