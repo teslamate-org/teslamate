@@ -9,7 +9,8 @@ Here is a list of projects using TeslaMate.
 - [MMM-Teslamate](#mmm-teslamate)
 - [TeslaMateAgile](#teslamateagile)
 - [TeslaMateApi](#teslamateapi)
-- [TeslaMate_Telegraf_Bot](#teslamate_telegram_bot)
+- [TeslaMate_Telegram_Bot](#teslamate_telegram_bot)
+- [TeslaMate-ABRP](#teslamate_abrp)
 
 ---
 
@@ -54,3 +55,9 @@ LINK: [github.com/tobiasehlert/TeslaMateApi](https://github.com/tobiasehlert/tes
 This is a telegram bot written in Python to notify by Telegram message when a new SW update for your Tesla is available. It uses the MQTT topic which TeslaMate offers.
 
 LINK: [github.com/JakobLichterfeld/TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot)
+
+## [TeslaMate_ABRP](https://github.com/fetzu/teslamate-abrp)
+
+This is a docker-based daemon/script that can push data to [ABetterRoutePlanner](https://abetterrouteplanner.com) based on contents of MQTT TeslaMate topic.
+
+LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
