@@ -122,7 +122,7 @@ The following commands will create a database called `teslamate` on the PostgreS
 ```console
 psql
 postgres=# create database teslamate;
-postgres=# create user teslamate with encrypted password 'secret';
+postgres=# create user teslamate with encrypted password 'your_secure_password_here';
 postgres=# grant all privileges on database teslamate to teslamate;
 postgres=# ALTER USER teslamate WITH SUPERUSER;
 postgres=# \q
@@ -230,7 +230,7 @@ service teslamate start
     Name: TeslaMate
     Host: localhost
     Database: teslamate
-    User: teslamate  Password: secret
+    User: teslamate  Password: your_secure_password_here
     SSL-Mode: disable
     Version: 10
     ```

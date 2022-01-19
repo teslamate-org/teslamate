@@ -72,15 +72,18 @@ msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/index.ex:15
-#: lib/teslamate_web/live/charge_live/cost.html.heex:3 lib/teslamate_web/live/geofence_live/form.html.heex:3
-#: lib/teslamate_web/live/geofence_live/index.html.heex:3 lib/teslamate_web/live/import_live/index.html.heex:3
+#: lib/teslamate_web/live/charge_live/cost.html.heex:3
+#: lib/teslamate_web/live/geofence_live/form.html.heex:3
+#: lib/teslamate_web/live/geofence_live/index.html.heex:3
+#: lib/teslamate_web/live/import_live/index.html.heex:3
 #: lib/teslamate_web/live/settings_live/index.html.heex:3
 msgid "Home"
 msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.ex:21
-#: lib/teslamate_web/live/settings_live/index.html.heex:4 lib/teslamate_web/templates/layout/root.html.heex:60
+#: lib/teslamate_web/live/settings_live/index.html.heex:4
+#: lib/teslamate_web/templates/layout/root.html.heex:60
 msgid "Settings"
 msgstr ""
 
@@ -137,8 +140,10 @@ msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:110
-#: lib/teslamate_web/live/geofence_live/form.html.heex:4 lib/teslamate_web/live/geofence_live/index.ex:22
-#: lib/teslamate_web/live/geofence_live/index.html.heex:4 lib/teslamate_web/templates/layout/root.html.heex:57
+#: lib/teslamate_web/live/geofence_live/form.html.heex:4
+#: lib/teslamate_web/live/geofence_live/index.ex:22
+#: lib/teslamate_web/live/geofence_live/index.html.heex:4
+#: lib/teslamate_web/templates/layout/root.html.heex:57
 msgid "Geo-Fences"
 msgstr ""
 
@@ -149,7 +154,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:43
-#: lib/teslamate_web/live/geofence_live/form.html.heex:48 lib/teslamate_web/live/geofence_live/index.html.heex:21
+#: lib/teslamate_web/live/geofence_live/form.html.heex:48
+#: lib/teslamate_web/live/geofence_live/index.html.heex:21
 msgid "Name"
 msgstr ""
 
@@ -172,7 +178,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:135
-#: lib/teslamate_web/live/geofence_live/form.html.heex:108 lib/teslamate_web/live/signin_live/index.html.heex:77
+#: lib/teslamate_web/live/geofence_live/form.html.heex:108
+#: lib/teslamate_web/live/signin_live/index.html.heex:77
 #: lib/teslamate_web/live/signin_live/index.html.heex:144
 msgid "Saving..."
 msgstr ""
@@ -465,7 +472,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:108
-#: lib/teslamate_web/live/signin_live/index.html.heex:75 lib/teslamate_web/live/signin_live/index.html.heex:142
+#: lib/teslamate_web/live/signin_live/index.html.heex:75
+#: lib/teslamate_web/live/signin_live/index.html.heex:142
 msgid "Sign in"
 msgstr ""
 

@@ -15,7 +15,7 @@ docker-compose exec -T database pg_dump -U teslamate teslamate > /backuplocation
 :::
 
 :::note
-Be absolutely certain to move the `teslamate.bck` file to another safe location, as you may loose that backup file if you use a docker-compose GUI to upgrade your teslamate configuration. Some GUIs delete the folder that holds the `docker-compose.yml` when updating.
+Be absolutely certain to move the `teslamate.bck` file to another safe location, as you may lose that backup file if you use a docker-compose GUI to upgrade your teslamate configuration. Some GUIs delete the folder that holds the `docker-compose.yml` when updating.
 :::
 
 :::note
