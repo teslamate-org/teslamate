@@ -166,10 +166,10 @@ export const SimpleMap = {
       boxZoom: false,
       doubleClickZoom: false,
       keyboard: false,
-      scrollWheelZoom: !!this.el.dataset.zoom,
+      scrollWheelZoom: true,
       tap: false,
       dragging: true,
-      touchZoom: !!this.el.dataset.zoom,
+      touchZoom: true,
     });
 
     const isArrow = this.el.dataset.marker === "arrow";
