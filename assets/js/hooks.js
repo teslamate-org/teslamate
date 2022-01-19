@@ -162,14 +162,14 @@ export const SimpleMap = {
 
     const map = createMap({
       elId: this.el.dataset.id,
-      zoomControl: !!this.el.dataset.zoom,
+      zoomControl: false,
       boxZoom: false,
       doubleClickZoom: false,
       keyboard: false,
-      scrollWheelZoom: false,
+      scrollWheelZoom: !!this.el.dataset.zoom,
       tap: false,
-      dragging: false,
-      touchZoom: false,
+      dragging: true,
+      touchZoom: !!this.el.dataset.zoom,
     });
 
     const isArrow = this.el.dataset.marker === "arrow";
