@@ -21,7 +21,6 @@ RUN mkdir -p "$GF_PATHS_PLUGINS" && \
 USER grafana
 
 RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install pr0ps-trackmap-panel 2.1.2 && \
-    grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install natel-discrete-panel 0.1.1 && \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/panodata/panodata-map-panel/releases/download/0.16.0/panodata-map-panel-0.16.0.zip plugins install grafana-worldmap-panel-ng
 
 COPY logo.svg /usr/share/grafana/public/img/grafana_icon.svg

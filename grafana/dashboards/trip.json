@@ -22,7 +22,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1642778255296,
+  "iteration": 1642781358282,
   "links": [
     {
       "icon": "doc",
@@ -1086,65 +1086,95 @@
       "type": "bargauge"
     },
     {
-      "backgroundColor": "rgba(128,128,128,0.01)",
-      "colorMaps": [
-        {
-          "color": "#F2CC0C",
-          "text": "charging"
-        },
-        {
-          "color": "#8F3BB8",
-          "text": "driving"
-        },
-        {
-          "color": "#56A64B",
-          "text": "asleep"
-        },
-        {
-          "color": "#6ED0E0",
-          "text": "online"
-        },
-        {
-          "color": "#FFB357",
-          "text": "offline"
-        },
-        {
-          "color": "#E02F44",
-          "text": "updating"
-        }
-      ],
-      "crosshairColor": "#8F070C",
       "datasource": "TeslaMate",
       "description": "",
-      "display": "timeline",
-      "expandFromQueryS": 0,
-      "extendLastValue": true,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "fillOpacity": 100,
+            "lineWidth": 0
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "#6ED0E0",
+                  "index": 0,
+                  "text": "online"
+                },
+                "1": {
+                  "color": "#8F3BB8",
+                  "index": 1,
+                  "text": "driving"
+                },
+                "2": {
+                  "color": "#F2CC0C",
+                  "index": 2,
+                  "text": "charging"
+                },
+                "3": {
+                  "color": "#FFB357",
+                  "index": 3,
+                  "text": "offline"
+                },
+                "4": {
+                  "color": "#56A64B",
+                  "index": 4,
+                  "text": "asleep"
+                },
+                "5": {
+                  "color": "#6ED0E0",
+                  "index": 5,
+                  "text": "online"
+                },
+                "6": {
+                  "color": "#E02F44",
+                  "index": 6,
+                  "text": "updating"
+                },
+                "null": {
+                  "index": 7,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 2,
         "w": 24,
         "x": 0,
         "y": 14
       },
-      "highlightOnMouseover": false,
       "id": 20,
-      "legendSortBy": "-ms",
-      "lineColor": "rgba(0,0,0,0.1)",
-      "metricNameColor": "#000000",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
+      "options": {
+        "alignValue": "center",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "mergeValues": true,
+        "rowHeight": 1,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single"
         }
-      ],
-      "rowHeight": 30,
-      "showLegend": false,
-      "showLegendCounts": false,
-      "showLegendNames": false,
-      "showLegendPercent": false,
-      "showLegendTime": true,
-      "showLegendValues": false,
-      "showTimeAxis": true,
+      },
       "targets": [
         {
           "format": "time_series",
@@ -1175,98 +1205,8 @@
           ]
         }
       ],
-      "textSize": 12,
-      "textSizeTime": 9,
-      "timeOptions": [
-        {
-          "name": "Years",
-          "value": "years"
-        },
-        {
-          "name": "Months",
-          "value": "months"
-        },
-        {
-          "name": "Weeks",
-          "value": "weeks"
-        },
-        {
-          "name": "Days",
-          "value": "days"
-        },
-        {
-          "name": "Hours",
-          "value": "hours"
-        },
-        {
-          "name": "Minutes",
-          "value": "minutes"
-        },
-        {
-          "name": "Seconds",
-          "value": "seconds"
-        },
-        {
-          "name": "Milliseconds",
-          "value": "milliseconds"
-        }
-      ],
-      "timePrecision": {
-        "name": "Minutes",
-        "value": "minutes"
-      },
-      "timeTextColor": "#d8d9da",
       "transparent": true,
-      "type": "natel-discrete-panel",
-      "units": "short",
-      "use12HourClock": false,
-      "useTimePrecision": false,
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        },
-        {
-          "op": "=",
-          "text": "online",
-          "value": "0"
-        },
-        {
-          "op": "=",
-          "text": "driving",
-          "value": "1"
-        },
-        {
-          "op": "=",
-          "text": "charging",
-          "value": "2"
-        },
-        {
-          "op": "=",
-          "text": "offline",
-          "value": "3"
-        },
-        {
-          "op": "=",
-          "text": "asleep",
-          "value": "4"
-        },
-        {
-          "op": "=",
-          "text": "online",
-          "value": "5"
-        },
-        {
-          "op": "=",
-          "text": "updating",
-          "value": "6"
-        }
-      ],
-      "valueTextColor": "#0f0f0f",
-      "writeAllValues": true,
-      "writeLastValue": true,
-      "writeMetricNames": false
+      "type": "state-timeline"
     },
     {
       "fieldConfig": {
@@ -2513,8 +2453,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1642590758899",
-          "value": "1642590758899"
+          "text": "1642593521525",
+          "value": "1642593521525"
         },
         "datasource": "TeslaMate",
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
