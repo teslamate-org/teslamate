@@ -15,7 +15,12 @@ const build_opts = {
   entryPoints: [path.join(__dirname, "..", "js", ENTRY_FILE)],
   outfile: `${OUTPUT_DIR}/${OUTPUT_FILE}`,
   minify: !isDevMode,
-  watch: isDevMode,
+  watch: isDevMode && {
+    onRebuild(error, result) {
+      if (error) console.error("[-] Esbuild failed:", error);
+      else console.log(`[+] Esbuild succeeded`);
+    },
+  },
   bundle: true,
   target: TARGET,
   logLevel: "silent",
@@ -39,8 +44,13 @@ const build_opts = {
 async function build() {
   try {
     console.log(`[+] Starting static assets build with esbuild (${MODE})...`);
-    await esbuild.build(build_opts);
+    result = await esbuild.build(build_opts);
     console.log(`[+] Esbuild ${ENTRY_FILE} to ${OUTPUT_DIR} succeeded.`);
+
+    if (!!build_opts.watch) {
+      process.stdin.pipe(process.stdout);
+      process.stdin.on("end", () => result.stop());
+    }
   } catch (e) {
     console.error("[-] Error building:", e.message);
     process.exit(1);

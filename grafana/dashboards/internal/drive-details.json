@@ -116,7 +116,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed::numeric, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tconvert_km([[preferred_range]]_battery_range_km, '$length_unit') AS \"Range ($preferred_range) [$length_unit]\",\n\tconvert_km(est_battery_range_km, '$length_unit') AS \"Range (est.) [$length_unit]\",\n\tbattery_level AS \"SOC [%]\",\n\tusable_battery_level AS \"usable SOC [%]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed::numeric, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tbattery_heater::integer*100 AS \"Preconditioning\",\n\tconvert_km([[preferred_range]]_battery_range_km, '$length_unit') AS \"Range ($preferred_range) [$length_unit]\",\n\tconvert_km(est_battery_range_km, '$length_unit') AS \"Range (est.) [$length_unit]\",\n\tbattery_level AS \"SOC [%]\",\n\tusable_battery_level AS \"usable SOC [%]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [

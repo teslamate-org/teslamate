@@ -1,7 +1,7 @@
-FROM grafana/grafana:7.5.11
+FROM grafana/grafana:7.5.12
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=FALSE \
-    GF_AUTH_ANONYMOUS_ENABLED=true \
+    GF_AUTH_ANONYMOUS_ENABLED=false \
     GF_AUTH_BASIC_ENABLED=false \
     GF_PATHS_PLUGINS="/var/lib/grafana-plugins" \
     GF_SECURITY_ADMIN_PASSWORD=admin \

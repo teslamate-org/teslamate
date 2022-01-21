@@ -113,40 +113,40 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
       html = Floki.parse_document!(html)
 
-      name = Floki.find(html, "##{id}_name")
+      name = Floki.find(html, "#geo_fence_name")
       assert ["Post office"] = Floki.attribute(name, "value")
 
-      latitude = Floki.find(html, "##{id}_latitude")
+      latitude = Floki.find(html, "#geo_fence_latitude")
       assert ["-25.066188"] = Floki.attribute(latitude, "value")
 
-      longitude = Floki.find(html, "##{id}_longitude")
+      longitude = Floki.find(html, "#geo_fence_longitude")
       assert ["-130.100502"] = Floki.attribute(longitude, "value")
 
-      radius = Floki.find(html, "##{id}_radius")
+      radius = Floki.find(html, "#geo_fence_radius")
       assert ["100"] = Floki.attribute(radius, "value")
 
-      radius = Floki.find(html, "##{id}_cost_per_unit")
+      radius = Floki.find(html, "#geo_fence_cost_per_unit")
       assert ["0.2599"] = Floki.attribute(radius, "value")
 
-      radius = Floki.find(html, "##{id}_session_fee")
+      radius = Floki.find(html, "#geo_fence_session_fee")
       assert ["5.49"] = Floki.attribute(radius, "value")
 
       html =
         render_submit(view, :save, %{geo_fence: %{name: "", radius: ""}})
         |> Floki.parse_document!()
 
-      assert [""] = html |> Floki.find("##{id}_name") |> Floki.attribute("value")
+      assert [""] = html |> Floki.find("#geo_fence_name") |> Floki.attribute("value")
 
       for kind <- ["name", "radius"] do
         error_html =
           html
           |> Floki.find(".field-body .field")
-          |> Enum.filter(fn field -> Floki.find(field, "##{id}_#{kind}") |> length() == 1 end)
+          |> Enum.filter(fn field -> Floki.find(field, "#geo_fence_#{kind}") |> length() == 1 end)
           |> Floki.find("span")
           |> Floki.raw_html(encode: false)
 
         assert error_html ==
-                 "<span class=\"help is-danger pl-15\" phx-feedback-for=\"#{id}_#{kind}\">can't be blank</span>"
+                 "<span class=\"help is-danger pl-15\" phx-feedback-for=\"geo_fence_#{kind}\">can't be blank</span>"
       end
     end
 
@@ -157,16 +157,16 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
       html = Floki.parse_document!(html)
 
-      name = Floki.find(html, "##{id}_name")
+      name = Floki.find(html, "#geo_fence_name")
       assert ["Post office"] = Floki.attribute(name, "value")
 
-      latitude = Floki.find(html, "##{id}_latitude")
+      latitude = Floki.find(html, "#geo_fence_latitude")
       assert ["-25.066188"] = Floki.attribute(latitude, "value")
 
-      longitude = Floki.find(html, "##{id}_longitude")
+      longitude = Floki.find(html, "#geo_fence_longitude")
       assert ["-130.100502"] = Floki.attribute(longitude, "value")
 
-      radius = Floki.find(html, "##{id}_radius")
+      radius = Floki.find(html, "#geo_fence_radius")
       assert ["100"] = Floki.attribute(radius, "value")
 
       render_submit(view, :save, %{
@@ -522,8 +522,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       h = Floki.parse_document!(h)
 
       assert [] == Floki.find(h, ".modal.is-active")
-      assert ["47.814441"] = h |> Floki.find("##{id}_latitude") |> Floki.attribute("value")
-      assert ["12.367768"] = h |> Floki.find("##{id}_longitude") |> Floki.attribute("value")
+      assert ["47.814441"] = h |> Floki.find("#geo_fence_latitude") |> Floki.attribute("value")
+      assert ["12.367768"] = h |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
 
       html =
         render_submit(view, :save, %{geo_fence: %{latitude: 47.814451, longitude: 12.367761}})
@@ -560,8 +560,8 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       h = Floki.parse_document!(h)
 
       assert [] == Floki.find(h, ".modal.is-active")
-      assert ["47.814441"] = h |> Floki.find("##{id}_latitude") |> Floki.attribute("value")
-      assert ["12.367768"] = h |> Floki.find("##{id}_longitude") |> Floki.attribute("value")
+      assert ["47.814441"] = h |> Floki.find("#geo_fence_latitude") |> Floki.attribute("value")
+      assert ["12.367768"] = h |> Floki.find("#geo_fence_longitude") |> Floki.attribute("value")
 
       html =
         render_submit(view, :save, %{geo_fence: %{radius: 50}})

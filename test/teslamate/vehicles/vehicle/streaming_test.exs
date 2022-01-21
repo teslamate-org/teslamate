@@ -234,7 +234,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                assert_receive :continue?
                refute_receive _
              end) =~ """
-             [warn] Discarded stale fetch result: %{
+             Discarded stale fetch result: %{
                last: %TeslaApi.Vehicle.State.Drive{
                  gps_as_of: nil,
                  heading: 120,
@@ -298,7 +298,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert capture_log(@log_opts, fn ->
                stream(name, %{shift_state: "P", time: DateTime.add(now, -1, :second)})
                refute_receive _
-             end) =~ "[warn] Received stale stream data"
+             end) =~ "Received stale stream data"
     end
   end
 
@@ -429,7 +429,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert capture_log(@log_opts, fn ->
                stream(name, %{shift_state: "D", time: DateTime.add(now, 1, :millisecond)})
                refute_receive _
-             end) =~ "[warn] Received stale stream data"
+             end) =~ "Received stale stream data"
     end
   end
 

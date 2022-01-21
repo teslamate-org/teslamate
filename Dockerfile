@@ -1,4 +1,4 @@
-FROM elixir:1.12 AS builder
+FROM elixir:1.13 AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -37,7 +37,7 @@ RUN mix release --path /opt/built
 
 ########################################################################
 
-FROM debian:buster-slim AS app
+FROM debian:bullseye-slim AS app
 
 ENV LANG=C.UTF-8 \
     SRTM_CACHE=/opt/app/.srtm_cache \

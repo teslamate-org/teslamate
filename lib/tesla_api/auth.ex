@@ -35,7 +35,7 @@ defmodule TeslaApi.Auth do
 
       :error ->
         case decode_jwt_payload(access_token) do
-          {:ok, %{"iss" => iss}} -> URI.parse(iss)
+          {:ok, %{"iss" => issuer_url}} -> issuer_url
           _ -> "https://auth.tesla.com/oauth2/v3"
         end
     end

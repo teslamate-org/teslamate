@@ -15,8 +15,6 @@ defmodule TeslaApi.Stream do
               disconnects: 0
   end
 
-  @endpoint_url "wss://streaming.vn.teslamotors.com/streaming/"
-
   @columns ~w(speed odometer soc elevation est_heading est_lat est_lng power shift_state range
               est_range heading)a
 
@@ -32,7 +30,13 @@ defmodule TeslaApi.Stream do
       auth: Keyword.fetch!(args, :auth)
     }
 
-    WebSockex.start_link(@endpoint_url, __MODULE__, state,
+    endpoint_url =
+      case Auth.region(state.auth) do
+        :chinese -> "wss://streaming.vn.cloud.tesla.cn/streaming/"
+        _global -> "wss://streaming.vn.teslamotors.com/streaming/"
+      end
+
+    WebSockex.start_link(endpoint_url, __MODULE__, state,
       socket_connect_timeout: :timer.seconds(15),
       socket_recv_timeout: :timer.seconds(30),
       name: :"stream_#{state.vehicle_id}",

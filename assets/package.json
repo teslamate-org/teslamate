@@ -8,8 +8,8 @@
   "dependencies": {
     "@creativebulma/bulma-divider": "^1.1.0",
     "@creativebulma/bulma-tooltip": "^1.2.0",
-    "@geoman-io/leaflet-geoman-free": "^2.11.3",
-    "@mdi/font": "^6.4.95",
+    "@geoman-io/leaflet-geoman-free": "^2.11.4",
+    "@mdi/font": "^6.5.95",
     "bulma-switch": "^2.0.0",
     "leaflet": "^1.7.1",
     "leaflet-control-geocoder": "^2.3.0",
@@ -19,9 +19,9 @@
   },
   "devDependencies": {
     "bulma": "^0.9.3",
-    "esbuild": "^0.13.12",
-    "esbuild-sass-plugin": "^1.7.0",
-    "sass": "^1.43.4"
+    "esbuild": "^0.14.10",
+    "esbuild-sass-plugin": "^2.0.0",
+    "sass": "^1.45.2"
   },
   "name": "assets"
 }
