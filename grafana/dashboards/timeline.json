@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1636742104784,
+  "iteration": 1642782365506,
   "links": [
     {
       "asDropdown": false,
@@ -50,6 +50,7 @@
       "url": ""
     }
   ],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
@@ -71,6 +72,7 @@
       "fieldConfig": {
         "defaults": {
           "custom": {
+            "align": "auto",
             "displayMode": "auto",
             "filterable": false
           },
@@ -102,7 +104,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 170
+                "value": 180
               },
               {
                 "id": "links",
@@ -251,6 +253,10 @@
                     "url": "[[base_url:raw]]/geo-fences/${__data.fields.start_path}"
                   }
                 ]
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 200
               }
             ]
           },
@@ -269,6 +275,10 @@
                     "url": "[[base_url:raw]]/geo-fences/${__data.fields.end_path}"
                   }
                 ]
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 200
               }
             ]
           },
@@ -515,7 +525,7 @@
           }
         ]
       },
-      "pluginVersion": "8.3.0-41273pre",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -602,7 +612,7 @@
     }
   ],
   "refresh": "1h",
-  "schemaVersion": 33,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [
     "tesla"
