@@ -8,14 +8,20 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1598014142171,
+  "iteration": 1642780400001,
   "links": [
     {
       "icon": "dashboard",
@@ -35,6 +41,7 @@
       "type": "dashboards"
     }
   ],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
@@ -48,26 +55,12 @@
       "id": 4,
       "panels": [],
       "repeat": "car_id",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "title": "$car_id",
       "type": "row"
     },
     {
       "autoZoom": true,
-      "datasource": "TeslaMate",
       "defaultLayer": "OpenStreetMap",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 21,
         "w": 24,
@@ -79,23 +72,47 @@
       "links": [],
       "maxDataPoints": 10000000,
       "pointColor": "royalblue",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "scrollWheelZoom": false,
       "showLayerChanger": true,
       "targets": [
         {
+          "datasource": "TeslaMate",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tto_timestamp(floor((extract('epoch' FROM date) / 60)) * 60) AT TIME ZONE 'UTC' AS time,\n\tavg(latitude) AS lat,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "rawSql": "SELECT\n\tto_timestamp(floor((extract('epoch' FROM date) / 60)) * 60) AT TIME ZONE 'UTC' AS time,\n\tavg(latitude) AS lat\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
           "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "charging",
+          "timeColumn": "Datum",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": "TeslaMate",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tto_timestamp(floor((extract('epoch' FROM date) / 60)) * 60) AT TIME ZONE 'UTC' AS time,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "refId": "B",
           "select": [
             [
               {
@@ -123,7 +140,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 26,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [
     "tesla"
@@ -131,11 +148,10 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": false,
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
@@ -151,13 +167,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "http://localhost:4000",
@@ -177,7 +191,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -216,5 +229,6 @@
   "timezone": "",
   "title": "Visited",
   "uid": "RG_DxSmgk",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }
