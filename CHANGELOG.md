@@ -1,5 +1,16 @@
 # Changelog
 
+## [unreleased]
+
+### Improvements and Bug Fixes
+
+- Upgrade to Grafana 8
+  - All table panels have been migrated to the new table component.
+    - This brings a bunch of improvments including an improved experience on small display sizes.
+    - The date colums now use a local format depending on your browser language setting
+  - The pie chart panel have been migrated to the new native pie charts component
+  - The discrete panels have been replaced by the native state timeline panel
+
 ## [1.25.2] - 2022-01-12
 
 - Bump app base image to Debian 11 to fix `GLIBC_2.29' not found` error
