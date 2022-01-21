@@ -162,14 +162,14 @@ export const SimpleMap = {
 
     const map = createMap({
       elId: this.el.dataset.id,
-      zoomControl: false,
+      zoomControl: !!this.el.dataset.zoom,
       boxZoom: false,
       doubleClickZoom: false,
       keyboard: false,
-      scrollWheelZoom: true,
+      scrollWheelZoom: false,
       tap: false,
-      dragging: true,
-      touchZoom: true,
+      dragging: false,
+      touchZoom: false,
     });
 
     const isArrow = this.el.dataset.marker === "arrow";
@@ -181,6 +181,11 @@ export const SimpleMap = {
 
     map.setView([lat, lng], 17);
     marker.addTo(map);
+
+    map.removeControl(map.zoomControl);
+
+    map.on('mouseover', function(e) { map.addControl( map.zoomControl ); });
+    map.on('mouseout', function(e) { map.removeControl( map.zoomControl ); });
 
     if (isArrow) {
       const setView = () => {
