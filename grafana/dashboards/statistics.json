@@ -8,14 +8,20 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1601887874542,
+  "iteration": 1642773094879,
   "links": [
     {
       "icon": "dashboard",
@@ -34,10 +40,11 @@
       "type": "dashboards"
     }
   ],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_TESLAMATE}",
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -47,13 +54,6 @@
       "id": 4,
       "panels": [],
       "repeat": "car_id",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "title": "$car_id",
       "type": "row"
     },
@@ -439,8 +439,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 25
+                "id": "custom.hidden",
+                "value": true
               }
             ]
           },
@@ -451,23 +451,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 26
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Avg consumption from charges"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "Wh/km"
-              },
-              {
-                "id": "custom.width"
+                "id": "custom.hidden",
+                "value": true
               }
             ]
           }
@@ -475,13 +460,20 @@
       },
       "gridPos": {
         "h": 18,
-        "w": 23,
+        "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 2,
       "maxPerRow": 2,
       "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "frameIndex": 1,
         "showHeader": true,
         "sortBy": [
@@ -491,16 +483,8 @@
           }
         ]
       },
-      "pluginVersion": "7.5.4",
-      "repeat": null,
+      "pluginVersion": "8.3.4",
       "repeatDirection": "h",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "targets": [
         {
           "format": "table",
@@ -584,8 +568,6 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "per ${period}",
       "transformations": [
         {
@@ -671,9 +653,9 @@
               "date": false,
               "date_from": false,
               "date_to": false,
-              "timezone": true,
               "efficiency_charged_net_km_temp": true,
-              "efficiency_charged_net_mi_temp": true
+              "efficiency_charged_net_mi_temp": true,
+              "timezone": true
             },
             "indexByName": {
               "avg_consumption_kwh": 9,
@@ -686,10 +668,10 @@
               "date_to": 17,
               "display": 0,
               "efficiency": 7,
-              "efficiency_net_km": 12,
-              "efficiency_net_mi": 13,
               "efficiency_charged_net_km": 14,
               "efficiency_charged_net_mi": 15,
+              "efficiency_net_km": 12,
+              "efficiency_net_mi": 13,
               "sum_consumption_kwh": 8,
               "sum_distance_km": 3,
               "sum_distance_mi": 4,
@@ -718,7 +700,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 27,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [
     "tesla"
@@ -726,7 +708,6 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "All",
@@ -746,13 +727,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "km",
@@ -798,13 +777,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": true,
           "text": "month",
@@ -843,7 +820,6 @@
         "type": "custom"
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "ideal",
@@ -853,7 +829,6 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "preferred_range",
         "options": [],
@@ -863,15 +838,15 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
-          "selected": false
+          "selected": false,
+          "text": "Europe/Berlin",
+          "value": "Europe/Berlin"
         },
         "datasource": "TeslaMate",
         "definition": "select current_setting('TIMEZONE'), name from pg_timezone_names where abbrev ~ '^[a-zA-Z]{3,4}$' and name not like 'posix%' order by 2;",
@@ -887,13 +862,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "http://localhost:4000",
@@ -903,7 +876,6 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "base_url",
         "options": [],
@@ -913,7 +885,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -941,5 +912,6 @@
   "timezone": "browser",
   "title": "Statistics",
   "uid": "1EZnXszMk",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }
