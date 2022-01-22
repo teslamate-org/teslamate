@@ -1055,7 +1055,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          {:next_event, :internal, {:update, {:online, vehicle}}}}
 
       %VehicleState{timestamp: ts, car_version: vsn, software_update: %SW{} = software_update} ->
-        if software_update.status != "" do
+        if software_update.status != "" and
+             not (software_update.status == "downloading" and software_update.install_perc == 100) do
           Logger.error(
             """
             Unexpected update status: #{software_update.status}
