@@ -298,7 +298,7 @@ msgid "The car's estimate of remaining range is based on a fixed energy consumpt
 msgstr "Die Schätzung der verbleibenden Reichweite basiert auf einem fixen Energieverbrauch in Wh/km. Der Wh/km-Faktor wird von Tesla bestimmt und ist nicht länderspezifisch, wohingegen die 'rated' Reichweite auf regulatorischen Tests in den verschiedenen Märkten für dieses Fahrzeug basiert."
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:140
+#: lib/teslamate_web/live/car_live/summary.ex:141
 msgid "Update in progress"
 msgstr "Update läuft"
 
@@ -376,12 +376,12 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geo-Fence \"%{name}\" aktualisiert"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:142
+#: lib/teslamate_web/live/car_live/summary.ex:143
 msgid "An error occurred"
 msgstr "Ein Fehler ist aufgetreten"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:141
+#: lib/teslamate_web/live/car_live/summary.ex:142
 msgid "Timeout"
 msgstr ""
 
@@ -610,3 +610,8 @@ msgstr "hier"
 #: lib/teslamate_web/live/signin_live/index.ex:59
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
 msgstr "Ihr Tesla-Konto ist aufgrund von zu vielen fehlgeschlagenen Anmeldeversuchen gesperrt. Um Ihr Konto zu entsperren, setzen Sie Ihr Kennwort zurück"
+
+#, elixir-format, ex-autogen
+#: lib/teslamate_web/live/car_live/summary.ex:140
+msgid "Downloading update"
+msgstr "Update wird heruntergeladen"
