@@ -60,7 +60,8 @@ defmodule TeslaMate.MixProject do
       {:timex, "~> 3.0"},
       {:tortoise, "~> 0.10"},
       {:tzdata, "~> 1.1"},
-      {:websockex, "~> 0.4"}
+      {:websockex, "~> 0.4"},
+      {:cloak_ecto, "~> 1.2"}
     ]
   end
 

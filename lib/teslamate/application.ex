@@ -21,6 +21,7 @@ defmodule TeslaMate.Application do
       nil ->
         [
           TeslaMate.Repo,
+          TeslaMate.Vault,
           TeslaMate.HTTP,
           TeslaMate.Api,
           TeslaMate.Updater,
@@ -36,6 +37,7 @@ defmodule TeslaMate.Application do
       import_directory ->
         [
           TeslaMate.Repo,
+          TeslaMate.Vault,
           TeslaMate.HTTP,
           TeslaMate.Api,
           TeslaMate.Updater,

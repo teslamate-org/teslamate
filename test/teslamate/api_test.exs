@@ -65,6 +65,11 @@ defmodule TeslaMate.ApiTest do
 
   @valid_tokens %Tokens{access: "$access", refresh: "$refresh"}
 
+  setup do
+    start_supervised!(TeslaMate.Vault)
+    :ok
+  end
+
   describe "sign in" do
     test "starts without tokens", %{test: name} do
       with_mocks [auth_mock(self()), vehicle_mock(self())] do

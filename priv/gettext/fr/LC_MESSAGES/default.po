@@ -449,7 +449,7 @@ msgstr[0] "Trouvé %{count} fichier"
 msgstr[1] "Trouvé %{count} fichiers"
 
 #, elixir-format
-#: lib/teslamate_web/templates/layout/root.html.heex:87
+#: lib/teslamate_web/templates/layout/root.html.heex:104
 msgid "Donate"
 msgstr "Faire un don"
 
@@ -550,7 +550,7 @@ msgstr "GitHub"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:274
-#: lib/teslamate_web/templates/layout/root.html.heex:95
+#: lib/teslamate_web/templates/layout/root.html.heex:112
 msgid "Update available"
 msgstr "Mise à jour disponible"
 
@@ -613,4 +613,24 @@ msgstr "Votre compte Tesla est verrouillé en raison d'un trop grand nombre de t
 #, elixir-format, ex-autogen
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Downloading update"
+msgstr ""
+
+#, elixir-format, ex-autogen
+#: lib/teslamate_web/templates/layout/root.html.heex:80
+msgid "No encryption key provided"
+msgstr ""
+
+#, elixir-format, ex-autogen, fuzzy
+#: lib/teslamate_web/templates/layout/root.html.heex:84
+msgid "For more information, see the updated installation guides on %{link}"
+msgstr ""
+
+#, elixir-format, ex-autogen
+#: lib/teslamate_web/templates/layout/root.html.heex:83
+msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
+msgstr ""
+
+#, elixir-format, ex-autogen, fuzzy
+#: lib/teslamate_web/templates/layout/root.html.heex:82
+msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr ""
