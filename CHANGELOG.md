@@ -4,21 +4,30 @@
 
 ### Improvements and Bug Fixes
 
-- Bump Docker app base image to Debian 11
-  - Raspberry Pi users unfortunately have to upgrade to Raspbian Bullseye or install the  backports version `libseccomp2` (see [#2302](https://github.com/adriankumpf/teslamate/issues/2302))
+- Remove support for logins with username/password
+- Show zoom controls when hovering over or tapping the map ([#2184](https://github.com/adriankumpf/teslamate/pull/2184) by [bogosj](https://github.com/bogosj))
 - Use new Chinese Tesla API endpoints
 - Fix MFA for Chinese accounts ([#2234](https://github.com/adriankumpf/teslamate/pull/2234) by [howard0su](https://github.com/howard0su))
-- Guard against duplicate vehicle API responses
 - Fix detection of refreshed Model S
+- Guard against duplicate vehicle API responses
+- Don't suspend logging while a car software update is downloaded
+- Don't warn if the update status completing the of a car software update is still reported as 'downloading'
+- Bump Docker app base image to Debian 11
+  - Raspberry Pi users unfortunately have to upgrade to Raspbian Bullseye or install the  backports version `libseccomp2` (see [#2302](https://github.com/adriankumpf/teslamate/issues/2302))
 
 #### Dashboards
 
-- Upgrade Grafana to version 8
-  - All table panels have been migrated to the new table component
-    - This brings a bunch of improvments including an improved experience on small display sizes
-    - The date colums now use a local format depending on your browser language setting
-  - The pie chart panel have been migrated to the new native pie charts component
-  - The discrete panels have been replaced by the native state timeline panel
+##### Upgrade Grafana to version 8
+
+> ⚠️ Manually managed Grafana instances have to be upgraded to v8.3.4 or higher!
+
+- All table panels have been migrated to the new table component
+  - This brings a bunch of improvments including an improved experience on small screen sizes
+  - The date colums now use a local format depending on your browser language setting
+- The pie chart panels have been migrated to the new native pie charts component
+- The discrete panels have been replaced by the native state timeline panel
+
+##### Other
 
 - Drive Details: Display if the car is preconditioning ([#2281](https://github.com/adriankumpf/teslamate/pull/2281) by [carloscuezva](https://github.com/carloscuezva))
 
@@ -36,6 +45,7 @@
 - Update FAQ: Clarified how the consumption values are calculated and what triggers the recalculations ([#2345](https://github.com/adriankumpf/teslamate/pull/2345)) by [cwanja](https://github.com/cwanja)
 - Added [TeslaMate-ABRP](https://github.com/fetzu/teslamate-abrp) to list of projects ([#2314](https://github.com/adriankumpf/teslamate/pull/2314))
 - Fix typo ([#2217](https://github.com/adriankumpf/teslamate/pull/2217) by [Oddadin](https://github.com/Oddadin))
+- Clarify that the pull command needs to be ran from the directory where the docker YML file is located ([#2368](https://github.com/adriankumpf/teslamate/pull/2368) by [cwanja](https://github.com/cwanja))
 
 ## [1.25.2] - 2022-01-12
 
