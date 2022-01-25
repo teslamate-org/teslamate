@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased]
+## [1.26.0] - 2022-01-25
 
 ### Improvements and Bug Fixes
 
@@ -1478,6 +1478,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.26.0]: https://github.com/adriankumpf/teslamate/compare/v1.25.2...v1.26.0
 [1.25.2]: https://github.com/adriankumpf/teslamate/compare/v1.25.1...v1.25.2
 [1.25.1]: https://github.com/adriankumpf/teslamate/compare/v1.25.0...v1.25.1
 [1.25.0]: https://github.com/adriankumpf/teslamate/compare/v1.24.2...v1.25.0
