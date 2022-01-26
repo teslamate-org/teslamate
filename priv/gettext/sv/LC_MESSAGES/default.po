@@ -614,4 +614,4 @@ msgstr "Ditt Tesla-konto är låst på grund av för många misslyckade inloggni
 #, elixir-format, ex-autogen
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Downloading update"
-msgstr ""
+msgstr "Laddar ner uppdatering"
