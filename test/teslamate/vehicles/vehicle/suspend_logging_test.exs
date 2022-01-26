@@ -89,6 +89,32 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert {:error, :user_present} = Vehicle.suspend_logging(name)
   end
 
+  test "cannot be suspended if a download is in progress", %{test: name} do
+    not_suspendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        vehicle_state: %{
+          software_update: %TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate{
+            status: "downloading",
+            download_perc: 10
+          },
+          car_version: ""
+        }
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, not_suspendable}
+    ]
+
+    :ok = start_vehicle(name, events)
+
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
+
+    assert {:error, :downloading_update} = Vehicle.suspend_logging(name)
+  end
+
   test "cannot be suspended if sentry mode is active", %{test: name} do
     not_suspendable =
       online_event(

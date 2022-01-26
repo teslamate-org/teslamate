@@ -11,7 +11,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 
 - Docker _(if you are new to Docker, see [Installing Docker and Docker Compose](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl))_
 - A Machine that's always on, so TeslaMate can continually fetch data
-- At least 1 GB of RAM on the machine for the installation to succeed. 
+- At least 1 GB of RAM on the machine for the installation to succeed.
 - External internet access, to talk to tesla.com
 
 ## Instructions
@@ -27,7 +27,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
        restart: always
        environment:
          - DATABASE_USER=teslamate
-         - DATABASE_PASS=secret
+         - DATABASE_PASS= #insert your secure password!
          - DATABASE_NAME=teslamate
          - DATABASE_HOST=database
          - MQTT_HOST=mosquitto
@@ -43,7 +43,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
        restart: always
        environment:
          - POSTGRES_USER=teslamate
-         - POSTGRES_PASSWORD=secret
+         - POSTGRES_PASSWORD= #insert your secure password!
          - POSTGRES_DB=teslamate
        volumes:
          - teslamate-db:/var/lib/postgresql/data
@@ -53,7 +53,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
        restart: always
        environment:
          - DATABASE_USER=teslamate
-         - DATABASE_PASS=secret
+         - DATABASE_PASS= #insert your secure password!
          - DATABASE_NAME=teslamate
          - DATABASE_HOST=database
        ports:
@@ -65,8 +65,8 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
        image: eclipse-mosquitto:2
        restart: always
        command: mosquitto -c /mosquitto-no-auth.conf
-       ports:
-         - 1883:1883
+       # ports:
+       #   - 1883:1883
        volumes:
          - mosquitto-conf:/mosquitto/config
          - mosquitto-data:/mosquitto/data
@@ -78,7 +78,9 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
      mosquitto-data:
    ```
 
-2. Start the docker containers with `docker-compose up`. To run the containers in the background add the `-d` flag:
+2. Choose your secure database password and insert it at every occurence of `DATABASE_PASS` and `POSTGRES_PASSWORD`
+
+3. Start the docker containers with `docker-compose up`. To run the containers in the background add the `-d` flag:
 
    ```bash
    docker-compose up -d
@@ -88,7 +90,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 
 1. Open the web interface [http://your-ip-address:4000](http://localhost:4000)
 2. Sign in with your Tesla account
-3. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000).
+3. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000). Log in with the default user `admin` (inital password `admin`) and enter a secure password.
 
 ## [Update](../upgrading.mdx)
 

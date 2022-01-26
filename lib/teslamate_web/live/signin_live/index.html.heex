@@ -1,190 +1,53 @@
-<% alias TeslaMateWeb.SignInLive.Index.State.{Credentials, Tokens, MFA, Captcha} %>
-
 <div class="mfa columns is-tablet is-centered">
   <div class="column is-half">
-    <%= case @state do %>
-      <% %type{changeset: changeset} when type in [Credentials, Tokens]-> %>
+    <.form let={f} for={@changeset} phx_change="validate" phx_submit="sign_in" class="box" as="tokens">
+      <%= if @error do %>
+        <div class="notification is-danger">
+          Error: <%= @error %>
+        </div>
+      <% end %>
 
-        <.form let={f} for={changeset} phx_change="validate" phx_submit="sign_in" class="box" as={(case type do
-          Credentials -> "credentials"
-          Tokens -> "tokens"
-        end)}>
-          <%= if @error do %>
-            <div class="notification is-danger">
-              Error: <%= @error %>
-            </div>
-          <% end %>
-
-          <%= case type do %>
-            <% Credentials -> %>
-          <div class="field">
-            <%= label f, :email, gettext("Email address"), class: "label" %>
-            <div class="control has-icons-left">
-              <%= text_input f, :email, class: "input is-rounded", type: "username",
-                                        autocorrect: "off", autocomplete: "email",
-                                        autocapitalize: "none", spellcheck: "false",
-                                        disabled: !!@task
-              %>
-              <span class="icon is-small is-left">
-                <i class="mdi mdi-email"></i>
-              </span>
-            </div>
-          </div>
-
-          <div class="field">
-            <%= label f, :password, gettext("Password"), class: "label" %>
-            <div class="control has-icons-left">
-              <%= text_input f, :password, class: "input is-rounded", type: "password",
-                                           autocomplete: "current-password", disabled: !!@task %>
-              <span class="icon is-small is-left">
-                <i class="mdi mdi-lock"></i>
-              </span>
-            </div>
-          </div>
-
-            <% Tokens -> %>
-          <div class="field">
-            <%= label f, :access, gettext("Access Token"), class: "label" %>
-            <div class="control has-icons-left">
-              <%= text_input f, :access, class: "input is-rounded", autocorrect: "off",
-                                         autocapitalize: "none", spellcheck: "false",
-                                         disabled: !!@task
-              %>
-              <span class="icon is-small is-left">
-                <i class="mdi mdi-api"></i>
-              </span>
-            </div>
-          </div>
-
-          <div class="field">
-            <%= label f, :refresh, gettext("Refresh Token"), class: "label" %>
-            <div class="control has-icons-left">
-              <%= text_input f, :refresh, class: "input is-rounded", autocorrect: "off",
-                                          autocapitalize: "none", spellcheck: "false",
-                                          disabled: !!@task
-              %>
-              <span class="icon is-small is-left">
-                <i class="mdi mdi-cloud-refresh"></i>
-              </span>
-            </div>
-          </div>
-          <% end %>
-
-          <div class="field mt-5">
-            <div class="control">
-              <%= submit gettext("Sign in"), class: ["button",  "is-rounded", "is-fullwidth", "is-link", (if !!@task, do: "is-loading")],
-                                             disabled: !changeset.valid?,
-                                             phx_disable_with: gettext("Saving...")
-              %>
-            </div>
-          </div>
-
-          <%= if type == Tokens do %>
-            <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
-            <% here_link = link gettext("here"), to: "https://docs.teslamate.org/docs/faq#how-to-generate-your-own-tokens",
-                                                 target: "_blank", rel: "noopener noreferrer"%>
-
-              <%= raw(gettext "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}.", here: safe_to_string(here_link)) %>
-            </p>
-          <% end %>
-
-          <%
-            {click_event, label} =
-              case type do
-                Credentials -> {"use_api_tokens", gettext("Use existing API tokens")}
-                Tokens -> {"use_credentials", gettext("Use email and password")}
-              end
+      <div class="field">
+        <%= label f, :access, gettext("Access Token"), class: "label" %>
+        <div class="control has-icons-left">
+          <%= text_input f, :access, class: "input is-rounded", autocorrect: "off",
+                                     autocapitalize: "none", spellcheck: "false",
+                                     disabled: !!@task
           %>
+          <span class="icon is-small is-left">
+            <i class="mdi mdi-api"></i>
+          </span>
+        </div>
+      </div>
 
-           <hr style=""/>
+      <div class="field">
+        <%= label f, :refresh, gettext("Refresh Token"), class: "label" %>
+        <div class="control has-icons-left">
+          <%= text_input f, :refresh, class: "input is-rounded", autocorrect: "off",
+                                      autocapitalize: "none", spellcheck: "false",
+                                      disabled: !!@task
+          %>
+          <span class="icon is-small is-left">
+            <i class="mdi mdi-cloud-refresh"></i>
+          </span>
+        </div>
+      </div>
 
-           <div class="field">
-             <div class="control">
-               <button type="button" class="button is-text is-small is-fullwidth"
-                       phx-click={click_event} {if !!@task, do: [disabled: true], else: []}>
-                 <span class="icon"><i class="mdi mdi-login"></i></span>&nbsp;<span><%=
-                  label
-                 %></span>
-               </button>
-             </div>
-           </div>
-        </.form>
+      <div class="field mt-5">
+        <div class="control">
+          <%= submit gettext("Sign in"), class: ["button",  "is-rounded", "is-fullwidth", "is-link", (if !!@task, do: "is-loading")],
+                                         disabled: !@changeset.valid?,
+                                         phx_disable_with: gettext("Saving...")
+          %>
+        </div>
+      </div>
 
-      <% %Captcha{changeset: changeset, captcha: captcha} -> %>
-        <.form let={f} for={changeset} phx_change="validate" phx_submit="sign_in" class="box" as="captcha">
-          <h3 class="title is-4 is-spaced has-text-centered">
-            <%= gettext "Captcha" %>
-          </h3>
+      <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
+      <% here_link = link gettext("here"), to: "https://docs.teslamate.org/docs/faq#how-to-generate-your-own-tokens",
+                                           target: "_blank", rel: "noopener noreferrer"%>
 
-          <div class="field is-grouped is-grouped-centered">
-            <div class="field has-addons">
-              <p class="control is-expanded has-icons-left">
-                <%= text_input f, :code, class: "input is-rounded", disabled: !!@task,
-                                                 autocorrect: "off", autocapitalize: "none", spellcheck: "false"
-                    %>
-                  <span class="icon is-small is-left">
-                    <i class="mdi mdi-human"></i>
-                  </span>
-              </p>
-              <p class="control">
-                <a class={["button", "is-static is-rounded", (if captcha == nil, do: "is-loading")]}
-                   style="min-width: 152px; padding: 0;">
-                    <span id="captcha" style="scale: 0.8">
-                    <%= raw captcha %>
-                    </span>
-                  </a>
-              </p>
-            </div>
-          </div>
-
-          <div class="field mt-5">
-            <div class="control">
-              <%= submit gettext("Sign in"), class: ["button", "is-rounded", "is-fullwidth", "is-link", (if !!@task, do: " is-loading")],
-                                             disabled: !changeset.valid?,
-                                             phx_disable_with: gettext("Saving...")
-              %>
-            </div>
-          </div>
-        </.form>
-
-      <% %MFA{changeset: changeset, devices: devices} -> %>
-        <.form let={f} for={changeset} phx_change="validate" class="box" as="mfa">
-          <h3 class="title is-4 is-spaced has-text-centered">
-            <%= gettext "Two-Factor Authentication" %>
-          </h3>
-
-          <div class="field is-grouped is-grouped-centered">
-            <div class="control has-icons-left">
-              <%= text_input f, :passcode, class: ["input", "is-rounded", (if @error, do: "is-danger")], type: "tel",
-                                           inputmode: "numeric", pattern: "[0-9]*",
-                                           maxlength: "6", disabled: !!@task,
-                                           autocorrect: "off", autocomplete: "one-time-code",
-                                           autocapitalize: "none", spellcheck: "false",
-                                           autofocus: true, phx_hook: "NumericInput"
-              %>
-              <span class="icon is-small is-left">
-                <i class="mdi mdi-two-factor-authentication"></i>
-              </span>
-            </div>
-          </div>
-
-          <div class="field is-grouped is-grouped-centered">
-            <p class={["help",  (if @error, do: "is-danger", else: "is-info")]}>
-              <%= @error || gettext "Enter the verification code generated by your authenticator app." %>
-            </p>
-          </div>
-
-          <div class="field is-grouped is-grouped-centered device">
-            <div class="control has-icons-left">
-              <div class={["select",  "is-small", "is-rounded", (if !!@task, do: "is-loading")]}>
-                <%= select f, :device_id, devices, style: "border-color: transparent;", disabled: !!@task %>
-              </div>
-              <div class="icon is-small is-left has-text-grey-dark">
-                <i class="mdi mdi-devices"></i>
-              </div>
-            </div>
-          </div>
-        </.form>
-    <% end %>
+        <%= raw(gettext "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}.", here: safe_to_string(here_link)) %>
+      </p>
+    </.form>
   </div>
 </div>
