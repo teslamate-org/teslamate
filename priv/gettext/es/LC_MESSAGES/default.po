@@ -410,7 +410,7 @@ msgstr "Coste"
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:119
 msgid "Enter charge cost"
-msgstr "Intruduce el coste de carga"
+msgstr "Introduce el coste de carga"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.ex:87
