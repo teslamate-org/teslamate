@@ -595,6 +595,7 @@
           ]
         }
       ],
+      "datasource": "TeslaMate",
       "title": "Updates",
       "type": "table"
     }
