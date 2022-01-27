@@ -5,5 +5,5 @@ defmodule TeslaMateWeb.Cldr do
     otp_app: :teslamate,
     providers: [],
     generate_docs: false,
-    force_locale_download: Mix.env() == :prod
+    force_locale_download: Mix.env() == :prod and System.get_env("SKIP_LOCALE_DOWNLOAD") != "true"
 end

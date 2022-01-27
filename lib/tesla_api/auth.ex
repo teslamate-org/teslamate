@@ -25,7 +25,6 @@ defmodule TeslaApi.Auth do
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
 
-  defdelegate login(email, password), to: __MODULE__.Login
   defdelegate refresh(auth), to: __MODULE__.Refresh
 
   def issuer_url(%__MODULE__{token: access_token}) do

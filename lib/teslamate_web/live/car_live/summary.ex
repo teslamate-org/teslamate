@@ -137,6 +137,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp error_to_str(:sentry_mode), do: gettext("Sentry mode is enabled")
   defp error_to_str(:preconditioning), do: gettext("Preconditioning")
   defp error_to_str(:user_present), do: gettext("Driver present")
+  defp error_to_str(:downloading_update), do: gettext("Downloading update")
   defp error_to_str(:update_in_progress), do: gettext("Update in progress")
   defp error_to_str(:timeout), do: gettext("Timeout")
   defp error_to_str(_other), do: gettext("An error occurred")

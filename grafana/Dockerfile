@@ -1,14 +1,16 @@
-FROM grafana/grafana:7.5.12
+FROM grafana/grafana:8.3.4
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=FALSE \
     GF_AUTH_ANONYMOUS_ENABLED=false \
     GF_AUTH_BASIC_ENABLED=false \
     GF_PATHS_PLUGINS="/var/lib/grafana-plugins" \
+    GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=natel-discrete-panel,pr0ps-trackmap-panel,panodata-map-panel \
     GF_SECURITY_ADMIN_PASSWORD=admin \
     GF_SECURITY_ADMIN_USER=admin \
     GF_SECURITY_ALLOW_EMBEDDING=true \
     GF_SECURITY_DISABLE_GRAVATAR=true \
     GF_USERS_ALLOW_SIGN_UP=false \
+    GF_ANALYTICS_REPORTING_ENABLED=FALSE \
     DATABASE_PORT=5432
 
 USER root
@@ -19,9 +21,7 @@ RUN mkdir -p "$GF_PATHS_PLUGINS" && \
 USER grafana
 
 RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install pr0ps-trackmap-panel 2.1.2 && \
-    grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install natel-discrete-panel 0.1.0 && \
-    grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install grafana-piechart-panel 1.6.1 && \
-    grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/panodata/grafana-map-panel/releases/download/0.15.0/grafana-map-panel-0.15.0.zip plugins install grafana-worldmap-panel-ng
+    grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/panodata/panodata-map-panel/releases/download/0.16.0/panodata-map-panel-0.16.0.zip plugins install grafana-worldmap-panel-ng
 
 COPY logo.svg /usr/share/grafana/public/img/grafana_icon.svg
 COPY favicon.png /usr/share/grafana/public/img/fav32.png

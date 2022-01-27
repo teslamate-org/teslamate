@@ -76,7 +76,7 @@ echo postgres_enable="yes" >> /etc/rc.conf
 </details>
 
 <details>
-  <summary>Grafana (v7.2+) & Plugins</summary>
+  <summary>Grafana (v8.3.4+) & Plugins</summary>
 
 ```bash
 pkg install grafana7
@@ -100,7 +100,7 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
 
 ```bash
 pkg install node14
-pkg install npm-node14  
+pkg install npm-node14
 ```
 
 </details>
