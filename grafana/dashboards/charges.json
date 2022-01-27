@@ -312,6 +312,10 @@
               {
                 "id": "custom.width",
                 "value": 80
+              },
+              {
+                "id": "noValue",
+                "value": "-"
               }
             ]
           },
