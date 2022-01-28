@@ -217,7 +217,18 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert table_row(html, "Outside Temperature", "24 °C")
       assert table_row(html, "Inside Temperature", "23.2 °C")
       assert table_row(html, "Mileage", "42000 km")
-      assert table_row(html, "Version", "2019.40.50.7")
+
+      assert table_row(
+               html,
+               "Version",
+               {"a",
+                [
+                  {"href",
+                   "https://www.notateslaapp.com/software-updates/version/2019.40.50.7/release-notes"},
+                  {"rel", "noopener noreferrer"},
+                  {"target", "_blank"}
+                ], ["2019.40.50.7"]}
+             )
     end
 
     @tag :signed_in
