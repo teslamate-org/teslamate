@@ -29,7 +29,11 @@ module.exports = {
     {
       type: "category",
       label: "Integrations",
-      items: ["integrations/home_assistant", "integrations/mqtt"],
+      items: [
+        "integrations/home_assistant",
+        "integrations/mqtt",
+        "integrations/Node-RED",
+      ],
     },
     {
       type: "category",

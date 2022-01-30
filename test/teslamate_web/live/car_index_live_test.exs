@@ -2,7 +2,6 @@ defmodule TeslaMateWeb.CarLive.Indextest do
   use TeslaMateWeb.ConnCase
   use TeslaMate.VehicleCase
 
-  alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
   alias TeslaMate.Settings.GlobalSettings
   alias TeslaMate.Settings
 

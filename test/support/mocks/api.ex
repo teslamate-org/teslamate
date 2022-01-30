@@ -2,7 +2,7 @@ defmodule ApiMock do
   use GenServer
 
   defmodule State do
-    defstruct [:pid, :events, :captcha]
+    defstruct [:pid, :events]
   end
 
   # API
@@ -16,7 +16,6 @@ defmodule ApiMock do
   def stream(name, vid, receiver), do: GenServer.call(name, {:stream, vid, receiver})
 
   def sign_in(name, tokens), do: GenServer.call(name, {:sign_in, tokens})
-  def prepare_sign_in(name), do: GenServer.call(name, :prepare_sign_in)
 
   # Callbacks
 
@@ -24,8 +23,7 @@ defmodule ApiMock do
   def init(opts) do
     state = %State{
       pid: Keyword.fetch!(opts, :pid),
-      events: Keyword.get(opts, :events, []),
-      captcha: Keyword.get(opts, :captcha, true)
+      events: Keyword.get(opts, :events, [])
     }
 
     {:ok, state}
@@ -40,44 +38,6 @@ defmodule ApiMock do
   def handle_call({action, _id}, _from, %State{events: [event | events]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
     {:reply, exec(event), %State{state | events: events}}
-  end
-
-  def handle_call(:prepare_sign_in, _from, %State{captcha: false} = state) do
-    callback = fn
-      email, password ->
-        send(state.pid, {ApiMock, :sign_in_callback, email, password})
-        :ok
-    end
-
-    {:reply, {:ok, callback}, state}
-  end
-
-  def handle_call(:prepare_sign_in, _from, %State{captcha: true} = state) do
-    callback = fn
-      "mfa" = email, password, captcha ->
-        send(state.pid, {ApiMock, :sign_in_callback, email, password, captcha})
-        :ok
-
-        devices = [
-          %{"id" => "000", "name" => "Device #1"},
-          %{"id" => "111", "name" => "Device #2"}
-        ]
-
-        callback = fn device_id, passcode ->
-          send(state.pid, {ApiMock, :mfa_callback, [device_id, passcode]})
-          :ok
-        end
-
-        {:ok, {:mfa, devices, callback}}
-
-      email, password, captcha ->
-        send(state.pid, {ApiMock, :sign_in_callback, email, password, captcha})
-        :ok
-    end
-
-    captcha = ~S(<svg xmlns="http://www.w3.org/2000/svg">)
-
-    {:reply, {:ok, {:captcha, captcha, callback}}, state}
   end
 
   def handle_call({:sign_in, _tokens} = event, _from, %State{pid: pid} = state) do

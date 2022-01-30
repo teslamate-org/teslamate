@@ -1,6 +1,8 @@
 defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
   use TeslaMate.VehicleCase, async: true
 
+  alias TeslaMate.Vehicles.Vehicle.Summary
+
   @tag :capture_log
   test "logs an update cycle", %{test: name} do
     now = DateTime.utc_now()

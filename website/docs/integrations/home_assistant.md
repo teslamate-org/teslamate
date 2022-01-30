@@ -214,7 +214,7 @@ tesla_location:
    state_topic: "teslamate/cars/1/power"
    device_class: power
    unit_of_measurement: W
-   icon: mdi:electricity
+   icon: mdi:flash
 
  - platform: mqtt
    name: tesla_speed
@@ -336,7 +336,7 @@ tesla_location:
    icon: mdi:clock-outline
 ```
 
-### binary_sensor.yaml (sensor: section of configuration.yaml)
+### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
 
 ```yml title="binary_sensor.yaml"
  - platform: template

@@ -6,11 +6,13 @@ defmodule TeslaMateWeb.CarLive.Index do
   alias TeslaMate.{Settings, Vehicles}
   alias TeslaMate.Settings.GlobalSettings
 
+  on_mount {TeslaMateWeb.InitAssigns, :locale}
+
   @impl true
-  def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
+  def mount(_params, %{"settings" => settings}, socket) do
     socket =
       socket
-      |> assign(locale: locale, page_title: gettext("Home"))
+      |> assign(page_title: gettext("Home"))
       |> assign_new(:summaries, fn -> Vehicles.list() end)
       |> assign_new(:settings, fn -> update_base_url(settings, socket) end)
 

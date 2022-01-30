@@ -28,10 +28,11 @@ npm-debug.log
 # The directory NPM downloads your dependencies sources to.
 /assets/node_modules/
 
-# Since we are building assets from assets/,
-# we ignore priv/static. You may want to comment
-# this depending on your deployment strategy.
-/priv/static/
+# Ignore assets that are produced by build tools.
+/priv/static/assets/
+
+# Ignore digested assets cache.
+/priv/static/cache_manifest.json
 
 # CDLR data repository
 /priv/cldr/

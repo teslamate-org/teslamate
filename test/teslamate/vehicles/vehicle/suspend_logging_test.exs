@@ -1,8 +1,7 @@
 defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   use TeslaMate.VehicleCase, async: true
 
-  alias TeslaMate.Vehicles.Vehicle
-
+  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle
 
   test "immediately returns :ok if asleep", %{test: name} do
@@ -51,7 +50,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if vehicle is preconditioning", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         climate_state: %{is_preconditioning: true}
@@ -59,7 +58,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -71,7 +70,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if user is present", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{is_user_present: true, car_version: ""}
@@ -79,7 +78,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -90,8 +89,34 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert {:error, :user_present} = Vehicle.suspend_logging(name)
   end
 
+  test "cannot be suspended if a download is in progress", %{test: name} do
+    not_suspendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        vehicle_state: %{
+          software_update: %TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate{
+            status: "downloading",
+            download_perc: 10
+          },
+          car_version: ""
+        }
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, not_suspendable}
+    ]
+
+    :ok = start_vehicle(name, events)
+
+    date = DateTime.from_unix!(0, :millisecond)
+    assert_receive {:start_state, _, :online, date: ^date}
+
+    assert {:error, :downloading_update} = Vehicle.suspend_logging(name)
+  end
+
   test "cannot be suspended if sentry mode is active", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{sentry_mode: true, car_version: ""}
@@ -99,7 +124,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -111,7 +136,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if vehicle is unlocked", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: false, car_version: ""}
@@ -119,7 +144,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
@@ -130,7 +155,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if any of the doors are open", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{df: 0, dr: 0, pf: 1, pr: 0, car_version: ""}
@@ -138,7 +163,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
@@ -149,7 +174,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if the rear or front trunk is open", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{rt: 1, ft: 1, car_version: ""}
@@ -157,7 +182,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
@@ -168,12 +193,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if shift_state is D", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(drive_state: %{timestamp: 0, shift_state: "D", latitude: 0.0, longitude: 0.0})
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -184,12 +209,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if shift_state is R", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(drive_state: %{timestamp: 0, shift_state: "R", latitude: 0.0, longitude: 0.0})
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)
@@ -200,12 +225,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if shift_state is N", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(drive_state: %{timestamp: 0, shift_state: "N", latitude: 0.0, longitude: 0.0})
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
     :ok = start_vehicle(name, events)

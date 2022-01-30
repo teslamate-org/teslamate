@@ -1,7 +1,7 @@
 defmodule TeslaMateWeb.Router do
   use TeslaMateWeb, :router
 
-  alias TeslaMateWeb.Plugs.{Donate, PutLocaleInSession}
+  alias TeslaMateWeb.Plugs.Donate
   alias TeslaMate.Settings
 
   pipeline :browser do
@@ -19,7 +19,7 @@ defmodule TeslaMateWeb.Router do
       gettext: TeslaMateWeb.Gettext,
       cldr: TeslaMateWeb.Cldr
 
-    plug PutLocaleInSession
+    plug TeslaMateWeb.Plugs.PutSession
 
     plug :put_root_layout, {TeslaMateWeb.LayoutView, :root}
     plug :protect_from_forgery
@@ -36,15 +36,18 @@ defmodule TeslaMateWeb.Router do
     pipe_through :browser
 
     get "/", CarController, :index
-    live "/sign_in", SignInLive.Index
-    live "/settings", SettingsLive.Index
-    live "/geo-fences", GeoFenceLive.Index
-    live "/geo-fences/new", GeoFenceLive.Form
-    live "/geo-fences/:id/edit", GeoFenceLive.Form
-    live "/charge-cost/:id", ChargeLive.Cost
-    live "/import", ImportLive.Index
     get "/drive/:id/gpx", DriveController, :gpx
     get "/donate", DonateController, :index
+
+    live_session :default do
+      live "/sign_in", SignInLive.Index
+      live "/settings", SettingsLive.Index
+      live "/geo-fences", GeoFenceLive.Index
+      live "/geo-fences/new", GeoFenceLive.Form
+      live "/geo-fences/:id/edit", GeoFenceLive.Form
+      live "/charge-cost/:id", ChargeLive.Cost
+      live "/import", ImportLive.Index
+    end
   end
 
   scope "/api", TeslaMateWeb do

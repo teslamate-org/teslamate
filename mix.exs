@@ -7,7 +7,7 @@ defmodule TeslaMate.MixProject do
       version: version(),
       elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       releases: releases(),
@@ -35,41 +35,43 @@ defmodule TeslaMate.MixProject do
 
   defp deps do
     [
-      {:phoenix, "~> 1.5.0"},
-      {:phoenix_pubsub, "~> 2.0"},
-      {:phoenix_ecto, "~> 4.0"},
+      {:castore, "~> 0.1"},
       {:ecto_sql, "~> 3.0"},
-      {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:ex_cldr, "~> 2.25.0"},
+      {:excoveralls, "~> 0.10", only: :test},
+      {:finch, "~> 0.3"},
+      {:floki, "~> 0.23"},
+      {:fuse, "~> 2.4"},
+      {:gen_state_machine, "~> 3.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
-      {:gen_state_machine, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.1"},
-      {:floki, "~> 0.23"},
-      {:tortoise, "~> 0.9.4"},
-      {:excoveralls, "~> 0.10", only: :test},
-      {:srtm, "~> 0.5"},
-      {:fuse, "~> 2.4"},
       {:mock, "~> 0.3", only: :test},
-      {:castore, "~> 0.1"},
-      {:ex_cldr, "~> 2.0"},
       {:nimble_csv, "~> 1.1"},
+      {:phoenix, "~> 1.6.0"},
+      {:phoenix_ecto, "~> 4.0"},
+      {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_live_view, "~> 0.17.0"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:plug_cowboy, "~> 2.0"},
+      {:postgrex, ">= 0.0.0"},
+      {:srtm, "~> 0.5"},
+      {:tesla, "~> 1.4"},
       {:timex, "~> 3.0"},
-      {:websockex, "~> 0.4"},
+      {:tortoise, "~> 0.10"},
       {:tzdata, "~> 1.1"},
-      {:finch, "~> 0.3"},
-      {:tesla, "~> 1.4"}
+      {:websockex, "~> 0.4"}
     ]
   end
 
   defp aliases do
     [
+      setup: ["deps.get", "ecto.setup", "cmd --cd assets npm ci --no-audit --loglevel=error"],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test --no-start"],
-      ci: ["format --check-formatted", "test --raise"]
+      "assets.deploy": ["cmd --cd assets npm run deploy", "phx.digest"],
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test --no-start"],
+      ci: ["format --check-formatted", "deps.unlock --check-unused", "test --raise"]
     ]
   end
 

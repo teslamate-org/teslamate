@@ -13,7 +13,7 @@ defmodule TeslaMateWeb.Endpoint do
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options], transport_log: :debug]
 
-  @only ~w(css fonts images js favicon.ico robots.txt android-chrome-192x192.png
+  @only ~w(assets fonts images favicon.ico robots.txt android-chrome-192x192.png
            android-chrome-512x512.png apple-touch-icon.png browserconfig.xml
            favicon-16x16.png favicon-32x32.png mstile-150x150.png
            safari-pinned-tab.svg site.webmanifest)

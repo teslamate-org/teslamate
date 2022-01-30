@@ -6,7 +6,7 @@ Dockerfile
 Makefile
 README*
 test/
-priv/static/
+priv/static/assets
 **/node_modules
 import/
 teslamate.bck

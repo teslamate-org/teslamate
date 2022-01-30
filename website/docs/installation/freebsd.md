@@ -11,14 +11,15 @@ It assumes that pre-requisites are met and only basic instructions are provided 
 Click on the following items to view detailed installation steps.
 
 <details>
-  <summary>bash</summary>
+  <summary>bash & jq</summary>
 
 ```bash
-pkg install bash
+pkg install bash jq
 bash
 ```
-  
-  For simplicity reasons, follow the rest of the tutorial in bash rather the csh.
+
+For simplicity reasons, follow the rest of the tutorial in bash rather the csh.
+
 </details>
 
 <details>
@@ -27,6 +28,7 @@ bash
 ```bash
 pkg install git
 ```
+
 </details>
 
 <details>
@@ -35,6 +37,7 @@ pkg install git
 ```bash
 pkg install erlang
 ```
+
 </details>
 
 <details>
@@ -43,12 +46,13 @@ pkg install erlang
 Unfortunately the Elixir part is not well updated in FreeBSD ports.
 Hence the latest supported version for Erlang 21 (latest in FreeBSD ports)
 is Elixir 1.11.
-  
+
 We will need to compile it from source, which is pretty easy though.
 
 ```bash
 pkg install gmake
-  
+
+mkdir /usr/local/src
 cd /usr/local/src
 git clone https://github.com/elixir-lang/elixir.git
 cd elixir
@@ -57,25 +61,28 @@ gmake clean test
 gmake install
 elixir --version
 ```
+
 </details>
 
 <details>
   <summary>Postgres (v12+)</summary>
 
 ```bash
-pkg install postgressql(12|13)-server
+pkg install postgresql(12|13)-server
+pkg install postgresql(12|13)-contrib
 echo postgres_enable="yes" >> /etc/rc.conf
 ```
-  
+
 </details>
 
 <details>
-  <summary>Grafana (v7.2+) & Plugins</summary>
+  <summary>Grafana (v8.3.4+) & Plugins</summary>
 
 ```bash
 pkg install grafana7
 echo grafana_enable="yes" >> /etc/rc.conf
 ```
+
 </details>
 
 <details>
@@ -89,11 +96,13 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
 </details>
 
 <details>
-  <summary>Node.js (v12+)</summary>
+  <summary>Node.js (v14+)</summary>
 
 ```bash
-pkg install node(12|14|)
+pkg install node14
+pkg install npm-node14
 ```
+
 </details>
 
 ## Clone TeslaMate git repository
@@ -111,12 +120,12 @@ git checkout $(git describe --tags `git rev-list --tags --max-count=1`) # Checko
 
 ## Create PostgreSQL database
 
-The following commands will create a database called `teslamate` on the PostgreSQL database server, and a user called `teslamate`. When creating the `teslamate` user, you will be prompted to enter a password for the user interactively. This password should be recorded and provided as an environment variable in the startup script at the end of this guide.
+The following commands will create a database called `teslamate` on the PostgreSQL database server, and a user called `teslamate`. When creating the `teslamate` user, you will be prompted to enter a password for the user interactively. This password should be recorded and provided as an environment variable in the startup script at the end of this guide. Use 'su - postgres' if unable to enter psql console from current user.
 
 ```console
 psql
 postgres=# create database teslamate;
-postgres=# create user teslamate with encrypted password 'secret';
+postgres=# create user teslamate with encrypted password 'your_secure_password_here';
 postgres=# grant all privileges on database teslamate to teslamate;
 postgres=# ALTER USER teslamate WITH SUPERUSER;
 postgres=# \q
@@ -139,6 +148,7 @@ mix do phx.digest, release --overwrite
 ## Starting TeslaMate at boot time
 
 ### Create FreeBSD service definition _/usr/local/etc/rc.d/teslamate_
+
 ```console
 # PROVIDE: teslamate
 # REQUIRE: DAEMON
@@ -183,7 +193,7 @@ COMMAND=${teslamate_command-"${HOME}/_build/prod/rel/teslamate/bin/teslamate"}
 teslamate_start()
 {
   ${COMMAND} eval "TeslaMate.Release.migrate"
-  ${COMMAND} daemon 
+  ${COMMAND} daemon
 }
 
 start_cmd="${name}_start"
@@ -196,16 +206,20 @@ run_rc_command "$1"
 ```
 
 ### Update _/etc/rc.conf_
+
 ```bash
 echo teslamate_enable="YES" >> /etc/rc.conf
 echo teslamate_db_host="localhost"  >> /etc/rc.conf
 echo teslamate_port="5432"  >> /etc/rc.conf
 echo teslamate_db_pass="<super secret>" >> /etc/rc.conf
 echo teslamate_disable_mqtt="true" >> /etc/rc.conf
+echo teslamate_timezone="<TZ Database>" >> /etc/rc.conf #i.e. Europe/Berlin
 ```
 
 ### Start service
+
 ```bash
+chmod +x /usr/local/etc/rc.d/teslamate
 service teslamate start
 ```
 
@@ -221,7 +235,7 @@ service teslamate start
     Name: TeslaMate
     Host: localhost
     Database: teslamate
-    User: teslamate  Password: secret
+    User: teslamate  Password: your_secure_password_here
     SSL-Mode: disable
     Version: 10
     ```
@@ -261,4 +275,3 @@ service teslamate start
     ```
 
     :::
-  

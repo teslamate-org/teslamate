@@ -1,7 +1,7 @@
 defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   use TeslaMate.VehicleCase, async: true
 
-  alias TeslaMate.Vehicles.Vehicle
+  alias TeslaMate.Vehicles.Vehicle.Summary
 
   test "suspends when idling", %{test: name} do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
@@ -111,7 +111,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
   @tag :capture_log
   test "does not suspend if preconditioning", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         climate_state: %{is_preconditioning: true}
@@ -119,16 +119,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
-    sudpend_after_idle_ms = 10
+    suspend_after_idle_ms = 10
     suspend_ms = 100
 
     :ok =
       start_vehicle(name, events,
         settings: %{
-          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
@@ -144,7 +144,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
   @tag :capture_log
   test "does not suspend if user is present", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{is_user_present: true, car_version: ""}
@@ -152,16 +152,55 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
-    sudpend_after_idle_ms = 10
+    suspend_after_idle_ms = 10
     suspend_ms = 100
 
     :ok =
       start_vehicle(name, events,
         settings: %{
-          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_after_idle_min: round(suspend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
+      )
+
+    assert_receive {:start_state, car, :online, date: _}
+    assert_receive {ApiMock, {:stream, 1000, _}}
+    assert_receive {:insert_position, ^car, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+    refute_receive _, round(suspend_ms * 0.5)
+
+    refute_receive _
+  end
+
+  @tag :capture_log
+  test "does not suspend if a download is in progress", %{test: name} do
+    not_suspendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        vehicle_state: %{
+          software_update: %TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate{
+            status: "downloading",
+            download_perc: 10
+          },
+          car_version: ""
+        }
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, not_suspendable}
+    ]
+
+    suspend_after_idle_ms = 10
+    suspend_ms = 200
+
+    :ok =
+      start_vehicle(name, events,
+        settings: %{
+          suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
@@ -176,7 +215,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   end
 
   test "does not suspend if sentry mode is active", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{sentry_mode: true, car_version: ""}
@@ -184,16 +223,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
-    sudpend_after_idle_ms = 10
+    suspend_after_idle_ms = 10
     suspend_ms = 100
 
     :ok =
       start_vehicle(name, events,
         settings: %{
-          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
@@ -211,7 +250,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
   @tag :capture_log
   test "does not suspend if any of the doors are open", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{df: 0, dr: 0, pf: 1, pr: 0, car_version: ""}
@@ -219,16 +258,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
-    sudpend_after_idle_ms = 10
+    suspend_after_idle_ms = 10
     suspend_ms = 100
 
     :ok =
       start_vehicle(name, events,
         settings: %{
-          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
@@ -246,7 +285,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
   @tag :capture_log
   test "does not suspend if the rear or front trunk is open", %{test: name} do
-    not_supendable =
+    not_suspendable =
       online_event(
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{rt: 0, ft: 1, car_version: ""}
@@ -254,16 +293,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, not_supendable}
+      {:ok, not_suspendable}
     ]
 
-    sudpend_after_idle_ms = 10
+    suspend_after_idle_ms = 10
     suspend_ms = 100
 
     :ok =
       start_vehicle(name, events,
         settings: %{
-          suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+          suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
@@ -473,7 +512,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   describe "req_not_unlocked" do
     @tag :capture_log
     test "does not suspend if vehicle is unlocked", %{test: name} do
-      not_supendable =
+      not_suspendable =
         online_event(
           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
           vehicle_state: %{locked: false, car_version: ""}
@@ -481,17 +520,17 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
       events = [
         {:ok, online_event()},
-        {:ok, not_supendable}
+        {:ok, not_suspendable}
       ]
 
-      sudpend_after_idle_ms = 10
+      suspend_after_idle_ms = 10
       suspend_ms = 100
 
       :ok =
         start_vehicle(name, events,
           settings: %{
             req_not_unlocked: true,
-            suspend_after_idle_min: round(sudpend_after_idle_ms / 60),
+            suspend_after_idle_min: round(suspend_after_idle_ms / 60),
             suspend_min: suspend_ms
           }
         )
@@ -511,7 +550,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     test "w/o does suspend if vehicle is unlocked", %{test: name} do
       now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
-      not_supendable = fn ts ->
+      not_suspendable = fn ts ->
         online_event(
           drive_state: %{timestamp: ts, latitude: 0.0, longitude: 0.0},
           vehicle_state: %{locked: false, car_version: ""}
@@ -519,19 +558,19 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       end
 
       events = [
-        {:ok, not_supendable.(now_ts + 0)},
-        {:ok, not_supendable.(now_ts + 1)},
-        {:ok, not_supendable.(now_ts + 2)},
-        {:ok, not_supendable.(now_ts + 3)},
-        {:ok, not_supendable.(now_ts + 4)},
-        {:ok, not_supendable.(now_ts + 5)},
-        {:ok, not_supendable.(now_ts + 6)},
-        {:ok, not_supendable.(now_ts + 7)},
-        {:ok, not_supendable.(now_ts + 8)},
-        {:ok, not_supendable.(now_ts + 9)},
-        {:ok, not_supendable.(now_ts + 10)},
-        {:ok, not_supendable.(now_ts + 11)},
-        {:ok, not_supendable.(now_ts + 12)},
+        {:ok, not_suspendable.(now_ts + 0)},
+        {:ok, not_suspendable.(now_ts + 1)},
+        {:ok, not_suspendable.(now_ts + 2)},
+        {:ok, not_suspendable.(now_ts + 3)},
+        {:ok, not_suspendable.(now_ts + 4)},
+        {:ok, not_suspendable.(now_ts + 5)},
+        {:ok, not_suspendable.(now_ts + 6)},
+        {:ok, not_suspendable.(now_ts + 7)},
+        {:ok, not_suspendable.(now_ts + 8)},
+        {:ok, not_suspendable.(now_ts + 9)},
+        {:ok, not_suspendable.(now_ts + 10)},
+        {:ok, not_suspendable.(now_ts + 11)},
+        {:ok, not_suspendable.(now_ts + 12)},
         fn -> Process.sleep(10_000) end
       ]
 

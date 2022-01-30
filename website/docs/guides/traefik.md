@@ -94,7 +94,7 @@ services:
       - "traefik.http.middlewares.redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.grafana-insecure.rule=Host(`${FQDN_TM}`)"
       - "traefik.http.routers.grafana-insecure.middlewares=redirect"
-      - "traefik.http.routers.grafana.rule=Path(`/grafana`) || PathPrefix(`/grafana/`)"
+      - "traefik.http.routers.grafana.rule=Host(`${FQDN_TM}`) && (Path(`/grafana`) || PathPrefix(`/grafana/`))"
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.tls.certresolver=tmhttpchallenge"
 
@@ -142,7 +142,7 @@ volumes:
 
 ```plaintext title=".env"
 TM_DB_USER=teslamate
-TM_DB_PASS=secret
+TM_DB_PASS= #your secure password!
 TM_DB_NAME=teslamate
 
 GRAFANA_USER=admin

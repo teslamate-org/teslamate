@@ -19,6 +19,8 @@ defmodule TeslaMate.Log.Car do
     # TODO: with v2.0 mark as non nullable
     field :vin, :string
 
+    field :friendly_name, :string, virtual: true
+
     belongs_to :settings, CarSettings
 
     has_many :charging_processes, ChargingProcess

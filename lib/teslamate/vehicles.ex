@@ -19,7 +19,7 @@ defmodule TeslaMate.Vehicles do
     |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
       ordered: false,
       max_concurrency: 10,
-      timeout: 2500
+      timeout: 5000
     )
     |> Enum.map(fn {:ok, vehicle} -> vehicle end)
     |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id}} -> id end)
@@ -51,6 +51,7 @@ defmodule TeslaMate.Vehicles do
       opts
       |> Keyword.get_lazy(:vehicles, &list_vehicles!/0)
       |> Enum.map(&{Keyword.get(opts, :vehicle, Vehicle), car: create_or_update!(&1)})
+      |> Enum.uniq_by(fn {_mod, car: %Car{id: id}} -> id end)
 
     Supervisor.init(children,
       strategy: :one_for_one,

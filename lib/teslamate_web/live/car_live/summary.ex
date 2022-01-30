@@ -7,11 +7,11 @@ defmodule TeslaMateWeb.CarLive.Summary do
   alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.{Vehicles, Convert}
 
+  on_mount {TeslaMateWeb.InitAssigns, :locale}
+
   @impl true
   def mount(_params, %{"summary" => %Summary{car: car} = summary} = session, socket) do
     if connected?(socket) do
-      Gettext.put_locale(session["locale"])
-
       send(self(), :update_duration)
       send(self(), {:status, Vehicle.busy?(car.id)})
 
@@ -137,6 +137,7 @@ defmodule TeslaMateWeb.CarLive.Summary do
   defp error_to_str(:sentry_mode), do: gettext("Sentry mode is enabled")
   defp error_to_str(:preconditioning), do: gettext("Preconditioning")
   defp error_to_str(:user_present), do: gettext("Driver present")
+  defp error_to_str(:downloading_update), do: gettext("Downloading update")
   defp error_to_str(:update_in_progress), do: gettext("Update in progress")
   defp error_to_str(:timeout), do: gettext("Timeout")
   defp error_to_str(_other), do: gettext("An error occurred")

@@ -24,7 +24,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       spoiler_type: get_car_attr(car, :spoiler_type),
       wheel_type: get_car_attr(car, :wheel_type),
       model: get_car_attr(car, :model),
-      car: car
+      car: put_friendly_name(car)
     }
   end
 
@@ -50,9 +50,24 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         spoiler_type: get_car_attr(car, :spoiler_type),
         wheel_type: get_car_attr(car, :wheel_type),
         model: get_car_attr(car, :model),
-        car: car
+        car: put_friendly_name(car)
     }
   end
+
+  defp put_friendly_name(nil), do: nil
+
+  defp put_friendly_name(%Car{} = car) do
+    %Car{car | friendly_name: friendly_name(car.model, car.trim_badging)}
+  end
+
+  defp friendly_name("3", "P74D"), do: "LR AWD Performance"
+  defp friendly_name("3", "74D"), do: "LR AWD"
+  defp friendly_name("3", "74"), do: "LR"
+  defp friendly_name("3", "62"), do: "MR"
+  defp friendly_name("3", "50"), do: "SR+"
+  defp friendly_name("Y", "P74D"), do: "LR AWD Performance"
+  defp friendly_name("Y", "74D"), do: "LR AWD"
+  defp friendly_name(_model, _trim), do: nil
 
   defp format_state({:driving, {:offline, _}, _id}), do: :offline
   defp format_state({:driving, _state, _id}), do: :driving

@@ -6,12 +6,11 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
   alias TeslaMate.{Settings, Updater, Api}
 
-  @impl true
-  def mount(_params, %{"settings" => settings, "locale" => locale}, socket) do
-    if connected?(socket), do: Gettext.put_locale(locale)
+  on_mount {TeslaMateWeb.InitAssigns, :locale}
 
+  @impl true
+  def mount(_params, %{"settings" => settings}, socket) do
     assigns = %{
-      locale: locale,
       addresses_migrated?: addresses_migrated?(),
       car_settings: Settings.get_car_settings() |> prepare(),
       car: nil,

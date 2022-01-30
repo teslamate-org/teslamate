@@ -6,3 +6,5 @@ config :logger, level: :warning
 # you can enable the server option below.
 config :teslamate, TeslaMateWeb.Endpoint, server: false
 config :teslamate, TeslaMate.Repo, pool: Ecto.Adapters.SQL.Sandbox
+
+config :phoenix, :plug_init_mode, :runtime

@@ -1,8 +1,8 @@
 defmodule TeslaMate.Vehicles.VehicleSyncTest do
-  use TeslaMate.DataCase
-  use TeslaMate.VehicleCase
+  use TeslaMate.VehicleCase, async: false
 
   describe "Summary" do
+    alias TeslaMate.Vehicles.Vehicle.Summary
     alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
     alias TeslaMate.Log.Car
     alias TeslaMate.Log

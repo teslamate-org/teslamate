@@ -55,6 +55,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
               "model3" <> _ -> "3"
               "modelx" <> _ -> "X"
               "modely" <> _ -> "Y"
+              "lychee" -> "S"
               _ -> nil
             end
           end
@@ -276,7 +277,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             drive_states = %{now: vehicle.drive_state, last: data.last_response.drive_state}
 
             Logger.warning(
-              "Discarded outdated fetch result: #{inspect(drive_states, pretty: true)}",
+              "Discarded stale fetch result: #{inspect(drive_states, pretty: true)}",
               car_id: data.car.id
             )
 
@@ -344,7 +345,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         end
 
       {:error, :not_signed_in} ->
-        Logger.error("Error / unauthorized")
+        Logger.error("Error / not_signed_in", car_id: data.car.id)
 
         :ok = fuse_name(:api_error, data.car.id) |> :fuse.circuit_disable()
 
@@ -368,7 +369,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:error, reason} ->
         Logger.error("Error / #{inspect(reason)}", car_id: data.car.id)
 
-        unless reason == :timeout do
+        unless reason in [:timeout, :unauthorized] do
           :ok = fuse_name(:api_error, data.car.id) |> :fuse.melt()
         end
 
@@ -390,8 +391,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
   #### Online
 
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, :online, data) do
+    stale_stream_data? = stale?(stream_data, data.last_response)
+
     case stream_data do
+      %Stream.Data{} when stale_stream_data? ->
+        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        :keep_state_and_data
+
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
+        Logger.info("Start of drive initiated by: #{inspect(stream_data)}")
+
         %{elevation: elevation} = position = create_position(stream_data, data)
         {drive, data} = start_drive(position, data)
 
@@ -433,8 +442,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
   #### Suspended
 
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, {:suspended, prev_state}, data) do
+    stale_stream_data? = stale?(stream_data, data.last_response)
+
     case stream_data do
+      %Stream.Data{} when stale_stream_data? ->
+        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        :keep_state_and_data
+
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
+        Logger.info("Start of drive initiated by: #{inspect(stream_data)}")
+
         %{elevation: elevation} = position = create_position(stream_data, data)
         {drive, data} = start_drive(position, data)
 
@@ -751,6 +768,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          }, [broadcast_summary(), schedule_fetch(15, data)]}
 
       %V{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
+        Logger.info("Start of drive initiated by: #{inspect(vehicle.drive_state)}")
+
         {drive, data} = start_drive(create_position(vehicle, data), data)
 
         {:next_state, {:driving, :available, drive}, data,
@@ -870,7 +889,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {:offline, _}}, {:driving, {:unavailable, _n}, drv}, data) do
     {:next_state, {:driving, {:offline, data.last_response}, drv},
-     %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30, data)}
+     %Data{data | last_used: DateTime.utc_now()}, [broadcast_summary(), schedule_fetch(30, data)]}
   end
 
   def handle_event(:internal, {:update, {:offline, _}}, {:driving, {:offline, _last}, nil}, data) do
@@ -885,7 +904,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         timeout_drive(drive, data)
 
         {:next_state, {:driving, {:offline, last}, nil},
-         %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30, data)}
+         %Data{data | last_used: DateTime.utc_now()},
+         [broadcast_summary(), schedule_fetch(30, data)]}
 
       _min ->
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(30, data)}
@@ -987,6 +1007,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             {drive, geofence}
           end)
 
+        Logger.info("End of drive initiated by: #{inspect(vehicle.drive_state)}")
         Logger.info("Driving / Ended / #{km && round(km)} km – #{min} min", car_id: data.car.id)
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now(), geofence: geofence},
@@ -1034,7 +1055,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          {:next_event, :internal, {:update, {:online, vehicle}}}}
 
       %VehicleState{timestamp: ts, car_version: vsn, software_update: %SW{} = software_update} ->
-        if software_update.status != "" do
+        if software_update.status != "" and
+             not (software_update.status == "downloading" and software_update.install_perc == 100) do
           Logger.error(
             """
             Unexpected update status: #{software_update.status}
@@ -1313,6 +1335,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
          [broadcast_summary(), schedule_fetch(15, data)]}
 
+      {:error, :downloading_update} ->
+        if suspend?, do: Logger.warning("Downloading update ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         [broadcast_summary(), schedule_fetch(15 * i, data)]}
+
       {:error, :doors_open} ->
         if suspend?, do: Logger.warning("Doors open ...", car_id: car.id)
 
@@ -1362,6 +1390,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _} ->
         {:error, :sentry_mode}
+
+      {%Vehicle{
+         vehicle_state: %VehicleState{
+           software_update: %VehicleState.SoftwareUpdate{
+             status: "downloading",
+             download_perc: download_percentage
+           }
+         }
+       }, _}
+      when download_percentage < 100 ->
+        {:error, :downloading_update}
 
       {%Vehicle{vehicle_state: %VehicleState{df: df, pf: pf, dr: dr, pr: pr}}, _}
       when is_number(df) and is_number(pf) and is_number(dr) and is_number(pr) and
@@ -1484,6 +1523,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
     |> hd()
     |> String.split(".")
     |> Enum.map(&String.pad_leading(&1, 4, "0"))
+  end
+
+  defp stale?(%Stream.Data{} = stream_data, %Vehicle{} = last_response) do
+    last_response_time =
+      case last_response do
+        %Vehicle{drive_state: %Drive{timestamp: t}} when is_number(t) -> parse_timestamp(t)
+        %Vehicle{drive_state: %Drive{timestamp: %DateTime{} = t}} -> t
+        _ -> nil
+      end
+
+    last_response_time != nil and DateTime.compare(last_response_time, stream_data.time) == :gt
   end
 
   defp streaming?(%Data{stream_pid: pid}), do: is_pid(pid) and Process.alive?(pid)

@@ -3,6 +3,7 @@ defmodule TeslaMate.Repo.Migrations.CreateChargingProcesses do
 
   def change do
     create table(:charging_processes) do
+      # Note the typo: 'nul' – This is fixed in 20211022103654_add_not_null_constraint_to_start_date
       add(:start_date, :utc_datetime, nul: false)
       add(:end_date, :utc_datetime)
       add(:charge_energy_added, :float)

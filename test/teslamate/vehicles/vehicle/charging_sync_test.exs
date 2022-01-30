@@ -1,9 +1,9 @@
 defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
-  use TeslaMate.DataCase
-  use TeslaMate.VehicleCase
+  use TeslaMate.VehicleCase, async: false
 
   import ExUnit.CaptureLog
 
+  alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Log
 
   @log_opts format: "[$level] $message\n",
@@ -38,9 +38,9 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
 
              refute_receive _
            end) =~
-             """
-             [warn] Invalid charge data: %{ideal_battery_range_km: [\"can't be blank\"]}
-             [warn] Invalid charge data: %{ideal_battery_range_km: [\"can't be blank\"]}
+             ~r"""
+             \[warn.*\] Invalid charge data: %{ideal_battery_range_km: \[\"can't be blank\"\]}
+             \[warn.*\] Invalid charge data: %{ideal_battery_range_km: \[\"can't be blank\"\]}
              """
   end
 
