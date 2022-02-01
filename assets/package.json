@@ -10,7 +10,7 @@
     "@creativebulma/bulma-tooltip": "^1.2.0",
     "@geoman-io/leaflet-geoman-free": "^2.11.4",
     "@mdi/font": "^6.5.95",
-    "bulma-switch": "^2.0.0",
+    "bulma-switch": "^2.0.4",
     "leaflet": "^1.7.1",
     "leaflet-control-geocoder": "^2.3.0",
     "phoenix": "file:../deps/phoenix",
@@ -19,9 +19,9 @@
   },
   "devDependencies": {
     "bulma": "^0.9.3",
-    "esbuild": "^0.14.10",
-    "esbuild-sass-plugin": "^2.0.0",
-    "sass": "^1.45.2"
+    "esbuild": "^0.14.16",
+    "esbuild-sass-plugin": "^2.2.1",
+    "sass": "^1.49.4"
   },
   "name": "assets"
 }
