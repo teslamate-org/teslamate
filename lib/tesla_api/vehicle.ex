@@ -95,7 +95,7 @@ defmodule TeslaApi.Vehicle do
       %Tesla.Env{status: 405, body: %{"error" => "vehicle is currently in service"}} = env ->
         {:error, %Error{reason: :vehicle_in_service, env: env}}
 
-      %Tesla.Env{status: 408, body: %{"error" => "vehicle unavailable:" <> _}} = env ->
+      %Tesla.Env{status: 408, body: %{"error" => "vehicle asleep" <> _}} = env ->
         {:error, %Error{reason: :vehicle_unavailable, env: env}}
 
       %Tesla.Env{status: 504} = env ->
