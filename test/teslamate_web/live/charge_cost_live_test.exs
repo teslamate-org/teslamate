@@ -205,7 +205,9 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       assert "Total" =
                html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
 
-      assert ["42.1200"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert ["42.1200"] =
+               html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+
       assert %ChargingProcess{cost: decimal("42.1200")} = Repo.get(ChargingProcess, id)
 
       html =
@@ -273,7 +275,9 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       assert "Total" =
                html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
 
-      assert ["-0.2900"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert ["-0.2900"] =
+               html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+
       assert %ChargingProcess{cost: decimal("-0.2900")} = Repo.get(ChargingProcess, id)
 
       html =
