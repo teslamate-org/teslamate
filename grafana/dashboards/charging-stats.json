@@ -1017,11 +1017,8 @@
           {
             "mapping": {
               "color": "Power [kW]",
-              "size": null,
-              "text": null,
               "x": "B - SOC [%]",
-              "y": "B - Avg Power [kW]",
-              "z": null
+              "y": "B - Avg Power [kW]"
             },
             "name": "Median Power",
             "settings": {
@@ -1055,12 +1052,9 @@
           },
           {
             "mapping": {
-              "color": "Power [kW]",
-              "size": null,
-              "text": null,
+              "color": "time",
               "x": "SOC [%]",
-              "y": "Power [kW]",
-              "z": null
+              "y": "Power [kW]"
             },
             "name": "Power",
             "settings": {
@@ -1073,7 +1067,7 @@
               },
               "marker": {
                 "color": "#808080",
-                "colorscale": "YlOrRd",
+                "colorscale": "Greys",
                 "line": {
                   "color": "#DDD",
                   "width": 0
