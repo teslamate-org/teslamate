@@ -59,6 +59,7 @@
       "type": "row"
     },
     {
+      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
           "color": {

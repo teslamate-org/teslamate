@@ -61,6 +61,7 @@
     {
       "autoZoom": true,
       "defaultLayer": "OpenStreetMap",
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 21,
         "w": 24,
@@ -76,7 +77,6 @@
       "showLayerChanger": true,
       "targets": [
         {
-          "datasource": "TeslaMate",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",

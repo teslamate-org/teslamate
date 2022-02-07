@@ -1209,6 +1209,7 @@
       "type": "state-timeline"
     },
     {
+      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1580,6 +1581,7 @@
       "type": "table"
     },
     {
+      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
           "color": {

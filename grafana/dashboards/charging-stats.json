@@ -698,6 +698,7 @@
       "type": "piechart"
     },
     {
+      "datasource": "TeslaMate",
       "autoPanLabels": true,
       "autoWidthLabels": true,
       "categories": "a,b",
@@ -767,7 +768,6 @@
       },
       "targets": [
         {
-          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "metricColumn": "none",

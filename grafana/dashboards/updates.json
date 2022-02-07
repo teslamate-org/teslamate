@@ -205,6 +205,7 @@
       "type": "stat"
     },
     {
+      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -566,7 +567,6 @@
       ],
       "targets": [
         {
-          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "metricColumn": "none",
