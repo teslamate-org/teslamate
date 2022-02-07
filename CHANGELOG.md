@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.26.1] - 2022-01-28
+
+### Improvements and Bug Fixes
+
+- Add link on the TeslaMate overview page to the notateslaapp.com release notes ([#2390](https://github.com/adriankumpf/teslamate/pull/2390) by [cwanja](https://github.com/cwanja))
+- Fix token refresh for Chinese accounts
+
+#### Dashboards
+
+- Charges: Show link if the charge cost is not set ([#2380](https://github.com/adriankumpf/teslamate/pull/2380) by [carloscuezva](https://github.com/carloscuezva))
+- Efficiency: Add min & max values to the Temperature-Efficiency gauge ([#2395](https://github.com/adriankumpf/teslamate/pull/2395) by [DrMichael](https://github.com/DrMichael))
+- Overview / Updates: Fix software version format
+
+#### Translations
+
+- Adding missing Swedish translation ([#2373](https://github.com/adriankumpf/teslamate/pull/2373) by [tobiasehlert](https://github.com/tobiasehlert))
+- Small correction for Spanish translation ([#2379](https://github.com/adriankumpf/teslamate/pull/2379) by [carloscuezva](https://github.com/carloscuezva))
+- Spanish translation refinements ([#2388](https://github.com/adriankumpf/teslamate/pull/2388) by [jmalcaide](https://github.com/jmalcaide))
+
 ## [1.26.0] - 2022-01-25
 
 ### Improvements and Bug Fixes
@@ -1478,6 +1497,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.26.1]: https://github.com/adriankumpf/teslamate/compare/v1.26.0...v1.26.1
 [1.26.0]: https://github.com/adriankumpf/teslamate/compare/v1.25.2...v1.26.0
 [1.25.2]: https://github.com/adriankumpf/teslamate/compare/v1.25.1...v1.25.2
 [1.25.1]: https://github.com/adriankumpf/teslamate/compare/v1.25.0...v1.25.1

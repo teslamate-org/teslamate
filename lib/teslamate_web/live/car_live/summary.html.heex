@@ -285,7 +285,7 @@
           <%= unless is_nil(@summary.version) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Version" %></td>
-            <td><%= @summary.version %></td>
+            <td><%= link @summary.version, to: "https://www.notateslaapp.com/software-updates/version/#{@summary.version}/release-notes", target: "_blank", rel: "noopener noreferrer" %></td>
           </tr>
           <% end %>
         </tbody>

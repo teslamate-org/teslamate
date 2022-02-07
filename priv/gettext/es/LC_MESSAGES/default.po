@@ -49,12 +49,12 @@ msgstr "conduciendo"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:130
 msgid "offline"
-msgstr "desconectado"
+msgstr "sin conexión"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:129
 msgid "online"
-msgstr "conectado"
+msgstr "en línea"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:127
@@ -106,7 +106,7 @@ msgstr "Límite de carga"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:128
 msgid "falling asleep"
-msgstr "Entrando en reposo"
+msgstr "entrando en reposo"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:132
@@ -116,7 +116,7 @@ msgstr "no disponible"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:198
 msgid "Length"
-msgstr "Longitud"
+msgstr "Distancia"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:213
@@ -151,7 +151,7 @@ msgstr "Geovallas"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:47
 msgid "Idle Time Before Trying to Sleep"
-msgstr "Período de inactividad antes de intentar reposo"
+msgstr "Período de inactividad previo a intentar reposo"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:43
@@ -484,7 +484,7 @@ msgstr "Supercarga gratuita"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:129
 msgid "General Settings"
-msgstr "Ajustes Generales"
+msgstr "Ajustes generales"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:83

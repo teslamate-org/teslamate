@@ -22,7 +22,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1642778786646,
+  "iteration": 1643273221821,
   "links": [
     {
       "icon": "dashboard",
@@ -315,6 +315,10 @@
                     "url": "https://www.notateslaapp.com/software-updates/version/${__data.fields[version]}/release-notes"
                   }
                 ]
+              },
+              {
+                "id": "unit",
+                "value": "string"
               }
             ]
           },
