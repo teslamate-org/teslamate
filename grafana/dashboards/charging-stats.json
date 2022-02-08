@@ -273,7 +273,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tsum(cp.cost)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nWHERE\n  $__timeFilter(end_date)\n  AND addr.display_name LIKE '%Supercharger%'\n\tAND cp.car_id = $car_id;",
+          "rawSql": "SELECT\n\tsum(cp.cost)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nWHERE\n  $__timeFilter(end_date)\n  AND addr.name LIKE '%Supercharger%'\n\tAND cp.car_id = $car_id;",
           "refId": "A",
           "select": [
             [
