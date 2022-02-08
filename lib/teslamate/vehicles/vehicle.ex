@@ -56,6 +56,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
               "modelx" <> _ -> "X"
               "modely" <> _ -> "Y"
               "lychee" -> "S"
+              "tamarind" -> "X"
               _ -> nil
             end
           end
