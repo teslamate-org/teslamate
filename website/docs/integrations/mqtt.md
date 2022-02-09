@@ -9,7 +9,7 @@ The MQTT function within TeslaMate allows useful values to be published to an MQ
 
 Vehicle data will be published to the following topics:
 
-|                         Topic                          |       Example        |                                      Description                                      |
+| Topic                                                  | Example              | Description                                                                           |
 | ------------------------------------------------------ | -------------------- | ------------------------------------------------------------------------------------- |
 | `teslamate/cars/$car_id/display_name`                  | Blue Thunder         | Vehicle Name                                                                          |
 | `teslamate/cars/$car_id/state`                         | asleep               | Status of the vehicle (e.g. `online`, `asleep`, `charging`)                           |
@@ -25,7 +25,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/wheel_type`                    | Pinwheel18           | The wheel type                                                                        |
 | `teslamate/cars/$car_id/spoiler_type`                  | None                 | The spoiler type                                                                      |
 |                                                        |                      |                                                                                       |
-| `teslamate/cars/$car_id/geofence`                      | 🏡 Home               | The name of the Geo-fence, if one exists at the current position                      |
+| `teslamate/cars/$car_id/geofence`                      | 🏡 Home              | The name of the Geo-fence, if one exists at the current position                      |
 |                                                        |                      |                                                                                       |
 | `teslamate/cars/$car_id/latitude`                      | 35.278131            | Last reported car latitude                                                            |
 | `teslamate/cars/$car_id/longitude`                     | 29.744801            | Last reported car longitude                                                           |
@@ -63,6 +63,8 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/charger_phases`                | 3                    | Number of charger power phases (1-3)                                                  |
 | `teslamate/cars/$car_id/charger_power`                 | 48.9                 | Charger Power                                                                         |
 | `teslamate/cars/$car_id/charger_voltage`               | 240                  | Charger Voltage                                                                       |
+| `teslamate/cars/$car_id/charge_current_request`        | 40                   | How many amps the car wants                                                           |
+| `teslamate/cars/$car_id/charge_current_request_max`    | 40                   | How many amps the car can have                                                        |
 | `teslamate/cars/$car_id/scheduled_charging_start_time` | 2019-02-29T23:00:07Z | Start time of the scheduled charge                                                    |
 | `teslamate/cars/$car_id/time_to_full_charge`           | 1.83                 | Hours remaining to full charge                                                        |
 
