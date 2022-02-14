@@ -136,6 +136,7 @@ Define LOG access.teslamate.log
 </VirtualHost>
 
 <VirtualHost *:80>
+    ProxyPreserveHost On
     ServerName grafana.${MYDOMAIN}
     CustomLog /var/log/apache2/${LOG} combined
     RewriteEngine on
@@ -171,6 +172,7 @@ Define LOG access.teslamate.log
 
 <IfModule mod_ssl.c>
     <VirtualHost *:443>
+        ProxyPreserveHost On
         ServerName grafana.${MYDOMAIN}
         ProxyPass / http://127.0.0.1:3000/
         ProxyPassReverse / http://127.0.0.1:3000/
