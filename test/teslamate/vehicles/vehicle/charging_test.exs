@@ -189,7 +189,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert capture_log(@log_opts, fn ->
              assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}
              assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
-           end) =~ "[warn] Discarded incomplete fetch result"
+           end) =~ "Discarded incomplete fetch result"
 
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.3}}

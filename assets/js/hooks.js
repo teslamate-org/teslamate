@@ -182,12 +182,17 @@ export const SimpleMap = {
     map.setView([lat, lng], 17);
     marker.addTo(map);
 
+    map.removeControl(map.zoomControl);
+
+    map.on('mouseover', function(e) { map.addControl( map.zoomControl ); });
+    map.on('mouseout', function(e) { map.removeControl( map.zoomControl ); });
+
     if (isArrow) {
       const setView = () => {
         const [lat, lng, heading] = $position.value.split(",");
         marker.setHeading(heading);
         marker.setLatLng([lat, lng]);
-        map.setView([lat, lng], 17);
+        map.setView([lat, lng], map.getZoom());
       };
 
       $position.addEventListener("change", setView);

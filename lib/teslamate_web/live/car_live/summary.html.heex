@@ -1,6 +1,6 @@
 <div class="car card">
   <div class="card-image">
-    <figure id={"map_#{@car.id}_container"} data-id={@car.id} data-marker="arrow" phx-hook="SimpleMap" phx-update="ignore">
+    <figure id={"map_#{@car.id}_container"} data-id={@car.id} data-marker="arrow" data-zoom="1" phx-hook="SimpleMap" phx-update="ignore">
       <div id={"map_#{@car.id}"} class="map" style="height: 175px; position: relative;">
         <div class="spinner">
           <span class="is-loading"/>
@@ -285,7 +285,7 @@
           <%= unless is_nil(@summary.version) do %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Version" %></td>
-            <td><%= @summary.version %></td>
+            <td><%= link @summary.version, to: "https://www.notateslaapp.com/software-updates/version/#{@summary.version}/release-notes", target: "_blank", rel: "noopener noreferrer" %></td>
           </tr>
           <% end %>
         </tbody>

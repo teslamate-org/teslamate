@@ -139,7 +139,6 @@ defmodule TeslaMate.Api do
     case args do
       [args, callback] when is_function(callback) -> apply(callback, args)
       [%Tokens{} = t] -> Auth.refresh(%Auth{token: t.access, refresh_token: t.refresh})
-      [email, password] -> Auth.login(email, password)
     end
     |> case do
       {:ok, %Auth{} = auth} ->

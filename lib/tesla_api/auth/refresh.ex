@@ -2,7 +2,6 @@ defmodule TeslaApi.Auth.Refresh do
   import TeslaApi.Auth, only: [post: 2]
 
   alias TeslaApi.{Auth, Error}
-  alias TeslaApi.Auth.OwnerApi
 
   @web_client_id TeslaApi.Auth.web_client_id()
 
@@ -26,13 +25,7 @@ defmodule TeslaApi.Auth.Refresh do
           created_at: body["created_at"]
         }
 
-        case Auth.region(auth) do
-          :chinese ->
-            OwnerApi.exchange_sso_token(auth)
-
-          _other ->
-            {:ok, auth}
-        end
+        {:ok, auth}
 
       error ->
         Error.into(error, :token_refresh)

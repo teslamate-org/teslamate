@@ -37,7 +37,7 @@ Source: [elixir-lang.org/install](https://elixir-lang.org/install)
 </details>
 
 <details>
-  <summary>Grafana (v7.2+) & Plugins</summary>
+  <summary>Grafana (v8.3.4+) & Plugins</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
@@ -54,10 +54,8 @@ Source: [grafana.com/docs/installation](https://grafana.com/docs/grafana/latest/
 Install the required Grafana plugins as well:
 
 ```bash
-sudo grafana-cli plugins install pr0ps-trackmap-panel
-sudo grafana-cli plugins install natel-discrete-panel
-sudo grafana-cli plugins install grafana-piechart-panel
-sudo grafana-cli --pluginUrl https://github.com/panodata/grafana-map-panel/releases/download/0.9.0/grafana-map-panel-0.9.0.zip plugins install grafana-worldmap-panel-ng
+sudo grafana-cli plugins install pr0ps-trackmap-panel 2.1.2
+sudo grafana-cli --pluginUrl https://github.com/panodata/panodata-map-panel/releases/download/0.16.0/panodata-map-panel-0.16.0.zip plugins install grafana-worldmap-panel-ng
 sudo systemctl restart grafana-server
 ```
 
@@ -108,7 +106,7 @@ The following commands will create a database called `teslamate` on the PostgreS
 ```console
 sudo -u postgres psql
 postgres=# create database teslamate;
-postgres=# create user teslamate with encrypted password 'secret';
+postgres=# create user teslamate with encrypted password 'your_secure_password_here';
 postgres=# grant all privileges on database teslamate to teslamate;
 postgres=# ALTER USER teslamate WITH SUPERUSER;
 postgres=# \q
@@ -171,7 +169,7 @@ Environment="LC_CTYPE=en_US.UTF-8"
 Environment="TZ=Europe/Berlin"
 Environment="PORT=4000"
 Environment="DATABASE_USER=teslamate"
-Environment="DATABASE_PASS=secret"
+Environment="DATABASE_PASS=#your secure password!
 Environment="DATABASE_NAME=teslamate"
 Environment="DATABASE_HOST=127.0.0.1"
 Environment="MQTT_HOST=127.0.0.1"
@@ -214,7 +212,7 @@ You should at least substitute the following details:
 
 ```
 export DATABASE_USER="teslamate"
-export DATABASE_PASS="secret"
+export DATABASE_PASS="your_secure_password_here"
 export DATABASE_HOST="127.0.0.1"
 export DATABASE_NAME="teslamate"
 export MQTT_HOST="127.0.0.1"
@@ -231,7 +229,7 @@ The following command needs to be run once during the installation process in or
 
 ```bash
 export DATABASE_USER="teslamate"
-export DATABASE_PASS="secret"
+export DATABASE_PASS="your_secure_password_here"
 export DATABASE_HOST="127.0.0.1"
 export DATABASE_NAME="teslamate"
 _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
@@ -260,7 +258,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
     Name: TeslaMate
     Host: localhost
     Database: teslamate
-    User: teslamate  Password: secret
+    User: teslamate  Password: your_secure_password_here
     SSL-Mode: disable
     Version: 10
     ```

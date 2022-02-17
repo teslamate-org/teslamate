@@ -9,14 +9,20 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1601807708629,
+  "iteration": 1642781358282,
   "links": [
     {
       "icon": "doc",
@@ -43,6 +49,7 @@
       "type": "dashboards"
     }
   ],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
@@ -56,13 +63,6 @@
       "id": 4,
       "panels": [],
       "repeat": "car_id",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "title": "$car_id",
       "type": "row"
     },
@@ -70,12 +70,6 @@
       "autoZoom": true,
       "datasource": "TeslaMate",
       "defaultLayer": "OpenStreetMap",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 13,
         "w": 13,
@@ -86,23 +80,47 @@
       "lineColor": "red",
       "maxDataPoints": 500,
       "pointColor": "royalblue",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "scrollWheelZoom": false,
       "showLayerChanger": true,
       "targets": [
         {
+          "datasource": "TeslaMate",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS lat,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS lat\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
           "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": "TeslaMate",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "refId": "B",
           "select": [
             [
               {
@@ -125,20 +143,15 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
+      "transformations": [],
       "transparent": true,
       "type": "pr0ps-trackmap-panel"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -192,7 +205,6 @@
         "y": 1
       },
       "id": 10,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -204,24 +216,17 @@
         },
         "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "mean"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -252,33 +257,74 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
-      "aliasColors": {
-        "charging (AC)": "#73BF69",
-        "charging (DC)": "#FADE2A",
-        "driving": "#5794F2"
-      },
-      "breakPoint": "50%",
-      "cacheTimeout": null,
-      "combine": {
-        "label": "Others",
-        "threshold": 0
-      },
       "datasource": "TeslaMate",
-      "decimals": 1,
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "unit": "dtdurations"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charging (AC)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charging (DC)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FADE2A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "driving"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5794F2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
-      "fontSize": "80%",
-      "format": "dtdurations",
       "gridPos": {
         "h": 8,
         "w": 5,
@@ -286,26 +332,33 @@
         "y": 1
       },
       "id": 38,
-      "interval": null,
-      "legend": {
-        "header": " ",
-        "percentage": false,
-        "show": true,
-        "values": true
-      },
-      "legendType": "Under graph",
       "links": [],
       "maxDataPoints": 3,
-      "nullPointMode": "connected",
-      "pieType": "pie",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
+      "options": {
+        "displayLabels": [
+          "name",
+          "percent"
+        ],
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single"
         }
       },
-      "strokeWidth": "1",
       "targets": [
         {
           "format": "time_series",
@@ -364,29 +417,24 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "type": "grafana-piechart-panel",
-      "valueName": "current"
+      "type": "piechart"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -440,7 +488,6 @@
         "y": 3
       },
       "id": 26,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -462,14 +509,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.2",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -500,19 +540,13 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -566,7 +600,6 @@
         "y": 5
       },
       "id": 28,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -588,14 +621,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.2",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -626,21 +652,15 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -694,7 +714,6 @@
         "y": 7
       },
       "id": 30,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -706,24 +725,18 @@
         },
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "mean"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
-        "textMode": "value_and_name"
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -754,21 +767,15 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -822,7 +829,6 @@
         "y": 7
       },
       "id": 32,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -834,24 +840,17 @@
         },
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "mean"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.2",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -882,29 +881,25 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "displayName": "Cost",
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -925,7 +920,6 @@
         "y": 9
       },
       "id": 22,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -947,14 +941,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.2",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -985,16 +972,12 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 1,
           "displayName": "${__cell_0}",
           "links": [],
@@ -1040,14 +1023,7 @@
         },
         "showUnfilled": false
       },
-      "pluginVersion": "7.2.2",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -1107,48 +1083,75 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "bargauge"
     },
     {
-      "backgroundColor": "rgba(128,128,128,0.01)",
-      "colorMaps": [
-        {
-          "color": "#F2CC0C",
-          "text": "charging"
-        },
-        {
-          "color": "#8F3BB8",
-          "text": "driving"
-        },
-        {
-          "color": "#56A64B",
-          "text": "asleep"
-        },
-        {
-          "color": "#6ED0E0",
-          "text": "online"
-        },
-        {
-          "color": "#FFB357",
-          "text": "offline"
-        },
-        {
-          "color": "#E02F44",
-          "text": "updating"
-        }
-      ],
-      "crosshairColor": "#8F070C",
       "datasource": "TeslaMate",
       "description": "",
-      "display": "timeline",
-      "expandFromQueryS": 0,
-      "extendLastValue": true,
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "fillOpacity": 100,
+            "lineWidth": 0
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "#6ED0E0",
+                  "index": 0,
+                  "text": "online"
+                },
+                "1": {
+                  "color": "#8F3BB8",
+                  "index": 1,
+                  "text": "driving"
+                },
+                "2": {
+                  "color": "#F2CC0C",
+                  "index": 2,
+                  "text": "charging"
+                },
+                "3": {
+                  "color": "#FFB357",
+                  "index": 3,
+                  "text": "offline"
+                },
+                "4": {
+                  "color": "#56A64B",
+                  "index": 4,
+                  "text": "asleep"
+                },
+                "5": {
+                  "color": "#6ED0E0",
+                  "index": 5,
+                  "text": "online"
+                },
+                "6": {
+                  "color": "#E02F44",
+                  "index": 6,
+                  "text": "updating"
+                },
+                "null": {
+                  "index": 7,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
         },
         "overrides": []
       },
@@ -1158,33 +1161,20 @@
         "x": 0,
         "y": 14
       },
-      "highlightOnMouseover": false,
       "id": 20,
-      "legendSortBy": "-ms",
-      "lineColor": "rgba(0,0,0,0.1)",
-      "metricNameColor": "#000000",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "rowHeight": 30,
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
+      "options": {
+        "alignValue": "center",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "mergeValues": true,
+        "rowHeight": 1,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single"
         }
       },
-      "showLegend": false,
-      "showLegendCounts": false,
-      "showLegendNames": false,
-      "showLegendPercent": false,
-      "showLegendTime": true,
-      "showLegendValues": false,
-      "showTimeAxis": true,
       "targets": [
         {
           "format": "time_series",
@@ -1215,111 +1205,321 @@
           ]
         }
       ],
-      "textSize": 12,
-      "textSizeTime": 9,
-      "timeFrom": null,
-      "timeOptions": [
-        {
-          "name": "Years",
-          "value": "years"
-        },
-        {
-          "name": "Months",
-          "value": "months"
-        },
-        {
-          "name": "Weeks",
-          "value": "weeks"
-        },
-        {
-          "name": "Days",
-          "value": "days"
-        },
-        {
-          "name": "Hours",
-          "value": "hours"
-        },
-        {
-          "name": "Minutes",
-          "value": "minutes"
-        },
-        {
-          "name": "Seconds",
-          "value": "seconds"
-        },
-        {
-          "name": "Milliseconds",
-          "value": "milliseconds"
-        }
-      ],
-      "timePrecision": {
-        "name": "Minutes",
-        "value": "minutes"
-      },
-      "timeShift": null,
-      "timeTextColor": "#d8d9da",
-      "title": "",
       "transparent": true,
-      "type": "natel-discrete-panel",
-      "units": "short",
-      "useTimePrecision": false,
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        },
-        {
-          "op": "=",
-          "text": "online",
-          "value": "0"
-        },
-        {
-          "op": "=",
-          "text": "driving",
-          "value": "1"
-        },
-        {
-          "op": "=",
-          "text": "charging",
-          "value": "2"
-        },
-        {
-          "op": "=",
-          "text": "offline",
-          "value": "3"
-        },
-        {
-          "op": "=",
-          "text": "asleep",
-          "value": "4"
-        },
-        {
-          "op": "=",
-          "text": "online",
-          "value": "5"
-        },
-        {
-          "op": "=",
-          "text": "updating",
-          "value": "6"
-        }
-      ],
-      "valueTextColor": "#0f0f0f",
-      "writeAllValues": true,
-      "writeLastValue": true,
-      "writeMetricNames": false
+      "type": "state-timeline"
     },
     {
-      "columns": [],
-      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "decimals": 2,
+          "displayName": "",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_date"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Date"
+              },
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "View drive details",
+                    "url": "d/zm7wN6Zgz?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-drive_id=${__data.fields.drive_id.numeric}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_kwh_km"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Consumption"
+              },
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_kwh_mi"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Consumption"
+              },
+              {
+                "id": "unit",
+                "value": "Wh/mi"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "distance_km"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "km"
+              },
+              {
+                "id": "unit",
+                "value": "lengthkm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_address"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Start"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Create or edit geo-fence",
+                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.start_path}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end_address"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Destination"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Create or edit geo-fence",
+                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.end_path}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration_min"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Duration"
+              },
+              {
+                "id": "unit",
+                "value": "m"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "${__data.fields.duration_str}",
+                    "url": ""
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_ts/"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "distance_mi"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "mi"
+              },
+              {
+                "id": "unit",
+                "value": "lengthmi"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "% Start"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 65
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "% End"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 65
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "(start_path|end_path|duration_str|car_id|drive_id)"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
       },
-      "fontSize": "100%",
       "gridPos": {
         "h": 11,
         "w": 24,
@@ -1328,489 +1528,32 @@
       },
       "id": 2,
       "links": [],
-      "pageSize": 100,
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Date"
+          }
+        ]
       },
-      "scroll": true,
-      "showHeader": true,
-      "sort": {
-        "col": 6,
-        "desc": true
-      },
-      "styles": [
-        {
-          "alias": "Date",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "link": true,
-          "linkTargetBlank": false,
-          "linkTooltip": "View drive details",
-          "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_2}&var-drive_id=${__cell_6}",
-          "mappingType": 1,
-          "pattern": "start_date_km",
-          "thresholds": [],
-          "type": "date",
-          "unit": "short"
-        },
-        {
-          "alias": "Consumption",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "consumption_kwh_km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "Wh/km"
-        },
-        {
-          "$$hashKey": "object:2063",
-          "alias": "Consumption",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "consumption_kwh_mi",
-          "thresholds": [],
-          "type": "number",
-          "unit": "Wh/mi"
-        },
-        {
-          "alias": "km",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "distance_km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthkm"
-        },
-        {
-          "alias": "kWh",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
-          "mappingType": 1,
-          "pattern": "consumption_kWh",
-          "thresholds": [],
-          "type": "number",
-          "unit": "kwatth"
-        },
-        {
-          "alias": "Start",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "link": true,
-          "linkTargetBlank": true,
-          "linkTooltip": "Create or edit geo-fence",
-          "linkUrl": "[[base_url:raw]]/geo-fences/${__cell_3:raw}",
-          "mappingType": 1,
-          "pattern": "start_address",
-          "preserveFormat": false,
-          "sanitize": false,
-          "thresholds": [],
-          "type": "string",
-          "unit": "short"
-        },
-        {
-          "alias": "Destination",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "link": true,
-          "linkTargetBlank": true,
-          "linkTooltip": "Create or edit geo-fence",
-          "linkUrl": "[[base_url:raw]]/geo-fences/${__cell_4:raw}",
-          "mappingType": 1,
-          "pattern": "end_address",
-          "thresholds": [],
-          "type": "string",
-          "unit": "short",
-          "valueMaps": []
-        },
-        {
-          "alias": "Temp",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "outside_temp_c",
-          "thresholds": [],
-          "type": "number",
-          "unit": "celsius"
-        },
-        {
-          "alias": "Duration",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "link": true,
-          "linkTooltip": "$__cell_5",
-          "linkUrl": "#",
-          "mappingType": 1,
-          "pattern": "duration_min",
-          "thresholds": [],
-          "type": "number",
-          "unit": "m"
-        },
-        {
-          "alias": "Efficiency",
-          "align": "auto",
-          "colorMode": "value",
-          "colors": [
-            "#FFA6B0",
-            "#FFCB7D",
-            "#C8F2C2"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "efficiency",
-          "thresholds": [
-            "0.65",
-            "0.99"
-          ],
-          "type": "number",
-          "unit": "percentunit"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "/.*_ts/",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "Speed",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "speed_avg_km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "velocitykmh"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "id",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "mi",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "distance_mi",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthmi"
-        },
-        {
-          "alias": "Temp",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "outside_temp_f",
-          "thresholds": [],
-          "type": "number",
-          "unit": "fahrenheit"
-        },
-        {
-          "alias": "Speed",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "speed_avg_mi",
-          "thresholds": [],
-          "type": "number",
-          "unit": "velocitymph"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "/(start|end)_path/",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "duration_str",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "car_id",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "Date",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "MM/DD/YY h:mm:ss a",
-          "decimals": 2,
-          "link": true,
-          "linkTargetBlank": false,
-          "linkTooltip": "View drive details",
-          "linkUrl": "d/zm7wN6Zgz?from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_2}&var-drive_id=${__cell_6}",
-          "mappingType": 1,
-          "pattern": "start_date_mi",
-          "thresholds": [],
-          "type": "date",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "% Start",
-          "thresholds": [],
-          "type": "number",
-          "unit": "percent"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "% End",
-          "thresholds": [],
-          "type": "number",
-          "unit": "percent"
-        },
-        {
-          "alias": " ",
-          "align": "auto",
-          "colorMode": "value",
-          "colors": [
-            "#3274D9",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "has_reduced_range",
-          "thresholds": [],
-          "type": "string",
-          "unit": "short",
-          "valueMaps": [
-            {
-              "text": "❄",
-              "value": "1"
-            },
-            {
-              "text": "",
-              "value": "0"
-            }
-          ]
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "drive_id",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "decimals": 2,
-          "pattern": "/.*/",
-          "thresholds": [],
-          "type": "number",
-          "unit": "short"
-        }
-      ],
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "alias": "",
+          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n  SELECT\n    round(extract(epoch FROM start_date)) * 1000 AS start_date_ts,\n    round(extract(epoch FROM end_date)) * 1000 AS end_date_ts,\n    car.id as car_id,\n    CASE WHEN start_geofence.id IS NULL THEN CONCAT('new?lat=', start_position.latitude, '&lng=', start_position.longitude)\n         WHEN start_geofence.id IS NOT NULL THEN CONCAT(start_geofence.id, '/edit')\n    END as start_path,\n    CASE WHEN end_geofence.id IS NULL THEN CONCAT('new?lat=', end_position.latitude, '&lng=', end_position.longitude)\n         WHEN end_geofence.id IS NOT NULL THEN CONCAT(end_geofence.id, '/edit')\n    END as end_path,\n    TO_CHAR((duration_min * INTERVAL '1 minute'), 'HH24:MI') as duration_str,\n    drives.id as drive_id,\n    -- Columns\n    start_date,\n    COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS start_address,\n    COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS end_address,\n    duration_min,\n    distance,\n    start_position.usable_battery_level as start_usable_battery_level,\n    start_position.battery_level as start_battery_level,\n    end_position.usable_battery_level as end_usable_battery_level,\n    end_position.battery_level as end_battery_level,\n    start_position.battery_level != start_position.usable_battery_level OR end_position.battery_level != end_position.usable_battery_level  as reduced_range,\n    duration_min > 1 AND distance > 1 AND ( \n      start_position.usable_battery_level IS NULL OR end_position.usable_battery_level IS NULL\tOR\n      (end_position.battery_level - end_position.usable_battery_level) = 0 \n    ) as is_sufficiently_precise,\n    NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) as range_diff,\n    car.efficiency as car_efficiency,\n    outside_temp_avg,\n    distance / NULLIF(duration_min, 0) * 60 AS avg_speed\n  FROM drives\n  LEFT JOIN addresses start_address ON start_address_id = start_address.id\n  LEFT JOIN addresses end_address ON end_address_id = end_address.id\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id\n  LEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n  LEFT JOIN cars car ON car.id = drives.car_id\n  WHERE $__timeFilter(start_date) AND drives.car_id = $car_id\n  ORDER BY start_date DESC\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    car_id,\n    start_path,\n    end_path,\n    duration_str,\n    drive_id,\n    -- Columns\n    start_date as start_date_[[length_unit]],\n    start_address,\n    end_address,\n    duration_min,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit,\n    start_battery_level as \"% Start\",\n    end_battery_level as \"% End\",\n    CASE WHEN is_sufficiently_precise THEN range_diff * car_efficiency / distance * 1000 * CASE WHEN '$length_unit' = 'km' THEN 1\n                                                                                                WHEN '$length_unit' = 'mi' THEN 1.60934\n                                                                                           END\n    END AS consumption_kWh_$length_unit\nFROM data;",
+          "rawSql": "WITH data AS (\n  SELECT\n    round(extract(epoch FROM start_date)) * 1000 AS start_date_ts,\n    round(extract(epoch FROM end_date)) * 1000 AS end_date_ts,\n    car.id as car_id,\n    CASE WHEN start_geofence.id IS NULL THEN CONCAT('new?lat=', start_position.latitude, '&lng=', start_position.longitude)\n         WHEN start_geofence.id IS NOT NULL THEN CONCAT(start_geofence.id, '/edit')\n    END as start_path,\n    CASE WHEN end_geofence.id IS NULL THEN CONCAT('new?lat=', end_position.latitude, '&lng=', end_position.longitude)\n         WHEN end_geofence.id IS NOT NULL THEN CONCAT(end_geofence.id, '/edit')\n    END as end_path,\n    TO_CHAR((duration_min * INTERVAL '1 minute'), 'HH24:MI') as duration_str,\n    drives.id as drive_id,\n    -- Columns\n    start_date,\n    COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS start_address,\n    COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS end_address,\n    duration_min,\n    distance,\n    start_position.usable_battery_level as start_usable_battery_level,\n    start_position.battery_level as start_battery_level,\n    end_position.usable_battery_level as end_usable_battery_level,\n    end_position.battery_level as end_battery_level,\n    start_position.battery_level != start_position.usable_battery_level OR end_position.battery_level != end_position.usable_battery_level  as reduced_range,\n    duration_min > 1 AND distance > 1 AND ( \n      start_position.usable_battery_level IS NULL OR end_position.usable_battery_level IS NULL\tOR\n      (end_position.battery_level - end_position.usable_battery_level) = 0 \n    ) as is_sufficiently_precise,\n    NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) as range_diff,\n    car.efficiency as car_efficiency,\n    outside_temp_avg,\n    distance / NULLIF(duration_min, 0) * 60 AS avg_speed\n  FROM drives\n  LEFT JOIN addresses start_address ON start_address_id = start_address.id\n  LEFT JOIN addresses end_address ON end_address_id = end_address.id\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id\n  LEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n  LEFT JOIN cars car ON car.id = drives.car_id\n  WHERE $__timeFilter(start_date) AND drives.car_id = $car_id\n  ORDER BY start_date DESC\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    car_id,\n    start_path,\n    end_path,\n    duration_str,\n    drive_id,\n    -- Columns\n    start_date,\n    start_address,\n    end_address,\n    duration_min,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit,\n    start_battery_level as \"% Start\",\n    end_battery_level as \"% End\",\n    CASE WHEN is_sufficiently_precise THEN range_diff * car_efficiency / distance * 1000 * CASE WHEN '$length_unit' = 'km' THEN 1\n                                                                                                WHEN '$length_unit' = 'mi' THEN 1.60934\n                                                                                           END\n    END AS consumption_kWh_$length_unit\nFROM data;",
           "refId": "A",
           "select": [
             [
@@ -1833,19 +1576,443 @@
         }
       ],
       "title": "Drives",
-      "transform": "table",
-      "type": "table-old"
+      "transformations": [],
+      "type": "table"
     },
     {
-      "columns": [],
-      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "decimals": 2,
+          "displayName": "",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_date"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Date"
+              },
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "View charge details",
+                    "url": "d/BHhxFeZRz?orgId=1&from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_energy_added"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Added"
+              },
+              {
+                "id": "unit",
+                "value": "kwatth"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_battery_level"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "% Start"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 65
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end_battery_level"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "% End"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 65
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration_min"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Duration"
+              },
+              {
+                "id": "unit",
+                "value": "m"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cost"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cost"
+              },
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Set Cost",
+                    "url": "[[base_url:raw]]/charge-cost/${__data.fields.id.numeric}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_ts/"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "id"
+            },
+            "properties": [
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "address"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Location"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Create or edit geo-fence",
+                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.path}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "distance_km"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Driven"
+              },
+              {
+                "id": "unit",
+                "value": "lengthkm"
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_energy_added_per_hour"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "kW"
+              },
+              {
+                "id": "unit",
+                "value": "kwatt"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#96D98D",
+                      "value": null
+                    },
+                    {
+                      "color": "#56A64B",
+                      "value": 20
+                    },
+                    {
+                      "color": "#37872D",
+                      "value": 55
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "distance_mi"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Driven"
+              },
+              {
+                "id": "unit",
+                "value": "lengthmi"
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "path"
+            },
+            "properties": [
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_energy_used"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Used"
+              },
+              {
+                "id": "unit",
+                "value": "kwatth"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "car_id"
+            },
+            "properties": [
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
       },
-      "fontSize": "100%",
       "gridPos": {
         "h": 8,
         "w": 24,
@@ -1854,448 +2021,31 @@
       },
       "id": 36,
       "links": [],
-      "pageSize": null,
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Date"
+          }
+        ]
       },
-      "scroll": false,
-      "showHeader": true,
-      "sort": {
-        "col": 5,
-        "desc": true
-      },
-      "styles": [
-        {
-          "alias": "Date",
-          "align": "auto",
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "link": true,
-          "linkTargetBlank": false,
-          "linkTooltip": "View charge details",
-          "linkUrl": "d/BHhxFeZRz?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
-          "pattern": "start_date_km",
-          "type": "date"
-        },
-        {
-          "alias": "Date",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "MM/DD/YY h:mm:ss a",
-          "decimals": 2,
-          "link": true,
-          "linkTargetBlank": false,
-          "linkTooltip": "View charge details",
-          "linkUrl": "d/BHhxFeZRz?orgId=1&from=${__cell_0}&to=${__cell_1}&var-car_id=${__cell_3}&var-charging_process_id=${__cell_4}",
-          "mappingType": 1,
-          "pattern": "start_date_mi",
-          "thresholds": [],
-          "type": "date",
-          "unit": "short"
-        },
-        {
-          "alias": "Added",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "charge_energy_added",
-          "thresholds": [],
-          "type": "number",
-          "unit": "kwatth"
-        },
-        {
-          "alias": "% Start",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "start_battery_level",
-          "thresholds": [],
-          "type": "number",
-          "unit": "percent"
-        },
-        {
-          "alias": "% End",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "end_battery_level",
-          "thresholds": [],
-          "type": "number",
-          "unit": "percent"
-        },
-        {
-          "alias": "Duration",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
-          "mappingType": 1,
-          "pattern": "duration_min",
-          "thresholds": [],
-          "type": "number",
-          "unit": "m"
-        },
-        {
-          "alias": "Temp",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
-          "mappingType": 1,
-          "pattern": "outside_temp_avg_c",
-          "thresholds": [],
-          "type": "number",
-          "unit": "celsius"
-        },
-        {
-          "alias": "Cost",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "link": true,
-          "linkTargetBlank": false,
-          "linkTooltip": "Set Cost",
-          "linkUrl": "[[base_url:raw]]/charge-cost/${__cell_4:raw}",
-          "mappingType": 1,
-          "pattern": "cost",
-          "thresholds": [],
-          "type": "number",
-          "unit": "none"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "/.*_ts/",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "id",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "Location",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "link": true,
-          "linkTargetBlank": true,
-          "linkTooltip": "Create or edit geo-fence",
-          "linkUrl": "[[base_url:raw]]/geo-fences/${__cell_2:raw}",
-          "mappingType": 1,
-          "pattern": "address",
-          "thresholds": [],
-          "type": "string",
-          "unit": "short"
-        },
-        {
-          "alias": "Driven",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "distance_km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthkm"
-        },
-        {
-          "alias": "kW",
-          "align": "auto",
-          "colorMode": "value",
-          "colors": [
-            "#96D98D",
-            "#56A64B",
-            "#37872D"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
-          "mappingType": 1,
-          "pattern": "charge_energy_added_per_hour",
-          "thresholds": [
-            "20",
-            "55"
-          ],
-          "type": "number",
-          "unit": "kwatt"
-        },
-        {
-          "alias": "km / h",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "range_added_per_hour_km",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthkm"
-        },
-        {
-          "alias": "Temp",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 1,
-          "mappingType": 1,
-          "pattern": "outside_temp_avg_f",
-          "thresholds": [],
-          "type": "number",
-          "unit": "fahrenheit"
-        },
-        {
-          "alias": "Driven",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "distance_mi",
-          "thresholds": [],
-          "type": "number",
-          "unit": "lengthmi"
-        },
-        {
-          "alias": "mi / h",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "range_added_per_hour_mi",
-          "thresholds": [],
-          "type": "number",
-          "unit": "none"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "path",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "Used",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "link": false,
-          "linkTooltip": "",
-          "linkUrl": "",
-          "mappingType": 1,
-          "pattern": "charge_energy_used",
-          "thresholds": [],
-          "type": "number",
-          "unit": "kwatth"
-        },
-        {
-          "alias": "Confidence",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "link": false,
-          "mappingType": 1,
-          "pattern": "charge_energy_used_confidence",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "none"
-        },
-        {
-          "alias": "Efficiency",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "charging_efficiency",
-          "thresholds": [],
-          "type": "number",
-          "unit": "percentunit"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "car_id",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "end_date",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "decimals": 2,
-          "pattern": "/.*/",
-          "thresholds": [],
-          "type": "number",
-          "unit": "short"
-        }
-      ],
+      "pluginVersion": "8.3.4",
       "targets": [
         {
+          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date) - 10) * 1000) AS start_date_ts,\n        (round(extract(epoch FROM end_date) + 10) * 1000) AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        charge_energy_added,\n        charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        start_[[preferred_range]]_range_km,\n        end_[[preferred_range]]_range_km,\n        outside_temp_avg,\n        c.id,\n        lag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        c.car_id,\n        cost\n    FROM\n        charging_processes c\n    LEFT JOIN positions p ON p.id = c.position_id\n    LEFT JOIN cars ON cars.id = c.car_id\n    LEFT JOIN addresses ON addresses.id = c.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\nWHERE \n    (charge_energy_added IS NULL OR charge_energy_added > 0) AND\n    c.car_id = $car_id AND\n    $__timeFilter(start_date)\nORDER BY\n    start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id,\n    id,\n    -- Columns\n    start_date as start_date_[[length_unit]],\n    end_date,\n    COALESCE(geofence_name, address) as address,    \n    duration_min,\n    cost,\n    charge_energy_added,\n    charge_energy_used,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    start_battery_level,\n    end_battery_level,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit\n FROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL)\nORDER BY\n  start_date DESC;\n    ",
+          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date) - 10) * 1000) AS start_date_ts,\n        (round(extract(epoch FROM end_date) + 10) * 1000) AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        charge_energy_added,\n        charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        start_[[preferred_range]]_range_km,\n        end_[[preferred_range]]_range_km,\n        outside_temp_avg,\n        c.id,\n        lag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        c.car_id,\n        cost\n    FROM\n        charging_processes c\n    LEFT JOIN positions p ON p.id = c.position_id\n    LEFT JOIN cars ON cars.id = c.car_id\n    LEFT JOIN addresses ON addresses.id = c.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\nWHERE \n    (charge_energy_added IS NULL OR charge_energy_added > 0) AND\n    c.car_id = $car_id AND\n    $__timeFilter(start_date)\nORDER BY\n    start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id,\n    id,\n    -- Columns\n    start_date,\n    COALESCE(geofence_name, address) as address,    \n    duration_min,\n    cost,\n    charge_energy_added,\n    charge_energy_used,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    start_battery_level,\n    end_battery_level,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit\n FROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL)\nORDER BY\n  start_date DESC;\n    ",
           "refId": "A",
           "select": [
             [
@@ -2317,11 +2067,16 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Charges",
-      "transform": "table",
-      "type": "table-old"
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {
+            "reducers": []
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "aliasColors": {},
@@ -2330,12 +2085,6 @@
       "dashes": false,
       "datasource": "TeslaMate",
       "decimals": 0,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 2,
       "gridPos": {
@@ -2365,17 +2114,10 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "seriesOverrides": [
         {
           "alias": "/.*range.*/",
@@ -2416,9 +2158,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Battery Level & Range",
       "tooltip": {
         "shared": true,
@@ -2427,9 +2167,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2439,23 +2177,16 @@
           "format": "percent",
           "label": "",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
-          "decimals": null,
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": true,
-        "alignLevel": null
+        "align": true
       }
     },
     {
@@ -2464,12 +2195,6 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "TeslaMate",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 2,
       "gridPos": {
@@ -2497,17 +2222,10 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "seriesOverrides": [
         {
           "alias": "/elevation.*/",
@@ -2548,9 +2266,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Elevation",
       "tooltip": {
         "shared": true,
@@ -2559,9 +2275,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2570,27 +2284,22 @@
           "format": "short",
           "label": "",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
           "label": "Elevation",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
-  "refresh": false,
-  "schemaVersion": 26,
+  "refresh": "",
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [
     "tesla"
@@ -2598,7 +2307,6 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "All",
@@ -2618,13 +2326,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "C",
@@ -2644,13 +2350,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "km",
@@ -2670,13 +2374,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "m",
@@ -2696,13 +2398,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "ideal",
@@ -2722,13 +2422,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "http://localhost:4000",
@@ -2748,23 +2446,20 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
-          "text": "1600620965194",
-          "value": "1600620965194"
+          "text": "1642593521525",
+          "value": "1642593521525"
         },
         "datasource": "TeslaMate",
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "from",
         "options": [],
@@ -2774,7 +2469,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -2813,5 +2507,6 @@
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }

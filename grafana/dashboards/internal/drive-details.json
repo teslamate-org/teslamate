@@ -9,14 +9,21 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1601722850623,
+  "id": 20,
+  "iteration": 1644262750775,
   "links": [
     {
       "icon": "dashboard",
@@ -44,6 +51,7 @@
       "type": "dashboards"
     }
   ],
+  "liveNow": false,
   "panels": [
     {
       "aliasColors": {},
@@ -53,7 +61,6 @@
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -87,7 +94,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.3.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -116,7 +123,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed::numeric, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tconvert_km([[preferred_range]]_battery_range_km, '$length_unit') AS \"Range ($preferred_range) [$length_unit]\",\n\tconvert_km(est_battery_range_km, '$length_unit') AS \"Range (est.) [$length_unit]\",\n\tbattery_level AS \"SOC [%]\",\n\tusable_battery_level AS \"usable SOC [%]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed::numeric, '$length_unit') AS \"Speed [$length_unit/h]\",\n\tpower AS \"Power [kW]\",\n\tbattery_heater::integer*100 AS \"Preconditioning\",\n\tconvert_km([[preferred_range]]_battery_range_km, '$length_unit') AS \"Range ($preferred_range) [$length_unit]\",\n\tconvert_km(est_battery_range_km, '$length_unit') AS \"Range (est.) [$length_unit]\",\n\tbattery_level AS \"SOC [%]\",\n\tusable_battery_level AS \"usable SOC [%]\"\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -141,9 +148,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Drive",
       "tooltip": {
         "shared": true,
@@ -152,9 +157,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -162,46 +165,38 @@
         {
           "decimals": 1,
           "format": "locale",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
-          "decimals": null,
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 2,
           "displayName": "Distance",
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -247,7 +242,6 @@
         "y": 0
       },
       "id": 10,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -264,7 +258,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -295,31 +289,26 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 1,
           "displayName": "Duration",
           "mappings": [
             {
-              "$$hashKey": "object:147",
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -340,7 +329,6 @@
         "y": 0
       },
       "id": 14,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -357,7 +345,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -388,29 +376,25 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 2,
           "displayName": "Energy used",
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -431,7 +415,6 @@
         "y": 2
       },
       "id": 12,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -448,7 +431,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -479,16 +462,12 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "displayName": "Consumption",
           "mappings": [],
           "thresholds": {
@@ -507,7 +486,8 @@
                 "value": 250
               }
             ]
-          }
+          },
+          "unit": "none"
         },
         "overrides": [
           {
@@ -557,7 +537,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -588,21 +568,11 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
       "autoZoom": true,
-      "datasource": "TeslaMate",
       "defaultLayer": "OpenStreetMap",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 27,
         "w": 12,
@@ -619,6 +589,7 @@
       "targets": [
         {
           "alias": "",
+          "datasource": "TeslaMate",
           "format": "time_series",
           "group": [
             {
@@ -632,8 +603,79 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  $__time(date),\r\n   latitude,\r\n   longitude\r\n   FROM positions\r\nWHERE \r\n  car_id = $car_id AND \r\n  $__timeFilter(date)\r\nORDER BY date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n   latitude\nFROM positions\nWHERE \n  car_id = $car_id AND \n  $__timeFilter(date)\nORDER BY \n  date ASC",
           "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "lat"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "avg"
+                ],
+                "type": "aggregate"
+              },
+              {
+                "params": [
+                  "lat"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "lng"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "avg"
+                ],
+                "type": "aggregate"
+              },
+              {
+                "params": [
+                  "lat"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "pos",
+          "timeColumn": "Datum",
+          "timeColumnType": "datetime",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "alias": "",
+          "datasource": "TeslaMate",
+          "format": "time_series",
+          "group": [
+            {
+              "params": [
+                "$__interval",
+                "none"
+              ],
+              "type": "time"
+            }
+          ],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__time(date),\n  longitude\nFROM positions\nWHERE \n  car_id = $car_id AND \n  $__timeFilter(date)\nORDER BY \n  date ASC",
+          "refId": "B",
           "select": [
             [
               {
@@ -688,8 +730,6 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Map",
       "type": "pr0ps-trackmap-panel"
     },
@@ -701,7 +741,6 @@
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -732,7 +771,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -776,9 +815,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Elevation",
       "tooltip": {
         "shared": true,
@@ -787,9 +824,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -797,24 +832,17 @@
         {
           "decimals": 0,
           "format": "none",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -825,7 +853,6 @@
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -856,7 +883,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -930,9 +957,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Temperatures",
       "tooltip": {
         "shared": true,
@@ -941,51 +966,147 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
-      "cacheTimeout": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 20,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "text": {},
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": "TeslaMate",
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH height as (SELECT\n\televation-LAG(elevation,1) over ( order BY\n\tdate ASC ) as diff\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC\n\t)\n\t\n\nselect convert_m(sum(diff), '$alternative_length_unit') || ' $alternative_length_unit'  as \"UP\" from height where diff > 0",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "start_km"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "drives",
+          "timeColumn": "start_date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": "TeslaMate",
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH height as (SELECT\n\televation-LAG(elevation,1) over ( order BY\n\tdate ASC ) as diff\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC\n\t)\n\t\n\t\nselect convert_m(sum(diff), '$alternative_length_unit') || ' $alternative_length_unit' as \"DOWN\" from height where diff < 0",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "start_km"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "drives",
+          "timeColumn": "start_date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Elevation Summary",
+      "type": "stat"
+    },
+    {
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1006,7 +1127,6 @@
         "y": 31
       },
       "id": 16,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -1023,7 +1143,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -1054,15 +1174,12 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "transparent": true,
       "type": "stat"
     }
   ],
   "refresh": false,
-  "schemaVersion": 26,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1074,7 +1191,6 @@
           "value": "NULL"
         },
         "hide": 2,
-        "label": null,
         "name": "drive_id",
         "options": [
           {
@@ -1083,13 +1199,13 @@
             "value": "NULL"
           }
         ],
-        "query": "NULL",
+        "query": "3217",
         "skipUrlSync": false,
         "type": "textbox"
       },
       {
-        "allValue": null,
         "current": {
+          "selected": false,
           "text": "C",
           "value": "C"
         },
@@ -1107,13 +1223,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "km",
@@ -1133,13 +1247,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "1",
@@ -1159,13 +1271,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "m",
@@ -1185,13 +1295,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "ideal",
@@ -1201,7 +1309,6 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "preferred_range",
         "options": [],
@@ -1211,13 +1318,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "http://localhost:4000",
@@ -1237,7 +1342,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1276,5 +1380,6 @@
   "timezone": "",
   "title": "Drive Details",
   "uid": "zm7wN6Zgz",
-  "version": 4
+  "version": 1,
+  "weekStart": ""
 }

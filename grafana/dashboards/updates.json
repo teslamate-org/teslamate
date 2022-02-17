@@ -9,14 +9,20 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1598013848072,
+  "iteration": 1643273221821,
   "links": [
     {
       "icon": "dashboard",
@@ -36,6 +42,7 @@
       "type": "dashboards"
     }
   ],
+  "liveNow": false,
   "panels": [
     {
       "datasource": "TeslaMate",
@@ -48,13 +55,6 @@
       "id": 4,
       "panels": [],
       "repeat": "car_id",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "title": "$car_id",
       "type": "row"
     },
@@ -62,7 +62,6 @@
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -97,14 +96,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.5.4",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -135,8 +127,6 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Updates",
       "type": "stat"
     },
@@ -144,7 +134,6 @@
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 1,
           "mappings": [],
           "thresholds": {
@@ -181,14 +170,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.5.4",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -219,17 +201,15 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Median time between updates",
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": null,
+            "align": "auto",
+            "displayMode": "auto",
             "filterable": false
           },
           "mappings": [],
@@ -333,9 +313,12 @@
                     "targetBlank": true,
                     "title": "${__data.fields[version]} release notes",
                     "url": "https://www.notateslaapp.com/software-updates/version/${__data.fields[version]}/release-notes"
-
                   }
                 ]
+              },
+              {
+                "id": "unit",
+                "value": "string"
               }
             ]
           },
@@ -358,7 +341,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Avg ideal range [mi]"
+              "options": "avg_ideal_range_km"
             },
             "properties": [
               {
@@ -368,13 +351,21 @@
               {
                 "id": "decimals",
                 "value": 1
+              },
+              {
+                "id": "unit",
+                "value": "lengthkm"
+              },
+              {
+                "id": "displayName",
+                "value": "Avg ideal range"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Avg ideal range [km]"
+              "options": "avg_rated_range_km"
             },
             "properties": [
               {
@@ -384,6 +375,62 @@
               {
                 "id": "decimals",
                 "value": 1
+              },
+              {
+                "id": "unit",
+                "value": "lengthkm"
+              },
+              {
+                "id": "displayName",
+                "value": "Avg rated range"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "avg_ideal_range_mi"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "unit",
+                "value": "lengthmi"
+              },
+              {
+                "id": "displayName",
+                "value": "Avg ideal range"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "avg_rated_range_mi"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "unit",
+                "value": "lengthmi"
+              },
+              {
+                "id": "displayName",
+                "value": "Avg rated range"
               }
             ]
           }
@@ -398,6 +445,13 @@
       "id": 2,
       "links": [],
       "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
         "sortBy": [
           {
@@ -406,14 +460,7 @@
           }
         ]
       },
-      "pluginVersion": "7.5.4",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "scroll": true,
       "showHeader": true,
       "sort": {
@@ -433,7 +480,6 @@
           "$$hashKey": "object:69",
           "alias": "End Date",
           "align": "auto",
-          "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
@@ -451,7 +497,6 @@
           "$$hashKey": "object:70",
           "alias": "Installed Version",
           "align": "auto",
-          "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
@@ -473,7 +518,6 @@
           "$$hashKey": "object:202",
           "alias": "Duration",
           "align": "auto",
-          "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
@@ -491,7 +535,6 @@
           "$$hashKey": "object:392",
           "alias": "Since Previous Update",
           "align": "auto",
-          "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
@@ -509,7 +552,6 @@
           "$$hashKey": "object:71",
           "alias": "# of Charges",
           "align": "auto",
-          "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
@@ -524,11 +566,12 @@
       ],
       "targets": [
         {
+          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "with u as (\r\n  select *, coalesce(lag(start_date) over(order by start_date desc), now()) as next_start_date \r\n  from updates\r\n  where car_id = $car_id and $__timeFilter(start_date)\r\n),\r\nrng as (\r\n  SELECT\r\n\t  to_timestamp(floor(extract(epoch from date)/21600)*21600) AS date,\r\n\t  (sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100 ) AS \"battery_rng\"\r\n  FROM (\r\n    select battery_level, usable_battery_level, date, rated_battery_range_km, ideal_battery_range_km\r\n    from positions\r\n    where car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\r\n    union all\r\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date, rated_battery_range_km, ideal_battery_range_km\r\n    from charges c\r\n    join charging_processes p ON p.id = c.charging_process_id \r\n    where $__timeFilter(date) and p.car_id = $car_id\r\n  ) as data\r\n  GROUP BY 1\r\n)\r\n\r\nselect\t\r\n  u.start_date as time,\r\n\textract(EPOCH FROM u.end_date - u.start_date) AS update_duration,\r\n\textract(EPOCH FROM u.start_date - lag(u.start_date) OVER (ORDER BY u.start_date)) AS since_last_update,\r\n\tsplit_part(u.version, ' ', 1) as version,\r\n\tcount(distinct cp.id) as chg_ct,\r\n\tconvert_km(avg(r.battery_rng), '$length_unit')::numeric(6,2) AS \"Avg [[preferred_range]] range [$length_unit]\"\r\nfrom u u\r\nleft join charging_processes cp\r\n\tON u.car_id = cp.car_id\r\n \tand cp.start_date between u.start_date and u.next_start_date\r\nleft join rng r\r\n\tON r.date between u.start_date and u.next_start_date\r\ngroup by u.car_id,\r\n\tu.start_date,\r\n\tu.end_date,\r\n\tnext_start_date,\r\n\tsplit_part(u.version, ' ', 1)",
+          "rawSql": "with u as (\r\n  select *, coalesce(lag(start_date) over(order by start_date desc), now()) as next_start_date \r\n  from updates\r\n  where car_id = $car_id and $__timeFilter(start_date)\r\n),\r\nrng as (\r\n  SELECT\r\n\t  to_timestamp(floor(extract(epoch from date)/21600)*21600) AS date,\r\n\t  (sum([[preferred_range]]_battery_range_km) / sum(coalesce(usable_battery_level,battery_level)) * 100 ) AS \"battery_rng\"\r\n  FROM (\r\n    select battery_level, usable_battery_level, date, rated_battery_range_km, ideal_battery_range_km\r\n    from positions\r\n    where car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\r\n    union all\r\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date, rated_battery_range_km, ideal_battery_range_km\r\n    from charges c\r\n    join charging_processes p ON p.id = c.charging_process_id \r\n    where $__timeFilter(date) and p.car_id = $car_id\r\n  ) as data\r\n  GROUP BY 1\r\n)\r\n\r\nselect\t\r\n  u.start_date as time,\r\n\textract(EPOCH FROM u.end_date - u.start_date) AS update_duration,\r\n\textract(EPOCH FROM u.start_date - lag(u.start_date) OVER (ORDER BY u.start_date)) AS since_last_update,\r\n\tsplit_part(u.version, ' ', 1) as version,\r\n\tcount(distinct cp.id) as chg_ct,\r\n\tconvert_km(avg(r.battery_rng), '$length_unit')::numeric(6,2) AS avg_[[preferred_range]]_range_[[length_unit]]\r\nfrom u u\r\nleft join charging_processes cp\r\n\tON u.car_id = cp.car_id\r\n \tand cp.start_date between u.start_date and u.next_start_date\r\nleft join rng r\r\n\tON r.date between u.start_date and u.next_start_date\r\ngroup by u.car_id,\r\n\tu.start_date,\r\n\tu.end_date,\r\n\tnext_start_date,\r\n\tsplit_part(u.version, ' ', 1)",
           "refId": "A",
           "select": [
             [
@@ -552,13 +595,11 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Updates",
       "type": "table"
     }
   ],
-  "schemaVersion": 27,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [
     "tesla"
@@ -566,11 +607,10 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": false,
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
@@ -586,13 +626,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "ideal",
@@ -602,7 +640,6 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "preferred_range",
         "options": [],
@@ -612,13 +649,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "km",
@@ -628,7 +663,6 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "length_unit",
         "options": [],
@@ -638,13 +672,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "http://localhost:4000",
@@ -664,7 +696,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -702,5 +733,6 @@
   "timezone": "",
   "title": "Updates",
   "uid": "IiC07mgWz",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }

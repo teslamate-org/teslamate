@@ -55,6 +55,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
               "model3" <> _ -> "3"
               "modelx" <> _ -> "X"
               "modely" <> _ -> "Y"
+              "lychee" -> "S"
+              "tamarind" -> "X"
               _ -> nil
             end
           end
@@ -1054,7 +1056,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          {:next_event, :internal, {:update, {:online, vehicle}}}}
 
       %VehicleState{timestamp: ts, car_version: vsn, software_update: %SW{} = software_update} ->
-        if software_update.status != "" do
+        if software_update.status != "" and
+             not (software_update.status == "downloading" and software_update.install_perc == 100) do
           Logger.error(
             """
             Unexpected update status: #{software_update.status}
@@ -1333,6 +1336,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
          [broadcast_summary(), schedule_fetch(15, data)]}
 
+      {:error, :downloading_update} ->
+        if suspend?, do: Logger.warning("Downloading update ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         [broadcast_summary(), schedule_fetch(15 * i, data)]}
+
       {:error, :doors_open} ->
         if suspend?, do: Logger.warning("Doors open ...", car_id: car.id)
 
@@ -1382,6 +1391,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _} ->
         {:error, :sentry_mode}
+
+      {%Vehicle{
+         vehicle_state: %VehicleState{
+           software_update: %VehicleState.SoftwareUpdate{
+             status: "downloading",
+             download_perc: download_percentage
+           }
+         }
+       }, _}
+      when download_percentage < 100 ->
+        {:error, :downloading_update}
 
       {%Vehicle{vehicle_state: %VehicleState{df: df, pf: pf, dr: dr, pr: pr}}, _}
       when is_number(df) and is_number(pf) and is_number(dr) and is_number(pr) and
