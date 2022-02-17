@@ -11,7 +11,7 @@
   </ul>
 </nav>
 
-<.form let={f} for={@changeset} phx_change="validate" phx_submit="save" class="geofence" id={@geofence.id}>
+<.form let={f} for={@changeset} phx_change="validate" phx_submit="save" class="geofence">
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <%= label f, :position, gettext("Position"), class: "label" %>

@@ -74,15 +74,18 @@ msgstr "哨兵模式"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/index.ex:15
-#: lib/teslamate_web/live/charge_live/cost.html.heex:3 lib/teslamate_web/live/geofence_live/form.html.heex:3
-#: lib/teslamate_web/live/geofence_live/index.html.heex:3 lib/teslamate_web/live/import_live/index.html.heex:3
+#: lib/teslamate_web/live/charge_live/cost.html.heex:3
+#: lib/teslamate_web/live/geofence_live/form.html.heex:3
+#: lib/teslamate_web/live/geofence_live/index.html.heex:3
+#: lib/teslamate_web/live/import_live/index.html.heex:3
 #: lib/teslamate_web/live/settings_live/index.html.heex:3
 msgid "Home"
 msgstr "主页"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.ex:21
-#: lib/teslamate_web/live/settings_live/index.html.heex:4 lib/teslamate_web/templates/layout/root.html.heex:60
+#: lib/teslamate_web/live/settings_live/index.html.heex:4
+#: lib/teslamate_web/templates/layout/root.html.heex:60
 msgid "Settings"
 msgstr "设置"
 
@@ -139,8 +142,10 @@ msgstr "收藏点 \"%{name}\" 已创建"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:110
-#: lib/teslamate_web/live/geofence_live/form.html.heex:4 lib/teslamate_web/live/geofence_live/index.ex:22
-#: lib/teslamate_web/live/geofence_live/index.html.heex:4 lib/teslamate_web/templates/layout/root.html.heex:57
+#: lib/teslamate_web/live/geofence_live/form.html.heex:4
+#: lib/teslamate_web/live/geofence_live/index.ex:22
+#: lib/teslamate_web/live/geofence_live/index.html.heex:4
+#: lib/teslamate_web/templates/layout/root.html.heex:57
 msgid "Geo-Fences"
 msgstr "收藏点"
 
@@ -151,7 +156,8 @@ msgstr "进入休眠前的闲置时间"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:43
-#: lib/teslamate_web/live/geofence_live/form.html.heex:48 lib/teslamate_web/live/geofence_live/index.html.heex:21
+#: lib/teslamate_web/live/geofence_live/form.html.heex:48
+#: lib/teslamate_web/live/geofence_live/index.html.heex:21
 msgid "Name"
 msgstr "名字"
 
@@ -174,8 +180,8 @@ msgstr "保存"
 
 #, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:135
-#: lib/teslamate_web/live/geofence_live/form.html.heex:108 lib/teslamate_web/live/signin_live/index.html.heex:77
-#: lib/teslamate_web/live/signin_live/index.html.heex:144
+#: lib/teslamate_web/live/geofence_live/form.html.heex:108
+#: lib/teslamate_web/live/signin_live/index.html.heex:40
 msgid "Saving..."
 msgstr "保存中"
 
@@ -191,7 +197,7 @@ msgid "min"
 msgstr "分钟"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:312
+#: lib/teslamate_web/live/signin_live/index.ex:81
 msgid "Signed in successfully"
 msgstr "登陆成功"
 
@@ -255,7 +261,7 @@ msgstr "车辆必须处于锁车状态"
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:133
 msgid "Range (rated)"
-msgstr "额定里程"
+msgstr "典型里程"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:171
@@ -275,17 +281,17 @@ msgstr "里程"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "ideal"
-msgstr "典型"
+msgstr "额定"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "rated"
-msgstr "额定"
+msgstr "典型"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:132
 msgid "Range (ideal)"
-msgstr "当前剩余里程 (典型)"
+msgstr "当前剩余里程 (额定)"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:138
@@ -293,7 +299,7 @@ msgid "The car's estimate of remaining range is based on a fixed energy consumpt
 msgstr "实际续航里程会因车辆配置、电池使用时长和状况、驾驶习惯及操作、环境和气候状况等因素的影响而有所不同。"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:140
+#: lib/teslamate_web/live/car_live/summary.ex:141
 msgid "Update in progress"
 msgstr "更新中"
 
@@ -371,12 +377,12 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "收藏点 \"%{name}\" 已更新"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:142
+#: lib/teslamate_web/live/car_live/summary.ex:143
 msgid "An error occurred"
 msgstr "发生了一个错误"
 
 #, elixir-format
-#: lib/teslamate_web/live/car_live/summary.ex:141
+#: lib/teslamate_web/live/car_live/summary.ex:142
 msgid "Timeout"
 msgstr "已超时"
 
@@ -461,20 +467,10 @@ msgid "Time zone"
 msgstr "时区"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:35
-msgid "Password"
-msgstr "密码"
-
-#, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:108
-#: lib/teslamate_web/live/signin_live/index.html.heex:75 lib/teslamate_web/live/signin_live/index.html.heex:142
+#: lib/teslamate_web/live/signin_live/index.ex:13
+#: lib/teslamate_web/live/signin_live/index.html.heex:38
 msgid "Sign in"
 msgstr "登陆"
-
-#, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:21
-msgid "Email address"
-msgstr "邮箱"
 
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:90
@@ -516,8 +512,8 @@ msgstr "总共"
 #: lib/teslamate_web/live/geofence_live/form.html.heex:125
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "此位置有 <strong>%{n} 次</strong> 收费记录，尚未添加任何费用。"
+msgstr[1] "此位置有 <strong>%{n} 次</strong> 收费记录，尚未添加任何费用。"
 
 #, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:134
@@ -574,7 +570,7 @@ msgstr "行李箱已打开"
 #: lib/teslamate_web/live/charge_live/cost.html.heex:112
 #: lib/teslamate_web/live/geofence_live/form.html.heex:66
 msgid "Per Minute"
-msgstr ""
+msgstr "每分钟"
 
 #, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:83
@@ -582,76 +578,41 @@ msgid "Software Update available (%{version})"
 msgstr "有可用更新 (%{version})"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:173
-msgid "Enter the verification code generated by your authenticator app."
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:153
-msgid "Two-Factor Authentication"
-msgstr ""
-
-#, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:295
 msgid "Sign out"
-msgstr ""
+msgstr "退出登陆"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:47
+#: lib/teslamate_web/live/signin_live/index.html.heex:11
 msgid "Access Token"
-msgstr ""
+msgstr "令牌"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:60
+#: lib/teslamate_web/live/signin_live/index.html.heex:24
 msgid "Refresh Token"
-msgstr ""
+msgstr "刷新令牌"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:270
+#: lib/teslamate_web/live/signin_live/index.ex:56
 msgid "Tokens are invalid"
-msgstr ""
+msgstr "令牌 无效"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:95
-msgid "Use email and password"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:87
+#: lib/teslamate_web/live/signin_live/index.html.heex:49
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr ""
+msgstr "通过 Tesla API 获得令牌需要有编程经验或者借助第三方服务。更多信息可以查看 %{here}。"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:84
+#: lib/teslamate_web/live/signin_live/index.html.heex:46
 msgid "here"
-msgstr ""
+msgstr "这里"
 
 #, elixir-format
-#: lib/teslamate_web/live/signin_live/index.html.heex:116
-msgid "Captcha"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:261
-msgid "Captcha does not match"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:267
-msgid "Invalid email address and password combination"
-msgstr ""
-
-#, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:273
+#: lib/teslamate_web/live/signin_live/index.ex:59
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr ""
+msgstr "您的 Tesla 帐户因登录尝试失败次数过多而被锁定。要解锁您的帐户，请重置您的密码"
 
-#, elixir-format
-#: lib/teslamate_web/live/signin_live/index.ex:264
-msgid "Recaptcha is required"
-msgstr ""
-
-#, elixir-format, fuzzy
-#: lib/teslamate_web/live/signin_live/index.html.heex:94
-msgid "Use existing API tokens"
+#, elixir-format, ex-autogen
+#: lib/teslamate_web/live/car_live/summary.ex:140
+msgid "Downloading update"
 msgstr ""

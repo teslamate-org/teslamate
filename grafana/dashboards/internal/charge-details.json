@@ -8,14 +8,20 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1594304652394,
+  "iteration": 1642784851277,
   "links": [
     {
       "icon": "dashboard",
@@ -35,6 +41,7 @@
       "type": "dashboards"
     }
   ],
+  "liveNow": false,
   "panels": [
     {
       "aliasColors": {},
@@ -45,7 +52,6 @@
       "decimals": 2,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -75,8 +81,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.0-beta2",
+      "pluginVersion": "8.3.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -132,9 +141,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Charge Details",
       "tooltip": {
         "shared": true,
@@ -143,9 +150,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -153,45 +158,37 @@
         {
           "$$hashKey": "object:289",
           "format": "none",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:290",
           "format": "none",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 1,
           "displayName": "Added",
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -212,7 +209,6 @@
         "y": 0
       },
       "id": 8,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -229,7 +225,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.0-beta2",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -260,29 +256,25 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 2,
           "displayName": "Cost",
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -303,7 +295,6 @@
         "y": 0
       },
       "id": 6,
-      "interval": null,
       "links": [
         {
           "title": "Set cost",
@@ -325,7 +316,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.0-beta2",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -357,34 +348,42 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
-      },
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 2,
@@ -393,42 +392,23 @@
         "y": 3
       },
       "id": 10,
-      "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -459,30 +439,11 @@
           ]
         }
       ],
-      "thresholds": "",
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "type": "singlestat",
-      "valueFontSize": "50%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "autoZoom": true,
-      "datasource": "TeslaMate",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
+      "defaultLayer": "OpenStreetMap",
       "gridPos": {
         "h": 15,
         "w": 7,
@@ -494,15 +455,47 @@
       "links": [],
       "maxDataPoints": 500,
       "pointColor": "royalblue",
+      "scrollWheelZoom": false,
+      "showLayerChanger": true,
       "targets": [
         {
           "alias": "",
+          "datasource": "TeslaMate",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tunnest(ARRAY[latitude, latitude]) AS latitude,\n\tunnest(ARRAY[longitude, longitude]) AS longitude\nFROM\n\tcharging_processes c\n\tJOIN positions p ON c.position_id = p.id\nWHERE\n\t$__timeFilter(date)\n\tAND c.car_id = $car_id;",
+          "rawSql": "SELECT\n\t$__time(date),\n\tunnest(ARRAY[latitude, latitude]) AS latitude\nFROM\n\tcharging_processes c\n\tJOIN positions p ON c.position_id = p.id\nWHERE\n\t$__timeFilter(date)\n\tAND c.car_id = $car_id;",
           "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "alias": "",
+          "datasource": "TeslaMate",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t$__time(date),\n\tunnest(ARRAY[longitude, longitude]) AS longitude\nFROM\n\tcharging_processes c\n\tJOIN positions p ON c.position_id = p.id\nWHERE\n\t$__timeFilter(date)\n\tAND c.car_id = $car_id;",
+          "refId": "B",
           "select": [
             [
               {
@@ -523,7 +516,6 @@
           ]
         }
       ],
-      "title": "",
       "type": "pr0ps-trackmap-panel"
     },
     {
@@ -730,7 +722,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 27,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -751,12 +743,11 @@
             "value": "NULL"
           }
         ],
-        "query": "128",
+        "query": "NULL",
         "skipUrlSync": false,
         "type": "textbox"
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "C",
@@ -776,13 +767,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "1",
@@ -802,13 +791,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "km",
@@ -818,7 +805,6 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "length_unit",
         "options": [],
@@ -828,13 +814,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "ideal",
@@ -844,7 +828,6 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "preferred_range",
         "options": [],
@@ -854,13 +837,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "http://localhost:4000",
@@ -870,7 +851,6 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "base_url",
         "options": [],
@@ -880,7 +860,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -919,5 +898,6 @@
   "timezone": "",
   "title": "Charge Details",
   "uid": "BHhxFeZRz",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }

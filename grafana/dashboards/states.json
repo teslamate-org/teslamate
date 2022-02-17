@@ -9,14 +9,20 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1598013761039,
+  "iteration": 1642780620514,
   "links": [
     {
       "icon": "dashboard",
@@ -36,6 +42,7 @@
       "type": "dashboards"
     }
   ],
+  "liveNow": false,
   "panels": [
     {
       "datasource": "TeslaMate",
@@ -48,25 +55,15 @@
       "id": 16,
       "panels": [],
       "repeat": "car_id",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
       "title": "$car_id",
       "type": "row"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "description": "Only distinguishes betwen online, offline and asleep.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -87,7 +84,6 @@
         "y": 1
       },
       "id": 2,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -109,14 +105,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.5.4",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -147,20 +136,15 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Last state change",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "description": "Only distinguishes between online, offline and asleep.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -181,7 +165,6 @@
         "y": 1
       },
       "id": 6,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -203,14 +186,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.5.4",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "table",
@@ -241,28 +217,27 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Current State",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "TeslaMate",
       "description": "based on any data ever recorded.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
+          "max": 1,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -283,7 +258,6 @@
         "y": 1
       },
       "id": 8,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -305,14 +279,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "7.5.4",
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "format": "time_series",
@@ -343,47 +310,76 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "parked (%)",
       "type": "stat"
     },
     {
-      "backgroundColor": "rgba(128,128,128,0.1)",
-      "colorMaps": [
-        {
-          "color": "#F2CC0C",
-          "text": "charging"
-        },
-        {
-          "color": "#8F3BB8",
-          "text": "driving"
-        },
-        {
-          "color": "#56A64B",
-          "text": "asleep"
-        },
-        {
-          "color": "#6ED0E0",
-          "text": "online"
-        },
-        {
-          "color": "#FFB357",
-          "text": "offline"
-        },
-        {
-          "color": "#E02F44",
-          "text": "updating"
-        }
-      ],
-      "crosshairColor": "#8F070C",
       "datasource": "TeslaMate",
-      "display": "timeline",
-      "expandFromQueryS": 0,
-      "extendLastValue": true,
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "fillOpacity": 100,
+            "lineWidth": 0
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "#6ED0E0",
+                  "index": 0,
+                  "text": "online"
+                },
+                "1": {
+                  "color": "#8F3BB8",
+                  "index": 1,
+                  "text": "driving"
+                },
+                "2": {
+                  "color": "#F2CC0C",
+                  "index": 2,
+                  "text": "charging"
+                },
+                "3": {
+                  "color": "#FFB357",
+                  "index": 3,
+                  "text": "offline"
+                },
+                "4": {
+                  "color": "#56A64B",
+                  "index": 4,
+                  "text": "asleep"
+                },
+                "5": {
+                  "color": "#6ED0E0",
+                  "index": 5,
+                  "text": "online"
+                },
+                "6": {
+                  "color": "#E02F44",
+                  "index": 6,
+                  "text": "updating"
+                },
+                "null": {
+                  "index": 7,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
@@ -393,35 +389,20 @@
         "x": 0,
         "y": 3
       },
-      "highlightOnMouseover": true,
       "id": 14,
-      "legendSortBy": "-ms",
-      "lineColor": "rgba(0,0,0,0.1)",
-      "metricNameColor": "#000000",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "rowHeight": 150,
-      "scopedVars": {
-        "car_id": {
-          "selected": true,
-          "text": "1",
-          "value": "1"
+      "options": {
+        "alignValue": "center",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "auto",
+        "tooltip": {
+          "mode": "single"
         }
       },
-      "showDistinctCount": false,
-      "showLegend": true,
-      "showLegendCounts": true,
-      "showLegendNames": false,
-      "showLegendPercent": true,
-      "showLegendTime": true,
-      "showLegendValues": true,
-      "showTimeAxis": true,
-      "showTransitionCount": false,
       "targets": [
         {
           "format": "time_series",
@@ -452,103 +433,12 @@
           ]
         }
       ],
-      "textSize": 26,
-      "textSizeTime": 14,
-      "timeFrom": null,
-      "timeOptions": [
-        {
-          "name": "Years",
-          "value": "years"
-        },
-        {
-          "name": "Months",
-          "value": "months"
-        },
-        {
-          "name": "Weeks",
-          "value": "weeks"
-        },
-        {
-          "name": "Days",
-          "value": "days"
-        },
-        {
-          "name": "Hours",
-          "value": "hours"
-        },
-        {
-          "name": "Minutes",
-          "value": "minutes"
-        },
-        {
-          "name": "Seconds",
-          "value": "seconds"
-        },
-        {
-          "name": "Milliseconds",
-          "value": "milliseconds"
-        }
-      ],
-      "timePrecision": {
-        "name": "Minutes",
-        "value": "minutes"
-      },
-      "timeShift": null,
-      "timeTextColor": "#d8d9da",
       "title": "States",
-      "type": "natel-discrete-panel",
-      "units": "short",
-      "useTimePrecision": false,
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        },
-        {
-          "op": "=",
-          "text": "online",
-          "value": "0"
-        },
-        {
-          "op": "=",
-          "text": "driving",
-          "value": "1"
-        },
-        {
-          "op": "=",
-          "text": "charging",
-          "value": "2"
-        },
-        {
-          "op": "=",
-          "text": "offline",
-          "value": "3"
-        },
-        {
-          "op": "=",
-          "text": "asleep",
-          "value": "4"
-        },
-        {
-          "op": "=",
-          "text": "online",
-          "value": "5"
-        },
-        {
-          "op": "=",
-          "text": "updating",
-          "value": "6"
-        }
-      ],
-      "valueTextColor": "#000000",
-      "writeAllValues": false,
-      "writeLastValue": true,
-      "writeMetricNames": false
+      "type": "state-timeline"
     }
   ],
   "refresh": false,
-  "schemaVersion": 27,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [
     "tesla"
@@ -556,11 +446,10 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": false,
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
@@ -576,13 +465,11 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "http://localhost:4000",
@@ -602,7 +489,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -641,5 +527,6 @@
   "timezone": "",
   "title": "States",
   "uid": "xo4BNRkZz",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }
