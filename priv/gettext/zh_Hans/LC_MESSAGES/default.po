@@ -580,7 +580,7 @@ msgstr "有可用更新 (%{version})"
 #, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:295
 msgid "Sign out"
-msgstr "退出登陆"
+msgstr "退出登录"
 
 #, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:11
