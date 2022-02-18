@@ -616,21 +616,21 @@ msgid "Downloading update"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/teslamate_web/templates/layout/root.html.heex:80
+#: lib/teslamate_web/templates/layout/root.html.heex:81
 msgid "No encryption key provided"
 msgstr ""
 
 #, elixir-autogen, elixir-format, fuzzy
-#: lib/teslamate_web/templates/layout/root.html.heex:84
+#: lib/teslamate_web/templates/layout/root.html.heex:85
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/teslamate_web/templates/layout/root.html.heex:83
+#: lib/teslamate_web/templates/layout/root.html.heex:84
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr ""
 
 #, elixir-autogen, elixir-format, fuzzy
-#: lib/teslamate_web/templates/layout/root.html.heex:82
+#: lib/teslamate_web/templates/layout/root.html.heex:83
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr ""
