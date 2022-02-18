@@ -60,6 +60,7 @@
     },
     {
       "autoZoom": true,
+      "datasource": "TeslaMate",
       "defaultLayer": "OpenStreetMap",
       "gridPos": {
         "h": 21,
@@ -227,6 +228,7 @@
     ]
   },
   "timezone": "",
+  "datasource": "TeslaMate",
   "title": "Visited",
   "uid": "RG_DxSmgk",
   "version": 1,

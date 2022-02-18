@@ -721,6 +721,7 @@
         "#32ac2d"
       ],
       "customAttribution": false,
+      "datasource": "TeslaMate",
       "decimals": 2,
       "description": "",
       "doubleClickZoom": true,

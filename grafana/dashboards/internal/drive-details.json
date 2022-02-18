@@ -572,6 +572,7 @@
     },
     {
       "autoZoom": true,
+      "datasource": "TeslaMate",
       "defaultLayer": "OpenStreetMap",
       "gridPos": {
         "h": 27,
