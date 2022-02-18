@@ -4,12 +4,19 @@
 
 ### Improvements and Bug Fixes
 
+🔓 Encrypt API tokens
+
+> During the database migration a randomly generated key will be used encrypt the tokens if no `ENCRYPTION_KEY` environment variable was provided.
+>
+> If the application is started without the presence of an `ENCRYPTION_KEY` (or if the key failed to decrypt the existing tokens), the UI will display a warning with further instructions.
+
 - Bump Grafana to 8.4.1
 - Add `charge_current_request` and `charge_current_request_max` MQTT topics
 - Add detection of fefresh Model X (2022) (#2455 - @cwanja)
 
 #### Dashboards
 
+- Add DC charge curve scatter graph (#2093 - @ToniA)
 - Add datasource to table and map panels (#2391- @andrewjw)
 - Charging Stats: Add panel with the cost of charges at SuC (#2448 - @carloscuezva)
 - Drive Details: Add elevation summary (#2449 - @coreGreenberet)
