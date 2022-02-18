@@ -15,7 +15,6 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 13,
   "iteration": 1644505954964,
   "links": [
     {
@@ -1201,5 +1200,5 @@
   "timezone": "",
   "title": "Drive Stats",
   "uid": "_7WkNSyWk",
-  "version": 48
+  "version": 1
 }
