@@ -212,6 +212,7 @@ You should at least substitute the following details:
 - `TESLAMATEPATH` should be the path that you ran the `git clone` within.
 
 ```
+export ENCRYPTION_KEY="your_secure_encryption_key_here"
 export DATABASE_USER="teslamate"
 export DATABASE_PASS="your_secure_password_here"
 export DATABASE_HOST="127.0.0.1"
@@ -229,6 +230,7 @@ $TESLAMATEPATH/_build/prod/rel/teslamate/bin/teslamate start
 The following command needs to be run once during the installation process in order to create the database schema for the TeslaMate installation:
 
 ```bash
+export ENCRYPTION_KEY="your_secure_encryption_key_here"
 export DATABASE_USER="teslamate"
 export DATABASE_PASS="your_secure_password_here"
 export DATABASE_HOST="127.0.0.1"

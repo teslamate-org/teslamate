@@ -10,6 +10,12 @@ config :teslamate, TeslaMateWeb.Endpoint,
   pubsub_server: TeslaMate.PubSub,
   live_view: [signing_salt: "6nSVV0NtBtBfA9Mjh+7XaZANjp9T73XH"]
 
+config :teslamate,
+  cloak_repo: TeslaMate.Repo,
+  cloak_schemas: [
+    TeslaMate.Auth.Tokens
+  ]
+
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:car_id]

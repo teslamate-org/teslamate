@@ -184,6 +184,7 @@ DATABASE_NAME=${teslamate_db-"teslamate"}; export DATABASE_NAME
 DATABASE_HOST=${teslamate_db_host-"localhost"}; export DATABASE_HOST
 DATABASE_USER=${teslamate_db_user-"teslamate"}; export DATABASE_USER
 DATABASE_PASS=${teslamate_db_pass}; export DATABASE_PASS
+ENCRYPTION_KEY=${teslamate_encryption_key}; export ENCRYPTION_KEY
 DISABLE_MQTT=${teslamate_mqtt_enable-"FALSE"}; export DISABLE_MQTT
 MQTT_HOST=${teslamate_mqtt_host-"localhost"}; export MQTT_HOST
 VIRTUAL_HOST=${teslamate_virtual_host-"teslamate.example.com"}; export VIRTUAL_HOST
@@ -212,6 +213,7 @@ echo teslamate_enable="YES" >> /etc/rc.conf
 echo teslamate_db_host="localhost"  >> /etc/rc.conf
 echo teslamate_port="5432"  >> /etc/rc.conf
 echo teslamate_db_pass="<super secret>" >> /etc/rc.conf
+echo teslamate_encryption_key="<super secret encryption key>" >> /etc/rc.conf
 echo teslamate_disable_mqtt="true" >> /etc/rc.conf
 echo teslamate_timezone="<TZ Database>" >> /etc/rc.conf #i.e. Europe/Berlin
 ```
