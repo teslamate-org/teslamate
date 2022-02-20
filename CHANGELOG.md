@@ -12,7 +12,7 @@
 
 - Bump Grafana to 8.4.1
 - Add `charge_current_request` and `charge_current_request_max` MQTT topics
-- Add detection of fefresh Model X (2022) (#2455 - @cwanja)
+- Add detection of refresh Model X (2022) (#2455 - @cwanja)
 
 #### Dashboards
 
