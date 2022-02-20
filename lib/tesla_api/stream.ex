@@ -161,6 +161,11 @@ defmodule TeslaApi.Stream do
             Logger.warn("Streaming API Client Error: #{error}")
             {:close, state}
 
+          %{"value" => "Can't validate token" <> _} ->
+            Logger.warn("Streaming API: Tokens expired")
+            state.receiver.(:tokens_expired)
+            {:ok, state}
+
           _ ->
             raise "Client Error: #{inspect(msg)}"
         end

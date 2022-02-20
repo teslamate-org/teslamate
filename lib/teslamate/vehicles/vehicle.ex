@@ -489,7 +489,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   #### Rest
 
-  def handle_event(:info, {:stream, :too_many_disconnects}, _state, data) do
+  def handle_event(:info, {:stream, msg}, _state, data)
+      when msg in [:too_many_disconnects, :tokens_expired] do
     Logger.info("Creating new connection … ", car_id: data.car.id)
 
     ref = Process.monitor(data.stream_pid)
