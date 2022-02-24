@@ -58,7 +58,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp put_friendly_name(nil), do: nil
 
   defp put_friendly_name(%Car{} = car) do
-    %Car{car | friendly_name: friendly_name(car.model, car.trim_badging)}
+    %Car{car | friendly_name: friendly_name(car.model, car.trim_badging, car.car_type)}
   end
 
   defp friendly_name("3", "P74D"), do: "LR AWD Performance"
@@ -68,6 +68,10 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defp friendly_name("3", "50"), do: "SR+"
   defp friendly_name("Y", "P74D"), do: "LR AWD Performance"
   defp friendly_name("Y", "74D"), do: "LR AWD"
+  defp friendly_name("S", "100D", "lychee"), do: "LR"
+  defp friendly_name("S", "P100D", "lychee"), do: "Plaid"
+  defp friendly_name("X", "100D", "tamarind"), do: "LR"
+  defp friendly_name("X", "P100D", "tamarind"), do: "Plaid"  
   defp friendly_name(_model, _trim), do: nil
 
   defp format_state({:driving, {:offline, _}, _id}), do: :offline
