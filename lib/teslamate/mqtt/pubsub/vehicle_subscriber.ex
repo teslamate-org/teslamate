@@ -58,6 +58,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     end)
     |> Stream.map(fn
       {key = :geofence, %GeoFence{name: name}} -> {key, name}
+      {key = :geofence, nil} -> {key, Application.get_env(:teslamate, :default_geofence)}
       {key, val} -> {key, val}
     end)
     |> Task.async_stream(&publish(&1, state),
