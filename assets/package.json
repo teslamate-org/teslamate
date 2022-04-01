@@ -20,7 +20,7 @@
   "devDependencies": {
     "bulma": "^0.9.3",
     "esbuild": "^0.14.22",
-    "esbuild-sass-plugin": "^2.2.3",
+    "esbuild-sass-plugin": "^2.2.6",
     "sass": "^1.49.8"
   },
   "name": "assets"
