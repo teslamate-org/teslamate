@@ -587,7 +587,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(start_date),\n\tstart_battery_level,\n\tend_battery_level\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)\n\tAND duration_min > 3\n\tAND car_id = $car_id\nORDER BY\n\tstart_date;",
+          "rawSql": "SELECT\n\t$__timeGroup(start_date,'2h') as time,\n\tMIN(start_battery_level) as start_battery_level,\n\tMAX(end_battery_level) as end_battery_level\nFROM\n\tcharging_processes\nWHERE\n\t$__timeFilter(start_date)\n\tAND duration_min > 3\n\tAND car_id = $car_id\nGROUP BY\n\t1\nORDER BY\n\t1;",
           "refId": "A",
           "select": [
             [
