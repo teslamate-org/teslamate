@@ -34,7 +34,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - uses: erlef/setup-beam@v1.10
         with:
           otp-version: ${{ matrix.pair.otp }}
