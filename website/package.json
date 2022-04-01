@@ -9,7 +9,7 @@
     "deploy": "docusaurus deploy"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-beta.15",
+    "@docusaurus/core": "^2.0.0-beta.18",
     "@docusaurus/preset-classic": "^2.0.0-beta.15",
     "classnames": "^2.3.1",
     "react": "^17.0.2",
