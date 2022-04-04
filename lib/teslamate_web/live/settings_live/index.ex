@@ -135,8 +135,8 @@ defmodule TeslaMateWeb.SettingsLive.Index do
                  |> Enum.into(%{})
 
   @supported_ui_languages TeslaMateWeb.Cldr.known_locale_names()
-                          |> Enum.reject(&(&1 in ["en-001", "root", "zh"]))
-                          |> Enum.map(&String.replace(&1, "-", "_"))
+                          |> Enum.reject(&(&1 in [:zh]))
+                          |> Enum.map(&String.replace(to_string(&1), "-", "_"))
                           |> Enum.map(&{Map.get(@language_tags, &1, &1), &1})
                           |> Enum.sort_by(&elem(&1, 0))
 
