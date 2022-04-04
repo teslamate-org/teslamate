@@ -56,8 +56,8 @@ This is a telegram bot written in Python to notify by Telegram message when a ne
 
 LINK: [github.com/JakobLichterfeld/TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot)
 
-## [TeslaMate_ABRP](https://github.com/fetzu/teslamate-abrp)
+## [TeslaMate-ABRP](https://fetzu.github.io/teslamate-abrp/)
 
-This is a docker-based daemon/script that can push data to [ABetterRoutePlanner](https://abetterrouteplanner.com) based on contents of MQTT TeslaMate topic.
+A python script (also available as a lightweight docker image) that pushes car status data to [ABetterRoutePlanner](https://abetterrouteplanner.com) based on contents of TeslaMate MQTT's topic.
 
 LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
