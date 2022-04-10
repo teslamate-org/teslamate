@@ -254,7 +254,7 @@
                   {
                     "targetBlank": true,
                     "title": "Create or edit geo-fence",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.start_path}"
+                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.start_path:raw}"
                   }
                 ]
               },
@@ -280,7 +280,7 @@
                   {
                     "targetBlank": true,
                     "title": "Create or edit geo-fence",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.end_path}"
+                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.end_path:raw}"
                   }
                 ]
               },
@@ -494,7 +494,7 @@
                   {
                     "targetBlank": true,
                     "title": "Slot details",
-                    "url": "${__data.fields.slotlink}"
+                    "url": "${__data.fields.slotlink:raw}"
                   }
                 ]
               }
