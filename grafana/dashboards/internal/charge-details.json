@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1642784851277,
+  "iteration": 1650631194870,
   "links": [
     {
       "icon": "dashboard",
@@ -85,7 +85,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "8.4.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -225,7 +225,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "format": "table",
@@ -316,7 +316,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "format": "table",
@@ -408,7 +408,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "format": "table",
@@ -520,11 +520,6 @@
       "type": "pr0ps-trackmap-panel"
     },
     {
-      "datasource": "TeslaMate",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 19,
         "w": 24,
@@ -548,7 +543,7 @@
           "xaxis": {
             "rangemode": "normal",
             "showgrid": true,
-            "title": "SOC %",
+            "title": "SOC [%]",
             "type": "linear",
             "zeroline": false
           },
@@ -576,11 +571,8 @@
           {
             "mapping": {
               "color": "Power [kW]",
-              "size": null,
-              "text": null,
               "x": "SOC [%]",
-              "y": "Power [kW]",
-              "z": null
+              "y": "Power [kW]"
             },
             "name": "Power",
             "settings": {
@@ -616,11 +608,8 @@
           {
             "mapping": {
               "color": "Power [kW]",
-              "size": null,
-              "text": null,
               "x": "avg SOC [%]",
-              "y": "avg Power [kW]",
-              "z": null
+              "y": "avg Power [kW]"
             },
             "name": "Average Power",
             "settings": {
@@ -659,12 +648,13 @@
       "targets": [
         {
           "alias": "",
+          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  battery_level as \"SOC [%]\",\n  CASE\n    WHEN fast_charger_present THEN charger_power \n    ELSE 0.001 * charger_voltage * charger_actual_current\n  END as \"Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  battery_level as \"SOC [%]\",\n  charger_power  as \"Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nORDER BY\n  date ASC",
           "refId": "A",
           "select": [
             [
@@ -686,12 +676,16 @@
           ]
         },
         {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PC98BA2F4D77E1A42"
+          },
           "format": "table",
           "group": [],
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  battery_level as \"avg SOC [%]\",\n  CASE\n    WHEN fast_charger_present THEN avg(charger_power) \n    ELSE avg(0.001 * charger_voltage * charger_actual_current)\n  END as \"avg Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nGROUP BY\n  battery_level, fast_charger_present\nORDER BY\n  battery_level ASC  ",
+          "rawSql": "SELECT\n  battery_level as \"avg SOC [%]\",\n  avg(charger_power) as \"avg Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nGROUP BY\n  battery_level, fast_charger_present\nORDER BY\n  battery_level ASC  ",
           "refId": "B",
           "select": [
             [
@@ -715,15 +709,13 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Charging curve",
       "type": "natel-plotly-panel",
       "version": 1
     }
   ],
   "refresh": false,
-  "schemaVersion": 34,
+  "schemaVersion": 35,
   "style": "dark",
   "tags": [],
   "templating": {
