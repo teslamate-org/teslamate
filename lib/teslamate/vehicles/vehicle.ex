@@ -61,11 +61,28 @@ defmodule TeslaMate.Vehicles.Vehicle do
             end
           end
 
+        marketing_name =
+          case {model, trim_badging, type} do
+            {"S", "100D", "lychee"} -> "LR"
+            {"S", "P100D", "lychee"} -> "Plaid"
+            {"3", "P74D", _} -> "LR AWD Performance"
+            {"3", "74D", _} -> "LR AWD"
+            {"3", "74", _} -> "LR"
+            {"3", "62", _} -> "MR"
+            {"3", "50", _} -> "SR+"
+            {"X", "100D", "tamarind"} -> "LR"
+            {"X", "P100D", "tamarind"} -> "Plaid"
+            {"Y", "P74D", _} -> "LR AWD Performance"
+            {"Y", "74D", _} -> "LR AWD"
+            {_model, _trim, _type} -> nil
+          end
+
         {:ok,
          %{
            model: model,
            name: name,
            trim_badging: trim_badging,
+           marketing_name: marketing_name,
            exterior_color: exterior_color,
            spoiler_type: spoiler_type,
            wheel_type: wheel_type

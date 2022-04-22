@@ -115,7 +115,8 @@ defmodule TeslaMate.Vehicles do
            nil <- Log.get_car_by(eid: vehicle.id) do
         settings =
           case Vehicle.identify(vehicle) do
-            {:ok, %{model: m, trim_badging: nil}} when m in ["S", "X"] ->
+            {:ok, %{model: m, trim_badging: trim_badging, marketing_name: marketing_name}}
+            when m in ["S", "X"] and (trim_badging == nil or is_binary(marketing_name)) ->
               %CarSettings{suspend_min: 12}
 
             {:ok, %{model: m}} when m in ["3", "Y"] ->

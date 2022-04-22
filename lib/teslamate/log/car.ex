@@ -10,6 +10,7 @@ defmodule TeslaMate.Log.Car do
     field :efficiency, :float
     field :model, :string
     field :trim_badging, :string
+    field :marketing_name, :string
     field :exterior_color, :string
     field :wheel_type, :string
     field :spoiler_type, :string
@@ -18,8 +19,6 @@ defmodule TeslaMate.Log.Car do
     field :vid, :integer
     # TODO: with v2.0 mark as non nullable
     field :vin, :string
-
-    field :friendly_name, :string, virtual: true
 
     belongs_to :settings, CarSettings
 
@@ -41,6 +40,7 @@ defmodule TeslaMate.Log.Car do
       :model,
       :efficiency,
       :trim_badging,
+      :marketing_name,
       :exterior_color,
       :wheel_type,
       :spoiler_type

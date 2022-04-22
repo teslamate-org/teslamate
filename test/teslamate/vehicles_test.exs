@@ -131,7 +131,7 @@ defmodule TeslaMate.VehiclesTest do
              id: 999_002,
              vehicle_id: 999_002,
              vin: "999002",
-             vehicle_config: %VehicleConfig{car_type: "modelx", trim_badging: nil}
+             vehicle_config: %VehicleConfig{car_type: "tamarind", trim_badging: "P100D"}
            },
            %TeslaApi.Vehicle{
              display_name: "Y",

@@ -21,11 +21,11 @@
         <p class="title is-5"><%= @summary.display_name %></p>
         <%= unless is_nil(@car.model) do %>
         <p class="subtitle is-6 has-text-weight-light">Model <%= @car.model %> <%=
-            if @car.friendly_name != nil do %><span
+            if @car.marketing_name != nil do %><span
                   class="has-tooltip-right has-tooltip-left-mobile"
                   style="border-bottom: none;"
                   data-tooltip={@car.trim_badging}><%=
-              @car.friendly_name
+              @car.marketing_name
             %></span>
           <% else %><%=
             @car.trim_badging
