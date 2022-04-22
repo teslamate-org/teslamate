@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1645197219438,
+  "iteration": 1650629213098,
   "links": [
     {
       "icon": "dashboard",
@@ -55,7 +55,7 @@
       "pconfig": {
         "fixScale": "",
         "layout": {
-          "dragmode": "lasso",
+          "dragmode": "zoom",
           "font": {
             "family": "\"Open Sans\", Helvetica, Arial, sans-serif"
           },
@@ -65,14 +65,10 @@
           },
           "showlegend": false,
           "xaxis": {
-            "range": [
-              0,
-              82
-            ],
-            "rangemode": "between",
+            "rangemode": "normal",
             "showgrid": true,
             "title": "SOC [%]",
-            "type": "auto",
+            "type": "linear",
             "zeroline": false
           },
           "yaxis": {
@@ -120,7 +116,7 @@
                   "width": 0
                 },
                 "showscale": false,
-                "size": 5,
+                "size": 3,
                 "sizemin": 3,
                 "sizemode": "diameter",
                 "sizeref": 0.2,
@@ -129,7 +125,44 @@
             },
             "show": {
               "line": true,
+              "lines": false,
               "markers": true
+            }
+          },
+          {
+            "mapping": {
+              "color": "charging_process_id",
+              "x": "B - SOC [%]",
+              "y": "B - Avg Power [kW]"
+            },
+            "name": "Median Power",
+            "settings": {
+              "color_option": "solid",
+              "line": {
+                "color": "#FF7383",
+                "dash": "solid",
+                "shape": "linear",
+                "width": 2
+              },
+              "marker": {
+                "color": "#33B5E5",
+                "colorscale": "Reds",
+                "line": {
+                  "color": "#DDD",
+                  "width": 0
+                },
+                "showscale": false,
+                "size": 2,
+                "sizemin": 3,
+                "sizemode": "diameter",
+                "sizeref": 0.2,
+                "symbol": "circle"
+              }
+            },
+            "show": {
+              "line": true,
+              "lines": true,
+              "markers": false
             }
           }
         ]
@@ -144,7 +177,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  c.battery_level as \"SOC [%]\",\r\n  round(avg(c.charger_power), 0) as \"Power [kW]\",\r\n  c.charging_process_id as \"charging_process_id\",\r\n  COALESCE(g.name, a.name) || ' ' || to_char(c.date, 'YYYY-MM-dd') as \"Charge\"\r\nFROM\r\n  charges c\r\nJOIN charging_processes p ON p.id = c.charging_process_id \r\nJOIN addresses a ON a.id = p.address_id\r\nLEFT JOIN geofences g ON g.id = p.geofence_id\r\nWHERE\r\n  $__timeFilter(date)\r\n AND p.car_id = $car_id\r\n AND c.fast_charger_present\r\nGROUP BY c.battery_level, c.charging_process_id, a.name, g.name, to_char(c.date, 'YYYY-MM-dd')",
+          "rawSql": "SELECT\r\n  c.battery_level as \"SOC [%]\",\r\n  round(avg(c.charger_power), 0) as \"Power [kW]\",\r\n  c.charging_process_id as \"charging_process_id\",\r\n  COALESCE(g.name, a.name) || ' ' || to_char(c.date, 'YYYY-MM-dd') as \"Charge\"\r\nFROM\r\n  charges c\r\nJOIN charging_processes p ON p.id = c.charging_process_id \r\nJOIN addresses a ON a.id = p.address_id\r\nLEFT JOIN geofences g ON g.id = p.geofence_id\r\nWHERE\r\n  $__timeFilter(date)\r\n AND p.car_id = $car_id\r\n AND charger_power > 0\r\n AND c.fast_charger_present\r\nGROUP BY c.battery_level, c.charging_process_id, a.name, g.name, to_char(c.date, 'YYYY-MM-dd')",
           "refId": "A",
           "select": [
             [
@@ -157,6 +190,36 @@
             ]
           ],
           "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": "TeslaMate",
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  c.battery_level as \"B - SOC [%]\",\n  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY charger_power) as \"B - Avg Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\n AND c.fast_charger_present\nGROUP BY battery_level",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "efficiency"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cars",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
           "where": [
             {
               "name": "$__timeFilter",
