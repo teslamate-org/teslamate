@@ -677,10 +677,7 @@
           ]
         },
         {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PC98BA2F4D77E1A42"
-          },
+          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "hide": false,
