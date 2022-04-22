@@ -35,6 +35,7 @@ services:
     image: teslamate/teslamate:latest
     restart: always
     environment:
+      - ENCRYPTION_KEY=${TM_ENCRYPTION_KEY}
       - DATABASE_USER=${TM_DB_USER}
       - DATABASE_PASS=${TM_DB_PASS}
       - DATABASE_NAME=${TM_DB_NAME}
@@ -101,6 +102,7 @@ volumes:
 This file should reside in the same folder as the docker-compose.yml file.
 
 ```plaintext title=".env"
+TM_ENCRYPTION_KEY= #your secure key to encrypt your Tesla API tokens
 TM_DB_USER=teslamate
 TM_DB_PASS= #your secure password!
 TM_DB_NAME=teslamate
@@ -136,6 +138,7 @@ Define LOG access.teslamate.log
 </VirtualHost>
 
 <VirtualHost *:80>
+    ProxyPreserveHost On
     ServerName grafana.${MYDOMAIN}
     CustomLog /var/log/apache2/${LOG} combined
     RewriteEngine on
@@ -171,6 +174,7 @@ Define LOG access.teslamate.log
 
 <IfModule mod_ssl.c>
     <VirtualHost *:443>
+        ProxyPreserveHost On
         ServerName grafana.${MYDOMAIN}
         ProxyPass / http://127.0.0.1:3000/
         ProxyPassReverse / http://127.0.0.1:3000/

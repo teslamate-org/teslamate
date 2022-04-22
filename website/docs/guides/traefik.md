@@ -32,6 +32,7 @@ services:
     depends_on:
       - database
     environment:
+      - ENCRYPTION_KEY=${TM_ENCRYPTION_KEY}
       - DATABASE_USER=${TM_DB_USER}
       - DATABASE_PASS=${TM_DB_PASS}
       - DATABASE_NAME=${TM_DB_NAME}
@@ -141,6 +142,7 @@ volumes:
 ### .env
 
 ```plaintext title=".env"
+TM_ENCRYPTION_KEY= #your secure key to encrypt your Tesla API tokens
 TM_DB_USER=teslamate
 TM_DB_PASS= #your secure password!
 TM_DB_NAME=teslamate

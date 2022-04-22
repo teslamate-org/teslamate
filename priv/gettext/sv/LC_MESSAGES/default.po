@@ -11,67 +11,67 @@ msgstr ""
 "Language: sv\n"
 "Plural-Forms: nplurals=2\n"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:104
 msgid "Status"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:237
 msgid "Speed"
 msgstr "Hastighet"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:229
 msgid "State of Charge"
 msgstr "Laddningsnivå"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:165
 msgid "Charged"
 msgstr "Laddad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:131
 msgid "asleep"
 msgstr "vilat"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:126
 msgid "charging"
 msgstr "laddat"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:125
 msgid "driving"
 msgstr "kört"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:130
 msgid "offline"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:129
 msgid "online"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:127
 msgid "updating"
 msgstr "uppdaterat"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:78
 msgid "Locked"
 msgstr "Låst"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:73
 msgid "Sentry Mode"
 msgstr "Vaktläge"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/index.ex:15
 #: lib/teslamate_web/live/charge_live/cost.html.heex:3
 #: lib/teslamate_web/live/geofence_live/form.html.heex:3
@@ -81,65 +81,65 @@ msgstr "Vaktläge"
 msgid "Home"
 msgstr "Hem"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
 #: lib/teslamate_web/templates/layout/root.html.heex:60
 msgid "Settings"
 msgstr "Inställningar"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:180
 msgid "Scheduled Charging"
 msgstr "Schemalagd laddning"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:58
 msgid "Plugged In"
 msgstr "Inkopplad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:189
 msgid "Charge Limit"
 msgstr "Laddningsgräns"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:128
 msgid "falling asleep"
 msgstr "gått ner i vila"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:132
 msgid "unavailable"
 msgstr "inte tillgänglig"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:198
 msgid "Length"
 msgstr "Avstånd"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:213
 msgid "Temperature"
 msgstr "Temperatur"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:195
 msgid "Units"
 msgstr "Enheter"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:131
 #: lib/teslamate_web/live/geofence_live/form.html.heex:105
 msgid "Back"
 msgstr "Tillbaka"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:188
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Geostaket \"%{name}\" skapat"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:110
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
@@ -148,296 +148,296 @@ msgstr "Geostaket \"%{name}\" skapat"
 msgid "Geo-Fences"
 msgstr "Geostaket"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:47
 msgid "Idle Time Before Trying to Sleep"
 msgstr "Inaktiv tid innan försök att gå ner i vila"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:43
 #: lib/teslamate_web/live/geofence_live/form.html.heex:48
 #: lib/teslamate_web/live/geofence_live/index.html.heex:21
 msgid "Name"
 msgstr "Namn"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:17
 #: lib/teslamate_web/live/geofence_live/index.html.heex:22
 msgid "Position"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/index.html.heex:23
 msgid "Radius"
 msgstr "Radie"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:134
 #: lib/teslamate_web/live/geofence_live/form.html.heex:108
 msgid "Save"
 msgstr "Spara"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:135
 #: lib/teslamate_web/live/geofence_live/form.html.heex:108
 #: lib/teslamate_web/live/signin_live/index.html.heex:40
 msgid "Saving..."
 msgstr "Sparar..."
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 msgid "Time to Try Sleeping"
 msgstr "Tid för försök att gå ner i vila"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:37
 #: lib/teslamate_web/live/settings_live/index.html.heex:56
 msgid "min"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:81
 msgid "Signed in successfully"
 msgstr "Inloggad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:134
 msgid "Car is unlocked"
 msgstr "Bilen är olåst"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/index.html.heex:9
 msgid "Create"
 msgstr "Skapa"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:138
 #: lib/teslamate_web/live/car_live/summary.html.heex:43
 msgid "Preconditioning"
 msgstr "Förvärmning"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:137
 msgid "Sentry mode is enabled"
 msgstr "Vaktläge är aktiverad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #: lib/teslamate_web/live/car_live/summary.html.heex:53
 msgid "Driver present"
 msgstr "Förare närvarande"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:307
 msgid "cancel sleep attempt"
 msgstr "avbryt försök att vila"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:302
 msgid "try to sleep"
 msgstr "försök att vila"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:152
 msgid "Range (est.)"
 msgstr "Räckvidd (beräk.)"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:107
 msgid "for"
 msgstr "i"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:68
 msgid "Requirements"
 msgstr "Krav"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:77
 msgid "Vehicle must be locked"
 msgstr "Fordonet måste vara låst"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:133
 msgid "Range (rated)"
 msgstr "Räckvidd (nominell)"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:171
 msgid "Charger Power"
 msgstr "Laddningskraft"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:139
 msgid "Preferred Range"
 msgstr "Föredragen räckvidd"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:135
 msgid "Range"
 msgstr "Räckvidd"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "ideal"
 msgstr "idealisk"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "rated"
 msgstr "nominell"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:132
 msgid "Range (ideal)"
 msgstr "Räckvidd (idealisk)"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:138
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
 msgstr "Bilens uppskattning av återstående räckvidd baseras på en fast energiförbrukning i Wh/km. Wh/km-faktorn är bestämd av Tesla och är inte landsspecifik medan det nominella räckvidden är baserat på reglerande tester på de olika marknaderna för fordonet."
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:141
 msgid "Update in progress"
 msgstr "Uppdatering pågår"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:63
 msgid "Windows open"
 msgstr "Fönster öppna"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/index.html.heex:51
 msgid "Delete '%{geo_fence}'?"
 msgstr "Ta bort '%{geo_fence}'?"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:262
 msgid "Inside Temperature"
 msgstr "Innertemperatur"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:250
 msgid "Outside Temperature"
 msgstr "Utetemperatur"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:287
 #: lib/teslamate_web/live/settings_live/index.html.heex:268
 msgid "Version"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:88
 msgid "Health check failed"
 msgstr "Hälsokontroll misslyckades"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:78
 msgid "Unlocked"
 msgstr "Olåst"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:119
 msgid "Remaining Time"
 msgstr "Återstående tid"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:248
 #: lib/teslamate_web/templates/layout/root.html.heex:47
 msgid "Dashboards"
 msgstr "Instrumentbrädor"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:231
 msgid "URLs"
 msgstr "URLer"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:162
 #: lib/teslamate_web/live/settings_live/index.html.heex:234
 msgid "Web App"
 msgstr "Webbapp"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:112
 msgid "Enabled"
 msgstr "Aktiverad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:24
 msgid "Sleep Mode"
 msgstr "Viloläge"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.ex:189
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geostaket \"%{name}\" uppdaterad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:143
 msgid "An error occurred"
 msgstr "Ett fel uppstod"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:142
 msgid "Timeout"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:48
 msgid "Reduced Battery Range"
 msgstr "Reducerad batteriräckvidd"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:222
 msgid "≈ %{range} at 100%"
 msgstr "≈ %{range} vid 100%"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.ex:20
 #: lib/teslamate_web/live/charge_live/cost.html.heex:4
 msgid "Charge Cost"
 msgstr "Laddningskostnad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:103
 #: lib/teslamate_web/live/geofence_live/form.html.heex:59
 msgid "Cost"
 msgstr "Kostnad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:119
 msgid "Enter charge cost"
 msgstr "Ange laddningskostnad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.ex:87
 msgid "Saved!"
 msgstr "Sparat!"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:38
 msgid "Fetching vehicle data ..."
 msgstr "Hämtar fordonsdata ..."
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:177
 msgid "Addresses"
 msgstr "Adresser"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:158
 msgid "Language"
 msgstr "Språk"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.ex:64
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr "Det gick inte att hämta data från OpenStreetMap. Vänligen försök igen senare."
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/import_live/index.html.heex:4
 msgid "TeslaFi Import"
 msgstr ""
@@ -449,60 +449,60 @@ msgid_plural "Found %{count} files"
 msgstr[0] "%{count} fil hittades"
 msgstr[1] "%{count} filer hittades"
 
-#, elixir-format
-#: lib/teslamate_web/templates/layout/root.html.heex:87
+#, elixir-autogen, elixir-format
+#: lib/teslamate_web/templates/layout/root.html.heex:104
 msgid "Donate"
 msgstr "Donera"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/import_live/index.ex:34
 #: lib/teslamate_web/live/import_live/index.html.heex:68
 msgid "Import"
 msgstr "Importera"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/import_live/index.html.heex:58
 msgid "Time zone"
 msgstr "Tidszon"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:13
 #: lib/teslamate_web/live/signin_live/index.html.heex:38
 msgid "Sign in"
 msgstr "Logga in"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:90
 msgid "Charge cost"
 msgstr "Laddningskostnad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:93
 msgid "Free Supercharging"
 msgstr "Gratis Supercharging"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:129
 msgid "General Settings"
 msgstr "Allmänna Inställningar"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:83
 msgid "Session fee"
 msgstr "Session avgift"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:68
 msgid "Doors open"
 msgstr "Dörrar öppna"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:111
 #: lib/teslamate_web/live/geofence_live/form.html.heex:66
 msgid "Per kWh"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:110
 msgid "Total"
 msgstr "Total"
@@ -514,104 +514,124 @@ msgid_plural "There are <strong>%{n} charging sessions</strong> at this location
 msgstr[0] "Det finns <strong>%{n} laddningssession</strong> på denna position för vilken ingen kostnad har lagts till än."
 msgstr[1] "Det finns <strong>%{n} laddningssessioner</strong> på denna position för vilken inga kostnader har lagts till än."
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:134
 msgid "Add costs retroactively"
 msgstr "Lägg till kostnader retroaktivt"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:119
 msgid "Charging Costs"
 msgstr "Laddningskostnad"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:133
 msgid "Continue"
 msgstr "Fortsätt"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:275
 msgid "Mileage"
 msgstr "Mätarställning"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:109
 msgid "Streaming API"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:283
 msgid "Documentation"
 msgstr "Dokumentation"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:279
 msgid "GitHub"
 msgstr ""
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:274
-#: lib/teslamate_web/templates/layout/root.html.heex:95
+#: lib/teslamate_web/templates/layout/root.html.heex:112
 msgid "Update available"
 msgstr "Uppdatering tillgänglig"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:135
 msgid "Doors are open"
 msgstr "Dörrar är öppna"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:136
 msgid "Trunk is open"
 msgstr "Bakluckan är öppen"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/charge_live/cost.html.heex:112
 #: lib/teslamate_web/live/geofence_live/form.html.heex:66
 msgid "Per Minute"
 msgstr "Per Minut"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:83
 msgid "Software Update available (%{version})"
 msgstr "Mjukvaruuppdatering tillgänglig (%{version})"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:295
 msgid "Sign out"
 msgstr "Logga ut"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:11
 msgid "Access Token"
 msgstr "Åtkomsttoken"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:24
 msgid "Refresh Token"
 msgstr "Uppdatera token"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:56
 msgid "Tokens are invalid"
 msgstr "Tokens är ogiltiga"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:49
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
 msgstr "För att få tokens via Tesla API krävs programmeringserfarenhet eller en tredjeparts tjänst. Information finns %{here}."
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:46
 msgid "here"
 msgstr "här"
 
-#, elixir-format
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:59
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
 msgstr "Ditt Tesla-konto är låst på grund av för många misslyckade inloggningsförsök. Återställ ditt lösenord för att låsa upp ditt konto"
 
-#, elixir-format, ex-autogen
+#, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Downloading update"
 msgstr "Laddar ner uppdatering"
+
+#, elixir-autogen, elixir-format
+#: lib/teslamate_web/templates/layout/root.html.heex:81
+msgid "No encryption key provided"
+msgstr ""
+
+#, elixir-autogen, elixir-format, fuzzy
+#: lib/teslamate_web/templates/layout/root.html.heex:85
+msgid "For more information, see the updated installation guides on %{link}"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/teslamate_web/templates/layout/root.html.heex:84
+msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
+msgstr ""
+
+#, elixir-autogen, elixir-format, fuzzy
+#: lib/teslamate_web/templates/layout/root.html.heex:83
+msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
+msgstr ""

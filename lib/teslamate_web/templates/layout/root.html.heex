@@ -67,8 +67,25 @@
     <% show_doante_button = @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) %>
     <% update = TeslaMate.Updater.get_update() %>
 
+
     <main role="main" style="overflow: hidden;" class={["section", (if show_doante_button or update, do: " full-height")]}>
       <div class="container">
+        <%= if not TeslaMate.Vault.encryption_key_provided?() or
+              (not TeslaMate.Api.signed_in?() and not TeslaMate.Auth.can_decrypt_tokens?()) do %>
+        <% docs_link = link "docs.teslamate.org", to: "https://docs.teslamate.org",
+                                                     target: "_blank",
+                                                     rel: "noopener noreferrer" %>
+
+        <div class="notification is-warning">
+          <p class="title is-5 is-spaced">
+            <span class="icon"><i class="mdi mdi-shield-alert"></i></span>&nbsp;<%= gettext "No encryption key provided" %>
+          </p>
+          <p class="subtitle is-6"><%= raw(gettext "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>.") %></p>
+          <p class="subtitle is-6"><%= raw(gettext "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>.") %></p>
+          <p class="subtitle is-6"><%= raw(gettext "For more information, see the updated installation guides on %{link}", link: safe_to_string(docs_link)) %></p>
+        </div>
+        <% end %>
+
         <%= Enum.map(get_flash(@conn), fn {flash_key, flash_message} -> %>
         <p class={"notification is-#{flash_key}"}><%= flash_message %></p>
         <% end) %>

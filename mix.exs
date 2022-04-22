@@ -37,7 +37,7 @@ defmodule TeslaMate.MixProject do
     [
       {:castore, "~> 0.1"},
       {:ecto_sql, "~> 3.0"},
-      {:ex_cldr, "~> 2.25.0"},
+      {:ex_cldr, "~> 2.27.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:finch, "~> 0.3"},
       {:floki, "~> 0.23"},
@@ -60,7 +60,8 @@ defmodule TeslaMate.MixProject do
       {:timex, "~> 3.0"},
       {:tortoise, "~> 0.10"},
       {:tzdata, "~> 1.1"},
-      {:websockex, "~> 0.4"}
+      {:websockex, "~> 0.4"},
+      {:cloak_ecto, "~> 1.2"}
     ]
   end
 

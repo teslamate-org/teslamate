@@ -127,6 +127,10 @@ defmodule TeslaMate.Api do
 
           state
 
+        %Tokens{access: :error, refresh: :error} ->
+          Logger.warning("Could not decrypt API tokens!")
+          state
+
         _ ->
           state
       end

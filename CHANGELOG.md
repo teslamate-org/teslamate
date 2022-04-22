@@ -1,5 +1,38 @@
 # Changelog
 
+## unreleased
+
+### Improvements and Bug Fixes
+
+🔓 Encrypt API tokens
+
+> During the database migration a randomly generated key will be used encrypt the tokens if no `ENCRYPTION_KEY` environment variable was provided.
+>
+> If the application is started without the presence of an `ENCRYPTION_KEY` (or if the key failed to decrypt the existing tokens), the UI will display a warning with further instructions.
+
+- Bump Grafana to 8.4.1
+- Add `charge_current_request` and `charge_current_request_max` MQTT topics
+- Add detection of refresh Model X (2022) (#2455 - @cwanja)
+
+#### Dashboards
+
+- Add DC charge curve scatter graph (#2093 - @ToniA)
+- Add datasource to table and map panels (#2391- @andrewjw)
+- Charging Stats: Add panel with the cost of charges at SuC (#2448 - @carloscuezva)
+- Drive Details: Add elevation summary (#2449 - @coreGreenberet)
+- Charging Stats: Set Y-Axis max of heatmap to 100 (#2461 - @DrMichael)
+- Drive Stats: Optimize query to estimate mileage calculation (#2464 - @coreGreenberet )
+- Trip: Render Trip piechart legend (#2473 - @cwanja)
+
+#### Translations
+
+- Update Chinse translation (#2479 - @AemonCao)
+
+#### Documentation
+
+- Add ProxyPreserveHost On to the Grafana entries in Apache2 config (#2471 - @DrMichael)
+- Node-RED: Fix typo (#2410 - @baylanger)
+
 ## [1.26.1] - 2022-01-28
 
 ### Improvements and Bug Fixes
@@ -32,7 +65,7 @@
 - Don't suspend logging while a car software update is downloaded
 - Don't warn if the update status completing the of a car software update is still reported as 'downloading'
 - Bump Docker app base image to Debian 11
-  - Raspberry Pi users unfortunately have to upgrade to Raspbian Bullseye or install the  backports version `libseccomp2` (see [#2302](https://github.com/adriankumpf/teslamate/issues/2302))
+  - Raspberry Pi users unfortunately have to upgrade to Raspbian Bullseye or install the backports version `libseccomp2` (see [#2302](https://github.com/adriankumpf/teslamate/issues/2302))
 
 #### Dashboards
 
@@ -75,7 +108,8 @@
 ## [1.25.1] - 2022-01-12
 
 Disable anonymous logins to Grafana by default (when using the `teslamate/grafana` Docker image)
- - The first time you visit Grafana, you will be asked to log in. Use the default user `admin` with the password `admin`. After successful login, you will be prompted to change the password.
+
+- The first time you visit Grafana, you will be asked to log in. Use the default user `admin` with the password `admin`. After successful login, you will be prompted to change the password.
 - To allow anonymous logins set the environment variable of the Grafana image `GF_AUTH_ANONYMOUS_ENABLED` to `true` (use only if your Grafana instance is not exposed to the internet!)
 
 > This change only affects users who followed the [basic Docker installation guide](https://docs.teslamate.org/docs/installation/docker) which, as mentioned in the guide, is intended for home network use only and not for exposure to the internet. Users who followed one of the [advanced installation guides](https://docs.teslamate.org/docs/guides/traefik) are not affected as their Grafana instances always had anonymous logins disabled.

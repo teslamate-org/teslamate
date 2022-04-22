@@ -545,6 +545,7 @@
           ]
         }
       ],
+      "datasource": "TeslaMate",
       "title": "Vampire Drain",
       "transformations": [
         {

@@ -3,6 +3,11 @@ defmodule TeslaMate.AuthTest do
 
   alias TeslaMate.Auth
 
+  setup do
+    start_supervised!(TeslaMate.Vault)
+    :ok
+  end
+
   describe "tokens" do
     @valid_attrs %{refresh_token: "some refresh token", token: "some access token"}
     @update_attrs %{
