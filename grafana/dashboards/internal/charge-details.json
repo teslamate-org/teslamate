@@ -520,6 +520,7 @@
       "type": "pr0ps-trackmap-panel"
     },
     {
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 19,
         "w": 24,
@@ -576,7 +577,7 @@
             },
             "name": "Power",
             "settings": {
-              "color_option": "ramp",
+              "color_option": "solid",
               "line": {
                 "color": "#005f81",
                 "dash": "solid",
@@ -584,7 +585,7 @@
                 "width": 6
               },
               "marker": {
-                "color": "#33B5E5",
+                "color": "#8AB8FF",
                 "colorscale": "YlOrRd",
                 "line": {
                   "color": "#DDD",
@@ -615,7 +616,7 @@
             "settings": {
               "color_option": "ramp",
               "line": {
-                "color": "#005f81",
+                "color": "#3274D9",
                 "dash": "solid",
                 "shape": "spline",
                 "width": 2
