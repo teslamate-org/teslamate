@@ -1,5 +1,5 @@
 %{
-  "castore": {:hex, :castore, "0.1.16", "2675f717adc700475345c5512c381ef9273eb5df26bdd3f8c13e2636cf4cc175", [:mix], [], "hexpm", "28ed2c43d83b5c25d35c51bc0abf229ac51359c170cba76171a462ced2e4b651"},
+  "castore": {:hex, :castore, "0.1.17", "ba672681de4e51ed8ec1f74ed624d104c0db72742ea1a5e74edbc770c815182f", [:mix], [], "hexpm", "d9844227ed52d26e7519224525cb6868650c272d4a3d327ce3ca5570c12163f9"},
   "certifi": {:hex, :certifi, "2.9.0", "6f2a475689dd47f19fb74334859d460a2dc4e3252a3324bd2111b8f0429e7e21", [:rebar3], [], "hexpm", "266da46bdb06d6c6d35fde799bcb28d36d985d424ad7c08b5bb48f5b5cdd4641"},
   "cldr_utils": {:hex, :cldr_utils, "2.17.1", "d5532ccfbe4b39cb652ba4566571324278344a6a2fb4500dac213ce8e123732f", [:mix], [{:castore, "~> 0.1", [hex: :castore, repo: "hexpm", optional: true]}, {:certifi, "~> 2.5", [hex: :certifi, repo: "hexpm", optional: true]}, {:decimal, "~> 1.9 or ~> 2.0", [hex: :decimal, repo: "hexpm", optional: false]}], "hexpm", "052e0c2cf5ee801018580d69939b25528730d73ea05a05cb2c0e0a8204856d76"},
   "cloak": {:hex, :cloak, "1.1.1", "6f8f6674cacd3c504daf2aaeba8f9cde3ae8009ce01ff854dd3e92fbb7954c69", [:mix], [{:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: true]}], "hexpm", "d440c4ea3a5a31baeaea4592b534dfdccc4ded0ee098b92955a5658cbe7be625"},
