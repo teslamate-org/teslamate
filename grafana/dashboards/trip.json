@@ -341,7 +341,7 @@
         ],
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
+          "displayMode": "list",
           "placement": "bottom",
           "values": [
             "value"
@@ -1599,6 +1599,7 @@
           ]
         }
       ],
+	  "datasource": "TeslaMate",
       "title": "Drives",
       "transformations": [],
       "type": "table"
@@ -2091,6 +2092,7 @@
           ]
         }
       ],
+	  "datasource": "TeslaMate",
       "title": "Charges",
       "transformations": [
         {
