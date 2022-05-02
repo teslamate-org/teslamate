@@ -2337,9 +2337,6 @@
           "value": "$__all"
         },
         "datasource": "TeslaMate",
-          "type": "postgres",
-          "uid": "PC98BA2F4D77E1A42"
-        },
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
         "hide": 2,
         "includeAll": true,
@@ -2364,9 +2361,6 @@
           "value": "C"
         },
         "datasource": "TeslaMate",
-          "type": "postgres",
-          "uid": "PC98BA2F4D77E1A42"
-        },
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2391,9 +2385,6 @@
           "value": "km"
         },
         "datasource": "TeslaMate",
-          "type": "postgres",
-          "uid": "PC98BA2F4D77E1A42"
-        },
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2418,9 +2409,6 @@
           "value": "m"
         },
         "datasource": "TeslaMate",
-          "type": "postgres",
-          "uid": "PC98BA2F4D77E1A42"
-        },
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2445,9 +2433,6 @@
           "value": "ideal"
         },
         "datasource": "TeslaMate",
-          "type": "postgres",
-          "uid": "PC98BA2F4D77E1A42"
-        },
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2472,9 +2457,6 @@
           "value": "http://localhost:4000"
         },
         "datasource": "TeslaMate",
-          "type": "postgres",
-          "uid": "PC98BA2F4D77E1A42"
-        },
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2499,9 +2481,6 @@
           "value": "1651419356616"
         },
         "datasource": "TeslaMate",
-          "type": "postgres",
-          "uid": "PC98BA2F4D77E1A42"
-        },
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "hide": 2,
         "includeAll": false,
