@@ -37,7 +37,8 @@ defmodule TeslaMate.MixProject do
     [
       {:castore, "~> 0.1"},
       {:ecto_sql, "~> 3.0"},
-      {:ex_cldr, "~> 2.27.0"},
+      {:ex_cldr, "~> 2.29.0"},
+      {:ex_cldr_plugs, "~> 1.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:finch, "~> 0.3"},
       {:floki, "~> 0.23"},
