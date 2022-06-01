@@ -8,7 +8,7 @@
   "dependencies": {
     "@creativebulma/bulma-divider": "^1.1.0",
     "@creativebulma/bulma-tooltip": "^1.2.0",
-    "@geoman-io/leaflet-geoman-free": "^2.12.0",
+    "@geoman-io/leaflet-geoman-free": "^2.13.0",
     "@mdi/font": "^6.7.96",
     "bulma-switch": "^2.0.4",
     "leaflet": "^1.8.0",
