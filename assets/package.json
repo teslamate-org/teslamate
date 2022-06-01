@@ -21,7 +21,7 @@
     "bulma": "^0.9.4",
     "esbuild": "^0.14.39",
     "esbuild-sass-plugin": "^2.2.6",
-    "sass": "^1.52.0"
+    "sass": "^1.52.1"
   },
   "name": "assets"
 }
