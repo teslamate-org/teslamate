@@ -310,6 +310,36 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       assert ["1.50"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
       assert %ChargingProcess{cost: decimal("1.50")} = Repo.get(ChargingProcess, id)
     end
+
+    test "allows to enter the cost per kWh Minute", %{conn: conn} do
+      %ChargingProcess{id: id} =
+        charging_process_fixture(car_fixture(), %{
+          cost: nil,
+          charge_energy_added: 7,
+          charge_energy_used: 10,
+          duration_min: 60
+        })
+
+      assert {:ok, view, html} = live(conn, "/charge-cost/#{id}")
+
+      assert [] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#charging_process_cost")
+               |> Floki.attribute("value")
+
+      html =
+        render_submit(view, :save, %{
+          charging_process: %{cost: "0.19;0.01", mode: "per_kwh_and_minute"}
+        })
+        |> Floki.parse_document!()
+
+      assert "Total" =
+               html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
+
+      assert ["2.50"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert %ChargingProcess{cost: decimal("2.50")} = Repo.get(ChargingProcess, id)
+    end
   end
 
   describe "back button" do
