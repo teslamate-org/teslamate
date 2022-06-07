@@ -457,6 +457,7 @@
       "type": "stat"
     },
     {
+      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -497,6 +498,7 @@
         },
         "textMode": "auto"
       },
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "format": "table",
