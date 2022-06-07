@@ -724,6 +724,14 @@
               {
                 "id": "custom.width",
                 "value": 100
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "noValue",
+                "value": "-"
               }
             ]
           }
