@@ -72,8 +72,10 @@ tesla:
   password: !secret tesla_password
   scan_interval: 3600
 
+mqtt:
+  sensor: !include mqtt_sensor.yaml
+  binary_sensor: !include mqtt_binary_sensor.yaml
 sensor: !include sensor.yaml
-
 binary_sensor: !include binary_sensor.yaml
 ```
 
@@ -89,6 +91,262 @@ tesla_location:
   name: Tesla
   picture:
   track: true
+```
+
+### mqtt_sensor.yaml (mqtt: sensor: section of configuration.yaml)
+
+```yml title="mqtt_sensor.yaml"
+ - name: tesla_display_name
+   state_topic: "teslamate/cars/1/display_name"
+   icon: mdi:car
+
+ - name: tesla_state
+   state_topic: "teslamate/cars/1/state"
+   icon: mdi:car-connected
+
+ - name: tesla_since
+   state_topic: "teslamate/cars/1/since"
+   device_class: timestamp
+   icon: mdi:clock-outline
+
+ - name: tesla_version
+   state_topic: "teslamate/cars/1/version"
+   icon: mdi:alphabetical
+
+ - name: tesla_update_version
+   state_topic: "teslamate/cars/1/update_version"
+   icon: mdi:alphabetical
+
+ - name: tesla_model
+   state_topic: "teslamate/cars/1/model"
+
+ - name: tesla_trim_badging
+   state_topic: "teslamate/cars/1/trim_badging"
+   icon: mdi:shield-star-outline
+
+ - name: tesla_exterior_color
+   state_topic: "teslamate/cars/1/exterior_color"
+   icon: mdi:palette
+
+ - name: tesla_wheel_type
+   state_topic: "teslamate/cars/1/wheel_type"
+
+ - name: tesla_spoiler_type
+   state_topic: "teslamate/cars/1/spoiler_type"
+   icon: mdi:car-sports
+
+ - name: tesla_geofence
+   state_topic: "teslamate/cars/1/geofence"
+   icon: mdi:earth
+
+ - name: tesla_latitude
+   state_topic: "teslamate/cars/1/latitude"
+   unit_of_measurement: °
+   icon: mdi:crosshairs-gps
+
+ - name: tesla_longitude
+   state_topic: "teslamate/cars/1/longitude"
+   unit_of_measurement: °
+   icon: mdi:crosshairs-gps
+
+ - name: tesla_shift_state
+   state_topic: "teslamate/cars/1/shift_state"
+   icon: mdi:car-shift-pattern
+
+ - name: tesla_power
+   state_topic: "teslamate/cars/1/power"
+   device_class: power
+   unit_of_measurement: W
+   icon: mdi:flash
+
+ - name: tesla_speed
+   state_topic: "teslamate/cars/1/speed"
+   unit_of_measurement: "km/h"
+   icon: mdi:speedometer
+
+ - name: tesla_heading
+   state_topic: "teslamate/cars/1/heading"
+   unit_of_measurement: °
+   icon: mdi:compass
+
+ - name: tesla_elevation
+   state_topic: "teslamate/cars/1/elevation"
+   unit_of_measurement: m
+   icon: mdi:image-filter-hdr
+
+ - name: tesla_inside_temp
+   state_topic: "teslamate/cars/1/inside_temp"
+   device_class: temperature
+   unit_of_measurement: °C
+   icon: mdi:thermometer-lines
+
+ - name: tesla_outside_temp
+   state_topic: "teslamate/cars/1/outside_temp"
+   device_class: temperature
+   unit_of_measurement: °C
+   icon: mdi:thermometer-lines
+
+ - name: tesla_odometer
+   state_topic: "teslamate/cars/1/odometer"
+   unit_of_measurement: km
+   icon: mdi:counter
+
+ - name: tesla_est_battery_range_km
+   state_topic: "teslamate/cars/1/est_battery_range_km"
+   unit_of_measurement: km
+   icon: mdi:gauge
+
+ - name: tesla_rated_battery_range_km
+   state_topic: "teslamate/cars/1/rated_battery_range_km"
+   unit_of_measurement: km
+   icon: mdi:gauge
+
+ - name: tesla_ideal_battery_range_km
+   state_topic: "teslamate/cars/1/ideal_battery_range_km"
+   unit_of_measurement: km
+   icon: mdi:gauge
+
+ - name: tesla_battery_level
+   state_topic: "teslamate/cars/1/battery_level"
+   device_class: battery
+   unit_of_measurement: "%"
+   icon: mdi:battery-80
+   
+ - name: tesla_usable_battery_level
+   state_topic: "teslamate/cars/1/usable_battery_level"
+   unit_of_measurement: "%"
+   icon: mdi:battery-80
+
+ - name: tesla_charge_energy_added
+   state_topic: "teslamate/cars/1/charge_energy_added"
+   device_class: energy
+   unit_of_measurement: kWh
+   icon: mdi:battery-charging
+
+ - name: tesla_charge_limit_soc
+   state_topic: "teslamate/cars/1/charge_limit_soc"
+   unit_of_measurement: "%"
+   icon: mdi:battery-charging-100
+
+ - name: tesla_charger_actual_current
+   state_topic: "teslamate/cars/1/charger_actual_current"
+   device_class: current
+   unit_of_measurement: A
+   icon: mdi:lightning-bolt
+
+ - name: tesla_charger_phases
+   state_topic: "teslamate/cars/1/charger_phases"
+   icon: mdi:sine-wave
+
+ - name: tesla_charger_power
+   state_topic: "teslamate/cars/1/charger_power"
+   device_class: power
+   unit_of_measurement: kW
+   icon: mdi:lightning-bolt
+
+ - name: tesla_charger_voltage
+   state_topic: "teslamate/cars/1/charger_voltage"
+   device_class: voltage
+   unit_of_measurement: V
+   icon: mdi:lightning-bolt
+
+ - name: tesla_scheduled_charging_start_time
+   state_topic: "teslamate/cars/1/scheduled_charging_start_time"
+   icon: mdi:clock-outline
+
+ - name: tesla_time_to_full_charge
+   state_topic: "teslamate/cars/1/time_to_full_charge"
+   unit_of_measurement: h
+   icon: mdi:clock-outline
+```
+
+### mqtt_binary_sensor.yaml (mqtt: binary_sensor: section of configuration.yaml)
+
+```yml title="mqtt_binary_sensor.yaml"
+ - name: tesla_healthy
+   state_topic: "teslamate/cars/1/healthy"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:heart-pulse
+
+ - name: tesla_update_available
+   state_topic: "teslamate/cars/1/update_available"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:alarm
+ 
+ - name: tesla_locked
+   device_class: lock
+   state_topic: "teslamate/cars/1/locked"
+   payload_on: "false"
+   payload_off: "true"
+
+ - name: tesla_sentry_mode
+   state_topic: "teslamate/cars/1/sentry_mode"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:cctv
+
+ - name: tesla_windows_open
+   device_class: window
+   state_topic: "teslamate/cars/1/windows_open"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:car-door
+
+ - name: tesla_doors_open
+   device_class: door
+   state_topic: "teslamate/cars/1/doors_open"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:car-door
+
+ - name: tesla_trunk_open
+   device_class: opening
+   state_topic: "teslamate/cars/1/trunk_open"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:car-side
+
+ - name: tesla_frunk_open
+   device_class: opening
+   state_topic: "teslamate/cars/1/frunk_open"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:car-side
+
+ - name: tesla_is_user_present
+   device_class: presence
+   state_topic: "teslamate/cars/1/is_user_present"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:human-greeting
+
+ - name: tesla_is_climate_on
+   state_topic: "teslamate/cars/1/is_climate_on"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:fan
+
+ - name: tesla_is_preconditioning
+   state_topic: "teslamate/cars/1/is_preconditioning"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:fan
+
+ - name: tesla_plugged_in
+   device_class: plug
+   state_topic: "teslamate/cars/1/plugged_in"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:ev-station
+
+ - name: tesla_charge_port_door_open
+   device_class: opening
+   state_topic: "teslamate/cars/1/charge_port_door_open"
+   payload_on: "true"
+   payload_off: "false"
+   icon: mdi:ev-plug-tesla
 ```
 
 ### sensor.yaml (sensor: section of configuration.yaml)
@@ -137,203 +395,6 @@ tesla_location:
       icon_template: mdi:image-filter-hdr
       value_template: >
        {{ (states('sensor.tesla_elevation') | float * 3.2808 ) | round(2) }}
-
- - platform: mqtt
-   name: tesla_display_name
-   state_topic: "teslamate/cars/1/display_name"
-   icon: mdi:car
-
- - platform: mqtt
-   name: tesla_state
-   state_topic: "teslamate/cars/1/state"
-   icon: mdi:car-connected
-
- - platform: mqtt
-   name: tesla_since
-   state_topic: "teslamate/cars/1/since"
-   device_class: timestamp
-   icon: mdi:clock-outline
-
- - platform: mqtt
-   name: tesla_version
-   state_topic: "teslamate/cars/1/version"
-   icon: mdi:alphabetical
-
- - platform: mqtt
-   name: tesla_update_version
-   state_topic: "teslamate/cars/1/update_version"
-   icon: mdi:alphabetical
-
- - platform: mqtt
-   name: tesla_model
-   state_topic: "teslamate/cars/1/model"
-
- - platform: mqtt
-   name: tesla_trim_badging
-   state_topic: "teslamate/cars/1/trim_badging"
-   icon: mdi:shield-star-outline
-
- - platform: mqtt
-   name: tesla_exterior_color
-   state_topic: "teslamate/cars/1/exterior_color"
-   icon: mdi:palette
-
- - platform: mqtt
-   name: tesla_wheel_type
-   state_topic: "teslamate/cars/1/wheel_type"
-
- - platform: mqtt
-   name: tesla_spoiler_type
-   state_topic: "teslamate/cars/1/spoiler_type"
-   icon: mdi:car-sports
-
- - platform: mqtt
-   name: tesla_geofence
-   state_topic: "teslamate/cars/1/geofence"
-   icon: mdi:earth
-
- - platform: mqtt
-   name: tesla_latitude
-   state_topic: "teslamate/cars/1/latitude"
-   unit_of_measurement: °
-   icon: mdi:crosshairs-gps
-
- - platform: mqtt
-   name: tesla_longitude
-   state_topic: "teslamate/cars/1/longitude"
-   unit_of_measurement: °
-   icon: mdi:crosshairs-gps
-
- - platform: mqtt
-   name: tesla_shift_state
-   state_topic: "teslamate/cars/1/shift_state"
-   icon: mdi:car-shift-pattern
-
- - platform: mqtt
-   name: tesla_power
-   state_topic: "teslamate/cars/1/power"
-   device_class: power
-   unit_of_measurement: W
-   icon: mdi:flash
-
- - platform: mqtt
-   name: tesla_speed
-   state_topic: "teslamate/cars/1/speed"
-   unit_of_measurement: "km/h"
-   icon: mdi:speedometer
-
- - platform: mqtt
-   name: tesla_heading
-   state_topic: "teslamate/cars/1/heading"
-   unit_of_measurement: °
-   icon: mdi:compass
-
- - platform: mqtt
-   name: tesla_elevation
-   state_topic: "teslamate/cars/1/elevation"
-   unit_of_measurement: m
-   icon: mdi:image-filter-hdr
-
- - platform: mqtt
-   name: tesla_inside_temp
-   state_topic: "teslamate/cars/1/inside_temp"
-   device_class: temperature
-   unit_of_measurement: °C
-   icon: mdi:thermometer-lines
-
- - platform: mqtt
-   name: tesla_outside_temp
-   state_topic: "teslamate/cars/1/outside_temp"
-   device_class: temperature
-   unit_of_measurement: °C
-   icon: mdi:thermometer-lines
-
- - platform: mqtt
-   name: tesla_odometer
-   state_topic: "teslamate/cars/1/odometer"
-   unit_of_measurement: km
-   icon: mdi:counter
-
- - platform: mqtt
-   name: tesla_est_battery_range_km
-   state_topic: "teslamate/cars/1/est_battery_range_km"
-   unit_of_measurement: km
-   icon: mdi:gauge
-
- - platform: mqtt
-   name: tesla_rated_battery_range_km
-   state_topic: "teslamate/cars/1/rated_battery_range_km"
-   unit_of_measurement: km
-   icon: mdi:gauge
-
- - platform: mqtt
-   name: tesla_ideal_battery_range_km
-   state_topic: "teslamate/cars/1/ideal_battery_range_km"
-   unit_of_measurement: km
-   icon: mdi:gauge
-
- - platform: mqtt
-   name: tesla_battery_level
-   state_topic: "teslamate/cars/1/battery_level"
-   device_class: battery
-   unit_of_measurement: "%"
-   icon: mdi:battery-80
-   
- - platform: mqtt
-   name: tesla_usable_battery_level
-   state_topic: "teslamate/cars/1/usable_battery_level"
-   unit_of_measurement: "%"
-   icon: mdi:battery-80
-
- - platform: mqtt
-   name: tesla_charge_energy_added
-   state_topic: "teslamate/cars/1/charge_energy_added"
-   device_class: energy
-   unit_of_measurement: kWh
-   icon: mdi:battery-charging
-
- - platform: mqtt
-   name: tesla_charge_limit_soc
-   state_topic: "teslamate/cars/1/charge_limit_soc"
-   unit_of_measurement: "%"
-   icon: mdi:battery-charging-100
-
- - platform: mqtt
-   name: tesla_charger_actual_current
-   state_topic: "teslamate/cars/1/charger_actual_current"
-   device_class: current
-   unit_of_measurement: A
-   icon: mdi:lightning-bolt
-
- - platform: mqtt
-   name: tesla_charger_phases
-   state_topic: "teslamate/cars/1/charger_phases"
-   icon: mdi:sine-wave
-
- - platform: mqtt
-   name: tesla_charger_power
-   state_topic: "teslamate/cars/1/charger_power"
-   device_class: power
-   unit_of_measurement: kW
-   icon: mdi:lightning-bolt
-
- - platform: mqtt
-   name: tesla_charger_voltage
-   state_topic: "teslamate/cars/1/charger_voltage"
-   device_class: voltage
-   unit_of_measurement: V
-   icon: mdi:lightning-bolt
-
- - platform: mqtt
-   name: tesla_scheduled_charging_start_time
-   state_topic: "teslamate/cars/1/scheduled_charging_start_time"
-   icon: mdi:clock-outline
-
- - platform: mqtt
-   name: tesla_time_to_full_charge
-   state_topic: "teslamate/cars/1/time_to_full_charge"
-   unit_of_measurement: h
-   icon: mdi:clock-outline
 ```
 
 ### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
@@ -350,104 +411,6 @@ tesla_location:
        {% else %}
          OFF
        {% endif %}
-
- - platform: mqtt
-   name: tesla_healthy
-   state_topic: "teslamate/cars/1/healthy"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:heart-pulse
-
- - platform: mqtt
-   name: tesla_update_available
-   state_topic: "teslamate/cars/1/update_available"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:alarm
- 
- - platform: mqtt
-   name: tesla_locked
-   device_class: lock
-   state_topic: "teslamate/cars/1/locked"
-   payload_on: "false"
-   payload_off: "true"
-
- - platform: mqtt
-   name: tesla_sentry_mode
-   state_topic: "teslamate/cars/1/sentry_mode"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:cctv
-
- - platform: mqtt
-   name: tesla_windows_open
-   device_class: window
-   state_topic: "teslamate/cars/1/windows_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:car-door
-
- - platform: mqtt
-   name: tesla_doors_open
-   device_class: door
-   state_topic: "teslamate/cars/1/doors_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:car-door
-
- - platform: mqtt
-   name: tesla_trunk_open
-   device_class: opening
-   state_topic: "teslamate/cars/1/trunk_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:car-side
-
- - platform: mqtt
-   name: tesla_frunk_open
-   device_class: opening
-   state_topic: "teslamate/cars/1/frunk_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:car-side
-
- - platform: mqtt
-   name: tesla_is_user_present
-   device_class: presence
-   state_topic: "teslamate/cars/1/is_user_present"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:human-greeting
-
- - platform: mqtt
-   name: tesla_is_climate_on
-   state_topic: "teslamate/cars/1/is_climate_on"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:fan
-
- - platform: mqtt
-   name: tesla_is_preconditioning
-   state_topic: "teslamate/cars/1/is_preconditioning"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:fan
-
- - platform: mqtt
-   name: tesla_plugged_in
-   device_class: plug
-   state_topic: "teslamate/cars/1/plugged_in"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:ev-station
-
- - platform: mqtt
-   name: tesla_charge_port_door_open
-   device_class: opening
-   state_topic: "teslamate/cars/1/charge_port_door_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:ev-plug-tesla
 ```
 
 ### ui-lovelace.yaml
