@@ -29,6 +29,10 @@ defmodule TeslaMate.Log.Position do
     field :is_climate_on, :boolean
     field :is_rear_defroster_on, :boolean
     field :is_front_defroster_on, :boolean
+    field :tpms_pressure_fl, :decimal
+    field :tpms_pressure_fr, :decimal
+    field :tpms_pressure_rl, :decimal
+    field :tpms_pressure_rr, :decimal
 
     belongs_to(:car, Car)
     belongs_to(:drive, Drive)
@@ -61,7 +65,11 @@ defmodule TeslaMate.Log.Position do
       :passenger_temp_setting,
       :is_climate_on,
       :is_rear_defroster_on,
-      :is_front_defroster_on
+      :is_front_defroster_on,
+      :tpms_pressure_fl,
+      :tpms_pressure_fr,
+      :tpms_pressure_rl,
+      :tpms_pressure_rr
     ])
     |> validate_required([:car_id, :date, :latitude, :longitude])
     |> foreign_key_constraint(:car_id)

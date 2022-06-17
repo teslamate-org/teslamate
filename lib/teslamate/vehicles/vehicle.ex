@@ -1261,7 +1261,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
       is_front_defroster_on: vehicle.climate_state.is_front_defroster_on,
       battery_heater_on: vehicle.charge_state.battery_heater_on,
       battery_heater: vehicle.climate_state.battery_heater,
-      battery_heater_no_power: vehicle.climate_state.battery_heater_no_power
+      battery_heater_no_power: vehicle.climate_state.battery_heater_no_power,
+      tpms_pressure_fl: vehicle.vehicle_state.tpms_pressure_fl,
+      tpms_pressure_fr: vehicle.vehicle_state.tpms_pressure_fr,
+      tpms_pressure_rl: vehicle.vehicle_state.tpms_pressure_rl,
+      tpms_pressure_rr: vehicle.vehicle_state.tpms_pressure_rr
     }
 
     elevation =

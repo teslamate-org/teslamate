@@ -379,6 +379,123 @@
       "type": "stat"
     },
     {
+      "id": 2,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "type": "graph",
+      "title": "Tire Pressure",
+      "pluginVersion": "8.3.4",
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "barAlignment": 0,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "spanNulls": true,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            },
+            "lineStyle": {
+              "fill": "solid"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "mappings": [],
+          "decimals": 1,
+          "links": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "single"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "alias": "",
+          "datasource": "TeslaMate",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    $__time(date),\r\n    convert_tire_pressure(tpms_pressure_fl,'$tire_pressure_units') AS tpms_pressure_front_left,\r\n    convert_tire_pressure(tpms_pressure_fr,'$tire_pressure_units') AS tpms_pressure_front_right,\r\n    convert_tire_pressure(tpms_pressure_rl,'$tire_pressure_units') AS tpms_pressure_rear_left,\r\n    convert_tire_pressure(tpms_pressure_rr,'$tire_pressure_units') AS tpms_pressure_rear_right\r\nFROM\r\n    positions\r\nWHERE\r\n    car_id = $car_id AND\r\n    $__timeFilter(date) AND\r\n    tpms_pressure_fl is not null\r\nORDER BY\r\n    date ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "pos",
+          "timeColumn": "date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "datasource": "TeslaMate"
+    },
+    {
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
@@ -1322,6 +1439,34 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "psi",
+          "value": "psi"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Tire Pressure Units",
+        "multi": false,
+        "name": "tire_pressure_units",
+        "options": [
+          {
+            "selected": false,
+            "text": "bar",
+            "value": "bar"
+          },
+          {
+            "selected": true,
+            "text": "psi",
+            "value": "psi"
+          }
+        ],
+        "query": "bar, psi",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       },
       {
         "current": {
