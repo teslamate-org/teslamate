@@ -8,9 +8,7 @@ defmodule TeslaMate.Repo.Migrations.AddTirePressures do
       add_if_not_exists(:tpms_pressure_rl, :numeric, precision: 4, scale: 1)
       add_if_not_exists(:tpms_pressure_rr, :numeric, precision: 4, scale: 1)
     end
-  end
 
-    def change do
       execute("DROP FUNCTION IF EXISTS public.convert_tire_pressure(double precision, character varying);", &noop/0)
 
       execute(
@@ -23,7 +21,7 @@ defmodule TeslaMate.Repo.Migrations.AddTirePressures do
         AS $BODY$
         SELECT
         CASE $2 WHEN 'bar' THEN $1
-          WHEN 'psi' THEN $1 * 14.503773773
+            WHEN 'psi' THEN $1 * 14.503773773
         END;
         $BODY$;
         """,
