@@ -3,10 +3,10 @@ defmodule TeslaMate.Repo.Migrations.AddTirePressures do
 
   def change do
     alter table(:positions) do
-      add_if_not_exists(:tpms_pressure_fl, :numeric, precision: 4, scale: 1)
-      add_if_not_exists(:tpms_pressure_fr, :numeric, precision: 4, scale: 1)
-      add_if_not_exists(:tpms_pressure_rl, :numeric, precision: 4, scale: 1)
-      add_if_not_exists(:tpms_pressure_rr, :numeric, precision: 4, scale: 1)
+      add(:tpms_pressure_fl, :numeric, precision: 4, scale: 1)
+      add(:tpms_pressure_fr, :numeric, precision: 4, scale: 1)
+      add(:tpms_pressure_rl, :numeric, precision: 4, scale: 1)
+      add(:tpms_pressure_rr, :numeric, precision: 4, scale: 1)
     end
 
       execute("DROP FUNCTION IF EXISTS public.convert_tire_pressure(double precision, character varying);", &noop/0)
