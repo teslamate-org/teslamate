@@ -9,8 +9,6 @@ defmodule TeslaMate.Repo.Migrations.AddTirePressures do
       add(:tpms_pressure_rr, :numeric, precision: 4, scale: 1)
     end
 
-      execute("DROP FUNCTION IF EXISTS public.convert_tire_pressure(double precision, character varying);", &noop/0)
-
       execute(
         """
         CREATE OR REPLACE FUNCTION public.convert_tire_pressure(n numeric(6,2), character varying)
