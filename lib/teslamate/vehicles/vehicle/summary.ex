@@ -122,7 +122,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       tpms_pressure_fl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fl]),
       tpms_pressure_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fr]),
       tpms_pressure_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rl]),
-      tpms_pressure_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rr]),
+      tpms_pressure_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rr])
     }
   end
 
