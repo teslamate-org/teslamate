@@ -22,7 +22,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1650630830781,
+  "iteration": 1656101603102,
   "links": [
     {
       "icon": "dashboard",
@@ -105,7 +105,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "table",
@@ -185,7 +185,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "table",
@@ -266,7 +266,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -348,7 +348,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "table",
@@ -422,7 +422,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "table",
@@ -498,7 +498,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "table",
@@ -598,56 +598,123 @@
       "yBucketSize": 10.00001
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": "TeslaMate",
-      "fill": 1,
-      "fillGradient": 0,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 35,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              },
+              {
+                "color": "transparent",
+                "value": 20
+              },
+              {
+                "color": "dark-green",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end_battery_level"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "start_battery_level"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_battery_level"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "end_battery_level"
+              }
+            ]
+          }
+        ]
+      },
       "gridPos": {
         "h": 6,
         "w": 12,
         "x": 12,
         "y": 4
       },
-      "hiddenSeries": false,
       "id": 16,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "connected",
       "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.4.5",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "end_battery_level",
-          "color": "#73BF69",
-          "fillBelowTo": "start_battery_level",
-          "lines": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
         },
-        {
-          "alias": "start_battery_level",
-          "lines": false
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
         }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
+      },
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "time_series",
@@ -678,55 +745,9 @@
           ]
         }
       ],
-      "thresholds": [
-        {
-          "colorMode": "ok",
-          "fill": false,
-          "line": true,
-          "op": "gt",
-          "value": 80,
-          "yaxis": "left"
-        },
-        {
-          "colorMode": "ok",
-          "fill": false,
-          "line": true,
-          "op": "lt",
-          "value": 20,
-          "yaxis": "left"
-        }
-      ],
       "timeFrom": "6M",
-      "timeRegions": [],
       "title": "Charge Delta",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "logBase": 1,
-          "max": "100",
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
+      "type": "timeseries"
     },
     {
       "datasource": "TeslaMate",
@@ -1270,15 +1291,15 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "auto"
+            "displayMode": "auto",
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -1308,8 +1329,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "yellow",
@@ -1372,7 +1392,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "table",
@@ -1410,15 +1430,15 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "auto"
+            "displayMode": "auto",
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1448,8 +1468,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red",
-                      "value": null
+                      "color": "red"
                     },
                     {
                       "color": "#EAB839",
@@ -1513,7 +1532,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "table",
@@ -1551,15 +1570,15 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "auto"
+            "displayMode": "auto",
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1620,7 +1639,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "table",
@@ -1658,15 +1677,15 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "auto"
+            "displayMode": "auto",
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1731,7 +1750,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "8.4.5",
+      "pluginVersion": "8.5.4",
       "targets": [
         {
           "format": "table",
