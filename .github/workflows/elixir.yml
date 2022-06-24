@@ -9,8 +9,8 @@ jobs:
       matrix:
         include:
           - pair:
-              elixir: "1.12"
-              otp: "24"
+              elixir: "1.13"
+              otp: "25"
             report_coverage: true
             lint: true
 
