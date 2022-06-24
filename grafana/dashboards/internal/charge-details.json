@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1656101730902,
+  "iteration": 1656106965302,
   "links": [
     {
       "icon": "dashboard",
@@ -167,6 +167,14 @@
               {
                 "id": "displayName",
                 "value": "Battery heater"
+              },
+              {
+                "id": "unit",
+                "value": "bool_on_off"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
               }
             ]
           },
