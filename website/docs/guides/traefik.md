@@ -62,7 +62,7 @@ services:
       - all
 
   database:
-    image: postgres:13
+    image: postgres:14
     restart: always
     environment:
       - POSTGRES_USER=${TM_DB_USER}
@@ -110,7 +110,7 @@ services:
       - mosquitto-data:/mosquitto/data
 
   proxy:
-    image: traefik:v2.4
+    image: traefik:v2.7
     restart: always
     command:
       - "--global.sendAnonymousUsage=false"
