@@ -10,18 +10,29 @@
 >
 > If the application is started without the presence of an `ENCRYPTION_KEY` (or if the key failed to decrypt the existing tokens), the UI will display a warning with further instructions.
 
-- Bump Grafana to 8.4.1
 - Add `charge_current_request` and `charge_current_request_max` MQTT topics
 - Add detection of refresh Model X (2022) (#2455 - @cwanja)
+- Restart streaming API process if token expired
+- Do not start erlang's EPMD service
+- Store vehicle marketing names in the database
+- Bump Grafana to 8.5.4
 
 #### Dashboards
 
-- Add DC charge curve scatter graph (#2093 - @ToniA)
 - Add datasource to table and map panels (#2391- @andrewjw)
+- Charge Details: Ensure that battery heater is shown when active during charging (#2527 - @woyteck1)
+- Charging Stats, Charges: Add average cost per kWh to charging stats (#2693 - @yoyostile)
+- Charging Stats, Charging Details: Add Charging curve (#2093 - @ToniA, #2152 - @fmossott)
 - Charging Stats: Add panel with the cost of charges at SuC (#2448 - @carloscuezva)
-- Drive Details: Add elevation summary (#2449 - @coreGreenberet)
+- Charging Stats: Fix for better "Charge deltas" when the charging process is interrupted and re-started (#2566, #2656 - @nicoladefranceschi)
 - Charging Stats: Set Y-Axis max of heatmap to 100 (#2461 - @DrMichael)
+- Charging Stats: Update Charging Stats panel styling (#2481 - @cwanja)
+- Drive Details: Add elevation summary (#2449 - @coreGreenberet)
+- Drive Details: Record the tire pressure which was made available by Tesla in the 2022.4 SW release (#2706 - @NirKli)
 - Drive Stats: Optimize query to estimate mileage calculation (#2464 - @coreGreenberet )
+- Locations: Let the gauge scale up to the maximum value (#2647 - @DrMichael)
+- States: Update States top row panels height (#2487 - @cwanja)
+- Timeline: Fix links (#2601 - @DrMichael))
 - Trip: Render Trip piechart legend (#2473 - @cwanja)
 
 #### Translations
@@ -32,6 +43,10 @@
 
 - Add ProxyPreserveHost On to the Grafana entries in Apache2 config (#2471 - @DrMichael)
 - Node-RED: Fix typo (#2410 - @baylanger)
+- Update to projects page (TeslaMate-ABRP) (#2518 - @fetzu)
+- Update HomeAssistant Integration examples for HA 2022.6 (#2704 - @star114)
+- Add FAQ around Docker timestamp logs (#2655 - @cwanja)
+- Add HomeAssistant notification example (#2712 - @brombomb)
 
 ## [1.26.1] - 2022-01-28
 
