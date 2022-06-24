@@ -2,7 +2,7 @@ FROM elixir:1.13 AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get update && apt-get install -y --no-install-recommends nodejs
 
 RUN mix local.rebar --force && \
