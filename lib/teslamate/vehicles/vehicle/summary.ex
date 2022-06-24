@@ -13,7 +13,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available update_version is_user_present geofence
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
-    charge_current_request charge_current_request_max
+    charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -118,7 +118,11 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       is_user_present: get_in_struct(vehicle, [:vehicle_state, :is_user_present]),
       version: version(vehicle),
       update_available: update_available(vehicle),
-      update_version: update_version(vehicle)
+      update_version: update_version(vehicle),
+      tpms_pressure_fl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fl]),
+      tpms_pressure_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fr]),
+      tpms_pressure_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rl]),
+      tpms_pressure_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rr])
     }
   end
 
