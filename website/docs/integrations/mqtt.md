@@ -10,7 +10,7 @@ The MQTT function within TeslaMate allows useful values to be published to an MQ
 Vehicle data will be published to the following topics:
 
 | Topic                                                  | Example              | Description                                                                           |
-| ------------------------------------------------------ | -------------------- | ------------------------------------------------------------------------------------- |
+|--------------------------------------------------------|----------------------|---------------------------------------------------------------------------------------|
 | `teslamate/cars/$car_id/display_name`                  | Blue Thunder         | Vehicle Name                                                                          |
 | `teslamate/cars/$car_id/state`                         | asleep               | Status of the vehicle (e.g. `online`, `asleep`, `charging`)                           |
 | `teslamate/cars/$car_id/since`                         | 2019-02-29T23:00:07Z | Date of the last status change                                                        |
@@ -67,6 +67,10 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/charge_current_request_max`    | 40                   | How many amps the car can have                                                        |
 | `teslamate/cars/$car_id/scheduled_charging_start_time` | 2019-02-29T23:00:07Z | Start time of the scheduled charge                                                    |
 | `teslamate/cars/$car_id/time_to_full_charge`           | 1.83                 | Hours remaining to full charge                                                        |
+| `teslamate/cars/$car_id/tpms_pressure_fl`              | 2.9                  | Tire pressure measure in BAR, front left tire                                         |
+| `teslamate/cars/$car_id/tpms_pressure_fr`              | 2.8                  | Tire pressure measure in BAR, front right tire                                        |
+| `teslamate/cars/$car_id/tpms_pressure_rl`              | 2.9                  | Tire pressure measure in BAR, rear left tire                                          |
+| `teslamate/cars/$car_id/tpms_pressure_rr`              | 2.8                  | Tire pressure measure in BAR, rear right tire                                         |
 
 :::note
 `$car_id` usually starts at 1
