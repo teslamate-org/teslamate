@@ -22,7 +22,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1656101603102,
+  "iteration": 1656105654302,
   "links": [
     {
       "icon": "dashboard",
@@ -658,7 +658,23 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "end_battery_level"
+              "options": "Start SOC"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "End SOC"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "End SOC"
             },
             "properties": [
               {
@@ -670,27 +686,11 @@
               },
               {
                 "id": "custom.fillBelowTo",
-                "value": "start_battery_level"
+                "value": "Start SOC"
               },
               {
                 "id": "custom.lineWidth",
                 "value": 0
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "start_battery_level"
-            },
-            "properties": [
-              {
-                "id": "custom.lineWidth",
-                "value": 0
-              },
-              {
-                "id": "custom.fillBelowTo",
-                "value": "end_battery_level"
               }
             ]
           }
@@ -717,11 +717,15 @@
       "pluginVersion": "8.5.4",
       "targets": [
         {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PC98BA2F4D77E1A42"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH charges AS (\n\tSELECT\n\t\tstart_date,\n\t\tstart_battery_level,\n\t\tend_battery_level,\n\t\tp.odometer,\n\t\tCOALESCE(\n\t\t\tLAG(p.odometer) OVER (\n\t\t\t\tORDER BY cp.start_date\n\t\t\t),\n\t\t\tp.odometer\n\t\t) as odometer_prev\n\tFROM\n\t\tcharging_processes cp\n\tJOIN positions p\n\tON p.id = cp.position_id\n\tWHERE\n\t\t$__timeFilter(cp.start_date)\n\t\tAND cp.duration_min > 3\n\t\tAND cp.car_id = $car_id\n)\nSELECT\n\tMIN(start_date) as time,\n\tMIN(start_battery_level) as start_battery_level,\n\tMAX(end_battery_level) as end_battery_level\nFROM charges\nGROUP BY\n\tCASE WHEN odometer - odometer_prev < 2 THEN odometer_prev ELSE odometer END\nORDER BY\n\ttime;",
+          "rawSql": "WITH charges AS (\n\tSELECT\n\t\tstart_date,\n\t\tstart_battery_level,\n\t\tend_battery_level,\n\t\tp.odometer,\n\t\tCOALESCE(\n\t\t\tLAG(p.odometer) OVER (\n\t\t\t\tORDER BY cp.start_date\n\t\t\t),\n\t\t\tp.odometer\n\t\t) as odometer_prev\n\tFROM\n\t\tcharging_processes cp\n\tJOIN positions p\n\tON p.id = cp.position_id\n\tWHERE\n\t\t$__timeFilter(cp.start_date)\n\t\tAND cp.duration_min > 3\n\t\tAND cp.car_id = $car_id\n)\nSELECT\n\tMIN(start_date) as time,\n\tMIN(start_battery_level) as \"Start SOC\",\n\tMAX(end_battery_level) as \"End SOC\"\nFROM charges\nGROUP BY\n\tCASE WHEN odometer - odometer_prev < 2 THEN odometer_prev ELSE odometer END\nORDER BY\n\ttime;",
           "refId": "A",
           "select": [
             [
@@ -1299,7 +1303,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -1329,7 +1334,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "yellow",
@@ -1438,7 +1444,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1468,7 +1475,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red"
+                      "color": "red",
+                      "value": null
                     },
                     {
                       "color": "#EAB839",
@@ -1578,7 +1586,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1685,7 +1694,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
