@@ -1291,10 +1291,7 @@
       "pluginVersion": "8.5.4",
       "targets": [
         {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PC98BA2F4D77E1A42"
-          },
+          "datasource": "TeslaMate",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
