@@ -745,5 +745,24 @@ notify_tesla_windows_open:
       data:
         variables:
           whatsopen: "windows"
+          
+- id: plugin-tesla-notify
+  alias: Notify if Tesla not plugged in at night
+  trigger:
+  - platform: time
+    at: '19:30:00'
+condition: and
+conditions:
+  - condition: state
+    entity_id: sensor.tesla_plugged_in
+    state: 'false'
+  action:
+  - service: notify.mobile_app_pixel_6_pro
+    data:
+      title: 🔌 Plug in your car 🚙
+      message: 'Tesla: {{states(''sensor.tesla_battery_level'')}}% - {{states(''sensor.tesla_ideal_range'')|round(0)}}
+        km'
+  initial_state: true
+  mode: single
 ```
 
