@@ -72,6 +72,22 @@ nav.navbar {
   }
 }
 
+.darkmode--activated main.section {
+  -webkit-filter: invert(100%);
+}
+
+.darkmode--activated .navbar-dropdown {
+  -webkit-filter: invert(100%);
+}
+
+.darkmode--activated #map_1 .leaflet-tile.leaflet-tile-loaded {
+  -webkit-filter: invert(100%);
+}
+
+.darkmode--activated #map .leaflet-tile.leaflet-tile-loaded {
+  -webkit-filter: invert(100%);
+}
+
 .car {
   display: flex;
   flex-direction: column;

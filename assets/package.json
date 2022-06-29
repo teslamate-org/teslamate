@@ -11,6 +11,8 @@
     "@geoman-io/leaflet-geoman-free": "^2.13.0",
     "@mdi/font": "^6.7.96",
     "bulma-switch": "^2.0.4",
+    "darkmode-js": "1.5.7",
+    "invert-color": "1.0.0",
     "leaflet": "^1.8.0",
     "leaflet-control-geocoder": "^2.4.0",
     "phoenix": "file:../deps/phoenix",

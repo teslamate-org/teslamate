@@ -136,11 +136,18 @@ const DirectionArrow = CircleMarker.extend({
 
 function createMap(opts) {
   const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", opts);
-
-  const osm = new TileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    { maxZoom: 19 }
-  );
+  let osm;
+  if (localStorage.getItem("theme") === "light") {
+     osm = new TileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        { maxZoom: 19 }
+    );
+  } else {
+     osm = new TileLayer(
+        "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png",
+        { maxZoom: 19 }
+    );
+  }
 
   if (opts.enableHybridLayer) {
     const hybrid = new TileLayer(
