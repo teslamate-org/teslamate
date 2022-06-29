@@ -84,6 +84,10 @@ nav.navbar {
   -webkit-filter: invert(100%);
 }
 
+.darkmode--activated .mdi.mdi-alert-box {
+  -webkit-filter: invert(100%);
+}
+
 .darkmode--activated #map .leaflet-tile.leaflet-tile-loaded {
   -webkit-filter: invert(100%);
 }
