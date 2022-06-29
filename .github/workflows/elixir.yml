@@ -9,8 +9,8 @@ jobs:
       matrix:
         include:
           - pair:
-              elixir: "1.12"
-              otp: "24"
+              elixir: "1.13"
+              otp: "25"
             report_coverage: true
             lint: true
 
@@ -18,7 +18,7 @@ jobs:
 
     services:
       db:
-        image: postgres:13
+        image: postgres:14
         ports: ["5432:5432"]
         env:
           POSTGRES_PASSWORD: postgres
