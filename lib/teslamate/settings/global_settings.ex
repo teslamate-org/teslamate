@@ -5,7 +5,8 @@ defmodule TeslaMate.Settings.GlobalSettings do
   schema "settings" do
     field :unit_of_length, Ecto.Enum, values: [:km, :mi]
     field :unit_of_temperature, Ecto.Enum, values: [:C, :F]
-
+    field :unit_of_tirepressure, Ecto.Enum, values: [:psi, :bar]
+    
     field :preferred_range, Ecto.Enum, values: [:ideal, :rated]
 
     field :base_url, :string
