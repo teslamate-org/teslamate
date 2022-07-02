@@ -87,6 +87,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
     |> cast(attrs, [
       :unit_of_length,
       :unit_of_temperature,
+      :unit_of_tirepressure,
       :preferred_range,
       :base_url,
       :grafana_url,
@@ -95,6 +96,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
     |> validate_required([
       :unit_of_length,
       :unit_of_temperature,
+      :unit_of_tirepressure,
       :preferred_range,
       :language
     ])
