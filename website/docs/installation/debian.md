@@ -169,6 +169,7 @@ Environment="LANG=en_US.UTF-8"
 Environment="LC_CTYPE=en_US.UTF-8"
 Environment="TZ=Europe/Berlin"
 Environment="PORT=4000"
+Environment="ENCRYPTION_KEY=your_secure_encryption_key_here"
 Environment="DATABASE_USER=teslamate"
 Environment="DATABASE_PASS=#your secure password!
 Environment="DATABASE_NAME=teslamate"
