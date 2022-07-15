@@ -252,6 +252,7 @@ tesla_location:
 
  - name: tesla_scheduled_charging_start_time
    state_topic: "teslamate/cars/1/scheduled_charging_start_time"
+   device_class: timestamp
    icon: mdi:clock-outline
 
  - name: tesla_time_to_full_charge
@@ -359,35 +360,35 @@ tesla_location:
       unit_of_measurement: mi
       icon_template: mdi:gauge
       value_template: >
-       {{ (states('sensor.tesla_est_battery_range_km') | float / 1.609) | round(2) }}
+       {{ (states('sensor.tesla_est_battery_range_km') | float / 1.609344) | round(2) }}
 
     tesla_rated_battery_range_mi:
       friendly_name: Rated Range (mi)
       unit_of_measurement: mi
       icon_template: mdi:gauge
       value_template: >
-       {{ (states('sensor.tesla_rated_battery_range_km') | float / 1.609) | round(2) }}
+       {{ (states('sensor.tesla_rated_battery_range_km') | float / 1.609344) | round(2) }}
 
     tesla_ideal_battery_range_mi:
       friendly_name: Ideal Range (mi)
       unit_of_measurement: mi
       icon_template: mdi:gauge
       value_template: >
-       {{ (states('sensor.tesla_ideal_battery_range_km') | float / 1.609) | round(2) }}
+       {{ (states('sensor.tesla_ideal_battery_range_km') | float / 1.609344) | round(2) }}
 
     tesla_odometer_mi:
       friendly_name: Odometer (mi)
       unit_of_measurement: mi
       icon_template: mdi:counter
       value_template: >
-       {{ (states('sensor.tesla_odometer') | float / 1.609) | round(2) }}
+       {{ (states('sensor.tesla_odometer') | float / 1.609344) | round(2) }}
 
     tesla_speed_mph:
       friendly_name: Speed (MPH)
       unit_of_measurement: mph
       icon_template: mdi:speedometer
       value_template: >
-       {{ (states('sensor.tesla_speed') | float / 1.609) | round(2) }}
+       {{ (states('sensor.tesla_speed') | float / 1.609344) | round(2) }}
 
     tesla_elevation_ft:
       friendly_name: Elevation (ft)
