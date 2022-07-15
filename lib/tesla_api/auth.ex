@@ -70,8 +70,11 @@ defmodule TeslaApi.Auth do
       l when is_list(l) ->
         Error.into({:error, :invalid_jwt}, :invalid_access_token)
 
-      error ->
-        Error.into(error, :invalid_access_token)
+      {:error, reason} ->
+        Error.into({:error, reason}, :invalid_access_token)
+
+      _error ->
+        Error.into({:error, "Invalid access token"}, :invalid_access_token)
     end
   end
 
