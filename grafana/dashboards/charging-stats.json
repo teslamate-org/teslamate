@@ -22,7 +22,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1656105654302,
+  "iteration": 1658137661652,
   "links": [
     {
       "icon": "dashboard",
@@ -105,7 +105,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -185,7 +185,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -266,7 +266,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -274,7 +274,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tsum(cp.cost)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nWHERE\n  $__timeFilter(end_date)\n  AND addr.name LIKE '%Supercharger%'\n\tAND cp.cost IS NOT NULL\n\tAND cp.car_id = $car_id;",
+          "rawSql": "SELECT\n\tsum(cp.cost)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nLEFT JOIN\n  geofences geo ON geo.id = geofence_id\nWHERE\n  $__timeFilter(end_date)\n  AND (addr.name LIKE '%Supercharger%' OR geo.name LIKE '%Supercharger%')\n\tAND cp.cost IS NOT NULL\n\tAND cp.car_id = $car_id;",
           "refId": "A",
           "select": [
             [
@@ -348,7 +348,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -422,7 +422,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -498,7 +498,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -1395,7 +1395,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -1537,7 +1537,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -1645,7 +1645,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -1757,7 +1757,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
