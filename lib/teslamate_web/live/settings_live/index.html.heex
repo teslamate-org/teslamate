@@ -223,6 +223,21 @@
           </div>
         </div>
       </div>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <%= label f, :unit_of_pressure, gettext("Tire Pressure"), class: "label" %>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <%= select(f, :unit_of_pressure, [:bar, :psi]) %>
+              </div>
+            </div>
+            <p class="help is-danger"><%= error_tag(f, :unit_of_pressure) %></p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

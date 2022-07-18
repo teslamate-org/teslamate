@@ -5,6 +5,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
   schema "settings" do
     field :unit_of_length, Ecto.Enum, values: [:km, :mi]
     field :unit_of_temperature, Ecto.Enum, values: [:C, :F]
+    field :unit_of_pressure, Ecto.Enum, values: [:bar, :psi]
 
     field :preferred_range, Ecto.Enum, values: [:ideal, :rated]
 
@@ -86,6 +87,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
     |> cast(attrs, [
       :unit_of_length,
       :unit_of_temperature,
+      :unit_of_pressure,
       :preferred_range,
       :base_url,
       :grafana_url,
@@ -94,6 +96,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
     |> validate_required([
       :unit_of_length,
       :unit_of_temperature,
+      :unit_of_pressure,
       :preferred_range,
       :language
     ])

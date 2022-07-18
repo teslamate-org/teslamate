@@ -22,7 +22,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1656106743302,
+  "iteration": 1658136653681,
   "links": [
     {
       "icon": "dashboard",
@@ -450,7 +450,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -537,7 +537,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -623,7 +623,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -729,7 +729,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -1144,7 +1144,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n    $__time(date),\r\n    convert_tire_pressure(tpms_pressure_fl,'$tire_pressure_units') AS tpms_pressure_front_left_$tire_pressure_units,\r\n    convert_tire_pressure(tpms_pressure_fr,'$tire_pressure_units') AS tpms_pressure_front_right_$tire_pressure_units,\r\n    convert_tire_pressure(tpms_pressure_rl,'$tire_pressure_units') AS tpms_pressure_rear_left_$tire_pressure_units,\r\n    convert_tire_pressure(tpms_pressure_rr,'$tire_pressure_units') AS tpms_pressure_rear_right_$tire_pressure_units\r\nFROM\r\n    positions\r\nWHERE\r\n    car_id = $car_id AND\r\n    $__timeFilter(date) AND\r\n    tpms_pressure_fl is not null\r\nORDER BY\r\n    date ASC",
+          "rawSql": "SELECT\r\n    $__time(date),\r\n    convert_tire_pressure(tpms_pressure_fl,'$pressure_unit') AS tpms_pressure_front_left_$pressure_unit,\r\n    convert_tire_pressure(tpms_pressure_fr,'$pressure_unit') AS tpms_pressure_front_right_$pressure_unit,\r\n    convert_tire_pressure(tpms_pressure_rl,'$pressure_unit') AS tpms_pressure_rear_left_$pressure_unit,\r\n    convert_tire_pressure(tpms_pressure_rr,'$pressure_unit') AS tpms_pressure_rear_right_$pressure_unit\r\nFROM\r\n    positions\r\nWHERE\r\n    car_id = $car_id AND\r\n    $__timeFilter(date) AND\r\n    tpms_pressure_fl is not null\r\nORDER BY\r\n    date ASC",
           "refId": "A",
           "select": [
             [
@@ -1634,7 +1634,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -1710,7 +1710,7 @@
         "text": {},
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.6",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -1923,36 +1923,8 @@
       {
         "current": {
           "selected": false,
-          "text": "bar",
-          "value": "bar"
-        },
-        "hide": 0,
-        "includeAll": false,
-        "label": "Tire Pressure Units",
-        "multi": false,
-        "name": "tire_pressure_units",
-        "options": [
-          {
-            "selected": true,
-            "text": "bar",
-            "value": "bar"
-          },
-          {
-            "selected": false,
-            "text": "psi",
-            "value": "psi"
-          }
-        ],
-        "query": "bar, psi",
-        "queryValue": "",
-        "skipUrlSync": false,
-        "type": "custom"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "http://localhost:4000",
-          "value": "http://localhost:4000"
+          "text": "",
+          "value": ""
         },
         "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
@@ -1971,6 +1943,25 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "bar",
+          "value": "bar"
+        },
+        "definition": "select unit_of_pressure from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "pressure_unit",
+        "options": [],
+        "query": "select unit_of_pressure from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
