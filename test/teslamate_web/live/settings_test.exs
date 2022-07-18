@@ -5,9 +5,9 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
   import TestHelper, only: [decimal: 1]
 
-  describe "global settings" do
-    test "shows km and C by default", %{conn: conn} do
-      assert {:ok, _view, html} = live(conn, "/settings")
+  describe "units" do
+    test "unit of length: shows 'km' by default", %{conn: conn} do
+      assert {:ok, view, html} = live(conn, "/settings")
 
       assert [
                {"select", _,
@@ -23,6 +23,24 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert [
                {"select", _,
                 [
+                  {"option", [{"value", "km"}], ["km"]},
+                  {"option", [{"selected", "selected"}, {"value", "mi"}], ["mi"]}
+                ]}
+             ] =
+               render_change(view, :change, %{global_settings: %{unit_of_length: :mi}})
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_unit_of_length")
+
+      assert settings = Settings.get_global_settings!()
+      assert settings.unit_of_length == :mi
+    end
+
+    test "unit of temperature: shows '°C' by default", %{conn: conn} do
+      assert {:ok, view, html} = live(conn, "/settings")
+
+      assert [
+               {"select", _,
+                [
                   {"option", [{"selected", "selected"}, {"value", "C"}], ["°C"]},
                   {"option", [{"value", "F"}], ["°F"]}
                 ]}
@@ -30,8 +48,53 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                html
                |> Floki.parse_document!()
                |> Floki.find("#global_settings_unit_of_temperature")
+
+      assert [
+               {"select", _,
+                [
+                  {"option", [{"value", "C"}], ["°C"]},
+                  {"option", [{"selected", "selected"}, {"value", "F"}], ["°F"]}
+                ]}
+             ] =
+               render_change(view, :change, %{global_settings: %{unit_of_temperature: :F}})
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_unit_of_temperature")
+
+      assert settings = Settings.get_global_settings!()
+      assert settings.unit_of_temperature == :F
     end
 
+    test "unit of pressure: shows 'bar' by default", %{conn: conn} do
+      assert {:ok, view, html} = live(conn, "/settings")
+
+      assert [
+               {"select", _,
+                [
+                  {"option", [{"selected", "selected"}, {"value", "bar"}], ["bar"]},
+                  {"option", [{"value", "psi"}], ["psi"]}
+                ]}
+             ] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_unit_of_pressure")
+
+      assert [
+               {"select", _,
+                [
+                  {"option", [{"value", "bar"}], ["bar"]},
+                  {"option", [{"selected", "selected"}, {"value", "psi"}], ["psi"]}
+                ]}
+             ] =
+               render_change(view, :change, %{global_settings: %{unit_of_pressure: :psi}})
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_unit_of_pressure")
+
+      assert settings = Settings.get_global_settings!()
+      assert settings.unit_of_pressure == :psi
+    end
+  end
+
+  describe "global settings" do
     test "shows :rated by default", %{conn: conn} do
       assert {:ok, _view, html} = live(conn, "/settings")
 
@@ -85,38 +148,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
              |> Floki.attribute("value") == ["https://example.com"]
 
       assert Settings.get_global_settings!().grafana_url == "https://example.com"
-    end
-
-    test "reacts to change events", %{conn: conn} do
-      assert {:ok, view, _html} = live(conn, "/settings")
-
-      assert [
-               {"select", _,
-                [
-                  {"option", [{"value", "km"}], ["km"]},
-                  {"option", [{"selected", "selected"}, {"value", "mi"}], ["mi"]}
-                ]}
-             ] =
-               render_change(view, :change, %{global_settings: %{unit_of_length: :mi}})
-               |> Floki.parse_document!()
-               |> Floki.find("#global_settings_unit_of_length")
-
-      assert settings = Settings.get_global_settings!()
-      assert settings.unit_of_length == :mi
-
-      assert [
-               {"select", _,
-                [
-                  {"option", [{"value", "C"}], ["°C"]},
-                  {"option", [{"selected", "selected"}, {"value", "F"}], ["°F"]}
-                ]}
-             ] =
-               render_change(view, :change, %{global_settings: %{unit_of_temperature: :F}})
-               |> Floki.parse_document!()
-               |> Floki.find("#global_settings_unit_of_temperature")
-
-      assert settings = Settings.get_global_settings!()
-      assert settings.unit_of_temperature == :F
     end
   end
 
