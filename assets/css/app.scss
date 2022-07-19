@@ -72,24 +72,87 @@ nav.navbar {
   }
 }
 
+
+.darkmode--activated .car {
+  background-color: #595959;
+  color: #0a0a0a;
+}
+
+
+.darkmode--activated select {
+  background-color: #787676;
+}
+
+.darkmode--activated .leaflet-control-container.span {
+  background-color: #787676;
+}
+
+.darkmode--activated input {
+  background-color: #787676;
+}
+
+.darkmode--activated tbody {
+  background-color: #787676;
+}
+
+.darkmode--activated .notification {
+  background-color: #787676;
+}
+
+.darkmode--activated a {
+  color: #bdbdbd;
+}
+
+.darkmode--activated label {
+  color: #0a0a0a;
+}
+
+.darkmode--activated h2 {
+  color: #0a0a0a;
+}
+
+.darkmode--activated .content table tr {
+  background-color: #595959;
+  color: #0a0a0a;
+}
+
+.darkmode--activated .content table td {
+  background-color: #595959;
+  color: #0a0a0a;
+}
+
+.darkmode--activated p.subtitle.is-6.has-text-weight-light {
+  color: #0a0a0a;
+}
+
+.darkmode--activated p.title.is-5 {
+  color: #0a0a0a;
+}
+
 .darkmode--activated main.section {
-  -webkit-filter: invert(100%);
+  background-color: #aaaaaa;
 }
 
 .darkmode--activated .navbar-dropdown {
-  -webkit-filter: invert(100%);
+  background-color: #272b30;
 }
 
-.darkmode--activated #map_1 .leaflet-tile.leaflet-tile-loaded {
-  -webkit-filter: invert(100%);
+.darkmode--activated .navbar {
+  background-color: #272b30;
 }
 
-.darkmode--activated .mdi.mdi-alert-box {
-  -webkit-filter: invert(100%);
+.darkmode--activated .footer {
+  background-color: #272b30;
 }
 
-.darkmode--activated #map .leaflet-tile.leaflet-tile-loaded {
-  -webkit-filter: invert(100%);
+.darkmode--activated .mdi {
+  color: #aaaaaa;
+}
+
+
+.darkmode--activated code {
+  background-color: #272b30;
+  color: #aaaaaa;
 }
 
 .car {
