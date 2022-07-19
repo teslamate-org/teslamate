@@ -41,7 +41,7 @@ pkg install erlang
 </details>
 
 <details>
-  <summary>Elixir (v1.11+)</summary>
+  <summary>Elixir (v1.12+)</summary>
 
 Unfortunately the Elixir part is not well updated in FreeBSD ports.
 Hence the latest supported version for Erlang 21 (latest in FreeBSD ports)

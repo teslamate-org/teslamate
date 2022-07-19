@@ -24,7 +24,7 @@ Source: [postgresql.org/download](https://www.postgresql.org/download/)
 </details>
 
 <details>
-  <summary>Elixir (v1.11+)</summary>
+  <summary>Elixir (v1.12+)</summary>
 
 ```bash
 wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb && sudo dpkg -i erlang-solutions_2.0_all.deb
