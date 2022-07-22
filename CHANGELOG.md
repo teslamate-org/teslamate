@@ -1,6 +1,17 @@
 # Changelog
 
-## unreleased
+## [1.27.1] - 2022-07-22
+
+### Improvements and Bug Fixes
+
+- Add setting to select tire pressure units
+- Fix `Protocol 'inet_tcp': register/listen error: econnrefused` error (#2771)
+- Bump minimum supported Elixir version to 1.12
+- Improve handling of invalid API tokens
+
+#### Dashboards
+
+- Charging Stats: Include SuC geofences to calculate charging cost
 
 ## [1.27.0] - 2022-07-15
 
@@ -47,7 +58,7 @@ If no `ENCRYPTION_KEY` environment variable is provided when running the databas
 - Drive Stats: Optimize query to estimate mileage calculation (#2464 - @coreGreenberet )
 - Locations: Let the gauge scale up to the maximum value (#2647 - @DrMichael)
 - States: Update States top row panels height (#2487 - @cwanja)
-- Timeline: Fix links (#2601 - @DrMichael))
+- Timeline: Fix links (#2601 - @DrMichael)
 - Trip: Render Trip piechart legend (#2473 - @cwanja)
 - Migrate dashboards to the new timeseries panels
 - Change unit of boolean fields
@@ -1565,6 +1576,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.27.1]: https://github.com/adriankumpf/teslamate/compare/v1.27.0...v1.27.1
 [1.27.0]: https://github.com/adriankumpf/teslamate/compare/v1.26.1...v1.27.0
 [1.26.1]: https://github.com/adriankumpf/teslamate/compare/v1.26.0...v1.26.1
 [1.26.0]: https://github.com/adriankumpf/teslamate/compare/v1.25.2...v1.26.0
