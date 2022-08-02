@@ -1,0 +1,34 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.docs.category.Getting started": {
+    "message": "开始",
+    "description": "The label for category Getting started in sidebar docs"
+  },
+  "sidebar.docs.category.Installation": {
+    "message": "安装",
+    "description": "The label for category Installation in sidebar docs"
+  },
+  "sidebar.docs.category.Guides": {
+    "message": "指南",
+    "description": "The label for category Guides in sidebar docs"
+  },
+  "sidebar.docs.category.Import": {
+    "message": "导入",
+    "description": "The label for category Import in sidebar docs"
+  },
+  "sidebar.docs.category.Integrations": {
+    "message": "集成",
+    "description": "The label for category Integrations in sidebar docs"
+  },
+  "sidebar.docs.category.Advanced Configuration": {
+    "message": "高级配置",
+    "description": "The label for category Advanced Configuration in sidebar docs"
+  },
+  "sidebar.docs.category.Maintenance": {
+    "message": "维护",
+    "description": "The label for category Maintenance in sidebar docs"
+  }
+}

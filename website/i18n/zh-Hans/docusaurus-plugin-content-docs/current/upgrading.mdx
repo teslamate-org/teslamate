@@ -1,0 +1,113 @@
+---
+id: upgrading
+title: 升级到最新版本
+sidebar_label: 升级到最新版本
+---
+
+:::info
+在升级前请查看[发行说明](https://github.com/adriankumpf/teslamate/releases)!
+:::
+
+:::note
+在更新前创建一个[备份](maintenance/backup_restore.md)。
+:::
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+<Tabs
+defaultValue="docker"
+values={[
+{ label: 'Docker', value: 'docker', },
+{ label: '手动安装 (Debian)', value: 'manual_debian', },
+{ label: '手动安装 (FreeBSD)', value: 'manual_freebsd', },
+]}>
+<TabItem value="docker">
+
+在 YML 文件所在的目录中，拉取新的镜像。
+
+```bash
+docker-compose pull
+```
+
+并用 `docker-compose up` 重新启动容器。要在后台运行容器，请添加 `-d` 命令。
+
+```bash
+docker-compose up -d
+```
+
+</TabItem>
+<TabItem value="manual_debian">
+
+1. 从 git 仓库拉取新的变化，检查新的版本，然后构建新的版本：
+
+   ```bash
+   git pull
+   git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
+
+   mix deps.get --only prod
+   npm install --prefix ./assets && npm run deploy --prefix ./assets
+
+   rm -rf _build
+   MIX_ENV=prod mix do phx.digest, release --overwrite
+   ```
+
+2. 大多数升级需要运行新的数据库迁移。如果是这样，请继续执行以下命令：
+
+   ```bash
+    _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+   ```
+
+   注意：你可能需要包括环境变量作为这一步的一部分：
+
+   ```bash
+    DATABASE_USER=teslamate DATABASE_PASS=super_secret_password DATABASE_NAME=teslamate DATABASE_HOST=localhost MQTT_HOST=your_MQTT_host(HomeAssistant in my case) _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+   ```
+
+3. 最后，重新导入 Grafana 仪表板：
+
+   ```bash
+   LOGIN="user:pass" ./grafana/dashboards.sh restore
+   ```
+
+</TabItem>
+<TabItem value="manual_freebsd">
+
+1. 从 git 仓库拉取新的变化，检查新的版本，然后构建新的版本：
+
+   ```bash
+   bash
+
+   git pull
+   git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
+
+   mix deps.get --only prod
+   npm install --prefix ./assets && npm run deploy --prefix ./assets
+
+   rm -rf _build
+   export MIX_ENV=prod
+   mix do phx.digest, release --overwrite
+   ```
+
+2. 大多数升级需要运行新的数据库迁移。如果是这样，请继续执行以下命令：
+
+   ```bash
+    _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+   ```
+
+   注意：你可能需要包括环境变量作为这一步的一部分：
+
+   ```bash
+    DATABASE_USER=teslamate DATABASE_PASS=super_secret_password DATABASE_NAME=teslamate DATABASE_HOST=localhost MQTT_HOST=your_MQTT_host(HomeAssistant in my case) _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+   ```
+
+3. 最后，重新导入 Grafana 仪表板：
+
+   ```bash
+   bash
+   export LOGIN="user:pass"
+   ./grafana/dashboards.sh restore
+   ```
+
+</TabItem>
+</Tabs>
