@@ -57,4 +57,4 @@ Calling the [Vehicle API](https://www.teslaapi.io/vehicles/list#vehicle) does no
 
 ## Why are my Docker timestamp logs different than my machine?
 
-Docker container timezones default to UTC. To set the timezone for your container, use the `TZ` Environment Variable in your YML file. More information found at [Enviornment Variables](https://docs.teslamate.org/docs/configuration/environment_variables)
+Docker container timezones default to UTC. To set the timezone for your container, use the `TZ` Environment Variable in your YML file. More information found at [Environment Variables](https://docs.teslamate.org/docs/configuration/environment_variables)
