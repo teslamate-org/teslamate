@@ -22,6 +22,10 @@ module.exports = {
         },
         // { to: "blog", label: "Blog", position: "left" },
         {
+          type: "localeDropdown",
+          position: "right",
+        },
+        {
           href: "https://github.com/adriankumpf/teslamate",
           label: "GitHub",
           position: "right",
@@ -55,8 +59,7 @@ module.exports = {
           // routeBasePath: "", // Docs-only
           sidebarCollapsible: false,
           sidebarPath: require.resolve("./sidebars.js"),
-          editUrl:
-            "https://github.com/adriankumpf/teslamate/edit/master/website/",
+          editUrl: "https://github.com/adriankumpf/teslamate/edit/master/website/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -64,4 +67,8 @@ module.exports = {
       },
     ],
   ],
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "zh-Hans"],
+  },
 };

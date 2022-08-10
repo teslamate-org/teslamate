@@ -615,29 +615,29 @@ msgstr "您的 Tesla 帐户因登录尝试失败次数过多而被锁定。要�
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Downloading update"
-msgstr ""
+msgstr "下载更新中"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:81
 msgid "No encryption key provided"
-msgstr ""
+msgstr "未提供加密密钥"
 
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:85
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr ""
+msgstr "有关详细信息，请参阅 %{link} 上的更新安装指南"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:84
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
-msgstr ""
+msgstr "用于当前会话的自动生成的加密密钥可以在<strong>应用程序日志中</strong>找到。"
 
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr ""
+msgstr "为确保您的<strong>Tesla API 令牌被安全地存储</strong>，必须通过 <code>ENCRYPTION_KEY</code> 环境变量向 TeslaMate 提供加密密钥。 否则，<strong>每次重启后都需要登录</strong>。"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
 msgid "Tire Pressure"
-msgstr ""
+msgstr "胎压"

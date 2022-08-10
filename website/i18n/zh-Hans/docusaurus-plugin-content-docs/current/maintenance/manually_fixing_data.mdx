@@ -1,0 +1,101 @@
+---
+title: 手动修复数据
+---
+
+## 获取 ID
+
+首先，你需要找出 Drive 或 Charge 的 ID：
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+<Tabs
+defaultValue="drive"
+groupId="type"
+values={[
+    { label: 'Drive', value: 'drive', },
+    { label: 'Charge', value: 'charge', },
+]}>
+<TabItem value="drive">
+
+- 打开 `Drives` 仪表板，点击驱动器的开始日期。
+- URL 将包含驱动器 ID，例如 `&var-drive_id=9999`。
+
+</TabItem>
+<TabItem value="charge">
+
+- 打开 `Charges` 仪表板，点击收费的开始日期。
+- URL 将包含驱动器 ID，例如 `&var-drive_id=9999`。
+
+</TabItem>
+</Tabs>
+
+## 终止一个 Drive 或 Charge
+
+如果由于某种原因，一个驱动器或充电没有被完全记录下来，例如由于一个错误或一个意外的重新启动，你可以手动终止它。在其他方面，这将为 drive/charge 指定一个结束日期。
+
+用实际的 ID 替换 `9999`，然后在 TeslaMate 容器运行时运行该命令。
+
+<Tabs
+defaultValue="drive"
+groupId="type"
+values={[
+    { label: 'Drive', value: 'drive', },
+    { label: 'Charge', value: 'charge', },
+]}>
+<TabItem value="drive">
+
+```bash
+docker-compose exec teslamate bin/teslamate rpc \
+    "TeslaMate.Repo.get!(TeslaMate.Log.Drive, 9999) |> TeslaMate.Log.close_drive()"
+```
+
+</TabItem>
+<TabItem value="charge">
+
+```bash
+docker-compose exec teslamate bin/teslamate rpc \
+    "TeslaMate.Repo.get!(TeslaMate.Log.ChargingProcess, 9999) |> TeslaMate.Log.complete_charging_process()"
+```
+
+</TabItem>
+</Tabs>
+
+## 删除一个 Drive 或 Charge
+
+如果由于某种原因，一个驱动器或充电被错误地记录，你可以删除它。
+
+1.  附加到**运行中的**数据库容器:
+
+    ```bash
+    docker-compose exec database psql teslamate teslamate
+    ```
+
+    :::note
+    如果你得到错误 `No such service: database`，请更新你的 _docker-compose.yml_ 或在上述命令中使用 `db` 而不是 `database`。
+    :::
+
+2.  之后用实际的 ID 替换 `9999` ，然后运行查询。
+
+    <Tabs
+    defaultValue="drive"
+    groupId="type"
+    values={[
+        { label: 'Drive', value: 'drive', },
+        { label: 'Charge', value: 'charge', },
+    ]}>
+    <TabItem value="drive">
+
+    ```sql
+    DELETE FROM drives WHERE id = 9999;
+    ```
+
+    </TabItem>
+    <TabItem value="charge">
+
+    ```sql
+    DELETE FROM charging_processes WHERE id = 9999;
+    ```
+
+    </TabItem>
+    </Tabs>
