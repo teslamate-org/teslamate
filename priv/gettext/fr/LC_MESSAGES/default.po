@@ -623,7 +623,7 @@ msgstr "Aucune clé de chiffrement renseignée"
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:85
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr "Pour plus d'informations, dirigez-vous vers le guide d'installation en suivant ce lien %{link}"
+msgstr "Pour plus d'informations, dirigez-vous vers le guide d'installation en suivant le lien %{link}"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:84
