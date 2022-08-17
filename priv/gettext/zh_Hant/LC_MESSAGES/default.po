@@ -578,7 +578,7 @@ msgstr "有可用更新 (%{version})"
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:310
 msgid "Sign out"
-msgstr ""
+msgstr "登出"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:11
@@ -588,32 +588,32 @@ msgstr ""
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:24
 msgid "Refresh Token"
-msgstr ""
+msgstr "更新Token"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:56
 msgid "Tokens are invalid"
-msgstr ""
+msgstr "Tokens無效"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:49
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr ""
+msgstr "勾過 Tesla API 獲得Token需要有程式編寫經驗或者藉由第三方服務。更多資訊詳見 %{here}。"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:46
 msgid "here"
-msgstr ""
+msgstr "這裡"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:59
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr ""
+msgstr "您的 Tesla 帳號因登入失敗次數過多而被鎖定。要解鎖您的帳戶，請重置您的密碼"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Downloading update"
-msgstr ""
+msgstr "下載更新"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:81
