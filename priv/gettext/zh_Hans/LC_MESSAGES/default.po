@@ -447,8 +447,8 @@ msgstr "从TeslaFi导入"
 #: lib/teslamate_web/live/import_live/index.html.heex:10
 msgid "Found %{count} file"
 msgid_plural "Found %{count} files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "找到了 %{count} 个文件"
+msgstr[1] "找到了 %{count} 个文件"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:104
@@ -615,29 +615,29 @@ msgstr "您的 Tesla 帐户因登录尝试失败次数过多而被锁定。要�
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Downloading update"
-msgstr ""
+msgstr "正在下载更新程序"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:81
 msgid "No encryption key provided"
-msgstr ""
+msgstr "没有提供密钥"
 
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:85
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr ""
+msgstr "获取更多信息,可查看更新安装指引:%{link}"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:84
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
-msgstr ""
+msgstr "当前会话自动生成的密钥可在<strong>应用程序日志</strong>中找到"
 
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr ""
+msgstr "为确保你的<strong>Tesla API令牌安全存储</strong>,密钥必须通过<code>ENCRYPTION_KEY</code>环境变量提供给Teslamate.否则每次重启都会被要求登录."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
 msgid "Tire Pressure"
-msgstr ""
+msgstr "胎压"
