@@ -1646,6 +1646,18 @@
               "viz": false
             }
           },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Open in Google Maps",
+              "url": "https://www.google.com/maps?q=${__data.fields.latitude},${__data.fields.longitude}"
+            },
+            {
+              "targetBlank": true,
+              "title": "Open In DuckDuckGo Maps",
+              "url": "https://duckduckgo.com/?q=${__data.fields.latitude}%2C+${__data.fields.longitude}&iaxm=maps"
+            }
+          ],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1670,10 +1682,6 @@
             },
             "properties": [
               {
-                "id": "unit",
-                "value": "degree"
-              },
-              {
                 "id": "decimals",
                 "value": 6
               }
@@ -1688,10 +1696,6 @@
               {
                 "id": "decimals",
                 "value": 6
-              },
-              {
-                "id": "unit",
-                "value": "degree"
               }
             ]
           },
@@ -1716,6 +1720,7 @@
         "y": 22
       },
       "id": 30,
+      "links": [],
       "options": {
         "basemap": {
           "config": {},
