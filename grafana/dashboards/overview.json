@@ -729,106 +729,106 @@
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#c7d0d9",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "version"
+        "datasource": "TeslaMate",
+        "fieldConfig": {
+            "defaults": {
+            "mappings": [],
+            "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                {
+                    "color": "#c7d0d9",
+                    "value": null
+                }
+                ]
             },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "string"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 0,
-        "y": 8
-      },
-      "id": 2,
-      "links": [
-        {
-          "targetBlank": true,
-          "title": "Updates",
-          "url": "/d/IiC07mgWz/updates?orgId=1"
-        }
-      ],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "value",
-        "fieldOptions": {
-          "calcs": [
-            "first"
-          ]
-        },
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "/^version$/",
-          "values": true
-        },
-        "textMode": "value"
-      },
-      "pluginVersion": "8.5.4",
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "select split_part(version, ' ', 1) as version \nfrom updates \nwhere car_id = $car_id \norder by start_date desc \nlimit 1",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "efficiency"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "cars",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
+            "unit": "none"
+            },
+            "overrides": [
             {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
+                "matcher": {
+                "id": "byName",
+                "options": "version"
+                },
+                "properties": [
+                {
+                    "id": "unit",
+                    "value": "string"
+                }
+                ]
             }
-          ]
-        }
-      ],
-      "title": "Firmware",
-      "type": "stat"
+            ]
+        },
+        "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 6,
+            "y": 8
+        },
+        "id": 2,
+        "links": [
+            {
+            "targetBlank": true,
+            "title": "Updates",
+            "url": "/d/IiC07mgWz/updates?orgId=1"
+            }
+        ],
+        "maxDataPoints": 100,
+        "options": {
+            "colorMode": "value",
+            "fieldOptions": {
+            "calcs": [
+                "first"
+            ]
+            },
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+            "calcs": [
+                "mean"
+            ],
+            "fields": "/^version$/",
+            "values": true
+            },
+            "textMode": "value"
+        },
+        "pluginVersion": "8.5.4",
+        "targets": [
+            {
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "select split_part(version, ' ', 1) as version \nfrom updates \nwhere car_id = $car_id \norder by start_date desc \nlimit 1",
+            "refId": "A",
+            "select": [
+                [
+                {
+                    "params": [
+                    "efficiency"
+                    ],
+                    "type": "column"
+                }
+                ]
+            ],
+            "table": "cars",
+            "timeColumn": "inserted_at",
+            "timeColumnType": "timestamp",
+            "where": [
+                {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+                }
+            ]
+            }
+        ],
+        "title": "Firmware",
+        "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
+    "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
@@ -872,9 +872,9 @@
         ]
       },
       "gridPos": {
-        "h": 3,
-        "w": 5,
-        "x": 4,
+        "h": 5,
+        "w": 3,
+        "x": 3,
         "y": 8
       },
       "id": 6,
@@ -1084,7 +1084,7 @@
         ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 15,
         "x": 9,
         "y": 8
@@ -1203,7 +1203,7 @@
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 11
+        "y": 13
       },
       "id": 16,
       "options": {
@@ -1280,7 +1280,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 11
+        "y": 13
       },
       "id": 8,
       "options": {
@@ -1357,7 +1357,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 11
+        "y": 13
       },
       "id": 9,
       "options": {
@@ -1484,7 +1484,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 17
       },
       "id": 20,
       "links": [
@@ -1539,6 +1539,284 @@
       ],
       "title": "States",
       "type": "state-timeline"
+    },
+    {
+        "datasource": "TeslaMate",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "displayName": "Vehicle Speed",
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "speed"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "$speed_unit"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 3,
+          "x": 0,
+          "y": 8
+        },
+        "id": 28,
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "text": {}
+        },
+        "pluginVersion": "8.5.4",
+        "targets": [
+          {
+          "datasource": "TeslaMate",
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT COALESCE(0, convert_km(speed::numeric, '$length_unit')) as speed FROM positions WHERE car_id = $car_id ORDER BY date DESC LIMIT 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "start_km"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "drives",
+            "timeColumn": "start_date",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "Speed",
+        "type": "gauge"
+    },
+    {
+      "datasource": "TeslaMate",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "latitude"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "degree"
+              },
+              {
+                "id": "decimals",
+                "value": 6
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "longitude"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 6
+              },
+              {
+                "id": "unit",
+                "value": "degree"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "date"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 30,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Location",
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "opacity": 0.7,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 10,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/triangle.svg",
+                  "mode": "fixed"
+                },
+                "text": {
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "location": {
+              "latitude": "latitude",
+              "longitude": "longitude",
+              "mode": "coords"
+            },
+            "name": "Location",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "view": {
+          "id": "fit",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 16
+        }
+      },
+      "pluginVersion": "8.5.4",
+      "targets": [
+        {
+          "datasource": "TeslaMate",
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT date, latitude, longitude, elevation FROM positions WHERE car_id = $car_id AND latitude IS NOT NULL AND longitude IS NOT NULL ORDER BY date DESC LIMIT 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "start_km"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "drives",
+          "timeColumn": "start_date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Location",
+      "transparent": true,
+      "type": "geomap"
     }
   ],
   "refresh": "30s",
@@ -1666,6 +1944,25 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "mph",
+          "value": "mph"
+        },
+        "definition": "select CASE WHEN unit_of_length = 'km' THEN 'km/hr' ELSE 'mph' END from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "speed_unit",
+        "options": [],
+        "query": "select CASE WHEN unit_of_length = 'km' THEN 'km/hr' ELSE 'mph' END from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
