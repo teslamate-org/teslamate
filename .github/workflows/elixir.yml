@@ -39,7 +39,7 @@ jobs:
         with:
           otp-version: ${{ matrix.pair.otp }}
           elixir-version: ${{ matrix.pair.elixir }}
-      - uses: actions/cache@v3.0.5
+      - uses: actions/cache@v3.0.8
         with:
           path: |
             deps
