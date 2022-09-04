@@ -259,6 +259,30 @@ tesla_location:
    state_topic: "teslamate/cars/1/time_to_full_charge"
    unit_of_measurement: h
    icon: mdi:clock-outline
+   
+ - name: Tesla Tire Pressure Front Left
+   state_topic: "teslamate/cars/1/tpms_pressure_fl"
+   device_class: pressure
+   unit_of_measurement: bar
+   icon: mdi:tire
+
+ - name: Tesla Tire Pressure Front Right
+   state_topic: "teslamate/cars/1/tpms_pressure_fr"
+   device_class: pressure
+   unit_of_measurement: bar
+   icon: mdi:tire
+
+ - name: Tesla Tire Pressure Rear Left
+   state_topic: "teslamate/cars/1/tpms_pressure_rl"
+   device_class: pressure
+   unit_of_measurement: bar
+   icon: mdi:tire
+
+ - name: Tesla Tire Pressure Rear Right
+   state_topic: "teslamate/cars/1/tpms_pressure_rr"
+   device_class: pressure
+   unit_of_measurement: bar
+   icon: mdi:tire
 ```
 
 ### mqtt_binary_sensor.yaml (mqtt: binary_sensor: section of configuration.yaml)
