@@ -1541,95 +1541,98 @@
       "type": "state-timeline"
     },
     {
-        "datasource": "TeslaMate",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "continuous-GrYlRd"
-            },
-            "displayName": "Vehicle Speed",
-            "mappings": [],
-            "min": 0,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "short"
+      "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
           },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "speed"
-              },
-              "properties": [
-                {
-                  "id": "displayName",
-                  "value": "$speed_unit"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 5,
-          "w": 3,
-          "x": 0,
-          "y": 8
-        },
-        "id": 28,
-        "options": {
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "showThresholdLabels": false,
-          "showThresholdMarkers": true,
-          "text": {}
-        },
-        "pluginVersion": "8.5.4",
-        "targets": [
-          {
-          "datasource": "TeslaMate",
-            "format": "table",
-            "group": [],
-            "metricColumn": "none",
-            "rawQuery": true,
-            "rawSql": "SELECT COALESCE(0, convert_km(speed::numeric, '$length_unit')) as speed FROM positions WHERE car_id = $car_id ORDER BY date DESC LIMIT 1",
-            "refId": "A",
-            "select": [
-              [
-                {
-                  "params": [
-                    "start_km"
-                  ],
-                  "type": "column"
-                }
-              ]
-            ],
-            "table": "drives",
-            "timeColumn": "start_date",
-            "timeColumnType": "timestamp",
-            "where": [
+          "displayName": "Vehicle Speed",
+          "mappings": [],
+          "decimals": 0,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
               {
-                "name": "$__timeFilter",
-                "params": [],
-                "type": "macro"
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "speed"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "$speed_unit"
               }
             ]
           }
-        ],
-        "title": "Speed",
-        "type": "gauge"
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 0,
+        "y": 8
+      },
+      "id": 28,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "text": {}
+      },
+      "pluginVersion": "8.5.4",
+      "targets": [
+        {
+          "datasource": "TeslaMate",
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT convert_km(speed::numeric, '$length_unit') as speed FROM positions WHERE car_id = $car_id ORDER BY date DESC LIMIT 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "start_km"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "drives",
+          "timeColumn": "start_date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Speed",
+      "type": "stat"
     },
     {
       "datasource": "TeslaMate",
