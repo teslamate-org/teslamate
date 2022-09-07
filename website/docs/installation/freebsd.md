@@ -62,13 +62,13 @@ echo postgres_enable="yes" >> /etc/rc.conf
 <details>
   <summary>Grafana (v8.3.4+) & Plugins</summary>
 
-Grafana from ports has a startup issue with the rc script, starting via rc.local is the workaround.
+The latest Grafana from ports/pkg has a startup issue with the rc script, starting via rc.local is the workaround.
 
 ```bash
-pkg install grafana7
+pkg install grafana8
 echo grafana_enable="yes" >> /etc/rc.conf
 # Only needed if grafana fails to start via rc.conf
-echo "cd /tmp && /usr/loca/etc/rc.d/grafana onestart" >> /etc/rc.local
+echo "cd /tmp && /usr/local/etc/rc.d/grafana onestart" >> /etc/rc.local
 ```
 
 </details>
