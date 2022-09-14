@@ -69,7 +69,7 @@ msgstr "잠김"
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:73
 msgid "Sentry Mode"
-msgstr "센트리 모드"
+msgstr "감시 모드"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/index.ex:15
@@ -219,7 +219,7 @@ msgstr "프리컨디셔닝"
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:137
 msgid "Sentry mode is enabled"
-msgstr "센트리 모드가 활성화되었습니다."
+msgstr "감시 모드가 활성화되었습니다."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:139
@@ -295,7 +295,7 @@ msgstr "거리 (이상적인)"
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:138
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
-msgstr "차량의 잔여거리 추정치는 고정 에너지 소비량(Wh/km)을 기준으로합니다. Wh/km 계수는 Tesla에 의해 결정되며 국가별로 다르지 않지만 정격 거리는 해당 차량의 다른 시장에서 규제 테스트를 기반으로합니다."
+msgstr "차량의 잔여거리 추정치는 고정 에너지 소비량(Wh/km)을 기준으로합니다. Wh/km 계수는 Tesla에 의해 결정되며 국가별로 다르지 않지만 정규 거리는 해당 차량의 다른 시장에서 규제 테스트를 기반으로합니다."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:141
@@ -594,49 +594,49 @@ msgstr ""
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:56
 msgid "Tokens are invalid"
-msgstr ""
+msgstr "토큰이 잘못되었습니다."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:49
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr ""
+msgstr "Tesla API 토큰을 얻으러면 프로그래밍 경험이나 타사 서비스가 필요합니다. 관련된 정보는 %{here}에서 찾을 수 있습니다."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:46
 msgid "here"
-msgstr ""
+msgstr "이곳"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:59
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr ""
+msgstr "너무 많은 로그인 시도로 Tesla 계정이 잠겼습니다. 계정 잠금을 해제하려면 비밀번호를 재설정하세요."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Downloading update"
-msgstr ""
+msgstr "업데이트 다운로드 중"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:81
 msgid "No encryption key provided"
-msgstr ""
+msgstr "암호화 키가 없습니다."
 
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:85
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr ""
+msgstr "자세한 내용은 ${%link}에서 업데이트 된 설치가이드를 참고하세요."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:84
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
-msgstr ""
+msgstr "현재 사용하고 있는 암호화키는 자동으로 생성되었으며, <strong>애플리케이션 로그</strong> 폴더에서 찾을 수 있습니다."
 
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr ""
+msgstr "<strong>Tesla API 토큰을 안전하게 저장</strong>하려면 TeslaMate에 환경 변수를 통해 <code>ENCRYPTION_KEY(암호화 키)</code>를 제공해야 합니다. 그렇지 않으면 <strong>TeslaMate를 다시 시작할 때마다 로그인</strong>해야 합니다."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
 msgid "Tire Pressure"
-msgstr ""
+msgstr "공기압"
