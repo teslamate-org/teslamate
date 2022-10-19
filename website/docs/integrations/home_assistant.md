@@ -395,7 +395,7 @@ tesla_location:
       unit_of_measurement: ft
       icon_template: mdi:image-filter-hdr
       value_template: >
-       {{ (states('sensor.tesla_elevation') | float * 3.2808 ) | round(2) }}
+       {{ (states('sensor.tesla_elevation') | float * 3.2808) | round(2) }}
 ```
 
 ### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
