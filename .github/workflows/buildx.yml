@@ -45,7 +45,7 @@ jobs:
           username: teslamate
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push
-        uses: docker/build-push-action@v3.1.0
+        uses: docker/build-push-action@v3.2.0
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
@@ -78,7 +78,7 @@ jobs:
           username: teslamate
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push
-        uses: docker/build-push-action@v3.1.0
+        uses: docker/build-push-action@v3.2.0
         with:
           context: grafana
           push: ${{ github.event_name != 'pull_request' }}
