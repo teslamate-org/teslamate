@@ -1,4 +1,4 @@
-FROM grafana/grafana:8.5.9
+FROM grafana/grafana:9.3.0
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=FALSE \
     GF_AUTH_ANONYMOUS_ENABLED=false \
