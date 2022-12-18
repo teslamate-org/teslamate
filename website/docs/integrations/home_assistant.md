@@ -156,7 +156,7 @@ tesla_location:
  - name: tesla_power
    state_topic: "teslamate/cars/1/power"
    device_class: power
-   unit_of_measurement: W
+   unit_of_measurement: kW
    icon: mdi:flash
 
  - name: tesla_speed
