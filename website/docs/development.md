@@ -85,7 +85,7 @@ volumes:
 
 _(on Linux use the actual IP address of the host as `DATABASE_HOST`instead of `host.docker.internal`)_
 
-Then build the image with `make grafana` and run the container via `docker-compose up grafana`.
+Then build the image with `make grafana` and run the container via `docker compose up grafana`.
 
 Access the Grafana at [http://localhost:3000](http://localhost:3000) and sign in with the default user `admin` and password `admin`.
 
