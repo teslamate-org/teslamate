@@ -9,7 +9,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 
 ## Requirements
 
-- Docker _(if you are new to Docker, see [Installing Docker and Docker Compose](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl))_
+- Docker _(if you are new to Docker, see [Installing Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux/))_
 - A Machine that's always on, so TeslaMate can continually fetch data
 - At least 1 GB of RAM on the machine for the installation to succeed.
 - External internet access, to talk to tesla.com
