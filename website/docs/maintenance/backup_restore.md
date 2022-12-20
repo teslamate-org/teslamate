@@ -23,7 +23,7 @@ If you get the error `No such service: database`, update your _docker-compose.ym
 :::
 
 :::note
-If you changed `TM_DB_USER` in the .env file from one of the advanced guides, make sure to replace the first instance of `teslamate` to the value of `TM_DB_USER` in the above command.
+If you changed `TM_DB_USER` in the .env file from one of the advanced guides, make sure to replace the first instance of `teslamate` to the value of `TM_DB_USER` in the above command. 
 :::
 
 ## Restore
