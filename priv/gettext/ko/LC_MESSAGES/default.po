@@ -584,59 +584,59 @@ msgstr "로그아웃"
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:11
 msgid "Access Token"
-msgstr ""
+msgstr "토큰 접근"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:24
 msgid "Refresh Token"
-msgstr ""
+msgstr "토큰 갱신"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:56
 msgid "Tokens are invalid"
-msgstr ""
+msgstr "토큰이 유효하지 않습니다."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:49
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr ""
+msgstr "Tesla API를 통해 토큰을 얻으려면 프로그래밍 경험이나 타사 서비스가 필요합니다. 이에 관한 정보는 %{여기} 에서 찾을 수 있습니다."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.html.heex:46
 msgid "here"
-msgstr ""
+msgstr "여기"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/signin_live/index.ex:59
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr ""
+msgstr "로그인을 너무 많이 실패하여 Tesla 계정이 잠겼습니다. 계정을 잠금 해제하려면 비밀번호를 재설정하세요."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:140
 msgid "Downloading update"
-msgstr ""
+msgstr "업데이트 다운로드 중"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:81
 msgid "No encryption key provided"
-msgstr ""
+msgstr "암호화키가 제공되지 않았습니다."
 
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:85
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr ""
+msgstr "자세한 내용은 %{link}에 업데이트된 설치 가이드를 참조하세요."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:84
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
-msgstr ""
+msgstr "현재 세션에 사용되는 자동으로 생성된 암호화키는 <strong>애플리케이션 로그</strong>에서 찾을 수 있습니다."
 
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr ""
+msgstr "<strong>Tesla API 토큰을 안전하게 저장</strong>하려면 <code>ENCRYPTION_KEY</code> 환경변수를 통해 TeslaMate에 암호화키를 제공해야 합니다. 그렇지 않으면 <strong>다시 시작할 때마다 로그인해야 합니다.</strong>"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
 msgid "Tire Pressure"
-msgstr ""
+msgstr "타이어 공기압"
