@@ -1,0 +1,97 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ua\n"
+
+## From Ecto.Changeset.cast/4
+msgid "can't be blank"
+msgstr "не повинно бути порожнім"
+
+## From Ecto.Changeset.unique_constraint/3
+msgid "has already been taken"
+msgstr "вже зайнято"
+
+## From Ecto.Changeset.put_change/3
+msgid "is invalid"
+msgstr "невірний"
+
+## From Ecto.Changeset.validate_acceptance/3
+msgid "must be accepted"
+msgstr "повинно бути прийняте"
+
+## From Ecto.Changeset.validate_format/3
+msgid "has invalid format"
+msgstr "невірний формат"
+
+## From Ecto.Changeset.validate_subset/3
+msgid "has an invalid entry"
+msgstr "невірний запис"
+
+## From Ecto.Changeset.validate_exclusion/3
+msgid "is reserved"
+msgstr "зарезервовано"
+
+## From Ecto.Changeset.validate_confirmation/3
+msgid "does not match confirmation"
+msgstr "не відповідає підтвердженню"
+
+## From Ecto.Changeset.no_assoc_constraint/3
+msgid "is still associated with this entry"
+msgstr "досі стосується цього запису"
+
+msgid "are still associated with this entry"
+msgstr "досі стосуються цих записів"
+
+## From Ecto.Changeset.validate_length/3
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "повинно бути %{count} символу"
+msgstr[1] "повинно бути %{count} символів"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "повинно бути %{count} знаку"
+msgstr[1] "повинно бути %{count} знаків"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "повинно мати %{count} знаки"
+msgstr[1] "повинно мати %{count} знаків"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "повинно мати хочаб %{count} символу"
+msgstr[1] "повинно мати хочаб %{count} символів"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "не повинно перевищувати %{count} знаки"
+msgstr[1] "не повинно перевищевати %{count} знаків"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "не повинно перевищувати %{count} символи"
+msgstr[1] "не повинно перевищувати %{count} символів"
+
+## From Ecto.Changeset.validate_number/3
+msgid "must be less than %{number}"
+msgstr "має бути менше ніж %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "має бути більше ніж %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "має бути менше чи дорівнювати %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "має бути більше чи дорівнювати %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "має дорівнювати %{number}"
