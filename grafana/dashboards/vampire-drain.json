@@ -96,7 +96,7 @@
               },
               {
                 "id": "unit",
-                "value": "dateTimeAsLocal"
+                "value": "dateTimeAsSystem"
               },
               {
                 "id": "links",
@@ -129,7 +129,7 @@
               },
               {
                 "id": "unit",
-                "value": "dateTimeAsLocal"
+                "value": "dateTimeAsSystem"
               },
               {
                 "id": "custom.align"
