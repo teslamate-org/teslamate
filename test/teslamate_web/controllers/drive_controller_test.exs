@@ -31,6 +31,13 @@ defmodule TeslaMateWeb.DriveControllerTest do
     })
 
     Log.insert_position(drive, %{
+      date: DateTime.utc_now() |> DateTime.add(-1800, :second),
+      latitude: 0.0,
+      longitude: 0.0,
+      elevation: nil
+    })
+
+    Log.insert_position(drive, %{
       date: DateTime.utc_now() |> DateTime.add(-3600, :second),
       latitude: 0.0,
       longitude: 0.0,
@@ -54,7 +61,9 @@ defmodule TeslaMateWeb.DriveControllerTest do
       drive = drive_fixture(car_fixture())
       assert conn = get(conn, Routes.drive_path(conn, :gpx, drive.id))
       xml = response(conn, 200)
-      assert xml =~ ~s(<gpx version="1.1")
+
+      assert xml =~
+               ~s(<?xml version="1.0"?>\n<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1" creator="Teslamate" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">)
 
       document = Floki.parse_document!(xml)
       xml_trackpoints = get_trackpoints(document)
@@ -74,12 +83,20 @@ defmodule TeslaMateWeb.DriveControllerTest do
 
     defp drive_trackpoints_to_trackpoints(drive) do
       Enum.map(drive.positions, fn pos ->
-        %{
-          latitude: pos.latitude |> Decimal.to_string(),
-          longitude: pos.longitude |> Decimal.to_string(),
-          time: pos.date |> DateTime.to_iso8601(),
-          elevation: pos.elevation |> Integer.to_string()
-        }
+        if is_nil(pos.elevation) do
+          %{
+            latitude: pos.latitude |> Decimal.to_string(),
+            longitude: pos.longitude |> Decimal.to_string(),
+            time: pos.date |> DateTime.to_iso8601()
+          }
+        else
+          %{
+            latitude: pos.latitude |> Decimal.to_string(),
+            longitude: pos.longitude |> Decimal.to_string(),
+            time: pos.date |> DateTime.to_iso8601(),
+            elevation: pos.elevation |> Integer.to_string()
+          }
+        end
       end)
     end
 
@@ -95,12 +112,20 @@ defmodule TeslaMateWeb.DriveControllerTest do
       time = Floki.find(trkpt, "time") |> Floki.text()
       elevation = Floki.find(trkpt, "ele") |> Floki.text()
 
-      %{
-        latitude: Enum.at(latitude, 0),
-        longitude: Enum.at(longitude, 0),
-        time: time,
-        elevation: elevation
-      }
+      if elevation === "" do
+        %{
+          latitude: Enum.at(latitude, 0),
+          longitude: Enum.at(longitude, 0),
+          time: time
+        }
+      else
+        %{
+          latitude: Enum.at(latitude, 0),
+          longitude: Enum.at(longitude, 0),
+          time: time,
+          elevation: elevation
+        }
+      end
     end
   end
 end
