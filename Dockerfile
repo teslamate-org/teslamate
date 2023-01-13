@@ -1,4 +1,4 @@
-FROM elixir:1.14 AS builder
+FROM elixir:1.13 AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -46,13 +46,13 @@ ENV LANG=C.UTF-8 \
 WORKDIR $HOME
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libodbc1  \
-    libsctp1  \
-    libssl1.1  \
-    libstdc++6 \
-    netcat \
-    tini  \
-    tzdata && \
+        libodbc1  \
+        libsctp1  \
+        libssl1.1  \
+        libstdc++6 \
+        netcat \
+        tini  \
+        tzdata && \
     rm -rf /var/lib/apt/lists/* && \
     addgroup --gid 10001 --system nonroot && \
     adduser  --uid 10000 --system --ingroup nonroot --home /home/nonroot nonroot && \
