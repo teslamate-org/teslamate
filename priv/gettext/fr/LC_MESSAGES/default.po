@@ -299,7 +299,7 @@ msgstr "Théorique = Autonomie indiquée par Tesla. Estimée = Autonomie norme W
 #: lib/teslamate_web/live/car_live/summary.ex:141
 #, elixir-autogen, elixir-format
 msgid "Update in progress"
-msgstr "Mise à jour en cours"
+msgstr "Mise à jour en cours d'installation"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:63
 #, elixir-autogen, elixir-format
@@ -613,29 +613,29 @@ msgstr "Votre compte Tesla est verrouillé en raison d'un trop grand nombre de t
 #: lib/teslamate_web/live/car_live/summary.ex:140
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
-msgstr ""
+msgstr "Mise à jour en cours de téléchargement"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
-msgstr ""
+msgstr "Aucune clé de chiffrement renseignée"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:85
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr ""
+msgstr "Pour plus d'informations, dirigez-vous vers le guide d'installation en suivant le lien %{link}"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
-msgstr ""
+msgstr "La clé de chiffrement générée automatiquement pour la session actuelle peut être trouvée dans <strong>les logs de l'application</strong>"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr ""
+msgstr "Pour s'assurer que votre <strong>jeton d'API Tesla est stocké de façon sécurisée</strong>, une clé de chiffrement doit être renseignée à TeslaMate via la variable d'environnement <code>ENCRYPTION_KEY</code>. Sinon, <strong>une authentification sera requise à chaque redémarrage</strong>."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
-msgstr ""
+msgstr "Pression des pneus"
