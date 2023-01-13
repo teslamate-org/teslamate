@@ -4,17 +4,24 @@ title: Projects using TeslaMate
 
 Here is a list of projects using TeslaMate.
 
+- [CustomGrafanaDashboards](#customgrafanadashboards)
 - [Gaussmeter](#gaussmeter)
-- [Home Assistant Addon](#home-assistant-addon)
 - [MMM-Teslamate](#mmm-teslamate)
+- [Home Assistant Addon](#home-assistant-addon)
 - [TeslaMateAgile](#teslamateagile)
 - [TeslaMateApi](#teslamateapi)
-- [TeslaMate_Telegram_Bot](#teslamate_telegram_bot)
+- [TeslaMate\_Telegram\_Bot](#teslamate_telegram_bot)
 - [TeslaMate ABRP](#teslamate-abrp)
 - [TeslaMate Custom Dashboards](#teslamate-custom-dashboards)
-- [Custom Grafana Dashboards](#customgrafanadashboards)
+- [Tesla USB](#tesla-usb)
 
 ---
+
+## [CustomGrafanaDashboards](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
+
+Collection of custom dashboards for Grafana.
+
+LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
 
 ## [Gaussmeter](https://github.com/gaussmeter/gaussmeter)
 
@@ -70,9 +77,8 @@ Teslamate Custom Dashboards: Battery Health, Charging Costs Stats, Charging Curv
 
 LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
 
+## [Tesla USB](https://github.com/marcone/teslausb)
 
-## [CustomGrafanaDashboards](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
+Raspberry Pi and other SBCs can emulate a USB drive, so can act as a drive for your Tesla to write dashcam footage too, so you may automatically copy the recordings to an archive server when you get home and much more.
 
-Collection of custom dashboards for Grafana.
-
-LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
+LINK: [github.com/marcone/teslausb](https://github.com/marcone/teslausb)
