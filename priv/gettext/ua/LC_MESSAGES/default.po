@@ -295,7 +295,7 @@ msgstr "Дальність (ideal)"
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:138
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
-msgstr "Авто розраховує залишок відстані базаючись на фіксованому споживання енергії в Вт/км. Одиниця Вт/км визначено Теслою і не змінюється для кожної країни окремо, в залежності від законодавства різних країн та відповідного тестування.
+msgstr "Авто розраховує залишок відстані базаючись на фіксованому споживання енергії в Вт/км. Одиниця Вт/км визначено Теслою і не змінюється для кожної країни окремо, в залежності від законодавства різних країн та відповідного тестування."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.ex:141
@@ -634,7 +634,7 @@ msgstr "Автоматично сгенерований ключ шифрува�
 #, elixir-autogen, elixir-format, fuzzy
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr "Щоб переконатися що <strong>Tesla API токени зберігаються безпечно</strong>", ключ шифрування повинен передаватись TeslaMate через <code>ENCRYPTION_KEY</code> змінну в середовищі. Інакше, <strong>необхідно буде виконувати вхід, після кожного перезапуску</strong>."
+msgstr "Щоб переконатися що <strong>Tesla API токени зберігаються безпечно</strong>, ключ шифрування повинен передаватись TeslaMate через <code>ENCRYPTION_KEY</code> змінну в середовищі. Інакше, <strong>необхідно буде виконувати вхід, після кожного перезапуску</strong>."
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
