@@ -42,34 +42,18 @@ pkg install erlang
 
 <details>
   <summary>Elixir (v1.12+)</summary>
-
-Unfortunately the Elixir part is not well updated in FreeBSD ports.
-Hence the latest supported version for Erlang 21 (latest in FreeBSD ports)
-is Elixir 1.11.
-
-We will need to compile it from source, which is pretty easy though.
-
 ```bash
-pkg install gmake
-
-mkdir /usr/local/src
-cd /usr/local/src
-git clone https://github.com/elixir-lang/elixir.git
-cd elixir
-git checkout v1.11.4
-gmake clean test
-gmake install
-elixir --version
+pkg install elixir
 ```
 
 </details>
 
 <details>
-  <summary>Postgres (v12+)</summary>
+  <summary>Postgres (v14+)</summary>
 
 ```bash
-pkg install postgresql(12|13)-server
-pkg install postgresql(12|13)-contrib
+pkg install postgresql14-server
+pkg install postgresql14-contrib
 echo postgres_enable="yes" >> /etc/rc.conf
 ```
 
@@ -78,9 +62,13 @@ echo postgres_enable="yes" >> /etc/rc.conf
 <details>
   <summary>Grafana (v8.3.4+) & Plugins</summary>
 
+The latest Grafana from ports/pkg has a startup issue with the rc script, starting via rc.local is the workaround.
+
 ```bash
-pkg install grafana7
+pkg install grafana8
 echo grafana_enable="yes" >> /etc/rc.conf
+# Only needed if grafana fails to start via rc.conf
+echo "cd /tmp && /usr/local/etc/rc.d/grafana onestart" >> /etc/rc.local
 ```
 
 </details>
@@ -96,11 +84,11 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
 </details>
 
 <details>
-  <summary>Node.js (v14+)</summary>
+  <summary>Node.js (v16+)</summary>
 
 ```bash
-pkg install node14
-pkg install npm-node14
+pkg install node
+pkg install npm-node
 ```
 
 </details>
@@ -211,11 +199,11 @@ run_rc_command "$1"
 ```bash
 echo teslamate_enable="YES" >> /etc/rc.conf
 echo teslamate_db_host="localhost"  >> /etc/rc.conf
-echo teslamate_port="5432"  >> /etc/rc.conf
+echo teslamate_db_port="5432"  >> /etc/rc.conf
 echo teslamate_db_pass="<super secret>" >> /etc/rc.conf
 echo teslamate_encryption_key="<super secret encryption key>" >> /etc/rc.conf
 echo teslamate_disable_mqtt="true" >> /etc/rc.conf
-echo teslamate_timezone="<TZ Database>" >> /etc/rc.conf #i.e. Europe/Berlin
+echo teslamate_timezone="<TZ Database>" >> /etc/rc.conf #i.e. Europe/Berlin, America/Los_Angeles
 ```
 
 ### Start service
