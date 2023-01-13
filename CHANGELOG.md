@@ -1,11 +1,41 @@
 # Changelog
 
+## [1.27.2] - 2023-01-13
+
+### Improvements and Bug Fixes
+
+- Bump pr0ps-trackmap-panel to 2.1.3 (fixes #2770)
+- Bump grafana to 8.5.15
+- Fix GPX format (#2925 - @martinh2011)
+- Change esbuild target to es2017
+- Update Elixir and frontend dependencies
+- Update GH action workflows
+
+#### Dashboards
+
+- Charging Stats: Update the filter for superchargers (#2832 - @sultantariq)
+
+#### Translations
+
+- Add Ukrainian translations (#3039 - @ZeusF1)
+- Update Korean translations (#2898 - @zipizigi)
+- Update Chinese (traditional) translations (#2852 - @occultsound)
+- Update Chinese translations (#2855 - @JhouXerox)
+- Update French translations (#2844 - @CrowMash)
+
+#### Documentation
+
+- Fix typo (#2843 - @CrowMash)
+- Improve FreeBSD installation documentation (#2885 - @victori)
+- Fix tesla_power unit from W to kW (#3024 - @enzo2)
+- Added "Custom Grafana Dashboards" to project list (#3056 - @CarlosCuezva)
+
 ## [1.27.1] - 2022-07-22
 
 ### Improvements and Bug Fixes
 
 - Add setting to select tire pressure units
-- Fix `Protocol 'inet_tcp': register/listen error: econnrefused` error (#2771)
+- Fix `Protocol 'inet_tcp': register/listen error: econnrefused` error (#2771 - @manuduarte)
 - Bump minimum supported Elixir version to 1.12
 - Improve handling of invalid API tokens
 
@@ -1576,6 +1606,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.27.2]: https://github.com/adriankumpf/teslamate/compare/v1.27.1...v1.27.2
 [1.27.1]: https://github.com/adriankumpf/teslamate/compare/v1.27.0...v1.27.1
 [1.27.0]: https://github.com/adriankumpf/teslamate/compare/v1.26.1...v1.27.0
 [1.26.1]: https://github.com/adriankumpf/teslamate/compare/v1.26.0...v1.26.1
