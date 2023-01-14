@@ -1,4 +1,4 @@
-FROM grafana/grafana:8.5.9
+FROM grafana/grafana:8.5.15
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=FALSE \
     GF_AUTH_ANONYMOUS_ENABLED=false \
@@ -20,7 +20,7 @@ RUN mkdir -p "$GF_PATHS_PLUGINS" && \
 
 USER grafana
 
-RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install pr0ps-trackmap-panel 2.1.2 && \
+RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/pR0Ps/grafana-trackmap-panel/releases/download/v2.1.3/pr0ps-trackmap-panel-2.1.3.zip plugins install pr0ps-trackmap-panel && \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install natel-plotly-panel 0.0.7 && \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/panodata/panodata-map-panel/releases/download/0.16.0/panodata-map-panel-0.16.0.zip plugins install grafana-worldmap-panel-ng
 

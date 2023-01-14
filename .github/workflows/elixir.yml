@@ -35,11 +35,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: erlef/setup-beam@v1.12
+      - uses: erlef/setup-beam@v1.15
         with:
           otp-version: ${{ matrix.pair.otp }}
           elixir-version: ${{ matrix.pair.elixir }}
-      - uses: actions/cache@v3.0.5
+      - uses: actions/cache@v3.2.2
         with:
           path: |
             deps

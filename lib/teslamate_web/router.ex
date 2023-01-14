@@ -13,7 +13,7 @@ defmodule TeslaMateWeb.Router do
       cldr_backend: TeslaMateWeb.Cldr,
       no_match_log_level: :debug
 
-    plug Cldr.Plug.SetLocale,
+    plug Cldr.Plug.PutLocale,
       apps: [:cldr, :gettext],
       from: [:query, :session, :accept_language],
       gettext: TeslaMateWeb.Gettext,
