@@ -2,7 +2,7 @@
 title: Projects using TeslaMate
 ---
 
-Here is a list of projects using TeslaMate.
+Here is a list of projects using TeslaMate (alphabetically arranged).
 
 - [CustomGrafanaDashboards](#customgrafanadashboards)
 - [Gaussmeter](#gaussmeter)
