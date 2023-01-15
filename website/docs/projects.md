@@ -13,7 +13,6 @@ Here is a list of projects using TeslaMate.
 - [TeslaMate\_Telegram\_Bot](#teslamate_telegram_bot)
 - [TeslaMate ABRP](#teslamate-abrp)
 - [TeslaMate Custom Dashboards](#teslamate-custom-dashboards)
-- [Tesla USB](#tesla-usb)
 
 ---
 
@@ -76,9 +75,3 @@ LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
 Teslamate Custom Dashboards: Battery Health, Charging Costs Stats, Charging CurveStats, Tracking Drives and more. Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
 
 LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
-
-## [Tesla USB](https://github.com/marcone/teslausb)
-
-Raspberry Pi and other SBCs can emulate a USB drive, so can act as a drive for your Tesla to write dashcam footage too, so you may automatically copy the recordings to an archive server when you get home and much more.
-
-LINK: [github.com/marcone/teslausb](https://github.com/marcone/teslausb)
