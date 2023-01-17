@@ -11,7 +11,6 @@ Here is a list of projects using TeslaMate.
 - [TeslaMateApi](#teslamateapi)
 - [TeslaMate_Telegram_Bot](#teslamate_telegram_bot)
 - [TeslaMate-ABRP](#teslamate_abrp)
-- [Custom Grafana Dashboards](#customgrafanadashboards)
 
 ---
 
@@ -62,9 +61,3 @@ LINK: [github.com/JakobLichterfeld/TeslaMate_Telegram_Bot](https://github.com/Ja
 A python script (also available as a lightweight docker image) that pushes car status data to [ABetterRoutePlanner](https://abetterrouteplanner.com) based on contents of TeslaMate MQTT's topic.
 
 LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
-
-## [CustomGrafanaDashboards](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
-
-Collection of custom dashboards for Grafana.
-
-LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
