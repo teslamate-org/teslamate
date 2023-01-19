@@ -598,7 +598,7 @@ msgstr "Token non validi"
 #: lib/teslamate_web/live/signin_live/index.html.heex:49
 #, elixir-autogen, elixir-format
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr "Ottenre i token tramite le API Tesla richede esperienza nel campo della programmazione o un servizio ti terze parti. Si possono trovare maggiori informazioni %{here}."
+msgstr "Ottenere i token tramite le API Tesla richede esperienza nel campo della programmazione o un servizio ti terze parti. Si possono trovare maggiori informazioni %{here}."
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:46
 #, elixir-autogen, elixir-format
@@ -613,29 +613,29 @@ msgstr "Il tuo account Tesla è bloccato a causa di troppi tentativi di accesso.
 #: lib/teslamate_web/live/car_live/summary.ex:140
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
-msgstr ""
+msgstr "Scarico aggiornamento"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
-msgstr ""
+msgstr "Nessuna chiave fornita"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:85
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr ""
+msgstr "Per maggiori informazioni, guarda le guide di installazione qui %{link}"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
-msgstr ""
+msgstr "La chiave di crittografia generata automaticamente utilizzata per la sessione corrente può essere trovata <strong>nei log dell'applicazione</strong>."
 
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr ""
+msgstr "Per garantire che i tuoi token API <strong>Tesla siano memorizzati in modo sicuro</strong>, una chiave di crittografia deve essere fornita a TeslaMate tramite la variabile di ambiente <code>ENCRYPTION_KEY</code>. Altrimenti, sarà richiesto un <strong>login dopo ogni riavvio</strong>."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
-msgstr ""
+msgstr "Pressione gomme"
