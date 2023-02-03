@@ -17,7 +17,7 @@ defmodule TeslaApi.Middleware.FollowRedirects do
   ## Options
 
   - `:max_redirects` - limit number of redirects (default: `3`)
-  - `:except` - redirect locations which should not be followd (default: `[]`)
+  - `:except` - redirect locations which should not be followed (default: `[]`)
 
   """
 

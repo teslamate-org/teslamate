@@ -56,7 +56,7 @@ defmodule TeslaMate.Vault do
 
         Logger.warning("""
         \n------------------------------------------------------------------------------
-        No ENCRYPTION_KEY was found to encrypt and securly store your API tokens.
+        No ENCRYPTION_KEY was found to encrypt and securely store your API tokens.
 
         Therefore, the following randomly generated key will be used instead for this
         session:

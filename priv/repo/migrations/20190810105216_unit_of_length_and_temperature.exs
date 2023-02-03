@@ -1,4 +1,4 @@
-defmodule TeslaMate.Repo.Migrations.UnitOfLegnthAndTemperature do
+defmodule TeslaMate.Repo.Migrations.UnitOfLengthAndTemperature do
   use Ecto.Migration
 
   alias TeslaMate.Repo
