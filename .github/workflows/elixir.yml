@@ -64,6 +64,8 @@ jobs:
       - name: Verify that POT files are up to date
         run: mix gettext.extract --check-up-to-date
         if: ${{ matrix.lint }}
+      - name: Spell check
+        uses: crate-ci/typos@master
       - name: Run Tests
         run: mix test
       - name: Check Coverage
