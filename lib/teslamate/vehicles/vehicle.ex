@@ -30,7 +30,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   @asleep_interval 30
   @driving_interval 2.5
 
-  @drive_timout_min 15
+  @drive_timeout_min 15
 
   # Static
 
@@ -319,7 +319,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:ok, %Vehicle{state: state} = vehicle} when state in ["offline", "asleep"] ->
         data =
           with %Data{last_response: nil} <- data do
-            {last_response, geofence} = restore_last_knwon_values(vehicle, data)
+            {last_response, geofence} = restore_last_known_values(vehicle, data)
             %Data{data | last_response: last_response, geofence: geofence}
           end
 
@@ -919,7 +919,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     offline_since = parse_timestamp(last.drive_state.timestamp)
 
     case diff_seconds(DateTime.utc_now(), offline_since) / 60 do
-      min when min >= @drive_timout_min ->
+      min when min >= @drive_timeout_min ->
         timeout_drive(drive, data)
 
         {:next_state, {:driving, {:offline, last}, nil},
@@ -968,7 +968,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, now}}}}
 
-      not has_gained_range? and offline_min >= @drive_timout_min ->
+      not has_gained_range? and offline_min >= @drive_timeout_min ->
         unless is_nil(drv), do: timeout_drive(drv, data)
 
         {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
@@ -1125,7 +1125,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   # Private
 
-  defp restore_last_knwon_values(vehicle, data) do
+  defp restore_last_known_values(vehicle, data) do
     with %Vehicle{drive_state: nil, charge_state: nil, climate_state: nil} <- vehicle,
          %Log.Position{} = position <- call(data.deps.log, :get_latest_position, [data.car]) do
       drive = %Drive{
@@ -1523,7 +1523,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
           %Log.Update{version: last_vsn} when is_binary(last_vsn) ->
             if normalize_version(last_vsn) < normalize_version(vsn) do
-              Logger.info("Logged missing software udpate: #{vsn}", car_id: car.id)
+              Logger.info("Logged missing software update: #{vsn}", car_id: car.id)
 
               {:ok, _} =
                 call(data.deps.log, :insert_missed_update, [car, vsn, [date: parse_timestamp(ts)]])
