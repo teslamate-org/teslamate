@@ -175,7 +175,7 @@ defmodule TeslaApi.Stream do
         {:ok, state}
 
       {:ok, msg} ->
-        Logger.warning("Unkown Message: #{inspect(msg, pretty: true)}")
+        Logger.warning("Unknown Message: #{inspect(msg, pretty: true)}")
         {:ok, state}
 
       {:error, reason} ->

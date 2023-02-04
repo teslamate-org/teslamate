@@ -130,7 +130,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: true, qos: 1]}}
     end
 
-    # Formated dates
+    # Formatted dates
     iso_time = DateTime.to_iso8601(summary.scheduled_charging_start_time)
 
     assert_receive {MqttPublisherMock,

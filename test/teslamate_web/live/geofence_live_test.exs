@@ -203,7 +203,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert ["12.862226"] = Floki.attribute(longitude, "value")
     end
 
-    test "validates cahnges when creating a new geo-fence", %{conn: conn} do
+    test "validates changes when creating a new geo-fence", %{conn: conn} do
       assert {:ok, view, _html} = live(conn, "/geo-fences/new")
 
       html =
