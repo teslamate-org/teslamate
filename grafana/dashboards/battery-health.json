@@ -466,7 +466,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT  \n  ('$aux'::json -> 'MaxRange')::text::float as \"maxrange_$length_unit\",\n  ('$aux'::json -> 'CurrentRange')::text::float  as \"currentrange_$length_unit\"",
+          "rawSql": "SELECT  \n  ('$aux'::json -> 'CurrentRange')::text::float  as \"currentrange_$length_unit\",\n ('$aux'::json -> 'MaxRange')::text::float as \"maxrange_$length_unit\"",
           "refId": "A",
           "select": [
             [
