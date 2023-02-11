@@ -3,6 +3,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
   use TeslaMate.VehicleCase, async: false
 
   alias TeslaMate.Log.ChargingProcess
+  alias TeslaMate.Log.Car
   alias TeslaMate.{Log, Locations, Repo}
 
   import TestHelper, only: [decimal: 1]
@@ -198,14 +199,16 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                |> Floki.attribute("value")
 
       html =
-        render_submit(view, :save, %{charging_process: %{cost: 42.12}})
+        render_submit(view, :save, %{charging_process: %{cost: 42.1200}})
         |> Floki.parse_document!()
 
       assert "Total" =
                html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
 
-      assert ["42.12"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
-      assert %ChargingProcess{cost: decimal("42.12")} = Repo.get(ChargingProcess, id)
+      assert ["42.1200"] =
+               html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+
+      assert %ChargingProcess{cost: decimal("42.1200")} = Repo.get(ChargingProcess, id)
 
       html =
         render_submit(view, :save, %{charging_process: %{cost: nil}})
@@ -238,8 +241,8 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       assert "Total" =
                html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
 
-      assert ["1.20"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
-      assert %ChargingProcess{cost: decimal("1.20")} = Repo.get(ChargingProcess, id)
+      assert ["1.2000"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert %ChargingProcess{cost: decimal("1.2000")} = Repo.get(ChargingProcess, id)
 
       html =
         render_submit(view, :save, %{charging_process: %{cost: nil}})
@@ -266,14 +269,16 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                |> Floki.attribute("value")
 
       html =
-        render_submit(view, :save, %{charging_process: %{cost: -0.029, mode: "per_kwh"}})
+        render_submit(view, :save, %{charging_process: %{cost: -0.02900, mode: "per_kwh"}})
         |> Floki.parse_document!()
 
       assert "Total" =
                html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
 
-      assert ["-0.29"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
-      assert %ChargingProcess{cost: decimal("-0.29")} = Repo.get(ChargingProcess, id)
+      assert ["-0.2900"] =
+               html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+
+      assert %ChargingProcess{cost: decimal("-0.2900")} = Repo.get(ChargingProcess, id)
 
       html =
         render_submit(view, :save, %{charging_process: %{cost: nil}})
@@ -307,8 +312,8 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       assert "Total" =
                html |> Floki.find("#charging_process_mode option[selected]") |> Floki.text()
 
-      assert ["1.50"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
-      assert %ChargingProcess{cost: decimal("1.50")} = Repo.get(ChargingProcess, id)
+      assert ["1.5000"] = html |> Floki.find("#charging_process_cost") |> Floki.attribute("value")
+      assert %ChargingProcess{cost: decimal("1.5000")} = Repo.get(ChargingProcess, id)
     end
   end
 
