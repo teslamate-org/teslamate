@@ -529,10 +529,7 @@
     },
     {
       "autoZoom": true,
-      "datasource": {
-        "type": "postgres",
-        "uid": "2lJoPBT7z"
-      },
+      "datasource": "TeslaMate",
       "defaultLayer": "OpenStreetMap",
       "gridPos": {
         "h": 7,
@@ -549,10 +546,7 @@
       "showLayerChanger": true,
       "targets": [
         {
-          "datasource": {
-            "type": "postgres",
-            "uid": "2lJoPBT7z"
-          },
+          "datasource": "TeslaMate",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -581,10 +575,7 @@
           ]
         },
         {
-          "datasource": {
-            "type": "postgres",
-            "uid": "2lJoPBT7z"
-          },
+          "datasource": "TeslaMate",
           "format": "time_series",
           "group": [],
           "hide": false,
@@ -1638,10 +1629,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": {
-          "type": "postgres",
-          "uid": "2lJoPBT7z"
-        },
+        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
         "hide": 2,
         "includeAll": true,
@@ -1665,10 +1653,7 @@
           "text": "km",
           "value": "km"
         },
-        "datasource": {
-          "type": "postgres",
-          "uid": "2lJoPBT7z"
-        },
+        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -1691,10 +1676,7 @@
           "text": "C",
           "value": "C"
         },
-        "datasource": {
-          "type": "postgres",
-          "uid": "2lJoPBT7z"
-        },
+        "datasource": "TeslaMate",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -1717,10 +1699,7 @@
           "text": "rated",
           "value": "rated"
         },
-        "datasource": {
-          "type": "postgres",
-          "uid": "2lJoPBT7z"
-        },
+        "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
