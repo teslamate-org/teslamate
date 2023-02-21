@@ -1,4 +1,4 @@
-FROM grafana/grafana:8.5.15
+FROM grafana/grafana:8.5.16-ubuntu
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=FALSE \
     GF_AUTH_ANONYMOUS_ENABLED=false \
