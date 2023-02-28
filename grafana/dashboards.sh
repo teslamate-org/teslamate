@@ -17,6 +17,7 @@ set -o errexit
 readonly URL=${URL:-"http://localhost:3000"}
 readonly LOGIN=${LOGIN:-"admin:admin"}
 readonly DASHBOARDS_DIRECTORY=${DASHBOARDS_DIRECTORY:-"./grafana/dashboards"}
+readonly DATASOURCE=${DATASOURCE:-"TeslaMate"}
 
 
 main() {
@@ -26,10 +27,12 @@ main() {
 URL:                  $URL
 LOGIN:                $LOGIN
 DASHBOARDS_DIRECTORY: $DASHBOARDS_DIRECTORY
+DATASOURCE:           $DATASOURCE
   "
 
   case $task in
       backup) backup;;
+      fix_datasource_uid) fix_datasource_uid_in_dashboards;;
       restore) restore;;
       *)     exit 1;;
   esac
@@ -121,5 +124,19 @@ list_dashboards() {
     cut -d '/' -f2
 }
 
+get_datasource_uid() {
+  curl \
+    --silent \
+    --user "$LOGIN" \
+    -X GET \
+    "$URL/api/datasources/name/$DATASOURCE"|
+    jq '.uid'
+}
+
+fix_datasource_uid_in_dashboards() {
+  datasource_uid=$(get_datasource_uid)
+  datasource_string='"datasource": {"type": "postgres","uid": '$datasource_uid'},'
+  find $DASHBOARDS_DIRECTORY -type f -name "*.json"|xargs -I{}  sed -i "s=\"datasource\"\:\ \"TeslaMate\"\,=$datasource_string=g" {}
+}
 
 main "$@"
