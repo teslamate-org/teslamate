@@ -64,7 +64,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1680172863695,
+  "iteration": 1680375952381,
   "links": [
     {
       "icon": "dashboard",
@@ -113,7 +113,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 6,
         "x": 0,
         "y": 0
@@ -246,7 +246,7 @@
         ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 6,
         "x": 6,
         "y": 0
@@ -365,7 +365,7 @@
         ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 6,
         "x": 12,
         "y": 0
@@ -430,13 +430,12 @@
         "type": "postgres",
         "uid": "TeslaMate"
       },
-      "description": "",
+      "description": "Estimated charging cycles are based on the whole energy added to the battery. So the more data you logged the better. \n",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -448,59 +447,10 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*_km/"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "lengthkm"
-              },
-              {
-                "id": "displayName",
-                "value": "Range added"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*_mi/"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "lengthmi"
-              },
-              {
-                "id": "displayName",
-                "value": "Range added"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Energy"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "kwatth"
-              },
-              {
-                "id": "displayName",
-                "value": "Energy added"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 6,
         "x": 18,
         "y": 0
@@ -515,7 +465,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
+          "fields": "/.*/",
           "values": false
         },
         "textMode": "value_and_name"
@@ -531,8 +481,8 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT  \n  ('$aux'::json -> 'LastChargekWhAdded')::text::float  as \"Energy\",\n  ('$aux'::json -> 'LastMileageAdded')::text::float as \"range_$length_unit\"",
-          "refId": "A",
+          "rawSql": "SELECT  \n  round(('$aux'::json -> 'LastChargekWhAdded')::text::numeric,1) || ' kWh' as \"Last Energy added\",\n  round(('$aux'::json -> 'LastMileageAdded')::text::numeric,1) || ' $length_unit' as \"Last Range added\"",
+          "refId": "LastChanging",
           "select": [
             [
               {
@@ -553,9 +503,75 @@
               "type": "macro"
             }
           ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "TeslaMate"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH since as (\n\tSELECT date FROM positions\n\tWHERE car_id = $car_id\n\tORDER BY date ASC\n\tLIMIT 1\n),\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', date)::date AS date,\n\t\tmax(odometer) - min(odometer) AS distance\n\tFROM positions\n\tWHERE car_id = $car_id\n\tGROUP BY 1\n),\nbase_line AS (\n\tSELECT date_trunc('day', dd)::date AS date\n  FROM generate_series((select date from since) , now(), '1 day'::interval) dd\n)\nSELECT \n  round(SUM(convert_km(COALESCE(distance, 0)::numeric, '$length_unit')),1) || ' $length_unit' as \"Mileage logged\"\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date",
+          "refId": "DistanceLogged",
+          "select": [
+            [
+              {
+                "params": [
+                  "efficiency"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cars",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "TeslaMate"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tround(ceil(sum(charge_energy_added) / ('$aux'::json -> 'MaxCapacity')::text::numeric),0) AS \"Estimated charging cycles\"\nFROM charging_processes WHERE car_id = $car_id;",
+          "refId": "Cycles",
+          "select": [
+            [
+              {
+                "params": [
+                  "efficiency"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cars",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "title": "Last Charge Report",
+      "title": "Mileage & Charges",
       "type": "stat"
     },
     {
@@ -598,7 +614,7 @@
         "h": 3,
         "w": 6,
         "x": 0,
-        "y": 5
+        "y": 6
       },
       "id": 12,
       "options": {
@@ -696,7 +712,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 5
+        "y": 6
       },
       "id": 17,
       "options": {
@@ -758,7 +774,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 5
+        "y": 6
       },
       "id": 28,
       "links": [],
@@ -993,7 +1009,7 @@
         "h": 2,
         "w": 6,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "id": 25,
       "options": {
@@ -1110,7 +1126,7 @@
         "h": 2,
         "w": 6,
         "x": 0,
-        "y": 10
+        "y": 11
       },
       "id": 27,
       "options": {
@@ -1185,7 +1201,7 @@
       "type": "bargauge"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 36,
   "style": "dark",
   "tags": [
@@ -1354,6 +1370,6 @@
   "timezone": "browser",
   "title": "Battery Health",
   "uid": "jchmRiqUfXgTM",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
