@@ -462,7 +462,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Total enery added"
+              "options": "Total energy added"
             },
             "properties": [
               {
@@ -512,7 +512,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tsum(charge_energy_added) as \"Total enery added\"\nFROM\n\tcharging_processes\nWHERE\n\tcar_id = $car_id;",
+          "rawSql": "SELECT\n\tsum(charge_energy_added) as \"Total energy added\"\nFROM\n\tcharging_processes\nWHERE\n\tcar_id = $car_id;",
           "refId": "A",
           "select": [
             [
