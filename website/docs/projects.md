@@ -72,7 +72,7 @@ LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/
 
 ## [Tesla Home Assistant Intergration](https://github.com/alandtse/tesla)
 
-The Tesla Home Assistant intergration can use the data from the TeslaMate MQTT intergration to update car data in near-real time
+The Tesla Home Assistant integration can use the data from the TeslaMate MQTT integration to update car data in near-real time.
 
 LINK: [https://github.com/alandtse/tesla](https://github.com/alandtse/tesla)
 
