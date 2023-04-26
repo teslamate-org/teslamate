@@ -12,6 +12,7 @@ Here is a list of projects using TeslaMate.
 - [TeslaMate_Telegram_Bot](#teslamate_telegram_bot)
 - [TeslaMate-ABRP](#teslamate_abrp)
 - [Custom Grafana Dashboards](#customgrafanadashboards)
+- [Home Assistant Intergration](#tesla-home-assistant-intergration)
 
 ---
 
@@ -68,3 +69,11 @@ LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
 Collection of custom dashboards for Grafana.
 
 LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
+
+## [Tesla Home Assistant Intergration](https://github.com/alandtse/tesla)
+
+The Tesla Home Assistant intergration can use the data from the TeslaMate MQTT intergration to update car data in near-real time
+
+LINK: [https://github.com/alandtse/tesla](https://github.com/alandtse/tesla)
+
+LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Intergration)
