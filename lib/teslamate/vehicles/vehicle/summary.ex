@@ -9,7 +9,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     car display_name state since healthy latitude longitude heading battery_level usable_battery_level
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
-    plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open doors_open
+    plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open doors_open driver_front_state driver_rear_state passenger_front_state passenger_rear_state
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available update_version is_user_present geofence
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
@@ -113,6 +113,10 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
       windows_open: window_open(vehicle),
       doors_open: doors_open(vehicle),
+      driver_front_state: driver_front_state(vehicle),
+      driver_rear_state: driver_rear_state(vehicle),
+      passenger_front_state: passenger_front_state(vehicle),
+      passenger_rear_state: passenger_rear_state(vehicle),
       trunk_open: trunk_open(vehicle),
       frunk_open: frunk_open(vehicle),
       is_user_present: get_in_struct(vehicle, [:vehicle_state, :is_user_present]),
@@ -156,6 +160,46 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       %VehicleState{df: df, pf: pf, dr: dr, pr: pr}
       when is_number(df) and is_number(pf) and is_number(dr) and is_number(pr) ->
         df > 0 or pf > 0 or dr > 0 or pr > 0
+
+      _ ->
+        nil
+    end
+  end
+  
+  defp driver_front_state(%Vehicle{vehicle_state: vehicle_state}) do
+    case vehicle_state do
+      %VehicleState{df: df} when is_number(df) ->
+        df > 0 
+
+      _ ->
+        nil
+    end
+  end
+  
+  defp driver_rear_state(%Vehicle{vehicle_state: vehicle_state}) do
+    case vehicle_state do
+      %VehicleState{dr: dr} when is_number(dr) ->
+        dr > 0 
+
+      _ ->
+        nil
+    end
+  end
+  
+  defp passenger_front_state(%Vehicle{vehicle_state: vehicle_state}) do
+    case vehicle_state do
+      %VehicleState{pf: pf} when is_number(pf) ->
+        pf > 0 
+
+      _ ->
+        nil
+    end
+  end
+  
+  defp passenger_rear_state(%Vehicle{vehicle_state: vehicle_state}) do
+    case vehicle_state do
+      %VehicleState{pr: pr} when is_number(pr) ->
+        pr > 0 
 
       _ ->
         nil
