@@ -7,7 +7,7 @@ const ENTRY_FILE = "app.js";
 const OUTPUT_DIR = path.resolve(__dirname, "../../priv/static/assets");
 const OUTPUT_FILE = "app.js";
 const MODE = process.env["NODE_ENV"] || "production";
-const TARGET = "es2016";
+const TARGET = "es2017";
 
 const isDevMode = MODE === "development";
 
@@ -16,7 +16,7 @@ const build_opts = {
   outfile: `${OUTPUT_DIR}/${OUTPUT_FILE}`,
   minify: !isDevMode,
   watch: isDevMode && {
-    onRebuild(error, result) {
+    onRebuild(error, _result) {
       if (error) console.error("[-] Esbuild failed:", error);
       else console.log(`[+] Esbuild succeeded`);
     },

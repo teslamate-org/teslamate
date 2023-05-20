@@ -60,7 +60,7 @@
     },
     {
       "datasource": "TeslaMate",
-      "description": "Only distinguishes betwen online, offline and asleep.",
+      "description": "Only distinguishes between online, offline and asleep.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],

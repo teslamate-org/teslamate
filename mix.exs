@@ -7,7 +7,7 @@ defmodule TeslaMate.MixProject do
       version: version(),
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       releases: releases(),
@@ -37,7 +37,7 @@ defmodule TeslaMate.MixProject do
     [
       {:castore, "~> 0.1"},
       {:ecto_sql, "~> 3.0"},
-      {:ex_cldr, "~> 2.31.0"},
+      {:ex_cldr, "~> 2.34.0"},
       {:ex_cldr_plugs, "~> 1.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:finch, "~> 0.3"},

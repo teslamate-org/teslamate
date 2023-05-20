@@ -344,7 +344,7 @@ defmodule TeslaMate.ApiTest do
     end
 
     @tag :capture_log
-    test "other error witn Env", %{test: name} do
+    test "other error with Env", %{test: name} do
       api_error = %TeslaApi.Error{
         reason: :unknown,
         message: "",
