@@ -67,8 +67,8 @@ defmodule TeslaMateWeb.CarControllerTest do
           {TeslaMate.Vehicles,
            vehicle: VehicleMock,
            vehicles: [
-             %TeslaApi.Vehicle{display_name: "f0o", id: 4241, vehicle_id: 11111, vin: "1221"},
-             %TeslaApi.Vehicle{display_name: "fo0", id: 1242, vehicle_id: 22222, vin: "2112"}
+             %TeslaApi.Vehicle{display_name: "f00o", id: 4241, vehicle_id: 11111, vin: "1221"},
+             %TeslaApi.Vehicle{display_name: "foo0", id: 1242, vehicle_id: 22222, vin: "2112"}
            ]}
         )
 
@@ -85,7 +85,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
 
     @tag :signed_in
-    test "renders last knwon vehicle stats", %{conn: conn} do
+    test "renders last known vehicle stats", %{conn: conn} do
       events = [
         {:ok, %TeslaApi.Vehicle{state: "asleep", display_name: "FooCar"}}
       ]
@@ -522,7 +522,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
   end
 
-  describe "supsend" do
+  describe "suspend" do
     setup %{conn: conn} do
       {:ok, conn: put_req_header(conn, "accept", "application/json")}
     end

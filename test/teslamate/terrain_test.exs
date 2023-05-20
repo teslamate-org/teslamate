@@ -34,7 +34,7 @@ defmodule TeslaMate.TerrainTest do
     end
 
     @tag :capture_log
-    test "return nil if an error occured", %{test: name} do
+    test "return nil if an error occurred", %{test: name} do
       :ok = start_terrain(name, %{{0, 0} => fn -> {:error, :kaputt} end})
 
       assert Terrain.get_elevation(name, {0, 0}) == nil
@@ -87,7 +87,7 @@ defmodule TeslaMate.TerrainTest do
     end
 
     @tag :capture_log
-    test "breakes circuit if too many queries fail", %{test: name} do
+    test "breaks circuit if too many queries fail", %{test: name} do
       :ok =
         start_terrain(name, %{
           {0, 0} => fn -> {:error, :kaputt} end

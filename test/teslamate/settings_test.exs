@@ -288,7 +288,7 @@ defmodule TeslaMate.SettingsTest do
     alias TeslaMate.Log.{Car, ChargingProcess, Position}
     alias TeslaMate.Log
 
-    test "triggers a recalculaten of efficiencies if the preferred range chages" do
+    test "triggers a recalculaten of efficiencies if the preferred range changes" do
       %Car{efficiency: nil} = car = car_fixture(%{efficiency: nil})
 
       data = [

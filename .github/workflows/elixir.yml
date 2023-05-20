@@ -35,11 +35,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: erlef/setup-beam@v1.12
+      - uses: erlef/setup-beam@v1.15
         with:
           otp-version: ${{ matrix.pair.otp }}
           elixir-version: ${{ matrix.pair.elixir }}
-      - uses: actions/cache@v3.0.5
+      - uses: actions/cache@v3.2.2
         with:
           path: |
             deps
@@ -64,6 +64,8 @@ jobs:
       - name: Verify that POT files are up to date
         run: mix gettext.extract --check-up-to-date
         if: ${{ matrix.lint }}
+      - name: Spell check
+        uses: crate-ci/typos@master
       - name: Run Tests
         run: mix test
       - name: Check Coverage

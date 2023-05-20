@@ -58,12 +58,12 @@ defmodule TeslaMate.Updater do
             {:noreply, %State{state | update: version}}
 
           _ ->
-            Logger.debug("No update availble")
+            Logger.debug("No update available")
             {:noreply, state}
         end
 
       {:ok, %Release{version: version, prerelease: true}} ->
-        Logger.debug("Prerelease availble: #{version}")
+        Logger.debug("Prerelease available: #{version}")
         {:noreply, state}
 
       {:error, reason} ->

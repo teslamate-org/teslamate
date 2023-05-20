@@ -47,7 +47,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
                      %Summary{state: :updating, since: s1, version: "2019.8.4"}}}
 
     assert DateTime.diff(s0, s1, :nanosecond) < 0
-    assert_receive {:finish_update, _upate_id, "2019.8.5 3aaa23d", date: ^end_date}, 200
+    assert_receive {:finish_update, _update_id, "2019.8.5 3aaa23d", date: ^end_date}, 200
 
     d1 = DateTime.from_unix!(now_ts + 6, :millisecond)
     assert_receive {:start_state, ^car_id, :online, date: ^d1}
@@ -96,7 +96,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
     assert_receive {:start_update, ^car_id, date: ^start_date}
     assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :updating, since: s1}}}
     assert DateTime.diff(s0, s1, :nanosecond) < 0
-    assert_receive {:finish_update, _upate_id, "2019.8.5 3aaa23d", date: ^end_date}, 200
+    assert_receive {:finish_update, _update_id, "2019.8.5 3aaa23d", date: ^end_date}, 200
 
     d1 = DateTime.from_unix!(now_ts + 1, :millisecond)
     assert_receive {:start_state, ^car_id, :online, date: ^d1}
@@ -137,7 +137,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
                     {:broadcast, _server, _topic,
                      %Summary{state: :updating, version: "2019.8.4", update_version: "2019.8.5"}}}
 
-    assert_receive {:cancel_update, _upate_id}, 200
+    assert_receive {:cancel_update, _update_id}, 200
 
     d1 = DateTime.from_unix!(now_ts + 10, :millisecond)
     assert_receive {:start_state, ^car_id, :online, date: ^d1}, 600

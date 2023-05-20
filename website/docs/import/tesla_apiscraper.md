@@ -11,7 +11,7 @@ This is a multi-step process to export your data from a [tesla-apiscraper](https
 
 - A system running Docker with sufficient RAM for InfluxDB to perform the CSV export. This does **not** need to be the same machine where API Scraper and/or TeslaMate was/is running - you can do the export and conversion on your PC/Mac. The important thing is to give the Docker machine more than 2GB of RAM, otherwise the InfluxDB export may fail.
 
-- **CREATE A [BACKUP](../maintenance/backup_restore.md) OF YOUR DATA** before attempting to import anything into TeslaMate. This is all highly experimental and has only been successfuly done once :)
+- **CREATE A [BACKUP](../maintenance/backup_restore.md) OF YOUR DATA** before attempting to import anything into TeslaMate. This is all highly experimental and has only been successfully done once :)
 
 ## Instructions
 
