@@ -630,7 +630,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t(NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency)\nFROM\n\tdrives d\nJOIN cars car ON car.id = car_id\nWHERE\n\td.id = $drive_id;",
+          "rawSql": "SELECT\n  (MAX([[preferred_range]]_battery_range_km) - MIN([[preferred_range]]_battery_range_km)) * (select efficiency from cars where cars.id = $car_id)\nFROM positions\nWHERE \n  car_id = $car_id AND \n  $__timeFilter(date);",
           "refId": "A",
           "select": [
             [
@@ -736,7 +736,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select\n\t(NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency) *1000 /\n\t  convert_km(distance::numeric, '$length_unit') as \"$length_unit\"\nfrom drives d\nJOIN cars car ON car.id = car_id\nwhere d.id = $drive_id;",
+          "rawSql":  "SELECT\n  (MAX([[preferred_range]]_battery_range_km) - MIN([[preferred_range]]_battery_range_km)) * (select efficiency from cars where cars.id = $car_id) * 1000 / \n  convert_km((MAX(odometer)- MIN(odometer))::numeric, '$length_unit') as \"$length_unit\" \nFROM positions\nWHERE \n  car_id = $car_id AND \n  $__timeFilter(date);",
           "refId": "A",
           "select": [
             [
