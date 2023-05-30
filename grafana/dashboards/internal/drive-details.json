@@ -457,7 +457,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select convert_km(distance::numeric, '$length_unit') as \"$length_unit\" from drives where id = $drive_id;",
+          "rawSql":  "SELECT\n  convert_km((MAX(odometer)- MIN(odometer))::numeric, '$length_unit') as \"$length_unit\" \nFROM positions\nWHERE \n  car_id = $car_id AND \n  $__timeFilter(date);",
           "refId": "A",
           "select": [
             [
