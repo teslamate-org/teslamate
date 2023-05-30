@@ -336,8 +336,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
             case data.car.settings do
               %CarSettings{use_streaming_api: true} ->
-                {:next_state, :start, %Data{data | stream_pid: stream_pid},
-                  [schedule_fetch(@asleep_interval, data), broadcast_summary()]}
+                case state do
+                  {:offline, _} ->
+                    Logger.info("State was :offline, go to :start")
+                    {:next_state, :start, %Data{data | stream_pid: stream_pid},
+                      [schedule_fetch(@asleep_interval, data), broadcast_summary()]}
+                  {:asleep, _} ->
+                    Logger.info("State was :asleep, go to :start")
+                    {:next_state, :start, %Data{data | stream_pid: stream_pid},
+                      [schedule_fetch(@asleep_interval, data), broadcast_summary()]}
+                  _ ->
+                    #Logger.info("state #{inspect(state)}, keep_state")
+                    {:keep_state, %Data{data | stream_pid: stream_pid},
+                      [schedule_fetch(@asleep_interval, data), broadcast_summary()]}
+                end
 
               _->
                 Logger.warning("Discarded incomplete fetch result", car_id: data.car.id)
@@ -475,11 +487,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case stream_data do
       %Stream.Data{} when stale_stream_data? ->
-        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        Logger.warn("Online / Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
         :keep_state_and_data
 
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
-        Logger.info("Start of drive initiated by: #{inspect(stream_data)}")
+        Logger.info("Online / Start of drive initiated by: #{inspect(stream_data)}")
 
         %{elevation: elevation} = position = create_position(stream_data, data)
         {drive, data} = start_drive(position, data)
@@ -491,7 +503,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: nil, power: power} when is_number(power) and power < 0 ->
-        Logger.info("Charging detected: #{power} kW", car_id: data.car.id)
+        Logger.info("Online / Charging detected: #{power} kW", car_id: data.car.id)
         {:keep_state_and_data, schedule_fetch(0, data)}
 
       %Stream.Data{} ->
@@ -526,11 +538,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case stream_data do
       %Stream.Data{} when stale_stream_data? ->
-        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        Logger.warn("Suspended / Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
         :keep_state_and_data
 
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
-        Logger.info("Start of drive initiated by: #{inspect(stream_data)}")
+        Logger.info("Suspended / Start of drive initiated by: #{inspect(stream_data)}")
 
         %{elevation: elevation} = position = create_position(stream_data, data)
         {drive, data} = start_drive(position, data)
@@ -543,8 +555,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       %Stream.Data{shift_state: s, power: power}
       when s in [nil, "P"] and is_number(power) and power < 0 ->
-        Logger.info("Charging detected: #{power} kW", car_id: data.car.id)
+        Logger.info("Suspended / Charging detected: #{power} kW", car_id: data.car.id)
         {:next_state, prev_state, data, schedule_fetch(0, data)}
+
+      %Stream.Data{shift_state: s, power: power}
+        when s in [nil, "P"] and is_number(power) and power > 0 ->
+          Logger.info("Suspended / Usage detected: #{power} kW", car_id: data.car.id)
+          {:next_state, prev_state, data, schedule_fetch(0, data)}
 
       %Stream.Data{} ->
         Logger.debug(inspect(stream_data), car_id: data.car.id)
@@ -1453,7 +1470,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
     {suspend_after_idle_min, suspend_min, i} =
       case {car.settings, streaming?(data)} do
-        {%CarSettings{use_streaming_api: true}, true} -> {3, 30, 2}
+        {%CarSettings{use_streaming_api: true}, true} ->
+          # when suspended vehicle_data is not polled, non-vehicle_data is not keeping the car awake
+          # poll more often to get a faster response in detecting offline - TODO: might not be necessary as stream inactive triggers a 'Fetching vehicle state ...' that will fetch a non-vehicle_data (always?) in offline
+          # fetch_result event will :keep_state and poll every @asleep_interval
+          {3, 1, 2}
         {%CarSettings{suspend_after_idle_min: i, suspend_min: s}, _} -> {i, s, 1}
       end
 
