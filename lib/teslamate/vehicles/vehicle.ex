@@ -413,7 +413,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case stream_data do
       %Stream.Data{} when stale_stream_data? ->
-        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        Logger.warning("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
         :keep_state_and_data
 
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
@@ -464,7 +464,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case stream_data do
       %Stream.Data{} when stale_stream_data? ->
-        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        Logger.warning("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
         :keep_state_and_data
 
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->

@@ -246,7 +246,7 @@ defmodule TeslaMate.Import do
                   %Veh{vin: vin, vehicle_id: vid, id: eid} = v
                   when car != nil and nil not in [vin, vid, eid] and
                          vin != car.vin and vid != car.vid and eid != car.eid ->
-                    Logger.warn(
+                    Logger.warning(
                       "'#{path}' contains data for more than one vehicle: #{car.name}" <>
                         " -> #{v.display_name}!"
                     )

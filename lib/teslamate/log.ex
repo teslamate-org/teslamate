@@ -281,6 +281,7 @@ defmodule TeslaMate.Log do
     query =
       from d0 in subquery(drive_data),
         join: d1 in subquery(non_streamed_drive_data),
+        on: true,
         select: %{
           d0
           | start_ideal_range_km: d1.start_ideal_range_km,
