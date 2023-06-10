@@ -40,6 +40,7 @@ defmodule TeslaMate.Import.LineParser do
   defp map_value(_, "false"), do: false
 
   defp map_value("display_name", name), do: name
+  defp map_value("vehicle_name", name), do: name
   defp map_value("state", "waking"), do: "online"
   defp map_value("state", "shutdown"), do: "online"
 
@@ -94,7 +95,7 @@ defmodule TeslaMate.Import.LineParser do
 
             {:error, reason} ->
               Logger.warning("""
-              Could not convert date #{inspect(datetime)} w/ time zone #{inspect(tz)}: 
+              Could not convert date #{inspect(datetime)} w/ time zone #{inspect(tz)}:
               #{inspect(reason)}
               """)
 
