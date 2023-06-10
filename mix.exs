@@ -62,7 +62,9 @@ defmodule TeslaMate.MixProject do
       {:tortoise, "~> 0.10"},
       {:tzdata, "~> 1.1"},
       {:websockex, "~> 0.4"},
-      {:cloak_ecto, "~> 1.2"}
+      {:cloak_ecto, "~> 1.2"},
+      # Necessary until v1.1.7+ is released
+      {:ssl_verify_fun, "~> 1.1.0", manager: :rebar3, override: true}
     ]
   end
 
