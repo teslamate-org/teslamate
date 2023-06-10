@@ -1,0 +1,13 @@
+[default.extend-words]
+Juni = "Juni"
+mosquitto = "mosquitto"
+HASS = "HASS"
+
+[type.po]
+extend-glob = ["*.po"]
+check-file = false
+
+[files]
+extend-exclude = [
+  "website/docs/integrations/Node-RED/Teslamate-flows.json.example",
+]
