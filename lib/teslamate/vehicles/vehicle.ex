@@ -292,7 +292,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           {%Vehicle{drive_state: %Drive{timestamp: now}},
            %Data{last_response: %Vehicle{drive_state: %Drive{timestamp: last}}}}
           when is_number(now) and is_number(last) and now < last ->
-            drive_states = %{now: vehicle.drive_state, last: data.last_response.drive_state}
+            drive_states = [now: vehicle.drive_state, last: data.last_response.drive_state]
 
             Logger.warning(
               "Discarded stale fetch result: #{inspect(drive_states, pretty: true)}",

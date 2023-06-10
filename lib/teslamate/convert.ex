@@ -2,11 +2,12 @@ defmodule TeslaMate.Convert do
   @km_factor 0.62137119223733
   @km_factor_d Decimal.from_float(@km_factor)
   @ft_factor 3.28084
+  @ft_factor_d Decimal.from_float(@ft_factor)
 
   alias Decimal, as: D
 
   def mph_to_kmh(nil), do: nil
-  def mph_to_kmh(mph = %D{}), do: mph |> D.div(@km_factor) |> D.round()
+  def mph_to_kmh(mph = %D{}), do: mph |> D.div(@km_factor_d) |> D.round()
   def mph_to_kmh(mph), do: round(mph / @km_factor)
 
   def miles_to_km(nil, _precision), do: nil
@@ -20,11 +21,11 @@ defmodule TeslaMate.Convert do
   def km_to_miles(km, precision), do: Float.round(km * @km_factor, precision)
 
   def m_to_ft(nil), do: nil
-  def m_to_ft(m = %D{}), do: D.mult(m, @ft_factor)
+  def m_to_ft(m = %D{}), do: D.mult(m, @ft_factor_d)
   def m_to_ft(m), do: m * @ft_factor
 
   def ft_to_m(nil), do: nil
-  def ft_to_m(ft = %D{}), do: D.div(ft, @ft_factor)
+  def ft_to_m(ft = %D{}), do: D.div(ft, @ft_factor_d)
   def ft_to_m(ft), do: ft / @ft_factor
 
   def celsius_to_fahrenheit(nil, _precision), do: nil
