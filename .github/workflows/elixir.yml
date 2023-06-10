@@ -35,9 +35,7 @@ jobs:
         env:
           cache-name: cache-elixir-deps
         with:
-          path: |
-            deps
-            priv/cldr/locales
+          path: deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-mix-${{ env.cache-name }}-
@@ -48,7 +46,9 @@ jobs:
         env:
           cache-name: cache-compiled-dev-build
         with:
-          path: _build
+          path: |
+            _build
+            priv/cldr/locales
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-mix-${{ env.cache-name }}-
@@ -149,9 +149,7 @@ jobs:
         env:
           cache-name: cache-elixir-deps
         with:
-          path: |
-            deps
-            priv/cldr/locales
+          path: deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-mix-${{ env.cache-name }}-
@@ -162,7 +160,9 @@ jobs:
         env:
           cache-name: cache-compiled-test-build
         with:
-          path: _build
+          path: |
+            _build
+            priv/cldr/locales
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-mix-${{ env.cache-name }}-
