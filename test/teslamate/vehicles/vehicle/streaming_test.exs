@@ -380,7 +380,9 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       ]
 
       :ok =
-        start_vehicle(name, events, settings: %{use_streaming_api: true, suspend_min: 999_999_999})
+        start_vehicle(name, events,
+          settings: %{use_streaming_api: true, suspend_min: 999_999_999}
+        )
 
       assert_receive {:start_state, car, :online, date: _}
       assert_receive {:insert_position, ^car, %{}}
