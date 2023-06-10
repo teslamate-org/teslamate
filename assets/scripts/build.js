@@ -11,13 +11,13 @@ const TARGET = "es2017";
 
 const isDevMode = MODE === "development";
 
-const onRebuildLogger = {
-  name: 'my-plugin',
+const buildLogger = {
+  name: "build-logger",
   setup(build) {
     let count = 0;
     build.onEnd(({ errors, warnings }) => {
       if (errors.length > 0) console.error("[-] Esbuild failed:", errors);
-      else if (warnings.length > 0) console.error("[-] Esbuild succeeded with warnings:", warnings);
+      else if (warnings.length > 0) console.warn("[-] Esbuild finished with warnings:", warnings);
       else console.log(`[+] Esbuild succeeded`);
     });
   },
@@ -39,7 +39,7 @@ const build_opts = {
     ".woff": "file",
     ".woff2": "file",
   },
-  plugins: [sassPlugin(), onRebuildLogger],
+  plugins: [sassPlugin(), buildLogger],
   define: {
     "process.env.NODE_ENV": isDevMode ? '"development"' : '"production"',
     global: "window",
@@ -51,15 +51,14 @@ async function build() {
   try {
     console.log(`[+] Starting static assets build with esbuild (${MODE})...`);
     ctx = await esbuild.context(build_opts);
-    console.log(`[+] Esbuild ${ENTRY_FILE} to ${OUTPUT_DIR} succeeded.`);
-
 
     if (isDevMode) {
       ctx.watch();
       process.stdin.pipe(process.stdout);
       process.stdin.on("end", () => ctx.dispose());
     } else {
-      ctx.dispose()
+      ctx.rebuild();
+      ctx.dispose();
     }
   } catch (e) {
     console.error("[-] Error building:", e.message);
