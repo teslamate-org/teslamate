@@ -47,7 +47,7 @@ defmodule TeslaMate.Log.Car do
       :wheel_type,
       :spoiler_type
     ])
-    |> validate_required([:eid, :vid, :vin])
+    |> validate_required([:name,  :eid, :vid, :vin])
     |> foreign_key_constraint(:tokens_id)
     |> unique_constraint(:settings_id)
     |> unique_constraint(:eid)
