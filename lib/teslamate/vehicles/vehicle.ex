@@ -218,7 +218,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event({:call, from}, :resume_logging, {state, _interval}, data)
       when state in [:asleep, :offline] do
-    Logger.info("Expecting imminent wakeup. Increasing polling frequency ...", car_id: data.car.id)
+    Logger.info("Expecting imminent wakeup. Increasing polling frequency ...",
+      car_id: data.car.id
+    )
 
     {:next_state, {state, 1}, data, [{:reply, from, :ok}, {:next_event, :internal, :fetch}]}
   end
