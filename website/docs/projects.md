@@ -12,7 +12,7 @@ Here is a list of projects using TeslaMate.
 - [TeslaMate_Telegram_Bot](#teslamate_telegram_bot)
 - [TeslaMate-ABRP](#teslamate_abrp)
 - [Custom Grafana Dashboards](#customgrafanadashboards)
-- [Home Assistant Intergration](#tesla-home-assistant-intergration)
+- [Home Assistant Integration](#tesla-home-assistant-integration)
 
 ---
 
@@ -76,4 +76,4 @@ The Tesla Home Assistant integration can use the data from the TeslaMate MQTT in
 
 LINK: [https://github.com/alandtse/tesla](https://github.com/alandtse/tesla)
 
-LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Intergration)
+LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Integration)
