@@ -234,21 +234,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                assert_receive :continue?
                refute_receive _
              end) =~ """
-             Discarded stale fetch result: %{
-               last: %TeslaApi.Vehicle.State.Drive{
-                 gps_as_of: nil,
-                 heading: 120,
-                 latitude: 42.1,
-                 longitude: 42.0,
-                 native_latitude: nil,
-                 native_location_supported: nil,
-                 native_longitude: nil,
-                 native_type: nil,
-                 power: 0,
-                 shift_state: \"D\",
-                 speed: 0,
-                 timestamp: #{DateTime.to_unix(d1, :millisecond)}
-               },
+             Discarded stale fetch result: [
                now: %TeslaApi.Vehicle.State.Drive{
                  gps_as_of: nil,
                  heading: nil,
@@ -262,8 +248,22 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                  shift_state: \"P\",
                  speed: 0,
                  timestamp: #{now_ts}
+               },
+               last: %TeslaApi.Vehicle.State.Drive{
+                 gps_as_of: nil,
+                 heading: 120,
+                 latitude: 42.1,
+                 longitude: 42.0,
+                 native_latitude: nil,
+                 native_location_supported: nil,
+                 native_longitude: nil,
+                 native_type: nil,
+                 power: 0,
+                 shift_state: \"D\",
+                 speed: 0,
+                 timestamp: #{DateTime.to_unix(d1, :millisecond)}
                }
-             }
+             ]
              """
 
       send(:"api_#{name}", :continue)

@@ -15,7 +15,7 @@ defmodule TeslaMate.Repair do
   # API
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__, fullsweep_after: 10)
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   def trigger_run do

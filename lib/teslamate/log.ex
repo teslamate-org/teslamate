@@ -568,10 +568,7 @@ defmodule TeslaMate.Log do
          }}
         when is_number(minutes) ->
           cost = Decimal.mult(minutes, cost_per_minute)
-
-          if match?(%Decimal{}, cost) or match?(%Decimal{}, session_fee) do
-            Decimal.add(session_fee || 0, cost || 0)
-          end
+          Decimal.add(session_fee || 0, cost)
 
         {_, _} ->
           nil
