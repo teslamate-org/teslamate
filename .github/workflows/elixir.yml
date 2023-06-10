@@ -1,4 +1,4 @@
-name: CI
+name: Elixir CI
 
 on:
   push:
@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.14"
-            otp: "25"
+          - elixir: "1.15"
+            otp: "26"
             lint: true
 
     steps:
@@ -55,7 +55,7 @@ jobs:
             ${{ runner.os }}-mix-
 
       - name: Clean to rule out incremental build as a source of flakiness
-        if: github.run_attempt != '1'
+        if: github.run_attempt > 3
         run: |
           mix deps.clean --all
           mix clean
@@ -117,8 +117,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.14"
-            otp: "25"
+          - elixir: "1.15"
+            otp: "26"
             report_coverage: true
 
     services:
@@ -169,7 +169,7 @@ jobs:
             ${{ runner.os }}-mix-
 
       - name: Clean to rule out incremental build as a source of flakiness
-        if: github.run_attempt != '1'
+        if: github.run_attempt > 3
         run: |
           mix deps.clean --all
           mix clean
