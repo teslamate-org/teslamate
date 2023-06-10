@@ -178,6 +178,6 @@ defmodule TeslaMate.Locations.Geocoder do
     with nil <- Map.get(address, key), do: get_first(address, aliases)
   end
 
-  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warn
+  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warning
   defp log_level(%Tesla.Env{}), do: :info
 end

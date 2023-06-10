@@ -113,6 +113,6 @@ defmodule TeslaMate.Updater do
     end
   end
 
-  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warn
+  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warning
   defp log_level(%Tesla.Env{}), do: :debug
 end
