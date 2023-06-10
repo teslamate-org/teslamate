@@ -7,6 +7,22 @@
         </div>
       <% end %>
 
+      <%= if @account_email do %>
+          <div class="field">
+            <%= label f, :access, gettext("Account name"), class: "label" %>
+            <div class="control has-icons-left">
+              <%= email_input f, :account_email, class: "input is-rounded", autocorrect: "off",
+                                         autocapitalize: "none", spellcheck: "false",
+                                         disabled: true,
+                                         value: @account_email
+              %>
+              <span class="icon is-small is-left">
+                <i class="mdi mdi-api"></i>
+              </span>
+            </div>
+          </div>
+      <% end %>
+
       <div class="field">
         <%= label f, :access, gettext("Access Token"), class: "label" %>
         <div class="control has-icons-left">

@@ -23,7 +23,7 @@ defmodule TeslaApi.Auth do
   plug Tesla.Middleware.JSON
   plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
 
-  defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
+  defstruct [:token, :type, :expires_in, :refresh_token, :created_at, :account_email]
 
   defdelegate refresh(auth), to: __MODULE__.Refresh
 

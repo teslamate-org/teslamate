@@ -13,7 +13,8 @@ defmodule TeslaMateWeb.SignInLive.Index do
       page_title: gettext("Sign in"),
       error: nil,
       task: nil,
-      changeset: Auth.change_tokens()
+      changeset: Auth.change_tokens(),
+      account_email: Application.get_env(:teslamate, :account_email)
     }
 
     {:ok, assign(socket, assigns)}

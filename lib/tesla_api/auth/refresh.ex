@@ -22,7 +22,8 @@ defmodule TeslaApi.Auth.Refresh do
           type: body["token_type"],
           expires_in: body["expires_in"],
           refresh_token: body["refresh_token"],
-          created_at: body["created_at"]
+          created_at: body["created_at"],
+          account_email: auth.account_email
         }
 
         {:ok, auth}

@@ -109,8 +109,8 @@ defmodule TeslaMate.Api do
 
     state =
       case call(deps.auth, :get_tokens) do
-        %Tokens{access: at, refresh: rt} when is_binary(at) and is_binary(rt) ->
-          restored_tokens = %Auth{token: at, refresh_token: rt, expires_in: 10 * 60}
+        %Tokens{access: at, refresh: rt, account_email: an} when is_binary(at) and is_binary(rt) ->
+          restored_tokens = %Auth{token: at, refresh_token: rt, expires_in: 10 * 60, account_email: an}
 
           {:ok, state} =
             case refresh_tokens(restored_tokens) do
@@ -142,7 +142,7 @@ defmodule TeslaMate.Api do
   def handle_call({:sign_in, args}, _, %State{} = state) do
     case args do
       [args, callback] when is_function(callback) -> apply(callback, args)
-      [%Tokens{} = t] -> Auth.refresh(%Auth{token: t.access, refresh_token: t.refresh})
+      [%Tokens{} = t] -> Auth.refresh(%Auth{token: t.access, refresh_token: t.refresh, account_email: t.account_email})
     end
     |> case do
       {:ok, %Auth{} = auth} ->
