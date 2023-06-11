@@ -40,7 +40,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
          - all
 
      database:
-       image: postgres:14
+       image: postgres:15
        restart: always
        environment:
          - POSTGRES_USER=teslamate

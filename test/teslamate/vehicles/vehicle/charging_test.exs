@@ -234,7 +234,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
   end
 
   @tag :capture_log
-  test "transisitions into asleep state", %{test: name} do
+  test "transitions into asleep state", %{test: name} do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [

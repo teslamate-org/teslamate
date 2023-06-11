@@ -38,9 +38,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
 
              refute_receive _
            end) =~
-             ~r"""
-             \[warn.*\] Invalid charge data: %{ideal_battery_range_km: \[\"can't be blank\"\]}
-             \[warn.*\] Invalid charge data: %{ideal_battery_range_km: \[\"can't be blank\"\]}
+             """
+             [warning] Invalid charge data: %{ideal_battery_range_km: [\"can't be blank\"]}
              """
   end
 

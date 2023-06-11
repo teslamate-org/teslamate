@@ -11,7 +11,7 @@ defmodule TeslaApi do
   plug TeslaApi.Middleware.TokenAuth
   plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
 
-  defp log_level(%Tesla.Env{} = env) when env.status >= 500, do: :warn
+  defp log_level(%Tesla.Env{} = env) when env.status >= 500, do: :warning
   defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :info
   defp log_level(%Tesla.Env{}), do: :debug
 end

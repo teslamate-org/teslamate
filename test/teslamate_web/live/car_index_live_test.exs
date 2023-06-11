@@ -7,7 +7,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
 
   describe "base URL" do
     @tag :signed_in
-    test "initiall sets the base URL", %{conn: conn} do
+    test "sets the base URL", %{conn: conn} do
       :ok = start_vehicles([{:ok, online_event()}])
 
       assert %GlobalSettings{base_url: nil} = Settings.get_global_settings!()
