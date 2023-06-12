@@ -66,10 +66,10 @@ volumes:
   node-red-data:
 ```
 
-Build and start the docker container with `docker-compose up`. To run the containers in the background, add the `-d` flag:
+Build and start the docker container with `docker compose up`. To run the containers in the background, add the `-d` flag:
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 # Node-RED Configuration
@@ -92,10 +92,10 @@ node-red-node-ui-table"
 set -x
 for MODULE in $MODULES
 do
-docker-compose exec -T node-red npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production $MODULE
+docker compose exec -T node-red npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production $MODULE
 done
-docker-compose stop node-red
-docker-compose start node-red
+docker compose stop node-red
+docker compose start node-red
 ```
 
 ## Import Flows
