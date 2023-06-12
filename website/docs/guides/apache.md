@@ -52,7 +52,7 @@ services:
       - all
 
   database:
-    image: postgres:14
+    image: postgres:15
     restart: always
     environment:
       - POSTGRES_USER=${TM_DB_USER}
@@ -198,7 +198,7 @@ teslamate:$2y$10$f7PB3UF3PNzqMIXZmf1dIefOkrv/15Xt6Xw3pzc6mkS/B5qoWBdAG
 
 ## Usage
 
-Start the stack with `docker-compose up` run in the same directory, where the docker-compose.yml resides.
+Start the stack with `docker compose up` run in the same directory, where the docker-compose.yml resides.
 
 1. Open the web interface [teslamate.example.com](https://teslamate.example.com)
 2. Sign in with your Tesla account

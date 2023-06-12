@@ -9,7 +9,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 
 ## Requirements
 
-- Docker _(if you are new to Docker, see [Installing Docker and Docker Compose](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl))_
+- Docker _(if you are new to Docker, see [Installing Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux/))_
 - A Machine that's always on, so TeslaMate can continually fetch data
 - At least 1 GB of RAM on the machine for the installation to succeed.
 - External internet access, to talk to tesla.com
@@ -40,7 +40,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
          - all
 
      database:
-       image: postgres:14
+       image: postgres:15
        restart: always
        environment:
          - POSTGRES_USER=teslamate
@@ -81,10 +81,10 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 
 2. **Choose a secure encryption key** that will be used to encrypt your Tesla API tokens (insert as `ENCRYPTION_KEY`).
 3. **Choose your secure database password** and insert it at every occurrence of `DATABASE_PASS` and `POSTGRES_PASSWORD`
-4. Start the docker containers with `docker-compose up`. To run the containers in the background add the `-d` flag:
+4. Start the docker containers with `docker compose up`. To run the containers in the background add the `-d` flag:
 
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 ## Usage
@@ -98,6 +98,6 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 To update the running TeslaMate configuration to the latest version, run the following commands:
 
 ```bash
-docker-compose pull
-docker-compose up -d
+docker compose pull
+docker compose up -d
 ```

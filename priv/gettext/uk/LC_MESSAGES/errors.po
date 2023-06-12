@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: ua\n"
+"Language: uk\n"
 
 ## From Ecto.Changeset.cast/4
 msgid "can't be blank"
@@ -54,31 +54,37 @@ msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
 msgstr[0] "повинно бути %{count} символу"
 msgstr[1] "повинно бути %{count} символів"
+msgstr[2] "повинно бути %{count} символів"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
 msgstr[0] "повинно бути %{count} знаку"
 msgstr[1] "повинно бути %{count} знаків"
+msgstr[2] "повинно бути %{count} знаків"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
 msgstr[0] "повинно мати %{count} знаки"
 msgstr[1] "повинно мати %{count} знаків"
+msgstr[2] "повинно мати %{count} знаків"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
 msgstr[0] "повинно мати хочаб %{count} символу"
 msgstr[1] "повинно мати хочаб %{count} символів"
+msgstr[2] "повинно мати хочаб %{count} символів"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
 msgstr[0] "не повинно перевищувати %{count} знаки"
 msgstr[1] "не повинно перевищевати %{count} знаків"
+msgstr[2] "не повинно перевищевати %{count} знаків"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
 msgstr[0] "не повинно перевищувати %{count} символи"
 msgstr[1] "не повинно перевищувати %{count} символів"
+msgstr[2] "не повинно перевищувати %{count} символів"
 
 ## From Ecto.Changeset.validate_number/3
 msgid "must be less than %{number}"

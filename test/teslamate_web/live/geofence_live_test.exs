@@ -369,7 +369,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   describe "grafana URL" do
     alias TeslaMate.Settings.GlobalSettings
 
-    test "initiall sets the base URL", %{conn: conn} do
+    test "sets the base URL", %{conn: conn} do
       assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
 
       assert {:ok, _parent_view, _html} =

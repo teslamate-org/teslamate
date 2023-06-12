@@ -9,7 +9,6 @@
 msgid ""
 msgstr ""
 "Language: en\n"
-"Plural-Forms: nplurals=2\n"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:104
 #, elixir-autogen, elixir-format

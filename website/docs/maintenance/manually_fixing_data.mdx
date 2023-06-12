@@ -47,7 +47,7 @@ values={[
 <TabItem value="drive">
 
 ```bash
-docker-compose exec teslamate bin/teslamate rpc \
+docker compose exec teslamate bin/teslamate rpc \
     "TeslaMate.Repo.get!(TeslaMate.Log.Drive, 9999) |> TeslaMate.Log.close_drive()"
 ```
 
@@ -55,7 +55,7 @@ docker-compose exec teslamate bin/teslamate rpc \
 <TabItem value="charge">
 
 ```bash
-docker-compose exec teslamate bin/teslamate rpc \
+docker compose exec teslamate bin/teslamate rpc \
     "TeslaMate.Repo.get!(TeslaMate.Log.ChargingProcess, 9999) |> TeslaMate.Log.complete_charging_process()"
 ```
 
@@ -69,7 +69,7 @@ If for some reason a drive or charge was recorded incorrectly, you can delete it
 1.  Attach to the **running** database container:
 
     ```bash
-    docker-compose exec database psql teslamate teslamate
+    docker compose exec database psql teslamate teslamate
     ```
 
     :::note
@@ -100,3 +100,23 @@ If for some reason a drive or charge was recorded incorrectly, you can delete it
 
     </TabItem>
     </Tabs>
+
+## Remove a vehicle from the database
+**NOTE:** Always [backup](https://docs.teslamate.org/docs/maintenance/backup_restore "backup") your data before performing any database changes.
+
+1. Connect to your TeslaMate database
+2. Identify the right car ID in the database to remove
+```
+SELECT id, vin FROM cars;
+```
+3. Based upon the output, run the following command replacing `num` with the ID from the previous command. 
+```
+DELETE FROM cars WHERE id = num;
+DELETE FROM car_settings WHERE id = num;
+DELETE FROM charging_processes WHERE car_id = num;
+DELETE from charges WHERE charging_process_id in (select id from charging_processes where car_id = num);
+DELETE FROM drives WHERE car_id = num;
+DELETE FROM positions WHERE car_id = num;
+DELETE FROM states WHERE car_id = num;
+DELETE FROM updates WHERE car_id = num;
+```
