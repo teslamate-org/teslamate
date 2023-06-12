@@ -23,7 +23,7 @@
 
 - Update docs to manually remove vehicle (#3075 - @cwanja)
 - Update Project: Tesla Home Assistant Integration (#3194 - @Megabytemb)
-- Updated menu route to Download TeslaFi Data (#3218 - @ helmo)
+- Updated menu route to Download TeslaFi Data (#3218 - @helmo)
 
 ## [1.27.2] - 2023-01-13
 
