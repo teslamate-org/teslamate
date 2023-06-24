@@ -302,7 +302,11 @@ defmodule TeslaApi.Vehicle.State do
       :tpms_pressure_fl,
       :tpms_pressure_fr,
       :tpms_pressure_rl,
-      :tpms_pressure_rr
+      :tpms_pressure_rr,
+      :tpms_soft_warning_fl,
+      :tpms_soft_warning_fr,
+      :tpms_soft_warning_rl,
+      :tpms_soft_warning_rr
     ]
 
     defmodule SoftwareUpdate do
@@ -366,7 +370,11 @@ defmodule TeslaApi.Vehicle.State do
         tpms_pressure_fl: vehicle_state["tpms_pressure_fl"],
         tpms_pressure_fr: vehicle_state["tpms_pressure_fr"],
         tpms_pressure_rl: vehicle_state["tpms_pressure_rl"],
-        tpms_pressure_rr: vehicle_state["tpms_pressure_rr"]
+        tpms_pressure_rr: vehicle_state["tpms_pressure_rr"],
+        tpms_soft_warning_fl: vehicle_state["tpms_soft_warning_fl"],
+        tpms_soft_warning_fr: vehicle_state["tpms_soft_warning_fr"],
+        tpms_soft_warning_rl: vehicle_state["tpms_soft_warning_rl"],
+        tpms_soft_warning_rr: vehicle_state["tpms_soft_warning_rr"]
       }
     end
   end
