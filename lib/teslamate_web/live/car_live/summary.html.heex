@@ -84,6 +84,13 @@
           <span class="mdi mdi-gift-outline"></span>
         </span>
       <% end %>
+      <%= unless is_nil(@summary.tpms_soft_warning_fl) or is_nil(@summary.tpms_soft_warning_fr) or is_nil(@summary.tpms_soft_warning_rl) or is_nil(@summary.tpms_soft_warning_rr) do %>
+        <%= if @summary.tpms_soft_warning_fl or @summary.tpms_soft_warning_fr or @summary.tpms_soft_warning_rl or @summary.tpms_soft_warning_rr do %>
+         <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "TMPS soft warning!, check (%{tire_low})", tire_low: Enum.filter([@summary.tpms_soft_warning_fl, @summary.tpms_soft_warning_fr, @summary.tpms_soft_warning_rl, @summary.tpms_soft_warning_rr], &(!is_nil(&1))) |> Enum.join(", ")}>
+          <span class="mdi mdi-car-tire-alert"></span>
+         </span>
+        <% end %>
+      <% end %>
       <%= if @summary.healthy == false do %>
         <span class="icon has-text-danger has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Health check failed"}>
           <span class="mdi mdi-alert-box"></span>
