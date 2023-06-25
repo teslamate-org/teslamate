@@ -66,7 +66,7 @@ defmodule TeslaApi.Vehicle do
       state: v["state"] || "unknown",
       option_codes: String.split(v["option_codes"] || "", ","),
       in_service: v["in_service"],
-      display_name: v["display_name"],
+      display_name: get_in(v, ["vehicle_state", "vehicle_name"]) || v["display_name"],
       color: v["color"],
       calendar_enabled: v["calendar_enabled"],
       backseat_token: v["backseat_token"],

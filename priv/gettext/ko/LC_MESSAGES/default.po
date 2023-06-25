@@ -9,7 +9,6 @@
 msgid ""
 msgstr ""
 "Language: ko\n"
-"Plural-Forms: nplurals=2\n"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:104
 #, elixir-autogen, elixir-format
@@ -39,7 +38,7 @@ msgstr "절전"
 #: lib/teslamate_web/live/car_live/summary.ex:126
 #, elixir-autogen, elixir-format
 msgid "charging"
-msgstr "충전중"
+msgstr "충전"
 
 #: lib/teslamate_web/live/car_live/summary.ex:125
 #, elixir-autogen, elixir-format
@@ -69,7 +68,7 @@ msgstr "잠김"
 #: lib/teslamate_web/live/car_live/summary.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Sentry Mode"
-msgstr "감시 모드"
+msgstr "감시모드"
 
 #: lib/teslamate_web/live/car_live/index.ex:15
 #: lib/teslamate_web/live/charge_live/cost.html.heex:3
@@ -91,7 +90,7 @@ msgstr "설정"
 #: lib/teslamate_web/live/car_live/summary.html.heex:180
 #, elixir-autogen, elixir-format
 msgid "Scheduled Charging"
-msgstr "충전예약됨"
+msgstr "충전 예약됨"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:58
 #, elixir-autogen, elixir-format
@@ -151,7 +150,7 @@ msgstr "지오펜스"
 #: lib/teslamate_web/live/settings_live/index.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "Idle Time Before Trying to Sleep"
-msgstr "절전모드 시도까지 유휴시간"
+msgstr "절전 전 유휴시간"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:43
 #: lib/teslamate_web/live/geofence_live/form.html.heex:48
@@ -187,7 +186,7 @@ msgstr "저장 중..."
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Time to Try Sleeping"
-msgstr "잠자기 시도 시작"
+msgstr "절전 시도 시간"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:37
 #: lib/teslamate_web/live/settings_live/index.html.heex:56
@@ -203,7 +202,7 @@ msgstr "로그인 성공"
 #: lib/teslamate_web/live/car_live/summary.ex:134
 #, elixir-autogen, elixir-format
 msgid "Car is unlocked"
-msgstr "차량 잠김해제"
+msgstr "차량이 잠김해제되었습니다."
 
 #: lib/teslamate_web/live/geofence_live/index.html.heex:9
 #, elixir-autogen, elixir-format
@@ -219,7 +218,7 @@ msgstr "프리컨디셔닝"
 #: lib/teslamate_web/live/car_live/summary.ex:137
 #, elixir-autogen, elixir-format
 msgid "Sentry mode is enabled"
-msgstr "감시 모드가 활성화되었습니다."
+msgstr "감시모드가 활성화되었습니다."
 
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #: lib/teslamate_web/live/car_live/summary.html.heex:53
@@ -265,7 +264,7 @@ msgstr "거리 (정규계산)"
 #: lib/teslamate_web/live/car_live/summary.html.heex:171
 #, elixir-autogen, elixir-format
 msgid "Charger Power"
-msgstr "충전장치 전력"
+msgstr "충전기 전력"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:139
 #, elixir-autogen, elixir-format
@@ -290,7 +289,7 @@ msgstr "정규계산된 거리"
 #: lib/teslamate_web/live/car_live/summary.html.heex:132
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
-msgstr "거리 (이상적인)"
+msgstr "거리 (이상적)"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:138
 #, elixir-autogen, elixir-format
@@ -358,7 +357,7 @@ msgstr "접속주소"
 #: lib/teslamate_web/live/settings_live/index.html.heex:249
 #, elixir-autogen, elixir-format
 msgid "Web App"
-msgstr "웹 어플리케이션"
+msgstr "웹 애플리케이션"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:112
 #, elixir-autogen, elixir-format
@@ -368,7 +367,7 @@ msgstr "활성화"
 #: lib/teslamate_web/live/settings_live/index.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "Sleep Mode"
-msgstr "절전 모드"
+msgstr "절전모드"
 
 #: lib/teslamate_web/live/geofence_live/form.ex:189
 #, elixir-autogen, elixir-format
@@ -447,7 +446,7 @@ msgstr "TeslaFi 가져오기"
 msgid "Found %{count} file"
 msgid_plural "Found %{count} files"
 msgstr[0] "%{count} 파일을 찾았습니다."
-msgstr[1] ""
+msgstr[1] "%{count} 파일들을 찾았습니다."
 
 #: lib/teslamate_web/templates/layout/root.html.heex:104
 #, elixir-autogen, elixir-format
@@ -479,7 +478,7 @@ msgstr "충전비용"
 #: lib/teslamate_web/live/settings_live/index.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "Free Supercharging"
-msgstr "무료 슈퍼차징"
+msgstr "무료 수퍼차징"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:129
 #, elixir-autogen, elixir-format
@@ -511,8 +510,8 @@ msgstr "총합"
 #, elixir-format
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
-msgstr[0] "이 위치에는 아직 비용이 추가되지 않은 <strong>%{n} 충전 세션</ strong>이 있습니다."
-msgstr[1] ""
+msgstr[0] "이 위치에는 아직 비용이 추가되지 않은 <strong>%{n} 충전 세션</strong>이 있습니다."
+msgstr[1] "이 위치에는 아직 비용이 추가되지 않은 <strong>%{n} 충전 세션들</strong>이 있습니다."
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:134
 #, elixir-autogen, elixir-format
@@ -547,7 +546,7 @@ msgstr "참고문서"
 #: lib/teslamate_web/live/settings_live/index.html.heex:294
 #, elixir-autogen, elixir-format
 msgid "GitHub"
-msgstr "GitHub"
+msgstr "깃허브"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:289
 #: lib/teslamate_web/templates/layout/root.html.heex:112
@@ -584,12 +583,12 @@ msgstr "로그아웃"
 #: lib/teslamate_web/live/signin_live/index.html.heex:11
 #, elixir-autogen, elixir-format
 msgid "Access Token"
-msgstr ""
+msgstr "엑세스 토큰"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "Refresh Token"
-msgstr ""
+msgstr "리프레시 토큰"
 
 #: lib/teslamate_web/live/signin_live/index.ex:56
 #, elixir-autogen, elixir-format
@@ -599,7 +598,7 @@ msgstr "토큰이 잘못되었습니다."
 #: lib/teslamate_web/live/signin_live/index.html.heex:49
 #, elixir-autogen, elixir-format
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr "Tesla API 토큰을 얻으러면 프로그래밍 경험이나 타사 서비스가 필요합니다. 관련된 정보는 %{here}에서 찾을 수 있습니다."
+msgstr "Tesla API 토큰을 얻으러면 프로그래밍 경험이나 서드파티 서비스가 필요합니다. 관련된 정보는 %{here}에서 찾을 수 있습니다."
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:46
 #, elixir-autogen, elixir-format
@@ -609,7 +608,7 @@ msgstr "이곳"
 #: lib/teslamate_web/live/signin_live/index.ex:59
 #, elixir-autogen, elixir-format
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr "너무 많은 로그인 시도로 Tesla 계정이 잠겼습니다. 계정 잠금을 해제하려면 비밀번호를 재설정하세요."
+msgstr "너무 많은 로그인 실패로 Tesla 계정이 잠겼습니다. 계정 잠금을 해제하려면 비밀번호를 재설정하세요."
 
 #: lib/teslamate_web/live/car_live/summary.ex:140
 #, elixir-autogen, elixir-format
@@ -624,7 +623,7 @@ msgstr "암호화 키가 없습니다."
 #: lib/teslamate_web/templates/layout/root.html.heex:85
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr "자세한 내용은 ${%link}에서 업데이트 된 설치가이드를 참고하세요."
+msgstr "자세한 내용은 %{link}에서 업데이트 된 설치가이드를 참고하세요."
 
 #: lib/teslamate_web/templates/layout/root.html.heex:84
 #, elixir-autogen, elixir-format
@@ -634,7 +633,7 @@ msgstr "현재 사용하고 있는 암호화키는 자동으로 생성되었으�
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr "<strong>Tesla API 토큰을 안전하게 저장</strong>하려면 TeslaMate에 환경 변수를 통해 <code>ENCRYPTION_KEY(암호화 키)</code>를 제공해야 합니다. 그렇지 않으면 <strong>TeslaMate를 다시 시작할 때마다 로그인</strong>해야 합니다."
+msgstr "<strong>Tesla API 토큰을 안전하게 저장</strong>하려면 하나의 암호화 키가 <code>ENCRYPTION_KEY</code> 환경 변수를 통해 TeslaMate로 제공되어야 합니다. 그렇지 않으면 <strong>TeslaMate를 재시작할 때마다 다시 로그인</strong>해야 합니다."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
 #, elixir-autogen, elixir-format

@@ -1,73 +1,189 @@
-name: CI
+name: Elixir CI
 
-on: [pull_request, push]
+on:
+  push:
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
-  mix_test:
+  lint:
+    name: Lint (Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }})
+    runs-on: ubuntu-20.04
+
+    permissions:
+      contents: read
+
     strategy:
-      fail-fast: false
       matrix:
         include:
-          - pair:
-              elixir: "1.13"
-              otp: "25"
-            report_coverage: true
+          - elixir: "1.15"
+            otp: "26"
             lint: true
 
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: erlef/setup-beam@v1
+        id: beam
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-elixir-deps
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+
+      - name: Cache compiled build
+        id: cache-build
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-compiled-dev-build
+        with:
+          path: |
+            _build
+            priv/cldr/locales
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+            ${{ runner.os }}-mix-
+
+      - name: Clean to rule out incremental build as a source of flakiness
+        if: github.run_attempt > 3
+        run: |
+          mix deps.clean --all
+          mix clean
+        shell: sh
+
+      - name: Restore PLT cache
+        id: plt_cache
+        uses: actions/cache/restore@v3
+        with:
+          key: |
+            ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt
+          path: |
+            priv/plts
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Compile without warnings
+        run: mix compile --warnings-as-errors
+
+      - name: Verify that POT files are up to date
+        run: mix gettext.extract --check-up-to-date
+
+      - name: Spell check
+        uses: crate-ci/typos@master
+
+      - name: Check formatting
+        run: mix format --check-formatted
+
+      - name: Check unused dependencies
+        run: mix deps.unlock --check-unused
+
+      - name: Create PLTs
+        if: steps.plt_cache.outputs.cache-hit != 'true'
+        run: mix dialyzer --plt
+
+      - name: Save PLT cache
+        id: plt_cache_save
+        uses: actions/cache/save@v3
+        if: steps.plt_cache.outputs.cache-hit != 'true'
+        with:
+          key: |
+            ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt
+          path: |
+            priv/plts
+
+      - name: Run dialyzer
+        run: mix dialyzer --format github
+
+  test:
+    name: Test (Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }})
     runs-on: ubuntu-20.04
+
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        include:
+          - elixir: "1.15"
+            otp: "26"
+            report_coverage: true
 
     services:
       db:
-        image: postgres:14
-        ports: ["5432:5432"]
+        image: postgres:15
+        ports: [ "5432:5432" ]
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     env:
       MIX_ENV: test
       ELIXIR_ASSERT_TIMEOUT: 1000
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - uses: actions/checkout@v3
-      - uses: erlef/setup-beam@v1.15
+
+      - uses: erlef/setup-beam@v1
+        id: beam
         with:
-          otp-version: ${{ matrix.pair.otp }}
-          elixir-version: ${{ matrix.pair.elixir }}
-      - uses: actions/cache@v3.2.2
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-elixir-deps
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+
+      - name: Cache compiled build
+        id: cache-build
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-compiled-test-build
         with:
           path: |
-            deps
             _build
             priv/cldr/locales
-          key: ${{ runner.os }}-${{ matrix.pair.elixir }}-${{ matrix.pair.otp }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.pair.elixir }}-${{ matrix.pair.otp }}-mix-
-      - name: Install Dependencies
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+            ${{ runner.os }}-mix-
+
+      - name: Clean to rule out incremental build as a source of flakiness
+        if: github.run_attempt > 3
+        run: |
+          mix deps.clean --all
+          mix clean
+        shell: sh
+
+      - name: Install dependencies
         run: mix deps.get
-      - name: Check Formatting
-        run: mix format --check-formatted
-        if: ${{ matrix.lint }}
-      - name: Check unused dependencies
-        run: mix deps.unlock --check-unused
-        if: ${{ matrix.lint }}
-      - name: Compile dependencies
-        run: mix deps.compile
-      - name: Check for compilation warnings
-        run: mix compile --warnings-as-errors
-        if: ${{ matrix.lint }}
-      - name: Verify that POT files are up to date
-        run: mix gettext.extract --check-up-to-date
-        if: ${{ matrix.lint }}
-      - name: Spell check
-        uses: crate-ci/typos@master
-      - name: Run Tests
-        run: mix test
+
+      - name: Compile
+        run: mix compile
+
+      - name: Run tests
+        run: mix test --warnings-as-errors
+
       - name: Check Coverage
         if: github.ref == 'refs/heads/master' && matrix.report_coverage
         run: mix coveralls.github

@@ -92,7 +92,7 @@ defmodule TeslaApi.Stream do
   end
 
   def handle_info({:ssl, _, _} = msg, state) do
-    Logger.warn("Received unexpected message: #{inspect(msg)}")
+    Logger.warning("Received unexpected message: #{inspect(msg)}")
     {:ok, state}
   end
 
@@ -165,11 +165,11 @@ defmodule TeslaApi.Stream do
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "client_error"} = msg} ->
         case msg do
           %{"value" => "owner_api error:" <> _ = error} ->
-            Logger.warn("Streaming API Client Error: #{error}")
+            Logger.warning("Streaming API Client Error: #{error}")
             {:close, state}
 
           %{"value" => "Can't validate token" <> _} ->
-            Logger.warn("Streaming API: Tokens expired")
+            Logger.warning("Streaming API: Tokens expired")
             state.receiver.(:tokens_expired)
             {:ok, state}
 
@@ -237,7 +237,7 @@ defmodule TeslaApi.Stream do
 
   def terminate(reason, _state) do
     # https://github.com/Azolo/websockex/issues/51
-    with {exception, stacktrace} <- reason, true <- Exception.exception?(exception) do
+    with {exception, stacktrace} <- reason, true <- is_exception(exception) do
       Logger.error(fn -> Exception.format(:error, exception, stacktrace) end)
     else
       _ -> Logger.error("Terminating: #{inspect(reason)}")
