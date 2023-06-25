@@ -12,12 +12,6 @@ defmodule TeslaMateWeb.CarLive.Summary do
   @impl true
   def mount(_params, %{"summary" => %Summary{car: car} = summary} = session, socket) do
     if connected?(socket) do
-      #summary = %{summary | tpms_soft_warning_fl: true}
-      IO.inspect(summary.tpms_soft_warning_fl, label: "summary.tpms_soft_warning_fl1:", pretty: true, limit: :infinity)
-      IO.inspect(summary.tpms_soft_warning_fr, label: "summary.tpms_soft_warning_fr1:", pretty: true, limit: :infinity)
-      IO.inspect(summary.tpms_soft_warning_rl, label: "summary.tpms_soft_warning_rl1:", pretty: true, limit: :infinity)
-      IO.inspect(summary.tpms_soft_warning_rr, label: "summary.tpms_soft_warning_rr1:", pretty: true, limit: :infinity)
-     # ^summary = %{summary | tpms_soft_warning_fl: true}
       send(self(), :update_duration)
       send(self(), {:status, Vehicle.busy?(car.id)})
 
@@ -38,11 +32,6 @@ defmodule TeslaMateWeb.CarLive.Summary do
       error_timeout: nil,
       loading: false
     }
-    #summary = %{summary | tpms_soft_warning_fl: true}
-    IO.inspect(summary.tpms_soft_warning_fl, label: "summary.tpms_soft_warning_fl2:", pretty: true, limit: :infinity)
-    IO.inspect(summary.tpms_soft_warning_fr, label: "summary.tpms_soft_warning_fr2:", pretty: true, limit: :infinity)
-    IO.inspect(summary.tpms_soft_warning_rl, label: "summary.tpms_soft_warning_rl2:", pretty: true, limit: :infinity)
-    IO.inspect(summary.tpms_soft_warning_rr, label: "summary.tpms_soft_warning_rr2:", pretty: true, limit: :infinity)
 
     {:ok, assign(socket, assigns)}
   end
