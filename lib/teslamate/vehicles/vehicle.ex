@@ -563,12 +563,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %Stream.Data{shift_state: s, power: power}
       when s in [nil, "P"] and is_number(power) and power < 0 ->
         Logger.info("Suspended / Charging detected: #{power} kW", car_id: data.car.id)
-        {:next_state, prev_state, data, schedule_fetch(0, data)}
+        {:next_state, prev_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(0, data)}
 
       %Stream.Data{shift_state: s, power: power}
         when s in [nil, "P"] and is_number(power) and power > 0 ->
           Logger.info("Suspended / Usage detected: #{power} kW", car_id: data.car.id)
-          {:next_state, prev_state, data, schedule_fetch(0, data)}
+          {:next_state, prev_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(0, data)}
 
       %Stream.Data{} ->
         Logger.debug(inspect(stream_data), car_id: data.car.id)
