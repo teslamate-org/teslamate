@@ -443,7 +443,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
               [broadcast_fetch(false), broadcast_summary(), schedule_fetch(15, data)]}
 
           :online ->
-            try_to_suspend(%Vehicle{}, state, data)
+            Logger.info("Error in online, try to suspend", car_id: data.car.id)
+            try_to_suspend(data.last_response, state, data, true)
 
           _ ->
             {:keep_state, data,
@@ -935,7 +936,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          }, [broadcast_summary(), schedule_fetch(5, data), schedule_position_storing()]}
 
       _ ->
-        try_to_suspend(vehicle, state, data)
+        try_to_suspend(vehicle, state, data, false)
     end
   end
 
@@ -1473,7 +1474,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
+  defp try_to_suspend(vehicle, current_state, %Data{car: car} = data, ignore_last_used) do
     {suspend_after_idle_min, suspend_min, i} =
       case {car.settings, streaming?(data)} do
         {%CarSettings{use_streaming_api: true}, true} ->
@@ -1484,7 +1485,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {%CarSettings{suspend_after_idle_min: i, suspend_min: s}, _} -> {i, s, 1}
       end
 
-    suspend? = diff_seconds(DateTime.utc_now(), data.last_used) / 60 >= suspend_after_idle_min
+    suspend? =
+      case ignore_last_used do
+        true -> true
+        _ -> diff_seconds(DateTime.utc_now(), data.last_used) / 60 >= suspend_after_idle_min
+      end
 
     case can_fall_asleep(vehicle, data) do
       {:error, :sentry_mode} ->
