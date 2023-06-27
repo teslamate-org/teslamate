@@ -97,7 +97,7 @@
         "type": "postgres",
         "uid": "TeslaMate"
       },
-      "description": "**Usable (now)** is the estimated current battery capacity.\n\nIf you see just '1.0 kWh' here, it means that you need at least a long charge session on the lasth month.\n\n**Usable (new)** is the estimated Battery Capacity since you begun to use Teslamate. That's why, the more data you have logged from your brand new car the better. ",
+      "description": "**Usable (now)** is the estimated current battery capacity.\n\nIf you see just '1.0 kWh' here, it means that you need at least a long charge session on the last month.\n\n**Usable (new)** is the estimated Battery Capacity since you begun to use Teslamate. That's why, the more data you have logged from your brand new car the better. ",
       "fieldConfig": {
         "defaults": {
           "color": {
