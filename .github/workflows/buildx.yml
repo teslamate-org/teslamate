@@ -51,7 +51,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push by digest
         id: build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v4.1.1
         with:
           context: .
           platforms: ${{ matrix.platform }}
@@ -134,7 +134,7 @@ jobs:
           username: teslamate
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push
-        uses: docker/build-push-action@v3.2.0
+        uses: docker/build-push-action@v4.1.1
         with:
           context: grafana
           push: true
