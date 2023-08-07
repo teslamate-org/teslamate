@@ -54,7 +54,7 @@ Source: [grafana.com/docs/installation](https://grafana.com/docs/grafana/latest/
 Install the required Grafana plugins as well:
 
 ```bash
-sudo grafana-cli plugins install pr0ps-trackmap-panel 2.1.2
+sudo grafana-cli --pluginUrl https://github.com/alexandrainst/alexandra-trackmap-panel/archive/b0582bd5722191dae1a3dede9cd0acfe599bf84d.zip plugins install alexandra-trackmap-panel
 sudo grafana-cli plugins install natel-plotly-panel 0.0.7
 sudo grafana-cli --pluginUrl https://github.com/panodata/panodata-map-panel/releases/download/0.16.0/panodata-map-panel-0.16.0.zip plugins install grafana-worldmap-panel-ng
 sudo systemctl restart grafana-server

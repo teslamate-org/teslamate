@@ -22,7 +22,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1656104359102,
+  "iteration": 1691400000000,
   "links": [
     {
       "icon": "doc",
@@ -67,9 +67,7 @@
       "type": "row"
     },
     {
-      "autoZoom": true,
       "datasource": "TeslaMate",
-      "defaultLayer": "OpenStreetMap",
       "gridPos": {
         "h": 13,
         "w": 13,
@@ -77,11 +75,74 @@
         "y": 1
       },
       "id": 6,
-      "lineColor": "red",
       "maxDataPoints": 500,
-      "pointColor": "royalblue",
-      "scrollWheelZoom": false,
-      "showLayerChanger": true,
+      "options": {
+        "ant": {
+          "color": "dark-red",
+          "colorOverridesByLabel": [],
+          "delay": 650,
+          "hardwareAccelerated": true,
+          "labelName": "",
+          "paused": false,
+          "pulseColor": "super-light-red",
+          "reverse": false,
+          "weight": 3
+        },
+        "coordinates": {
+          "customLatitudeColumnName": "",
+          "customLongitudeColumnName": ""
+        },
+        "discardZeroOrNull": true,
+        "displayHoverMarker": false,
+        "heat": {
+          "maxValue": 1
+        },
+        "hex": {
+          "colorRangeFrom": "#f7fbff",
+          "colorRangeTo": "#ff0000",
+          "opacity": 0.6,
+          "radiusRangeFrom": 5,
+          "radiusRangeTo": 12
+        },
+        "hoverMarker": {
+          "color": "rgb(255, 255, 255)",
+          "fillColor": "rgb(65, 105, 225)",
+          "fillOpacity": 1,
+          "radius": 7,
+          "weight": 2
+        },
+        "map": {
+          "centerLatitude": 56.17203,
+          "centerLongitude": 10.1865203,
+          "centerMethod": "first",
+          "tileAttribution": "&copy <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors",
+          "tileSubdomains": [
+            "a",
+            "b",
+            "c"
+          ],
+          "tileUrlSchema": "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
+          "useBoundsInQuery": false,
+          "zoom": 10,
+          "zoomToDataBounds": true
+        },
+        "marker": {
+          "alwaysShowTooltips": false,
+          "defaultHtml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"25px\" height=\"25px\" viewBox=\"0 0 25 25\" version=\"1.1\"><g id=\"surface1\"><path style=\" stroke:none;fill-rule:nonzero;fill:rgb(100%,50%,50%);fill-opacity:0.8;\" d=\"M 12.515625 0 L 12.480469 0 C 8.164062 0 4.652344 3.511719 4.652344 7.828125 C 4.652344 10.65625 5.941406 14.386719 8.480469 18.921875 C 10.363281 22.285156 12.273438 24.859375 12.292969 24.882812 C 12.347656 24.957031 12.429688 24.996094 12.519531 24.996094 C 12.523438 24.996094 12.523438 24.996094 12.527344 24.996094 C 12.617188 24.996094 12.703125 24.949219 12.753906 24.871094 C 12.773438 24.84375 14.667969 21.980469 16.539062 18.476562 C 19.066406 13.75 20.347656 10.164062 20.347656 7.828125 C 20.347656 3.511719 16.832031 0 12.515625 0 Z M 16.128906 8.019531 C 16.128906 10.019531 14.5 11.648438 12.5 11.648438 C 10.496094 11.648438 8.867188 10.019531 8.867188 8.019531 C 8.867188 6.015625 10.496094 4.386719 12.5 4.386719 C 14.5 4.386719 16.128906 6.015625 16.128906 8.019531 Z M 16.128906 8.019531 \"/></g></svg>",
+          "iconOffset": "",
+          "labelName": "",
+          "markerHtmlByLabel": [],
+          "popupOffset": "",
+          "showOnlyLastMarker": false,
+          "size": 25,
+          "sizeLast": 25,
+          "tooltipOffset": "",
+          "useHTMLForMarkers": false,
+          "useSecondaryIconForAllMarkers": false,
+          "useSecondaryIconForLastMarker": false
+        },
+        "viewType": "ant"
+      },
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -89,38 +150,8 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS lat\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS lat,\n\tavg(longitude) as lon\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        },
-        {
-          "datasource": "TeslaMate",
-          "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
-          "refId": "B",
           "select": [
             [
               {
@@ -145,7 +176,7 @@
       ],
       "transformations": [],
       "transparent": true,
-      "type": "pr0ps-trackmap-panel"
+      "type": "alexandra-trackmap-panel"
     },
     {
       "datasource": "TeslaMate",
@@ -226,7 +257,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.26",
       "targets": [
         {
           "format": "table",
@@ -510,7 +541,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.26",
       "targets": [
         {
           "format": "table",
@@ -622,7 +653,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.26",
       "targets": [
         {
           "format": "table",
@@ -737,7 +768,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.26",
       "targets": [
         {
           "format": "table",
@@ -851,7 +882,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.26",
       "targets": [
         {
           "format": "table",
@@ -942,7 +973,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.26",
       "targets": [
         {
           "format": "table",
@@ -1026,7 +1057,7 @@
         },
         "showUnfilled": false
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.26",
       "targets": [
         {
           "format": "table",
@@ -1551,7 +1582,7 @@
           }
         ]
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.26",
       "targets": [
         {
           "alias": "",
@@ -2046,7 +2077,7 @@
           }
         ]
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "8.5.26",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -2627,6 +2658,6 @@
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
