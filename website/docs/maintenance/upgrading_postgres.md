@@ -7,7 +7,7 @@ sidebar_label: Upgrading PostgreSQL
 2. Stop all TeslaMate containers
 
    ```bash
-   docker-compose down
+   docker compose down
    ```
 
 3. Delete the database volume. **Be careful**, this will delete all your previously recorded data! Make sure that your backup can be restored before you start.
@@ -24,7 +24,7 @@ sidebar_label: Upgrading PostgreSQL
    ```
 
    ```bash
-   docker-compose up -d database
+   docker compose up -d database
    ```
 
 5. [Restore](backup_restore.md) the backup
