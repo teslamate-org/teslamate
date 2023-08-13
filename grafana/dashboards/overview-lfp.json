@@ -85,14 +85,6 @@
               {
                 "color": "semi-dark-green",
                 "value": 20
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 81
-              },
-              {
-                "color": "light-red",
-                "value": 91
               }
             ]
           },
@@ -234,7 +226,7 @@
           },
           "decimals": 0,
           "mappings": [],
-          "max": 250,
+          "max": 170,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
