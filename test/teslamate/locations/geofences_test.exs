@@ -81,6 +81,12 @@ defmodule TeslaMate.LocationsGeofencesTest do
              } = errors_on(changeset)
     end
 
+    test "create_geofence/1 with trims the name" do
+      attrs = put_in(@valid_attrs.name, "  foo  \n")
+      assert {:ok, geofence} = Locations.create_geofence(attrs)
+      assert geofence.name == "foo"
+    end
+
     test "create_geofence/1 links the geofence with drives and charging processes" do
       car = car_fixture()
 
