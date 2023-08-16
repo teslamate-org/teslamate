@@ -1160,7 +1160,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       climate = %Climate{
         outside_temp: position.outside_temp,
-        inside_temp: position.inside_temp
+        inside_temp: position.inside_temp,
+        cabin_overheat_protection: position.cabin_overheat_protection,
+        cabin_overheat_protection_actively_cooling: position.cabin_overheat_protection_actively_cooling
       }
 
       vehicle_state = %VehicleState{
@@ -1261,6 +1263,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       passenger_temp_setting: vehicle.climate_state.passenger_temp_setting,
       is_rear_defroster_on: vehicle.climate_state.is_rear_defroster_on,
       is_front_defroster_on: vehicle.climate_state.is_front_defroster_on,
+      cabin_overheat_protection: vehicle.climate_state.cabin_overheat_protection,
+      cabin_overheat_protection_actively_cooling: vehicle.climate_state.cabin_overheat_protection_actively_cooling
       battery_heater_on: vehicle.charge_state.battery_heater_on,
       battery_heater: vehicle.climate_state.battery_heater,
       battery_heater_no_power: vehicle.climate_state.battery_heater_no_power,
