@@ -9,7 +9,6 @@ defmodule TeslaMate.Log.Position do
     field :latitude, :decimal, read_after_writes: true
     field :longitude, :decimal, read_after_writes: true
     field :elevation, :integer
-
     field :speed, :integer
     field :power, :integer
     field :odometer, :float
@@ -29,6 +28,8 @@ defmodule TeslaMate.Log.Position do
     field :is_climate_on, :boolean
     field :is_rear_defroster_on, :boolean
     field :is_front_defroster_on, :boolean
+    field :cabin_overheat_protection, :boolean
+    field :cabin_overheat_protection_actively_cooling, :boolean
     field :tpms_pressure_fl, :decimal
     field :tpms_pressure_fr, :decimal
     field :tpms_pressure_rl, :decimal
@@ -66,6 +67,8 @@ defmodule TeslaMate.Log.Position do
       :is_climate_on,
       :is_rear_defroster_on,
       :is_front_defroster_on,
+      :cabin_overheat_protection,
+      :cabin_overheat_protection_actively_cooling,
       :tpms_pressure_fl,
       :tpms_pressure_fr,
       :tpms_pressure_rl,
