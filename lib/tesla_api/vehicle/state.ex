@@ -136,7 +136,7 @@ defmodule TeslaApi.Vehicle.State do
         battery_heater_no_power: climate["battery_heater_no_power"],
         climate_keeper_mode: climate["climate_keeper_mode"],
         cabin_overheat_protection: climate["cabin_overheat_protection"],
-        cabin_overheat_protection_actively_cooling: claimte["cabin_overheat_protection_actively_cooling"],
+        cabin_overheat_protection_actively_cooling: climate["cabin_overheat_protection_actively_cooling"],
         defrost_mode: climate["defrost_mode"],
         driver_temp_setting: climate["driver_temp_setting"],
         fan_status: climate["fan_status"],
