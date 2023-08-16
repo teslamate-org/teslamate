@@ -106,6 +106,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       is_preconditioning: get_in_struct(vehicle, [:climate_state, :is_preconditioning]),
       outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),
       inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp]),
+      cabin_overheat_protection: get_in_struct(vehicle, [:climate_state, :cabin_overheat_protection]),
+      cabin_overheat_protection_actively_cooling: get_in_struct(vehicle, [:climate_state, :cabin_overheat_protection_actively_cooling]),
 
       # Vehicle State
       odometer: get_in_struct(vehicle, [:vehicle_state, :odometer]) |> miles_to_km(2),
