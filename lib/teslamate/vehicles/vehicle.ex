@@ -1264,7 +1264,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       is_rear_defroster_on: vehicle.climate_state.is_rear_defroster_on,
       is_front_defroster_on: vehicle.climate_state.is_front_defroster_on,
       cabin_overheat_protection: vehicle.climate_state.cabin_overheat_protection,
-      cabin_overheat_protection_actively_cooling: vehicle.climate_state.cabin_overheat_protection_actively_cooling
+      cabin_overheat_protection_actively_cooling: vehicle.climate_state.cabin_overheat_protection_actively_cooling,
       battery_heater_on: vehicle.charge_state.battery_heater_on,
       battery_heater: vehicle.climate_state.battery_heater,
       battery_heater_no_power: vehicle.climate_state.battery_heater_no_power,
