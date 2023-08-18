@@ -71,6 +71,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/tpms_pressure_fr`              | 2.8                  | Tire pressure measure in BAR, front right tire                                        |
 | `teslamate/cars/$car_id/tpms_pressure_rl`              | 2.9                  | Tire pressure measure in BAR, rear left tire                                          |
 | `teslamate/cars/$car_id/tpms_pressure_rr`              | 2.8                  | Tire pressure measure in BAR, rear right tire                                         |
+| `teslamate/cars/$car_id/valet_mode`                    | true                 | Indicates id the valet mode is on                                                     |
 
 :::note
 `$car_id` usually starts at 1
