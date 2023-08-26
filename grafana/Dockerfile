@@ -20,7 +20,7 @@ RUN mkdir -p "$GF_PATHS_PLUGINS" && \
 
 USER grafana
 
-RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/alexandrainst/alexandra-trackmap-panel/archive/refs/tags/v2.5.0.zip plugins install alexandra-trackmap-panel \
+RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/alexandrainst/alexandra-trackmap-panel/releases/download/v2.5.1/alexandra-trackmap-panel-v2.5.1.zip plugins install alexandra-trackmap-panel \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install natel-plotly-panel 0.0.7 && \
     grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" --pluginUrl https://github.com/panodata/panodata-map-panel/releases/download/0.16.0/panodata-map-panel-0.16.0.zip plugins install grafana-worldmap-panel-ng
 
