@@ -62,8 +62,14 @@ defmodule Util do
             [ip: ip]
 
           {:error, reason} ->
-            IO.puts("Cannot parse HTTP_BINDING_ADDRESS '#{address}': #{inspect(reason)}")
-            defaults
+            case String.at(address, 0) do
+              "/" ->
+                [ip: {:local, address}]
+
+              _ ->
+                IO.puts("Cannot parse HTTP_BINDING_ADDRESS '#{address}': #{inspect(reason)}")
+                defaults
+            end
         end
     end
   end
