@@ -1,4 +1,4 @@
-FROM elixir:1.13 AS builder
+FROM elixir:1.15 AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 

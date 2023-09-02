@@ -89,9 +89,29 @@ config :teslamate, TeslaMate.Repo,
   database: Util.fetch_env!("DATABASE_NAME", dev: "teslamate_dev", test: "teslamate_test"),
   hostname: Util.fetch_env!("DATABASE_HOST", all: "localhost"),
   port: System.get_env("DATABASE_PORT", "5432"),
-  ssl: System.get_env("DATABASE_SSL", "false") == "true",
   pool_size: System.get_env("DATABASE_POOL_SIZE", "10") |> String.to_integer(),
   timeout: System.get_env("DATABASE_TIMEOUT", "60000") |> String.to_integer()
+
+case System.get_env("DATABASE_SSL") do
+  "true" ->
+    ca_cert_file =
+      System.get_env("DATABASE_SSL_CA_CERT_FILE") || raise "DATABASE_SSL_CA_CERT_FILE must be set"
+
+    config :teslamate, TeslaMate.Repo,
+      ssl: true,
+      ssl_opts: [
+        verify: :verify_peer,
+        cacertfile: ca_cert_file
+      ]
+
+  "noverify" ->
+    config :teslamate, TeslaMate.Repo,
+      ssl: true,
+      ssl_opts: [verify: :verify_none]
+
+  _false ->
+    config :teslamate, TeslaMate.Repo, ssl: false
+end
 
 if System.get_env("DATABASE_IPV6") == "true" do
   config :teslamate, TeslaMate.Repo, socket_options: [:inet6]

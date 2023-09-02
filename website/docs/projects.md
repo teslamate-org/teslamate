@@ -2,19 +2,6 @@
 title: Projects using TeslaMate
 ---
 
-Here is a list of projects using TeslaMate.
-
-- [Gaussmeter](#gaussmeter)
-- [Home Assistant Addon](#home-assistant-addon)
-- [MMM-Teslamate](#mmm-teslamate)
-- [TeslaMateAgile](#teslamateagile)
-- [TeslaMateApi](#teslamateapi)
-- [TeslaMate_Telegram_Bot](#teslamate_telegram_bot)
-- [TeslaMate-ABRP](#teslamate_abrp)
-- [Custom Grafana Dashboards](#customgrafanadashboards)
-
----
-
 ## [Gaussmeter](https://github.com/gaussmeter/gaussmeter)
 
 An LED illuminated acrylic Tesla Model 3. Its color and scale of light depend on the cars current state.
@@ -57,7 +44,7 @@ This is a telegram bot written in Python to notify by Telegram message when a ne
 
 LINK: [github.com/JakobLichterfeld/TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot)
 
-## [TeslaMate-ABRP](https://fetzu.github.io/teslamate-abrp/)
+## [TeslaMate ABRP](https://fetzu.github.io/teslamate-abrp/)
 
 A python script (also available as a lightweight docker image) that pushes car status data to [ABetterRoutePlanner](https://abetterrouteplanner.com) based on contents of TeslaMate MQTT's topic.
 
@@ -68,3 +55,17 @@ LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
 Collection of custom dashboards for Grafana.
 
 LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
+
+## [TeslaMate Custom Dashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
+
+Teslamate Custom Dashboards: Battery Health, Charging Costs Stats, Charging CurveStats, Tracking Drives and more. Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
+
+LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
+
+## [Tesla Home Assistant Integration](https://github.com/alandtse/tesla)
+
+The Tesla Home Assistant integration can use the data from the TeslaMate MQTT integration to update car data in near-real time.
+
+LINK: [https://github.com/alandtse/tesla](https://github.com/alandtse/tesla)
+
+LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Integration)

@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.27.3] - 2023-06-12
+
+### Improvements and Bug Fixes
+
+- Read the vehicle name from the `vehicle_data` response as Tesla has made [some changes](https://github.com/timdorr/tesla-api/issues/728) to the API
+- Add composite index to position and drop drive_id index (#3186 - @IlyaDiallo)
+- Bump Grafana to 8.5.26
+- Ship Docker image with OTP 26 (this should improve performance on ARM devices)
+- Optimize automatic Docker image builds
+
+#### Dashboards
+
+- Update drive-details.json missing dataSource for pressure units (#3225 - @OrangeBean)
+- Bump pr0ps-trackmap-panel to 2.1.4 (#3076 - @Obihoernchen)
+
+#### Translations
+
+- Fix Korean translation (#3126 - @nanishin)
+
+#### Documentation
+
+- Update docs to manually remove vehicle (#3075 - @cwanja)
+- Update Project: Tesla Home Assistant Integration (#3194 - @Megabytemb)
+- Updated menu route to Download TeslaFi Data (#3218 - @helmo)
+
 ## [1.27.2] - 2023-01-13
 
 ### Improvements and Bug Fixes
@@ -1606,6 +1631,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.27.3]: https://github.com/adriankumpf/teslamate/compare/v1.27.2...v1.27.3
 [1.27.2]: https://github.com/adriankumpf/teslamate/compare/v1.27.1...v1.27.2
 [1.27.1]: https://github.com/adriankumpf/teslamate/compare/v1.27.0...v1.27.1
 [1.27.0]: https://github.com/adriankumpf/teslamate/compare/v1.26.1...v1.27.0

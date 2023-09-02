@@ -58,3 +58,6 @@ config/*.env
 
 # Mac files
 .DS_Store
+
+/priv/plts/*.plt
+/priv/plts/*.plt.hash

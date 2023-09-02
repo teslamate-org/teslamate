@@ -218,7 +218,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event({:call, from}, :resume_logging, {state, _interval}, data)
       when state in [:asleep, :offline] do
-    Logger.info("Expecting imminent wakeup. Increasing polling frequency ...", car_id: data.car.id)
+    Logger.info("Expecting imminent wakeup. Increasing polling frequency ...",
+      car_id: data.car.id
+    )
 
     {:next_state, {state, 1}, data, [{:reply, from, :ok}, {:next_event, :internal, :fetch}]}
   end
@@ -292,7 +294,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           {%Vehicle{drive_state: %Drive{timestamp: now}},
            %Data{last_response: %Vehicle{drive_state: %Drive{timestamp: last}}}}
           when is_number(now) and is_number(last) and now < last ->
-            drive_states = %{now: vehicle.drive_state, last: data.last_response.drive_state}
+            drive_states = [now: vehicle.drive_state, last: data.last_response.drive_state]
 
             Logger.warning(
               "Discarded stale fetch result: #{inspect(drive_states, pretty: true)}",
@@ -413,7 +415,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case stream_data do
       %Stream.Data{} when stale_stream_data? ->
-        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        Logger.warning("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
         :keep_state_and_data
 
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
@@ -464,7 +466,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case stream_data do
       %Stream.Data{} when stale_stream_data? ->
-        Logger.warn("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        Logger.warning("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
         :keep_state_and_data
 
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
