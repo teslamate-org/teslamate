@@ -57,6 +57,7 @@ defmodule TeslaMate.MixProject do
       {:phoenix_pubsub, "~> 2.0"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
+      {:ranch, "~> 2.1", override: true},
       {:srtm, "~> 0.5"},
       {:tesla, "~> 1.4"},
       {:timex, "~> 3.0"},
