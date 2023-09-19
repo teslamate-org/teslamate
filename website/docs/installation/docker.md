@@ -84,7 +84,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 4. Start the docker containers with `docker compose up`. To run the containers in the background add the `-d` flag:
 
    ```bash
-   docker compose up -d
+   docker-compose up -d
    ```
 
 ## Usage
@@ -98,6 +98,6 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 To update the running TeslaMate configuration to the latest version, run the following commands:
 
 ```bash
-docker compose pull
-docker compose up -d
+docker-compose pull
+docker-compose up -d
 ```
