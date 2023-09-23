@@ -2,7 +2,10 @@ FROM elixir:1.15 AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+RUN apt-get update && apt-get install -y ca-certificates curl gnupg && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
     apt-get update && apt-get install -y --no-install-recommends nodejs
 
 RUN mix local.rebar --force && \
@@ -50,6 +53,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libsctp1  \
         libssl1.1  \
         libstdc++6 \
+        mosquitto \
         netcat \
         tini  \
         tzdata && \
@@ -63,7 +67,7 @@ COPY --chown=nonroot:nonroot entrypoint.sh /
 COPY --from=builder --chown=nonroot:nonroot /opt/built .
 RUN mkdir $SRTM_CACHE
 
-EXPOSE 4000
+EXPOSE 4000 1883
 
 ENTRYPOINT ["tini", "--", "/bin/sh", "/entrypoint.sh"]
 CMD ["bin/teslamate", "start"]

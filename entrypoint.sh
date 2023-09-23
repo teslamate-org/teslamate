@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 set -e
 
+echo "listener 1883\nallow_anonymous true" > mosquitto.conf
+/usr/sbin/mosquitto -c mosquitto.conf -d
+
 : "${DATABASE_HOST:="127.0.0.1"}"
 : "${DATABASE_PORT:=5432}"
 
