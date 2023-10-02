@@ -10,6 +10,7 @@ There are multiple apps available to securely generate access tokens yourself, f
 - [Auth app for Tesla (iOS, macOS)](https://apps.apple.com/us/app/auth-app-for-tesla/id1552058613)
 - [Tesla Tokens (Android)](https://play.google.com/store/apps/details?id=net.leveugle.teslatokens)
 - [Tesla Auth (macOS, Linux, Windows)](https://github.com/adriankumpf/tesla_auth)
+- [Tesla API Token Generator (Python script)](https://github.com/sebmatton/TeslaApiTokenGenerator).
 
 ## Why are no consumption values displayed in Grafana?
 
