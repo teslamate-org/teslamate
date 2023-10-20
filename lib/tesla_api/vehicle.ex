@@ -51,10 +51,21 @@ defmodule TeslaApi.Vehicle do
         _global -> "https://owner-api.teslamotors.com"
       end
 
-    TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}/vehicle_data",
+    vehicle_location_data = TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}/vehicle_data?endpoints=location_data",
       opts: [access_token: auth.token]
     )
     |> handle_response(transform: &result/1)
+
+    vehicle_data = TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}/vehicle_data",
+      opts: [access_token: auth.token]
+    )
+    |> handle_response(transform: &result/1)
+
+    {
+      elem(vehicle_data, 0),
+      %TeslaApi.Vehicle{elem(vehicle_data, 1) | drive_state: elem(vehicle_location_data, 1).drive_state}
+    }
+
   end
 
   def result(v) do
