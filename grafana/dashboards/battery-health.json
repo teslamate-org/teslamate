@@ -21,12 +21,6 @@
     },
     {
       "type": "panel",
-      "id": "natel-plotly-panel",
-      "name": "Plotly",
-      "version": "0.0.7"
-    },
-    {
-      "type": "panel",
       "id": "piechart",
       "name": "Pie chart",
       "version": ""
@@ -1204,10 +1198,7 @@
       "type": "bargauge"
     },
     {
-      "datasource": {
-        "type": "postgres",
-        "uid": "TeslaMate"
-      },
+      "datasource": "TeslaMate",
       "gridPos": {
         "h": 8,
         "w": 24,
@@ -1216,129 +1207,11 @@
       },
       "id": 28,
       "links": [],
-      "pconfig": {
-        "fixScale": "",
-        "layout": {
-          "dragmode": "zoom",
-          "font": {
-            "family": "\"Open Sans\", Helvetica, Arial, sans-serif"
-          },
-          "hovermode": "closest",
-          "legend": {
-            "orientation": "h"
-          },
-          "showlegend": false,
-          "xaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "title": "Odometer",
-            "type": "linear",
-            "zeroline": false
-          },
-          "yaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "title": "kWh",
-            "type": "linear",
-            "zeroline": false
-          },
-          "zaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "type": "linear",
-            "zeroline": false
-          }
-        },
-        "loadFromCDN": false,
-        "settings": {
-          "displayModeBar": false,
-          "type": "scatter"
-        },
-        "showAnnotations": true,
-        "traces": [
-          {
-            "mapping": {
-              "color": "id",
-              "text": "title",
-              "x": "odometer",
-              "y": "kWh"
-            },
-            "name": "Mileage, kWh",
-            "settings": {
-              "color_option": "ramp",
-              "line": {
-                "color": "#C0D8FF",
-                "dash": "dashdot",
-                "shape": "linear",
-                "width": 1
-              },
-              "marker": {
-                "color": "#33B5E5",
-                "colorscale": "Reds",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 10,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              }
-            },
-            "show": {
-              "line": true,
-              "lines": false,
-              "markers": true
-            }
-          },
-          {
-            "mapping": {
-              "color": "id",
-              "x": "M-Odometer",
-              "y": "M-kWh"
-            },
-            "name": "Median",
-            "settings": {
-              "color_option": "ramp",
-              "line": {
-                "color": "#C0D8FF",
-                "dash": "solid",
-                "shape": "linear",
-                "width": 2
-              },
-              "marker": {
-                "color": "#33B5E5",
-                "colorscale": "Reds",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 3,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              }
-            },
-            "show": {
-              "line": true,
-              "lines": true,
-              "markers": false
-            }
-          }
-        ]
-      },
       "pluginVersion": "8.5.6",
       "targets": [
         {
           "alias": "",
-          "datasource": {
-            "type": "postgres",
-            "uid": "TeslaMate"
-          },
+          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "hide": false,
@@ -1367,10 +1240,7 @@
         },
         {
           "alias": "",
-          "datasource": {
-            "type": "postgres",
-            "uid": "TeslaMate"
-          },
+          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "hide": false,
@@ -1401,8 +1271,100 @@
         }
       ],
       "title": "Battery Capacity by Mileage",
-      "type": "natel-plotly-panel",
-      "version": 1
+      "type": "xychart",
+      "options": {
+        "seriesMapping": "manual",
+        "series": [
+          {
+            "pointColor": {
+              "field": "kWh"
+            },
+            "x": "odometer",
+            "y": "kWh"
+          },
+          {
+            "pointColor": {
+              "fixed": "dark-red"
+            },
+            "x": "M-Odometer",
+            "y": "M-kWh"
+          }
+        ],
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "show": "points",
+            "pointSize": {
+              "fixed": 6
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "axisBorderShow": false,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "Median"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.show",
+                "value": "lines"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "solid"
+                }
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "refresh": "",
