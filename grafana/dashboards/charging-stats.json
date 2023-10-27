@@ -866,78 +866,19 @@
           ]
         }
       ],
-      "title": "AC/DC – kWh",
+      "title": "AC/DC - kWh",
       "type": "piechart"
     },
     {
-      "autoPanLabels": true,
-      "autoWidthLabels": true,
-      "categories": "a,b",
-      "circleMaxSize": 30,
-      "circleMinSize": 2,
-      "circleOptions": {
-        "strokeEnabled": false,
-        "strokeWeight": "2"
-      },
-      "circleSizeAbsoluteEnabled": false,
-      "circleSizeAbsoluteFactor": 1,
-      "clickthroughOptions": {},
-      "clickthroughUrl": "",
-      "colorMode": "threshold",
-      "colors": [
-        "#f53636",
-        "#c05634",
-        "#976f32",
-        "#688b30",
-        "#32ac2d"
-      ],
-      "customAttribution": false,
       "datasource": "TeslaMate",
-      "decimals": 2,
-      "description": "",
-      "doubleClickZoom": true,
-      "dragging": true,
-      "enableOverlay": false,
-      "enableReloadOverlay": false,
-      "esMetric": "Count",
-      "formatOmitEmptyValue": false,
       "gridPos": {
         "h": 13,
         "w": 14,
         "x": 5,
         "y": 10
       },
-      "hideEmpty": false,
-      "hideTimepickerNavigation": false,
-      "hideZero": false,
       "id": 24,
-      "ignoreEmptyGeohashValues": false,
-      "ignoreEscapeKey": false,
-      "ignoreInvalidGeohashValues": false,
-      "initialZoom": 1,
-      "locationData": "table",
-      "mapCenter": "(0°, 0°)",
-      "mapCenterLatitude": 0,
-      "mapCenterLongitude": 0,
-      "mapFitData": true,
       "maxDataPoints": 1,
-      "mouseWheelZoom": true,
-      "overlayOpacity": 0.5,
-      "overlayRangeLatitude": "0,10",
-      "overlayRangeLongitude": "0,20",
-      "overlayUrl": "",
-      "showAttribution": false,
-      "showLegend": true,
-      "showZoomControl": true,
-      "stickyLabels": false,
-      "tableQueryOptions": {
-        "geohashField": "geohash",
-        "labelField": "loc_nm",
-        "latitudeField": "lat",
-        "longitudeField": "lng",
-        "metricField": "pct",
-        "queryType": "coordinates"
-      },
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -945,7 +886,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH charge_data AS (\r\nSELECT COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS loc_nm\r\n, AVG(position.latitude) AS lat \r\n, AVG(position.longitude) AS lng\r\n,sum(charge.charge_energy_added) AS chg_total\r\nFROM charging_processes charge\r\nLEFT JOIN addresses address ON charge.address_id = address.id\r\nLEFT JOIN positions position ON charge.position_id = position.id\r\nLEFT JOIN geofences geofence ON charge.geofence_id = geofence.id\r\nWHERE $__timeFilter(charge.start_date) \r\nAND charge.car_id = $car_id\r\nGROUP BY COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city))\r\n) \r\nSELECT loc_nm\r\n\t,lat\r\n\t,lng\r\n\t,chg_total\r\n\t,chg_total * 1.0 / (SELECT sum(chg_total) FROM charge_data) * 100   AS pct\r\nFROM charge_data",
+          "rawSql": "WITH charge_data AS (\r\nSELECT COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS loc_nm\r\n, AVG(position.latitude) AS latitude\r\n, AVG(position.longitude) AS longitude\r\n,sum(charge.charge_energy_added) AS chg_total\r\nFROM charging_processes charge\r\nLEFT JOIN addresses address ON charge.address_id = address.id\r\nLEFT JOIN positions position ON charge.position_id = position.id\r\nLEFT JOIN geofences geofence ON charge.geofence_id = geofence.id\r\nWHERE $__timeFilter(charge.start_date) \r\nAND charge.car_id = $car_id\r\nGROUP BY COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city))\r\n) \r\nSELECT loc_nm\r\n\t,latitude\r\n\t,longitude\r\n\t,chg_total\r\n\t,chg_total * 1.0 / (SELECT sum(chg_total) FROM charge_data) * 100   AS pct\r\nFROM charge_data",
           "refId": "A",
           "select": [
             [
@@ -966,15 +907,176 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "editorMode": "code",
+          "sql": {
+            "columns": [
+              {
+                "type": "function",
+                "parameters": []
+              }
+            ],
+            "groupBy": [
+              {
+                "type": "groupBy",
+                "property": {
+                  "type": "string"
+                }
+              }
+            ]
+          }
         }
       ],
-      "thresholds": "0,25,50,75",
       "title": "Charging heat map by kWh",
-      "type": "panodata-map-panel",
-      "unitPlural": "%",
-      "unitSingular": "%",
-      "valueName": "total"
+      "type": "geomap",
+      "options": {
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lat": 46,
+          "lon": 14,
+          "zoom": 15
+        },
+        "controls": {
+          "showZoom": true,
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showScale": false,
+          "showMeasure": false,
+          "showDebug": false
+        },
+        "tooltip": {
+          "mode": "details"
+        },
+        "layers": [
+          {
+            "type": "markers",
+            "name": "Charge location",
+            "config": {
+              "style": {
+                "size": {
+                  "fixed": 5,
+                  "min": 5,
+                  "max": 30,
+                  "field": "pct"
+                },
+                "color": {
+                  "field": "chg_total",
+                  "fixed": "red"
+                },
+                "opacity": 0.3,
+                "symbol": {
+                  "mode": "fixed",
+                  "fixed": "img/icons/marker/circle.svg"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "textAlign": "center",
+                  "textBaseline": "middle",
+                  "offsetX": 0,
+                  "offsetY": 0
+                },
+                "rotation": {
+                  "fixed": 0,
+                  "mode": "clamped",
+                  "min": -360,
+                  "max": 360
+                },
+                "text": {
+                  "fixed": "",
+                  "mode": "field",
+                  "field": "chg_total"
+                }
+              },
+              "showLegend": false
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "tooltip": true
+          }
+        ],
+        "basemap": {
+          "type": "default",
+          "name": "Layer 0",
+          "config": {},
+          "tooltip": true
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "super-light-purple",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "fieldMinMax": false,
+          "unit": "kwatth",
+          "decimals": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "loc_nm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Location"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Of total"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "chg_total"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Charged here"
+              }
+            ]
+          }
+        ]
+      },
+      "description": ""
     },
     {
       "datasource": "TeslaMate",
