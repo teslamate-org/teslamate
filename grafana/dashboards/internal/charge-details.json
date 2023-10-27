@@ -826,127 +826,11 @@
       },
       "id": 11,
       "links": [],
-      "pconfig": {
-        "fixScale": "",
-        "layout": {
-          "dragmode": "pan",
-          "font": {
-            "family": "\"Open Sans\", Helvetica, Arial, sans-serif"
-          },
-          "hovermode": "closest",
-          "legend": {
-            "orientation": "h"
-          },
-          "showlegend": false,
-          "xaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "title": "SOC [%]",
-            "type": "linear",
-            "zeroline": false
-          },
-          "yaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "title": "kW",
-            "type": "linear",
-            "zeroline": false
-          },
-          "zaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "type": "linear",
-            "zeroline": false
-          }
-        },
-        "loadFromCDN": false,
-        "settings": {
-          "displayModeBar": false,
-          "type": "scatter"
-        },
-        "showAnnotations": true,
-        "traces": [
-          {
-            "mapping": {
-              "color": "Power [kW]",
-              "x": "SOC [%]",
-              "y": "Power [kW]"
-            },
-            "name": "Power",
-            "settings": {
-              "color_option": "solid",
-              "line": {
-                "color": "#005f81",
-                "dash": "solid",
-                "shape": "linear",
-                "width": 6
-              },
-              "marker": {
-                "color": "#8AB8FF",
-                "colorscale": "YlOrRd",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 5,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              },
-              "textposition": "bottom"
-            },
-            "show": {
-              "line": true,
-              "lines": false,
-              "markers": true
-            }
-          },
-          {
-            "mapping": {
-              "color": "Power [kW]",
-              "x": "avg SOC [%]",
-              "y": "avg Power [kW]"
-            },
-            "name": "Average Power",
-            "settings": {
-              "color_option": "ramp",
-              "line": {
-                "color": "#3274D9",
-                "dash": "solid",
-                "shape": "spline",
-                "width": 2
-              },
-              "marker": {
-                "color": "#33B5E5",
-                "colorscale": "YlOrRd",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 5,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              },
-              "textposition": "bottom"
-            },
-            "show": {
-              "line": true,
-              "lines": true,
-              "markers": false
-            }
-          }
-        ]
-      },
       "pluginVersion": "7.5.11",
       "targets": [
         {
-          "alias": "",
           "datasource": "TeslaMate",
+          "alias": "",
           "format": "table",
           "group": [],
           "hide": false,
@@ -971,7 +855,25 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "editorMode": "code",
+          "sql": {
+            "columns": [
+              {
+                "type": "function",
+                "parameters": []
+              }
+            ],
+            "groupBy": [
+              {
+                "type": "groupBy",
+                "property": {
+                  "type": "string"
+                }
+              }
+            ],
+            "limit": 50
+          }
         },
         {
           "datasource": "TeslaMate",
@@ -1005,8 +907,98 @@
         }
       ],
       "title": "Charging curve",
-      "type": "natel-plotly-panel",
-      "version": 1
+      "type": "xychart",
+      "options": {
+        "seriesMapping": "manual",
+        "series": [
+          {
+            "pointColor": {},
+            "x": "SOC [%]",
+            "y": "Power [kW]"
+          },
+          {
+            "pointColor": {
+              "fixed": "blue"
+            },
+            "x": "avg SOC [%]",
+            "y": "avg Power [kW]"
+          }
+        ],
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "show": "points",
+            "pointSize": {
+              "fixed": 5
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "axisBorderShow": false,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "custom.show",
+                "value": "lines"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "solid"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "refresh": false,
