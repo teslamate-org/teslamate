@@ -37,7 +37,7 @@ Source: [elixir-lang.org/install](https://elixir-lang.org/install)
 </details>
 
 <details>
-  <summary>Grafana (v8.3.4+) & Plugins</summary>
+  <summary>Grafana & Plugins</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
@@ -50,13 +50,6 @@ sudo systemctl enable grafana-server.service # to start Grafana at boot time
 ```
 
 Source: [grafana.com/docs/installation](https://grafana.com/docs/grafana/latest/installation/)
-
-Install the required Grafana plugins as well:
-
-```bash
-sudo grafana-cli plugins install natel-plotly-panel 0.0.7
-sudo systemctl restart grafana-server
-```
 
 [Import the Grafana dashboards](#import-grafana-dashboards) after [cloning the TeslaMate git repository](#clone-teslamate-git-repository).
 

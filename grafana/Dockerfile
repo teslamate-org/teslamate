@@ -4,7 +4,6 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=FALSE \
     GF_AUTH_ANONYMOUS_ENABLED=false \
     GF_AUTH_BASIC_ENABLED=false \
     GF_PATHS_PLUGINS="/var/lib/grafana-plugins" \
-    GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=natel-plotly-panel \
     GF_SECURITY_ADMIN_PASSWORD=admin \
     GF_SECURITY_ADMIN_USER=admin \
     GF_SECURITY_ALLOW_EMBEDDING=true \
@@ -19,8 +18,6 @@ RUN mkdir -p "$GF_PATHS_PLUGINS" && \
     chown -R grafana "$GF_PATHS_PLUGINS"
 
 USER grafana
-
-RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install natel-plotly-panel 0.0.7
 
 COPY logo.svg /usr/share/grafana/public/img/grafana_icon.svg
 COPY favicon.png /usr/share/grafana/public/img/fav32.png
