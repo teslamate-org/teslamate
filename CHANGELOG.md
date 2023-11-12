@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.4] - 2023-11-10
+
+### Improvements and Bug Fixes
+
+- Add endpoints query param to `vehicle_data` request to [reflect changes](https://developer.tesla.com/docs/fleet-api?shell#vehicle_data) to the API
+- Fix 60 seconds delay in built time - The installation scripts setup_XX.x are no longer supported and are not needed anymore
+
 ## [1.27.3] - 2023-06-12
 
 ### Improvements and Bug Fixes
@@ -1631,6 +1638,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[1.27.4]: https://github.com/adriankumpf/teslamate/compare/v1.27.3...v1.27.4
 [1.27.3]: https://github.com/adriankumpf/teslamate/compare/v1.27.2...v1.27.3
 [1.27.2]: https://github.com/adriankumpf/teslamate/compare/v1.27.1...v1.27.2
 [1.27.1]: https://github.com/adriankumpf/teslamate/compare/v1.27.0...v1.27.1
