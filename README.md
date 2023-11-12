@@ -1,8 +1,8 @@
 # TeslaMate
 
-[![CI](https://github.com/adriankumpf/teslamate/actions/workflows/elixir.yml/badge.svg)](https://github.com/adriankumpf/teslamate/actions/workflows/elixir.yml)
-[![Publish Docker images](https://github.com/adriankumpf/teslamate/actions/workflows/buildx.yml/badge.svg)](https://github.com/adriankumpf/teslamate/actions/workflows/buildx.yml)
-[![](https://coveralls.io/repos/github/adriankumpf/teslamate/badge.svg?branch=master)](https://coveralls.io/github/adriankumpf/teslamate?branch=master)
+[![CI](https://github.com/teslamate-org/teslamate/actions/workflows/elixir.yml/badge.svg)](https://github.com/teslamate-org/teslamate/actions/workflows/elixir.yml)
+[![Publish Docker images](https://github.com/teslamate-org/teslamate/actions/workflows/buildx.yml/badge.svg)](https://github.com/teslamate-org/teslamate/actions/workflows/buildx.yml)
+[![](https://coveralls.io/repos/github/teslamate-org/teslamate/badge.svg?branch=master)](https://coveralls.io/github/teslamate-org/teslamate?branch=master)
 [![](https://img.shields.io/docker/v/teslamate/teslamate/latest)](https://hub.docker.com/r/teslamate/teslamate)
 [![](https://img.shields.io/docker/image-size/teslamate/teslamate/latest)](https://hub.docker.com/r/teslamate/teslamate)
 [![](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)](https://hub.docker.com/r/teslamate/teslamate)
@@ -58,5 +58,5 @@ The documentation is available at [docs.teslamate.org](https://docs.teslamate.or
 
 ## Credits
 
-- Authors: Adrian Kumpf – [List of contributors](https://github.com/adriankumpf/teslamate/graphs/contributors)
+- Authors: Adrian Kumpf – [List of contributors](https://github.com/teslamate-org/teslamate/graphs/contributors)
 - Distributed under MIT License

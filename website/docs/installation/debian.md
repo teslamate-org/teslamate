@@ -94,7 +94,7 @@ The following command will clone the source files for the TeslaMate project. Thi
 ```bash
 cd /usr/src
 
-git clone https://github.com/adriankumpf/teslamate.git
+git clone https://github.com/teslamate-org/teslamate.git
 cd teslamate
 
 git checkout $(git describe --tags `git rev-list --tags --max-count=1`) # Checkout the latest stable version
@@ -267,7 +267,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
     Version: 10
     ```
 
-3.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/adriankumpf/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
+3.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
 
     ```bash
     $ ./grafana/dashboards.sh restore
