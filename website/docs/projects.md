@@ -58,7 +58,8 @@ LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/
 
 ## [TeslaMate Custom Dashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
 
-Teslamate Custom Dashboards: Battery Health, Charging Costs Stats, Charging CurveStats, Tracking Drives and more. Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
+Teslamate Custom Grafana Dashboards, including: Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Mileage Stats, Tracking Drives and more.
+Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
 
 LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
 

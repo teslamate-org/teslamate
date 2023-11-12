@@ -33,8 +33,8 @@ The documentation is available at [docs.teslamate.org](https://docs.teslamate.or
 - [Drive Stats](https://docs.teslamate.org/docs/screenshots#drive-stats)
 - [History of installed updates](https://docs.teslamate.org/docs/screenshots#updates)
 - [See when your car was online or asleep](https://docs.teslamate.org/docs/screenshots#states)
-- Lifetime driving map
-- Visited addresses
+- [Lifetime driving map](https://docs.teslamate.org/docs/screenshots/#lifetime-driving-map)
+- [Visited addresses](https://docs.teslamate.org/docs/screenshots/#visited-addresses)
 
 **General**
 
@@ -42,6 +42,7 @@ The documentation is available at [docs.teslamate.org](https://docs.teslamate.or
 - No additional vampire drain: the car will fall asleep as soon as possible
 - Automatic address lookup
 - Easy integration into Home Assistant (via MQTT)
+- Easy integration into Node-Red & Telegram (via MQTT)
 - Geo-fencing feature to create custom locations
 - Supports multiple vehicles per Tesla Account
 - Charge cost tracking
