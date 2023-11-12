@@ -10,6 +10,10 @@ on:
 env:
   REGISTRY_IMAGE: teslamate/teslamate
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   teslamate_build:
     strategy:
