@@ -6,8 +6,7 @@ Note: TeslaMate moved to the new @teslamate-org organization.
 
 ### Improvements and Bug Fixes
 
-- Add endpoints query param to `vehicle_data` request to [reflect changes](https://developer.tesla.com/docs/fleet-api?shell#vehicle_data) to the API
-- Fix 60 seconds delay in built time - The installation scripts setup_XX.x are no longer supported and are not needed anymore
+- Add endpoints query param to `vehicle_data` request to [reflect changes](https://developer.tesla.com/docs/fleet-api?shell#vehicle_data) to the API (#3398 - @swiffer)
 - Remove donation links
 - Fix warnings on Elixir 1.16
 - Upgrade Grafana to 9.5
