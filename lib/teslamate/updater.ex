@@ -85,7 +85,7 @@ defmodule TeslaMate.Updater do
   ## Private
 
   defp fetch_release do
-    case get("/repos/adriankumpf/teslamate/releases/latest") do
+    case get("/repos/teslamate-org/teslamate/releases/latest") do
       {:ok, %Tesla.Env{status: 200, body: body}} ->
         parse_release(body)
 

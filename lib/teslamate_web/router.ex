@@ -1,7 +1,6 @@
 defmodule TeslaMateWeb.Router do
   use TeslaMateWeb, :router
 
-  alias TeslaMateWeb.Plugs.Donate
   alias TeslaMate.Settings
 
   pipeline :browser do
@@ -24,7 +23,6 @@ defmodule TeslaMateWeb.Router do
     plug :put_root_layout, {TeslaMateWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug Donate
     plug :fetch_settings
   end
 
@@ -37,7 +35,6 @@ defmodule TeslaMateWeb.Router do
 
     get "/", CarController, :index
     get "/drive/:id/gpx", DriveController, :gpx
-    get "/donate", DonateController, :index
 
     live_session :default do
       live "/sign_in", SignInLive.Index

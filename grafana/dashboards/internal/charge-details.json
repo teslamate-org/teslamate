@@ -605,8 +605,10 @@
         "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [],
-          "fields": "/^location$/",
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
           "values": false
         },
         "textMode": "value"

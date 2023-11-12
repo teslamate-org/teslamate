@@ -158,7 +158,7 @@ defmodule TeslaMate.LogDriveTest do
       car = car_fixture()
 
       assert {:ok, %Drive{} = drive} = Log.start_drive(car)
-      assert {:ok, %Drive{id: id, distance: 0.0, duration_min: 0}} = Log.close_drive(drive)
+      assert {:ok, %Drive{id: id, distance: +0.0, duration_min: 0}} = Log.close_drive(drive)
       assert nil == Repo.get(Drive, id)
     end
 
@@ -166,7 +166,7 @@ defmodule TeslaMate.LogDriveTest do
       car = car_fixture()
 
       positions = [
-        %{date: "2019-04-06 10:00:00", latitude: 0.0, longitude: 0.0, odometer: 100}
+        %{date: "2019-04-06 10:00:00", latitude: +0.0, longitude: +0.0, odometer: 100}
       ]
 
       assert {:ok, drive} = Log.start_drive(car)
@@ -175,7 +175,7 @@ defmodule TeslaMate.LogDriveTest do
         assert {:ok, _} = Log.insert_position(drive, p)
       end
 
-      assert {:ok, %Drive{id: id, distance: 0.0, duration_min: 0}} = Log.close_drive(drive)
+      assert {:ok, %Drive{id: id, distance: +0.0, duration_min: 0}} = Log.close_drive(drive)
       assert nil == Repo.get(Drive, id)
     end
 
@@ -185,15 +185,15 @@ defmodule TeslaMate.LogDriveTest do
       positions = [
         %{
           date: "2019-04-06 10:00:00",
-          latitude: 0.0,
-          longitude: 0.0,
+          latitude: +0.0,
+          longitude: +0.0,
           odometer: 100,
           ideal_battery_range_km: 300
         },
         %{
           date: "2019-04-06 10:05:00",
-          latitude: 0.0,
-          longitude: 0.0,
+          latitude: +0.0,
+          longitude: +0.0,
           odometer: 100,
           ideal_battery_range_km: 300
         }
@@ -205,7 +205,7 @@ defmodule TeslaMate.LogDriveTest do
         assert {:ok, _} = Log.insert_position(drive, p)
       end
 
-      assert {:ok, %Drive{id: id, distance: 0.0}} = Log.close_drive(drive)
+      assert {:ok, %Drive{id: id, distance: +0.0}} = Log.close_drive(drive)
       assert nil == Repo.get(Drive, id)
     end
   end
