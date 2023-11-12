@@ -1,11 +1,40 @@
 # Changelog
 
-## [1.27.4] - 2023-11-10
+## [1.27.4] - 2023-11-12
+
+Note: TeslaMate moved to the new @teslamate-org organization.
 
 ### Improvements and Bug Fixes
 
 - Add endpoints query param to `vehicle_data` request to [reflect changes](https://developer.tesla.com/docs/fleet-api?shell#vehicle_data) to the API
 - Fix 60 seconds delay in built time - The installation scripts setup_XX.x are no longer supported and are not needed anymore
+- Remove donation links
+- Fix warnings on Elixir 1.16
+- Upgrade Grafana to 9.5
+- Trim whitespace from geofence names
+- Support self-signed certificates via (`DATABASE_SSL_CA_CERT_FILE`)
+- Use preferred tile.openstreetmap.org URL (#3368)
+- Update dependencies
+
+#### Dashboards
+
+- Charges: Mark `end_date` as `dateTimeAsLocal` (#3033 - @DrMichae)
+- Add Battery Health dashboard (#3059 - @jheredianet)
+- Show all vehicles on drive stats dashboard (#3342 - @yoyostile)
+- Updates: Fix for div by zero error (#3289 - @Dulanic)
+- Show location name in charge details (#3294 - @DrMichael)
+- Fix broken links when orgId is not 1 (#3380 - @jlestel)
+- Update query to get car efficiency on Battery Health dashboard (#3245 - @jheredianet)
+
+#### Translations
+
+- Updated Spanish translation (#3244 - @jheredianet)
+
+#### Documentation
+
+- Update docs to use Docker Compose V2 (#3025 - @eden881)
+- Update FreeBSD instructions (#3394 - @ivanovd)
+- Add Tesla-YouQ project (#3347 - @brchri)
 
 ## [1.27.3] - 2023-06-12
 
