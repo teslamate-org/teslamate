@@ -28,7 +28,7 @@ defmodule TeslaMate.TerrainTest do
       :ok = start_terrain(name, %{{0, 0} => fn -> {:ok, 42} end})
 
       assert 42 == Terrain.get_elevation(name, {0, 0})
-      assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
+      assert_received {SRTM, {:get_elevation, 0, 0, [disk_cache_path: ".srtm_cache"]}}
 
       refute_receive _
     end
@@ -40,7 +40,7 @@ defmodule TeslaMate.TerrainTest do
       assert Terrain.get_elevation(name, {0, 0}) == nil
 
       TestHelper.eventually(fn ->
-        assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
+        assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
       end)
 
       refute_receive _
@@ -58,7 +58,7 @@ defmodule TeslaMate.TerrainTest do
       assert Terrain.get_elevation(name, {0, 0}) == nil
 
       TestHelper.eventually(fn ->
-        assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
+        assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
       end)
 
       # still blocked
@@ -80,7 +80,7 @@ defmodule TeslaMate.TerrainTest do
       assert Terrain.get_elevation(name, {1, 1}) == nil
 
       TestHelper.eventually(fn ->
-        assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 1, 1}}
+        assert_received {SRTM, {:get_elevation, 1, 1, _opts}}
       end)
 
       refute_receive _
@@ -102,22 +102,12 @@ defmodule TeslaMate.TerrainTest do
       # circuit broke after 3 attempts
       TestHelper.eventually(
         fn ->
-          assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
-          assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
-          assert_received {SRTM, {:get_elevation, %SRTM.Client{}, 0, 0}}
+          assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
+          assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
+          assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
         end,
         attempts: 25
       )
-
-      refute_receive _
-    end
-  end
-
-  describe "handle_info/2" do
-    test "handles :purge_srtm_in_memory_cache message", %{test: name} do
-      :ok = start_terrain(name)
-
-      send(name, :purge_srtm_in_memory_cache)
 
       refute_receive _
     end
