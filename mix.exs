@@ -36,7 +36,7 @@ defmodule TeslaMate.MixProject do
 
   defp deps do
     [
-      {:castore, "~> 0.1"},
+      {:castore, "~> 1.0"},
       {:ecto_sql, "~> 3.0"},
       {:ex_cldr, "~> 2.37.0"},
       {:ex_cldr_plugs, "~> 1.0"},
@@ -57,15 +57,13 @@ defmodule TeslaMate.MixProject do
       {:phoenix_pubsub, "~> 2.0"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
-      {:srtm, "~> 0.5"},
+      {:srtm, "~> 0.6.0"},
       {:tesla, "~> 1.4"},
       {:timex, "~> 3.0"},
       {:tortoise, "~> 0.10"},
       {:tzdata, "~> 1.1"},
       {:websockex, "~> 0.4"},
       {:cloak_ecto, "~> 1.2"},
-      # Necessary until v1.1.7+ is released
-      {:ssl_verify_fun, "~> 1.1.0", manager: :rebar3, override: true},
       {:dialyxir, "~> 1.3", only: [:dev], runtime: false}
     ]
   end
