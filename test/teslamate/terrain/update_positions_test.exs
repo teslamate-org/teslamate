@@ -48,7 +48,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
       if i in [50, 150] do
         assert_receive {SRTM, {:get_elevation, 1.0, 1.0, _opts}}
       else
-        assert_receive {SRTM, {:get_elevation, 0.0, 0.0, _opts}}
+        assert_receive {SRTM, {:get_elevation, +0.0, +0.0, _opts}}
       end
     end
 
@@ -101,7 +101,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
         end
       })
 
-    assert_receive {SRTM, {:get_elevation, 0.0, 0.0, _opts}}
+    assert_receive {SRTM, {:get_elevation, +0.0, +0.0, _opts}}
     assert_receive {SRTM, {:get_elevation, 1.0, 1.0, _opts}}
     assert_receive {SRTM, {:get_elevation, 42.0, 42.0, _opts}}
     assert_receive {SRTM, {:get_elevation, 42.0, 42.0, _opts}}
