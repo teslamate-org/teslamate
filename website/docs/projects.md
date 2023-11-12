@@ -69,3 +69,9 @@ The Tesla Home Assistant integration can use the data from the TeslaMate MQTT in
 LINK: [https://github.com/alandtse/tesla](https://github.com/alandtse/tesla)
 
 LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Integration)
+
+## [Tesla-YouQ](https://github.com/brchri/tesla-youq)
+
+A lightweight app that will operate your MyQ connected garage doors based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and MyQ devices.
+
+LINK: [https://github.com/brchri/tesla-youq](https://github.com/brchri/tesla-youq)
