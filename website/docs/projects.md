@@ -6,8 +6,6 @@ title: Projects using TeslaMate
 
 An LED illuminated acrylic Tesla Model 3. Its color and scale of light depend on the cars current state.
 
-A limited number of Gaussmeter units are available for sale, see github link for details. (10% of profits go to support Teslamate)
-
 LINK: [github.com/gaussmeter/gaussmeter](https://github.com/gaussmeter/gaussmeter)
 
 ## [MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
