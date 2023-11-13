@@ -6,8 +6,6 @@ title: Projects using TeslaMate
 
 An LED illuminated acrylic Tesla Model 3. Its color and scale of light depend on the cars current state.
 
-A limited number of Gaussmeter units are available for sale, see github link for details. (10% of profits go to support Teslamate)
-
 LINK: [github.com/gaussmeter/gaussmeter](https://github.com/gaussmeter/gaussmeter)
 
 ## [MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
@@ -58,7 +56,8 @@ LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/
 
 ## [TeslaMate Custom Dashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
 
-Teslamate Custom Dashboards: Battery Health, Charging Costs Stats, Charging CurveStats, Tracking Drives and more. Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
+Teslamate Custom Grafana Dashboards, including: Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Mileage Stats, Tracking Drives and more.
+Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
 
 LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
 
@@ -69,3 +68,9 @@ The Tesla Home Assistant integration can use the data from the TeslaMate MQTT in
 LINK: [https://github.com/alandtse/tesla](https://github.com/alandtse/tesla)
 
 LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Integration)
+
+## [Tesla-YouQ](https://github.com/brchri/tesla-youq)
+
+A lightweight app that will operate your MyQ connected garage doors based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and MyQ devices.
+
+LINK: [https://github.com/brchri/tesla-youq](https://github.com/brchri/tesla-youq)
