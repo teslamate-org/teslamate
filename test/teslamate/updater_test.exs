@@ -17,7 +17,9 @@ defmodule TeslaMate.UpdaterTest do
       [
         {Tesla.Adapter.Finch, [],
          call: fn %Tesla.Env{} = env, _opts ->
-           assert env.url == "https://api.github.com/repos/adriankumpf/teslamate/releases/latest"
+           assert env.url ==
+                    "https://api.github.com/repos/teslamate-org/teslamate/releases/latest"
+
            resp
          end}
       ]

@@ -6,7 +6,7 @@ defmodule TeslaMate.Terrain do
   alias TeslaMate.Log.Position
   alias TeslaMate.Log
 
-  defstruct [:client, :timeout, :deps, :name]
+  defstruct [:timeout, :deps, :name]
   alias __MODULE__, as: Data
 
   @name __MODULE__
@@ -25,15 +25,9 @@ defmodule TeslaMate.Terrain do
 
   @impl true
   def init(opts) do
-    {:ok, client} =
-      SRTM.Client.new(cache_path(),
-        adapter: {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000}
-      )
-
     data = %Data{
       timeout: Keyword.get(opts, :timeout, 100),
       name: Keyword.get(opts, :name, @name),
-      client: client,
       deps: %{
         srtm: Keyword.get(opts, :deps_srtm, SRTM),
         log: Keyword.get(opts, :deps_log, Log)
@@ -42,7 +36,6 @@ defmodule TeslaMate.Terrain do
 
     case Keyword.get(opts, :disabled, false) do
       false ->
-        {:ok, _ref} = :timer.send_interval(:timer.hours(3), self(), :purge_srtm_in_memory_cache)
         {:ok, :ready, data, {:next_event, :internal, {:fetch_positions, 0}}}
 
       true ->
@@ -57,8 +50,8 @@ defmodule TeslaMate.Terrain do
     task = Task.async(fn -> do_get_elevation({lat, lng}, data) end)
 
     case Task.yield(task, data.timeout) do
-      {:ok, {:ok, elevation, client}} ->
-        {:keep_state, %Data{data | client: client}, {:reply, from, elevation}}
+      {:ok, {:ok, elevation}} ->
+        {:keep_state_and_data, {:reply, from, elevation}}
 
       {:ok, {:error, :unavailable}} ->
         {:keep_state_and_data, {:reply, from, nil}}
@@ -97,11 +90,7 @@ defmodule TeslaMate.Terrain do
   ## Cast
 
   def handle_event(:cast, :process, {:update, [], next, nil}, data) do
-    {:next_state, :ready, data,
-     [
-       {:next_event, :info, :purge_srtm_in_memory_cache},
-       {:next_event, :internal, {:fetch_positions, next}}
-     ]}
+    {:next_state, :ready, data, {:next_event, :internal, {:fetch_positions, next}}}
   end
 
   def handle_event(:cast, :process, {:update, [%Position{} = p | rest], next, nil}, data) do
@@ -117,10 +106,10 @@ defmodule TeslaMate.Terrain do
       end)
 
     case Task.yield(task, data.timeout) do
-      {:ok, {:ok, elevation, client}} ->
+      {:ok, {:ok, elevation}} ->
         {:ok, _pos} = call(data.deps.log, :update_position, [p, %{elevation: elevation}])
         :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil}, %Data{data | client: client}}
+        {:next_state, {:update, rest, next, nil}, data}
 
       {:ok, {:error, :unavailable}} ->
         :ok = GenStateMachine.cast(self(), :process)
@@ -141,9 +130,9 @@ defmodule TeslaMate.Terrain do
 
   def handle_event(:info, {ref, result}, {:waiting, ref}, data) do
     case result do
-      {:ok, elevation, %SRTM.Client{} = client} ->
+      {:ok, elevation} ->
         Logger.debug("Received delayed SRTM message: #{elevation}m")
-        {:next_state, :ready, %Data{data | client: client}, schedule_fetch()}
+        {:next_state, :ready, data, schedule_fetch()}
 
       {:error, reason} ->
         log_warning(reason)
@@ -153,11 +142,11 @@ defmodule TeslaMate.Terrain do
 
   def handle_event(:info, {ref, result}, {:update, [%Position{} = p | rest], next, ref}, data) do
     case result do
-      {:ok, elevation, %SRTM.Client{} = client} ->
+      {:ok, elevation} ->
         Logger.debug("Received delayed SRTM message: #{elevation}m")
         {:ok, _pos} = call(data.deps.log, :update_position, [p, %{elevation: elevation}])
         :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil}, %Data{data | client: client}}
+        {:next_state, {:update, rest, next, nil}, data}
 
       {:error, reason} ->
         log_warning(reason)
@@ -170,12 +159,6 @@ defmodule TeslaMate.Terrain do
     :keep_state_and_data
   end
 
-  def handle_event(:info, :purge_srtm_in_memory_cache, _state, %Data{client: client} = data) do
-    Logger.debug("Purging SRTM in-memory cache ...")
-    {:ok, client} = SRTM.Client.purge_in_memory_cache(client, keep: 2)
-    {:keep_state, %Data{data | client: client}, {:next_event, :info, :garbage_collect}}
-  end
-
   def handle_event(:info, :garbage_collect, _state, _data) do
     :erlang.garbage_collect(self())
     :keep_state_and_data
@@ -183,10 +166,11 @@ defmodule TeslaMate.Terrain do
 
   # Private
 
-  defp do_get_elevation({lat, lng}, %Data{client: client, deps: %{srtm: srtm}, name: name} = data) do
+  defp do_get_elevation({lat, lng}, %Data{deps: %{srtm: srtm}, name: name} = data) do
     case :fuse.ask(name, :sync) do
       :ok ->
-        with {:error, reason} <- call(srtm, :get_elevation, [client, lat, lng]) do
+        with {:error, reason} <-
+               call(srtm, :get_elevation, [lat, lng, [disk_cache_path: cache_path()]]) do
           :fuse.melt(name)
           {:error, reason}
         end

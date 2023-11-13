@@ -21,7 +21,7 @@ jobs:
             lint: true
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: erlef/setup-beam@v1
         id: beam
@@ -135,7 +135,7 @@ jobs:
       ELIXIR_ASSERT_TIMEOUT: 1000
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: erlef/setup-beam@v1
         id: beam

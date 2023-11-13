@@ -4,7 +4,7 @@ module.exports = {
   url: "https://docs.teslamate.org",
   baseUrl: "/",
   favicon: "img/favicon.ico",
-  organizationName: "adriankumpf",
+  organizationName: "teslamate-org",
   projectName: "teslamate",
   themeConfig: {
     navbar: {
@@ -22,7 +22,7 @@ module.exports = {
         },
         // { to: "blog", label: "Blog", position: "left" },
         {
-          href: "https://github.com/adriankumpf/teslamate",
+          href: "https://github.com/teslamate-org/teslamate",
           label: "GitHub",
           position: "right",
         },
@@ -56,7 +56,7 @@ module.exports = {
           sidebarCollapsible: false,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl:
-            "https://github.com/adriankumpf/teslamate/edit/master/website/",
+            "https://github.com/teslamate-org/teslamate/edit/master/website/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),

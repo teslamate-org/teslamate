@@ -36,8 +36,8 @@ Replace the default `teslamate` value below with the value defined in the .env f
 # Stop the teslamate container to avoid write conflicts
 docker compose stop teslamate
 
-# Drop existing data and reinitialize
-docker compose exec -T database psql -U teslamate << .
+# Drop existing data and reinitialize (Don't forget to replace first teslamate if using different TM_DB_USER)
+docker compose exec -T database psql -U teslamate teslamate << .
 drop schema public cascade;
 create schema public;
 create extension cube;
