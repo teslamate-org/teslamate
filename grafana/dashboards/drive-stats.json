@@ -485,7 +485,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Median distance of a drive",
+      "title": "Average distance of a drive",
       "type": "stat"
     },
     {
@@ -603,7 +603,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Median distance driven per day",
+      "title": "Average distance driven per day",
       "type": "stat"
     },
     {
@@ -696,7 +696,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Median kWh used per day",
+      "title": "Average kWh used per day",
       "type": "stat"
     },
     {
