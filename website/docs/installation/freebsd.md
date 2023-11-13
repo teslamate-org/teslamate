@@ -42,7 +42,6 @@ pkg install erlang
 
 <details>
   <summary>Elixir (v1.12+)</summary>
-  
 ```bash
 pkg install elixir
 ```
@@ -148,6 +147,7 @@ mix do phx.digest, release --overwrite
 ### Create FreeBSD service definition _/usr/local/etc/rc.d/teslamate_
 
 ```console
+#!/bin/sh
 # PROVIDE: teslamate
 # REQUIRE: DAEMON
 # KEYWORD: teslamate,tesla
@@ -185,6 +185,9 @@ DATABASE_PASS=${teslamate_db_pass}; export DATABASE_PASS
 ENCRYPTION_KEY=${teslamate_encryption_key}; export ENCRYPTION_KEY
 DISABLE_MQTT=${teslamate_mqtt_enable-"FALSE"}; export DISABLE_MQTT
 MQTT_HOST=${teslamate_mqtt_host-"localhost"}; export MQTT_HOST
+# Uncomment if you need these
+#MQTT_USERNAME=${teslamate_mqtt_user-"teslamate"}; export MQTT_USERNAME
+#MQTT_PASSWORD=${teslamate_mqtt_pass-"mqttpassword"}; export MQTT_PASSWORD
 VIRTUAL_HOST=${teslamate_virtual_host-"teslamate.example.com"}; export VIRTUAL_HOST
 
 COMMAND=${teslamate_command-"${HOME}/_build/prod/rel/teslamate/bin/teslamate"}
@@ -199,9 +202,7 @@ start_cmd="${name}_start"
 stop_cmd="${COMMAND} stop"
 status_cmd="${COMMAND} pid"
 
-
 run_rc_command "$1"
-
 ```
 
 ### Update _/etc/rc.conf_
