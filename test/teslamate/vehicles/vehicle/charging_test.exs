@@ -33,7 +33,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
-    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+    assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
                     [lookup_address: true]}
 
     assert_receive {:"$websockex_cast", :disconnect}
@@ -100,7 +100,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, charging_event(now_ts + 2, "Charging", 0.2)},
       {:error, :vehicle_unavailable},
@@ -123,7 +123,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+    assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
                     [lookup_address: true]}
 
     assert_receive {:"$websockex_cast", :disconnect}
@@ -159,7 +159,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     events = [
       {:ok, online_event()},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, %TeslaApi.Vehicle{state: "online", charge_state: nil}},
       {:ok, %TeslaApi.Vehicle{state: "online", charge_state: nil}},
@@ -178,7 +178,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+    assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
                     [lookup_address: true]}
 
     assert_receive {:"$websockex_cast", :disconnect}
@@ -223,7 +223,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+    assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
                     [lookup_address: true]}
 
     assert_receive {:"$websockex_cast", :disconnect}
@@ -234,12 +234,12 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
   end
 
   @tag :capture_log
-  test "transisitions into asleep state", %{test: name} do
+  test "transitions into asleep state", %{test: name} do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
       {:ok, online_event()},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, charging_event(now_ts + 2, "Charging", 0.2)},
       {:error, :vehicle_unavailable},
@@ -255,7 +255,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-    assert_receive {:start_charging_process, ^car, %{latitude: 0.0, longitude: 0.0},
+    assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
                     [lookup_address: true]}
 
     assert_receive {:"$websockex_cast", :disconnect}

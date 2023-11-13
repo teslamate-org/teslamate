@@ -1950,6 +1950,7 @@
           "text": "bar",
           "value": "bar"
         },
+        "datasource": "TeslaMate",
         "definition": "select unit_of_pressure from settings limit 1;",
         "hide": 2,
         "includeAll": false,

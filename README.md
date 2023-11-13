@@ -1,11 +1,11 @@
 # TeslaMate
 
-[![CI](https://github.com/adriankumpf/teslamate/workflows/CI/badge.svg?branch=master)](https://github.com/adriankumpf/teslamate/actions?query=workflow%3ACI)
-[![](https://coveralls.io/repos/github/adriankumpf/teslamate/badge.svg?branch=master)](https://coveralls.io/github/adriankumpf/teslamate?branch=master)
+[![CI](https://github.com/teslamate-org/teslamate/actions/workflows/elixir.yml/badge.svg)](https://github.com/teslamate-org/teslamate/actions/workflows/elixir.yml)
+[![Publish Docker images](https://github.com/teslamate-org/teslamate/actions/workflows/buildx.yml/badge.svg)](https://github.com/teslamate-org/teslamate/actions/workflows/buildx.yml)
+[![](https://coveralls.io/repos/github/teslamate-org/teslamate/badge.svg?branch=master)](https://coveralls.io/github/teslamate-org/teslamate?branch=master)
 [![](https://img.shields.io/docker/v/teslamate/teslamate/latest)](https://hub.docker.com/r/teslamate/teslamate)
 [![](https://img.shields.io/docker/image-size/teslamate/teslamate/latest)](https://hub.docker.com/r/teslamate/teslamate)
 [![](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)](https://hub.docker.com/r/teslamate/teslamate)
-[![](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YE4CPXRAV9CVL&source=url)
 
 A powerful, self-hosted data logger for your Tesla.
 
@@ -32,8 +32,8 @@ The documentation is available at [docs.teslamate.org](https://docs.teslamate.or
 - [Drive Stats](https://docs.teslamate.org/docs/screenshots#drive-stats)
 - [History of installed updates](https://docs.teslamate.org/docs/screenshots#updates)
 - [See when your car was online or asleep](https://docs.teslamate.org/docs/screenshots#states)
-- Lifetime driving map
-- Visited addresses
+- [Lifetime driving map](https://docs.teslamate.org/docs/screenshots/#lifetime-driving-map)
+- [Visited addresses](https://docs.teslamate.org/docs/screenshots/#visited-addresses)
 
 **General**
 
@@ -41,6 +41,7 @@ The documentation is available at [docs.teslamate.org](https://docs.teslamate.or
 - No additional vampire drain: the car will fall asleep as soon as possible
 - Automatic address lookup
 - Easy integration into Home Assistant (via MQTT)
+- Easy integration into Node-Red & Telegram (via MQTT)
 - Geo-fencing feature to create custom locations
 - Supports multiple vehicles per Tesla Account
 - Charge cost tracking
@@ -57,5 +58,5 @@ The documentation is available at [docs.teslamate.org](https://docs.teslamate.or
 
 ## Credits
 
-- Authors: Adrian Kumpf – [List of contributors](https://github.com/adriankumpf/teslamate/graphs/contributors)
+- Authors: Adrian Kumpf – [List of contributors](https://github.com/teslamate-org/teslamate/graphs/contributors)
 - Distributed under MIT License

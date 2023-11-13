@@ -281,6 +281,7 @@ defmodule TeslaMate.Log do
     query =
       from d0 in subquery(drive_data),
         join: d1 in subquery(non_streamed_drive_data),
+        on: true,
         select: %{
           d0
           | start_ideal_range_km: d1.start_ideal_range_km,
@@ -567,10 +568,7 @@ defmodule TeslaMate.Log do
          }}
         when is_number(minutes) ->
           cost = Decimal.mult(minutes, cost_per_minute)
-
-          if match?(%Decimal{}, cost) or match?(%Decimal{}, session_fee) do
-            Decimal.add(session_fee || 0, cost || 0)
-          end
+          Decimal.add(session_fee || 0, cost)
 
         {_, _} ->
           nil

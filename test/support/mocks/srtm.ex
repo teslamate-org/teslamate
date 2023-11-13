@@ -10,8 +10,8 @@ defmodule SRTMMock do
     GenServer.start_link(__MODULE__, opts, name: Keyword.fetch!(opts, :name))
   end
 
-  def get_elevation(name, client, lat, lng) do
-    GenServer.call(name, {:get_elevation, client, lat, lng})
+  def get_elevation(name, lat, lng, opts \\ []) do
+    GenServer.call(name, {:get_elevation, lat, lng, opts})
   end
 
   # Callbacks
@@ -22,15 +22,15 @@ defmodule SRTMMock do
   end
 
   @impl true
-  def handle_call({:get_elevation, client, lat, lng}, _, %State{responses: r} = state) do
+  def handle_call({:get_elevation, lat, lng, opts}, _, %State{responses: r} = state) do
     lat = with %Decimal{} <- lat, do: Decimal.to_float(lat)
     lng = with %Decimal{} <- lng, do: Decimal.to_float(lng)
 
-    send(state.pid, {SRTM, {:get_elevation, client, lat, lng}})
+    send(state.pid, {SRTM, {:get_elevation, lat, lng, opts}})
 
     response =
       with {:ok, elevation} <- Map.fetch!(r, {lat, lng}).() do
-        {:ok, elevation, client}
+        {:ok, elevation}
       end
 
     {:reply, response, state}

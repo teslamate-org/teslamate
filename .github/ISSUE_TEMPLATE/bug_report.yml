@@ -9,8 +9,8 @@ body:
       description: |
         Please search to see if an issue already exists for the bug you encountered:
 
-        - [Issues](https://github.com/adriankumpf/teslamate/issues?q=)
-        - [Discussions](https://github.com/adriankumpf/teslamate/discussions)
+        - [Issues](https://github.com/teslamate-org/teslamate/issues?q=)
+        - [Discussions](https://github.com/teslamate-org/teslamate/discussions)
 
       options:
         - label: I have searched the existing issues
@@ -56,7 +56,7 @@ body:
       description: |
         Please copy and paste any relevant log output of the TeslaMate Docker container or application. This will be automatically formatted into code, so no need for backticks.
 
-        To retrieve the TeslaMate Docker container logs, run `docker-compose logs teslamate`.
+        To retrieve the TeslaMate Docker container logs, run `docker compose logs teslamate`.
       placeholder: |
         2021-09-22 23:20:54.226 [info] Starting logger for 'Tesla'
         2021-09-22 23:20:54.251 [info] MQTT connection has been established
@@ -83,20 +83,20 @@ body:
         For example, to export charge data after January 1, 2020:
 
         ```bash
-        $ docker-compose exec database psql teslamate teslamate -c \
+        $ docker compose exec database psql teslamate teslamate -c \
            "COPY (select * from charges where date > '2020-01-01') TO STDOUT WITH CSV HEADER" > charges.csv
 
-        $ docker-compose exec database psql teslamate teslamate -c \
+        $ docker compose exec database psql teslamate teslamate -c \
            "COPY (select * from charging_processes where start_date > '2020-01-01') TO STDOUT WITH CSV HEADER" > charging_processes.csv
         ```
 
         To export drive data after January 1, 2020:
 
         ```bash
-        $ docker-compose exec database psql teslamate teslamate -c \
+        $ docker compose exec database psql teslamate teslamate -c \
            "COPY (select id, car_id, drive_id, date, elevation, speed, power, odometer, ideal_battery_range_km, est_battery_range_km, rated_battery_range_km, battery_level, usable_battery_level, battery_heater_no_power, battery_heater_on, battery_heater, inside_temp, outside_temp, fan_status, driver_temp_setting, passenger_temp_setting, is_climate_on, is_rear_defroster_on, is_front_defroster_on from positions where date > '2020-01-20') TO STDOUT WITH CSV HEADER" > positions.csv
 
-        $ docker-compose exec database psql teslamate teslamate -c \
+        $ docker compose exec database psql teslamate teslamate -c \
            "COPY (select * from drives where start_date > '2020-01-01') TO STDOUT WITH CSV HEADER" > drives.csv
         ```
       placeholder: Upload exported data here by dragging & dropping

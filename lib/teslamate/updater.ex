@@ -7,7 +7,7 @@ defmodule TeslaMate.Updater do
   @version Mix.Project.config()[:version]
   @name __MODULE__
 
-  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP
+  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000
 
   plug Tesla.Middleware.BaseUrl, "https://api.github.com"
   plug Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]
@@ -85,7 +85,7 @@ defmodule TeslaMate.Updater do
   ## Private
 
   defp fetch_release do
-    case get("/repos/adriankumpf/teslamate/releases/latest", receive_timeout: 30_000) do
+    case get("/repos/teslamate-org/teslamate/releases/latest") do
       {:ok, %Tesla.Env{status: 200, body: body}} ->
         parse_release(body)
 
@@ -113,6 +113,6 @@ defmodule TeslaMate.Updater do
     end
   end
 
-  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warn
+  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warning
   defp log_level(%Tesla.Env{}), do: :debug
 end

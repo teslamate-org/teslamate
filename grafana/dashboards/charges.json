@@ -692,11 +692,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
+                "value": "dateTimeAsLocal"
               },
               {
                 "id": "custom.align"

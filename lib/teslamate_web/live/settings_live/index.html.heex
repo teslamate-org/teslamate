@@ -283,7 +283,7 @@
               <th align="right"><%= gettext("Version") %></th>
               <td><%= Application.spec(:teslamate, :vsn) %><strong><%=
                 if @update do
-                  vsn = link @update, to: "https://github.com/adriankumpf/teslamate/releases",
+                  vsn = link @update, to: "https://github.com/teslamate-org/teslamate/releases",
                                       target: "_blank", rel: "noopener noreferrer"
 
                   [" (", gettext("Update available"), ": ", vsn, ")"]
@@ -292,7 +292,7 @@
             </tr>
             <tr>
               <th align="right"><%= gettext("GitHub") %></th>
-              <td><%= link "adriankumpf/teslamate", to: "https://github.com/adriankumpf/teslamate", target: "_blank", rel: "noopener noreferrer" %></td>
+              <td><%= link "teslamate-org/teslamate", to: "https://github.com/teslamate-org/teslamate", target: "_blank", rel: "noopener noreferrer" %></td>
             </tr>
             <tr>
               <th align="right"><%= gettext("Documentation") %></th>

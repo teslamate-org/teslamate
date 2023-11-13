@@ -1,8 +1,7 @@
 [default.extend-words]
 mosquitto = "mosquitto"
-Mosquitto = "Mosquitto"
 HASS = "HASS"
-hass = "hass"
+Juni = "Juni"
 
 [type.po]
 extend-glob = ["*.po"]

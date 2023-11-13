@@ -554,11 +554,9 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
         assert [
                  {"a",
-                  [_, {"href", "https://github.com/adriankumpf/teslamate/releases"}, _, _, _],
+                  [_, {"href", "https://github.com/teslamate-org/teslamate/releases"}, _, _, _],
                   [_, {_, _, ["Update available: 1.1.3"]}]}
-               ] =
-                 Floki.find(html, ".footer a")
-                 |> Enum.reject(&match?({"a", [_, _, _, _, _], [_, {_, _, ["Donate"]}]}, &1))
+               ] = Floki.find(html, ".footer a")
       end
     end
   end

@@ -52,6 +52,10 @@ defmodule TeslaApi.Vehicle do
       end
 
     TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}/vehicle_data",
+      query: [
+        endpoints:
+          "charge_state;climate_state;closures_state;drive_state;gui_settings;location_data;vehicle_config;vehicle_state;vehicle_data_combo"
+      ],
       opts: [access_token: auth.token]
     )
     |> handle_response(transform: &result/1)
@@ -66,7 +70,7 @@ defmodule TeslaApi.Vehicle do
       state: v["state"] || "unknown",
       option_codes: String.split(v["option_codes"] || "", ","),
       in_service: v["in_service"],
-      display_name: v["display_name"],
+      display_name: get_in(v, ["vehicle_state", "vehicle_name"]) || v["display_name"],
       color: v["color"],
       calendar_enabled: v["calendar_enabled"],
       backseat_token: v["backseat_token"],

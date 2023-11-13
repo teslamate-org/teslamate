@@ -234,21 +234,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                assert_receive :continue?
                refute_receive _
              end) =~ """
-             Discarded stale fetch result: %{
-               last: %TeslaApi.Vehicle.State.Drive{
-                 gps_as_of: nil,
-                 heading: 120,
-                 latitude: 42.1,
-                 longitude: 42.0,
-                 native_latitude: nil,
-                 native_location_supported: nil,
-                 native_longitude: nil,
-                 native_type: nil,
-                 power: 0,
-                 shift_state: \"D\",
-                 speed: 0,
-                 timestamp: #{DateTime.to_unix(d1, :millisecond)}
-               },
+             Discarded stale fetch result: [
                now: %TeslaApi.Vehicle.State.Drive{
                  gps_as_of: nil,
                  heading: nil,
@@ -262,8 +248,22 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                  shift_state: \"P\",
                  speed: 0,
                  timestamp: #{now_ts}
+               },
+               last: %TeslaApi.Vehicle.State.Drive{
+                 gps_as_of: nil,
+                 heading: 120,
+                 latitude: 42.1,
+                 longitude: 42.0,
+                 native_latitude: nil,
+                 native_location_supported: nil,
+                 native_longitude: nil,
+                 native_type: nil,
+                 power: 0,
+                 shift_state: \"D\",
+                 speed: 0,
+                 timestamp: #{DateTime.to_unix(d1, :millisecond)}
                }
-             }
+             ]
              """
 
       send(:"api_#{name}", :continue)
@@ -338,8 +338,8 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       stream(name, %{shift_state: nil, power: -1, time: now})
       send(:"api_#{name}", :continue)
 
-      assert_receive {:start_charging_process, ^car, %{latitude: 0.0}, [lookup_address: true]}
-      assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: 0.0}}
+      assert_receive {:start_charging_process, ^car, %{latitude: +0.0}, [lookup_address: true]}
+      assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: +0.0}}
       assert_receive {:"$websockex_cast", :disconnect}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 
@@ -380,7 +380,9 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       ]
 
       :ok =
-        start_vehicle(name, events, settings: %{use_streaming_api: true, suspend_min: 999_999_999})
+        start_vehicle(name, events,
+          settings: %{use_streaming_api: true, suspend_min: 999_999_999}
+        )
 
       assert_receive {:start_state, car, :online, date: _}
       assert_receive {:insert_position, ^car, %{}}
@@ -515,8 +517,10 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     assert_receive :continue?
     send(:"api_#{name}", :continue)
 
-    assert_receive {:start_charging_process, ^car, %{latitude: 0.0}, [lookup_address: true]}, 1000
-    assert_receive {:insert_charge, _cproc, %{date: _, charge_energy_added: 0.0}}
+    assert_receive {:start_charging_process, ^car, %{latitude: +0.0}, [lookup_address: true]},
+                   1000
+
+    assert_receive {:insert_charge, _cproc, %{date: _, charge_energy_added: +0.0}}
     assert_receive {:"$websockex_cast", :disconnect}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
 

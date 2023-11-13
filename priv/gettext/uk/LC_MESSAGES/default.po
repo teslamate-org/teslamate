@@ -9,7 +9,6 @@
 msgid ""
 msgstr ""
 "Language: uk\n"
-"Plural-Forms: nplurals=2\n"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/car_live/summary.html.heex:104
@@ -448,6 +447,7 @@ msgid "Found %{count} file"
 msgid_plural "Found %{count} files"
 msgstr[0] "Знайдено %{count} файл"
 msgstr[1] "Знайдено %{count} файли"
+msgstr[2] "Знайдено %{count} файли"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/templates/layout/root.html.heex:104
@@ -513,6 +513,7 @@ msgid "There is <strong>%{n} charging session</strong> at this location for whic
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "Зарядній сесії %{n} у данній гео-позиції ще не задано вартість"
 msgstr[1] "Зарядним сесіям %{n} у данній гео-позиції ще не задано вартість"
+msgstr[2] "Зарядним сесіям %{n} у данній гео-позиції ще не задано вартість"
 
 #, elixir-autogen, elixir-format
 #: lib/teslamate_web/live/geofence_live/form.html.heex:134

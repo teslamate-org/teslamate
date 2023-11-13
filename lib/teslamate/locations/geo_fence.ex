@@ -31,5 +31,6 @@ defmodule TeslaMate.Locations.GeoFence do
     |> validate_required([:name, :latitude, :longitude, :radius])
     |> validate_number(:radius, greater_than: 0, less_than: 5000)
     |> validate_number(:session_fee, greater_than_or_equal_to: 0)
+    |> update_change(:name, &String.trim/1)
   end
 end

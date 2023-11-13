@@ -42,6 +42,7 @@ pkg install erlang
 
 <details>
   <summary>Elixir (v1.12+)</summary>
+  
 ```bash
 pkg install elixir
 ```
@@ -52,9 +53,18 @@ pkg install elixir
   <summary>Postgres (v14+)</summary>
 
 ```bash
-pkg install postgresql14-server
-pkg install postgresql14-contrib
+pkg install postgresql16-server-16.0
+pkg install postgresql16-contrib-16.0
 echo postgres_enable="yes" >> /etc/rc.conf
+```
+
+</details>
+
+<details>
+  <summary>Initialize the database</summary>
+
+```bash
+service postgresql initdb
 ```
 
 </details>
@@ -62,10 +72,10 @@ echo postgres_enable="yes" >> /etc/rc.conf
 <details>
   <summary>Grafana (v8.3.4+) & Plugins</summary>
 
-The latest Grafana from ports/pkg has a startup issue with the rc script, starting via rc.local is the workaround.
+(might be obsolete with Grafana 9, I had no issues with a fresh install) The latest Grafana from ports/pkg has a startup issue with the rc script, starting via rc.local is the workaround.
 
 ```bash
-pkg install grafana8
+pkg install grafana9-9.5.7_2
 echo grafana_enable="yes" >> /etc/rc.conf
 # Only needed if grafana fails to start via rc.conf
 echo "cd /tmp && /usr/local/etc/rc.d/grafana onestart" >> /etc/rc.local
@@ -88,7 +98,7 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
 
 ```bash
 pkg install node
-pkg install npm-node
+pkg install npm-node20-10.2.0
 ```
 
 </details>
@@ -100,7 +110,7 @@ The following command will clone the source files for the TeslaMate project. Thi
 ```bash
 cd /usr/local/src
 
-git clone https://github.com/adriankumpf/teslamate.git
+git clone https://github.com/teslamate-org/teslamate.git
 cd teslamate
 
 git checkout $(git describe --tags `git rev-list --tags --max-count=1`) # Checkout the latest stable version
@@ -215,7 +225,7 @@ service teslamate start
 
 ## Import Grafana Dashboards
 
-1.  Visit [localhost:3000](http://localhost:3000) and log in. The default credentials are: `admin:admin`.
+1.  Visit [localhost:3000](http://localhost:3000) and log in (don't forget to start the service: service grafana start). The default credentials are: `admin:admin`.
 
 2.  Create a data source with the name "TeslaMate":
 
@@ -230,7 +240,7 @@ service teslamate start
     Version: 10
     ```
 
-3.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/adriankumpf/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
+3.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
 
     ```bash
     $ ./grafana/dashboards.sh restore
