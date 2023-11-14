@@ -26,9 +26,9 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
        image: teslamate/teslamate:latest
        restart: always
        environment:
-         - ENCRYPTION_KEY= #insert a secure key to encrypt your Tesla API tokens
+         - ENCRYPTION_KEY=secretkey #replace with a secure key to encrypt your Tesla API tokens
          - DATABASE_USER=teslamate
-         - DATABASE_PASS= #insert your secure database password!
+         - DATABASE_PASS=password #insert your secure database password!
          - DATABASE_NAME=teslamate
          - DATABASE_HOST=database
          - MQTT_HOST=mosquitto
@@ -44,7 +44,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
        restart: always
        environment:
          - POSTGRES_USER=teslamate
-         - POSTGRES_PASSWORD= #insert your secure database password!
+         - POSTGRES_PASSWORD=password #insert your secure database password!
          - POSTGRES_DB=teslamate
        volumes:
          - teslamate-db:/var/lib/postgresql/data
@@ -54,7 +54,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
        restart: always
        environment:
          - DATABASE_USER=teslamate
-         - DATABASE_PASS= #insert your secure database password!
+         - DATABASE_PASS=password #insert your secure database password!
          - DATABASE_NAME=teslamate
          - DATABASE_HOST=database
        ports:
