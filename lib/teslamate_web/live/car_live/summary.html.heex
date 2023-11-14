@@ -84,6 +84,35 @@
           <span class="mdi mdi-gift-outline"></span>
         </span>
       <% end %>
+      <%= unless is_nil(@summary.tpms_soft_warning_fl) or is_nil(@summary.tpms_soft_warning_fr) or is_nil(@summary.tpms_soft_warning_rl) or is_nil(@summary.tpms_soft_warning_rr) do %>
+        <%= if @summary.tpms_soft_warning_fl or @summary.tpms_soft_warning_fr or @summary.tpms_soft_warning_rl or @summary.tpms_soft_warning_rr do %>
+            <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+                  data-tooltip={
+                    gettext(
+                      "Low tire pressure, check (%{tire_low}) tire",
+                      %{tire_low:
+                        Enum.filter([
+                          {:fl, @summary.tpms_soft_warning_fl},
+                          {:fr, @summary.tpms_soft_warning_fr},
+                          {:rl, @summary.tpms_soft_warning_rl},
+                          {:rr, @summary.tpms_soft_warning_rr}
+                        ], fn {_tire, pressure} -> pressure end)
+                        |> Enum.map(fn
+                          {:fl, true} -> "Front left"
+                          {:fr, true} -> "Front right"
+                          {:rl, true} -> "Rear left"
+                          {:rr, true} -> "Rear right"
+                          _ -> nil
+                        end)
+                        |> Enum.filter(&(&1 != nil))
+                        |> Enum.join(", ")
+                      }
+                    )
+                  }>
+              <span class="mdi mdi-car-tire-alert"></span>
+            </span>
+        <% end %>
+      <% end %>
       <%= if @summary.healthy == false do %>
         <span class="icon has-text-danger has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Health check failed"}>
           <span class="mdi mdi-alert-box"></span>

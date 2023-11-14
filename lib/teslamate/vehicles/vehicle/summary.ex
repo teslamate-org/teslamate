@@ -14,6 +14,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     charger_actual_current charger_voltage version update_available update_version is_user_present geofence
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
+    tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -122,7 +123,11 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       tpms_pressure_fl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fl]),
       tpms_pressure_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fr]),
       tpms_pressure_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rl]),
-      tpms_pressure_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rr])
+      tpms_pressure_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rr]),
+      tpms_soft_warning_fl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fl]),
+      tpms_soft_warning_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fr]),
+      tpms_soft_warning_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rl]),
+      tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr])
     }
   end
 
