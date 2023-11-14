@@ -10,6 +10,10 @@ on:
 env:
   REGISTRY_IMAGE: teslamate/teslamate
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   teslamate_build:
     strategy:
@@ -30,35 +34,35 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY_IMAGE }}
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3.0.0
         with:
           username: teslamate
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3.0.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push by digest
         id: build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5.0.0
         with:
           context: .
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.docker_meta.outputs.tags }}
-          cache-from: type=registry,ref=ghcr.io/adriankumpf/teslamate:buildcache-${{ matrix.cache_id }}
-          cache-to: type=registry,ref=ghcr.io/adriankumpf/teslamate:buildcache-${{ matrix.cache_id }},mode=max
+          cache-from: type=registry,ref=ghcr.io/teslamate-org/teslamate:buildcache-${{ matrix.cache_id }}
+          cache-to: type=registry,ref=ghcr.io/teslamate-org/teslamate:buildcache-${{ matrix.cache_id }},mode=max
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
       - name: Export digest
         run: |
@@ -84,10 +88,10 @@ jobs:
           name: digests
           path: /tmp/digests
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
@@ -96,7 +100,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=edge
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3.0.0
         with:
           username: teslamate
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -113,10 +117,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Docker meta
         id: docker_meta
-        uses: docker/metadata-action@v4.4.0
+        uses: docker/metadata-action@v5
         with:
           images: teslamate/grafana
           tags: |
@@ -125,16 +129,16 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2.2.1
+        uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
-        uses: docker/login-action@v2.0.0
+        uses: docker/login-action@v3.0.0
         with:
           username: teslamate
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push
-        uses: docker/build-push-action@v3.2.0
+        uses: docker/build-push-action@v5.0.0
         with:
           context: grafana
           push: true

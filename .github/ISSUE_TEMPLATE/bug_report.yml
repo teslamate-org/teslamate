@@ -9,8 +9,8 @@ body:
       description: |
         Please search to see if an issue already exists for the bug you encountered:
 
-        - [Issues](https://github.com/adriankumpf/teslamate/issues?q=)
-        - [Discussions](https://github.com/adriankumpf/teslamate/discussions)
+        - [Issues](https://github.com/teslamate-org/teslamate/issues?q=)
+        - [Discussions](https://github.com/teslamate-org/teslamate/discussions)
 
       options:
         - label: I have searched the existing issues

@@ -377,7 +377,7 @@ msgstr "Actualizada la geovalla \"%{name}\""
 #: lib/teslamate_web/live/car_live/summary.ex:143
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
-msgstr "Ha sucedido un error"
+msgstr "Ha ocurrido un error"
 
 #: lib/teslamate_web/live/car_live/summary.ex:142
 #, elixir-autogen, elixir-format
@@ -613,29 +613,29 @@ msgstr "Su cuenta Tesla se ha bloqueado a causa de demasiados intentos fallidos 
 #: lib/teslamate_web/live/car_live/summary.ex:140
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
-msgstr ""
+msgstr "Descargando actualización"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
-msgstr ""
+msgstr "No se proporcionó ninguna clave de encriptación"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:85
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr ""
+msgstr "Para más información, consulte las guías de instalación actualizadas en %{link}"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
-msgstr ""
+msgstr "La clave de encriptación generada automáticamente utilizada para la sesión actual se puede encontrar <strong>en los registros de la aplicación</strong>."
 
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr ""
+msgstr "Para asegurarse de que sus <strong>tokens API de Tesla se almacenen de forma segura</strong>, se debe proporcionar a TeslaMate una clave de encriptación a través de la variable de entorno <code>ENCRYPTION_KEY</code>. De lo contrario, se requerirá un <strong>inicio de sesión después de cada reinicio</strong>."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
-msgstr ""
+msgstr "Presión de las ruedas"

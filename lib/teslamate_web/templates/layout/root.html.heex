@@ -64,11 +64,10 @@
       </div>
     </nav>
 
-    <% show_doante_button = @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) %>
     <% update = TeslaMate.Updater.get_update() %>
 
 
-    <main role="main" style="overflow: hidden;" class={["section", (if show_doante_button or update, do: " full-height")]}>
+    <main role="main" style="overflow: hidden;" class={["section", (if update, do: " full-height")]}>
       <div class="container">
         <%= if not TeslaMate.Vault.encryption_key_provided?() or
               (not TeslaMate.Api.signed_in?() and not TeslaMate.Auth.can_decrypt_tokens?()) do %>
@@ -96,16 +95,8 @@
 
     <footer class="footer">
       <div class="content has-text-centered">
-        <%= if @conn.cookies["donate"] in Enum.map(0..1, &to_string/1) do %>
-          <%= link to: Routes.donate_path(@conn, :index),
-              class: "button is-rounded is-text is-small has-text-grey", type: "button",
-              target: "_blank", rel: "noopener noreferrer" do %>
-            <span class="icon"><i class="mdi mdi-heart"></i> </span>
-            <strong><%= gettext "Donate" %></strong>
-          <% end %>
-        <% end %>
         <%= if update do %>
-          <%= link to: "https://github.com/adriankumpf/teslamate/releases",
+          <%= link to: "https://github.com/teslamate-org/teslamate/releases",
               class: "button is-rounded is-text is-small has-text-grey", type: "button",
               target: "_blank", rel: "noopener noreferrer" do %>
             <span class="icon"><i class="mdi mdi-gift"></i> </span>
