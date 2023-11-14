@@ -71,6 +71,10 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/tpms_pressure_fr`              | 2.8                  | Tire pressure measure in BAR, front right tire                                        |
 | `teslamate/cars/$car_id/tpms_pressure_rl`              | 2.9                  | Tire pressure measure in BAR, rear left tire                                          |
 | `teslamate/cars/$car_id/tpms_pressure_rr`              | 2.8                  | Tire pressure measure in BAR, rear right tire                                         |
+| `teslamate/cars/$car_id/tpms_soft_warning_fl`          | true                 | Indicates if the Tire pressure measure is soft warning, front left tire               |
+| `teslamate/cars/$car_id/tpms_soft_warning_fr`          | false                | Indicates if the Tire pressure measure is soft warning, front right tire              |                          |
+| `teslamate/cars/$car_id/tpms_soft_warning_rl`          | false                | Indicates if the Tire pressure measure is soft warning, rear left tire                |                          |
+| `teslamate/cars/$car_id/tpms_soft_warning_rr`          | false                | Indicates if the Tire pressure measure is soft warning, rear right tire               |     
 
 :::note
 `$car_id` usually starts at 1

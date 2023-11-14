@@ -54,7 +54,7 @@ Source: [grafana.com/docs/installation](https://grafana.com/docs/grafana/latest/
 Install the required Grafana plugins as well:
 
 ```bash
-sudo grafana-cli plugins install pr0ps-trackmap-panel 2.1.2
+sudo grafana-cli plugins install pr0ps-trackmap-panel 2.1.4
 sudo grafana-cli plugins install natel-plotly-panel 0.0.7
 sudo grafana-cli --pluginUrl https://github.com/panodata/panodata-map-panel/releases/download/0.16.0/panodata-map-panel-0.16.0.zip plugins install grafana-worldmap-panel-ng
 sudo systemctl restart grafana-server
@@ -94,7 +94,7 @@ The following command will clone the source files for the TeslaMate project. Thi
 ```bash
 cd /usr/src
 
-git clone https://github.com/adriankumpf/teslamate.git
+git clone https://github.com/teslamate-org/teslamate.git
 cd teslamate
 
 git checkout $(git describe --tags `git rev-list --tags --max-count=1`) # Checkout the latest stable version
@@ -267,7 +267,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
     Version: 10
     ```
 
-3.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/adriankumpf/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
+3.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
 
     ```bash
     $ ./grafana/dashboards.sh restore

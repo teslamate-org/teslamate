@@ -52,6 +52,10 @@ defmodule TeslaApi.Vehicle do
       end
 
     TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}/vehicle_data",
+      query: [
+        endpoints:
+          "charge_state;climate_state;closures_state;drive_state;gui_settings;location_data;vehicle_config;vehicle_state;vehicle_data_combo"
+      ],
       opts: [access_token: auth.token]
     )
     |> handle_response(transform: &result/1)

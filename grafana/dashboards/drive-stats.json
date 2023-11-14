@@ -485,7 +485,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Median distance of a drive",
+      "title": "Average distance of a drive",
       "type": "stat"
     },
     {
@@ -603,7 +603,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Median distance driven per day",
+      "title": "Average distance driven per day",
       "type": "stat"
     },
     {
@@ -696,7 +696,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Median kWh used per day",
+      "title": "Average kWh used per day",
       "type": "stat"
     },
     {
@@ -1039,8 +1039,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "1",
-          "value": "1"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
