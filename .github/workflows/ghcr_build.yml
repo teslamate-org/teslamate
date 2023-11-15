@@ -1,4 +1,4 @@
-name: Build PR images
+name: Build GHCR images
 
 on:
   push:
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    name: Build GHCR images
+    name: Build images
     strategy:
       fail-fast: false
       matrix:
