@@ -5,6 +5,10 @@ on:
     types:
       - closed
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   purge-pr-untagged:
     name: Delete untagged images from ghcr.io
