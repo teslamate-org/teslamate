@@ -4,8 +4,9 @@ on:
   push:
     branches: 
       - "master"
-    tags:
       - "v*"
+    tags:
+      - "v*"      
   pull_request:
     branches: [ "master" ]
 
