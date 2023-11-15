@@ -1,65 +1,11 @@
-name: Elixir CI & PR images
+name: Elixir CI
 
 on:
   push:
-    branches: 
-      - "master"
-      - "v*"
-    tags:
-      - "v*"      
   pull_request:
     branches: [ "master" ]
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
-permissions:
-  contents: read
-  packages: write
-
 jobs:
-  build:
-    name: Build images (only if pull_request)
-    if: github.event_name == 'pull_request'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: "linux/amd64"
-            runs_on: "ubuntu-latest"
-            cache_id: amd64
-          - platform: "linux/arm/v7"
-            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
-            cache_id: arm
-          - platform: "linux/arm64"
-            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
-            cache_id: arm64
-    runs-on: ${{ matrix.runs_on }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          labels: |
-            org.opencontainers.image.version=${{ github.ref || github.ref_name }}
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
   lint:
     name: Lint (Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }})
     runs-on: ubuntu-20.04
