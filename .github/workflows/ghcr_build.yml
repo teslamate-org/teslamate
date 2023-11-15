@@ -30,7 +30,7 @@ jobs:
             cache_id: arm
           - platform: "linux/arm64"
             runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
-            cache_id: arm64
+            cache_id: arm64            
     runs-on: ${{ matrix.runs_on }}
     timeout-minutes: 10
     steps:
@@ -74,3 +74,22 @@ jobs:
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:$(cat /tmp/teslamate/version)
+
+  grafana:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ./.github/actions/grafana
+        with:
+          image: ghcr.io/teslamate/teslamate/grafana
+          labels: |
+            org.opencontainers.image.version=${{ github.ref || github.ref_name }}
