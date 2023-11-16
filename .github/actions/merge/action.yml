@@ -1,12 +1,12 @@
-name: 'Merge'
-description: 'Merge images'
+name: "Merge"
+description: "Merge images"
 inputs:
   tags:
-    description: 'Tags'
+    description: "Tags"
     required: false
-    default: ''
+    default: ""
   image:
-    description: 'Image target'
+    description: "Image target"
     required: true
 
 runs:
@@ -30,11 +30,11 @@ runs:
 
     - name: Create manifest list and push
       working-directory: /tmp/digests
-      shell: bash  
+      shell: bash
       run: |
         docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
           $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
     - name: Inspect image
-      shell: bash  
+      shell: bash
       run: |
         docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}

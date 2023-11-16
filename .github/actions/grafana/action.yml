@@ -1,17 +1,17 @@
-name: 'Grafana'
-description: 'Grafana images'
+name: "Grafana"
+description: "Grafana images"
 inputs:
   tags:
-    description: 'Tags'
+    description: "Tags"
     required: false
-    default: ''
+    default: ""
   labels:
-    description: 'Labels'
+    description: "Labels"
     required: true
   image:
-    description: 'Image target'
+    description: "Image target"
     required: true
-    default: 'teslamate/grafana'
+    default: "teslamate/grafana"
 runs:
   using: "composite"
   steps:
