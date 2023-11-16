@@ -54,26 +54,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4          
-
-      - name: Merge
-        id: merge
-        uses: ./.github/actions/merge
-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3.0.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create manifest list and push
-        working-directory: /tmp/teslamate/digests
-        run: |
-          docker buildx imagetools create -t ${{ env.REGISTRY_IMAGE }}:$(cat /tmp/teslamate/version) \
-            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
-      - name: Inspect image
-        run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:$(cat /tmp/teslamate/version)
+      - name: Merge
+        id: merge
+        uses: ./.github/actions/merge
+        with:
+          image: ${{ env.REGISTRY_IMAGE }}
 
   grafana:
     runs-on: ubuntu-latest

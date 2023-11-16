@@ -51,14 +51,13 @@ runs:
       - name: Export digest
         shell: bash      
         run: |
-          mkdir -p /tmp/teslamate/digests
+          mkdir -p /tmp/digests
           digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/teslamate/digests/${digest#sha256:}"
-          echo ${{ env.DOCKER_METADATA_OUTPUT_VERSION }} > /tmp/teslamate/version
+          touch "/tmp/digests/${digest#sha256:}"
       - name: Upload digest
         uses: actions/upload-artifact@v3
         with:
           name: digests
-          path: /tmp/teslamate/*
+          path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
