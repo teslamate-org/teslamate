@@ -11,7 +11,7 @@ inputs:
   image:
     description: 'Image target'
     required: true
-    default: 'myteslamate/grafana'
+    default: 'teslamate/grafana'
 runs:
   using: "composite"
   steps:
