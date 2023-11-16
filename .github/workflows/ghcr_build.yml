@@ -11,8 +11,8 @@ on:
 #      - '**/*'
 #      - '!.github/**'  # Important: Exclude PRs related to .github from auto-run
 
-env:
-  REGISTRY_IMAGE: ${{ env.REGISTRY_IMAGE }}
+#env:
+#  REGISTRY_IMAGE: ${{ env.REGISTRY_IMAGE }}
 
 permissions:
   contents: read
