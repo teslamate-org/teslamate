@@ -60,6 +60,7 @@ runs:
           mkdir -p /tmp/digests
           digest="${{ steps.build.outputs.digest }}"
           touch "/tmp/digests/${digest#sha256:}"
+          ls -l /tmp/digests/
       - name: Upload digest
         uses: actions/upload-artifact@v3
         with:
