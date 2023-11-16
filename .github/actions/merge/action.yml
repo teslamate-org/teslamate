@@ -22,7 +22,7 @@ runs:
       shell: bash  
       run: |
         ls -l /tmp/
-        ls -l /tmp/digests/
+        ls -l /tmp/digest/
       
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
