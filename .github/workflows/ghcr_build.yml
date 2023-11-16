@@ -12,8 +12,7 @@ on:
 #      - '!.github/**'  # Important: Exclude PRs related to .github from auto-run
 
 env:
-  REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
-  
+  REGISTRY_IMAGE: ${{ env.REGISTRY_IMAGE }}
 
 permissions:
   contents: read
