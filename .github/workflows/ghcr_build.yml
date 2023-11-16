@@ -7,9 +7,9 @@ on:
       - "master"      
   pull_request:
     branches: [ "master" ]
-    paths:
-      - '**/*'
-      - '!.github/**'  # Important: Exclude PRs related to .github from auto-run
+#    paths:
+#      - '**/*'
+#      - '!.github/**'  # Important: Exclude PRs related to .github from auto-run
 
 env:
   REGISTRY_IMAGE: ghcr.io/teslamate-org/teslamate
