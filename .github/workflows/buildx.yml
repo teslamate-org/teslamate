@@ -41,6 +41,7 @@ jobs:
         with:
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           repository_owner: ${{ github.repository_owner }}
+          repository_name: ${{ github.repository }} 
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   teslamate_merge:
