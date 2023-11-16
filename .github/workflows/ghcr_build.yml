@@ -9,7 +9,7 @@ on:
     branches: [ "master" ]
 
 env:
-  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
 
 permissions:
   contents: read
@@ -41,7 +41,7 @@ jobs:
         with:
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           repository_owner: ${{ github.repository_owner }}
-          repository_name: ${{ github.repository }}          
+          repository: ${{ github.repository }}          
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
               org.opencontainers.image.version=${{ github.ref || github.ref_name }}
