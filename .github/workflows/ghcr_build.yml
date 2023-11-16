@@ -12,7 +12,7 @@ on:
 #      - '!.github/**'  # Important: Exclude PRs related to .github from auto-run
 
 env:
-  REGISTRY_IMAGE: ghcr.io/${{ github.actor }}/teslamate
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/teslamate
 
 permissions:
   contents: read
@@ -85,8 +85,7 @@ jobs:
           echo ${{ github.actor }}
           echo "c"
           echo ${{ env.GITHUB_REPOSITORY }}
-          
-          
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3.0.0
         with:
@@ -96,6 +95,6 @@ jobs:
 
       - uses: ./.github/actions/grafana
         with:
-          image: ghcr.io/teslamate/teslamate/grafana
+          image: ghcr.io/${{ github.repository_owner }}/teslamate/grafana
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
