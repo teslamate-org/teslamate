@@ -2,9 +2,7 @@ name: Build GHCR images
 
 on:
   workflow_dispatch:
-  push:  
-    branches: 
-      - "master"      
+  push:
   pull_request_target:
     branches: [ "master" ]
 
