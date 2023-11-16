@@ -7,6 +7,11 @@ inputs:
   repository_owner:
     description: 'Repository owner'
     required: true
+    default: 'teslamate-org'        
+  repository_name:
+    description: 'Repo name'
+    required: true
+    default: 'teslamate'    
   github_token:
     description: 'GitHub Token'
     required: true
@@ -14,14 +19,6 @@ inputs:
     description: 'Labels added on metadata'
     required: false
     default: ''
-  org:
-    description: 'Organisation name'
-    required: true
-    default: 'teslamate-org'
-  repo:
-    description: 'Repo name'
-    required: true
-    default: 'teslamate'    
 runs:
   using: "composite"
   steps:
