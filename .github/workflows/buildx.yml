@@ -35,20 +35,20 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4  
+        uses: actions/checkout@v4
       - name: Buildx
         uses: ./.github/actions/build
         with:
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           repository_owner: ${{ github.repository_owner }}
-          repository: ${{ github.repository }} 
+          repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   teslamate_merge:
     runs-on: ubuntu-latest
     needs:
       - teslamate_build
-    steps:    
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -80,5 +80,3 @@ jobs:
             type=schedule,pattern=edge
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-
-      

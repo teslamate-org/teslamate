@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - '**/*'
-      - '!.github/**' 
+      - "**/*"
+      - "!.github/**"
   pull_request_target:
-    branches: [ "master" ]
+    branches: ["master"]
     paths:
-      - '**/*'
-      - '!.github/**'  # Important: Exclude PRs related to .github from auto-run
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
 
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
@@ -34,21 +34,21 @@ jobs:
             cache_id: arm
           - platform: "linux/arm64"
             runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
-            cache_id: arm64            
+            cache_id: arm64
     runs-on: ${{ matrix.runs_on }}
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4      
+        uses: actions/checkout@v4
       - name: Buildx
         uses: ./.github/actions/build
         with:
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           repository_owner: ${{ github.repository_owner }}
-          repository: ${{ github.repository }}          
+          repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
-              org.opencontainers.image.version=${{ github.ref || github.ref_name }}
+            org.opencontainers.image.version=${{ github.ref || github.ref_name }}
 
   teslamate_merge:
     name: Merge GHCR images
@@ -58,7 +58,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4          
+        uses: actions/checkout@v4
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3.0.0
         with:
