@@ -455,6 +455,18 @@
                 "value": true
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg cost per kWh"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 137
+              }
+            ]
           }
         ]
       },
@@ -647,6 +659,54 @@
           }
         },
         {
+          "id": "calculateField",
+          "options": {
+            "alias": "avg_cost_kwh",
+            "binary": {
+              "left": "cost_charges",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "sum_consumption_kwh"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "avg_cost_km",
+            "binary": {
+              "left": "cost_charges",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "sum_distance_km"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "avg_cost_mi",
+            "binary": {
+              "left": "cost_charges",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "sum_distance_mi"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {
@@ -659,19 +719,22 @@
             },
             "indexByName": {
               "avg_consumption_kwh": 9,
+              "avg_cost_km": 19,
+              "avg_cost_mi": 20,
+              "avg_cost_kwh": 11,
               "avg_outside_temp_c": 5,
               "cnt": 6,
               "cnt_charges": 11,
               "cost_charges": 10,
               "date": 1,
-              "date_from": 16,
-              "date_to": 17,
+              "date_from": 17,
+              "date_to": 18,
               "display": 0,
               "efficiency": 7,
-              "efficiency_charged_net_km": 14,
-              "efficiency_charged_net_mi": 15,
-              "efficiency_net_km": 12,
-              "efficiency_net_mi": 13,
+              "efficiency_charged_net_km": 15,
+              "efficiency_charged_net_mi": 16,
+              "efficiency_net_km": 13,
+              "efficiency_net_mi": 14,
               "sum_consumption_kwh": 8,
               "sum_distance_km": 3,
               "sum_distance_mi": 4,
@@ -679,6 +742,9 @@
             },
             "renameByName": {
               "avg_consumption_kwh": "Avg charged",
+              "avg_cost_km": "Avg cost per km",
+	            "avg_cost_mi": "Avg cost per mi",
+              "avg_cost_kwh": "Avg cost per kWh",
               "avg_outside_temp_c": "",
               "cnt": "# drives",
               "cnt_charges": "# charges",
