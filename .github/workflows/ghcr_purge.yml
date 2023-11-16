@@ -2,6 +2,9 @@ name: Purge PR images
 
 on:
   pull_request_target:
+    paths:
+      - '**/*'
+      - '!.github/**'  # Important: Exclude PRs related to .github from auto-run
     types:
       - closed
 
