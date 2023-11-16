@@ -81,6 +81,6 @@ jobs:
 
       - uses: ./.github/actions/grafana
         with:
-          image: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}/grafana
+          image: ${{ env.REGISTRY_IMAGE }}/grafana
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
