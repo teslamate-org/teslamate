@@ -29,12 +29,12 @@ jobs:
           - platform: "linux/amd64"
             runs_on: "ubuntu-latest"
             cache_id: amd64
-#          - platform: "linux/arm/v7"
-#            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
-#            cache_id: arm
-#          - platform: "linux/arm64"
-#            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
-#            cache_id: arm64            
+          - platform: "linux/arm/v7"
+            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
+            cache_id: arm
+          - platform: "linux/arm64"
+            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
+            cache_id: arm64            
     runs-on: ${{ matrix.runs_on }}
     timeout-minutes: 10
     steps:
