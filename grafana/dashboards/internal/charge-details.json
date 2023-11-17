@@ -720,9 +720,9 @@
               "showLegend": false,
               "style": {
                 "color": {
-                  "fixed": "blue"
+                  "fixed": "red"
                 },
-                "opacity": 0.4,
+                "opacity": 1,
                 "rotation": {
                   "fixed": 0,
                   "max": 360,
@@ -730,7 +730,7 @@
                   "mode": "mod"
                 },
                 "size": {
-                  "fixed": 5,
+                  "fixed": 7,
                   "max": 15,
                   "min": 2
                 },
