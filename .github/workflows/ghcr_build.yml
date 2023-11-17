@@ -3,9 +3,9 @@ name: Build GHCR images
 on:
   workflow_dispatch:
   push:
-    paths:
-      - "**/*"
-      - "!.github/**"
+#    paths:
+#      - "**/*"
+#      - "!.github/**"
   pull_request_target:
     branches: ["master"]
 #    paths:
@@ -53,7 +53,7 @@ jobs:
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ github.ref || github.ref_name }}
+          version: ${{ github.ref_name }}
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
 
