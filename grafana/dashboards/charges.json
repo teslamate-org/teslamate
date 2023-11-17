@@ -106,7 +106,7 @@
                   {
                     "targetBlank": false,
                     "title": "View charge details",
-                    "url": "d/BHhxFeZRz?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric:raw}"
+                    "url": "d/BHhxFeZRz?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric}"
                   }
                 ]
               },
@@ -302,7 +302,7 @@
                   {
                     "targetBlank": false,
                     "title": "Set Cost",
-                    "url": "[[base_url:raw]]/charge-cost/${__data.fields.id.numeric:raw}"
+                    "url": "[[base_url:raw]]/charge-cost/${__data.fields.id.numeric}"
                   }
                 ]
               },
@@ -389,7 +389,7 @@
                   {
                     "targetBlank": true,
                     "title": "Create or edit geo-fence",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.path:raw}"
+                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.path}"
                   }
                 ]
               },
