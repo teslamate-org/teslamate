@@ -39,6 +39,7 @@ jobs:
       - name: Buildx
         uses: ./.github/actions/build
         with:
+          is_dockerhub_pushed: '1'
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
