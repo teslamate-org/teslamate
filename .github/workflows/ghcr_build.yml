@@ -1,14 +1,19 @@
-name: Publish Docker images
+name: Build GHCR images
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 3 * * 0"
   push:
-    tags:
-      - "v*"
+    paths:
+      - "**/*"
+      - "!.github/**"
+  pull_request_target:
+    branches: ["master"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+
 env:
-  REGISTRY_IMAGE: teslamate/teslamate
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
 
 permissions:
   contents: read
@@ -16,6 +21,7 @@ permissions:
 
 jobs:
   teslamate_build:
+    name: Build images
     strategy:
       fail-fast: false
       matrix:
@@ -29,10 +35,8 @@ jobs:
           - platform: "linux/arm64"
             runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
             cache_id: arm64
-
     runs-on: ${{ matrix.runs_on }}
     timeout-minutes: 10
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,40 +47,45 @@ jobs:
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: |
+            org.opencontainers.image.version=${{ github.ref || github.ref_name }}
 
   teslamate_merge:
+    name: Merge GHCR images
     runs-on: ubuntu-latest
     needs:
       - teslamate_build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3.0.0
-        with:
-          username: teslamate
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - uses: ./.github/actions/merge
-        with:
-          image: ${{ env.REGISTRY_IMAGE }}
-          tags: |
-            type=schedule,pattern=edge
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=edge
-  grafana:
-    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Merge
+        id: merge
+        uses: ./.github/actions/merge
+        with:
+          image: ${{ env.REGISTRY_IMAGE }}
+
+  grafana:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/grafana
         with:
-          tags: |
-            type=edge
-            type=schedule,pattern=edge
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+          image: ${{ env.REGISTRY_IMAGE }}/grafana
+          labels: |
+            org.opencontainers.image.version=${{ github.ref || github.ref_name }}
