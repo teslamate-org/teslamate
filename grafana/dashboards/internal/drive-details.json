@@ -829,7 +829,7 @@
               "arrow": 0,
               "style": {
                 "color": {
-                  "fixed": "blue"
+                  "fixed": "red"
                 },
                 "lineWidth": 2,
                 "opacity": 1,
