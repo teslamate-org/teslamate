@@ -1,0 +1,35 @@
+name: Purge PR images
+
+on:
+  pull_request_target:
+    types:
+      - closed
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  purge-pr-untagged:
+    name: Delete untagged images from ghcr.io
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: "teslamate"
+          package-type: "container"
+          min-versions-to-keep: 0
+          delete-only-untagged-versions: "true"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  purge-pr-package:
+    name: Delete image from ghcr.io
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: chipkent/action-cleanup-package@v1.0.1
+        with:
+          package-name: ${{ github.event.repository.name }}
+          tag: pr-${{ github.event.pull_request.number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
