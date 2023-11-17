@@ -720,7 +720,7 @@
               "showLegend": false,
               "style": {
                 "color": {
-                  "fixed": "red"
+                  "fixed": "blue"
                 },
                 "opacity": 0.4,
                 "rotation": {
@@ -818,6 +818,70 @@
     },
     {
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "pointSize": {
+              "fixed": 5
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "show": "points"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "custom.show",
+                "value": "lines"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "solid"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
       "gridPos": {
         "h": 19,
         "w": 24,
@@ -826,127 +890,39 @@
       },
       "id": 11,
       "links": [],
-      "pconfig": {
-        "fixScale": "",
-        "layout": {
-          "dragmode": "pan",
-          "font": {
-            "family": "\"Open Sans\", Helvetica, Arial, sans-serif"
-          },
-          "hovermode": "closest",
-          "legend": {
-            "orientation": "h"
-          },
-          "showlegend": false,
-          "xaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "title": "SOC [%]",
-            "type": "linear",
-            "zeroline": false
-          },
-          "yaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "title": "kW",
-            "type": "linear",
-            "zeroline": false
-          },
-          "zaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "type": "linear",
-            "zeroline": false
-          }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
-        "loadFromCDN": false,
-        "settings": {
-          "displayModeBar": false,
-          "type": "scatter"
-        },
-        "showAnnotations": true,
-        "traces": [
+        "series": [
           {
-            "mapping": {
-              "color": "Power [kW]",
-              "x": "SOC [%]",
-              "y": "Power [kW]"
-            },
-            "name": "Power",
-            "settings": {
-              "color_option": "solid",
-              "line": {
-                "color": "#005f81",
-                "dash": "solid",
-                "shape": "linear",
-                "width": 6
-              },
-              "marker": {
-                "color": "#8AB8FF",
-                "colorscale": "YlOrRd",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 5,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              },
-              "textposition": "bottom"
-            },
-            "show": {
-              "line": true,
-              "lines": false,
-              "markers": true
-            }
+            "pointColor": {},
+            "x": "SOC [%]",
+            "y": "Power [kW]"
           },
           {
-            "mapping": {
-              "color": "Power [kW]",
-              "x": "avg SOC [%]",
-              "y": "avg Power [kW]"
+            "pointColor": {
+              "fixed": "blue"
             },
-            "name": "Average Power",
-            "settings": {
-              "color_option": "ramp",
-              "line": {
-                "color": "#3274D9",
-                "dash": "solid",
-                "shape": "spline",
-                "width": 2
-              },
-              "marker": {
-                "color": "#33B5E5",
-                "colorscale": "YlOrRd",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 5,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              },
-              "textposition": "bottom"
-            },
-            "show": {
-              "line": true,
-              "lines": true,
-              "markers": false
-            }
+            "x": "avg SOC [%]",
+            "y": "avg Power [kW]"
           }
-        ]
+        ],
+        "seriesMapping": "manual",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "7.5.11",
       "targets": [
         {
           "alias": "",
           "datasource": "TeslaMate",
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "hide": false,
@@ -964,6 +940,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "time",
           "where": [
             {
@@ -1005,8 +998,7 @@
         }
       ],
       "title": "Charging curve",
-      "type": "natel-plotly-panel",
-      "version": 1
+      "type": "xychart"
     }
   ],
   "refresh": false,
