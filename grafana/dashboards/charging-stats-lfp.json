@@ -866,86 +866,131 @@
           ]
         }
       ],
-      "title": "AC/DC – kWh",
+      "title": "AC/DC - kWh",
       "type": "piechart"
     },
     {
-      "autoPanLabels": true,
-      "autoWidthLabels": true,
-      "categories": "a,b",
-      "circleMaxSize": 30,
-      "circleMinSize": 2,
-      "circleOptions": {
-        "strokeEnabled": false,
-        "strokeWeight": "2"
-      },
-      "circleSizeAbsoluteEnabled": false,
-      "circleSizeAbsoluteFactor": 1,
-      "clickthroughOptions": {},
-      "clickthroughUrl": "",
-      "colorMode": "threshold",
-      "colors": [
-        "#f53636",
-        "#c05634",
-        "#976f32",
-        "#688b30",
-        "#32ac2d"
-      ],
-      "customAttribution": false,
       "datasource": "TeslaMate",
-      "decimals": 2,
       "description": "",
-      "doubleClickZoom": true,
-      "dragging": true,
-      "enableOverlay": false,
-      "enableReloadOverlay": false,
-      "esMetric": "Count",
-      "formatOmitEmptyValue": false,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 13,
         "w": 14,
         "x": 5,
         "y": 10
       },
-      "hideEmpty": false,
-      "hideTimepickerNavigation": false,
-      "hideZero": false,
       "id": 24,
-      "ignoreEmptyGeohashValues": false,
-      "ignoreEscapeKey": false,
-      "ignoreInvalidGeohashValues": false,
-      "initialZoom": 1,
-      "locationData": "table",
-      "mapCenter": "(0°, 0°)",
-      "mapCenterLatitude": 0,
-      "mapCenterLongitude": 0,
-      "mapFitData": true,
       "maxDataPoints": 1,
-      "mouseWheelZoom": true,
-      "overlayOpacity": 0.5,
-      "overlayRangeLatitude": "0,10",
-      "overlayRangeLongitude": "0,20",
-      "overlayUrl": "",
-      "showAttribution": false,
-      "showLegend": true,
-      "showZoomControl": true,
-      "stickyLabels": false,
-      "tableQueryOptions": {
-        "geohashField": "geohash",
-        "labelField": "loc_nm",
-        "latitudeField": "lat",
-        "longitudeField": "lng",
-        "metricField": "pct",
-        "queryType": "coordinates"
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "tooltip": true,
+          "type": "osm-standard"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "fixed": "red"
+                },
+                "opacity": 0.5,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "field": "chg_total",
+                  "fixed": 5,
+                  "max": 30,
+                  "min": 10
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "text": {
+                  "field": "pct",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 25,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "name": "Charge location",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 15
+        }
       },
       "targets": [
         {
           "datasource": "TeslaMate",
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH charge_data AS (\r\nSELECT COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS loc_nm\r\n, AVG(position.latitude) AS lat \r\n, AVG(position.longitude) AS lng\r\n,sum(charge.charge_energy_added) AS chg_total\r\nFROM charging_processes charge\r\nLEFT JOIN addresses address ON charge.address_id = address.id\r\nLEFT JOIN positions position ON charge.position_id = position.id\r\nLEFT JOIN geofences geofence ON charge.geofence_id = geofence.id\r\nWHERE $__timeFilter(charge.start_date) \r\nAND charge.car_id = $car_id\r\nGROUP BY COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city))\r\n) \r\nSELECT loc_nm\r\n\t,lat\r\n\t,lng\r\n\t,chg_total\r\n\t,chg_total * 1.0 / (SELECT sum(chg_total) FROM charge_data) * 100   AS pct\r\nFROM charge_data",
+          "rawSql": "WITH charge_data AS (\r\nSELECT COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS loc_nm\r\n, AVG(position.latitude) AS latitude\r\n, AVG(position.longitude) AS longitude\r\n,sum(charge.charge_energy_added) AS chg_total\r\nFROM charging_processes charge\r\nLEFT JOIN addresses address ON charge.address_id = address.id\r\nLEFT JOIN positions position ON charge.position_id = position.id\r\nLEFT JOIN geofences geofence ON charge.geofence_id = geofence.id\r\nWHERE $__timeFilter(charge.start_date) \r\nAND charge.car_id = $car_id\r\nGROUP BY COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city))\r\n) \r\nSELECT loc_nm\r\n\t,latitude\r\n\t,longitude\r\n\t,chg_total\r\n\t,chg_total * 1.0 / (SELECT sum(chg_total) FROM charge_data) * 100   AS pct\r\nFROM charge_data",
           "refId": "A",
           "select": [
             [
@@ -957,6 +1002,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "cars",
           "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
@@ -969,12 +1031,8 @@
           ]
         }
       ],
-      "thresholds": "0,25,50,75",
       "title": "Charging heat map by kWh",
-      "type": "panodata-map-panel",
-      "unitPlural": "%",
-      "unitSingular": "%",
-      "valueName": "total"
+      "type": "geomap"
     },
     {
       "datasource": "TeslaMate",
@@ -1092,11 +1150,52 @@
           ]
         }
       ],
-      "title": "AC/DC – Duration",
+      "title": "AC/DC - Duration",
       "type": "piechart"
     },
     {
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "pointSize": {
+              "fixed": 5
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "show": "points"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 16,
         "w": 24,
@@ -1105,126 +1204,30 @@
       },
       "id": 29,
       "links": [],
-      "pconfig": {
-        "fixScale": "",
-        "layout": {
-          "dragmode": "zoom",
-          "font": {
-            "family": "\"Open Sans\", Helvetica, Arial, sans-serif"
-          },
-          "hovermode": "closest",
-          "legend": {
-            "orientation": "h"
-          },
-          "showlegend": false,
-          "xaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "title": "SOC [%]",
-            "type": "linear",
-            "zeroline": false
-          },
-          "yaxis": {
-            "rangemode": "tozero",
-            "showgrid": true,
-            "title": "kW",
-            "type": "linear",
-            "zeroline": false
-          },
-          "zaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "type": "linear",
-            "zeroline": false
-          }
+      "options": {
+        "dims": {
+          "exclude": [
+            "charging_process_id"
+          ]
         },
-        "loadFromCDN": false,
-        "settings": {
-          "displayModeBar": false,
-          "type": "scatter"
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showAnnotations": true,
-        "traces": [
-          {
-            "mapping": {
-              "color": "charging_process_id",
-              "text": "Charge",
-              "x": "SOC [%]",
-              "y": "Power [kW]"
-            },
-            "name": "Charge Curve",
-            "settings": {
-              "color_option": "ramp",
-              "line": {
-                "color": "#005f81",
-                "dash": "solid",
-                "shape": "linear",
-                "width": 6
-              },
-              "marker": {
-                "color": "#33B5E5",
-                "colorscale": "Reds",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 3,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              }
-            },
-            "show": {
-              "line": true,
-              "lines": false,
-              "markers": true
-            }
-          },
-          {
-            "mapping": {
-              "color": "charging_process_id",
-              "x": "B - SOC [%]",
-              "y": "B - Avg Power [kW]"
-            },
-            "name": "Median Power",
-            "settings": {
-              "color_option": "solid",
-              "line": {
-                "color": "#FF7383",
-                "dash": "solid",
-                "shape": "linear",
-                "width": 2
-              },
-              "marker": {
-                "color": "#33B5E5",
-                "colorscale": "Reds",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 2,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              }
-            },
-            "show": {
-              "line": true,
-              "lines": true,
-              "markers": false
-            }
-          }
-        ]
+        "series": [],
+        "seriesMapping": "auto",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "7.5.11",
       "targets": [
         {
           "alias": "",
           "datasource": "TeslaMate",
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "hide": false,
@@ -1242,6 +1245,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "time",
           "where": [
             {
@@ -1283,8 +1303,7 @@
         }
       ],
       "title": "DC Charging Curve",
-      "type": "natel-plotly-panel",
-      "version": 1
+      "type": "xychart"
     },
     {
       "datasource": "TeslaMate",
