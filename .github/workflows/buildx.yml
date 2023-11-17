@@ -31,118 +31,52 @@ jobs:
             cache_id: arm64
 
     runs-on: ${{ matrix.runs_on }}
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
+      - name: Buildx
+        uses: ./.github/actions/build
         with:
-          images: ${{ env.REGISTRY_IMAGE }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3.0.0
-        with:
-          username: teslamate
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3.0.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push by digest
-        id: build
-        uses: docker/build-push-action@v5.0.0
-        with:
-          context: .
-          platforms: ${{ matrix.platform }}
-          labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          cache-from: type=registry,ref=ghcr.io/teslamate-org/teslamate:buildcache-${{ matrix.cache_id }}
-          cache-to: type=registry,ref=ghcr.io/teslamate-org/teslamate:buildcache-${{ matrix.cache_id }},mode=max
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
-      - name: Export digest
-        run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
-      - name: Upload digest
-        uses: actions/upload-artifact@v3
-        with:
-          name: digests
-          path: /tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
+          docker_password: ${{ secrets.DOCKER_PASSWORD }}
+          repository_owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   teslamate_merge:
     runs-on: ubuntu-latest
     needs:
       - teslamate_build
     steps:
-      - name: Download digests
-        uses: actions/download-artifact@v3
-        with:
-          name: digests
-          path: /tmp/digests
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY_IMAGE }}
-          tags: |
-            type=schedule,pattern=edge
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=edge
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3.0.0
         with:
           username: teslamate
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Create manifest list and push
-        working-directory: /tmp/digests
-        run: |
-          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
-      - name: Inspect image
-        run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
 
+      - uses: ./.github/actions/merge
+        with:
+          image: ${{ env.REGISTRY_IMAGE }}
+          tags: |
+            type=schedule,pattern=edge
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=edge
   grafana:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Docker meta
-        id: docker_meta
-        uses: docker/metadata-action@v5
+
+      - uses: ./.github/actions/grafana
         with:
-          images: teslamate/grafana
           tags: |
             type=edge
             type=schedule,pattern=edge
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3.0.0
-        with:
-          username: teslamate
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push
-        uses: docker/build-push-action@v5.0.0
-        with:
-          context: grafana
-          push: true
-          platforms: linux/amd64,linux/arm/v7,linux/arm64
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max

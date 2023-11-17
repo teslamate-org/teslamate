@@ -1,0 +1,37 @@
+name: "Grafana"
+description: "Grafana images"
+inputs:
+  tags:
+    description: "Tags"
+    required: false
+    default: ""
+  labels:
+    description: "Labels"
+    required: true
+  image:
+    description: "Image target"
+    required: true
+    default: "teslamate/grafana"
+runs:
+  using: "composite"
+  steps:
+    - name: Docker meta
+      id: docker_meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ inputs.image }}
+        tags: ${{ inputs.tags }}
+        labels: ${{ inputs.labels }}
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Build and push
+      uses: docker/build-push-action@v5.0.0
+      with:
+        context: grafana
+        push: true
+        platforms: linux/amd64,linux/arm/v7,linux/arm64
+        tags: ${{ steps.docker_meta.outputs.tags }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
