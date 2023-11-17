@@ -875,7 +875,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-reds"
           },
           "custom": {
             "hideFrom": {
@@ -893,9 +893,35 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unit": "none"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pct"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "chg_total"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "kwatth"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 13,
@@ -926,9 +952,10 @@
               "showLegend": false,
               "style": {
                 "color": {
+                  "field": "pct",
                   "fixed": "red"
                 },
-                "opacity": 0.5,
+                "opacity": 0.4,
                 "rotation": {
                   "fixed": 0,
                   "max": 360,
@@ -939,7 +966,7 @@
                   "field": "chg_total",
                   "fixed": 5,
                   "max": 30,
-                  "min": 10
+                  "min": 5
                 },
                 "symbol": {
                   "fixed": "img/icons/marker/circle.svg",
@@ -950,7 +977,7 @@
                   "vertical": "center"
                 },
                 "text": {
-                  "field": "pct",
+                  "field": "chg_total",
                   "fixed": "",
                   "mode": "field"
                 },
@@ -982,6 +1009,7 @@
           "zoom": 15
         }
       },
+      "pluginVersion": "10.2.0",
       "targets": [
         {
           "datasource": "TeslaMate",
