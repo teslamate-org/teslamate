@@ -154,7 +154,7 @@
             "config": {
               "style": {
                 "size": {
-                  "fixed": 2,
+                  "fixed": 3,
                   "min": 2,
                   "max": 15
                 },
