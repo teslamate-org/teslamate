@@ -982,7 +982,6 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "10.2.0",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -1224,7 +1223,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.0",
       "targets": [
         {
           "alias": "",
