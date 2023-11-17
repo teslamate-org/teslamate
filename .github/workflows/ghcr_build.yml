@@ -8,9 +8,9 @@ on:
       - "!.github/**"
   pull_request_target:
     branches: ["master"]
-    paths:
-      - "**/*"
-      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+#    paths:
+#      - "**/*"
+#      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
 
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
