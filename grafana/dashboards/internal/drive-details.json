@@ -840,7 +840,7 @@
                   "mode": "mod"
                 },
                 "size": {
-                  "fixed": 2,
+                  "fixed": 3,
                   "max": 15,
                   "min": 2
                 },
