@@ -6,6 +6,7 @@ on:
     paths:
       - "**/*"
       - "!.github/**"
+    branches: ["ci"]
   pull_request_target:
     branches: ["master"]
     paths:
