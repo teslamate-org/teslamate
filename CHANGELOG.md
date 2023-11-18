@@ -31,6 +31,7 @@
 - ci: bump actions/delete-package-versions from 4 to 5 (#3713)
 - Replace tortoise library with tortoise311 (#3697 - @brianmay)
 - build(deps): bump follow-redirects from 1.15.4 to 1.15.6 in /website (#3743)
+- feat: experimental nix flake (#3485 - @brianmay)
 
 #### Dashboards
 
