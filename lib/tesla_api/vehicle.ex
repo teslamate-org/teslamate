@@ -102,6 +102,11 @@ defmodule TeslaApi.Vehicle do
       %Tesla.Env{status: 408, body: %{"error" => "vehicle unavailable:" <> _}} = env ->
         {:error, %Error{reason: :vehicle_unavailable, env: env}}
 
+      %Tesla.Env{status: 429, headers: headers} = env ->
+        IO.inspect(headers)
+        IO.inspect(headers["Retry-After"])
+        {:error, %Error{reason: :unknown, env: env}}
+
       %Tesla.Env{status: 504} = env ->
         {:error, %Error{reason: :timeout, env: env}}
 
