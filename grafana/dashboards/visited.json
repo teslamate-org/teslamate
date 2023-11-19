@@ -1,27 +1,10 @@
 {
   "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
-        "type": "dashboard"
-      }
-    ]
+    "list": []
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1642780400002,
   "links": [
     {
       "icon": "dashboard",
@@ -55,6 +38,12 @@
       "id": 4,
       "panels": [],
       "repeat": "car_id",
+      "targets": [
+        {
+          "datasource": "TeslaMate",
+          "refId": "A"
+        }
+      ],
       "title": "$car_id",
       "type": "row"
     },
@@ -199,7 +188,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 34,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "tesla"
@@ -257,7 +246,7 @@
     ]
   },
   "time": {
-    "from": "now-5y",
+    "from": "now-90d",
     "to": "now"
   },
   "timepicker": {
@@ -286,9 +275,8 @@
     ]
   },
   "timezone": "",
-  "datasource": "TeslaMate",
   "title": "Visited",
   "uid": "RG_DxSmgk",
-  "version": 2,
+  "version": 10,
   "weekStart": ""
 }
