@@ -188,7 +188,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 38,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [
     "tesla"
