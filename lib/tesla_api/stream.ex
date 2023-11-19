@@ -156,6 +156,7 @@ defmodule TeslaApi.Stream do
           "Vehicle is offline" ->
             Logger.info("Streaming API: Vehicle offline")
             state.receiver.(:vehicle_offline)
+
           _ ->
             Logger.error("Vehicle Error: #{v}")
         end

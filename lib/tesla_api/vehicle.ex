@@ -59,7 +59,6 @@ defmodule TeslaApi.Vehicle do
       opts: [access_token: auth.token]
     )
     |> handle_response(transform: &result/1)
-
   end
 
   def result(v) do
