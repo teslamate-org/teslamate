@@ -557,7 +557,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "dateTimeAsLocal"
+                "value": "dateTimeAsSystem"
               },
               {
                 "id": "custom.width",
