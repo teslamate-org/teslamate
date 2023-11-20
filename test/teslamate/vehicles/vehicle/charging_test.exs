@@ -91,6 +91,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: ^s2}}}
 
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     refute_receive _
   end
 
@@ -151,6 +152,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     refute_receive _
   end
 
