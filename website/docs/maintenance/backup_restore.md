@@ -1,6 +1,9 @@
 ---
 title: Backup and Restore
 ---
+:::note
+If you are using `docker-compose`, you are using Docker Compose v1 and has become end of life. Docker Compse commands reference Docker Compose v2. Consider upgrading https://docs.docker.com/compose/migrate/
+:::
 
 ## Backup
 
