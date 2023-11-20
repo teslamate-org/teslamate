@@ -184,7 +184,7 @@ jobs:
       - name: Run tests
         run: mix test --warnings-as-errors
 
-      - name: Check Coverage
-        if: github.ref == 'refs/heads/master' && matrix.report_coverage
-        run: mix coveralls.github
-        continue-on-error: true
+      # - name: Check Coverage
+      #   if: github.ref == 'refs/heads/master' && matrix.report_coverage
+      #   run: mix coveralls.github
+      #   continue-on-error: true
