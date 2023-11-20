@@ -42,7 +42,7 @@ pkg install erlang
 
 <details>
   <summary>Elixir (v1.12+)</summary>
-  
+
 ```bash
 pkg install elixir
 ```
