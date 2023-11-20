@@ -1,6 +1,9 @@
 ---
 title: Backup and Restore
 ---
+:::note
+Docker commands reference Docker Compose v2. If you are on v1, include a hyphen between `docker` and `compose` (e.g. `docker-compose`)
+:::
 
 ## Backup
 
