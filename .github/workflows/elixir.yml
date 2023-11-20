@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.16"
+          - elixir: "1.15"
             otp: "26"
             lint: true
 
@@ -117,7 +117,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.16"
+          - elixir: "1.15"
             otp: "26"
             report_coverage: true
 
