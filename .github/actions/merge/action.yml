@@ -1,0 +1,40 @@
+name: "Merge"
+description: "Merge images"
+inputs:
+  tags:
+    description: "Tags"
+    required: false
+    default: ""
+  image:
+    description: "Image target"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download digests
+      uses: actions/download-artifact@v3
+      with:
+        name: digests
+        path: /tmp/digests
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ inputs.image }}
+        tags: ${{ inputs.tags }}
+
+    - name: Create manifest list and push
+      working-directory: /tmp/digests
+      shell: bash
+      run: |
+        docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+          $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+    - name: Inspect image
+      shell: bash
+      run: |
+        docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
