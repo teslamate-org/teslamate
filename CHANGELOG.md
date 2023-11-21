@@ -1,5 +1,41 @@
 # Changelog
 
+## [unreleased]
+
+Note: First release as @teslamate-org organization.
+
+### New features
+
+- Added tire low pressure icon to teslamate web (#3424 - @NirKli)
+
+### Improvements and bug fixes
+
+- UI: sync meta theme-color with header background color for iOS status bar (#2840 - @libotony)
+- Linting in dashboard links (#3443 - @jlestel)
+- Update Grafana to 10.1.2 (#3455 - @swiffer)
+
+#### dashboards
+
+- Fix link to Charge Level dashboard (#3263 - @Sjorsa)
+- Add LFP variants of Grafana dashboards (#3311 - @eden881)
+- Average cost stat in stats dashboard (#3030 - @fmossott)
+- Odometer in Charges dashboard (#3463 - @DrMichael)
+- Use built-in Grafana visuals instead of plugins (#3439 - @oivindoh and @swiffer)
+- Ensure that dashboards can be modified after import (#3454 - @swiffer)
+- Migrate projected range to TimeSeries (#3454 - @swiffer)
+
+#### Translations
+
+#### Documentation
+
+- Gaussmeter units no longer for sale, #3419 - @LelandSindt
+- Docker backup restore note about update command when using different TM_DB_USER (#3291 - @tsongalin)
+- Update FreeBSD installation instructions (#3277 - @uqs)
+- Updated Docker Compose instructions (#3320 - @Dulanic)
+- Update HA integration docs with TPMS sensors and examples (#2845 - @marspath)
+- Fix code style in FreeBSD section (#3461 and #3462 - @ivanovd)
+- Advise that docker-compose v1 is EOL and to upgrade to v2 (#3472 - @cwanja)
+
 ## [1.27.4] - 2023-11-12
 
 Note: TeslaMate moved to the new @teslamate-org organization.
@@ -1666,6 +1702,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.27.4...HEAD
 [1.27.4]: https://github.com/adriankumpf/teslamate/compare/v1.27.3...v1.27.4
 [1.27.3]: https://github.com/adriankumpf/teslamate/compare/v1.27.2...v1.27.3
 [1.27.2]: https://github.com/adriankumpf/teslamate/compare/v1.27.1...v1.27.2
