@@ -2,8 +2,14 @@ name: Elixir CI
 
 on:
   push:
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
 
 jobs:
   lint:
@@ -124,7 +130,7 @@ jobs:
     services:
       db:
         image: postgres:15
-        ports: [ "5432:5432" ]
+        ports: ["5432:5432"]
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
