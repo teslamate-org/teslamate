@@ -67,9 +67,7 @@
       "type": "row"
     },
     {
-      "autoZoom": true,
       "datasource": "TeslaMate",
-      "defaultLayer": "OpenStreetMap",
       "gridPos": {
         "h": 13,
         "w": 13,
@@ -77,11 +75,7 @@
         "y": 1
       },
       "id": 6,
-      "lineColor": "red",
       "maxDataPoints": 500,
-      "pointColor": "royalblue",
-      "scrollWheelZoom": false,
-      "showLayerChanger": true,
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -89,7 +83,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS lat\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS latitude,\n\tavg(longitude) AS longitude\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
           "refId": "A",
           "select": [
             [
@@ -110,42 +104,123 @@
               "params": [],
               "type": "macro"
             }
-          ]
-        },
-        {
-          "datasource": "TeslaMate",
-          "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(longitude) AS lng\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
-          "refId": "B",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
           ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          "editorMode": "code",
+          "sql": {
+            "columns": [
+              {
+                "type": "function",
+                "parameters": []
+              }
+            ],
+            "groupBy": [
+              {
+                "type": "groupBy",
+                "property": {
+                  "type": "string"
+                }
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "transformations": [],
       "transparent": true,
-      "type": "pr0ps-trackmap-panel"
+      "type": "geomap",
+      "options": {
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 15
+        },
+        "controls": {
+          "showZoom": true,
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showScale": false,
+          "showMeasure": false,
+          "showDebug": false
+        },
+        "tooltip": {
+          "mode": "details"
+        },
+        "layers": [
+          {
+            "type": "route",
+            "name": "Layer 1",
+            "config": {
+              "style": {
+                "size": {
+                  "fixed": 3,
+                  "min": 2,
+                  "max": 15
+                },
+                "color": {
+                  "fixed": "red"
+                },
+                "opacity": 1,
+                "symbol": {
+                  "mode": "fixed",
+                  "fixed": "img/icons/marker/circle.svg"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "textAlign": "center",
+                  "textBaseline": "middle",
+                  "offsetX": 0,
+                  "offsetY": 0
+                },
+                "rotation": {
+                  "fixed": 0,
+                  "mode": "mod",
+                  "min": -360,
+                  "max": 360
+                },
+                "lineWidth": 2
+              },
+              "arrow": 0
+            },
+            "tooltip": true
+          }
+        ],
+        "basemap": {
+          "type": "osm-standard",
+          "name": "Layer 0",
+          "config": {}
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      }
     },
     {
       "datasource": "TeslaMate",

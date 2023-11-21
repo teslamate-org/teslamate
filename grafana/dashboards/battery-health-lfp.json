@@ -21,12 +21,6 @@
     },
     {
       "type": "panel",
-      "id": "natel-plotly-panel",
-      "name": "Plotly",
-      "version": "0.0.7"
-    },
-    {
-      "type": "panel",
       "id": "piechart",
       "name": "Pie chart",
       "version": ""
@@ -1196,9 +1190,70 @@
       "type": "bargauge"
     },
     {
-      "datasource": {
-        "type": "postgres",
-        "uid": "TeslaMate"
+      "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "pointSize": {
+              "fixed": 6
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "show": "points"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "Median"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.show",
+                "value": "lines"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "solid"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -1208,129 +1263,40 @@
       },
       "id": 28,
       "links": [],
-      "pconfig": {
-        "fixScale": "",
-        "layout": {
-          "dragmode": "zoom",
-          "font": {
-            "family": "\"Open Sans\", Helvetica, Arial, sans-serif"
-          },
-          "hovermode": "closest",
-          "legend": {
-            "orientation": "h"
-          },
-          "showlegend": false,
-          "xaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "title": "Odometer",
-            "type": "linear",
-            "zeroline": false
-          },
-          "yaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "title": "kWh",
-            "type": "linear",
-            "zeroline": false
-          },
-          "zaxis": {
-            "rangemode": "normal",
-            "showgrid": true,
-            "type": "linear",
-            "zeroline": false
-          }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
-        "loadFromCDN": false,
-        "settings": {
-          "displayModeBar": false,
-          "type": "scatter"
-        },
-        "showAnnotations": true,
-        "traces": [
+        "series": [
           {
-            "mapping": {
-              "color": "id",
-              "text": "title",
-              "x": "odometer",
-              "y": "kWh"
+            "pointColor": {
+              "field": "kWh"
             },
-            "name": "Mileage, kWh",
-            "settings": {
-              "color_option": "ramp",
-              "line": {
-                "color": "#C0D8FF",
-                "dash": "dashdot",
-                "shape": "linear",
-                "width": 1
-              },
-              "marker": {
-                "color": "#33B5E5",
-                "colorscale": "Reds",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 10,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              }
-            },
-            "show": {
-              "line": true,
-              "lines": false,
-              "markers": true
-            }
+            "x": "odometer",
+            "y": "kWh"
           },
           {
-            "mapping": {
-              "color": "id",
-              "x": "M-Odometer",
-              "y": "M-kWh"
+            "pointColor": {
+              "fixed": "dark-red"
             },
-            "name": "Median",
-            "settings": {
-              "color_option": "ramp",
-              "line": {
-                "color": "#C0D8FF",
-                "dash": "solid",
-                "shape": "linear",
-                "width": 2
-              },
-              "marker": {
-                "color": "#33B5E5",
-                "colorscale": "Reds",
-                "line": {
-                  "color": "#DDD",
-                  "width": 0
-                },
-                "showscale": false,
-                "size": 3,
-                "sizemin": 3,
-                "sizemode": "diameter",
-                "sizeref": 0.2,
-                "symbol": "circle"
-              }
-            },
-            "show": {
-              "line": true,
-              "lines": true,
-              "markers": false
-            }
+            "x": "M-Odometer",
+            "y": "M-kWh"
           }
-        ]
+        ],
+        "seriesMapping": "manual",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "pluginVersion": "8.5.6",
       "targets": [
         {
           "alias": "",
-          "datasource": {
-            "type": "postgres",
-            "uid": "TeslaMate"
-          },
+          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "hide": false,
@@ -1359,10 +1325,7 @@
         },
         {
           "alias": "",
-          "datasource": {
-            "type": "postgres",
-            "uid": "TeslaMate"
-          },
+          "datasource": "TeslaMate",
           "format": "table",
           "group": [],
           "hide": false,
@@ -1393,8 +1356,7 @@
         }
       ],
       "title": "Battery Capacity by Mileage",
-      "type": "natel-plotly-panel",
-      "version": 1
+      "type": "xychart"
     }
   ],
   "refresh": "",
