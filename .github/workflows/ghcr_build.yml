@@ -8,7 +8,7 @@ on:
       - "!.github/**"
     branches: ["ci"]
   pull_request_target:
-    branches: ["master"]
+    branches: ["master", "ci"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
