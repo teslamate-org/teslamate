@@ -26,7 +26,7 @@ Note: First release as @teslamate-org organization.
 - UI: sync meta theme-color with header background color for iOS status bar (#2840 - @libotony)
 - Linting in dashboard links (#3443 - @jlestel)
 - Update Grafana to 10.1.2 (#3455 - @swiffer)
-- CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile to test (#3445, #3480, #3481 -@jlestel)
+- CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile for testing purpose (#3445, #3480, #3481 -@jlestel)
 - Update to Nodejs 20 (#3477 - @PhilThurston)
 - Add credo lint support (#3452 - @brianmay)
 
