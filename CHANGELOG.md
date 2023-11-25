@@ -7,12 +7,16 @@ Note: First release as @teslamate-org organization.
 ### New features
 
 - Added tire low pressure icon to teslamate web (#3424 - @NirKli)
+- Add charging_state to VehicleSummary (#3471 - @brianmay)
 
 ### Improvements and bug fixes
 
 - UI: sync meta theme-color with header background color for iOS status bar (#2840 - @libotony)
 - Linting in dashboard links (#3443 - @jlestel)
 - Update Grafana to 10.1.2 (#3455 - @swiffer)
+- CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile to test (#3445, #3481 -@jlestel)
+- Update to Nodejs 20 (#3477 - @PhilThurston)
+- Add credo lint support (#3452 - @brianmay)
 
 #### dashboards
 
@@ -25,6 +29,8 @@ Note: First release as @teslamate-org organization.
 - Migrate projected range to TimeSeries (#3454 - @swiffer)
 
 #### Translations
+
+- There is nothing new here.
 
 #### Documentation
 
