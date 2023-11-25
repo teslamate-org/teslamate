@@ -28,7 +28,7 @@ Note: First release as @teslamate-org organization.
 - Update Grafana to 10.1.2 (#3455 - @swiffer)
 - CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile for testing purpose (#3445, #3480, #3481 -@jlestel)
 - Update to Nodejs 20 (#3477 - @PhilThurston)
-- Add credo lint support (#3452 - @brianmay)
+- Add credo lint support for static code analysis (#3452 - @brianmay)
 
 #### Dashboards
 
