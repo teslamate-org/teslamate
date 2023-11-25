@@ -2,6 +2,18 @@
 
 ## [unreleased]
 
+### New features
+
+### Improvements and bug fixes
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+## [1.28.0] - 2023-11-25
+
 Note: First release as @teslamate-org organization.
 
 ### New features
@@ -14,11 +26,11 @@ Note: First release as @teslamate-org organization.
 - UI: sync meta theme-color with header background color for iOS status bar (#2840 - @libotony)
 - Linting in dashboard links (#3443 - @jlestel)
 - Update Grafana to 10.1.2 (#3455 - @swiffer)
-- CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile to test (#3445, #3481 -@jlestel)
+- CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile to test (#3445, #3480, #3481 -@jlestel)
 - Update to Nodejs 20 (#3477 - @PhilThurston)
 - Add credo lint support (#3452 - @brianmay)
 
-#### dashboards
+#### Dashboards
 
 - Fix link to Charge Level dashboard (#3263 - @Sjorsa)
 - Add LFP variants of Grafana dashboards (#3311 - @eden881)
@@ -1708,7 +1720,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.27.4...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...HEAD
+[1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.27.4...v1.28.0
 [1.27.4]: https://github.com/adriankumpf/teslamate/compare/v1.27.3...v1.27.4
 [1.27.3]: https://github.com/adriankumpf/teslamate/compare/v1.27.2...v1.27.3
 [1.27.2]: https://github.com/adriankumpf/teslamate/compare/v1.27.1...v1.27.2
