@@ -128,7 +128,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       tpms_soft_warning_fl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fl]),
       tpms_soft_warning_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fr]),
       tpms_soft_warning_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rl]),
-      tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr])
+      tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr]),
       valet_mode: get_in_struct(vehicle, [:vehicle_state, :valet_mode])
     }
   end
