@@ -422,28 +422,28 @@ tesla_location:
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
       value_template: >
-       {{ (states('sensor.tesla_tpms_pressure_fl') | float * 14.50377) | round(2) }}
+       {{ (states('sensor.tesla_tpms_pressure_fl_bar') | float * 14.50377) | round(2) }}
 
     tesla_tpms_pressure_fr_psi:
       friendly_name: Front Right Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
       value_template: >
-       {{ (states('sensor.tesla_tpms_pressure_fr') | float * 14.50377) | round(2) }}
+       {{ (states('sensor.tesla_tpms_pressure_fr_bar') | float * 14.50377) | round(2) }}
 
     tesla_tpms_pressure_rl_psi:
       friendly_name: Rear Left Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
       value_template: >
-       {{ (states('sensor.tesla_tpms_pressure_rl') | float * 14.50377) | round(2) }}
+       {{ (states('sensor.tesla_tpms_pressure_rl_bar') | float * 14.50377) | round(2) }}
 
     tesla_tpms_pressure_rr_psi:
       friendly_name: Rear Right Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
       value_template: >
-       {{ (states('sensor.tesla_tpms_pressure_rr') | float * 14.50377) | round(2) }}
+       {{ (states('sensor.tesla_tpms_pressure_rr_bar') | float * 14.50377) | round(2) }}
 ```
 
 ### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
