@@ -7,6 +7,8 @@ defmodule TeslaMate.Vehicles do
   alias TeslaMate.Settings.CarSettings
   alias TeslaMate.Log.Car
   alias TeslaMate.Log
+  alias TeslaMate.Auth
+  alias TeslaMate.Auth.Tokens
 
   @name __MODULE__
 
@@ -126,7 +128,12 @@ defmodule TeslaMate.Vehicles do
               %CarSettings{}
           end
 
-        %Car{settings: settings}
+        tokens = Auth.get_tokens()
+
+        %Car{
+          settings: settings,
+          tokens: tokens
+        }
       end
       |> Car.changeset(%{
         name: vehicle.display_name,

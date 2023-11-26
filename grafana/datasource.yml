@@ -4,7 +4,7 @@ datasources:
 - name: TeslaMate
   type: postgres
   url: $DATABASE_HOST:$DATABASE_PORT
-  user: $DATABASE_USER
+  user: $
   database: $DATABASE_NAME
   password: ""
   access: proxy

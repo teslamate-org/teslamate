@@ -75,6 +75,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/tpms_soft_warning_fr`          | false                | Indicates if the Tire pressure measure is soft warning, front right tire              |                          |
 | `teslamate/cars/$car_id/tpms_soft_warning_rl`          | false                | Indicates if the Tire pressure measure is soft warning, rear left tire                |                          |
 | `teslamate/cars/$car_id/tpms_soft_warning_rr`          | false                | Indicates if the Tire pressure measure is soft warning, rear right tire               |     
+| `teslamate/cars/$car_id/valet_mode`                    | true                 | Indicates id the valet mode is on                                                     |
 
 :::note
 `$car_id` usually starts at 1

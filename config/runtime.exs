@@ -81,7 +81,8 @@ defmodule Util do
 end
 
 config :teslamate,
-  default_geofence: System.get_env("DEFAULT_GEOFENCE")
+  default_geofence: System.get_env("DEFAULT_GEOFENCE"),
+  account_email: Util.fetch_env!("ACCOUNT_EMAIL", all: nil)
 
 config :teslamate, TeslaMate.Repo,
   username: Util.fetch_env!("DATABASE_USER", all: "postgres"),

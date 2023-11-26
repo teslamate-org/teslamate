@@ -12,11 +12,23 @@ defmodule TeslaMate.Log do
   alias TeslaMate.{Repo, Locations, Settings}
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Settings.{CarSettings, GlobalSettings}
+  alias TeslaMate.Auth
 
   ## Car
 
   def list_cars do
-    Repo.all(Car)
+    tokens = Auth.get_tokens()
+    account_email = Application.get_env(:teslamate, :account_email)
+
+    if account_email == nil do
+      Repo.all(Car)
+    else
+      if tokens == nil do
+        []
+      else
+        Repo.get_by(Car, tokens: tokens)
+      end
+    end
   end
 
   def get_car!(id) do

@@ -4,6 +4,7 @@ defmodule TeslaMate.Log.Car do
 
   alias TeslaMate.Log.{ChargingProcess, Position, Drive}
   alias TeslaMate.Settings.CarSettings
+  alias TeslaMate.Auth.Tokens
 
   schema "cars" do
     field :name, :string
@@ -21,6 +22,7 @@ defmodule TeslaMate.Log.Car do
     field :vin, :string
 
     belongs_to :settings, CarSettings
+    belongs_to :tokens, Tokens
 
     has_many :charging_processes, ChargingProcess
     has_many :positions, Position
@@ -45,7 +47,8 @@ defmodule TeslaMate.Log.Car do
       :wheel_type,
       :spoiler_type
     ])
-    |> validate_required([:eid, :vid, :vin])
+    |> validate_required([:name,  :eid, :vid, :vin])
+    |> foreign_key_constraint(:tokens_id)
     |> unique_constraint(:settings_id)
     |> unique_constraint(:eid)
     |> unique_constraint(:vin)

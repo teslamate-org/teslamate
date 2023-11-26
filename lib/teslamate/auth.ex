@@ -27,24 +27,29 @@ defmodule TeslaMate.Auth do
   end
 
   def get_tokens do
-    case Repo.all(Tokens) do
-      [%Tokens{} = tokens] ->
-        tokens
+    account_email = Application.get_env(:teslamate, :account_email)
+    if account_email == nil do
+      case Repo.all(Tokens) do
+        [%Tokens{} = tokens] ->
+          tokens
 
-      [_ | _] = tokens ->
-        raise """
-        Found #{length(tokens)} token pairs!
+        [_ | _] = tokens ->
+          raise """
+          Found #{length(tokens)} token pairs!
 
-        Make sure that there is no more than ONE token pair in the table 'tokens'.
-        """
+          Make sure that there is no more than ONE token pair in the table 'tokens'.
+          """
 
-      [] ->
-        nil
+        [] ->
+          nil
+      end
+    else
+      Repo.get_by(Tokens, account_email: account_email)
     end
   end
 
-  def save(%{token: access, refresh_token: refresh}) do
-    attrs = %{access: access, refresh: refresh}
+  def save(%{token: access, refresh_token: refresh, account_email: account_email}) do
+    attrs = %{access: access, refresh: refresh, account_email: account_email}
 
     maybe_created_or_updated =
       case get_tokens() do

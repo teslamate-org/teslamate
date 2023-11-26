@@ -6,8 +6,24 @@
           Error: <%= @error %>
         </div>
       <% end %>
+      <div class="field hidden">
+        <%= label f, :access, gettext("Account name"), class: "label" %>
+        <div class="control has-icons-left">
+          <%= email_input f, :account_email, class: "input is-rounded", autocorrect: "off",
+                                     autocapitalize: "none", spellcheck: "false",
+                                     readonly: "readonly",
+                                     value: @account_email
+          %>
+          <span class="icon is-small is-left">
+            <i class="mdi mdi-api"></i>
+          </span>
+        </div>
+      </div>
 
       <div class="field">
+        <div class="account_email">
+            <%= @account_email %>
+        </div>
         <%= label f, :access, gettext("Access Token"), class: "label" %>
         <div class="control has-icons-left">
           <%= text_input f, :access, class: "input is-rounded", autocorrect: "off",
