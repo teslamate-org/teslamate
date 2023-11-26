@@ -969,7 +969,7 @@
                   {
                     "targetBlank": true,
                     "title": "",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.id.numeric}/edit"
+                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.id.numeric:raw}/edit"
                   }
                 ]
               },
@@ -1053,7 +1053,7 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 34,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [
     "tesla"

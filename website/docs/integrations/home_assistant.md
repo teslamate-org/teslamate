@@ -259,6 +259,26 @@ tesla_location:
    state_topic: "teslamate/cars/1/time_to_full_charge"
    unit_of_measurement: h
    icon: mdi:clock-outline
+
+ - name: tesla_tpms_pressure_fl_bar
+   state_topic: "teslamate/cars/1/tpms_pressure_fl"
+   unit_of_measurement: bar
+   icon: mdi:car-tire-alert
+
+ - name: tesla_tpms_pressure_fr_bar
+   state_topic: "teslamate/cars/1/tpms_pressure_fr"
+   unit_of_measurement: bar
+   icon: mdi:car-tire-alert
+
+ - name: tesla_tpms_pressure_rl_bar
+   state_topic: "teslamate/cars/1/tpms_pressure_rl"
+   unit_of_measurement: bar
+   icon: mdi:car-tire-alert
+
+ - name: tesla_tpms_pressure_rr_bar
+   state_topic: "teslamate/cars/1/tpms_pressure_rr"
+   unit_of_measurement: bar
+   icon: mdi:car-tire-alert
 ```
 
 ### mqtt_binary_sensor.yaml (mqtt: binary_sensor: section of configuration.yaml)
@@ -396,6 +416,34 @@ tesla_location:
       icon_template: mdi:image-filter-hdr
       value_template: >
        {{ (states('sensor.tesla_elevation') | float * 3.2808 ) | round(2) }}
+
+    tesla_tpms_pressure_fl_psi:
+      friendly_name: Front Left Tire Pressure (psi)
+      unit_of_measurement: psi
+      icon_template: mdi:car-tire-alert
+      value_template: >
+       {{ (states('sensor.tesla_tpms_pressure_fl_bar') | float * 14.50377) | round(2) }}
+
+    tesla_tpms_pressure_fr_psi:
+      friendly_name: Front Right Tire Pressure (psi)
+      unit_of_measurement: psi
+      icon_template: mdi:car-tire-alert
+      value_template: >
+       {{ (states('sensor.tesla_tpms_pressure_fr_bar') | float * 14.50377) | round(2) }}
+
+    tesla_tpms_pressure_rl_psi:
+      friendly_name: Rear Left Tire Pressure (psi)
+      unit_of_measurement: psi
+      icon_template: mdi:car-tire-alert
+      value_template: >
+       {{ (states('sensor.tesla_tpms_pressure_rl_bar') | float * 14.50377) | round(2) }}
+
+    tesla_tpms_pressure_rr_psi:
+      friendly_name: Rear Right Tire Pressure (psi)
+      unit_of_measurement: psi
+      icon_template: mdi:car-tire-alert
+      value_template: >
+       {{ (states('sensor.tesla_tpms_pressure_rr_bar') | float * 14.50377) | round(2) }}
 ```
 
 ### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
@@ -610,6 +658,22 @@ views:
             name: Scheduled Charging Start Time
           - entity: sensor.tesla_time_to_full_charge
             name: Time To Full Charge
+          - entity: sensor.tesla_tpms_pressure_fl_bar
+            name: Front Left Tire Pressure (bar)
+          - entity: sensor.tesla_tpms_pressure_fl_psi
+            name: Front Left Tire Pressure (psi)
+          - entity: sensor.tesla_tpms_pressure_fr_bar
+            name: Front Right Tire Pressure (bar)
+          - entity: sensor.tesla_tpms_pressure_fr_psi
+            name: Front Right Tire Pressure (psi)
+          - entity: sensor.tesla_tpms_pressure_rl_bar
+            name: Rear Left Tire Pressure (bar)
+          - entity: sensor.tesla_tpms_pressure_rl_psi
+            name: Rear Left Tire Pressure (psi)
+          - entity: sensor.tesla_tpms_pressure_rr_bar
+            name: Rear Right Tire Pressure (bar)
+          - entity: sensor.tesla_tpms_pressure_rr_psi
+            name: Rear Right Tire Pressure (psi)
 ```
 
 ## Useful Automations
