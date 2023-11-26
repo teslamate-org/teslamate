@@ -12,6 +12,20 @@
 
 #### Documentation
 
+## [1.28.1] - 2023-11-26
+
+### New features
+
+### Improvements and bug fixes
+
+- Fix display version in settings
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [1.28.0] - 2023-11-26
 
 Note: First release as @teslamate-org organization.
@@ -1721,7 +1735,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.1...HEAD
+[1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...v1.28.1
 [1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.27.4...v1.28.0
 [1.27.4]: https://github.com/adriankumpf/teslamate/compare/v1.27.3...v1.27.4
 [1.27.3]: https://github.com/adriankumpf/teslamate/compare/v1.27.2...v1.27.3
