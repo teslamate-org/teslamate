@@ -12,7 +12,21 @@
 
 #### Documentation
 
-## [1.28.0] - 2023-11-25
+## [1.28.1] - 2023-11-26
+
+### New features
+
+### Improvements and bug fixes
+
+- Fix display version in settings
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+## [1.28.0] - 2023-11-26
 
 Note: First release as @teslamate-org organization.
 
@@ -26,7 +40,7 @@ Note: First release as @teslamate-org organization.
 - UI: sync meta theme-color with header background color for iOS status bar (#2840 - @libotony)
 - Linting in dashboard links (#3443 - @jlestel)
 - Update Grafana to 10.1.2 (#3455 - @swiffer)
-- CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile for testing purpose (#3445, #3480, #3481 -@jlestel)
+- CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile for testing purpose (#3445, #3480, #3481, #3491 -@jlestel)
 - Update to Nodejs 20 (#3477 - @PhilThurston)
 - Add credo lint support for static code analysis (#3452 - @brianmay)
 
@@ -53,6 +67,7 @@ Note: First release as @teslamate-org organization.
 - Update HA integration docs with TPMS sensors and examples (#2845 - @marspath)
 - Fix code style in FreeBSD section (#3461 and #3462 - @ivanovd)
 - Advise that docker-compose v1 is EOL and to upgrade to v2 (#3472 - @cwanja)
+- Fix tpms bar sensors name in template for psi (#3490 - @virtualm2000)
 
 ## [1.27.4] - 2023-11-12
 
@@ -1720,7 +1735,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.1...HEAD
+[1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...v1.28.1
 [1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.27.4...v1.28.0
 [1.27.4]: https://github.com/adriankumpf/teslamate/compare/v1.27.3...v1.27.4
 [1.27.3]: https://github.com/adriankumpf/teslamate/compare/v1.27.2...v1.27.3
