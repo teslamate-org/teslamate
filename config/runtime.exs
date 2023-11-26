@@ -108,7 +108,11 @@ case System.get_env("DATABASE_SSL") do
     config :teslamate, TeslaMate.Repo,
       ssl: true,
       ssl_opts: [
-        server_name_indication: to_charlist(System.get_env("DATABASE_SSL_SNI") || Util.fetch_env!("DATABASE_HOST", all: "localhost")),
+        server_name_indication:
+          to_charlist(
+            System.get_env("DATABASE_SSL_SNI") ||
+              Util.fetch_env!("DATABASE_HOST", all: "localhost")
+          ),
         verify: :verify_none
       ]
 
