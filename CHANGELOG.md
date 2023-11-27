@@ -6,6 +6,10 @@
 
 ### Improvements and bug fixes
 
+- grafana: support DATABASE_SSL_MODE (#3498 - @simonsmh)
+- Support server_name_indication for ssl (#3497 - @simonsmh)
+- grafana: Fix Dashboard dropdown link display (#3501 - @oivindoh)
+
 #### Dashboards
 
 #### Translations
