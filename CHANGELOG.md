@@ -1,5 +1,78 @@
 # Changelog
 
+## [unreleased]
+
+### New features
+
+### Improvements and bug fixes
+
+- grafana: support DATABASE_SSL_MODE (#3498 - @simonsmh)
+- Support server_name_indication for ssl (#3497 - @simonsmh)
+- grafana: Fix Dashboard dropdown link display (#3501 - @oivindoh)
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+## [1.28.1] - 2023-11-26
+
+### New features
+
+### Improvements and bug fixes
+
+- Fix display version in settings
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+## [1.28.0] - 2023-11-26
+
+Note: First release as @teslamate-org organization.
+
+### New features
+
+- Added tire low pressure icon to teslamate web (#3424 - @NirKli)
+- Add charging_state to VehicleSummary (#3471 - @brianmay)
+
+### Improvements and bug fixes
+
+- UI: sync meta theme-color with header background color for iOS status bar (#2840 - @libotony)
+- Linting in dashboard links (#3443 - @jlestel)
+- Update Grafana to 10.1.2 (#3455 - @swiffer)
+- CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile for testing purpose (#3445, #3480, #3481, #3491 -@jlestel)
+- Update to Nodejs 20 (#3477 - @PhilThurston)
+- Add credo lint support for static code analysis (#3452 - @brianmay)
+
+#### Dashboards
+
+- Fix link to Charge Level dashboard (#3263 - @Sjorsa)
+- Add LFP variants of Grafana dashboards (#3311 - @eden881)
+- Average cost stat in stats dashboard (#3030 - @fmossott)
+- Odometer in Charges dashboard (#3463 - @DrMichael)
+- Use built-in Grafana visuals instead of plugins (#3439 - @oivindoh and @swiffer)
+- Ensure that dashboards can be modified after import (#3454 - @swiffer)
+- Migrate projected range to TimeSeries (#3454 - @swiffer)
+
+#### Translations
+
+- There is nothing new here.
+
+#### Documentation
+
+- Gaussmeter units no longer for sale, #3419 - @LelandSindt
+- Docker backup restore note about update command when using different TM_DB_USER (#3291 - @tsongalin)
+- Update FreeBSD installation instructions (#3277 - @uqs)
+- Updated Docker Compose instructions (#3320 - @Dulanic)
+- Update HA integration docs with TPMS sensors and examples (#2845 - @marspath)
+- Fix code style in FreeBSD section (#3461 and #3462 - @ivanovd)
+- Advise that docker-compose v1 is EOL and to upgrade to v2 (#3472 - @cwanja)
+- Fix tpms bar sensors name in template for psi (#3490 - @virtualm2000)
+
 ## [1.27.4] - 2023-11-12
 
 Note: TeslaMate moved to the new @teslamate-org organization.
@@ -1666,6 +1739,9 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.1...HEAD
+[1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...v1.28.1
+[1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.27.4...v1.28.0
 [1.27.4]: https://github.com/adriankumpf/teslamate/compare/v1.27.3...v1.27.4
 [1.27.3]: https://github.com/adriankumpf/teslamate/compare/v1.27.2...v1.27.3
 [1.27.2]: https://github.com/adriankumpf/teslamate/compare/v1.27.1...v1.27.2

@@ -743,7 +743,7 @@
             "renameByName": {
               "avg_consumption_kwh": "Avg charged",
               "avg_cost_km": "Avg cost per km",
-	            "avg_cost_mi": "Avg cost per mi",
+              "avg_cost_mi": "Avg cost per mi",
               "avg_cost_kwh": "Avg cost per kWh",
               "avg_outside_temp_c": "",
               "cnt": "# drives",
@@ -766,7 +766,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 34,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [
     "tesla"

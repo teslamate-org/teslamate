@@ -10,6 +10,7 @@ Check out the [release notes](https://github.com/teslamate-org/teslamate/release
 
 :::note
 Create a [backup](maintenance/backup_restore.md) before updating.
+If you are using `docker-compose`, you are using Docker Compose v1, which has been deprecated. Docker Compose commands refer to Docker Compose v2. Consider upgrading your docker setup, see [Migrate to Compose V2](https://docs.docker.com/compose/migrate/)
 :::
 
 import Tabs from "@theme/Tabs";
@@ -57,8 +58,9 @@ docker compose up -d
    ```bash
     _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
    ```
+
    Note, you may need to include environment variables when running this step:
-   
+
    ```bash
     DATABASE_USER=teslamate DATABASE_PASS=super_secret_password DATABASE_NAME=teslamate DATABASE_HOST=localhost MQTT_HOST=your_MQTT_host(HomeAssistant in my case) _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
    ```
@@ -93,9 +95,9 @@ docker compose up -d
    ```bash
     _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
    ```
-  
+
    Note: you may need to include environment variables as part of this step:
-   
+
    ```bash
     DATABASE_USER=teslamate DATABASE_PASS=super_secret_password DATABASE_NAME=teslamate DATABASE_HOST=localhost MQTT_HOST=your_MQTT_host(HomeAssistant in my case) _build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
    ```
