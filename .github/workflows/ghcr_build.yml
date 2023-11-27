@@ -6,8 +6,9 @@ on:
     paths:
       - "**/*"
       - "!.github/**"
+    branches: ["ci"]
   pull_request_target:
-    branches: ["master"]
+    branches: ["master", "ci"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
@@ -39,8 +40,14 @@ jobs:
     runs-on: ${{ matrix.runs_on }}
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name != 'pull_request_target' }}
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'pull_request_target' }}
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+
       - name: Buildx
         uses: ./.github/actions/build
         with:
@@ -76,8 +83,13 @@ jobs:
   grafana:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name != 'pull_request_target' }}
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'pull_request_target' }}
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3.0.0
