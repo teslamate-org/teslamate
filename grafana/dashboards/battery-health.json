@@ -1,5 +1,5 @@
 {
-  "__elements": [],
+  "__elements": {},
   "__requires": [
     {
       "type": "panel",
@@ -17,7 +17,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.5.26"
+      "version": "10.1.2"
     },
     {
       "type": "panel",
@@ -35,6 +35,12 @@
       "type": "panel",
       "id": "stat",
       "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "xychart",
+      "name": "XY Chart",
       "version": ""
     }
   ],
@@ -64,7 +70,6 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1689940704136,
   "links": [
     {
       "icon": "dashboard",
@@ -141,7 +146,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.26",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": {
@@ -286,7 +291,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.26",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": {
@@ -369,7 +374,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.26",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": {
@@ -503,7 +508,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.26",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": {
@@ -631,7 +636,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "8.5.26",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": {
@@ -724,9 +729,10 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true
+        "showUnfilled": true,
+        "valueMode": "color"
       },
-      "pluginVersion": "8.5.26",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": {
@@ -809,7 +815,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.26",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": {
@@ -917,8 +923,9 @@
           "value"
         ],
         "legend": {
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "pieType": "pie",
         "reduceOptions": {
@@ -1030,9 +1037,10 @@
           "values": false
         },
         "showUnfilled": true,
-        "text": {}
+        "text": {},
+        "valueMode": "color"
       },
-      "pluginVersion": "8.5.26",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": {
@@ -1147,9 +1155,10 @@
           "values": false
         },
         "showUnfilled": true,
-        "text": {}
+        "text": {},
+        "valueMode": "color"
       },
-      "pluginVersion": "8.5.26",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": {
@@ -1206,14 +1215,16 @@
       "type": "bargauge"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "postgres",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "continuous-RdYlGr"
           },
           "custom": {
-            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -1260,12 +1271,6 @@
               {
                 "id": "custom.show",
                 "value": "lines"
-              },
-              {
-                "id": "custom.lineStyle",
-                "value": {
-                  "fill": "solid"
-                }
               }
             ]
           }
@@ -1288,13 +1293,20 @@
         },
         "series": [
           {
+            "name": "Odometer",
             "pointColor": {
               "field": "kWh"
+            },
+            "pointSize": {
+              "fixed": 5,
+              "max": 100,
+              "min": 1
             },
             "x": "odometer",
             "y": "kWh"
           },
           {
+            "name": "Median Odometer",
             "pointColor": {
               "fixed": "dark-red"
             },
@@ -1304,7 +1316,7 @@
         ],
         "seriesMapping": "manual",
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
@@ -1312,13 +1324,17 @@
       "targets": [
         {
           "alias": "",
-          "datasource": "TeslaMate",
+          "datasource": {
+            "type": "postgres",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT convert_km(AVG(p.odometer)::numeric,'$length_unit') AS odometer, \r\n\tAVG(c.rated_battery_range_km) * ('$aux'::json -> 'RatedEfficiency')::text::float / AVG(c.usable_battery_level) AS \"kWh\",\r\n\tMAX(cp.id) AS id,\r\n\tto_char(cp.end_date, 'YYYY-MM-dd') AS Title\r\n\tFROM charging_processes cp\r\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\tFROM charges GROUP BY charging_process_id) AS last_charges\tON cp.id = last_charges.charging_process_id\r\n\t\tINNER JOIN charges c\r\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\r\n\t\tINNER JOIN positions p ON p.id = cp.position_id\r\n\tWHERE cp.car_id = $car_id\r\n\t\tAND cp.end_date IS NOT NULL\r\n\t\tAND cp.end_rated_range_km > cp.start_rated_range_km\r\n\tGROUP BY 4",
+          "rawSql": "SELECT convert_km(AVG(p.odometer)::numeric,'$length_unit') AS odometer, \r\n\tAVG(c.rated_battery_range_km * ('$aux'::json -> 'RatedEfficiency')::text::float / c.usable_battery_level) AS \"kWh\",\r\n\tMAX(cp.id) AS id,\r\n\tto_char(cp.end_date, 'YYYY-MM-dd') AS Title\r\n\tFROM charging_processes cp\r\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\tFROM charges WHERE usable_battery_level > 0 GROUP BY charging_process_id) AS last_charges\tON cp.id = last_charges.charging_process_id\r\n\t\tINNER JOIN charges c\r\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\r\n\t\tINNER JOIN positions p ON p.id = cp.position_id\r\n\tWHERE cp.car_id = $car_id\r\n\t\tAND cp.end_date IS NOT NULL\r\n\t\tAND cp.charge_energy_added >= ('$aux'::json -> 'RatedEfficiency')::text::float\r\n\tGROUP BY 4",
           "refId": "Projected Range",
           "select": [
             [
@@ -1330,6 +1346,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "time",
           "where": [
             {
@@ -1341,13 +1374,17 @@
         },
         {
           "alias": "",
-          "datasource": "TeslaMate",
+          "datasource": {
+            "type": "postgres",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \n  ROUND(MIN(convert_km(p.odometer::numeric,'$length_unit')),0) AS \"M-Odometer\",\n\tROUND(PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY c.rated_battery_range_km * ('$aux'::json -> 'RatedEfficiency')::text::float / c.usable_battery_level)::numeric,1) AS \"M-kWh\",\n\tto_char(cp.end_date, 'YYYYMM') || CASE WHEN to_char(cp.end_date, 'DD')::int <= 15 THEN '1' ELSE '2' END  AS Title\n\tFROM charging_processes cp\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\tFROM charges GROUP BY charging_process_id) AS last_charges\tON cp.id = last_charges.charging_process_id\n\t\tINNER JOIN charges c\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\n\t\tINNER JOIN positions p ON p.id = cp.position_id\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.end_rated_range_km > cp.start_rated_range_km\n\tGROUP BY 3",
+          "rawSql": "SELECT \n  ROUND(MIN(convert_km(p.odometer::numeric,'$length_unit')),0) AS \"M-Odometer\",\n\tROUND(PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY c.rated_battery_range_km * ('$aux'::json -> 'RatedEfficiency')::text::float / c.usable_battery_level)::numeric,1) AS \"M-kWh\",\n\tto_char(cp.end_date, 'YYYYMM') || CASE WHEN to_char(cp.end_date, 'DD')::int <= 15 THEN '1' ELSE '2' END  AS Title\n\tFROM charging_processes cp\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\tFROM charges WHERE usable_battery_level > 0 GROUP BY charging_process_id) AS last_charges\tON cp.id = last_charges.charging_process_id\n\t\tINNER JOIN charges c\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\n\t\tINNER JOIN positions p ON p.id = cp.position_id\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.charge_energy_added >= ('$aux'::json -> 'RatedEfficiency')::text::float\n\tGROUP BY 3",
           "refId": "Median",
           "select": [
             [
@@ -1359,6 +1396,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "drives",
           "timeColumn": "start_date",
           "timeColumnType": "timestamp",
@@ -1376,7 +1430,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 36,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "tesla"
@@ -1458,13 +1512,13 @@
           "type": "postgres",
           "uid": "TeslaMate"
         },
-        "definition": "-- CONCATENATED JOIN QUERIES TO IMPROVE PERFORMANCE\n-- The following query is the result of many tests and hours of work. This panel is for your own personal use. \n-- If you think you can improve it and contribute, please create a pull request and do not take it to your repository, \n-- much less upload it to another repository as if the original idea were yours, nor do you share it on social media\n-- without mentioning the author. Respect the ingenuity and work of others. Cheers!\n-- 2023-07-21\n-- By @jheredianet - Twitter: @juanheredia",
+        "definition": "-- CONCATENATED JOIN QUERIES TO IMPROVE PERFORMANCE\n-- The following query is the result of many tests and hours of work. This panel is for your own personal use. \n-- If you think you can improve it and contribute, please create a pull request and do not take it to your repository, \n-- much less upload it to another repository as if the original idea were yours, nor do you share it on social media\n-- without mentioning the author. Respect the ingenuity and work of others. Cheers!\n-- 2023-12-01\n-- By @jheredianet - Twitter: @juanheredia",
         "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "aux",
         "options": [],
-        "query": "WITH\naux\tAS\n(\n\tSELECT cp.charge_energy_added,\n\t\tcp.car_id, (SELECT efficiency FROM cars WHERE id = $car_id) * 100.0 AS rated_efficiency,\n\t\t(cp.end_rated_range_km - cp.start_rated_range_km) AS added_range_km\n\tFROM charging_processes cp\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\n\t\tFROM charges\n\t\tGROUP BY charging_process_id) AS last_charges\n\t\tON cp.id = last_charges.charging_process_id\n\t\tINNER JOIN charges c\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.end_rated_range_km > cp.start_rated_range_km\n\tORDER BY cp.end_date DESC \n\tLIMIT 1\n),  \nCurrentCapacity\t AS\n(\n\tSELECT AVG(Capacity) AS CurrentCapacity FROM\n  (SELECT (100.0 * cp.charge_energy_added) / (GREATEST(1,MAX(usable_battery_level) - MIN(usable_battery_level))) AS Capacity\t\n    FROM charging_processes cp\n\t  INNER JOIN charges c\tON cp.id = c.charging_process_id\n    INNER JOIN aux ON cp.car_id = aux.car_id\n\t  WHERE cp.car_id = $car_id AND cp.charge_energy_added >= aux.rated_efficiency \n    GROUP BY  cp.charge_energy_added, cp.end_date\n    ORDER BY cp.end_date DESC \n    LIMIT 5\n  ) AS lastEstimatedCapacity\n), \nMaxCapacity AS\n(\n   SELECT AVG(c.rated_battery_range_km * aux.rated_efficiency  / c.usable_battery_level) AS MaxCapacity, cp.id\n   FROM charging_processes cp\n\tJOIN (SELECT charging_process_id, MAX(date) as date FROM charges \n                    WHERE usable_battery_level > 0 GROUP BY charging_process_id) AS last_charges\t\n        ON cp.id = last_charges.charging_process_id\n\tINNER JOIN charges c ON c.charging_process_id = cp.id AND c.date = last_charges.date\n\tINNER JOIN positions p ON p.id = cp.position_id\n        INNER JOIN aux ON cp.car_id = aux.car_id\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.charge_energy_added >= aux.rated_efficiency \n\tGROUP BY cp.id \n        ORDER BY 1 DESC \n        LIMIT 1\n), \nCurrentRange AS\n(\n    SELECT\n\t\tfloor(extract(epoch from date)/86400)*86400 AS timecurrent,\n\t\tsum(rated_battery_range_km) / sum(usable_battery_level) * 100 AS rated_range_km\n\tFROM (\n\t\tSELECT battery_level, usable_battery_level, date,  rated_battery_range_km from charges c \n\t\tJOIN charging_processes p ON p.id = c.charging_process_id \n\t\tWHERE p.car_id = $car_id AND usable_battery_level IS NOT NULL) AS data\n\tGROUP BY 1\n\tORDER BY 1 DESC\n\tLIMIT 1\n), \nMaxRange AS\n(\n    SELECT\n\t\tfloor(extract(epoch from date)/86400)*86400 AS time,\n\t\tsum(rated_battery_range_km) / sum(usable_battery_level) * 100 AS max_rated_range_km\n\tFROM (\n\t\tSELECT battery_level, usable_battery_level, date,  rated_battery_range_km from charges c \n\t\tJOIN charging_processes p ON p.id = c.charging_process_id \n\t\tWHERE p.car_id = $car_id AND usable_battery_level IS NOT NULL) AS data\n\tGROUP BY 1\n\tORDER BY 2 DESC\n\tLIMIT 1\n) \nSELECT  CONCAT('{\"LastChargekWhAdded\": ', aux.charge_energy_added, \n  ', \"LastMileageAdded\" : ', convert_km(aux.added_range_km,'$length_unit'),\n  ', \"MaxRange\": ', convert_km(MaxRange.max_rated_range_km,'$length_unit'),\n  ', \"CurrentRange\": ',convert_km(CurrentRange.rated_range_km,'$length_unit'),\n  ', \"MaxCapacity\": ', MaxCapacity.MaxCapacity,\n  ', \"CurrentCapacity\": ', CASE WHEN CurrentCapacity.CurrentCapacity IS NULL THEN 1 ELSE CurrentCapacity.CurrentCapacity END,\n  ', \"RatedEfficiency\": ',aux.rated_efficiency, '}') \nFROM MaxRange, CurrentRange, Aux, MaxCapacity, CurrentCapacity;",
+        "query": "WITH DerivatedEfficiency AS (\n    SELECT (charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric *  \n        CASE WHEN '$length_unit' = 'km' THEN 1.0\n             WHEN '$length_unit' = 'mi' THEN 1.60934 \n        END * 100.0 as \"efficiency\",\n        count(*) as count FROM  charging_processes \n    WHERE car_id = $car_id  \n        AND duration_min > 10  \n        AND end_battery_level <= 95  \n        AND start_rated_range_km IS NOT NULL  \n        AND end_rated_range_km IS NOT NULL  \n        AND charge_energy_added > 0\n    GROUP BY  1\n    ORDER BY  2 DESC\n    LIMIT 1\n),\naux\tAS\n(\n\tSELECT cp.charge_energy_added,\n\t\tcp.car_id, (SELECT efficiency FROM DerivatedEfficiency) AS rated_efficiency,\n\t\t(cp.end_rated_range_km - cp.start_rated_range_km) AS added_range_km\n\tFROM charging_processes cp\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\n\t\tFROM charges\n\t\tGROUP BY charging_process_id) AS last_charges\n\t\tON cp.id = last_charges.charging_process_id\n\t\tINNER JOIN charges c\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.end_rated_range_km > cp.start_rated_range_km\n\tORDER BY cp.end_date DESC \n\tLIMIT 1\n),  \nCurrentCapacity\t AS\n(\n\tSELECT AVG(Capacity) AS CurrentCapacity FROM\n  (SELECT (100.0 * cp.charge_energy_added) / (GREATEST(1,MAX(usable_battery_level) - MIN(usable_battery_level))) AS Capacity\t\n    FROM charging_processes cp\n\t  INNER JOIN charges c\tON cp.id = c.charging_process_id\n    INNER JOIN aux ON cp.car_id = aux.car_id\n\t  WHERE cp.car_id = $car_id AND cp.charge_energy_added >= aux.rated_efficiency \n    GROUP BY  cp.charge_energy_added, cp.end_date\n    ORDER BY cp.end_date DESC \n    LIMIT 5\n  ) AS lastEstimatedCapacity\n), \nMaxCapacity AS\n(\n   SELECT AVG(c.rated_battery_range_km * aux.rated_efficiency  / c.usable_battery_level) AS MaxCapacity, cp.id\n   FROM charging_processes cp\n\tJOIN (SELECT charging_process_id, MAX(date) as date FROM charges \n                    WHERE usable_battery_level > 0 GROUP BY charging_process_id) AS last_charges\t\n        ON cp.id = last_charges.charging_process_id\n\tINNER JOIN charges c ON c.charging_process_id = cp.id AND c.date = last_charges.date\n\tINNER JOIN positions p ON p.id = cp.position_id\n        INNER JOIN aux ON cp.car_id = aux.car_id\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.charge_energy_added >= aux.rated_efficiency \n\tGROUP BY cp.id \n        ORDER BY 1 DESC \n        LIMIT 1\n), \nCurrentRange AS\n(\n    SELECT\n\t\tfloor(extract(epoch from date)/86400)*86400 AS timecurrent,\n\t\tsum(rated_battery_range_km) / sum(usable_battery_level) * 100 AS rated_range_km\n\tFROM (\n\t\tSELECT battery_level, usable_battery_level, date,  rated_battery_range_km from charges c \n\t\tJOIN charging_processes p ON p.id = c.charging_process_id \n\t\tWHERE p.car_id = $car_id AND usable_battery_level IS NOT NULL) AS data\n\tGROUP BY 1\n\tORDER BY 1 DESC\n\tLIMIT 1\n), \nMaxRange AS\n(\n    SELECT\n\t\tfloor(extract(epoch from date)/86400)*86400 AS time,\n\t\tsum(rated_battery_range_km) / sum(usable_battery_level) * 100 AS max_rated_range_km\n\tFROM (\n\t\tSELECT battery_level, usable_battery_level, date,  rated_battery_range_km from charges c \n\t\tJOIN charging_processes p ON p.id = c.charging_process_id \n\t\tWHERE p.car_id = $car_id AND usable_battery_level IS NOT NULL) AS data\n\tGROUP BY 1\n\tORDER BY 2 DESC\n\tLIMIT 1\n) \nSELECT  CONCAT('{\"LastChargekWhAdded\": ', aux.charge_energy_added, \n  ', \"LastMileageAdded\" : ', convert_km(aux.added_range_km,'$length_unit'),\n  ', \"MaxRange\": ', convert_km(MaxRange.max_rated_range_km,'$length_unit'),\n  ', \"CurrentRange\": ',convert_km(CurrentRange.rated_range_km,'$length_unit'),\n  ', \"MaxCapacity\": ', MaxCapacity.MaxCapacity,\n  ', \"CurrentCapacity\": ', CASE WHEN CurrentCapacity.CurrentCapacity IS NULL THEN 1 ELSE CurrentCapacity.CurrentCapacity END,\n  ', \"RatedEfficiency\": ',aux.rated_efficiency, '}') \nFROM MaxRange, CurrentRange, Aux, MaxCapacity, CurrentCapacity;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1523,6 +1577,6 @@
   "timezone": "browser",
   "title": "Battery Health",
   "uid": "jchmRiqUfXgTM",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }
