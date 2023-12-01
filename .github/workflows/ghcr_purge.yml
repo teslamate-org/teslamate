@@ -28,7 +28,7 @@ jobs:
         name: Delete untagged images from ghcr.io
         continue-on-error: true
         with:
-          package-name: "teslamate"
+          package-name: "volvomate"
           package-type: "container"
           min-versions-to-keep: 0
           delete-only-untagged-versions: "true"

@@ -21,7 +21,7 @@ permissions:
   packages: write
 
 jobs:
-  teslamate_build:
+  volvomate_build:
     name: Build images
     strategy:
       fail-fast: false
@@ -59,11 +59,11 @@ jobs:
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
 
-  teslamate_merge:
+  volvomate_merge:
     name: Merge GHCR images
     runs-on: ubuntu-latest
     needs:
-      - teslamate_build
+      - volvomate_build
     timeout-minutes: 10
     steps:
       - name: Checkout
