@@ -1081,7 +1081,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           Logger.error(
             """
             Unexpected update status: #{software_update.status}
-            
+
             #{inspect(software_update, pretty: true)}
             """,
             car_id: data.car.id
