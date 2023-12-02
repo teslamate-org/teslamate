@@ -103,6 +103,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           {"Sentry mode is enabled", "online", %{},
            vehicle_state: %{timestamp: 0, sentry_mode: true, locked: true, car_version: ""}},
           {"Preconditioning", "online", %{}, climate_state: %{is_preconditioning: true}},
+          {"Dog mode is enabled", "online", %{}, climate_state: %{climate_keeper_mode: "dog"}},
           {"Driver present", "online", %{},
            vehicle_state: %{timestamp: 0, is_user_present: true, car_version: ""}},
           {"Update in progress", "updating", %{},
