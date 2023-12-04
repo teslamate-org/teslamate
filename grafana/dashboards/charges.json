@@ -715,7 +715,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Cost per kWh"
+                "value": "Cost/kWh"
               },
               {
                 "id": "custom.width",
