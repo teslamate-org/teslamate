@@ -181,7 +181,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
          online_event(
            display_name: "FooCar",
            drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
-           climate_state: %{timestamp: now, is_preconditioning: false,climate_keeper_mode: "off"},
+           climate_state: %{timestamp: now, is_preconditioning: false, climate_keeper_mode: "off"},
            vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
