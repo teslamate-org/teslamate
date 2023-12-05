@@ -333,7 +333,7 @@
           !@summary.sentry_mode and
           !@summary.is_user_present and
           !@summary.is_preconditioning and
-           @summary.climate_keeper_mode == "dog" ->
+           @summary.climate_keeper_mode == "off" ->
             link gettext("try to sleep"), to: "#", phx_click: "suspend_logging",
                                           class: "button is-info is-small is-outlined is-fullwidth" <>
                                                    (if @loading, do: " is-loading", else: "")
