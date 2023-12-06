@@ -73,7 +73,7 @@ LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Integr
 
 A lightweight app that will operate your smart garage door openers based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and various smart garage door openers.
 
-LINK: [https://github.com/brchri/tesla-youq](https://github.com/brchri/tesla-geogdo)
+LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-geogdo)
 
 ## [TeslaBox](https://www.teslarpi.com)
 
