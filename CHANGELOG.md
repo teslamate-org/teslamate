@@ -12,6 +12,23 @@
 
 #### Documentation
 
+## [1.28.2] - 2023-11-27
+
+### New features
+
+### Improvements and bug fixes
+
+- grafana: support DATABASE_SSL_MODE (#3498 - @simonsmh)
+- Support server_name_indication for ssl (#3497 - @simonsmh)
+- grafana: Fix Dashboard dropdown link display (#3501 - @oivindoh)
+- Ci: GHCR Purge success even if package doesn't exist (#3480 - @jlestel and #3504 - @JakobLichterfeld)
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [1.28.1] - 2023-11-26
 
 ### New features
@@ -1735,7 +1752,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.1...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.2...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.1...v1.28.2
 [1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...v1.28.1
 [1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.27.4...v1.28.0
 [1.27.4]: https://github.com/adriankumpf/teslamate/compare/v1.27.3...v1.27.4

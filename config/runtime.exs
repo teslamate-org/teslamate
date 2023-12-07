@@ -107,7 +107,14 @@ case System.get_env("DATABASE_SSL") do
   "noverify" ->
     config :teslamate, TeslaMate.Repo,
       ssl: true,
-      ssl_opts: [verify: :verify_none]
+      ssl_opts: [
+        server_name_indication:
+          to_charlist(
+            System.get_env("DATABASE_SSL_SNI") ||
+              Util.fetch_env!("DATABASE_HOST", all: "localhost")
+          ),
+        verify: :verify_none
+      ]
 
   _false ->
     config :teslamate, TeslaMate.Repo, ssl: false

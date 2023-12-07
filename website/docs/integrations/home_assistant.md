@@ -72,9 +72,7 @@ tesla:
   password: !secret tesla_password
   scan_interval: 3600
 
-mqtt:
-  sensor: !include mqtt_sensor.yaml
-  binary_sensor: !include mqtt_binary_sensor.yaml
+mqtt: !include mqtt_sensors.yaml
 sensor: !include sensor.yaml
 binary_sensor: !include binary_sensor.yaml
 ```
@@ -93,281 +91,543 @@ tesla_location:
   track: true
 ```
 
-### mqtt_sensor.yaml (mqtt: sensor: section of configuration.yaml)
+### mqtt_sensors.yaml (mqtt: section of configuration.yaml)
 
-```yml title="mqtt_sensor.yaml"
- - name: tesla_display_name
-   state_topic: "teslamate/cars/1/display_name"
-   icon: mdi:car
+Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct corresponding values.
 
- - name: tesla_state
-   state_topic: "teslamate/cars/1/state"
-   icon: mdi:car-connected
+```yml title="mqtt_sensors.yaml"
+- sensor:
+    name: Display Name
+    object_id: tesla_display_name # entity_id
+    unique_id: teslamate_1_display_name # internal id, used for device grouping
+    availability: &teslamate_availability
+      - topic: teslamate/cars/1/healthy
+        payload_available: 'true'
+        payload_not_available: 'false'
+    device: &teslamate_device_info
+      identifiers: [teslamate_car_1]
+      configuration_url: https://teslamate.zxxz.io/
+      manufacturer: Tesla
+      model: Model 3
+      name: Tesla Model 3
+    state_topic: "teslamate/cars/1/display_name"
+    icon: mdi:car
 
- - name: tesla_since
-   state_topic: "teslamate/cars/1/since"
-   device_class: timestamp
-   icon: mdi:clock-outline
+- sensor:
+    name: State
+    object_id: tesla_state
+    unique_id: teslamate_1_state
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/state"
+    icon: mdi:car-connected
 
- - name: tesla_version
-   state_topic: "teslamate/cars/1/version"
-   icon: mdi:alphabetical
+- sensor:
+    name: Since
+    object_id: tesla_since
+    unique_id: teslamate_1_since
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/since"
+    device_class: timestamp
+    icon: mdi:clock-outline
 
- - name: tesla_update_version
-   state_topic: "teslamate/cars/1/update_version"
-   icon: mdi:alphabetical
+- sensor:
+    name: Version
+    object_id: tesla_version
+    unique_id: teslamate_1_version
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/version"
+    icon: mdi:alphabetical
 
- - name: tesla_model
-   state_topic: "teslamate/cars/1/model"
+- sensor:
+    name: Update Version
+    object_id: tesla_update_version
+    unique_id: teslamate_1_update_version
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/update_version"
+    icon: mdi:alphabetical
 
- - name: tesla_trim_badging
-   state_topic: "teslamate/cars/1/trim_badging"
-   icon: mdi:shield-star-outline
+- sensor:
+    name: Model
+    object_id: tesla_model
+    unique_id: teslamate_1_model
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/model"
 
- - name: tesla_exterior_color
-   state_topic: "teslamate/cars/1/exterior_color"
-   icon: mdi:palette
+- sensor:
+    name: Trim Badging
+    object_id: tesla_trim_badging
+    unique_id: teslamate_1_trim_badging
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/trim_badging"
+    icon: mdi:shield-star-outline
 
- - name: tesla_wheel_type
-   state_topic: "teslamate/cars/1/wheel_type"
+- sensor:
+    name: Exterior Color
+    object_id: tesla_exterior_color
+    unique_id: teslamate_1_exterior_color
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/exterior_color"
+    icon: mdi:palette
 
- - name: tesla_spoiler_type
-   state_topic: "teslamate/cars/1/spoiler_type"
-   icon: mdi:car-sports
+- sensor:
+    name: Wheel Type
+    object_id: tesla_wheel_type
+    unique_id: teslamate_1_wheel_type
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/wheel_type"
 
- - name: tesla_geofence
-   state_topic: "teslamate/cars/1/geofence"
-   icon: mdi:earth
+- sensor:
+    name: Spoiler Type
+    object_id: tesla_spoiler_type
+    unique_id: teslamate_1_spoiler_type
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/spoiler_type"
+    icon: mdi:car-sports
 
- - name: tesla_latitude
-   state_topic: "teslamate/cars/1/latitude"
-   unit_of_measurement: °
-   icon: mdi:crosshairs-gps
+- sensor:
+    name: Geofence
+    object_id: tesla_geofence
+    unique_id: teslamate_1_geofence
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/geofence"
+    icon: mdi:earth
 
- - name: tesla_longitude
-   state_topic: "teslamate/cars/1/longitude"
-   unit_of_measurement: °
-   icon: mdi:crosshairs-gps
+- sensor:
+    name: Latitude
+    object_id: tesla_latitude
+    unique_id: teslamate_1_latitude
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/latitude"
+    unit_of_measurement: °
+    icon: mdi:crosshairs-gps
 
- - name: tesla_shift_state
-   state_topic: "teslamate/cars/1/shift_state"
-   icon: mdi:car-shift-pattern
+- sensor:
+    name: Longitude
+    object_id: tesla_longitude
+    unique_id: teslamate_1_longitude
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/longitude"
+    unit_of_measurement: °
+    icon: mdi:crosshairs-gps
 
- - name: tesla_power
-   state_topic: "teslamate/cars/1/power"
-   device_class: power
-   unit_of_measurement: kW
-   icon: mdi:flash
+- sensor:
+    name: Shift State
+    object_id: tesla_shift_state
+    unique_id: teslamate_1_shift_state
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/shift_state"
+    icon: mdi:car-shift-pattern
 
- - name: tesla_speed
-   state_topic: "teslamate/cars/1/speed"
-   unit_of_measurement: "km/h"
-   icon: mdi:speedometer
+- sensor:
+    name: Power
+    object_id: tesla_power
+    unique_id: teslamate_1_power
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/power"
+    device_class: power
+    unit_of_measurement: kW
+    icon: mdi:flash
 
- - name: tesla_heading
-   state_topic: "teslamate/cars/1/heading"
-   unit_of_measurement: °
-   icon: mdi:compass
+- sensor:
+    name: Speed
+    object_id: tesla_speed
+    unique_id: teslamate_1_speed
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/speed"
+    unit_of_measurement: "km/h"
+    icon: mdi:speedometer
 
- - name: tesla_elevation
-   state_topic: "teslamate/cars/1/elevation"
-   unit_of_measurement: m
-   icon: mdi:image-filter-hdr
+- sensor:
+    name: Heading
+    object_id: tesla_heading
+    unique_id: teslamate_1_heading
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/heading"
+    unit_of_measurement: °
+    icon: mdi:compass
 
- - name: tesla_inside_temp
-   state_topic: "teslamate/cars/1/inside_temp"
-   device_class: temperature
-   unit_of_measurement: °C
-   icon: mdi:thermometer-lines
+- sensor:
+    name: Elevation
+    object_id: tesla_elevation
+    unique_id: teslamate_1_elevation
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/elevation"
+    unit_of_measurement: m
+    icon: mdi:image-filter-hdr
 
- - name: tesla_outside_temp
-   state_topic: "teslamate/cars/1/outside_temp"
-   device_class: temperature
-   unit_of_measurement: °C
-   icon: mdi:thermometer-lines
+- sensor:
+    name: Inside Temp
+    object_id: tesla_inside_temp
+    unique_id: teslamate_1_inside_temp
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/inside_temp"
+    device_class: temperature
+    unit_of_measurement: °C
+    icon: mdi:thermometer-lines
 
- - name: tesla_odometer
-   state_topic: "teslamate/cars/1/odometer"
-   unit_of_measurement: km
-   icon: mdi:counter
+- sensor:
+    name: Outside Temp
+    object_id: tesla_outside_temp
+    unique_id: teslamate_1_outside_temp
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/outside_temp"
+    device_class: temperature
+    unit_of_measurement: °C
+    icon: mdi:thermometer-lines
 
- - name: tesla_est_battery_range_km
-   state_topic: "teslamate/cars/1/est_battery_range_km"
-   unit_of_measurement: km
-   icon: mdi:gauge
+- sensor:
+    name: Odometer
+    object_id: tesla_odometer
+    unique_id: teslamate_1_odometer
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/odometer"
+    unit_of_measurement: km
+    icon: mdi:counter
 
- - name: tesla_rated_battery_range_km
-   state_topic: "teslamate/cars/1/rated_battery_range_km"
-   unit_of_measurement: km
-   icon: mdi:gauge
+- sensor:
+    name: Est Battery Range
+    object_id: tesla_est_battery_range_km
+    unique_id: teslamate_1_est_battery_range_km
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/est_battery_range_km"
+    unit_of_measurement: km
+    icon: mdi:gauge
 
- - name: tesla_ideal_battery_range_km
-   state_topic: "teslamate/cars/1/ideal_battery_range_km"
-   unit_of_measurement: km
-   icon: mdi:gauge
+- sensor:
+    name: Rated Battery Range
+    object_id: tesla_rated_battery_range_km
+    unique_id: teslamate_1_rated_battery_range_km
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/rated_battery_range_km"
+    unit_of_measurement: km
+    icon: mdi:gauge
 
- - name: tesla_battery_level
-   state_topic: "teslamate/cars/1/battery_level"
-   device_class: battery
-   unit_of_measurement: "%"
-   icon: mdi:battery-80
-   
- - name: tesla_usable_battery_level
-   state_topic: "teslamate/cars/1/usable_battery_level"
-   unit_of_measurement: "%"
-   icon: mdi:battery-80
+- sensor:
+    name: Ideal Battery Range
+    object_id: tesla_ideal_battery_range_km
+    unique_id: teslamate_1_ideal_battery_range_km
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/ideal_battery_range_km"
+    unit_of_measurement: km
+    icon: mdi:gauge
 
- - name: tesla_charge_energy_added
-   state_topic: "teslamate/cars/1/charge_energy_added"
-   device_class: energy
-   unit_of_measurement: kWh
-   icon: mdi:battery-charging
+- sensor:
+    name: Battery Level
+    object_id: tesla_battery_level
+    unique_id: teslamate_1_battery_level
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/battery_level"
+    device_class: battery
+    unit_of_measurement: "%"
+    icon: mdi:battery-80
+    
+- sensor:
+    name: Usable Battery Level
+    object_id: tesla_usable_battery_level
+    unique_id: teslamate_1_usable_battery_level
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/usable_battery_level"
+    unit_of_measurement: "%"
+    icon: mdi:battery-80
 
- - name: tesla_charge_limit_soc
-   state_topic: "teslamate/cars/1/charge_limit_soc"
-   unit_of_measurement: "%"
-   icon: mdi:battery-charging-100
+- sensor:
+    name: Charge Energy Added
+    object_id: tesla_charge_energy_added
+    unique_id: teslamate_1_charge_energy_added
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/charge_energy_added"
+    device_class: energy
+    unit_of_measurement: kWh
+    icon: mdi:battery-charging
 
- - name: tesla_charger_actual_current
-   state_topic: "teslamate/cars/1/charger_actual_current"
-   device_class: current
-   unit_of_measurement: A
-   icon: mdi:lightning-bolt
+- sensor:
+    name: Charge Limit Soc
+    object_id: tesla_charge_limit_soc
+    unique_id: teslamate_1_charge_limit_soc
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/charge_limit_soc"
+    unit_of_measurement: "%"
+    icon: mdi:battery-charging-100
 
- - name: tesla_charger_phases
-   state_topic: "teslamate/cars/1/charger_phases"
-   icon: mdi:sine-wave
+- sensor:
+    name: Charger Actual Current
+    object_id: tesla_charger_actual_current
+    unique_id: teslamate_1_charger_actual_current
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/charger_actual_current"
+    device_class: current
+    unit_of_measurement: A
+    icon: mdi:lightning-bolt
 
- - name: tesla_charger_power
-   state_topic: "teslamate/cars/1/charger_power"
-   device_class: power
-   unit_of_measurement: kW
-   icon: mdi:lightning-bolt
+- sensor:
+    name: Charger Phases
+    object_id: tesla_charger_phases
+    unique_id: teslamate_1_charger_phases
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/charger_phases"
+    icon: mdi:sine-wave
 
- - name: tesla_charger_voltage
-   state_topic: "teslamate/cars/1/charger_voltage"
-   device_class: voltage
-   unit_of_measurement: V
-   icon: mdi:lightning-bolt
+- sensor:
+    name: Charger Power
+    object_id: tesla_charger_power
+    unique_id: teslamate_1_charger_power
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/charger_power"
+    device_class: power
+    unit_of_measurement: kW
+    icon: mdi:lightning-bolt
 
- - name: tesla_scheduled_charging_start_time
-   state_topic: "teslamate/cars/1/scheduled_charging_start_time"
-   device_class: timestamp
-   icon: mdi:clock-outline
+- sensor:
+    name: Charger Voltage
+    object_id: tesla_charger_voltage
+    unique_id: teslamate_1_charger_voltage
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/charger_voltage"
+    device_class: voltage
+    unit_of_measurement: V
+    icon: mdi:lightning-bolt
 
- - name: tesla_time_to_full_charge
-   state_topic: "teslamate/cars/1/time_to_full_charge"
-   unit_of_measurement: h
-   icon: mdi:clock-outline
+- sensor:
+    name: Scheduled Charging Start Time
+    object_id: tesla_scheduled_charging_start_time
+    unique_id: teslamate_1_scheduled_charging_start_time
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/scheduled_charging_start_time"
+    device_class: timestamp
+    icon: mdi:clock-outline
 
- - name: tesla_tpms_pressure_fl_bar
-   state_topic: "teslamate/cars/1/tpms_pressure_fl"
-   unit_of_measurement: bar
-   icon: mdi:car-tire-alert
+- sensor:
+    name: Time To Full Charge
+    object_id: tesla_time_to_full_charge
+    unique_id: teslamate_1_time_to_full_charge
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/time_to_full_charge"
+    unit_of_measurement: h
+    icon: mdi:clock-outline
 
- - name: tesla_tpms_pressure_fr_bar
-   state_topic: "teslamate/cars/1/tpms_pressure_fr"
-   unit_of_measurement: bar
-   icon: mdi:car-tire-alert
+- sensor:
+    name: TPMS Pressure Front Left
+    object_id: tesla_tpms_fl
+    unique_id: teslamate_1_tpms_fl
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/tpms_pressure_fl"
+    unit_of_measurement: bar
+    icon: mdi:car-tire-alert
 
- - name: tesla_tpms_pressure_rl_bar
-   state_topic: "teslamate/cars/1/tpms_pressure_rl"
-   unit_of_measurement: bar
-   icon: mdi:car-tire-alert
+- sensor:
+    name: TPMS Pressure Front Right
+    object_id: tesla_tpms_fr
+    unique_id: teslamate_1_tpms_fr
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/tpms_pressure_fr"
+    unit_of_measurement: bar
+    icon: mdi:car-tire-alert
 
- - name: tesla_tpms_pressure_rr_bar
-   state_topic: "teslamate/cars/1/tpms_pressure_rr"
-   unit_of_measurement: bar
-   icon: mdi:car-tire-alert
-```
+- sensor:
+    name: TPMS Pressure Rear Left
+    object_id: tesla_tpms_rl
+    unique_id: teslamate_1_tpms_rl
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/tpms_pressure_rl"
+    unit_of_measurement: bar
+    icon: mdi:car-tire-alert
 
-### mqtt_binary_sensor.yaml (mqtt: binary_sensor: section of configuration.yaml)
+- sensor:
+    name: TPMS Pressure Rear Right
+    object_id: tesla_tpms_rr
+    unique_id: teslamate_1_tpms_rr
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/tpms_pressure_rr"
+    unit_of_measurement: bar
+    icon: mdi:car-tire-alert
 
-```yml title="mqtt_binary_sensor.yaml"
- - name: tesla_healthy
-   state_topic: "teslamate/cars/1/healthy"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:heart-pulse
+- binary_sensor:
+    name: Healthy
+    object_id: tesla_healthy
+    unique_id: teslamate_1_healthy
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/healthy"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:heart-pulse
 
- - name: tesla_update_available
-   state_topic: "teslamate/cars/1/update_available"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:alarm
- 
- - name: tesla_locked
-   device_class: lock
-   state_topic: "teslamate/cars/1/locked"
-   payload_on: "false"
-   payload_off: "true"
+- binary_sensor:
+    name: Update Available
+    object_id: tesla_update_available
+    unique_id: teslamate_1_update_available
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/update_available"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:alarm
 
- - name: tesla_sentry_mode
-   state_topic: "teslamate/cars/1/sentry_mode"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:cctv
+- binary_sensor:
+    name: Locked
+    object_id: tesla_locked
+    unique_id: teslamate_1_locked
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    device_class: lock
+    state_topic: "teslamate/cars/1/locked"
+    payload_on: "false"
+    payload_off: "true"
 
- - name: tesla_windows_open
-   device_class: window
-   state_topic: "teslamate/cars/1/windows_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:car-door
+- binary_sensor:
+    name: Sentry Mode
+    object_id: tesla_sentry_mode
+    unique_id: teslamate_1_sentry_mode
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/sentry_mode"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:cctv
 
- - name: tesla_doors_open
-   device_class: door
-   state_topic: "teslamate/cars/1/doors_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:car-door
+- binary_sensor:
+    name: Windows Open
+    object_id: tesla_windows_open
+    unique_id: teslamate_1_windows_open
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    device_class: window
+    state_topic: "teslamate/cars/1/windows_open"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:car-door
 
- - name: tesla_trunk_open
-   device_class: opening
-   state_topic: "teslamate/cars/1/trunk_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:car-side
+- binary_sensor:
+    name: Doors Open
+    object_id: tesla_doors_open
+    unique_id: teslamate_1_doors_open
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    device_class: door
+    state_topic: "teslamate/cars/1/doors_open"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:car-door
 
- - name: tesla_frunk_open
-   device_class: opening
-   state_topic: "teslamate/cars/1/frunk_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:car-side
+- binary_sensor:
+    name: Trunk Open
+    object_id: tesla_trunk_open
+    unique_id: teslamate_1_trunk_open
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    device_class: opening
+    state_topic: "teslamate/cars/1/trunk_open"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:car-side
 
- - name: tesla_is_user_present
-   device_class: presence
-   state_topic: "teslamate/cars/1/is_user_present"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:human-greeting
+- binary_sensor:
+    name: Frunk Open
+    object_id: tesla_frunk_open
+    unique_id: teslamate_1_frunk_open
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    device_class: opening
+    state_topic: "teslamate/cars/1/frunk_open"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:car-side
 
- - name: tesla_is_climate_on
-   state_topic: "teslamate/cars/1/is_climate_on"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:fan
+- binary_sensor:
+    name: Is User Present
+    object_id: tesla_is_user_present
+    unique_id: teslamate_1_is_user_present
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    device_class: presence
+    state_topic: "teslamate/cars/1/is_user_present"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:human-greeting
 
- - name: tesla_is_preconditioning
-   state_topic: "teslamate/cars/1/is_preconditioning"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:fan
+- binary_sensor:
+    name: Is Climate On
+    object_id: tesla_is_climate_on
+    unique_id: teslamate_1_is_climate_on
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/is_climate_on"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:fan
 
- - name: tesla_plugged_in
-   device_class: plug
-   state_topic: "teslamate/cars/1/plugged_in"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:ev-station
+- binary_sensor:
+    name: Is Preconditioning
+    object_id: tesla_is_preconditioning
+    unique_id: teslamate_1_is_preconditioning
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/is_preconditioning"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:fan
 
- - name: tesla_charge_port_door_open
-   device_class: opening
-   state_topic: "teslamate/cars/1/charge_port_door_open"
-   payload_on: "true"
-   payload_off: "false"
-   icon: mdi:ev-plug-tesla
+- binary_sensor:
+    name: Plugged In
+    object_id: tesla_plugged_in
+    unique_id: teslamate_1_plugged_in
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    device_class: plug
+    state_topic: "teslamate/cars/1/plugged_in"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:ev-station
+
+- binary_sensor:
+    name: Charge Port Door OPEN
+    object_id: tesla_charge_port_door_open
+    unique_id: teslamate_1_charge_port_door_open
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    device_class: opening
+    state_topic: "teslamate/cars/1/charge_port_door_open"
+    payload_on: "true"
+    payload_off: "false"
+    icon: mdi:ev-plug-tesla
+
 ```
 
 ### sensor.yaml (sensor: section of configuration.yaml)
