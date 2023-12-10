@@ -30,6 +30,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Testing action output
+      shell: bash
+      run: "echo SECTEST"
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v5
