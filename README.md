@@ -37,7 +37,7 @@ The documentation is available at [docs.teslamate.org](https://docs.teslamate.or
 
 **General**
 
-- High precision drive data recording
+- *High precision drive data recording*
 - No additional vampire drain: the car will fall asleep as soon as possible
 - Automatic address lookup
 - Easy integration into Home Assistant (via MQTT)
