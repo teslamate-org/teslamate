@@ -14,7 +14,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     charger_actual_current charger_voltage version update_available update_version is_user_present geofence
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
-    tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr
+    tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -106,6 +106,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       # Climate State
       is_climate_on: get_in_struct(vehicle, [:climate_state, :is_climate_on]),
       is_preconditioning: get_in_struct(vehicle, [:climate_state, :is_preconditioning]),
+      climate_keeper_mode: get_in_struct(vehicle, [:climate_state, :climate_keeper_mode]),
       outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),
       inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp]),
 

@@ -143,6 +143,39 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
   end
 
   @tag :capture_log
+  test "does not suspend if dog mode is active", %{test: name} do
+    not_suspendable =
+      online_event(
+        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        climate_state: %{climate_keeper_mode: "dog"}
+      )
+
+    events = [
+      {:ok, online_event()},
+      {:ok, not_suspendable}
+    ]
+
+    suspend_after_idle_ms = 10
+    suspend_ms = 100
+
+    :ok =
+      start_vehicle(name, events,
+        settings: %{
+          suspend_after_idle_min: round(suspend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
+      )
+
+    assert_receive {:start_state, car, :online, date: _}
+    assert_receive {ApiMock, {:stream, 1000, _}}
+    assert_receive {:insert_position, ^car, %{}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+    refute_receive _, round(suspend_ms * 0.5)
+
+    refute_receive _
+  end
+
+  @tag :capture_log
   test "does not suspend if user is present", %{test: name} do
     not_suspendable =
       online_event(

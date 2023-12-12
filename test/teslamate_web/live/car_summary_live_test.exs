@@ -57,7 +57,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
          online_event(
            display_name: "FooCar",
            drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
-           climate_state: %{timestamp: now, is_preconditioning: false},
+           climate_state: %{timestamp: now, is_preconditioning: false, climate_keeper_mode: "off"},
            vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
@@ -103,6 +103,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           {"Sentry mode is enabled", "online", %{},
            vehicle_state: %{timestamp: 0, sentry_mode: true, locked: true, car_version: ""}},
           {"Preconditioning", "online", %{}, climate_state: %{is_preconditioning: true}},
+          {"Dog mode is enabled", "online", %{}, climate_state: %{climate_keeper_mode: "dog"}},
           {"Driver present", "online", %{},
            vehicle_state: %{timestamp: 0, is_user_present: true, car_version: ""}},
           {"Update in progress", "updating", %{},
@@ -180,7 +181,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
          online_event(
            display_name: "FooCar",
            drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
-           climate_state: %{timestamp: now, is_preconditioning: false},
+           climate_state: %{timestamp: now, is_preconditioning: false, climate_keeper_mode: "off"},
            vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
