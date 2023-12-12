@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: chipkent/action-cleanup-package@v1.0.1
+      - uses: chipkent/action-cleanup-package@v1.0.3
         id: cleanup
         continue-on-error: true
         with:
