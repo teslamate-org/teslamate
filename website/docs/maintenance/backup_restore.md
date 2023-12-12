@@ -32,10 +32,6 @@ If you changed `TM_DB_USER` in the .env file from one of the advanced guides, ma
 ## Restore
 
 :::note
-Restore from backup only works with the same PostgreSQL versions from which you took a backup (e.g. backups from PSQL v14 will not restore to PSQL v15). If you want to upgrade, restore the data to the matching PSQL version and then upgrade PSQL.
-:::
-
-:::note
 Replace the default `teslamate` value below with the value defined in the .env file if you have one (TM_DB_USER and TM_DB_NAME)
 :::
 
