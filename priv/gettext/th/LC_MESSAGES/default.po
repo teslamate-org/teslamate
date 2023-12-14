@@ -8,17 +8,7 @@
 # # to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Suthep Yonphimai <tomztt@gmail.com>\n"
-"Language-Team: \n"
-"Language: th\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.2.2\n"
+
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:104
 msgid "Status"
