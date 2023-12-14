@@ -28,7 +28,7 @@ msgstr "ชาร์จเรียบร้อยแล้ว"
 
 #: lib/teslamate_web/live/car_live/summary.ex:131
 msgid "asleep"
-msgstr ""
+msgstr "หลับ"
 
 #: lib/teslamate_web/live/car_live/summary.ex:126
 msgid "charging"
@@ -83,11 +83,11 @@ msgstr "เสียบปลั๊กแล้ว"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:189
 msgid "Charge Limit"
-msgstr ""
+msgstr "การจำกัดการชาร์จ"
 
 #: lib/teslamate_web/live/car_live/summary.ex:128
 msgid "falling asleep"
-msgstr ""
+msgstr "หลับใน"
 
 #: lib/teslamate_web/live/car_live/summary.ex:132
 msgid "unavailable"
@@ -124,7 +124,7 @@ msgstr "เขตทางภูมิศาสตร์"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:47
 msgid "Idle Time Before Trying to Sleep"
-msgstr ""
+msgstr "ระยะเวลาก่อนทำงานในโหมดหลับ"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:43
 #: lib/teslamate_web/live/geofence_live/form.html.heex:48
@@ -154,7 +154,7 @@ msgstr "กำลังบันทึก..."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 msgid "Time to Try Sleeping"
-msgstr ""
+msgstr "จำนวนครั้งที่รถพยายามเข้าสู่โหมดหลับ"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:37
 #: lib/teslamate_web/live/settings_live/index.html.heex:56
@@ -189,11 +189,11 @@ msgstr "มีผู้ขับรถอยู่"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:307
 msgid "cancel sleep attempt"
-msgstr ""
+msgstr "ยกเลิกการพยายามเข้าสู่โหมดหลับ"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:302
 msgid "try to sleep"
-msgstr ""
+msgstr "พยายามเข้าสู่โหมดหลับ"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:152
 msgid "Range (est.)"
@@ -300,7 +300,7 @@ msgstr "เปิดใช้งานแล้ว"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:24
 msgid "Sleep Mode"
-msgstr ""
+msgstr "โหมดหลับ"
 
 #: lib/teslamate_web/live/geofence_live/form.ex:189
 msgid "Geo-fence \"%{name}\" updated"
@@ -457,7 +457,7 @@ msgstr "ประตูเปิดอยู่"
 
 #: lib/teslamate_web/live/car_live/summary.ex:136
 msgid "Trunk is open"
-msgstr ""
+msgstr "ที่เก็บสัมภาระท้ายรถเปิดอยู่"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:112
 #: lib/teslamate_web/live/geofence_live/form.html.heex:66
