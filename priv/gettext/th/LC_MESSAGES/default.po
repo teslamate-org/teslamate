@@ -85,11 +85,11 @@ msgstr "การตั้งค่า"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:180
 msgid "Scheduled Charging"
-msgstr ""
+msgstr "การชาร์จตามกำหนดเวลา"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:58
 msgid "Plugged In"
-msgstr ""
+msgstr "เสียบปลั๊กแล้ว"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:189
 msgid "Charge Limit"
@@ -101,28 +101,28 @@ msgstr ""
 
 #: lib/teslamate_web/live/car_live/summary.ex:132
 msgid "unavailable"
-msgstr ""
+msgstr "ไม่พร้อมใช้งาน"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:198
 msgid "Length"
-msgstr ""
+msgstr "ความยาว"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:213
 msgid "Temperature"
-msgstr ""
+msgstr "อุณฆภูมิ"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:195
 msgid "Units"
-msgstr ""
+msgstr "หน่วย"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:131
 #: lib/teslamate_web/live/geofence_live/form.html.heex:105
 msgid "Back"
-msgstr ""
+msgstr "ย้อนกลับ"
 
 #: lib/teslamate_web/live/geofence_live/form.ex:188
 msgid "Geo-fence \"%{name}\" created"
-msgstr ""
+msgstr "สร้างขอบเขตทางภูมิศาสตร์ \"%{name}\" แล้ว"
 
 #: lib/teslamate_web/live/geofence_live/form.ex:110
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
@@ -130,7 +130,7 @@ msgstr ""
 #: lib/teslamate_web/live/geofence_live/index.html.heex:4
 #: lib/teslamate_web/templates/layout/root.html.heex:57
 msgid "Geo-Fences"
-msgstr ""
+msgstr "เขตทางภูมิศาสตร์"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:47
 msgid "Idle Time Before Trying to Sleep"
@@ -140,27 +140,27 @@ msgstr ""
 #: lib/teslamate_web/live/geofence_live/form.html.heex:48
 #: lib/teslamate_web/live/geofence_live/index.html.heex:21
 msgid "Name"
-msgstr ""
+msgstr "ชื่อ"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:17
 #: lib/teslamate_web/live/geofence_live/index.html.heex:22
 msgid "Position"
-msgstr ""
+msgstr "ตำแหน่ง"
 
 #: lib/teslamate_web/live/geofence_live/index.html.heex:23
 msgid "Radius"
-msgstr ""
+msgstr "รัศมี"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:134
 #: lib/teslamate_web/live/geofence_live/form.html.heex:108
 msgid "Save"
-msgstr ""
+msgstr "บันทึก"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:135
 #: lib/teslamate_web/live/geofence_live/form.html.heex:108
 #: lib/teslamate_web/live/signin_live/index.html.heex:40
 msgid "Saving..."
-msgstr ""
+msgstr "กำลังบันทึก..."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 msgid "Time to Try Sleeping"
@@ -169,33 +169,33 @@ msgstr ""
 #: lib/teslamate_web/live/settings_live/index.html.heex:37
 #: lib/teslamate_web/live/settings_live/index.html.heex:56
 msgid "min"
-msgstr ""
+msgstr "นาที"
 
 #: lib/teslamate_web/live/signin_live/index.ex:81
 msgid "Signed in successfully"
-msgstr ""
+msgstr "ลงชื่อเข้าใช้เรียบร้อย"
 
 #: lib/teslamate_web/live/car_live/summary.ex:134
 msgid "Car is unlocked"
-msgstr ""
+msgstr "รถถูกปลดล็อคแล้ว"
 
 #: lib/teslamate_web/live/geofence_live/index.html.heex:9
 msgid "Create"
-msgstr ""
+msgstr "สร้าง"
 
 #: lib/teslamate_web/live/car_live/summary.ex:138
 #: lib/teslamate_web/live/car_live/summary.html.heex:43
 msgid "Preconditioning"
-msgstr ""
+msgstr "การปรับสภาพล่วงหน้า"
 
 #: lib/teslamate_web/live/car_live/summary.ex:137
 msgid "Sentry mode is enabled"
-msgstr ""
+msgstr "โหมด Sentry เปิดแล้ว"
 
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #: lib/teslamate_web/live/car_live/summary.html.heex:53
 msgid "Driver present"
-msgstr ""
+msgstr "มีผู้ขับรถอยู่"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:307
 msgid "cancel sleep attempt"
@@ -207,23 +207,23 @@ msgstr ""
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:152
 msgid "Range (est.)"
-msgstr ""
+msgstr "ระยะทาง (โดยประมาณ)"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:107
 msgid "for"
-msgstr ""
+msgstr "สำหรับ"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:68
 msgid "Requirements"
-msgstr ""
+msgstr "ความต้องการ"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:77
 msgid "Vehicle must be locked"
-msgstr ""
+msgstr "รถควรจะต้องถูกล็อค"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:133
 msgid "Range (rated)"
-msgstr ""
+msgstr "ระยะทาง (จัดอันดับ)"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:171
 msgid "Charger Power"
