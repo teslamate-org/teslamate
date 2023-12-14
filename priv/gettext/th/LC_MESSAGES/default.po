@@ -229,7 +229,7 @@ msgstr "ระยะทาง"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "ideal"
-msgstr ในอุดมคติ""
+msgstr ในอุดมคติ"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "rated"
@@ -241,7 +241,7 @@ msgstr "ระยะทาง (ในอุดมคติ)"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:138
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
-msgstr "ระยะทางที่เหลือโดยประมาณของรถจะขึ้นอยู่กับอัตราการสิ้นเปลืองพลังงานคงที่ในหน่วย Wh/km ปัจจัย Wh/km ถูกกำหนดโดย Tesla และไม่ได้ระบุเฉพาะประเทศ ในขณะที่ช่วงพิกัดจะขึ้นอยู่กับการทดสอบตามกฎข้อบังคับในตลาดต่างๆ สำหรับยานพาหนะนั้น"
+msgstr "ระยะทางที่เหลือโดยประมาณของรถจะขึ้นอยู่กับอัตราการสิ้นเปลืองพลังงานคงที่ในหน่วยกิโลวัตต์ชั่วโมง ปัจจัยกิโลวัตต์ชั่วโมงถูกกำหนดโดย Tesla และไม่ได้ระบุเฉพาะประเทศ ในขณะที่ช่วงพิกัดจะขึ้นอยู่กับการทดสอบตามกฎข้อบังคับในตลาดต่างๆ สำหรับยานพาหนะนั้น"
 
 #: lib/teslamate_web/live/car_live/summary.ex:141
 msgid "Update in progress"
