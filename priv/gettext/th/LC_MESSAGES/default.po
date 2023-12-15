@@ -362,7 +362,7 @@ msgstr "การนำเข้าจาก TeslaFi"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:10
 msgid "Found %{count} file"
-msgid_plural "Found %{count} files"
+msgid_plural "พบ %{count} ไฟล์"
 msgstr[0] "พบ %{count} ไฟล์"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:104
