@@ -1,7 +1,7 @@
 # Ensure selecting a tag that is available for ARMv7
 # https://hub.docker.com/r/grafana/grafana/tags
 # https://grafana.com/blog/2023/09/29/grafana-and-grafana-enterprise-updates-for-armv6-and-armv7-will-be-temporarily-paused/
-FROM grafana/grafana:10.1.2
+FROM grafana/grafana:10.2.3
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_AUTH_ANONYMOUS_ENABLED=false \
