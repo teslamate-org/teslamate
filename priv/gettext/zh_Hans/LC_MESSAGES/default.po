@@ -198,7 +198,7 @@ msgstr "分钟"
 #: lib/teslamate_web/live/signin_live/index.ex:81
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
-msgstr "登陆成功"
+msgstr "登录成功"
 
 #: lib/teslamate_web/live/car_live/summary.ex:134
 #, elixir-autogen, elixir-format
@@ -469,7 +469,7 @@ msgstr "时区"
 #: lib/teslamate_web/live/signin_live/index.html.heex:38
 #, elixir-autogen, elixir-format
 msgid "Sign in"
-msgstr "登陆"
+msgstr "登录"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:90
 #, elixir-autogen, elixir-format
