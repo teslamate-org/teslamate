@@ -514,7 +514,7 @@ msgstr "คีย์การเข้ารหัสที่สร้างข
 
 #: lib/teslamate_web/templates/layout/root.html.heex:83
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr เพื่อให้แน่ใจว่า <strong>โทเค็น Tesla API ของคุณจะถูกเก็บไว้อย่างปลอดภัย</strong> จะต้องมอบคีย์การเข้ารหัสให้กับ TeslaMate ผ่านทางตัวแปรสภาพแวดล้อม <code>ENCRYPTION_KEY</code> มิฉะนั้น <strong>จะต้องเข้าสู่ระบบหลังจากรีสตาร์ททุกครั้ง</strong>"
+msgstr "เพื่อให้แน่ใจว่า <strong>โทเค็น Tesla API ของคุณจะถูกเก็บไว้อย่างปลอดภัย</strong> จะต้องมอบคีย์การเข้ารหัสให้กับ TeslaMate ผ่านทางตัวแปรสภาพแวดล้อม <code>ENCRYPTION_KEY</code> มิฉะนั้น <strong>จะต้องเข้าสู่ระบบหลังจากรีสตาร์ททุกครั้ง</strong>"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:228
 msgid "Tire Pressure"
