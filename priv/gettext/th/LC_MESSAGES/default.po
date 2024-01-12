@@ -87,7 +87,7 @@ msgstr "การจำกัดการชาร์จ"
 
 #: lib/teslamate_web/live/car_live/summary.ex:128
 msgid "falling asleep"
-msgstr "หลับใน"
+msgstr "กำลังเข้าสู่การหลับ"
 
 #: lib/teslamate_web/live/car_live/summary.ex:132
 msgid "unavailable"
@@ -99,7 +99,7 @@ msgstr "ความยาว"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:213
 msgid "Temperature"
-msgstr "อุณฆภูมิ"
+msgstr "อุณหภูมิ"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:195
 msgid "Units"
@@ -229,7 +229,7 @@ msgstr "ระยะทาง"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "ideal"
-msgstr ในอุดมคติ"
+msgstr "ในอุดมคติ"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:146
 msgid "rated"
@@ -401,7 +401,7 @@ msgstr "ค่าธรรมเนียมเซสชัน"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:68
 msgid "Doors open"
-msgstr "ประตูเปิดอยู่"
+msgstr "ประตูเปิด"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:111
 #: lib/teslamate_web/live/geofence_live/form.html.heex:66
@@ -416,7 +416,7 @@ msgstr "ทั้งหมด"
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "มีเซสชันการเรียกเก็บเงิน <strong>%{n} ครั้ง</strong> ณ ตำแหน่งนี้ ซึ่งยังไม่มีการเพิ่มค่าใช้จ่าย"
-msgid_plural "มีเซสชันการชาร์จ <strong>%{n} ครั้ง</strong> ณ ตำแหน่งนี้ ซึ่งยังไม่มีการเพิ่มค่าใช้จ่าย"
+msgid_plural "มีเซสชันการเรียกเก็บเงิน <strong>%{n} ครั้ง</strong> ณ ตำแหน่งนี้ ซึ่งยังไม่มีการเพิ่มค่าใช้จ่าย"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:134
 msgid "Add costs retroactively"
@@ -486,7 +486,7 @@ msgstr "โทเค็นไม่ถูกต้อง"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:49
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr "การได้รับโทเค็นผ่าน Tesla API ต้องใช้ประสบการณ์การเขียนโปรแกรมหรือบริการของบุคคลที่สาม ข้อมูลสามารถพบได้ %{here}"
+msgstr "การได้รับโทเค็นผ่าน Tesla API ต้องใช้ประสบการณ์การเขียนโปรแกรมหรือบริการของบุคคลที่สาม ข้อมูลสามารถพบได้ที่ %{here}"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:46
 msgid "here"
