@@ -1,6 +1,6 @@
 <div class="mfa columns is-tablet is-centered">
   <div class="column is-half">
-    <.form let={f} for={@changeset} phx_change="validate" phx_submit="sign_in" class="box" as="tokens">
+    <.form :let={f} for={@changeset} phx-change="validate" phx-submit="sign_in" class="box" as={:tokens}>
       <%= if @error do %>
         <div class="notification is-danger">
           Error: <%= @error %>

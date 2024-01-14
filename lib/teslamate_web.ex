@@ -52,7 +52,7 @@ defmodule TeslaMateWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {TeslaMateWeb.LayoutView, "live.html"}
+        layout: {TeslaMateWeb.LayoutView, :live}
 
       unquote(view_helpers())
     end

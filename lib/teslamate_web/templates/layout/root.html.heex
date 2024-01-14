@@ -85,7 +85,7 @@
         </div>
         <% end %>
 
-        <%= Enum.map(get_flash(@conn), fn {flash_key, flash_message} -> %>
+        <%= Enum.map(@flash, fn {flash_key, flash_message} -> %>
         <p class={"notification is-#{flash_key}"}><%= flash_message %></p>
         <% end) %>
 

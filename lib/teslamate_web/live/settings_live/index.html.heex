@@ -18,7 +18,7 @@
   </div>
   <% end %>
 
-<.form let={f} for={get_in(@car_settings, [@car, :changeset])} phx_change="change" as={"car_settings_#{@car}"}>
+<.form :let={f} for={get_in(@car_settings, [@car, :changeset])} phx-change="change" as={:"car_settings_#{@car}"}>
   <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Sleep Mode") %></h2>
@@ -129,7 +129,7 @@
   <%= gettext("General Settings") %>
 </div>
 
-<.form let={f} for={@global_settings.changeset} phx_change="change">
+<.form :let={f} for={@global_settings.changeset} phx-change="change">
   <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Range") %></h2>

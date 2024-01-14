@@ -53,7 +53,7 @@
 </div>
 
 <%= if @status.state == :idle do %>
-<.form let={f} for={@changeset} phx_change="change" phx_submit="import">
+<.form :let={f} for={@changeset} phx-change="change" phx-submit="import">
   <div class="field mb-6">
     <%= label f, :timezone, gettext("Time zone"), class: "label is-medium " %>
     <div class="control">
