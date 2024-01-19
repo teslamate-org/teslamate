@@ -34,6 +34,7 @@ The documentation is available at [docs.teslamate.org](https://docs.teslamate.or
 - [See when your car was online or asleep](https://docs.teslamate.org/docs/screenshots#states)
 - [Lifetime driving map](https://docs.teslamate.org/docs/screenshots/#lifetime-driving-map)
 - [Visited addresses](https://docs.teslamate.org/docs/screenshots/#visited-addresses)
+- [Battery Health](https://docs.teslamate.org/docs/screenshots/#battery-health)
 
 **General**
 
