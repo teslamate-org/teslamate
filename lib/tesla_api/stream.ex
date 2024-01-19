@@ -152,7 +152,15 @@ defmodule TeslaApi.Stream do
 
       {:ok,
        %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "vehicle_error", "value" => v}} ->
-        Logger.error("Vehicle Error: #{v}")
+        case v do
+          "Vehicle is offline" ->
+            Logger.info("Streaming API: Vehicle offline")
+            state.receiver.(:vehicle_offline)
+
+          _ ->
+            Logger.error("Vehicle Error: #{v}")
+        end
+
         {:ok, state}
 
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "client_error"} = msg} ->
