@@ -1513,7 +1513,7 @@
           "type": "postgres",
           "uid": "TeslaMate"
         },
-        "definition": "-- CONCATENATED JOIN QUERIES TO IMPROVE PERFORMANCE\n-- The following query is the result of many tests and hours of work. This panel is for your own personal use. \n-- If you think you can improve it and contribute, please create a pull request and do not take it to your repository, \n-- much less upload it to another repository as if the original idea were yours, nor do you share it on social media\n-- without mentioning the author. Respect the ingenuity and work of others. Cheers!\n-- 2024-01-06\n-- By @jheredianet - Twitter: @juanheredia",
+        "definition": "-- CONCATENATED JOIN QUERIES TO IMPROVE PERFORMANCE",
         "hide": 2,
         "includeAll": false,
         "multi": false,
