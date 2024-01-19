@@ -82,7 +82,8 @@ The flow names are "Car Dashboard" and "Notifications".
 After bringing up the Node-RED container the first time, save the following shell script to a file (e.g. named _add-nr-modules.sh_, then run `bash ./add-nr-modules.sh`) to install modules required for the example flows:
 
 ```bash title="add-nr-modules.sh"
-:
+#!/bin/sh
+
 MODULES="node-red-contrib-calc
 node-red-contrib-simpletime
 node-red-dashboard
@@ -92,11 +93,12 @@ node-red-node-ui-table"
 set -x
 for MODULE in $MODULES
 do
-docker compose exec -T node-red npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production $MODULE
+docker compose exec -T node-red npm install --no-audit --no-update-notifier --no-fund --save --prefix=/data --production $MODULE
 done
 docker compose stop node-red
 docker compose start node-red
 ```
+Note that if your function nodes need additional NPM packages, you can add those into 'MODULES'. You can import those in the function node 'Setup' page, like add module 'linq-js' and import it as variable 'Enumerable'.
 
 ## Import Flows
 
