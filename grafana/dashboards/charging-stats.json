@@ -983,9 +983,9 @@
                 },
                 "textConfig": {
                   "fontSize": 12,
-                  "offsetX": 40,
+                  "offsetX": 15,
                   "offsetY": 0,
-                  "textAlign": "center",
+                  "textAlign": "left",
                   "textBaseline": "middle"
                 }
               }
