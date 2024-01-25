@@ -29,7 +29,7 @@ defmodule TeslaApi.Vehicle do
         _global -> "https://owner-api.teslamotors.com"
       end
 
-    TeslaApi.get(endpoint_url <> "/api/1/vehicles", opts: [access_token: auth.token])
+    TeslaApi.get(endpoint_url <> "/api/1/products", opts: [access_token: auth.token])
     |> handle_response(transform: &result/1)
   end
 
