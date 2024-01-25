@@ -55,7 +55,9 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                html
                |> Floki.parse_document!()
                |> Floki.find("tr")
-               |> Enum.map(fn row -> row |> Floki.find("td") |> Enum.map(&Floki.text/1) end)
+               |> Enum.map(fn row ->
+                 row |> Floki.find("td") |> Enum.map(&Floki.text/1) |> Enum.map(&String.trim/1)
+               end)
     end
 
     test "displays radius in ft", %{conn: conn} do
@@ -73,7 +75,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["Post office", "-25.066188, -130.100502", "328 ft", _] =
-               html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("td")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
     end
 
     test "allows deletion of a geo-fence", %{conn: conn} do
@@ -83,7 +89,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, view, html} = live(conn, "/geo-fences")
 
       assert ["Victory Column", "52.514521, 13.350144", "100 m", _] =
-               html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("td")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
 
       assert [{"a", _, _}] =
                html
@@ -178,7 +188,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["Adamstown", "0.000000, 0.000000", "20 m", _] =
-               html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("td")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
     end
   end
 
@@ -331,7 +345,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["post office", "-25.066188, -130.100502", "25 m", _] =
-               html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("td")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
     end
 
     test "allows creating of a geo-fence with radius being displayed in ft", %{conn: conn} do
@@ -354,7 +372,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["post office", "-25.066188, -130.100502", "49 ft", _] =
-               html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("td")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
 
       {:ok, _settings} =
         Settings.get_global_settings!() |> Settings.update_global_settings(%{unit_of_length: :km})
@@ -362,7 +384,11 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert {:ok, _view, html} = live(conn, "/geo-fences")
 
       assert ["post office", "-25.066188, -130.100502", "15 m", _] =
-               html |> Floki.parse_document!() |> Floki.find("td") |> Enum.map(&Floki.text/1)
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("td")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
     end
   end
 
@@ -464,7 +490,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                modal |> Floki.find(".modal-card-body strong") |> Floki.text()
 
       assert ["Continue", "Add costs retroactively"] =
-               modal |> Floki.find(".modal-card-foot button") |> Enum.map(&Floki.text/1)
+               modal
+               |> Floki.find(".modal-card-foot button")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
     end
 
     test "shows modal if a session fee was entered", %{conn: conn} do
@@ -497,7 +526,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                modal |> Floki.find(".modal-card-body strong") |> Floki.text()
 
       assert ["Continue", "Add costs retroactively"] =
-               modal |> Floki.find(".modal-card-foot button") |> Enum.map(&Floki.text/1)
+               modal
+               |> Floki.find(".modal-card-foot button")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
     end
 
     test "shows modal if the position changed", %{conn: conn} do
@@ -535,7 +567,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                modal |> Floki.find(".modal-card-body strong") |> Floki.text()
 
       assert ["Continue", "Add costs retroactively"] =
-               modal |> Floki.find(".modal-card-foot button") |> Enum.map(&Floki.text/1)
+               modal
+               |> Floki.find(".modal-card-foot button")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
     end
 
     test "shows modal if the radius changed", %{conn: conn} do
@@ -573,7 +608,10 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
                modal |> Floki.find(".modal-card-body strong") |> Floki.text()
 
       assert ["Continue", "Add costs retroactively"] =
-               modal |> Floki.find(".modal-card-foot button") |> Enum.map(&Floki.text/1)
+               modal
+               |> Floki.find(".modal-card-foot button")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
     end
 
     test "adds charging costs", %{conn: conn} do
@@ -600,10 +638,13 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert [
                {"button", [_, {"phx-click", "calc-costs"}, {"phx-value-result", "no"}],
-                ["Continue"]},
+                [no_button_text]},
                {"button", [_, {"phx-click", "calc-costs"}, {"phx-value-result", "yes"}],
-                ["Add costs retroactively"]}
+                [yes_button_text]}
              ] = html |> Floki.find(".modal.is-active") |> Floki.find(".modal-card-foot button")
+
+      assert "Continue" == String.trim(no_button_text)
+      assert "Add costs retroactively" == String.trim(yes_button_text)
 
       view
       |> element(".modal button", "Add costs retroactively")
@@ -675,10 +716,13 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
       assert [
                {"button", [_, {"phx-click", "calc-costs"}, {"phx-value-result", "no"}],
-                ["Continue"]},
+                [no_button_text]},
                {"button", [_, {"phx-click", "calc-costs"}, {"phx-value-result", "yes"}],
-                ["Add costs retroactively"]}
+                [yes_button_text]}
              ] = html |> Floki.find(".modal.is-active") |> Floki.find(".modal-card-foot button")
+
+      assert String.trim(no_button_text) == "Continue"
+      assert String.trim(yes_button_text) == "Add costs retroactively"
 
       view
       |> element(".modal button", "Continue")

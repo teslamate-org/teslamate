@@ -29,7 +29,7 @@
         <p class="title is-5"><%= @summary.display_name %></p>
         <%= unless is_nil(@car.model) do %>
           <p class="subtitle is-6 has-text-weight-light">
-            Model<%= @car.model %>
+            Model <%= @car.model %>
             <%= if @car.marketing_name != nil do %>
               <span
                 class="has-tooltip-right has-tooltip-left-mobile"
@@ -258,13 +258,13 @@
             <%= unless is_nil(@summary.charge_energy_added) do %>
               <tr>
                 <td class="has-text-weight-medium"><%= gettext("Charged") %></td>
-                <td><%= @summary.charge_energy_added %>kWh</td>
+                <td><%= @summary.charge_energy_added %> kWh</td>
               </tr>
             <% end %>
             <%= unless is_nil(@summary.charger_power) do %>
               <tr>
                 <td class="has-text-weight-medium"><%= gettext("Charger Power") %></td>
-                <td><%= @summary.charger_power %>kW</td>
+                <td><%= @summary.charger_power %> kW</td>
               </tr>
             <% end %>
           <% end %>
