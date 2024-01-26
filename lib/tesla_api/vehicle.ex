@@ -63,7 +63,7 @@ defmodule TeslaApi.Vehicle do
 
   def list_result(result) do
     result
-    |> Enum.filter(fn(x) -> Map.has_key?(x, "vehicle_id") end)
+    |> Enum.filter(fn x -> Map.has_key?(x, "vehicle_id") end)
     |> Enum.map(&result/1)
   end
 
