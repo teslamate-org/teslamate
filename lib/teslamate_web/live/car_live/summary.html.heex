@@ -44,6 +44,11 @@
           <span class="mdi mdi-air-conditioner"></span>
         </span>
       <% end %>
+      <%= if @summary.climate_keeper_mode == "dog" do %>
+        <span class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Dog Mode"}>
+          <span class="mdi mdi-dog-side"></span>
+        </span>
+      <% end %>
       <%= if not is_nil(@summary.battery_level) and not is_nil(@summary.usable_battery_level) and @summary.battery_level - @summary.usable_battery_level > 2 do %>
         <span class="icon has-text-link has-tooltip-top has-tooltip-left-mobile" data-tooltip={gettext "Reduced Battery Range"}>
           <span class="mdi mdi-snowflake"></span>
@@ -327,7 +332,8 @@
           @summary.state == :online and
           !@summary.sentry_mode and
           !@summary.is_user_present and
-          !@summary.is_preconditioning ->
+          !@summary.is_preconditioning and
+           @summary.climate_keeper_mode == "off" ->
             link gettext("try to sleep"), to: "#", phx_click: "suspend_logging",
                                           class: "button is-info is-small is-outlined is-fullwidth" <>
                                                    (if @loading, do: " is-loading", else: "")

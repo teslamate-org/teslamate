@@ -556,4 +556,47 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       refute_receive _
     end
   end
+
+  describe "offline" do
+    test "go offline when stream get :vehicle_offline", %{test: name} do
+      me = self()
+
+      events = [
+        {:ok, online_event()},
+        {:ok, online_event()},
+        {:ok, online_event()},
+        fn ->
+          send(me, :continue?)
+
+          receive do
+            :continue -> {:ok, %TeslaApi.Vehicle{state: "offline"}}
+          after
+            5_000 -> raise "No :continue after 5s"
+          end
+        end,
+        fn -> Process.sleep(10_000) end
+      ]
+
+      :ok =
+        start_vehicle(name, events,
+          settings: %{use_streaming_api: true, suspend_min: 999_999_999}
+        )
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {ApiMock, {:stream, _eid, func}} when is_function(func)
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      send(name, {:stream, :vehicle_offline})
+
+      assert_receive :continue?
+      send(:"api_#{name}", :continue)
+
+      assert_receive {:start_state, _, :offline, _}
+      assert_receive {:"$websockex_cast", :disconnect}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
+
+      refute_receive _
+    end
+  end
 end

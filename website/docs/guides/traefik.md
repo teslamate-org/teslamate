@@ -44,22 +44,22 @@ services:
     volumes:
       - ./import:/opt/app/import
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=4000"
-      - "traefik.http.middlewares.redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.teslamate-auth.basicauth.realm=teslamate"
-      - "traefik.http.middlewares.teslamate-auth.basicauth.usersfile=/auth/.htpasswd"
-      - "traefik.http.routers.teslamate-insecure.rule=Host(`${FQDN_TM}`)"
-      - "traefik.http.routers.teslamate-insecure.middlewares=redirect"
-      - "traefik.http.routers.teslamate-ws.rule=Host(`${FQDN_TM}`) && Path(`/live/websocket`)"
-      - "traefik.http.routers.teslamate-ws.entrypoints=websecure"
-      - "traefik.http.routers.teslamate-ws.tls"
-      - "traefik.http.routers.teslamate.rule=Host(`${FQDN_TM}`)"
-      - "traefik.http.routers.teslamate.middlewares=teslamate-auth"
-      - "traefik.http.routers.teslamate.entrypoints=websecure"
-      - "traefik.http.routers.teslamate.tls.certresolver=tmhttpchallenge"
+      traefik.enable: "true"
+      traefik.port: "4000"
+      traefik.http.middlewares.redirect.redirectscheme.scheme: "https"
+      traefik.http.middlewares.teslamate-auth.basicauth.realm: "teslamate"
+      traefik.http.middlewares.teslamate-auth.basicauth.usersfile: "/auth/.htpasswd"
+      traefik.http.routers.teslamate-insecure.rule: "Host(`${FQDN_TM}`)"
+      traefik.http.routers.teslamate-insecure.middlewares: "redirect"
+      traefik.http.routers.teslamate-ws.rule: "Host(`${FQDN_TM}`) && Path(`/live/websocket`)"
+      traefik.http.routers.teslamate-ws.entrypoints: "websecure"
+      traefik.http.routers.teslamate-ws.tls: ""
+      traefik.http.routers.teslamate.rule: "Host(`${FQDN_TM}`)"
+      traefik.http.routers.teslamate.middlewares: "teslamate-auth"
+      traefik.http.routers.teslamate.entrypoints: "websecure"
+      traefik.http.routers.teslamate.tls.certresolver: "tmhttpchallenge"
     cap_drop:
-      - all
+      - ALL
 
   database:
     image: postgres:15
@@ -90,21 +90,21 @@ services:
     volumes:
       - teslamate-grafana-data:/var/lib/grafana
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=3000"
-      - "traefik.http.middlewares.redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.grafana-insecure.rule=Host(`${FQDN_TM}`)"
-      - "traefik.http.routers.grafana-insecure.middlewares=redirect"
-      - "traefik.http.routers.grafana.rule=Host(`${FQDN_TM}`) && (Path(`/grafana`) || PathPrefix(`/grafana/`))"
-      - "traefik.http.routers.grafana.entrypoints=websecure"
-      - "traefik.http.routers.grafana.tls.certresolver=tmhttpchallenge"
+      traefik.enable: "true"
+      traefik.port: "3000"
+      traefik.http.middlewares.redirect.redirectscheme.scheme: "https"
+      traefik.http.routers.grafana-insecure.rule: "Host(`${FQDN_TM}`)"
+      traefik.http.routers.grafana-insecure.middlewares: "redirect"
+      traefik.http.routers.grafana.rule: "Host(`${FQDN_TM}`) && (Path(`/grafana`) || PathPrefix(`/grafana/`))"
+      traefik.http.routers.grafana.entrypoints: "websecure"
+      traefik.http.routers.grafana.tls.certresolver: "tmhttpchallenge"
 
   mosquitto:
     image: eclipse-mosquitto:2
     restart: always
     command: mosquitto -c /mosquitto-no-auth.conf
     ports:
-      - 127.0.0.1:1883:1883
+      - "127.0.0.1:1883:1883"
     volumes:
       - mosquitto-conf:/mosquitto/config
       - mosquitto-data:/mosquitto/data
@@ -123,8 +123,8 @@ services:
       - "--certificatesresolvers.tmhttpchallenge.acme.email=${LETSENCRYPT_EMAIL}"
       - "--certificatesresolvers.tmhttpchallenge.acme.storage=/etc/acme/acme.json"
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     volumes:
       - ./.htpasswd:/auth/.htpasswd
       - ./acme/:/etc/acme/

@@ -16,11 +16,11 @@ msgstr "no puede estar vacío"
 
 ## From Ecto.Changeset.unique_constraint/3
 msgid "has already been taken"
-msgstr "ya ha sido elegido"
+msgstr "ya ha sido usado"
 
 ## From Ecto.Changeset.put_change/3
 msgid "is invalid"
-msgstr "es inválido"
+msgstr "no es válido"
 
 ## From Ecto.Changeset.validate_acceptance/3
 msgid "must be accepted"
@@ -28,11 +28,11 @@ msgstr "debe ser aceptado"
 
 ## From Ecto.Changeset.validate_format/3
 msgid "has invalid format"
-msgstr "tiene formato inválido"
+msgstr "tiene formato incorrecto"
 
 ## From Ecto.Changeset.validate_subset/3
 msgid "has an invalid entry"
-msgstr "tiene una entrada inválida"
+msgstr "tiene una entrada incorrecta"
 
 ## From Ecto.Changeset.validate_exclusion/3
 msgid "is reserved"
@@ -40,7 +40,7 @@ msgstr "está reservado"
 
 ## From Ecto.Changeset.validate_confirmation/3
 msgid "does not match confirmation"
-msgstr "no coincide la confirmación"
+msgstr "no coincide con la confirmación"
 
 ## From Ecto.Changeset.no_assoc_constraint/3
 msgid "is still associated with this entry"
