@@ -19,7 +19,7 @@ module.exports = {
     {
       type: "category",
       label: "Guides",
-      items: ["guides/traefik", "guides/apache", "guides/portainer"],
+      items: ["guides/traefik", "guides/apache", "guides/portainer", "guides/unix_domain_sockets"],
     },
     {
       type: "category",
