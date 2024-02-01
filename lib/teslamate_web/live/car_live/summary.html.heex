@@ -148,16 +148,26 @@
               end
             )%></td>
           </tr>
-          <%= if @summary.state == :charging and not is_nil(@summary.time_to_full_charge) do %>
-          <tr>
-            <td class="has-text-weight-medium"><%= gettext "Remaining Time" %></td>
-            <td><%=
+            <%= if @summary.state == :charging and not is_nil(@summary.time_to_full_charge) do %>
+            <%
+              current_time = DateTime.utc_now()
+              finish_time = DateTime.add(current_time, round(@summary.time_to_full_charge * 60 * 60))
+              formatted_finish_time = Timex.format!(finish_time, "%Y-%m-%d %H:%M:%S", :strftime)
+
+              remaining_time_text =
                 round(@summary.time_to_full_charge * 60 * 60)
                 |> Convert.sec_to_str()
                 |> Enum.reject(&String.ends_with?(&1, "s"))
-                |> Enum.join(", ")
-            %></td>
-          </tr>
+                |> Enum.join(", ")
+            %>
+            <tr>
+              <td class="has-text-weight-medium"><%= gettext "Remaining Time" %></td>
+              <td><%= remaining_time_text %></td>
+            </tr>
+            <tr>
+              <td class="has-text-weight-medium"><%= gettext "Expected Finish Time" %></td>
+              <td><%= formatted_finish_time %></td>
+            </tr>
           <% end %>
           <%= unless is_nil(@summary.ideal_battery_range_km) do %>
           <tr>
