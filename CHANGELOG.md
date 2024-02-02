@@ -12,6 +12,43 @@
 
 #### Documentation
 
+## [1.28.3] - 2024-02-02
+
+### New features
+
+- Support listening on unix domain socket (#3328 - @PhracturedBlue)
+- Added expected finish charging localtime to teslamate overview in web (#3646 - @NirKli)
+
+### Improvements and bug fixes
+
+- CI: Remove deprecated probot-no-response and update to stale workflow (#3525 - @JakobLichterfeld)
+- Fix an issue when car is could enter sleep mode while dog mode is enabled (#3538 - @NirKli)
+- Handle stream getting the message "Vehicle is offline" and change the state to offline in vehicle (#3508 - @micves)
+- fix: use product api endpoint to fetch vehicles (#3630 - @brianmay and @JakobLichterfeld)
+
+#### Dashboards
+
+- Update locations.json with car selector (@DrMichael)
+- Fix Odometer_mi charger dashboard (#3534 - @mechoriet)
+- Update charges.json: reenable cost per kWh re added (#3544 - @DrMichael)
+- Improve Battery health derived efficiency estimations and Fix error divided by zero (#3593 - @jheredianet)
+- Battery Health - Improve performance & adjust queries to handle empty or null data (#3627 - @jheredianet)
+- charging-stats: map - add charges count and move label (#3625 - @fmossott)
+
+#### Translations
+
+- fix: translation Update default.po for simplified chinese (#3600 - @ycjcl868)
+- Improvements for Spanish translations (#3610 - @jheredianet)
+
+#### Documentation
+
+- Node-RED required modules should be saved under /data (#3623 - @ToniA)
+- Use recommended format for Home Assistant MQTT sensor configuration (#3344)
+- Update projects.md with TeslaBox (#3542 - @mluggy)
+- update tesla-youq project (#3547 - @brchri)
+- doc: Fix TPMS sensor names to match binary_sensor.yaml (#3613 - @kenni)
+- update docker-compose.yml for Docker Compose version v2.24.1 (#3626 - @realJustinLee)
+
 ## [1.28.2] - 2023-11-27
 
 ### New features
@@ -58,7 +95,7 @@ Note: First release as @teslamate-org organization.
 - Linting in dashboard links (#3443 - @jlestel)
 - Update Grafana to 10.1.2 (#3455 - @swiffer)
 - CI: Build PR images on GHCR, so every PR will have a dedicated dockerfile for testing purpose (#3445, #3480, #3481, #3491 -@jlestel)
-- Update to Nodejs 20 (#3477 - @PhilThurston)
+- Update to Node.js 20 (#3477 - @PhilThurston)
 - Add credo lint support for static code analysis (#3452 - @brianmay)
 
 #### Dashboards
@@ -231,7 +268,7 @@ If no `ENCRYPTION_KEY` environment variable is provided when running the databas
 - Drive Details: Add elevation summary (#2449 - @coreGreenberet)
 - Drive Details: Record the tire pressure which was made available by Tesla in the 2022.4 SW release (#2706 - @NirKli)
 - Drive Details: Set elevation units on axis
-- Drive Stats: Optimize query to estimate mileage calculation (#2464 - @coreGreenberet )
+- Drive Stats: Optimize query to estimate mileage calculation (#2464 - @coreGreenberet)
 - Locations: Let the gauge scale up to the maximum value (#2647 - @DrMichael)
 - States: Update States top row panels height (#2487 - @cwanja)
 - Timeline: Fix links (#2601 - @DrMichael)
@@ -1517,7 +1554,7 @@ superuser rights (temporarily):
 - Rollback the "Time to Try Sleeping" setting to previous pre v1.5 value (21 min) to play it safe
 
   **Note to Model 3 owners and everyone who likes to tweak things a bit**: most
-  cars seem to handle a value of 12min just fine. Doing so reduces the
+  cars seem to handle a value of 12 min just fine. Doing so reduces the
   likelihood of potential data gaps. Just keep an eye on your car afterwards to
   see if it still goes into sleep mode.
 
@@ -1692,7 +1729,7 @@ New users need to sign in via the web interface.
 
 ## [1.3.0] - 2019-07-29
 
-#### Changed
+### Changed
 
 - Fix / inverse efficiency calculation: if distance traveled is less than the
   ideal rated distance the efficiency will now be lower than 100% and vice-versa.
@@ -1701,25 +1738,25 @@ New users need to sign in via the web interface.
 
 ## [1.2.0] - 2019-07-29
 
-#### Added
+### Added
 
 - Add psql conversion helper functions (**via database migration**)
 - Report imperial metrics
 
   **Important: please re-import the Grafana Dashboards after restarting TeslaMate**
 
-#### Fixed
+### Fixed
 
 - Remove TZ environment variable from Dockerfile
 
 ## [1.1.1] - 2019-07-27
 
-#### Changed
+### Changed
 
 - Upgrade tesla_api
 - Upgrade Phoenix LiveView
 
-#### Fixed
+### Fixed
 
 - Fix a few english translations in the en dashboards
 - Remove `DATABASE_PORT` from docker-compose example
@@ -1728,22 +1765,22 @@ New users need to sign in via the web interface.
 
 ## [1.1.0] - 2019-07-27
 
-#### Added
+### Added
 
 - Support custom database port through `DATABASE_PORT` environment variable
 - Add entrypoint to handle db migration
 
-#### Changed
+### Changed
 
 - Replace `node-sass` with `sass` to speed up compilation
 
-#### Fixed
+### Fixed
 
 - Update README.md to fix resume and suspend logging PUT requests.
 
 ## [1.0.1] - 2019-07-26
 
-#### Changed
+### Changed
 
 - Set unique :id to support multiple vehicles
 - Reduce default pool size to 5
@@ -1752,9 +1789,10 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.2...HEAD
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.1...v1.28.2
-[1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...v1.28.1
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.3...HEAD
+[1.28.3]: https://github.com/teslamate-org/teslamate/compare/v1.28.2...v1.28.3
+[1.28.2]: https://github.com/teslamate-org/teslamate/compare/v1.28.1...v1.28.2
+[1.28.1]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...v1.28.1
 [1.28.0]: https://github.com/teslamate-org/teslamate/compare/v1.27.4...v1.28.0
 [1.27.4]: https://github.com/adriankumpf/teslamate/compare/v1.27.3...v1.27.4
 [1.27.3]: https://github.com/adriankumpf/teslamate/compare/v1.27.2...v1.27.3
