@@ -149,6 +149,13 @@
             )%></td>
           </tr>
           <%= if @summary.state == :charging and not is_nil(@summary.time_to_full_charge) do %>
+          <%
+            current_time = Timex.now()
+            finish_time = Timex.add(current_time, Timex.Duration.from_hours(@summary.time_to_full_charge))
+            local_timezone = Timex.Timezone.local()
+            local_finish_time = Timex.Timezone.convert(finish_time, local_timezone)
+            formatted_finish_time = Timex.format!(local_finish_time, "%Y-%m-%d %H:%M:%S", :strftime)
+          %>
           <tr>
             <td class="has-text-weight-medium"><%= gettext "Remaining Time" %></td>
             <td><%=
@@ -157,6 +164,10 @@
                 |> Enum.reject(&String.ends_with?(&1, "s"))
                 |> Enum.join(", ")
             %></td>
+          </tr>
+          <tr>
+            <td class="has-text-weight-medium"><%= gettext "Expected Finish Time" %></td>
+            <td><%= formatted_finish_time %></td>
           </tr>
           <% end %>
           <%= unless is_nil(@summary.ideal_battery_range_km) do %>
