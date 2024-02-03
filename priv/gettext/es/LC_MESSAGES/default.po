@@ -608,7 +608,7 @@ msgstr "aquí"
 #: lib/teslamate_web/live/signin_live/index.ex:59
 #, elixir-autogen, elixir-format
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr "Su cuenta Tesla se ha bloqueado a causa de demasiados intentos fallidos de inicio de sesión. Para desbloquearla debe crear una nueva contraseña."
+msgstr "Su cuenta de Tesla se ha bloqueado por demasiados intentos fallidos de inicio de sesión. Para desbloquearla debe crear una nueva contraseña."
 
 #: lib/teslamate_web/live/car_live/summary.ex:140
 #, elixir-autogen, elixir-format
