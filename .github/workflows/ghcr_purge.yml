@@ -4,14 +4,35 @@ on:
   pull_request_target:
     types:
       - closed
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
+
 
 permissions:
   contents: read
   packages: write
 
 jobs:
+  check_paths:
+    runs-on: ubuntu-latest
+    outputs:
+      githubfolder: ${{ steps.filter.outputs.githubfolder }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3.0.0
+        id: filter
+        with:
+          filters: |
+            githubfolder:
+              - '.github/**'
+
   purge-pr-package:
     name: Delete images from ghcr.io when PR is closed
+    needs: check_paths
+    if: needs.check_paths.outputs.githubfolder == 'false'
     runs-on: ubuntu-latest
 
     steps:

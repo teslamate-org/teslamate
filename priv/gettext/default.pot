@@ -15,17 +15,17 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:271
+#: lib/teslamate_web/live/car_live/summary.html.heex:282
 #, elixir-autogen, elixir-format
 msgid "Speed"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:263
+#: lib/teslamate_web/live/car_live/summary.html.heex:274
 #, elixir-autogen, elixir-format
 msgid "State of Charge"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:199
+#: lib/teslamate_web/live/car_live/summary.html.heex:210
 #, elixir-autogen, elixir-format
 msgid "Charged"
 msgstr ""
@@ -87,7 +87,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:214
+#: lib/teslamate_web/live/car_live/summary.html.heex:225
 #, elixir-autogen, elixir-format
 msgid "Scheduled Charging"
 msgstr ""
@@ -97,7 +97,7 @@ msgstr ""
 msgid "Plugged In"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:223
+#: lib/teslamate_web/live/car_live/summary.html.heex:234
 #, elixir-autogen, elixir-format
 msgid "Charge Limit"
 msgstr ""
@@ -226,17 +226,17 @@ msgstr ""
 msgid "Driver present"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:342
+#: lib/teslamate_web/live/car_live/summary.html.heex:353
 #, elixir-autogen, elixir-format
 msgid "cancel sleep attempt"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:337
+#: lib/teslamate_web/live/car_live/summary.html.heex:348
 #, elixir-autogen, elixir-format
 msgid "try to sleep"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:186
+#: lib/teslamate_web/live/car_live/summary.html.heex:197
 #, elixir-autogen, elixir-format
 msgid "Range (est.)"
 msgstr ""
@@ -256,12 +256,12 @@ msgstr ""
 msgid "Vehicle must be locked"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:167
+#: lib/teslamate_web/live/car_live/summary.html.heex:178
 #, elixir-autogen, elixir-format
 msgid "Range (rated)"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:205
+#: lib/teslamate_web/live/car_live/summary.html.heex:216
 #, elixir-autogen, elixir-format
 msgid "Charger Power"
 msgstr ""
@@ -286,7 +286,7 @@ msgstr ""
 msgid "rated"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:166
+#: lib/teslamate_web/live/car_live/summary.html.heex:177
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
 msgstr ""
@@ -311,17 +311,17 @@ msgstr ""
 msgid "Delete '%{geo_fence}'?"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:296
+#: lib/teslamate_web/live/car_live/summary.html.heex:307
 #, elixir-autogen, elixir-format
 msgid "Inside Temperature"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:284
+#: lib/teslamate_web/live/car_live/summary.html.heex:295
 #, elixir-autogen, elixir-format
 msgid "Outside Temperature"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:321
+#: lib/teslamate_web/live/car_live/summary.html.heex:332
 #: lib/teslamate_web/live/settings_live/index.html.heex:283
 #, elixir-autogen, elixir-format
 msgid "Version"
@@ -337,7 +337,7 @@ msgstr ""
 msgid "Unlocked"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:153
+#: lib/teslamate_web/live/car_live/summary.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Remaining Time"
 msgstr ""
@@ -389,7 +389,7 @@ msgstr ""
 msgid "Reduced Battery Range"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:256
+#: lib/teslamate_web/live/car_live/summary.html.heex:267
 #, elixir-autogen, elixir-format
 msgid "≈ %{range} at 100%"
 msgstr ""
@@ -523,7 +523,7 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:309
+#: lib/teslamate_web/live/car_live/summary.html.heex:320
 #, elixir-autogen, elixir-format
 msgid "Mileage"
 msgstr ""
@@ -648,4 +648,9 @@ msgstr ""
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:169
+#, elixir-autogen, elixir-format
+msgid "Expected Finish Time"
 msgstr ""
