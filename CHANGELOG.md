@@ -50,19 +50,8 @@
 - update docker-compose.yml for Docker Compose version v2.24.1 (#3626 - @realJustinLee)
 
 ### Configure Timezone Setting for Accurate Local Time Display
-Ensure accurate time-related features by setting the TZ environment variable in your docker-compose.yml.
-
-This configures your container's timezone:
-```yaml
-services:
-  teslamate:
-    image: teslamate/teslamate:latest
-    restart: always
-    environment:
-      - TZ=America/New_York
-      # ...
- ```
-For timezone values, see the tz database [list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).   
+To ensure time-related features display accurately in your local timezone, configure the TZ environment variable.  
+Detailed instructions are available in our [configuration guide](https://docs.teslamate.org/docs/configuration/environment_variables/).   
 
 ## [1.28.2] - 2023-11-27
 
