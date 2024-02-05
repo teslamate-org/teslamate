@@ -19,7 +19,7 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     case Keyword.get(opts, :tooltip) do
       nil ->
-        assert Floki.text(value) == Floki.text(td_value) |>  String.trim()
+        assert Floki.text(value) == Floki.text(td_value) |> String.trim()
 
       str ->
         assert {"span", [_, {"data-tooltip", ^str}], [ele]} = td_value
