@@ -49,6 +49,10 @@
 - doc: Fix TPMS sensor names to match binary_sensor.yaml (#3613 - @kenni)
 - update docker-compose.yml for Docker Compose version v2.24.1 (#3626 - @realJustinLee)
 
+### Configure Timezone Setting for Accurate Local Time Display
+To ensure time-related features display accurately in your local timezone, configure the TZ environment variable.  
+Detailed instructions are available in our [configuration guide](https://docs.teslamate.org/docs/configuration/environment_variables/).   
+
 ## [1.28.2] - 2023-11-27
 
 ### New features
