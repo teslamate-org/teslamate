@@ -1,0 +1,97 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: th\n"
+
+## From Ecto.Changeset.cast/4
+msgid "can't be blank"
+msgstr "ไม่สามารถเว้นว่างได้"
+
+## From Ecto.Changeset.unique_constraint/3
+msgid "has already been taken"
+msgstr "ถูกเลือกไปแล้ว"
+
+## From Ecto.Changeset.put_change/3
+msgid "is invalid"
+msgstr "ไม่ถูกต้อง"
+
+## From Ecto.Changeset.validate_acceptance/3
+msgid "must be accepted"
+msgstr "จะต้องยอมรับ"
+
+## From Ecto.Changeset.validate_format/3
+msgid "has invalid format"
+msgstr "มีรูปแบบที่ไม่ถูกต้อง"
+
+## From Ecto.Changeset.validate_subset/3
+msgid "has an invalid entry"
+msgstr "มีรายการไม่ถูกต้อง"
+
+## From Ecto.Changeset.validate_exclusion/3
+msgid "is reserved"
+msgstr "ถูกสงวนไว้"
+
+## From Ecto.Changeset.validate_confirmation/3
+msgid "does not match confirmation"
+msgstr "ไม่ตรงกับการยืนยัน"
+
+## From Ecto.Changeset.no_assoc_constraint/3
+msgid "is still associated with this entry"
+msgstr "ยังคงเกี่ยวข้องกับรายการนี้"
+
+msgid "are still associated with this entry"
+msgstr "ยังคงเกี่ยวข้องกับรายการนี้"
+
+## From Ecto.Changeset.validate_length/3
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "ควรเป็น %{count} อักขระ"
+msgstr[1] "ควรเป็น %{count} อักขระ"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "ควรมี %{count} รายการ"
+msgstr[1] "ควรมี %{count} รายการ"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "ควรมีอักขระอย่างน้อย %{count} ตัว"
+msgstr[1] "ควรมีอักขระอย่างน้อย %{count} ตัว"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "ควรมีอย่างน้อย %{count} รายการ"
+msgstr[1] "ควรมีอย่างน้อย %{count} รายการ"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "ควรมีอักขระไม่เกิน %{count} ตัว"
+msgstr[1] "ควรมีอักขระไม่เกิน %{count} ตัว"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "ควรมีมากที่สุด %{count} รายการ"
+msgstr[1] "ควรมีมากที่สุด %{count} รายการ"
+
+## From Ecto.Changeset.validate_number/3
+msgid "must be less than %{number}"
+msgstr "ต้องน้อยกว่า %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "ต้องมากกว่า %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "ต้องน้อยกว่าหรือเท่ากับ %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "ต้องมากกว่าหรือเท่ากับ %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "ต้องเท่ากับ %{number}"
