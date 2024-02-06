@@ -40,43 +40,17 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
   def handle_event("save", %{"charging_process" => params}, socket) do
     params =
       case params do
+        %{"cost" => cost, "mode" => "per_kwh_and_minute"} when is_binary(cost) ->
+          evaluate_per_kwh_and_minute(cost, params, socket)
+
         %{"cost" => cost, "mode" => "per_kwh"} when is_binary(cost) ->
-          kwh =
-            socket.assigns.charging_process
-            |> Map.take([:charge_energy_added, :charge_energy_used])
-            |> Map.values()
-            |> Enum.reject(&is_nil/1)
-            |> case do
-              [k0, k1] -> Decimal.max(k0, k1)
-              [kwh] -> kwh
-              [] -> nil
-            end
-
-          with true <- match?(%Decimal{}, kwh),
-               {cost_per_kwh, ""} <- Float.parse(cost) do
-            cost =
-              cost_per_kwh
-              |> Decimal.from_float()
-              |> Decimal.mult(kwh)
-
-            Map.put(params, "cost", cost)
-          else
-            _ -> params
-          end
+          evaluate_per_kwh(cost, params, socket)
 
         %{"cost" => cost, "mode" => "per_minute"} when is_binary(cost) ->
-          with %ChargingProcess{duration_min: minutes} when is_number(minutes) <-
-                 socket.assigns.charging_process,
-               {cost_per_minute, ""} <- Float.parse(cost) do
-            cost =
-              cost_per_minute
-              |> Decimal.from_float()
-              |> Decimal.mult(minutes)
+          evaluate_per_minute(cost, params, socket)
 
-            Map.put(params, "cost", cost)
-          else
-            _ -> params
-          end
+        %{"cost" => cost, "mode" => "per_kwh_and_minute"} when is_binary(cost) ->
+          evaluate_per_kwh_and_minute(cost, params, socket)
 
         %{"cost" => _} ->
           params
@@ -122,5 +96,53 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
     id = make_ref()
     Process.send_after(self(), {:remove_notification, id}, 2500)
     %{id: id, message: msg, key: key}
+  end
+
+  defp evaluate_per_kwh_and_minute(cost, params, socket) do
+    with costs <- String.split(cost, ";"),
+         %{"cost" => cost_per_kwh} <- evaluate_per_kwh(Enum.at(costs, 0), params, socket),
+         %{"cost" => cost_per_minute} <- evaluate_per_minute(Enum.at(costs, 1), params, socket) do
+      Map.put(params, "cost", Decimal.add(cost_per_kwh, cost_per_minute))
+    end
+  end
+
+  defp evaluate_per_minute(cost, params, socket) do
+    with %ChargingProcess{duration_min: minutes} when is_number(minutes) <-
+           socket.assigns.charging_process,
+         {cost_per_minute, ""} <- Float.parse(cost) do
+      cost =
+        cost_per_minute
+        |> Decimal.from_float()
+        |> Decimal.mult(minutes)
+
+      Map.put(params, "cost", cost)
+    else
+      _ -> params
+    end
+  end
+
+  defp evaluate_per_kwh(cost, params, socket) do
+    kwh =
+      socket.assigns.charging_process
+      |> Map.take([:charge_energy_added, :charge_energy_used])
+      |> Map.values()
+      |> Enum.reject(&is_nil/1)
+      |> case do
+        [k0, k1] -> Decimal.max(k0, k1)
+        [kwh] -> kwh
+        [] -> nil
+      end
+
+    with true <- match?(%Decimal{}, kwh),
+         {cost_per_kwh, ""} <- Float.parse(cost) do
+      cost =
+        cost_per_kwh
+        |> Decimal.from_float()
+        |> Decimal.mult(kwh)
+
+      Map.put(params, "cost", cost)
+    else
+      _ -> params
+    end
   end
 end

@@ -109,13 +109,13 @@
             <%= select f, :mode, [
                   {gettext("Total"), :total},
                   {gettext("Per kWh"), :per_kwh},
-                  {gettext("Per Minute"), :per_minute}
+                  {gettext("Per Minute"), :per_minute},
+                  {gettext("Per kWh/Minute (semicolon separated values"), :per_kwh_and_minute}
             ] %>
           </span>
         </p>
         <p class="control is-expanded">
           <%= text_input f, :cost, class: "input",
-                                   type: :number, inputmode: :decimal, step: 0.01,
                                    placeholder: gettext("Enter charge cost"), autofocus: true %>
         </p>
         <p class="help is-danger"><%= error_tag(f, :cost) %></p>
