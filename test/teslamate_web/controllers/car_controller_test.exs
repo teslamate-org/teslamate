@@ -266,7 +266,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              est_battery_range: 180,
              ideal_battery_range: 175,
              charging_state: "Charging",
-             charge_energy_added: "4.32",
+             charge_energy_added: 4.32,
              charge_port_latch: "Engaged",
              charge_port_door_open: true,
              charge_port_cold_weather_mode: false,
