@@ -288,7 +288,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Plugged In", "power-plug")
       assert table_row(html, "Range (rated)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
-      assert table_row(html, "Charged", "4.32 kWh")
+      assert table_row(html, "Charged", "4.32 kWh")
       assert table_row(html, "Charger Power", "11 kW")
 
       assert table_row(
