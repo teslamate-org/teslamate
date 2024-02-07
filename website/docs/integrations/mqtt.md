@@ -75,6 +75,9 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/tpms_soft_warning_fr`          | false                | Indicates if the Tire pressure measure is soft warning, front right tire              |                          |
 | `teslamate/cars/$car_id/tpms_soft_warning_rl`          | false                | Indicates if the Tire pressure measure is soft warning, rear left tire                |                          |
 | `teslamate/cars/$car_id/tpms_soft_warning_rr`          | false                | Indicates if the Tire pressure measure is soft warning, rear right tire               |     
+| `teslamate/cars/$car_id/active_route_destination`      | Home                 | Navigation destination name                                                           |     
+| `teslamate/cars/$car_id/active_route_latitude`         | 35.278131            | Navigation destination latitude                                                       |     
+| `teslamate/cars/$car_id/active_route_longitude`        | 29.744801            | Navigation destination longitude                                                      |     
 
 :::note
 `$car_id` usually starts at 1
