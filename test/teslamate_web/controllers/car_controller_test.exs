@@ -7,15 +7,23 @@ defmodule TeslaMateWeb.CarControllerTest do
   alias TeslaMate.Log.Car
 
   defp table_row(html, key, value, opts \\ []) do
-    assert {"tr", _, [{"td", _, [^key]}, {"td", [], [v]}]} =
+    assert {"tr", _, [{"td", _, [td_key]}, {"td", [], [td_value]}]} =
              html
              |> Floki.parse_document!()
              |> Floki.find("tr")
-             |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
+             |> Enum.find(fn ele ->
+               Floki.text(ele) =~ key
+             end)
+
+    assert Floki.text(td_key) |> String.trim() == key
 
     case Keyword.get(opts, :tooltip) do
-      nil -> assert value == v
-      str -> assert {"span", [_, {"data-tooltip", ^str}], [^value]} = v
+      nil ->
+        assert Floki.text(value) == Floki.text(td_value) |> String.trim()
+
+      str ->
+        assert {"span", [_, {"data-tooltip", ^str}], [ele]} = td_value
+        assert Floki.text(ele) |> String.trim() == value
     end
   end
 
@@ -143,11 +151,16 @@ defmodule TeslaMateWeb.CarControllerTest do
 
       assert html = response(conn, 200)
 
-      assert "Model 3 LR AWD Performance" ==
+      assert "Model 3 LR AWD Performance" ==
                html
                |> Floki.parse_document!()
                |> Floki.find(".car .subtitle")
                |> Floki.text()
+               # Trim all whitespace
+               |> String.trim()
+               |> String.replace(~r/(\n)+/, " ")
+               |> String.replace(~r/(\s)+/, " ")
+               |> String.replace(~r/(\t)+/, " ")
     end
 
     @tag :signed_in
@@ -197,11 +210,14 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert html = response(conn, 200)
       assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
 
-      assert "Model S P90D" ==
+      assert "Model S P90D" ==
                html
                |> Floki.parse_document!()
                |> Floki.find(".car .subtitle")
                |> Floki.text()
+               |> String.trim()
+               |> String.replace(~r/(\n)+/, " ")
+               |> String.replace(~r/(\s)+/, " ")
 
       assert table_row(html, "Status", "online")
       assert table_row(html, "Range (rated)", "321.87 km")
@@ -250,7 +266,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              est_battery_range: 180,
              ideal_battery_range: 175,
              charging_state: "Charging",
-             charge_energy_added: "4.32",
+             charge_energy_added: 4.32,
              charge_port_latch: "Engaged",
              charge_port_door_open: true,
              charge_port_cold_weather_mode: false,
@@ -272,8 +288,8 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Plugged In", "power-plug")
       assert table_row(html, "Range (rated)", "321.87 km")
       assert table_row(html, "Range (est.)", "289.68 km")
-      assert table_row(html, "Charged", "4.32 kWh")
-      assert table_row(html, "Charger Power", "11 kW")
+      assert table_row(html, "Charged", "4.32 kWh")
+      assert table_row(html, "Charger Power", "11 kW")
 
       assert table_row(
                html,

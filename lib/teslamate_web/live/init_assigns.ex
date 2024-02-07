@@ -3,7 +3,7 @@ defmodule TeslaMateWeb.InitAssigns do
   Ensures common `assigns` are applied to all LiveViews attaching this hook.
   """
 
-  import Phoenix.LiveView
+  import Phoenix.Component
 
   def on_mount(:locale, _params, %{"gettext_locale" => locale}, socket) do
     Gettext.put_locale(locale)

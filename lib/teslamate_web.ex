@@ -17,6 +17,11 @@ defmodule TeslaMateWeb do
   and import those modules here.
   """
 
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt android-chrome-192x192.png
+           android-chrome-512x512.png apple-touch-icon.png browserconfig.xml
+           favicon-16x16.png favicon-32x32.png mstile-150x150.png
+           safari-pinned-tab.svg site.webmanifest)
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: TeslaMateWeb
@@ -24,6 +29,8 @@ defmodule TeslaMateWeb do
       import Plug.Conn
       import TeslaMateWeb.Gettext
       alias TeslaMateWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 
@@ -45,7 +52,7 @@ defmodule TeslaMateWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {TeslaMateWeb.LayoutView, "live.html"}
+        layout: {TeslaMateWeb.LayoutView, :live}
 
       unquote(view_helpers())
     end
@@ -89,6 +96,17 @@ defmodule TeslaMateWeb do
       import TeslaMateWeb.ErrorHelpers
       import TeslaMateWeb.Gettext
       alias TeslaMateWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: TeslaMateWeb.Endpoint,
+        router: TeslaMateWeb.Router,
+        statics: TeslaMateWeb.static_paths()
     end
   end
 

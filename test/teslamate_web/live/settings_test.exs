@@ -551,6 +551,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                  html
                  |> Floki.find(".about tr:first-child td")
                  |> Floki.text()
+                 |> String.trim()
 
         assert [
                  {"a",
