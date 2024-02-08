@@ -236,6 +236,13 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
              end) =~ """
              Discarded stale fetch result: [
                now: %TeslaApi.Vehicle.State.Drive{
+                 active_route_destination: nil,
+                 active_route_energy_at_arrival: nil,
+                 active_route_latitude: nil,
+                 active_route_longitude: nil,
+                 active_route_miles_to_arrival: nil,
+                 active_route_minutes_to_arrival: nil,
+                 active_route_traffic_minutes_delay: nil,
                  gps_as_of: nil,
                  heading: nil,
                  latitude: 42.91,
@@ -250,6 +257,13 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                  timestamp: #{now_ts}
                },
                last: %TeslaApi.Vehicle.State.Drive{
+                 active_route_destination: nil,
+                 active_route_energy_at_arrival: nil,
+                 active_route_latitude: nil,
+                 active_route_longitude: nil,
+                 active_route_miles_to_arrival: nil,
+                 active_route_minutes_to_arrival: nil,
+                 active_route_traffic_minutes_delay: nil,
                  gps_as_of: nil,
                  heading: 120,
                  latitude: 42.1,
