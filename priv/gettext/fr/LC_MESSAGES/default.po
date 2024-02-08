@@ -638,19 +638,19 @@ msgstr "Pression des pneus"
 #: lib/teslamate_web/live/car_live/summary.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "Low tire pressure, check (%{tire_low}) tire"
-msgstr ""
+msgstr "Pression basse des pneus; vérifier le pneu (%{tire_low})"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Dog Mode"
-msgstr ""
+msgstr "Mode Chien"
 
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
-msgstr ""
+msgstr "Le Mode Chien est actif"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
-msgstr ""
+msgstr "Fin de charge estimée"
