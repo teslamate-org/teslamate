@@ -10,22 +10,22 @@ msgid ""
 msgstr ""
 "Language: ko\n"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:104
+#: lib/teslamate_web/live/car_live/summary.html.heex:195
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "현재 차량상태"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:237
+#: lib/teslamate_web/live/car_live/summary.html.heex:350
 #, elixir-autogen, elixir-format
 msgid "Speed"
 msgstr "속도"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:229
+#: lib/teslamate_web/live/car_live/summary.html.heex:340
 #, elixir-autogen, elixir-format
 msgid "State of Charge"
 msgstr "충전상태"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:165
+#: lib/teslamate_web/live/car_live/summary.html.heex:274
 #, elixir-autogen, elixir-format
 msgid "Charged"
 msgstr "충전됨"
@@ -60,12 +60,12 @@ msgstr "온라인"
 msgid "updating"
 msgstr "업데이트"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:78
+#: lib/teslamate_web/live/car_live/summary.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "Locked"
 msgstr "잠김"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:73
+#: lib/teslamate_web/live/car_live/summary.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "Sentry Mode"
 msgstr "감시모드"
@@ -82,22 +82,22 @@ msgstr "홈"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:60
+#: lib/teslamate_web/templates/layout/root.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "설정"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:180
+#: lib/teslamate_web/live/car_live/summary.html.heex:289
 #, elixir-autogen, elixir-format
 msgid "Scheduled Charging"
 msgstr "충전 예약됨"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:58
+#: lib/teslamate_web/live/car_live/summary.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Plugged In"
 msgstr "충전 준비됨"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:189
+#: lib/teslamate_web/live/car_live/summary.html.heex:301
 #, elixir-autogen, elixir-format
 msgid "Charge Limit"
 msgstr "충전목표"
@@ -112,23 +112,23 @@ msgstr "절전 중"
 msgid "unavailable"
 msgstr "사용불가"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:198
+#: lib/teslamate_web/live/settings_live/index.html.heex:216
 #, elixir-autogen, elixir-format
 msgid "Length"
 msgstr "거리"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:213
+#: lib/teslamate_web/live/settings_live/index.html.heex:231
 #, elixir-autogen, elixir-format
 msgid "Temperature"
 msgstr "온도"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:195
+#: lib/teslamate_web/live/settings_live/index.html.heex:213
 #, elixir-autogen, elixir-format
 msgid "Units"
 msgstr "단위"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:131
-#: lib/teslamate_web/live/geofence_live/form.html.heex:105
+#: lib/teslamate_web/live/charge_live/cost.html.heex:165
+#: lib/teslamate_web/live/geofence_live/form.html.heex:123
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "뒤로"
@@ -142,54 +142,54 @@ msgstr "지오펜스 \"%{name}\" 가 생성되었습니다."
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
 #: lib/teslamate_web/live/geofence_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:57
+#: lib/teslamate_web/templates/layout/root.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
 msgstr "지오펜스"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:47
+#: lib/teslamate_web/live/settings_live/index.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "Idle Time Before Trying to Sleep"
 msgstr "절전 전 유휴시간"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:43
-#: lib/teslamate_web/live/geofence_live/form.html.heex:48
-#: lib/teslamate_web/live/geofence_live/index.html.heex:21
+#: lib/teslamate_web/live/geofence_live/form.html.heex:46
+#: lib/teslamate_web/live/geofence_live/form.html.heex:52
+#: lib/teslamate_web/live/geofence_live/index.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "이름"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:17
-#: lib/teslamate_web/live/geofence_live/index.html.heex:22
+#: lib/teslamate_web/live/geofence_live/form.html.heex:19
+#: lib/teslamate_web/live/geofence_live/index.html.heex:23
 #, elixir-autogen, elixir-format
 msgid "Position"
 msgstr "위치"
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:23
+#: lib/teslamate_web/live/geofence_live/index.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "Radius"
 msgstr "반경"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:134
-#: lib/teslamate_web/live/geofence_live/form.html.heex:108
+#: lib/teslamate_web/live/charge_live/cost.html.heex:168
+#: lib/teslamate_web/live/geofence_live/form.html.heex:129
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "저장"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:135
-#: lib/teslamate_web/live/geofence_live/form.html.heex:108
-#: lib/teslamate_web/live/signin_live/index.html.heex:40
+#: lib/teslamate_web/live/charge_live/cost.html.heex:169
+#: lib/teslamate_web/live/geofence_live/form.html.heex:130
+#: lib/teslamate_web/live/signin_live/index.html.heex:60
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "저장 중..."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:29
+#: lib/teslamate_web/live/settings_live/index.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "Time to Try Sleeping"
 msgstr "절전 시도 시간"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:37
-#: lib/teslamate_web/live/settings_live/index.html.heex:56
+#: lib/teslamate_web/live/settings_live/index.html.heex:45
+#: lib/teslamate_web/live/settings_live/index.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "min"
 msgstr "분"
@@ -204,13 +204,13 @@ msgstr "로그인 성공"
 msgid "Car is unlocked"
 msgstr "차량이 잠김해제되었습니다."
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:9
+#: lib/teslamate_web/live/geofence_live/index.html.heex:10
 #, elixir-autogen, elixir-format
 msgid "Create"
 msgstr "생성"
 
 #: lib/teslamate_web/live/car_live/summary.ex:138
-#: lib/teslamate_web/live/car_live/summary.html.heex:43
+#: lib/teslamate_web/live/car_live/summary.html.heex:57
 #, elixir-autogen, elixir-format
 msgid "Preconditioning"
 msgstr "프리컨디셔닝"
@@ -220,151 +220,151 @@ msgstr "프리컨디셔닝"
 msgid "Sentry mode is enabled"
 msgstr "감시모드가 활성화되었습니다."
 
-#: lib/teslamate_web/live/car_live/summary.ex:139
-#: lib/teslamate_web/live/car_live/summary.html.heex:53
+#: lib/teslamate_web/live/car_live/summary.ex:140
+#: lib/teslamate_web/live/car_live/summary.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Driver present"
 msgstr "현재 운전자"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:307
+#: lib/teslamate_web/live/car_live/summary.html.heex:435
 #, elixir-autogen, elixir-format
 msgid "cancel sleep attempt"
 msgstr "절전모드 시도 취소"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:302
+#: lib/teslamate_web/live/car_live/summary.html.heex:426
 #, elixir-autogen, elixir-format
 msgid "try to sleep"
 msgstr "절전모드 시도"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:152
+#: lib/teslamate_web/live/car_live/summary.html.heex:261
 #, elixir-autogen, elixir-format
 msgid "Range (est.)"
 msgstr "거리 (예상)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:107
+#: lib/teslamate_web/live/car_live/summary.html.heex:200
 #, elixir-autogen, elixir-format
 msgid "for"
 msgstr "경과시간"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:68
+#: lib/teslamate_web/live/settings_live/index.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "Requirements"
 msgstr "필수요구사항"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:77
+#: lib/teslamate_web/live/settings_live/index.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "Vehicle must be locked"
 msgstr "차량문은 모두 잠겨있어야 합니다."
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:133
+#: lib/teslamate_web/live/car_live/summary.html.heex:241
 #, elixir-autogen, elixir-format
 msgid "Range (rated)"
 msgstr "거리 (정규계산)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:171
+#: lib/teslamate_web/live/car_live/summary.html.heex:280
 #, elixir-autogen, elixir-format
 msgid "Charger Power"
 msgstr "충전기 전력"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:139
+#: lib/teslamate_web/live/settings_live/index.html.heex:152
 #, elixir-autogen, elixir-format
 msgid "Preferred Range"
 msgstr "선호하는 계산방법"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:135
+#: lib/teslamate_web/live/settings_live/index.html.heex:148
 #, elixir-autogen, elixir-format
 msgid "Range"
 msgstr "거리"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:146
+#: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "ideal"
 msgstr "이상적인 거리"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:146
+#: lib/teslamate_web/live/settings_live/index.html.heex:161
 #, elixir-autogen, elixir-format
 msgid "rated"
 msgstr "정규계산된 거리"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:132
+#: lib/teslamate_web/live/car_live/summary.html.heex:240
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
 msgstr "거리 (이상적)"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:138
+#: lib/teslamate_web/live/settings_live/index.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
 msgstr "차량의 잔여거리 추정치는 고정 에너지 소비량(Wh/km)을 기준으로합니다. Wh/km 계수는 Tesla에 의해 결정되며 국가별로 다르지 않지만 정규 거리는 해당 차량의 다른 시장에서 규제 테스트를 기반으로합니다."
 
-#: lib/teslamate_web/live/car_live/summary.ex:141
+#: lib/teslamate_web/live/car_live/summary.ex:142
 #, elixir-autogen, elixir-format
 msgid "Update in progress"
 msgstr "업데이트 진행 중"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:63
+#: lib/teslamate_web/live/car_live/summary.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "Windows open"
 msgstr "창문 열림"
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:51
+#: lib/teslamate_web/live/geofence_live/index.html.heex:60
 #, elixir-autogen, elixir-format
 msgid "Delete '%{geo_fence}'?"
 msgstr "'%{geo_fence}'를 삭제하겠습니까?"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:262
+#: lib/teslamate_web/live/car_live/summary.html.heex:375
 #, elixir-autogen, elixir-format
 msgid "Inside Temperature"
 msgstr "실내 온도"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:250
+#: lib/teslamate_web/live/car_live/summary.html.heex:363
 #, elixir-autogen, elixir-format
 msgid "Outside Temperature"
 msgstr "실외 온도"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:287
-#: lib/teslamate_web/live/settings_live/index.html.heex:283
+#: lib/teslamate_web/live/car_live/summary.html.heex:400
+#: lib/teslamate_web/live/settings_live/index.html.heex:311
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "소프트웨어 버전"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:88
+#: lib/teslamate_web/live/car_live/summary.html.heex:178
 #, elixir-autogen, elixir-format
 msgid "Health check failed"
 msgstr "상태확인 실패"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:78
+#: lib/teslamate_web/live/car_live/summary.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "Unlocked"
 msgstr "잠금 해제"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:119
+#: lib/teslamate_web/live/car_live/summary.html.heex:223
 #, elixir-autogen, elixir-format
 msgid "Remaining Time"
 msgstr "남은 시간"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:263
-#: lib/teslamate_web/templates/layout/root.html.heex:47
+#: lib/teslamate_web/live/settings_live/index.html.heex:286
+#: lib/teslamate_web/templates/layout/root.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "대시보드"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:246
+#: lib/teslamate_web/live/settings_live/index.html.heex:264
 #, elixir-autogen, elixir-format
 msgid "URLs"
 msgstr "접속주소"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:162
-#: lib/teslamate_web/live/settings_live/index.html.heex:249
+#: lib/teslamate_web/live/settings_live/index.html.heex:178
+#: lib/teslamate_web/live/settings_live/index.html.heex:267
 #, elixir-autogen, elixir-format
 msgid "Web App"
 msgstr "웹 애플리케이션"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:112
+#: lib/teslamate_web/live/settings_live/index.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "Enabled"
 msgstr "활성화"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:24
+#: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Sleep Mode"
 msgstr "절전모드"
@@ -374,22 +374,22 @@ msgstr "절전모드"
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "지오펜스 \"%{name}\" 가 업데이트 되었습니다."
 
-#: lib/teslamate_web/live/car_live/summary.ex:143
+#: lib/teslamate_web/live/car_live/summary.ex:144
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
 msgstr "오류가 발생하였습니다"
 
-#: lib/teslamate_web/live/car_live/summary.ex:142
+#: lib/teslamate_web/live/car_live/summary.ex:143
 #, elixir-autogen, elixir-format
 msgid "Timeout"
 msgstr "시간초과"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:48
+#: lib/teslamate_web/live/car_live/summary.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Reduced Battery Range"
 msgstr "감소된 배터리 거리"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:222
+#: lib/teslamate_web/live/car_live/summary.html.heex:334
 #, elixir-autogen, elixir-format
 msgid "≈ %{range} at 100%"
 msgstr "≈ 100%에서 %{range}"
@@ -400,13 +400,13 @@ msgstr "≈ 100%에서 %{range}"
 msgid "Charge Cost"
 msgstr "충전비용"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:103
-#: lib/teslamate_web/live/geofence_live/form.html.heex:59
+#: lib/teslamate_web/live/charge_live/cost.html.heex:132
+#: lib/teslamate_web/live/geofence_live/form.html.heex:64
 #, elixir-autogen, elixir-format
 msgid "Cost"
 msgstr "비용"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:119
+#: lib/teslamate_web/live/charge_live/cost.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "Enter charge cost"
 msgstr "충전비용 입력"
@@ -416,17 +416,17 @@ msgstr "충전비용 입력"
 msgid "Saved!"
 msgstr "저장완료!"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:38
+#: lib/teslamate_web/live/car_live/summary.html.heex:50
 #, elixir-autogen, elixir-format
 msgid "Fetching vehicle data ..."
 msgstr "차량데이터를 가져오는 중입니다."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:177
+#: lib/teslamate_web/live/settings_live/index.html.heex:193
 #, elixir-autogen, elixir-format
 msgid "Addresses"
 msgstr "주소"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:158
+#: lib/teslamate_web/live/settings_live/index.html.heex:174
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "언어"
@@ -448,108 +448,103 @@ msgid_plural "Found %{count} files"
 msgstr[0] "%{count} 파일을 찾았습니다."
 msgstr[1] "%{count} 파일들을 찾았습니다."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:104
-#, elixir-autogen, elixir-format
-msgid "Donate"
-msgstr "후원"
-
 #: lib/teslamate_web/live/import_live/index.ex:34
-#: lib/teslamate_web/live/import_live/index.html.heex:68
+#: lib/teslamate_web/live/import_live/index.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Import"
 msgstr "가져오기"
 
-#: lib/teslamate_web/live/import_live/index.html.heex:58
+#: lib/teslamate_web/live/import_live/index.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Time zone"
 msgstr "시간대"
 
 #: lib/teslamate_web/live/signin_live/index.ex:13
-#: lib/teslamate_web/live/signin_live/index.html.heex:38
+#: lib/teslamate_web/live/signin_live/index.html.heex:51
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "로그인"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:90
+#: lib/teslamate_web/live/settings_live/index.html.heex:103
 #, elixir-autogen, elixir-format
 msgid "Charge cost"
 msgstr "충전비용"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:93
+#: lib/teslamate_web/live/settings_live/index.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "Free Supercharging"
 msgstr "무료 수퍼차징"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:129
+#: lib/teslamate_web/live/settings_live/index.html.heex:142
 #, elixir-autogen, elixir-format
 msgid "General Settings"
 msgstr "일반설정"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:83
+#: lib/teslamate_web/live/geofence_live/form.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "Session fee"
 msgstr "세션수수료"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:68
+#: lib/teslamate_web/live/car_live/summary.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "Doors open"
 msgstr "차량문 열림"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:111
-#: lib/teslamate_web/live/geofence_live/form.html.heex:66
+#: lib/teslamate_web/live/charge_live/cost.html.heex:140
+#: lib/teslamate_web/live/geofence_live/form.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "Per kWh"
 msgstr "kWh 당"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:110
+#: lib/teslamate_web/live/charge_live/cost.html.heex:139
 #, elixir-autogen, elixir-format
 msgid "Total"
 msgstr "총합"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:125
+#: lib/teslamate_web/live/geofence_live/form.html.heex:164
 #, elixir-format
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "이 위치에는 아직 비용이 추가되지 않은 <strong>%{n} 충전 세션</strong>이 있습니다."
 msgstr[1] "이 위치에는 아직 비용이 추가되지 않은 <strong>%{n} 충전 세션들</strong>이 있습니다."
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:134
+#: lib/teslamate_web/live/geofence_live/form.html.heex:178
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "과거 요금 추가"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:119
+#: lib/teslamate_web/live/geofence_live/form.html.heex:156
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "충전요금"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:133
+#: lib/teslamate_web/live/geofence_live/form.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "계속"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:275
+#: lib/teslamate_web/live/car_live/summary.html.heex:388
 #, elixir-autogen, elixir-format
 msgid "Mileage"
 msgstr "누적주행거리"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:109
+#: lib/teslamate_web/live/settings_live/index.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Streaming API"
 msgstr "스트리밍 API"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:298
+#: lib/teslamate_web/live/settings_live/index.html.heex:332
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr "참고문서"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:294
+#: lib/teslamate_web/live/settings_live/index.html.heex:322
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr "깃허브"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:289
-#: lib/teslamate_web/templates/layout/root.html.heex:112
+#: lib/teslamate_web/live/settings_live/index.html.heex:317
+#: lib/teslamate_web/templates/layout/root.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "업데이트 가능"
@@ -564,28 +559,28 @@ msgstr "문이 열려있습니다."
 msgid "Trunk is open"
 msgstr "트렁크가 열려있습니다."
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:112
-#: lib/teslamate_web/live/geofence_live/form.html.heex:66
+#: lib/teslamate_web/live/charge_live/cost.html.heex:141
+#: lib/teslamate_web/live/geofence_live/form.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Per Minute"
 msgstr "분당"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:83
+#: lib/teslamate_web/live/car_live/summary.html.heex:134
 #, elixir-autogen, elixir-format
 msgid "Software Update available (%{version})"
 msgstr "소프트웨어 업데이트 가능 (%{version})"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:310
+#: lib/teslamate_web/live/settings_live/index.html.heex:350
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "로그아웃"
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:11
+#: lib/teslamate_web/live/signin_live/index.html.heex:18
 #, elixir-autogen, elixir-format
 msgid "Access Token"
 msgstr "엑세스 토큰"
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:24
+#: lib/teslamate_web/live/signin_live/index.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "Refresh Token"
 msgstr "리프레시 토큰"
@@ -595,12 +590,12 @@ msgstr "리프레시 토큰"
 msgid "Tokens are invalid"
 msgstr "토큰이 잘못되었습니다."
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:49
+#: lib/teslamate_web/live/signin_live/index.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
 msgstr "Tesla API 토큰을 얻으러면 프로그래밍 경험이나 서드파티 서비스가 필요합니다. 관련된 정보는 %{here}에서 찾을 수 있습니다."
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:46
+#: lib/teslamate_web/live/signin_live/index.html.heex:67
 #, elixir-autogen, elixir-format
 msgid "here"
 msgstr "이곳"
@@ -610,32 +605,52 @@ msgstr "이곳"
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
 msgstr "너무 많은 로그인 실패로 Tesla 계정이 잠겼습니다. 계정 잠금을 해제하려면 비밀번호를 재설정하세요."
 
-#: lib/teslamate_web/live/car_live/summary.ex:140
+#: lib/teslamate_web/live/car_live/summary.ex:141
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
 msgstr "업데이트 다운로드 중"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:81
+#: lib/teslamate_web/templates/layout/root.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "암호화 키가 없습니다."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:85
+#: lib/teslamate_web/templates/layout/root.html.heex:120
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "자세한 내용은 %{link}에서 업데이트 된 설치가이드를 참고하세요."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:84
+#: lib/teslamate_web/templates/layout/root.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "현재 사용하고 있는 암호화키는 자동으로 생성되었으며, <strong>애플리케이션 로그</strong> 폴더에서 찾을 수 있습니다."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:83
+#: lib/teslamate_web/templates/layout/root.html.heex:106
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "<strong>Tesla API 토큰을 안전하게 저장</strong>하려면 하나의 암호화 키가 <code>ENCRYPTION_KEY</code> 환경 변수를 통해 TeslaMate로 제공되어야 합니다. 그렇지 않으면 <strong>TeslaMate를 재시작할 때마다 다시 로그인</strong>해야 합니다."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:228
+#: lib/teslamate_web/live/settings_live/index.html.heex:246
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
 msgstr "공기압"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:145
+#, elixir-autogen, elixir-format
+msgid "Low tire pressure, check (%{tire_low}) tire"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "Dog Mode"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.ex:139
+#, elixir-autogen, elixir-format
+msgid "Dog mode is enabled"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:232
+#, elixir-autogen, elixir-format
+msgid "Expected Finish Time"
+msgstr ""

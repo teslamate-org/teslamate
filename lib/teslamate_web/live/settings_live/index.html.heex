@@ -1,81 +1,95 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= live_redirect gettext("Home"), to: "/" %></li>
-    <li class="is-active"><%= live_redirect gettext("Settings"), to: "/settings" %></li>
+    <li><%= live_redirect(gettext("Home"), to: "/") %></li>
+    <li class="is-active"><%= live_redirect(gettext("Settings"), to: "/settings") %></li>
   </ul>
 </nav>
 
 <%= if Enum.count(@car_settings) > 0 do %>
   <%= if Enum.count(@car_settings) > 1 do %>
-  <div class="tabs is-centered is-boxed">
-    <ul>
-    <%= for {car_id, %{original: %{car: car}}} <- @car_settings do %>
-      <li class={if car_id == @car, do: "is-active"}>
-        <%= link car.name || "???", to: "#", phx_click: "car", phx_value_id: car_id %>
-      </li>
-    <% end %>
-    </ul>
-  </div>
+    <div class="tabs is-centered is-boxed">
+      <ul>
+        <%= for {car_id, %{original: %{car: car}}} <- @car_settings do %>
+          <li class={if car_id == @car, do: "is-active"}>
+            <%= link(car.name || "???", to: "#", phx_click: "car", phx_value_id: car_id) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
   <% end %>
 
-<.form let={f} for={get_in(@car_settings, [@car, :changeset])} phx_change="change" as={"car_settings_#{@car}"}>
-  <div class="columns is-mobile is-centered">
-    <div class="column">
-      <h2 class="title is-4"><%= gettext("Sleep Mode") %></h2>
+  <.form
+    :let={f}
+    for={get_in(@car_settings, [@car, :changeset])}
+    phx-change="change"
+    as={:"car_settings_#{@car}"}
+  >
+    <div class="columns is-mobile is-centered">
+      <div class="column">
+        <h2 class="title is-4"><%= gettext("Sleep Mode") %></h2>
 
-    <%= unless Ecto.Changeset.get_field(f.source, :use_streaming_api) do %>
-      <div class="field is-horizontal center-vertically">
-        <div class="field-label is-normal">
-          <%= label f, :suspend_min, gettext("Time to Try Sleeping"), class: "label" %>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <div class="select is-fullwidth">
-                <%= select(f, :suspend_min,
-                              (Enum.filter(12..30, & rem(&1, 3) == 0) ++ Enum.filter(35..90, & rem(&1, 5) == 0))
-                              |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
-                %>
+        <%= unless Ecto.Changeset.get_field(f.source, :use_streaming_api) do %>
+          <div class="field is-horizontal center-vertically">
+            <div class="field-label is-normal">
+              <%= label(f, :suspend_min, gettext("Time to Try Sleeping"), class: "label") %>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <%= select(
+                      f,
+                      :suspend_min,
+                      (Enum.filter(12..30, &(rem(&1, 3) == 0)) ++
+                         Enum.filter(35..90, &(rem(&1, 5) == 0)))
+                      |> Enum.map(&{"#{&1} #{gettext("min")}", &1})
+                    ) %>
+                  </div>
+                </div>
+                <p class="help is-danger"><%= error_tag(f, :suspend_min) %></p>
               </div>
             </div>
-            <p class="help is-danger"><%= error_tag(f, :suspend_min) %></p>
           </div>
-        </div>
-      </div>
-      <div class="field is-horizontal center-vertically">
-        <div class="field-label is-normal">
-          <%= label f, :suspend_after_idle_min, gettext("Idle Time Before Trying to Sleep"), class: "label" %>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <div class="select is-fullwidth">
-                <%= select(f, :suspend_after_idle_min,
-                              3..60
-                              |> Enum.filter(& &1 == 3 or rem(&1, 5) == 0)
-                              |> Enum.map(&{"#{&1} #{gettext("min")}", &1}))
-                %>
+          <div class="field is-horizontal center-vertically">
+            <div class="field-label is-normal">
+              <%= label(f, :suspend_after_idle_min, gettext("Idle Time Before Trying to Sleep"),
+                class: "label"
+              ) %>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <%= select(
+                      f,
+                      :suspend_after_idle_min,
+                      3..60
+                      |> Enum.filter(&(&1 == 3 or rem(&1, 5) == 0))
+                      |> Enum.map(&{"#{&1} #{gettext("min")}", &1})
+                    ) %>
+                  </div>
+                </div>
+                <p class="help is-danger"><%= error_tag(f, :suspend_after_idle_min) %></p>
               </div>
             </div>
-            <p class="help is-danger"><%= error_tag(f, :suspend_after_idle_min) %></p>
           </div>
-        </div>
-      </div>
-    <% end %>
+        <% end %>
 
-      <div class="field is-horizontal mb-0">
-        <div class="field-label is-normal is-paddingless">
-          <label class="label"><%= gettext("Requirements") %></label>
-        </div>
-        <div class="field-body">
-          <div class="field" style="min-width: 280px;">
-            <div class="control">
-              <div class="columns is-multiline is-mobile is-gapless">
-                <div class="column is-full">
-                  <label class="checkbox">
-                    <%= checkbox(f, :req_not_unlocked) %>&nbsp;
-                    <%= gettext("Vehicle must be locked") %>
-                  </label>
+        <div class="field is-horizontal mb-0">
+          <div class="field-label is-normal is-paddingless">
+            <label class="label"><%= gettext("Requirements") %></label>
+          </div>
+          <div class="field-body">
+            <div class="field" style="min-width: 280px;">
+              <div class="control">
+                <div class="columns is-multiline is-mobile is-gapless">
+                  <div class="column is-full">
+                    <label class="checkbox">
+                      <%= checkbox(f, :req_not_unlocked) %>&nbsp; <%= gettext(
+                        "Vehicle must be locked"
+                      ) %>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -83,53 +97,52 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="columns is-mobile is-centered">
-    <div class="column">
-      <h2 class="title is-4"><%= gettext("Charge cost") %></h2>
-      <div class="field is-horizontal center-vertically">
-        <div class="field-label is-normal is-paddingless">
-          <%= label f, :free_supercharging, gettext("Free Supercharging"), class: "label" %>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <%= checkbox(f, :free_supercharging, class: "switch is-rounded is-success") %>
-              <%= label f, :free_supercharging, nil %>
+    <div class="columns is-mobile is-centered">
+      <div class="column">
+        <h2 class="title is-4"><%= gettext("Charge cost") %></h2>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <%= label(f, :free_supercharging, gettext("Free Supercharging"), class: "label") %>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <%= checkbox(f, :free_supercharging, class: "switch is-rounded is-success") %>
+                <%= label(f, :free_supercharging, nil) %>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="columns is-mobile is-centered">
-    <div class="column">
-      <h2 class="title is-4"><%= gettext("Streaming API") %></h2>
-      <div class="field is-horizontal center-vertically">
-        <div class="field-label is-normal is-paddingless">
-          <%= label f, :use_streaming_api, gettext("Enabled"), class: "label" %>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <%= checkbox(f, :use_streaming_api, class: "switch is-rounded is-success") %>
-              <%= label f, :use_streaming_api, nil %>
+    <div class="columns is-mobile is-centered">
+      <div class="column">
+        <h2 class="title is-4"><%= gettext("Streaming API") %></h2>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <%= label(f, :use_streaming_api, gettext("Enabled"), class: "label") %>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <%= checkbox(f, :use_streaming_api, class: "switch is-rounded is-success") %>
+                <%= label(f, :use_streaming_api, nil) %>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</.form>
+  </.form>
 <% end %>
 
-<div class={["divider", (if Enum.count(@car_settings) <= 1, do: " is-invisible")]}>
+<div class={["divider", if(Enum.count(@car_settings) <= 1, do: " is-invisible")]}>
   <%= gettext("General Settings") %>
 </div>
 
-<.form let={f} for={@global_settings.changeset} phx_change="change">
+<.form :let={f} for={@global_settings.changeset} phx-change="change">
   <div class="columns is-mobile is-centered">
     <div class="column">
       <h2 class="title is-4"><%= gettext("Range") %></h2>
@@ -143,7 +156,10 @@
           <div class="field">
             <div class="control">
               <div class="select is-fullwidth">
-                <%= select(f, :preferred_range, [{gettext("ideal"), :ideal}, {gettext("rated"), :rated}]) %>
+                <%= select(f, :preferred_range, [
+                  {gettext("ideal"), :ideal},
+                  {gettext("rated"), :rated}
+                ]) %>
               </div>
             </div>
             <p class="help is-danger"><%= error_tag(f, :preferred_range) %></p>
@@ -159,7 +175,7 @@
 
       <div class="field is-horizontal">
         <div class="field-label is-normal">
-          <%= label f, :ui, gettext("Web App"), class: "label" %>
+          <%= label(f, :ui, gettext("Web App"), class: "label") %>
         </div>
         <div class="field-body">
           <div class="field">
@@ -174,13 +190,15 @@
 
       <div class="field is-horizontal">
         <div class="field-label is-normal">
-          <%= label f, :language, gettext("Addresses"), class: "label" %>
+          <%= label(f, :language, gettext("Addresses"), class: "label") %>
         </div>
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <div class={["select", "is-fullwidth", (if @refreshing_addresses?, do: "is-loading")]}>
-                <%= select(f, :language, GlobalSettings.supported_languages(), disabled: !@addresses_migrated? or @refreshing_addresses?) %>
+              <div class={["select", "is-fullwidth", if(@refreshing_addresses?, do: "is-loading")]}>
+                <%= select(f, :language, GlobalSettings.supported_languages(),
+                  disabled: !@addresses_migrated? or @refreshing_addresses?
+                ) %>
               </div>
             </div>
             <p class="help is-danger"><%= @refresh_error || error_tag(f, :language) %></p>
@@ -195,7 +213,7 @@
       <h2 class="title is-4"><%= gettext("Units") %></h2>
       <div class="field is-horizontal">
         <div class="field-label is-normal">
-          <%= label f, :unit_of_length, gettext("Length"), class: "label" %>
+          <%= label(f, :unit_of_length, gettext("Length"), class: "label") %>
         </div>
         <div class="field-body">
           <div class="field">
@@ -210,13 +228,13 @@
       </div>
       <div class="field is-horizontal">
         <div class="field-label is-normal">
-          <%= label f, :unit_of_temperature, gettext("Temperature"), class: "label" %>
+          <%= label(f, :unit_of_temperature, gettext("Temperature"), class: "label") %>
         </div>
         <div class="field-body">
           <div class="field">
             <div class="control">
               <div class="select is-fullwidth">
-                <%= select(f, :unit_of_temperature, ["°C": :C, "°F": :F]) %>
+                <%= select(f, :unit_of_temperature, "°C": :C, "°F": :F) %>
               </div>
             </div>
             <p class="help is-danger"><%= error_tag(f, :unit_of_temperature) %></p>
@@ -225,7 +243,7 @@
       </div>
       <div class="field is-horizontal">
         <div class="field-label is-normal">
-          <%= label f, :unit_of_pressure, gettext("Tire Pressure"), class: "label" %>
+          <%= label(f, :unit_of_pressure, gettext("Tire Pressure"), class: "label") %>
         </div>
         <div class="field-body">
           <div class="field">
@@ -246,12 +264,17 @@
       <h2 class="title is-4"><%= gettext("URLs") %></h2>
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
-          <%= label f, :base_url, gettext("Web App"), class: "label" %>
+          <%= label(f, :base_url, gettext("Web App"), class: "label") %>
         </div>
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <%= text_input f, :base_url, type: :url, class: "input", phx_debounce: "blur", placeholder: "teslamate.example.com" %>
+              <%= text_input(f, :base_url,
+                type: :url,
+                class: "input",
+                phx_debounce: "blur",
+                placeholder: "teslamate.example.com"
+              ) %>
             </div>
             <p class="help is-danger"><%= error_tag(f, :base_url) %></p>
           </div>
@@ -260,12 +283,17 @@
 
       <div class="field is-horizontal center-vertically">
         <div class="field-label is-normal">
-          <%= label f, :grafana_url, gettext("Dashboards"), class: "label" %>
+          <%= label(f, :grafana_url, gettext("Dashboards"), class: "label") %>
         </div>
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <%= text_input f, :grafana_url, type: :url, class: "input", phx_debounce: "blur", placeholder: "grafana.example.com" %>
+              <%= text_input(f, :grafana_url,
+                type: :url,
+                class: "input",
+                phx_debounce: "blur",
+                placeholder: "grafana.example.com"
+              ) %>
             </div>
             <p class="help is-danger"><%= error_tag(f, :grafana_url) %></p>
           </div>
@@ -277,38 +305,50 @@
 
 <div class="columns is-mobile is-centered">
   <div class="column is-narrow table-container">
-        <table class="about table is-narrow">
-          <tbody>
-            <tr>
-              <th align="right"><%= gettext("Version") %></th>
-              <td><%= Application.spec(:teslamate, :vsn) %><strong><%=
-                if @update do
+    <table class="about table is-narrow">
+      <tbody>
+        <tr>
+          <th align="right"><%= gettext("Version") %></th>
+          <td>
+            <%= Application.spec(:teslamate, :vsn) %><strong><%= if @update do
                   vsn = link @update, to: "https://github.com/teslamate-org/teslamate/releases",
                                       target: "_blank", rel: "noopener noreferrer"
 
                   [" (", gettext("Update available"), ": ", vsn, ")"]
-                end
-              %></strong></td>
-            </tr>
-            <tr>
-              <th align="right"><%= gettext("GitHub") %></th>
-              <td><%= link "teslamate-org/teslamate", to: "https://github.com/teslamate-org/teslamate", target: "_blank", rel: "noopener noreferrer" %></td>
-            </tr>
-            <tr>
-              <th align="right"><%= gettext("Documentation") %></th>
-              <td><%= link "docs.teslamate.org", to: "https://docs.teslamate.org", target: "_blank", rel: "noopener noreferrer" %></td>
-            </tr>
-          </tbody>
-        </table>
+                end %></strong>
+          </td>
+        </tr>
+        <tr>
+          <th align="right"><%= gettext("GitHub") %></th>
+          <td>
+            <%= link("teslamate-org/teslamate",
+              to: "https://github.com/teslamate-org/teslamate",
+              target: "_blank",
+              rel: "noopener noreferrer"
+            ) %>
+          </td>
+        </tr>
+        <tr>
+          <th align="right"><%= gettext("Documentation") %></th>
+          <td>
+            <%= link("docs.teslamate.org",
+              to: "https://docs.teslamate.org",
+              target: "_blank",
+              rel: "noopener noreferrer"
+            ) %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
 <%= if TeslaMate.Api.signed_in?() and not TeslaMate.Import.enabled?() do %>
-<div class="columns is-mobile is-centered">
-  <div class="column is-narrow table-container">
-    <button class="button is-text is-rounded" aria-label="sign out" phx-click="sign_out">
-      <%= gettext "Sign out" %>
-    </button>
+  <div class="columns is-mobile is-centered">
+    <div class="column is-narrow table-container">
+      <button class="button is-text is-rounded" aria-label="sign out" phx-click="sign_out">
+        <%= gettext("Sign out") %>
+      </button>
+    </div>
   </div>
-</div>
 <% end %>

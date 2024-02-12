@@ -15,6 +15,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
+    active_route_destination active_route_latitude active_route_longitude
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -75,6 +76,9 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       display_name: vehicle.display_name,
 
       # Drive State
+      active_route_destination: get_in_struct(vehicle, [:drive_state, :active_route_destination]),
+      active_route_latitude: get_in_struct(vehicle, [:drive_state, :active_route_latitude]),
+      active_route_longitude: get_in_struct(vehicle, [:drive_state, :active_route_longitude]),
       latitude: get_in_struct(vehicle, [:drive_state, :latitude]),
       longitude: get_in_struct(vehicle, [:drive_state, :longitude]),
       power: get_in_struct(vehicle, [:drive_state, :power]),

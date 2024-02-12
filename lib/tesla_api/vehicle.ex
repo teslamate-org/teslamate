@@ -29,8 +29,8 @@ defmodule TeslaApi.Vehicle do
         _global -> "https://owner-api.teslamotors.com"
       end
 
-    TeslaApi.get(endpoint_url <> "/api/1/vehicles", opts: [access_token: auth.token])
-    |> handle_response(transform: &result/1)
+    TeslaApi.get(endpoint_url <> "/api/1/products", opts: [access_token: auth.token])
+    |> handle_response(transform: &list_result/1)
   end
 
   def get(%Auth{} = auth, id) do
@@ -61,6 +61,12 @@ defmodule TeslaApi.Vehicle do
     |> handle_response(transform: &result/1)
   end
 
+  def list_result(result) do
+    result
+    |> Enum.filter(fn x -> Map.has_key?(x, "vehicle_id") end)
+    |> Enum.map(&result/1)
+  end
+
   def result(v) do
     %__MODULE__{
       id: v["id"],
@@ -88,7 +94,7 @@ defmodule TeslaApi.Vehicle do
     case env do
       %Tesla.Env{status: status, body: %{"response" => res}} when status in 200..299 ->
         transform = Keyword.get(opts, :transform, & &1)
-        {:ok, if(is_list(res), do: Enum.map(res, transform), else: transform.(res))}
+        {:ok, transform.(res)}
 
       %Tesla.Env{status: 401} = env ->
         {:error, %Error{reason: :unauthorized, env: env}}
