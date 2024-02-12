@@ -51,6 +51,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMax": 100,
@@ -64,6 +66,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -339,7 +342,8 @@
             "max"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -434,7 +438,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -525,7 +529,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -617,7 +621,7 @@
         },
         "textMode": "value"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -654,11 +658,14 @@
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "custom": {
             "hideFrom": {
+              "legend": false,
               "tooltip": false,
-              "viz": false,
-              "legend": false
+              "viz": false
             }
           },
           "mappings": [],
@@ -674,9 +681,6 @@
                 "value": 80
               }
             ]
-          },
-          "color": {
-            "mode": "thresholds"
           }
         },
         "overrides": []
@@ -691,28 +695,18 @@
       "links": [],
       "maxDataPoints": 500,
       "options": {
-        "view": {
-          "allLayers": true,
-          "id": "fit",
-          "lat": 0,
-          "lon": 0,
-          "zoom": 15
-        },
-        "controls": {
-          "showZoom": true,
-          "mouseWheelZoom": true,
-          "showAttribution": true,
-          "showScale": false,
-          "showMeasure": false,
-          "showDebug": false
-        },
-        "tooltip": {
-          "mode": "details"
-        },
         "basemap": {
           "config": {},
           "name": "Layer 0",
           "type": "osm-standard"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
         },
         "layers": [
           {
@@ -720,7 +714,7 @@
               "showLegend": false,
               "style": {
                 "color": {
-                  "fixed": "red"
+                  "fixed": "dark-blue"
                 },
                 "opacity": 1,
                 "rotation": {
@@ -764,8 +758,19 @@
             "tooltip": true,
             "type": "markers"
           }
-        ]
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 15
+        }
       },
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "alias": "",
@@ -824,7 +829,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -1002,7 +1006,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 36,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1081,7 +1085,10 @@
           "text": "km",
           "value": "km"
         },
-        "datasource": "TeslaMate",
+        "datasource": {
+          "type": "postgres",
+          "uid": "PC98BA2F4D77E1A42"
+        },
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -1178,6 +1185,6 @@
   "timezone": "",
   "title": "Charge Details",
   "uid": "BHhxFeZRz",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
