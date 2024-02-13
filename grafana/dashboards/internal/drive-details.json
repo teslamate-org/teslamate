@@ -334,7 +334,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "alias": "",
@@ -450,7 +449,6 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -488,8 +486,82 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "decimals": 1,
-          "displayName": "Duration",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "dtdurations"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 18,
+        "y": 0
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": "TeslaMate",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ${__to:date:seconds} - ${__from:date:seconds}",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Selected duration",
+      "type": "stat"
+    },
+    {
+      "datasource": "TeslaMate",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
           "mappings": [
             {
               "options": {
@@ -516,8 +588,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 6,
-        "x": 18,
+        "w": 3,
+        "x": 21,
         "y": 0
       },
       "id": 14,
@@ -535,9 +607,9 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -568,6 +640,7 @@
           ]
         }
       ],
+      "title": "Drive duration",
       "type": "stat"
     },
     {
@@ -623,7 +696,6 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -729,7 +801,6 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -1173,7 +1244,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "alias": "",
@@ -1327,7 +1397,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -1587,7 +1656,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -1673,7 +1741,6 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -1749,7 +1816,6 @@
         "text": {},
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.6",
       "targets": [
         {
           "datasource": "TeslaMate",
