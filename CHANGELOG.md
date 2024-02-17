@@ -4,13 +4,28 @@
 
 ### New features
 
+- Add navigation active route drive state data (#3657 - @longzheng)
+
 ### Improvements and bug fixes
+
+- ci: prevent workflow runs for certain conditions and allow sheduled runs ([f71cc51](https://github.com/teslamate-org/teslamate/commit/f71cc51271007da70e7dc57c00e292acdf20e8d6) and [596a10f](https://github.com/teslamate-org/teslamate/commit/596a10f1eeb5c81f1f79293684a06241cc68d465) - @JakobLichterfeld)
+- feat: Upgrade web development framework to Phoenix 1.7 (#3615 - @marvelm and @JakobLichterfeld)
+- ci: stale after 30 days ([07670fa](https://github.com/teslamate-org/teslamate/commit/07670fa014b4d79d6907e7198960ec13c5cdae71) -@JakobLichterfeld)
+- Add stat panel for selected duration in drive details dashboard (#3667 - @oivindoh)
+- ci: run edge build every night ([206d731](https://github.com/teslamate-org/teslamate/commit/206d731935a5e8ebc350a7981df8c6d92480b88b) - @JakobLichterfeld)
 
 #### Dashboards
 
 #### Translations
 
+- Add Thai Translation (#3566 - @tomzt)
+- Update default.po missing french translations (#3662 - @pquattro)
+- update zh_Hans text (#3664 - @mrgaolei)
+
 #### Documentation
+
+- Add details how to configuring the TZ environment variable (#3650 - @NirKli)
+- doc: add instructions, how to connect to database before editing cars (#3656 - @JakobLichterfeld)
 
 ## [1.28.3] - 2024-02-02
 
