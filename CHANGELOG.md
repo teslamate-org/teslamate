@@ -8,7 +8,7 @@
 
 ### Improvements and bug fixes
 
-- ci: prevent workflow runs for certain conditions and allow sheduled runs ([f71cc51](https://github.com/teslamate-org/teslamate/commit/f71cc51271007da70e7dc57c00e292acdf20e8d6) and [596a10f](https://github.com/teslamate-org/teslamate/commit/596a10f1eeb5c81f1f79293684a06241cc68d465) - @JakobLichterfeld)
+- ci: prevent workflow runs for certain conditions and allow scheduled runs ([f71cc51](https://github.com/teslamate-org/teslamate/commit/f71cc51271007da70e7dc57c00e292acdf20e8d6) and [596a10f](https://github.com/teslamate-org/teslamate/commit/596a10f1eeb5c81f1f79293684a06241cc68d465) - @JakobLichterfeld)
 - feat: Upgrade web development framework to Phoenix 1.7 (#3615 - @marvelm and @JakobLichterfeld)
 - ci: stale after 30 days ([07670fa](https://github.com/teslamate-org/teslamate/commit/07670fa014b4d79d6907e7198960ec13c5cdae71) -@JakobLichterfeld)
 - Add stat panel for selected duration in drive details dashboard (#3667 - @oivindoh)
