@@ -6,7 +6,6 @@ defmodule TeslaMate.Application do
   def start(_type, _args) do
     Logger.info("System Info: #{system_info()}")
     Logger.info("Version: #{Application.spec(:teslamate, :vsn) || "???"}")
-    Logger.info("Build info: #{Application.spec(:teslamate, :description) || "???"}")
 
     # Disable log entries
     :ok = :telemetry.detach({Phoenix.Logger, [:phoenix, :socket_connected]})

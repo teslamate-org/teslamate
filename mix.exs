@@ -5,7 +5,6 @@ defmodule TeslaMate.MixProject do
     [
       app: :teslamate,
       version: version(),
-      description: build_info(),
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
@@ -107,42 +106,5 @@ defmodule TeslaMate.MixProject do
       {:ok, version} -> String.trim(version)
       {:error, _reason} -> "0.0.0"
     end
-  end
-
-  def build_info do
-    # get info on remote, will help locate origin for PR builds
-    remote_output =
-      case System.cmd(
-             "git",
-             ["remote", "get-url", "origin"],
-             stderr_to_stdout: true
-           ) do
-        {remote_output, _} -> remote_output |> to_string()
-        _ -> "no git remote output"
-      end
-
-    # get info on the branch
-    log_output =
-      case System.cmd(
-             "git",
-             ["log", "-1", "--format=rev:%h %ad %d"],
-             stderr_to_stdout: true
-           ) do
-        {log_output, _} -> log_output |> to_string()
-        _ -> "no git log output"
-      end
-
-    # get date which will be build date and time
-    build_date =
-      case System.cmd("date", ~w[], stderr_to_stdout: true) do
-        {build_date, _} -> build_date |> to_string()
-        _ -> "no date"
-      end
-
-    concatenated_output =
-      String.trim(remote_output) <>
-        " " <> String.trim(log_output) <> ", build date: " <> String.trim(build_date)
-
-    concatenated_output
   end
 end
