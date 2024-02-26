@@ -11,7 +11,9 @@ RUN apt-get update \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" \
      | tee /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
-    && apt-get install nodejs -y
+    && apt-get install nodejs -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN mix local.rebar --force && \
     mix local.hex --force
@@ -61,6 +63,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         netcat \
         tini  \
         tzdata && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     addgroup --gid 10001 --system nonroot && \
     adduser  --uid 10000 --system --ingroup nonroot --home /home/nonroot nonroot && \
