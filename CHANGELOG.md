@@ -19,6 +19,8 @@
 
 #### Dashboards
 
+- Change tracking line color on Maps to blue (#3670 - @jheredianet)
+
 #### Translations
 
 - Add Thai Translation (#3566 - @tomzt)
