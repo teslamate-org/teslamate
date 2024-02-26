@@ -1,20 +1,22 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= live_redirect gettext("Home"), to: "/" %></li>
-    <li><%= live_redirect gettext("Geo-Fences"), to: "/geo-fences" %></li>
-    <li class="is-active"><a href="#"><%=
-      case @action do
-        :new -> Ecto.Changeset.get_field(@changeset, :name) || "…"
-        :edit -> @geofence.name
-      end
-    %></a></li>
+    <li><%= live_redirect(gettext("Home"), to: "/") %></li>
+    <li><%= live_redirect(gettext("Geo-Fences"), to: "/geo-fences") %></li>
+    <li class="is-active">
+      <a href="#">
+        <%= case @action do
+          :new -> Ecto.Changeset.get_field(@changeset, :name) || "…"
+          :edit -> @geofence.name
+        end %>
+      </a>
+    </li>
   </ul>
 </nav>
 
-<.form let={f} for={@changeset} phx_change="validate" phx_submit="save" class="geofence">
+<.form :let={f} for={@changeset} phx-change="validate" phx-submit="save" class="geofence">
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <%= label f, :position, gettext("Position"), class: "label" %>
+      <%= label(f, :position, gettext("Position"), class: "label") %>
     </div>
     <div class="field-body">
       <div class="field">
@@ -22,9 +24,9 @@
           <div id="map_container" phx-update="ignore">
             <figure id="map" style="height: 400px; position: relative;" phx-hook="Map"></figure>
           </div>
-          <%= hidden_input f, :latitude %>
-          <%= hidden_input f, :longitude %>
-          <%= hidden_input f, :radius %>
+          <%= hidden_input(f, :latitude) %>
+          <%= hidden_input(f, :longitude) %>
+          <%= hidden_input(f, :radius) %>
         </div>
         <%= if @show_errors do %>
           <p class="help is-danger">
@@ -40,12 +42,14 @@
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <%= label class: "label" do gettext("Name") end %>
+      <%= label class: "label" do
+        gettext("Name")
+      end %>
     </div>
     <div class="field-body">
       <div class="field is-expanded">
         <div class="control">
-          <%= text_input f, :name, class: "input", placeholder: gettext("Name") %>
+          <%= text_input(f, :name, class: "input", placeholder: gettext("Name")) %>
         </div>
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :name) %></p>
@@ -56,23 +60,31 @@
 
   <div class="field is-horizontal mt-4">
     <div class="field-label is-normal">
-      <%= label class: "label" do gettext("Cost") end %>
+      <%= label class: "label" do
+        gettext("Cost")
+      end %>
     </div>
     <div class="field-body">
-
       <div class="field has-addons">
         <p class="control">
           <span class="select">
-            <%= select f, :billing_type, [{gettext("Per kWh"), :per_kwh}, {gettext("Per Minute"), :per_minute}] %>
+            <%= select(f, :billing_type, [
+              {gettext("Per kWh"), :per_kwh},
+              {gettext("Per Minute"), :per_minute}
+            ]) %>
           </span>
         </p>
         <p class="control is-expanded">
-          <%= text_input f, :cost_per_unit, class: "input",
-                             type: :number, inputmode: :decimal, step: 0.0001,
-                             placeholder: "0.00" %>
+          <%= text_input(f, :cost_per_unit,
+            class: "input",
+            type: :number,
+            inputmode: :decimal,
+            step: 0.0001,
+            placeholder: "0.00"
+          ) %>
         </p>
         <%= if @show_errors do %>
-        <p class="help is-danger"><%= error_tag(f, :cost_per_unit) %></p>
+          <p class="help is-danger"><%= error_tag(f, :cost_per_unit) %></p>
         <% end %>
       </div>
     </div>
@@ -80,18 +92,24 @@
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <%= label class: "label" do gettext("Session fee") end %>
+      <%= label class: "label" do
+        gettext("Session fee")
+      end %>
     </div>
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <%= text_input f, :session_fee, class: "input",
-                             type: :number, inputmode: :decimal, min: 0.0, step: 0.01,
-                             placeholder: "0.00"
-          %>
+          <%= text_input(f, :session_fee,
+            class: "input",
+            type: :number,
+            inputmode: :decimal,
+            min: 0.0,
+            step: 0.01,
+            placeholder: "0.00"
+          ) %>
         </div>
         <%= if @show_errors do %>
-        <p class="help is-danger"><%= error_tag(f, :session_fee) %></p>
+          <p class="help is-danger"><%= error_tag(f, :session_fee) %></p>
         <% end %>
       </div>
     </div>
@@ -102,36 +120,63 @@
     <div class="field-body">
       <div class="field is-grouped">
         <div class="control">
-          <%= live_redirect gettext("Back"), to: Routes.live_path(@socket, GeoFenceLive.Index), class: "button" %>
+          <%= live_redirect(gettext("Back"),
+            to: Routes.live_path(@socket, GeoFenceLive.Index),
+            class: "button"
+          ) %>
         </div>
         <div class="control">
-          <%= submit gettext("Save"), phx_disable_with: gettext("Saving..."), class: "button is-info" %>
+          <%= submit(gettext("Save"),
+            phx_disable_with: gettext("Saving..."),
+            class: "button is-info"
+          ) %>
         </div>
       </div>
     </div>
   </div>
 </.form>
 
-<div id="charging_cost_modal" class={["modal modal-fx-fadeInScale", (if @show_modal, do: "is-active"), (if not @connected?, do: "is-hidden")]} phx-hook="Modal">
-  <div class="modal-background" phx-click="close-modal" {if @show_modal, do: [phx_window_keyup: "keyup"], else: []}></div>
+<div
+  id="charging_cost_modal"
+  class={[
+    "modal modal-fx-fadeInScale",
+    if(@show_modal, do: "is-active"),
+    if(not @connected?, do: "is-hidden")
+  ]}
+  phx-hook="Modal"
+>
+  <div
+    class="modal-background"
+    phx-click="close-modal"
+    {if @show_modal, do: [phx_window_keyup: "keyup"], else: []}
+  >
+  </div>
   <div class="modal-card modal-content">
     <header class="modal-card-head">
-      <p class="modal-card-title"><%= gettext "Charging Costs" %></p>
+      <p class="modal-card-title"><%= gettext("Charging Costs") %></p>
       <button class="button is-text is-rounded" aria-label="close" phx-click="close-modal">
         <span class="icon is-small"><i class="mdi mdi-close"></i></span>
       </button>
     </header>
     <section class="modal-card-body">
-      <p><%= raw ngettext(
-              "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet.",
-              "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet.",
-              @charges_without_costs,
-              n: @charges_without_costs
-      ) %></p>
+      <p>
+        <%= raw(
+          ngettext(
+            "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet.",
+            "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet.",
+            @charges_without_costs,
+            n: @charges_without_costs
+          )
+        ) %>
+      </p>
     </section>
     <footer class="modal-card-foot">
-      <button class="button" phx-click="calc-costs" phx-value-result="no"><%= gettext "Continue" %></button>
-      <button class="button is-info" phx-click="calc-costs" phx-value-result="yes"><%= gettext "Add costs retroactively" %></button>
+      <button class="button" phx-click="calc-costs" phx-value-result="no">
+        <%= gettext("Continue") %>
+      </button>
+      <button class="button is-info" phx-click="calc-costs" phx-value-result="yes">
+        <%= gettext("Add costs retroactively") %>
+      </button>
     </footer>
   </div>
 </div>

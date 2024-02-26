@@ -70,7 +70,7 @@ runs:
         touch "/tmp/digests/${digest#sha256:}"
         ls -l /tmp/digests/
     - name: Upload digest
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: digests
         path: /tmp/digests/*

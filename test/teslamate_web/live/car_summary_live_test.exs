@@ -13,8 +13,12 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
              |> Enum.find(&match?({"tr", _, [{"td", _, [^key]}, _td]}, &1))
 
     case Keyword.get(opts, :tooltip) do
-      nil -> assert value == v
-      str -> assert {"span", [_, {"data-tooltip", ^str}], [^value]} = v
+      nil ->
+        assert value == String.trim(v)
+
+      str ->
+        assert {"span", [_, {"data-tooltip", ^str}], [text]} = v
+        assert String.trim(text) == value
     end
   end
 

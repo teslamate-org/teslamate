@@ -27,6 +27,8 @@ defmodule TeslaMateWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint TeslaMateWeb.Endpoint
+
+      use TeslaMateWeb, :verified_routes
     end
   end
 

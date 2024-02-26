@@ -108,7 +108,16 @@ If for some reason a drive or charge was recorded incorrectly, you can delete it
 
 **NOTE:** Always [backup](https://docs.teslamate.org/docs/maintenance/backup_restore "backup") your data before performing any database changes.
 
-1. Connect to your TeslaMate database
+1. Connect to your running TeslaMate database
+
+    ```bash
+    docker compose exec database psql teslamate teslamate
+    ```
+
+    :::note
+    If you get the error `No such service: database`, update your _docker-compose.yml_ or use `db` instead of `database` in the above command.
+    :::
+
 2. Identify the right car ID in the database to remove
 ```
 SELECT id, vin FROM cars;

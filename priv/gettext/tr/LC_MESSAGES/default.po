@@ -10,22 +10,22 @@
 msgid ""
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:104
+#: lib/teslamate_web/live/car_live/summary.html.heex:195
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Durum"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:237
+#: lib/teslamate_web/live/car_live/summary.html.heex:350
 #, elixir-autogen, elixir-format
 msgid "Speed"
 msgstr "Hız"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:229
+#: lib/teslamate_web/live/car_live/summary.html.heex:340
 #, elixir-autogen, elixir-format
 msgid "State of Charge"
 msgstr "Şarj Durumu"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:165
+#: lib/teslamate_web/live/car_live/summary.html.heex:274
 #, elixir-autogen, elixir-format
 msgid "Charged"
 msgstr "Şarj Oldu"
@@ -60,12 +60,12 @@ msgstr "çevrimiçi"
 msgid "updating"
 msgstr "güncelleniyor"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:78
+#: lib/teslamate_web/live/car_live/summary.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "Locked"
 msgstr "Kilitli"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:73
+#: lib/teslamate_web/live/car_live/summary.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "Sentry Mode"
 msgstr "Sentry-modu"
@@ -82,22 +82,22 @@ msgstr "Anasayfa"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:60
+#: lib/teslamate_web/templates/layout/root.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Ayarlar"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:180
+#: lib/teslamate_web/live/car_live/summary.html.heex:289
 #, elixir-autogen, elixir-format
 msgid "Scheduled Charging"
 msgstr "Zamanlanmış Şarj"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:58
+#: lib/teslamate_web/live/car_live/summary.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Plugged In"
 msgstr "Prize Takılı"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:189
+#: lib/teslamate_web/live/car_live/summary.html.heex:301
 #, elixir-autogen, elixir-format
 msgid "Charge Limit"
 msgstr "Şarj Sınırı"
@@ -112,23 +112,23 @@ msgstr "uykuya dalıyor"
 msgid "unavailable"
 msgstr "mevcut değil"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:198
+#: lib/teslamate_web/live/settings_live/index.html.heex:216
 #, elixir-autogen, elixir-format
 msgid "Length"
 msgstr "Uzunluk"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:213
+#: lib/teslamate_web/live/settings_live/index.html.heex:231
 #, elixir-autogen, elixir-format
 msgid "Temperature"
 msgstr "Sıcaklık"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:195
+#: lib/teslamate_web/live/settings_live/index.html.heex:213
 #, elixir-autogen, elixir-format
 msgid "Units"
 msgstr "Birimler"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:131
-#: lib/teslamate_web/live/geofence_live/form.html.heex:105
+#: lib/teslamate_web/live/charge_live/cost.html.heex:165
+#: lib/teslamate_web/live/geofence_live/form.html.heex:123
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Geri"
@@ -142,54 +142,54 @@ msgstr "Coğrafi-sınır \"%{name}\" oluşturuldu"
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
 #: lib/teslamate_web/live/geofence_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:57
+#: lib/teslamate_web/templates/layout/root.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
 msgstr "Coğrafi-Sınırlar"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:47
+#: lib/teslamate_web/live/settings_live/index.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "Idle Time Before Trying to Sleep"
 msgstr "Uykuya Dalmadan Önce Boşta Geçen Zaman"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:43
-#: lib/teslamate_web/live/geofence_live/form.html.heex:48
-#: lib/teslamate_web/live/geofence_live/index.html.heex:21
+#: lib/teslamate_web/live/geofence_live/form.html.heex:46
+#: lib/teslamate_web/live/geofence_live/form.html.heex:52
+#: lib/teslamate_web/live/geofence_live/index.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "İsim"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:17
-#: lib/teslamate_web/live/geofence_live/index.html.heex:22
+#: lib/teslamate_web/live/geofence_live/form.html.heex:19
+#: lib/teslamate_web/live/geofence_live/index.html.heex:23
 #, elixir-autogen, elixir-format
 msgid "Position"
 msgstr "Konum"
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:23
+#: lib/teslamate_web/live/geofence_live/index.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "Radius"
 msgstr "Yarıçap"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:134
-#: lib/teslamate_web/live/geofence_live/form.html.heex:108
+#: lib/teslamate_web/live/charge_live/cost.html.heex:168
+#: lib/teslamate_web/live/geofence_live/form.html.heex:129
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Kaydet"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:135
-#: lib/teslamate_web/live/geofence_live/form.html.heex:108
-#: lib/teslamate_web/live/signin_live/index.html.heex:40
+#: lib/teslamate_web/live/charge_live/cost.html.heex:169
+#: lib/teslamate_web/live/geofence_live/form.html.heex:130
+#: lib/teslamate_web/live/signin_live/index.html.heex:60
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Kaydediliyor..."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:29
+#: lib/teslamate_web/live/settings_live/index.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "Time to Try Sleeping"
 msgstr "Uykuya Dalmayı Deneme Zamanı"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:37
-#: lib/teslamate_web/live/settings_live/index.html.heex:56
+#: lib/teslamate_web/live/settings_live/index.html.heex:45
+#: lib/teslamate_web/live/settings_live/index.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "min"
 msgstr "min"
@@ -204,13 +204,13 @@ msgstr "Oturum başarıyla açıldı"
 msgid "Car is unlocked"
 msgstr "Araba kilitli değil"
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:9
+#: lib/teslamate_web/live/geofence_live/index.html.heex:10
 #, elixir-autogen, elixir-format
 msgid "Create"
 msgstr "Oluştur"
 
 #: lib/teslamate_web/live/car_live/summary.ex:138
-#: lib/teslamate_web/live/car_live/summary.html.heex:43
+#: lib/teslamate_web/live/car_live/summary.html.heex:57
 #, elixir-autogen, elixir-format
 msgid "Preconditioning"
 msgstr "Batarya şarja hazırlanıyor"
@@ -220,151 +220,151 @@ msgstr "Batarya şarja hazırlanıyor"
 msgid "Sentry mode is enabled"
 msgstr "Sentry-modu devrede"
 
-#: lib/teslamate_web/live/car_live/summary.ex:139
-#: lib/teslamate_web/live/car_live/summary.html.heex:53
+#: lib/teslamate_web/live/car_live/summary.ex:140
+#: lib/teslamate_web/live/car_live/summary.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Driver present"
 msgstr "Sürücü araçta"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:307
+#: lib/teslamate_web/live/car_live/summary.html.heex:435
 #, elixir-autogen, elixir-format
 msgid "cancel sleep attempt"
 msgstr "Uykuya dalmaktan vazgeç"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:302
+#: lib/teslamate_web/live/car_live/summary.html.heex:426
 #, elixir-autogen, elixir-format
 msgid "try to sleep"
 msgstr "uyumaya çalış"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:152
+#: lib/teslamate_web/live/car_live/summary.html.heex:261
 #, elixir-autogen, elixir-format
 msgid "Range (est.)"
 msgstr "Menzil (tahmini)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:107
+#: lib/teslamate_web/live/car_live/summary.html.heex:200
 #, elixir-autogen, elixir-format
 msgid "for"
 msgstr "için"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:68
+#: lib/teslamate_web/live/settings_live/index.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "Requirements"
 msgstr "Gereksinimler"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:77
+#: lib/teslamate_web/live/settings_live/index.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "Vehicle must be locked"
 msgstr "Araç kilitli olmalı"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:133
+#: lib/teslamate_web/live/car_live/summary.html.heex:241
 #, elixir-autogen, elixir-format
 msgid "Range (rated)"
 msgstr "Menzil (hesaplanan)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:171
+#: lib/teslamate_web/live/car_live/summary.html.heex:280
 #, elixir-autogen, elixir-format
 msgid "Charger Power"
 msgstr "Şarj Cihazı Gücü"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:139
+#: lib/teslamate_web/live/settings_live/index.html.heex:152
 #, elixir-autogen, elixir-format
 msgid "Preferred Range"
 msgstr "Tercih Edilen Menzil"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:135
+#: lib/teslamate_web/live/settings_live/index.html.heex:148
 #, elixir-autogen, elixir-format
 msgid "Range"
 msgstr "Menzil"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:146
+#: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "ideal"
 msgstr "ideal"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:146
+#: lib/teslamate_web/live/settings_live/index.html.heex:161
 #, elixir-autogen, elixir-format
 msgid "rated"
 msgstr "hesaplanan"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:132
+#: lib/teslamate_web/live/car_live/summary.html.heex:240
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
 msgstr "Menzil (ideal)"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:138
+#: lib/teslamate_web/live/settings_live/index.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
 msgstr "Aracın kalan menzil tahmini Wh/km cinsinden belirlenmiş sabit bir enerji tüketimine göre temel alınmıştır. Hesaplanan menzil, düzenliyici kurumların ilgili piyasalarda bu araç için yaptığı testlere göre temel alınırken Wh/km çarpanı Tesla tarafından belirlenir ve ülkeye özgü değildir."
 
-#: lib/teslamate_web/live/car_live/summary.ex:141
+#: lib/teslamate_web/live/car_live/summary.ex:142
 #, elixir-autogen, elixir-format
 msgid "Update in progress"
 msgstr "Güncelleniyor"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:63
+#: lib/teslamate_web/live/car_live/summary.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "Windows open"
 msgstr "Pencereler açık"
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:51
+#: lib/teslamate_web/live/geofence_live/index.html.heex:60
 #, elixir-autogen, elixir-format
 msgid "Delete '%{geo_fence}'?"
 msgstr "Sil '%{geo_fence}'?"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:262
+#: lib/teslamate_web/live/car_live/summary.html.heex:375
 #, elixir-autogen, elixir-format
 msgid "Inside Temperature"
 msgstr "İç Ortam Sıcaklığı"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:250
+#: lib/teslamate_web/live/car_live/summary.html.heex:363
 #, elixir-autogen, elixir-format
 msgid "Outside Temperature"
 msgstr "Dış Ortam Sıcaklığı"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:287
-#: lib/teslamate_web/live/settings_live/index.html.heex:283
+#: lib/teslamate_web/live/car_live/summary.html.heex:400
+#: lib/teslamate_web/live/settings_live/index.html.heex:311
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "Sürüm"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:88
+#: lib/teslamate_web/live/car_live/summary.html.heex:178
 #, elixir-autogen, elixir-format
 msgid "Health check failed"
 msgstr "Sağlık kontrolü başarısız"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:78
+#: lib/teslamate_web/live/car_live/summary.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "Unlocked"
 msgstr "Kilit açıldı"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:119
+#: lib/teslamate_web/live/car_live/summary.html.heex:223
 #, elixir-autogen, elixir-format
 msgid "Remaining Time"
 msgstr "Kalan Süre"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:263
-#: lib/teslamate_web/templates/layout/root.html.heex:47
+#: lib/teslamate_web/live/settings_live/index.html.heex:286
+#: lib/teslamate_web/templates/layout/root.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "Gösterge Paneli"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:246
+#: lib/teslamate_web/live/settings_live/index.html.heex:264
 #, elixir-autogen, elixir-format
 msgid "URLs"
 msgstr "Bağlantılar"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:162
-#: lib/teslamate_web/live/settings_live/index.html.heex:249
+#: lib/teslamate_web/live/settings_live/index.html.heex:178
+#: lib/teslamate_web/live/settings_live/index.html.heex:267
 #, elixir-autogen, elixir-format
 msgid "Web App"
 msgstr "Web Uygulaması"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:112
+#: lib/teslamate_web/live/settings_live/index.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "Enabled"
 msgstr "Devrede"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:24
+#: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Sleep Mode"
 msgstr "Uyku Modu"
@@ -374,22 +374,22 @@ msgstr "Uyku Modu"
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "Coğrafi-sınır \"%{name}\" güncellendi"
 
-#: lib/teslamate_web/live/car_live/summary.ex:143
+#: lib/teslamate_web/live/car_live/summary.ex:144
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
 msgstr "Bir hata oluştu"
 
-#: lib/teslamate_web/live/car_live/summary.ex:142
+#: lib/teslamate_web/live/car_live/summary.ex:143
 #, elixir-autogen, elixir-format
 msgid "Timeout"
 msgstr "Zamanaşımı"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:48
+#: lib/teslamate_web/live/car_live/summary.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Reduced Battery Range"
 msgstr "Kısıtlı Batarya Menzili"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:222
+#: lib/teslamate_web/live/car_live/summary.html.heex:334
 #, elixir-autogen, elixir-format
 msgid "≈ %{range} at 100%"
 msgstr "≈ %100'de %{range}"
@@ -400,13 +400,13 @@ msgstr "≈ %100'de %{range}"
 msgid "Charge Cost"
 msgstr "Şarj Tutarı"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:103
-#: lib/teslamate_web/live/geofence_live/form.html.heex:59
+#: lib/teslamate_web/live/charge_live/cost.html.heex:132
+#: lib/teslamate_web/live/geofence_live/form.html.heex:64
 #, elixir-autogen, elixir-format
 msgid "Cost"
 msgstr "Tutar"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:119
+#: lib/teslamate_web/live/charge_live/cost.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "Enter charge cost"
 msgstr "Şarj tutarını girin"
@@ -416,17 +416,17 @@ msgstr "Şarj tutarını girin"
 msgid "Saved!"
 msgstr "Kaydedildi!"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:38
+#: lib/teslamate_web/live/car_live/summary.html.heex:50
 #, elixir-autogen, elixir-format
 msgid "Fetching vehicle data ..."
 msgstr "Araç verisi alınıyor..."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:177
+#: lib/teslamate_web/live/settings_live/index.html.heex:193
 #, elixir-autogen, elixir-format
 msgid "Addresses"
 msgstr "Adresler"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:158
+#: lib/teslamate_web/live/settings_live/index.html.heex:174
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Dil"
@@ -448,108 +448,103 @@ msgid_plural "Found %{count} files"
 msgstr[0] "%{count} dosya bulundu"
 msgstr[1] "%{count} dosya bulundu"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:104
-#, elixir-autogen, elixir-format
-msgid "Donate"
-msgstr "Bağış Yap"
-
 #: lib/teslamate_web/live/import_live/index.ex:34
-#: lib/teslamate_web/live/import_live/index.html.heex:68
+#: lib/teslamate_web/live/import_live/index.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Import"
 msgstr "İçe Aktar"
 
-#: lib/teslamate_web/live/import_live/index.html.heex:58
+#: lib/teslamate_web/live/import_live/index.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Time zone"
 msgstr "Saat dilimi"
 
 #: lib/teslamate_web/live/signin_live/index.ex:13
-#: lib/teslamate_web/live/signin_live/index.html.heex:38
+#: lib/teslamate_web/live/signin_live/index.html.heex:51
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Oturum aç"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:90
+#: lib/teslamate_web/live/settings_live/index.html.heex:103
 #, elixir-autogen, elixir-format
 msgid "Charge cost"
 msgstr "Şarj Tutarı"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:93
+#: lib/teslamate_web/live/settings_live/index.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "Free Supercharging"
 msgstr "Bedava Supercharging"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:129
+#: lib/teslamate_web/live/settings_live/index.html.heex:142
 #, elixir-autogen, elixir-format
 msgid "General Settings"
 msgstr "Genel Ayarlar"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:83
+#: lib/teslamate_web/live/geofence_live/form.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "Session fee"
 msgstr "Oturum ücreti"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:68
+#: lib/teslamate_web/live/car_live/summary.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "Doors open"
 msgstr "Kapılar açık"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:111
-#: lib/teslamate_web/live/geofence_live/form.html.heex:66
+#: lib/teslamate_web/live/charge_live/cost.html.heex:140
+#: lib/teslamate_web/live/geofence_live/form.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "Per kWh"
 msgstr "kWh başına"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:110
+#: lib/teslamate_web/live/charge_live/cost.html.heex:139
 #, elixir-autogen, elixir-format
 msgid "Total"
 msgstr "Toplam"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:125
+#: lib/teslamate_web/live/geofence_live/form.html.heex:164
 #, elixir-format
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "Bu konumdaki <strong>%{n} şarj işlemi</strong> için henüz bir ücret yansıtılmadı."
 msgstr[1] "Bu konumdaki <strong>%{n} şarj işlemi</strong> için henüz bir ücret yansıtılmadı."
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:134
+#: lib/teslamate_web/live/geofence_live/form.html.heex:178
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "Tutarları geçmişe dönük olarak ekle"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:119
+#: lib/teslamate_web/live/geofence_live/form.html.heex:156
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "Şarj Tutarları"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:133
+#: lib/teslamate_web/live/geofence_live/form.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "Devam Et"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:275
+#: lib/teslamate_web/live/car_live/summary.html.heex:388
 #, elixir-autogen, elixir-format
 msgid "Mileage"
 msgstr "Mesafe"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:109
+#: lib/teslamate_web/live/settings_live/index.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Streaming API"
 msgstr "Eşzamanlı-API"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:298
+#: lib/teslamate_web/live/settings_live/index.html.heex:332
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr "Dökümantasyon"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:294
+#: lib/teslamate_web/live/settings_live/index.html.heex:322
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr "GitHub"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:289
-#: lib/teslamate_web/templates/layout/root.html.heex:112
+#: lib/teslamate_web/live/settings_live/index.html.heex:317
+#: lib/teslamate_web/templates/layout/root.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "Güncelleme mevcut"
@@ -564,28 +559,28 @@ msgstr "Kapılar açık"
 msgid "Trunk is open"
 msgstr "Bağaj açık"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:112
-#: lib/teslamate_web/live/geofence_live/form.html.heex:66
+#: lib/teslamate_web/live/charge_live/cost.html.heex:141
+#: lib/teslamate_web/live/geofence_live/form.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Per Minute"
 msgstr "Dakika Başına"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:83
+#: lib/teslamate_web/live/car_live/summary.html.heex:134
 #, elixir-autogen, elixir-format
 msgid "Software Update available (%{version})"
 msgstr "Yazılım Güncellemesi mevcut (%{version})"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:310
+#: lib/teslamate_web/live/settings_live/index.html.heex:350
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:11
+#: lib/teslamate_web/live/signin_live/index.html.heex:18
 #, elixir-autogen, elixir-format
 msgid "Access Token"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:24
+#: lib/teslamate_web/live/signin_live/index.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "Refresh Token"
 msgstr ""
@@ -595,12 +590,12 @@ msgstr ""
 msgid "Tokens are invalid"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:49
+#: lib/teslamate_web/live/signin_live/index.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:46
+#: lib/teslamate_web/live/signin_live/index.html.heex:67
 #, elixir-autogen, elixir-format
 msgid "here"
 msgstr ""
@@ -610,32 +605,52 @@ msgstr ""
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.ex:140
+#: lib/teslamate_web/live/car_live/summary.ex:141
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
 msgstr ""
 
-#: lib/teslamate_web/templates/layout/root.html.heex:81
+#: lib/teslamate_web/templates/layout/root.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr ""
 
-#: lib/teslamate_web/templates/layout/root.html.heex:85
+#: lib/teslamate_web/templates/layout/root.html.heex:120
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr ""
 
-#: lib/teslamate_web/templates/layout/root.html.heex:84
+#: lib/teslamate_web/templates/layout/root.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr ""
 
-#: lib/teslamate_web/templates/layout/root.html.heex:83
+#: lib/teslamate_web/templates/layout/root.html.heex:106
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:228
+#: lib/teslamate_web/live/settings_live/index.html.heex:246
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:145
+#, elixir-autogen, elixir-format
+msgid "Low tire pressure, check (%{tire_low}) tire"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "Dog Mode"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.ex:139
+#, elixir-autogen, elixir-format
+msgid "Dog mode is enabled"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:232
+#, elixir-autogen, elixir-format
+msgid "Expected Finish Time"
 msgstr ""

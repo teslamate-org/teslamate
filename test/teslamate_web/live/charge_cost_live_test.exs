@@ -78,12 +78,14 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                  {"div", _,
                   [
                     {"span", _, [{"span", _, [{"span", [{"class", "mdi mdi-flash"}], _}]}]},
-                    {"span", _, [^tag_str]}
+                    {"span", _, [text]}
                   ]}
                ] =
                  html
                  |> Floki.parse_document!()
                  |> Floki.find("#energy-tag")
+
+        assert String.trim(text) == tag_str
       end
 
       # both nil
@@ -132,12 +134,14 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                {"div", _,
                 [
                   {"span", _, [{"span", _, [{"span", [{"class", "mdi mdi-map-marker"}], _}]}]},
-                  {"span", _, ["Post Office"]}
+                  {"span", _, [location_text]}
                 ]}
              ] =
                html
                |> Floki.parse_document!()
                |> Floki.find("#location-tag")
+
+      assert String.trim(location_text) == "Post Office"
     end
 
     test "shows the address name", %{conn: conn} do
@@ -171,12 +175,14 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                {"div", _,
                 [
                   {"span", _, [{"span", _, [{"span", [{"class", "mdi mdi-map-marker"}], _}]}]},
-                  {"span", _, ["Beelitz Supercharger, Beelitz"]}
+                  {"span", _, [location_text]}
                 ]}
              ] =
                html
                |> Floki.parse_document!()
                |> Floki.find("#location-tag")
+
+      assert String.trim(location_text) == "Beelitz Supercharger, Beelitz"
     end
   end
 
