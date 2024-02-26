@@ -45,7 +45,7 @@ RUN SKIP_LOCALE_DOWNLOAD=true mix release --path /opt/built
 
 ########################################################################
 
-FROM debian:bullseye-slim AS app
+FROM debian:bookworm-slim AS app
 
 ENV LANG=C.UTF-8 \
     SRTM_CACHE=/opt/app/.srtm_cache \

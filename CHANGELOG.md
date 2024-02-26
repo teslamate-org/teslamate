@@ -14,6 +14,7 @@
 - Add stat panel for selected duration in drive details dashboard (#3667 - @oivindoh)
 - ci: run edge build every night ([206d731](https://github.com/teslamate-org/teslamate/commit/206d731935a5e8ebc350a7981df8c6d92480b88b) - @JakobLichterfeld)
 - ci: update upload-artifact action (#3689 - @JakobLichterfeld)
+- build: bump app base image to fix 'GLIBC_2.34' not found error
 
 #### Dashboards
 
