@@ -13,7 +13,7 @@
 - ci: stale after 30 days ([07670fa](https://github.com/teslamate-org/teslamate/commit/07670fa014b4d79d6907e7198960ec13c5cdae71) -@JakobLichterfeld)
 - Add stat panel for selected duration in drive details dashboard (#3667 - @oivindoh)
 - ci: run edge build every night ([206d731](https://github.com/teslamate-org/teslamate/commit/206d731935a5e8ebc350a7981df8c6d92480b88b) - @JakobLichterfeld)
-- ci: update upload-artifact action ([ba3058f](https://github.com/teslamate-org/teslamate/commit/ba3058fedd71e86e77426d495be662553428db03) - @JakobLichterfeld)
+- ci: update upload-artifact action (#3689 - @JakobLichterfeld)
 
 #### Dashboards
 
