@@ -62,7 +62,7 @@ defmodule TeslaMate.MixProject do
       {:srtm, "~> 0.8.0"},
       {:tesla, "~> 1.4"},
       {:timex, "~> 3.0"},
-      {:tortoise, "~> 0.10"},
+      {:tortoise311, "~> 0.10"},
       {:tzdata, "~> 1.1"},
       {:websockex, "~> 0.4"},
       {:cloak_ecto, "~> 1.2"},

@@ -34,17 +34,17 @@ defmodule TeslaMate.Mqtt.Publisher do
 
     case Keyword.get(opts, :qos, 0) do
       0 ->
-        :ok = Tortoise.publish(id, topic, msg, opts)
+        :ok = Tortoise311.publish(id, topic, msg, opts)
         {:reply, :ok, state}
 
       _ ->
-        {:ok, ref} = Tortoise.publish(id, topic, msg, opts)
+        {:ok, ref} = Tortoise311.publish(id, topic, msg, opts)
         {:noreply, %State{state | refs: Map.put(refs, ref, from)}}
     end
   end
 
   @impl true
-  def handle_info({{Tortoise, id}, ref, result}, %State{client_id: id, refs: refs} = state) do
+  def handle_info({{Tortoise311, id}, ref, result}, %State{client_id: id, refs: refs} = state) do
     {from, refs} = Map.pop(refs, ref)
     GenServer.reply(from, result)
     {:noreply, %State{state | refs: refs}}
