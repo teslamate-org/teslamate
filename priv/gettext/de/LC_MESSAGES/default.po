@@ -557,7 +557,7 @@ msgstr "Türen geöffnet"
 #: lib/teslamate_web/live/car_live/summary.ex:136
 #, elixir-autogen, elixir-format
 msgid "Trunk is open"
-msgstr "Kofferraum is geöffnet"
+msgstr "Kofferraum ist geöffnet"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:141
 #: lib/teslamate_web/live/geofence_live/form.html.heex:73
@@ -603,7 +603,7 @@ msgstr "hier"
 #: lib/teslamate_web/live/signin_live/index.ex:59
 #, elixir-autogen, elixir-format
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr "Ihr Tesla-Konto ist aufgrund von zu vielen fehlgeschlagenen Anmeldeversuchen gesperrt. Um Ihr Konto zu entsperren, setzen Sie Ihr Kennwort zurück"
+msgstr "Dein Tesla-Konto ist aufgrund von zu vielen fehlgeschlagenen Anmeldeversuchen gesperrt. Um das Konto zu entsperren, setze dein Kennwort zurück"
 
 #: lib/teslamate_web/live/car_live/summary.ex:141
 #, elixir-autogen, elixir-format
@@ -638,19 +638,19 @@ msgstr "Reifendruck"
 #: lib/teslamate_web/live/car_live/summary.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "Low tire pressure, check (%{tire_low}) tire"
-msgstr ""
+msgstr "Niedriger Reifendruck, Reifen (%{tire_low}) prüfen"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Dog Mode"
-msgstr ""
+msgstr "Hundemodus"
 
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
-msgstr ""
+msgstr "Hundemodus ist aktiviert"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
-msgstr ""
+msgstr "Erwartete Endzeit"
