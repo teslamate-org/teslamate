@@ -648,7 +648,7 @@ msgstr "애견 모드"
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
-msgstr "애견 모드가 켜져있습니다.
+msgstr "애견 모드가 켜져있습니다."
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:232
 #, elixir-autogen, elixir-format
