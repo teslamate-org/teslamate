@@ -29,6 +29,7 @@
 - Update default.po missing french translations (#3662 - @pquattro)
 - update zh_Hans text (#3664 - @mrgaolei)
 - Add missing German translation for new messages, fix mistakes (#3694 - @accolon)
+- feat: add missing translation for new messages for Korean (#3693 - @zipizigi)
 
 #### Documentation
 
