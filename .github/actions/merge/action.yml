@@ -17,7 +17,6 @@ runs:
       with:
         name: digests
         pattern: single-digest-*
-        path: /tmp/digests
         merge-multiple: true
 
     - name: Set up Docker Buildx
