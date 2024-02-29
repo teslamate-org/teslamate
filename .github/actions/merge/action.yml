@@ -12,13 +12,17 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Download digests
+    - name: Merge digests and reupload
       uses: actions/upload-artifact/merge@v4
       with:
         name: digests
         pattern: single-digest-*
+
+    - name: Download merged digests
+      uses: actions/download-artifact@v4
+      with:
+        name: digests
         path: /tmp/digests
-        merge-multiple: true
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3

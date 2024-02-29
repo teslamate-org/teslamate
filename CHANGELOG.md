@@ -30,6 +30,7 @@
 - update zh_Hans text (#3664 - @mrgaolei)
 - Add missing German translation for new messages, fix mistakes (#3694 - @accolon)
 - feat: add missing translation for new messages for Korean (#3693 - @zipizigi)
+- add Traditional Chinese translation for new messages (#3699 - @occultsound )
 
 #### Documentation
 
