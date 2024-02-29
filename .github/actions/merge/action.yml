@@ -13,6 +13,7 @@ runs:
   using: "composite"
   steps:
     - name: Download digests
+      working-directory: /tmp/digests
       uses: actions/upload-artifact/merge@v4
       with:
         name: digests
