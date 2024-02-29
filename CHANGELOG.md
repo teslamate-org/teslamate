@@ -33,7 +33,7 @@
 
 #### Documentation
 
-- Add details how to configuring the TZ environment variable (#3650 - @NirKli)
+- - Add details on how to configure the TZ environment variable (#3650 - @NirKli)
 - doc: add instructions, how to connect to database before editing cars (#3656 - @JakobLichterfeld)
 
 ## [1.28.3] - 2024-02-02
