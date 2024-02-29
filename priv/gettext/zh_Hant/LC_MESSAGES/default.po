@@ -563,7 +563,7 @@ msgstr "後行李箱已打開"
 #: lib/teslamate_web/live/geofence_live/form.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Per Minute"
-msgstr ""
+msgstr "每分鐘"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:134
 #, elixir-autogen, elixir-format
@@ -633,24 +633,24 @@ msgstr ""
 #: lib/teslamate_web/live/settings_live/index.html.heex:246
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
-msgstr ""
+msgstr "胎壓"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "Low tire pressure, check (%{tire_low}) tire"
-msgstr ""
+msgstr "低胎壓, 檢查 (%{tire_low}) 輪胎"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Dog Mode"
-msgstr ""
+msgstr "寵物模式"
 
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
-msgstr ""
+msgstr "寵物模式開啓"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
-msgstr ""
+msgstr "預計充電完成時間"
