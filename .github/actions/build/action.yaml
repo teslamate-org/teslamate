@@ -72,7 +72,7 @@ runs:
     - name: Upload digest
       uses: actions/upload-artifact@v4
       with:
-        name: single-digest-${{ matrix.platform }}
+        name: single-digest-${{ matrix.platform.replace('/', '_') }}
         path: /tmp/digests/*
         if-no-files-found: error
         retention-days: 1
