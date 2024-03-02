@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dorny/paths-filter@v3.0.0
+      - uses: dorny/paths-filter@v3.0.1
         id: filter
         with:
           filters: |
