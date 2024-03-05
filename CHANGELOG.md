@@ -18,6 +18,7 @@
 - build: bump app base image to fix 'GLIBC_2.34' not found error (#3691- @JakobLichterfeld)
 - build: bump app dependencies for libssl and netcat to packages available in debian bookworm (#3691- @JakobLichterfeld)
 - build: reduce the size of the Docker image by cleaning the APT cache (#3692- @JakobLichterfeld)
+- build(deps): bump dorny/paths-filter from 3.0.0 to 3.0.1 (#3712)
 
 #### Dashboards
 
@@ -30,12 +31,14 @@
 - update zh_Hans text (#3664 - @mrgaolei)
 - Add missing German translation for new messages, fix mistakes (#3694 - @accolon)
 - feat: add missing translation for new messages for Korean (#3693 - @zipizigi)
-- add Traditional Chinese translation for new messages (#3699 - @occultsound )
+- add Traditional Chinese translation for new messages (#3699 and #3709 - @occultsound)
+- Adding missing Swedish translation for new messages (#3716 -@tobiasehlert)
 
 #### Documentation
 
 - Add details how to configuring the TZ environment variable (#3650 - @NirKli)
 - doc: add instructions, how to connect to database before editing cars (#3656 - @JakobLichterfeld)
+- Fix name in lovelace example to match sensor name (#3718 - @js94x)
 
 ## [1.28.3] - 2024-02-02
 
