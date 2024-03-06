@@ -19,7 +19,7 @@ Unfortunately the Tesla API does not return consumption values for a trip. In or
 
 If you have not customized the name of your Tesla, Teslamate saves an empty value in the PostgreSQL database. When Grafana is reading from the database, the value `null` is the value for the variable car_id in Grafana.
 
-Set your a name for your Tesla and wait until Teslamate has synchronized it.
+Give your Tesla a name via car touchscreen and wait for Teslamate to synchronize it.
 
 ## What is the geo-fence feature for?
 
