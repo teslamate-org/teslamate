@@ -39,6 +39,7 @@
 - Add details how to configuring the TZ environment variable (#3650 - @NirKli)
 - doc: add instructions, how to connect to database before editing cars (#3656 - @JakobLichterfeld)
 - Fix name in lovelace example to match sensor name (#3718 - @js94x)
+- doc: Hint for null value in Grafana if car has not been renamed yet (#3720 -@js94x)
 
 ## [1.28.3] - 2024-02-02
 
