@@ -60,7 +60,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libsctp1  \
         libssl3  \
         libstdc++6 \
-        netcat-traditional \
+        netcat-openbsd \
         tini  \
         tzdata && \
     apt-get clean && \
