@@ -21,6 +21,7 @@
 - build: reduce the size of the Docker image by cleaning the APT cache (#3692- @JakobLichterfeld)
 - build(deps): bump dorny/paths-filter from 3.0.0 to 3.0.1 (#3712)
 - feat: Grafana 10.4.0 & Angular Deprecation (#3726 - @swiffer and @JakobLichterfeld)
+- build: pin elixir image full version to elixir:1.16.1-otp-26 (#3733 - @brianmay and @JakobLichterfeld)
 
 #### Dashboards
 
