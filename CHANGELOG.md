@@ -19,10 +19,12 @@
 - build: bump app dependencies for libssl and netcat to packages available in debian bookworm (#3691- @JakobLichterfeld)
 - build: reduce the size of the Docker image by cleaning the APT cache (#3692- @JakobLichterfeld)
 - build(deps): bump dorny/paths-filter from 3.0.0 to 3.0.1 (#3712)
+- feat: Grafana 10.4.0 & Angular Deprecation (#3726 - @swiffer and @JakobLichterfeld)
 
 #### Dashboards
 
 - Change tracking line color on Maps to blue (#3670 - @jheredianet)
+- - Select last three drives in trip dashboard now opens in new tab to work reliable ([ca9816b](https://github.com/teslamate-org/teslamate/commit/ca9816ba4905c653b5f4daad533bf2caf2fe1d9c) - @DrMichael)
 
 #### Translations
 
