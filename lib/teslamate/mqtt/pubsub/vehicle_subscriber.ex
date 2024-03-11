@@ -74,6 +74,36 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
         nil
     end)
 
+    if state.last_summary == nil or
+         state.last_summary.latitude != summary.latitude or
+         state.last_summary.longitude != summary.longitude do
+      lat_lng =
+        case {summary.latitude, summary.longitude} do
+          {nil, _} -> nil
+          {_, nil} -> nil
+          {%Decimal{} = lat, %Decimal{} = lon} -> {Decimal.to_float(lat), Decimal.to_float(lon)}
+          {lat, lon} -> {lat, lon}
+        end
+
+      case lat_lng do
+        nil ->
+          nil
+
+        {lat, lon} ->
+          location =
+            %{
+              latitude: lat,
+              longitude: lon
+            }
+            |> Jason.encode!()
+
+          case publish({"location", location}, state) do
+            :ok -> nil
+            {:error, reason} -> Logger.warning("Failed to publish location: #{inspect(reason)}")
+          end
+      end
+    end
+
     {:noreply, %State{state | last_summary: summary}}
   end
 
