@@ -17,6 +17,7 @@
 - fix: upload and merge artifact naming conflict since action version v4 (#3689 - @JakobLichterfeld)
 - build: bump app base image to fix 'GLIBC_2.34' not found error (#3691- @JakobLichterfeld)
 - build: bump app dependencies for libssl and netcat to packages available in debian bookworm (#3691- @JakobLichterfeld)
+- build: use netcat-openbsd to support ipv6 again (#3732 - @JakobLichterfeld)
 - build: reduce the size of the Docker image by cleaning the APT cache (#3692- @JakobLichterfeld)
 - build(deps): bump dorny/paths-filter from 3.0.0 to 3.0.1 (#3712)
 - feat: Grafana 10.4.0 & Angular Deprecation (#3726 - @swiffer and @JakobLichterfeld)
