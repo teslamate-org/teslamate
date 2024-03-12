@@ -44,7 +44,7 @@ jobs:
           tag: pr-${{ github.event.pull_request.number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/delete-package-versions@v4
+      - uses: actions/delete-package-versions@v5
         if: job.steps.cleanup.status == success()
         name: Delete untagged images from ghcr.io
         continue-on-error: true
