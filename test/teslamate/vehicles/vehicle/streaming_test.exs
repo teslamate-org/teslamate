@@ -1,5 +1,5 @@
 defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
-  use TeslaMate.VehicleCase, async: true
+  use TeslaMate.VehicleCase, async: false
 
   import ExUnit.CaptureLog
 
