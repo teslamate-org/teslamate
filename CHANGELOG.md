@@ -70,6 +70,7 @@
 - Improve Battery health derived efficiency estimations and Fix error divided by zero (#3593 - @jheredianet)
 - Battery Health - Improve performance & adjust queries to handle empty or null data (#3627 - @jheredianet)
 - charging-stats: map - add charges count and move label (#3625 - @fmossott)
+- Battery health dashboard: Added Distance (Logged - Mileage) stats (#3741 - @jheredianet)
 
 #### Translations
 
