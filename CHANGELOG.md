@@ -84,6 +84,7 @@
 - update tesla-youq project (#3547 - @brchri)
 - doc: Fix TPMS sensor names to match binary_sensor.yaml (#3613 - @kenni)
 - update docker-compose.yml for Docker Compose version v2.24.1 (#3626 - @realJustinLee)
+- doc: Updated links for TeslaMate projects ([bf50f79](https://github.com/teslamate-org/teslamate/commit/bf50f799941ade1810fadacc408392e274afa459) - @JakobLichterfeld)
 
 ### Configure Timezone Setting for Accurate Local Time Display
 
