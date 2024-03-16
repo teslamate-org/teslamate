@@ -22,6 +22,7 @@
 - ci: bump dorny/paths-filter from 3.0.0 to 3.0.1 (#3712)
 - feat: Grafana 10.4.0 & Angular Deprecation (#3726 - @swiffer and @JakobLichterfeld)
 - build: pin elixir image full version to elixir:1.16.1-otp-26 (#3733 - @brianmay and @JakobLichterfeld)
+- build: adding chmod to file copy in app stage (#3740 - @tobiasehlert)
 - ci: bump actions/delete-package-versions from 4 to 5 (#3713)
 - test: Make tests non-async (#3738 - @brianmay)
 
@@ -680,6 +681,7 @@ Users who are already signed in in do not have to worry about it. TeslaMate will
 > **To immediately obtain new tokens after upgrading**, go to the TeslaMate settings page, **sign out via the button** at the bottom of the page and then sign in again.
 
 Additional:
+
 > **⚠️ NOTE**: This release changes TeslaMate's base Docker image to Debian. If you have any customizations on top of TeslaMate (like healthchecks), they could need updates to work on top of this new image.
 
 ### Enhancements
@@ -889,6 +891,7 @@ Additional:
 - Overview: Update battery gauge thresholds ([#651](https://github.com/adriankumpf/teslamate/pull/651) by [wooter](https://github.com/wooter))
 - Drives: Add column header for reduced range ([#662](https://github.com/adriankumpf/teslamate/pull/662) by [Dulanic](https://github.com/Dulanic))
 - Charging Stats: Show map with frequently used chargers ([#666](https://github.com/adriankumpf/teslamate/pull/666) by [Dulanic](https://github.com/Dulanic))
+
   - _Manual install: requires Grafana plugin **grafana-map-panel**_
 
     ```bash
@@ -1638,7 +1641,7 @@ superuser rights (temporarily):
 
 ## 1.4
 
-### 1. New custom grafana image: `teslamate/grafana`**
+### 1. New custom grafana image: `teslamate/grafana`
 
 Starting with this release there is a customized Grafana docker image
 (`teslamate/grafana`) that auto provisions the datasource and dashboards which
