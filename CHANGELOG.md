@@ -25,6 +25,7 @@
 - build: adding chmod to file copy in app stage (#3740 - @tobiasehlert)
 - ci: bump actions/delete-package-versions from 4 to 5 (#3713)
 - test: Make tests non-async (#3738 - @brianmay)
+- Fix aggressive switch to offline when stream gets offline message (#3672 - @micves)
 
 #### Dashboards
 
