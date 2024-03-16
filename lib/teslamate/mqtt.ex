@@ -14,7 +14,7 @@ defmodule TeslaMate.Mqtt do
     client_id = generate_client_id()
 
     children = [
-      {Tortoise.Connection, connection_config(opts) ++ [client_id: client_id]},
+      {Tortoise311.Connection, connection_config(opts) ++ [client_id: client_id]},
       {Publisher, client_id: client_id},
       {PubSub, namespace: opts[:namespace]}
     ]
@@ -24,7 +24,7 @@ defmodule TeslaMate.Mqtt do
 
   # Private
 
-  alias Tortoise.Transport
+  alias Tortoise311.Transport
 
   defp connection_config(opts) do
     socket_opts =

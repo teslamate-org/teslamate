@@ -1,5 +1,5 @@
 defmodule TeslaMate.Mqtt.Handler do
-  use Tortoise.Handler
+  use Tortoise311.Handler
 
   require Logger
 
