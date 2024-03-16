@@ -528,10 +528,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:info, {:stream, msg}, _state, data)
       when msg in [:vehicle_offline] do
-    Logger.info("Stream reports vehicle as offline … ", car_id: data.car.id)
+    Logger.warning("Stream reports vehicle as offline, fetching vehicle state ...",
+      car_id: data.car.id
+    )
 
-    {:next_state, :start, data,
-     [broadcast_fetch(false), {:next_event, :internal, {:update, {:offline, data.last_response}}}]}
+    # fetch data right away and let the result decide the real state
+    {:keep_state_and_data, schedule_fetch(0, data)}
   end
 
   def handle_event(:info, {:stream, stream_data}, _state, data) do
