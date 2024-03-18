@@ -5,6 +5,7 @@
 ### New features
 
 - Add navigation active route drive state data (#3657 - @longzheng)
+- Add location topic (lat and long in one json blob) (#3729 - @brianmay)
 
 ### Improvements and bug fixes
 
@@ -31,7 +32,8 @@
 #### Dashboards
 
 - Change tracking line color on Maps to blue (#3670 - @jheredianet)
-- - Select last three drives in trip dashboard now opens in new tab to work reliable ([ca9816b](https://github.com/teslamate-org/teslamate/commit/ca9816ba4905c653b5f4daad533bf2caf2fe1d9c) - @DrMichael)
+- Select last three drives in trip dashboard now opens in new tab to work reliable ([ca9816b](https://github.com/teslamate-org/teslamate/commit/ca9816ba4905c653b5f4daad533bf2caf2fe1d9c) - @DrMichael)
+- Battery health dashboard: Added Distance (Logged - Mileage) stats (#3741 - @jheredianet)
 
 #### Translations
 
@@ -49,6 +51,7 @@
 - doc: add instructions, how to connect to database before editing cars (#3656 - @JakobLichterfeld)
 - Fix name in lovelace example to match sensor name (#3718 - @js94x)
 - doc: Hint for null value in Grafana if car has not been renamed yet (#3720 -@js94x)
+- doc: Updated links for TeslaMate projects ([bf50f79](https://github.com/teslamate-org/teslamate/commit/bf50f799941ade1810fadacc408392e274afa459) - @JakobLichterfeld)
 
 ## [1.28.3] - 2024-02-02
 
@@ -72,7 +75,6 @@
 - Improve Battery health derived efficiency estimations and Fix error divided by zero (#3593 - @jheredianet)
 - Battery Health - Improve performance & adjust queries to handle empty or null data (#3627 - @jheredianet)
 - charging-stats: map - add charges count and move label (#3625 - @fmossott)
-- Battery health dashboard: Added Distance (Logged - Mileage) stats (#3741 - @jheredianet)
 
 #### Translations
 
@@ -87,7 +89,6 @@
 - update tesla-youq project (#3547 - @brchri)
 - doc: Fix TPMS sensor names to match binary_sensor.yaml (#3613 - @kenni)
 - update docker-compose.yml for Docker Compose version v2.24.1 (#3626 - @realJustinLee)
-- doc: Updated links for TeslaMate projects ([bf50f79](https://github.com/teslamate-org/teslamate/commit/bf50f799941ade1810fadacc408392e274afa459) - @JakobLichterfeld)
 
 ### Configure Timezone Setting for Accurate Local Time Display
 
