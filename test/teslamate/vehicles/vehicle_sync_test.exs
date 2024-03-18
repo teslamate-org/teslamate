@@ -149,6 +149,14 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
         assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: true, qos: 1]}}
       end
 
+      topic = "teslamate/cars/#{car.id}/location"
+      assert_receive {MqttPublisherMock, {:publish, ^topic, data, [retain: true, qos: 1]}}
+
+      assert Jason.decode!(data) == %{
+               "latitude" => 37.889544,
+               "longitude" => 41.128817
+             }
+
       refute_receive _
     end
   end

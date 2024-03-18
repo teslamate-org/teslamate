@@ -29,6 +29,7 @@ Vehicle data will be published to the following topics:
 |                                                        |                      |                                                                                       |
 | `teslamate/cars/$car_id/latitude`                      | 35.278131            | Last reported car latitude                                                            |
 | `teslamate/cars/$car_id/longitude`                     | 29.744801            | Last reported car longitude                                                           |
+| `teslamate/cars/$car_id/location`                     |                "latitude": 37.889544, "longitude: 41.128817            | Last reported car location                                                           |
 | `teslamate/cars/$car_id/shift_state`                   | D                    | Current/Last Shift State (D/N/R/P)                                                    |
 | `teslamate/cars/$car_id/power`                         | -9                   | Current battery power in watts. Positive value on discharge, negative value on charge |
 | `teslamate/cars/$car_id/speed`                         | 12                   | Current Speed in km/h                                                                 |
