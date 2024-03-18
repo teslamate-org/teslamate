@@ -38,6 +38,7 @@
 - Change tracking line color on Maps to blue (#3670 - @jheredianet)
 - Select last three drives in trip dashboard now opens in new tab to work reliable ([ca9816b](https://github.com/teslamate-org/teslamate/commit/ca9816ba4905c653b5f4daad533bf2caf2fe1d9c) - @DrMichael)
 - Battery health dashboard: Added Distance (Logged - Mileage) stats (#3741 - @jheredianet)
+- Update timeline.json: column Action correct width with new grafana version (#3744 - @DrMichael)
 
 #### Translations
 
