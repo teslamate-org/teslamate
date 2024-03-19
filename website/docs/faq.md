@@ -15,6 +15,12 @@ There are multiple apps available to securely generate access tokens yourself, f
 
 Unfortunately the Tesla API does not return consumption values for a trip. In order to still be able to display values TeslaMate estimates the consumption on the basis of the recorded (charging) data. It takes **at least two** charging sessions before the first estimate can be displayed. Charging sessions have to be longer than 10 minutes and less than 95% state-of-charge (SoC). Each future charging session will slightly improve the accuracy of the estimate, which is applied retroactively to all data.
 
+## Why "null" is displayed above the panels in Grafana?
+
+If you have not customized the name of your Tesla, Teslamate saves an empty value in the PostgreSQL database. When Grafana is reading from the database, the value `null` is the value for the variable car_id in Grafana.
+
+Give your Tesla a name via car touchscreen and wait for Teslamate to synchronize it.
+
 ## What is the geo-fence feature for?
 
 At the moment geo-fences are a way to create custom locations like `🏡 Home` or `🛠️ Work` That may be particularly useful if the addresses (which are provided by [OpenStreetMap](https://www.openstreetmap.org)) in your region are inaccurate or if you street-park at locations where the exact address may vary.

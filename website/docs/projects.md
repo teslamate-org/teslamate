@@ -36,11 +36,11 @@ The application is written in Golang and data is received from both PostgreSQL a
 
 LINK: [github.com/tobiasehlert/TeslaMateApi](https://github.com/tobiasehlert/teslamateapi)
 
-## [TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot)
+## [TeslaMate Telegram Bot](https://github.com/JakobLichterfeld/TeslaMate-Telegram-Bot)
 
 This is a telegram bot written in Python to notify by Telegram message when a new SW update for your Tesla is available. It uses the MQTT topic which TeslaMate offers.
 
-LINK: [github.com/JakobLichterfeld/TeslaMate_Telegram_Bot](https://github.com/JakobLichterfeld/TeslaMate_Telegram_Bot)
+LINK: [github.com/JakobLichterfeld/TeslaMate-Telegram-Bot](https://github.com/JakobLichterfeld/TeslaMate-Telegram-Bot)
 
 ## [TeslaMate ABRP](https://fetzu.github.io/teslamate-abrp/)
 

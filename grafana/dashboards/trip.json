@@ -27,6 +27,7 @@
     {
       "icon": "doc",
       "tags": [],
+      "targetBlank": true,
       "title": "Select last three drives",
       "type": "link",
       "url": "/d/FkUpJpQZk?from=$from"

@@ -1,4 +1,4 @@
-FROM elixir:1.16 AS builder
+FROM elixir:1.16.1-otp-26 AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -60,7 +60,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libsctp1  \
         libssl3  \
         libstdc++6 \
-        netcat-traditional \
+        netcat-openbsd \
         tini  \
         tzdata && \
     apt-get clean && \
@@ -70,8 +70,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     chown -R nonroot:nonroot .
 
 USER nonroot:nonroot
-COPY --chown=nonroot:nonroot entrypoint.sh /
-COPY --from=builder --chown=nonroot:nonroot /opt/built .
+COPY --chown=nonroot:nonroot --chmod=544 entrypoint.sh /
+COPY --from=builder --chown=nonroot:nonroot --chmod=544 /opt/built .
 RUN mkdir $SRTM_CACHE
 
 EXPOSE 4000

@@ -95,6 +95,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
     end
 
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/location", data, [retain: true, qos: 1]}}
+
+    assert Jason.decode!(data) == %{
+             "latitude" => 37.889602,
+             "longitude" => 41.129182
+           }
+
     refute_receive _
   end
 
@@ -158,7 +166,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     geofence = %GeoFence{id: 0, name: "Home", latitude: 0.0, longitude: 0.0, radius: 20}
     other_geofence = %GeoFence{id: 0, name: "Work", latitude: 0.0, longitude: 0.0, radius: 20}
 
-    # Send geofence 
+    # Send geofence
     send(pid, %Summary{geofence: geofence, version: "1"})
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/geofence", "Home", _}}
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "1", _}}
