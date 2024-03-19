@@ -4,6 +4,18 @@
 
 ### New features
 
+### Improvements and bug fixes
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+## [1.28.4] - 2024-03-19
+
+### New features
+
 - Add navigation active route drive state data (#3657 - @longzheng)
 - Add location topic (lat and long in one json blob) (#3729 - @brianmay)
 
