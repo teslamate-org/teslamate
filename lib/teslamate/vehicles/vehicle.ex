@@ -376,6 +376,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
                   car_id: data.car.id
                 )
 
+                data =
+                  with %Data{last_response: nil} <- data do
+                    {last_response, geofence} = restore_last_known_values(vehicle, data)
+                    %Data{data | last_response: last_response, geofence: geofence}
+                  end
+
                 {:ok, pid} = connect_stream(data)
 
                 {:next_state, {:offline, @asleep_interval},
