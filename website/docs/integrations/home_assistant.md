@@ -918,19 +918,19 @@ views:
             name: Scheduled Charging Start Time
           - entity: sensor.tesla_time_to_full_charge
             name: Time To Full Charge
-          - entity: sensor.tesla_tpms_pressure_fl_bar
+          - entity: sensor.tesla_tpms_pressure_fl
             name: Front Left Tire Pressure (bar)
           - entity: sensor.tesla_tpms_pressure_fl_psi
             name: Front Left Tire Pressure (psi)
-          - entity: sensor.tesla_tpms_pressure_fr_bar
+          - entity: sensor.tesla_tpms_pressure_fr
             name: Front Right Tire Pressure (bar)
           - entity: sensor.tesla_tpms_pressure_fr_psi
             name: Front Right Tire Pressure (psi)
-          - entity: sensor.tesla_tpms_pressure_rl_bar
+          - entity: sensor.tesla_tpms_pressure_rl
             name: Rear Left Tire Pressure (bar)
           - entity: sensor.tesla_tpms_pressure_rl_psi
             name: Rear Left Tire Pressure (psi)
-          - entity: sensor.tesla_tpms_pressure_rr_bar
+          - entity: sensor.tesla_tpms_pressure_rr
             name: Rear Right Tire Pressure (bar)
           - entity: sensor.tesla_tpms_pressure_rr_psi
             name: Rear Right Tire Pressure (psi)

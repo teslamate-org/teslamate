@@ -633,24 +633,24 @@ msgstr "För att säkerställa att dina <strong>Tesla API-tokens lagras säkert<
 #: lib/teslamate_web/live/settings_live/index.html.heex:246
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
-msgstr ""
+msgstr "Däcktryck"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "Low tire pressure, check (%{tire_low}) tire"
-msgstr ""
+msgstr "Lågt däcktryck, kontrollera (%{tire_low}) däck"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Dog Mode"
-msgstr ""
+msgstr "Hundläge"
 
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
-msgstr ""
+msgstr "Hundläge är aktiverad"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
-msgstr ""
+msgstr "Förväntad sluttid"

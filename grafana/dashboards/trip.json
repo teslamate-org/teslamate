@@ -27,6 +27,7 @@
     {
       "icon": "doc",
       "tags": [],
+      "targetBlank": true,
       "title": "Select last three drives",
       "type": "link",
       "url": "/d/FkUpJpQZk?from=$from"
@@ -68,6 +69,31 @@
     },
     {
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 13,
         "w": 13,
@@ -76,9 +102,79 @@
       },
       "id": 6,
       "maxDataPoints": 500,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "osm-standard"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "arrow": 0,
+              "style": {
+                "color": {
+                  "fixed": "dark-blue"
+                },
+                "lineWidth": 2,
+                "opacity": 1,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 3,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "name": "Layer 1",
+            "tooltip": true,
+            "type": "route"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 15
+        }
+      },
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "datasource": "TeslaMate",
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -95,6 +191,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "addresses",
           "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
@@ -104,123 +217,12 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "editorMode": "code",
-          "sql": {
-            "columns": [
-              {
-                "type": "function",
-                "parameters": []
-              }
-            ],
-            "groupBy": [
-              {
-                "type": "groupBy",
-                "property": {
-                  "type": "string"
-                }
-              }
-            ],
-            "limit": 50
-          }
+          ]
         }
       ],
       "transformations": [],
       "transparent": true,
-      "type": "geomap",
-      "options": {
-        "view": {
-          "allLayers": true,
-          "id": "fit",
-          "lat": 0,
-          "lon": 0,
-          "zoom": 15
-        },
-        "controls": {
-          "showZoom": true,
-          "mouseWheelZoom": true,
-          "showAttribution": true,
-          "showScale": false,
-          "showMeasure": false,
-          "showDebug": false
-        },
-        "tooltip": {
-          "mode": "details"
-        },
-        "layers": [
-          {
-            "type": "route",
-            "name": "Layer 1",
-            "config": {
-              "style": {
-                "size": {
-                  "fixed": 3,
-                  "min": 2,
-                  "max": 15
-                },
-                "color": {
-                  "fixed": "red"
-                },
-                "opacity": 1,
-                "symbol": {
-                  "mode": "fixed",
-                  "fixed": "img/icons/marker/circle.svg"
-                },
-                "symbolAlign": {
-                  "horizontal": "center",
-                  "vertical": "center"
-                },
-                "textConfig": {
-                  "fontSize": 12,
-                  "textAlign": "center",
-                  "textBaseline": "middle",
-                  "offsetX": 0,
-                  "offsetY": 0
-                },
-                "rotation": {
-                  "fixed": 0,
-                  "mode": "mod",
-                  "min": -360,
-                  "max": 360
-                },
-                "lineWidth": 2
-              },
-              "arrow": 0
-            },
-            "tooltip": true
-          }
-        ],
-        "basemap": {
-          "type": "osm-standard",
-          "name": "Layer 0",
-          "config": {}
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "color": {
-            "mode": "thresholds"
-          }
-        },
-        "overrides": []
-      }
+      "type": "geomap"
     },
     {
       "datasource": "TeslaMate",
@@ -301,7 +303,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -418,6 +420,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
+          "showLegend": true,
           "values": [
             "value"
           ]
@@ -585,7 +588,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -697,7 +700,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -812,7 +815,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -926,7 +929,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -1017,7 +1020,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -1099,9 +1102,10 @@
           "fields": "",
           "values": true
         },
-        "showUnfilled": false
+        "showUnfilled": false,
+        "valueMode": "color"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -1173,6 +1177,12 @@
           },
           "custom": {
             "fillOpacity": 100,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineWidth": 0,
             "spanNulls": false
           },
@@ -1245,7 +1255,8 @@
         "alignValue": "center",
         "legend": {
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "mergeValues": true,
         "rowHeight": 1,
@@ -1297,7 +1308,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "decimals": 2,
@@ -1611,7 +1624,9 @@
       "id": 2,
       "links": [],
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -1626,7 +1641,7 @@
           }
         ]
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "alias": "",
@@ -1670,7 +1685,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "decimals": 2,
@@ -1680,8 +1697,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1983,8 +1999,10 @@
                 "value": 1
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-text"
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
               },
               {
                 "id": "custom.align"
@@ -1995,8 +2013,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "#96D98D",
-                      "value": null
+                      "color": "#96D98D"
                     },
                     {
                       "color": "#56A64B",
@@ -2203,8 +2220,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2296,7 +2312,8 @@
             "lastNotNull"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -2378,8 +2395,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2450,7 +2466,8 @@
             "lastNotNull"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -2494,7 +2511,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 36,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "tesla"
@@ -2702,6 +2719,6 @@
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

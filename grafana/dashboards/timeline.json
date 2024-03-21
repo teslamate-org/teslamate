@@ -182,7 +182,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 100
+                "value": 150
               },
               {
                 "id": "custom.filterable",

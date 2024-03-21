@@ -12,6 +12,65 @@
 
 #### Documentation
 
+## [1.28.4] - 2024-03-19
+
+### New features
+
+- Add navigation active route drive state data (#3657 - @longzheng)
+- Add location topic (lat and long in one json blob) (#3729 - @brianmay)
+
+### Improvements and bug fixes
+
+- Fix aggressive switch to offline when stream gets offline message (#3672 - @micves)
+- feat: Grafana 10.4.0 & Angular Deprecation (#3726 - @swiffer and @JakobLichterfeld)
+- test: Make tests non-async (#3738 - @brianmay)
+
+#### Build, CI, internal
+
+- ci: prevent workflow runs for certain conditions and allow scheduled runs ([f71cc51](https://github.com/teslamate-org/teslamate/commit/f71cc51271007da70e7dc57c00e292acdf20e8d6) and [596a10f](https://github.com/teslamate-org/teslamate/commit/596a10f1eeb5c81f1f79293684a06241cc68d465) - @JakobLichterfeld)
+- feat: Upgrade web development framework to Phoenix 1.7 (#3615 - @marvelm and @JakobLichterfeld)
+- ci: stale after 30 days ([07670fa](https://github.com/teslamate-org/teslamate/commit/07670fa014b4d79d6907e7198960ec13c5cdae71) -@JakobLichterfeld)
+- ci: run edge build every night ([206d731](https://github.com/teslamate-org/teslamate/commit/206d731935a5e8ebc350a7981df8c6d92480b88b) - @JakobLichterfeld)
+- ci: update upload-artifact action (#3689 - @JakobLichterfeld)
+- fix: upload and merge artifact naming conflict since action version v4 (#3689 - @JakobLichterfeld)
+- build: bump app base image to fix 'GLIBC_2.34' not found error (#3691- @JakobLichterfeld)
+- build: bump app dependencies for libssl and netcat to packages available in debian bookworm (#3691- @JakobLichterfeld)
+- build: use netcat-openbsd to support ipv6 again (#3732 - @JakobLichterfeld)
+- build: reduce the size of the Docker image by cleaning the APT cache (#3692- @JakobLichterfeld)
+- ci: bump dorny/paths-filter from 3.0.0 to 3.0.1 (#3712)
+- build: pin elixir image full version to elixir:1.16.1-otp-26 (#3733 - @brianmay and @JakobLichterfeld)
+- build: adding chmod to file copy in app stage (#3740 - @tobiasehlert)
+- ci: bump actions/delete-package-versions from 4 to 5 (#3713)
+- Replace tortoise library with tortoise311 (#3697 - @brianmay)
+- build(deps): bump follow-redirects from 1.15.4 to 1.15.6 in /website (#3743)
+- feat: experimental nix flake (#3485 - @brianmay)
+
+#### Dashboards
+
+- feat: Add stat panel for selected duration in drive details dashboard (#3667 - @oivindoh)
+- Change tracking line color on Maps to blue (#3670 - @jheredianet)
+- Select last three drives in trip dashboard now opens in new tab to work reliable ([ca9816b](https://github.com/teslamate-org/teslamate/commit/ca9816ba4905c653b5f4daad533bf2caf2fe1d9c) - @DrMichael)
+- Battery health dashboard: Added Distance (Logged - Mileage) stats (#3741 - @jheredianet)
+- Update timeline.json: column Action correct width with new grafana version (#3744 - @DrMichael)
+
+#### Translations
+
+- Add Thai Translation (#3566 - @tomzt)
+- Update default.po missing french translations (#3662 - @pquattro)
+- update zh_Hans text (#3664 - @mrgaolei)
+- Add missing German translation for new messages, fix mistakes (#3694 - @accolon)
+- feat: add missing translation for new messages for Korean (#3693 - @zipizigi)
+- add Traditional Chinese translation for new messages (#3699 and #3709 - @occultsound)
+- Adding missing Swedish translation for new messages (#3716 -@tobiasehlert)
+
+#### Documentation
+
+- Add details how to configuring the TZ environment variable (#3650 - @NirKli)
+- doc: add instructions, how to connect to database before editing cars (#3656 - @JakobLichterfeld)
+- Fix name in lovelace example to match sensor name (#3718 - @js94x)
+- doc: Hint for null value in Grafana if car has not been renamed yet (#3720 -@js94x)
+- doc: Updated links for TeslaMate projects ([bf50f79](https://github.com/teslamate-org/teslamate/commit/bf50f799941ade1810fadacc408392e274afa459) - @JakobLichterfeld)
+
 ## [1.28.3] - 2024-02-02
 
 ### New features
@@ -50,8 +109,9 @@
 - update docker-compose.yml for Docker Compose version v2.24.1 (#3626 - @realJustinLee)
 
 ### Configure Timezone Setting for Accurate Local Time Display
-To ensure time-related features display accurately in your local timezone, configure the TZ environment variable.  
-Detailed instructions are available in our [configuration guide](https://docs.teslamate.org/docs/configuration/environment_variables/).   
+
+To ensure time-related features display accurately in your local timezone, configure the TZ environment variable.
+Detailed instructions are available in our [configuration guide](https://docs.teslamate.org/docs/configuration/environment_variables/).
 
 ## [1.28.2] - 2023-11-27
 
@@ -643,6 +703,8 @@ Users who are already signed in in do not have to worry about it. TeslaMate will
 >
 > **To immediately obtain new tokens after upgrading**, go to the TeslaMate settings page, **sign out via the button** at the bottom of the page and then sign in again.
 
+Additional:
+
 > **⚠️ NOTE**: This release changes TeslaMate's base Docker image to Debian. If you have any customizations on top of TeslaMate (like healthchecks), they could need updates to work on top of this new image.
 
 ### Enhancements
@@ -852,7 +914,9 @@ Users who are already signed in in do not have to worry about it. TeslaMate will
 - Overview: Update battery gauge thresholds ([#651](https://github.com/adriankumpf/teslamate/pull/651) by [wooter](https://github.com/wooter))
 - Drives: Add column header for reduced range ([#662](https://github.com/adriankumpf/teslamate/pull/662) by [Dulanic](https://github.com/Dulanic))
 - Charging Stats: Show map with frequently used chargers ([#666](https://github.com/adriankumpf/teslamate/pull/666) by [Dulanic](https://github.com/Dulanic))
+
   - _Manual install: requires Grafana plugin **grafana-map-panel**_
+
     ```bash
     grafana-cli --pluginUrl https://github.com/panodata/grafana-map-panel/releases/download/0.9.0/grafana-map-panel-0.9.0.zip plugins install grafana-worldmap-panel-ng
     ```
@@ -925,7 +989,7 @@ As the first and only Tesla logging app out there, TeslaMate now use the Tesla s
 - Update French translation ([#598](https://github.com/adriankumpf/teslamate/pull/598) by [tomS3210](https://github.com/tomS3210) and [MaxG88](https://github.com/MaxG88))
 - Updated Labels to Title Case ([#578](https://github.com/adriankumpf/teslamate/pull/578) by [jmiverson](https://github.com/jmiverson))
 
-#### Other enhancements:
+#### Other enhancements
 
 - Send credentials with manifest request ([#555](https://github.com/adriankumpf/teslamate/pull/555) by [MaxG88](https://github.com/MaxG88))
 - Add option to change the language of the web interface
@@ -1187,17 +1251,17 @@ The docs were revised (once again). You can find them at **[docs.teslamate.org](
 
 ### Enhancements
 
-**Documentation**
+#### Documentation
 
 [@gundalow](https://github.com/gundalow) has revamped the docs ([#292](https://github.com/adriankumpf/teslamate/pull/292), [#314](https://github.com/adriankumpf/teslamate/pull/314)). The new documentation is available here: [teslamate.readthedocs.io](https://teslamate.readthedocs.io)
 
-**Automatic phase correction**
+#### Automatic phase correction
 
 The phase correction is now applied automatically.
 
 Background: some vehicles incorrectly report 2 instead of 1 or 3 phases when charging. This led to an incorrect calculation of the 'kWh used'. Furthermore, the calculation did not work reliably in three-phase networks with e.g. 127/220V. Therefore it was necessary in the past to manually activate a phase correction for specific geo-fences. With this update the correction is now applied automatically.
 
-**Other enhancements**
+#### Other enhancements
 
 - Refactored API module
 - Increased polling frequency in asleep state
@@ -1377,7 +1441,7 @@ Currently, a firmware bug in some vehicles may cause the wrong number of phases 
 - Generally improve error handling and error messages
 - Improve landscape mode on devices with a notch
 
-* Open the geo-fence editor by clicking on the start or destination address of
+- Open the geo-fence editor by clicking on the start or destination address of
   a trip
 
   **Note:** For this feature to work Grafana needs to know the base URL of the
@@ -1525,7 +1589,7 @@ superuser rights (temporarily):
 
 ### Added / Changed
 
-**Dashboards**
+#### Dashboards
 
 - Display car name instead of its id and replace dropdown with separate row for each car
 - Improve States dashboard:
@@ -1535,7 +1599,7 @@ superuser rights (temporarily):
 - Drive Details: add estimated range graph
 - Degradation: Increase resolution of projected 100% range
 
-**Web UI**
+#### Web UI
 
 - Add favicons
 - Fetch last known values from database after (re)starting TeslaMate
@@ -1600,7 +1664,7 @@ superuser rights (temporarily):
 
 ## 1.4
 
-**1. New custom grafana image: `teslamate/grafana`**
+### 1. New custom grafana image: `teslamate/grafana`
 
 Starting with this release there is a customized Grafana docker image
 (`teslamate/grafana`) that auto provisions the datasource and dashboards which
@@ -1638,12 +1702,12 @@ volumes:
 
 Find the full example in the updated README.
 
-**2. Switch to imperial units**
+### 2. Switch to imperial units
 
 There is a new settings view in the web interface. To use imperial measurements
 in grafana and on the status screen just tick the checkbox it shows!
 
-**3. Deprecation of TESLA_USERNAME and TESLA_PASSWORD**
+### 3. Deprecation of TESLA_USERNAME and TESLA_PASSWORD
 
 With this release API tokens are stored in the database. After starting
 TeslaMate v1.4 once, you can safely remove both environment variables.
@@ -1794,6 +1858,7 @@ New users need to sign in via the web interface.
 ## [1.0.0] - 2019-07-25
 
 [unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.3...HEAD
+[1.28.4]: https://github.com/teslamate-org/teslamate/compare/v1.28.3...v1.28.4
 [1.28.3]: https://github.com/teslamate-org/teslamate/compare/v1.28.2...v1.28.3
 [1.28.2]: https://github.com/teslamate-org/teslamate/compare/v1.28.1...v1.28.2
 [1.28.1]: https://github.com/teslamate-org/teslamate/compare/v1.28.0...v1.28.1

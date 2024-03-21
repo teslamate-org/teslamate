@@ -60,6 +60,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -71,6 +73,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 1,
             "pointSize": 5,
@@ -327,14 +330,14 @@
             "min"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "alias": "",
@@ -450,7 +453,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -488,8 +491,82 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "decimals": 1,
-          "displayName": "Duration",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "dtdurations"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 18,
+        "y": 0
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": "TeslaMate",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ${__to:date:seconds} - ${__from:date:seconds}",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Selected duration",
+      "type": "stat"
+    },
+    {
+      "datasource": "TeslaMate",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
           "mappings": [
             {
               "options": {
@@ -516,8 +593,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 6,
-        "x": 18,
+        "w": 3,
+        "x": 21,
         "y": 0
       },
       "id": 14,
@@ -535,9 +612,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -568,6 +646,7 @@
           ]
         }
       ],
+      "title": "Drive duration",
       "type": "stat"
     },
     {
@@ -623,7 +702,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -729,7 +808,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "format": "table",
@@ -766,11 +845,15 @@
       "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "thresholds"
+          },
           "custom": {
             "hideFrom": {
+              "legend": false,
               "tooltip": false,
-              "viz": false,
-              "legend": false
+              "viz": false
             }
           },
           "mappings": [],
@@ -782,10 +865,6 @@
                 "value": null
               }
             ]
-          },
-          "color": {
-            "fixedColor": "red",
-            "mode": "thresholds"
           }
         },
         "overrides": []
@@ -800,28 +879,18 @@
       "links": [],
       "maxDataPoints": 50000,
       "options": {
-        "view": {
-          "allLayers": true,
-          "id": "fit",
-          "lat": 0,
-          "lon": 0,
-          "zoom": 15
-        },
-        "controls": {
-          "showZoom": true,
-          "mouseWheelZoom": true,
-          "showAttribution": true,
-          "showScale": false,
-          "showMeasure": false,
-          "showDebug": false
-        },
-        "tooltip": {
-          "mode": "details"
-        },
         "basemap": {
           "config": {},
           "name": "Layer 0",
           "type": "osm-standard"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
         },
         "layers": [
           {
@@ -829,7 +898,7 @@
               "arrow": 0,
               "style": {
                 "color": {
-                  "fixed": "red"
+                  "fixed": "dark-blue"
                 },
                 "lineWidth": 2,
                 "opacity": 1,
@@ -845,9 +914,9 @@
                   "min": 2
                 },
                 "symbol": {
-                  "mode": "fixed",
+                  "field": "",
                   "fixed": "",
-                  "field": ""
+                  "mode": "fixed"
                 },
                 "symbolAlign": {
                   "horizontal": "center",
@@ -870,8 +939,19 @@
             "tooltip": true,
             "type": "route"
           }
-        ]
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 15
+        }
       },
+      "pluginVersion": "10.1.2",
       "targets": [
         {
           "alias": "",
@@ -973,6 +1053,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -984,6 +1066,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineStyle": {
               "fill": "solid"
@@ -1166,14 +1249,14 @@
             "max"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "alias": "",
@@ -1252,8 +1335,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1319,15 +1401,15 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -1403,8 +1485,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1580,14 +1661,14 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -1641,8 +1722,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-blue",
-                "value": null
+                "color": "super-light-blue"
               }
             ]
           },
@@ -1673,7 +1753,6 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.6",
       "targets": [
         {
           "format": "table",
@@ -1719,8 +1798,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -1749,7 +1827,6 @@
         "text": {},
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.5.6",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -1816,7 +1893,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 36,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -2037,6 +2114,6 @@
   "timezone": "",
   "title": "Drive Details",
   "uid": "zm7wN6Zgz",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

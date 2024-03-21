@@ -638,19 +638,19 @@ msgstr "공기압"
 #: lib/teslamate_web/live/car_live/summary.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "Low tire pressure, check (%{tire_low}) tire"
-msgstr ""
+msgstr "타이어 공기압 부족, 타이어(%{tire_low})를 확인하세요."
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Dog Mode"
-msgstr ""
+msgstr "애견 모드"
 
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
-msgstr ""
+msgstr "애견 모드가 켜져있습니다."
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
-msgstr ""
+msgstr "예상 종료 시간"

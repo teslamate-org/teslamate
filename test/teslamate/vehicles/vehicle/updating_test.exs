@@ -1,5 +1,5 @@
 defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
-  use TeslaMate.VehicleCase, async: true
+  use TeslaMate.VehicleCase, async: false
 
   alias TeslaMate.Vehicles.Vehicle.Summary
 
