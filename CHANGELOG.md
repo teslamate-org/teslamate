@@ -16,6 +16,8 @@
 
 #### Documentation
 
+- doc: version tag in docker-compose.yml is obsolete since docker 25.05 (#3761 - @JakobLichterfeld)
+
 ## [1.28.4] - 2024-03-19
 
 ### New features

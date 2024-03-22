@@ -28,8 +28,6 @@ Create the following files:
 ### docker-compose.yml
 
 ```yml title="docker-compose.yml"
-version: "3"
-
 services:
   teslamate:
     image: teslamate/teslamate:latest
