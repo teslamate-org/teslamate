@@ -6,6 +6,10 @@
 
 ### Improvements and bug fixes
 
+#### Build, CI, internal
+
+- Update to latest devenv in nix flake (#3760 - @brianmay)
+
 #### Dashboards
 
 #### Translations
