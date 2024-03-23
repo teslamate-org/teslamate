@@ -13,6 +13,8 @@
 
 #### Dashboards
 
+- Improve estimations on Battery Health dashboard (#3756 - @jheredianet)
+
 #### Translations
 
 #### Documentation
