@@ -14,6 +14,8 @@
 #### Dashboards
 
 - Improve estimations on Battery Health dashboard (#3756 - @jheredianet)
+- Update overview.json: add time range to states link (#3757 - @DrMichael)
+- Update overview.json: add time range to charges links (#3758 - @DrMichael)
 
 #### Translations
 
