@@ -1489,8 +1489,9 @@
       "id": 20,
       "links": [
         {
+          "targetBlank": true,
           "title": "States",
-          "url": "/d/xo4BNRkZz/states"
+          "url": "/d/xo4BNRkZz/states?orgId=1&${__url_time_range}"
         }
       ],
       "options": {
