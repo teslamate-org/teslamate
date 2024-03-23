@@ -9,6 +9,7 @@
 #### Build, CI, internal
 
 - Update to latest devenv in nix flake (#3760 - @brianmay)
+- build(deps): bump webpack-dev-middleware from 5.3.3 to 5.3.4 in /website (#3766)
 
 #### Dashboards
 
