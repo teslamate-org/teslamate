@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat: Add URL_PATH environment variable for reverse proxy deployments (#3771 -@b1c1l1)
+
 ### Improvements and bug fixes
 
 #### Build, CI, internal
