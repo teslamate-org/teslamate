@@ -82,7 +82,7 @@ msgstr "首頁"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:74
+#: lib/teslamate_web/templates/layout/root.html.heex:75
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "設定"
@@ -142,7 +142,7 @@ msgstr "收藏地點 \"%{name}\" 已建立"
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
 #: lib/teslamate_web/live/geofence_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:71
+#: lib/teslamate_web/templates/layout/root.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
 msgstr "收藏地點"
@@ -343,7 +343,7 @@ msgid "Remaining Time"
 msgstr "剩餘時間"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:286
-#: lib/teslamate_web/templates/layout/root.html.heex:56
+#: lib/teslamate_web/templates/layout/root.html.heex:57
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "控制台"
@@ -542,7 +542,7 @@ msgid "GitHub"
 msgstr "GitHub"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:317
-#: lib/teslamate_web/templates/layout/root.html.heex:143
+#: lib/teslamate_web/templates/layout/root.html.heex:144
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "有可用更新"
@@ -608,22 +608,22 @@ msgstr "您的 Tesla 帳號因登入失敗次數過多而被鎖定。要解鎖�
 msgid "Downloading update"
 msgstr "下載更新"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:100
+#: lib/teslamate_web/templates/layout/root.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "未提供密鑰"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:120
+#: lib/teslamate_web/templates/layout/root.html.heex:121
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "獲取更多資訊，請查看更新安裝指引"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:113
+#: lib/teslamate_web/templates/layout/root.html.heex:114
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "目前對話自動生成的密鑰可在<strong>應用程式日誌</strong>中找到"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:106
+#: lib/teslamate_web/templates/layout/root.html.heex:107
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "為了確保你的<strong>Tesla API tokens安全儲存</strong>,密鑰必須通過<code>ENCRYPTION_KEY</code>環境變數提供给Teslamate.否則每次重啟都會被要求登入"

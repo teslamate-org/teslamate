@@ -82,7 +82,7 @@ msgstr "Inicio"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:74
+#: lib/teslamate_web/templates/layout/root.html.heex:75
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Ajustes"
@@ -142,7 +142,7 @@ msgstr "Creada la geovalla \"%{name}\""
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
 #: lib/teslamate_web/live/geofence_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:71
+#: lib/teslamate_web/templates/layout/root.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
 msgstr "Geovallas"
@@ -343,7 +343,7 @@ msgid "Remaining Time"
 msgstr "Tiempo restante"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:286
-#: lib/teslamate_web/templates/layout/root.html.heex:56
+#: lib/teslamate_web/templates/layout/root.html.heex:57
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "Paneles"
@@ -544,7 +544,7 @@ msgid "GitHub"
 msgstr "GitHub"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:317
-#: lib/teslamate_web/templates/layout/root.html.heex:143
+#: lib/teslamate_web/templates/layout/root.html.heex:144
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "Actualización disponible"
@@ -610,22 +610,22 @@ msgstr "Su cuenta de Tesla se ha bloqueado por demasiados intentos fallidos de i
 msgid "Downloading update"
 msgstr "Descargando actualización"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:100
+#: lib/teslamate_web/templates/layout/root.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "No se proporcionó ninguna clave de encriptación"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:120
+#: lib/teslamate_web/templates/layout/root.html.heex:121
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "Para más información, consulte las guías de instalación actualizadas en %{link}"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:113
+#: lib/teslamate_web/templates/layout/root.html.heex:114
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "La clave de encriptación generada automáticamente utilizada para la sesión actual se puede encontrar <strong>en los registros de la aplicación</strong>."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:106
+#: lib/teslamate_web/templates/layout/root.html.heex:107
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "Para asegurarse de que sus <strong>tokens API de Tesla se almacenen de forma segura</strong>, se debe proporcionar a TeslaMate una clave de encriptación a través de la variable de entorno <code>ENCRYPTION_KEY</code>. De lo contrario, se requerirá un <strong>inicio de sesión después de cada reinicio</strong>."
