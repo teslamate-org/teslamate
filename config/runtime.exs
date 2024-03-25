@@ -144,7 +144,11 @@ end
 
 config :teslamate, TeslaMateWeb.Endpoint,
   http: Util.choose_http_binding_address(),
-  url: [host: System.get_env("VIRTUAL_HOST", "localhost"), port: 80],
+  url: [
+    host: System.get_env("VIRTUAL_HOST", "localhost"),
+    path: System.get_env("URL_PATH", "/"),
+    port: 80
+  ],
   secret_key_base: System.get_env("SECRET_KEY_BASE", Util.random_string(64)),
   live_view: [signing_salt: System.get_env("SIGNING_SALT", Util.random_string(8))],
   check_origin: System.get_env("CHECK_ORIGIN", "false") |> Util.parse_check_origin!()
