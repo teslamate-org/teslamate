@@ -8,6 +8,8 @@
 
 ### Improvements and bug fixes
 
+- fix: permissions denied error when specifying user (#3772 -@tobiasehlert)
+
 #### Build, CI, internal
 
 - Update to latest devenv in nix flake (#3760 - @brianmay)
