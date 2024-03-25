@@ -82,7 +82,7 @@ msgstr "홈"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:75
+#: lib/teslamate_web/templates/layout/root.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "설정"
@@ -142,7 +142,7 @@ msgstr "지오펜스 \"%{name}\" 가 생성되었습니다."
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
 #: lib/teslamate_web/live/geofence_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:72
+#: lib/teslamate_web/templates/layout/root.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
 msgstr "지오펜스"
@@ -343,7 +343,7 @@ msgid "Remaining Time"
 msgstr "남은 시간"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:286
-#: lib/teslamate_web/templates/layout/root.html.heex:57
+#: lib/teslamate_web/templates/layout/root.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "대시보드"
@@ -544,7 +544,7 @@ msgid "GitHub"
 msgstr "깃허브"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:317
-#: lib/teslamate_web/templates/layout/root.html.heex:144
+#: lib/teslamate_web/templates/layout/root.html.heex:168
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "업데이트 가능"
@@ -610,22 +610,22 @@ msgstr "너무 많은 로그인 실패로 Tesla 계정이 잠겼습니다. 계�
 msgid "Downloading update"
 msgstr "업데이트 다운로드 중"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:101
+#: lib/teslamate_web/templates/layout/root.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "암호화 키가 없습니다."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:121
+#: lib/teslamate_web/templates/layout/root.html.heex:145
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "자세한 내용은 %{link}에서 업데이트 된 설치가이드를 참고하세요."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:114
+#: lib/teslamate_web/templates/layout/root.html.heex:138
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "현재 사용하고 있는 암호화키는 자동으로 생성되었으며, <strong>애플리케이션 로그</strong> 폴더에서 찾을 수 있습니다."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:107
+#: lib/teslamate_web/templates/layout/root.html.heex:131
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "<strong>Tesla API 토큰을 안전하게 저장</strong>하려면 하나의 암호화 키가 <code>ENCRYPTION_KEY</code> 환경 변수를 통해 TeslaMate로 제공되어야 합니다. 그렇지 않으면 <strong>TeslaMate를 재시작할 때마다 다시 로그인</strong>해야 합니다."

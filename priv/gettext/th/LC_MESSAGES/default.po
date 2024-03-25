@@ -82,7 +82,7 @@ msgstr "บ้าน"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:75
+#: lib/teslamate_web/templates/layout/root.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "การตั้งค่า"
@@ -142,7 +142,7 @@ msgstr "สร้างขอบเขตทางภูมิศาสตร์
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
 #: lib/teslamate_web/live/geofence_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:72
+#: lib/teslamate_web/templates/layout/root.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
 msgstr "เขตทางภูมิศาสตร์"
@@ -343,7 +343,7 @@ msgid "Remaining Time"
 msgstr "เวลาที่เหลือ"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:286
-#: lib/teslamate_web/templates/layout/root.html.heex:57
+#: lib/teslamate_web/templates/layout/root.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "แดชบอร์ด"
@@ -543,7 +543,7 @@ msgid "GitHub"
 msgstr "GitHub"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:317
-#: lib/teslamate_web/templates/layout/root.html.heex:144
+#: lib/teslamate_web/templates/layout/root.html.heex:168
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "มีการอัปเดต"
@@ -609,22 +609,22 @@ msgstr "บัญชี Tesla ของคุณถูกล็อคเนื�
 msgid "Downloading update"
 msgstr "กำลังดาวน์โหลดอัปเดต"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:101
+#: lib/teslamate_web/templates/layout/root.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "ไม่มีคีย์เข้ารหัสให้มา"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:121
+#: lib/teslamate_web/templates/layout/root.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "สำหรับข้อมูลเพิ่มเติม โปรดดูคู่มือการติดตั้งที่อัปเดตที่ %{link}"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:114
+#: lib/teslamate_web/templates/layout/root.html.heex:138
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "คีย์การเข้ารหัสที่สร้างขึ้นโดยอัตโนมัติที่ใช้สำหรับเซสชันปัจจุบันสามารถพบได้<strong>ในบันทึกแอปพลิเคชัน</strong>"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:107
+#: lib/teslamate_web/templates/layout/root.html.heex:131
 #, elixir-autogen, elixir-format
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "เพื่อให้แน่ใจว่า <strong>โทเค็น Tesla API ของคุณจะถูกเก็บไว้อย่างปลอดภัย</strong> จะต้องมอบคีย์การเข้ารหัสให้กับ TeslaMate ผ่านทางตัวแปรสภาพแวดล้อม <code>ENCRYPTION_KEY</code> มิฉะนั้น <strong>จะต้องเข้าสู่ระบบหลังจากรีสตาร์ททุกครั้ง</strong>"
