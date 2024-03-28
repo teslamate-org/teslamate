@@ -53,6 +53,12 @@ mix compile
 mix format
 ```
 
+## Update pot files (extract messages for translation)
+
+```bash
+mix gettext.extract --merge
+```
+
 ## Testing
 
 To ensure a commit passes CI you should run `mix ci` locally, which executes the following commands:
