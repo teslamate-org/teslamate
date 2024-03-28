@@ -15,7 +15,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
-    active_route_destination active_route_latitude active_route_longitude
+    active_route_destination active_route_latitude active_route_longitude active_route_energy_at_arrival
+    active_route_miles_to_arrival active_route_minutes_to_arrival active_route_traffic_minutes_delay
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -79,6 +80,14 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       active_route_destination: get_in_struct(vehicle, [:drive_state, :active_route_destination]),
       active_route_latitude: get_in_struct(vehicle, [:drive_state, :active_route_latitude]),
       active_route_longitude: get_in_struct(vehicle, [:drive_state, :active_route_longitude]),
+      active_route_energy_at_arrival:
+        get_in_struct(vehicle, [:drive_state, :active_route_energy_at_arrival]),
+      active_route_miles_to_arrival:
+        get_in_struct(vehicle, [:drive_state, :active_route_miles_to_arrival]),
+      active_route_minutes_to_arrival:
+        get_in_struct(vehicle, [:drive_state, :active_route_minutes_to_arrival]),
+      active_route_traffic_minutes_delay:
+        get_in_struct(vehicle, [:drive_state, :active_route_traffic_minutes_delay]),
       latitude: get_in_struct(vehicle, [:drive_state, :latitude]),
       longitude: get_in_struct(vehicle, [:drive_state, :longitude]),
       power: get_in_struct(vehicle, [:drive_state, :power]),
