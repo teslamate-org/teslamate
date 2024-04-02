@@ -435,7 +435,7 @@ msgstr "语言"
 #: lib/teslamate_web/live/settings_live/index.ex:64
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
-msgstr "在获取OpenStreetMap地图信息时发成错误，请稍后再试。"
+msgstr "在获取OpenStreetMap地图信息时发生错误，请稍后再试。"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:4
 #, elixir-autogen, elixir-format
