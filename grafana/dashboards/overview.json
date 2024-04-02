@@ -368,7 +368,7 @@
         {
           "targetBlank": true,
           "title": "Charge Level",
-          "url": "/d/WopVO_mgz"
+          "url": "/d/WopVO_mgz/charge-level?${__url_time_range}"
         }
       ],
       "options": {
@@ -1093,8 +1093,8 @@
       "links": [
         {
           "targetBlank": true,
-          "title": "Charging Details",
-          "url": "/d/BHhxFeZRz/charge-details"
+          "title": "Charging Stats",
+          "url": "/d/-pkIkhmRz/charging-stats?${__url_time_range}"
         }
       ],
       "options": {
@@ -1489,8 +1489,9 @@
       "id": 20,
       "links": [
         {
+          "targetBlank": true,
           "title": "States",
-          "url": "/d/xo4BNRkZz/states"
+          "url": "/d/xo4BNRkZz/states?orgId=1&${__url_time_range}"
         }
       ],
       "options": {

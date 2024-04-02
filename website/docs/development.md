@@ -53,6 +53,12 @@ mix compile
 mix format
 ```
 
+## Update pot files (extract messages for translation)
+
+```bash
+mix gettext.extract --merge
+```
+
 ## Testing
 
 To ensure a commit passes CI you should run `mix ci` locally, which executes the following commands:
@@ -65,7 +71,6 @@ To ensure a commit passes CI you should run `mix ci` locally, which executes the
 To update dashboards you need Grafana running locally. The following _docker-compose.yml_ can be used for this purpose:
 
 ```yml
-version: "3"
 services:
   grafana:
     image: teslamate-grafana:latest

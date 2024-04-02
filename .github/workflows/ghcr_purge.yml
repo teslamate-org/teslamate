@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dorny/paths-filter@v3.0.1
+      - uses: dorny/paths-filter@v3.0.2
         id: filter
         with:
           filters: |

@@ -6,11 +6,54 @@
 
 ### Improvements and bug fixes
 
+#### Build, CI, internal
+
+- build(deps): bump dorny/paths-filter from 3.0.1 to 3.0.2 (#3799)
+- build(deps): bump docker/login-action from 3.0.0 to 3.1.0 (#3798)
+- build(deps): bump grafana/grafana from 10.4.0 to 10.4.1 in /grafana (#3800)
+- ci: update typos false positive list (#3808 - @JakobLichterfeld)
+- build(deps): bump docker/login-action from 3.0.0 to 3.1.0 in custom action ([b9f1f8b](https://github.com/teslamate-org/teslamate/commit/b9f1f8b956c7fb531321a2d3d875efffd4be6ead) - @JakobLichterfeld)
+- ci: pin crate-ci/typos action to version v1.20.1 ([bd50177](https://github.com/teslamate-org/teslamate/commit/bd50177a454426501a9dd7fca000b44c62f10113) and [53d8e62](https://github.com/teslamate-org/teslamate/commit/53d8e625ae4483789b456458a8bb43af9f009361) - @JakobLichterfeld)
+
 #### Dashboards
+
+- Battery Health: Fix a bug on efficiency estimations (#3795 - @jheredianet)
+
+#### Translations
+
+- Update zh_Hans default.po typo (#3804 - @liopoos)
+
+#### Documentation
+
+- doc: remove update steps in installation instructions and link to maintenance section ([dbf23fa](https://github.com/teslamate-org/teslamate/commit/dbf23faa31d84f222c99dba9f5de52c69dd43afb) and #3794 - @JakobLichterfeld and @brianmay)
+- doc: add instructions how to update pot files to development guide ([3ab8ee8](https://github.com/teslamate-org/teslamate/commit/3ab8ee8535da32ba0c11307aaacc65379ddcc0b2) - @JakobLichterfeld)
+
+## [1.28.5] - 2024-03-25
+
+### New features
+
+- feat: Add URL_PATH environment variable for reverse proxy deployments (#3771 -@b1c1l1)
+
+### Improvements and bug fixes
+
+- fix: permissions denied error when specifying user (#3772 -@tobiasehlert)
+
+#### Build, CI, internal
+
+- Update to latest devenv in nix flake (#3760 - @brianmay)
+- build(deps): bump webpack-dev-middleware from 5.3.3 to 5.3.4 in /website (#3766)
+
+#### Dashboards
+
+- Improve estimations on Battery Health dashboard (#3756 - @jheredianet)
+- Update overview.json: add time range to states link (#3757 - @DrMichael)
+- Update overview.json: add time range to charges links (#3758 - @DrMichael)
 
 #### Translations
 
 #### Documentation
+
+- doc: version tag in docker-compose.yml is obsolete since docker 25.05 (#3761 - @JakobLichterfeld)
 
 ## [1.28.4] - 2024-03-19
 
@@ -1857,7 +1900,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.3...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...HEAD
+[1.28.5]: https://github.com/teslamate-org/teslamate/compare/v1.28.4...v1.28.5
 [1.28.4]: https://github.com/teslamate-org/teslamate/compare/v1.28.3...v1.28.4
 [1.28.3]: https://github.com/teslamate-org/teslamate/compare/v1.28.2...v1.28.3
 [1.28.2]: https://github.com/teslamate-org/teslamate/compare/v1.28.1...v1.28.2

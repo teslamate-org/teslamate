@@ -9,8 +9,6 @@ To manage your docker installation of TeslaMate you could use the open-source ma
 Add a new `portainer` service and a `portainer-data` volume to your `docker-compose.yml`:
 
 ```yml docker-compose.yml {4-12,15}
-version: "3"
-
 services:
   portainer:
     image: portainer/portainer
