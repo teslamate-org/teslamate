@@ -12,6 +12,8 @@
 - build(deps): bump docker/login-action from 3.0.0 to 3.1.0 (#3798)
 - build(deps): bump grafana/grafana from 10.4.0 to 10.4.1 in /grafana (#3800)
 - ci: update typos false positive list (#3808 - @JakobLichterfeld)
+- build(deps): bump docker/login-action from 3.0.0 to 3.1.0 in custom action ([b9f1f8b](https://github.com/teslamate-org/teslamate/commit/b9f1f8b956c7fb531321a2d3d875efffd4be6ead) - @JakobLichterfeld)
+- ci: pin crate-ci/typos action to version v1.20.1 ([bd50177](https://github.com/teslamate-org/teslamate/commit/bd50177a454426501a9dd7fca000b44c62f10113) and [53d8e62](https://github.com/teslamate-org/teslamate/commit/53d8e625ae4483789b456458a8bb43af9f009361) - @JakobLichterfeld)
 
 #### Dashboards
 
