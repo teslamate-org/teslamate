@@ -10,6 +10,7 @@
 
 - build(deps): bump dorny/paths-filter from 3.0.1 to 3.0.2 (#3799)
 - build(deps): bump docker/login-action from 3.0.0 to 3.1.0 (#3798)
+- build(deps): bump grafana/grafana from 10.4.0 to 10.4.1 in /grafana (#3800)
 
 #### Dashboards
 
