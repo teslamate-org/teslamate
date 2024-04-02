@@ -17,6 +17,8 @@
 
 #### Translations
 
+- Update zh_Hans default.po typo (#3804 - @liopoos)
+
 #### Documentation
 
 - doc: remove update steps in installation instructions and link to maintenance section ([dbf23fa](https://github.com/teslamate-org/teslamate/commit/dbf23faa31d84f222c99dba9f5de52c69dd43afb) and #3794 - @JakobLichterfeld and @brianmay)
