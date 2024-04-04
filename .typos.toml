@@ -2,6 +2,15 @@
 mosquitto = "mosquitto"
 HASS = "HASS"
 Juni = "Juni"
+bck = "bck"
+Automations = "Automations"
+automations = "automations"
+ws = "ws"
+WS = "WS"
+ro = "ro"
+hd = "hd"
+dur = "dur"
+pn = "pn"
 
 [type.po]
 extend-glob = ["*.po"]
