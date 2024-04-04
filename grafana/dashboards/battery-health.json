@@ -423,7 +423,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(convert_km((max(odometer) - min(odometer))::numeric, '$length_unit'),0)|| ' $length_unit' as \"Mileage\"\nfrom positions where car_id = $car_id;",
+          "rawSql": "SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0)|| ' $length_unit' as \"Mileage\"\nFROM drives WHERE car_id = $car_id;",
           "refId": "Mileage",
           "select": [
             [
@@ -474,7 +474,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(convert_km(max(odometer)::numeric, '$length_unit'),0) || ' $length_unit' as \"Odometer\"\nfrom positions where car_id =  $car_id;",
+          "rawSql": "SELECT ROUND(convert_km(max(end_km)::numeric, '$length_unit'),0) || ' $length_unit' as \"Odometer\"\nFROM drives WHERE car_id =  $car_id;",
           "refId": "Odometer",
           "select": [
             [
@@ -1888,6 +1888,6 @@
   "timezone": "browser",
   "title": "Battery Health",
   "uid": "jchmRiqUfXgTM",
-  "version": 17,
+  "version": 18,
   "weekStart": ""
 }
