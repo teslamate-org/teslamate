@@ -4,6 +4,8 @@
 
 ### New features
 
+- Publish extra active_route fields to mqtt output (#3789 - @brianmay)
+
 ### Improvements and bug fixes
 
 #### Build, CI, internal
