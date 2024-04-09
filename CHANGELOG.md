@@ -20,7 +20,7 @@
 #### Dashboards
 
 - Battery Health: Fix a bug on efficiency estimations (#3795 - @jheredianet)
-- Add more info on charge details dashboard (#3821 -@jheredianet)
+- Add more info on charge details dashboard (#3821, #3827 -@jheredianet)
 - Battery Health dashboard: new stats panel for efficiency and improve query performance (#3806 -@jheredianet)
 
 #### Translations
