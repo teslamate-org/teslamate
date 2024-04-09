@@ -1374,7 +1374,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT $__timeGroupAlias(date,$__interval),\r\navg(outside_temp) as outside_temp_$temp_unit \r\nFROM charges WHERE charging_process_id = $charging_process_id\r\nGROUP BY 1 ORDER BY 1 ",
+          "rawSql": "SELECT $__timeGroupAlias(date,$__interval),\r\nconvert_celsius(avg(outside_temp), '$temp_unit') as outside_temp_$temp_unit \r\nFROM charges WHERE charging_process_id = $charging_process_id\r\nGROUP BY 1 ORDER BY 1 ",
           "refId": "Current",
           "select": [
             [
