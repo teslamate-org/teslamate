@@ -3,8 +3,8 @@
   "__requires": [
     {
       "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
+      "id": "barchart",
+      "name": "Bar chart",
       "version": ""
     },
     {
@@ -1351,7 +1351,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-blue"
+                "color": "super-light-blue",
+                "value": null
               }
             ]
           },
@@ -1463,7 +1464,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue"
+                "color": "semi-dark-blue",
+                "value": null
               }
             ]
           },
@@ -1498,6 +1500,10 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -1523,11 +1529,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Drive duration",
@@ -1550,7 +1552,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue"
+                "color": "semi-dark-blue",
+                "value": null
               }
             ]
           },
@@ -1625,13 +1628,38 @@
           "color": {
             "mode": "continuous-GrYlRd"
           },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisWidth": -10,
+            "fillOpacity": 90,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
           "mappings": [],
           "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-green"
+                "color": "super-light-green",
+                "value": null
               }
             ]
           }
@@ -1640,16 +1668,16 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "seconds_elapsed"
+              "options": "Elapsed"
             },
             "properties": [
               {
                 "id": "unit",
-                "value": "s"
+                "value": "percent"
               },
               {
                 "id": "decimals",
-                "value": 1
+                "value": 0
               }
             ]
           }
@@ -1663,22 +1691,28 @@
       },
       "id": 35,
       "options": {
-        "displayMode": "gradient",
-        "maxVizHeight": 300,
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": true
+        "barRadius": 0.05,
+        "barWidth": 0.97,
+        "colorByField": "Elapsed",
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
-        "showUnfilled": false,
-        "sizing": "auto",
-        "valueMode": "color"
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {},
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Speed",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "pluginVersion": "10.4.0",
       "targets": [
@@ -1692,7 +1726,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n    speed_section_$length_unit || CASE WHEN '$length_unit' = 'km' THEN ' km/h' WHEN '$length_unit' = 'mi' THEN ' mph' END AS speed,\r\n    SUM(seconds_elapsed) AS seconds_elapsed\r\nFROM (\r\n    SELECT\r\n        ROUND(convert_km(p.speed::numeric, '$length_unit') / 10,0) * 10 AS speed_section_$length_unit,\r\n        EXTRACT(EPOCH FROM (LEAD(p.\"date\") OVER (ORDER BY p.\"date\") - p.\"date\")) AS seconds_elapsed\r\n    FROM drives d\r\n    INNER JOIN positions p ON p.drive_id = d.id\r\n    WHERE\r\n        $__timeFilter(d.start_date)\r\n        AND p.speed > 0.1\r\n) AS drivedata\r\nGROUP BY speed_section_$length_unit\r\nORDER BY speed_section_$length_unit DESC",
+          "rawSql": "SELECT \r\n    speed_section_$length_unit AS \"Speed\",\r\n    CASE WHEN '$length_unit' = 'km' THEN 'km/h' WHEN '$length_unit' = 'mi' THEN 'mph' END AS speed_unit,\r\n    SUM(seconds_elapsed) * 100 / MAX(duration) as \"Elapsed\",\r\n    TO_CHAR((SUM(seconds_elapsed) || ' second')::interval, 'HH24:MI:SS') AS \"Time\"\r\nFROM (\r\n    SELECT\r\n        ROUND(convert_km(p.speed::numeric, '$length_unit') / 10,0) * 10 AS speed_section_$length_unit,\r\n        EXTRACT(EPOCH FROM (LEAD(p.\"date\") OVER (ORDER BY p.\"date\") - p.\"date\")) AS seconds_elapsed,\r\n        EXTRACT(EPOCH FROM (end_date - start_date)) AS duration\r\n    FROM drives d\r\n    INNER JOIN positions p ON p.drive_id = d.id\r\n    WHERE d.id = $drive_id\r\n) AS drivedata\r\nGROUP BY 1\r\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -1732,7 +1766,41 @@
         }
       ],
       "title": "Speeds",
-      "type": "bargauge"
+      "transformations": [
+        {
+          "id": "configFromData",
+          "options": {
+            "applyTo": {
+              "id": "byName",
+              "options": "Speed"
+            },
+            "configRefId": "A",
+            "mappings": [
+              {
+                "fieldName": "speed_mi",
+                "handlerKey": "unit"
+              },
+              {
+                "fieldName": "speed_unit",
+                "handlerKey": "unit"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Speed",
+                "Elapsed",
+                "Time"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "barchart"
     },
     {
       "datasource": {
@@ -1759,7 +1827,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-green"
+                "color": "semi-dark-green",
+                "value": null
               }
             ]
           },
@@ -1819,6 +1888,10 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -1844,11 +1917,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Distance",
@@ -1869,7 +1938,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -2030,7 +2100,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow"
+                "color": "light-yellow",
+                "value": null
               }
             ]
           },
@@ -2065,6 +2136,10 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -2090,11 +2165,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Energy used",
@@ -2116,7 +2187,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "yellow",
@@ -2254,7 +2326,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -2380,7 +2453,7 @@
         "name": "drive_id",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "NULL",
             "value": "NULL"
           }
@@ -2548,8 +2621,8 @@
     ]
   },
   "time": {
-    "from": "now-12h",
-    "to": "now"
+    "from": "2024-03-26T15:16:02.000Z",
+    "to": "2024-03-26T16:24:41.000Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -2577,8 +2650,8 @@
     ]
   },
   "timezone": "",
-  "title": "Drive Details",
-  "uid": "zm7wN6Zgz",
-  "version": 3,
+  "title": "Drive Details Modified",
+  "uid": "zm7wN6Zgz1",
+  "version": 10,
   "weekStart": ""
 }
