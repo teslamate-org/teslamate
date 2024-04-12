@@ -1351,8 +1351,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-blue",
-                "value": null
+                "color": "super-light-blue"
               }
             ]
           },
@@ -1464,8 +1463,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
-                "value": null
+                "color": "semi-dark-blue"
               }
             ]
           },
@@ -1552,8 +1550,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
-                "value": null
+                "color": "semi-dark-blue"
               }
             ]
           },
@@ -1658,8 +1655,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-green",
-                "value": null
+                "color": "super-light-green"
               }
             ]
           }
@@ -1827,8 +1823,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-green",
-                "value": null
+                "color": "semi-dark-green"
               }
             ]
           },
@@ -1938,8 +1933,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -2100,8 +2094,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow",
-                "value": null
+                "color": "light-yellow"
               }
             ]
           },
@@ -2187,8 +2180,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "yellow",
@@ -2326,8 +2318,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -2444,11 +2435,7 @@
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "5897",
-          "value": "5897"
-        },
+        "current": {},
         "hide": 2,
         "name": "drive_id",
         "options": [
@@ -2458,7 +2445,7 @@
             "value": "NULL"
           }
         ],
-        "query": "5897",
+        "query": "",
         "skipUrlSync": false,
         "type": "textbox"
       },
@@ -2651,7 +2638,7 @@
   },
   "timezone": "",
   "title": "Drive Details Modified",
-  "uid": "zm7wN6Zgz1",
-  "version": 10,
+  "uid": "zm7wN6Zgz",
+  "version": 3,
   "weekStart": ""
 }
