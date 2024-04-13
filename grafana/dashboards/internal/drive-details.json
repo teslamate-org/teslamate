@@ -256,7 +256,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Battery heater"
+                "value": "Battery Heater"
               },
               {
                 "id": "unit",
@@ -328,7 +328,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "usable SOC"
+                "value": "Usable SOC"
               },
               {
                 "id": "unit",
@@ -355,6 +355,111 @@
                 "value": "hidden"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Power"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Usable SOC"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SOC"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Range (est.)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Range (ideal)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Battery Heater"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Speed"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -364,7 +469,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 2,
+      "id": 39,
       "options": {
         "legend": {
           "calcs": [
@@ -388,12 +493,13 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed::numeric, '$length_unit') AS speed_[[length_unit]]h,\n\tpower,\n\tbattery_heater::integer,\n\tconvert_km([[preferred_range]]_battery_range_km, '$length_unit') AS range_[[preferred_range]]_[[length_unit]],\n\tconvert_km(est_battery_range_km, '$length_unit') AS range_estimated_[[length_unit]],\n\tbattery_level,\n\tusable_battery_level\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed::numeric, '$length_unit') AS speed_[[length_unit]]h,\n\tpower,\n\tconvert_km([[preferred_range]]_battery_range_km, '$length_unit') AS range_[[preferred_range]]_[[length_unit]],\n\tconvert_km(est_battery_range_km, '$length_unit') AS range_estimated_[[length_unit]],\n\tbattery_level,\n\tusable_battery_level,\n\tbattery_heater::integer\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -405,6 +511,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "charging",
           "timeColumn": "Datum",
           "timeColumnType": "timestamp",
@@ -726,7 +849,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "semi-dark-blue",
+                  "fixedColor": "super-light-blue",
                   "mode": "fixed"
                 }
               }
@@ -1135,7 +1258,7 @@
               },
               {
                 "id": "displayName",
-                "value": "front left"
+                "value": "Front Left"
               }
             ]
           },
@@ -1151,7 +1274,7 @@
               },
               {
                 "id": "displayName",
-                "value": "front right"
+                "value": "Front Right"
               }
             ]
           },
@@ -1167,7 +1290,7 @@
               },
               {
                 "id": "displayName",
-                "value": "rear left"
+                "value": "Rear Left"
               }
             ]
           },
@@ -1183,7 +1306,7 @@
               },
               {
                 "id": "displayName",
-                "value": "rear right"
+                "value": "Rear Right"
               }
             ]
           },
@@ -1199,7 +1322,7 @@
               },
               {
                 "id": "displayName",
-                "value": "front left"
+                "value": "Front Left"
               }
             ]
           },
@@ -1215,7 +1338,7 @@
               },
               {
                 "id": "displayName",
-                "value": "front right"
+                "value": "Front Right"
               }
             ]
           },
@@ -1231,7 +1354,7 @@
               },
               {
                 "id": "displayName",
-                "value": "rear left"
+                "value": "Rear Left"
               }
             ]
           },
@@ -1247,7 +1370,7 @@
               },
               {
                 "id": "displayName",
-                "value": "rear right"
+                "value": "Rear Right"
               }
             ]
           }
@@ -1437,7 +1560,7 @@
           ]
         }
       ],
-      "title": "Odometer (from - to)",
+      "title": "Odometer (From - To)",
       "type": "stat"
     },
     {
@@ -1464,7 +1587,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
+                "color": "text",
                 "value": null
               }
             ]
@@ -1532,7 +1655,7 @@
           ]
         }
       ],
-      "title": "Drive duration",
+      "title": "Drive Duration",
       "type": "stat"
     },
     {
@@ -1552,7 +1675,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
+                "color": "text",
                 "value": null
               }
             ]
@@ -1615,7 +1738,7 @@
           }
         }
       ],
-      "title": "Selected duration",
+      "title": "Selected Duration",
       "type": "stat"
     },
     {
@@ -2150,7 +2273,7 @@
           ]
         }
       ],
-      "title": "Energy used",
+      "title": "Energy Used",
       "type": "stat"
     },
     {
@@ -2598,6 +2721,10 @@
       },
       {
         "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
+        },
         "definition": "SELECT  CASE WHEN '$length_unit' = 'km' THEN 'km/h' WHEN '$length_unit' = 'mi' THEN 'mph' END",
         "hide": 2,
         "includeAll": false,
