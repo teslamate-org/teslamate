@@ -24,6 +24,7 @@
 - Battery Health dashboard: new stats panel for efficiency and improve query performance (#3806 -@jheredianet)
 - Add stats to Visited dashboard (#3824 - @jheredianet)
 - Update Thresholds colors for ºF temperature in Charges dashboard (#3834 - @jheredianet)
+- Velocity/Speed histogram in drive details dashboard (#3836 - @jheredianet)
 
 #### Translations
 
