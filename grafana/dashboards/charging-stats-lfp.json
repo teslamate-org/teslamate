@@ -2215,8 +2215,8 @@
       {
         "current": {
           "selected": false,
-          "text": "mi",
-          "value": "mi"
+          "text": "km",
+          "value": "km"
         },
 		"datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
