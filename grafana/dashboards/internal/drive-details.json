@@ -102,7 +102,7 @@
       },
       "id": 40,
       "panels": [],
-      "title": "$car_id",
+      "title": "Car: $car_id",
       "type": "row"
     },
     {
