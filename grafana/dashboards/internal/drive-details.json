@@ -93,6 +93,19 @@
   "liveNow": false,
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 40,
+      "panels": [],
+      "title": "Car: $car_id",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
@@ -460,6 +473,21 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Range (rated)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -467,7 +495,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 39,
       "options": {
@@ -578,7 +606,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 1
       },
       "id": 4,
       "maxDataPoints": 50000,
@@ -861,7 +889,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 12
+        "y": 13
       },
       "id": 8,
       "options": {
@@ -1131,7 +1159,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 12
+        "y": 13
       },
       "id": 6,
       "options": {
@@ -1380,7 +1408,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 19
       },
       "id": 32,
       "options": {
@@ -1443,7 +1471,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 36,
       "panels": [],
@@ -1474,8 +1502,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-blue",
-                "value": null
+                "color": "super-light-blue"
               }
             ]
           },
@@ -1487,7 +1514,7 @@
         "h": 3,
         "w": 6,
         "x": 0,
-        "y": 25
+        "y": 26
       },
       "id": 38,
       "maxDataPoints": 100,
@@ -1587,8 +1614,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           },
@@ -1600,7 +1626,7 @@
         "h": 3,
         "w": 3,
         "x": 6,
-        "y": 25
+        "y": 26
       },
       "id": 14,
       "maxDataPoints": 100,
@@ -1675,8 +1701,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           },
@@ -1688,7 +1713,7 @@
         "h": 3,
         "w": 3,
         "x": 9,
-        "y": 25
+        "y": 26
       },
       "id": 34,
       "options": {
@@ -1782,8 +1807,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-green",
-                "value": null
+                "color": "super-light-green"
               }
             ]
           }
@@ -1811,7 +1835,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 25
+        "y": 26
       },
       "id": 35,
       "options": {
@@ -1932,8 +1956,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-green",
-                "value": null
+                "color": "semi-dark-green"
               }
             ]
           },
@@ -1970,7 +1993,7 @@
         "h": 3,
         "w": 6,
         "x": 0,
-        "y": 28
+        "y": 29
       },
       "id": 10,
       "maxDataPoints": 100,
@@ -2043,8 +2066,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -2055,7 +2077,7 @@
         "h": 3,
         "w": 6,
         "x": 6,
-        "y": 28
+        "y": 29
       },
       "id": 20,
       "options": {
@@ -2205,8 +2227,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow",
-                "value": null
+                "color": "light-yellow"
               }
             ]
           },
@@ -2218,7 +2239,7 @@
         "h": 3,
         "w": 6,
         "x": 0,
-        "y": 31
+        "y": 32
       },
       "id": 12,
       "maxDataPoints": 100,
@@ -2292,8 +2313,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "yellow",
@@ -2338,7 +2358,7 @@
         "h": 3,
         "w": 3,
         "x": 6,
-        "y": 31
+        "y": 32
       },
       "id": 18,
       "options": {
@@ -2431,8 +2451,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -2468,7 +2487,7 @@
         "h": 3,
         "w": 3,
         "x": 9,
-        "y": 31
+        "y": 32
       },
       "id": 37,
       "options": {
@@ -2748,6 +2767,6 @@
   "timezone": "",
   "title": "Drive Details",
   "uid": "zm7wN6Zgz",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
