@@ -25,6 +25,7 @@
 - Add stats to Visited dashboard (#3824 - @jheredianet)
 - Update Thresholds colors for ºF temperature in Charges dashboard (#3834 - @jheredianet)
 - Velocity/Speed histogram in drive details dashboard (#3836 - @jheredianet)
+- Change car id selector by row on Charge Details dashboard (#3844- @jheredianet)
 
 #### Translations
 
