@@ -8,6 +8,8 @@
 
 ### Improvements and bug fixes
 
+- fix: errors from Timex.Timezone.local() during switchover to DST (#3848 - @dyxyl)
+
 #### Build, CI, internal
 
 - build(deps): bump dorny/paths-filter from 3.0.1 to 3.0.2 (#3799)
