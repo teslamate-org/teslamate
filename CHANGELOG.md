@@ -22,6 +22,10 @@
 - Battery Health: Fix a bug on efficiency estimations (#3795 - @jheredianet)
 - Add more info on charge details dashboard (#3821, #3827 -@jheredianet)
 - Battery Health dashboard: new stats panel for efficiency and improve query performance (#3806 -@jheredianet)
+- Add stats to Visited dashboard (#3824 - @jheredianet)
+- Update Thresholds colors for ºF temperature in Charges dashboard (#3834 - @jheredianet)
+- Velocity/Speed histogram in drive details dashboard (#3836 - @jheredianet)
+- Change car id selector by row on Charge Details dashboard (#3844- @jheredianet)
 
 #### Translations
 
@@ -31,6 +35,7 @@
 
 - doc: remove update steps in installation instructions and link to maintenance section ([dbf23fa](https://github.com/teslamate-org/teslamate/commit/dbf23faa31d84f222c99dba9f5de52c69dd43afb) and #3794 - @JakobLichterfeld and @brianmay)
 - doc: add instructions how to update pot files to development guide ([3ab8ee8](https://github.com/teslamate-org/teslamate/commit/3ab8ee8535da32ba0c11307aaacc65379ddcc0b2) - @JakobLichterfeld)
+- doc: update links to token apps in FAQ (#3833 - @JakobLichterfeld)
 
 ## [1.28.5] - 2024-03-25
 
