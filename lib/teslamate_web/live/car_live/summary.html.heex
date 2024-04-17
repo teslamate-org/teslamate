@@ -214,8 +214,7 @@
             finish_time =
               Timex.add(current_time, Timex.Duration.from_hours(@summary.time_to_full_charge))
 
-            local_timezone = Timex.Timezone.local()
-            local_finish_time = Timex.Timezone.convert(finish_time, local_timezone)
+            local_finish_time = Timex.local(finish_time)
 
             formatted_finish_time =
               Timex.format!(local_finish_time, "%Y-%m-%d %H:%M:%S", :strftime) %>
