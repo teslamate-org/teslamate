@@ -22,7 +22,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1658137661652,
   "links": [
     {
       "icon": "dashboard",
@@ -84,7 +83,6 @@
         "y": 1
       },
       "id": 8,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -103,9 +101,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value"
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
           "format": "table",
@@ -164,7 +164,6 @@
         "y": 1
       },
       "id": 10,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -183,9 +182,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value"
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
           "format": "table",
@@ -240,12 +241,11 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 4,
+        "w": 3,
         "x": 10,
         "y": 1
       },
       "id": 14,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -264,9 +264,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value"
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -322,12 +324,11 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 4,
-        "x": 14,
+        "w": 3,
+        "x": 13,
         "y": 1
       },
       "id": 27,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -346,9 +347,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value"
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
           "format": "table",
@@ -403,8 +406,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 3,
-        "x": 18,
+        "w": 2,
+        "x": 16,
         "y": 1
       },
       "id": 26,
@@ -420,9 +423,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
           "format": "table",
@@ -479,8 +484,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 3,
-        "x": 21,
+        "w": 2,
+        "x": 18,
         "y": 1
       },
       "id": 31,
@@ -496,9 +501,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
           "format": "table",
@@ -523,6 +530,180 @@
       "type": "stat"
     },
     {
+	  "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#d8d9da",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 20,
+        "y": 1
+      },
+      "id": 32,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+		  "datasource": "TeslaMate",
+          "editorMode": "code",
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n    cp.cost,\n    cp.end_date,\n    cp.car_id,\n    cp.charge_energy_added,\n    cp.charge_energy_used,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1\n)\nSELECT (\n  SELECT \n    sum(cost)\n  FROM data\n  WHERE $__timeFilter(end_date) AND car_id = $car_id AND current = 'DC'\n)/(\n SELECT sum(greatest(charge_energy_added, charge_energy_used))\n  FROM data\n  WHERE $__timeFilter(end_date) AND car_id = $car_id AND current = 'DC'\n  )",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "drives",
+          "timeColumn": "start_date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "DC Avg Cost per kWh",
+      "type": "stat"
+    },
+    {
+	  "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#d8d9da",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 22,
+        "y": 1
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+		  "datasource": "TeslaMate",
+          "editorMode": "code",
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n    cp.cost,\n    cp.end_date,\n    cp.car_id,\n    cp.charge_energy_added,\n    cp.charge_energy_used,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1\n)\nSELECT (\n  SELECT \n    sum(cost)\n  FROM data\n  WHERE $__timeFilter(end_date) AND car_id = $car_id AND current = 'AC'\n)/(\n SELECT sum(greatest(charge_energy_added, charge_energy_used))\n  FROM data\n  WHERE $__timeFilter(end_date) AND car_id = $car_id AND current = 'AC'\n  )",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "drives",
+          "timeColumn": "start_date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "AC Avg Cost per kWh",
+      "type": "stat"
+    },
+    {
       "cards": {},
       "color": {
         "cardColor": "#b4ff00",
@@ -534,6 +715,21 @@
       },
       "dataFormat": "timeseries",
       "datasource": "TeslaMate",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 6,
         "w": 12,
@@ -547,6 +743,52 @@
       "legend": {
         "show": false
       },
+      "options": {
+        "calculate": true,
+        "calculation": {
+          "yBuckets": {
+            "mode": "size",
+            "value": "10.00001"
+          }
+        },
+        "cellGap": 2,
+        "cellValues": {},
+        "color": {
+          "exponent": 0.5,
+          "fill": "#b4ff00",
+          "min": 0,
+          "mode": "opacity",
+          "reverse": false,
+          "scale": "exponential",
+          "scheme": "Oranges",
+          "steps": 128
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 1e-9
+        },
+        "legend": {
+          "show": false
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "showColorScale": false,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "max": "100",
+          "reverse": false,
+          "unit": "short"
+        }
+      },
+      "pluginVersion": "10.4.0",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -605,6 +847,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -616,6 +861,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -706,8 +952,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "multi",
@@ -808,7 +1055,6 @@
         "y": 10
       },
       "id": 18,
-      "links": [],
       "maxDataPoints": 3,
       "options": {
         "displayLabels": [
@@ -818,6 +1064,7 @@
           "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
+          "showLegend": true,
           "values": [
             "value",
             "percent"
@@ -1009,7 +1256,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
           "datasource": "TeslaMate",
@@ -1120,7 +1367,6 @@
         "y": 10
       },
       "id": 20,
-      "links": [],
       "maxDataPoints": 3,
       "options": {
         "displayLabels": [
@@ -1130,6 +1376,7 @@
           "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
+          "showLegend": true,
           "values": [
             "value",
             "percent"
@@ -1214,7 +1461,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1250,7 +1498,6 @@
         "y": 23
       },
       "id": 29,
-      "links": [],
       "options": {
         "dims": {
           "exclude": [
@@ -1372,7 +1619,6 @@
         }
       ],
       "title": "DC Charging Curve",
-      "transformations": [],
       "type": "xychart"
     },
     {
@@ -1381,7 +1627,9 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -1389,8 +1637,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -1411,8 +1658,10 @@
                 "value": "SOC"
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-text"
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
               },
               {
                 "id": "thresholds",
@@ -1420,8 +1669,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "yellow",
@@ -1451,8 +1699,11 @@
                 "value": "# of Charges"
               },
               {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
               },
               {
                 "id": "max"
@@ -1472,7 +1723,6 @@
         "y": 39
       },
       "id": 2,
-      "links": [],
       "options": {
         "footer": {
           "fields": "",
@@ -1522,7 +1772,9 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -1530,8 +1782,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1561,8 +1812,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red",
-                      "value": null
+                      "color": "red"
                     },
                     {
                       "color": "#EAB839",
@@ -1576,8 +1826,10 @@
                 }
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-text"
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
               },
               {
                 "id": "custom.width",
@@ -1596,8 +1848,11 @@
                 "value": "# of Discharges"
               },
               {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
               },
               {
                 "id": "min",
@@ -1614,7 +1869,6 @@
         "y": 39
       },
       "id": 13,
-      "links": [],
       "options": {
         "footer": {
           "fields": "",
@@ -1664,7 +1918,9 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -1672,8 +1928,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1772,7 +2027,9 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -1780,8 +2037,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1882,8 +2138,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 36,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [
     "tesla"
   ],
@@ -1895,7 +2150,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": "TeslaMate",
+		"datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
         "hide": 2,
         "includeAll": true,
@@ -1919,7 +2174,7 @@
           "text": "http://localhost:4000",
           "value": "http://localhost:4000"
         },
-        "datasource": "TeslaMate",
+		"datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -1943,7 +2198,7 @@
           "text": "km",
           "value": "km"
         },
-        "datasource": "TeslaMate",
+		"datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -1995,6 +2250,6 @@
   "timezone": "",
   "title": "Charging Stats",
   "uid": "-pkIkhmRz",
-  "version": 1,
+  "version": 5,
   "weekStart": ""
 }
