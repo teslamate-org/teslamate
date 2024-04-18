@@ -30,6 +30,7 @@
 - Velocity/Speed histogram in drive details dashboard (#3836 - @jheredianet)
 - Change car id selector by row on Charge Details dashboard (#3844- @jheredianet)
 - Fix missing units when miles is used (#3850 - @sdwalker)
+- Statistics: Add max value for efficiency thresholds (#3852 - @sdwalker)
 
 #### Translations
 
