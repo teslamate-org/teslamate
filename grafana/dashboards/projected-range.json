@@ -237,7 +237,7 @@
       "type": "timeseries"
     },
     {
-    "datasource": "TeslaMate",
+      "datasource": "TeslaMate",
       "fieldConfig": {
         "defaults": {
           "color": {
