@@ -184,7 +184,7 @@
           {
             "matcher": {
               "id": "byRegexp",
-              "options": ".*_mph$"
+              "options": ".*_mih$"
             },
             "properties": [
               {
