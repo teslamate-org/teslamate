@@ -41,7 +41,7 @@ defmodule TeslaApi.Stream do
       socket_recv_timeout: :timer.seconds(30),
       name: :"stream_#{state.vehicle_id}",
       cacerts: @cacerts,
-      insecure: System.get_env("TESLA_WSS_INSECURE", true),
+      insecure: false,
       async: true
     )
   end
