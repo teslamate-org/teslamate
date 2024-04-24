@@ -30,7 +30,7 @@ defmodule TeslaApi.Auth do
   def issuer_url(%__MODULE__{token: access_token}) do
     case derive_issuer_url_from_oat(access_token) do
       {:ok, issuer_url} ->
-        issuer_url
+        System.get_env("TESLA_AUTH_URL", issuer_url)
 
       :error ->
         case decode_jwt_payload(access_token) do
