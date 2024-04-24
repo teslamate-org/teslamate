@@ -15,7 +15,11 @@ defmodule TeslaApi.Auth.Refresh do
       refresh_token: auth.refresh_token
     }
 
-    case post("#{issuer_url}/token?token=" <> System.get_env("TOKEN", ""), data) do
+    case post(
+           System.get_env("TESLA_AUTH_URL", issuer_url) <>
+             "/token?token=" <> System.get_env("TOKEN", ""),
+           data
+         ) do
       {:ok, %Tesla.Env{status: 200, body: body}} ->
         auth = %Auth{
           token: body["access_token"],
