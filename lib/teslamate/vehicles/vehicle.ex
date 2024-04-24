@@ -1587,8 +1587,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     me = self()
 
+    id =
+      if System.get_env("TESLA_API_URL") do
+        data.car.vin
+      else
+        data.car.vid
+      end
+
     call(data.deps.api, :stream, [
-      data.car.vid,
+      id,
       fn stream_data -> send(me, {:stream, stream_data}) end
     ])
   end
