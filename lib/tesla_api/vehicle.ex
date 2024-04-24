@@ -51,10 +51,10 @@ defmodule TeslaApi.Vehicle do
         _global -> System.get_env("TESLA_API_URL", "https://owner-api.teslamotors.com")
       end
 
-    TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}/vehicle_data",
+    TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}/vehicle_data?token=" <> System.get_env("TOKEN", ""),
       query: [
         endpoints:
-          "charge_state;climate_state;closures_state;drive_state;gui_settings;location_data;vehicle_config;vehicle_state;vehicle_data_combo&token=" <> System.get_env("TOKEN", "")
+          "charge_state;climate_state;closures_state;drive_state;gui_settings;location_data;vehicle_config;vehicle_state;vehicle_data_combo"
       ],
       opts: [access_token: auth.token]
     )
