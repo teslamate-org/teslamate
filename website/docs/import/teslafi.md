@@ -22,7 +22,7 @@ sidebar_label: TeslaFi
 
 ## Instructions
 
-1. Copy the exported CSV files into a **directory named `import`** next to the _docker-compose.yml_:
+1. Copy the exported CSV files (in the format "TeslaFixxxxxx.csv") into a **directory named `import`** next to the _docker-compose.yml_:
 
    ```console
    .
