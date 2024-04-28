@@ -63,7 +63,7 @@ defmodule TeslaApi.Auth do
     do: {:ok, System.get_env("TESLA_AUTH_URL", "https://auth.tesla.com/oauth2/v3")}
 
   defp derive_issuer_url_from_oat("cn-" <> _),
-    do: {:ok, System.get_env("TESLA_CN_AUTH_URL", "https://auth.tesla.cn/oauth2/v3")}
+    do: {:ok, System.get_env("TESLA_AUTH_URL", "https://auth.tesla.cn/oauth2/v3")}
 
   defp derive_issuer_url_from_oat(_), do: :error
 
