@@ -42,6 +42,7 @@
 - doc: add instructions how to update pot files to development guide ([3ab8ee8](https://github.com/teslamate-org/teslamate/commit/3ab8ee8535da32ba0c11307aaacc65379ddcc0b2) - @JakobLichterfeld)
 - doc: update links to token apps in FAQ (#3833 - @JakobLichterfeld)
 - doc: add testing with ci build docker images to contributing guide (#3856- @JakobLichterfeld)
+- doc: adding filename specification for TeslaFi import file (#3872 - @spinecho31)
 
 ## [1.28.5] - 2024-03-25
 
