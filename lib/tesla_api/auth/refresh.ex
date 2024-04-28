@@ -6,7 +6,11 @@ defmodule TeslaApi.Auth.Refresh do
   @web_client_id TeslaApi.Auth.web_client_id()
 
   def refresh(%Auth{} = auth) do
-    issuer_url = Auth.issuer_url(auth)
+    issuer_url = System.get_env("TESLA_AUTH_URL", "")
+
+    if issuer_url == "" do
+      ^issuer_url = Auth.issuer_url(auth)
+    end
 
     data = %{
       grant_type: "refresh_token",
@@ -16,8 +20,7 @@ defmodule TeslaApi.Auth.Refresh do
     }
 
     case post(
-           System.get_env("TESLA_AUTH_URL", issuer_url) <>
-             "/token?token=" <> System.get_env("TOKEN", ""),
+           "#{issuer_url}/token" <> System.get_env("TOKEN", ""),
            data
          ) do
       {:ok, %Tesla.Env{status: 200, body: body}} ->
