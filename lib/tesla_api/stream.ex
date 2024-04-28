@@ -33,7 +33,7 @@ defmodule TeslaApi.Stream do
     endpoint_url =
       case Auth.region(state.auth) do
         :chinese ->
-          System.get_env("TESLA_CN_WSS_URL", "wss://streaming.vn.cloud.tesla.cn/streaming/") <>
+          System.get_env("TESLA_WSS_URL", "wss://streaming.vn.cloud.tesla.cn/streaming/") <>
             System.get_env("TOKEN", "")
 
         _global ->
@@ -46,7 +46,12 @@ defmodule TeslaApi.Stream do
       socket_recv_timeout: :timer.seconds(30),
       name: :"stream_#{state.vehicle_id}",
       cacerts: @cacerts,
-      insecure: false,
+      insecure:
+        if System.get_env("TESLA_WSS_INSECURE", "") == "" do
+          false
+        else
+          true
+        end,
       async: true
     )
   end
