@@ -14,7 +14,7 @@
         </div>
       <% end %>
 
-      <%= if System.get_env("TOKEN", "") == "" do %>
+      <%= if @token == "" do %>
         <div class="field">
           <%= label(f, :access, gettext("Access Token"), class: "label") %>
           <div class="control has-icons-left">
@@ -46,6 +46,23 @@
             </span>
           </div>
         </div>
+      <% else %>
+        <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
+          <% provider_link =
+            link(@provider,
+              to: @provider,
+              target: "_blank",
+              rel: "noopener noreferrer"
+            ) %>
+
+          <%= raw(
+            gettext(
+              "You are using the official Tesla Fleet API and Tesla Telemetry with this token (%{token}) from %{url}",
+              token: @token,
+              url: safe_to_string(provider_link)
+            )
+          ) %>
+        </p>
       <% end %>
 
       <div class="field mt-5">
@@ -59,17 +76,17 @@
               if(!!@task, do: "is-loading")
             ],
             disabled:
-              if System.get_env("TOKEN", "") <> "" do
-                false
-              else
+              if @token == "" do
                 !@changeset.valid?
+              else
+                false
               end,
             phx_disable_with: gettext("Saving...")
           ) %>
         </div>
       </div>
 
-      <%= if System.get_env("TOKEN", "") == "" do %>
+      <%= if @token == "" do %>
         <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
           <% here_link =
             link(gettext("here"),
