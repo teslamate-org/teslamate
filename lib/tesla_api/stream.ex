@@ -47,10 +47,10 @@ defmodule TeslaApi.Stream do
       name: :"stream_#{state.vehicle_id}",
       cacerts: @cacerts,
       insecure:
-        if System.get_env("TESLA_WSS_INSECURE", "") == "" do
-          false
-        else
+        if System.get_env("TESLA_WSS_TLS_ACCEPT_INVALID_CERTS", "") == "true" do
           true
+        else
+          false
         end,
       async: true
     )
