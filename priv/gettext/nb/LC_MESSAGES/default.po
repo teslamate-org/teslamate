@@ -657,6 +657,6 @@ msgid "Expected Finish Time"
 msgstr ""
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
-#, elixir-autogen, elixir-format
-msgid "You are using the official Tesla Fleet API and Tesla Telemetry with this token (%{token}) from %{url}"
+#, elixir-autogen, elixir-format, fuzzy
+msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
 msgstr ""

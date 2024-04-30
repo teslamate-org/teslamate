@@ -57,7 +57,7 @@
 
           <%= raw(
             gettext(
-              "You are using the official Tesla Fleet API and Tesla Telemetry with this token (%{token}) from %{url}",
+              "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming.",
               token: @token,
               url: safe_to_string(provider_link)
             )
