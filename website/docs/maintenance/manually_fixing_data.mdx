@@ -65,6 +65,41 @@ docker compose exec teslamate bin/teslamate rpc \
 </TabItem>
 </Tabs>
 
+## Terminate a drive or charge
+
+If you discover a large number of drives or charges that need to be closed, you can leverage the script below. You will need to create a file (e.g. close-drives-charges.sh) and then call it by executing `bash close-drives-charges.sh` (or what you named the file). Additionally, you might need to change `teslamate_database_1` and `teslamate_teslamate_1` to your service name. Get the proper service name by running `docker compose ps` and reviewing the returned **PORTS** from the list.
+
+```
+#!/bin/bash
+echo "Seeking for unclosed drives & charges..."
+
+sql="select id from charging_processes where end_date is null and start_date <  now() + interval '-2 days' order by start_date;"
+data=$(docker exec teslamate_database_1 bash -c "psql -d teslamate -U teslamate -t -c \"${sql}\"")
+data=($data)
+
+if [ "${data}" != "" ]; then
+  for m in "${data[@]}"; do
+    echo "Closing charge num: ${m}..."
+    sudo docker exec  teslamate_teslamate_1 /opt/app/bin/teslamate rpc "TeslaMate.Repo.get(TeslaMate.Log.ChargingProcess,${m}) |> TeslaMate.Log.complete_charging_process()";
+  done
+fi
+
+sql="select id from drives where end_date is null and start_date <  now() + interval '-2 days' order by start_date;"
+data=$(docker exec teslamate_database_1 bash -c "psql -d teslamate -U teslamate -t -c \"${sql}\"")
+data=($data)
+
+if [ "${data}" != "" ]; then
+  for m in "${data[@]}"; do
+    echo "Closing drive num: ${m}..."
+    sudo docker exec  teslamate_teslamate_1 /opt/app/bin/teslamate rpc "TeslaMate.Repo.get(TeslaMate.Log.Drive,${m}) |> TeslaMate.Log.close_drive()";
+  done
+fi
+
+
+echo "Done."
+```
+_Credit to [dmachadol](https://github.com/dmachadol) via [discussion 2364](https://github.com/teslamate-org/teslamate/discussions/2364#discussioncomment-8568796)._
+
 ## Delete a drive or charge
 
 If for some reason a drive or charge was recorded incorrectly, you can delete it.
