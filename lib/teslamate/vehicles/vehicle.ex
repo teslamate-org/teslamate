@@ -1588,7 +1588,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     me = self()
 
     id =
-      if System.get_env("TESLA_API_HOST") do
+      if System.get_env("TESLA_WSS_USE_VIN") do
         data.car.vin
       else
         data.car.vid
