@@ -31,6 +31,7 @@
 - Fix missing units when miles is used (#3850 - @sdwalker)
 - Statistics: Add max value for efficiency thresholds (#3852 - @sdwalker)
 - Add average cost per kWh for AC and DC as separate values (#3841 -@woyteck1)
+- Update statistics.json: timezone issues addressed (#3862 - @DrMichael)
 
 #### Translations
 
