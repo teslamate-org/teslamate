@@ -33,11 +33,13 @@ defmodule TeslaApi.Stream do
     endpoint_url =
       case Auth.region(state.auth) do
         :chinese ->
-          System.get_env("TESLA_WSS_URL", "wss://streaming.vn.cloud.tesla.cn/streaming/") <>
+          System.get_env("TESLA_WSS_HOST", "wss://streaming.vn.cloud.tesla.cn") <>
+            "/streaming/" <>
             System.get_env("TOKEN", "")
 
         _global ->
-          System.get_env("TESLA_WSS_URL", "wss://streaming.vn.teslamotors.com/streaming/") <>
+          System.get_env("TESLA_WSS_HOST", "wss://streaming.vn.teslamotors.com") <>
+            "/streaming/" <>
             System.get_env("TOKEN", "")
       end
 

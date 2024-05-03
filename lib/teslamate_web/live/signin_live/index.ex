@@ -15,7 +15,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
       task: nil,
       changeset: Auth.change_tokens(),
       token: System.get_env("TOKEN", ""),
-      provider: System.get_env("TESLA_AUTH_DOMAIN", "https://auth.tesla.com")
+      provider: System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com")
     }
 
     {:ok, assign(socket, assigns)}

@@ -6,7 +6,7 @@ defmodule TeslaApi.Auth.Refresh do
   @web_client_id TeslaApi.Auth.web_client_id()
 
   def refresh(%Auth{} = auth) do
-    issuer_url = System.get_env("TESLA_AUTH_URL", "")
+    issuer_url = System.get_env("TESLA_AUTH_HOST", "") <> System.get_env("TESLA_AUTH_PATH", "")
 
     if issuer_url == "" do
       ^issuer_url = Auth.issuer_url(auth)
