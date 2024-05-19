@@ -4,20 +4,36 @@
 
 ### New features
 
+- Publish extra active_route fields to mqtt output (#3789 - @brianmay)
+
 ### Improvements and bug fixes
+
+- fix: errors from Timex.Timezone.local() during switchover to DST (#3848 - @dyxyl)
 
 #### Build, CI, internal
 
 - build(deps): bump dorny/paths-filter from 3.0.1 to 3.0.2 (#3799)
 - build(deps): bump docker/login-action from 3.0.0 to 3.1.0 (#3798)
 - build(deps): bump grafana/grafana from 10.4.0 to 10.4.1 in /grafana (#3800)
+- build(deps): bump grafana/grafana from 10.4.1 to 10.4.2 in /grafana (#3876)
 - ci: update typos false positive list (#3808 - @JakobLichterfeld)
 - build(deps): bump docker/login-action from 3.0.0 to 3.1.0 in custom action ([b9f1f8b](https://github.com/teslamate-org/teslamate/commit/b9f1f8b956c7fb531321a2d3d875efffd4be6ead) - @JakobLichterfeld)
 - ci: pin crate-ci/typos action to version v1.20.1 ([bd50177](https://github.com/teslamate-org/teslamate/commit/bd50177a454426501a9dd7fca000b44c62f10113) and [53d8e62](https://github.com/teslamate-org/teslamate/commit/53d8e625ae4483789b456458a8bb43af9f009361) - @JakobLichterfeld)
+- build(deps): bump crate-ci/typos from 1.20.1 to 1.21.0 (#3875)
 
 #### Dashboards
 
 - Battery Health: Fix a bug on efficiency estimations (#3795 - @jheredianet)
+- Add more info on charge details dashboard (#3821, #3827 -@jheredianet)
+- Battery Health dashboard: new stats panel for efficiency and improve query performance (#3806 -@jheredianet)
+- Add stats to Visited dashboard (#3824 - @jheredianet)
+- Update Thresholds colors for ºF temperature in Charges dashboard (#3834 - @jheredianet)
+- Velocity/Speed histogram in drive details dashboard (#3836 - @jheredianet)
+- Change car id selector by row on Charge Details dashboard (#3844- @jheredianet)
+- Fix missing units when miles is used (#3850 - @sdwalker)
+- Statistics: Add max value for efficiency thresholds (#3852 - @sdwalker)
+- Add average cost per kWh for AC and DC as separate values (#3841 -@woyteck1)
+- Update statistics.json: timezone issues addressed (#3862 - @DrMichael)
 
 #### Translations
 
@@ -27,6 +43,9 @@
 
 - doc: remove update steps in installation instructions and link to maintenance section ([dbf23fa](https://github.com/teslamate-org/teslamate/commit/dbf23faa31d84f222c99dba9f5de52c69dd43afb) and #3794 - @JakobLichterfeld and @brianmay)
 - doc: add instructions how to update pot files to development guide ([3ab8ee8](https://github.com/teslamate-org/teslamate/commit/3ab8ee8535da32ba0c11307aaacc65379ddcc0b2) - @JakobLichterfeld)
+- doc: update links to token apps in FAQ (#3833 - @JakobLichterfeld)
+- doc: add testing with ci build docker images to contributing guide (#3856- @JakobLichterfeld)
+- doc: adding filename specification for TeslaFi import file (#3872 - @spinecho31)
 
 ## [1.28.5] - 2024-03-25
 
