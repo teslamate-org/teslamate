@@ -32,15 +32,8 @@ defmodule TeslaApi.Stream do
 
     endpoint_url =
       case Auth.region(state.auth) do
-        :chinese ->
-          System.get_env("TESLA_WSS_HOST", "wss://streaming.vn.cloud.tesla.cn") <>
-            "/streaming/" <>
-            System.get_env("TOKEN", "")
-
-        _global ->
-          System.get_env("TESLA_WSS_HOST", "wss://streaming.vn.teslamotors.com") <>
-            "/streaming/" <>
-            System.get_env("TOKEN", "")
+        :chinese -> "wss://streaming.vn.cloud.tesla.cn/streaming/"
+        _global -> "wss://streaming.vn.teslamotors.com/streaming/"
       end
 
     WebSockex.start_link(endpoint_url, __MODULE__, state,
@@ -48,7 +41,7 @@ defmodule TeslaApi.Stream do
       socket_recv_timeout: :timer.seconds(30),
       name: :"stream_#{state.vehicle_id}",
       cacerts: @cacerts,
-      insecure: System.get_env("TESLA_WSS_TLS_ACCEPT_INVALID_CERTS", "") == "true",
+      insecure: false,
       async: true
     )
   end
