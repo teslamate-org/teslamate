@@ -179,7 +179,7 @@ msgstr "保存"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:169
 #: lib/teslamate_web/live/geofence_live/form.html.heex:130
-#: lib/teslamate_web/live/signin_live/index.html.heex:60
+#: lib/teslamate_web/live/signin_live/index.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "保存中"
@@ -195,7 +195,7 @@ msgstr "尝试进入睡眠用时"
 msgid "min"
 msgstr "分钟"
 
-#: lib/teslamate_web/live/signin_live/index.ex:81
+#: lib/teslamate_web/live/signin_live/index.ex:83
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "登录成功"
@@ -461,7 +461,7 @@ msgid "Time zone"
 msgstr "时区"
 
 #: lib/teslamate_web/live/signin_live/index.ex:13
-#: lib/teslamate_web/live/signin_live/index.html.heex:51
+#: lib/teslamate_web/live/signin_live/index.html.heex:70
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "登录"
@@ -576,32 +576,32 @@ msgstr "有可用更新 (%{version})"
 msgid "Sign out"
 msgstr "退出登录"
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:18
+#: lib/teslamate_web/live/signin_live/index.html.heex:19
 #, elixir-autogen, elixir-format
 msgid "Access Token"
 msgstr "令牌"
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:34
+#: lib/teslamate_web/live/signin_live/index.html.heex:35
 #, elixir-autogen, elixir-format
 msgid "Refresh Token"
 msgstr "刷新令牌"
 
-#: lib/teslamate_web/live/signin_live/index.ex:56
+#: lib/teslamate_web/live/signin_live/index.ex:58
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
 msgstr "令牌 无效"
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:74
+#: lib/teslamate_web/live/signin_live/index.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
 msgstr "通过 Tesla API 获得令牌需要有编程经验或者借助第三方服务。更多信息可以查看 %{here}。"
 
-#: lib/teslamate_web/live/signin_live/index.html.heex:67
+#: lib/teslamate_web/live/signin_live/index.html.heex:92
 #, elixir-autogen, elixir-format
 msgid "here"
 msgstr "这里"
 
-#: lib/teslamate_web/live/signin_live/index.ex:59
+#: lib/teslamate_web/live/signin_live/index.ex:61
 #, elixir-autogen, elixir-format
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
 msgstr "您的 Tesla 帐户因登录尝试失败次数过多而被锁定。要解锁您的帐户，请重置您的密码"
@@ -655,3 +655,8 @@ msgstr "爱犬模式已激活"
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
 msgstr "预计完成时间"
+
+#: lib/teslamate_web/live/signin_live/index.html.heex:59
+#, elixir-autogen, elixir-format, fuzzy
+msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
+msgstr ""

@@ -14,37 +14,56 @@
         </div>
       <% end %>
 
-      <div class="field">
-        <%= label(f, :access, gettext("Access Token"), class: "label") %>
-        <div class="control has-icons-left">
-          <%= text_input(f, :access,
-            class: "input is-rounded",
-            autocorrect: "off",
-            autocapitalize: "none",
-            spellcheck: "false",
-            disabled: !!@task
-          ) %>
-          <span class="icon is-small is-left">
-            <i class="mdi mdi-api"></i>
-          </span>
+      <%= if @token == "" do %>
+        <div class="field">
+          <%= label(f, :access, gettext("Access Token"), class: "label") %>
+          <div class="control has-icons-left">
+            <%= text_input(f, :access,
+              class: "input is-rounded",
+              autocorrect: "off",
+              autocapitalize: "none",
+              spellcheck: "false",
+              disabled: !!@task
+            ) %>
+            <span class="icon is-small is-left">
+              <i class="mdi mdi-api"></i>
+            </span>
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <%= label(f, :refresh, gettext("Refresh Token"), class: "label") %>
-        <div class="control has-icons-left">
-          <%= text_input(f, :refresh,
-            class: "input is-rounded",
-            autocorrect: "off",
-            autocapitalize: "none",
-            spellcheck: "false",
-            disabled: !!@task
-          ) %>
-          <span class="icon is-small is-left">
-            <i class="mdi mdi-cloud-refresh"></i>
-          </span>
+        <div class="field">
+          <%= label(f, :refresh, gettext("Refresh Token"), class: "label") %>
+          <div class="control has-icons-left">
+            <%= text_input(f, :refresh,
+              class: "input is-rounded",
+              autocorrect: "off",
+              autocapitalize: "none",
+              spellcheck: "false",
+              disabled: !!@task
+            ) %>
+            <span class="icon is-small is-left">
+              <i class="mdi mdi-cloud-refresh"></i>
+            </span>
+          </div>
         </div>
-      </div>
+      <% else %>
+        <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
+          <% provider_link =
+            link(@provider,
+              to: @provider,
+              target: "_blank",
+              rel: "noopener noreferrer"
+            ) %>
+
+          <%= raw(
+            gettext(
+              "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming.",
+              token: @token,
+              url: safe_to_string(provider_link)
+            )
+          ) %>
+        </p>
+      <% end %>
 
       <div class="field mt-5">
         <div class="control">
@@ -56,27 +75,34 @@
               "is-link",
               if(!!@task, do: "is-loading")
             ],
-            disabled: !@changeset.valid?,
+            disabled:
+              if @token == "" do
+                !@changeset.valid?
+              else
+                false
+              end,
             phx_disable_with: gettext("Saving...")
           ) %>
         </div>
       </div>
 
-      <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
-        <% here_link =
-          link(gettext("here"),
-            to: "https://docs.teslamate.org/docs/faq#how-to-generate-your-own-tokens",
-            target: "_blank",
-            rel: "noopener noreferrer"
-          ) %>
+      <%= if @token == "" do %>
+        <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
+          <% here_link =
+            link(gettext("here"),
+              to: "https://docs.teslamate.org/docs/faq#how-to-generate-your-own-tokens",
+              target: "_blank",
+              rel: "noopener noreferrer"
+            ) %>
 
-        <%= raw(
-          gettext(
-            "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}.",
-            here: safe_to_string(here_link)
-          )
-        ) %>
-      </p>
+          <%= raw(
+            gettext(
+              "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}.",
+              here: safe_to_string(here_link)
+            )
+          ) %>
+        </p>
+      <% end %>
     </.form>
   </div>
 </div>
