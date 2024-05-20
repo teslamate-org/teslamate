@@ -14,6 +14,10 @@
 
 #### Documentation
 
+## [1.29.1] - 2024-05-20
+
+same as 1.29.0 but reverted: "Dynamic endpoints and token to use official Tesla API (self-hosted or from third party provider) (#3866 - @jlestel)" as it was breaking backwards compatibility
+
 ## [1.29.0] - 2024-05-20
 
 ### New features
@@ -1935,7 +1939,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.0...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...HEAD
+[1.29.1]: https://github.com/teslamate-org/teslamate/compare/v1.29.0...v1.29.1
 [1.29.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...v1.29.0
 [1.28.5]: https://github.com/teslamate-org/teslamate/compare/v1.28.4...v1.28.5
 [1.28.4]: https://github.com/teslamate-org/teslamate/compare/v1.28.3...v1.28.4
