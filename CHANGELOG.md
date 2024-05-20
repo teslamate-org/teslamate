@@ -4,6 +4,20 @@
 
 ### New features
 
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+## [1.29.0] - 2024-05-20
+
+### New features
+
 - Publish extra active_route fields to mqtt output (#3789 - @brianmay)
 - Dynamic endpoints and token to use official Tesla API (self-hosted or from third party provider) (#3866 - @jlestel)
 
@@ -1921,7 +1935,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.0...HEAD
+[1.29.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...v1.29.0
 [1.28.5]: https://github.com/teslamate-org/teslamate/compare/v1.28.4...v1.28.5
 [1.28.4]: https://github.com/teslamate-org/teslamate/compare/v1.28.3...v1.28.4
 [1.28.3]: https://github.com/teslamate-org/teslamate/compare/v1.28.2...v1.28.3
