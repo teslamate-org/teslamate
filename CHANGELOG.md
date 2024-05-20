@@ -5,6 +5,7 @@
 ### New features
 
 - Publish extra active_route fields to mqtt output (#3789 - @brianmay)
+- Dynamic endpoints and token to use official Tesla API (self-hosted or from third party provider) (#3866 - @jlestel)
 
 ### Improvements and bug fixes
 
