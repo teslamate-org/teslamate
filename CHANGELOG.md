@@ -4,7 +4,26 @@
 
 ### New features
 
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+## [1.29.1] - 2024-05-20
+
+same as 1.29.0 but reverted: "Dynamic endpoints and token to use official Tesla API (self-hosted or from third party provider) (#3866 - @jlestel)" as it was breaking backwards compatibility
+
+## [1.29.0] - 2024-05-20
+
+### New features
+
 - Publish extra active_route fields to mqtt output (#3789 - @brianmay)
+- Dynamic endpoints and token to use official Tesla API (self-hosted or from third party provider) (#3866 - @jlestel)
 
 ### Improvements and bug fixes
 
@@ -15,9 +34,11 @@
 - build(deps): bump dorny/paths-filter from 3.0.1 to 3.0.2 (#3799)
 - build(deps): bump docker/login-action from 3.0.0 to 3.1.0 (#3798)
 - build(deps): bump grafana/grafana from 10.4.0 to 10.4.1 in /grafana (#3800)
+- build(deps): bump grafana/grafana from 10.4.1 to 10.4.2 in /grafana (#3876)
 - ci: update typos false positive list (#3808 - @JakobLichterfeld)
 - build(deps): bump docker/login-action from 3.0.0 to 3.1.0 in custom action ([b9f1f8b](https://github.com/teslamate-org/teslamate/commit/b9f1f8b956c7fb531321a2d3d875efffd4be6ead) - @JakobLichterfeld)
 - ci: pin crate-ci/typos action to version v1.20.1 ([bd50177](https://github.com/teslamate-org/teslamate/commit/bd50177a454426501a9dd7fca000b44c62f10113) and [53d8e62](https://github.com/teslamate-org/teslamate/commit/53d8e625ae4483789b456458a8bb43af9f009361) - @JakobLichterfeld)
+- build(deps): bump crate-ci/typos from 1.20.1 to 1.21.0 (#3875)
 
 #### Dashboards
 
@@ -32,6 +53,7 @@
 - Statistics: Add max value for efficiency thresholds (#3852 - @sdwalker)
 - Add average cost per kWh for AC and DC as separate values (#3841 -@woyteck1)
 - Update statistics.json: timezone issues addressed (#3862 - @DrMichael)
+- Statistics: fix temperature colors and column layout for Fahrenheit (#3854 - @sdwalker)
 
 #### Translations
 
@@ -1917,7 +1939,9 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...HEAD
+[1.29.1]: https://github.com/teslamate-org/teslamate/compare/v1.29.0...v1.29.1
+[1.29.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...v1.29.0
 [1.28.5]: https://github.com/teslamate-org/teslamate/compare/v1.28.4...v1.28.5
 [1.28.4]: https://github.com/teslamate-org/teslamate/compare/v1.28.3...v1.28.4
 [1.28.3]: https://github.com/teslamate-org/teslamate/compare/v1.28.2...v1.28.3
