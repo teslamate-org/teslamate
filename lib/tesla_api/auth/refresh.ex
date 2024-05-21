@@ -8,8 +8,10 @@ defmodule TeslaApi.Auth.Refresh do
   def refresh(%Auth{} = auth) do
     issuer_url = System.get_env("TESLA_AUTH_HOST", "") <> System.get_env("TESLA_AUTH_PATH", "")
 
-    if issuer_url == "" do
-      issuer_url = Auth.issuer_url(auth)
+    issuer_url = if issuer_url == "" do
+      Auth.issuer_url(auth)
+    else
+      issuer_url
     end
 
     data = %{
