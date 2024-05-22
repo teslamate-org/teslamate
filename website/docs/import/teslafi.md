@@ -48,5 +48,9 @@ If there is an overlap between the already existing TeslaMate and TeslaFi data, 
 :::
 
 :::note
+If the CSV files are missing the vehicle ID, the imported will default to `1`. You can alter this behavior by setting the environment variable `TESLAFI_IMPORT_VEHICLE_ID`.
+:::
+
+:::note
 Since the exported CSV files do not contain addresses, they are added automatically during and after the import. So please note that not all addresses are visible immediately after the import/restarting. Depending on the amount of data imported, it may take a while before they appear. The same applies to elevation data.
 :::
