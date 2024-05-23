@@ -14,6 +14,8 @@
 
 #### Documentation
 
+- doc: update backup path location to current directory to work around no write access to placeholder directory issue (#3908 - @JakobLichterfeld)
+
 ## [1.29.1] - 2024-05-20
 
 same as 1.29.0 but reverted: "Dynamic endpoints and token to use official Tesla API (self-hosted or from third party provider) (#3866 - @jlestel)" as it was breaking backwards compatibility
