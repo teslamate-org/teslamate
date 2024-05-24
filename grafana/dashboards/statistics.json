@@ -433,7 +433,34 @@
               {
                 "id": "unit",
                 "value": "fahrenheit"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "super-light-blue",
+                      "value": null
+                    },
+                    {
+                      "color": "super-light-green",
+                      "value": 50
+                    },
+                    {
+                      "color": "super-light-red",
+                      "value": 68
+                    }
+                  ]
+                }
               }
+
             ]
           },
           {
@@ -727,6 +754,7 @@
               "avg_cost_mi": 20,
               "avg_cost_kwh": 11,
               "avg_outside_temp_c": 5,
+              "avg_outside_temp_f": 5,
               "cnt": 6,
               "cnt_charges": 11,
               "cost_charges": 10,
@@ -981,7 +1009,7 @@
   },
   "timezone": "browser",
   "title": "Statistics",
-  "uid": "1EZnXszMl",
+  "uid": "1EZnXszMk",
   "version": 2,
   "weekStart": ""
 }
