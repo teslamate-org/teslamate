@@ -6,6 +6,9 @@
 
 ### Improvements and bug fixes
 
+- fix: Update statistics.json: change back uid (#3907 -@DrMichael)
+- feat: Update TeslaFi importer to accept newer export formats (#3431 - @ithinuel)
+
 #### Build, CI, internal
 
 #### Dashboards
