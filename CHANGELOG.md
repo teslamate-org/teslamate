@@ -15,6 +15,8 @@
 
 #### Translations
 
+- feat: Update default.po for Thai translation (#3906 - @tomzt)
+
 #### Documentation
 
 - doc: update backup path location to current directory to work around no write access to placeholder directory issue (#3908 - @JakobLichterfeld)
