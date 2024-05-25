@@ -12,6 +12,8 @@
 
 #### Build, CI, internal
 
+- ci: Upgrade PostgreSQL to v16 in elixir workflow (#3916 - @JakobLichterfeld)
+
 #### Dashboards
 
 #### Translations
