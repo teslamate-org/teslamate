@@ -8,6 +8,7 @@
 
 - fix: Update statistics.json: change back uid (#3907 -@DrMichael)
 - feat: Update TeslaFi importer to accept newer export formats (#3431 - @ithinuel)
+- feat: Upgrade PostgreSQL to v16 (#3884 -@enoch85)
 
 #### Build, CI, internal
 
