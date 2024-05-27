@@ -6,13 +6,23 @@
 
 ### Improvements and bug fixes
 
+- fix: Update statistics.json: change back uid (#3907 -@DrMichael)
+- feat: Update TeslaFi importer to accept newer export formats (#3431 - @ithinuel)
+- feat: Upgrade PostgreSQL to v16 (#3884 -@enoch85)
+
 #### Build, CI, internal
+
+- ci: Upgrade PostgreSQL to v16 in elixir workflow (#3916 - @JakobLichterfeld)
 
 #### Dashboards
 
 #### Translations
 
+- feat: Update default.po for Thai translation (#3906 - @tomzt)
+
 #### Documentation
+
+- doc: update backup path location to current directory to work around no write access to placeholder directory issue (#3908 - @JakobLichterfeld)
 
 ## [1.29.1] - 2024-05-20
 

@@ -145,7 +145,7 @@ msgstr "สร้างขอบเขตทางภูมิศาสตร์
 #: lib/teslamate_web/templates/layout/root.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
-msgstr "เขตทางภูมิศาสตร์"
+msgstr "ขอบเขตทางภูมิศาสตร์"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:55
 #, elixir-autogen, elixir-format
@@ -472,7 +472,7 @@ msgstr "ค่าใช้จ่ายการชาร์จ"
 #: lib/teslamate_web/live/settings_live/index.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "Free Supercharging"
-msgstr "ฟรีซูเปอร์ชาร์จ"
+msgstr "ซูเปอร์ชาร์จฟรี"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:142
 #, elixir-autogen, elixir-format
@@ -637,22 +637,22 @@ msgstr "แรงดันลมยาง"
 #: lib/teslamate_web/live/car_live/summary.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "Low tire pressure, check (%{tire_low}) tire"
-msgstr ""
+msgstr "แรงดันลมยางต่ำ ตรวจสอบยาง (%{tire_low})"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Dog Mode"
-msgstr ""
+msgstr "โหมดสำหรับสุนัข"
 
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
-msgstr ""
+msgstr "เปิดใช้งานโหมดสำหรับสุนัขแล้ว"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:231
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
-msgstr ""
+msgstr "เวลาที่คาดว่าจะเสร็จสิ้น"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
