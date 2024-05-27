@@ -461,9 +461,9 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     icon: mdi:battery-80
 
 - sensor:
-    name: Active route distance to arrival (miles)
-    object_id: tesla_active_route_distance_to_arrival_miles
-    unique_id: teslamate_1_active_route_distance_to_arrival_miles
+    name: Active route distance to arrival (mi)
+    object_id: tesla_active_route_distance_to_arrival_mi
+    unique_id: teslamate_1_active_route_distance_to_arrival_mi
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
@@ -725,7 +725,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       unit_of_measurement: km
       icon_template: mdi:map-marker-distance
       value_template: >
-        {{ (states('sensor.tesla_active_route_distance_to_arrival_miles') | float * 1.609344) | round(2) }}
+        {{ (states('sensor.tesla_active_route_distance_to_arrival_mi') | float * 1.609344) | round(2) }}
 ```
 
 ### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
@@ -958,8 +958,8 @@ views:
             name: Active Route Energy at Arrival
           - entity: sensor.tesla_active_route_distance_to_arrival_km
             name: Active Route Distance to Arrival (km)
-          - entity: sensor.tesla_active_route_distance_to_arrival_miles
-            name: Active Route Distance to Arrival (miles)
+          - entity: sensor.tesla_active_route_distance_to_arrival_mi
+            name: Active Route Distance to Arrival (mi)
           - entity: sensor.tesla_active_route_minutes_to_arrival
             name: Active Route Minutes to Arrival
           - entity: sensor.tesla_active_route_traffic_minutes_delay
