@@ -88,7 +88,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     unique_id: teslamate_1_active_route_location
     availability: &teslamate_active_route_availability
       - topic: "teslamate/cars/1/active_route"
-        value_template: "{{ iif(value_json.error, 'offline', 'online') }}"
+        value_template: "{{ 'offline' if value_json.error else 'online' }}"
     device: *teslamate_device_info
     json_attributes_topic: "teslamate/cars/1/active_route"
     json_attributes_template: "{{ value_json.location | tojson }}"
