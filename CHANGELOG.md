@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat: Dynamic endpoints and token to use official Tesla API (self-hosted or from third party provider) (#3903 - @jlestel)
+
 ### Improvements and bug fixes
 
 - fix: Update statistics.json: change back uid (#3907 -@DrMichael)
