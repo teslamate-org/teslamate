@@ -19,6 +19,7 @@
 #### Dashboards
 
 - Remove A lot of empty space on the drive graph (#3927 - @jheredianet)
+- Add more ways to recognize Supercharger locations (#3863 -@woyteck1)
 
 #### Translations
 
