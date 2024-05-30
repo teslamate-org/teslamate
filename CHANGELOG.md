@@ -18,6 +18,8 @@
 
 #### Dashboards
 
+- Remove A lot of empty space on the drive graph (#3927 - @jheredianet)
+
 #### Translations
 
 - feat: Update default.po for Thai translation (#3906 - @tomzt)
