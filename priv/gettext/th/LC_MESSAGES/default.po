@@ -657,4 +657,4 @@ msgstr "เวลาที่คาดว่าจะเสร็จสิ้น
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
-msgstr ""
+msgstr "คุณกำลังใช้คีย์ API (%{token}) ที่ได้รับจาก %{url} มันจะช่วยให้ TeslaMate ของคุณเข้าถึง Tesla Fleet API อย่างเป็นทางการและการสตรีม Tesla Telemetry ได้"
