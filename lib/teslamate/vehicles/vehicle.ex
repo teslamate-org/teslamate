@@ -1632,7 +1632,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp determince_interval(n), do: round(250 / n) |> min(20) |> max(5)
 
   defp fuse_name(:vehicle_not_found, car_id), do: :"#{__MODULE__}_#{car_id}_not_found"
-  defp fuse_name(:too_many_requests, car_id), do: :"#{__MODULE__}_#{car_id}_too_many_requests"
   defp fuse_name(:api_error, car_id), do: :"#{__MODULE__}_#{car_id}_api_error"
 
   defp broadcast_summary, do: {:next_event, :internal, :broadcast_summary}
