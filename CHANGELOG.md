@@ -15,6 +15,7 @@
 #### Build, CI, internal
 
 - ci: Upgrade PostgreSQL to v16 in elixir workflow (#3916 - @JakobLichterfeld)
+- build(deps): bump docker/login-action from 3.1.0 to 3.2.0 (#3933)
 
 #### Dashboards
 
