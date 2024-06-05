@@ -7,7 +7,7 @@ defmodule TeslaMate.MixProject do
       version: version(),
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: Mix.compilers(),
+      compilers: [:yecc, :leex] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       releases: releases(),
