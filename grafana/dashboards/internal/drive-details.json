@@ -17,7 +17,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.4.0"
+      "version": "10.4.2"
     },
     {
       "type": "datasource",
@@ -366,6 +366,10 @@
               {
                 "id": "custom.axisPlacement",
                 "value": "hidden"
+              },
+              {
+                "id": "min",
+                "value": 0
               }
             ]
           },
@@ -683,7 +687,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "alias": "",
@@ -2767,6 +2771,6 @@
   "timezone": "",
   "title": "Drive Details",
   "uid": "zm7wN6Zgz",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
