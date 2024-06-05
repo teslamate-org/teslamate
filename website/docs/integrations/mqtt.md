@@ -25,11 +25,11 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/wheel_type`                    | Pinwheel18                                   | The wheel type                                                                        |
 | `teslamate/cars/$car_id/spoiler_type`                  | None                                         | The spoiler type                                                                      |
 |                                                        |                                              |                                                                                       |
-| `teslamate/cars/$car_id/geofence`                      | 🏡 Home                                       | The name of the Geo-fence, if one exists at the current position                      |
+| `teslamate/cars/$car_id/geofence`                      | 🏡 Home                                       | The name of the Geo-fence, if one exists at the current position                     |
 |                                                        |                                              |                                                                                       |
 | `teslamate/cars/$car_id/latitude`                      | 35.278131                                    | DEPRECATED: Last reported car latitude                                                |
 | `teslamate/cars/$car_id/longitude`                     | 29.744801                                    | DEPRECATED: Last reported car longitude                                               |
-| `teslamate/cars/$car_id/location`                      | "latitude": 37.889544, "longitude: 41.128817 | Last reported car location                                                            |
+| `teslamate/cars/$car_id/location`                      | <pre lang="json">{<br/>  "latitude": 35.278131,<br />  "longitude: 29.744801<br/>}</pre> | Last reported car location (json blob)    |
 | `teslamate/cars/$car_id/shift_state`                   | D                                            | Current/Last Shift State (D/N/R/P)                                                    |
 | `teslamate/cars/$car_id/power`                         | -9                                           | Current battery power in watts. Positive value on discharge, negative value on charge |
 | `teslamate/cars/$car_id/speed`                         | 12                                           | Current Speed in km/h                                                                 |
@@ -79,8 +79,35 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/active_route_destination`      | Home                                         | DEPRECATED: Navigation destination name (or "nil")                                    |
 | `teslamate/cars/$car_id/active_route_latitude`         | 35.278131                                    | DEPRECATED: Navigation destination latitude (or "nil")                                |
 | `teslamate/cars/$car_id/active_route_longitude`        | 29.744801                                    | DEPRECATED: Navigation destination longitude (or "nil")                               |
-| `teslamate/cars/$car_id/active_route`                  |                                              | Navigation details (json blob)                                                        |
+| `teslamate/cars/$car_id/active_route`                  | _See below_                                  | Navigation details (json blob)                                                        |
 
 :::note
 `$car_id` usually starts at 1
 :::
+
+### `active_route` payload examples
+
+Routing to a destination.
+
+```json
+{
+    "destination": "Home",
+    "energy_at_arrival": 73,
+    "miles_to_arrival": 6.485299,
+    "minutes_to_arrival": 23.466667,
+    "traffic_minutes_delay": 0.0,
+    "location": {
+        "latitude": 35.278131,
+        "longitude": 29.744801
+    },
+    "error": null
+}
+```
+
+Not routing to a destination.
+
+```json
+{
+    "error": "No active route available"
+}
+```

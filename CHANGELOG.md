@@ -18,6 +18,9 @@
 
 #### Dashboards
 
+- Remove A lot of empty space on the drive graph (#3927 - @jheredianet)
+- Add more ways to recognize Supercharger locations (#3863 -@woyteck1)
+
 #### Translations
 
 - feat: Update default.po for Thai translation (#3906 - @tomzt)
@@ -25,6 +28,8 @@
 #### Documentation
 
 - doc: update backup path location to current directory to work around no write access to placeholder directory issue (#3908 - @JakobLichterfeld)
+- doc: Update MQTT examples of location/active_route (#3919 - @longzheng)
+- doc: Update HomeAssistant docs to use new MQTT values (#3923 - @longzheng)
 
 ## [1.29.1] - 2024-05-20
 
