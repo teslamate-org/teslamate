@@ -33,6 +33,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   @drive_timeout_min 15
 
+  # Static
   def interval(env_var, default) do
     System.get_env(env_var)
     |> case do
