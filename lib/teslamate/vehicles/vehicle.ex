@@ -44,6 +44,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", 2.5)
   def default_interval, do: interval("POLLING_DEFAULT_INTERVAL", 15)
   def online_interval, do: interval("POLLING_ONLINE_INTERVAL", 60)
+  def minimum_interval, do: interval("POLLING_MINIMUM_INTERVAL", 5)
 
   def identify(%Vehicle{display_name: name, vehicle_config: config}) do
     case config do
@@ -1633,7 +1634,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp fetch_topic(car_id) when is_number(car_id), do: "#{__MODULE__}/fetch/#{car_id}"
 
   defp determince_interval(n) when is_nil(n) or n <= 0, do: 5
-  defp determince_interval(n), do: round(250 / n) |> min(20) |> max(5)
+  defp determince_interval(n), do: round(250 / n) |> min(20) |> max(minimum_interval())
 
   defp fuse_name(:vehicle_not_found, car_id), do: :"#{__MODULE__}_#{car_id}_not_found"
   defp fuse_name(:api_error, car_id), do: :"#{__MODULE__}_#{car_id}_api_error"
