@@ -369,7 +369,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
             )
 
             {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
-             [broadcast_fetch(false), broadcast_summary(), schedule_fetch(online_interval(), data)]}
+             [
+               broadcast_fetch(false),
+               broadcast_summary(),
+               schedule_fetch(online_interval(), data)
+             ]}
 
           _ ->
             {:keep_state, data, [broadcast_fetch(false), schedule_fetch(online_interval(), data)]}
