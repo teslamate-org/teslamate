@@ -28,8 +28,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   @asleep_interval 30
-  @driving_interval 2.5
-  @default_interval 15
 
   @drive_timeout_min 15
 
@@ -43,8 +41,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def asleep_interval, do: interval("POLLING_ASLEEP_INTERVAL", @asleep_interval)
-  def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", @driving_interval)
-  def default_interval, do: interval("POLLING_DEFAULT_INTERVAL", @default_interval)
+  def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", 2.5)
+  def default_interval, do: interval("POLLING_DEFAULT_INTERVAL", 15)
+  def online_interval, do: interval("POLLING_ONLINE_INTERVAL", 60)
 
   def identify(%Vehicle{display_name: name, vehicle_config: config}) do
     case config do
@@ -370,10 +369,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
             )
 
             {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
-             [broadcast_fetch(false), broadcast_summary(), schedule_fetch(60, data)]}
+             [broadcast_fetch(false), broadcast_summary(), schedule_fetch(online_interval(), data)]}
 
           _ ->
-            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(60, data)]}
+            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(online_interval(), data)]}
         end
 
       {:error, :not_signed_in} ->
