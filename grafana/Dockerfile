@@ -1,6 +1,6 @@
 # Ensure selecting a tag that is available for arm/v7, arm64, and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
-FROM grafana/grafana:10.4.2
+FROM grafana/grafana:11.0.0
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_AUTH_ANONYMOUS_ENABLED=false \
@@ -9,7 +9,6 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_SECURITY_ADMIN_USER=admin \
     GF_SECURITY_ALLOW_EMBEDDING=true \
     GF_SECURITY_DISABLE_GRAVATAR=true \
-    GF_SECURITY_ANGULAR_SUPPORT_ENABLED=false \
     GF_USERS_ALLOW_SIGN_UP=false \
     DATABASE_PORT=5432 \
     DATABASE_SSL_MODE=disable
