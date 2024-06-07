@@ -12,6 +12,7 @@
 - feat: Update TeslaFi importer to accept newer export formats (#3431 - @ithinuel)
 - feat: Upgrade PostgreSQL to v16 (#3884 -@enoch85)
 - feat: Respect Retry-After header on 429 response code (#3943 - @jlestel)
+- feat: use Grafana 11.0.0 (#3895 - @swiffer)
 
 #### Build, CI, internal
 
@@ -26,8 +27,7 @@
 
 #### Translations
 
-- feat: Update default.po for Thai translation (#3906 - @tomzt)
-- feat: Update default.po for thai (#3945 - @tomzt)
+- feat: Update default.po for Thai translation (#3906, #3945 - @tomzt)
 
 #### Documentation
 
