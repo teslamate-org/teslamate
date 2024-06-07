@@ -386,6 +386,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, data,
          [broadcast_fetch(false), broadcast_summary(), schedule_fetch(30, data)]}
 
+      {:error, :too_many_request, retry_after} ->
+        Logger.error("Too many request / Retry after #{retry_after} seconds", car_id: data.car.id)
+
+        {:keep_state, data,
+         [broadcast_fetch(false), broadcast_summary(), schedule_fetch(retry_after, data)]}
+
       {:error, reason} ->
         Logger.error("Error / #{inspect(reason)}", car_id: data.car.id)
 
