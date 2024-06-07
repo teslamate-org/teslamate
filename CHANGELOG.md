@@ -26,6 +26,7 @@
 #### Translations
 
 - feat: Update default.po for Thai translation (#3906 - @tomzt)
+- feat: Update default.po for thai (#3945 - @tomzt)
 
 #### Documentation
 
