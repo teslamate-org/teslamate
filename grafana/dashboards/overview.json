@@ -708,8 +708,7 @@
       "pluginVersion": "11.0.0",
       "targets": [
         {
-            "datasource": "TeslaMate"
-          },
+          "datasource": "TeslaMate",
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
