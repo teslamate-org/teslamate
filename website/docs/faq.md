@@ -63,3 +63,23 @@ Calling the [Vehicle API](https://www.teslaapi.io/vehicles/list#vehicle) does no
 ## Why are my Docker timestamp logs different than my machine?
 
 Docker container timezones default to UTC. To set the timezone for your container, use the `TZ` Environment Variable in your YML file. More information found at [Environment Variables](https://docs.teslamate.org/docs/configuration/environment_variables)
+
+## Which network flows must be authorized?
+
+⚠️ This is for advanced users!
+
+You might want to prohibit all network flows except those necessary for teslamate.
+This is a common practice to harden an installation (e.g., to reduce the risk of data leakage).
+
+The following flows must be authorized (egress traffic and DNS resolution):
+
+HTTPS (TCP/443)  
+auth.tesla.com  
+owner-api.teslamotors.com  
+streaming.vn.teslamotors.com  
+nominatim.openstreetmap.org  
+
+HTTP (TCP/80)  
+step.esa.int  
+
+Note: This may change when Teslamate is updated!
