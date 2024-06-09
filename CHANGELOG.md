@@ -34,6 +34,7 @@
 - doc: update backup path location to current directory to work around no write access to placeholder directory issue (#3908 - @JakobLichterfeld)
 - doc: Update MQTT examples of location/active_route (#3919 - @longzheng)
 - doc: Update HomeAssistant docs to use new MQTT values (#3923 - @longzheng)
+- doc: Add network flows that should be authorized (#3886 - @fl42)
 
 ## [1.29.1] - 2024-05-20
 
