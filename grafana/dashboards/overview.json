@@ -708,9 +708,7 @@
       "pluginVersion": "11.0.0",
       "targets": [
         {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "PC98BA2F4D77E1A42"
+            "datasource": "TeslaMate"
           },
           "editorMode": "code",
           "format": "table",
