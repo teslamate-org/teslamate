@@ -1659,7 +1659,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp parse_timestamp(ts), do: DateTime.from_unix!(ts, :millisecond)
 
-  defp schedule_fetch(%Data{} = data), do: schedule_fetch(10 |> max(minimum_interval()), :seconds, data)
+  defp schedule_fetch(%Data{} = data),
+    do: schedule_fetch(10 |> max(minimum_interval()), :seconds, data)
 
   defp schedule_fetch(n, %Data{} = data),
     do: schedule_fetch(n |> max(minimum_interval()), :seconds, data)
