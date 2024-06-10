@@ -28,6 +28,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   @asleep_interval 30
+  @minimum_interval 5
 
   @drive_timeout_min 15
 
@@ -41,10 +42,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def asleep_interval, do: interval("POLLING_ASLEEP_INTERVAL", @asleep_interval)
-  def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", 2.5)
+  def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", @minimum_interval)
   def default_interval, do: interval("POLLING_DEFAULT_INTERVAL", 15)
   def online_interval, do: interval("POLLING_ONLINE_INTERVAL", 60)
-  def minimum_interval, do: interval("POLLING_MINIMUM_INTERVAL", 5)
+  def minimum_interval, do: interval("POLLING_MINIMUM_INTERVAL", @minimum_interval)
 
   def identify(%Vehicle{display_name: name, vehicle_config: config}) do
     case config do
@@ -411,10 +412,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         interval =
           case state do
-            {:driving, _, _} -> 10
+            {:driving, _, _} -> round(default_interval() * 2 / 3)
             {:charging, _} -> default_interval()
-            :online -> 20
-            _ -> 30
+            :online -> round(default_interval() * 4 / 3)
+            _ -> default_interval() * 2
           end
 
         {:keep_state, data,
@@ -1652,8 +1653,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp parse_timestamp(ts), do: DateTime.from_unix!(ts, :millisecond)
 
-  defp schedule_fetch(%Data{} = data), do: schedule_fetch(10, :seconds, data)
-  defp schedule_fetch(n, %Data{} = data), do: schedule_fetch(n, :seconds, data)
+  defp schedule_fetch(%Data{} = data), do: schedule_fetch(10 |> max(minimum_interval()), :seconds, data)
+
+  defp schedule_fetch(n, %Data{} = data),
+    do: schedule_fetch(n |> max(minimum_interval()), :seconds, data)
 
   defp schedule_fetch(_n, _unit, %Data{import?: true}), do: {:state_timeout, 0, :fetch}
   defp schedule_fetch(n, unit, _), do: {:state_timeout, fetch_timeout(n, unit), :fetch}
