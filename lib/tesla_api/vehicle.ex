@@ -113,6 +113,18 @@ defmodule TeslaApi.Vehicle do
       %Tesla.Env{status: 408, body: %{"error" => "vehicle unavailable:" <> _}} = env ->
         {:error, %Error{reason: :vehicle_unavailable, env: env}}
 
+      %Tesla.Env{status: 429, headers: headers} ->
+        retry_after =
+          case Enum.find(headers, fn {key, _value} -> key == "retry-after" end) do
+            nil ->
+              "300"
+
+            {"retry-after", value} ->
+              value
+          end
+
+        {:error, %Error{reason: :too_many_request, message: String.to_integer(retry_after)}}
+
       %Tesla.Env{status: 504} = env ->
         {:error, %Error{reason: :timeout, env: env}}
 

@@ -11,25 +11,33 @@
 - fix: Update statistics.json: change back uid (#3907 -@DrMichael)
 - feat: Update TeslaFi importer to accept newer export formats (#3431 - @ithinuel)
 - feat: Upgrade PostgreSQL to v16 (#3884 -@enoch85)
+- feat: Respect Retry-After header on 429 response code (#3943 - @jlestel)
+- feat: use Grafana 11.0.0 (#3895 - @swiffer)
 
 #### Build, CI, internal
 
 - ci: Upgrade PostgreSQL to v16 in elixir workflow (#3916 - @JakobLichterfeld)
+- build(deps): bump docker/login-action from 3.1.0 to 3.2.0 (#3933)
+- build(deps): bump elixir from 1.16.1-otp-26 to 1.16.2-otp-26 (#3935 - @JakobLichterfeld)
 
 #### Dashboards
 
 - Remove A lot of empty space on the drive graph (#3927 - @jheredianet)
 - Add more ways to recognize Supercharger locations (#3863 -@woyteck1)
+- Projected Range fix (using usable_battery_level) (#3859 -@woyteck1)
+- Update and fix timeline dashboard (#3951 -@jheredianet)
+- Remove A lot of empty space on the drive graph (#3950 -@jheredianet)
 
 #### Translations
 
-- feat: Update default.po for Thai translation (#3906 - @tomzt)
+- feat: Update default.po for Thai translation (#3906, #3945 - @tomzt)
 
 #### Documentation
 
 - doc: update backup path location to current directory to work around no write access to placeholder directory issue (#3908 - @JakobLichterfeld)
 - doc: Update MQTT examples of location/active_route (#3919 - @longzheng)
 - doc: Update HomeAssistant docs to use new MQTT values (#3923 - @longzheng)
+- doc: Add network flows that should be authorized (#3886 - @fl42)
 
 ## [1.29.1] - 2024-05-20
 

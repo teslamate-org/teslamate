@@ -55,6 +55,7 @@ config/*.env
 .eclipse/
 .elixir_ls/
 /.project
+.vscode/
 
 # Mac files
 .DS_Store

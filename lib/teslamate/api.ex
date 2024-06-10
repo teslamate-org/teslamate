@@ -278,6 +278,10 @@ defmodule TeslaMate.Api do
         Logger.error("TeslaApi.Error / #{status} – #{inspect(body, pretty: true)}")
         {:error, reason}
 
+      {:error, %TeslaApi.Error{reason: :too_many_request, message: retry_after}} ->
+        Logger.warning("TeslaApi.Error / :too_many_request #{retry_after}")
+        {:error, :too_many_request, retry_after}
+
       {:error, %TeslaApi.Error{reason: reason, message: msg}} ->
         if is_binary(msg) and msg != "", do: Logger.warning("TeslaApi.Error / #{msg}")
         {:error, reason}
