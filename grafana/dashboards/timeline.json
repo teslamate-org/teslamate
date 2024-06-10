@@ -786,7 +786,7 @@
           "value": ""
         },
         "hide": 0,
-        "label": "Text Filter",
+        "label": "Address Filter",
         "name": "text_filter",
         "options": [
           {
