@@ -8,7 +8,7 @@ An LED illuminated acrylic Tesla Model 3. Its color and scale of light depend on
 
 LINK: [github.com/gaussmeter/gaussmeter](https://github.com/gaussmeter/gaussmeter)
 
-## [MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
+## [MMM-Teslamate](https://github.com/lildude/ha-addon-teslamate)
 
 A [Magic Mirror](https://magicmirror.builders/) Module for TeslaMate.
 

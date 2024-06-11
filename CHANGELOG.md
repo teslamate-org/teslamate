@@ -24,6 +24,9 @@
 
 - Remove A lot of empty space on the drive graph (#3927 - @jheredianet)
 - Add more ways to recognize Supercharger locations (#3863 -@woyteck1)
+- Projected Range fix (using usable_battery_level) (#3859 -@woyteck1)
+- Update and fix timeline dashboard (#3951 -@jheredianet)
+- Remove A lot of empty space on the drive graph (#3950 -@jheredianet)
 
 #### Translations
 
@@ -35,6 +38,7 @@
 - doc: Update MQTT examples of location/active_route (#3919 - @longzheng)
 - doc: Update HomeAssistant docs to use new MQTT values (#3923 - @longzheng)
 - doc: Add network flows that should be authorized (#3886 - @fl42)
+- doc: Update projects.md with new MMM (#3953 - @top-gun)
 
 ## [1.29.1] - 2024-05-20
 
