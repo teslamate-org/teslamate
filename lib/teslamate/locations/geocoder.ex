@@ -179,5 +179,5 @@ defmodule TeslaMate.Locations.Geocoder do
   end
 
   defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warning
-  defp log_level(%Tesla.Env{}), do: Mix.Project.config()[:logger][:level] || :info
+  defp log_level(%Tesla.Env{}), do: String.to_existing_atom(System.get_env("LOG_LEVEL", "info"))
 end

@@ -6,11 +6,8 @@ config :teslamate, TeslaMateWeb.Endpoint,
   server: true,
   version: Application.spec(:teslamate, :vsn)
 
-log_level = System.get_env("LOG_LEVEL", "info")
-log_level_atom = String.to_existing_atom(log_level)
-
 config :logger,
-  level: log_level_atom
+  level: String.to_existing_atom(System.get_env("LOG_LEVEL", "info"))
 
 config :logger, :console,
   format: "$date $time $metadata[$level] $message\n",

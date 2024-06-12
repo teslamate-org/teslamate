@@ -114,5 +114,5 @@ defmodule TeslaMate.Updater do
   end
 
   defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warning
-  defp log_level(%Tesla.Env{}), do: :debug
+  defp log_level(%Tesla.Env{}), do: String.to_existing_atom(System.get_env("LOG_LEVEL", "debug"))
 end

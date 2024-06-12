@@ -14,7 +14,7 @@ defmodule TeslaApi do
   defp log_level(%Tesla.Env{} = env) when env.status >= 500, do: :warning
 
   defp log_level(%Tesla.Env{} = env) when env.status >= 400,
-    do: Mix.Project.config()[:logger][:level] || :info
+    do: String.to_existing_atom(System.get_env("LOG_LEVEL", "info"))
 
-  defp log_level(%Tesla.Env{}), do: Mix.Project.config()[:logger][:level] || :info
+  defp log_level(%Tesla.Env{}), do: String.to_existing_atom(System.get_env("LOG_LEVEL", "info"))
 end
