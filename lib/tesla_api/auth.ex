@@ -94,5 +94,5 @@ defmodule TeslaApi.Auth do
   end
 
   defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :error
-  defp log_level(%Tesla.Env{}), do: String.to_existing_atom(System.get_env("LOG_LEVEL", "info"))
+  defp log_level(%Tesla.Env{}), do: :info
 end
