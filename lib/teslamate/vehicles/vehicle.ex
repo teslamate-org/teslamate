@@ -28,7 +28,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   @asleep_interval 30
-  @minimum_interval 5
 
   @drive_timeout_min 15
 
@@ -42,11 +41,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def asleep_interval, do: interval("POLLING_ASLEEP_INTERVAL", @asleep_interval)
-  def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", @minimum_interval)
+  def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", 2.5)
   def default_interval, do: interval("POLLING_DEFAULT_INTERVAL", 15)
   def online_interval, do: interval("POLLING_ONLINE_INTERVAL", 60)
   def charging_interval, do: interval("POLLING_CHARGING_INTERVAL", 5)
-  def minimum_interval, do: interval("POLLING_MINIMUM_INTERVAL", @minimum_interval)
+  def minimum_interval, do: interval("POLLING_MINIMUM_INTERVAL", 0)
 
   def identify(%Vehicle{display_name: name, vehicle_config: config}) do
     case config do
@@ -1660,11 +1659,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp parse_timestamp(ts), do: DateTime.from_unix!(ts, :millisecond)
 
-  defp schedule_fetch(%Data{} = data),
-    do: schedule_fetch(10, :seconds, data)
-
-  defp schedule_fetch(0, %Data{} = data),
-    do: schedule_fetch(0, :seconds, data)
+  defp schedule_fetch(%Data{} = data), do: schedule_fetch(10, :seconds, data)
 
   defp schedule_fetch(n, %Data{} = data),
     do: schedule_fetch(n |> max(minimum_interval()), :seconds, data)
