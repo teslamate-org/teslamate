@@ -14,5 +14,5 @@ defmodule TeslaApi do
   defp log_level(%Tesla.Env{} = env) when env.status >= 500, do: :warning
 
   defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :info
-  defp log_level(%Tesla.Env{}), do: :info
+  defp log_level(%Tesla.Env{}), do: :debug
 end
