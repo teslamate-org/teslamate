@@ -418,10 +418,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         interval =
           case state do
-            {:driving, _, _} -> round(default_interval() * 2 / 3)
-            {:charging, _} -> default_interval()
-            :online -> round(default_interval() * 4 / 3)
-            _ -> default_interval() * 2
+            {:driving, _, _} -> 10
+            {:charging, _} -> 15
+            :online -> 20
+            _ -> 30
           end
 
         {:keep_state, data,
