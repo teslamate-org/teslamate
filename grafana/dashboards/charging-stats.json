@@ -1119,7 +1119,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  20 as lower,\r\n  CASE\r\n    WHEN substring(vin, 7, 1) = 'F'\r\n    THEN 100\r\n    ELSE 80\r\n  END as upper\r\nfrom cars ",
+          "rawSql": "SELECT\r\n  20 as lower,\r\n  CASE\r\n    WHEN substring(vin, 7, 1) = 'F' or (substring(vin, 0, 3) != 'LRW' and substring(vin, 8, 1) = 'S' and substring(vin, 7, 1) = 'E')\r\n    THEN 100\r\n    ELSE 80\r\n  END as upper\r\nfrom cars ",
           "refId": "B",
           "sql": {
             "columns": [
@@ -1973,7 +1973,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  CASE\r\n    WHEN substring(vin, 7, 1) = 'F'\r\n    THEN 100\r\n    ELSE 81\r\n  END as high,\r\n  CASE\r\n    WHEN substring(vin, 7, 1) = 'F'\r\n    THEN 100\r\n    ELSE 91\r\n  END as highest\r\nfrom cars ",
+          "rawSql": "SELECT\r\n  CASE\r\n    WHEN substring(vin, 7, 1) = 'F' or (substring(vin, 0, 3) != 'LRW' and substring(vin, 8, 1) = 'S' and substring(vin, 7, 1) = 'E')\r\n    THEN 100\r\n    ELSE 81\r\n  END as high,\r\n  CASE\r\n    WHEN substring(vin, 7, 1) = 'F' or (substring(vin, 0, 3) != 'LRW' and substring(vin, 8, 1) = 'S' and substring(vin, 7, 1) = 'E')\r\n    THEN 100\r\n    ELSE 91\r\n  END as highest\r\nfrom cars ",
           "refId": "B",
           "sql": {
             "columns": [
@@ -2537,6 +2537,6 @@
   "timezone": "",
   "title": "Charging Stats",
   "uid": "-pkIkhmRz",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }

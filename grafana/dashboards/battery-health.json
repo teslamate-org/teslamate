@@ -17,7 +17,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.4.0"
+      "version": "11.0.0"
     },
     {
       "type": "datasource",
@@ -1256,7 +1256,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  0 as lowest,\r\n  20 as lower,\r\n  CASE\r\n    WHEN substring(vin, 7, 1) = 'F'\r\n    THEN 100\r\n    ELSE 81\r\n  END as upper\r\nfrom cars ",
+          "rawSql": "SELECT\r\n  0 as lowest,\r\n  20 as lower,\r\n  CASE\r\n    WHEN substring(vin, 7, 1) = 'F' or (substring(vin, 0, 3) != 'LRW' and substring(vin, 8, 1) = 'S' and substring(vin, 7, 1) = 'E')\r\n    THEN 100\r\n    ELSE 81\r\n  END as upper\r\nfrom cars ",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1948,6 +1948,6 @@
   "timezone": "browser",
   "title": "Battery Health",
   "uid": "jchmRiqUfXgTM",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
