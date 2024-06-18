@@ -1,6 +1,8 @@
 # Changelog
 
-## [unreleased]
+## [1.29.2]
+
+This release improve TeslaMate behavior on Tesla API rate limits, which occur from time to time. We respect the retry-after header on 429 response code to not hammer the API unnecessarily in these cases.
 
 ### New features
 
@@ -1968,7 +1970,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.2...HEAD
+[1.29.2]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...v1.29.2
 [1.29.1]: https://github.com/teslamate-org/teslamate/compare/v1.29.0...v1.29.1
 [1.29.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...v1.29.0
 [1.28.5]: https://github.com/teslamate-org/teslamate/compare/v1.28.4...v1.28.5
