@@ -19,6 +19,7 @@
 - ci: Upgrade PostgreSQL to v16 in elixir workflow (#3916 - @JakobLichterfeld)
 - build(deps): bump docker/login-action from 3.1.0 to 3.2.0 (#3933)
 - build(deps): bump elixir from 1.16.1-otp-26 to 1.16.2-otp-26 (#3935 - @JakobLichterfeld)
+- build(deps): bump braces from 3.0.2 to 3.0.3 in /website #3967
 
 #### Dashboards
 
