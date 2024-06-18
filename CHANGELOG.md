@@ -29,6 +29,7 @@
 - Update and fix timeline dashboard (#3951 -@jheredianet)
 - Remove A lot of empty space on the drive graph (#3950 -@jheredianet)
 - Integrate LFP specific dashboards into regular dashboards (#3966 - @swiffer)
+- Export all Dashboards via Grafana 11.0.0 (#3971 - @swiffer)
 
 #### Translations
 
