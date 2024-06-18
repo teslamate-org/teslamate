@@ -27,6 +27,7 @@
 - Projected Range fix (using usable_battery_level) (#3859 -@woyteck1)
 - Update and fix timeline dashboard (#3951 -@jheredianet)
 - Remove A lot of empty space on the drive graph (#3950 -@jheredianet)
+- Integrate LFP specific dashboards into regular dashboards (#3966 - @swiffer)
 
 #### Translations
 
