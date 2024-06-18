@@ -1,5 +1,19 @@
 # Changelog
 
+## [unreleased]
+
+### New features
+
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [1.29.2]
 
 This release improve TeslaMate behavior on Tesla API rate limits, which occur from time to time. We respect the retry-after header on 429 response code to not hammer the API unnecessarily in these cases.
