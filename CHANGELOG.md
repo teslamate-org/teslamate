@@ -4,6 +4,25 @@
 
 ### New features
 
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+- doc: remove outdated, unsupported, unmaintained portainer doc (#3972 - @JakobLichterfeld)
+- doc: fix MMM-Teslamate and ha-addon-teslamate project links (#3973 - @olexs)
+
+## [1.29.2]
+
+This release improve TeslaMate behavior on Tesla API rate limits, which occur from time to time. We respect the retry-after header on 429 response code to not hammer the API unnecessarily in these cases.
+
+### New features
+
 - feat: Dynamic endpoints and token to use official Tesla API (self-hosted or from third party provider) (#3903 - @jlestel)
 
 ### Improvements and bug fixes
@@ -19,6 +38,7 @@
 - ci: Upgrade PostgreSQL to v16 in elixir workflow (#3916 - @JakobLichterfeld)
 - build(deps): bump docker/login-action from 3.1.0 to 3.2.0 (#3933)
 - build(deps): bump elixir from 1.16.1-otp-26 to 1.16.2-otp-26 (#3935 - @JakobLichterfeld)
+- build(deps): bump braces from 3.0.2 to 3.0.3 in /website #3967
 
 #### Dashboards
 
@@ -27,6 +47,8 @@
 - Projected Range fix (using usable_battery_level) (#3859 -@woyteck1)
 - Update and fix timeline dashboard (#3951 -@jheredianet)
 - Remove A lot of empty space on the drive graph (#3950 -@jheredianet)
+- Integrate LFP specific dashboards into regular dashboards (#3966 - @swiffer)
+- Export all Dashboards via Grafana 11.0.0 (#3971 - @swiffer)
 
 #### Translations
 
@@ -1965,7 +1987,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.2...HEAD
+[1.29.2]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...v1.29.2
 [1.29.1]: https://github.com/teslamate-org/teslamate/compare/v1.29.0...v1.29.1
 [1.29.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...v1.29.0
 [1.28.5]: https://github.com/teslamate-org/teslamate/compare/v1.28.4...v1.28.5

@@ -17,7 +17,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.4.0"
+      "version": "11.0.0"
     },
     {
       "type": "datasource",
@@ -149,7 +149,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -296,7 +296,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -381,7 +381,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -603,6 +603,7 @@
           "values": false
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
@@ -723,7 +724,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -822,7 +823,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -947,7 +948,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -1159,20 +1160,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-red",
+                "color": "transparent",
                 "value": null
-              },
-              {
-                "color": "semi-dark-green",
-                "value": 20
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 80
-              },
-              {
-                "color": "light-blue",
-                "value": 100
               }
             ]
           },
@@ -1206,7 +1195,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -1257,9 +1246,74 @@
               "type": "macro"
             }
           ]
+        },
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  0 as lowest,\r\n  20 as lower,\r\n  CASE\r\n    WHEN substring(vin, 7, 1) = 'F' or (substring(vin, 0, 3) != 'LRW' and substring(vin, 8, 1) = 'S' and substring(vin, 7, 1) = 'E')\r\n    THEN 100\r\n    ELSE 81\r\n  END as upper\r\nfrom cars ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Current SOC",
+      "transformations": [
+        {
+          "id": "configFromData",
+          "options": {
+            "applyTo": {
+              "id": "byFrameRefID",
+              "options": "SOC"
+            },
+            "configRefId": "A",
+            "mappings": [
+              {
+                "fieldName": "lower",
+                "handlerArguments": {
+                  "threshold": {
+                    "color": "green"
+                  }
+                },
+                "handlerKey": "threshold1"
+              },
+              {
+                "fieldName": "upper",
+                "handlerArguments": {
+                  "threshold": {
+                    "color": "orange"
+                  }
+                },
+                "handlerKey": "threshold1"
+              },
+              {
+                "fieldName": "lowest",
+                "handlerKey": "threshold1"
+              }
+            ]
+          }
+        }
+      ],
       "type": "bargauge"
     },
     {
@@ -1335,7 +1389,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -1435,7 +1489,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -1611,6 +1665,7 @@
         ],
         "seriesMapping": "manual",
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
@@ -1882,12 +1937,17 @@
       }
     ]
   },
-    "timepicker": {
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timeRangeUpdatedDuringEditOrView": false,
+  "timepicker": {
     "hidden": true
   },
   "timezone": "browser",
   "title": "Battery Health",
   "uid": "jchmRiqUfXgTM",
-  "version": 18,
+  "version": 6,
   "weekStart": ""
 }
