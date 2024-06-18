@@ -36,7 +36,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     System.get_env(env_var)
     |> case do
       nil -> default
-      interval -> String.to_integer(interval)
+      interval -> String.to_integer(interval) |> max(default)
     end
   end
 
