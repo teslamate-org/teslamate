@@ -10,7 +10,7 @@ Tesla now provides official APIs: the Fleet API and the Telemetry API, which rep
 
 **Migration to the new API depends on your Tesla account type:**
 
-1. **_Tesla Business Fleet users:_** the Owner API is [being shut down](https://developer.tesla.com/docs/fleet-api#2024-03-26-shutting-down-legacy-vehicle-api-endpoints) for Tesla Business Fleet users. This is done gradually and an error message means that they must now use the official API.
+1. **_[Tesla Business Fleet users](https://www.tesla.com/fleet):_** the Owner API is [being shut down](https://developer.tesla.com/docs/fleet-api#2024-03-26-shutting-down-legacy-vehicle-api-endpoints). Fleet vehicles are upgraded gradually and an error message means that they must now use the official API.
 
 1. **_Individual users:_** the Owner API is currently still accessible. Even if it seems to incorporate new limitations similar to those present on the official API.
 
@@ -29,24 +29,21 @@ The [Tesla Fleet Telemetry](https://github.com/teslamotors/fleet-telemetry) diff
 ### How to Use Tesla APIs
 
 The process to use the official Tesla APIs is complex.
-
 You can use a third-party provider to easily access these APIs.
 
 ## Guide for Third-Party Providers
 
 Environment variables allow changing the API and streaming endpoints.
-
 You must obtain the `URL` to use for your third-party API calls and the `TOKEN` that serves to identify your calls.
 
 ### [MyTeslaMate](https://www.myteslamate.com) (free)
 #### MyTeslaMate Fleet API
-Log in the [MyTeslaMate](https://app.myteslamate.com) website **with your Tesla account** and go to the [MyTeslaMate Fleet](https://app.myteslamate.com/fleet) page to get your `TOKEN`.
-
-You must use your `TOKEN` instead of _`xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx`_
+1. Log in the [MyTeslaMate](https://app.myteslamate.com) website **with your Tesla account** and go to the [MyTeslaMate Fleet](https://app.myteslamate.com/fleet) page to get your `TOKEN`. 
+1. Add the following environment variables (using your `TOKEN` instead of _`xxxx-xxxx-xxxx-xxxx`_):
 
 ```yml
 # API Fleet
-- TOKEN=?token=xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx
+- TOKEN=?token=xxxx-xxxx-xxxx-xxxx
 - TESLA_API_HOST=https://api.myteslamate.com
 - TESLA_AUTH_HOST=https://api.myteslamate.com
 - TESLA_AUTH_PATH=/api/oauth2/v3
@@ -55,27 +52,27 @@ You must use your `TOKEN` instead of _`xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx`_
 #### MyTeslaMate Streaming
 MyTeslaMate also provides streaming by [reproducing the old streaming from the data sent by Fleet Telemetry](https://github.com/MyTeslaMate/websocket). 
 
-You need to "_Pair your vehicle(s)_" on the [fleet](https://app.myteslamate.com/fleet) page and then use the following dedicated environment variables:
-
-```yml
-# Streaming from Fleet Telemetry
-- TESLA_WSS_HOST=wss://streaming.myteslamate.com
-- TESLA_WSS_TLS_ACCEPT_INVALID_CERTS=true
-- TESLA_WSS_USE_VIN=true
-```
+1. You need to "_Pair your vehicle(s)_" on the [fleet](https://app.myteslamate.com/fleet) page
+1. Use the following dedicated environment variables:
+    ```yml
+    - TESLA_WSS_HOST=wss://streaming.myteslamate.com
+    - TESLA_WSS_TLS_ACCEPT_INVALID_CERTS=true
+    - TESLA_WSS_USE_VIN=true
+    ```
+1. Restart your instance    
 
 ### [Teslemetry](https://teslemetry.com/pricing) (paid)
 
 #### Teslemetry Fleet API
-Log in the [Teslemetry website](https://teslemetry.com) and create your `TOKEN`. Use this `TOKEN` instead of _`xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx`_ and add the following environment variables.
-
-```yml
-# API Fleet
-- TOKEN=?token=xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx
-- TESLA_API_HOST=https://api.teslemetry.com
-- TESLA_AUTH_HOST=https://api.teslemetry.com
-- TESLA_AUTH_PATH=/api/oauth2/v3
-```
+1. Log in the [Teslemetry website](https://teslemetry.com) and create your `TOKEN`. 
+1. Use this `TOKEN` instead of _`xxxx-xxxx-xxxx-xxxx`_ and add the following environment variables:
+    ```yml
+    - TOKEN=?token=xxxx-xxxx-xxxx-xxxx
+    - TESLA_API_HOST=https://api.teslemetry.com
+    - TESLA_AUTH_HOST=https://api.teslemetry.com
+    - TESLA_AUTH_PATH=/api/oauth2/v3
+    ```
+1. Restart your instance
 
 #### Streaming
 **_Important: no streaming provided by Teslemetry, you MUST disable manually the streaming in Teslamate settings._**
@@ -101,19 +98,18 @@ _Authentication endpoint remains unchanged. Teslamate will take care of the toke
 
 ### Tesla Streaming
 
-**_Important: if you don't setup the streaming, you MUST disable manually the streaming in Teslamate settings._**
+**_Important: if you don't setup your own streaming, you MUST disable manually the streaming in Teslamate settings._**
 
-To get your own streaming server, you can follow these steps:
+To setup your own streaming server, you can follow these steps:
 1. Setup a [Tesla Fleet Telemetry](https://github.com/teslamotors/fleet-telemetry) instance on a public domain (eg: _telemetry.mydomain.com_)
 1. Add a [Google pubsub dispatcher](https://github.com/teslamotors/fleet-telemetry?tab=readme-ov-file#backendsdispatchers) to your own GCP PubSub.
-1. Setup a [Streaming Server from Fleet Telemetry Events](https://github.com/MyTeslaMate/websocket) on a public domain (eg: _streaming.mydomain.com_)
-1. Manually create a subscription to the `telemetry_V` PubSub with:
+1. Setup a [MyTeslaMate Streaming Server from Fleet Telemetry Events](https://github.com/MyTeslaMate/websocket) on a public domain (eg: _streaming.mydomain.com_)
+1. Manually create a subscription to the `telemetry_V` created in PubSub by the Tesla Telemetry with:
     - Delivery type: Push
     - Endpoint URL: https://streaming.mydomain.com
 1. Update your environment variables:
-
-```yml
-- TESLA_WSS_HOST=wss://streaming.mydomain.com
-- TESLA_WSS_TLS_ACCEPT_INVALID_CERTS=true
-- TESLA_WSS_USE_VIN=true
-```
+    ```yml
+    - TESLA_WSS_HOST=wss://streaming.mydomain.com
+    - TESLA_WSS_TLS_ACCEPT_INVALID_CERTS=true
+    - TESLA_WSS_USE_VIN=true
+    ```
