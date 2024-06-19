@@ -84,12 +84,13 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 
 **_Important: no streaming provided by Teslemetry, you MUST disable manually the streaming in Teslamate settings._**
 
-## Guide for official Tesla API
+## Guide to using the official Tesla API directly (free)
 
 ### Requirements
 
-- A dedicated public hosting
 - Advanced IT skills
+- A dedicated public hosting
+- A [free Tesla Fleet API plan](https://developer.tesla.com/docs/fleet-api#membership-levels)
 
 ### Tesla Fleet API
 
