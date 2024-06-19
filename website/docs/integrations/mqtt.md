@@ -40,6 +40,10 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/sentry_mode`                   | false                                        | Indicates if Sentry Mode is active                                                    |
 | `teslamate/cars/$car_id/windows_open`                  | false                                        | Indicates if any of the windows are open                                              |
 | `teslamate/cars/$car_id/doors_open`                    | false                                        | Indicates if any of the doors are open                                                |
+| `teslamate/cars/$car_id/driver_front_door_open`        | false                                        | Indicates if the driver-side front door is open                                       |
+| `teslamate/cars/$car_id/driver_rear_door_open`         | false                                        | Indicates if the driver-side rear door is open                                        |
+| `teslamate/cars/$car_id/passenger_front_door_open`     | false                                        | Indicates if the passenger-side front door is open                                    |
+| `teslamate/cars/$car_id/passenger_rear_door_open`      | false                                        | Indicates if the passenger-side rear door is open                                     |
 | `teslamate/cars/$car_id/trunk_open`                    | false                                        | Indicates if the trunk is open                                                        |
 | `teslamate/cars/$car_id/frunk_open`                    | false                                        | Indicates if the frunk is open                                                        |
 | `teslamate/cars/$car_id/is_user_present`               | false                                        | Indicates if a user is present in the vehicle                                         |
