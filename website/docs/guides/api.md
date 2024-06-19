@@ -34,7 +34,7 @@ You must obtain the `URL` to use for your third-party API calls and the `TOKEN` 
 
 ### [MyTeslaMate](https://www.myteslamate.com) (free)
 
-Simply log in with your Tesla account and then check the fleet page to get the environment variables to use.
+Simply log in with your Tesla account and go to the [MyTeslamate Fleet](https://app.myteslamate.com/fleet) page to get your `TOKEN`.
 
 You must use your `TOKEN` instead of _`xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx`_
 
@@ -48,7 +48,7 @@ You must use your `TOKEN` instead of _`xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx`_
 
 MyTeslaMate also provides streaming by [reproducing the old streaming from the data sent by Telemetry](https://github.com/MyTeslaMate/websocket). 
 
-You need to use dedicated environment variables : 
+You need to "_Pair your vehicle(s)_" on the [MyTeslamate Fleet](https://app.myteslamate.com/fleet) page and then use dedicated environment variables :
 
 ```yml
 # Streaming from Telemetry
