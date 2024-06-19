@@ -19,7 +19,9 @@ defmodule TeslaMate.HTTP do
       |> Keyword.pop(:headers, [])
 
     verify_mode = System.get_env("TESLA_HTTP_TLS_ACCEPT_INVALID_CERTS", "verify_peer")
+    IO.inspect(verify_mode, label: "SSL Verification Mode")
     opts = Keyword.put(opts, :transport_opts, [ssl: [verify: String.to_atom(verify_mode)]])
+    IO.inspect(opts, label: "Final opts")
 
     Finch.build(:get, url, headers, nil)
     |> Finch.request(__MODULE__, opts)
@@ -32,7 +34,9 @@ defmodule TeslaMate.HTTP do
       |> Keyword.pop(:headers, [])
 
     verify_mode = System.get_env("TESLA_HTTP_TLS_ACCEPT_INVALID_CERTS", "verify_peer")
+    IO.inspect(verify_mode, label: "SSL Verification Mode")
     opts = Keyword.put(opts, :transport_opts, [ssl: [verify: String.to_atom(verify_mode)]])
+    IO.inspect(opts, label: "Final opts")
 
     Finch.build(:post, url, headers, body)
     |> Finch.request(__MODULE__, opts)
