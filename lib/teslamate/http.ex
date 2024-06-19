@@ -14,20 +14,20 @@ defmodule TeslaMate.HTTP do
     Finch.child_spec(name: __MODULE__, pools: @pools)
   end
 
-#  def get(url, opts \\ []) do
-#    {headers, opts} =
-#      opts
-#      |> Keyword.put_new(:pool_timeout, @pool_timeout)
-#      |> Keyword.pop(:headers, [])
-#
-#    verify_mode = System.get_env("TESLA_HTTP_TLS_ACCEPT_INVALID_CERTS", "verify_peer")
-#    Logger.info("verify_mode =  #{verify_mode}")
-#    opts = Keyword.put(opts, :transport_opts, [ssl: [verify: String.to_atom(verify_mode)]])
-#    Logger.info("opts =  #{opts}")
-#
-#    Finch.build(:get, url, headers, nil)
-#    |> Finch.request(__MODULE__, opts)
-#  end
+  def get(url, opts \\ []) do
+    {headers, opts} =
+      opts
+      |> Keyword.put_new(:pool_timeout, @pool_timeout)
+      |> Keyword.pop(:headers, [])
+
+    verify_mode = System.get_env("TESLA_HTTP_TLS_ACCEPT_INVALID_CERTS", "verify_peer")
+    Logger.info("verify_mode =  #{verify_mode}")
+    opts = Keyword.put(opts, :transport_opts, [ssl: [verify: String.to_atom(verify_mode)]])
+    Logger.info("opts =  #{opts}")
+
+    Finch.build(:get, url, headers, nil)
+    |> Finch.request(__MODULE__, opts)
+  end
 
   def post(url, body \\ nil, opts \\ []) do
     {headers, opts} =
