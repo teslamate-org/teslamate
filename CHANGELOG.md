@@ -4,6 +4,8 @@
 
 ### New features
 
+- Track open/close states for individual doors (#3962 - @SaswatPadhi), new MQTT values see [documentation](https://docs.teslamate.org/docs/integrations/mqtt)
+
 ### Improvements and bug fixes
 
 #### Build, CI, internal
