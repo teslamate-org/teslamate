@@ -94,21 +94,24 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 
 ### Tesla Fleet API
 
-You can follow the official [Setup documentation](https://developer.tesla.com/docs/fleet-api#setup):
-
-1. Set up a third-party account at [developer.tesla.com](https://developer.tesla.com)
-1. Complete registration of an account: you need to share your public key on a public domain (eg: _api.mydomain.com_)
-1. Request authorization permissions from a customer: _the generation of tokens usable in Teslamate no longer requires a third-party application as with the Owner API_
-1. Send drivers a "Pairing request" to be able to use your own [Tesla Vehicle Command Protocol http proxy to send commands](https://github.com/teslamotors/vehicle-command?tab=readme-ov-file#using-the-http-proxy).
-   This proxy must be accessible from your Teslamate instance. You need to host this http proxy on the same domain
+1. Set up a third-party account at [developer.tesla.com](https://developer.tesla.com) as described on the [Tesla docs](https://developer.tesla.com/docs/fleet-api#setup)
 1. Add the following environment variable with your own domain :
+      1. Use [the correct region](https://developer.tesla.com/docs/fleet-api#endpoints-and-regional-requirements) in the `TESLA_API_HOST` field:
+         - North America, Asia-Pacific (excluding China): https://fleet-api.prd.na.vn.cloud.tesla.com
+         - Europe, Middle East, Africa: https://fleet-api.prd.eu.vn.cloud.tesla.com
+         - China: https://fleet-api.prd.cn.vn.cloud.tesla.cn 
+      1. Update the `TESLA_AUTH_CLIENT_ID` with the client ID of your Tesla application.
+   ```yml
+   # API Fleet
+   - TESLA_API_HOST=https://fleet-api.prd.eu.vn.cloud.tesla.com
+   - TESLA_AUTH_HOST=https://auth.tesla.com
+   - TESLA_AUTH_PATH=/oauth2/v3
+   - TESLA_AUTH_CLIENT_ID=xxxxxxxxx-xxxx-xxxx-xxxxxxxxxxxx
+   ```
+1. (Optional) If you want to send commands or use Tesla Telemetry:
+   1. Send drivers a "Pairing request" to be able to use your own [Tesla Vehicle Command Protocol http proxy to send commands](https://github.com/teslamotors/vehicle-command?tab=readme-ov-file#using-the-http-proxy)
+   1. Send test commands or setup Telemetry to [stream it to your Teslamate](#streaming-via-tesla-telemetry)
 
-```yml
-# API Fleet
-- TESLA_API_HOST=https://api.mydomain.com
-```
-
-_Authentication endpoint remains unchanged. Teslamate will take care of the tokens renewal as usual._
 
 ### Streaming via Tesla Telemetry
 
