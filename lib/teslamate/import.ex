@@ -192,6 +192,9 @@ defmodule TeslaMate.Import do
 
   defp parse_fname(name) do
     case name do
+      <<m::binary-size(2), y::binary-size(4), ".csv"::bitstring>> ->
+        parse_date(y, m)
+
       <<"TeslaFi"::bitstring, m::binary-size(2), y::binary-size(4), ".csv"::bitstring>> ->
         parse_date(y, m)
 

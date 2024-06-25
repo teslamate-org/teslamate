@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.16.1"
+          - elixir: "1.16.2"
             otp: "26"
             lint: true
 
@@ -123,13 +123,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.16.1"
+          - elixir: "1.16.2"
             otp: "26"
             report_coverage: true
 
     services:
       db:
-        image: postgres:15
+        image: postgres:16
         ports: ["5432:5432"]
         env:
           POSTGRES_PASSWORD: postgres

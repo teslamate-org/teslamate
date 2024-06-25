@@ -18,7 +18,7 @@ defmodule TeslaApi.Auth do
   adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000
 
   plug TeslaApi.Middleware.FollowRedirects, except: [@redirect_uri]
-  plug Tesla.Middleware.BaseUrl, "https://auth.tesla.com"
+  plug Tesla.Middleware.BaseUrl, System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com")
   plug Tesla.Middleware.Headers, @default_headers
   plug Tesla.Middleware.JSON
   plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
@@ -56,9 +56,24 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp derive_issuer_url_from_oat("qts-" <> _), do: {:ok, "https://auth.tesla.com/oauth2/v3"}
-  defp derive_issuer_url_from_oat("eu-" <> _), do: {:ok, "https://auth.tesla.com/oauth2/v3"}
-  defp derive_issuer_url_from_oat("cn-" <> _), do: {:ok, "https://auth.tesla.cn/oauth2/v3"}
+  defp derive_issuer_url_from_oat("qts-" <> _),
+    do:
+      {:ok,
+       System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com") <>
+         System.get_env("TESLA_AUTH_PATH", "/oauth2/v3")}
+
+  defp derive_issuer_url_from_oat("eu-" <> _),
+    do:
+      {:ok,
+       System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com") <>
+         System.get_env("TESLA_AUTH_PATH", "/oauth2/v3")}
+
+  defp derive_issuer_url_from_oat("cn-" <> _),
+    do:
+      {:ok,
+       System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com") <>
+         System.get_env("TESLA_AUTH_PATH", "/oauth2/v3")}
+
   defp derive_issuer_url_from_oat(_), do: :error
 
   defp decode_jwt_payload(jwt) do

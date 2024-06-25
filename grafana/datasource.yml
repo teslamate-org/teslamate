@@ -1,19 +1,19 @@
 apiVersion: 1
 
 datasources:
-- name: TeslaMate
-  type: postgres
-  url: $DATABASE_HOST:$DATABASE_PORT
-  user: $DATABASE_USER
-  database: $DATABASE_NAME
-  access: proxy
-  basicAuth: false
-  withCredentials: false
-  isDefault: true
-  secureJsonData:
-    password: $DATABASE_PASS
-  jsonData:
-    postgresVersion: 1500
-    sslmode: $DATABASE_SSL_MODE
-  version: 1
-  editable: true
+  - name: TeslaMate
+    type: postgres
+    url: $DATABASE_HOST:$DATABASE_PORT
+    user: $DATABASE_USER
+    database: $DATABASE_NAME
+    access: proxy
+    basicAuth: false
+    withCredentials: false
+    isDefault: true
+    secureJsonData:
+      password: $DATABASE_PASS
+    jsonData:
+      postgresVersion: 1500
+      sslmode: $DATABASE_SSL_MODE
+    version: 1
+    editable: true

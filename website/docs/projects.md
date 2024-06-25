@@ -14,11 +14,11 @@ A [Magic Mirror](https://magicmirror.builders/) Module for TeslaMate.
 
 LINK: [github.com/denverquane/MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
 
-## [Home Assistant Addon](https://github.com/matt-FFFFFF/hassio-addon-teslamate)
+## [Home Assistant Addon](https://github.com/lildude/ha-addon-teslamate)
 
 An unofficial Home Assistant addon for TeslaMate, with a PostgreSQL addon too. Works with the existing community Grafana and Mosquitto addons to provide a complete solution.
 
-LINK: [github.com/matt-FFFFFF/hassio-addon-teslamate](https://github.com/matt-FFFFFF/hassio-addon-teslamate)
+LINK: [github.com/lildude/ha-addon-teslamate](https://github.com/lildude/ha-addon-teslamate)
 
 ## [TeslaMateAgile](https://github.com/MattJeanes/TeslaMateAgile)
 

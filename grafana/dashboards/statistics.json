@@ -1,4 +1,25 @@
 {
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-postgresql-datasource",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -21,7 +42,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1642773094880,
+  "id": null,
   "links": [
     {
       "icon": "dashboard",
@@ -58,14 +79,20 @@
       "type": "row"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
           "custom": {
             "align": "left",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "filterable": false,
+            "inspect": false,
             "width": 120
           },
           "mappings": [],
@@ -136,10 +163,6 @@
               {
                 "id": "unit",
                 "value": "percentunit"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
               },
               {
                 "id": "thresholds",
@@ -288,10 +311,6 @@
                 "value": "Temperature"
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-text"
-              },
-              {
                 "id": "thresholds",
                 "value": {
                   "mode": "absolute",
@@ -433,6 +452,32 @@
               {
                 "id": "unit",
                 "value": "fahrenheit"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "super-light-blue",
+                      "value": null
+                    },
+                    {
+                      "color": "super-light-green",
+                      "value": 50
+                    },
+                    {
+                      "color": "super-light-red",
+                      "value": 68
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -483,7 +528,9 @@
       "id": 2,
       "maxPerRow": 2,
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -499,7 +546,7 @@
           }
         ]
       },
-      "pluginVersion": "10.4.1",
+      "pluginVersion": "11.0.0",
       "repeatDirection": "h",
       "targets": [
         {
@@ -528,7 +575,11 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         },
         {
           "format": "table",
@@ -554,7 +605,11 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         },
         {
           "format": "table",
@@ -581,7 +636,11 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "title": "per ${period}",
@@ -724,9 +783,10 @@
             "indexByName": {
               "avg_consumption_kwh": 9,
               "avg_cost_km": 19,
-              "avg_cost_mi": 20,
               "avg_cost_kwh": 11,
+              "avg_cost_mi": 20,
               "avg_outside_temp_c": 5,
+              "avg_outside_temp_f": 5,
               "cnt": 6,
               "cnt_charges": 11,
               "cost_charges": 10,
@@ -747,8 +807,8 @@
             "renameByName": {
               "avg_consumption_kwh": "Avg charged",
               "avg_cost_km": "Avg cost per km",
-              "avg_cost_mi": "Avg cost per mi",
               "avg_cost_kwh": "Avg cost per kWh",
+              "avg_cost_mi": "Avg cost per mi",
               "avg_outside_temp_c": "",
               "cnt": "# drives",
               "cnt_charges": "# charges",
@@ -771,19 +831,17 @@
   ],
   "refresh": false,
   "schemaVersion": 39,
-  "style": "dark",
   "tags": [
     "tesla"
   ],
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
         "hide": 2,
         "includeAll": true,
@@ -802,12 +860,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "km",
-          "value": "km"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -827,13 +884,11 @@
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "C",
-          "value": "C"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -853,7 +908,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "month",
           "value": "month"
         },
@@ -890,12 +945,11 @@
         "type": "custom"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "ideal",
-          "value": "ideal"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -913,36 +967,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-								  
-								  
-		  
-								  
-																																								
-				  
-							
-							 
-					   
-						   
-					  
-																																						   
-					 
-					
-							 
-				  
-							 
-						
-						
-						
-		
-	   
-					
-							
-          "text": "http://localhost:4000",
-          "value": "http://localhost:4000"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -965,6 +994,7 @@
     "from": "now-10y",
     "to": "now"
   },
+  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -981,7 +1011,7 @@
   },
   "timezone": "browser",
   "title": "Statistics",
-  "uid": "1EZnXszMl",
-  "version": 2,
+  "uid": "1EZnXszMk",
+  "version": 1,
   "weekStart": ""
 }

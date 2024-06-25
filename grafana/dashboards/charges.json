@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.4.0"
+      "version": "11.0.0"
     },
     {
       "type": "datasource",
@@ -873,7 +873,7 @@
           }
         ]
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -997,9 +997,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -1025,11 +1029,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Energy added",
@@ -1098,9 +1098,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -1126,11 +1130,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Energy used",
@@ -1200,9 +1200,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -1228,11 +1232,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Cost",
@@ -1429,6 +1429,7 @@
     "from": "now-6M",
     "to": "now"
   },
+  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -1457,6 +1458,6 @@
   "timezone": "",
   "title": "Charges",
   "uid": "TSmNYvRRk",
-  "version": 5,
+  "version": 3,
   "weekStart": ""
 }
