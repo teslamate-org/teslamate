@@ -90,6 +90,7 @@ defmodule TeslaMate.Settings do
     if preEnabled != postEnabled do
       call(Vehicles, :restart)
     end
+
     :ok
   end
 
