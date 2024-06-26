@@ -5,6 +5,7 @@
 ### New features
 
 - Track open/close states for individual doors (#3962 - @SaswatPadhi), new MQTT values see [documentation](https://docs.teslamate.org/docs/integrations/mqtt)
+- Allow Fleet API users to change client_id (#3984 -@jlestel)
 
 ### Improvements and bug fixes
 
