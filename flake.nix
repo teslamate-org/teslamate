@@ -166,7 +166,7 @@
               imports = [ self.nixosModules.default ];
               services.teslamate = {
                 enable = true;
-                secrestFile = builtins.toFile "teslamate.env" ''
+                secretsFile = builtins.toFile "teslamate.env" ''
                   ENCRYPTION_KEY=123456789
                   DATABASE_PASS=123456789
                   RELEASE_COOKIE=123456789

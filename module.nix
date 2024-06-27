@@ -57,7 +57,7 @@ in {
     };
 
     postgres = {
-      enable = mkOption {
+      enable_server = mkOption {
         type = types.bool;
         default = false;
         description = lib.mdDoc ''
@@ -184,7 +184,7 @@ in {
           ];
         };
       }
-      (mkIf cfg.postgres.enable {
+      (mkIf cfg.postgres.enable_server {
         services.postgresql = {
           enable = true;
           package = pkgs.postgresql_16;
