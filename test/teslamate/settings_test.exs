@@ -189,7 +189,8 @@ defmodule TeslaMate.SettingsTest do
                suspend_after_idle_min: ["can't be blank"],
                suspend_min: ["can't be blank"],
                free_supercharging: ["can't be blank"],
-               use_streaming_api: ["can't be blank"]
+               use_streaming_api: ["can't be blank"],
+               lfp_battery: ["can't be blank"]
              }
 
       assert [^settings] = Settings.get_car_settings()
