@@ -12,7 +12,6 @@ defmodule TeslaMate.Settings.CarSettings do
     field :use_streaming_api, :boolean, default: true
     field :lfp_battery, :boolean, default: false
 
-
     has_one :car, Car, foreign_key: :settings_id
   end
 
