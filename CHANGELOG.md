@@ -13,6 +13,8 @@
 
 #### Dashboards
 
+- Improve drive details (#4004 -@jheredianet)
+
 #### Translations
 
 #### Documentation
