@@ -146,7 +146,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_not_unlocked == false
       assert settings.free_supercharging == false
       assert settings.use_streaming_api == true
-      assert settings.lfp_battery == true
+      assert settings.lfp_battery == false
     end
 
     test "update_car_settings/2 with valid data updates the settings" do
