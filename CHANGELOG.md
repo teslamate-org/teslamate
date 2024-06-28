@@ -14,7 +14,7 @@
 #### Dashboards
 
 - Improve drive details (#4004 - @jheredianet)
-- Improve visualizations on Battery Health dasboard (#4005 - @jheredianet)
+- Improve visualizations on Battery Health dashboard (#4005 - @jheredianet)
 
 #### Translations
 
