@@ -23,6 +23,7 @@
 
 - doc: remove outdated, unsupported, unmaintained portainer doc (#3972 - @JakobLichterfeld)
 - doc: fix MMM-Teslamate and ha-addon-teslamate project links (#3973 - @olexs)
+- doc: update the Contributor's Guide with the latest requirements (#4017 - @JakobLichterfeld)
 
 ## [1.29.2]
 
