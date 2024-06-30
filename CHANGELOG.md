@@ -15,6 +15,7 @@
 
 - Improve drive details (#4004 - @jheredianet)
 - Improve visualizations on Battery Health dashboard (#4005 - @jheredianet)
+- Update drives.json: show drives with duration=0 but distance>0 (#3867 - @DrMichael)
 
 #### Translations
 
