@@ -4,11 +4,29 @@
 
 ### New features
 
+- Track open/close states for individual doors (#3962 - @SaswatPadhi), new MQTT values see [documentation](https://docs.teslamate.org/docs/integrations/mqtt)
+- Allow Fleet API users to change client_id (#3984 - @jlestel)
+- Customize intervals between vehicle_data calls (#3940 - @jlestel)
+- feat: Create NixOS module (#3998 - @scottbot95)
+
 ### Improvements and bug fixes
+
+- feat: use Grafana 11.1.0 (#4019 - @swiffer)
 
 #### Build, CI, internal
 
+- build(deps): bump crate-ci/typos from 1.21.0 to 1.22.9 (#4021)
+
 #### Dashboards
+
+- Improve drive details (#4004 - @jheredianet)
+- Improve visualizations on Battery Health dashboard (#4005 - @jheredianet)
+- Update drives.json: show drives with duration=0 but distance>0 (#3867 - @DrMichael)
+- Improve performance of timeline dashboard (#4019 - @swiffer)
+- Fix detection of missing data (geofence condition) in timeline dashboard (#4019 - @swiffer)
+- Fix time filter for links to trip dashboard in timeline dashboard (#4019 - @swiffer)
+- Reduce number of queries executed in overview dashboard to increase performance (#4019 - @swiffer)
+- Ensure Index usage when getting temperatures in overview dashboard (#4019 - @swiffer)
 
 #### Translations
 
@@ -16,6 +34,9 @@
 
 - doc: remove outdated, unsupported, unmaintained portainer doc (#3972 - @JakobLichterfeld)
 - doc: fix MMM-Teslamate and ha-addon-teslamate project links (#3973 - @olexs)
+- doc: update the Contributor's Guide with the latest requirements (#4017 - @JakobLichterfeld)
+- doc: Documentation for new endpoint changes (#3978 - @jlestel)
+- doc: Add Grafana VS Code extension documentation (#4025 - @JakobLichterfeld)
 
 ## [1.29.2]
 
