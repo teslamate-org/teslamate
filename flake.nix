@@ -8,7 +8,7 @@
   };
 
   outputs = inputs@{ self, nixpkgs, flake-utils, devenv }:
-    flake-utils.lib.eachDefaultSystem (system:
+    (flake-utils.lib.eachDefaultSystem (system:
       let
         inherit (pkgs.lib) optional optionals;
         pkgs = nixpkgs.legacyPackages.${system};
@@ -17,7 +17,7 @@
         beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang;
 
         src = ./.;
-        version = "0.0.0";
+        version = builtins.readFile ./VERSION;
         pname = "teslamate";
 
         mixFodDeps = beamPackages.fetchMixDeps {
@@ -79,6 +79,9 @@
             mix phx.digest --no-deps-check
           '';
 
+          meta = {
+            mainProgram = "teslamate";
+          };
         };
 
         postgres_port = 7000;
@@ -153,11 +156,39 @@
           }];
 
         };
+
+        moduleTest = (nixpkgs.lib.nixos.runTest {
+          hostPkgs = pkgs;
+          defaults.documentation.enable = false;
+          imports = [{
+            name = "teslamate";
+            nodes.server = {
+              imports = [ self.nixosModules.default ];
+              services.teslamate = {
+                enable = true;
+                secretsFile = builtins.toFile "teslamate.env" ''
+                  ENCRYPTION_KEY=123456789
+                  DATABASE_PASS=123456789
+                  RELEASE_COOKIE=123456789
+                '';
+                postgres.enable = true;
+                grafana.enable = true;
+              };
+            };
+
+            testScript = ''
+              server.wait_for_open_port(4000)
+            '';
+          }];
+        }).config.result;
       in {
         packages = {
           devenv-up = devShell.config.procfileScript;
           default = pkg;
         };
         devShells.default = devShell;
-      });
+        checks.default = moduleTest;
+      })) // {
+        nixosModules.default = import ./module.nix { inherit self; };
+      };
 }
