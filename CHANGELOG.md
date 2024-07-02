@@ -36,6 +36,7 @@
 - doc: fix MMM-Teslamate and ha-addon-teslamate project links (#3973 - @olexs)
 - doc: update the Contributor's Guide with the latest requirements (#4017 - @JakobLichterfeld)
 - doc: Documentation for new endpoint changes (#3978 - @jlestel)
+- doc: Add Grafana VS Code extension documentation (#4025 - @JakobLichterfeld)
 
 ## [1.29.2]
 
