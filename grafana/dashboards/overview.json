@@ -11,7 +11,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.0"
+      "version": "11.1.0"
     },
     {
       "type": "datasource",
@@ -148,7 +148,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -312,9 +312,13 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -340,11 +344,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Charging Voltage",
@@ -399,7 +399,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -685,6 +685,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -696,9 +697,13 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -722,11 +727,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Range",
@@ -789,6 +790,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -800,9 +802,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -828,11 +834,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Net",
@@ -895,6 +897,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -906,9 +909,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -934,11 +941,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Gross",
@@ -1003,6 +1006,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -1014,9 +1018,13 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -1042,11 +1050,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Firmware",
@@ -1124,6 +1128,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -1135,9 +1140,13 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -1161,11 +1170,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Odometer",
@@ -1389,6 +1394,10 @@
           ]
         },
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "hide": false,
@@ -1415,11 +1424,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Charging Details",
@@ -1474,14 +1479,19 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\"\nFROM positions\nWHERE driver_temp_setting IS NOT NULL AND car_id = $car_id AND date AT TIME ZONE 'Etc/UTC' >= (NOW() - interval '60m')\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "SELECT\r\n\t$__time(date),\r\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\",\r\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\"\r\nFROM positions\r\nWHERE driver_temp_setting IS NOT NULL AND inside_temp IS NOT NULL AND car_id = $car_id AND date >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '60m')\r\nORDER BY date DESC\r\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -1493,6 +1503,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "positions",
           "timeColumn": "date",
           "timeColumnType": "timestamp",
@@ -1502,14 +1529,21 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Driver Temp",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "byVariable": false,
+            "include": {
+              "pattern": "time|Driver.*"
+            }
+          }
+        }
+      ],
       "type": "gauge"
     },
     {
@@ -1561,14 +1595,19 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH last_position AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM positions\n\tWHERE car_id = $car_id AND outside_temp IS NOT NULL AND date AT TIME ZONE 'Etc/UTC' >= (NOW() - interval '60m')\n\tORDER BY date DESC\n\tLIMIT 1\n),\nlast_charge AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM charges\n\tJOIN charging_processes ON charges.charging_process_id = charging_processes.id\n\tWHERE car_id = $car_id AND outside_temp IS NOT NULL AND date AT TIME ZONE 'Etc/UTC' >= (NOW() - interval '60m')\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT * FROM last_position\nUNION ALL\nSELECT * FROM last_charge\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "WITH last_position AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM positions\n\tWHERE car_id = $car_id AND outside_temp IS NOT NULL AND date >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '60m')\n\tORDER BY date DESC\n\tLIMIT 1\n),\nlast_charge AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM charges\n\tJOIN charging_processes ON charges.charging_process_id = charging_processes.id\n\tWHERE car_id = $car_id AND outside_temp IS NOT NULL AND date >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '60m')\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT * FROM last_position\nUNION ALL\nSELECT * FROM last_charge\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -1580,6 +1619,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "positions",
           "timeColumn": "date",
           "timeColumnType": "timestamp",
@@ -1589,11 +1645,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Outside Temp",
@@ -1601,8 +1653,8 @@
     },
     {
       "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+        "type": "datasource",
+        "uid": "-- Dashboard --"
       },
       "fieldConfig": {
         "defaults": {
@@ -1648,42 +1700,28 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  date,\n  convert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\"\nFROM positions\nWHERE\n  car_id = $car_id\n  and inside_temp is not null AND date AT TIME ZONE 'Etc/UTC' >= (NOW() - interval '60m')\norder by date desc\nlimit 1 ",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "outside_temp"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "positions",
-          "timeColumn": "date",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 16,
+          "refId": "A"
         }
       ],
       "title": "Inside Temp",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "time|Inside.*"
+            }
+          }
+        }
+      ],
       "type": "gauge"
     },
     {
@@ -1801,6 +1839,10 @@
       },
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -1826,11 +1868,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "States",
@@ -1963,7 +2001,6 @@
     "from": "now-24h",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "hidden": false,
     "refresh_intervals": [
@@ -1993,6 +2030,6 @@
   "timezone": "",
   "title": "Overview",
   "uid": "kOuP_Fggz",
-  "version": 4,
+  "version": 8,
   "weekStart": ""
 }
