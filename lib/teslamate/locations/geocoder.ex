@@ -129,6 +129,13 @@ defmodule TeslaMate.Locations.Geocoder do
     "department"
   ]
 
+  @state_aliases [
+    "state",
+    "province",
+    "territory",
+    "state_code"
+  ]
+
   defp into_address(%{"error" => "Unable to geocode"} = raw) do
     unknown_address = %{
       display_name: "Unknown",
@@ -162,7 +169,7 @@ defmodule TeslaMate.Locations.Geocoder do
       city: raw["address"] |> get_first(@city_aliases),
       county: raw["address"] |> get_first(@county_aliases),
       postcode: get_in(raw, ["address", "postcode"]),
-      state: raw["address"] |> get_first(["state", "province", "state_code"]),
+      state: raw["address"] |> get_first(@state_aliases),
       state_district: get_in(raw, ["address", "state_district"]),
       country: raw["address"] |> get_first(["country", "country_name"]),
       raw: raw
