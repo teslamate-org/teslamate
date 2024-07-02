@@ -89,7 +89,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     charger_actual_current charger_voltage version update_available update_version is_user_present
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
-    tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
+    tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode center_display_state
   )a
 
   defp add_simple_values(map, %Summary{} = summary) do
