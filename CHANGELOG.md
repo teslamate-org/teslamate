@@ -11,6 +11,8 @@
 
 ### Improvements and bug fixes
 
+- feat: use Grafana 11.1.0 (#4019 - @swiffer)
+
 #### Build, CI, internal
 
 - build(deps): bump crate-ci/typos from 1.21.0 to 1.22.9 (#4021)
@@ -20,6 +22,11 @@
 - Improve drive details (#4004 - @jheredianet)
 - Improve visualizations on Battery Health dashboard (#4005 - @jheredianet)
 - Update drives.json: show drives with duration=0 but distance>0 (#3867 - @DrMichael)
+- Improve performance of timeline dashboard (#4019 - @swiffer)
+- Fix detection of missing data (geofence condition) in timeline dashboard (#4019 - @swiffer)
+- Fix time filter for links to trip dashboard in timeline dashboard (#4019 - @swiffer)
+- Reduce number of queries executed in overview dashboard to increase performance (#4019 - @swiffer)
+- Ensure Index usage when getting temperatures in overview dashboard (#4019 - @swiffer)
 
 #### Translations
 
