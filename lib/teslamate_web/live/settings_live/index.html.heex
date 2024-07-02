@@ -135,6 +135,25 @@
         </div>
       </div>
     </div>
+
+    <div class="columns is-mobile is-centered">
+      <div class="column">
+        <h2 class="title is-4"><%= gettext("Battery") %></h2>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <%= label(f, :lfp_battery, gettext("LFP Battery"), class: "label") %>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <%= checkbox(f, :lfp_battery, class: "switch is-rounded is-success") %>
+                <%= label(f, :lfp_battery, nil) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </.form>
 <% end %>
 
