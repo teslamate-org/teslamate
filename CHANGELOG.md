@@ -11,6 +11,8 @@
 
 #### Build, CI, internal
 
+- build(deps): bump crate-ci/typos from 1.21.0 to 1.22.9 (#4021)
+
 #### Dashboards
 
 - Improve drive details (#4004 - @jheredianet)
