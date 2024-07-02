@@ -6,10 +6,10 @@ sidebar_label: Development and Contributing
 
 ## Requirements
 
-- **Elixir** >= 1.12
-- **Postgres** >= 10
+- **Elixir** >= 1.16.2-otp-26
+- **Postgres** >= 16
 - An **MQTT broker** e.g. mosquitto (_optional_)
-- **NodeJS** >= 14
+- **NodeJS** >= 20.15.0
 
 ## Initial Setup
 
@@ -53,6 +53,12 @@ mix compile
 mix format
 ```
 
+## Update pot files (extract messages for translation)
+
+```bash
+mix gettext.extract --merge
+```
+
 ## Testing
 
 To ensure a commit passes CI you should run `mix ci` locally, which executes the following commands:
@@ -60,12 +66,31 @@ To ensure a commit passes CI you should run `mix ci` locally, which executes the
 - Check formatting (`mix format --check-formatted`)
 - Run all tests (`mix test`)
 
+### Testing with our CI which builds the Docker images automatically per PR
+
+Our CI automatically builds the Docker images for each PR. To test the changes introduce by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
+
+For TeslaMate:
+
+```yml
+teslamate:
+       # image: teslamate/teslamate:latest
+      image: ghcr.io/teslamate-org/teslamate/teslamate:pr-3836
+```
+
+For Grafana:
+
+```yml
+grafana:
+       # image: teslamate/grafana:latest
+      image: ghcr.io/teslamate-org/teslamate/grafana:pr-3836
+```
+
 ## Making Changes to Grafana Dashboards
 
 To update dashboards you need Grafana running locally. The following _docker-compose.yml_ can be used for this purpose:
 
 ```yml
-version: "3"
 services:
   grafana:
     image: teslamate-grafana:latest

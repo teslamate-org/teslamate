@@ -1,4 +1,61 @@
 {
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "geomap",
+      "name": "Geomap",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-postgresql-datasource",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "state-timeline",
+      "name": "State timeline",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -22,11 +79,12 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1656104359102,
+  "id": null,
   "links": [
     {
       "icon": "doc",
       "tags": [],
+      "targetBlank": true,
       "title": "Select last three drives",
       "type": "link",
       "url": "/d/FkUpJpQZk?from=$from"
@@ -67,7 +125,35 @@
       "type": "row"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 13,
         "w": 13,
@@ -76,9 +162,82 @@
       },
       "id": 6,
       "maxDataPoints": 500,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "osm-standard"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "arrow": 0,
+              "style": {
+                "color": {
+                  "fixed": "dark-blue"
+                },
+                "lineWidth": 2,
+                "opacity": 1,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 3,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "name": "Layer 1",
+            "tooltip": true,
+            "type": "route"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 15
+        }
+      },
+      "pluginVersion": "11.0.0",
       "targets": [
         {
-          "datasource": "TeslaMate",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -95,6 +254,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "addresses",
           "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
@@ -104,126 +280,17 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "editorMode": "code",
-          "sql": {
-            "columns": [
-              {
-                "type": "function",
-                "parameters": []
-              }
-            ],
-            "groupBy": [
-              {
-                "type": "groupBy",
-                "property": {
-                  "type": "string"
-                }
-              }
-            ],
-            "limit": 50
-          }
+          ]
         }
       ],
-      "transformations": [],
       "transparent": true,
-      "type": "geomap",
-      "options": {
-        "view": {
-          "allLayers": true,
-          "id": "fit",
-          "lat": 0,
-          "lon": 0,
-          "zoom": 15
-        },
-        "controls": {
-          "showZoom": true,
-          "mouseWheelZoom": true,
-          "showAttribution": true,
-          "showScale": false,
-          "showMeasure": false,
-          "showDebug": false
-        },
-        "tooltip": {
-          "mode": "details"
-        },
-        "layers": [
-          {
-            "type": "route",
-            "name": "Layer 1",
-            "config": {
-              "style": {
-                "size": {
-                  "fixed": 3,
-                  "min": 2,
-                  "max": 15
-                },
-                "color": {
-                  "fixed": "red"
-                },
-                "opacity": 1,
-                "symbol": {
-                  "mode": "fixed",
-                  "fixed": "img/icons/marker/circle.svg"
-                },
-                "symbolAlign": {
-                  "horizontal": "center",
-                  "vertical": "center"
-                },
-                "textConfig": {
-                  "fontSize": 12,
-                  "textAlign": "center",
-                  "textBaseline": "middle",
-                  "offsetX": 0,
-                  "offsetY": 0
-                },
-                "rotation": {
-                  "fixed": 0,
-                  "mode": "mod",
-                  "min": -360,
-                  "max": 360
-                },
-                "lineWidth": 2
-              },
-              "arrow": 0
-            },
-            "tooltip": true
-          }
-        ],
-        "basemap": {
-          "type": "osm-standard",
-          "name": "Layer 0",
-          "config": {}
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "color": {
-            "mode": "thresholds"
-          }
-        },
-        "overrides": []
-      }
+      "type": "geomap"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -280,7 +347,6 @@
         "y": 1
       },
       "id": 10,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -299,9 +365,11 @@
           "fields": "",
           "values": true
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "format": "table",
@@ -329,13 +397,20 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -407,7 +482,6 @@
         "y": 1
       },
       "id": 38,
-      "links": [],
       "maxDataPoints": 3,
       "options": {
         "displayLabels": [
@@ -418,6 +492,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
+          "showLegend": true,
           "values": [
             "value"
           ]
@@ -431,6 +506,7 @@
           "values": true
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
@@ -462,7 +538,11 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         },
         {
           "format": "time_series",
@@ -490,13 +570,20 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "type": "piechart"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -564,7 +651,6 @@
         "y": 3
       },
       "id": 26,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -583,9 +669,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value_and_name"
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "format": "table",
@@ -613,13 +701,20 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -676,7 +771,6 @@
         "y": 5
       },
       "id": 28,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -695,9 +789,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value_and_name"
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "format": "table",
@@ -725,13 +821,20 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -790,7 +893,6 @@
         "y": 7
       },
       "id": 30,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -809,10 +911,12 @@
           "fields": "",
           "values": true
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "format": "table",
@@ -840,13 +944,20 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -905,7 +1016,6 @@
         "y": 7
       },
       "id": 32,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -924,9 +1034,11 @@
           "fields": "",
           "values": true
         },
-        "textMode": "value_and_name"
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "format": "table",
@@ -954,13 +1066,20 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -996,7 +1115,6 @@
         "y": 9
       },
       "id": 22,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -1015,9 +1133,11 @@
           "fields": "",
           "values": true
         },
-        "textMode": "value_and_name"
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "format": "table",
@@ -1045,13 +1165,20 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "decimals": 1,
@@ -1089,8 +1216,10 @@
       "id": 40,
       "options": {
         "displayMode": "gradient",
+        "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -1099,9 +1228,11 @@
           "fields": "",
           "values": true
         },
-        "showUnfilled": false
+        "showUnfilled": false,
+        "sizing": "auto",
+        "valueMode": "color"
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "format": "table",
@@ -1129,7 +1260,11 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         },
         {
           "format": "table",
@@ -1158,13 +1293,20 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "type": "bargauge"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1173,6 +1315,12 @@
           },
           "custom": {
             "fillOpacity": 100,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineWidth": 0,
             "spanNulls": false
           },
@@ -1245,12 +1393,14 @@
         "alignValue": "center",
         "legend": {
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "mergeValues": true,
         "rowHeight": 1,
         "showValue": "never",
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
@@ -1282,14 +1432,21 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "transparent": true,
       "type": "state-timeline"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1297,7 +1454,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "decimals": 2,
@@ -1609,9 +1768,10 @@
         "y": 16
       },
       "id": 2,
-      "links": [],
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -1626,11 +1786,14 @@
           }
         ]
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "alias": "",
-          "datasource": "TeslaMate",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -1658,11 +1821,13 @@
         }
       ],
       "title": "Drives",
-      "transformations": [],
       "type": "table"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1670,7 +1835,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "decimals": 2,
@@ -1680,8 +1847,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1983,8 +2149,10 @@
                 "value": 1
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-text"
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
               },
               {
                 "id": "custom.align"
@@ -1995,8 +2163,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "#96D98D",
-                      "value": null
+                      "color": "#96D98D"
                     },
                     {
                       "color": "#56A64B",
@@ -2104,7 +2271,6 @@
         "y": 27
       },
       "id": 36,
-      "links": [],
       "options": {
         "footer": {
           "fields": "",
@@ -2124,7 +2290,10 @@
       "pluginVersion": "8.5.4",
       "targets": [
         {
-          "datasource": "TeslaMate",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -2163,7 +2332,10 @@
       "type": "table"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2203,8 +2375,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2296,7 +2467,8 @@
             "lastNotNull"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -2306,7 +2478,10 @@
       "pluginVersion": "8.5.4",
       "targets": [
         {
-          "datasource": "TeslaMate",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -2339,7 +2514,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2378,8 +2556,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2450,7 +2627,8 @@
             "lastNotNull"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -2460,7 +2638,10 @@
       "pluginVersion": "8.5.4",
       "targets": [
         {
-          "datasource": "TeslaMate",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -2494,20 +2675,18 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 36,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [
     "tesla"
   ],
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
         "hide": 2,
         "includeAll": true,
@@ -2526,12 +2705,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "C",
-          "value": "C"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2550,12 +2728,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "km",
-          "value": "km"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2574,12 +2751,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "m",
-          "value": "m"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2598,12 +2774,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "ideal",
-          "value": "ideal"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2622,12 +2797,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "http://localhost:4000",
-          "value": "http://localhost:4000"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -2646,12 +2820,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "1642593521525",
-          "value": "1642593521525"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "hide": 2,
         "includeAll": false,
@@ -2674,6 +2847,7 @@
     "from": "now/d",
     "to": "now"
   },
+  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -2702,6 +2876,6 @@
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

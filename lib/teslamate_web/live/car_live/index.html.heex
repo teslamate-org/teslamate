@@ -1,4 +1,6 @@
 <%= for summary <- @summaries do %>
-  <%= live_render @socket, TeslaMateWeb.CarLive.Summary, id: "car_#{summary.car.id}",
-        session: %{ "summary" => summary, "settings" => @settings, "locale" => @locale } %>
+  <%= live_render(@socket, TeslaMateWeb.CarLive.Summary,
+    id: "car_#{summary.car.id}",
+    session: %{"summary" => summary, "settings" => @settings, "locale" => @locale}
+  ) %>
 <% end %>

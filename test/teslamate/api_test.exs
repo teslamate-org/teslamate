@@ -344,6 +344,29 @@ defmodule TeslaMate.ApiTest do
     end
 
     @tag :capture_log
+    test ":too_many_requests", %{test: name} do
+      api_error = %TeslaApi.Error{
+        reason: :too_many_requests,
+        message: 300
+      }
+
+      vehicle_mock =
+        {TeslaApi.Vehicle, [],
+         [
+           get: fn _auth, _id -> {:error, api_error} end,
+           get_with_state: fn _auth, _id -> {:error, api_error} end
+         ]}
+
+      with_mocks [auth_mock(self()), vehicle_mock] do
+        :ok = start_api(name, start_auth: false)
+
+        assert :ok = Api.sign_in(name, @valid_tokens)
+        assert {:error, :too_many_requests} = Api.get_vehicle(name, 0)
+        assert {:error, :too_many_requests} = Api.get_vehicle_with_state(name, 0)
+      end
+    end
+
+    @tag :capture_log
     test "other error with Env", %{test: name} do
       api_error = %TeslaApi.Error{
         reason: :unknown,

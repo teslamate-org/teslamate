@@ -55,9 +55,19 @@ config/*.env
 .eclipse/
 .elixir_ls/
 /.project
+.vscode/
 
 # Mac files
 .DS_Store
 
 /priv/plts/*.plt
 /priv/plts/*.plt.hash
+
+# Nix files
+/.direnv
+/.devenv
+/tzdata/
+/result
+
+# Used during tests
+/tmp/

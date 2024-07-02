@@ -22,7 +22,7 @@ sidebar_label: TeslaFi
 
 ## Instructions
 
-1. Copy the exported CSV files into a **directory named `import`** next to the _docker-compose.yml_:
+1. Copy the exported CSV files (in the format "TeslaFixxxxxx.csv") into a **directory named `import`** next to the _docker-compose.yml_:
 
    ```console
    .
@@ -45,6 +45,10 @@ sidebar_label: TeslaFi
 
 :::note
 If there is an overlap between the already existing TeslaMate and TeslaFi data, only the data prior to the first TeslaMate data will be imported.
+:::
+
+:::note
+If the CSV files are missing the vehicle ID, the imported will default to `1`. You can alter this behavior by setting the environment variable `TESLAFI_IMPORT_VEHICLE_ID`.
 :::
 
 :::note

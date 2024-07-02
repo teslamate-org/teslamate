@@ -149,6 +149,33 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
         assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: true, qos: 1]}}
       end
 
+      topic = "teslamate/cars/#{car.id}/location"
+      assert_receive {MqttPublisherMock, {:publish, ^topic, data, [retain: true, qos: 1]}}
+
+      assert Jason.decode!(data) == %{
+               "latitude" => 37.889544,
+               "longitude" => 41.128817
+             }
+
+      # Published as nil
+      for key <- [
+            :active_route_destination,
+            :active_route_longitude,
+            :active_route_latitude
+          ] do
+        topic = "teslamate/cars/#{car.id}/#{key}"
+        assert_receive {MqttPublisherMock, {:publish, ^topic, "nil", [retain: true, qos: 1]}}
+      end
+
+      # Published as nil
+      for key <- [
+            :active_route
+          ] do
+        topic = "teslamate/cars/#{car.id}/#{key}"
+        assert_receive {MqttPublisherMock, {:publish, ^topic, data, [retain: true, qos: 1]}}
+        assert Jason.decode!(data) == %{"error" => "No active route available"}
+      end
+
       refute_receive _
     end
   end

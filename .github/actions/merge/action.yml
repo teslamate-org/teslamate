@@ -12,8 +12,14 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Download digests
-      uses: actions/download-artifact@v3
+    - name: Merge digests and reupload
+      uses: actions/upload-artifact/merge@v4
+      with:
+        name: digests
+        pattern: single-digest-*
+
+    - name: Download merged digests
+      uses: actions/download-artifact@v4
       with:
         name: digests
         path: /tmp/digests

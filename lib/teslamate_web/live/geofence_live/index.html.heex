@@ -1,19 +1,20 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= live_redirect gettext("Home"), to: "/" %></li>
-    <li class="is-active"><%= live_redirect gettext("Geo-Fences"), to: "/geo-fences" %></li>
+    <li><%= live_redirect(gettext("Home"), to: "/") %></li>
+    <li class="is-active"><%= live_redirect(gettext("Geo-Fences"), to: "/geo-fences") %></li>
   </ul>
 </nav>
 
-<%= live_redirect raw("""
-      <span>#{gettext("Create")}</span>
-      <span class="icon">
-        <span class="mdi mdi-plus"></span>
-      </span>
-      """) ,
-      to: Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form),
-      class: "button is-info is-small is-rounded is-pulled-right mb-4"
-%>
+<%= live_redirect(
+  raw("""
+  <span>#{gettext("Create")}</span>
+  <span class="icon">
+    <span class="mdi mdi-plus"></span>
+  </span>
+  """),
+  to: Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form),
+  class: "button is-info is-small is-rounded is-pulled-right mb-4"
+) %>
 
 <table class="table is-fullwidth">
   <thead class="is-hidden-mobile">
@@ -25,39 +26,47 @@
     </tr>
   </thead>
   <tbody style="font-variant-numeric: tabular-nums;">
-<%= for geofence <- @geofences do %>
-    <tr>
-      <td class="has-text-weight-medium is-truncated" style="min-width: 0; max-width: 180px"><%= geofence.name %></td>
-      <td class="is-hidden-mobile has-text-weight-light" style="width: 30%"><%= geofence.latitude %>, <%= geofence.longitude %></td>
-      <td class="is-hidden-mobile has-text-weight-light" style="width: 10%"><%=
-          case @unit_of_length do
+    <%= for geofence <- @geofences do %>
+      <tr>
+        <td class="has-text-weight-medium is-truncated" style="min-width: 0; max-width: 180px">
+          <%= geofence.name %>
+        </td>
+        <td class="is-hidden-mobile has-text-weight-light" style="width: 30%">
+          <%= geofence.latitude %>, <%= geofence.longitude %>
+        </td>
+        <td class="is-hidden-mobile has-text-weight-light" style="width: 10%">
+          <%= case @unit_of_length do
             :ft -> geofence.radius |> Convert.m_to_ft() |> round()
             :m -> geofence.radius |> round()
-          end
-        %> <%= @unit_of_length %></td>
-      <td>
-        <div class="field is-grouped is-pulled-right">
-          <p class="control">
-            <%= live_redirect raw("<span class='icon'><span class='mdi mdi-square-edit-outline'></span></span>"),
-                  to: Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form, geofence, []),
-                  class: "button is-info is-small is-inverted is-light"
-            %>
-          </p>
-          <p class="control">
-            <%= link raw("<span class='icon'><span class='mdi mdi-trash-can'></span></span>"),
-                  to: "#", phx_hook: "ConfirmGeoFenceDeletion",
-                  data: [
-                    id: geofence.id,
-                    msg: gettext("Delete '%{geo_fence}'?", geo_fence: geofence.name)
-                  ],
-                  type: "button",
-                  id: "delete_#{geofence.id}",
-                  class: "button is-danger is-small is-inverted is-light"
-            %>
-          </p>
-        </div>
-      </td>
-    </tr>
-<% end %>
+          end %> <%= @unit_of_length %>
+        </td>
+        <td>
+          <div class="field is-grouped is-pulled-right">
+            <p class="control">
+              <%= live_redirect(
+                raw(
+                  "<span class='icon'><span class='mdi mdi-square-edit-outline'></span></span>"
+                ),
+                to: Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form, geofence, []),
+                class: "button is-info is-small is-inverted is-light"
+              ) %>
+            </p>
+            <p class="control">
+              <%= link(raw("<span class='icon'><span class='mdi mdi-trash-can'></span></span>"),
+                to: "#",
+                phx_hook: "ConfirmGeoFenceDeletion",
+                data: [
+                  id: geofence.id,
+                  msg: gettext("Delete '%{geo_fence}'?", geo_fence: geofence.name)
+                ],
+                type: "button",
+                id: "delete_#{geofence.id}",
+                class: "button is-danger is-small is-inverted is-light"
+              ) %>
+            </p>
+          </div>
+        </td>
+      </tr>
+    <% end %>
   </tbody>
 </table>

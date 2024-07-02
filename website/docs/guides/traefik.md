@@ -23,8 +23,6 @@ Create the following three files:
 ### docker-compose.yml
 
 ```yml title="docker-compose.yml"
-version: "3"
-
 services:
   teslamate:
     image: teslamate/teslamate:latest
@@ -62,7 +60,7 @@ services:
       - ALL
 
   database:
-    image: postgres:15
+    image: postgres:16
     restart: always
     environment:
       - POSTGRES_USER=${TM_DB_USER}

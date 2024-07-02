@@ -7,13 +7,18 @@ sidebar_label: FAQ
 
 There are multiple apps available to securely generate access tokens yourself, for example:
 
-- [Auth app for Tesla (iOS, macOS)](https://apps.apple.com/us/app/auth-app-for-tesla/id1552058613)
-- [Tesla Tokens (Android)](https://play.google.com/store/apps/details?id=net.leveugle.teslatokens)
 - [Tesla Auth (macOS, Linux, Windows)](https://github.com/adriankumpf/tesla_auth)
+- [Auth app for Tesla (iOS, macOS)](https://apps.apple.com/us/app/auth-app-for-tesla/id1552058613)
 
 ## Why are no consumption values displayed in Grafana?
 
 Unfortunately the Tesla API does not return consumption values for a trip. In order to still be able to display values TeslaMate estimates the consumption on the basis of the recorded (charging) data. It takes **at least two** charging sessions before the first estimate can be displayed. Charging sessions have to be longer than 10 minutes and less than 95% state-of-charge (SoC). Each future charging session will slightly improve the accuracy of the estimate, which is applied retroactively to all data.
+
+## Why "null" is displayed above the panels in Grafana?
+
+If you have not customized the name of your Tesla, Teslamate saves an empty value in the PostgreSQL database. When Grafana is reading from the database, the value `null` is the value for the variable car_id in Grafana.
+
+Give your Tesla a name via car touchscreen and wait for Teslamate to synchronize it.
 
 ## What is the geo-fence feature for?
 
@@ -58,3 +63,23 @@ Calling the [Vehicle API](https://www.teslaapi.io/vehicles/list#vehicle) does no
 ## Why are my Docker timestamp logs different than my machine?
 
 Docker container timezones default to UTC. To set the timezone for your container, use the `TZ` Environment Variable in your YML file. More information found at [Environment Variables](https://docs.teslamate.org/docs/configuration/environment_variables)
+
+## Which network flows must be authorized?
+
+⚠️ This is for advanced users!
+
+You might want to prohibit all network flows except those necessary for teslamate.
+This is a common practice to harden an installation (e.g., to reduce the risk of data leakage).
+
+The following flows must be authorized (egress traffic and DNS resolution):
+
+HTTPS (TCP/443)  
+auth.tesla.com  
+owner-api.teslamotors.com  
+streaming.vn.teslamotors.com  
+nominatim.openstreetmap.org  
+
+HTTP (TCP/80)  
+step.esa.int  
+
+Note: This may change when Teslamate is updated!
