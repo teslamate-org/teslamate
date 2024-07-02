@@ -26,6 +26,25 @@
   >
     <div class="columns is-mobile is-centered">
       <div class="column">
+        <h2 class="title is-4"><%= gettext("Enabled") %></h2>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <%= label(f, :enabled, gettext("Enabled"), class: "label") %>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <%= checkbox(f, :enabled, class: "switch is-rounded is-success") %>
+                <%= label(f, :enabled, nil) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-mobile is-centered">
+      <div class="column">
         <h2 class="title is-4"><%= gettext("Sleep Mode") %></h2>
 
         <%= unless Ecto.Changeset.get_field(f.source, :use_streaming_api) do %>

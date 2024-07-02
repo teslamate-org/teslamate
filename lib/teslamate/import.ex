@@ -291,7 +291,8 @@ defmodule TeslaMate.Import do
         settings = %CarSettings{
           suspend_min: 0,
           suspend_after_idle_min: 99999,
-          use_streaming_api: false
+          use_streaming_api: false,
+          enabled: true
         }
 
         %Car{car | settings: settings}

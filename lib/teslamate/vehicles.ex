@@ -52,6 +52,7 @@ defmodule TeslaMate.Vehicles do
       |> Keyword.get_lazy(:vehicles, &list_vehicles!/0)
       |> Enum.map(&{Keyword.get(opts, :vehicle, Vehicle), car: create_or_update!(&1)})
       |> Enum.uniq_by(fn {_mod, car: %Car{id: id}} -> id end)
+      |> Enum.filter(fn {_mod, car: %Car{settings: settings}} -> settings.enabled end)
 
     Supervisor.init(children,
       strategy: :one_for_one,
