@@ -8,6 +8,7 @@
 - Allow Fleet API users to change client_id (#3984 - @jlestel)
 - Customize intervals between vehicle_data calls (#3940 - @jlestel)
 - feat: Create NixOS module (#3998 - @scottbot95)
+- Update vehicle.ex with marketing name for Model Y Long Range RWD (#3989 - @stefanlange)
 
 ### Improvements and bug fixes
 
