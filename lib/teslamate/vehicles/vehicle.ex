@@ -87,6 +87,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             {"X", "P100D", "tamarind"} -> "Plaid"
             {"Y", "P74D", _} -> "LR AWD Performance"
             {"Y", "74D", _} -> "LR AWD"
+            {"Y", "74", _} -> "LR"
             {_model, _trim, _type} -> nil
           end
 
