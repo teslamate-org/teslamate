@@ -27,6 +27,7 @@
 - Fix time filter for links to trip dashboard in timeline dashboard (#4019 - @swiffer)
 - Reduce number of queries executed in overview dashboard to increase performance (#4019 - @swiffer)
 - Ensure Index usage when getting temperatures in overview dashboard (#4019 - @swiffer)
+- re-enable time picker by default in drive-details, charge-details dashboards (#3985)
 
 #### Translations
 
