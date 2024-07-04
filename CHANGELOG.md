@@ -30,6 +30,7 @@
 - Ensure Index usage when getting temperatures in overview dashboard (#4019 - @swiffer)
 - re-enable time picker by default in drive-details, charge-details dashboards (#3985)
 - Improve "Charges" dashboard (#4031 - @jheredianet)
+- Improve "Drives" dashboard (#4033 - @jheredianet)
 
 #### Translations
 
