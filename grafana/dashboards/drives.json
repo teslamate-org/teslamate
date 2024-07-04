@@ -24,6 +24,12 @@
       "id": "table",
       "name": "Table",
       "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
     }
   ],
   "annotations": {
@@ -837,7 +843,7 @@
         ]
       },
       "gridPos": {
-        "h": 20,
+        "h": 22,
         "w": 24,
         "x": 0,
         "y": 0
@@ -847,7 +853,7 @@
         "cellHeight": "sm",
         "footer": {
           "countRows": false,
-          "enablePagination": true,
+          "enablePagination": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -921,16 +927,16 @@
       "type": "table"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 22
       },
       "id": 3,
       "panels": [],
-      "title": "Summary of",
+      "title": "Summary of this period",
       "type": "row"
     },
     {
@@ -975,7 +981,7 @@
         "h": 4,
         "w": 6,
         "x": 0,
-        "y": 21
+        "y": 23
       },
       "id": 4,
       "maxDataPoints": 100,
@@ -1066,7 +1072,7 @@
         "h": 4,
         "w": 6,
         "x": 6,
-        "y": 21
+        "y": 23
       },
       "id": 5,
       "maxDataPoints": 100,
@@ -1140,7 +1146,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1180,7 +1187,7 @@
         "h": 4,
         "w": 6,
         "x": 12,
-        "y": 21
+        "y": 23
       },
       "id": 6,
       "maxDataPoints": 100,
@@ -1255,7 +1262,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1295,7 +1303,7 @@
         "h": 4,
         "w": 6,
         "x": 18,
-        "y": 21
+        "y": 23
       },
       "id": 7,
       "maxDataPoints": 100,
@@ -1342,6 +1350,154 @@
       ],
       "transparent": true,
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "id": 8,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "From here you can check if you have \nincomplete data of **Drives** (drives without ending date)\nIf so, you may follow the official \nguide by <a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  start_date AS \"time\",\n  start_km\nFROM drives\nWHERE\n  $__timeFilter(start_date)\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "start_km"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "drives",
+          "timeColumn": "start_date",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.0.0",
+      "targets": [
+        {
+          "alias": "",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT id AS \"Drive ID\", start_date, end_date, distance, duration_min \nFROM drives \nWHERE car_id = $car_id AND end_date is null\nORDER BY start_date DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Incomplete Drives 🛣️",
+      "type": "table"
     }
   ],
   "schemaVersion": 39,
@@ -1511,21 +1667,15 @@
       {
         "current": {
           "selected": false,
-          "text": "14",
-          "value": "14"
+          "text": "0",
+          "value": "0"
         },
         "hide": 0,
         "includeAll": false,
         "label": "Distance >=",
         "name": "min_dist",
-        "options": [
-          {
-            "selected": true,
-            "text": "14",
-            "value": "14"
-          }
-        ],
-        "query": "14",
+        "options": [],
+        "query": "0",
         "skipUrlSync": false,
         "type": "textbox"
       },
@@ -1547,7 +1697,7 @@
     ]
   },
   "time": {
-    "from": "now-90d",
+    "from": "now-3M",
     "to": "now"
   },
   "timeRangeUpdatedDuringEditOrView": false,
@@ -1577,8 +1727,8 @@
     ]
   },
   "timezone": "",
-  "title": "Drives1",
-  "uid": "Y8upc6ZRk1",
-  "version": 13,
+  "title": "Drives",
+  "uid": "Y8upc6ZRk",
+  "version": 2,
   "weekStart": ""
 }
