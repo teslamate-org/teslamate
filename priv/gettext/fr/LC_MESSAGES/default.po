@@ -112,17 +112,17 @@ msgstr "S'endort"
 msgid "unavailable"
 msgstr "Indisponible"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:216
+#: lib/teslamate_web/live/settings_live/index.html.heex:235
 #, elixir-autogen, elixir-format
 msgid "Length"
 msgstr "Distance"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:231
+#: lib/teslamate_web/live/settings_live/index.html.heex:250
 #, elixir-autogen, elixir-format
 msgid "Temperature"
 msgstr "Température"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:213
+#: lib/teslamate_web/live/settings_live/index.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Units"
 msgstr "Unités"
@@ -147,7 +147,7 @@ msgstr "Géorepérage \"%{name}\" créé"
 msgid "Geo-Fences"
 msgstr "Géorepérages"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:55
+#: lib/teslamate_web/live/settings_live/index.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Idle Time Before Trying to Sleep"
 msgstr "Temps d'inactivité avant d'essayer de dormir"
@@ -183,13 +183,13 @@ msgstr "Enregistrer"
 msgid "Saving..."
 msgstr "Enregistrement..."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:34
+#: lib/teslamate_web/live/settings_live/index.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "Time to Try Sleeping"
 msgstr "Temps avant d'essayer de dormir"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:45
-#: lib/teslamate_web/live/settings_live/index.html.heex:68
+#: lib/teslamate_web/live/settings_live/index.html.heex:64
+#: lib/teslamate_web/live/settings_live/index.html.heex:87
 #, elixir-autogen, elixir-format
 msgid "min"
 msgstr "min"
@@ -246,12 +246,12 @@ msgstr "Autonomie estimée"
 msgid "for"
 msgstr "depuis"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:80
+#: lib/teslamate_web/live/settings_live/index.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "Requirements"
 msgstr "Exigences"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:88
+#: lib/teslamate_web/live/settings_live/index.html.heex:107
 #, elixir-autogen, elixir-format
 msgid "Vehicle must be locked"
 msgstr "Le véhicule doit être verrouillé"
@@ -266,22 +266,22 @@ msgstr "Autonomie théorique"
 msgid "Charger Power"
 msgstr "Puissance de charge"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:152
+#: lib/teslamate_web/live/settings_live/index.html.heex:171
 #, elixir-autogen, elixir-format
 msgid "Preferred Range"
 msgstr "Autonomie préférée"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:148
+#: lib/teslamate_web/live/settings_live/index.html.heex:167
 #, elixir-autogen, elixir-format
 msgid "Range"
 msgstr "Autonomie"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:160
+#: lib/teslamate_web/live/settings_live/index.html.heex:179
 #, elixir-autogen, elixir-format
 msgid "ideal"
 msgstr "Estimée"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:161
+#: lib/teslamate_web/live/settings_live/index.html.heex:180
 #, elixir-autogen, elixir-format
 msgid "rated"
 msgstr "Théorique"
@@ -291,7 +291,7 @@ msgstr "Théorique"
 msgid "Range (ideal)"
 msgstr "Autonomie Estimée"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:151
+#: lib/teslamate_web/live/settings_live/index.html.heex:170
 #, elixir-autogen, elixir-format
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
 msgstr "Théorique = Autonomie indiquée par Tesla. Estimée = Autonomie norme WLTP Europe"
@@ -322,7 +322,7 @@ msgid "Outside Temperature"
 msgstr "Température extérieure"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:399
-#: lib/teslamate_web/live/settings_live/index.html.heex:311
+#: lib/teslamate_web/live/settings_live/index.html.heex:330
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "Version"
@@ -342,29 +342,30 @@ msgstr "Déverouillée"
 msgid "Remaining Time"
 msgstr "Temps restant"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:286
+#: lib/teslamate_web/live/settings_live/index.html.heex:305
 #: lib/teslamate_web/templates/layout/root.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "Tableaux de bord"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:264
+#: lib/teslamate_web/live/settings_live/index.html.heex:283
 #, elixir-autogen, elixir-format
 msgid "URLs"
 msgstr "URLs"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:178
-#: lib/teslamate_web/live/settings_live/index.html.heex:267
+#: lib/teslamate_web/live/settings_live/index.html.heex:197
+#: lib/teslamate_web/live/settings_live/index.html.heex:286
 #, elixir-autogen, elixir-format
 msgid "Web App"
 msgstr "App Web"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:125
+#: lib/teslamate_web/live/settings_live/index.html.heex:29
+#: lib/teslamate_web/live/settings_live/index.html.heex:144
 #, elixir-autogen, elixir-format
 msgid "Enabled"
 msgstr "Activé"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:29
+#: lib/teslamate_web/live/settings_live/index.html.heex:48
 #, elixir-autogen, elixir-format
 msgid "Sleep Mode"
 msgstr "Mode veille"
@@ -421,12 +422,12 @@ msgstr "Enregistré!"
 msgid "Fetching vehicle data ..."
 msgstr "Récupération des données du véhicule ..."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:193
+#: lib/teslamate_web/live/settings_live/index.html.heex:212
 #, elixir-autogen, elixir-format
 msgid "Addresses"
 msgstr "Adresses"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:174
+#: lib/teslamate_web/live/settings_live/index.html.heex:193
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Langue"
@@ -465,17 +466,17 @@ msgstr "Fuseau horaire"
 msgid "Sign in"
 msgstr "Connexion"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:103
+#: lib/teslamate_web/live/settings_live/index.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Charge cost"
 msgstr "Coût de charge"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:106
+#: lib/teslamate_web/live/settings_live/index.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "Free Supercharging"
 msgstr "Supercharge gratuite"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:142
+#: lib/teslamate_web/live/settings_live/index.html.heex:161
 #, elixir-autogen, elixir-format
 msgid "General Settings"
 msgstr "Réglages généraux"
@@ -528,22 +529,22 @@ msgstr "Continuer"
 msgid "Mileage"
 msgstr "Kilométrage"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:122
+#: lib/teslamate_web/live/settings_live/index.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Streaming API"
 msgstr "API de Streaming"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:332
+#: lib/teslamate_web/live/settings_live/index.html.heex:351
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr "Documentation"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:322
+#: lib/teslamate_web/live/settings_live/index.html.heex:341
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr "GitHub"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:317
+#: lib/teslamate_web/live/settings_live/index.html.heex:336
 #: lib/teslamate_web/templates/layout/root.html.heex:168
 #, elixir-autogen, elixir-format
 msgid "Update available"
@@ -570,7 +571,7 @@ msgstr "Par minute"
 msgid "Software Update available (%{version})"
 msgstr "Mise à jour disponible (%{version})"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:350
+#: lib/teslamate_web/live/settings_live/index.html.heex:369
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Déconnexion"
@@ -630,7 +631,7 @@ msgstr "La clé de chiffrement générée automatiquement pour la session actuel
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "Pour s'assurer que votre <strong>jeton d'API Tesla est stocké de façon sécurisée</strong>, une clé de chiffrement doit être renseignée à TeslaMate via la variable d'environnement <code>ENCRYPTION_KEY</code>. Sinon, <strong>une authentification sera requise à chaque redémarrage</strong>."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:246
+#: lib/teslamate_web/live/settings_live/index.html.heex:265
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
 msgstr "Pression des pneus"
@@ -658,4 +659,9 @@ msgstr "Fin de charge estimée"
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:32
+#, elixir-autogen, elixir-format
+msgid "Enable data collection"
 msgstr ""
