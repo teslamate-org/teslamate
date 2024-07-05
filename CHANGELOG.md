@@ -10,6 +10,7 @@
 - feat: Create NixOS module (#3998 - @scottbot95)
 - Update vehicle.ex with marketing name for Model Y Long Range RWD (#3989 - @stefanlange)
 - feat: Add ability to enable and disable data collection for cars (#3993 - @mark3-dev)
+- publish center_display_state to mqtt (#3813 - @Atrox)
 
 ### Improvements and bug fixes
 
