@@ -7,8 +7,9 @@ defmodule TeslaMate.Settings do
   alias TeslaMate.Repo
 
   alias __MODULE__.{GlobalSettings, CarSettings}
-  alias TeslaMate.{Log, Locations}
+  alias TeslaMate.{Log, Locations, Vehicles}
   alias TeslaMate.Log.Car
+  import Core.Dependency, only: [call: 2]
 
   def get_global_settings! do
     case Repo.all(GlobalSettings) do
@@ -46,6 +47,7 @@ defmodule TeslaMate.Settings do
   def update_car_settings(%CarSettings{car: %Car{}} = pre, attrs) do
     Repo.transaction(fn ->
       with {:ok, post} <- pre |> CarSettings.changeset(attrs) |> Repo.update(),
+           :ok <- on_enabled_change(pre, post),
            :ok <- broadcast(pre.car, post) do
         post
       else
@@ -82,6 +84,14 @@ defmodule TeslaMate.Settings do
 
   defp on_language_change(%GlobalSettings{}, %GlobalSettings{language: lang}) do
     Locations.refresh_addresses(lang)
+  end
+
+  def on_enabled_change(%CarSettings{enabled: preEnabled}, %CarSettings{enabled: postEnabled}) do
+    if preEnabled != postEnabled do
+      call(Vehicles, :restart)
+    end
+
+    :ok
   end
 
   defp broadcast(car, settings) do
