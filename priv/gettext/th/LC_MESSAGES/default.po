@@ -112,17 +112,17 @@ msgstr "กำลังเข้าสู่การหลับ"
 msgid "unavailable"
 msgstr "ไม่พร้อมใช้งาน"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:235
+#: lib/teslamate_web/live/settings_live/index.html.heex:254
 #, elixir-autogen, elixir-format
 msgid "Length"
 msgstr "ความยาว"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:250
+#: lib/teslamate_web/live/settings_live/index.html.heex:269
 #, elixir-autogen, elixir-format
 msgid "Temperature"
 msgstr "อุณหภูมิ"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:232
+#: lib/teslamate_web/live/settings_live/index.html.heex:251
 #, elixir-autogen, elixir-format
 msgid "Units"
 msgstr "หน่วย"
@@ -266,22 +266,22 @@ msgstr "ระยะทาง (จัดอันดับ)"
 msgid "Charger Power"
 msgstr "กำลังการชาร์จ"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:171
+#: lib/teslamate_web/live/settings_live/index.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "Preferred Range"
 msgstr "ระยะที่ต้องการ"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:167
+#: lib/teslamate_web/live/settings_live/index.html.heex:186
 #, elixir-autogen, elixir-format
 msgid "Range"
 msgstr "ระยะทาง"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:179
+#: lib/teslamate_web/live/settings_live/index.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "ideal"
 msgstr "ในอุดมคติ"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:180
+#: lib/teslamate_web/live/settings_live/index.html.heex:199
 #, elixir-autogen, elixir-format
 msgid "rated"
 msgstr "จัดอันดับแล้ว"
@@ -291,7 +291,7 @@ msgstr "จัดอันดับแล้ว"
 msgid "Range (ideal)"
 msgstr "ระยะทาง (ในอุดมคติ)"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:170
+#: lib/teslamate_web/live/settings_live/index.html.heex:189
 #, elixir-autogen, elixir-format
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
 msgstr "ระยะทางที่เหลือโดยประมาณของรถจะขึ้นอยู่กับอัตราการสิ้นเปลืองพลังงานคงที่ในหน่วยกิโลวัตต์ชั่วโมง ปัจจัยกิโลวัตต์ชั่วโมงถูกกำหนดโดย Tesla และไม่ได้ระบุเฉพาะประเทศ ในขณะที่ช่วงพิกัดจะขึ้นอยู่กับการทดสอบตามกฎข้อบังคับในตลาดต่างๆ สำหรับยานพาหนะนั้น"
@@ -322,7 +322,7 @@ msgid "Outside Temperature"
 msgstr "อุณหภูมิภายนอก"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:399
-#: lib/teslamate_web/live/settings_live/index.html.heex:330
+#: lib/teslamate_web/live/settings_live/index.html.heex:349
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "รุ่น"
@@ -342,19 +342,19 @@ msgstr "ปลดล็อคแล้ว"
 msgid "Remaining Time"
 msgstr "เวลาที่เหลือ"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:305
+#: lib/teslamate_web/live/settings_live/index.html.heex:324
 #: lib/teslamate_web/templates/layout/root.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "แดชบอร์ด"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:283
+#: lib/teslamate_web/live/settings_live/index.html.heex:302
 #, elixir-autogen, elixir-format
 msgid "URLs"
 msgstr "URL"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:197
-#: lib/teslamate_web/live/settings_live/index.html.heex:286
+#: lib/teslamate_web/live/settings_live/index.html.heex:216
+#: lib/teslamate_web/live/settings_live/index.html.heex:305
 #, elixir-autogen, elixir-format
 msgid "Web App"
 msgstr "เว็บแอป"
@@ -422,12 +422,12 @@ msgstr "บันทึกแล้ว!"
 msgid "Fetching vehicle data ..."
 msgstr "กำลังเรียกข้อมูลรถ..."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:212
+#: lib/teslamate_web/live/settings_live/index.html.heex:231
 #, elixir-autogen, elixir-format
 msgid "Addresses"
 msgstr "ที่อยู่"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:193
+#: lib/teslamate_web/live/settings_live/index.html.heex:212
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "ภาษา"
@@ -475,7 +475,7 @@ msgstr "ค่าใช้จ่ายการชาร์จ"
 msgid "Free Supercharging"
 msgstr "ซูเปอร์ชาร์จฟรี"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:161
+#: lib/teslamate_web/live/settings_live/index.html.heex:180
 #, elixir-autogen, elixir-format
 msgid "General Settings"
 msgstr "การตั้งค่าทั่วไป"
@@ -533,17 +533,17 @@ msgstr "ระยะทาง"
 msgid "Streaming API"
 msgstr "สตรีมมิ่ง API"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:351
+#: lib/teslamate_web/live/settings_live/index.html.heex:370
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr "เอกสาร"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:341
+#: lib/teslamate_web/live/settings_live/index.html.heex:360
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr "GitHub"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:336
+#: lib/teslamate_web/live/settings_live/index.html.heex:355
 #: lib/teslamate_web/templates/layout/root.html.heex:168
 #, elixir-autogen, elixir-format
 msgid "Update available"
@@ -570,7 +570,7 @@ msgstr "ต่อนาที"
 msgid "Software Update available (%{version})"
 msgstr "มีการอัปเดตซอฟต์แวร์ (%{version})"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:369
+#: lib/teslamate_web/live/settings_live/index.html.heex:388
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "ออกจากระบบ"
@@ -630,7 +630,7 @@ msgstr "คีย์การเข้ารหัสที่สร้างข
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "เพื่อให้แน่ใจว่า <strong>โทเค็น Tesla API ของคุณจะถูกเก็บไว้อย่างปลอดภัย</strong> จะต้องมอบคีย์การเข้ารหัสให้กับ TeslaMate ผ่านทางตัวแปรสภาพแวดล้อม <code>ENCRYPTION_KEY</code> มิฉะนั้น <strong>จะต้องเข้าสู่ระบบหลังจากรีสตาร์ททุกครั้ง</strong>"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:265
+#: lib/teslamate_web/live/settings_live/index.html.heex:284
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
 msgstr "แรงดันลมยาง"
@@ -663,4 +663,14 @@ msgstr "คุณกำลังใช้คีย์ API (%{token}) ที่�
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:160
+#, elixir-autogen, elixir-format
+msgid "Battery"
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:163
+#, elixir-autogen, elixir-format
+msgid "LFP Battery"
 msgstr ""
