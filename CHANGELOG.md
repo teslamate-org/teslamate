@@ -9,6 +9,7 @@
 - Customize intervals between vehicle_data calls (#3940 - @jlestel)
 - feat: Create NixOS module (#3998 - @scottbot95)
 - Update vehicle.ex with marketing name for Model Y Long Range RWD (#3989 - @stefanlange)
+- feat: Add ability to enable and disable data collection for cars (#3993 - @mark3-dev)
 
 ### Improvements and bug fixes
 
