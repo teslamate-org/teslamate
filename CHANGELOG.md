@@ -32,6 +32,7 @@
 - re-enable time picker by default in drive-details, charge-details dashboards (#3985)
 - Improve "Charges" dashboard (#4031 - @jheredianet)
 - Improve "Drives" dashboard (#4033 - @jheredianet)
+- Update overview.json: Add Distance (#4034 - @DrMichael)
 
 #### Translations
 
