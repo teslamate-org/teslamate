@@ -10,6 +10,7 @@ defmodule TeslaMate.Settings.CarSettings do
     field :req_not_unlocked, :boolean, default: false
     field :free_supercharging, :boolean, default: false
     field :use_streaming_api, :boolean, default: true
+    field :enabled, :boolean, default: true
     field :lfp_battery, :boolean, default: false
 
     has_one :car, Car, foreign_key: :settings_id
@@ -21,6 +22,7 @@ defmodule TeslaMate.Settings.CarSettings do
     :req_not_unlocked,
     :free_supercharging,
     :use_streaming_api,
+    :enabled,
     :lfp_battery
   ]
 

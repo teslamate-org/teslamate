@@ -125,6 +125,7 @@ defmodule TeslaMate.SettingsTest do
       req_not_unlocked: true,
       free_supercharging: true,
       use_streaming_api: false,
+      enabled: true,
       lfp_battery: false
     }
     @invalid_attrs %{
@@ -133,6 +134,7 @@ defmodule TeslaMate.SettingsTest do
       req_not_unlocked: nil,
       free_supercharging: nil,
       use_streaming_api: nil,
+      enabled: nil,
       lfp_battery: nil
     }
 
@@ -146,6 +148,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_not_unlocked == false
       assert settings.free_supercharging == false
       assert settings.use_streaming_api == true
+      assert settings.enabled == true
       assert settings.lfp_battery == false
     end
 
@@ -162,6 +165,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.req_not_unlocked == true
       assert settings.free_supercharging == true
       assert settings.use_streaming_api == false
+      assert settings.enabled == true
       assert settings.lfp_battery == false
     end
 
@@ -190,6 +194,7 @@ defmodule TeslaMate.SettingsTest do
                suspend_min: ["can't be blank"],
                free_supercharging: ["can't be blank"],
                use_streaming_api: ["can't be blank"],
+               enabled: ["can't be blank"],
                lfp_battery: ["can't be blank"]
              }
 
