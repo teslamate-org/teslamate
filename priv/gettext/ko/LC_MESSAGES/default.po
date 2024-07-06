@@ -10,22 +10,22 @@ msgid ""
 msgstr ""
 "Language: ko\n"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:195
+#: lib/teslamate_web/live/car_live/summary.html.heex:203
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "현재 차량상태"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:349
+#: lib/teslamate_web/live/car_live/summary.html.heex:357
 #, elixir-autogen, elixir-format
 msgid "Speed"
 msgstr "속도"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:339
+#: lib/teslamate_web/live/car_live/summary.html.heex:347
 #, elixir-autogen, elixir-format
 msgid "State of Charge"
 msgstr "충전상태"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:273
+#: lib/teslamate_web/live/car_live/summary.html.heex:281
 #, elixir-autogen, elixir-format
 msgid "Charged"
 msgstr "충전됨"
@@ -60,7 +60,7 @@ msgstr "온라인"
 msgid "updating"
 msgstr "업데이트"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:121
+#: lib/teslamate_web/live/car_live/summary.html.heex:129
 #, elixir-autogen, elixir-format
 msgid "Locked"
 msgstr "잠김"
@@ -87,7 +87,7 @@ msgstr "홈"
 msgid "Settings"
 msgstr "설정"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:288
+#: lib/teslamate_web/live/car_live/summary.html.heex:296
 #, elixir-autogen, elixir-format
 msgid "Scheduled Charging"
 msgstr "충전 예약됨"
@@ -97,7 +97,7 @@ msgstr "충전 예약됨"
 msgid "Plugged In"
 msgstr "충전 준비됨"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:300
+#: lib/teslamate_web/live/car_live/summary.html.heex:308
 #, elixir-autogen, elixir-format
 msgid "Charge Limit"
 msgstr "충전목표"
@@ -226,22 +226,22 @@ msgstr "감시모드가 활성화되었습니다."
 msgid "Driver present"
 msgstr "현재 운전자"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:434
+#: lib/teslamate_web/live/car_live/summary.html.heex:442
 #, elixir-autogen, elixir-format
 msgid "cancel sleep attempt"
 msgstr "절전모드 시도 취소"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:425
+#: lib/teslamate_web/live/car_live/summary.html.heex:433
 #, elixir-autogen, elixir-format
 msgid "try to sleep"
 msgstr "절전모드 시도"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:260
+#: lib/teslamate_web/live/car_live/summary.html.heex:268
 #, elixir-autogen, elixir-format
 msgid "Range (est.)"
 msgstr "거리 (예상)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:200
+#: lib/teslamate_web/live/car_live/summary.html.heex:208
 #, elixir-autogen, elixir-format
 msgid "for"
 msgstr "경과시간"
@@ -256,12 +256,12 @@ msgstr "필수요구사항"
 msgid "Vehicle must be locked"
 msgstr "차량문은 모두 잠겨있어야 합니다."
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:240
+#: lib/teslamate_web/live/car_live/summary.html.heex:248
 #, elixir-autogen, elixir-format
 msgid "Range (rated)"
 msgstr "거리 (정규계산)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:279
+#: lib/teslamate_web/live/car_live/summary.html.heex:287
 #, elixir-autogen, elixir-format
 msgid "Charger Power"
 msgstr "충전기 전력"
@@ -286,7 +286,7 @@ msgstr "이상적인 거리"
 msgid "rated"
 msgstr "정규계산된 거리"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:239
+#: lib/teslamate_web/live/car_live/summary.html.heex:247
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
 msgstr "거리 (이상적)"
@@ -311,33 +311,33 @@ msgstr "창문 열림"
 msgid "Delete '%{geo_fence}'?"
 msgstr "'%{geo_fence}'를 삭제하겠습니까?"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:374
+#: lib/teslamate_web/live/car_live/summary.html.heex:382
 #, elixir-autogen, elixir-format
 msgid "Inside Temperature"
 msgstr "실내 온도"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:362
+#: lib/teslamate_web/live/car_live/summary.html.heex:370
 #, elixir-autogen, elixir-format
 msgid "Outside Temperature"
 msgstr "실외 온도"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:399
+#: lib/teslamate_web/live/car_live/summary.html.heex:407
 #: lib/teslamate_web/live/settings_live/index.html.heex:349
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "소프트웨어 버전"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:178
+#: lib/teslamate_web/live/car_live/summary.html.heex:186
 #, elixir-autogen, elixir-format
 msgid "Health check failed"
 msgstr "상태확인 실패"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:121
+#: lib/teslamate_web/live/car_live/summary.html.heex:129
 #, elixir-autogen, elixir-format
 msgid "Unlocked"
 msgstr "잠금 해제"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:222
+#: lib/teslamate_web/live/car_live/summary.html.heex:230
 #, elixir-autogen, elixir-format
 msgid "Remaining Time"
 msgstr "남은 시간"
@@ -390,7 +390,7 @@ msgstr "시간초과"
 msgid "Reduced Battery Range"
 msgstr "감소된 배터리 거리"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:333
+#: lib/teslamate_web/live/car_live/summary.html.heex:341
 #, elixir-autogen, elixir-format
 msgid "≈ %{range} at 100%"
 msgstr "≈ 100%에서 %{range}"
@@ -524,7 +524,7 @@ msgstr "충전요금"
 msgid "Continue"
 msgstr "계속"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:387
+#: lib/teslamate_web/live/car_live/summary.html.heex:395
 #, elixir-autogen, elixir-format
 msgid "Mileage"
 msgstr "누적주행거리"
@@ -566,7 +566,7 @@ msgstr "트렁크가 열려있습니다."
 msgid "Per Minute"
 msgstr "분당"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:134
+#: lib/teslamate_web/live/car_live/summary.html.heex:142
 #, elixir-autogen, elixir-format
 msgid "Software Update available (%{version})"
 msgstr "소프트웨어 업데이트 가능 (%{version})"
@@ -636,7 +636,7 @@ msgstr "<strong>Tesla API 토큰을 안전하게 저장</strong>하려면 하나
 msgid "Tire Pressure"
 msgstr "공기압"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:145
+#: lib/teslamate_web/live/car_live/summary.html.heex:153
 #, elixir-autogen, elixir-format
 msgid "Low tire pressure, check (%{tire_low}) tire"
 msgstr "타이어 공기압 부족, 타이어(%{tire_low})를 확인하세요."
@@ -651,7 +651,7 @@ msgstr "애견 모드"
 msgid "Dog mode is enabled"
 msgstr "애견 모드가 켜져있습니다."
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:231
+#: lib/teslamate_web/live/car_live/summary.html.heex:239
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
 msgstr "예상 종료 시간"
@@ -675,3 +675,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "LFP Battery"
 msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:121
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Sentry Mode recording"
+msgstr "감시모드"
