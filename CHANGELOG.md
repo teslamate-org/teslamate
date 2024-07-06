@@ -11,6 +11,7 @@
 - feat: Add ability to enable and disable data collection for cars (#3993 - @mark3-dev)
 - publish center_display_state to mqtt (#3813 - @Atrox)
 - feat: add LFP Battery setting for car settings (#4007 -@cwanja)
+- Add icon to summary when Sentry Mode is triggered and recording (#4043 -@kolaCZek)
 
 ### Improvements and bug fixes
 
