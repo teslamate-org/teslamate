@@ -36,6 +36,7 @@
 - Improve "Charges" dashboard (#4031 - @jheredianet)
 - Improve "Drives" dashboard (#4033 - @jheredianet)
 - Update overview.json: Add Distance (#4034 - @DrMichael)
+- Update overview.json: fix Net (#4045 - @DrMichael)
 
 #### Translations
 
