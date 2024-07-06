@@ -22,6 +22,8 @@
 
 - build(deps): bump crate-ci/typos from 1.21.0 to 1.22.9 (#4021)
 - build(deps): bump express from 4.18.2 to 4.19.2 in /website (#3790)
+- chore: update @docusaurus/core and @docusaurus/preset-classic dependencies to v3.4.0 and react and react-dom to 18.3.1 (#4046 - @JakobLichterfeld)
+- build: specify node.js version for Netlify (#4046 - @JakobLichterfeld)
 
 #### Dashboards
 
@@ -48,6 +50,7 @@
 - doc: update the Contributor's Guide with the latest requirements (#4017 - @JakobLichterfeld)
 - doc: Documentation for new endpoint changes (#3978 - @jlestel)
 - doc: Add Grafana VS Code extension documentation (#4025 - @JakobLichterfeld)
+- doc: fix markdown linter warnings in faq (#4046 - @JakobLichterfeld)
 
 ## [1.29.2]
 
