@@ -618,22 +618,22 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
+			 
+						  
+								
+						   
+							   
+				 
+				
+							   
+			 
+			
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
+                "color": "green",
                 "value": null
               }
             ]
@@ -643,25 +643,25 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byName",
-              "options": "range_km"
+              "id": "byRegexp",
+              "options": ".*_km"
             },
             "properties": [
               {
                 "id": "unit",
-                "value": "lengthkm"
+                "value": "Wh/km"
               }
             ]
           },
           {
             "matcher": {
-              "id": "byName",
-              "options": "range_mi"
+              "id": "byRegexp",
+              "options": ".*_mi"
             },
             "properties": [
               {
                 "id": "unit",
-                "value": "lengthmi"
+                "value": "Wh/km"
               }
             ]
           }
@@ -684,7 +684,7 @@
         },
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
@@ -1064,8 +1064,8 @@
             ]
           ],
           "timeColumn": "time",
-									 
-										
+		  
+		  
           "where": [
             {
               "name": "$__timeFilter",
@@ -2161,6 +2161,6 @@
   "timezone": "",
   "title": "Overview",
   "uid": "kOuP_Fggz",
-  "version": 9,
+  "version": 10,
   "weekStart": ""
 }
