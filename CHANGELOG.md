@@ -48,6 +48,7 @@
 - doc: update the Contributor's Guide with the latest requirements (#4017 - @JakobLichterfeld)
 - doc: Documentation for new endpoint changes (#3978 - @jlestel)
 - doc: Add Grafana VS Code extension documentation (#4025 - @JakobLichterfeld)
+- doc: fix typo in MQTT location JSON format (#4047 - @JakobLichterfeld)
 
 ## [1.29.2]
 
