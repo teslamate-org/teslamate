@@ -21,6 +21,7 @@
 #### Build, CI, internal
 
 - build(deps): bump crate-ci/typos from 1.21.0 to 1.22.9 (#4021)
+- build(deps): bump express from 4.18.2 to 4.19.2 in /website (#3790)
 
 #### Dashboards
 
