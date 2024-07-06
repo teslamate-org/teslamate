@@ -680,4 +680,4 @@ msgstr ""
 #: lib/teslamate_web/live/car_live/summary.html.heex:121
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Sentry Mode recording"
-msgstr "哨兵模式"
+msgstr "哨兵模式录音"
