@@ -41,6 +41,7 @@
 - Improve "Drives" dashboard (#4033 - @jheredianet)
 - Update overview.json: Add Distance (#4034 - @DrMichael)
 - Update overview.json: fix Net (#4045 - @DrMichael)
+- update overview dashboard to fix units for energy consumption (#4048 - @JakobLichterfeld)
 
 #### Translations
 
