@@ -23,7 +23,7 @@
 - build(deps): bump crate-ci/typos from 1.21.0 to 1.22.9 (#4021)
 - build(deps): bump express from 4.18.2 to 4.19.2 in /website (#3790)
 - chore: update @docusaurus/core and @docusaurus/preset-classic dependencies to v3.4.0 and react and react-dom to 18.3.1 (#4046 - @JakobLichterfeld)
-- build: specify node.js version for Netlify (#4046 - @JakobLichterfeld)
+- build: specify node.js version for Netlify in base dir as latest lts major version (#4046 - @JakobLichterfeld)
 
 #### Dashboards
 
