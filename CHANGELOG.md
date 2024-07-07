@@ -43,6 +43,7 @@
 - Update overview.json: Add Distance (#4034 - @DrMichael)
 - Update overview.json: fix Net (#4045 - @DrMichael)
 - update overview dashboard to fix units for energy consumption (#4048 - @JakobLichterfeld)
+- use lfp_battery setting in dashboards & speed up updates dashboard (#4051 - @swiffer)
 
 #### Translations
 
