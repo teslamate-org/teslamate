@@ -383,7 +383,7 @@ msgstr "Ein Fehler ist aufgetreten"
 #: lib/teslamate_web/live/car_live/summary.ex:143
 #, elixir-autogen, elixir-format
 msgid "Timeout"
-msgstr ""
+msgstr "Zeitüberschreitung"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:73
 #, elixir-autogen, elixir-format
@@ -659,22 +659,22 @@ msgstr "Erwartete Endzeit"
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
-msgstr ""
+msgstr "Du verwendest den API-Schlüssel (%{token}), der von %{url} bereitgestellt wird. Er ermöglicht deinem TeslaMate den Zugriff auf die offizielle Tesla Fleet API und Tesla Telemetry Streaming."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
-msgstr ""
+msgstr "Datenerfassung"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Battery"
-msgstr ""
+msgstr "Batterie"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:163
 #, elixir-autogen, elixir-format
 msgid "LFP Battery"
-msgstr ""
+msgstr "LFP Batterie"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:121
 #, elixir-autogen, elixir-format, fuzzy
