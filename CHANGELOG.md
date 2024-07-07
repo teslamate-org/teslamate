@@ -18,6 +18,7 @@
 - Update vehicle.ex with marketing name for Model Y Long Range RWD (#3989 - @stefanlange)
 - feat: use Grafana 11.1.0 (#4019 - @swiffer)
 - Update vehicle.ex with marketing name for Model Y SR (#4042 - @kolaCZek)
+- feat: update breadcrumb links to use Phoenix path helpers (#4052 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
