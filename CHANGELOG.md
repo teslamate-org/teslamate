@@ -16,6 +16,8 @@
 
 ## [1.30.0] - 2024-07-07
 
+As always with many improvements. Cleaner LFP battery handling, 100x speed improvement in dashboards and much, much more. Enjoy it.
+
 ### New features
 
 - Track open/close states for individual doors (#3962 - @SaswatPadhi), new MQTT values see [documentation](https://docs.teslamate.org/docs/integrations/mqtt)
