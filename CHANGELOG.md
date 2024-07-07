@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased]
+## [1.30.0] - 2024-07-07
 
 ### New features
 
@@ -9,7 +9,7 @@
 - Customize intervals between vehicle_data calls (#3940 - @jlestel)
 - feat: Create NixOS module (#3998 - @scottbot95)
 - feat: Add ability to enable and disable data collection for cars (#3993 - @mark3-dev)
-- publish center_display_state to mqtt (#3813 - @Atrox)
+- publish center_display_state to mqtt (#3813 - @Atrox), new MQTT values see [documentation](https://docs.teslamate.org/docs/integrations/mqtt)
 - feat: add LFP Battery setting for car settings (#4007 -@cwanja)
 - Add icon to summary when Sentry Mode is triggered and recording (#4043 -@kolaCZek)
 
@@ -60,7 +60,7 @@
 - doc: fix markdown linter warnings in faq (#4046 - @JakobLichterfeld)
 - doc: fix typo in MQTT location JSON format (#4047 - @JakobLichterfeld)
 
-## [1.29.2]
+## [1.29.2] - 2024-06-18
 
 This release improve TeslaMate behavior on Tesla API rate limits, which occur from time to time. We respect the retry-after header on 429 response code to not hammer the API unnecessarily in these cases.
 
@@ -2030,7 +2030,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.2...HEAD
+[1.30.0]: https://github.com/teslamate-org/teslamate/compare/v1.29.2...v1.30.0
 [1.29.2]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...v1.29.2
 [1.29.1]: https://github.com/teslamate-org/teslamate/compare/v1.29.0...v1.29.1
 [1.29.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...v1.29.0
