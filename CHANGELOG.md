@@ -48,6 +48,8 @@
 
 #### Translations
 
+- feat: update German translations missing messages (#4054 - @JakobLichterfeld)
+
 #### Documentation
 
 - doc: remove outdated, unsupported, unmaintained portainer doc (#3972 - @JakobLichterfeld)
