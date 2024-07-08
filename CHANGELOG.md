@@ -11,7 +11,7 @@
 #### Dashboards
 
 - Configure Grafana to use browser language / date formats (#4064 - @swiffer)
-- Fix hard coded informations (timezone and orgId) (#4056 - @jlestel)
+- Fix hard coded information (timezone and orgId) (#4056 - @jlestel)
 
 #### Translations
 
