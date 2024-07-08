@@ -194,3 +194,5 @@ jobs:
         if: github.ref == 'refs/heads/master' && matrix.report_coverage
         run: mix coveralls.github
         continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
