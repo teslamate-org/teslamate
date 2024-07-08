@@ -1978,7 +1978,7 @@
   "timepicker": {
     "hidden": true
   },
-  "timezone": "browser",
+  "timezone": "",
   "title": "Battery Health",
   "uid": "jchmRiqUfXgTM",
   "version": 9,

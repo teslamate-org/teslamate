@@ -1955,7 +1955,7 @@
         {
           "targetBlank": true,
           "title": "States",
-          "url": "/d/xo4BNRkZz/states?orgId=1&${__url_time_range}"
+          "url": "/d/xo4BNRkZz/states?${__url_time_range}"
         }
       ],
       "options": {
