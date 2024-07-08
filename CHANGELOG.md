@@ -10,7 +10,7 @@
 
 #### Dashboards
 
-- Configure Grafana to use browser language / date formats
+- Configure Grafana to use browser language / date formats (#4064 - @swiffer)
 
 #### Translations
 
