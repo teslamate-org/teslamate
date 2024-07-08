@@ -10,6 +10,8 @@
 
 #### Dashboards
 
+- Configure Grafana to use browser language / date formats
+
 #### Translations
 
 #### Documentation
