@@ -8,6 +8,8 @@
 
 #### Build, CI, internal
 
+- ci: fix coverage report env variable (#4066 - @JakobLichterfeld)
+
 #### Dashboards
 
 - Configure Grafana to use browser language / date formats (#4064 - @swiffer)
