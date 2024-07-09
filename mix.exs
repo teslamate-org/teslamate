@@ -112,11 +112,11 @@ defmodule TeslaMate.MixProject do
             |> to_string()
 
           _error ->
-            "0.0.0-dev"
+            fallback_to_version_from_file()
         end
 
       _ ->
-        "0.0.0-dev"
+        fallback_to_version_from_file()
     end
   end
 
@@ -124,4 +124,11 @@ defmodule TeslaMate.MixProject do
 
   defp bump_version(%Version{patch: p} = version),
     do: struct(version, patch: p + 1)
+
+  defp fallback_to_version_from_file do
+    case File.read("VERSION") do
+      {:ok, version} -> String.trim(version)
+      {:error, _reason} -> "0.0.0-dev"
+    end
+  end
 end
