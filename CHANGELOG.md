@@ -9,6 +9,7 @@
 #### Build, CI, internal
 
 - ci: fix coverage report env variable (#4066 - @JakobLichterfeld)
+- feat: extend version with more build info (#4069 - @JakobLichterfeld)
 
 #### Dashboards
 
