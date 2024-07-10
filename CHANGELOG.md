@@ -20,6 +20,7 @@
 #### Translations
 
 - update zh_hans localized string (#4073 - @mrgaolei)
+- Update default.po for thai (#4072 - @tomzt)
 
 #### Documentation
 
