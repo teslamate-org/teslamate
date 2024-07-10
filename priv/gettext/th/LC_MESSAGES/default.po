@@ -663,19 +663,19 @@ msgstr "คุณกำลังใช้คีย์ API (%{token}) ที่�
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
-msgstr ""
+msgstr "การเก็บรวบรวมข้อมูล"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Battery"
-msgstr ""
+msgstr "แบตเตอรี่"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:163
 #, elixir-autogen, elixir-format
 msgid "LFP Battery"
-msgstr ""
+msgstr "แบตเตอรี่ชนิด LFP"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:121
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Sentry Mode recording"
-msgstr "โหมด Sentry"
+msgstr "การบันทึกใน Sentry โหมด"
