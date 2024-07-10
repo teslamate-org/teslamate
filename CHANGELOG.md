@@ -8,6 +8,22 @@
 
 #### Build, CI, internal
 
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+## [1.30.1] - 2024-07-10
+
+This is a hotfix release to work around the map fit problem in the new Upstream Grafana. As soon as a new Grafana version is available, we will update again.
+
+### Improvements and bug fixes
+
+- downgrade grafana until maps issue in upstream grafana is resolved (#4071 - @swiffer)
+
+#### Build, CI, internal
+
 - ci: fix coverage report env variable (#4066 - @JakobLichterfeld)
 
 #### Dashboards
@@ -17,7 +33,8 @@
 
 #### Translations
 
-#### Documentation
+- update zh_hans localized string (#4073 - @mrgaolei)
+- Update default.po for thai (#4072 - @tomzt)
 
 ## [1.30.0] - 2024-07-07
 
@@ -2051,7 +2068,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.30.0...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.30.1...HEAD
+[1.30.1]: https://github.com/teslamate-org/teslamate/compare/v1.30.0...v1.30.1
 [1.30.0]: https://github.com/teslamate-org/teslamate/compare/v1.29.2...v1.30.0
 [1.29.2]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...v1.29.2
 [1.29.1]: https://github.com/teslamate-org/teslamate/compare/v1.29.0...v1.29.1
