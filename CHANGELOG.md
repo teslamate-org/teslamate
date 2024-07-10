@@ -17,6 +17,8 @@
 
 #### Translations
 
+- update zh_hans localized string (#4073 - @mrgaolei)
+
 #### Documentation
 
 ## [1.30.0] - 2024-07-07
