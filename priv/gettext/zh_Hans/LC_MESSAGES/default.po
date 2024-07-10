@@ -660,24 +660,24 @@ msgstr "预计完成时间"
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
-msgstr ""
+msgstr "正在使用由 %{url} 提供的API key (%{token})。他将允许TeslaMate通过特斯拉官方车队API和Telemetry数据流访问你的车辆。"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
-msgstr ""
+msgstr "数据收集"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Battery"
-msgstr ""
+msgstr "电池类型"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:163
 #, elixir-autogen, elixir-format
 msgid "LFP Battery"
-msgstr ""
+msgstr "磷酸铁锂电池"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:121
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Sentry Mode recording"
-msgstr "哨兵模式录音"
+msgstr "哨兵模式录制中"
