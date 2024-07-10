@@ -4,12 +4,11 @@
   inputs = {
     nixpkgs = { url = "github:NixOS/nixpkgs/nixos-unstable"; };
     flake-utils = { url = "github:numtide/flake-utils"; };
-    # See https://github.com/cachix/devenv/issues/756
-    devenv.url = "github:cachix/devenv/v0.6.3";
+    devenv.url = "github:cachix/devenv";
   };
 
   outputs = inputs@{ self, nixpkgs, flake-utils, devenv }:
-    flake-utils.lib.eachDefaultSystem (system:
+    (flake-utils.lib.eachDefaultSystem (system:
       let
         inherit (pkgs.lib) optional optionals;
         pkgs = nixpkgs.legacyPackages.${system};
@@ -18,7 +17,7 @@
         beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang;
 
         src = ./.;
-        version = "0.0.0";
+        version = builtins.readFile ./VERSION;
         pname = "teslamate";
 
         mixFodDeps = beamPackages.fetchMixDeps {
@@ -80,10 +79,14 @@
             mix phx.digest --no-deps-check
           '';
 
+          meta = {
+            mainProgram = "teslamate";
+          };
         };
 
         postgres_port = 7000;
         mosquitto_port = 7001;
+        process_compose_port = 7002;
 
         psql = pkgs.writeShellScriptBin "teslamate_psql" ''
           exec "${pkgs.postgresql}/bin/psql" --host "$DATABASE_HOST" --user "$DATABASE_USER" --port "$DATABASE_PORT" "$DATABASE_NAME" "$@"
@@ -92,11 +95,9 @@
           exec "${pkgs.mosquitto}/bin/mosquitto_sub" -h "$MQTT_HOST" -p "$MQTT_PORT" -u "$MQTT_USERNAME" -P "$MQTT_PASSWORD" "$@"
         '';
 
-      in with pkgs; {
-        packages.default = pkg;
-        devShells.default = devenv.lib.mkShell {
+        devShell = devenv.lib.mkShell {
           inherit inputs pkgs;
-          modules = [{
+          modules = with pkgs; [{
             packages = [
               elixir
               elixir_ls
@@ -116,8 +117,6 @@
                 CoreServices
               ]);
             enterShell = ''
-              # kludge for https://github.com/cachix/devenv/issues/862
-              # export PKG_CONFIG_PATH_FOR_TARGET="$PKG_CONFIG_PATH"
               export LOCALES="${cldr}/priv/cldr";
               export PORT="4000"
               export ENCRYPTION_KEY="your_secure_encryption_key_here"
@@ -131,9 +130,16 @@
               export RELEASE_COOKIE="1234567890123456789"
               export TZDATA_DIR="$PWD/tzdata"
             '';
+            enterTest = ''
+              mix test
+            '';
             processes.mqtt = {
               exec =
                 "${pkgs.mosquitto}/bin/mosquitto -p ${toString mosquitto_port}";
+            };
+            process.process-compose = {
+              port = process_compose_port;
+              tui = true;
             };
             services.postgres = {
               enable = true;
@@ -148,6 +154,41 @@
               '';
             };
           }];
+
         };
-      });
+
+        moduleTest = (nixpkgs.lib.nixos.runTest {
+          hostPkgs = pkgs;
+          defaults.documentation.enable = false;
+          imports = [{
+            name = "teslamate";
+            nodes.server = {
+              imports = [ self.nixosModules.default ];
+              services.teslamate = {
+                enable = true;
+                secretsFile = builtins.toFile "teslamate.env" ''
+                  ENCRYPTION_KEY=123456789
+                  DATABASE_PASS=123456789
+                  RELEASE_COOKIE=123456789
+                '';
+                postgres.enable = true;
+                grafana.enable = true;
+              };
+            };
+
+            testScript = ''
+              server.wait_for_open_port(4000)
+            '';
+          }];
+        }).config.result;
+      in {
+        packages = {
+          devenv-up = devShell.config.procfileScript;
+          default = pkg;
+        };
+        devShells.default = devShell;
+        checks.default = moduleTest;
+      })) // {
+        nixosModules.default = import ./module.nix { inherit self; };
+      };
 }

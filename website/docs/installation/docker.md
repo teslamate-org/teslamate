@@ -3,7 +3,7 @@ title: Docker install
 sidebar_label: Docker
 ---
 
-This document provides the necessary steps for installation of TeslaMate on a any system that runs Docker. For a walkthrough that provides the necessary steps for manual installation see [Manual Install](debian.md).
+This document provides the necessary steps for installation of TeslaMate on any system that runs Docker. For a walkthrough that provides the necessary steps for manual installation see [Manual installation](debian.md).
 
 This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk. If you intend to expose TeslaMate directly to the internet check out the [advanced guides](../guides/traefik.md).
 
@@ -19,8 +19,6 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 1. Create a file called `docker-compose.yml` with the following content:
 
    ```yml title="docker-compose.yml"
-   version: "3"
-
    services:
      teslamate:
        image: teslamate/teslamate:latest
@@ -40,7 +38,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
          - all
 
      database:
-       image: postgres:15
+       image: postgres:16
        restart: always
        environment:
          - POSTGRES_USER=teslamate
@@ -90,14 +88,9 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 ## Usage
 
 1. Open the web interface [http://your-ip-address:4000](http://localhost:4000)
-2. Sign in with your Tesla account
+2. Sign in with your Tesla Account
 3. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000). Log in with the default user `admin` (initial password `admin`) and enter a secure password.
 
-## [Update](../upgrading.mdx)
+## Update
 
-To update the running TeslaMate configuration to the latest version, run the following commands:
-
-```bash
-docker compose pull
-docker compose up -d
-```
+To update the running TeslaMate configuration to the latest version, follow: [Upgrading to a new version](../upgrading.mdx)

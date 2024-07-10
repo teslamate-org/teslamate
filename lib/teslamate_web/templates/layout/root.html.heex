@@ -6,16 +6,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <%= live_title_tag(assigns[:page_title] || "Home", suffix: " · TeslaMate") %>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")} />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5AB53N3ALo" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=5AB53N3ALo" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=5AB53N3ALo" />
-    <link rel="manifest" href="/site.webmanifest?v=5AB53N3ALo" crossorigin="use-credentials" />
-    <link rel="mask-icon" href="/safari-pinned-tab.svg?v=5AB53N3ALo" color="#363636" />
-    <link rel="shortcut icon" href="/favicon.ico?v=5AB53N3ALo" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href={Routes.static_path(@conn, "/apple-touch-icon.png?v=5AB53N3ALo")}
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href={Routes.static_path(@conn, "/favicon-32x32.png?v=5AB53N3ALo")}
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href={Routes.static_path(@conn, "/favicon-16x16.png?v=5AB53N3ALo")}
+    />
+    <link
+      rel="manifest"
+      href={Routes.static_path(@conn, "/site.webmanifest?v=5AB53N3ALo")}
+      crossorigin="use-credentials"
+    />
+    <link
+      rel="mask-icon"
+      href={Routes.static_path(@conn, "/safari-pinned-tab.svg?v=5AB53N3ALo")}
+      color="#363636"
+    />
+    <link rel="shortcut icon" href={Routes.static_path(@conn, "/favicon.ico?v=5AB53N3ALo")} />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="msapplication-TileColor" content="#ffffff" />
     <meta name="theme-color" content="#363636" />
     <%= csrf_meta_tag() %>
+    <script>
+      window.LIVE_PATH = "<%= Routes.static_path(@conn, "/live") %>";
+    </script>
     <script
       defer
       phx-track-static
@@ -28,7 +53,7 @@
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
-          <a class="navbar-item" href="/">
+          <a class="navbar-item" href={Routes.static_path(@conn, "/")}>
             <%= img_tag(Routes.static_path(@conn, "/images/logo.svg"),
               alt: "TeslaMate",
               width: "90px"

@@ -1,4 +1,31 @@
 {
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.1.0"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-postgresql-datasource",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -22,7 +49,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1643273221821,
+  "id": null,
   "links": [
     {
       "icon": "dashboard",
@@ -59,7 +86,10 @@
       "type": "row"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -87,6 +117,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "count"
@@ -94,9 +125,11 @@
           "fields": "",
           "values": true
         },
-        "textMode": "value"
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "format": "table",
@@ -124,14 +157,21 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "title": "Updates",
       "type": "stat"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "decimals": 1,
@@ -161,6 +201,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -168,9 +209,11 @@
           "fields": "",
           "values": true
         },
-        "textMode": "value"
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "format": "table",
@@ -198,19 +241,30 @@
               "params": [],
               "type": "macro"
             }
-          ]
+          ],
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          }
         }
       ],
       "title": "Median time between updates",
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
-            "filterable": false
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -443,9 +497,10 @@
         "y": 4
       },
       "id": 2,
-      "links": [],
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -460,7 +515,7 @@
           }
         ]
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "11.1.0",
       "scroll": true,
       "showHeader": true,
       "sort": {
@@ -566,12 +621,16 @@
       ],
       "targets": [
         {
-          "datasource": "TeslaMate",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "with u as (\r\n  select *, coalesce(lag(start_date) over(order by start_date desc), now()) as next_start_date \r\n  from updates\r\n  where car_id = $car_id and $__timeFilter(start_date)\r\n),\r\nrng as (\r\n  SELECT\r\n\t  to_timestamp(floor(extract(epoch from date)/21600)*21600) AS date,\r\n\t  (sum([[preferred_range]]_battery_range_km) / nullif(sum(coalesce(usable_battery_level,battery_level)),0) * 100 ) AS \"battery_rng\"\r\n  FROM (\r\n    select battery_level, usable_battery_level, date, rated_battery_range_km, ideal_battery_range_km\r\n    from positions\r\n    where car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\r\n    union all\r\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date, rated_battery_range_km, ideal_battery_range_km\r\n    from charges c\r\n    join charging_processes p ON p.id = c.charging_process_id \r\n    where $__timeFilter(date) and p.car_id = $car_id\r\n  ) as data\r\n  GROUP BY 1\r\n)\r\n\r\nselect\t\r\n  u.start_date as time,\r\n\textract(EPOCH FROM u.end_date - u.start_date) AS update_duration,\r\n\textract(EPOCH FROM u.start_date - lag(u.start_date) OVER (ORDER BY u.start_date)) AS since_last_update,\r\n\tsplit_part(u.version, ' ', 1) as version,\r\n\tcount(distinct cp.id) as chg_ct,\r\n\tconvert_km(avg(r.battery_rng), '$length_unit')::numeric(6,2) AS avg_[[preferred_range]]_range_[[length_unit]]\r\nfrom u u\r\nleft join charging_processes cp\r\n\tON u.car_id = cp.car_id\r\n \tand cp.start_date between u.start_date and u.next_start_date\r\nleft join rng r\r\n\tON r.date between u.start_date and u.next_start_date\r\ngroup by u.car_id,\r\n\tu.start_date,\r\n\tu.end_date,\r\n\tnext_start_date,\r\n\tsplit_part(u.version, ' ', 1)",
+          "rawSql": "with u as (\r\n  select *, coalesce(lag(start_date) over(order by start_date desc), now()) as next_start_date \r\n  from updates\r\n  where car_id = $car_id and $__timeFilter(start_date)\r\n),\r\nrng as (\r\n  SELECT\r\n\t  date_trunc('hour', date) AS date,\r\n\t  (sum([[preferred_range]]_battery_range_km)/ nullif(sum(usable_battery_level),0) * 100 ) AS \"battery_rng\",\r\n\t  sum(case when action = 'Charge' then 1 else 0 end) as chg_ct\r\n  FROM (\r\n    select coalesce(usable_battery_level, battery_level) as usable_battery_level, start_date as date, start_rated_range_km as rated_battery_range_km, start_ideal_range_km as ideal_battery_range_km, 'Drive' as action\r\n    from drives d\r\n    inner join positions p on d.start_position_id = p.id \r\n    where d.car_id = $car_id and $__timeFilter(start_date)\r\n    union all\r\n    select end_battery_level as usable_battery_level, end_date, end_rated_range_km as rated_battery_range_km, end_ideal_range_km as ideal_battery_range_km, 'Charge' as action\r\n    from charging_processes p\r\n    where $__timeFilter(end_date) and p.car_id = $car_id\r\n  ) as data\r\n  GROUP BY 1\r\n)\r\n\r\nselect\t\r\n  u.start_date as time,\r\n\textract(EPOCH FROM u.end_date - u.start_date) AS update_duration,\r\n\textract(EPOCH FROM u.start_date - lag(u.start_date) OVER (ORDER BY u.start_date)) AS since_last_update,\r\n\tsplit_part(u.version, ' ', 1) as version,\r\n\tsum(r.chg_ct) as chg_ct,\r\n\tconvert_km(avg(r.battery_rng), '$length_unit')::numeric(6,2) AS avg_[[preferred_range]]_range_[[length_unit]]\r\nfrom u u\r\nleft join rng r\r\n\tON r.date between u.start_date and u.next_start_date\r\ngroup by u.car_id,\r\n\tu.start_date,\r\n\tu.end_date,\r\n\tnext_start_date,\r\n\tsplit_part(u.version, ' ', 1)",
           "refId": "A",
           "select": [
             [
@@ -583,6 +642,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "cars",
           "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
@@ -595,25 +671,22 @@
           ]
         }
       ],
-      "datasource": "TeslaMate",
       "title": "Updates",
       "type": "table"
     }
   ],
-  "schemaVersion": 36,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [
     "tesla"
   ],
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
         "hide": 2,
         "includeAll": true,
@@ -632,12 +705,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "ideal",
-          "value": "ideal"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -655,12 +727,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "km",
-          "value": "km"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -678,12 +749,11 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "http://localhost:4000",
-          "value": "http://localhost:4000"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -734,6 +804,6 @@
   "timezone": "",
   "title": "Updates",
   "uid": "IiC07mgWz",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

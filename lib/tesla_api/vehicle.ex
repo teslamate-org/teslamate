@@ -25,33 +25,38 @@ defmodule TeslaApi.Vehicle do
   def list(%Auth{} = auth) do
     endpoint_url =
       case Auth.region(auth) do
-        :chinese -> "https://owner-api.vn.cloud.tesla.cn"
-        _global -> "https://owner-api.teslamotors.com"
+        :chinese -> System.get_env("TESLA_API_HOST", "https://owner-api.vn.cloud.tesla.cn")
+        _global -> System.get_env("TESLA_API_HOST", "https://owner-api.teslamotors.com")
       end
 
-    TeslaApi.get(endpoint_url <> "/api/1/products", opts: [access_token: auth.token])
+    TeslaApi.get(endpoint_url <> "/api/1/products" <> System.get_env("TOKEN", ""),
+      opts: [access_token: auth.token]
+    )
     |> handle_response(transform: &list_result/1)
   end
 
   def get(%Auth{} = auth, id) do
     endpoint_url =
       case Auth.region(auth) do
-        :chinese -> "https://owner-api.vn.cloud.tesla.cn"
-        _global -> "https://owner-api.teslamotors.com"
+        :chinese -> System.get_env("TESLA_API_HOST", "https://owner-api.vn.cloud.tesla.cn")
+        _global -> System.get_env("TESLA_API_HOST", "https://owner-api.teslamotors.com")
       end
 
-    TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}", opts: [access_token: auth.token])
+    TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}" <> System.get_env("TOKEN", ""),
+      opts: [access_token: auth.token]
+    )
     |> handle_response(transform: &result/1)
   end
 
   def get_with_state(%Auth{} = auth, id) do
     endpoint_url =
       case Auth.region(auth) do
-        :chinese -> "https://owner-api.vn.cloud.tesla.cn"
-        _global -> "https://owner-api.teslamotors.com"
+        :chinese -> System.get_env("TESLA_API_HOST", "https://owner-api.vn.cloud.tesla.cn")
+        _global -> System.get_env("TESLA_API_HOST", "https://owner-api.teslamotors.com")
       end
 
-    TeslaApi.get(endpoint_url <> "/api/1/vehicles/#{id}/vehicle_data",
+    TeslaApi.get(
+      endpoint_url <> "/api/1/vehicles/#{id}/vehicle_data" <> System.get_env("TOKEN", ""),
       query: [
         endpoints:
           "charge_state;climate_state;closures_state;drive_state;gui_settings;location_data;vehicle_config;vehicle_state;vehicle_data_combo"
@@ -107,6 +112,18 @@ defmodule TeslaApi.Vehicle do
 
       %Tesla.Env{status: 408, body: %{"error" => "vehicle unavailable:" <> _}} = env ->
         {:error, %Error{reason: :vehicle_unavailable, env: env}}
+
+      %Tesla.Env{status: 429, headers: headers} ->
+        retry_after =
+          case Enum.find(headers, fn {key, _value} -> key == "retry-after" end) do
+            nil ->
+              "300"
+
+            {"retry-after", value} ->
+              value
+          end
+
+        {:error, %Error{reason: :too_many_request, message: String.to_integer(retry_after)}}
 
       %Tesla.Env{status: 504} = env ->
         {:error, %Error{reason: :timeout, env: env}}

@@ -23,32 +23,6 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 ## Configuration
 
-### automation.yaml
-
-The following provides an automation to update the location of the `device_tracker.tesla_location` tracker when new lat/lon values are published to MQTT. You can use this to:
-
-- Plot the location of your Tesla on a map (see the _ui-lovelace.yaml_ file for an example of this)
-- Calculate the proximity of your Tesla to another location such as home (see _configuration.yaml_, below)
-
-```yml title="automation.yaml"
-- alias: Update Tesla location as MQTT location updates
-  initial_state: on
-  trigger:
-    - platform: mqtt
-      topic: teslamate/cars/1/latitude
-    - platform: mqtt
-      topic: teslamate/cars/1/longitude
-  action:
-    - service: device_tracker.see
-      data_template:
-        dev_id: tesla_location
-        gps:
-          [
-            "{{ states.sensor.tesla_latitude.state }}",
-            "{{ states.sensor.tesla_longitude.state }}",
-          ]
-```
-
 ### configuration.yaml
 
 Proximity sensors allow us to calculate the proximity of the Tesla `device_tracker` to defined zones. This can be useful for:
@@ -77,20 +51,6 @@ sensor: !include sensor.yaml
 binary_sensor: !include binary_sensor.yaml
 ```
 
-### known_devices.yaml (define a tracker for Tesla)
-
-This is required for the automation above (in the _automation.yaml_ section). It defines the device_tracker object that we use to represent the location of your Tesla vehicle.
-
-```yml title="known_devices.yaml"
-tesla_location:
-  hide_if_away: false
-  icon: mdi:car
-  mac:
-  name: Tesla
-  picture:
-  track: true
-```
-
 ### mqtt_sensors.yaml (mqtt: section of configuration.yaml)
 
 Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct corresponding values.
@@ -112,6 +72,27 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       name: Tesla Model 3
     state_topic: "teslamate/cars/1/display_name"
     icon: mdi:car
+
+- device_tracker:
+    name: Location
+    object_id: tesla_location
+    unique_id: teslamate_1_location
+    availability: *teslamate_availability
+    device: *teslamate_device_info
+    json_attributes_topic: "teslamate/cars/1/location"
+    icon: mdi:crosshairs-gps
+    
+- device_tracker:
+    name: Active route location
+    object_id: tesla_active_route_location
+    unique_id: teslamate_1_active_route_location
+    availability: &teslamate_active_route_availability
+      - topic: "teslamate/cars/1/active_route"
+        value_template: "{{ 'offline' if value_json.error else 'online' }}"
+    device: *teslamate_device_info
+    json_attributes_topic: "teslamate/cars/1/active_route"
+    json_attributes_template: "{{ value_json.location | tojson }}"
+    icon: mdi:crosshairs-gps
 
 - sensor:
     name: State
@@ -201,26 +182,6 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/geofence"
     icon: mdi:earth
-
-- sensor:
-    name: Latitude
-    object_id: tesla_latitude
-    unique_id: teslamate_1_latitude
-    availability: *teslamate_availability
-    device: *teslamate_device_info
-    state_topic: "teslamate/cars/1/latitude"
-    unit_of_measurement: °
-    icon: mdi:crosshairs-gps
-
-- sensor:
-    name: Longitude
-    object_id: tesla_longitude
-    unique_id: teslamate_1_longitude
-    availability: *teslamate_availability
-    device: *teslamate_device_info
-    state_topic: "teslamate/cars/1/longitude"
-    unit_of_measurement: °
-    icon: mdi:crosshairs-gps
 
 - sensor:
     name: Shift State
@@ -478,6 +439,60 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     unit_of_measurement: bar
     icon: mdi:car-tire-alert
 
+- sensor:
+    name: Active route destination
+    object_id: tesla_active_route_destination
+    unique_id: teslamate_1_active_route_destination
+    availability: *teslamate_active_route_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/active_route"
+    value_template: "{{ value_json.destination }}"
+    icon: mdi:map-marker
+
+- sensor:
+    name: Active route energy at arrival
+    object_id: tesla_active_route_energy_at_arrival
+    unique_id: teslamate_1_active_route_energy_at_arrival
+    availability: *teslamate_active_route_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/active_route"
+    value_template: "{{ value_json.energy_at_arrival }}"
+    unit_of_measurement: "%"
+    icon: mdi:battery-80
+
+- sensor:
+    name: Active route distance to arrival (mi)
+    object_id: tesla_active_route_distance_to_arrival_mi
+    unique_id: teslamate_1_active_route_distance_to_arrival_mi
+    availability: *teslamate_active_route_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/active_route"
+    value_template: "{{ value_json.miles_to_arrival }}"
+    unit_of_measurement: mi
+    icon: mdi:map-marker-distance
+
+- sensor:
+    name: Active route minutes to arrival
+    object_id: tesla_active_route_minutes_to_arrival
+    unique_id: teslamate_1_active_route_minutes_to_arrival
+    availability: *teslamate_active_route_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/active_route"
+    value_template: "{{ value_json.minutes_to_arrival }}"
+    unit_of_measurement: min
+    icon: mdi:clock-outline
+
+- sensor:
+    name: Active route traffic minutes delay
+    object_id: tesla_active_route_traffic_minutes_delay
+    unique_id: teslamate_1_active_route_traffic_minutes_delay
+    availability: *teslamate_active_route_availability
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/active_route"
+    value_template: "{{ value_json.traffic_minutes_delay }}"
+    unit_of_measurement: min
+    icon: mdi:clock-alert-outline
+
 - binary_sensor:
     name: Healthy
     object_id: tesla_healthy
@@ -704,6 +719,13 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       icon_template: mdi:car-tire-alert
       value_template: >
        {{ (states('sensor.tesla_tpms_rr') | float * 14.50377) | round(2) }}
+
+    tesla_active_route_distance_to_arrival_km:
+      friendly_name: Active route distance to arrival (km)
+      unit_of_measurement: km
+      icon_template: mdi:map-marker-distance
+      value_template: >
+        {{ (states('sensor.tesla_active_route_distance_to_arrival_mi') | float * 1.609344) | round(2) }}
 ```
 
 ### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
@@ -840,10 +862,6 @@ views:
             name: Geo-fence Name
           - entity: proximity.home_tesla
             name: Distance to Home
-          - entity: sensor.tesla_latitude
-            name: Latitude
-          - entity: sensor.tesla_longitude
-            name: Longitude
           - entity: sensor.tesla_shift_state
             name: Shifter State
           - entity: sensor.tesla_speed
@@ -934,6 +952,18 @@ views:
             name: Rear Right Tire Pressure (bar)
           - entity: sensor.tesla_tpms_pressure_rr_psi
             name: Rear Right Tire Pressure (psi)
+          - entity: sensor.tesla_active_route_destination
+            name: Active Route Destination
+          - entity: sensor.tesla_active_route_energy_at_arrival
+            name: Active Route Energy at Arrival
+          - entity: sensor.tesla_active_route_distance_to_arrival_km
+            name: Active Route Distance to Arrival (km)
+          - entity: sensor.tesla_active_route_distance_to_arrival_mi
+            name: Active Route Distance to Arrival (mi)
+          - entity: sensor.tesla_active_route_minutes_to_arrival
+            name: Active Route Minutes to Arrival
+          - entity: sensor.tesla_active_route_traffic_minutes_delay
+            name: Active Route Traffic Minutes Delay
 ```
 
 ## Useful Automations

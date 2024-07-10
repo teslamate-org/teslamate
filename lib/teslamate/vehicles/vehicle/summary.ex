@@ -9,13 +9,16 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     car display_name state since healthy latitude longitude heading battery_level charging_state usable_battery_level
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
-    plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open doors_open
+    plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
+    doors_open driver_front_door_open driver_rear_door_open passenger_front_door_open passenger_rear_door_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available update_version is_user_present geofence
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
-    active_route_destination active_route_latitude active_route_longitude
+    active_route_destination active_route_latitude active_route_longitude active_route_energy_at_arrival
+    active_route_miles_to_arrival active_route_minutes_to_arrival active_route_traffic_minutes_delay
+    center_display_state
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -79,6 +82,14 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       active_route_destination: get_in_struct(vehicle, [:drive_state, :active_route_destination]),
       active_route_latitude: get_in_struct(vehicle, [:drive_state, :active_route_latitude]),
       active_route_longitude: get_in_struct(vehicle, [:drive_state, :active_route_longitude]),
+      active_route_energy_at_arrival:
+        get_in_struct(vehicle, [:drive_state, :active_route_energy_at_arrival]),
+      active_route_miles_to_arrival:
+        get_in_struct(vehicle, [:drive_state, :active_route_miles_to_arrival]),
+      active_route_minutes_to_arrival:
+        get_in_struct(vehicle, [:drive_state, :active_route_minutes_to_arrival]),
+      active_route_traffic_minutes_delay:
+        get_in_struct(vehicle, [:drive_state, :active_route_traffic_minutes_delay]),
       latitude: get_in_struct(vehicle, [:drive_state, :latitude]),
       longitude: get_in_struct(vehicle, [:drive_state, :longitude]),
       power: get_in_struct(vehicle, [:drive_state, :power]),
@@ -120,6 +131,10 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
       windows_open: window_open(vehicle),
       doors_open: doors_open(vehicle),
+      driver_front_door_open: driver_front_door_open(vehicle),
+      driver_rear_door_open: driver_rear_door_open(vehicle),
+      passenger_front_door_open: passenger_front_door_open(vehicle),
+      passenger_rear_door_open: passenger_rear_door_open(vehicle),
       trunk_open: trunk_open(vehicle),
       frunk_open: frunk_open(vehicle),
       is_user_present: get_in_struct(vehicle, [:vehicle_state, :is_user_present]),
@@ -133,7 +148,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       tpms_soft_warning_fl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fl]),
       tpms_soft_warning_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fr]),
       tpms_soft_warning_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rl]),
-      tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr])
+      tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr]),
+      center_display_state: get_in_struct(vehicle, [:vehicle_state, :center_display_state])
     }
   end
 
@@ -172,6 +188,28 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         nil
     end
   end
+
+  defp driver_front_door_open(%Vehicle{vehicle_state: %VehicleState{df: df}}) when is_number(df),
+    do: df > 0
+
+  defp driver_front_door_open(_vehicle), do: nil
+
+  defp driver_rear_door_open(%Vehicle{vehicle_state: %VehicleState{dr: dr}}) when is_number(dr),
+    do: dr > 0
+
+  defp driver_rear_door_open(_vehicle), do: nil
+
+  defp passenger_front_door_open(%Vehicle{vehicle_state: %VehicleState{pf: pf}})
+       when is_number(pf),
+       do: pf > 0
+
+  defp passenger_front_door_open(_vehicle), do: nil
+
+  defp passenger_rear_door_open(%Vehicle{vehicle_state: %VehicleState{pr: pr}})
+       when is_number(pr),
+       do: pr > 0
+
+  defp passenger_rear_door_open(_vehicle), do: nil
 
   defp trunk_open(%Vehicle{vehicle_state: %VehicleState{rt: rt}}) when is_number(rt), do: rt > 0
   defp trunk_open(_vehicle), do: nil

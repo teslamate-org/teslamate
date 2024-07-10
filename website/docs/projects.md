@@ -14,11 +14,11 @@ A [Magic Mirror](https://magicmirror.builders/) Module for TeslaMate.
 
 LINK: [github.com/denverquane/MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
 
-## [Home Assistant Addon](https://github.com/matt-FFFFFF/hassio-addon-teslamate)
+## [Home Assistant Addon](https://github.com/lildude/ha-addon-teslamate)
 
 An unofficial Home Assistant addon for TeslaMate, with a PostgreSQL addon too. Works with the existing community Grafana and Mosquitto addons to provide a complete solution.
 
-LINK: [github.com/matt-FFFFFF/hassio-addon-teslamate](https://github.com/matt-FFFFFF/hassio-addon-teslamate)
+LINK: [github.com/lildude/ha-addon-teslamate](https://github.com/lildude/ha-addon-teslamate)
 
 ## [TeslaMateAgile](https://github.com/MattJeanes/TeslaMateAgile)
 
@@ -79,4 +79,14 @@ LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-g
 
 Raspberry Pi project that installs along Tesla's standard USB drive, sends video alerts in real-time & backs up all footage, now comes pre-installed with TeslaMate.
 
-LINK: [https://www.teslarpi.com)
+LINK: [https://www.teslarpi.com](https://www.teslarpi.com)
+
+## [MyTeslaMate](https://www.myteslamate.com)
+
+For those who do not wish to install their own instance, MyTeslaMate provides a managed instance of TeslaMate ready to use in one minute, with a security overlay (Authelia), 30-day backups, and the possibility of importing a backup to migrate easily.
+
+For all [TeslaMate](https://www.myteslamate.com) users, MyTeslaMate also provides for free a [Fleet API](https://app.myteslamate.com/fleet) endpoint and a streaming server based on Tesla Telemetry events.
+
+LINK: [MyTeslaMate Website](https://www.myteslamate.com)
+
+LINK: [Follow this guide](/docs/guides/api#myteslamate-fleet-api) to use official Tesla APIs on your Teslamate.

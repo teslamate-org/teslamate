@@ -10,7 +10,7 @@ If you are using `docker-compose`, you are using Docker Compose v1, which has be
 Create backup file `teslamate.bck`:
 
 ```bash
-docker compose exec -T database pg_dump -U teslamate teslamate > /backuplocation/teslamate.bck
+docker compose exec -T database pg_dump -U teslamate teslamate > ./teslamate.bck
 ```
 
 :::note

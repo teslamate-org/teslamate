@@ -76,6 +76,9 @@ defmodule TeslaMate.Import.LineParser do
       {"id", _val} ->
         Map.put(acc, "id", :rand.uniform(65536))
 
+      {"vehicle_id", ""} ->
+        Map.put(acc, "vehicle_id", System.get_env("TESLAFI_IMPORT_VEHICLE_ID", "1"))
+
       {"Date", val} ->
         {:ok, datetime} =
           with {:error, _reason} <- Timex.parse(val, "{YYYY}-{M}-{D} {h24}:{m}:{s}"),

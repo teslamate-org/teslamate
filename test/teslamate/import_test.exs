@@ -472,6 +472,34 @@ defmodule TeslaMate.ImportTest do
   end
 
   @tag :capture_log
+  test "accepts newer teslafi format where vin and id may not be defined", %{pid: pid} do
+    {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/07_alternative_variant"})
+
+    assert %Import.Status{files: [f], message: nil, state: :idle} = Import.get_status()
+
+    assert f == %{
+             complete: false,
+             date: [2023, 11],
+             path: "#{@dir}/07_alternative_variant/112023.csv"
+           }
+
+    with_mock Repair, trigger_run: fn -> ok_fn(:trigger_run, pid) end do
+      assert :ok = Import.subscribe()
+      assert :ok = Import.run("America/Los_Angeles")
+
+      assert_receive %Status{files: [%{complete: false}], state: :running}, 3000
+      assert_receive %Status{files: [%{complete: false}], state: :running}, 3000
+      assert_receive %Status{files: [%{complete: true}], state: :running}, 3000
+      assert_receive %Status{files: [%{complete: true}], state: :complete}, 3000
+
+      assert_receive :trigger_run
+      assert_receive :trigger_run
+
+      refute_receive _
+    end
+  end
+
+  @tag :capture_log
   test "captures errors of the vehicle process", %{pid: _pid} do
     {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/04_error"})
 

@@ -10,7 +10,7 @@ const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 
-const liveSocket = new LiveSocket("/live", Socket, {
+const liveSocket = new LiveSocket(window.LIVE_PATH, Socket, {
   hooks,
   params: {
     _csrf_token: csrfToken,

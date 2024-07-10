@@ -28,11 +28,24 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   @asleep_interval 30
-  @driving_interval 2.5
 
   @drive_timeout_min 15
 
   # Static
+  def interval(env_var, default) do
+    System.get_env(env_var)
+    |> case do
+      nil -> default
+      interval -> String.to_integer(interval) |> max(default)
+    end
+  end
+
+  def asleep_interval, do: interval("POLLING_ASLEEP_INTERVAL", @asleep_interval)
+  def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", 2.5)
+  def default_interval, do: interval("POLLING_DEFAULT_INTERVAL", 15)
+  def online_interval, do: interval("POLLING_ONLINE_INTERVAL", 60)
+  def charging_interval, do: interval("POLLING_CHARGING_INTERVAL", 5)
+  def minimum_interval, do: interval("POLLING_MINIMUM_INTERVAL", 0)
 
   def identify(%Vehicle{display_name: name, vehicle_config: config}) do
     case config do
@@ -74,6 +87,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
             {"X", "P100D", "tamarind"} -> "Plaid"
             {"Y", "P74D", _} -> "LR AWD Performance"
             {"Y", "74D", _} -> "LR AWD"
+            {"Y", "74", _} -> "LR"
+            {"Y", "50", _} -> "SR"
             {_model, _trim, _type} -> nil
           end
 
@@ -358,10 +373,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
             )
 
             {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
-             [broadcast_fetch(false), broadcast_summary(), schedule_fetch(60, data)]}
+             [
+               broadcast_fetch(false),
+               broadcast_summary(),
+               schedule_fetch(online_interval(), data)
+             ]}
 
           _ ->
-            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(60, data)]}
+            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(online_interval(), data)]}
         end
 
       {:error, :not_signed_in} ->
@@ -385,6 +404,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:keep_state, data,
          [broadcast_fetch(false), broadcast_summary(), schedule_fetch(30, data)]}
+
+      {:error, :too_many_request, retry_after} ->
+        Logger.error("Too many request / Retry after #{retry_after} seconds", car_id: data.car.id)
+
+        {:keep_state, data,
+         [broadcast_fetch(false), broadcast_summary(), schedule_fetch(retry_after, data)]}
 
       {:error, reason} ->
         Logger.error("Error / #{inspect(reason)}", car_id: data.car.id)
@@ -690,7 +715,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     :ok = disconnect_stream(data)
 
-    {:next_state, {:asleep, @asleep_interval},
+    {:next_state, {:asleep, asleep_interval()},
      %Data{data | last_state_change: last_state_change, stream_pid: nil},
      [broadcast_summary(), schedule_fetch(data)]}
   end
@@ -703,7 +728,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     :ok = disconnect_stream(data)
 
-    {:next_state, {:offline, @asleep_interval},
+    {:next_state, {:offline, asleep_interval()},
      %Data{data | last_state_change: last_state_change, stream_pid: nil},
      [broadcast_summary(), schedule_fetch(data)]}
   end
@@ -804,7 +829,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {drive, data} = start_drive(create_position(vehicle, data), data)
 
         {:next_state, {:driving, :available, drive}, data,
-         [broadcast_summary(), schedule_fetch(@driving_interval, data)]}
+         [
+           broadcast_summary(),
+           schedule_fetch(driving_interval(), data)
+         ]}
 
       %V{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
       when charging_state in ["Starting", "Charging"] ->
@@ -1009,7 +1037,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:internal, {:update, {:online, vehicle}}, {:driving, :available, drv}, data) do
-    interval = if streaming?(data), do: 15, else: @driving_interval
+    interval = if streaming?(data), do: default_interval(), else: driving_interval()
 
     case vehicle do
       %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
@@ -1073,7 +1101,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(5, data)}
 
       %VehicleState{software_update: %SW{status: "installing"}} ->
-        {:keep_state, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(15, data)}
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         schedule_fetch(default_interval(), data)}
 
       %VehicleState{software_update: %SW{status: "available"} = update} ->
         {:ok, %Log.Update{}} = call(data.deps.log, :cancel_update, [update])
@@ -1112,12 +1141,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {state, _}}, {state, @asleep_interval}, data)
       when state in [:asleep, :offline] do
-    {:keep_state_and_data, [schedule_fetch(@asleep_interval, data), broadcast_summary()]}
+    {:keep_state_and_data, [schedule_fetch(asleep_interval(), data), broadcast_summary()]}
   end
 
   def handle_event(:internal, {:update, {state, _}}, {state, interval}, data)
       when state in [:asleep, :offline] do
-    {:next_state, {state, min(interval * 2, @asleep_interval)}, data,
+    {:next_state, {state, min(interval * 2, asleep_interval())}, data,
      schedule_fetch(interval, data)}
   end
 
@@ -1374,29 +1403,31 @@ defmodule TeslaMate.Vehicles.Vehicle do
         if suspend?, do: Logger.warning("User present ...", car_id: car.id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
-         [broadcast_summary(), schedule_fetch(15, data)]}
+         [broadcast_summary(), schedule_fetch(default_interval(), data)]}
 
       {:error, :downloading_update} ->
         if suspend?, do: Logger.warning("Downloading update ...", car_id: car.id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
-         [broadcast_summary(), schedule_fetch(15 * i, data)]}
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
 
       {:error, :doors_open} ->
         if suspend?, do: Logger.warning("Doors open ...", car_id: car.id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
-         [broadcast_summary(), schedule_fetch(15 * i, data)]}
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
 
       {:error, :trunk_open} ->
         if suspend?, do: Logger.warning("Trunk open ...", car_id: car.id)
 
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
-         [broadcast_summary(), schedule_fetch(15 * i, data)]}
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
 
       {:error, :unlocked} ->
         if suspend?, do: Logger.warning("Unlocked ...", car_id: car.id)
-        {:keep_state_and_data, [broadcast_summary(), schedule_fetch(15 * i, data)]}
+
+        {:keep_state_and_data,
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
 
       :ok ->
         if suspend? do
@@ -1416,7 +1447,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
                %Data{data | last_state_change: DateTime.utc_now()}, events}
           end
         else
-          {:keep_state_and_data, [broadcast_summary(), schedule_fetch(15 * i, data)]}
+          {:keep_state_and_data,
+           [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
         end
     end
   end
@@ -1587,8 +1619,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     me = self()
 
+    id =
+      if System.get_env("TESLA_WSS_USE_VIN") do
+        data.car.vin
+      else
+        data.car.vid
+      end
+
     call(data.deps.api, :stream, [
-      data.car.vid,
+      id,
       fn stream_data -> send(me, {:stream, stream_data}) end
     ])
   end
@@ -1604,7 +1643,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp fetch_topic(car_id) when is_number(car_id), do: "#{__MODULE__}/fetch/#{car_id}"
 
   defp determince_interval(n) when is_nil(n) or n <= 0, do: 5
-  defp determince_interval(n), do: round(250 / n) |> min(20) |> max(5)
+  defp determince_interval(n), do: round(250 / n) |> min(20) |> max(charging_interval())
 
   defp fuse_name(:vehicle_not_found, car_id), do: :"#{__MODULE__}_#{car_id}_not_found"
   defp fuse_name(:api_error, car_id), do: :"#{__MODULE__}_#{car_id}_api_error"
@@ -1623,7 +1662,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp parse_timestamp(ts), do: DateTime.from_unix!(ts, :millisecond)
 
   defp schedule_fetch(%Data{} = data), do: schedule_fetch(10, :seconds, data)
-  defp schedule_fetch(n, %Data{} = data), do: schedule_fetch(n, :seconds, data)
+
+  defp schedule_fetch(n, %Data{} = data),
+    do: schedule_fetch(n |> max(minimum_interval()), :seconds, data)
 
   defp schedule_fetch(_n, _unit, %Data{import?: true}), do: {:state_timeout, 0, :fetch}
   defp schedule_fetch(n, unit, _), do: {:state_timeout, fetch_timeout(n, unit), :fetch}
