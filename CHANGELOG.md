@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- downgrade grafana until maps issue in upstream grafana is resolved (#4071 - @swiffer)
+
 #### Build, CI, internal
 
 - ci: fix coverage report env variable (#4066 - @JakobLichterfeld)
