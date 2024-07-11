@@ -12,6 +12,8 @@
 
 #### Dashboards
 
+- Improve Battery Health dashboard estimations on rated range (#4074 - @jheredianet)
+
 #### Translations
 
 #### Documentation
