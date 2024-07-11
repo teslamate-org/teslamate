@@ -17,17 +17,17 @@ runs:
   steps:
     - name: Docker meta
       id: docker_meta
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
       with:
         images: ${{ inputs.image }}
         tags: ${{ inputs.tags }}
         labels: ${{ inputs.labels }}
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@5927c834f5b4fdf503fca6f4c7eccda82949e1ee # v3.1.0
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@4fd812986e6c8c2a69e18311145f9371337f27d4 # v3.4.0
     - name: Build and push
-      uses: docker/build-push-action@v5.0.0
+      uses: docker/build-push-action@1a162644f9a7e87d8f4b053101d1d9a712edc18c # v6.3.0
       with:
         context: grafana
         push: true
