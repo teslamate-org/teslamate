@@ -8,6 +8,8 @@
 
 #### Build, CI, internal
 
+- ci: pin github action dependencies to protect against supply chain attacks (#4076 - @JakobLichterfeld)
+
 #### Dashboards
 
 #### Translations
