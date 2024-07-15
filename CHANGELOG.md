@@ -18,6 +18,8 @@
 
 #### Documentation
 
+- doc: Add initial author and list of contributors to README.md (#4084 - @JakobLichterfeld)
+
 ## [1.30.1] - 2024-07-10
 
 This is a hotfix release to work around the map fit problem in the new Upstream Grafana. As soon as a new Grafana version is available, we will update again.
