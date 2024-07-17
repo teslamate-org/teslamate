@@ -13,6 +13,7 @@
 #### Dashboards
 
 - Improve Battery Health dashboard estimations on rated range (#4074 - @jheredianet)
+- Update charges.json: range added per hour (#4089 - @DrMichael)
 
 #### Translations
 
