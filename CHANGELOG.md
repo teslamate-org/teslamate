@@ -17,6 +17,8 @@
 
 #### Translations
 
+- Adding missing Swedish translation (#4097 - @tobiasehlert)
+
 #### Documentation
 
 - doc: Add initial author and list of contributors to README.md (#4084 - @JakobLichterfeld)
