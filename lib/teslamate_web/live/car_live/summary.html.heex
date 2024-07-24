@@ -46,7 +46,7 @@
       </div>
       <div class="icons ml-5">
         <span
-          class={"#{if @fetch_status, do: '', else: 'is-hidden '}spinner has-tooltip-top has-tooltip-left-mobile"}
+          class={"#{if @fetch_status, do: "", else: "is-hidden "}spinner has-tooltip-top has-tooltip-left-mobile"}
           data-tooltip={gettext("Fetching vehicle data ...")}
         >
           <span class="is-loading"></span>
@@ -113,6 +113,14 @@
             data-tooltip={gettext("Sentry Mode")}
           >
             <span class="mdi mdi-shield-check"></span>
+          </span>
+        <% end %>
+        <%= if @summary.center_display_state == 7 do %>
+          <span
+            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            data-tooltip={gettext("Sentry Mode recording")}
+          >
+            <span class="mdi mdi-cctv"></span>
           </span>
         <% end %>
         <%= unless is_nil(@summary.locked) do %>

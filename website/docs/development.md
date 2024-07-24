@@ -6,10 +6,10 @@ sidebar_label: Development and Contributing
 
 ## Requirements
 
-- **Elixir** >= 1.12
-- **Postgres** >= 10
+- **Elixir** >= 1.16.2-otp-26
+- **Postgres** >= 16
 - An **MQTT broker** e.g. mosquitto (_optional_)
-- **NodeJS** >= 14
+- **NodeJS** >= 20.15.0
 
 ## Initial Setup
 
@@ -115,3 +115,14 @@ Then build the image with `make grafana` and run the container via `docker compo
 Access the Grafana at [http://localhost:3000](http://localhost:3000) and sign in with the default user `admin` and password `admin`.
 
 Then edit the respective dashboard(s) locally. To export a dashboard hit the 'Save' button and select `Save JSON to file`. The final JSON file belongs in the directory `./grafana/dashboards/`. To apply the changes rebuild the image and start the container.
+
+### Grafana VS Code Extension
+
+The Grafana VS Code extension allows you to open Grafana dashboards as JSON files in VS Code, and preview them live with data from a Grafana instance of your choice.
+
+- Open a Grafana dashboard JSON file
+- Start a live preview of that dashboard inside VS Code, connected to live data from a Grafana instance of your choice
+- Edit the dashboard in the preview, using the normal Grafana dashboard editor UI
+- From the editor UI, save the updated dashboard back to the original JSON file
+
+see: [grafana-vs-code-extension](https://github.com/grafana/grafana-vs-code-extension)

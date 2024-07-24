@@ -4,22 +4,110 @@
 
 ### New features
 
-- Track open/close states for individual doors (#3962 - @SaswatPadhi), new MQTT values see [documentation](https://docs.teslamate.org/docs/integrations/mqtt)
-
 ### Improvements and bug fixes
 
 #### Build, CI, internal
 
+- ci: pin github action dependencies to protect against supply chain attacks (#4076 - @JakobLichterfeld)
+
 #### Dashboards
 
+- Improve Battery Health dashboard estimations on rated range (#4074 - @jheredianet)
+- Update charges.json: range added per hour (#4089 - @DrMichael)
+
 #### Translations
+
+- Adding missing Swedish translation (#4097 - @tobiasehlert)
+
+#### Documentation
+
+- doc: Add initial author and list of contributors to README.md (#4084 - @JakobLichterfeld)
+
+## [1.30.1] - 2024-07-10
+
+This is a hotfix release to work around the map fit problem in the new Upstream Grafana. As soon as a new Grafana version is available, we will update again.
+
+### Improvements and bug fixes
+
+- downgrade grafana until maps issue in upstream grafana is resolved (#4071 - @swiffer)
+
+#### Build, CI, internal
+
+- ci: fix coverage report env variable (#4066 - @JakobLichterfeld)
+
+#### Dashboards
+
+- Configure Grafana to use browser language / date formats (#4064 - @swiffer)
+- Fix hard coded information (timezone and orgId) (#4056 - @jlestel)
+
+#### Translations
+
+- update zh_hans localized string (#4073 - @mrgaolei)
+- Update default.po for thai (#4072 - @tomzt)
+
+## [1.30.0] - 2024-07-07
+
+As always with many improvements. Cleaner LFP battery handling, 100x speed improvement in dashboards and much, much more. Enjoy it.
+
+### New features
+
+- Track open/close states for individual doors (#3962 - @SaswatPadhi), new MQTT values see [documentation](https://docs.teslamate.org/docs/integrations/mqtt)
+- Allow Fleet API users to change client_id (#3984 - @jlestel)
+- Customize intervals between vehicle_data calls (#3940 - @jlestel)
+- feat: Create NixOS module (#3998 - @scottbot95)
+- feat: Add ability to enable and disable data collection for cars (#3993 - @mark3-dev)
+- publish center_display_state to mqtt (#3813 - @Atrox), new MQTT values see [documentation](https://docs.teslamate.org/docs/integrations/mqtt)
+- feat: add LFP Battery setting for car settings (#4007 -@cwanja)
+- Add icon to summary when Sentry Mode is triggered and recording (#4043 -@kolaCZek)
+
+### Improvements and bug fixes
+
+- Update vehicle.ex with marketing name for Model Y Long Range RWD (#3989 - @stefanlange)
+- feat: use Grafana 11.1.0 (#4019 - @swiffer)
+- Update vehicle.ex with marketing name for Model Y SR (#4042 - @kolaCZek)
+- feat: update breadcrumb links to use Phoenix path helpers (#4052 - @JakobLichterfeld)
+
+#### Build, CI, internal
+
+- build(deps): bump crate-ci/typos from 1.21.0 to 1.22.9 (#4021)
+- build(deps): bump express from 4.18.2 to 4.19.2 in /website (#3790)
+- chore: update @docusaurus/core and @docusaurus/preset-classic dependencies to v3.4.0 and react and react-dom to 18.3.1 (#4046 - @JakobLichterfeld)
+- build: specify node.js version for Netlify in base dir as latest lts major version (#4046 - @JakobLichterfeld)
+- style: fix single quoted string in car_live (#4049 - @JakobLichterfeld)
+
+#### Dashboards
+
+- Improve drive details (#4004 - @jheredianet)
+- Improve visualizations on Battery Health dashboard (#4005 - @jheredianet)
+- Update drives.json: show drives with duration=0 but distance>0 (#3867 - @DrMichael)
+- Improve performance of timeline dashboard (#4019 - @swiffer)
+- Fix detection of missing data (geofence condition) in timeline dashboard (#4019 - @swiffer)
+- Fix time filter for links to trip dashboard in timeline dashboard (#4019 - @swiffer)
+- Reduce number of queries executed in overview dashboard to increase performance (#4019 - @swiffer)
+- Ensure Index usage when getting temperatures in overview dashboard (#4019 - @swiffer)
+- re-enable time picker by default in drive-details, charge-details dashboards (#3985)
+- Improve "Charges" dashboard (#4031 - @jheredianet)
+- Improve "Drives" dashboard (#4033 - @jheredianet)
+- Update overview.json: Add Distance (#4034 - @DrMichael)
+- Update overview.json: fix Net (#4045 - @DrMichael)
+- update overview dashboard to fix units for energy consumption (#4048 - @JakobLichterfeld)
+- use lfp_battery setting in dashboards & speed up updates dashboard (#4051 - @swiffer)
+
+#### Translations
+
+- feat: update German translations missing messages (#4054 - @JakobLichterfeld)
 
 #### Documentation
 
 - doc: remove outdated, unsupported, unmaintained portainer doc (#3972 - @JakobLichterfeld)
 - doc: fix MMM-Teslamate and ha-addon-teslamate project links (#3973 - @olexs)
+- doc: update the Contributor's Guide with the latest requirements (#4017 - @JakobLichterfeld)
+- doc: Documentation for new endpoint changes (#3978 - @jlestel)
+- doc: Add Grafana VS Code extension documentation (#4025 - @JakobLichterfeld)
+- doc: fix markdown linter warnings in faq (#4046 - @JakobLichterfeld)
+- doc: fix typo in MQTT location JSON format (#4047 - @JakobLichterfeld)
 
-## [1.29.2]
+## [1.29.2] - 2024-06-18
 
 This release improve TeslaMate behavior on Tesla API rate limits, which occur from time to time. We respect the retry-after header on 429 response code to not hammer the API unnecessarily in these cases.
 
@@ -1989,7 +2077,9 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.29.2...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.30.1...HEAD
+[1.30.1]: https://github.com/teslamate-org/teslamate/compare/v1.30.0...v1.30.1
+[1.30.0]: https://github.com/teslamate-org/teslamate/compare/v1.29.2...v1.30.0
 [1.29.2]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...v1.29.2
 [1.29.1]: https://github.com/teslamate-org/teslamate/compare/v1.29.0...v1.29.1
 [1.29.0]: https://github.com/teslamate-org/teslamate/compare/v1.28.5...v1.29.0

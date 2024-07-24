@@ -12,7 +12,8 @@ There are multiple apps available to securely generate access tokens yourself, f
 
 ## Why are no consumption values displayed in Grafana?
 
-Unfortunately the Tesla API does not return consumption values for a trip. In order to still be able to display values TeslaMate estimates the consumption on the basis of the recorded (charging) data. It takes **at least two** charging sessions before the first estimate can be displayed. Charging sessions have to be longer than 10 minutes and less than 95% state-of-charge (SoC). Each future charging session will slightly improve the accuracy of the estimate, which is applied retroactively to all data.
+Unfortunately the Tesla API does not return consumption values for a trip. In order to still be able to display values TeslaMate estimates the consumption on the basis of the recorded (charging) data.
+It takes **at least two** charging sessions before the first estimate can be displayed. Charging sessions have to be longer than 10 minutes and less than 95% state-of-charge (SoC). Each future charging session will slightly improve the accuracy of the estimate, which is applied retroactively to all data.
 
 ## Why "null" is displayed above the panels in Grafana?
 
@@ -41,7 +42,7 @@ With these settings the MCU1 cars should fall asleep within some 15 minutes of i
 
 In this example the driver's door was opened and closed:
 
-```
+```bash
 teslamate_1     | 2021-03-16 11:41:19.336 car_id=1 [info] Start / :online
 teslamate_1     | 2021-03-16 11:41:19.603 car_id=1 [info] Connecting ...
 teslamate_1     | 2021-03-16 11:44:41.380 car_id=1 [info] Suspending logging
@@ -56,7 +57,8 @@ teslamate_1     | 2021-03-16 12:03:28.139 car_id=1 [info] Disconnecting ...
 
 ## Why am I missing data when not using the Streaming API?
 
-The problem with the polling mode is that the car does not fall asleep before it have been inactive for some 15 minutes. TeslaMate will suspend all polling after the car has been idle for 3 minutes (the 'Idle Time Before Trying to Sleep' setting), and will resume polling 15 minutes later (the 'Time to Try Sleeping' setting). Any activity during this 15 minutes can't be detected, as calling the [Vehicle Data API](https://www.teslaapi.io/vehicles/state-and-settings#vehicle-data) would reset the car's inactivity timer, preventing the car from falling asleep.
+The problem with the polling mode is that the car does not fall asleep before it have been inactive for some 15 minutes. TeslaMate will suspend all polling after the car has been idle for 3 minutes (the 'Idle Time Before Trying to Sleep' setting), and will resume polling 15 minutes later (the 'Time to Try Sleeping' setting).
+Any activity during this 15 minutes can't be detected, as calling the [Vehicle Data API](https://www.teslaapi.io/vehicles/state-and-settings#vehicle-data) would reset the car's inactivity timer, preventing the car from falling asleep.
 
 Calling the [Vehicle API](https://www.teslaapi.io/vehicles/list#vehicle) does not reset the inactivity timer, but it only tells if the car is either online (driving, charging, idle, about to fall asleep) or asleep. It can't tell if an idle car started driving during the 'Time to Try Sleeping' period.
 

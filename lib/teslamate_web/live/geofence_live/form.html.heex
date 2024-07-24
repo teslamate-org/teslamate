@@ -1,7 +1,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= live_redirect(gettext("Home"), to: "/") %></li>
-    <li><%= live_redirect(gettext("Geo-Fences"), to: "/geo-fences") %></li>
+    <li><%= live_redirect(gettext("Home"), to: ~p"/") %></li>
+    <li><%= live_redirect(gettext("Geo-Fences"), to: ~p"/geo-fences") %></li>
     <li class="is-active">
       <a href="#">
         <%= case @action do

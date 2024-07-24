@@ -1,7 +1,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= live_redirect(gettext("Home"), to: "/") %></li>
-    <li class="is-active"><%= live_redirect(gettext("Settings"), to: "/settings") %></li>
+    <li><%= live_redirect(gettext("Home"), to: ~p"/") %></li>
+    <li class="is-active"><%= live_redirect(gettext("Settings"), to: ~p"/settings") %></li>
   </ul>
 </nav>
 
@@ -24,6 +24,25 @@
     phx-change="change"
     as={:"car_settings_#{@car}"}
   >
+    <div class="columns is-mobile is-centered">
+      <div class="column">
+        <h2 class="title is-4"><%= gettext("Data Collection") %></h2>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <%= label(f, :enabled, gettext("Enabled"), class: "label") %>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <%= checkbox(f, :enabled, class: "switch is-rounded is-success") %>
+                <%= label(f, :enabled, nil) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="columns is-mobile is-centered">
       <div class="column">
         <h2 class="title is-4"><%= gettext("Sleep Mode") %></h2>
@@ -129,6 +148,25 @@
               <div class="control">
                 <%= checkbox(f, :use_streaming_api, class: "switch is-rounded is-success") %>
                 <%= label(f, :use_streaming_api, nil) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-mobile is-centered">
+      <div class="column">
+        <h2 class="title is-4"><%= gettext("Battery") %></h2>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <%= label(f, :lfp_battery, gettext("LFP Battery"), class: "label") %>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <%= checkbox(f, :lfp_battery, class: "switch is-rounded is-success") %>
+                <%= label(f, :lfp_battery, nil) %>
               </div>
             </div>
           </div>

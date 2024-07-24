@@ -17,7 +17,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.4.2"
+      "version": "11.0.0"
     },
     {
       "type": "datasource",
@@ -92,19 +92,6 @@
   ],
   "liveNow": false,
   "panels": [
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 40,
-      "panels": [],
-      "title": "Car: $car_id",
-      "type": "row"
-    },
     {
       "datasource": {
         "type": "grafana-postgresql-datasource",
@@ -499,7 +486,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 1
+        "y": 0
       },
       "id": 39,
       "options": {
@@ -514,6 +501,7 @@
           "showLegend": true
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
@@ -610,7 +598,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 1
+        "y": 0
       },
       "id": 4,
       "maxDataPoints": 50000,
@@ -687,7 +675,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "10.4.2",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "alias": "",
@@ -893,7 +881,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 13
+        "y": 12
       },
       "id": 8,
       "options": {
@@ -904,6 +892,7 @@
           "showLegend": false
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
@@ -1163,7 +1152,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 13
+        "y": 12
       },
       "id": 6,
       "options": {
@@ -1174,6 +1163,7 @@
           "showLegend": true
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
@@ -1412,7 +1402,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 19
+        "y": 18
       },
       "id": 32,
       "options": {
@@ -1426,6 +1416,7 @@
           "showLegend": true
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
@@ -1475,7 +1466,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 24
       },
       "id": 36,
       "panels": [],
@@ -1506,7 +1497,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-blue"
+                "color": "super-light-blue",
+                "value": null
               }
             ]
           },
@@ -1518,7 +1510,7 @@
         "h": 3,
         "w": 6,
         "x": 0,
-        "y": 26
+        "y": 25
       },
       "id": 38,
       "maxDataPoints": 100,
@@ -1538,7 +1530,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -1618,7 +1610,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text"
+                "color": "text",
+                "value": null
               }
             ]
           },
@@ -1630,7 +1623,7 @@
         "h": 3,
         "w": 3,
         "x": 6,
-        "y": 26
+        "y": 25
       },
       "id": 14,
       "maxDataPoints": 100,
@@ -1650,7 +1643,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -1705,7 +1698,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text"
+                "color": "text",
+                "value": null
               }
             ]
           },
@@ -1717,7 +1711,7 @@
         "h": 3,
         "w": 3,
         "x": 9,
-        "y": 26
+        "y": 25
       },
       "id": 34,
       "options": {
@@ -1736,7 +1730,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -1811,7 +1805,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-green"
+                "color": "super-light-green",
+                "value": null
               }
             ]
           }
@@ -1839,7 +1834,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 26
+        "y": 25
       },
       "id": 35,
       "options": {
@@ -1859,6 +1854,7 @@
         "stacking": "none",
         "text": {},
         "tooltip": {
+          "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         },
@@ -1878,7 +1874,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n    speed_section_$length_unit AS \"Speed\",\r\n    SUM(seconds_elapsed) * 100 / MAX(duration) as \"Elapsed\",\r\n    TO_CHAR((SUM(seconds_elapsed) || ' second')::interval, 'HH24:MI:SS') AS \"Time\"\r\nFROM (\r\n    SELECT\r\n        ROUND(convert_km(p.speed::numeric, '$length_unit') / 10,0) * 10 AS speed_section_$length_unit,\r\n        EXTRACT(EPOCH FROM (LEAD(p.\"date\") OVER (ORDER BY p.\"date\") - p.\"date\")) AS seconds_elapsed,\r\n        EXTRACT(EPOCH FROM (end_date - start_date)) AS duration\r\n    FROM drives d\r\n    INNER JOIN positions p ON p.drive_id = d.id\r\n    WHERE d.id = $drive_id\r\n) AS drivedata\r\nGROUP BY 1\r\nORDER BY 1",
+          "rawSql": "SELECT \r\n    speed_section_$length_unit AS \"Speed\",\r\n    SUM(seconds_elapsed) * 100 / MAX(duration) as \"Elapsed\",\r\n    TO_CHAR((SUM(seconds_elapsed) || ' second')::interval, 'HH24:MI:SS') AS \"Time\"\r\nFROM (\r\n    SELECT\r\n        ROUND(convert_km(p.speed::numeric, '$length_unit') / 10,0) * 10 AS speed_section_$length_unit,\r\n        EXTRACT(EPOCH FROM (LEAD(p.\"date\") OVER (ORDER BY p.\"date\") - p.\"date\")) AS seconds_elapsed,\r\n        EXTRACT(EPOCH FROM (end_date - start_date)) AS duration\r\n    FROM drives d\r\n    INNER JOIN positions p ON p.drive_id = d.id\r\n    WHERE d.id = $drive_id\r\n) AS drivedata\r\nWHERE speed_section_$length_unit>0\r\nGROUP BY 1\r\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -1960,7 +1956,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-green"
+                "color": "semi-dark-green",
+                "value": null
               }
             ]
           },
@@ -1997,7 +1994,7 @@
         "h": 3,
         "w": 6,
         "x": 0,
-        "y": 29
+        "y": 28
       },
       "id": 10,
       "maxDataPoints": 100,
@@ -2017,7 +2014,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -2070,7 +2067,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -2081,7 +2079,7 @@
         "h": 3,
         "w": 6,
         "x": 6,
-        "y": 29
+        "y": 28
       },
       "id": 20,
       "options": {
@@ -2101,7 +2099,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -2231,7 +2229,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow"
+                "color": "light-yellow",
+                "value": null
               }
             ]
           },
@@ -2243,7 +2242,7 @@
         "h": 3,
         "w": 6,
         "x": 0,
-        "y": 32
+        "y": 31
       },
       "id": 12,
       "maxDataPoints": 100,
@@ -2263,7 +2262,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -2317,7 +2316,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "yellow",
@@ -2362,7 +2362,7 @@
         "h": 3,
         "w": 3,
         "x": 6,
-        "y": 32
+        "y": 31
       },
       "id": 18,
       "options": {
@@ -2381,7 +2381,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -2455,7 +2455,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -2491,7 +2492,7 @@
         "h": 3,
         "w": 3,
         "x": 9,
-        "y": 32
+        "y": 31
       },
       "id": 37,
       "options": {
@@ -2510,7 +2511,7 @@
         "textMode": "value",
         "wideLayout": false
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -2764,13 +2765,12 @@
     ]
   },
   "timepicker": {
-    "hidden": true,
     "refresh_intervals": [],
     "time_options": []
   },
   "timezone": "",
   "title": "Drive Details",
   "uid": "zm7wN6Zgz",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
