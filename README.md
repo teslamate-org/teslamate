@@ -62,5 +62,7 @@ The documentation is available at [https://docs.teslamate.org](https://docs.tesl
 
 ## Credits
 
-- Authors: Adrian Kumpf – [List of contributors](https://github.com/teslamate-org/teslamate/graphs/contributors)
+- Initial Author: Adrian Kumpf
+- List of Contributors:
+- <a href="https://github.com/teslamate-org/teslamate/graphs/contributors"><img src="https://contrib.rocks/image?repo=teslamate-org/teslamate"  alt="TeslaMate Contributors"/></a>
 - Distributed under MIT License

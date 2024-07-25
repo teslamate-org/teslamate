@@ -18,6 +18,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
     active_route_destination active_route_latitude active_route_longitude active_route_energy_at_arrival
     active_route_miles_to_arrival active_route_minutes_to_arrival active_route_traffic_minutes_delay
+    center_display_state
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -147,7 +148,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       tpms_soft_warning_fl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fl]),
       tpms_soft_warning_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fr]),
       tpms_soft_warning_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rl]),
-      tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr])
+      tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr]),
+      center_display_state: get_in_struct(vehicle, [:vehicle_state, :center_display_state])
     }
   end
 

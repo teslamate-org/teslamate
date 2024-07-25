@@ -20,7 +20,7 @@ msgid "is invalid"
 msgstr "ist ungültig"
 
 msgid "must be accepted"
-msgstr ""
+msgstr "muss akzeptiert werden"
 
 msgid "has invalid format"
 msgstr "hat ein ungültiges Format"
@@ -29,16 +29,16 @@ msgid "has an invalid entry"
 msgstr "hat einen ungültigen Eintrag"
 
 msgid "is reserved"
-msgstr ""
+msgstr "ist reserviert"
 
 msgid "does not match confirmation"
-msgstr ""
+msgstr "stimmt nicht mit der Bestätigung überein"
 
 msgid "is still associated with this entry"
-msgstr ""
+msgstr "ist noch mit diesem Eintrag verbunden"
 
 msgid "are still associated with this entry"
-msgstr ""
+msgstr "sind noch mit diesem Eintrag verbunden"
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"

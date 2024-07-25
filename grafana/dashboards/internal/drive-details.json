@@ -2765,7 +2765,6 @@
     ]
   },
   "timepicker": {
-    "hidden": true,
     "refresh_intervals": [],
     "time_options": []
   },

@@ -29,7 +29,7 @@ Vehicle data will be published to the following topics:
 |                                                        |                                              |                                                                                       |
 | `teslamate/cars/$car_id/latitude`                      | 35.278131                                    | DEPRECATED: Last reported car latitude                                                |
 | `teslamate/cars/$car_id/longitude`                     | 29.744801                                    | DEPRECATED: Last reported car longitude                                               |
-| `teslamate/cars/$car_id/location`                      | <pre lang="json">{<br/>  "latitude": 35.278131,<br />  "longitude: 29.744801<br/>}</pre> | Last reported car location (json blob)    |
+| `teslamate/cars/$car_id/location`                      | <pre lang="json">\{<br />  "latitude": 35.278131,<br />  "longitude": 29.744801<br />\}</pre> | Last reported car location (json blob)    |
 | `teslamate/cars/$car_id/shift_state`                   | D                                            | Current/Last Shift State (D/N/R/P)                                                    |
 | `teslamate/cars/$car_id/power`                         | -9                                           | Current battery power in watts. Positive value on discharge, negative value on charge |
 | `teslamate/cars/$car_id/speed`                         | 12                                           | Current Speed in km/h                                                                 |
@@ -84,6 +84,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/active_route_latitude`         | 35.278131                                    | DEPRECATED: Navigation destination latitude (or "nil")                                |
 | `teslamate/cars/$car_id/active_route_longitude`        | 29.744801                                    | DEPRECATED: Navigation destination longitude (or "nil")                               |
 | `teslamate/cars/$car_id/active_route`                  | _See below_                                  | Navigation details (json blob)                                                        |
+| `teslamate/cars/$car_id/center_display_state`          | 0                                            | Center Display State                                                                  |
 
 :::note
 `$car_id` usually starts at 1
