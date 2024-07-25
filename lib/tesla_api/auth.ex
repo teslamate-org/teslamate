@@ -3,9 +3,10 @@ defmodule TeslaApi.Auth do
 
   alias TeslaApi.Error
 
+  @web_client_id "ownerapi"
   @redirect_uri "https://auth.tesla.com/void/callback"
 
-  def web_client_id, do: System.get_env("TESLA_AUTH_CLIENT_ID", "ownerapi")
+  def web_client_id, do: @web_client_id
   def redirect_uri, do: @redirect_uri
 
   @default_headers [

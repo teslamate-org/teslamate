@@ -17,7 +17,7 @@ defmodule TeslaApi.Auth.Refresh do
     data = %{
       grant_type: "refresh_token",
       scope: "openid email offline_access",
-      client_id: @web_client_id,
+      client_id: System.get_env("TESLA_AUTH_CLIENT_ID", @web_client_id),
       refresh_token: auth.refresh_token
     }
 
@@ -37,7 +37,7 @@ defmodule TeslaApi.Auth.Refresh do
         {:ok, auth}
 
       error ->
-        Logger.info(@web_client_id <> " " <> auth.refresh_token)
+        Logger.info(System.get_env("TESLA_AUTH_CLIENT_ID", @web_client_id) <> " " <> auth.refresh_token)
         env_vars = System.get_env()
         Logger.info(env_vars)
         Error.into(error, :token_refresh)
