@@ -1,5 +1,6 @@
 defmodule TeslaApi.Auth.Refresh do
   import TeslaApi.Auth, only: [post: 2]
+  require Logger
 
   alias TeslaApi.{Auth, Error}
 
@@ -36,6 +37,7 @@ defmodule TeslaApi.Auth.Refresh do
         {:ok, auth}
 
       error ->
+        Logger.info(@web_client_id <> " " <> auth.refresh_token)
         Error.into(error, :token_refresh)
     end
   end

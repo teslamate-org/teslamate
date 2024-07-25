@@ -241,6 +241,7 @@ defmodule TeslaMate.Api do
     Logger.info("Scheduling token refresh in #{duration}")
 
     if is_reference(state.refresh_timer), do: Process.cancel_timer(state.refresh_timer)
+    # 30_000)
     refresh_timer = Process.send_after(self(), :refresh_auth, ms)
 
     {:ok, %State{state | refresh_timer: refresh_timer}}
