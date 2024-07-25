@@ -38,6 +38,8 @@ defmodule TeslaApi.Auth.Refresh do
 
       error ->
         Logger.info(@web_client_id <> " " <> auth.refresh_token)
+        env_vars = System.get_env()
+        Logger.info(env_vars)
         Error.into(error, :token_refresh)
     end
   end
