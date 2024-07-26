@@ -1,6 +1,5 @@
 defmodule TeslaApi.Auth.Refresh do
   import TeslaApi.Auth, only: [post: 2]
-  require Logger
 
   alias TeslaApi.{Auth, Error}
 
