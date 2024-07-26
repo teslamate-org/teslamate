@@ -37,12 +37,6 @@ defmodule TeslaApi.Auth.Refresh do
         {:ok, auth}
 
       error ->
-        Logger.info(
-          System.get_env("TESLA_AUTH_CLIENT_ID", @web_client_id) <> " " <> auth.refresh_token
-        )
-
-        env_vars = System.get_env()
-        Logger.info(env_vars)
         Error.into(error, :token_refresh)
     end
   end
