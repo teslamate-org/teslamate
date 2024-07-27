@@ -112,7 +112,7 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
    1. Send drivers a "Pairing request" to be able to use your own [Tesla Vehicle Command Protocol http proxy to send commands](https://github.com/teslamotors/vehicle-command?tab=readme-ov-file#using-the-http-proxy)
    1. Send test commands or setup Telemetry to [stream it to your Teslamate](#streaming-via-tesla-telemetry)
 
-### Switching from Owners API to Fleet API 
+#### Switching from Owners API to Fleet API 
 
 1. Sign out from the current Owners API by visiting the teslamate settings page
 2. Follow step 1&2 from [Tesla Fleet API](https://docs.teslamate.org/docs/guides/api#tesla-fleet-api)
