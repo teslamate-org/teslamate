@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- Fix 401 on direct Fleet API calls (#4095 - @jlestel)
+
 #### Build, CI, internal
 
 - ci: pin github action dependencies to protect against supply chain attacks (#4076 - @JakobLichterfeld)
