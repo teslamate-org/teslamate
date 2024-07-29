@@ -401,8 +401,8 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
 
 - sensor:
     name: TPMS Pressure Front Left
-    object_id: tesla_tpms_fl
-    unique_id: teslamate_1_tpms_fl
+    object_id: tesla_tpms_pressure_fl
+    unique_id: teslamate_1_tpms_pressure_fl
     availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/tpms_pressure_fl"
@@ -411,8 +411,8 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
 
 - sensor:
     name: TPMS Pressure Front Right
-    object_id: tesla_tpms_fr
-    unique_id: teslamate_1_tpms_fr
+    object_id: tesla_tpms_pressure_fr
+    unique_id: teslamate_1_tpms_pressure_fr
     availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/tpms_pressure_fr"
@@ -421,8 +421,8 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
 
 - sensor:
     name: TPMS Pressure Rear Left
-    object_id: tesla_tpms_rl
-    unique_id: teslamate_1_tpms_rl
+    object_id: tesla_tpms_pressure_rl
+    unique_id: teslamate_1_tpms_pressure_rl
     availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/tpms_pressure_rl"
@@ -431,8 +431,8 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
 
 - sensor:
     name: TPMS Pressure Rear Right
-    object_id: tesla_tpms_rr
-    unique_id: teslamate_1_tpms_rr
+    object_id: tesla_tpms_pressure_rr
+    unique_id: teslamate_1_tpms_pressure_rr
     availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/tpms_pressure_rr"
@@ -697,28 +697,28 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
       value_template: >
-       {{ (states('sensor.tesla_tpms_fl') | float * 14.50377) | round(2) }}
+       {{ (states('sensor.tesla_tpms_pressure_fl') | float * 14.50377) | round(2) }}
 
     tesla_tpms_pressure_fr_psi:
       friendly_name: Front Right Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
       value_template: >
-       {{ (states('sensor.tesla_tpms_fr') | float * 14.50377) | round(2) }}
+       {{ (states('sensor.tesla_tpms_pressure_fr') | float * 14.50377) | round(2) }}
 
     tesla_tpms_pressure_rl_psi:
       friendly_name: Rear Left Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
       value_template: >
-       {{ (states('sensor.tesla_tpms_rl') | float * 14.50377) | round(2) }}
+       {{ (states('sensor.tesla_tpms_pressure_rl') | float * 14.50377) | round(2) }}
 
     tesla_tpms_pressure_rr_psi:
       friendly_name: Rear Right Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
       value_template: >
-       {{ (states('sensor.tesla_tpms_rr') | float * 14.50377) | round(2) }}
+       {{ (states('sensor.tesla_tpms_pressure_rr') | float * 14.50377) | round(2) }}
 
     tesla_active_route_distance_to_arrival_km:
       friendly_name: Active route distance to arrival (km)
