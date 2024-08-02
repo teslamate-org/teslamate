@@ -11,6 +11,7 @@
 #### Build, CI, internal
 
 - ci: pin github action dependencies to protect against supply chain attacks (#4076 - @JakobLichterfeld)
+- chore: correct comment for pinned Docker login-action to version 3.2.0 (#4120 - @JakobLichterfeld)
 
 #### Dashboards
 
