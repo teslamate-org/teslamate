@@ -7,6 +7,7 @@
 ### Improvements and bug fixes
 
 - Fix 401 on direct Fleet API calls (#4095 - @jlestel)
+- feat: use Grafana 11.1.2 (#4101 - @swiffer)
 
 #### Build, CI, internal
 
