@@ -876,6 +876,35 @@
                 "value": 62
               }
             ]
+          },
+	      {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_type"
+            },
+            "properties": [
+              {
+                "id": "color"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "AC": {
+                        "color": "green",
+                        "index": 0
+                      },
+                      "DC": {
+                        "color": "light-orange",
+                        "index": 1
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },

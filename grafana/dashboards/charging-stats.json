@@ -1230,7 +1230,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#FADE2A",
+                  "fixedColor": "light-orange",
                   "mode": "fixed"
                 }
               }
@@ -1556,7 +1556,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#FADE2A",
+                  "fixedColor": "light-orange",
                   "mode": "fixed"
                 }
               }
