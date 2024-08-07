@@ -88,7 +88,7 @@ jobs:
         run: mix gettext.extract --check-up-to-date
 
       - name: Spell check
-        uses: crate-ci/typos@c16dc8f5b4a7ad6211464ecf136c69c851e8e83c # v1.22.9
+        uses: crate-ci/typos@935271f0204ebdf61717cf6caac31d8d115f1c14 # v1.23.6
 
       - name: Check formatting
         run: mix format --check-formatted
