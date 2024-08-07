@@ -103,9 +103,32 @@ defmodule TeslaMate.MixProject do
   end
 
   defp version do
+    case System.cmd("git", ~w[describe --dirty=+dirty], stderr_to_stdout: true) do
+      {version, 0} ->
+        case Version.parse(version) do
+          {:ok, parsed_version} ->
+            parsed_version
+            |> bump_version()
+            |> to_string()
+
+          _error ->
+            fallback_to_version_from_file()
+        end
+
+      _ ->
+        fallback_to_version_from_file()
+    end
+  end
+
+  defp bump_version(%Version{pre: []} = version), do: version
+
+  defp bump_version(%Version{patch: p} = version),
+    do: struct(version, patch: p + 1)
+
+  defp fallback_to_version_from_file do
     case File.read("VERSION") do
       {:ok, version} -> String.trim(version)
-      {:error, _reason} -> "0.0.0"
+      {:error, _reason} -> "0.0.0-dev"
     end
   end
 end
