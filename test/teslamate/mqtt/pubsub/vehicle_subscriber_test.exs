@@ -89,7 +89,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
           :charger_power,
           :charger_voltage,
           :scheduled_charging_start_time,
-          :time_to_full_charge
+          :time_to_full_charge,
+          :charge_rate
         ] do
       topic = "teslamate/cars/0/#{key}"
       assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
@@ -145,7 +146,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       ideal_battery_range_km: 230.52,
       rated_battery_range_km: 230.52,
       scheduled_charging_start_time: DateTime.utc_now() |> DateTime.add(60 * 60 * 10, :second),
-      time_to_full_charge: 2.5
+      time_to_full_charge: 2.5,
+      charge_rate: 123
     }
 
     send(pid, summary)
@@ -251,7 +253,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
           :time_to_full_charge,
           :shift_state,
           :geofence,
-          :trim_badging
+          :trim_badging,
+          :charge_rate
         ] do
       topic = "teslamate/account_0/cars/0/#{key}"
       assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
