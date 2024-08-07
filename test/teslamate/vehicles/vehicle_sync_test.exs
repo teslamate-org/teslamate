@@ -84,6 +84,7 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
                charger_phases: :unknown,
                charger_power: :unknown,
                charger_voltage: :unknown,
+               charge_rate: :unknown,
                display_name: "bar",
                doors_open: nil,
                elevation: nil,

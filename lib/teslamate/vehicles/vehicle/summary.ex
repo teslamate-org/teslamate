@@ -9,7 +9,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     car display_name state since healthy latitude longitude heading battery_level charging_state usable_battery_level
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
-    plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
+    plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open charge_rate
     doors_open driver_front_door_open driver_rear_door_open passenger_front_door_open passenger_rear_door_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available update_version is_user_present geofence
@@ -104,6 +104,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       charge_current_request_max: charge(vehicle, :charge_current_request_max),
       charge_energy_added: charge(vehicle, :charge_energy_added),
       charge_limit_soc: charge(vehicle, :charge_limit_soc),
+      charge_rate: charge(vehicle, :charge_rate),
       charge_port_door_open: charge(vehicle, :charge_port_door_open),
       charger_actual_current: charge(vehicle, :charger_actual_current),
       charger_phases: charge(vehicle, :charger_phases),
