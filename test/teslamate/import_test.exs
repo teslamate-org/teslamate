@@ -120,6 +120,7 @@ defmodule TeslaMate.ImportTest do
                address_id: nil,
                cost: nil,
                duration_min: 70,
+               charge_rate: decimal(123),
                start_battery_level: 57,
                end_battery_level: 70,
                start_date: ~U[2016-06-26 23:04:32.000000Z],

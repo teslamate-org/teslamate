@@ -263,6 +263,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              charger_voltage: 229,
              charger_actual_current: 16,
              battery_range: 200,
+             charge_rate: 123,
              est_battery_range: 180,
              ideal_battery_range: 175,
              charging_state: "Charging",
@@ -316,6 +317,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              charging_state: "Charging",
              charge_energy_added: "4.32",
              ideal_battery_range: 200,
+             charge_rate: 123,
              time_to_full_charge: 0.33
            }
          )}
