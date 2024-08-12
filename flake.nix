@@ -143,7 +143,7 @@
             };
             services.postgres = {
               enable = true;
-              package = pkgs.postgresql_15;
+              package = pkgs.postgresql_16;
               listen_addresses = "127.0.0.1";
               port = postgres_port;
               initialDatabases = [{ name = "teslamate"; }];
