@@ -14,6 +14,7 @@
 - chore: correct comment for pinned Docker login-action to version 3.2.0 (#4120 - @JakobLichterfeld)
 - build(deps): bump erlef/setup-beam from 1.18.0 to 1.18.1 (#4116)
 - build(deps): bump docker/login-action from 3.2.0 to 3.3.0 (#4115)
+- chore: update PostgreSQL to version 16 in flake.nix (#4135- @JakobLichterfeld)
 
 #### Dashboards
 
