@@ -357,7 +357,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tsum(cp.cost)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nLEFT JOIN\n  geofences geo ON geo.id = geofence_id\nJOIN\n  charges char ON char.charging_process_id = cp.id AND char.date = end_date\t\nWHERE\n  $__timeFilter(end_date)\n  AND (addr.name ILIKE '%supercharger%' OR geo.name ILIKE '%supercharger%' OR char.fast_charger_brand = 'Tesla')\n\tAND cp.cost IS NOT NULL\n\tAND cp.car_id = $car_id;",
+          "rawSql": "SELECT\n\tCOALESCE(sum(cp.cost),0)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nLEFT JOIN\n  geofences geo ON geo.id = geofence_id\nJOIN\n  charges char ON char.charging_process_id = cp.id AND char.date = end_date\t\nWHERE\n  $__timeFilter(end_date)\n  AND (addr.name ILIKE '%supercharger%' OR geo.name ILIKE '%supercharger%' OR char.fast_charger_brand = 'Tesla')\n\tAND NULLIF(char.charger_phases, 0) IS NULL\n\tAND char.fast_charger_type != 'ACSingleWireCAN'\n\tAND cp.cost IS NOT NULL\n\tAND cp.car_id = $car_id;",
           "refId": "A",
           "select": [
             [
