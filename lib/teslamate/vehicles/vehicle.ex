@@ -504,28 +504,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
           :ok = fuse_name(:api_error, data.car.id) |> :fuse.melt()
         end
 
-        case state do
-          {:driving, _, _} ->
-            {:keep_state, data,
-             [broadcast_fetch(false), broadcast_summary(), schedule_fetch(10, data)]}
+        interval =
+          case state do
+            {:driving, _, _} -> 10
+            {:charging, _} -> 15
+            :online -> 20
+            _ -> 30
+          end
 
-          {:charging, _} ->
-            {:keep_state, data,
-             [broadcast_fetch(false), broadcast_summary(), schedule_fetch(15, data)]}
-
-          :online ->
-            Logger.info("Error in online, try to suspend", car_id: data.car.id)
-            # Try to suspend if we get an error while being online.
-            # This is to try to avoid polling vehicle_data when the errors stop which could keep the car awake
-            # Might need something smarter here.
-            # If old data has something that prevents suspending it wont do it
-            # and a force suspend might just cause us to miss something
-            try_to_suspend(data.last_response, state, data, true)
-
-          _ ->
-            {:keep_state, data,
-             [broadcast_fetch(false), broadcast_summary(), schedule_fetch(30, data)]}
-        end
+        {:keep_state, data,
+         [broadcast_fetch(false), broadcast_summary(), schedule_fetch(interval, data)]}
     end
   end
 
@@ -973,7 +961,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
        data
        | car: car,
          last_state_change: last_state_change,
-         last_used: DateTime.utc_now(),
          geofence: geofence,
          stream_pid: stream_pid
      }, [broadcast_summary(), {:next_event, :internal, evt}, schedule_position_storing()]}
@@ -1065,7 +1052,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          }, [broadcast_summary(), schedule_fetch(5, data), schedule_position_storing()]}
 
       _ ->
-        try_to_suspend(vehicle, state, data, false)
+        try_to_suspend(vehicle, state, data)
     end
   end
 
@@ -1609,24 +1596,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp try_to_suspend(vehicle, current_state, %Data{car: car} = data, ignore_last_used) do
+  defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
     {suspend_after_idle_min, suspend_min, i} =
       case {car.settings, streaming?(data)} do
-        {%CarSettings{use_streaming_api: true}, true} ->
-          # when suspended vehicle_data is not polled, non-vehicle_data is not keeping the car awake
-          # poll more often to get a faster response in detecting offline - usually not necessary as stream :inactive triggers a 'Fetching vehicle state ...' which fetch a non-vehicle_data with result as offline
-          # fetch_result event will :keep_state and poll every @asleep_interval
-          {1, 1, 1}
-
-        {%CarSettings{suspend_after_idle_min: i, suspend_min: s}, _} ->
-          {i, s, 1}
+        {%CarSettings{use_streaming_api: true}, true} -> {3, 30, 2}
+        {%CarSettings{suspend_after_idle_min: i, suspend_min: s}, _} -> {i, s, 1}
       end
 
-    suspend? =
-      case ignore_last_used do
-        true -> true
-        _ -> diff_seconds(DateTime.utc_now(), data.last_used) / 60 >= suspend_after_idle_min
-      end
+    suspend? = diff_seconds(DateTime.utc_now(), data.last_used) / 60 >= suspend_after_idle_min
 
     case can_fall_asleep(vehicle, data) do
       {:error, :sentry_mode} ->
