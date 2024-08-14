@@ -6,14 +6,21 @@
 
 ### Improvements and bug fixes
 
+- Fix 401 on direct Fleet API calls (#4095 - @jlestel)
+
 #### Build, CI, internal
 
 - ci: pin github action dependencies to protect against supply chain attacks (#4076 - @JakobLichterfeld)
+- chore: correct comment for pinned Docker login-action to version 3.2.0 (#4120 - @JakobLichterfeld)
+- build(deps): bump erlef/setup-beam from 1.18.0 to 1.18.1 (#4116)
+- build(deps): bump docker/login-action from 3.2.0 to 3.3.0 (#4115)
+- chore: update PostgreSQL to version 16 in flake.nix (#4135- @JakobLichterfeld)
 
 #### Dashboards
 
 - Improve Battery Health dashboard estimations on rated range (#4074 - @jheredianet)
 - Update charges.json: range added per hour (#4089 - @DrMichael)
+- small visual distinguish between AC & DC charging in charges dashboard and unification of the DC coloring in all dashboards (#4124 - @stauffenberg2020)
 
 #### Translations
 
@@ -22,6 +29,8 @@
 #### Documentation
 
 - doc: Add initial author and list of contributors to README.md (#4084 - @JakobLichterfeld)
+- doc: add steps to the guide regarding how to switch to Fleet API (#4103 - @yangiak)
+- doc: align TPMS Pressure naming in sensor config to match ui config for home assistant (#4104 - @helmo)
 
 ## [1.30.1] - 2024-07-10
 
