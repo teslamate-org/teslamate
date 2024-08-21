@@ -21,6 +21,7 @@
 - Improve Battery Health dashboard estimations on rated range (#4074 - @jheredianet)
 - Update charges.json: range added per hour (#4089 - @DrMichael)
 - small visual distinguish between AC & DC charging in charges dashboard and unification of the DC coloring in all dashboards (#4124 - @stauffenberg2020)
+- Improve drive stats (#4148 - @jheredianet)
 
 #### Translations
 
