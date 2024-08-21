@@ -11,7 +11,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.1.0"
+      "version": "11.0.1"
     },
     {
       "type": "datasource",
@@ -118,7 +118,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -232,7 +232,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -339,7 +339,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -463,7 +463,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -577,7 +577,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -666,7 +666,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -780,7 +780,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -894,7 +894,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -987,7 +987,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
