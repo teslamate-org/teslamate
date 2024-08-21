@@ -327,7 +327,7 @@ same as 1.29.0 but reverted: "Dynamic endpoints and token to use official Tesla 
 
 #### Translations
 
-- fix: translation Update default.po for simplified chinese (#3600 - @ycjcl868)
+- fix: translation Update default.po for simplified Chinese (#3600 - @ycjcl868)
 - Improvements for Spanish translations (#3610 - @jheredianet)
 
 #### Documentation
@@ -573,7 +573,7 @@ If no `ENCRYPTION_KEY` environment variable is provided when running the databas
 
 #### Translations
 
-- Update Chinse translation (#2479 - @AemonCao)
+- Update Chinese translation (#2479 - @AemonCao)
 - Add missing Swedish translation (#2731 - @tobiasehlert)
 
 #### Documentation
