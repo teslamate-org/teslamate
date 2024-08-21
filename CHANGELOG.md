@@ -23,6 +23,7 @@
 - small visual distinguish between AC & DC charging in charges dashboard and unification of the DC coloring in all dashboards (#4124 - @stauffenberg2020)
 - Improve drive stats (#4148 - @jheredianet)
 - Improve drives dashboard (#4146 - @jheredianet)
+- Odometer in charges (#4144 - @jheredianet)
 
 #### Translations
 
