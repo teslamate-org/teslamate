@@ -34,6 +34,7 @@
 - doc: Add initial author and list of contributors to README.md (#4084 - @JakobLichterfeld)
 - doc: add steps to the guide regarding how to switch to Fleet API (#4103 - @yangiak)
 - doc: align TPMS Pressure naming in sensor config to match ui config for home assistant (#4104 - @helmo)
+- doc: Update screenshots and rearrange links (#4151 - @jheredianet)
 
 ## [1.30.1] - 2024-07-10
 
