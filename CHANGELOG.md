@@ -24,6 +24,7 @@
 - Improve drive stats (#4148 - @jheredianet)
 - Improve drives dashboard (#4146 - @jheredianet)
 - Odometer in charges (#4144 - @jheredianet)
+- Update charging-stats for handling suc cost mixed with AC charge on TWC (#4137 - @cyberden)
 
 #### Translations
 
