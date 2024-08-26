@@ -14,6 +14,7 @@ defmodule TeslaMate.Log.ChargingProcess do
     field :end_ideal_range_km, :decimal, read_after_writes: true
     field :start_rated_range_km, :decimal, read_after_writes: true
     field :end_rated_range_km, :decimal, read_after_writes: true
+    field :charge_rate, :integer, read_after_writes: true
     field :start_battery_level, :integer
     field :end_battery_level, :integer
     field :duration_min, :integer
@@ -42,6 +43,7 @@ defmodule TeslaMate.Log.ChargingProcess do
       :end_ideal_range_km,
       :start_rated_range_km,
       :end_rated_range_km,
+      :charge_rate,
       :start_battery_level,
       :end_battery_level,
       :duration_min,
