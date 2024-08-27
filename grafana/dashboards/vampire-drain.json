@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.0"
+      "version": "11.2.0"
     },
     {
       "type": "datasource",
@@ -548,7 +548,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "alias": "",
@@ -749,7 +749,6 @@
     "from": "now-90d",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -778,6 +777,6 @@
   "timezone": "",
   "title": "Vampire Drain",
   "uid": "zhHx2Fggk",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

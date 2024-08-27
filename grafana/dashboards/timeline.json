@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.1.0"
+      "version": "11.2.0"
     },
     {
       "type": "datasource",
@@ -567,7 +567,7 @@
           }
         ]
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -877,6 +877,6 @@
   "timezone": "",
   "title": "Timeline",
   "uid": "SUBgwtigz",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }
