@@ -62,7 +62,7 @@ restore() {
       while IFS= read -r -d '' dashboard_path; do
           folder_id=$(get_folder_id "$(basename "$dashboard_path" .json)")
           curl \
-            --silent --show-error --output /dev/null \
+            --silent --fail --show-error --output /dev/null \
             --user "$LOGIN" \
             -X POST -H "Content-Type: application/json" \
             -d "{\"dashboard\":$(cat "$dashboard_path"), \
