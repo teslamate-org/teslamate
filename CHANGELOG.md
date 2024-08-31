@@ -39,6 +39,8 @@
 - doc: add steps to the guide regarding how to switch to Fleet API (#4103 - @yangiak)
 - doc: align TPMS Pressure naming in sensor config to match ui config for home assistant (#4104 - @helmo)
 - doc: Update screenshots and rearrange links (#4151 - @jheredianet)
+- doc: fix markdownlint warnings in fleet api documentation (#4173 - @JakobLichterfeld)
+- doc: clarify using fleet api has lots of drawbacks (#4173 - @JakobLichterfeld)
 
 ## [1.30.1] - 2024-07-10
 
