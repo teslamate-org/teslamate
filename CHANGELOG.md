@@ -16,6 +16,7 @@
 - build(deps): bump docker/login-action from 3.2.0 to 3.3.0 (#4115)
 - chore: update PostgreSQL to version 16 in flake.nix (#4135- @JakobLichterfeld)
 - build(deps): bump webpack from 5.92.1 to 5.94.0 in /website (#4171)
+- build(deps): bump micromatch from 4.0.5 to 4.0.8 in /website (#4174)
 
 #### Dashboards
 
