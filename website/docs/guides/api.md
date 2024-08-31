@@ -1,26 +1,30 @@
 ---
-title: Using the Official Tesla Fleet API and Telemetry Streaming
+title: Using the Tesla Fleet API and Telemetry Streaming (only for business fleet users)
 ---
 
 ## Official Tesla APIs
 
-### Why Tesla Fleet and Telemetry are Needed
+### Why Tesla Fleet and Telemetry only have drawbacks
 
-By default, TeslaMate uses the _unofficial_ Owner API and streaming.
+As far as we know, using the Tesla Fleet API and Telemetry API as a user has only drawbacks. The only reason to use them is if you are a Tesla Business Fleet user and therefore the Owner API is no longer available for you.
 
-Tesla now provides official APIs: the Fleet API and the Telemetry API, which replace the Owner API and streaming respectively.
+### When Tesla Fleet API and Telemetry API are needed
+
+By default, TeslaMate uses the "_unofficial_" Owner API and streaming.
+
+Tesla now provides official APIs: the Fleet API and the Telemetry API, which replace the Owner API and streaming respectively. But come with limitations and drawbacks.
 
 **Migration to the new API depends on your Tesla account type:**
 
 1. **_[Tesla Business Fleet users](https://www.tesla.com/fleet):_** the Owner API is [being shut down](https://developer.tesla.com/docs/fleet-api#2024-03-26-shutting-down-legacy-vehicle-api-endpoints). Fleet vehicles are upgraded gradually and an error message means that they must now use the official API.
 
-1. **_Individual users:_** the Owner API is currently still accessible. Even if it seems to incorporate new limitations similar to those present on the official API.
+2. **_Individual users:_** the Owner API is currently still accessible.
 
-**Resume: if you are a Tesla Business Fleet user, you should migrate to the official API ASAP!** The official Tesla API will only become mandatory when the Owner API shuts down for all users.
+**Resume: if you are a Tesla Business Fleet user, you should migrate to the official API ASAP!** The official Tesla API will only become mandatory when the Owner API shuts down for all users. Until then you can and should continue to use the Owner API, as it is more feature-rich and has higher resolution streaming.
 
 ### Impacts/Limitations of New Endpoints
 
-#### Tesla Fleet API: no impact
+#### Tesla Fleet API: very limited recording resolution
 
 The [Fleet API](https://developer.tesla.com/docs/fleet-api) is similar to the Owner API but more comprehensive. However, retrieving vehicle information (`vehicle_data`) or sending commands is limited. The limits on the Owner API were historically much higher. It is likely that [these limits](https://developer.tesla.com/docs/fleet-api#membership-levels) will also be applied soon to the API Owner.
 
