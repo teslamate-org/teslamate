@@ -59,11 +59,13 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 
 1. You need to "_Pair your vehicle(s)_" on the [fleet](https://app.myteslamate.com/fleet) page
 1. Use the following dedicated environment variables:
+
    ```yml
    - TESLA_WSS_HOST=wss://streaming.myteslamate.com
    - TESLA_WSS_TLS_ACCEPT_INVALID_CERTS=true
    - TESLA_WSS_USE_VIN=true
    ```
+
 1. Restart your instance
 
 ### [Teslemetry](https://teslemetry.com/pricing) (paid)
@@ -72,12 +74,14 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 
 1. Log in the [Teslemetry website](https://teslemetry.com) and create your `TOKEN`.
 1. Use this `TOKEN` instead of _`xxxx-xxxx-xxxx-xxxx`_ and add the following environment variables:
+
    ```yml
    - TOKEN=?token=xxxx-xxxx-xxxx-xxxx
    - TESLA_API_HOST=https://api.teslemetry.com
    - TESLA_AUTH_HOST=https://api.teslemetry.com
    - TESLA_AUTH_PATH=/api/oauth2/v3
    ```
+
 1. Restart your instance
 
 #### Teslemetry Streaming
@@ -97,10 +101,11 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 1. Set up a third-party account at [developer.tesla.com](https://developer.tesla.com) as described on the [Tesla docs](https://developer.tesla.com/docs/fleet-api#setup)
 1. Add the following environment variable with your own domain :
       1. Use [the correct region](https://developer.tesla.com/docs/fleet-api#endpoints-and-regional-requirements) in the `TESLA_API_HOST` field:
-         - North America, Asia-Pacific (excluding China): https://fleet-api.prd.na.vn.cloud.tesla.com
-         - Europe, Middle East, Africa: https://fleet-api.prd.eu.vn.cloud.tesla.com
-         - China: https://fleet-api.prd.cn.vn.cloud.tesla.cn 
+         - North America, Asia-Pacific (excluding China): [https://fleet-api.prd.na.vn.cloud.tesla.com](https://fleet-api.prd.na.vn.cloud.tesla.com)
+         - Europe, Middle East, Africa: [https://fleet-api.prd.eu.vn.cloud.tesla.com](https://fleet-api.prd.eu.vn.cloud.tesla.com)
+         - China: [https://fleet-api.prd.cn.vn.cloud.tesla.cn](https://fleet-api.prd.cn.vn.cloud.tesla.cn)
       1. Update the `TESLA_AUTH_CLIENT_ID` with the client ID of your Tesla application.
+
    ```yml
    # API Fleet
    - TESLA_API_HOST=https://fleet-api.prd.eu.vn.cloud.tesla.com
@@ -108,11 +113,12 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
    - TESLA_AUTH_PATH=/oauth2/v3
    - TESLA_AUTH_CLIENT_ID=xxxxxxxxx-xxxx-xxxx-xxxxxxxxxxxx
    ```
+
 1. (Optional) If you want to send commands or use Tesla Telemetry:
    1. Send drivers a "Pairing request" to be able to use your own [Tesla Vehicle Command Protocol http proxy to send commands](https://github.com/teslamotors/vehicle-command?tab=readme-ov-file#using-the-http-proxy)
-   1. Send test commands or setup Telemetry to [stream it to your Teslamate](#streaming-via-tesla-telemetry)
+   2. Send test commands or setup Telemetry to [stream it to your Teslamate](#streaming-via-tesla-telemetry)
 
-#### Switching from Owners API to Fleet API 
+#### Switching from Owners API to Fleet API
 
 1. Sign out from the current Owners API by visiting the teslamate settings page
 2. Follow step 1&2 from [Tesla Fleet API](https://docs.teslamate.org/docs/guides/api#tesla-fleet-api)
@@ -130,11 +136,13 @@ To setup your own streaming server, you can follow these steps:
 1. Setup a [MyTeslaMate Streaming Server from Fleet Telemetry Events](https://github.com/MyTeslaMate/websocket) on a public domain (eg: _streaming.mydomain.com_)
 1. Manually create a subscription to the `telemetry_V` created in PubSub by the Tesla Telemetry with:
    - Delivery type: Push
-   - Endpoint URL: https://streaming.mydomain.com
+   - Endpoint URL: [https://streaming.mydomain.com](https://streaming.mydomain.com)
 1. Update your environment variables:
+
    ```yml
    - TESLA_WSS_HOST=wss://streaming.mydomain.com
    - TESLA_WSS_TLS_ACCEPT_INVALID_CERTS=true
    - TESLA_WSS_USE_VIN=true
    ```
+
 1. Restart your instance
