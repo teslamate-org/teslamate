@@ -28,6 +28,7 @@
 - Odometer in charges (#4144 - @jheredianet)
 - Update charging-stats for handling suc cost mixed with AC charge on TWC (#4137 - @cyberden)
 - Fix the issue of failing to restore efficiency dashboard (#4153 - @ghostiee)
+- Improve rounding to month / weeks / days in Updates "Since Previous Update" column (#4164 - @swiffer)
 
 #### Translations
 
