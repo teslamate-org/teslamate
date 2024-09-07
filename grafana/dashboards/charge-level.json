@@ -276,6 +276,35 @@
               }
             ]
           }
+        },
+        {
+          "id": "regression",
+          "options": {
+            "degree": 5,
+            "modelType": "polynomial",
+            "predictionCount": 1000,
+            "xFieldName": "Time",
+            "yFieldName": "Battery Level"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Battery Level predicted polynomial regression": false
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Battery Level predicted polynomial regression": "Regression Line"
+            }
+          }
         }
       ],
       "type": "timeseries"
@@ -368,6 +397,6 @@
   "timezone": "",
   "title": "Charge Level",
   "uid": "WopVO_mgz",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
