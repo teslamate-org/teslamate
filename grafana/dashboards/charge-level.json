@@ -171,12 +171,13 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tbattery_level AS \"Battery Level\",\n\tusable_battery_level AS \"Usable Battery Level\"\nfrom positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id\n\tORDER BY Time ASC\n;",
+          "rawSql": "SELECT\n\tdate_bin(($__interval_ms / 1000 || ' milliseconds')::INTERVAL, date, TIMESTAMP '2003-07-01') as time,\n\tavg(battery_level) AS \"Battery Level\",\n\tavg(usable_battery_level) AS \"Usable Battery Level\"\nfrom positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id\n\tGROUP BY time\n\tORDER BY time ASC\n;",
           "refId": "A",
           "select": [
             [
@@ -188,6 +189,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "time",
           "where": [
             {
@@ -319,7 +337,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-6M",
     "to": "now"
   },
   "timepicker": {
@@ -350,6 +368,6 @@
   "timezone": "",
   "title": "Charge Level",
   "uid": "WopVO_mgz",
-  "version": 5,
+  "version": 7,
   "weekStart": ""
 }
