@@ -203,7 +203,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  0 as lowest,\r\n  10 as low,\r\n  20 as mid,\r\n  CASE WHEN lfp_battery THEN 100 ELSE 81 END as high,\r\n  CASE WHEN lfp_battery THEN 100 ELSE 91 END as highest\r\nfrom cars inner join car_settings on cars.settings_id = car_settings.id\r\nwhere cars.id = $car_id",
+          "rawSql": "SELECT\r\n  0 as lowest,\r\n  10 as low,\r\n  20 as mid,\r\n  CASE WHEN lfp_battery THEN 101 ELSE 81 END as high,\r\n  CASE WHEN lfp_battery THEN 101 ELSE 91 END as highest\r\nfrom cars inner join car_settings on cars.settings_id = car_settings.id\r\nwhere cars.id = $car_id",
           "refId": "B",
           "sql": {
             "columns": [
