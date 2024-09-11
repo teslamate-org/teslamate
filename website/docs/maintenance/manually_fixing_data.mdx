@@ -36,7 +36,7 @@ values={[
 
 ## Terminate a drive or charge
 
-If for some reason a drive or charge hasn't been fully recorded, for example due to a bug or an unexpected restart, you can terminate it manually. Among other things, this assigns an end date to the drive/charge.
+If for some reason a drive or charge hasn't been fully recorded, for example due to a bug or an unexpected restart, you can terminate it manually. Among other things, this assigns an end date to the drive/charge. Depending on your environment you will need to use double quotes.
 
 Replace `9999` with the actual ID then run the command while the TeslaMate container is running:
 
@@ -51,7 +51,7 @@ values={[
 
 ```bash
 docker compose exec teslamate bin/teslamate rpc \
-    "TeslaMate.Repo.get!(TeslaMate.Log.Drive, 9999) |> TeslaMate.Log.close_drive()"
+    'TeslaMate.Repo.get!(TeslaMate.Log.Drive, 9999) |> TeslaMate.Log.close_drive()'
 ```
 
 </TabItem>
@@ -59,7 +59,7 @@ docker compose exec teslamate bin/teslamate rpc \
 
 ```bash
 docker compose exec teslamate bin/teslamate rpc \
-    "TeslaMate.Repo.get!(TeslaMate.Log.ChargingProcess, 9999) |> TeslaMate.Log.complete_charging_process()"
+    'TeslaMate.Repo.get!(TeslaMate.Log.ChargingProcess, 9999) |> TeslaMate.Log.complete_charging_process()'
 ```
 
 </TabItem>
