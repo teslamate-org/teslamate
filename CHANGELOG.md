@@ -30,6 +30,7 @@
 - Fix the issue of failing to restore efficiency dashboard (#4153 - @ghostiee)
 - Improve rounding to month / weeks / days in Updates "Since Previous Update" column (#4164 - @swiffer)
 - feat: Improve cost filter on Charges dashboard to show charges with negative cost as well (#4179 - @jheredianet)
+- feat: display vehicle VIN as a fallback for vehicle name on grafana dashboards (#4198 - @arcastro)
 
 #### Translations
 
