@@ -74,16 +74,16 @@ For TeslaMate:
 
 ```yml
 teslamate:
-       # image: teslamate/teslamate:latest
-      image: ghcr.io/teslamate-org/teslamate/teslamate:pr-3836
+  # image: teslamate/teslamate:latest
+  image: ghcr.io/teslamate-org/teslamate/teslamate:pr-3836
 ```
 
 For Grafana:
 
 ```yml
 grafana:
-       # image: teslamate/grafana:latest
-      image: ghcr.io/teslamate-org/teslamate/grafana:pr-3836
+  # image: teslamate/grafana:latest
+  image: ghcr.io/teslamate-org/teslamate/grafana:pr-3836
 ```
 
 ## Making Changes to Grafana Dashboards
