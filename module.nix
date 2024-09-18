@@ -1,11 +1,25 @@
 { self }:
-{ config, lib, pkgs, ...}:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   teslamate = self.packages.${pkgs.system}.default;
   cfg = config.services.teslamate;
 
-  inherit (lib) mkEnableOption mkOption types mkIf mkMerge getExe literalExpression;
-in {
+  inherit (lib)
+    mkEnableOption
+    mkOption
+    types
+    mkIf
+    mkMerge
+    getExe
+    literalExpression
+    ;
+in
+{
   options.services.teslamate = {
     enable = mkEnableOption "Teslamate";
 
@@ -99,7 +113,7 @@ in {
         default = false;
         description = "Whether to create and provision grafana with the TeslaMate dashboards";
       };
-      
+
       listenAddress = mkOption {
         type = types.str;
         default = "0.0.0.0";
@@ -137,159 +151,155 @@ in {
     };
   };
 
-  config = mkIf cfg.enable 
-    (mkMerge [
-      {
-        users.users.teslamate = {
-          isSystemUser = true;
-          group = "teslamate";
-          home = "/var/lib/teslamate";
-          createHome = true;
-        };
-        users.groups.teslamate = {};
+  config = mkIf cfg.enable (mkMerge [
+    {
+      users.users.teslamate = {
+        isSystemUser = true;
+        group = "teslamate";
+        home = "/var/lib/teslamate";
+        createHome = true;
+      };
+      users.groups.teslamate = { };
 
-        systemd.services.teslamate = {
-          description = "TeslaMate";
-          after = [ "network.target" "postgresql.service" ];
-          wantedBy = mkIf cfg.autoStart [ "multi-user.target" ];
-          serviceConfig = {
-            User = "teslamate";
-            Restart = "on-failure";
-            RestartSec = 5;
+      systemd.services.teslamate = {
+        description = "TeslaMate";
+        after = [
+          "network.target"
+          "postgresql.service"
+        ];
+        wantedBy = mkIf cfg.autoStart [ "multi-user.target" ];
+        serviceConfig = {
+          User = "teslamate";
+          Restart = "on-failure";
+          RestartSec = 5;
 
-            WorkingDirectory = "/var/lib/teslamate";
+          WorkingDirectory = "/var/lib/teslamate";
 
-            ExecStartPre = ''${getExe teslamate} eval "TeslaMate.Release.migrate"'';
-            ExecStart = "${getExe teslamate} start";
-            ExecStop = "${getExe teslamate} stop";
+          ExecStartPre = ''${getExe teslamate} eval "TeslaMate.Release.migrate"'';
+          ExecStart = "${getExe teslamate} start";
+          ExecStop = "${getExe teslamate} stop";
 
-            EnvironmentFile = cfg.secretsFile;
-          };
-          environment = mkMerge [
-            {
-              PORT = toString cfg.port;
-              DATABASE_USER = cfg.postgres.user;
-              DATABASE_NAME = cfg.postgres.database;
-              DATABASE_HOST = cfg.postgres.host;
-              DATABASE_PORT = toString cfg.postgres.port;
-              VIRTUAL_HOST = cfg.virtualHost;
-              URL_PATH = cfg.urlPath;
-              HTTP_BINDING_ADDRESS = mkIf (cfg.listenAddress != null) cfg.listenAddress;
-              DISABLE_MQTT = mkIf (!cfg.mqtt.enable) "true";
-            }
-            (mkIf cfg.mqtt.enable {
-              MQTT_HOST = cfg.mqtt.host;
-              MQTT_PORT = mkIf (cfg.mqtt.port != null) (toString cfg.mqtt.port);
-            })
-          ];
+          EnvironmentFile = cfg.secretsFile;
         };
-      }
-      (mkIf cfg.postgres.enable_server {
-        services.postgresql = {
-          enable = true;
-          package = pkgs.postgresql_16;
-          inherit (cfg.postgres) port;
-          
-          initialScript = pkgs.writeText "teslamate-psql-init" ''
-            \set password `echo $DATABASE_PASS`
-            CREATE DATABASE ${cfg.postgres.database};
-            CREATE USER ${cfg.postgres.user} with encrypted password :'password';
-            GRANT ALL PRIVILEGES ON DATABASE ${cfg.postgres.database} TO ${cfg.postgres.user};
-            ALTER USER ${cfg.postgres.user} WITH SUPERUSER;
-          '';
-        };
-        
-        # Include secrets in postgres as well
-        systemd.services.postgresql = {
-          serviceConfig = {
-            EnvironmentFile = cfg.secretsFile;
-          };
-        };
-      })
-      (mkIf cfg.grafana.enable {
-        services.grafana = {
-          enable = true;
-          settings = {
-            server = {
-              domain = cfg.virtualHost;
-              http_port = cfg.grafana.port;
-              http_addr = cfg.grafana.listenAddress;
-              root_url = "http://%(domain)s${cfg.grafana.urlPath}";
-              serve_from_sub_path = cfg.grafana.urlPath != "/";
-            };
-            security = {
-              allow_embedding = true;
-              disable_gravatr = true;
-            };
-            users = {
-              allow_sign_up = false;
-            };
-            "auth.anonymous".enabled = false;
-            "auth.basic".enabled = false;
-            analytics.reporting_enabled = false;
-          };
-          provision = {
-            enable = true;
-            datasources.path = ./grafana/datasource.yml;
-            # Need to duplicate dashboards.yml since it contains absolute paths
-            # which are incompatible with NixOS
-            dashboards.settings = {
-              apiVersion = 1;
-              providers = [
-                {
-                  name = "teslamate";
-                  orgId = 1;
-                  folder = "TeslaMate";
-                  folderUid = "Nr4ofiDZk";
-                  type = "file";
-                  disableDeletion = false;
-                  editable = true;
-                  updateIntervalSeconds = 86400;
-                  options.path = lib.sources.sourceFilesBySuffices
-                    ./grafana/dashboards
-                    [ ".json" ];
-                }
-                {
-                  name = "teslamate_internal";
-                  orgId = 1;
-                  folder = "Internal";
-                  folderUid = "Nr5ofiDZk";
-                  type = "file";
-                  disableDeletion = false;
-                  editable = true;
-                  updateIntervalSeconds = 86400;
-                  options.path = lib.sources.sourceFilesBySuffices
-                    ./grafana/dashboards/internal
-                    [ ".json" ];
-                }
-                {
-                  name = "teslamate_reports";
-                  orgId = 1;
-                  folder = "Reports";
-                  folderUid = "Nr6ofiDZk";
-                  type = "file";
-                  disableDeletion = false;
-                  editable = true;
-                  updateIntervalSeconds = 86400;
-                  options.path = lib.sources.sourceFilesBySuffices
-                    ./grafana/dashboards/reports
-                    [ ".json" ];
-                }
-              ];
-            };
-          };
-        };
-
-        systemd.services.grafana = {
-          serviceConfig.EnvironmentFile = cfg.secretsFile;
-          environment = {
+        environment = mkMerge [
+          {
+            PORT = toString cfg.port;
             DATABASE_USER = cfg.postgres.user;
             DATABASE_NAME = cfg.postgres.database;
             DATABASE_HOST = cfg.postgres.host;
             DATABASE_PORT = toString cfg.postgres.port;
-            DATABASE_SSL_MODE = "disable";
+            VIRTUAL_HOST = cfg.virtualHost;
+            URL_PATH = cfg.urlPath;
+            HTTP_BINDING_ADDRESS = mkIf (cfg.listenAddress != null) cfg.listenAddress;
+            DISABLE_MQTT = mkIf (!cfg.mqtt.enable) "true";
+          }
+          (mkIf cfg.mqtt.enable {
+            MQTT_HOST = cfg.mqtt.host;
+            MQTT_PORT = mkIf (cfg.mqtt.port != null) (toString cfg.mqtt.port);
+          })
+        ];
+      };
+    }
+    (mkIf cfg.postgres.enable_server {
+      services.postgresql = {
+        enable = true;
+        package = pkgs.postgresql_16;
+        inherit (cfg.postgres) port;
+
+        initialScript = pkgs.writeText "teslamate-psql-init" ''
+          \set password `echo $DATABASE_PASS`
+          CREATE DATABASE ${cfg.postgres.database};
+          CREATE USER ${cfg.postgres.user} with encrypted password :'password';
+          GRANT ALL PRIVILEGES ON DATABASE ${cfg.postgres.database} TO ${cfg.postgres.user};
+          ALTER USER ${cfg.postgres.user} WITH SUPERUSER;
+        '';
+      };
+
+      # Include secrets in postgres as well
+      systemd.services.postgresql = {
+        serviceConfig = {
+          EnvironmentFile = cfg.secretsFile;
+        };
+      };
+    })
+    (mkIf cfg.grafana.enable {
+      services.grafana = {
+        enable = true;
+        settings = {
+          server = {
+            domain = cfg.virtualHost;
+            http_port = cfg.grafana.port;
+            http_addr = cfg.grafana.listenAddress;
+            root_url = "http://%(domain)s${cfg.grafana.urlPath}";
+            serve_from_sub_path = cfg.grafana.urlPath != "/";
+          };
+          security = {
+            allow_embedding = true;
+            disable_gravatr = true;
+          };
+          users = {
+            allow_sign_up = false;
+          };
+          "auth.anonymous".enabled = false;
+          "auth.basic".enabled = false;
+          analytics.reporting_enabled = false;
+        };
+        provision = {
+          enable = true;
+          datasources.path = ./grafana/datasource.yml;
+          # Need to duplicate dashboards.yml since it contains absolute paths
+          # which are incompatible with NixOS
+          dashboards.settings = {
+            apiVersion = 1;
+            providers = [
+              {
+                name = "teslamate";
+                orgId = 1;
+                folder = "TeslaMate";
+                folderUid = "Nr4ofiDZk";
+                type = "file";
+                disableDeletion = false;
+                editable = true;
+                updateIntervalSeconds = 86400;
+                options.path = lib.sources.sourceFilesBySuffices ./grafana/dashboards [ ".json" ];
+              }
+              {
+                name = "teslamate_internal";
+                orgId = 1;
+                folder = "Internal";
+                folderUid = "Nr5ofiDZk";
+                type = "file";
+                disableDeletion = false;
+                editable = true;
+                updateIntervalSeconds = 86400;
+                options.path = lib.sources.sourceFilesBySuffices ./grafana/dashboards/internal [ ".json" ];
+              }
+              {
+                name = "teslamate_reports";
+                orgId = 1;
+                folder = "Reports";
+                folderUid = "Nr6ofiDZk";
+                type = "file";
+                disableDeletion = false;
+                editable = true;
+                updateIntervalSeconds = 86400;
+                options.path = lib.sources.sourceFilesBySuffices ./grafana/dashboards/reports [ ".json" ];
+              }
+            ];
           };
         };
-      })
-    ]);
+      };
+
+      systemd.services.grafana = {
+        serviceConfig.EnvironmentFile = cfg.secretsFile;
+        environment = {
+          DATABASE_USER = cfg.postgres.user;
+          DATABASE_NAME = cfg.postgres.database;
+          DATABASE_HOST = cfg.postgres.host;
+          DATABASE_PORT = toString cfg.postgres.port;
+          DATABASE_SSL_MODE = "disable";
+        };
+      };
+    })
+  ]);
 }

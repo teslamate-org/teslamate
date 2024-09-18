@@ -2,13 +2,24 @@
   description = "TeslaMate Logger";
 
   inputs = {
-    nixpkgs = { url = "github:NixOS/nixpkgs/nixos-unstable"; };
-    flake-utils = { url = "github:numtide/flake-utils"; };
+    nixpkgs = {
+      url = "github:NixOS/nixpkgs/nixos-unstable";
+    };
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
     devenv.url = "github:cachix/devenv";
   };
 
-  outputs = inputs@{ self, nixpkgs, flake-utils, devenv }:
-    (flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      flake-utils,
+      devenv,
+    }:
+    (flake-utils.lib.eachDefaultSystem (
+      system:
       let
         inherit (pkgs.lib) optional optionals;
         pkgs = nixpkgs.legacyPackages.${system};
@@ -63,7 +74,13 @@
 
         pkg = beamPackages.mixRelease {
           TOP_SRC = src;
-          inherit pname version elixir src mixFodDeps;
+          inherit
+            pname
+            version
+            elixir
+            src
+            mixFodDeps
+            ;
 
           LOCALES = "${cldr}/priv/cldr";
 
@@ -97,98 +114,110 @@
 
         devShell = devenv.lib.mkShell {
           inherit inputs pkgs;
-          modules = with pkgs; [{
-            packages = [
-              elixir
-              elixir_ls
-              glibcLocales
-              node2nix
-              nodejs
-              prefetch-npm-deps
-              # for dashboard scripts
-              jq
-              psql
-              mosquitto
-              mosquitto_sub
-            ] ++ optional stdenv.isLinux inotify-tools
-              ++ optional stdenv.isDarwin terminal-notifier
-              ++ optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
-                CoreFoundation
-                CoreServices
-              ]);
-            enterShell = ''
-              export LOCALES="${cldr}/priv/cldr";
-              export PORT="4000"
-              export ENCRYPTION_KEY="your_secure_encryption_key_here"
-              export DATABASE_USER="teslamate"
-              export DATABASE_PASS="your_secure_password_here"
-              export DATABASE_NAME="teslamate"
-              export DATABASE_HOST="127.0.0.1"
-              export DATABASE_PORT="${toString postgres_port}"
-              export MQTT_HOST="127.0.0.1"
-              export MQTT_PORT="${toString mosquitto_port}"
-              export RELEASE_COOKIE="1234567890123456789"
-              export TZDATA_DIR="$PWD/tzdata"
-            '';
-            enterTest = ''
-              mix test
-            '';
-            processes.mqtt = {
-              exec =
-                "${pkgs.mosquitto}/bin/mosquitto -p ${toString mosquitto_port}";
-            };
-            process.process-compose = {
-              port = process_compose_port;
-              tui = true;
-            };
-            services.postgres = {
-              enable = true;
-              package = pkgs.postgresql_16;
-              listen_addresses = "127.0.0.1";
-              port = postgres_port;
-              initialDatabases = [{ name = "teslamate"; }];
-              initialScript = ''
-                CREATE USER teslamate with encrypted password 'your_secure_password_here';
-                GRANT ALL PRIVILEGES ON DATABASE teslamate TO teslamate;
-                ALTER USER teslamate WITH SUPERUSER;
+          modules = with pkgs; [
+            {
+              packages =
+                [
+                  elixir
+                  elixir_ls
+                  glibcLocales
+                  node2nix
+                  nodejs
+                  prefetch-npm-deps
+                  # for dashboard scripts
+                  jq
+                  psql
+                  mosquitto
+                  mosquitto_sub
+                ]
+                ++ optional stdenv.isLinux inotify-tools
+                ++ optional stdenv.isDarwin terminal-notifier
+                ++ optionals stdenv.isDarwin (
+                  with darwin.apple_sdk.frameworks;
+                  [
+                    CoreFoundation
+                    CoreServices
+                  ]
+                );
+              enterShell = ''
+                export LOCALES="${cldr}/priv/cldr";
+                export PORT="4000"
+                export ENCRYPTION_KEY="your_secure_encryption_key_here"
+                export DATABASE_USER="teslamate"
+                export DATABASE_PASS="your_secure_password_here"
+                export DATABASE_NAME="teslamate"
+                export DATABASE_HOST="127.0.0.1"
+                export DATABASE_PORT="${toString postgres_port}"
+                export MQTT_HOST="127.0.0.1"
+                export MQTT_PORT="${toString mosquitto_port}"
+                export RELEASE_COOKIE="1234567890123456789"
+                export TZDATA_DIR="$PWD/tzdata"
               '';
-            };
-          }];
+              enterTest = ''
+                mix test
+              '';
+              processes.mqtt = {
+                exec = "${pkgs.mosquitto}/bin/mosquitto -p ${toString mosquitto_port}";
+              };
+              process.process-compose = {
+                port = process_compose_port;
+                tui = true;
+              };
+              services.postgres = {
+                enable = true;
+                package = pkgs.postgresql_16;
+                listen_addresses = "127.0.0.1";
+                port = postgres_port;
+                initialDatabases = [ { name = "teslamate"; } ];
+                initialScript = ''
+                  CREATE USER teslamate with encrypted password 'your_secure_password_here';
+                  GRANT ALL PRIVILEGES ON DATABASE teslamate TO teslamate;
+                  ALTER USER teslamate WITH SUPERUSER;
+                '';
+              };
+            }
+          ];
 
         };
 
-        moduleTest = (nixpkgs.lib.nixos.runTest {
-          hostPkgs = pkgs;
-          defaults.documentation.enable = false;
-          imports = [{
-            name = "teslamate";
-            nodes.server = {
-              imports = [ self.nixosModules.default ];
-              services.teslamate = {
-                enable = true;
-                secretsFile = builtins.toFile "teslamate.env" ''
-                  ENCRYPTION_KEY=123456789
-                  DATABASE_PASS=123456789
-                  RELEASE_COOKIE=123456789
-                '';
-                postgres.enable = true;
-                grafana.enable = true;
-              };
-            };
+        moduleTest =
+          (nixpkgs.lib.nixos.runTest {
+            hostPkgs = pkgs;
+            defaults.documentation.enable = false;
+            imports = [
+              {
+                name = "teslamate";
+                nodes.server = {
+                  imports = [ self.nixosModules.default ];
+                  services.teslamate = {
+                    enable = true;
+                    secretsFile = builtins.toFile "teslamate.env" ''
+                      ENCRYPTION_KEY=123456789
+                      DATABASE_PASS=123456789
+                      RELEASE_COOKIE=123456789
+                    '';
+                    postgres.enable = true;
+                    grafana.enable = true;
+                  };
+                };
 
-            testScript = ''
-              server.wait_for_open_port(4000)
-            '';
-          }];
-        }).config.result;
-      in {
+                testScript = ''
+                  server.wait_for_open_port(4000)
+                '';
+              }
+            ];
+          }).config.result;
+      in
+      {
         packages = {
           devenv-up = devShell.config.procfileScript;
           default = pkg;
         };
         devShells.default = devShell;
         checks.default = moduleTest;
-      })) // {
-        nixosModules.default = import ./module.nix { inherit self; };
-      };
+      }
+    ))
+    // {
+      nixosModules.default = import ./module.nix { inherit self; };
+    };
 }
