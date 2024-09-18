@@ -10,10 +10,10 @@ updates:
     schedule:
       interval: "monthly"
 
-  # - package-ecosystem: "npm"
-  #   directory: "/website"
-  #   schedule:
-  #     interval: "monthly"
+  - package-ecosystem: "npm"
+    directory: "/website"
+    schedule:
+      interval: "monthly"
 
   - package-ecosystem: "docker"
     directory: "/"
