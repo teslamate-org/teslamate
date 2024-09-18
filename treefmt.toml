@@ -55,12 +55,6 @@ excludes = []
 includes = ["*.cjs", "*.css", "*.html", "*.js", "*.json", "*.json5", "*.jsx", "*.md", "*.mdx", "*.mjs", "*.scss", "*.ts", "*.tsx", "*.vue", "*.yaml", "*.yml"]
 options = ["--write"]
 
-# [formatter.clang-format]
-# command = "clang-format"
-# excludes = []
-# includes = ["*.c", "*.cc", "*.cpp", "*.h", "*.hh", "*.hpp"]
-# options = ["-i"]
-
 [formatter.nixfmt-rfc-style]
 command = "nixfmt"
 excludes = []
