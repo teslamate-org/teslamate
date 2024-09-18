@@ -21,6 +21,7 @@
 - build(deps): bump send and express in /website (#4203)
 - ci: enable dependabot for mix and npm (#4207 - @JakobLichterfeld)
 - build(deps): bump @docusaurus/preset-classic from 3.4.0 to 3.5.2 in /website (#4210)
+- build(deps): bump phoenix_ecto from 4.4.3 to 4.6.2 (#4213)
 
 #### Dashboards
 
