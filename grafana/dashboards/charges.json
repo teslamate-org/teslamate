@@ -68,9 +68,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -151,9 +149,7 @@
         "justifyMode": "center",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
+          "calcs": ["sum"],
           "fields": "",
           "values": false
         },
@@ -177,9 +173,7 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": [
-                "charge_energy_added"
-              ]
+              "names": ["charge_energy_added"]
             }
           }
         }
@@ -248,9 +242,7 @@
         "justifyMode": "center",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
+          "calcs": ["sum"],
           "fields": "",
           "values": false
         },
@@ -274,9 +266,7 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": [
-                "charge_energy_used"
-              ]
+              "names": ["charge_energy_used"]
             }
           }
         }
@@ -346,9 +336,7 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
+          "calcs": ["sum"],
           "fields": "",
           "values": false
         },
@@ -372,9 +360,7 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": [
-                "cost"
-              ]
+              "names": ["cost"]
             }
           }
         }
@@ -445,9 +431,7 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -471,9 +455,7 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": [
-                "duration_min"
-              ]
+              "names": ["duration_min"]
             }
           }
         }
@@ -1342,9 +1324,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true,
@@ -1367,9 +1347,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -1454,9 +1432,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -1520,9 +1496,7 @@
           "countRows": false,
           "enablePagination": true,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true
@@ -1545,9 +1519,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -1568,9 +1540,7 @@
   ],
   "refresh": "",
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -1735,12 +1705,8 @@
         "allValue": "",
         "current": {
           "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
+          "text": ["All"],
+          "value": ["$__all"]
         },
         "hide": 0,
         "includeAll": true,
@@ -1829,17 +1795,7 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
   "title": "Charges",

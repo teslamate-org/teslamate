@@ -62,9 +62,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -119,9 +117,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "count"
-          ],
+          "calcs": ["count"],
           "fields": "",
           "values": true
         },
@@ -141,9 +137,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -203,9 +197,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": true
         },
@@ -225,9 +217,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -498,9 +488,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true,
@@ -631,9 +619,7 @@
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -672,9 +658,7 @@
     }
   ],
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -785,17 +769,7 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
   "title": "Updates",

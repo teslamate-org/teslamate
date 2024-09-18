@@ -29,9 +29,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -306,7 +304,7 @@
         ]
       },
       "pluginVersion": "7.2.2",
-	  "repeat": "car_id",
+      "repeat": "car_id",
       "scopedVars": {
         "car_id": {
           "selected": false,
@@ -326,9 +324,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -507,4 +503,3 @@
   "uid": "lBIoQIggk",
   "version": 1
 }
-
