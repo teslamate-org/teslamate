@@ -1,9 +1,9 @@
 version: 2
 updates:
-  # - package-ecosystem: "mix"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "monthly"
+  - package-ecosystem: "mix"
+    directory: "/"
+    schedule:
+      interval: "monthly"
 
   # - package-ecosystem: "npm"
   #   directory: "/assets"
