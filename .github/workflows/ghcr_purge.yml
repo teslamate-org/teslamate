@@ -9,7 +9,6 @@ on:
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
       - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
 
-
 permissions:
   contents: read
   packages: write
