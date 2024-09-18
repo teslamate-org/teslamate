@@ -19,6 +19,7 @@
 - build(deps): bump micromatch from 4.0.5 to 4.0.8 in /website (#4174)
 - chore: Update tzdata to version 1.1.2 and mimerl to version 1.3.0 (#4205 - @JakobLichterfeld)
 - build(deps): bump send and express in /website (#4203)
+- ci: enable dependabot for mix and npm (#4207 - @JakobLichterfeld)
 
 #### Dashboards
 
