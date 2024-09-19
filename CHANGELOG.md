@@ -25,6 +25,7 @@
 - build(deps): bump jason from 1.4.1 to 1.4.4 (#4216)
 - build(deps): bump classnames from 2.3.2 to 2.5.1 in /website (#4211)
 - ci: add treefmt as code formatting multiplexer (#4219 - @JakobLichterfeld)
+- ci(refactor): use composite action to avoid duplication in elixir workflow (#4219 - @JakobLichterfeld)
 
 #### Dashboards
 
