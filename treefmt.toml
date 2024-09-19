@@ -28,6 +28,7 @@ excludes = [
     "*.json.example",
     "*.typos.toml",
     "treefmt.toml",
+    "grafana/dashboards/*.json", #we use the grafana export style
     ]
 
 [formatter.mix-format]
@@ -51,7 +52,7 @@ priority = 1
 
 [formatter.prettier]
 command = "prettier"
-excludes = ["/grafana/dashboards/*.json"]
+excludes = []
 includes = ["*.cjs", "*.css", "*.html", "*.js", "*.json", "*.json5", "*.jsx", "*.md", "*.mdx", "*.mjs", "*.scss", "*.ts", "*.tsx", "*.vue", "*.yaml", "*.yml"]
 options = ["--write"]
 
