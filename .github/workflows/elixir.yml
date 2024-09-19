@@ -18,8 +18,24 @@ env:
   ELIXIR_ASSERT_TIMEOUT: 1000
 
 jobs:
+  check_paths:
+    runs-on: ubuntu-latest
+    outputs:
+      githubfolder: ${{ steps.filter.outputs.githubfolder }}
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: filter
+        with:
+          filters: |
+            githubfolder:
+              - '.github/**'
+
   lint:
     name: Lint
+    needs: check_paths
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
     runs-on: ubuntu-20.04
 
     permissions:
@@ -82,6 +98,10 @@ jobs:
 
   test:
     name: Test
+    needs:
+      - check_paths
+      - lint
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
     runs-on: ubuntu-20.04
 
     permissions:
