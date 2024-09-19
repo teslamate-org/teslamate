@@ -1,19 +1,14 @@
 name: Build GHCR images
 
 on:
-  workflow_dispatch:
-  push:
-    paths:
-      - "**/*"
-      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
-    branches: ["ci"]
+  workflow_call:
   pull_request_target:
     branches: ["master", "ci"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}

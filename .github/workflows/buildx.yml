@@ -2,6 +2,7 @@ name: Publish Docker images
 
 on:
   workflow_dispatch:
+  workflow_call:
   schedule:
     - cron: "0 3 * * *"
   push:
@@ -10,7 +11,8 @@ on:
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 env:
   REGISTRY_IMAGE: teslamate/teslamate
 

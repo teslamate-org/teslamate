@@ -1,13 +1,15 @@
 name: Purge PR images
 
 on:
+  workflow_call:
   pull_request_target:
     types:
       - closed
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 
 permissions:
   contents: read

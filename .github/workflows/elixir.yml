@@ -1,21 +1,16 @@
 name: Elixir CI
 
 on:
-  push:
-    paths:
-      - "**/*"
-      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-  pull_request:
-    branches: ["master"]
-    paths:
-      - "**/*"
-      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+  workflow_call:
 
 env:
   CACHE_NAME_DEPS: cache-elixir-deps
   CACHE_NAME_COMPILED_DEV: cache-compiled-dev-build
   CACHE_NAME_COMPILED_TEST: cache-compiled-test-build
   ELIXIR_ASSERT_TIMEOUT: 1000
+
+permissions:
+  contents: read
 
 jobs:
   check_paths:

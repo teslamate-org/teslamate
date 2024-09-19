@@ -22,6 +22,9 @@ on:
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 
+permissions:
+  contents: read
+
 jobs:
   check_paths:
     runs-on: ubuntu-latest
