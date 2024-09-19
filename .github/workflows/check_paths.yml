@@ -4,7 +4,9 @@ on:
   workflow_call:
     # Map the workflow outputs to job outputs
     outputs:
-      githubfolder: ${{ jobs.check_paths.githubfolder }}
+      githubfolder:
+        description: "changes to .github folder"
+        value: ${{ jobs.check_paths.githubfolder }}
   push:
     paths:
       - "**/*"
@@ -31,6 +33,7 @@ jobs:
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: filter
         with:
+          base: "master" # needed to set as a called workflow does not have direct access to repository.default_branch
           filters: |
             githubfolder:
               - '.github/**'
