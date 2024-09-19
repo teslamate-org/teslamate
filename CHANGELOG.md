@@ -27,6 +27,7 @@
 - ci: add treefmt as code formatting multiplexer (#4219 - @JakobLichterfeld)
 - ci(refactor): use composite action to avoid duplication in elixir workflow (#4219 - @JakobLichterfeld)
 - ci: prevent workflow runs for certain conditions and allow scheduled runs (#4219 - @JakobLichterfeld)
+- ci(refactor): use reusable workflow to check paths (#4219 - @JakobLichterfeld)
 
 #### Dashboards
 

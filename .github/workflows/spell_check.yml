@@ -39,6 +39,58 @@ jobs:
         with:
           cache-name-deps: ${{ env.CACHE_NAME_DEPS }}
           cache-name-compiled: ${{ env.CACHE_NAME_COMPILED_DEV }}
+name: Elixir CI
+
+on:
+  push:
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+
+env:
+  CACHE_NAME_DEPS: cache-elixir-deps
+  CACHE_NAME_COMPILED_DEV: cache-compiled-dev-build
+  CACHE_NAME_COMPILED_TEST: cache-compiled-test-build
+  ELIXIR_ASSERT_TIMEOUT: 1000
+
+jobs:
+  check_paths:
+    runs-on: ubuntu-latest
+    outputs:
+      githubfolder: ${{ steps.filter.outputs.githubfolder }}
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: filter
+        with:
+          filters: |
+            githubfolder:
+              - '.github/**'
+
+  lint:
+    name: Lint
+    needs: check_paths
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    runs-on: ubuntu-20.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Setup Elixir and Cache Dependencies
+        id: setup-elixir-and-cache-deps
+        uses: ./.github/actions/setup-elixir-and-cache-deps
+        with:
+          cache-name-deps: ${{ env.CACHE_NAME_DEPS }}
+          cache-name-compiled: ${{ env.CACHE_NAME_COMPILED_DEV }}
           mix-env: dev
 
       - name: Compile without warnings
@@ -89,7 +141,7 @@ jobs:
     name: Test
     needs:
       - check_paths
-      - verify_dependencies_and_static_analysis
+      - lint
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
     runs-on: ubuntu-20.04
 
