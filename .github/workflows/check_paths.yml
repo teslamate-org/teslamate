@@ -39,5 +39,4 @@ jobs:
           base: "master" # needed to set as a called workflow does not have direct access to repository.default_branch
           filters: |
             githubfolder:
-              # - '.github/**'
-              - '.github/actions/merge/action.yml'
+              - '.github/**'
