@@ -51,7 +51,7 @@ priority = 1
 
 [formatter.prettier]
 command = "prettier"
-excludes = []
+excludes = ["/grafana/dashboards/*.json"]
 includes = ["*.cjs", "*.css", "*.html", "*.js", "*.json", "*.json5", "*.jsx", "*.md", "*.mdx", "*.mjs", "*.scss", "*.ts", "*.tsx", "*.vue", "*.yaml", "*.yml"]
 options = ["--write"]
 
