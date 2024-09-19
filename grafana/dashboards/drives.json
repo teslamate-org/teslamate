@@ -69,7 +69,9 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": ["tesla"],
+      "tags": [
+        "tesla"
+      ],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -150,7 +152,9 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["sum"],
+          "calcs": [
+            "sum"
+          ],
           "fields": "",
           "values": false
         },
@@ -174,7 +178,9 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": ["consumption_kWh"]
+              "names": [
+                "consumption_kWh"
+              ]
             }
           }
         }
@@ -245,7 +251,9 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["sum"],
+          "calcs": [
+            "sum"
+          ],
           "fields": "",
           "values": false
         },
@@ -269,7 +277,9 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": ["duration_min"]
+              "names": [
+                "duration_min"
+              ]
             }
           }
         }
@@ -359,7 +369,9 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["sum"],
+          "calcs": [
+            "sum"
+          ],
           "fields": "",
           "values": false
         },
@@ -383,7 +395,10 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": ["distance_mi", "distance_km"]
+              "names": [
+                "distance_mi",
+                "distance_km"
+              ]
             }
           }
         }
@@ -473,7 +488,9 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "",
           "values": false
         },
@@ -497,7 +514,10 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": ["consumption_kwh_mi", "consumption_kwh_km"]
+              "names": [
+                "consumption_kwh_mi",
+                "consumption_kwh_km"
+              ]
             }
           }
         }
@@ -1278,7 +1298,9 @@
           "countRows": false,
           "enablePagination": false,
           "fields": "",
-          "reducer": ["sum"],
+          "reducer": [
+            "sum"
+          ],
           "show": false
         },
         "showHeader": true,
@@ -1302,7 +1324,9 @@
           "select": [
             [
               {
-                "params": ["value"],
+                "params": [
+                  "value"
+                ],
                 "type": "column"
               }
             ]
@@ -1395,7 +1419,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -1459,7 +1485,9 @@
           "countRows": false,
           "enablePagination": true,
           "fields": "",
-          "reducer": ["sum"],
+          "reducer": [
+            "sum"
+          ],
           "show": false
         },
         "showHeader": true
@@ -1482,7 +1510,9 @@
           "select": [
             [
               {
-                "params": ["value"],
+                "params": [
+                  "value"
+                ],
                 "type": "column"
               }
             ]
@@ -1502,7 +1532,9 @@
     }
   ],
   "schemaVersion": 39,
-  "tags": ["tesla"],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {
@@ -1713,7 +1745,17 @@
       "2h",
       "1d"
     ],
-    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
   },
   "timezone": "",
   "title": "Drives",

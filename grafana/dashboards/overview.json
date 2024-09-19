@@ -75,7 +75,9 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": ["tesla"],
+      "tags": [
+        "tesla"
+      ],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -136,7 +138,9 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "",
           "values": false
         },
@@ -161,7 +165,9 @@
           "select": [
             [
               {
-                "params": ["battery_level"],
+                "params": [
+                  "battery_level"
+                ],
                 "type": "column"
               }
             ]
@@ -314,7 +320,9 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["firstNotNull"],
+          "calcs": [
+            "firstNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -338,7 +346,9 @@
           "select": [
             [
               {
-                "params": ["outside_temp"],
+                "params": [
+                  "outside_temp"
+                ],
                 "type": "column"
               }
             ]
@@ -397,7 +407,9 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["firstNotNull"],
+          "calcs": [
+            "firstNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -421,7 +433,9 @@
           "select": [
             [
               {
-                "params": ["outside_temp"],
+                "params": [
+                  "outside_temp"
+                ],
                 "type": "column"
               }
             ]
@@ -562,7 +576,10 @@
       ],
       "options": {
         "legend": {
-          "calcs": ["max", "min"],
+          "calcs": [
+            "max",
+            "min"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -589,7 +606,9 @@
           "select": [
             [
               {
-                "params": ["latitude"],
+                "params": [
+                  "latitude"
+                ],
                 "type": "column"
               }
             ]
@@ -667,14 +686,18 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": ["first"]
+          "calcs": [
+            "first"
+          ]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "",
           "values": false
         },
@@ -698,7 +721,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -777,7 +802,9 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "",
           "values": false
         },
@@ -801,7 +828,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -888,7 +917,9 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -998,14 +1029,18 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": ["first"]
+          "calcs": [
+            "first"
+          ]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "",
           "values": false
         },
@@ -1029,7 +1064,9 @@
           "select": [
             [
               {
-                "params": ["value"],
+                "params": [
+                  "value"
+                ],
                 "type": "column"
               }
             ]
@@ -1099,14 +1136,18 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": ["first"]
+          "calcs": [
+            "first"
+          ]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "/^version$/",
           "values": true
         },
@@ -1130,7 +1171,9 @@
           "select": [
             [
               {
-                "params": ["efficiency"],
+                "params": [
+                  "efficiency"
+                ],
                 "type": "column"
               }
             ]
@@ -1215,14 +1258,18 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": ["first"]
+          "calcs": [
+            "first"
+          ]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "",
           "values": false
         },
@@ -1246,7 +1293,9 @@
           "select": [
             [
               {
-                "params": ["value"],
+                "params": [
+                  "value"
+                ],
                 "type": "column"
               }
             ]
@@ -1433,7 +1482,10 @@
       ],
       "options": {
         "legend": {
-          "calcs": ["max", "min"],
+          "calcs": [
+            "max",
+            "min"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1460,7 +1512,9 @@
           "select": [
             [
               {
-                "params": ["latitude"],
+                "params": [
+                  "latitude"
+                ],
                 "type": "column"
               }
             ]
@@ -1491,7 +1545,9 @@
           "select": [
             [
               {
-                "params": ["latitude"],
+                "params": [
+                  "latitude"
+                ],
                 "type": "column"
               }
             ]
@@ -1550,7 +1606,9 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["firstNotNull"],
+          "calcs": [
+            "firstNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -1575,7 +1633,9 @@
           "select": [
             [
               {
-                "params": ["outside_temp"],
+                "params": [
+                  "outside_temp"
+                ],
                 "type": "column"
               }
             ]
@@ -1662,7 +1722,9 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["firstNotNull"],
+          "calcs": [
+            "firstNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -1687,7 +1749,9 @@
           "select": [
             [
               {
-                "params": ["outside_temp"],
+                "params": [
+                  "outside_temp"
+                ],
                 "type": "column"
               }
             ]
@@ -1763,7 +1827,9 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["firstNotNull"],
+          "calcs": [
+            "firstNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -1923,7 +1989,9 @@
           "select": [
             [
               {
-                "params": ["latitude"],
+                "params": [
+                  "latitude"
+                ],
                 "type": "column"
               }
             ]
@@ -1946,7 +2014,9 @@
   ],
   "refresh": "30s",
   "schemaVersion": 39,
-  "tags": ["tesla"],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {
@@ -2082,7 +2152,17 @@
       "2h",
       "1d"
     ],
-    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
   },
   "timezone": "",
   "title": "Overview",

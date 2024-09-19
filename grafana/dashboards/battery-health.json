@@ -83,7 +83,9 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": ["tesla"],
+      "tags": [
+        "tesla"
+      ],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -138,7 +140,9 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -162,7 +166,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -282,7 +288,9 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -307,7 +315,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -382,7 +392,9 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "/.*/",
           "values": false
         },
@@ -437,7 +449,9 @@
           "select": [
             [
               {
-                "params": ["efficiency"],
+                "params": [
+                  "efficiency"
+                ],
                 "type": "column"
               }
             ]
@@ -486,7 +500,9 @@
           "select": [
             [
               {
-                "params": ["efficiency"],
+                "params": [
+                  "efficiency"
+                ],
                 "type": "column"
               }
             ]
@@ -615,16 +631,24 @@
       "id": 34,
       "maxDataPoints": 3,
       "options": {
-        "displayLabels": ["name", "percent", "value"],
+        "displayLabels": [
+          "name",
+          "percent",
+          "value"
+        ],
         "legend": {
           "displayMode": "list",
           "placement": "right",
           "showLegend": false,
-          "values": ["value"]
+          "values": [
+            "value"
+          ]
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -651,7 +675,9 @@
           "select": [
             [
               {
-                "params": ["latitude"],
+                "params": [
+                  "latitude"
+                ],
                 "type": "column"
               }
             ]
@@ -764,7 +790,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -835,7 +863,9 @@
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -859,7 +889,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -948,14 +980,18 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": ["mean"]
+          "calcs": [
+            "mean"
+          ]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "",
           "values": false
         },
@@ -1010,7 +1046,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -1058,7 +1096,9 @@
           "select": [
             [
               {
-                "params": ["efficiency"],
+                "params": [
+                  "efficiency"
+                ],
                 "type": "column"
               }
             ]
@@ -1195,7 +1235,9 @@
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -1215,11 +1257,15 @@
           "group": [],
           "groupBy": [
             {
-              "params": ["$__interval"],
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
@@ -1234,7 +1280,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -1383,7 +1431,9 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "/.*/",
           "values": false
         },
@@ -1480,7 +1530,9 @@
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "/^kwh$/",
           "values": false
         },
@@ -1501,11 +1553,15 @@
           "group": [],
           "groupBy": [
             {
-              "params": ["$__interval"],
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
@@ -1520,7 +1576,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -1683,7 +1741,9 @@
           "select": [
             [
               {
-                "params": ["value"],
+                "params": [
+                  "value"
+                ],
                 "type": "column"
               }
             ]
@@ -1731,7 +1791,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -1771,7 +1833,9 @@
   ],
   "refresh": "",
   "schemaVersion": 39,
-  "tags": ["tesla"],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {

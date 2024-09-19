@@ -62,7 +62,9 @@
       "icon": "external link",
       "includeVars": false,
       "keepTime": false,
-      "tags": ["tesla"],
+      "tags": [
+        "tesla"
+      ],
       "targetBlank": false,
       "title": "Dashboards",
       "tooltip": "",
@@ -552,7 +554,9 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": ["sum"],
+          "reducer": [
+            "sum"
+          ],
           "show": false
         },
         "showHeader": true,
@@ -580,7 +584,9 @@
           "select": [
             [
               {
-                "params": ["id"],
+                "params": [
+                  "id"
+                ],
                 "type": "column"
               }
             ]
@@ -671,7 +677,9 @@
   ],
   "refresh": "",
   "schemaVersion": 39,
-  "tags": ["tesla"],
+  "tags": [
+    "tesla"
+  ],
   "templating": {
     "list": [
       {
@@ -722,8 +730,12 @@
       {
         "current": {
           "selected": true,
-          "text": ["All"],
-          "value": ["$__all"]
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "hide": 0,
         "includeAll": true,

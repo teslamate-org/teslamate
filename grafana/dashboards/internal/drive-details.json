@@ -83,7 +83,9 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": ["tesla"],
+      "tags": [
+        "tesla"
+      ],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -489,7 +491,11 @@
       "id": 39,
       "options": {
         "legend": {
-          "calcs": ["mean", "max", "min"],
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -518,7 +524,9 @@
           "select": [
             [
               {
-                "params": ["id"],
+                "params": [
+                  "id"
+                ],
                 "type": "column"
               }
             ]
@@ -679,7 +687,10 @@
           "format": "time_series",
           "group": [
             {
-              "params": ["$__interval", "none"],
+              "params": [
+                "$__interval",
+                "none"
+              ],
               "type": "time"
             }
           ],
@@ -691,29 +702,41 @@
           "select": [
             [
               {
-                "params": ["lat"],
+                "params": [
+                  "lat"
+                ],
                 "type": "column"
               },
               {
-                "params": ["avg"],
+                "params": [
+                  "avg"
+                ],
                 "type": "aggregate"
               },
               {
-                "params": ["lat"],
+                "params": [
+                  "lat"
+                ],
                 "type": "alias"
               }
             ],
             [
               {
-                "params": ["lng"],
+                "params": [
+                  "lng"
+                ],
                 "type": "column"
               },
               {
-                "params": ["avg"],
+                "params": [
+                  "avg"
+                ],
                 "type": "aggregate"
               },
               {
-                "params": ["lat"],
+                "params": [
+                  "lat"
+                ],
                 "type": "alias"
               }
             ]
@@ -889,7 +912,9 @@
           "select": [
             [
               {
-                "params": ["charge_energy_added"],
+                "params": [
+                  "charge_energy_added"
+                ],
                 "type": "column"
               }
             ]
@@ -1158,7 +1183,9 @@
           "select": [
             [
               {
-                "params": ["charge_energy_added"],
+                "params": [
+                  "charge_energy_added"
+                ],
                 "type": "column"
               }
             ]
@@ -1380,7 +1407,10 @@
       "id": 32,
       "options": {
         "legend": {
-          "calcs": ["logmin", "max"],
+          "calcs": [
+            "logmin",
+            "max"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1408,7 +1438,9 @@
           "select": [
             [
               {
-                "params": ["id"],
+                "params": [
+                  "id"
+                ],
                 "type": "column"
               }
             ]
@@ -1488,7 +1520,9 @@
         "justifyMode": "center",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "/.*/",
           "values": false
         },
@@ -1513,7 +1547,9 @@
           "select": [
             [
               {
-                "params": ["latitude"],
+                "params": [
+                  "latitude"
+                ],
                 "type": "column"
               }
             ]
@@ -1597,7 +1633,9 @@
         "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -1621,7 +1659,9 @@
           "select": [
             [
               {
-                "params": ["latitude"],
+                "params": [
+                  "latitude"
+                ],
                 "type": "column"
               }
             ]
@@ -1680,7 +1720,9 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -1837,7 +1879,9 @@
           "select": [
             [
               {
-                "params": ["value"],
+                "params": [
+                  "value"
+                ],
                 "type": "column"
               }
             ]
@@ -1875,7 +1919,12 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": ["Elapsed", "Time", "Speed", "SpeedUnit"]
+              "names": [
+                "Elapsed",
+                "Time",
+                "Speed",
+                "SpeedUnit"
+              ]
             }
           }
         }
@@ -1955,7 +2004,9 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -1979,7 +2030,9 @@
           "select": [
             [
               {
-                "params": ["latitude"],
+                "params": [
+                  "latitude"
+                ],
                 "type": "column"
               }
             ]
@@ -2035,7 +2088,9 @@
         "justifyMode": "auto",
         "orientation": "vertical",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "/.*/",
           "values": false
         },
@@ -2061,7 +2116,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -2110,7 +2167,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -2193,7 +2252,9 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -2217,7 +2278,9 @@
           "select": [
             [
               {
-                "params": ["latitude"],
+                "params": [
+                  "latitude"
+                ],
                 "type": "column"
               }
             ]
@@ -2308,7 +2371,9 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "",
           "values": false
         },
@@ -2333,7 +2398,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
@@ -2434,7 +2501,9 @@
         "justifyMode": "center",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["mean"],
+          "calcs": [
+            "mean"
+          ],
           "fields": "",
           "values": true
         },
@@ -2459,7 +2528,9 @@
           "select": [
             [
               {
-                "params": ["start_km"],
+                "params": [
+                  "start_km"
+                ],
                 "type": "column"
               }
             ]
