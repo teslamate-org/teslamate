@@ -13,13 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  check_paths:
-    uses: ./.github/workflows/check_paths.yml
-
   verify_dependencies_and_static_analysis:
     name: Verify dependencies, POT files, unused dependencies, static analysis
-    needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
     runs-on: ubuntu-20.04
 
     permissions:

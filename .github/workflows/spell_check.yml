@@ -7,13 +7,8 @@ permissions:
   contents: read
 
 jobs:
-  check_paths:
-    uses: ./.github/workflows/check_paths.yml
-
   spell_check:
     name: Spell check
-    needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
     runs-on: ubuntu-20.04
 
     steps:
