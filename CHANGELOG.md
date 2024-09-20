@@ -7,6 +7,7 @@
 ### Improvements and bug fixes
 
 - Fix 401 on direct Fleet API calls (#4095 - @jlestel)
+- feat: add treefmt-nix to nix flake (#4219 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

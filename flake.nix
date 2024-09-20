@@ -9,6 +9,7 @@
       url = "github:numtide/flake-utils";
     };
     devenv.url = "github:cachix/devenv";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   outputs =
@@ -17,6 +18,8 @@
       nixpkgs,
       flake-utils,
       devenv,
+      systems,
+      treefmt-nix,
     }:
     (flake-utils.lib.eachDefaultSystem (
       system:
@@ -207,14 +210,83 @@
               }
             ];
           }).config.result;
+
+        # Small tool to iterate over each systems
+        eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
+
+        # Eval the treefmt modules
+        treefmtEval = eachSystem (
+          pkgs:
+          treefmt-nix.lib.evalModule pkgs {
+            projectRootFile = self.flake-root.projectRootFile;
+            package = pkgs.treefmt;
+            global.excludes = [
+              "*.gitignore"
+              "*.dockerignore"
+              ".envrc"
+              "*.node-version"
+              "Dockerfile"
+              "grafana/Dockerfile"
+              "Makefile"
+              "VERSION"
+              "LICENSE"
+              "*.metadata"
+              "*.manifest"
+              "*.webmanifest"
+              "*.dat"
+              "*.lock"
+              "*.txt"
+              "*.csv"
+              "*.ico"
+              "*.png"
+              "*.svg"
+              "*.properties"
+              "*.xml"
+              "*.po"
+              "*.pot"
+              "*.json.example"
+              "*.typos.toml"
+              "treefmt.toml"
+              "grafana/dashboards/*.json" # we use the grafana export style
+            ];
+            programs.mix.enable = true;
+            settings.formatter.mix-format.includes = [
+              "*.ex"
+              "*.exs"
+              "*.{heex,eex}"
+            ];
+            # run shellcheck first
+            programs.shellcheck.enable = true;
+            settings.formatter.shellcheck.priority = 0; # default is 0, but we set it here for clarity
+
+            # shfmt second
+            programs.shfmt.enable = true;
+            settings.formatter.shfmt.priority = 1;
+
+            programs.prettier.enable = true;
+
+            programs.nixpkgs-fmt.enable = true;
+          }
+        );
       in
       {
+        imports = [
+          inputs.treefmt-nix.flakeModule
+          inputs.flake-root.flakeModule
+        ];
         packages = {
           devenv-up = devShell.config.procfileScript;
           default = pkg;
         };
         devShells.default = devShell;
-        checks.default = moduleTest;
+
+        # for `nix fmt`
+        formatter = eachSystem (pkgs: treefmtEval.${pkgs.system}.config.build.wrapper);
+        # for `nix flake check`
+        checks = eachSystem (pkgs: {
+          default = moduleTest;
+          formatting = treefmtEval.${pkgs.system}.config.build.check self;
+        });
       }
     ))
     // {
