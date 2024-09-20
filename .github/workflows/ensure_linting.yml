@@ -19,5 +19,5 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: run treefmt in CI mode
-        run: nix flake check
+        run: nix flake check --impure
         # or use: https://github.com/cachix/git-hooks.nix?tab=readme-ov-file
