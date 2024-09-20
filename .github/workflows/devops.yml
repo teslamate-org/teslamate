@@ -26,21 +26,21 @@ jobs:
 
   spell_check:
     needs: check_paths
-    # if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
     uses: ./.github/workflows/spell_check.yml
 
   ensure_linting:
     needs:
       - check_paths
       - spell_check
-    # if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
     uses: ./.github/workflows/ensure_linting.yml
 
   elixir:
     needs:
       - check_paths
       - ensure_linting
-    # if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
     uses: ./.github/workflows/elixir.yml
 
   elixir_test:
