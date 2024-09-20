@@ -29,6 +29,7 @@
 - ci: prevent workflow runs for certain conditions and allow scheduled runs (#4219 - @JakobLichterfeld)
 - ci(refactor): use reusable workflow to check paths (#4219 - @JakobLichterfeld)
 - ci(refactor): use reusable workflows for streamlined DevOps pipeline (#4219 - @JakobLichterfeld)
+- ci(refactor): allow ghcr_build parallel to elixir test (#4219 - @JakobLichterfeld)
 
 #### Dashboards
 
