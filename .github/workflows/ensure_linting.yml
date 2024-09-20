@@ -1,0 +1,23 @@
+name: Ensure Linting
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check_linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@ba0dd844c9180cbf77aa72a116d6fbc515d0e87b #v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: run treefmt in CI mode
+        run: nix flake check
+        # or use: https://github.com/cachix/git-hooks.nix?tab=readme-ov-file
