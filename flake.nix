@@ -215,9 +215,7 @@
         eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
 
         # Eval the treefmt modules
-        treefmtEval = eachSystem (
-          pkgs:
-          treefmt-nix.lib.evalModule pkgs {
+        treefmtEval = treefmt-nix.lib.evalModule pkgs {
             projectRootFile = self.flake-root.projectRootFile;
             package = pkgs.treefmt;
             global.excludes = [
