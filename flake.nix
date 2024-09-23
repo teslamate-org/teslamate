@@ -211,9 +211,6 @@
             ];
           }).config.result;
 
-        # Small tool to iterate over each systems
-        eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
-
         # Eval the treefmt modules
         treefmtEval = treefmt-nix.lib.evalModule pkgs {
           projectRootFile = self.flake-root.projectRootFile;
