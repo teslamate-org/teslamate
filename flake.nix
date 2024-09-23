@@ -128,6 +128,7 @@
                   psql
                   mosquitto
                   mosquitto_sub
+                  treefmt
                 ]
                 ++ optional stdenv.isLinux inotify-tools
                 ++ optional stdenv.isDarwin terminal-notifier
@@ -206,11 +207,22 @@
               }
             ];
           }).config.result;
+        treefmt = import treefmt-nix { inherit pkgs; };
+      in
+      {
+        packages = {
+          devenv-up = devShell.config.procfileScript;
+          default = pkg;
+        };
+        devShells.default = devShell;
 
-        # Eval the treefmt modules
-        treefmtEval = treefmt-nix.lib.evalModule pkgs {
-          projectRootFile = self.flake-root.projectRootFile;
-          package = pkgs.treefmt;
+        # for `nix fmt`
+        treefmt.config = {
+          flakeFormatter = true;
+          flakeCheck = true;
+          projectRootFile = "flake.nix";
+
+          # we really need to mirror the treefmt.toml as we can't use it directly
           global.excludes = [
             "*.gitignore"
             "*.dockerignore"
@@ -258,21 +270,10 @@
 
           programs.nixpkgs-fmt.enable = true;
         };
-
-      in
-      {
-        packages = {
-          devenv-up = devShell.config.procfileScript;
-          default = pkg;
-        };
-        devShells.default = devShell;
-
-        # for `nix fmt`
-        formatter = treefmtEval.${pkgs.system}.config.build.wrapper;
         # for `nix flake check`
         checks = {
           default = moduleTest;
-          formatting = treefmtEval.config.build.check self;
+          formatting = pkgs.treefmt.check;
         };
       }
     ))
