@@ -268,10 +268,6 @@
         );
       in
       {
-        imports = [
-          inputs.treefmt-nix.flakeModule
-          inputs.flake-root.flakeModule
-        ];
         packages = {
           devenv-up = devShell.config.procfileScript;
           default = pkg;
