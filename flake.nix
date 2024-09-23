@@ -216,56 +216,56 @@
 
         # Eval the treefmt modules
         treefmtEval = treefmt-nix.lib.evalModule pkgs {
-            projectRootFile = self.flake-root.projectRootFile;
-            package = pkgs.treefmt;
-            global.excludes = [
-              "*.gitignore"
-              "*.dockerignore"
-              ".envrc"
-              "*.node-version"
-              "Dockerfile"
-              "grafana/Dockerfile"
-              "Makefile"
-              "VERSION"
-              "LICENSE"
-              "*.metadata"
-              "*.manifest"
-              "*.webmanifest"
-              "*.dat"
-              "*.lock"
-              "*.txt"
-              "*.csv"
-              "*.ico"
-              "*.png"
-              "*.svg"
-              "*.properties"
-              "*.xml"
-              "*.po"
-              "*.pot"
-              "*.json.example"
-              "*.typos.toml"
-              "treefmt.toml"
-              "grafana/dashboards/*.json" # we use the grafana export style
-            ];
-            programs.mix.enable = true;
-            settings.formatter.mix-format.includes = [
-              "*.ex"
-              "*.exs"
-              "*.{heex,eex}"
-            ];
-            # run shellcheck first
-            programs.shellcheck.enable = true;
-            settings.formatter.shellcheck.priority = 0; # default is 0, but we set it here for clarity
+          projectRootFile = self.flake-root.projectRootFile;
+          package = pkgs.treefmt;
+          global.excludes = [
+            "*.gitignore"
+            "*.dockerignore"
+            ".envrc"
+            "*.node-version"
+            "Dockerfile"
+            "grafana/Dockerfile"
+            "Makefile"
+            "VERSION"
+            "LICENSE"
+            "*.metadata"
+            "*.manifest"
+            "*.webmanifest"
+            "*.dat"
+            "*.lock"
+            "*.txt"
+            "*.csv"
+            "*.ico"
+            "*.png"
+            "*.svg"
+            "*.properties"
+            "*.xml"
+            "*.po"
+            "*.pot"
+            "*.json.example"
+            "*.typos.toml"
+            "treefmt.toml"
+            "grafana/dashboards/*.json" # we use the grafana export style
+          ];
+          programs.mix.enable = true;
+          settings.formatter.mix-format.includes = [
+            "*.ex"
+            "*.exs"
+            "*.{heex,eex}"
+          ];
+          # run shellcheck first
+          programs.shellcheck.enable = true;
+          settings.formatter.shellcheck.priority = 0; # default is 0, but we set it here for clarity
 
-            # shfmt second
-            programs.shfmt.enable = true;
-            settings.formatter.shfmt.priority = 1;
+          # shfmt second
+          programs.shfmt.enable = true;
+          settings.formatter.shfmt.priority = 1;
 
-            programs.prettier.enable = true;
+          programs.prettier.enable = true;
 
-            programs.nixpkgs-fmt.enable = true;
-          }
-        );
+          programs.nixpkgs-fmt.enable = true;
+        };
+
       in
       {
         packages = {
