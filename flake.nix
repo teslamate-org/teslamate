@@ -281,12 +281,12 @@
         devShells.default = devShell;
 
         # for `nix fmt`
-        formatter = eachSystem (pkgs: treefmtEval.${pkgs.system}.config.build.wrapper);
+        formatter = treefmtEval.${pkgs.system}.config.build.wrapper;
         # for `nix flake check`
-        checks = eachSystem (pkgs: {
+        checks = {
           default = moduleTest;
-          formatting = treefmtEval.${pkgs.system}.config.build.check self;
-        });
+          formatting = treefmtEval.config.build.check self;
+        };
       }
     ))
     // {
