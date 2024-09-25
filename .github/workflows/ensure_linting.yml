@@ -18,6 +18,9 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: run treefmt in CI mode
-        run: nix flake check --impure
+      - name: Nix binary cache
+        uses: DeterminateSystems/magic-nix-cache-action@87b14cf437d03d37989d87f0fa5ce4f5dc1a330b #v8
+
+      - name: Run treefmt in CI mode
+        run: nix develop --command treefmt --ci
         # or use: https://github.com/cachix/git-hooks.nix?tab=readme-ov-file
