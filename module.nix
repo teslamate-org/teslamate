@@ -4,7 +4,7 @@ let
   teslamate = self.packages.${pkgs.system}.default;
   cfg = config.services.teslamate;
 
-  inherit (lib) mkEnableOption mkOption types mkIf mkMerge getExe literalExpression;
+  inherit (lib) mkPackageOption mkEnableOption mkOption types mkIf mkMerge getExe literalExpression;
 in {
   options.services.teslamate = {
     enable = mkEnableOption "Teslamate";
@@ -65,6 +65,12 @@ in {
 
           Other settings will still be used even if `enable` is false to configure
           database connection.
+        '';
+      };
+
+      package = mkPackageOption pkgs "postgresql_16" {
+        extraDescription = ''
+          The postgresql package to use.
         '';
       };
 
@@ -187,8 +193,7 @@ in {
       (mkIf cfg.postgres.enable_server {
         services.postgresql = {
           enable = true;
-          package = pkgs.postgresql_16;
-          inherit (cfg.postgres) port;
+          inherit (cfg.postgres) port package;
           
           initialScript = pkgs.writeText "teslamate-psql-init" ''
             \set password `echo $DATABASE_PASS`
