@@ -207,7 +207,6 @@
               }
             ];
           }).config.result;
-        treefmt = import treefmt-nix { inherit pkgs; };
       in
       {
         packages = {
