@@ -10,13 +10,13 @@ This document provides the necessary steps for installation of TeslaMate on a va
 Click on the following items to view detailed installation steps.
 
 <details>
-  <summary>Postgres (v12+)</summary>
+  <summary>Postgres (v17+)</summary>
 
 ```bash
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee  /etc/apt/sources.list.d/pgdg.list
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
 sudo apt-get update
-sudo apt-get install -y postgresql-12 postgresql-client-12
+sudo apt-get install -y postgresql-17 postgresql-client-17
 ```
 
 Source: [postgresql.org/download](https://www.postgresql.org/download/)
@@ -37,7 +37,7 @@ Source: [elixir-lang.org/install](https://elixir-lang.org/install)
 </details>
 
 <details>
-  <summary>Grafana (v8.3.4+) & Plugins</summary>
+  <summary>Grafana (v11.1.0+)</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
@@ -50,15 +50,6 @@ sudo systemctl enable grafana-server.service # to start Grafana at boot time
 ```
 
 Source: [grafana.com/docs/installation](https://grafana.com/docs/grafana/latest/installation/)
-
-Install the required Grafana plugins as well:
-
-```bash
-sudo grafana-cli plugins install pr0ps-trackmap-panel 2.1.4
-sudo grafana-cli plugins install natel-plotly-panel 0.0.7
-sudo grafana-cli --pluginUrl https://github.com/panodata/panodata-map-panel/releases/download/0.16.0/panodata-map-panel-0.16.0.zip plugins install grafana-worldmap-panel-ng
-sudo systemctl restart grafana-server
-```
 
 [Import the Grafana dashboards](#import-grafana-dashboards) after [cloning the TeslaMate git repository](#clone-teslamate-git-repository).
 
