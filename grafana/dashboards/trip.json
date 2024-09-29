@@ -17,7 +17,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.0"
+      "version": "11.2.0"
     },
     {
       "type": "datasource",
@@ -230,7 +230,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -358,6 +358,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -369,9 +370,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -397,11 +402,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "type": "stat"
@@ -513,6 +514,10 @@
       },
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -538,13 +543,13 @@
               "params": [],
               "type": "macro"
             }
-          ],
+          ]
+        },
+        {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
-          }
-        },
-        {
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -570,11 +575,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "type": "piechart"
@@ -662,6 +663,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -673,9 +675,13 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -701,11 +707,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "type": "stat"
@@ -782,6 +784,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -793,9 +796,13 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -821,11 +828,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "type": "stat"
@@ -904,6 +907,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -916,9 +920,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -944,11 +952,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "type": "stat"
@@ -1027,6 +1031,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -1038,9 +1043,13 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -1066,11 +1075,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "type": "stat"
@@ -1126,6 +1131,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -1137,9 +1143,13 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -1165,11 +1175,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "type": "stat"
@@ -1232,9 +1238,13 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -1260,13 +1270,13 @@
               "params": [],
               "type": "macro"
             }
-          ],
+          ]
+        },
+        {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
-          }
-        },
-        {
+          },
           "format": "table",
           "group": [],
           "hide": false,
@@ -1293,11 +1303,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "type": "bargauge"
@@ -1407,6 +1413,10 @@
       },
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -1432,11 +1442,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "transparent": true,
@@ -1786,7 +1792,7 @@
           }
         ]
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "alias": "",
@@ -1847,7 +1853,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2163,7 +2170,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "#96D98D"
+                      "color": "#96D98D",
+                      "value": null
                     },
                     {
                       "color": "#56A64B",
@@ -2272,7 +2280,9 @@
       },
       "id": 36,
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -2287,7 +2297,7 @@
           }
         ]
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2342,9 +2352,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "opacity",
@@ -2353,6 +2367,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2375,7 +2390,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2475,7 +2491,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "datasource": {
@@ -2524,9 +2539,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "opacity",
@@ -2535,6 +2554,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2556,7 +2576,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2635,7 +2656,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "datasource": {
@@ -2847,7 +2867,6 @@
     "from": "now/d",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -2876,6 +2895,6 @@
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }

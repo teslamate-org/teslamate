@@ -11,7 +11,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.1.0"
+      "version": "11.2.0"
     },
     {
       "type": "datasource",
@@ -167,7 +167,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -256,7 +256,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -346,7 +346,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -436,7 +436,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -520,7 +520,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -606,7 +606,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -682,7 +682,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -776,7 +776,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -911,7 +911,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -983,6 +983,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 35,
             "gradientMode": "none",
@@ -1084,7 +1085,6 @@
           "sort": "desc"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "datasource": {
@@ -1454,7 +1454,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -1654,14 +1654,17 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "fillOpacity": 50,
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
+            "pointShape": "circle",
             "pointSize": {
               "fixed": 3
             },
+            "pointStrokeWidth": 1,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -1700,6 +1703,18 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "B - Avg Power [kW]"
+            },
+            "properties": [
+              {
+                "id": "custom.pointSize.fixed",
+                "value": 15
+              }
+            ]
           }
         ]
       },
@@ -1711,47 +1726,86 @@
       },
       "id": 29,
       "options": {
-        "dims": {
-          "exclude": [
-            "charging_process_id"
-          ],
-          "frame": 0
-        },
         "legend": {
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": false
         },
+        "mapping": "manual",
         "series": [
           {
-            "pointColor": {
-              "field": "Power [kW]"
+            "color": {
+              "matcher": {
+                "id": "byName",
+                "options": "Power [kW]"
+              }
             },
-            "x": "SOC [%]",
-            "y": "Power [kW]"
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 0
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "SOC [%]"
+              }
+            },
+            "y": {
+              "exclude": {
+                "id": "byNames",
+                "options": [
+                  "charging_process_id"
+                ]
+              },
+              "matcher": {
+                "id": "byName",
+                "options": "Power [kW]"
+              }
+            }
           },
           {
-            "pointColor": {
-              "field": "B - Avg Power [kW]"
+            "color": {
+              "matcher": {
+                "id": "byName",
+                "options": "B - Avg Power [kW]"
+              }
             },
-            "pointSize": {
-              "fixed": 15,
-              "max": 100,
-              "min": 1
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 1
+              }
             },
-            "x": "B - SOC [%]",
-            "y": "B - Avg Power [kW]"
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "B - SOC [%]"
+              }
+            },
+            "y": {
+              "exclude": {
+                "id": "byNames",
+                "options": [
+                  "charging_process_id"
+                ]
+              },
+              "matcher": {
+                "id": "byName",
+                "options": "B - Avg Power [kW]"
+              }
+            }
           }
         ],
-        "seriesMapping": "manual",
         "tooltip": {
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "7.5.11",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "alias": "",
@@ -1940,7 +1994,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2153,7 +2207,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2272,7 +2326,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2395,7 +2449,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2544,6 +2598,6 @@
   "timezone": "",
   "title": "Charging Stats",
   "uid": "-pkIkhmRz",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }

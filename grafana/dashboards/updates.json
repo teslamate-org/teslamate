@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.1.0"
+      "version": "11.2.0"
     },
     {
       "type": "datasource",
@@ -129,9 +129,13 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -157,11 +161,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Updates",
@@ -213,9 +213,13 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -241,11 +245,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "Median time between updates",
@@ -511,7 +511,7 @@
           }
         ]
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.0",
       "scroll": true,
       "showHeader": true,
       "sort": {
@@ -800,6 +800,6 @@
   "timezone": "",
   "title": "Updates",
   "uid": "IiC07mgWz",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }

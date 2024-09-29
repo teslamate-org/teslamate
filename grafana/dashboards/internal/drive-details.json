@@ -17,7 +17,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.0"
+      "version": "11.2.0"
     },
     {
       "type": "datasource",
@@ -109,6 +109,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "opacity",
@@ -675,7 +676,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "alias": "",
@@ -788,6 +789,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "opacity",
@@ -951,6 +953,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "opacity",
@@ -1222,6 +1225,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "opacity",
@@ -1256,8 +1260,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1497,8 +1500,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-blue",
-                "value": null
+                "color": "super-light-blue"
               }
             ]
           },
@@ -1519,6 +1521,7 @@
         "graphMode": "area",
         "justifyMode": "center",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1530,7 +1533,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -1610,8 +1613,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           },
@@ -1632,6 +1634,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1643,7 +1646,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -1698,8 +1701,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           },
@@ -1719,6 +1721,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1730,7 +1733,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -1805,8 +1808,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-green",
-                "value": null
+                "color": "super-light-green"
               }
             ]
           }
@@ -1862,7 +1864,6 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "10.4.0",
       "targets": [
         {
           "datasource": {
@@ -1956,8 +1957,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-green",
-                "value": null
+                "color": "semi-dark-green"
               }
             ]
           },
@@ -2003,6 +2003,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -2014,7 +2015,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2067,8 +2068,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -2087,6 +2087,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "vertical",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -2099,7 +2100,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2229,8 +2230,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow",
-                "value": null
+                "color": "light-yellow"
               }
             ]
           },
@@ -2251,6 +2251,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -2262,7 +2263,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2316,8 +2317,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "yellow",
@@ -2370,6 +2370,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -2381,7 +2382,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2455,8 +2456,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -2500,6 +2500,7 @@
         "graphMode": "area",
         "justifyMode": "center",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -2511,7 +2512,7 @@
         "textMode": "value",
         "wideLayout": false
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -2578,7 +2579,7 @@
         "name": "drive_id",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "NULL",
             "value": "NULL"
           }
@@ -2764,6 +2765,10 @@
       }
     ]
   },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
   "timepicker": {
     "refresh_intervals": [],
     "time_options": []
@@ -2771,6 +2776,6 @@
   "timezone": "",
   "title": "Drive Details",
   "uid": "zm7wN6Zgz",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }

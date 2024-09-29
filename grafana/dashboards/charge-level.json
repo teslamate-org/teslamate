@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.1.0"
+      "version": "11.2.0"
     },
     {
       "type": "datasource",
@@ -96,6 +96,7 @@
             "axisLabel": "Charge Level",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "opacity",
@@ -163,7 +164,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "alias": "",
@@ -350,6 +350,6 @@
   "timezone": "",
   "title": "Charge Level",
   "uid": "WopVO_mgz",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }

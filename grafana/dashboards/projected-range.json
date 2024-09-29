@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.0"
+      "version": "11.2.0"
     },
     {
       "type": "datasource",
@@ -111,6 +111,7 @@
             "axisLabel": "Projected Range",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 30,
             "gradientMode": "opacity",
@@ -201,7 +202,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.1",
       "targets": [
         {
           "alias": "",
@@ -321,8 +321,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -379,7 +378,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.1",
       "targets": [
         {
           "alias": "",
@@ -602,7 +600,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.1",
       "targets": [
         {
           "alias": "",
@@ -867,7 +864,6 @@
     "from": "now-6M",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -896,6 +892,6 @@
   "timezone": "",
   "title": "Projected Range",
   "uid": "riqUfXgRz",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
