@@ -42,6 +42,7 @@
 - feat: Add Moving Average / Percentiles to Charge Level dashboard & bucket data to support longer periods (#4200 - @swiffer)
 - increase max battery charge gauge threshold to 101 in case of LFP (#4191 - @neothematrix)
 - multiple cars, same name, add vin next to name (#4230 - @swiffer)
+- json_build_object instead of concat in battery-health (#4229 - @swiffer)
 
 #### Translations
 
