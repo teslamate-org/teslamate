@@ -119,7 +119,6 @@
                 [
                   elixir
                   elixir_ls
-                  glibcLocales
                   node2nix
                   nodejs
                   prefetch-npm-deps
@@ -130,7 +129,7 @@
                   mosquitto_sub
                   treefmt
                 ]
-                ++ optional stdenv.isLinux inotify-tools
+                ++ optional stdenv.isLinux [inotify-tools glibcLocales]
                 ++ optional stdenv.isDarwin terminal-notifier
                 ++ optionals stdenv.isDarwin (
                   with darwin.apple_sdk.frameworks;
