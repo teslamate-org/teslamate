@@ -1,25 +1,28 @@
+{ inputs, ... }:
 {
+  # imports = [
+  #   inputs.nixpkgs.flakeModule
+  # ];
   perSystem =
     {
       config,
       self',
       inputs',
       pkgs,
-      nixpkgs,
       system,
       devenv,
       ...
     }:
-
     let
       inherit (pkgs.lib) optional optionals;
+      nixpkgs = inputs.nixpkgs;
       pkgs = nixpkgs.legacyPackages.${system};
 
       elixir = pkgs.beam.packages.erlang.elixir_1_16;
       beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang;
 
-      src = ./.;
-      version = builtins.readFile ./VERSION;
+      src = ../../.;
+      version = builtins.readFile "${src}/VERSION";
       pname = "teslamate";
 
       mixFodDeps = beamPackages.fetchMixDeps {
