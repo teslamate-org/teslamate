@@ -151,6 +151,7 @@
                 export MQTT_PORT="${toString mosquitto_port}"
                 export RELEASE_COOKIE="1234567890123456789"
                 export TZDATA_DIR="$PWD/tzdata"
+                mix deps.get
               '';
               enterTest = ''
                 mix test
