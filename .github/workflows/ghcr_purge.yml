@@ -22,7 +22,7 @@ jobs:
   purge-pr-package:
     name: Delete images from ghcr.io when PR is closed
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false'
+    if: needs.check_paths.outputs.githubfolder != 'true'
     runs-on: ubuntu-latest
 
     steps:
