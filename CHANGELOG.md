@@ -32,6 +32,7 @@
 - ci(refactor): use reusable workflows for streamlined DevOps pipeline (#4219 - @JakobLichterfeld)
 - ci(refactor): allow ghcr_build parallel to elixir test (#4219 - @JakobLichterfeld)
 - ci: ensure proper linting via treefmt (#4219 - @JakobLichterfeld)
+- doc: update CI badge URL for devops workflow (#4219 - @JakobLichterfeld)
 
 #### Dashboards
 
