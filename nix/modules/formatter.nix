@@ -11,10 +11,11 @@
       treefmt.config = {
         flakeFormatter = true;
         flakeCheck = true;
+        build.check = true;
         projectRootFile = "flake.nix";
 
         # we really need to mirror the treefmt.toml as we can't use it directly
-        global.excludes = [
+        settings.global.excludes = [
           "*.gitignore"
           "*.dockerignore"
           ".envrc"
