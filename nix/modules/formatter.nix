@@ -44,7 +44,7 @@
           "treefmt.toml"
           "grafana/dashboards/*.json" # we use the grafana export style
         ];
-        programs.mix.enable = true;
+        programs.mix-format.enable = true;
         settings.formatter.mix-format.includes = [
           "*.ex"
           "*.exs"
