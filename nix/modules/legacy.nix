@@ -1,8 +1,8 @@
 { inputs, ... }:
 {
-  # imports = [
-  #   inputs.nixpkgs.flakeModule
-  # ];
+  imports = [
+    inputs.devenv.flakeModule
+  ];
   perSystem =
     {
       config,
@@ -10,7 +10,6 @@
       inputs',
       pkgs,
       system,
-      devenv,
       ...
     }:
     let
@@ -106,13 +105,12 @@
         exec "${pkgs.mosquitto}/bin/mosquitto_sub" -h "$MQTT_HOST" -p "$MQTT_PORT" -u "$MQTT_USERNAME" -P "$MQTT_PASSWORD" "$@"
       '';
 
-      devShell = devenv.lib.mkShell {
-        inherit inputs' pkgs;
-        name = "teslamate";
-        meta.description = "TeslaMate development environment";
-        inputsFrom = [
-          config.treefmt.build.devShell # See ./nix/modules/formatter.nix
-        ];
+      devShell = inputs.devenv.lib.mkShell {
+        inherit inputs pkgs;
+        # inputsFrom = [
+        #   config.treefmt.build.devShell # See ./nix/modules/formatter.nix
+        # ];
+
         modules = with pkgs; [
           {
             packages =
