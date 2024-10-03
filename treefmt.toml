@@ -56,7 +56,7 @@ excludes = []
 includes = ["*.cjs", "*.css", "*.html", "*.js", "*.json", "*.json5", "*.jsx", "*.md", "*.mdx", "*.mjs", "*.scss", "*.ts", "*.tsx", "*.vue", "*.yaml", "*.yml"]
 options = ["--write"]
 
-[formatter.nixfmt-rfc-style]
+[formatter.nixfmt]
 command = "nixfmt"
 excludes = []
 includes = ["*.nix"]
