@@ -154,7 +154,7 @@
                   ++ builtins.attrValues config.treefmt.build.programs
                   ++ optional stdenv.isLinux [
                     inotify-tools
-                    glibcLocales
+                    # glibcLocales
                   ]
                   ++ optional stdenv.isDarwin terminal-notifier
                   ++ optionals stdenv.isDarwin (
