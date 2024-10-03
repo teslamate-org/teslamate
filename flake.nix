@@ -166,7 +166,6 @@
                   );
                 enterShell = ''
                   export LOCALES="${cldr}/priv/cldr";
-                  export ELIXIR_ERL_OPTIONS="+fnu";
                   export PORT="4000"
                   export ENCRYPTION_KEY="your_secure_encryption_key_here"
                   export DATABASE_USER="teslamate"
