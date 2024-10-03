@@ -8,6 +8,7 @@
 
 - Fix 401 on direct Fleet API calls (#4095 - @jlestel)
 - feat: PostgreSQL 17 (#4231 - @swiffer)
+- fix: add nix module option to specify postgres package (#4227 - @brianmay)
 
 #### Build, CI, internal
 
