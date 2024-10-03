@@ -28,7 +28,8 @@
       # See ./nix/modules/*.nix for the modules that are imported here.
       imports = [
         inputs.devenv.flakeModule
-      ] ++ builtins.map (fn: ./nix/modules/${fn}) (builtins.attrNames (builtins.readDir ./nix/modules));
+        ./nix/flake-modules/formatter.nix
+      ];
 
       perSystem =
         {
