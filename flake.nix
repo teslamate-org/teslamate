@@ -47,8 +47,8 @@
           elixir = pkgs.beam.packages.erlang.elixir_1_16;
           beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang;
 
-          src = ../../.;
-          version = builtins.readFile "${src}/VERSION";
+          src = ./.;
+          version = builtins.readFile ./VERSION;
           pname = "teslamate";
 
           mixFodDeps = beamPackages.fetchMixDeps {
