@@ -152,10 +152,10 @@
                     config.treefmt.build.wrapper
                   ]
                   ++ builtins.attrValues config.treefmt.build.programs
-                  ++ optional stdenv.isLinux [
-                    # inotify-tools # disabled to avoid error: A definition for option `packages."[definition 4-entry 16]"' is not of type `package'.
-                    # glibcLocales # disabled to avoid error:  A definition for option `packages."[definition 4-entry 16]"' is not of type `package'.
-                  ]
+                  # ++ optional stdenv.isLinux [
+                  #   inotify-tools # disabled to avoid error: A definition for option `packages."[definition 4-entry 16]"' is not of type `package'.
+                  #   glibcLocales # disabled to avoid error:  A definition for option `packages."[definition 4-entry 16]"' is not of type `package'.
+                  # ]
                   ++ optional stdenv.isDarwin terminal-notifier
                   ++ optionals stdenv.isDarwin (
                     with darwin.apple_sdk.frameworks;
