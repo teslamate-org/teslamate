@@ -56,6 +56,7 @@
 
         # shfmt second
         programs.shfmt.enable = true;
+        programs.shfmt.indent_size = 0; # 0 means tabs
         settings.formatter.shfmt.priority = 1;
 
         programs.prettier.enable = true;
