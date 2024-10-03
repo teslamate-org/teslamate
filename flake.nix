@@ -178,6 +178,8 @@
                   export MQTT_PORT="${toString mosquitto_port}"
                   export RELEASE_COOKIE="1234567890123456789"
                   export TZDATA_DIR="$PWD/tzdata"
+                  mix local.rebar --force
+                  mix local.hex --force
                   mix deps.get
                 '';
                 enterTest = ''
