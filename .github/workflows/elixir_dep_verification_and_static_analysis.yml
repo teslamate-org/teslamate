@@ -1,4 +1,4 @@
-name: Elixir CI
+name: Elixir Dependency Verification and Static Analysis
 
 on:
   workflow_call:
@@ -37,12 +37,6 @@ jobs:
 
       - name: Verify that POT files are up to date
         run: mix gettext.extract --check-up-to-date
-
-      - name: Spell check
-        uses: crate-ci/typos@c16dc8f5b4a7ad6211464ecf136c69c851e8e83c # v1.22.9
-
-      - name: Check formatting
-        run: mix format --check-formatted
 
       - name: Check unused dependencies
         run: mix deps.unlock --check-unused

@@ -1,4 +1,4 @@
-name: Elixir CI
+name: Elixir Test and report coverage
 
 on:
   workflow_call:

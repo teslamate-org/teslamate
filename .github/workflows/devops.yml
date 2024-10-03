@@ -36,12 +36,12 @@ jobs:
     # if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
     uses: ./.github/workflows/ensure_linting.yml
 
-  elixir:
+  elixir_dep_verification_and_static_analysis:
     needs:
       - check_paths
       - ensure_linting
     # if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
-    uses: ./.github/workflows/elixir.yml
+    uses: ./.github/workflows/elixir_dep_verification_and_static_analysis.yml
 
   elixir_test:
     needs:
@@ -53,6 +53,6 @@ jobs:
   ghcr_build:
     needs:
       - check_paths
-      - elixir
+      - elixir_dep_verification_and_static_analysis
     # if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
     uses: ./.github/workflows/ghcr_build.yml
