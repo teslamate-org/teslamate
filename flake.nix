@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-    devenv.url = "github:cachix/devenv";
+    devenv.url = "github:cachix/devenv/e316837bf4d0256e56ef26aa3778a10086f8db1a"; # https://github.com/teslamate-org/teslamate/pull/4219#issuecomment-2394953465
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
