@@ -44,8 +44,8 @@
           nixpkgs = inputs.nixpkgs;
           pkgs = nixpkgs.legacyPackages.${system};
 
-          elixir = pkgs.beam.packages.erlang.elixir_1_16;
-          beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang;
+          elixir = pkgs.beam.packages.erlang_26.elixir_1_16;
+          beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_26;
 
           src = ./.;
           version = builtins.readFile ./VERSION;
