@@ -226,7 +226,7 @@
                         DATABASE_PASS=123456789
                         RELEASE_COOKIE=123456789
                       '';
-                      postgres.enable = true;
+                      postgres.enable_server = true;
                       grafana.enable = true;
                     };
                   };
