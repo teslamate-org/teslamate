@@ -5,9 +5,13 @@
     nixpkgs = { url = "github:NixOS/nixpkgs/nixos-unstable"; };
     flake-utils = { url = "github:numtide/flake-utils"; };
     devenv.url = "github:cachix/devenv";
+    devenv-root = {
+      url = "file+file:///dev/null";
+      flake = false;
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, flake-utils, devenv }:
+  outputs = inputs@{ self, nixpkgs, flake-utils, devenv, devenv-root }:
     (flake-utils.lib.eachDefaultSystem (system:
       let
         inherit (pkgs.lib) optional optionals;
@@ -98,6 +102,13 @@
         devShell = devenv.lib.mkShell {
           inherit inputs pkgs;
           modules = with pkgs; [{
+
+            devenv.root =
+              let
+                devenvRootFileContent = builtins.readFile devenv-root.outPath;
+              in
+              pkgs.lib.mkIf (devenvRootFileContent != "") devenvRootFileContent;
+
             packages = [
               elixir
               elixir_ls
