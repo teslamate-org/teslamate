@@ -176,7 +176,6 @@
                   );
                 enterShell = ''
                   export LOCALES="${cldr}/priv/cldr";
-                  export LANG=C.UTF-8;
                   export PORT="4000"
                   export ENCRYPTION_KEY="your_secure_encryption_key_here"
                   export DATABASE_USER="teslamate"
