@@ -9,9 +9,8 @@
       # Auto formatters. This also adds a flake check to ensure that the
       # source tree was auto formatted.
       treefmt.config = {
-        flakeFormatter = true; #Enables treefmt the default formatter used by the nix fmt command
-        flakeCheck = true; #Add a flake check to run treefmt
-        build.check = true; #Create a flake check to test that the given project tree is already formatted. Input argument is the path to the project tree (usually ‘self’).
+        flakeFormatter = true; # Enables treefmt the default formatter used by the nix fmt command
+        flakeCheck = true; # Add a flake check to run treefmt
         projectRootFile = "flake.nix";
 
         # we really need to mirror the treefmt.toml as we can't use it directly

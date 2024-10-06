@@ -256,7 +256,7 @@
           # for `nix flake check`
           checks = {
             default = if pkgs.stdenv.isLinux then moduleTest else null;
-            formatting = pkgs.treefmt.check;
+            # formatter check is done in the formatter module
           };
         };
     };
