@@ -34,6 +34,7 @@
 - ci: ensure proper linting via treefmt (#4219 - @JakobLichterfeld)
 - doc: update CI badge URL for devops workflow (#4219 - @JakobLichterfeld)
 - ci(fix): handle empty path filter output (#4219 - @JakobLichterfeld)
+- fix: avoid the need for impure for devenv (#4245 - @brianmay)
 
 #### Dashboards
 
