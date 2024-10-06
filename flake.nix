@@ -247,6 +247,13 @@
                 }
               ];
             }).config.result;
+
+          emptyTest = pkgs.stdenv.mkDerivation {
+            name = "noTest";
+            buildPhase = ''
+              echo "Tests are only supported on Linux."
+            '';
+          };
         in
         {
           packages = {
@@ -257,7 +264,7 @@
 
           # for `nix flake check`
           checks = {
-            default = if pkgs.stdenv.isLinux then moduleTest else null;
+            default = if pkgs.stdenv.isLinux then moduleTest else emptyTest;
             # formatter check is done in the formatter module
           };
         };
