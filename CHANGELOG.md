@@ -9,6 +9,7 @@
 - Fix 401 on direct Fleet API calls (#4095 - @jlestel)
 - feat: PostgreSQL 17 (#4231 - @swiffer)
 - fix: add nix module option to specify postgres package (#4227 - @brianmay)
+- perf: limit positions to set elevation for to last 10 days (#4228 - @swiffer)
 
 #### Build, CI, internal
 
