@@ -13,12 +13,11 @@
   };
 
   outputs =
-    inputs@{
-      self,
-      flake-parts,
-      devenv,
-      devenv-root,
-      ...
+    inputs@{ self
+    , flake-parts
+    , devenv
+    , devenv-root
+    , ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
 
@@ -35,13 +34,12 @@
       ];
 
       perSystem =
-        {
-          config,
-          self',
-          inputs',
-          pkgs,
-          system,
-          ...
+        { config
+        , self'
+        , inputs'
+        , pkgs
+        , system
+        , ...
         }:
         # legacy
         let
@@ -206,7 +204,7 @@
                   package = pkgs.postgresql_16;
                   listen_addresses = "127.0.0.1";
                   port = postgres_port;
-                  initialDatabases = [ { name = "teslamate"; } ];
+                  initialDatabases = [{ name = "teslamate"; }];
                   initialScript = ''
                     CREATE USER teslamate with encrypted password 'your_secure_password_here';
                     GRANT ALL PRIVILEGES ON DATABASE teslamate TO teslamate;
