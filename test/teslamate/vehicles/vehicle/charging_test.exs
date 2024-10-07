@@ -43,6 +43,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                       date: _,
                       charge_energy_added: 0.1,
                       rated_battery_range_km: 1.61,
+                      charge_rate: 0,
                       ideal_battery_range_km: 1.61
                     }}
 
@@ -54,6 +55,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                       date: _,
                       charge_energy_added: 0.2,
                       rated_battery_range_km: 3.22,
+                      charge_rate: 2,
                       ideal_battery_range_km: 3.22
                     }}
 
@@ -64,6 +66,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                       date: _,
                       charge_energy_added: 0.3,
                       rated_battery_range_km: 4.83,
+                      charge_rate: 10,
                       ideal_battery_range_km: 4.83
                     }}
 
@@ -76,6 +79,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
                       date: _,
                       charge_energy_added: 0.4,
                       rated_battery_range_km: 6.44,
+                      charge_rate: 10,
                       ideal_battery_range_km: 6.44
                     }}
 
