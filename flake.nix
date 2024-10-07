@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-    devenv.url = "github:cachix/devenv/e316837bf4d0256e56ef26aa3778a10086f8db1a"; # https://github.com/teslamate-org/teslamate/pull/4219#issuecomment-2394953465
+    devenv.url = "github:cachix/devenv/fed89fff44ccbc73f91d69ca326ac241baeb1726"; # https://github.com/cachix/devenv/issues/1497
     devenv-root.url = "file+file:///dev/null";
     devenv-root.flake = false;
     treefmt-nix.url = "github:numtide/treefmt-nix";
@@ -198,9 +198,9 @@
                 processes.mqtt = {
                   exec = "${pkgs.mosquitto}/bin/mosquitto -p ${toString mosquitto_port}";
                 };
-                process.process-compose = {
+                process.managers.process-compose = {
                   port = process_compose_port;
-                  tui = true;
+                  tui.enable = true;
                 };
                 services.postgres = {
                   enable = true;
