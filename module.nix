@@ -9,6 +9,7 @@ let
   cfg = config.services.teslamate;
 
   inherit (lib)
+    mkPackageOption
     mkEnableOption
     mkOption
     types
@@ -78,6 +79,12 @@ in
 
           Other settings will still be used even if `enable` is false to configure
           database connection.
+        '';
+      };
+
+      package = mkPackageOption pkgs "postgresql_16" {
+        extraDescription = ''
+          The postgresql package to use.
         '';
       };
 
@@ -202,8 +209,7 @@ in
     (mkIf cfg.postgres.enable_server {
       services.postgresql = {
         enable = true;
-        package = pkgs.postgresql_16;
-        inherit (cfg.postgres) port;
+        inherit (cfg.postgres) port package;
 
         initialScript = pkgs.writeText "teslamate-psql-init" ''
           \set password `echo $DATABASE_PASS`
@@ -260,7 +266,9 @@ in
                 disableDeletion = false;
                 editable = true;
                 updateIntervalSeconds = 86400;
-                options.path = lib.sources.sourceFilesBySuffices ./grafana/dashboards [ ".json" ];
+                options.path = lib.sources.sourceFilesBySuffices
+                  ./grafana/dashboards
+                  [ ".json" ];
               }
               {
                 name = "teslamate_internal";
@@ -271,7 +279,9 @@ in
                 disableDeletion = false;
                 editable = true;
                 updateIntervalSeconds = 86400;
-                options.path = lib.sources.sourceFilesBySuffices ./grafana/dashboards/internal [ ".json" ];
+                options.path = lib.sources.sourceFilesBySuffices
+                  ./grafana/dashboards/internal
+                  [ ".json" ];
               }
               {
                 name = "teslamate_reports";
@@ -282,7 +292,9 @@ in
                 disableDeletion = false;
                 editable = true;
                 updateIntervalSeconds = 86400;
-                options.path = lib.sources.sourceFilesBySuffices ./grafana/dashboards/reports [ ".json" ];
+                options.path = lib.sources.sourceFilesBySuffices
+                  ./grafana/dashboards/reports
+                  [ ".json" ];
               }
             ];
           };

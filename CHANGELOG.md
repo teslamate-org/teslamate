@@ -7,6 +7,9 @@
 ### Improvements and bug fixes
 
 - Fix 401 on direct Fleet API calls (#4095 - @jlestel)
+- feat: PostgreSQL 17 (#4231 - @swiffer)
+- fix: add nix module option to specify postgres package (#4227 - @brianmay)
+- perf: limit positions to set elevation for to last 10 days (#4228 - @swiffer)
 - feat: add treefmt-nix to nix flake (#4219 - @JakobLichterfeld)
 
 #### Build, CI, internal
@@ -50,6 +53,9 @@
 - feat: Improve cost filter on Charges dashboard to show charges with negative cost as well (#4179 - @jheredianet)
 - feat: display vehicle VIN as a fallback for vehicle name on grafana dashboards (#4198 - @arcastro)
 - feat: Add Moving Average / Percentiles to Charge Level dashboard & bucket data to support longer periods (#4200 - @swiffer)
+- increase max battery charge gauge threshold to 101 in case of LFP (#4191 - @neothematrix)
+- multiple cars, same name, add vin next to name (#4230 - @swiffer)
+- json_build_object instead of concat in battery-health (#4229 - @swiffer)
 
 #### Translations
 

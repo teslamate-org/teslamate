@@ -50,11 +50,11 @@ pkg install elixir
 </details>
 
 <details>
-  <summary>Postgres (v14+)</summary>
+  <summary>Postgres (v17+)</summary>
 
 ```bash
-pkg install postgresql16-server-16.0
-pkg install postgresql16-contrib-16.0
+pkg install postgresql17-server-17.0
+pkg install postgresql17-contrib-17.0
 echo postgres_enable="yes" >> /etc/rc.conf
 ```
 
@@ -70,12 +70,12 @@ service postgresql initdb
 </details>
 
 <details>
-  <summary>Grafana (v8.3.4+) & Plugins</summary>
+  <summary>Grafana (v10.4.5+)</summary>
 
 (might be obsolete with Grafana 9, I had no issues with a fresh install) The latest Grafana from ports/pkg has a startup issue with the rc script, starting via rc.local is the workaround.
 
 ```bash
-pkg install grafana9-9.5.7_2
+pkg install grafana-10.4.5_1
 echo grafana_enable="yes" >> /etc/rc.conf
 # Only needed if grafana fails to start via rc.conf
 echo "cd /tmp && /usr/local/etc/rc.d/grafana onestart" >> /etc/rc.local
