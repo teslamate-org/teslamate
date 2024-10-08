@@ -187,9 +187,6 @@
                   export TZDATA_DIR="$PWD/tzdata"
                   export MIX_REBAR3="${rebar3}/bin/rebar3";
                   mix deps.get
-                  echo "Debug"
-                  locale
-                  elixir --version
                 '';
                 enterTest = ''
                   mix test
