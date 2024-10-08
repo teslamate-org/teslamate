@@ -200,7 +200,7 @@
                 };
                 services.postgres = {
                   enable = true;
-                  package = pkgs.postgresql_16;
+                  package = pkgs.postgresql_16; # 17 is not yet available in nixpkgs
                   listen_addresses = "127.0.0.1";
                   port = postgres_port;
                   initialDatabases = [{ name = "teslamate"; }];
