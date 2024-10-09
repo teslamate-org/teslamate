@@ -13,7 +13,6 @@ on:
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
-    branches: ["ci"]
   pull_request_target:
     branches: ["master"]
     paths:
