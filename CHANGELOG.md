@@ -38,6 +38,7 @@
 - doc: update CI badge URL for devops workflow (#4219 - @JakobLichterfeld)
 - ci(fix): handle empty path filter output (#4219 - @JakobLichterfeld)
 - fix: avoid the need for impure for devenv (#4245 - @brianmay)
+- ci(fix): ensure cache name in build action does not contain invalid characters to avoid invalid reference format (#4219 - @JakobLichterfeld)
 
 #### Dashboards
 
