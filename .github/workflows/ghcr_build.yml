@@ -19,12 +19,14 @@ permissions:
 
 jobs:
   check_paths:
+    if: ${{ github.event_name != 'workflow_call' }}
     uses: ./.github/workflows/check_paths.yml
 
   teslamate_build:
     name: Build images
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder != 'true'
+    # Only run if there are no changes to the github folder and on workflow call, or PRs from forks (to avoid duplicate runs for PRs from non-forks, and to avoid invalid reference format for cache name in PRs from our repo)
+    if: needs.check_paths.outputs.githubfolder != 'true' && (${{ github.event_name }} == 'workflow_call' || ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }})
     strategy:
       fail-fast: false
       matrix:
