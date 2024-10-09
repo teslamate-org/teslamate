@@ -532,7 +532,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT (\n  SELECT sum(cost)\n  FROM charging_processes\n  WHERE $__timeFilter(end_date) AND car_id = $car_id\n) / (\n\tSELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit')\n\tFROM positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id and ideal_battery_range_km is not null\n) * 100",
+          "rawSql": "SELECT (\n  SELECT sum(cost)\n  FROM charging_processes\n  WHERE $__timeFilter(end_date) AND car_id = $car_id\n) / (\n\tSELECT convert_km((max(end_km) - min(start_km))::numeric, '$length_unit')\n\tFROM drives\n\tWHERE $__timeFilter(end_date) AND car_id = $car_id\n) * 100",
           "refId": "A",
           "select": [
             [
@@ -2562,6 +2562,6 @@
   "timezone": "",
   "title": "Charging Stats",
   "uid": "-pkIkhmRz",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }
