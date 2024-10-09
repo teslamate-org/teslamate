@@ -38,7 +38,7 @@
 - doc: update CI badge URL for devops workflow (#4219 - @JakobLichterfeld)
 - ci(fix): handle empty path filter output (#4219 - @JakobLichterfeld)
 - fix: avoid the need for impure for devenv (#4245 - @brianmay)
-- ci(fix): ensure cache name in build action does not contain invalid characters to avoid invalid reference format (#4219 - @JakobLichterfeld)
+- ci(fix): run ghcr build workflow only for specific conditions (#4219 - @JakobLichterfeld)
 - ci: remove branch restriction for check_paths workflow to increase sec (#4219 - @JakobLichterfeld)
 
 #### Dashboards
