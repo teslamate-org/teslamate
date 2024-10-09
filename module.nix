@@ -82,7 +82,8 @@ in
         '';
       };
 
-      package = mkPackageOption pkgs "postgresql_16" { # 17 is not yet available in nixpkgs
+      package = mkPackageOption pkgs "postgresql_16" {
+        # 17 is not yet available in nixpkgs
         extraDescription = ''
           The postgresql package to use.
         '';
