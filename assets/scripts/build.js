@@ -17,7 +17,8 @@ const buildLogger = {
     let count = 0;
     build.onEnd(({ errors, warnings }) => {
       if (errors.length > 0) console.error("[-] Esbuild failed:", errors);
-      else if (warnings.length > 0) console.warn("[-] Esbuild finished with warnings:", warnings);
+      else if (warnings.length > 0)
+        console.warn("[-] Esbuild finished with warnings:", warnings);
       else console.log(`[+] Esbuild succeeded`);
     });
   },

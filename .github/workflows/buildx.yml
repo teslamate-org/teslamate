@@ -2,6 +2,7 @@ name: Publish Docker images
 
 on:
   workflow_dispatch:
+  workflow_call:
   schedule:
     - cron: "0 3 * * *"
   push:
@@ -10,7 +11,8 @@ on:
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 env:
   REGISTRY_IMAGE: teslamate/teslamate
 
@@ -20,22 +22,11 @@ permissions:
 
 jobs:
   check_paths:
-    runs-on: ubuntu-latest
-    outputs:
-      githubfolder: ${{ steps.filter.outputs.githubfolder }}
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
-        id: filter
-        with:
-          filters: |
-            githubfolder:
-              - '.github/**'
+    uses: ./.github/workflows/check_paths.yml
 
   teslamate_build:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
     strategy:
       fail-fast: false
       matrix:
@@ -71,7 +62,7 @@ jobs:
     needs:
       - check_paths
       - teslamate_build
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
     steps:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -92,7 +83,7 @@ jobs:
             type=edge
   grafana:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

@@ -10,6 +10,7 @@
 - feat: PostgreSQL 17 (#4231 - @swiffer)
 - fix: add nix module option to specify postgres package (#4227 - @brianmay)
 - perf: limit positions to set elevation for to last 10 days (#4228 - @swiffer)
+- feat: add treefmt-nix to nix flake (#4219 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -27,6 +28,18 @@
 - build(deps): bump phoenix_ecto from 4.4.3 to 4.6.2 (#4213)
 - build(deps): bump jason from 1.4.1 to 1.4.4 (#4216)
 - build(deps): bump classnames from 2.3.2 to 2.5.1 in /website (#4211)
+- ci: add treefmt as code formatting multiplexer (#4219 - @JakobLichterfeld)
+- ci(refactor): use composite action to avoid duplication in elixir workflow (#4219 - @JakobLichterfeld)
+- ci: prevent workflow runs for certain conditions and allow scheduled runs (#4219 - @JakobLichterfeld)
+- ci(refactor): use reusable workflow to check paths (#4219 - @JakobLichterfeld)
+- ci(refactor): use reusable workflows for streamlined DevOps pipeline (#4219 - @JakobLichterfeld)
+- ci(refactor): allow ghcr_build parallel to elixir test (#4219 - @JakobLichterfeld)
+- ci: ensure proper linting via treefmt (#4219 - @JakobLichterfeld)
+- doc: update CI badge URL for devops workflow (#4219 - @JakobLichterfeld)
+- ci(fix): handle empty path filter output (#4219 - @JakobLichterfeld)
+- fix: avoid the need for impure for devenv (#4245 - @brianmay)
+- ci(fix): run ghcr build workflow only for specific conditions (#4219 - @JakobLichterfeld)
+- ci: remove branch restriction for check_paths workflow to increase sec (#4219 - @JakobLichterfeld)
 
 #### Dashboards
 

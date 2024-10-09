@@ -4,7 +4,7 @@ inputs:
   is_dockerhub_pushed:
     description: "Need docker hub login?"
     required: true
-    default: ''
+    default: ""
   docker_password:
     description: "Docker password"
     required: true

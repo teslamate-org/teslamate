@@ -1,0 +1,41 @@
+name: Check paths
+
+on:
+  workflow_call:
+    # Map the workflow outputs to job outputs
+    outputs:
+      githubfolder:
+        description: "changes to .github folder"
+        value: ${{ jobs.check_paths.githubfolder }}
+  push:
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  pull_request_target:
+    branches: ["master"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+
+permissions:
+  contents: read
+
+jobs:
+  check_paths:
+    runs-on: ubuntu-latest
+    outputs:
+      githubfolder: ${{ steps.filter.outputs.githubfolder }}
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: filter
+        with:
+          base: "master" # needed to set as a called workflow does not have direct access to repository.default_branch
+          filters: |
+            githubfolder:
+              - '.github/**'

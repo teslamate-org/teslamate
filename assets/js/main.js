@@ -5,7 +5,7 @@ document.querySelector(".navbar-burger").addEventListener("click", function () {
 });
 
 for (const navDropdown of document.querySelectorAll(
-  ".navbar-item.has-dropdown"
+  ".navbar-item.has-dropdown",
 )) {
   navDropdown.addEventListener("click", function () {
     if (document.querySelector(".navbar-menu.is-active")) {

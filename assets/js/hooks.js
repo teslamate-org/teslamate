@@ -53,7 +53,11 @@ export const LocalTimeRange = {
 
     const time = [this.el.dataset.startDate, this.el.dataset.endDate]
       .map((date) =>
-        toLocalTime(date, { hour: "2-digit", minute: "2-digit", hour12: false })
+        toLocalTime(date, {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }),
       )
       .join(" – ");
 
@@ -125,7 +129,7 @@ const DirectionArrow = CircleMarker.extend({
     this.getElement().setAttributeNS(
       null,
       "transform",
-      `translate(${x},${y}) rotate(${this._heading})`
+      `translate(${x},${y}) rotate(${this._heading})`,
     );
 
     const path = this._empty() ? "" : `M0,${3} L-4,${5} L0,${-5} L4,${5} z}`;
@@ -137,15 +141,14 @@ const DirectionArrow = CircleMarker.extend({
 function createMap(opts) {
   const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", opts);
 
-  const osm = new TileLayer(
-    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    { maxZoom: 19 }
-  );
+  const osm = new TileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+  });
 
   if (opts.enableHybridLayer) {
     const hybrid = new TileLayer(
       "http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
-      { maxZoom: 20, subdomains: ["mt0", "mt1", "mt2", "mt3"] }
+      { maxZoom: 20, subdomains: ["mt0", "mt1", "mt2", "mt3"] },
     );
 
     new Control.Layers({ OSM: osm, Hybrid: hybrid }).addTo(map);
@@ -184,8 +187,12 @@ export const SimpleMap = {
 
     map.removeControl(map.zoomControl);
 
-    map.on('mouseover', function(e) { map.addControl( map.zoomControl ); });
-    map.on('mouseout', function(e) { map.removeControl( map.zoomControl ); });
+    map.on("mouseover", function (e) {
+      map.addControl(map.zoomControl);
+    });
+    map.on("mouseout", function (e) {
+      map.removeControl(map.zoomControl);
+    });
 
     if (isArrow) {
       const setView = () => {

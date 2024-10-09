@@ -98,6 +98,7 @@ done
 docker compose stop node-red
 docker compose start node-red
 ```
+
 Note that if your function nodes need additional NPM packages, you can add those into 'MODULES'. You can import those in the function node 'Setup' page, like add module 'linq-js' and import it as variable 'Enumerable'.
 
 ## Import Flows

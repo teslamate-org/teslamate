@@ -11,6 +11,8 @@ sidebar_label: Development and Contributing
 - An **MQTT broker** e.g. mosquitto (_optional_)
 - **NodeJS** >= 20.15.0
 
+or [Nix](https://nixos.org/download/). You can then use the nix devenv (via direnv) setup.
+
 ## Initial Setup
 
 To run the TeslaMate test suite you need a database named `teslamate_test`:
@@ -49,6 +51,18 @@ mix compile
 
 ## Code formatting
 
+### Format all files
+
+Install [Treefmt](https://github.com/numtide/treefmt/releases) or use the nix devenv (via direnv) setup.
+
+```bash
+treefmt
+```
+
+You can even use a VS Code extension like [treefmt](https://marketplace.visualstudio.com/items?itemName=ibecker.treefmt-vscode) to format the files on save.
+
+### Only format elixir files
+
 ```bash
 mix format
 ```
@@ -74,16 +88,16 @@ For TeslaMate:
 
 ```yml
 teslamate:
-       # image: teslamate/teslamate:latest
-      image: ghcr.io/teslamate-org/teslamate/teslamate:pr-3836
+  # image: teslamate/teslamate:latest
+  image: ghcr.io/teslamate-org/teslamate/teslamate:pr-3836
 ```
 
 For Grafana:
 
 ```yml
 grafana:
-       # image: teslamate/grafana:latest
-      image: ghcr.io/teslamate-org/teslamate/grafana:pr-3836
+  # image: teslamate/grafana:latest
+  image: ghcr.io/teslamate-org/teslamate/grafana:pr-3836
 ```
 
 ## Making Changes to Grafana Dashboards

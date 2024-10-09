@@ -79,9 +79,9 @@ HTTPS (TCP/443)
 auth.tesla.com  
 owner-api.teslamotors.com  
 streaming.vn.teslamotors.com  
-nominatim.openstreetmap.org  
+nominatim.openstreetmap.org
 
 HTTP (TCP/80)  
-step.esa.int  
+step.esa.int
 
 Note: This may change when Teslamate is updated!

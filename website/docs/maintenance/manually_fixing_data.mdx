@@ -1,6 +1,7 @@
 ---
 title: Manually fixing data
 ---
+
 :::note
 If you are using `docker-compose`, you are using Docker Compose v1, which has been deprecated. Docker Compose commands refer to Docker Compose v2. Consider upgrading your docker setup, see [Migrate to Compose V2](https://docs.docker.com/compose/migrate/)
 :::
@@ -9,8 +10,8 @@ If you are using `docker-compose`, you are using Docker Compose v1, which has be
 
 First you need to find out the ID of the drive or charge:
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 <Tabs
 defaultValue="drive"
@@ -32,7 +33,6 @@ values={[
 
 </TabItem>
 </Tabs>
-
 
 ## Terminate a drive or charge
 
@@ -81,27 +81,31 @@ If for some reason a drive or charge was recorded incorrectly, you can delete it
 
 2.  Afterwards replace `9999` with the actual ID then run the query:
 
-    <Tabs
+        <Tabs
+
     defaultValue="drive"
     groupId="type"
     values={[
-        { label: 'Drive', value: 'drive', },
-        { label: 'Charge', value: 'charge', },
+    { label: 'Drive', value: 'drive', },
+    { label: 'Charge', value: 'charge', },
     ]}>
+
     <TabItem value="drive">
 
-    ```sql
-    DELETE FROM drives WHERE id = 9999;
-    ```
+        ```sql
+        DELETE FROM drives WHERE id = 9999;
+        ```
 
-    </TabItem>
+        </TabItem>
+
     <TabItem value="charge">
 
-    ```sql
-    DELETE FROM charging_processes WHERE id = 9999;
-    ```
+        ```sql
+        DELETE FROM charging_processes WHERE id = 9999;
+        ```
 
-    </TabItem>
+        </TabItem>
+
     </Tabs>
 
 ## Remove a vehicle from the database
@@ -110,19 +114,22 @@ If for some reason a drive or charge was recorded incorrectly, you can delete it
 
 1. Connect to your running TeslaMate database
 
-    ```bash
-    docker compose exec database psql teslamate teslamate
-    ```
+   ```bash
+   docker compose exec database psql teslamate teslamate
+   ```
 
-    :::note
-    If you get the error `No such service: database`, update your _docker-compose.yml_ or use `db` instead of `database` in the above command.
-    :::
+   :::note
+   If you get the error `No such service: database`, update your _docker-compose.yml_ or use `db` instead of `database` in the above command.
+   :::
 
 2. Identify the right car ID in the database to remove
+
 ```
 SELECT id, vin FROM cars;
 ```
-3. Based upon the output, run the following command replacing `num` with the ID from the previous command. 
+
+3. Based upon the output, run the following command replacing `num` with the ID from the previous command.
+
 ```
 DELETE FROM cars WHERE id = num;
 DELETE FROM car_settings WHERE id = num;

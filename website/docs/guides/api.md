@@ -104,11 +104,12 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 
 1. Set up a third-party account at [developer.tesla.com](https://developer.tesla.com) as described on the [Tesla docs](https://developer.tesla.com/docs/fleet-api#setup)
 1. Add the following environment variable with your own domain :
-      1. Use [the correct region](https://developer.tesla.com/docs/fleet-api#endpoints-and-regional-requirements) in the `TESLA_API_HOST` field:
-         - North America, Asia-Pacific (excluding China): [https://fleet-api.prd.na.vn.cloud.tesla.com](https://fleet-api.prd.na.vn.cloud.tesla.com)
-         - Europe, Middle East, Africa: [https://fleet-api.prd.eu.vn.cloud.tesla.com](https://fleet-api.prd.eu.vn.cloud.tesla.com)
-         - China: [https://fleet-api.prd.cn.vn.cloud.tesla.cn](https://fleet-api.prd.cn.vn.cloud.tesla.cn)
-      1. Update the `TESLA_AUTH_CLIENT_ID` with the client ID of your Tesla application.
+
+   1. Use [the correct region](https://developer.tesla.com/docs/fleet-api#endpoints-and-regional-requirements) in the `TESLA_API_HOST` field:
+      - North America, Asia-Pacific (excluding China): [https://fleet-api.prd.na.vn.cloud.tesla.com](https://fleet-api.prd.na.vn.cloud.tesla.com)
+      - Europe, Middle East, Africa: [https://fleet-api.prd.eu.vn.cloud.tesla.com](https://fleet-api.prd.eu.vn.cloud.tesla.com)
+      - China: [https://fleet-api.prd.cn.vn.cloud.tesla.cn](https://fleet-api.prd.cn.vn.cloud.tesla.cn)
+   1. Update the `TESLA_AUTH_CLIENT_ID` with the client ID of your Tesla application.
 
    ```yml
    # API Fleet
