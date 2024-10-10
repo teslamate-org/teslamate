@@ -1138,7 +1138,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "fixed"
           },
           "custom": {
             "axisBorderShow": false,
@@ -1189,7 +1189,7 @@
               },
               {
                 "id": "decimals",
-                "value": 0
+                "value": 1
               }
             ]
           }
@@ -1239,7 +1239,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n    speed_section_$length_unit AS \"Speed\",\r\n    SUM(seconds_elapsed) * 100 / MAX(duration) as \"Elapsed\",\r\n    TO_CHAR((SUM(seconds_elapsed) || ' second')::interval, 'HH24:MI:SS') AS \"Time\"\r\nFROM (\r\n    SELECT\r\n        ROUND(convert_km(p.speed::numeric, '$length_unit') / 10,0) * 10 AS speed_section_$length_unit,\r\n        EXTRACT(EPOCH FROM (LEAD(p.\"date\") OVER (ORDER BY p.\"date\") - p.\"date\")) AS seconds_elapsed,\r\n        EXTRACT(EPOCH FROM (end_date - start_date)) AS duration\r\n    FROM drives d\r\n    INNER JOIN positions p ON p.drive_id = d.id\r\n    WHERE d.car_id = $car_id AND $__timeFilter(d.start_date)\r\n) AS drivedata\r\nWHERE speed_section_$length_unit > 0\r\nGROUP BY 1\r\nORDER BY 1\r\n",
+          "rawSql": "WITH TotalDuration AS (\r\n    SELECT \r\n        SUM(seconds_elapsed) AS total_elapsed_time\r\n    FROM (\r\n        SELECT\r\n            ROUND(convert_km(p.speed::numeric, '$length_unit') / 10, 0) * 10 AS speed_section_$length_unit,\r\n            EXTRACT(EPOCH FROM (LEAD(p.\"date\") OVER (ORDER BY p.\"date\") - p.\"date\")) AS seconds_elapsed\r\n        FROM drives d\r\n        INNER JOIN positions p ON p.drive_id = d.id\r\n        WHERE d.car_id = $car_id AND $__timeFilter(d.start_date)\r\n    ) AS drivedata\r\n    WHERE speed_section_$length_unit > 0\r\n)\r\nSELECT \r\n    speed_section_$length_unit AS \"Speed\",\r\n    SUM(seconds_elapsed) * 100 / (SELECT total_elapsed_time FROM TotalDuration) AS \"Elapsed\",\r\n    TO_CHAR((SUM(seconds_elapsed) || ' second')::interval, 'HH24:MI:SS') AS \"Time\"\r\nFROM (\r\n    SELECT\r\n        ROUND(convert_km(p.speed::numeric, '$length_unit') / 10, 0) * 10 AS speed_section_$length_unit,\r\n        EXTRACT(EPOCH FROM (LEAD(p.\"date\") OVER (ORDER BY p.\"date\") - p.\"date\")) AS seconds_elapsed,\r\n        EXTRACT(EPOCH FROM (end_date - start_date)) AS duration\r\n    FROM drives d\r\n    INNER JOIN positions p ON p.drive_id = d.id\r\n    WHERE d.car_id = $car_id AND $__timeFilter(d.start_date)\r\n) AS drivedata\r\nWHERE speed_section_$length_unit > 0\r\nGROUP BY 1\r\nORDER BY 1\r\n",
           "refId": "A",
           "select": [
             [
