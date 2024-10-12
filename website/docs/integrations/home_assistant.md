@@ -744,8 +744,11 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       friendly_name: Active route distance to arrival (km)
       unit_of_measurement: km
       icon_template: mdi:map-marker-distance
+      availability_template: "{{ has_value('sensor.tesla_active_route_distance_to_arrival_mi') }}"
       value_template: >
-        {{ (states('sensor.tesla_active_route_distance_to_arrival_mi') | float * 1.609344) | round(2) }}
+        {% if has_value('sensor.tesla_active_route_distance_to_arrival_mi') %}
+          {{ (states('sensor.tesla_active_route_distance_to_arrival_mi') | float / 1.609344) | round(2) }}
+        {% endif %}
 ```
 
 ### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
