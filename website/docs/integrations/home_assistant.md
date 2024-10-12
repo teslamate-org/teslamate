@@ -91,7 +91,12 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
         value_template: "{{ 'offline' if value_json.error else 'online' }}"
     device: *teslamate_device_info
     json_attributes_topic: "teslamate/cars/1/active_route"
-    json_attributes_template: "{{ value_json.location | tojson }}"
+    json_attributes_template: >
+      {% if not value_json.error and value_json.location %}
+        {{ value_json.location | tojson }}
+      {% else %}
+        {}
+      {% endif %}
     icon: mdi:crosshairs-gps
 
 - sensor:
@@ -446,7 +451,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.destination }}"
+    value_template: >
+      {% if not value_json.error and value_json.destination %}
+        {{ value_json.destination }}
+      {% endif %}
     icon: mdi:map-marker
 
 - sensor:
@@ -456,7 +464,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.energy_at_arrival }}"
+    value_template: >
+      {% if not value_json.error and value_json.energy_at_arrival %}
+        {{ value_json.energy_at_arrival }}
+      {% endif %}
     unit_of_measurement: "%"
     icon: mdi:battery-80
 
@@ -467,7 +478,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.miles_to_arrival }}"
+    value_template: >
+      {% if not value_json.error and value_json.miles_to_arrival %}
+        {{ value_json.miles_to_arrival }}
+      {% endif %}
     unit_of_measurement: mi
     icon: mdi:map-marker-distance
 
@@ -478,7 +492,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.minutes_to_arrival }}"
+    value_template: >
+      {% if not value_json.error and value_json.minutes_to_arrival %}
+        {{ value_json.minutes_to_arrival }}
+      {% endif %}
     unit_of_measurement: min
     icon: mdi:clock-outline
 
@@ -489,7 +506,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.traffic_minutes_delay }}"
+    value_template: >
+      {% if not value_json.error and value_json.traffic_minutes_delay %}
+        {{ value_json.traffic_minutes_delay }}
+      {% endif %}
     unit_of_measurement: min
     icon: mdi:clock-alert-outline
 
