@@ -3,7 +3,7 @@ name: Build GHCR images
 on:
   workflow_call:
   pull_request_target:
-    branches: ["master", "ci"]
+    branches: ["master"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
@@ -88,7 +88,8 @@ jobs:
 
   grafana:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder != 'true'
+    # Only run if there are no changes to the github folder and on workflow call, or PRs from forks (to avoid duplicate runs for PRs from non-forks, and to avoid invalid reference format for cache name in PRs from our repo)
+    if: needs.check_paths.outputs.githubfolder != 'true' && (${{ github.event_name }} == 'workflow_call' || ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }})
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
