@@ -10,6 +10,7 @@
     devenv-root.flake = false;
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+
   };
 
   outputs =
@@ -20,6 +21,8 @@
     , ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
+
+      flake.nixosModules.default = import ./module.nix { inherit self; };
 
       systems = [
         "x86_64-linux"
@@ -223,7 +226,6 @@
                 {
                   name = "teslamate";
                   nodes.server = {
-                    nixosModules.default = import ./module.nix { inherit self'; };
                     imports = [ self'.nixosModules.default ];
                     services.teslamate = {
                       enable = true;
