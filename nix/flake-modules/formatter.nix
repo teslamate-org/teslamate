@@ -8,7 +8,7 @@
     {
       # Auto formatters. This also adds a flake check to ensure that the
       # source tree was auto formatted.
-      treefmt.config = {
+      treefmt = {
         flakeFormatter = true; # Enables treefmt the default formatter used by the nix fmt command
         flakeCheck = false; # Add a flake check to run treefmt, disabled, as mix format does need the dependencies fetched beforehand
         projectRootFile = "flake.nix";
