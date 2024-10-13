@@ -10,7 +10,7 @@
       # source tree was auto formatted.
       treefmt.config = {
         flakeFormatter = true; # Enables treefmt the default formatter used by the nix fmt command
-        flakeCheck = true; # Add a flake check to run treefmt
+        flakeCheck = false; # Add a flake check to run treefmt, disabled, as mix format does need the dependencies fetched beforehand
         projectRootFile = "flake.nix";
 
         # we really need to mirror the treefmt.toml as we can't use it directly
