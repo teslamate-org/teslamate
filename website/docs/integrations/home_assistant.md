@@ -727,7 +727,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       availability_template: "{{ has_value('sensor.tesla_elevation') }}"
       value_template: >
         {% if has_value('sensor.tesla_elevation') %}
-          {{ (states('sensor.tesla_elevation') | float / 3.2808) | round(2) }}
+          {{ (states('sensor.tesla_elevation') | float * 3.2808) | round(2) }}
         {% endif %}
 
     tesla_tpms_pressure_fl_psi:
@@ -737,7 +737,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       availability_template: "{{ has_value('sensor.tesla_tpms_fl') }}"
       value_template: >
         {% if has_value('sensor.tesla_tpms_fl') %}
-          {{ (states('sensor.tesla_tpms_fl') | float / 14.50377) | round(2) }}
+          {{ (states('sensor.tesla_tpms_fl') | float * 14.50377) | round(2) }}
         {% endif %}
 
     tesla_tpms_pressure_fr_psi:
@@ -747,7 +747,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       availability_template: "{{ has_value('sensor.tesla_tpms_fr') }}"
       value_template: >
         {% if has_value('sensor.tesla_tpms_fr') %}
-          {{ (states('sensor.tesla_tpms_fr') | float / 14.50377) | round(2) }}
+          {{ (states('sensor.tesla_tpms_fr') | float * 14.50377) | round(2) }}
         {% endif %}
 
     tesla_tpms_pressure_rl_psi:
@@ -757,7 +757,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       availability_template: "{{ has_value('sensor.tesla_tpms_rl') }}"
       value_template: >
         {% if has_value('sensor.tesla_tpms_rl') %}
-          {{ (states('sensor.tesla_tpms_rl') | float / 14.50377) | round(2) }}
+          {{ (states('sensor.tesla_tpms_rl') | float * 14.50377) | round(2) }}
         {% endif %}
 
     tesla_tpms_pressure_rr_psi:
@@ -767,7 +767,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       availability_template: "{{ has_value('sensor.tesla_tpms_rr') }}"
       value_template: >
         {% if has_value('sensor.tesla_tpms_rr') %}
-          {{ (states('sensor.tesla_tpms_rr') | float / 14.50377) | round(2) }}
+          {{ (states('sensor.tesla_tpms_rr') | float * 14.50377) | round(2) }}
         {% endif %}
 
     tesla_active_route_distance_to_arrival_km:
@@ -777,7 +777,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
       availability_template: "{{ has_value('sensor.tesla_active_route_distance_to_arrival_mi') }}"
       value_template: >
         {% if has_value('sensor.tesla_active_route_distance_to_arrival_mi') %}
-          {{ (states('sensor.tesla_active_route_distance_to_arrival_mi') | float / 1.609344) | round(2) }}
+          {{ (states('sensor.tesla_active_route_distance_to_arrival_mi') | float * 1.609344) | round(2) }}
         {% endif %}
 ```
 
