@@ -41,6 +41,7 @@
 - ci(fix): run ghcr build workflow only for specific conditions (#4219 - @JakobLichterfeld)
 - ci: remove branch restriction for check_paths workflow to increase sec (#4219 - @JakobLichterfeld)
 - build(deps): bump actions/checkout from 4.1.7 to 4.2.1 (#4262)
+- ci(fix): only run ghcr build in DevOps workflow on own repo ( [022b173](https://github.com/teslamate-org/teslamate/commit/022b173430221d385479f4ec9d91d8ccffbfe7b9) - @JakobLichterfeld)
 
 #### Dashboards
 
