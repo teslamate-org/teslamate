@@ -33,6 +33,7 @@
       # See ./nix/flake-modules/*.nix for the modules that are imported here.
       imports = [
         inputs.devenv.flakeModule
+        ./nix/flake-modules/checks.nix
         ./nix/flake-modules/formatter.nix
         ./nix/flake-modules/package.nix
       ];
@@ -145,53 +146,12 @@
             ];
 
           };
-
-          moduleTest =
-            (nixpkgs.lib.nixos.runTest {
-              hostPkgs = pkgs;
-              defaults.documentation.enable = false;
-              imports = [
-                {
-                  name = "teslamate";
-                  nodes.server = {
-                    imports = [ self'.nixosModules.default ];
-                    services.teslamate = {
-                      enable = true;
-                      secretsFile = builtins.toFile "teslamate.env" ''
-                        ENCRYPTION_KEY=123456789
-                        DATABASE_PASS=123456789
-                        RELEASE_COOKIE=123456789
-                      '';
-                      postgres.enable_server = true;
-                      grafana.enable = true;
-                    };
-                  };
-
-                  testScript = ''
-                    server.wait_for_open_port(4000)
-                  '';
-                }
-              ];
-            }).config.result;
-
-          emptyTest = pkgs.stdenv.mkDerivation {
-            name = "noTest";
-            buildPhase = ''
-              echo "Tests are only supported on Linux."
-            '';
-          };
         in
         {
           packages = {
             devenv-up = devShell.config.procfileScript;
           };
           devShells.default = devShell;
-
-          # for `nix flake check`
-          checks = {
-            default = if pkgs.stdenv.isLinux then moduleTest else emptyTest;
-            # formatter check is done in the formatter module
-          };
         };
     };
 }
