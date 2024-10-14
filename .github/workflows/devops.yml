@@ -54,5 +54,6 @@ jobs:
     needs:
       - check_paths
       - elixir_dep_verification_and_static_analysis
-    if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
+    # Only run if there are no changes to the github folder and for PR from non-forks
+    if: needs.check_paths.outputs.githubfolder != 'true' && ( ${{ github.event.pull_request.head.repo.full_name }} == ${{ github.repository }}) || github.event_name == 'schedule'
     uses: ./.github/workflows/ghcr_build.yml
