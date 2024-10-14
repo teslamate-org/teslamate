@@ -32,7 +32,7 @@ jobs:
       matrix:
         include:
           - platform: "linux/amd64"
-            runs_on: "ubuntu-latest"
+            runs_on: "ubuntu-24.04"
             cache_id: amd64
           - platform: "linux/arm/v7"
             runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
@@ -58,7 +58,7 @@ jobs:
           version: ${{ github.ref_name }}
 
   teslamate_merge:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - check_paths
       - teslamate_build
@@ -84,7 +84,7 @@ jobs:
   grafana:
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout

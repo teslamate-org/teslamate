@@ -23,7 +23,7 @@ jobs:
     name: Delete images from ghcr.io when PR is closed
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: chipkent/action-cleanup-package@1316a66015b82d745b57acbb6c570f2bb1d108f9 # v1.0.3

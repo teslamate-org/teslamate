@@ -15,7 +15,7 @@ permissions:
 jobs:
   verify_dependencies_and_static_analysis:
     name: Verify dependencies, POT files, unused dependencies, static analysis
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: read
