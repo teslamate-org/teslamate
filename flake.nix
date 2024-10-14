@@ -32,7 +32,7 @@
       partitionedAttrs.formatter = "dev";
       partitions.dev.extraInputsFlake = ./nix/dev;
       partitions.dev.extraInputs = {
-        # propogate devenv-root to dev partition
+        # propagate devenv-root to dev partition
         inherit (inputs) devenv-root;
       };
       partitions.dev.module = {
