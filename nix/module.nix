@@ -210,7 +210,11 @@ in
     (mkIf cfg.postgres.enable_server {
       services.postgresql = {
         enable = true;
-        inherit (cfg.postgres) port package;
+        inherit (cfg.postgres) package;
+
+        settings = {
+          inherit (cfg.postgres) port;
+        };
 
         initialScript = pkgs.writeText "teslamate-psql-init" ''
           \set password `echo $DATABASE_PASS`
@@ -252,7 +256,7 @@ in
         };
         provision = {
           enable = true;
-          datasources.path = ./grafana/datasource.yml;
+          datasources.path = ../grafana/datasource.yml;
           # Need to duplicate dashboards.yml since it contains absolute paths
           # which are incompatible with NixOS
           dashboards.settings = {
@@ -268,7 +272,7 @@ in
                 editable = true;
                 updateIntervalSeconds = 86400;
                 options.path = lib.sources.sourceFilesBySuffices
-                  ./grafana/dashboards
+                  ../grafana/dashboards
                   [ ".json" ];
               }
               {
@@ -281,7 +285,7 @@ in
                 editable = true;
                 updateIntervalSeconds = 86400;
                 options.path = lib.sources.sourceFilesBySuffices
-                  ./grafana/dashboards/internal
+                  ../grafana/dashboards/internal
                   [ ".json" ];
               }
               {
@@ -294,7 +298,7 @@ in
                 editable = true;
                 updateIntervalSeconds = 86400;
                 options.path = lib.sources.sourceFilesBySuffices
-                  ./grafana/dashboards/reports
+                  ../grafana/dashboards/reports
                   [ ".json" ];
               }
             ];

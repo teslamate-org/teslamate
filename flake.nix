@@ -22,7 +22,7 @@
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
 
-      flake.nixosModules.default = import ./module.nix { inherit self; };
+      flake.nixosModules.default = import ./nix/module.nix { inherit self; };
 
       systems = [
         "x86_64-linux"
