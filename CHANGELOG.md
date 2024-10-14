@@ -40,6 +40,7 @@
 - fix: avoid the need for impure for devenv (#4245 - @brianmay)
 - ci(fix): run ghcr build workflow only for specific conditions (#4219 - @JakobLichterfeld)
 - ci: remove branch restriction for check_paths workflow to increase sec (#4219 - @JakobLichterfeld)
+- build(deps): bump actions/checkout from 4.1.7 to 4.2.1 (#4262)
 
 #### Dashboards
 
