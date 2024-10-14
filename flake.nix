@@ -30,10 +30,11 @@
         "x86_64-darwin"
         "aarch64-darwin"
       ];
-      # See ./nix/modules/*.nix for the modules that are imported here.
+      # See ./nix/flake-modules/*.nix for the modules that are imported here.
       imports = [
         inputs.devenv.flakeModule
         ./nix/flake-modules/formatter.nix
+        ./nix/flake-modules/package.nix
       ];
 
       perSystem =
@@ -51,81 +52,8 @@
           pkgs = nixpkgs.legacyPackages.${system};
 
           elixir = pkgs.beam.packages.erlang_26.elixir_1_16;
-          beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_26;
-
-          src = ./.;
-          version = builtins.readFile ./VERSION;
-          pname = "teslamate";
-
-          mixFodDeps = beamPackages.fetchMixDeps {
-            TOP_SRC = src;
-            pname = "${pname}-mix-deps";
-            inherit src version;
-            hash = "sha256-Y+CGgvnSCiiuyhtsQ+j0vayq1IHO5IEPVl+V/wwTd6w=";
-            # hash = pkgs.lib.fakeHash;
-          };
 
           nodejs = pkgs.nodejs;
-          nodePackages = pkgs.buildNpmPackage {
-            name = "teslamate";
-            src = ./assets;
-            npmDepsHash = "sha256-05AKPyms4WP8MHBqWMup8VXR3a1tv/f/7jT8c6EpWBw=";
-            # npmDepsHash = pkgs.lib.fakeHash;
-            dontNpmBuild = true;
-            inherit nodejs;
-
-            installPhase = ''
-              mkdir $out
-              cp -r node_modules $out
-              ln -s $out/node_modules/.bin $out/bin
-
-              rm $out/node_modules/phoenix
-              ln -s ${mixFodDeps}/phoenix $out/node_modules
-
-              rm $out/node_modules/phoenix_html
-              ln -s ${mixFodDeps}/phoenix_html $out/node_modules
-
-              rm $out/node_modules/phoenix_live_view
-              ln -s ${mixFodDeps}/phoenix_live_view $out/node_modules
-            '';
-          };
-
-          cldr = pkgs.fetchFromGitHub {
-            owner = "elixir-cldr";
-            repo = "cldr";
-            rev = "v2.37.5";
-            sha256 = "sha256-T5Qvuo+xPwpgBsqHNZYnTCA4loToeBn1LKTMsDcCdYs=";
-            # sha256 = pkgs.lib.fakeHash;
-          };
-
-          pkg = beamPackages.mixRelease {
-            TOP_SRC = src;
-            inherit
-              pname
-              version
-              elixir
-              src
-              mixFodDeps
-              ;
-
-            LOCALES = "${cldr}/priv/cldr";
-
-            postBuild = ''
-              ln -sf ${mixFodDeps}/deps deps
-              ln -sf ${nodePackages}/node_modules assets/node_modules
-              export PATH="${pkgs.nodejs}/bin:${nodePackages}/bin:$PATH"
-              ${nodejs}/bin/npm run deploy --prefix ./assets
-
-              # for external task you need a workaround for the no deps check flag
-              # https://github.com/phoenixframework/phoenix/issues/2690
-              mix do deps.loadpaths --no-deps-check, phx.digest
-              mix phx.digest --no-deps-check
-            '';
-
-            meta = {
-              mainProgram = "teslamate";
-            };
-          };
 
           postgres_port = 7000;
           mosquitto_port = 7001;
@@ -176,7 +104,7 @@
                     ]
                   );
                 enterShell = ''
-                  export LOCALES="${cldr}/priv/cldr";
+                  export LOCALES="${self'.packages.cldr}/priv/cldr";
                   export PORT="4000"
                   export ENCRYPTION_KEY="your_secure_encryption_key_here"
                   export DATABASE_USER="teslamate"
@@ -256,7 +184,6 @@
         {
           packages = {
             devenv-up = devShell.config.procfileScript;
-            default = pkg;
           };
           devShells.default = devShell;
 
