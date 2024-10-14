@@ -5,12 +5,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-    devenv.url = "github:cachix/devenv";
     devenv-root.url = "file+file:///dev/null";
     devenv-root.flake = false;
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
-
   };
 
   outputs = inputs@{ self, flake-parts, ... }:
@@ -26,11 +22,21 @@
 
       # See ./nix/flake-modules/*.nix for the modules that are imported here.
       imports = [
-        inputs.devenv.flakeModule
+        inputs.flake-parts.flakeModules.partitions
         ./nix/flake-modules/checks.nix
-        ./nix/flake-modules/dev.nix
-        ./nix/flake-modules/formatter.nix
         ./nix/flake-modules/package.nix
       ];
+
+      # Setup separate flake.lock for dev dependencies
+      partitionedAttrs.devShells = "dev";
+      partitionedAttrs.formatter = "dev";
+      partitions.dev.extraInputsFlake = ./nix/dev;
+      partitions.dev.extraInputs = {
+        # propogate devenv-root to dev partition
+        inherit (inputs) devenv-root;
+      };
+      partitions.dev.module = {
+        imports = [ ./nix/dev/flake-module.nix ];
+      };
     };
 }

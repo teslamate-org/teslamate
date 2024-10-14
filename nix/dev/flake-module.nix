@@ -1,12 +1,15 @@
 { inputs, ... }:
 {
+  imports = [
+    inputs.devenv.flakeModule
+    ./formatter.nix
+  ];
+
   perSystem =
     { config
     , self'
-    , inputs'
     , pkgs
     , lib
-    , system
     , ...
     }:
     # legacy
