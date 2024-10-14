@@ -14,7 +14,7 @@
 
 #### Build, CI, internal
 
-- ci: pin github action dependencies to protect against supply chain attacks (#4076 - @JakobLichterfeld)
+- ci: pin GitHub action dependencies to protect against supply chain attacks (#4076 - @JakobLichterfeld)
 - chore: correct comment for pinned Docker login-action to version 3.2.0 (#4120 - @JakobLichterfeld)
 - build(deps): bump erlef/setup-beam from 1.18.0 to 1.18.1 (#4116)
 - build(deps): bump docker/login-action from 3.2.0 to 3.3.0 (#4115)
@@ -41,7 +41,8 @@
 - ci(fix): run ghcr build workflow only for specific conditions (#4219 - @JakobLichterfeld)
 - ci: remove branch restriction for check_paths workflow to increase sec (#4219 - @JakobLichterfeld)
 - build(deps): bump actions/checkout from 4.1.7 to 4.2.1 (#4262)
-- ci(fix): only run ghcr build in DevOps workflow on own repo ( [022b173](https://github.com/teslamate-org/teslamate/commit/022b173430221d385479f4ec9d91d8ccffbfe7b9) - @JakobLichterfeld)
+- ci(fix): only run ghcr build in DevOps workflow on own repo ([022b173](https://github.com/teslamate-org/teslamate/commit/022b173430221d385479f4ec9d91d8ccffbfe7b9) - @JakobLichterfeld)
+- ci: pin ubuntu-24.04 as runner os ([40dab3e](https://github.com/teslamate-org/teslamate/commit/40dab3e2a978b8a867f1159626d4c157ccab6c56) - @JakobLichterfeld)
 
 #### Dashboards
 
