@@ -26,7 +26,7 @@ jobs:
     name: Build images
     needs: check_paths
     # Only run if there are no changes to the github folder and on workflow call, or PRs from forks (to avoid duplicate runs for PRs from non-forks, and to avoid invalid reference format for cache name in PRs from our repo)
-    if: needs.check_paths.outputs.githubfolder != 'true' && (${{ github.event_name }} == 'workflow_call' || ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }})
+    if: needs.check_paths.outputs.githubfolder != 'true' && (${{ github.event_name  == 'workflow_call' }} || ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }})
     strategy:
       fail-fast: false
       matrix:
@@ -89,7 +89,7 @@ jobs:
   grafana:
     needs: check_paths
     # Only run if there are no changes to the github folder and on workflow call, or PRs from forks (to avoid duplicate runs for PRs from non-forks, and to avoid invalid reference format for cache name in PRs from our repo)
-    if: needs.check_paths.outputs.githubfolder != 'true' && (${{ github.event_name }} == 'workflow_call' || ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }})
+    if: needs.check_paths.outputs.githubfolder != 'true' && (${{ github.event_name  == 'workflow_call' }} || ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }})
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
