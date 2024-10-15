@@ -1,19 +1,14 @@
 name: Build GHCR images
 
 on:
-  workflow_dispatch:
-  push:
-    paths:
-      - "**/*"
-      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
-    branches: ["ci"]
+  workflow_call:
   pull_request_target:
-    branches: ["master", "ci"]
+    branches: ["master"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
@@ -24,29 +19,20 @@ permissions:
 
 jobs:
   check_paths:
-    runs-on: ubuntu-latest
-    outputs:
-      githubfolder: ${{ steps.filter.outputs.githubfolder }}
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
-        id: filter
-        with:
-          filters: |
-            githubfolder:
-              - '.github/**'
+    if: ${{ github.event_name != 'workflow_call' }}
+    uses: ./.github/workflows/check_paths.yml
 
   teslamate_build:
     name: Build images
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false'
+    # Only run if there are no changes to the github folder and on workflow call, or PRs from forks (to avoid duplicate runs for PRs from non-forks, and to avoid invalid reference format for cache name in PRs from our repo)
+    if: needs.check_paths.outputs.githubfolder != 'true' && (${{ github.event_name }} == 'workflow_call' || ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }})
     strategy:
       fail-fast: false
       matrix:
         include:
           - platform: "linux/amd64"
-            runs_on: "ubuntu-latest"
+            runs_on: "ubuntu-24.04"
             cache_id: amd64
           - platform: "linux/arm/v7"
             runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
@@ -58,9 +44,9 @@ jobs:
     runs-on: ${{ matrix.runs_on }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         if: ${{ github.event_name != 'pull_request_target' }}
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         if: ${{ github.event_name == 'pull_request_target' }}
         with:
           ref: ${{github.event.pull_request.head.ref}}
@@ -73,7 +59,7 @@ jobs:
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ github.ref_name }}
+          version: ${{ github.head_ref || github.ref_name }}
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
 
@@ -82,12 +68,12 @@ jobs:
     needs:
       - check_paths
       - teslamate_build
-    if: needs.check_paths.outputs.githubfolder == 'false'
-    runs-on: ubuntu-latest
+    if: needs.check_paths.outputs.githubfolder != 'true'
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
       - name: Login to GitHub Container Registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
@@ -102,12 +88,13 @@ jobs:
 
   grafana:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false'
-    runs-on: ubuntu-latest
+    # Only run if there are no changes to the github folder and on workflow call, or PRs from forks (to avoid duplicate runs for PRs from non-forks, and to avoid invalid reference format for cache name in PRs from our repo)
+    if: needs.check_paths.outputs.githubfolder != 'true' && (${{ github.event_name }} == 'workflow_call' || ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }})
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         if: ${{ github.event_name != 'pull_request_target' }}
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         if: ${{ github.event_name == 'pull_request_target' }}
         with:
           ref: ${{github.event.pull_request.head.ref}}

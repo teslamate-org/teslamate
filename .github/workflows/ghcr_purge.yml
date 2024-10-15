@@ -1,14 +1,15 @@
 name: Purge PR images
 
 on:
+  workflow_call:
   pull_request_target:
     types:
       - closed
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
-
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 
 permissions:
   contents: read
@@ -16,24 +17,13 @@ permissions:
 
 jobs:
   check_paths:
-    runs-on: ubuntu-latest
-    outputs:
-      githubfolder: ${{ steps.filter.outputs.githubfolder }}
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
-        id: filter
-        with:
-          filters: |
-            githubfolder:
-              - '.github/**'
+    uses: ./.github/workflows/check_paths.yml
 
   purge-pr-package:
     name: Delete images from ghcr.io when PR is closed
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false'
-    runs-on: ubuntu-latest
+    if: needs.check_paths.outputs.githubfolder != 'true'
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: chipkent/action-cleanup-package@1316a66015b82d745b57acbb6c570f2bb1d108f9 # v1.0.3

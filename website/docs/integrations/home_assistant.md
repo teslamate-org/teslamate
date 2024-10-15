@@ -62,8 +62,8 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     unique_id: teslamate_1_display_name # internal id, used for device grouping
     availability: &teslamate_availability
       - topic: teslamate/cars/1/healthy
-        payload_available: 'true'
-        payload_not_available: 'false'
+        payload_available: "true"
+        payload_not_available: "false"
     device: &teslamate_device_info
       identifiers: [teslamate_car_1]
       configuration_url: https://teslamate.zxxz.io/
@@ -81,7 +81,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     device: *teslamate_device_info
     json_attributes_topic: "teslamate/cars/1/location"
     icon: mdi:crosshairs-gps
-    
+
 - device_tracker:
     name: Active route location
     object_id: tesla_active_route_location
@@ -310,7 +310,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     device_class: battery
     unit_of_measurement: "%"
     icon: mdi:battery-80
-    
+
 - sensor:
     name: Usable Battery Level
     object_id: tesla_usable_battery_level
@@ -662,7 +662,6 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     payload_on: "true"
     payload_off: "false"
     icon: mdi:ev-plug-tesla
-
 ```
 
 ### sensor.yaml (sensor: section of configuration.yaml)
@@ -784,17 +783,17 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
 ### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
 
 ```yml title="binary_sensor.yaml"
- - platform: template
-   sensors:
+- platform: template
+  sensors:
     tesla_park_brake:
       friendly_name: Parking Brake
       icon_template: mdi:car-brake-parking
       value_template: >-
-       {% if is_state('sensor.tesla_shift_state', 'P') %}
-         ON
-       {% else %}
-         OFF
-       {% endif %}
+        {% if is_state('sensor.tesla_shift_state', 'P') %}
+          ON
+        {% else %}
+          OFF
+        {% endif %}
 ```
 
 ### ui-lovelace.yaml
@@ -1153,7 +1152,7 @@ notify_tesla_windows_open:
       data:
         variables:
           whatsopen: "windows"
-          
+
 - id: plugin-tesla-notify
   alias: Notify if Tesla not plugged in at night
   trigger:
@@ -1173,4 +1172,3 @@ conditions:
   initial_state: true
   mode: single
 ```
-
