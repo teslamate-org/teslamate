@@ -11,7 +11,7 @@
       treefmt = {
         flakeFormatter = true; # Enables treefmt the default formatter used by the nix fmt command
         flakeCheck = false; # Add a flake check to run treefmt, disabled, as mix format does need the dependencies fetched beforehand
-        projectRootFile = "flake.nix";
+        projectRootFile = "VERSION"; # File used to identity repo root
 
         # we really need to mirror the treefmt.toml as we can't use it directly
         settings.global.excludes = [
