@@ -48,6 +48,7 @@
 - ci(fix): correct syntax in ghcr_build workflow for workflow_call ([9e6a275](https://github.com/teslamate-org/teslamate/commit/9e6a2758d5ff21604976184ad69befc1c546e600) - @JakobLichterfeld)
 - ci(fix): run ghcr build as separate workflow to fix permission issues with forks ([0410593](https://github.com/teslamate-org/teslamate/commit/0410593850cde00e8f201a9b7d6009f0581ed43c) - @JakobLichterfeld)
 - build(deps-dev): bump credo from 1.7.1 to 1.7.8 (#4238)
+- build(deps): bump crate-ci/typos from 1.22.9 to 1.26.0 (#4261)
 
 #### Dashboards
 
