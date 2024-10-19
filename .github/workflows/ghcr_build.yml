@@ -1,7 +1,13 @@
 name: Build GHCR images
 
 on:
-  workflow_call:
+  pull_request_target:
+    branches: ["master", "ci"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
@@ -12,7 +18,6 @@ permissions:
 
 jobs:
   check_paths:
-    if: ${{ github.event_name != 'workflow_call' }}
     uses: ./.github/workflows/check_paths.yml
 
   teslamate_build:
@@ -37,10 +42,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
-        if: ${{ github.event.pull_request.head.repo.full_name }} == ${{ github.repository }}
+        if: ${{ github.event_name != 'pull_request_target' }}
       - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
-        # coming from a fork
-        if: ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }}
+        if: ${{ github.event_name == 'pull_request_target' }}
         with:
           ref: ${{github.event.pull_request.head.ref}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
@@ -52,7 +56,7 @@ jobs:
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ github.head_ref || github.ref_name }}
+          version: ${{ github.ref_name }}
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
 
@@ -85,9 +89,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
-        if: ${{ github.event.pull_request.head.repo.full_name }} == ${{ github.repository }}
+        if: ${{ github.event_name != 'pull_request_target' }}
       - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
-        if: ${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }}
+        if: ${{ github.event_name == 'pull_request_target' }}
         with:
           ref: ${{github.event.pull_request.head.ref}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
