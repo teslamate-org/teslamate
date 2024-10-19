@@ -49,10 +49,3 @@ jobs:
       - ensure_linting
     if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
     uses: ./.github/workflows/elixir_test.yml
-
-  ghcr_build:
-    needs:
-      - check_paths
-      - elixir_dep_verification_and_static_analysis
-    if: needs.check_paths.outputs.githubfolder != 'true'
-    uses: ./.github/workflows/ghcr_build.yml
