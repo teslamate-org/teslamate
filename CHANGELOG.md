@@ -66,6 +66,7 @@
 - multiple cars, same name, add vin next to name (#4230 - @swiffer)
 - json_build_object instead of concat in battery-health (#4229 - @swiffer)
 - perf: fix skipping streaming data in charging stats (#4252 - @swiffer)
+- perf: improvements drive stats (#4258 - @swiffer)
 
 #### Translations
 
