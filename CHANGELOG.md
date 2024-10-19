@@ -83,6 +83,7 @@
 - doc: fix markdownlint warnings in fleet api documentation (#4173 - @JakobLichterfeld)
 - doc: clarify using fleet api has lots of drawbacks (#4173 - @JakobLichterfeld)
 - docs: fix Home Assistant MQTT sensor JSON templates warnings (#4257 - @longzheng)
+- docs: add recommended RAM size (#4278 - @JakobLichterfeld)
 
 ## [1.30.1] - 2024-07-10
 
