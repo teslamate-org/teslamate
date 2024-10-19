@@ -1,7 +1,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= live_redirect(gettext("Home"), to: ~p"/") %></li>
-    <li><%= live_redirect(gettext("Geo-Fences"), to: ~p"/geo-fences") %></li>
+    <li><.link navigate={~p"/"}><%= gettext("Home") %></.link></li>
+    <li><.link navigate={~p"/geo-fences"}><%= gettext("Geo-Fences") %></.link></li>
     <li class="is-active">
       <a href="#">
         <%= case @action do
@@ -120,10 +120,9 @@
     <div class="field-body">
       <div class="field is-grouped">
         <div class="control">
-          <%= live_redirect(gettext("Back"),
-            to: Routes.live_path(@socket, GeoFenceLive.Index),
-            class: "button"
-          ) %>
+          <.link navigate={Routes.live_path(@socket, GeoFenceLive.Index)} class="button">
+            <%= gettext("Back") %>
+          </.link>
         </div>
         <div class="control">
           <%= submit(gettext("Save"),

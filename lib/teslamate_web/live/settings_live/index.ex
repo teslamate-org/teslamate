@@ -171,7 +171,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   end
 
   defp add_params(socket, params) do
-    push_redirect(socket, to: Routes.live_path(socket, __MODULE__, params), replace: true)
+    push_navigate(socket, to: Routes.live_path(socket, __MODULE__, params), replace: true)
   end
 
   defp prepare(%GlobalSettings{} = settings) do

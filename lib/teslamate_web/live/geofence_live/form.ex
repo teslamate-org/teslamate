@@ -161,7 +161,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
         socket
         |> assign(geofence: geofence)
         |> put_flash(:success, flash_msg(action, name))
-        |> push_redirect(to: Routes.live_path(socket, GeoFenceLive.Index))
+        |> push_navigate(to: Routes.live_path(socket, GeoFenceLive.Index))
 
       {:ok, socket}
     end

@@ -1,20 +1,21 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><%= live_redirect(gettext("Home"), to: ~p"/") %></li>
-    <li class="is-active"><%= live_redirect(gettext("Geo-Fences"), to: ~p"/geo-fences") %></li>
+    <li><.link navigate={~p"/"}><%= gettext("Home") %></.link></li>
+    <li class="is-active">
+      <.link navigate={~p"/geo-fences"}><%= gettext("Geo-Fences") %></.link>
+    </li>
   </ul>
 </nav>
 
-<%= live_redirect(
-  raw("""
-  <span>#{gettext("Create")}</span>
+<.link
+  navigate={Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form)}
+  class="button is-info is-small is-rounded is-pulled-right mb-4"
+>
+  <span><%= gettext("Create") %></span>
   <span class="icon">
     <span class="mdi mdi-plus"></span>
   </span>
-  """),
-  to: Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form),
-  class: "button is-info is-small is-rounded is-pulled-right mb-4"
-) %>
+</.link>
 
 <table class="table is-fullwidth">
   <thead class="is-hidden-mobile">
@@ -43,13 +44,12 @@
         <td>
           <div class="field is-grouped is-pulled-right">
             <p class="control">
-              <%= live_redirect(
-                raw(
-                  "<span class='icon'><span class='mdi mdi-square-edit-outline'></span></span>"
-                ),
-                to: Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form, geofence, []),
-                class: "button is-info is-small is-inverted is-light"
-              ) %>
+              <.link
+                navigate={Routes.live_path(@socket, TeslaMateWeb.GeoFenceLive.Form, geofence, [])}
+                class="button is-info is-small is-inverted is-light"
+              >
+                <span class="icon"><span class="mdi mdi-square-edit-outline"></span></span>
+              </.link>
             </p>
             <p class="control">
               <%= link(raw("<span class='icon'><span class='mdi mdi-trash-can'></span></span>"),
