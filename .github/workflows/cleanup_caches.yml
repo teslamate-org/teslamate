@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Cleanup
         run: |
-          gh extension install actions/gh-actions-cache@d88f49218fd18a37f6f63ee4f8716764316a7f7d #v1.0.4
+          gh extension install actions/gh-actions-cache
 
           echo "Fetching list of cache key"
           cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH -L 100 | cut -f 1 )
