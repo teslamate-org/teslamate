@@ -85,8 +85,10 @@ defmodule TeslaMateWeb do
 
   defp view_helpers do
     quote do
-      # Use all HTML functionality (forms, tags, etc)
-      use Phoenix.HTML
+      # Import all HTML functionality (forms, tags, etc)
+      import Phoenix.HTML
+      import Phoenix.HTML.Form
+      use PhoenixHTMLHelpers
 
       # Import convenience functions for LiveView rendering
       import Phoenix.LiveView.Helpers
