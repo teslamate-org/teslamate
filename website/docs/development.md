@@ -140,3 +140,46 @@ The Grafana VS Code extension allows you to open Grafana dashboards as JSON file
 - From the editor UI, save the updated dashboard back to the original JSON file
 
 see: [grafana-vs-code-extension](https://github.com/grafana/grafana-vs-code-extension)
+
+### Best Practices
+
+When Streaming API is enabled roughly 1 GB of data is gathered per car and 30.000km. Most of that data (95+ percent) is stored in positions table. For optimal dashboard performance these recommendations should be followed:
+
+- only query positions table when really needed
+- if data in 15 second intervals is sufficient consider excluding streaming data by adding `ideal_battery_range_km IS NOT NULL and car_id = $car_id` as WHERE conditions
+
+Before opening pull requests please diagnose index usage & query performance by making use of `EXPLAIN ANALYZE`.
+
+### Enable _pg_stat_statements_ to collect query statistics
+To quickly identify performance bottlenecks we encourage all contributors to enable the pg_stat_statements extension in their instance. For docker based installs you can follow these steps:
+
+- Enable the pg_stat_statements module
+
+  ```yml
+  services:
+    database:
+      image: postgres:17
+      ...
+      command: postgres -c shared_preload_libraries=pg_stat_statements
+      ...
+  ```
+
+- Create Extension to enable `pg_stat_statements` view
+
+  ```sql
+  CREATE EXTENSION IF NOT EXISTS `pg_stat_statements`;
+  ```
+
+- Identify potentially slow queries (mean_exec_time)
+
+  ```sql
+  SELECT query, calls, mean_exec_time, total_exec_time FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;
+  ```
+
+- Identify frequently executed queries (calls)
+
+  ```sql
+  SELECT query, calls, mean_exec_time, total_exec_time FROM pg_stat_statements ORDER BY calls DESC LIMIT 10;
+  ```
+
+Additional details about pg_stat_statements can be found here: https://www.postgresql.org/docs/current/pgstatstatements.html
