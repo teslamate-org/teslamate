@@ -141,7 +141,21 @@ The Grafana VS Code extension allows you to open Grafana dashboards as JSON file
 
 see: [grafana-vs-code-extension](https://github.com/grafana/grafana-vs-code-extension)
 
-### Best Practices
+## Best Practices
+
+### Queries involving timestamp columns
+
+Datetime values are currently stored in columns of type `timestamp`. [This is NOT recommended](https://wiki.postgresql.org/wiki/Don't_Do_This#Don.27t_use_timestamp_.28without_time_zone.29_to_store_UTC_times).
+
+While [Grafana macros](https://grafana.com/docs/grafana/latest/datasources/postgres/#macros) like `$__timeFilter` & `$__timeGroup` are working PostgreSQL functions like `DATE_TRUNC()` require additional treatment.
+
+```sql
+DATE_TRUNC('day', TIMEZONE('UTC', date))
+```
+
+In addition ensure to compare either values with or without time zone.
+
+### Streaming API data / positions table usage in dashboard queries
 
 When Streaming API is enabled roughly 1 GB of data is gathered per car and 30.000km. Most of that data (95+ percent) is stored in positions table. For optimal dashboard performance these recommendations should be followed:
 
