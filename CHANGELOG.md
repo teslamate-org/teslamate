@@ -11,6 +11,7 @@
 - fix: add nix module option to specify postgres package (#4227 - @brianmay)
 - perf: limit positions to set elevation for to last 10 days (#4228 - @swiffer)
 - feat: add treefmt-nix to nix flake (#4219 - @JakobLichterfeld)
+- feat: use Grafana 11.0.6-security-01 (#4279 - @swiffer)
 
 #### Build, CI, internal
 
