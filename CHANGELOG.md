@@ -70,6 +70,8 @@
 - json_build_object instead of concat in battery-health (#4229 - @swiffer)
 - perf: fix skipping streaming data in charging stats (#4252 - @swiffer)
 - perf: improvements drive stats (#4258 - @swiffer)
+- fix: for drives not showing if duration < 1 minute (#4284 - @swiffer)
+- feat: add max speed in drives dashboard (#4284 / #4267 - @js94x)
 
 #### Translations
 
