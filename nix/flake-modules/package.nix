@@ -1,6 +1,6 @@
 { ... }:
 {
-  perSystem = { pkgs, ... }:
+  perSystem = { lib, pkgs, system, ... }:
     let
       elixir = pkgs.beam.packages.erlang_26.elixir_1_16;
       beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_26;
@@ -80,9 +80,25 @@
       };
     in
     {
-      packages = {
-        inherit cldr;
-        default = teslamate;
+      options = {
+        teslamate.cldr = lib.mkOption {
+          type = lib.types.package;
+          readOnly = true;
+        };
+        teslamate.elixir = lib.mkOption {
+          type = lib.types.package;
+          readOnly = true;
+        };
+      };
+
+      config = {
+        teslamate = {
+          inherit cldr elixir;
+        };
+
+        packages = {
+          default = teslamate;
+        };
       };
     };
 }

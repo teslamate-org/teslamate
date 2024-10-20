@@ -2,12 +2,10 @@
 {
   imports = [
     inputs.devenv.flakeModule
-    ./formatter.nix
   ];
 
   perSystem =
     { config
-    , self'
     , pkgs
     , lib
     , ...
@@ -16,7 +14,7 @@
     let
       inherit (lib) optional optionals;
 
-      elixir = pkgs.beam.packages.erlang_26.elixir_1_16;
+      elixir = config.teslamate.elixir;
 
       nodejs = pkgs.nodejs;
 
@@ -66,7 +64,7 @@
             ]
           );
         enterShell = ''
-          export LOCALES="${self'.packages.cldr}/priv/cldr";
+          export LOCALES="${config.teslamate.cldr}/priv/cldr";
           export PORT="4000"
           export ENCRYPTION_KEY="your_secure_encryption_key_here"
           export DATABASE_USER="teslamate"
