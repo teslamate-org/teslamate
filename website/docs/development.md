@@ -165,6 +165,7 @@ When Streaming API is enabled roughly 1 GB of data is gathered per car and 30.00
 Before opening pull requests please diagnose index usage & query performance by making use of `EXPLAIN ANALYZE`.
 
 ### Enable _pg_stat_statements_ to collect query statistics
+
 To quickly identify performance bottlenecks we encourage all contributors to enable the pg_stat_statements extension in their instance. For docker based installs you can follow these steps:
 
 - Enable the pg_stat_statements module
