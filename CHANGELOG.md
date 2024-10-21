@@ -4,7 +4,7 @@
 
 As always, lots of improvements. The focus has been on performance improvements, especially on slow HW like Raspberry Pi 3B+. We achieved 240x speed improvements in several dashboards :rocket: And we welcomed @swiffer to the TeslaMate-Org team :wave: And much, much more. Enjoy it.
 
-**Regarding Postgres17:** TeslaMate uses PostgreSQL as database, this is an external dependency and needs to be updated by yourself. Although TeslaMate currently runs fine with Postgres12, 13, 14, 15, 16 we strongly recommend upgrading to newer versions as we plan to use some cool new features. We recommend that you do this as follows:
+**Regarding PostgreSQL 17:** TeslaMate uses PostgreSQL as database, this is an external dependency and needs to be updated by yourself. Although TeslaMate currently runs fine with PostgreSQL 12+ we strongly recommend upgrading to the latest supported version. We recommend that you do this as follows:
 
 - [Backup your data](https://docs.teslamate.org/docs/maintenance/backup_restore#backup)
 - [Upgrade TeslaMate to this version](https://docs.teslamate.org/docs/upgrading)
@@ -18,7 +18,7 @@ As always, lots of improvements. The focus has been on performance improvements,
 ### Improvements and bug fixes
 
 - fix: 401 on direct Fleet API calls (#4095 - @jlestel)
-- feat: PostgreSQL 17 (#4231 - @swiffer)
+- feat: add support for PostgreSQL 17 (#4231 - @swiffer)
 - fix: add nix module option to specify postgres package (#4227 - @brianmay)
 - perf: limit positions to set elevation for to last 10 days (#4228 - @swiffer)
 - feat: add treefmt-nix to nix flake (#4219 - @JakobLichterfeld)
