@@ -40,8 +40,9 @@
         }).config.result;
     in
     {
-      checks = if pkgs.stdenv.isLinux then {
-        default = moduleTest;
-      } else {};
+      checks =
+        if pkgs.stdenv.isLinux then {
+          default = moduleTest;
+        } else { };
     };
 }
