@@ -182,7 +182,7 @@ To quickly identify performance bottlenecks we encourage all contributors to ena
 - Create Extension to enable `pg_stat_statements` view
 
   ```sql
-  CREATE EXTENSION IF NOT EXISTS `pg_stat_statements`;
+  CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
   ```
 
 - Identify potentially slow queries (mean_exec_time)
