@@ -27,7 +27,7 @@ defmodule TeslaMateWeb do
       use Phoenix.Controller, namespace: TeslaMateWeb
 
       import Plug.Conn
-      import TeslaMateWeb.Gettext
+      use Gettext, backend: TeslaMateWeb.Gettext
       alias TeslaMateWeb.Router.Helpers, as: Routes
 
       unquote(verified_routes())
@@ -79,7 +79,7 @@ defmodule TeslaMateWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import TeslaMateWeb.Gettext
+      use Gettext, backend: TeslaMateWeb.Gettext
     end
   end
 
@@ -96,7 +96,7 @@ defmodule TeslaMateWeb do
       import Phoenix.View
 
       import TeslaMateWeb.ErrorHelpers
-      import TeslaMateWeb.Gettext
+      use Gettext, backend: TeslaMateWeb.Gettext
       alias TeslaMateWeb.Router.Helpers, as: Routes
 
       unquote(verified_routes())
