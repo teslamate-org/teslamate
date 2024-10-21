@@ -408,6 +408,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "datasource",
         "uid": "-- Dashboard --"
       },
@@ -488,9 +489,7 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": [],
           "fields": "",
           "values": false
         },
@@ -514,11 +513,56 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": [
-                "consumption_kwh_mi",
-                "consumption_kwh_km"
-              ]
+              "pattern": "distance_km|distance_mi|consumption_kWh"
             }
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "distance_(mi|km)",
+            "renamePattern": "distance"
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "sum"
+            ]
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "consumption_kWh",
+              "operator": "/",
+              "right": "distance"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "consumption_kwh_$length_unit",
+            "binary": {
+              "left": "1000",
+              "operator": "*",
+              "right": "consumption_kWh / distance"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
           }
         }
       ],
@@ -1805,6 +1849,6 @@
   "timezone": "",
   "title": "Drives",
   "uid": "Y8upc6ZRk",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }
