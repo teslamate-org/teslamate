@@ -2,6 +2,17 @@
 
 ## [unreleased]
 
+As always, lots of improvements. The focus has been on performance improvements, especially on slow HW like Raspberry Pi 3B+. We achieved 240x speed improvements in several dashboards :rocket: And we welcomed @swiffer to the TeslaMate-Org team :wave: And much, much more. Enjoy it.
+
+**Regarding Postgres17:** TeslaMate uses PostgreSQL as database, this is an external dependency and needs to be updated by yourself. Although TeslaMate currently runs fine with Postgres12, 13, 14, 15, 16 we strongly recommend upgrading to newer versions as we plan to use some cool new features. We recommend that you do this as follows:
+
+- [Backup your data](https://docs.teslamate.org/docs/maintenance/backup_restore#backup)
+- [Upgrade TeslaMate to this version](https://docs.teslamate.org/docs/upgrading)
+- [Backup your data after the upgrade](https://docs.teslamate.org/docs/maintenance/backup_restore#backup)
+- [Upgrade PostgreSQL to postgres:17](https://docs.teslamate.org/docs/maintenance/upgrading_postgres) (Yes, you will have to erase your data, which is why you need your backup in the first place.)
+
+**Additional info:** In some very rare cases with very old installations of TeslaMate (from 2019) we have observed performance issues due to missing indexes. These should normally be added with our automatic migrations. If you think your installation may be missing some indexes, see #4201 for the corrective SQL command.
+
 ### New features
 
 ### Improvements and bug fixes
@@ -66,7 +77,7 @@
 - feat: display vehicle VIN as a fallback for vehicle name on grafana dashboards (#4198 - @arcastro)
 - feat: Add Moving Average / Percentiles to Charge Level dashboard & bucket data to support longer periods (#4200 - @swiffer)
 - increase max battery charge gauge threshold to 101 in case of LFP (#4191 - @neothematrix)
-- multiple cars, same name, add vin next to name (#4230 - @swiffer)
+- multiple cars, same name, add VIN next to name (#4230 - @swiffer)
 - json_build_object instead of concat in battery-health (#4229 - @swiffer)
 - perf: fix skipping streaming data in charging stats (#4252 - @swiffer)
 - perf: improvements drive stats (#4258 - @swiffer)
@@ -83,10 +94,10 @@
 
 - doc: Add initial author and list of contributors to README.md (#4084 - @JakobLichterfeld)
 - doc: add steps to the guide regarding how to switch to Fleet API (#4103 - @yangiak)
-- doc: align TPMS Pressure naming in sensor config to match ui config for home assistant (#4104 - @helmo)
+- doc: align TPMS Pressure naming in sensor config to match UI config for home assistant (#4104 - @helmo)
 - doc: Update screenshots and rearrange links (#4151 - @jheredianet)
-- doc: fix markdownlint warnings in fleet api documentation (#4173 - @JakobLichterfeld)
-- doc: clarify using fleet api has lots of drawbacks (#4173 - @JakobLichterfeld)
+- doc: fix markdownlint warnings in fleet API documentation (#4173 - @JakobLichterfeld)
+- doc: clarify using fleet API has lots of drawbacks (#4173 - @JakobLichterfeld)
 - docs: fix Home Assistant MQTT sensor JSON templates warnings (#4257 - @longzheng)
 - docs: add recommended RAM size (#4278 - @JakobLichterfeld)
 
