@@ -101,6 +101,7 @@ As always, lots of improvements. The focus has been on performance improvements,
 - doc: clarify using fleet API has lots of drawbacks (#4173 - @JakobLichterfeld)
 - docs: fix Home Assistant MQTT sensor JSON templates warnings (#4257 - @longzheng)
 - docs: add recommended RAM size (#4278 - @JakobLichterfeld)
+- docs: add best practice section to contribution guide (#4288 - @swiffer)
 
 ## [1.30.1] - 2024-07-10
 
