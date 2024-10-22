@@ -86,6 +86,7 @@ As always, lots of improvements. The focus has been on performance improvements,
 - feat: add max speed in drives dashboard (#4284 / #4267 - @js94x)
 - perf: exclude streaming data when getting battery level (#4286 - @swiffer)
 - perf: exclude streaming data in visited dashboard (#4287 - @swiffer)
+- fix: weighted average calculation for consumption in drives dashboard (#4289 - @swiffer)
 
 #### Translations
 
