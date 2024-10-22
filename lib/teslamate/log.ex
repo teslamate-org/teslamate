@@ -179,7 +179,8 @@ defmodule TeslaMate.Log do
           DateTime.add(DateTime.utc_now(), -10, :day)
 
         true ->
-          DateTime.from_iso8601("2003-07-01T00:00:00Z")
+          {:ok, default_date_earliest, _} = DateTime.from_iso8601("2003-07-01T00:00:00Z")
+          default_date_earliest
       end
 
     naive_date_earliest = DateTime.to_naive(date_earliest)
