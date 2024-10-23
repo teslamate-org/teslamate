@@ -62,6 +62,7 @@ As always, lots of improvements. The focus has been on performance improvements,
 - build(deps-dev): bump credo from 1.7.1 to 1.7.8 (#4238)
 - build(deps): bump crate-ci/typos from 1.22.9 to 1.26.0 (#4261)
 - refactor: Cleanup nix code (#4265 - @scottbot95)
+- build(deps): bump elixir from 1.16.2-otp-26 to 1.17.2-otp-27 (#4296 - @JakobLichterfeld)
 
 #### Dashboards
 
