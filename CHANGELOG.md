@@ -2,15 +2,27 @@
 
 ## [unreleased]
 
+As always, lots of improvements. The focus has been on performance improvements, especially on slow HW like Raspberry Pi 3B+. We achieved 240x speed improvements in several dashboards :rocket: And we welcomed @swiffer to the TeslaMate-Org team :wave: And much, much more. Enjoy it.
+
+**Regarding PostgreSQL 17:** TeslaMate uses PostgreSQL as database, this is an external dependency and needs to be updated by yourself. Although TeslaMate currently runs fine with PostgreSQL 12+ we strongly recommend upgrading to the latest supported version. We recommend that you do this as follows:
+
+- [Backup your data](https://docs.teslamate.org/docs/maintenance/backup_restore#backup)
+- [Upgrade TeslaMate to this version](https://docs.teslamate.org/docs/upgrading)
+- [Backup your data after the upgrade](https://docs.teslamate.org/docs/maintenance/backup_restore#backup)
+- [Upgrade PostgreSQL to postgres:17](https://docs.teslamate.org/docs/maintenance/upgrading_postgres) (Yes, you will have to erase your data, which is why you need your backup in the first place.)
+
+**Additional info:** In some very rare cases with very old installations of TeslaMate (from 2019) we have observed performance issues due to missing indexes. These should normally be added with our automatic migrations. If you think your installation may be missing some indexes, see #4201 for the corrective SQL command.
+
 ### New features
 
 ### Improvements and bug fixes
 
 - fix: 401 on direct Fleet API calls (#4095 - @jlestel)
-- feat: PostgreSQL 17 (#4231 - @swiffer)
+- feat: add support for PostgreSQL 17 (#4231 - @swiffer)
 - fix: add nix module option to specify postgres package (#4227 - @brianmay)
 - perf: limit positions to set elevation for to last 10 days (#4228 - @swiffer)
 - feat: add treefmt-nix to nix flake (#4219 - @JakobLichterfeld)
+- feat: use Grafana 11.0.6-security-01 (#4279 - @swiffer)
 
 #### Build, CI, internal
 
@@ -47,6 +59,10 @@
 - ci(fix): run ghcr build in DevOps workflow for forks ([688147e](https://github.com/teslamate-org/teslamate/commit/688147e2cf3fb5b55e702185a97a4a4ebb14d7ca) - @JakobLichterfeld)
 - ci(fix): correct syntax in ghcr_build workflow for workflow_call ([9e6a275](https://github.com/teslamate-org/teslamate/commit/9e6a2758d5ff21604976184ad69befc1c546e600) - @JakobLichterfeld)
 - ci(fix): run ghcr build as separate workflow to fix permission issues with forks ([0410593](https://github.com/teslamate-org/teslamate/commit/0410593850cde00e8f201a9b7d6009f0581ed43c) - @JakobLichterfeld)
+- build(deps-dev): bump credo from 1.7.1 to 1.7.8 (#4238)
+- build(deps): bump crate-ci/typos from 1.22.9 to 1.26.0 (#4261)
+- refactor: Cleanup nix code (#4265 - @scottbot95)
+- build(deps): bump elixir from 1.16.2-otp-26 to 1.17.2-otp-27 (#4296 - @JakobLichterfeld)
 
 #### Dashboards
 
@@ -63,8 +79,15 @@
 - feat: display vehicle VIN as a fallback for vehicle name on grafana dashboards (#4198 - @arcastro)
 - feat: Add Moving Average / Percentiles to Charge Level dashboard & bucket data to support longer periods (#4200 - @swiffer)
 - increase max battery charge gauge threshold to 101 in case of LFP (#4191 - @neothematrix)
-- multiple cars, same name, add vin next to name (#4230 - @swiffer)
+- multiple cars, same name, add VIN next to name (#4230 - @swiffer)
 - json_build_object instead of concat in battery-health (#4229 - @swiffer)
+- perf: fix skipping streaming data in charging stats (#4252 - @swiffer)
+- perf: improvements drive stats (#4258 - @swiffer)
+- fix: for drives not showing if duration < 1 minute (#4284 - @swiffer)
+- feat: add max speed in drives dashboard (#4284 / #4267 - @js94x)
+- perf: exclude streaming data when getting battery level (#4286 - @swiffer)
+- perf: exclude streaming data in visited dashboard (#4287 - @swiffer)
+- fix: weighted average calculation for consumption in drives dashboard (#4289 - @swiffer)
 
 #### Translations
 
@@ -74,10 +97,13 @@
 
 - doc: Add initial author and list of contributors to README.md (#4084 - @JakobLichterfeld)
 - doc: add steps to the guide regarding how to switch to Fleet API (#4103 - @yangiak)
-- doc: align TPMS Pressure naming in sensor config to match ui config for home assistant (#4104 - @helmo)
+- doc: align TPMS Pressure naming in sensor config to match UI config for home assistant (#4104 - @helmo)
 - doc: Update screenshots and rearrange links (#4151 - @jheredianet)
-- doc: fix markdownlint warnings in fleet api documentation (#4173 - @JakobLichterfeld)
-- doc: clarify using fleet api has lots of drawbacks (#4173 - @JakobLichterfeld)
+- doc: fix markdownlint warnings in fleet API documentation (#4173 - @JakobLichterfeld)
+- doc: clarify using fleet API has lots of drawbacks (#4173 - @JakobLichterfeld)
+- docs: fix Home Assistant MQTT sensor JSON templates warnings (#4257 - @longzheng)
+- docs: add recommended RAM size (#4278 - @JakobLichterfeld)
+- docs: add best practice section to contribution guide (#4288 - @swiffer)
 
 ## [1.30.1] - 2024-07-10
 

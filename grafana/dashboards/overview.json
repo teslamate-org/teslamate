@@ -160,7 +160,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "(SELECT battery_level, date\nFROM positions\nWHERE car_id = $car_id\nORDER BY date DESC\nLIMIT 1)\nUNION\nSELECT battery_level, date\nFROM charges c\nJOIN charging_processes p ON p.id = c.charging_process_id\nWHERE $__timeFilter(date) AND p.car_id = $car_id\nORDER BY date DESC\nLIMIT 1",
+          "rawSql": "(SELECT battery_level, date\nFROM positions\nWHERE car_id = $car_id and ideal_battery_range_km is not null\nORDER BY date DESC\nLIMIT 1)\nUNION\nSELECT battery_level, date\nFROM charges c\nJOIN charging_processes p ON p.id = c.charging_process_id\nWHERE $__timeFilter(date) AND p.car_id = $car_id\nORDER BY date DESC\nLIMIT 1",
           "refId": "A",
           "select": [
             [
@@ -2167,6 +2167,6 @@
   "timezone": "",
   "title": "Overview",
   "uid": "kOuP_Fggz",
-  "version": 10,
+  "version": 13,
   "weekStart": ""
 }

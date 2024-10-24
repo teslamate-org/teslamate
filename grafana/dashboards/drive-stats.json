@@ -125,11 +125,12 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  date_trunc('day', start_date) as \"time\",\n  count(*)\nFROM drives\nWHERE $__timeFilter(start_date) AND car_id = $car_id\nGROUP BY 1\nORDER BY 1;",
+          "rawSql": "WITH since as (\n\tSELECT min(start_date) at time zone 'UTC' as date FROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY car_id\n),\n\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', start_date at time zone 'UTC') AS date,\n\t\tcount(*) AS number_of_drives\n\tFROM drives\n\tWHERE car_id = $car_id and $__timeFilter(start_date) and $__timeFilter(end_date) \n\tGROUP BY 1\n),\n\nbase_line AS (\n\tSELECT date from generate_series(date_trunc('day', (select date from since)), date_trunc('day', timestamp with time zone $__timeTo()), '1 day'::interval) date\n)\n\nSELECT\n  base_line.date as time,\n\tCOALESCE(actual.number_of_drives, 0) as number_of_drives\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE date_trunc('day', timestamp with time zone $__timeFrom()) <= base_line.date\norder by base_line.date\n",
           "refId": "A",
           "select": [
             [
@@ -141,6 +142,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "addresses",
           "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
@@ -244,7 +262,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \n    DATE(start_date)  AS \"time\",\n    SUM(convert_km((end_km - start_km)::numeric, '$length_unit')) AS \"distance_$length_unit\"\nFROM drives \nWHERE car_id = $car_id\n\tAND $__timeFilter(start_date)\nGROUP BY DATE(start_date)\nORDER BY DATE(start_date);\n\n",
+          "rawSql": "WITH since as (\n\tSELECT min(start_date) at time zone 'UTC' as date FROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY car_id\n),\n\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', start_date at time zone 'UTC') AS date,\n\t\tsum(distance) AS distance\n\tFROM drives\n\tWHERE car_id = $car_id and $__timeFilter(start_date) and $__timeFilter(end_date) \n\tGROUP BY 1\n),\n\nbase_line AS (\n\tSELECT date from generate_series(date_trunc('day', (select date from since)), date_trunc('day', timestamp with time zone $__timeTo()), '1 day'::interval) date)\n\nSELECT\n  base_line.date as time,\n\tconvert_km(COALESCE(actual.distance, 0)::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE date_trunc('day', timestamp with time zone $__timeFrom()) <= base_line.date\norder by base_line.date\n",
           "refId": "A",
           "select": [
             [
@@ -346,11 +364,12 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(start_date),\n  NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency AS energy\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(start_date) AND car_id = $car_id\nORDER BY 1",
+          "rawSql": "WITH since as (\n\tSELECT min(start_date) at time zone 'UTC' as date FROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY car_id\n),\n\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', start_date at time zone 'UTC') AS date,\n\t\tsum(NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * cars.efficiency) AS energy\n\tFROM drives\n  INNER JOIN cars on drives.car_id = cars.id\n\tWHERE car_id = $car_id and $__timeFilter(start_date) and $__timeFilter(end_date) \n\tGROUP BY 1\n),\n\nbase_line AS (\n\tSELECT date from generate_series(date_trunc('day', (select date from since)), date_trunc('day', timestamp with time zone $__timeTo()), '1 day'::interval) date)\n\nSELECT\n  base_line.date as time,\n\tcoalesce(energy, 0) as energy\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE date_trunc('day', timestamp with time zone $__timeFrom()) <= base_line.date\norder by base_line.date\n",
           "refId": "A",
           "select": [
             [
@@ -362,6 +381,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "addresses",
           "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
@@ -453,9 +489,7 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": [],
           "fields": "",
           "values": false
         },
@@ -470,11 +504,12 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT convert_km((percentile_disc(0.5) WITHIN GROUP (ORDER BY distance))::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM drives\nWHERE car_id = $car_id AND $__timeFilter(start_date);",
+          "rawSql": "SELECT convert_km((percentile_cont(0.5) WITHIN GROUP (ORDER BY distance))::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM drives\nWHERE car_id = $car_id AND $__timeFilter(start_date) AND $__timeFilter(end_date);",
           "refId": "A",
           "select": [
             [
@@ -486,6 +521,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "addresses",
           "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
@@ -498,13 +550,14 @@
           ]
         }
       ],
-      "title": "Average distance of a drive",
+      "title": "Median distance of a drive",
       "type": "stat"
     },
     {
       "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+        "default": false,
+        "type": "datasource",
+        "uid": "-- Dashboard --"
       },
       "fieldConfig": {
         "defaults": {
@@ -581,35 +634,11 @@
       "targets": [
         {
           "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
+            "type": "datasource",
+            "uid": "-- Dashboard --"
           },
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH since as (\n\tSELECT date FROM positions\n\tWHERE car_id = $car_id\n\tORDER BY date ASC\n\tLIMIT 1\n),\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', start_date)::date AS date,\n\t\tsum(distance) AS distance\n\tFROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY 1\n),\nbase_line AS (\n\tSELECT date_trunc('day', dd)::date AS date\n  FROM generate_series((select date from since), NOW(), '1 day'::interval) dd\n),\ncombined as (\n  SELECT base_line.date, COALESCE(actual.distance, 0) as distance\n  FROM base_line\n  LEFT JOIN actual ON actual.date = base_line.date\n  WHERE $__timeFilter(base_line.date)\n)\nSELECT convert_km((percentile_disc(0.5) WITHIN GROUP (ORDER BY distance))::numeric, '$length_unit') AS \"distance_$length_unit\"\nFROM combined;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "efficiency"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "cars",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          "panelId": 16,
+          "refId": "A"
         }
       ],
       "title": "Average distance driven per day",
@@ -617,8 +646,9 @@
     },
     {
       "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+        "default": false,
+        "type": "datasource",
+        "uid": "-- Dashboard --"
       },
       "fieldConfig": {
         "defaults": {
@@ -670,35 +700,11 @@
       "targets": [
         {
           "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
+            "type": "datasource",
+            "uid": "-- Dashboard --"
           },
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH since as (\n\tSELECT date FROM positions\n\tWHERE car_id = $car_id\n\tORDER BY date ASC\n\tLIMIT 1\n),\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', start_date)::date AS date,\n\t\tsum(NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency) AS energy\n\tFROM drives\n\tJOIN cars car ON car.id = car_id\n\tWHERE car_id = $car_id\n\tGROUP BY 1\n),\nbase_line AS (\n\tSELECT date_trunc('day', dd)::date AS date\n  FROM generate_series((select date from since), NOW(), '1 day'::interval) dd\n),\ncombined as (\n  SELECT base_line.date, COALESCE(actual.energy, 0) as energy\n  FROM base_line\n  LEFT JOIN actual ON actual.date = base_line.date\n  WHERE $__timeFilter(base_line.date)\n)\nSELECT percentile_disc(0.5) WITHIN GROUP (ORDER BY energy) AS energy\nFROM combined;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          "panelId": 22,
+          "refId": "A"
         }
       ],
       "title": "Average kWh used per day",
@@ -787,11 +793,12 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH first_position AS (\n\tSELECT date, odometer\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date)\n\tORDER BY date ASC\n\tLIMIT 1\n),\nlast_position AS (\n\tSELECT date, odometer\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date)\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT\n\tconvert_km((((SELECT odometer FROM last_position) - (SELECT odometer\tFROM first_position)) /\n\tEXTRACT(days FROM (SELECT date FROM last_position) - (SELECT date\tFROM first_position)) * \n\t(365/12))::numeric, '$length_unit') AS \"mileage_$length_unit\";",
+          "rawSql": "WITH since as (\r\n\tSELECT min(start_date) at time zone 'UTC' as date FROM drives\r\n\tWHERE car_id = $car_id\r\n\tGROUP BY car_id\r\n)\r\n\r\nselect\r\n  convert_km(((max(end_km) - min(start_km)) / greatest(extract(days from (timestamp with time zone $__timeTo() - greatest(timestamp with time zone $__timeFrom(), (select date from since)))), 1) * (365/12))::numeric, '$length_unit') as \"mileage_$length_unit\"\r\nfrom drives\r\nwhere car_id = $car_id and $__timeFilter(start_date) and $__timeFilter(end_date)\r\ngroup by car_id",
           "refId": "A",
           "select": [
             [
@@ -803,6 +810,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "addresses",
           "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
@@ -820,8 +844,9 @@
     },
     {
       "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+        "default": false,
+        "type": "datasource",
+        "uid": "-- Dashboard --"
       },
       "fieldConfig": {
         "defaults": {
@@ -898,38 +923,48 @@
       "targets": [
         {
           "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
+            "type": "datasource",
+            "uid": "-- Dashboard --"
           },
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH first_position AS (\n\tSELECT date, odometer\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date)\n\tORDER BY date ASC\n\tLIMIT 1\n),\nlast_position AS (\n\tSELECT date, odometer\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date)\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT\n\tconvert_km(((lp.odometer - fp.odometer) /\n\tEXTRACT(days FROM lp.date - fp.date) * \n\t365)::numeric, '$length_unit') AS \"mileage_$length_unit\" from first_position as fp, last_position as lp;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          "panelId": 32,
+          "refId": "A"
         }
       ],
       "title": "Extrapolated annual mileage",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "mileage_km",
+            "binary": {
+              "left": "mileage_km",
+              "operator": "*",
+              "right": "12"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "mileage_mi",
+            "binary": {
+              "left": "mileage_mi",
+              "operator": "*",
+              "right": "12"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
       "type": "stat"
     },
     {
@@ -999,7 +1034,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT * FROM (\nSELECT\n\tCOALESCE(g.name, COALESCE(a.name, nullif(CONCAT_WS(' ', a.road, a.house_number), ''))) as name,\n\tcount(*) AS visited\nFROM drives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE t.car_id = $car_id AND $__timeFilter(t.start_date)\nGROUP BY 1\nORDER BY visited DESC)\nWHERE name NOT ILIKE ALL ${exclude_formatted_string:raw}\nLIMIT 10;",
+          "rawSql": "SELECT * FROM (\nSELECT\n\tCOALESCE(g.name, COALESCE(a.name, nullif(CONCAT_WS(' ', a.road, a.house_number), ''))) as name,\n\tcount(*) AS visited\nFROM drives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE t.car_id = $car_id AND $__timeFilter(t.start_date) and $__timeFilter(t.end_date) \nGROUP BY 1\nORDER BY visited DESC)\nWHERE name NOT ILIKE ALL ${exclude_formatted_string:raw}\nLIMIT 10;",
           "refId": "A",
           "select": [
             [
@@ -1169,13 +1204,13 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "WITH splits AS (\n    SELECT unnest(string_to_array('$exclude', ', ')) AS part\n),\nsplit_strings AS (\n\tSELECT COALESCE(part, ' ') AS part\n\tFROM (VALUES (NULL)) AS v(dummy)\n\tLEFT JOIN splits ON TRUE\n),\nexclude_string AS (\n\tSELECT array_to_string(array_agg('''%' || part || '%'''), ', ') AS formatted_string\n\tFROM split_strings\n)\nSELECT '(ARRAY[' || formatted_string || '])' FROM exclude_string",
+        "definition": "WITH splits AS (\n    SELECT unnest(string_to_array('$exclude', ', ')) AS part\n),\nsplit_strings AS (\n\tSELECT part AS part\n\tFROM (VALUES (NULL)) AS v(dummy)\n\tLEFT JOIN splits ON TRUE\n),\nexclude_string AS (\n\tSELECT array_to_string(array_agg(case when part is null then '''''' else '''%' || part || '%''' end), ', ') AS formatted_string\n\tFROM split_strings\n)\nSELECT '(ARRAY[' || formatted_string || '])' FROM exclude_string",
         "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "exclude_formatted_string",
         "options": [],
-        "query": "WITH splits AS (\n    SELECT unnest(string_to_array('$exclude', ', ')) AS part\n),\nsplit_strings AS (\n\tSELECT COALESCE(part, ' ') AS part\n\tFROM (VALUES (NULL)) AS v(dummy)\n\tLEFT JOIN splits ON TRUE\n),\nexclude_string AS (\n\tSELECT array_to_string(array_agg('''%' || part || '%'''), ', ') AS formatted_string\n\tFROM split_strings\n)\nSELECT '(ARRAY[' || formatted_string || '])' FROM exclude_string",
+        "query": "WITH splits AS (\n    SELECT unnest(string_to_array('$exclude', ', ')) AS part\n),\nsplit_strings AS (\n\tSELECT part AS part\n\tFROM (VALUES (NULL)) AS v(dummy)\n\tLEFT JOIN splits ON TRUE\n),\nexclude_string AS (\n\tSELECT array_to_string(array_agg(case when part is null then '''''' else '''%' || part || '%''' end), ', ') AS formatted_string\n\tFROM split_strings\n)\nSELECT '(ARRAY[' || formatted_string || '])' FROM exclude_string",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1217,6 +1252,6 @@
   "timezone": "",
   "title": "Drive Stats",
   "uid": "_7WkNSyWk",
-  "version": 4,
+  "version": 14,
   "weekStart": ""
 }
