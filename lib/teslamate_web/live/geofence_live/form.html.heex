@@ -49,21 +49,11 @@
     <div class="field-body">
       <div class="field is-expanded">
         <div class="control">
-          <input
-            class="input"
-            id="geo_fence_name"
-            name="geo_fence[name]"
-            placeholder="Name"
-            type="text"
-            value=""
-          />
+          <%= text_input(f, :name, class: "input", placeholder: gettext("Name")) %>
         </div>
-
-        <p class="help is-danger">
-          <span class="help is-danger pl-15" phx-feedback-for="geo_fence[name]">
-            can't be blank
-          </span>
-        </p>
+        <%= if @show_errors do %>
+          <p class="help is-danger"><%= error_tag(f, :name) %></p>
+        <% end %>
       </div>
     </div>
   </div>
