@@ -63,6 +63,7 @@ As always, lots of improvements. The focus has been on performance improvements,
 - build(deps): bump crate-ci/typos from 1.22.9 to 1.26.0 (#4261)
 - refactor: Cleanup nix code (#4265 - @scottbot95)
 - build(deps): bump elixir from 1.16.2-otp-26 to 1.17.2-otp-27 (#4296 - @JakobLichterfeld)
+- build(deps): bump http-proxy-middleware from 2.0.6 to 2.0.7 in /website (#4303)
 
 #### Dashboards
 
@@ -88,6 +89,7 @@ As always, lots of improvements. The focus has been on performance improvements,
 - perf: exclude streaming data when getting battery level (#4286 - @swiffer)
 - perf: exclude streaming data in visited dashboard (#4287 - @swiffer)
 - fix: weighted average calculation for consumption in drives dashboard (#4289 - @swiffer)
+- perf: improvement in charge level (#4301 - @swiffer)
 
 #### Translations
 
