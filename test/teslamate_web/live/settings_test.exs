@@ -229,9 +229,9 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                    )
                  )
                  |> case do
-                  nil -> flunk("HTML structure is nil")
-                  element -> Floki.find(element, "p.help") |> Floki.text()
-                end
+          nil -> flunk("HTML structure is nil")
+          element -> Floki.find(element, "p.help") |> Floki.text()
+        end
 
         assert [{"option", [{"selected", "selected"}, {"value", "en"}], ["English"]}] =
                  html
