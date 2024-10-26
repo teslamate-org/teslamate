@@ -62,7 +62,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -830,7 +830,7 @@
                   {
                     "targetBlank": true,
                     "title": "",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.path}"
+                    "url": "${base_url:raw}/geo-fences/${__data.fields.path}"
                   }
                 ]
               },
@@ -1092,7 +1092,7 @@
                   {
                     "targetBlank": true,
                     "title": "",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.id.numeric:raw}/edit"
+                    "url": "${base_url:raw}/geo-fences/${__data.fields.id.numeric:raw}/edit"
                   }
                 ]
               },
