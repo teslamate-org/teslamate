@@ -91,6 +91,7 @@ As always, lots of improvements. The focus has been on performance improvements,
 - perf: exclude streaming data in visited dashboard (#4287 - @swiffer)
 - fix: weighted average calculation for consumption in drives dashboard (#4289 - @swiffer)
 - perf: improvement in charge level (#4301 - @swiffer)
+- perf: improvement and deprecated syntax removal (#4304 - @swiffer)
 
 #### Translations
 
