@@ -64,6 +64,7 @@ As always, lots of improvements. The focus has been on performance improvements,
 - refactor: Cleanup nix code (#4265 - @scottbot95)
 - build(deps): bump elixir from 1.16.2-otp-26 to 1.17.2-otp-27 (#4296 - @JakobLichterfeld)
 - build(deps): bump http-proxy-middleware from 2.0.6 to 2.0.7 in /website (#4303)
+- feat: update to Phoenix HTML 4.1, bump dependencies (#4277 - sdwalker and @JakobLichterfeld)
 
 #### Dashboards
 
