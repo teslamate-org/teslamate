@@ -209,7 +209,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       TestHelper.eventually(fn ->
         html = render(view)
-        IO.inspect(html, label: "Rendered HTML")
 
         assert "There was a problem retrieving data from OpenStreetMap. Please try again later." =
                  html
