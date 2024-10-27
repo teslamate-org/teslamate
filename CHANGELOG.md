@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased]
+## [1.31.0] - 2024-10-27
 
 As always, lots of improvements. The focus has been on performance improvements, especially on slow HW like Raspberry Pi 3B+. We achieved 240x speed improvements in several dashboards :rocket: And we welcomed @swiffer to the TeslaMate-Org team :wave: And much, much more. Enjoy it.
 
@@ -2163,7 +2163,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.30.1...HEAD
+[1.31.0]: https://github.com/teslamate-org/teslamate/compare/v1.30.1...v1.31.0
 [1.30.1]: https://github.com/teslamate-org/teslamate/compare/v1.30.0...v1.30.1
 [1.30.0]: https://github.com/teslamate-org/teslamate/compare/v1.29.2...v1.30.0
 [1.29.2]: https://github.com/teslamate-org/teslamate/compare/v1.29.1...v1.29.2
