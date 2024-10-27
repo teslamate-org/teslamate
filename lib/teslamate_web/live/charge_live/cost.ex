@@ -7,7 +7,7 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
   alias TeslaMate.Log.ChargingProcess
   alias TeslaMate.Log
 
-  import TeslaMateWeb.Gettext
+  use Gettext, backend: TeslaMateWeb.Gettext
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
