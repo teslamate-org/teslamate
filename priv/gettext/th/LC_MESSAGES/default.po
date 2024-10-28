@@ -33,7 +33,7 @@ msgstr "ชาร์จเรียบร้อยแล้ว"
 #: lib/teslamate_web/live/car_live/summary.ex:131
 #, elixir-autogen, elixir-format
 msgid "asleep"
-msgstr "หลับ"
+msgstr "หลับอยู่"
 
 #: lib/teslamate_web/live/car_live/summary.ex:126
 #, elixir-autogen, elixir-format
