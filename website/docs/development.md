@@ -89,7 +89,7 @@ For TeslaMate:
 ```yml
 teslamate:
   # image: teslamate/teslamate:latest
-  image: ghcr.io/teslamate-org/teslamate/teslamate:pr-3836
+  image: ghcr.io/teslamate-org/teslamate:pr-3836
 ```
 
 For Grafana:
@@ -107,7 +107,7 @@ To update dashboards you need Grafana running locally. The following _docker-com
 ```yml
 services:
   grafana:
-    image: teslamate-grafana:latest
+    image: teslamate/grafana:latest
     environment:
       - DATABASE_USER=postgres
       - DATABASE_PASS=postgres
