@@ -1278,7 +1278,7 @@
           ]
         }
       ],
-      "title": "Speed Histogram",
+      "title": "Speed Histogram ($speed_unit)",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -1687,6 +1687,25 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
+        },
+        "definition": "SELECT CASE WHEN '$length_unit' = 'km' THEN 'km/h' WHEN '$length_unit' = 'mi' THEN 'mph' END",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "speed_unit",
+        "options": [],
+        "query": "SELECT CASE WHEN '$length_unit' = 'km' THEN 'km/h' WHEN '$length_unit' = 'mi' THEN 'mph' END",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       },
       {
         "current": {},
