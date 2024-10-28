@@ -1138,7 +1138,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "fixed"
+            "mode": "continuous-GrYlRd"
           },
           "custom": {
             "axisBorderShow": false,
