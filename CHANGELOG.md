@@ -11,6 +11,7 @@
 #### Dashboards
 
 - perf: add ideal_battery_range_km as query condition (#4305 - @swiffer)
+- fix: re-add missing changes from pr 4124 (#4310 - @swiffer)
 
 #### Translations
 
