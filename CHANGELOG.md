@@ -17,6 +17,8 @@
 
 #### Documentation
 
+- docs: fix ghcr image path in contributing guide (#4309 - @swiffer)
+
 ## [1.31.0] - 2024-10-27
 
 As always, lots of improvements. The focus has been on performance improvements, especially on slow HW like Raspberry Pi 3B+. We achieved 240x speed improvements in several dashboards :rocket: And we welcomed @swiffer to the TeslaMate-Org team :wave: And much, much more. Enjoy it.
