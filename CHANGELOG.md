@@ -10,6 +10,8 @@
 
 #### Dashboards
 
+- perf: add ideal_battery_range_km as query condition (#4305 - @swiffer)
+
 #### Translations
 
 #### Documentation
