@@ -15,6 +15,8 @@
 
 #### Translations
 
+- Update default.po for thai (#4312 - @tomzt)
+
 #### Documentation
 
 - docs: fix ghcr image path in contributing guide (#4309 - @swiffer)
