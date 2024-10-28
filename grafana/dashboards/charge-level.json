@@ -50,7 +50,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -177,7 +177,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tdate_bin('2 minutes'::interval, date at time zone 'UTC', to_timestamp(${__from:date:seconds})) as time,\n\tavg(battery_level) AS \"Battery Level\",\n\tavg(usable_battery_level) AS \"Usable Battery Level\"\nfrom positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id\n\tgroup by time\n\tORDER BY time ASC\n;",
+          "rawSql": "SELECT\n\tdate_bin('2 minutes'::interval, date at time zone 'UTC', to_timestamp(${__from:date:seconds})) as time,\n\tavg(battery_level) AS \"Battery Level\",\n\tavg(usable_battery_level) AS \"Usable Battery Level\"\nfrom positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id and ideal_battery_range_km is not null\n\tgroup by time\n\tORDER BY time ASC\n;",
           "refId": "A",
           "select": [
             [

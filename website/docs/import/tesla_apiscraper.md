@@ -67,4 +67,3 @@ All of this is experimental and has not been extensively tested. If you encounte
 ### Part 3: Importing the processed CSV data into TeslaMate
 
 - Proceed with the [TeslaFi import](teslafi.md) steps using the CSV files you just created.
-

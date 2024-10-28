@@ -179,7 +179,8 @@ defmodule TeslaMate.Log do
           DateTime.add(DateTime.utc_now(), -10, :day)
 
         true ->
-          DateTime.from_iso8601("2003-07-01T00:00:00Z")
+          {:ok, default_date_earliest, _} = DateTime.from_iso8601("2003-07-01T00:00:00Z")
+          default_date_earliest
       end
 
     naive_date_earliest = DateTime.to_naive(date_earliest)
@@ -189,7 +190,7 @@ defmodule TeslaMate.Log do
         from p in Position,
           select: p.drive_id,
           inner_join: d in assoc(p, :drive),
-          where: d.start_date > ^naive_date_earliest,
+          where: d.start_date > ^naive_date_earliest and p.id > ^min_id,
           having:
             count()
             |> filter(not is_nil(p.odometer) and is_nil(p.ideal_battery_range_km)) == 0,

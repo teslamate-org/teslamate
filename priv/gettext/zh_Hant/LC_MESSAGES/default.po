@@ -82,7 +82,7 @@ msgstr "首頁"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:99
+#: lib/teslamate_web/templates/layout/root.html.heex:107
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "設定"
@@ -128,7 +128,7 @@ msgid "Units"
 msgstr "單位"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:165
-#: lib/teslamate_web/live/geofence_live/form.html.heex:123
+#: lib/teslamate_web/live/geofence_live/form.html.heex:124
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "後退"
@@ -141,8 +141,8 @@ msgstr "收藏地點 \"%{name}\" 已建立"
 #: lib/teslamate_web/live/geofence_live/form.ex:110
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
-#: lib/teslamate_web/live/geofence_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:96
+#: lib/teslamate_web/live/geofence_live/index.html.heex:5
+#: lib/teslamate_web/templates/layout/root.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
 msgstr "收藏地點"
@@ -154,30 +154,30 @@ msgstr "進入休眠前的閒置時間"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:46
 #: lib/teslamate_web/live/geofence_live/form.html.heex:52
-#: lib/teslamate_web/live/geofence_live/index.html.heex:22
+#: lib/teslamate_web/live/geofence_live/index.html.heex:23
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "名字"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:19
-#: lib/teslamate_web/live/geofence_live/index.html.heex:23
+#: lib/teslamate_web/live/geofence_live/index.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "Position"
 msgstr "位置"
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:24
+#: lib/teslamate_web/live/geofence_live/index.html.heex:25
 #, elixir-autogen, elixir-format
 msgid "Radius"
 msgstr "半徑"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:168
-#: lib/teslamate_web/live/geofence_live/form.html.heex:129
+#: lib/teslamate_web/live/geofence_live/form.html.heex:128
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "保存"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:169
-#: lib/teslamate_web/live/geofence_live/form.html.heex:130
+#: lib/teslamate_web/live/geofence_live/form.html.heex:129
 #: lib/teslamate_web/live/signin_live/index.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -204,7 +204,7 @@ msgstr "登入成功"
 msgid "Car is unlocked"
 msgstr "已鎖車"
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:10
+#: lib/teslamate_web/live/geofence_live/index.html.heex:14
 #, elixir-autogen, elixir-format
 msgid "Create"
 msgstr "新建"
@@ -343,7 +343,7 @@ msgid "Remaining Time"
 msgstr "剩餘時間"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:324
-#: lib/teslamate_web/templates/layout/root.html.heex:81
+#: lib/teslamate_web/templates/layout/root.html.heex:83
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "控制台"
@@ -443,7 +443,7 @@ msgid "TeslaFi Import"
 msgstr "從TeslaFi匯入"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:10
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "Found %{count} file"
 msgid_plural "Found %{count} files"
 msgstr[0] "找到了 %{count} 個檔案"
@@ -501,23 +501,23 @@ msgstr "/度"
 msgid "Total"
 msgstr "總共"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:164
-#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.heex:163
+#, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "此地點有 <strong>%{n} 次</strong> 充電記錄，尚未增加費用。"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:178
+#: lib/teslamate_web/live/geofence_live/form.html.heex:177
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "追溯添加費用"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:156
+#: lib/teslamate_web/live/geofence_live/form.html.heex:155
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "充電費用"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:175
+#: lib/teslamate_web/live/geofence_live/form.html.heex:174
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "下一步"
@@ -543,7 +543,7 @@ msgid "GitHub"
 msgstr "GitHub"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:355
-#: lib/teslamate_web/templates/layout/root.html.heex:168
+#: lib/teslamate_web/templates/layout/root.html.heex:176
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "有可用更新"
@@ -609,22 +609,22 @@ msgstr "您的 Tesla 帳號因登入失敗次數過多而被鎖定。要解鎖�
 msgid "Downloading update"
 msgstr "下載更新"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:125
+#: lib/teslamate_web/templates/layout/root.html.heex:133
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "未提供密鑰"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:145
+#: lib/teslamate_web/templates/layout/root.html.heex:153
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "獲取更多資訊，請查看更新安裝指引"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:138
+#: lib/teslamate_web/templates/layout/root.html.heex:146
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "目前對話自動生成的密鑰可在<strong>應用程式日誌</strong>中找到"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:131
+#: lib/teslamate_web/templates/layout/root.html.heex:139
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "為了確保你的<strong>Tesla API tokens安全儲存</strong>,密鑰必須通過<code>ENCRYPTION_KEY</code>環境變數提供给Teslamate.否則每次重啟都會被要求登入"

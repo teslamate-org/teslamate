@@ -62,8 +62,8 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     unique_id: teslamate_1_display_name # internal id, used for device grouping
     availability: &teslamate_availability
       - topic: teslamate/cars/1/healthy
-        payload_available: 'true'
-        payload_not_available: 'false'
+        payload_available: "true"
+        payload_not_available: "false"
     device: &teslamate_device_info
       identifiers: [teslamate_car_1]
       configuration_url: https://teslamate.zxxz.io/
@@ -81,7 +81,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     device: *teslamate_device_info
     json_attributes_topic: "teslamate/cars/1/location"
     icon: mdi:crosshairs-gps
-    
+
 - device_tracker:
     name: Active route location
     object_id: tesla_active_route_location
@@ -91,7 +91,12 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
         value_template: "{{ 'offline' if value_json.error else 'online' }}"
     device: *teslamate_device_info
     json_attributes_topic: "teslamate/cars/1/active_route"
-    json_attributes_template: "{{ value_json.location | tojson }}"
+    json_attributes_template: >
+      {% if not value_json.error and value_json.location %}
+        {{ value_json.location | tojson }}
+      {% else %}
+        {}
+      {% endif %}
     icon: mdi:crosshairs-gps
 
 - sensor:
@@ -305,7 +310,7 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     device_class: battery
     unit_of_measurement: "%"
     icon: mdi:battery-80
-    
+
 - sensor:
     name: Usable Battery Level
     object_id: tesla_usable_battery_level
@@ -446,7 +451,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.destination }}"
+    value_template: >
+      {% if not value_json.error and value_json.destination %}
+        {{ value_json.destination }}
+      {% endif %}
     icon: mdi:map-marker
 
 - sensor:
@@ -456,7 +464,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.energy_at_arrival }}"
+    value_template: >
+      {% if not value_json.error and value_json.energy_at_arrival %}
+        {{ value_json.energy_at_arrival }}
+      {% endif %}
     unit_of_measurement: "%"
     icon: mdi:battery-80
 
@@ -467,7 +478,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.miles_to_arrival }}"
+    value_template: >
+      {% if not value_json.error and value_json.miles_to_arrival %}
+        {{ value_json.miles_to_arrival }}
+      {% endif %}
     unit_of_measurement: mi
     icon: mdi:map-marker-distance
 
@@ -478,7 +492,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.minutes_to_arrival }}"
+    value_template: >
+      {% if not value_json.error and value_json.minutes_to_arrival %}
+        {{ value_json.minutes_to_arrival }}
+      {% endif %}
     unit_of_measurement: min
     icon: mdi:clock-outline
 
@@ -489,7 +506,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     availability: *teslamate_active_route_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/active_route"
-    value_template: "{{ value_json.traffic_minutes_delay }}"
+    value_template: >
+      {% if not value_json.error and value_json.traffic_minutes_delay %}
+        {{ value_json.traffic_minutes_delay }}
+      {% endif %}
     unit_of_measurement: min
     icon: mdi:clock-alert-outline
 
@@ -642,106 +662,138 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
     payload_on: "true"
     payload_off: "false"
     icon: mdi:ev-plug-tesla
-
 ```
 
 ### sensor.yaml (sensor: section of configuration.yaml)
 
 ```yml title="sensor.yaml"
- - platform: template
-   sensors:
+- platform: template
+  sensors:
     tesla_est_battery_range_mi:
       friendly_name: Estimated Range (mi)
       unit_of_measurement: mi
       icon_template: mdi:gauge
+      availability_template: "{{ has_value('sensor.tesla_est_battery_range_km') }}"
       value_template: >
-       {{ (states('sensor.tesla_est_battery_range_km') | float / 1.609344) | round(2) }}
+        {% if has_value('sensor.tesla_est_battery_range_km') %}
+          {{ (states('sensor.tesla_est_battery_range_km') | float / 1.609344) | round(2) }}
+        {% endif %}
 
     tesla_rated_battery_range_mi:
       friendly_name: Rated Range (mi)
       unit_of_measurement: mi
       icon_template: mdi:gauge
+      availability_template: "{{ has_value('sensor.tesla_rated_battery_range_km') }}"
       value_template: >
-       {{ (states('sensor.tesla_rated_battery_range_km') | float / 1.609344) | round(2) }}
+        {% if has_value('sensor.tesla_rated_battery_range_km') %}
+          {{ (states('sensor.tesla_rated_battery_range_km') | float / 1.609344) | round(2) }}
+        {% endif %}
 
     tesla_ideal_battery_range_mi:
       friendly_name: Ideal Range (mi)
       unit_of_measurement: mi
       icon_template: mdi:gauge
+      availability_template: "{{ has_value('sensor.tesla_ideal_battery_range_km') }}"
       value_template: >
-       {{ (states('sensor.tesla_ideal_battery_range_km') | float / 1.609344) | round(2) }}
+        {% if has_value('sensor.tesla_ideal_battery_range_km') %}
+          {{ (states('sensor.tesla_ideal_battery_range_km') | float / 1.609344) | round(2) }}
+        {% endif %}
 
     tesla_odometer_mi:
       friendly_name: Odometer (mi)
       unit_of_measurement: mi
       icon_template: mdi:counter
+      availability_template: "{{ has_value('sensor.tesla_odometer') }}"
       value_template: >
-       {{ (states('sensor.tesla_odometer') | float / 1.609344) | round(2) }}
+        {% if has_value('sensor.tesla_odometer') %}
+          {{ (states('sensor.tesla_odometer') | float / 1.609344) | round(2) }}
+        {% endif %}
 
     tesla_speed_mph:
       friendly_name: Speed (MPH)
       unit_of_measurement: mph
       icon_template: mdi:speedometer
+      availability_template: "{{ has_value('sensor.tesla_speed') }}"
       value_template: >
-       {{ (states('sensor.tesla_speed') | float / 1.609344) | round(2) }}
+        {% if has_value('sensor.tesla_speed') %}
+          {{ (states('sensor.tesla_speed') | float / 1.609344) | round(2) }}
+        {% endif %}
 
     tesla_elevation_ft:
       friendly_name: Elevation (ft)
       unit_of_measurement: ft
       icon_template: mdi:image-filter-hdr
+      availability_template: "{{ has_value('sensor.tesla_elevation') }}"
       value_template: >
-       {{ (states('sensor.tesla_elevation') | float * 3.2808 ) | round(2) }}
+        {% if has_value('sensor.tesla_elevation') %}
+          {{ (states('sensor.tesla_elevation') | float * 3.2808) | round(2) }}
+        {% endif %}
 
     tesla_tpms_pressure_fl_psi:
       friendly_name: Front Left Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
+      availability_template: "{{ has_value('sensor.tesla_tpms_fl') }}"
       value_template: >
-       {{ (states('sensor.tesla_tpms_pressure_fl') | float * 14.50377) | round(2) }}
+        {% if has_value('sensor.tesla_tpms_fl') %}
+          {{ (states('sensor.tesla_tpms_fl') | float * 14.50377) | round(2) }}
+        {% endif %}
 
     tesla_tpms_pressure_fr_psi:
       friendly_name: Front Right Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
+      availability_template: "{{ has_value('sensor.tesla_tpms_fr') }}"
       value_template: >
-       {{ (states('sensor.tesla_tpms_pressure_fr') | float * 14.50377) | round(2) }}
+        {% if has_value('sensor.tesla_tpms_fr') %}
+          {{ (states('sensor.tesla_tpms_fr') | float * 14.50377) | round(2) }}
+        {% endif %}
 
     tesla_tpms_pressure_rl_psi:
       friendly_name: Rear Left Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
+      availability_template: "{{ has_value('sensor.tesla_tpms_rl') }}"
       value_template: >
-       {{ (states('sensor.tesla_tpms_pressure_rl') | float * 14.50377) | round(2) }}
+        {% if has_value('sensor.tesla_tpms_rl') %}
+          {{ (states('sensor.tesla_tpms_rl') | float * 14.50377) | round(2) }}
+        {% endif %}
 
     tesla_tpms_pressure_rr_psi:
       friendly_name: Rear Right Tire Pressure (psi)
       unit_of_measurement: psi
       icon_template: mdi:car-tire-alert
+      availability_template: "{{ has_value('sensor.tesla_tpms_rr') }}"
       value_template: >
-       {{ (states('sensor.tesla_tpms_pressure_rr') | float * 14.50377) | round(2) }}
+        {% if has_value('sensor.tesla_tpms_rr') %}
+          {{ (states('sensor.tesla_tpms_rr') | float * 14.50377) | round(2) }}
+        {% endif %}
 
     tesla_active_route_distance_to_arrival_km:
       friendly_name: Active route distance to arrival (km)
       unit_of_measurement: km
       icon_template: mdi:map-marker-distance
+      availability_template: "{{ has_value('sensor.tesla_active_route_distance_to_arrival_mi') }}"
       value_template: >
-        {{ (states('sensor.tesla_active_route_distance_to_arrival_mi') | float * 1.609344) | round(2) }}
+        {% if has_value('sensor.tesla_active_route_distance_to_arrival_mi') %}
+          {{ (states('sensor.tesla_active_route_distance_to_arrival_mi') | float * 1.609344) | round(2) }}
+        {% endif %}
 ```
 
 ### binary_sensor.yaml (binary_sensor: section of configuration.yaml)
 
 ```yml title="binary_sensor.yaml"
- - platform: template
-   sensors:
+- platform: template
+  sensors:
     tesla_park_brake:
       friendly_name: Parking Brake
       icon_template: mdi:car-brake-parking
       value_template: >-
-       {% if is_state('sensor.tesla_shift_state', 'P') %}
-         ON
-       {% else %}
-         OFF
-       {% endif %}
+        {% if is_state('sensor.tesla_shift_state', 'P') %}
+          ON
+        {% else %}
+          OFF
+        {% endif %}
 ```
 
 ### ui-lovelace.yaml
@@ -1100,7 +1152,7 @@ notify_tesla_windows_open:
       data:
         variables:
           whatsopen: "windows"
-          
+
 - id: plugin-tesla-notify
   alias: Notify if Tesla not plugged in at night
   trigger:
@@ -1120,4 +1172,3 @@ conditions:
   initial_state: true
   mode: single
 ```
-
