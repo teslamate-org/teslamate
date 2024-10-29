@@ -8,6 +8,8 @@
 
 #### Build, CI, internal
 
+- ci(fix): update cleanup_caches.yml to use new cache management commands and fix permissions ([d6793ce](https://github.com/teslamate-org/teslamate/commit/d6793ce5717687b9e984067bf4c208415e15fdac) - @JakobLichterfeld)
+
 #### Dashboards
 
 - perf: add ideal_battery_range_km as query condition (#4305 - @swiffer)
