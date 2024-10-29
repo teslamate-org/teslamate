@@ -19,6 +19,7 @@
 #### Translations
 
 - Update default.po for thai (#4312 - @tomzt)
+- Spanish translation of missing items (#4320 -@ferminmg)
 
 #### Documentation
 
