@@ -540,7 +540,11 @@
               },
               {
                 "id": "custom.minWidth",
-                "value": 160
+                "value": 180
+              },
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
               }
             ]
           },
