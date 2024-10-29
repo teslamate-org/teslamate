@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- fix: downgrade elixir from 1.17.2-otp-27 to 1.17.3-otp-26 (#4315 - @swiffer)
+
 #### Build, CI, internal
 
 #### Dashboards
