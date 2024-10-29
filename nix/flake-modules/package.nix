@@ -2,8 +2,8 @@
 {
   perSystem = { lib, pkgs, system, ... }:
     let
-      elixir = pkgs.beam.packages.erlang_27.elixir_1_17;
-      beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_27;
+      elixir = pkgs.beam.packages.erlang_26.elixir_1_17;
+      beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_26;
 
       src = ../..;
       version = builtins.readFile "${src}/VERSION";
@@ -13,7 +13,7 @@
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-Y+CGgvnSCiiuyhtsQ+j0vayq1IHO5IEPVl+V/wwTd6w=";
+        hash = "sha256-46RLGX86/soSlEHifFspFGQeDU6s9agFEa9uRw4tZRg=";
         # hash = pkgs.lib.fakeHash;
       };
 
