@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- fix: use elixir-1.17.3-otp-26 to avoid beam.smp chewing CPU on arm (#4319 - @swiffer and @JakobLichterfeld)
+
 #### Build, CI, internal
 
 #### Dashboards
