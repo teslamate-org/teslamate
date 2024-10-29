@@ -1,5 +1,19 @@
 # Changelog
 
+## [unreleased]
+
+### New features
+
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [1.31.1] - 2024-10-29
 
 This release primarily prevents beam.smp from overloading the CPU on ARM hosts. It also includes a number of other bug fixes and performance improvements. Enjoy it.
@@ -2196,6 +2210,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v1.31.1...HEAD
 [1.31.1]: https://github.com/teslamate-org/teslamate/compare/v1.31.0...v1.31.1
 [1.31.0]: https://github.com/teslamate-org/teslamate/compare/v1.30.1...v1.31.0
 [1.30.1]: https://github.com/teslamate-org/teslamate/compare/v1.30.0...v1.30.1
