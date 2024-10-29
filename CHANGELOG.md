@@ -13,6 +13,7 @@
 - perf: add ideal_battery_range_km as query condition (#4305 - @swiffer)
 - fix: re-add missing changes from pr 4124 (#4310 - @swiffer)
 - feat: add max speed & speed histogram to drive stats (#4253 - @js94x)
+- fix: remove convert_km from kwh calculations in timeline dashboard (#4318 - @swiffer)
 
 #### Translations
 
