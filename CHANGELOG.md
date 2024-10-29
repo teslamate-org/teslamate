@@ -8,7 +8,8 @@
 
 #### Build, CI, internal
 
-- ci(fix): update cleanup_caches.yml to use new cache management commands and fix permissions ([d6793ce](https://github.com/teslamate-org/teslamate/commit/d6793ce5717687b9e984067bf4c208415e15fdac) - @JakobLichterfeld)
+- ci(fix): update cleanup_caches.yml to use new cache management commands and fix permissions ([d6793ce](https://github.com/teslamate-org/teslamate/commit/d6793ce5717687b9e984067bf4c208415e15fdac), [b0b694f](https://github.com/teslamate-org/teslamate/commit/b0b694fc8c3c45036aafda45200f3b0d068a2f50) - @JakobLichterfeld)
+- ci: Add workflow to manually cleanup largest 100 caches ([dad7e3d](https://github.com/teslamate-org/teslamate/commit/dad7e3dea0ae1d799398bf1b31a0d598eff784bf)- @JakobLichterfeld)
 
 #### Dashboards
 
