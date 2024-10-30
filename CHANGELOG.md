@@ -8,6 +8,8 @@
 
 #### Build, CI, internal
 
+- ci: remove unknown flag --ref for gh cache delete in cleanup_caches workflow ([3a515df](https://github.com/teslamate-org/teslamate/commit/3a515df5aa400139acf8ef638e5ae37339c553cf) - @JakobLichterfeld)
+
 #### Dashboards
 
 #### Translations
@@ -23,7 +25,7 @@ Please also note: [v1.31.0 Release Notes](https://github.com/teslamate-org/tesla
 
 ### Improvements and bug fixes
 
-- fix: use elixir-1.17.3-otp-26 to avoid beam.smp chewing CPU on arm (#4319 - @swiffer and @JakobLichterfeld)
+- fix: use elixir-1.17.3-otp-26 to avoid beam.smp chewing CPU on arm (#4319 - @brianmay, @swiffer and @JakobLichterfeld)
 
 #### Build, CI, internal
 
