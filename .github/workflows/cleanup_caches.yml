@@ -39,7 +39,7 @@ jobs:
           echo "Deleting caches..."
           for cacheKey in $cacheKeysForPR
           do
-              gh cache delete $cacheKey --repo $REPO --ref $BRANCH
+              gh cache delete $cacheKey --repo $REPO
           done
           echo "Done"
         env:
