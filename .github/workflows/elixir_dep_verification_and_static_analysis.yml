@@ -1,0 +1,70 @@
+name: Elixir Dependency Verification and Static Analysis
+
+on:
+  workflow_call:
+
+env:
+  CACHE_NAME_DEPS: cache-elixir-deps
+  CACHE_NAME_COMPILED_DEV: cache-compiled-dev-build
+  CACHE_NAME_COMPILED_TEST: cache-compiled-test-build
+  ELIXIR_ASSERT_TIMEOUT: 1000
+
+permissions:
+  contents: read
+
+jobs:
+  verify_dependencies_and_static_analysis:
+    name: Verify dependencies, POT files, unused dependencies, static analysis
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+
+      - name: Setup Elixir and Cache Dependencies
+        id: setup-elixir-and-cache-deps
+        uses: ./.github/actions/setup-elixir-and-cache-deps
+        with:
+          cache-name-deps: ${{ env.CACHE_NAME_DEPS }}
+          cache-name-compiled: ${{ env.CACHE_NAME_COMPILED_DEV }}
+          mix-env: dev
+
+      - name: Compile without warnings
+        run: mix compile --warnings-as-errors
+        shell: sh
+
+      - name: Verify that POT files are up to date
+        run: mix gettext.extract --check-up-to-date
+
+      - name: Check unused dependencies
+        run: mix deps.unlock --check-unused
+
+      - name: Restore PLT cache
+        id: plt_cache
+        uses: actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          key: |
+            ${{ runner.os }}-${{ steps.setup-elixir-and-cache-deps.outputs.elixir-version }}-${{ steps.setup-elixir-and-cache-deps.outputs.otp-version }}-plt
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.setup-elixir-and-cache-deps.outputs.elixir-version }}-${{ steps.setup-elixir-and-cache-deps.outputs.otp-version }}-plt
+          path: |
+            priv/plts
+
+      - name: Create Persistent Lookup Tables (PLTs) for Dialyzer
+        if: steps.plt_cache.outputs.cache-hit != 'true'
+        run: mix dialyzer --plt
+
+      - name: Save PLT cache
+        id: plt_cache_save
+        uses: actions/cache/save@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        if: steps.plt_cache.outputs.cache-hit != 'true'
+        with:
+          key: |
+            ${{ runner.os }}-${{ steps.setup-elixir-and-cache-deps.outputs.elixir-version }}-${{ steps.setup-elixir-and-cache-deps.outputs.otp-version }}-plt
+          path: |
+            priv/plts
+
+      - name: Run dialyzer for static analysis
+        run: mix dialyzer --format github

@@ -1,7 +1,7 @@
 defmodule TeslaMateWeb.CarLive.Summary do
   use TeslaMateWeb, :live_view
 
-  import TeslaMateWeb.Gettext
+  use Gettext, backend: TeslaMateWeb.Gettext
 
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle

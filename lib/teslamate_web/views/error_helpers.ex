@@ -3,7 +3,8 @@ defmodule TeslaMateWeb.ErrorHelpers do
   Conveniences for translating and building error messages.
   """
 
-  use Phoenix.HTML
+  import Phoenix.HTML.Form
+  use PhoenixHTMLHelpers
 
   @doc """
   Generates tag for inlined form input errors.
@@ -12,7 +13,7 @@ defmodule TeslaMateWeb.ErrorHelpers do
     Enum.map(Keyword.get_values(form.errors, field), fn error ->
       content_tag(:span, translate_error(error),
         class: "help is-danger pl-15",
-        phx_feedback_for: input_id(form, field)
+        phx_feedback_for: input_name(form, field)
       )
     end)
   end

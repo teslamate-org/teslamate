@@ -1,0 +1,51 @@
+name: DevOps
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  check_paths:
+    uses: ./.github/workflows/check_paths.yml
+
+  spell_check:
+    needs: check_paths
+    if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
+    uses: ./.github/workflows/spell_check.yml
+
+  ensure_linting:
+    needs:
+      - check_paths
+      - spell_check
+    if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
+    uses: ./.github/workflows/ensure_linting.yml
+
+  elixir_dep_verification_and_static_analysis:
+    needs:
+      - check_paths
+      - ensure_linting
+    if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
+    uses: ./.github/workflows/elixir_dep_verification_and_static_analysis.yml
+
+  elixir_test:
+    needs:
+      - check_paths
+      - ensure_linting
+    if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
+    uses: ./.github/workflows/elixir_test.yml

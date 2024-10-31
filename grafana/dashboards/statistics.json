@@ -49,7 +49,7 @@
       "tags": [],
       "title": "TeslaMate",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -617,7 +617,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n  SELECT\n    drives.*,\n    date_trunc('$period', TIMEZONE('$__timezone', TIMEZONE('UTC', start_date))) as date\n  FROM drives)\nSELECT\n  EXTRACT(EPOCH FROM TIMEZONE('$__timezone', date))*1000 AS date_from,\n  EXTRACT(EPOCH FROM (TIMEZONE('$__timezone', date) + ('1 ' || '$period')::INTERVAL))*1000 AS date_to,\n  CASE '$period'\n    WHEN 'month' THEN to_char(date, 'YYYY Month')\n    WHEN 'year' THEN to_char(date, 'YYYY')\n    WHEN 'week' THEN 'week ' || to_char(date, 'WW') || ' starting ' || to_char(date, 'YYYY-MM-DD')\n    ELSE to_char(date, 'YYYY-MM-DD')\n  END AS display,\n  TIMEZONE('$__timezone', date) AS date,\n  sum(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit') as efficiency_net_$length_unit\nFROM data\nJOIN cars car ON car.id = car_id\nWHERE\n  car_id = $car_id AND\n  $__timeFilter(start_date)\nGROUP BY date\nORDER BY date",
+          "rawSql": "WITH data AS (\n  SELECT\n    drives.*,\n    date_trunc('$period', TIMEZONE('$__timezone', TIMEZONE('UTC', start_date))) as date\n  FROM drives)\nSELECT\n  EXTRACT(EPOCH FROM TIMEZONE('$__timezone', date))*1000 AS date_from,\n  EXTRACT(EPOCH FROM (TIMEZONE('$__timezone', date) + ('1 ' || '$period')::INTERVAL))*1000 AS date_to,\n  CASE '$period'\n    WHEN 'month' THEN to_char(date, 'YYYY Month')\n    WHEN 'year' THEN to_char(date, 'YYYY')\n    WHEN 'week' THEN 'week ' || to_char(date, 'WW') || ' starting ' || to_char(date, 'YYYY-MM-DD')\n    ELSE to_char(date, 'YYYY-MM-DD')\n  END AS display,\n  TIMEZONE('$__timezone', date) AS date,\n  sum(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit') as efficiency_net_$length_unit\nFROM data\nJOIN cars car ON car.id = car_id\nWHERE\n  car_id = $car_id AND\n  $__timeFilter(start_date)\nGROUP BY date\nORDER BY date",
           "refId": "C",
           "select": [
             [
@@ -842,14 +842,14 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
         "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

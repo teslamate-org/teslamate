@@ -87,7 +87,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -357,7 +357,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tsum(cp.cost)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nLEFT JOIN\n  geofences geo ON geo.id = geofence_id\nJOIN\n  charges char ON char.charging_process_id = cp.id AND char.date = end_date\t\nWHERE\n  $__timeFilter(end_date)\n  AND (addr.name ILIKE '%supercharger%' OR geo.name ILIKE '%supercharger%' OR char.fast_charger_brand = 'Tesla')\n\tAND cp.cost IS NOT NULL\n\tAND cp.car_id = $car_id;",
+          "rawSql": "SELECT\n\tCOALESCE(sum(cp.cost),0)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nLEFT JOIN\n  geofences geo ON geo.id = geofence_id\nJOIN\n  charges char ON char.charging_process_id = cp.id AND char.date = end_date\t\nWHERE\n  $__timeFilter(end_date)\n  AND (addr.name ILIKE '%supercharger%' OR geo.name ILIKE '%supercharger%' OR char.fast_charger_brand = 'Tesla')\n\tAND NULLIF(char.charger_phases, 0) IS NULL\n\tAND char.fast_charger_type != 'ACSingleWireCAN'\n\tAND cp.cost IS NOT NULL\n\tAND cp.car_id = $car_id;",
           "refId": "A",
           "select": [
             [
@@ -527,11 +527,12 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT (\n  SELECT sum(cost)\n  FROM charging_processes\n  WHERE $__timeFilter(end_date) AND car_id = $car_id\n) / (\n\tSELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit')\n\tFROM positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id\n) * 100",
+          "rawSql": "SELECT (\n  SELECT sum(cost)\n  FROM charging_processes\n  WHERE $__timeFilter(end_date) AND car_id = $car_id\n) / (\n\tSELECT convert_km((max(end_km) - min(start_km))::numeric, '$length_unit')\n\tFROM drives\n\tWHERE $__timeFilter(end_date) AND car_id = $car_id\n) * 100",
           "refId": "A",
           "select": [
             [
@@ -543,6 +544,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "cars",
           "timeColumn": "inserted_at",
           "timeColumnType": "timestamp",
@@ -2447,14 +2465,14 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
         "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2544,6 +2562,6 @@
   "timezone": "",
   "title": "Charging Stats",
   "uid": "-pkIkhmRz",
-  "version": 8,
+  "version": 11,
   "weekStart": ""
 }

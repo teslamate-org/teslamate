@@ -82,7 +82,7 @@ msgstr "Додому"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:99
+#: lib/teslamate_web/templates/layout/root.html.heex:107
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Налаштування"
@@ -128,7 +128,7 @@ msgid "Units"
 msgstr "Одиниці"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:165
-#: lib/teslamate_web/live/geofence_live/form.html.heex:123
+#: lib/teslamate_web/live/geofence_live/form.html.heex:124
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Назад"
@@ -141,8 +141,8 @@ msgstr "Гео-позиція \"%{name}\" створена"
 #: lib/teslamate_web/live/geofence_live/form.ex:110
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
-#: lib/teslamate_web/live/geofence_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:96
+#: lib/teslamate_web/live/geofence_live/index.html.heex:5
+#: lib/teslamate_web/templates/layout/root.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
 msgstr "Гео-позиції"
@@ -154,30 +154,30 @@ msgstr "Час простою перед спробою заснути"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:46
 #: lib/teslamate_web/live/geofence_live/form.html.heex:52
-#: lib/teslamate_web/live/geofence_live/index.html.heex:22
+#: lib/teslamate_web/live/geofence_live/index.html.heex:23
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "Ім'я"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:19
-#: lib/teslamate_web/live/geofence_live/index.html.heex:23
+#: lib/teslamate_web/live/geofence_live/index.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "Position"
 msgstr "Позиція"
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:24
+#: lib/teslamate_web/live/geofence_live/index.html.heex:25
 #, elixir-autogen, elixir-format
 msgid "Radius"
 msgstr "Радіус"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:168
-#: lib/teslamate_web/live/geofence_live/form.html.heex:129
+#: lib/teslamate_web/live/geofence_live/form.html.heex:128
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Зберегти"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:169
-#: lib/teslamate_web/live/geofence_live/form.html.heex:130
+#: lib/teslamate_web/live/geofence_live/form.html.heex:129
 #: lib/teslamate_web/live/signin_live/index.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -204,7 +204,7 @@ msgstr "Вхід успішний"
 msgid "Car is unlocked"
 msgstr "Авто відкрите"
 
-#: lib/teslamate_web/live/geofence_live/index.html.heex:10
+#: lib/teslamate_web/live/geofence_live/index.html.heex:14
 #, elixir-autogen, elixir-format
 msgid "Create"
 msgstr "Створити"
@@ -343,7 +343,7 @@ msgid "Remaining Time"
 msgstr "Залишилось часу"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:324
-#: lib/teslamate_web/templates/layout/root.html.heex:81
+#: lib/teslamate_web/templates/layout/root.html.heex:83
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr ""
@@ -443,7 +443,7 @@ msgid "TeslaFi Import"
 msgstr "TeslaFi імпорт"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:10
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "Found %{count} file"
 msgid_plural "Found %{count} files"
 msgstr[0] "Знайдено %{count} файл"
@@ -503,25 +503,25 @@ msgstr "за кВт*Г"
 msgid "Total"
 msgstr "Усього"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:164
-#, elixir-format
+#: lib/teslamate_web/live/geofence_live/form.html.heex:163
+#, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "Зарядній сесії %{n} у данній гео-позиції ще не задано вартість"
 msgstr[1] "Зарядним сесіям %{n} у данній гео-позиції ще не задано вартість"
 msgstr[2] "Зарядним сесіям %{n} у данній гео-позиції ще не задано вартість"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:178
+#: lib/teslamate_web/live/geofence_live/form.html.heex:177
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "Додати вартість минулим сесіям?"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:156
+#: lib/teslamate_web/live/geofence_live/form.html.heex:155
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "Вартість зарядки"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:175
+#: lib/teslamate_web/live/geofence_live/form.html.heex:174
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "Продовжити"
@@ -547,7 +547,7 @@ msgid "GitHub"
 msgstr ""
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:355
-#: lib/teslamate_web/templates/layout/root.html.heex:168
+#: lib/teslamate_web/templates/layout/root.html.heex:176
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "Доступне оновлення"
@@ -613,22 +613,22 @@ msgstr "Ваш аккаунт Тесла заблоковано через ду�
 msgid "Downloading update"
 msgstr "Завантаження оновлення"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:125
+#: lib/teslamate_web/templates/layout/root.html.heex:133
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "Не надано ключ шифрування"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:145
+#: lib/teslamate_web/templates/layout/root.html.heex:153
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "За додатковою інформацією, ознайомтесь з інструкцією за посиланням %{link}"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:138
+#: lib/teslamate_web/templates/layout/root.html.heex:146
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "Автоматично сгенерований ключ шифрування, що використовується поточною сесією може бути знайдений <strong>у логах додотку</strong>."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:131
+#: lib/teslamate_web/templates/layout/root.html.heex:139
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "Щоб переконатися що <strong>Tesla API токени зберігаються безпечно</strong>, ключ шифрування повинен передаватись TeslaMate через <code>ENCRYPTION_KEY</code> змінну в середовищі. Інакше, <strong>необхідно буде виконувати вхід, після кожного перезапуску</strong>."

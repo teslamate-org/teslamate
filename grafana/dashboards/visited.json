@@ -54,7 +54,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -213,7 +213,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\n  date_trunc('minute', date) as time,\n  avg(latitude) as latitude,\n  avg(longitude) as longitude\nFROM\n  positions\nWHERE\n  car_id = $car_id AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  date_trunc('minute', date) as time,\n  avg(latitude) as latitude,\n  avg(longitude) as longitude\nFROM\n  positions\nWHERE\n  car_id = $car_id AND $__timeFilter(date) and ideal_battery_range_km is not null\nGROUP BY 1\nORDER BY 1",
           "refId": "Positions",
           "sql": {
             "columns": [
@@ -673,14 +673,14 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
         "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -738,7 +738,6 @@
     "from": "now-90d",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -767,6 +766,6 @@
   "timezone": "",
   "title": "Visited",
   "uid": "RG_DxSmgk",
-  "version": 3,
+  "version": 5,
   "weekStart": ""
 }

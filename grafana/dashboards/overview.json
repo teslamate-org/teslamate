@@ -70,7 +70,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -160,7 +160,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "(SELECT battery_level, date\nFROM positions\nWHERE car_id = $car_id\nORDER BY date DESC\nLIMIT 1)\nUNION\nSELECT battery_level, date\nFROM charges c\nJOIN charging_processes p ON p.id = c.charging_process_id\nWHERE $__timeFilter(date) AND p.car_id = $car_id\nORDER BY date DESC\nLIMIT 1",
+          "rawSql": "(SELECT battery_level, date\nFROM positions\nWHERE car_id = $car_id and ideal_battery_range_km is not null\nORDER BY date DESC\nLIMIT 1)\nUNION\nSELECT battery_level, date\nFROM charges c\nJOIN charging_processes p ON p.id = c.charging_process_id\nWHERE $__timeFilter(date) AND p.car_id = $car_id\nORDER BY date DESC\nLIMIT 1",
           "refId": "A",
           "select": [
             [
@@ -203,7 +203,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  0 as lowest,\r\n  10 as low,\r\n  20 as mid,\r\n  CASE WHEN lfp_battery THEN 100 ELSE 81 END as high,\r\n  CASE WHEN lfp_battery THEN 100 ELSE 91 END as highest\r\nfrom cars inner join car_settings on cars.settings_id = car_settings.id\r\nwhere cars.id = $car_id",
+          "rawSql": "SELECT\r\n  0 as lowest,\r\n  10 as low,\r\n  20 as mid,\r\n  CASE WHEN lfp_battery THEN 101 ELSE 81 END as high,\r\n  CASE WHEN lfp_battery THEN 101 ELSE 91 END as highest\r\nfrom cars inner join car_settings on cars.settings_id = car_settings.id\r\nwhere cars.id = $car_id",
           "refId": "B",
           "sql": {
             "columns": [
@@ -590,18 +590,19 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT $__time(date), battery_level AS \"SOC\"\nFROM (\n\tSELECT battery_level, date\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date)\n\tUNION ALL\n\tSELECT battery_level, date\n\tFROM charges c \n  JOIN charging_processes p ON p.id = c.charging_process_id\n\tWHERE $__timeFilter(date) AND p.car_id = $car_id) AS data\nORDER BY date ASC;",
+          "rawSql": "SELECT $__time(date), battery_level AS \"SOC\"\nFROM (\n\tSELECT battery_level, date\n\tFROM positions\n\tWHERE car_id = $car_id AND ideal_battery_range_km IS NOT NULL AND $__timeFilter(date)\n\tUNION ALL\n\tSELECT battery_level, date\n\tFROM charges c \n  JOIN charging_processes p ON p.id = c.charging_process_id\n\tWHERE $__timeFilter(date) AND p.car_id = $car_id) AS data\nORDER BY date ASC;",
           "refId": "A",
           "select": [
             [
@@ -613,6 +614,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "positions",
           "timeColumn": "date",
           "timeColumnType": "timestamp",
@@ -716,7 +734,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  sum(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit') as \"consumption_$length_unit\"\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(start_date) AND car_id = $car_id",
+          "rawSql": "SELECT\n  sum(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit') as \"consumption_$length_unit\"\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(start_date) AND car_id = $car_id",
           "refId": "A",
           "select": [
             [
@@ -823,7 +841,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH d AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM charging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id AND\n\t  $__timeFilter(start_date)\n\tORDER BY start_date\n),\n\nrange_loss_between_charges AS (\n  SELECT sum(range_loss) AS range_loss\n  FROM d\n  WHERE distance >= 0 AND range_loss >= 0\n  GROUP BY car_id\n),\n\ncharge_dates AS (\n\tSELECT\n\t\tmin(start_date) as first_charge,\n\t\tmax(end_date) as last_charge\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tend_date IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND $__timeFilter(start_date)\n),\n\nrange_loss_before_first_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND ((select first_charge from charge_dates) is null OR date < (select first_charge from charge_dates))\n),\n\nrange_loss_after_last_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND date > (select last_charge from charge_dates)\t\n),\n\ntotal_range_loss AS (\n  SELECT sum(range_loss) as range_loss\n  FROM (\n    SELECT range_loss FROM range_loss_between_charges\n    UNION ALL\n    SELECT range_loss FROM range_loss_before_first_charge\n    UNION ALL\n    SELECT range_loss FROM range_loss_after_last_charge\n  ) r\n),\n\ndistance AS (\n  SELECT max(odometer) - min(odometer) as distance\n  FROM positions\n  WHERE car_id = $car_id AND $__timeFilter(date)\n)\n\nSELECT \n  NULLIF(range_loss, 0) * (c.efficiency * 1000) / convert_km(NULLIF(distance::numeric, 0), '$length_unit') as \"consumption_$length_unit\"\nFROM total_range_loss, distance\nLEFT JOIN cars c ON c.id = $car_id",
+          "rawSql": "WITH d AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_${preferred_range}_range_km) OVER (ORDER BY start_date) - start_${preferred_range}_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM charging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id AND\n\t  $__timeFilter(start_date)\n\tORDER BY start_date\n),\n\nrange_loss_between_charges AS (\n  SELECT sum(range_loss) AS range_loss\n  FROM d\n  WHERE distance >= 0 AND range_loss >= 0\n  GROUP BY car_id\n),\n\ncharge_dates AS (\n\tSELECT\n\t\tmin(start_date) as first_charge,\n\t\tmax(end_date) as last_charge\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tend_date IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND $__timeFilter(start_date)\n),\n\nrange_loss_before_first_charge AS (\n\tSELECT\n\t\tmax(${preferred_range}_battery_range_km) - min(${preferred_range}_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND ((select first_charge from charge_dates) is null OR date < (select first_charge from charge_dates))\n),\n\nrange_loss_after_last_charge AS (\n\tSELECT\n\t\tmax(${preferred_range}_battery_range_km) - min(${preferred_range}_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND date > (select last_charge from charge_dates)\t\n),\n\ntotal_range_loss AS (\n  SELECT sum(range_loss) as range_loss\n  FROM (\n    SELECT range_loss FROM range_loss_between_charges\n    UNION ALL\n    SELECT range_loss FROM range_loss_before_first_charge\n    UNION ALL\n    SELECT range_loss FROM range_loss_after_last_charge\n  ) r\n),\n\ndistance AS (\n  SELECT max(odometer) - min(odometer) as distance\n  FROM positions\n  WHERE car_id = $car_id AND $__timeFilter(date)\n)\n\nSELECT \n  NULLIF(range_loss, 0) * (c.efficiency * 1000) / convert_km(NULLIF(distance::numeric, 0), '$length_unit') as \"consumption_$length_unit\"\nFROM total_range_loss, distance\nLEFT JOIN cars c ON c.id = $car_id",
           "refId": "A",
           "select": [
             [
@@ -1055,11 +1073,12 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT $__time(date), range as \"range_$length_unit\"\nFROM (\n\t(SELECT date, convert_km([[preferred_range]]_battery_range_km, '$length_unit') AS range\n\tFROM positions\n\tWHERE car_id = $car_id AND [[preferred_range]]_battery_range_km IS NOT NULL\n  ORDER BY date DESC\n\tLIMIT 1)\n\tUNION ALL\n\t(SELECT date, convert_km([[preferred_range]]_battery_range_km, '$length_unit') AS range\n\tFROM charges c\n\tJOIN charging_processes p ON p.id = c.charging_process_id\n\tWHERE p.car_id = $car_id\n\tORDER BY date DESC\n\tLIMIT 1)\n) AS data\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "SELECT $__time(date), range as \"range_$length_unit\"\nFROM (\n\t(SELECT date, convert_km(${preferred_range}_battery_range_km, '$length_unit') AS range\n\tFROM positions\n\tWHERE car_id = $car_id AND ideal_battery_range_km IS NOT NULL\n  ORDER BY date DESC\n\tLIMIT 1)\n\tUNION ALL\n\t(SELECT date, convert_km(${preferred_range}_battery_range_km, '$length_unit') AS range\n\tFROM charges c\n\tJOIN charging_processes p ON p.id = c.charging_process_id\n\tWHERE p.car_id = $car_id\n\tORDER BY date DESC\n\tLIMIT 1)\n) AS data\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
@@ -1071,6 +1090,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "time",
           "where": [
             {
@@ -1284,11 +1320,12 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select $__time(date), convert_km(odometer::numeric, '$length_unit')  as \"odometer_$length_unit\"\nfrom positions \nwhere car_id = $car_id \norder by date desc \nlimit 1;",
+          "rawSql": "select $__time(date), convert_km(odometer::numeric, '$length_unit')  as \"odometer_$length_unit\"\nfrom positions \nwhere car_id = $car_id and ideal_battery_range_km is not null\norder by date desc \nlimit 1;",
           "refId": "A",
           "select": [
             [
@@ -1300,6 +1337,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "time",
           "where": [
             {
@@ -1496,7 +1550,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -1974,6 +2028,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -2025,14 +2080,14 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
         "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2167,6 +2222,6 @@
   "timezone": "",
   "title": "Overview",
   "uid": "kOuP_Fggz",
-  "version": 9,
+  "version": 14,
   "weekStart": ""
 }

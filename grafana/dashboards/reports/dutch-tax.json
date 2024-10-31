@@ -1,10 +1,34 @@
 {
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.0.6+security-01"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-postgresql-datasource",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
         "$$hashKey": "object:24",
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -14,9 +38,9 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1602596446244,
+  "id": null,
   "links": [
     {
       "icon": "dashboard",
@@ -24,7 +48,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -39,7 +63,10 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -49,23 +76,31 @@
       "id": 4,
       "panels": [],
       "repeat": "car_id",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "refId": "A"
         }
-      },
+      ],
       "title": "$car_id",
       "type": "row"
     },
     {
-      "datasource": "TeslaMate",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": null,
-            "filterable": false
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -295,8 +330,16 @@
         "y": 1
       },
       "id": 2,
-      "links": [],
       "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
         "sortBy": [
           {
@@ -305,18 +348,14 @@
           }
         ]
       },
-      "pluginVersion": "7.2.2",
-	  "repeat": "car_id",
-      "scopedVars": {
-        "car_id": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        }
-      },
+      "pluginVersion": "11.0.6+security-01",
       "targets": [
         {
           "alias": "",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -347,45 +386,39 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 26,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
       {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
         "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "C",
-          "value": "C"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -399,19 +432,16 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "km",
-          "value": "km"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -425,19 +455,16 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "rated",
-          "value": "rated"
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -451,18 +478,16 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "value": null
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
         },
-        "datasource": "TeslaMate",
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
@@ -476,7 +501,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -484,9 +508,10 @@
     ]
   },
   "time": {
-    "from": "now/y",
-    "to": "now/y"
+    "from": "now-1y",
+    "to": "now"
   },
+  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -500,11 +525,21 @@
       "2h",
       "1d"
     ],
-    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
   },
   "timezone": "",
   "title": "Drives - Dutch tax",
   "uid": "lBIoQIggk",
-  "version": 1
+  "version": 2,
+  "weekStart": ""
 }
-

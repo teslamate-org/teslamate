@@ -50,7 +50,7 @@ services:
       - all
 
   database:
-    image: postgres:16
+    image: postgres:17
     restart: always
     environment:
       - POSTGRES_USER=${TM_DB_USER}

@@ -11,7 +11,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
 
 - Docker _(if you are new to Docker, see [Installing Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux/))_
 - A Machine that's always on, so TeslaMate can continually fetch data
-- At least 1 GB of RAM on the machine for the installation to succeed.
+- At least 1 GB of RAM on the machine for the installation to succeed. It is recommended to have at least 2 GB of RAM for optimal operation.
 - External internet access, to talk to tesla.com
 
 ## Instructions
@@ -38,7 +38,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
          - all
 
      database:
-       image: postgres:16
+       image: postgres:17
        restart: always
        environment:
          - POSTGRES_USER=teslamate

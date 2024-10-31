@@ -151,12 +151,16 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
         error_html =
           html
           |> Floki.find(".field-body .field")
-          |> Enum.filter(fn field -> Floki.find(field, "#geo_fence_#{kind}") |> length() == 1 end)
-          |> Floki.find("span")
-          |> Floki.raw_html(encode: false)
+          |> Enum.filter(fn field ->
+            Floki.find(field, "input[name=\"geo_fence[#{kind}]\"]") |> length() == 1
+          end)
+          |> Enum.map(fn field -> Floki.find(field, "span.help.is-danger.pl-15") end)
+          |> List.flatten()
+          |> Enum.map(&Floki.raw_html(&1, encode: false))
+          |> Enum.join()
 
         assert error_html ==
-                 "<span class=\"help is-danger pl-15\" phx-feedback-for=\"geo_fence_#{kind}\">can't be blank</span>"
+                 "<span class=\"help is-danger pl-15\" phx-feedback-for=\"geo_fence[#{kind}]\">can't be blank</span>"
       end
     end
 

@@ -1,0 +1,25 @@
+name: Ensure Linting
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check_linting:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@ba0dd844c9180cbf77aa72a116d6fbc515d0e87b #v27
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Nix binary cache
+        uses: DeterminateSystems/magic-nix-cache-action@87b14cf437d03d37989d87f0fa5ce4f5dc1a330b #v8
+
+      - name: Run treefmt in CI mode
+        run: nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt --ci
+        # or use: https://github.com/cachix/git-hooks.nix?tab=readme-ov-file

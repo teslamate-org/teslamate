@@ -70,7 +70,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "icon": "",
@@ -78,7 +78,7 @@
       "title": "GpxExport",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]/drive/$drive_id/gpx"
+      "url": "${base_url:raw}/drive/$drive_id/gpx"
     },
     {
       "asDropdown": true,
@@ -519,7 +519,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed::numeric, '$length_unit') AS speed_[[length_unit]]h,\n\tpower,\n\tconvert_km([[preferred_range]]_battery_range_km, '$length_unit') AS range_[[preferred_range]]_[[length_unit]],\n\tconvert_km(est_battery_range_km, '$length_unit') AS range_estimated_[[length_unit]],\n\tbattery_level,\n\tusable_battery_level,\n\tbattery_heater::integer\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tconvert_km(speed::numeric, '$length_unit') AS speed_${length_unit}h,\n\tpower,\n\tconvert_km(${preferred_range}_battery_range_km, '$length_unit') AS range_${preferred_range}_${length_unit},\n\tconvert_km(est_battery_range_km, '$length_unit') AS range_estimated_${length_unit},\n\tbattery_level,\n\tusable_battery_level,\n\tbattery_heater::integer\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -907,7 +907,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__time(date),\n\tROUND(convert_m(elevation, '$alternative_length_unit')) AS elevation_[[alternative_length_unit]]\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
+          "rawSql": "SELECT\n\t$__time(date),\n\tROUND(convert_m(elevation, '$alternative_length_unit')) AS elevation_${alternative_length_unit}\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n $__timeFilter(date)\nORDER BY\n\tdate ASC",
           "refId": "A",
           "select": [
             [
@@ -2273,7 +2273,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t(NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency)\nFROM\n\tdrives d\nJOIN cars car ON car.id = car_id\nWHERE\n\td.id = $drive_id;",
+          "rawSql": "SELECT\n\t(NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) * car.efficiency)\nFROM\n\tdrives d\nJOIN cars car ON car.id = car_id\nWHERE\n\td.id = $drive_id;",
           "refId": "A",
           "select": [
             [
@@ -2393,7 +2393,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select\n\t(NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) * car.efficiency) *1000 /\n\t  convert_km(distance::numeric, '$length_unit') as \"$length_unit\"\nfrom drives d\nJOIN cars car ON car.id = car_id\nwhere d.id = $drive_id;",
+          "rawSql": "select\n\t(NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) * car.efficiency) *1000 /\n\t  convert_km(distance::numeric, '$length_unit') as \"$length_unit\"\nfrom drives d\nJOIN cars car ON car.id = car_id\nwhere d.id = $drive_id;",
           "refId": "A",
           "select": [
             [
@@ -2523,7 +2523,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tconvert_km(avg(speed)::numeric, '$length_unit') AS speed_[[length_unit]]h\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)",
+          "rawSql": "SELECT\n\tconvert_km(avg(speed)::numeric, '$length_unit') AS speed_${length_unit}h\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)",
           "refId": "A",
           "select": [
             [
@@ -2639,14 +2639,14 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 0,
         "includeAll": false,
         "label": "Car",
         "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

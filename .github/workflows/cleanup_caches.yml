@@ -1,0 +1,48 @@
+name: Cleanup caches by a branch
+
+on:
+  pull_request:
+    types:
+      - closed
+  pull_request_target:
+    types:
+      - closed
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+
+permissions:
+  contents: read
+  packages: read
+  actions: write
+
+jobs:
+  check_paths:
+    uses: ./.github/workflows/check_paths.yml
+
+  cleanup:
+    name: Delete caches when PR is closed
+    needs: check_paths
+    if: needs.check_paths.outputs.githubfolder != 'true'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Cleanup
+        run: |
+          echo "Fetching list of cache key"
+          cacheKeysForPR=$(gh cache list --repo $REPO --ref $BRANCH --limit 100 | cut -f 1 )
+
+          ## Setting this to not fail the workflow while deleting cache keys.
+          set +e
+          echo "Deleting caches..."
+          for cacheKey in $cacheKeysForPR
+          do
+              gh cache delete $cacheKey --repo $REPO
+          done
+          echo "Done"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          BRANCH: refs/pull/${{ github.event.pull_request.number }}/merge
