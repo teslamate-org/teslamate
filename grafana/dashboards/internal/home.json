@@ -1,119 +1,144 @@
 {
-    "__elements": {},
-    "__requires": [
-      {
-        "type": "panel",
-        "id": "dashlist",
-        "name": "Dashboard list",
-        "version": ""
-      },
-      {
-        "type": "grafana",
-        "id": "grafana",
-        "name": "Grafana",
-        "version": "11.2.3"
-      },
-      {
-        "type": "datasource",
-        "id": "grafana-postgresql-datasource",
-        "name": "PostgreSQL",
-        "version": "1.0.0"
-      },
-      {
-        "type": "panel",
-        "id": "text",
-        "name": "Text",
-        "version": ""
-      }
-    ],
-    "annotations": {
-      "list": [
-        {
-          "builtIn": 1,
-          "datasource": {
-            "type": "grafana",
-            "uid": "-- Grafana --"
-          },
-          "enable": true,
-          "hide": true,
-          "iconColor": "rgba(0, 211, 255, 1)",
-          "name": "Annotations & Alerts",
-          "type": "dashboard"
-        }
-      ]
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "dashlist",
+      "name": "Dashboard list",
+      "version": ""
     },
-    "editable": true,
-    "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
-    "id": null,
-    "links": [],
-    "panels": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.2.3"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-postgresql-datasource",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "news",
+      "name": "News",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
       {
+        "builtIn": 1,
         "datasource": {
-          "type": "grafana-postgresql-datasource",
-          "uid": "TeslaMate"
+          "type": "grafana",
+          "uid": "-- Grafana --"
         },
-        "gridPos": {
-          "h": 20,
-          "w": 7,
-          "x": 0,
-          "y": 0
-        },
-        "id": 2,
-        "options": {
-          "folderUID": "Nr4ofiDZk",
-          "includeVars": false,
-          "keepTime": false,
-          "maxItems": 100,
-          "query": "",
-          "showFolderNames": false,
-          "showHeadings": false,
-          "showRecentlyViewed": false,
-          "showSearch": true,
-          "showStarred": false,
-          "tags": []
-        },
-        "pluginVersion": "11.2.3",
-        "type": "dashlist"
-      },
-      {
-        "datasource": {
-          "type": "grafana-postgresql-datasource",
-          "uid": "TeslaMate"
-        },
-        "gridPos": {
-          "h": 20,
-          "w": 17,
-          "x": 7,
-          "y": 0
-        },
-        "id": 1,
-        "options": {
-          "code": {
-            "language": "plaintext",
-            "showLineNumbers": false,
-            "showMiniMap": false
-          },
-          "content": "<div style=\"background-size: cover; background-image: url(&quot;https://digitalassets.tesla.com/tesla-contents/image/upload/c_pad,dpr_1.0,f_auto,q_auto/c_pad/Group_83?pgw=1&quot;);width:100%;height:100%;background-position:center;\"></div>",
-          "mode": "html"
-        },
-        "pluginVersion": "11.2.3",
-        "type": "text"
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
       }
-    ],
-    "schemaVersion": 39,
-    "tags": [],
-    "templating": {
-      "list": []
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "folderUID": "Nr4ofiDZk",
+        "includeVars": false,
+        "keepTime": false,
+        "maxItems": 100,
+        "query": "",
+        "showFolderNames": false,
+        "showHeadings": false,
+        "showRecentlyViewed": false,
+        "showSearch": true,
+        "showStarred": false,
+        "tags": []
+      },
+      "pluginVersion": "11.2.3",
+      "type": "dashlist"
     },
-    "time": {
-      "from": "now-6h",
-      "to": "now"
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 16,
+        "x": 6,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"background-size: cover; background-image: url(&quot;https://digitalassets.tesla.com/tesla-contents/image/upload/c_pad,dpr_1.0,f_auto,q_auto/c_pad/Group_83?pgw=1&quot;);width:100%;height:100%;background-position:center;\"></div>",
+        "mode": "html"
+      },
+      "pluginVersion": "11.2.3",
+      "type": "text"
     },
-    "timepicker": {},
-    "timezone": "browser",
-    "title": "Home",
-    "uid": "be2m9kga7b8qoc",
-    "version": 1,
-    "weekStart": ""
-  }
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 2,
+        "x": 22,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "feedUrl": "https://corsproxy.io/?https://github.com/teslamate-org/teslamate/tags.atom",
+        "showImage": false
+      },
+      "title": "Releases",
+      "type": "news"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Home",
+  "uid": "be2m9kga7b8qoc",
+  "version": 1,
+  "weekStart": ""
+}
