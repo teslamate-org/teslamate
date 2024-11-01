@@ -3,6 +3,12 @@
   "__requires": [
     {
       "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "bargauge",
       "name": "Bar gauge",
       "version": ""
@@ -807,7 +813,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT max(speed) AS speed_[[length_unit]]h\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date);",
+          "rawSql": "SELECT convert_km(max(speed_max), '$length_unit') AS speed_${length_unit}h\nFROM drives\nWHERE car_id = $car_id and $__timeFilter(start_date);",
           "refId": "A",
           "select": [
             [
@@ -948,7 +954,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT max(speed) AS speed_[[length_unit]]h\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date);",
+          "rawSql": "SELECT convert_km(max(speed_max), '$length_unit') AS speed_${length_unit}h\nFROM drives\nWHERE car_id = $car_id and $__timeFilter(start_date);",
           "refId": "A",
           "select": [
             [
@@ -1090,7 +1096,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT max(speed) AS speed_[[length_unit]]h\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date);",
+          "rawSql": "SELECT convert_km(max(speed_max), '$length_unit') AS speed_${length_unit}h\nFROM drives\nWHERE car_id = $car_id and $__timeFilter(start_date);",
           "refId": "A",
           "select": [
             [
@@ -1233,7 +1239,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -1245,7 +1251,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH drivedata AS (\r\n    SELECT\r\n        ROUND(convert_km(p.speed::numeric, '$length_unit') / 10, 0) * 10 AS speed_section_$length_unit,\r\n        EXTRACT(EPOCH FROM (LEAD(p.\"date\") OVER (ORDER BY p.\"date\") - p.\"date\")) AS seconds_elapsed\r\n    FROM drives d\r\n    INNER JOIN positions p ON p.drive_id = d.id\r\n    WHERE d.car_id = $car_id AND $__timeFilter(d.start_date) AND p.ideal_battery_range_km IS NOT NULL\r\n),\r\nTotalDuration AS (\r\n    SELECT SUM(seconds_elapsed) AS total_elapsed_time\r\n    FROM drivedata\r\n    WHERE speed_section_$length_unit > 0\r\n)\r\nSELECT \r\n    speed_section_$length_unit AS \"Speed\",\r\n    SUM(seconds_elapsed) * 100 / (SELECT total_elapsed_time FROM TotalDuration) AS \"Elapsed\", \r\n    TO_CHAR((SUM(seconds_elapsed) || ' second')::interval, 'HH24:MI:SS') AS \"Time\"\r\nFROM drivedata\r\nWHERE speed_section_$length_unit > 0\r\nGROUP BY speed_section_$length_unit\r\nORDER BY speed_section_$length_unit;\r\n",
+          "rawSql": "WITH drivedata AS (\r\n    SELECT\r\n        ROUND(convert_km(p.speed::numeric, '$length_unit') / 10, 0) * 10 AS speed_section_${length_unit},\r\n        EXTRACT(EPOCH FROM (LEAD(p.\"date\") OVER (PARTITION BY p.drive_id ORDER BY p.\"date\") - p.\"date\")) AS seconds_elapsed\r\n    FROM positions p\r\n    WHERE p.car_id = $car_id AND $__timeFilter(p.date) AND p.ideal_battery_range_km IS NOT NULL\r\n)\r\n\r\nSELECT \r\n    speed_section_${length_unit} AS \"Speed\",\r\n    SUM(seconds_elapsed) * 100 / SUM(SUM(seconds_elapsed)) OVER () AS \"Elapsed\", \r\n    TO_CHAR((SUM(seconds_elapsed) || ' second')::interval, 'HH24:MI:SS') AS \"Time\"\r\nFROM drivedata\r\nWHERE speed_section_${length_unit} > 0\r\nGROUP BY speed_section_${length_unit}\r\nORDER BY speed_section_${length_unit};\r\n",
           "refId": "A",
           "select": [
             [
