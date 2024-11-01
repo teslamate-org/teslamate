@@ -11,7 +11,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.1.0"
+      "version": "11.2.3"
     },
     {
       "type": "datasource",
@@ -148,7 +148,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -330,7 +330,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -417,7 +417,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -515,6 +515,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "opacity",
@@ -590,7 +591,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -723,7 +723,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -830,7 +830,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -945,7 +945,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1066,7 +1066,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1191,7 +1191,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1313,7 +1313,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1384,6 +1384,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "opacity",
@@ -1550,7 +1551,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -1670,7 +1670,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1786,7 +1786,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1891,7 +1891,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -2028,7 +2028,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -2222,6 +2221,6 @@
   "timezone": "",
   "title": "Overview",
   "uid": "kOuP_Fggz",
-  "version": 14,
+  "version": 1,
   "weekStart": ""
 }

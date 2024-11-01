@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.1"
+      "version": "11.2.3"
     },
     {
       "type": "datasource",
@@ -151,6 +151,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "sum"
@@ -162,7 +163,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -250,6 +251,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "sum"
@@ -261,7 +263,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -368,6 +370,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "sum"
@@ -379,7 +382,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -488,6 +491,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [],
           "fields": "",
@@ -497,7 +501,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -593,7 +597,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -619,7 +624,7 @@
                   {
                     "targetBlank": false,
                     "title": "View drive details",
-                    "url": "d/zm7wN6Zgz?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-drive_id=${__data.fields.drive_id.numeric}"
+                    "url": "d/zm7wN6Zgz/drive-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-drive_id=${__data.fields.drive_id.numeric}"
                   }
                 ]
               },
@@ -742,7 +747,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-green"
+                      "color": "super-light-green",
+                      "value": null
                     },
                     {
                       "color": "green",
@@ -858,7 +864,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-blue"
+                      "color": "super-light-blue",
+                      "value": null
                     },
                     {
                       "color": "super-light-green",
@@ -1078,7 +1085,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-blue"
+                      "color": "super-light-blue",
+                      "value": null
                     },
                     {
                       "color": "super-light-green",
@@ -1404,7 +1412,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "alias": "",
@@ -1493,7 +1501,7 @@
         "content": "From here you can check if you have \nincomplete data of **Drives** (drives without ending date)\nIf so, you may follow the official \nguide by <a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>",
         "mode": "markdown"
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1582,7 +1590,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "alias": "",
@@ -1849,6 +1857,6 @@
   "timezone": "",
   "title": "Drives",
   "uid": "Y8upc6ZRk",
-  "version": 6,
+  "version": 1,
   "weekStart": ""
 }

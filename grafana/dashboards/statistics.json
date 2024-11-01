@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.0"
+      "version": "11.2.3"
     },
     {
       "type": "datasource",
@@ -546,10 +546,14 @@
           }
         ]
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.2.3",
       "repeatDirection": "h",
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -575,13 +579,13 @@
               "params": [],
               "type": "macro"
             }
-          ],
+          ]
+        },
+        {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
-          }
-        },
-        {
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -605,13 +609,13 @@
               "params": [],
               "type": "macro"
             }
-          ],
+          ]
+        },
+        {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
-          }
-        },
-        {
+          },
           "format": "table",
           "group": [],
           "hide": false,
@@ -636,11 +640,7 @@
               "params": [],
               "type": "macro"
             }
-          ],
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          }
+          ]
         }
       ],
       "title": "per ${period}",
@@ -994,7 +994,6 @@
     "from": "now-10y",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",

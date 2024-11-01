@@ -17,7 +17,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.1"
+      "version": "11.2.3"
     },
     {
       "type": "datasource",
@@ -124,7 +124,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -256,7 +256,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -363,7 +363,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -503,7 +503,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -636,7 +636,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -702,7 +702,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -790,6 +790,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -801,7 +802,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -931,6 +932,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -942,7 +944,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1073,6 +1075,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "last"
@@ -1084,7 +1087,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1239,7 +1242,6 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "11.0.1",
       "targets": [
         {
           "datasource": {
@@ -1384,7 +1386,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1517,7 +1519,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1620,7 +1622,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.0.1",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1869,6 +1871,6 @@
   "timezone": "",
   "title": "Drive Stats",
   "uid": "_7WkNSyWk",
-  "version": 14,
+  "version": 1,
   "weekStart": ""
 }
