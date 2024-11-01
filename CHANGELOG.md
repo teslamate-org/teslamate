@@ -15,6 +15,8 @@
 
 #### Dashboards
 
+- fix: allow editing of dashboards - [changes will be overwritten on update](https://grafana.com/docs/grafana/latest/administration/provisioning/#making-changes-to-a-provisioned-dashboard)
+
 #### Translations
 
 #### Documentation
