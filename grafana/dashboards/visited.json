@@ -256,7 +256,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\n  date_trunc('minute', date) as time,\n  avg(latitude) as latitude,\n  avg(longitude) as longitude\nFROM\n  positions\nWHERE\n  car_id = $car_id AND $__timeFilter(date) and ideal_battery_range_km is not null\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  date_trunc('minute', TIMEZONE('UTC', date)) as time,\n  avg(latitude) as latitude,\n  avg(longitude) as longitude\nFROM\n  positions\nWHERE\n  car_id = $car_id AND $__timeFilter(date) and ideal_battery_range_km is not null\nGROUP BY 1\nORDER BY 1",
           "refId": "Positions",
           "sql": {
             "columns": [
