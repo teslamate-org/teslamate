@@ -18,6 +18,7 @@
 - fix: allow editing of dashboards - [changes will be overwritten on update](https://grafana.com/docs/grafana/latest/administration/provisioning/#making-changes-to-a-provisioned-dashboard)
 - fix: ensure max speed panels are converted according to length unit setting in drive stats dashboard
 - perf: speed up queries used to calculate max speed in drive stats dashboard
+- feat: add a welcome dashboard
 
 #### Translations
 
