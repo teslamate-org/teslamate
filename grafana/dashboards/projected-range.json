@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.0"
+      "version": "11.2.3"
     },
     {
       "type": "datasource",
@@ -111,6 +111,7 @@
             "axisLabel": "Projected Range",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 30,
             "gradientMode": "opacity",
@@ -201,7 +202,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.1",
       "targets": [
         {
           "alias": "",
@@ -288,6 +288,7 @@
             "axisLabel": "Projected Range",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 30,
             "gradientMode": "opacity",
@@ -379,7 +380,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.1",
       "targets": [
         {
           "alias": "",
@@ -602,7 +602,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.1",
       "targets": [
         {
           "alias": "",
@@ -867,7 +866,6 @@
     "from": "now-6M",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",

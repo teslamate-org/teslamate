@@ -17,7 +17,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.1.0"
+      "version": "11.2.3"
     },
     {
       "type": "datasource",
@@ -150,7 +150,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -298,7 +298,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -402,7 +402,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -414,7 +414,7 @@
           "hide": false,
           "rawQuery": true,
           "rawSql": "select ROUND(convert_km(sum(distance)::numeric, '$length_unit'),0)|| ' $length_unit' as \"Logged\"\r\nfrom drives \r\nwhere car_id = $car_id;\r\n",
-          "refId": "Looged",
+          "refId": "Logged",
           "sql": {
             "columns": [
               {
@@ -658,7 +658,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.6",
       "targets": [
         {
           "datasource": {
@@ -774,7 +773,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -873,7 +872,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -999,7 +998,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1246,7 +1245,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1441,7 +1440,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1453,7 +1452,7 @@
           "hide": false,
           "rawQuery": true,
           "rawSql": "SELECT ('$aux'::json -> 'RatedEfficiency')::text::float * \r\n CASE \r\n    WHEN '$length_unit' = 'km' THEN 10\r\n    WHEN '$length_unit' = 'mi' THEN 16.0934 \r\n  END AS efficiency_$length_unit",
-          "refId": "Looged",
+          "refId": "Logged",
           "sql": {
             "columns": [
               {
@@ -1541,7 +1540,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1631,14 +1630,17 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "fillOpacity": 50,
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
+            "pointShape": "circle",
             "pointSize": {
               "fixed": 6
             },
+            "pointStrokeWidth": 1,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -1675,6 +1677,33 @@
                 "value": "lines"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "kWh"
+            },
+            "properties": [
+              {
+                "id": "custom.pointSize.fixed",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "M-kWh"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -1692,37 +1721,62 @@
           "placement": "bottom",
           "showLegend": false
         },
+        "mapping": "manual",
         "series": [
           {
-            "name": "Odometer",
-            "pointColor": {
-              "field": "kWh"
+            "color": {
+              "matcher": {
+                "id": "byName",
+                "options": "kWh"
+              }
             },
-            "pointSize": {
-              "fixed": 5,
-              "max": 100,
-              "min": 1
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 0
+              }
             },
-            "x": "Odometer",
-            "y": "kWh"
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "Odometer"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "kWh"
+              }
+            }
           },
           {
-            "name": "Median Odometer",
-            "pointColor": {
-              "fixed": "dark-red"
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 1
+              }
             },
-            "x": "M-Odometer",
-            "y": "M-kWh"
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "M-Odometer"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "M-kWh"
+              }
+            }
           }
         ],
-        "seriesMapping": "manual",
         "tooltip": {
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.6",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "alias": "",
@@ -1999,6 +2053,6 @@
   "timezone": "browser",
   "title": "Battery Health",
   "uid": "jchmRiqUfXgTM",
-  "version": 11,
+  "version": 1,
   "weekStart": ""
 }

@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- feat: use Grafana 11.2.3
+
 #### Build, CI, internal
 
 - ci: remove unknown flag --ref for gh cache delete in cleanup_caches workflow ([3a515df](https://github.com/teslamate-org/teslamate/commit/3a515df5aa400139acf8ef638e5ae37339c553cf) - @JakobLichterfeld)

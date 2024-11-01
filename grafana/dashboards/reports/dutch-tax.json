@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.6+security-01"
+      "version": "11.2.3"
     },
     {
       "type": "datasource",
@@ -96,6 +96,7 @@
       "fieldConfig": {
         "defaults": {
           "custom": {
+            "align": "auto",
             "cellOptions": {
               "type": "auto"
             },
@@ -348,7 +349,7 @@
           }
         ]
       },
-      "pluginVersion": "11.0.6+security-01",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "alias": "",
@@ -511,7 +512,6 @@
     "from": "now-1y",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -540,6 +540,6 @@
   "timezone": "",
   "title": "Drives - Dutch tax",
   "uid": "lBIoQIggk",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }

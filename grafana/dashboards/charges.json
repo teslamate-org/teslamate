@@ -5,7 +5,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.0.6+security-01"
+      "version": "11.2.3"
     },
     {
       "type": "datasource",
@@ -150,6 +150,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "sum"
@@ -161,7 +162,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.6+security-01",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -247,6 +248,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "sum"
@@ -258,7 +260,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.6+security-01",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -345,6 +347,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "sum"
@@ -356,7 +359,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.6+security-01",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -444,6 +447,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -455,7 +459,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.6+security-01",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -534,7 +538,7 @@
                   {
                     "targetBlank": false,
                     "title": "View charge details",
-                    "url": "d/BHhxFeZRz?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric}"
+                    "url": "d/BHhxFeZRz/charge-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric}"
                   }
                 ]
               },
@@ -1169,7 +1173,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "11.0.6+security-01",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1257,7 +1261,7 @@
         "content": "From here you can check if you have \nincomplete data of **Charges** (charges without ending date)\nIf so, you may follow the official \nguide by <a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>",
         "mode": "markdown"
       },
-      "pluginVersion": "11.0.6+security-01",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1346,7 +1350,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.0.6+security-01",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "alias": "",
@@ -1634,7 +1638,6 @@
     "from": "now-3M",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [
       "5s",
@@ -1663,6 +1666,6 @@
   "timezone": "",
   "title": "Charges",
   "uid": "TSmNYvRRk",
-  "version": 7,
+  "version": 1,
   "weekStart": ""
 }
