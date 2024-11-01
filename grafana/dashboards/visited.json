@@ -129,11 +129,9 @@
       "maxDataPoints": 10000000,
       "options": {
         "basemap": {
-          "config": {
-            "server": "streets"
-          },
+          "config": {},
           "name": "Layer 0",
-          "type": "esri-xyz"
+          "type": "osm-standard"
         },
         "controls": {
           "mouseWheelZoom": true,
