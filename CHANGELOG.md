@@ -11,6 +11,7 @@
 - ci: remove unknown flag --ref for gh cache delete in cleanup_caches workflow ([3a515df](https://github.com/teslamate-org/teslamate/commit/3a515df5aa400139acf8ef638e5ae37339c553cf) - @JakobLichterfeld)
 - build(deps): bump actions/checkout from 4.2.1 to 4.2.2 (#4340)
 - build(deps): bump actions/cache from 4.0.2 to 4.1.2 (#4341)
+- build(deps): bump cachix/install-nix-action from 27 to 30 (#4342)
 
 #### Dashboards
 
