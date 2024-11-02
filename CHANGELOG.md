@@ -19,6 +19,8 @@
 
 #### Documentation
 
+docs: add contributing guidelines link for GitHub (#4345 - @JakobLichterfeld)
+
 ## [1.31.1] - 2024-10-29
 
 This release primarily prevents beam.smp from overloading the CPU on ARM hosts. It also includes a number of other bug fixes and performance improvements. Enjoy it.
