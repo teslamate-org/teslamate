@@ -1022,7 +1022,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric * convert_km(1, '$length_unit'), 3) * 1000 as \"efficiency_$length_unit\",\n  count(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_ideal_range_km IS NOT NULL\n  AND end_ideal_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
+          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric / convert_km(1, '$length_unit'), 3) * 1000 as \"efficiency_$length_unit\",\n  count(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_ideal_range_km IS NOT NULL\n  AND end_ideal_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
           "refId": "A",
           "select": [
             [
@@ -1158,7 +1158,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric * convert_km(1, '$length_unit'), 3) * 1000 as \"efficiency_$length_unit\",\n\tcount(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_rated_range_km IS NOT NULL\n  AND end_rated_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
+          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric / convert_km(1, '$length_unit'), 3) * 1000 as \"efficiency_$length_unit\",\n\tcount(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_rated_range_km IS NOT NULL\n  AND end_rated_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
           "refId": "A",
           "select": [
             [
@@ -1401,6 +1401,6 @@
   "timezone": "",
   "title": "Efficiency",
   "uid": "fu4SiQgWz",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
