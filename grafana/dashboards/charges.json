@@ -810,7 +810,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Power avg"
+                "value": "Ø Power"
               },
               {
                 "id": "unit",
@@ -860,7 +860,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Range added"
+                "value": "Ø Charge rate"
               },
               {
                 "id": "unit",
@@ -954,7 +954,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Range added"
+                "value": "Ø Charge rate"
               },
               {
                 "id": "unit",
@@ -1322,8 +1322,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
