@@ -84,7 +84,7 @@
     {
       "icon": "doc",
       "tags": [],
-      "targetBlank": false,
+      "targetBlank": true,
       "title": "Select last three drives",
       "type": "link",
       "url": "/d/FkUpJpQZk/trip?from=$from"
@@ -1914,8 +1914,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2231,8 +2230,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "#96D98D",
-                      "value": null
+                      "color": "#96D98D"
                     },
                     {
                       "color": "#56A64B",
@@ -2451,8 +2449,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2637,8 +2634,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2925,7 +2921,7 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "2024-11-02T13:34:36.487Z",
     "to": "now"
   },
   "timepicker": {

@@ -139,7 +139,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
+        "w": 3,
         "x": 0,
         "y": 1
       },
@@ -228,8 +228,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 5,
+        "w": 3,
+        "x": 3,
         "y": 1
       },
       "id": 10,
@@ -319,7 +319,7 @@
       "gridPos": {
         "h": 3,
         "w": 3,
-        "x": 10,
+        "x": 6,
         "y": 1
       },
       "id": 14,
@@ -381,7 +381,7 @@
           ]
         }
       ],
-      "title": "Charging Cost at SuC",
+      "title": "SuC Charging Cost",
       "type": "stat"
     },
     {
@@ -409,7 +409,7 @@
       "gridPos": {
         "h": 3,
         "w": 3,
-        "x": 13,
+        "x": 9,
         "y": 1
       },
       "id": 27,
@@ -498,8 +498,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 16,
+        "w": 3,
+        "x": 12,
         "y": 1
       },
       "id": 26,
@@ -573,7 +573,7 @@
           ]
         }
       ],
-      "title": "Cost per 100 $length_unit",
+      "title": "Ø Cost per 100 $length_unit",
       "type": "stat"
     },
     {
@@ -602,8 +602,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 18,
+        "w": 3,
+        "x": 15,
         "y": 1
       },
       "id": 31,
@@ -649,7 +649,7 @@
           ]
         }
       ],
-      "title": "Average Cost per kWh",
+      "title": "Ø Cost per kWh",
       "type": "stat"
     },
     {
@@ -678,8 +678,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 20,
+        "w": 3,
+        "x": 18,
         "y": 1
       },
       "id": 32,
@@ -743,7 +743,7 @@
           ]
         }
       ],
-      "title": "DC Avg Cost per kWh",
+      "title": "Ø Cost per kWh DC",
       "type": "stat"
     },
     {
@@ -772,8 +772,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 22,
+        "w": 3,
+        "x": 21,
         "y": 1
       },
       "id": 33,
@@ -837,7 +837,7 @@
           ]
         }
       ],
-      "title": "AC Avg Cost per kWh",
+      "title": "Ø Cost per kWh AC",
       "type": "stat"
     },
     {
@@ -1924,14 +1924,16 @@
             "cellOptions": {
               "type": "auto"
             },
-            "inspect": false
+            "inspect": false,
+            "minWidth": 50
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -1945,7 +1947,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 70
+                "value": 50
               },
               {
                 "id": "displayName",
@@ -1977,7 +1979,8 @@
                 "id": "custom.cellOptions",
                 "value": {
                   "mode": "gradient",
-                  "type": "gauge"
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
                 }
               },
               {
@@ -1986,6 +1989,10 @@
               {
                 "id": "min",
                 "value": 0
+              },
+              {
+                "id": "custom.align",
+                "value": "left"
               }
             ]
           }
@@ -2011,6 +2018,7 @@
         "showHeader": true,
         "sortBy": []
       },
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -2114,14 +2122,16 @@
             "cellOptions": {
               "type": "auto"
             },
-            "inspect": false
+            "inspect": false,
+            "minWidth": 50
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2151,7 +2161,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red"
+                      "color": "red",
+                      "value": null
                     },
                     {
                       "color": "#EAB839",
@@ -2172,7 +2183,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 70
+                "value": 50
               }
             ]
           },
@@ -2196,6 +2207,10 @@
               {
                 "id": "min",
                 "value": 0
+              },
+              {
+                "id": "custom.align",
+                "value": "left"
               }
             ]
           }
@@ -2221,6 +2236,7 @@
         "showHeader": true,
         "sortBy": []
       },
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -2275,7 +2291,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2338,6 +2355,7 @@
         },
         "showHeader": true
       },
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -2392,7 +2410,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2459,6 +2478,7 @@
         },
         "showHeader": true
       },
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -2607,6 +2627,6 @@
   "timezone": "",
   "title": "Charging Stats",
   "uid": "-pkIkhmRz",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
