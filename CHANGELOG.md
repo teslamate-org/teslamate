@@ -21,6 +21,7 @@
 - fix: ensure max speed panels are converted according to length unit setting in drive stats dashboard (#4338 - @swiffer)
 - perf: speed up queries used to calculate max speed in drive stats dashboard (#4338 - @swiffer)
 - feat: add a welcome dashboard (#4338 - @swiffer)
+- fix: Charges Dashboard -> Range added renamed to Ø Charge rate (#4349 - @swiffer)
 
 #### Translations
 
