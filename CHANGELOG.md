@@ -15,6 +15,7 @@
 - build(deps): bump actions/cache from 4.0.2 to 4.1.2 (#4341)
 - build(deps): bump cachix/install-nix-action from 27 to 30 (#4342)
 - build(deps): bump tesla from 1.12.1 to 1.13.0 (#4335)
+- build(deps): bump floki from 0.36.2 to 0.36.3 (#4336)
 
 #### Dashboards
 
