@@ -14,6 +14,7 @@
 - build(deps): bump actions/checkout from 4.2.1 to 4.2.2 (#4340)
 - build(deps): bump actions/cache from 4.0.2 to 4.1.2 (#4341)
 - build(deps): bump cachix/install-nix-action from 27 to 30 (#4342)
+- build(deps): bump tesla from 1.12.1 to 1.13.0 (#4335)
 
 #### Dashboards
 
