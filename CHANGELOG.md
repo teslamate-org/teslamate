@@ -6,7 +6,7 @@
 
 ### Improvements and bug fixes
 
-- feat: use Grafana 11.2.3
+- feat: use Grafana 11.2.3 (#4338 - @swiffer)
 
 #### Build, CI, internal
 
@@ -17,10 +17,10 @@
 
 #### Dashboards
 
-- fix: allow editing of dashboards - [changes will be overwritten on update](https://grafana.com/docs/grafana/latest/administration/provisioning/#making-changes-to-a-provisioned-dashboard)
-- fix: ensure max speed panels are converted according to length unit setting in drive stats dashboard
-- perf: speed up queries used to calculate max speed in drive stats dashboard
-- feat: add a welcome dashboard
+- fix: allow editing of dashboards - [changes will be overwritten on update](https://grafana.com/docs/grafana/latest/administration/provisioning/#making-changes-to-a-provisioned-dashboard) (#4338 - @swiffer)
+- fix: ensure max speed panels are converted according to length unit setting in drive stats dashboard (#4338 - @swiffer)
+- perf: speed up queries used to calculate max speed in drive stats dashboard (#4338 - @swiffer)
+- feat: add a welcome dashboard (#4338 - @swiffer)
 
 #### Translations
 
