@@ -19,6 +19,7 @@
           "*.dockerignore"
           ".envrc"
           "*.node-version"
+          "CONTRIBUTING"
           "Dockerfile"
           "grafana/Dockerfile"
           "Makefile"
