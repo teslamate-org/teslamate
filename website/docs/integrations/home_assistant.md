@@ -66,10 +66,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
         payload_not_available: "false"
     device: &teslamate_device_info
       identifiers: [teslamate_car_1]
-      configuration_url: https://teslamate.zxxz.io/
+      configuration_url: https://teslamate.zxxz.io/ # update this with your teslamate URL
       manufacturer: Tesla
-      model: Model 3
-      name: Tesla Model 3
+      model: Model 3 # update this with your car model
+      name: Tesla Model 3 # update this with your car name
     state_topic: "teslamate/cars/1/display_name"
     icon: mdi:car
 
