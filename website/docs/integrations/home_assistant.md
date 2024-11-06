@@ -1,21 +1,27 @@
 ---
-title: HomeAssistant Integration
-sidebar_label: HomeAssistant
+title: Home Assistant Integration
+sidebar_label: Home Assistant
 ---
 
-Whilst HomeAssistant provides an official component for Tesla vehicles, the component has not been updated recently, and does not have the sophistication of TeslaMate's polling mechanism, resulting in the component's default values keeping the vehicle awake and draining the battery.
+## Introduction
+
+Whilst Home Assistant provides an official component for Tesla vehicles, the component has not been updated recently, and does not have the sophistication of TeslaMate's polling mechanism, resulting in the component's default values keeping the vehicle awake and draining the battery.
 
 The ultimate goal of this guide is to consume as much of the TeslaMate polling data as possible to replace the majority of the official Tesla component's polling functionality.
 
 If your intention is to only use read-only sensor values, those provided by TeslaMate via MQTT are sufficient, and you do not need to utilise the official Tesla component. If however you would like to be able to write values to the Tesla API (Lock/Unlock Doors or automate Climate), there is a solution which involves configuring an extremely high polling interval for the Tesla component and using automation to populate the values from the TeslaMate MQTT parameters.
 
-**Screenshots**
+### Car ID
+
+The following configuarations assumes a car ID of 1 (`teslamate/cars/1`). It usually starts at 1, but it can be different if you have multiple cars in TeslaMate for example.
+
+### Screenshots
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 <img alt="HASS Screenshot" src={useBaseUrl('img/hass-dashboard.png')} />
 
-**Current Status**
+### Current Status
 
 - Sensors: All sensors exposed by the Tesla component are available
 - Locks: Not implemented
@@ -53,7 +59,7 @@ binary_sensor: !include binary_sensor.yaml
 
 ### mqtt_sensors.yaml (mqtt: section of configuration.yaml)
 
-Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct corresponding values.
+Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla name>` with correct corresponding values.
 
 ```yml title="mqtt_sensors.yaml"
 - sensor:
@@ -66,10 +72,10 @@ Don't forget to replace `<teslamate url>` and `<your tesla model>` with correct 
         payload_not_available: "false"
     device: &teslamate_device_info
       identifiers: [teslamate_car_1]
-      configuration_url: https://teslamate.zxxz.io/ # update this with your teslamate URL
+      configuration_url: <teslamate url> # update this with your teslamate URL, e.g. https://teslamate.example.com/
       manufacturer: Tesla
-      model: Model 3 # update this with your car model
-      name: Tesla Model 3 # update this with your car name
+      model: Model 3 # <your tesla model>, update this with your car model
+      name: Tesla Model 3 # <your tesla name> update this with your car name
     state_topic: "teslamate/cars/1/display_name"
     icon: mdi:car
 
@@ -1045,7 +1051,8 @@ The following set of automations and scripts will detect when a Tesla door, frun
 
 By default, the script will repeatedly notify every 5 minutes. Remove the recursive `script.turn_on` sequence in the `notify_tesla_open` script if you'd only like to be informed once.
 
-We add the random 30 second interval after each notification to avoid clobbering the notification script when we have multiple things open at once. For example, opening the door will open the door and the window. If we don't delay the calls, we will only get a message about the window (as it is the last call to the script) and if we then close the window, we won't get notifications about other things left open. This results in more notifications but less chance on missing out on knowing something was left open.
+We add the random 30 second interval after each notification to avoid clobbering the notification script when we have multiple things open at once.
+For example, opening the door will open the door and the window. If we don't delay the calls, we will only get a message about the window (as it is the last call to the script) and if we then close the window, we won't get notifications about other things left open. This results in more notifications but less chance on missing out on knowing something was left open.
 
 #### automation.yaml
 
