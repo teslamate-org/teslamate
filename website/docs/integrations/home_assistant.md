@@ -64,10 +64,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Display Name
     object_id: tesla_display_name # entity_id
     unique_id: teslamate_1_display_name # internal id, used for device grouping
-    availability: &teslamate_availability
-      - topic: teslamate/cars/1/healthy
-        payload_available: "true"
-        payload_not_available: "false"
     device: &teslamate_device_info
       identifiers: [teslamate_car_1]
       configuration_url: <teslamate url> # update this with your teslamate URL, e.g. https://teslamate.example.com/
@@ -81,7 +77,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Location
     object_id: tesla_location
     unique_id: teslamate_1_location
-    availability: *teslamate_availability
     device: *teslamate_device_info
     json_attributes_topic: "teslamate/cars/1/location"
     icon: mdi:crosshairs-gps
@@ -107,7 +102,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: State
     object_id: tesla_state
     unique_id: teslamate_1_state
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/state"
     icon: mdi:car-connected
@@ -116,7 +110,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Since
     object_id: tesla_since
     unique_id: teslamate_1_since
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/since"
     device_class: timestamp
@@ -126,7 +119,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Version
     object_id: tesla_version
     unique_id: teslamate_1_version
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/version"
     icon: mdi:alphabetical
@@ -135,7 +127,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Update Version
     object_id: tesla_update_version
     unique_id: teslamate_1_update_version
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/update_version"
     icon: mdi:alphabetical
@@ -144,7 +135,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Model
     object_id: tesla_model
     unique_id: teslamate_1_model
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/model"
 
@@ -152,7 +142,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Trim Badging
     object_id: tesla_trim_badging
     unique_id: teslamate_1_trim_badging
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/trim_badging"
     icon: mdi:shield-star-outline
@@ -161,7 +150,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Exterior Color
     object_id: tesla_exterior_color
     unique_id: teslamate_1_exterior_color
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/exterior_color"
     icon: mdi:palette
@@ -170,7 +158,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Wheel Type
     object_id: tesla_wheel_type
     unique_id: teslamate_1_wheel_type
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/wheel_type"
 
@@ -178,7 +165,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Spoiler Type
     object_id: tesla_spoiler_type
     unique_id: teslamate_1_spoiler_type
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/spoiler_type"
     icon: mdi:car-sports
@@ -187,7 +173,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Geofence
     object_id: tesla_geofence
     unique_id: teslamate_1_geofence
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/geofence"
     icon: mdi:earth
@@ -196,7 +181,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Shift State
     object_id: tesla_shift_state
     unique_id: teslamate_1_shift_state
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/shift_state"
     icon: mdi:car-shift-pattern
@@ -205,7 +189,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Power
     object_id: tesla_power
     unique_id: teslamate_1_power
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/power"
     device_class: power
@@ -216,7 +199,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Speed
     object_id: tesla_speed
     unique_id: teslamate_1_speed
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/speed"
     unit_of_measurement: "km/h"
@@ -226,7 +208,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Heading
     object_id: tesla_heading
     unique_id: teslamate_1_heading
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/heading"
     unit_of_measurement: °
@@ -236,7 +217,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Elevation
     object_id: tesla_elevation
     unique_id: teslamate_1_elevation
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/elevation"
     unit_of_measurement: m
@@ -246,7 +226,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Inside Temp
     object_id: tesla_inside_temp
     unique_id: teslamate_1_inside_temp
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/inside_temp"
     device_class: temperature
@@ -257,7 +236,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Outside Temp
     object_id: tesla_outside_temp
     unique_id: teslamate_1_outside_temp
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/outside_temp"
     device_class: temperature
@@ -268,7 +246,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Odometer
     object_id: tesla_odometer
     unique_id: teslamate_1_odometer
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/odometer"
     unit_of_measurement: km
@@ -278,7 +255,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Est Battery Range
     object_id: tesla_est_battery_range_km
     unique_id: teslamate_1_est_battery_range_km
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/est_battery_range_km"
     unit_of_measurement: km
@@ -288,7 +264,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Rated Battery Range
     object_id: tesla_rated_battery_range_km
     unique_id: teslamate_1_rated_battery_range_km
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/rated_battery_range_km"
     unit_of_measurement: km
@@ -298,7 +273,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Ideal Battery Range
     object_id: tesla_ideal_battery_range_km
     unique_id: teslamate_1_ideal_battery_range_km
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/ideal_battery_range_km"
     unit_of_measurement: km
@@ -308,7 +282,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Battery Level
     object_id: tesla_battery_level
     unique_id: teslamate_1_battery_level
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/battery_level"
     device_class: battery
@@ -319,7 +292,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Usable Battery Level
     object_id: tesla_usable_battery_level
     unique_id: teslamate_1_usable_battery_level
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/usable_battery_level"
     unit_of_measurement: "%"
@@ -329,7 +301,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Charge Energy Added
     object_id: tesla_charge_energy_added
     unique_id: teslamate_1_charge_energy_added
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/charge_energy_added"
     device_class: energy
@@ -340,7 +311,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Charge Limit Soc
     object_id: tesla_charge_limit_soc
     unique_id: teslamate_1_charge_limit_soc
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/charge_limit_soc"
     unit_of_measurement: "%"
@@ -350,7 +320,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Charger Actual Current
     object_id: tesla_charger_actual_current
     unique_id: teslamate_1_charger_actual_current
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/charger_actual_current"
     device_class: current
@@ -361,7 +330,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Charger Phases
     object_id: tesla_charger_phases
     unique_id: teslamate_1_charger_phases
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/charger_phases"
     icon: mdi:sine-wave
@@ -370,7 +338,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Charger Power
     object_id: tesla_charger_power
     unique_id: teslamate_1_charger_power
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/charger_power"
     device_class: power
@@ -381,7 +348,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Charger Voltage
     object_id: tesla_charger_voltage
     unique_id: teslamate_1_charger_voltage
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/charger_voltage"
     device_class: voltage
@@ -392,7 +358,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Scheduled Charging Start Time
     object_id: tesla_scheduled_charging_start_time
     unique_id: teslamate_1_scheduled_charging_start_time
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/scheduled_charging_start_time"
     device_class: timestamp
@@ -402,7 +367,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Time To Full Charge
     object_id: tesla_time_to_full_charge
     unique_id: teslamate_1_time_to_full_charge
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/time_to_full_charge"
     unit_of_measurement: h
@@ -412,7 +376,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: TPMS Pressure Front Left
     object_id: tesla_tpms_pressure_fl
     unique_id: teslamate_1_tpms_pressure_fl
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/tpms_pressure_fl"
     unit_of_measurement: bar
@@ -422,7 +385,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: TPMS Pressure Front Right
     object_id: tesla_tpms_pressure_fr
     unique_id: teslamate_1_tpms_pressure_fr
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/tpms_pressure_fr"
     unit_of_measurement: bar
@@ -432,7 +394,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: TPMS Pressure Rear Left
     object_id: tesla_tpms_pressure_rl
     unique_id: teslamate_1_tpms_pressure_rl
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/tpms_pressure_rl"
     unit_of_measurement: bar
@@ -442,7 +403,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: TPMS Pressure Rear Right
     object_id: tesla_tpms_pressure_rr
     unique_id: teslamate_1_tpms_pressure_rr
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/tpms_pressure_rr"
     unit_of_measurement: bar
@@ -521,7 +481,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Healthy
     object_id: tesla_healthy
     unique_id: teslamate_1_healthy
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/healthy"
     payload_on: "true"
@@ -532,7 +491,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Update Available
     object_id: tesla_update_available
     unique_id: teslamate_1_update_available
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/update_available"
     payload_on: "true"
@@ -543,7 +501,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Locked
     object_id: tesla_locked
     unique_id: teslamate_1_locked
-    availability: *teslamate_availability
     device: *teslamate_device_info
     device_class: lock
     state_topic: "teslamate/cars/1/locked"
@@ -554,7 +511,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Sentry Mode
     object_id: tesla_sentry_mode
     unique_id: teslamate_1_sentry_mode
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/sentry_mode"
     payload_on: "true"
@@ -565,7 +521,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Windows Open
     object_id: tesla_windows_open
     unique_id: teslamate_1_windows_open
-    availability: *teslamate_availability
     device: *teslamate_device_info
     device_class: window
     state_topic: "teslamate/cars/1/windows_open"
@@ -577,7 +532,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Doors Open
     object_id: tesla_doors_open
     unique_id: teslamate_1_doors_open
-    availability: *teslamate_availability
     device: *teslamate_device_info
     device_class: door
     state_topic: "teslamate/cars/1/doors_open"
@@ -589,7 +543,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Trunk Open
     object_id: tesla_trunk_open
     unique_id: teslamate_1_trunk_open
-    availability: *teslamate_availability
     device: *teslamate_device_info
     device_class: opening
     state_topic: "teslamate/cars/1/trunk_open"
@@ -601,7 +554,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Frunk Open
     object_id: tesla_frunk_open
     unique_id: teslamate_1_frunk_open
-    availability: *teslamate_availability
     device: *teslamate_device_info
     device_class: opening
     state_topic: "teslamate/cars/1/frunk_open"
@@ -613,7 +565,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Is User Present
     object_id: tesla_is_user_present
     unique_id: teslamate_1_is_user_present
-    availability: *teslamate_availability
     device: *teslamate_device_info
     device_class: presence
     state_topic: "teslamate/cars/1/is_user_present"
@@ -625,7 +576,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Is Climate On
     object_id: tesla_is_climate_on
     unique_id: teslamate_1_is_climate_on
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/is_climate_on"
     payload_on: "true"
@@ -636,7 +586,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Is Preconditioning
     object_id: tesla_is_preconditioning
     unique_id: teslamate_1_is_preconditioning
-    availability: *teslamate_availability
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/is_preconditioning"
     payload_on: "true"
@@ -647,7 +596,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Plugged In
     object_id: tesla_plugged_in
     unique_id: teslamate_1_plugged_in
-    availability: *teslamate_availability
     device: *teslamate_device_info
     device_class: plug
     state_topic: "teslamate/cars/1/plugged_in"
@@ -659,7 +607,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     name: Charge Port Door OPEN
     object_id: tesla_charge_port_door_open
     unique_id: teslamate_1_charge_port_door_open
-    availability: *teslamate_availability
     device: *teslamate_device_info
     device_class: opening
     state_topic: "teslamate/cars/1/charge_port_door_open"
