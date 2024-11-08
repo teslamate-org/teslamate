@@ -25,6 +25,7 @@
 - perf: speed up queries used to calculate max speed in drive stats dashboard (#4338 - @swiffer)
 - feat: add a welcome dashboard (#4338 - @swiffer)
 - fix: Charges Dashboard -> Range added renamed to Ø Charge rate (#4349 - @swiffer)
+- fix: Axis Labels for XY Chart in Battery Health and reduces Query count in Visited (#4364 - @swiffer)
 
 #### Translations
 
