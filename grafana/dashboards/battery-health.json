@@ -1451,7 +1451,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT ('$aux'::json -> 'RatedEfficiency')::text::float * \r\n CASE \r\n    WHEN '$length_unit' = 'km' THEN 10\r\n    WHEN '$length_unit' = 'mi' THEN 16.0934 \r\n  END AS efficiency_$length_unit",
+          "rawSql": "SELECT ('$aux'::json ->> 'RatedEfficiency')::float * 10 / convert_km(1, 'km') AS efficiency_$length_unit",
           "refId": "Logged",
           "sql": {
             "columns": [
