@@ -65,6 +65,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           with str when is_binary(str) <- type do
             case String.downcase(str) do
               "models" <> _ -> "S"
+              "models2" <> _ -> "S"
               "model3" <> _ -> "3"
               "modelx" <> _ -> "X"
               "modely" <> _ -> "Y"
@@ -78,6 +79,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           case {model, trim_badging, type} do
             {"S", "100D", "lychee"} -> "LR"
             {"S", "P100D", "lychee"} -> "Plaid"
+            {"S", "100D", "models2"} -> "LR+"
             {"3", "P74D", _} -> "LR AWD Performance"
             {"3", "74D", _} -> "LR AWD"
             {"3", "74", _} -> "LR"
