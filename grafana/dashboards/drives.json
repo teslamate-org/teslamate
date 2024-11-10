@@ -132,7 +132,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Energy used:"
+                "value": "Total Energy consumed (net):"
               }
             ]
           }
@@ -331,11 +331,11 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "none"
+                "value": "mi"
               },
               {
                 "id": "displayName",
-                "value": "Total Distance (mi):"
+                "value": "Total Distance logged:"
               }
             ]
           },
@@ -347,11 +347,11 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "none"
+                "value": "km"
               },
               {
                 "id": "displayName",
-                "value": "Total Distance (km):"
+                "value": "Total Distance logged:"
               }
             ]
           }
@@ -456,7 +456,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Average Consumption:"
+                "value": "Ø Consumption (net):"
               }
             ]
           },
@@ -472,7 +472,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Average Consumption:"
+                "value": "Ø Consumption (net):"
               }
             ]
           }
@@ -584,7 +584,7 @@
             "mode": "thresholds"
           },
           "custom": {
-            "align": "center",
+            "align": "auto",
             "cellOptions": {
               "type": "auto"
             },
@@ -629,10 +629,6 @@
                 ]
               },
               {
-                "id": "custom.align",
-                "value": "auto"
-              },
-              {
                 "id": "custom.minWidth",
                 "value": 180
               }
@@ -646,19 +642,15 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Consumption"
+                "value": "Ø Consumption (net)"
               },
               {
                 "id": "unit",
                 "value": "Wh/km"
               },
               {
-                "id": "custom.align",
-                "value": "center"
-              },
-              {
                 "id": "custom.minWidth",
-                "value": 120
+                "value": 165
               }
             ]
           },
@@ -670,19 +662,15 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Consumption"
+                "value": "Ø Consumption (net)"
               },
               {
                 "id": "unit",
                 "value": "Wh/mi"
               },
               {
-                "id": "custom.align",
-                "value": "center"
-              },
-              {
                 "id": "custom.minWidth",
-                "value": 120
+                "value": 165
               }
             ]
           },
@@ -705,9 +693,6 @@
                 "value": 1
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "custom.minWidth",
                 "value": 90
               }
@@ -721,7 +706,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "kWh"
+                "value": "Energy consumed (net)"
               },
               {
                 "id": "unit",
@@ -730,10 +715,6 @@
               {
                 "id": "decimals",
                 "value": 1
-              },
-              {
-                "id": "custom.align",
-                "value": "center"
               },
               {
                 "id": "custom.cellOptions",
@@ -763,7 +744,7 @@
               },
               {
                 "id": "custom.minWidth",
-                "value": 80
+                "value": 180
               }
             ]
           },
@@ -786,10 +767,6 @@
                     "url": "${base_url:raw}/geo-fences/${__data.fields.start_path}"
                   }
                 ]
-              },
-              {
-                "id": "custom.align",
-                "value": "auto"
               },
               {
                 "id": "custom.minWidth",
@@ -818,10 +795,6 @@
                 ]
               },
               {
-                "id": "custom.align",
-                "value": "auto"
-              },
-              {
                 "id": "custom.minWidth",
                 "value": 200
               }
@@ -840,9 +813,6 @@
               {
                 "id": "unit",
                 "value": "celsius"
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "decimals",
@@ -895,9 +865,6 @@
                 "value": "m"
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "decimals",
                 "value": 1
               },
@@ -929,22 +896,41 @@
                 }
               },
               {
-                "id": "custom.align",
-                "value": "center"
-              },
-              {
                 "id": "max",
-                "value": 1
+                "value": 1.75
               },
               {
                 "id": "color",
                 "value": {
-                  "mode": "continuous-RdYlGr"
+                  "mode": "thresholds"
                 }
               },
               {
                 "id": "custom.minWidth",
-                "value": 90
+                "value": 120
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "super-light-orange",
+                      "value": null
+                    },
+                    {
+                      "color": "light-orange",
+                      "value": 0.65
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.99
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "decimals"
               }
             ]
           },
@@ -954,17 +940,6 @@
               "options": "/.*_ts/"
             },
             "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -979,14 +954,11 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Speed"
+                "value": "Ø Speed"
               },
               {
                 "id": "unit",
                 "value": "velocitykmh"
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "decimals",
@@ -1004,17 +976,6 @@
               "options": "id"
             },
             "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -1040,9 +1001,6 @@
                 "value": 1
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "custom.minWidth",
                 "value": 90
               }
@@ -1061,9 +1019,6 @@
               {
                 "id": "unit",
                 "value": "fahrenheit"
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "decimals",
@@ -1109,14 +1064,11 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Speed"
+                "value": "Ø Speed"
               },
               {
                 "id": "unit",
                 "value": "velocitymph"
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "decimals",
@@ -1143,15 +1095,12 @@
                 "value": "velocitymph"
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "decimals",
                 "value": 0
               },
               {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 95
               }
             ]
           },
@@ -1170,15 +1119,12 @@
                 "value": "velocitykmh"
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "decimals",
                 "value": 0
               },
               {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 95
               }
             ]
           },
@@ -1188,17 +1134,6 @@
               "options": "/(start|end)_path/"
             },
             "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -1212,17 +1147,6 @@
             },
             "properties": [
               {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
-              {
                 "id": "custom.hidden",
                 "value": true
               }
@@ -1234,17 +1158,6 @@
               "options": "car_id"
             },
             "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -1262,15 +1175,12 @@
                 "value": "percent"
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "decimals",
                 "value": 0
               },
               {
                 "id": "custom.minWidth",
-                "value": 76
+                "value": 75
               }
             ]
           },
@@ -1283,9 +1193,6 @@
               {
                 "id": "unit",
                 "value": "percent"
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "decimals",
@@ -1350,17 +1257,6 @@
             },
             "properties": [
               {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
-              {
                 "id": "custom.hidden",
                 "value": true
               }
@@ -1379,9 +1275,6 @@
               {
                 "id": "unit",
                 "value": "kwatt"
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "custom.minWidth",

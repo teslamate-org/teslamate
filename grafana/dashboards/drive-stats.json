@@ -177,7 +177,7 @@
           ]
         }
       ],
-      "title": "Number of drives",
+      "title": "Number of Drives",
       "type": "stat"
     },
     {
@@ -268,7 +268,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH since as (\n\tSELECT min(start_date) at time zone 'UTC' as date FROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY car_id\n),\n\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', start_date at time zone 'UTC') AS date,\n\t\tsum(distance) AS distance\n\tFROM drives\n\tWHERE car_id = $car_id and $__timeFilter(start_date) and $__timeFilter(end_date) \n\tGROUP BY 1\n),\n\nbase_line AS (\n\tSELECT date from generate_series(date_trunc('day', (select date from since)), date_trunc('day', timestamp with time zone $__timeTo()), '1 day'::interval) date)\n\nSELECT\n  base_line.date as time,\n\tconvert_km(COALESCE(actual.distance, 0)::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE date_trunc('day', timestamp with time zone $__timeFrom()) <= base_line.date\norder by base_line.date\n",
+          "rawSql": "WITH since as (\n\tSELECT min(start_date) at time zone 'UTC' as date FROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY car_id\n),\n\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', start_date at time zone 'UTC') AS date,\n\t\tsum(distance) AS distance\n\tFROM drives\n\tWHERE car_id = $car_id and $__timeFilter(start_date)\n\tGROUP BY 1\n),\n\nbase_line AS (\n\tSELECT date from generate_series(date_trunc('day', (select date from since)), date_trunc('day', timestamp with time zone $__timeTo()), '1 day'::interval) date)\n\nSELECT\n  base_line.date as time,\n\tconvert_km(COALESCE(actual.distance, 0)::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE date_trunc('day', timestamp with time zone $__timeFrom()) <= base_line.date\norder by base_line.date\n",
           "refId": "A",
           "select": [
             [
@@ -309,7 +309,7 @@
           ]
         }
       ],
-      "title": "$length_unit driven",
+      "title": "Total Distance logged",
       "type": "stat"
     },
     {
@@ -375,7 +375,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH since as (\n\tSELECT min(start_date) at time zone 'UTC' as date FROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY car_id\n),\n\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', start_date at time zone 'UTC') AS date,\n\t\tsum(NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) * cars.efficiency) AS energy\n\tFROM drives\n  INNER JOIN cars on drives.car_id = cars.id\n\tWHERE car_id = $car_id and $__timeFilter(start_date) and $__timeFilter(end_date) \n\tGROUP BY 1\n),\n\nbase_line AS (\n\tSELECT date from generate_series(date_trunc('day', (select date from since)), date_trunc('day', timestamp with time zone $__timeTo()), '1 day'::interval) date)\n\nSELECT\n  base_line.date as time,\n\tcoalesce(energy, 0) as energy\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE date_trunc('day', timestamp with time zone $__timeFrom()) <= base_line.date\norder by base_line.date\n",
+          "rawSql": "WITH since as (\n\tSELECT min(start_date) at time zone 'UTC' as date FROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY car_id\n),\n\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', start_date at time zone 'UTC') AS date,\n\t\tsum(NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) * cars.efficiency) AS energy\n\tFROM drives\n  INNER JOIN cars on drives.car_id = cars.id\n\tWHERE car_id = $car_id and $__timeFilter(start_date)\n\tGROUP BY 1\n),\n\nbase_line AS (\n\tSELECT date from generate_series(date_trunc('day', (select date from since)), date_trunc('day', timestamp with time zone $__timeTo()), '1 day'::interval) date)\n\nSELECT\n  base_line.date as time,\n\tcoalesce(energy, 0) as energy\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE date_trunc('day', timestamp with time zone $__timeFrom()) <= base_line.date\norder by base_line.date\n",
           "refId": "A",
           "select": [
             [
@@ -416,7 +416,7 @@
           ]
         }
       ],
-      "title": "Energy used",
+      "title": "Total Energy consumed (net)",
       "type": "stat"
     },
     {
@@ -647,7 +647,7 @@
           "refId": "A"
         }
       ],
-      "title": "Average distance driven per day",
+      "title": "Ø Distance driven per day",
       "type": "stat"
     },
     {
@@ -713,7 +713,7 @@
           "refId": "A"
         }
       ],
-      "title": "Average kWh used per day",
+      "title": "Ø Energy consumed (net) per day",
       "type": "stat"
     },
     {
@@ -998,7 +998,7 @@
         }
       ],
       "timeFrom": "30d",
-      "title": "Max Speed (last 30d)",
+      "title": "Max Speed",
       "type": "stat"
     },
     {
@@ -1141,7 +1141,7 @@
         }
       ],
       "timeFrom": "7d",
-      "title": "Max Speed (last 7d)",
+      "title": "Max Speed",
       "type": "stat"
     },
     {

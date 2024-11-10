@@ -1291,7 +1291,7 @@
           ]
         }
       ],
-      "title": "Average Power",
+      "title": "Ø Power",
       "type": "stat"
     },
     {
@@ -1420,7 +1420,7 @@
           ]
         }
       ],
-      "title": "Average Outdoor Temperature",
+      "title": "Ø Outdoor Temperature",
       "type": "stat"
     },
     {

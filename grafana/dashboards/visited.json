@@ -318,7 +318,7 @@
             "lastNotNull"
           ],
           "fields": "/.*/",
-          "values": false
+          "values": true
         },
         "showPercentChange": false,
         "textMode": "value_and_name",
@@ -337,7 +337,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0)|| ' $length_unit' as \"Distance Traveled\"\nFROM drives WHERE car_id = $car_id AND $__timeFilter(start_date)",
+          "rawSql": "SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0)|| ' $length_unit' as \"Mileage\"\nFROM drives WHERE car_id = $car_id AND $__timeFilter(start_date)",
           "refId": "distance traveled",
           "select": [
             [
@@ -406,7 +406,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Total energy added"
+              "options": "Total Energy added"
             },
             "properties": [
               {
@@ -418,7 +418,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Total energy used"
+              "options": "Total Energy used"
             },
             "properties": [
               {
@@ -430,7 +430,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Charge Efficiency"
+              "options": "Charging Efficiency"
             },
             "properties": [
               {
@@ -465,7 +465,7 @@
             "mean"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "showPercentChange": false,
         "textMode": "value_and_name",
@@ -483,7 +483,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tsum(charge_energy_added) as \"Total energy added\",\n\tSUM(charge_energy_used) AS \"Total energy used\",\n\tSUM(charge_energy_added) * 100 / SUM(charge_energy_used) AS \"Charge Efficiency\"\nFROM\n\tcharging_processes\nWHERE\n\tcar_id = $car_id AND $__timeFilter(start_date) AND charge_energy_added > 0.01",
+          "rawSql": "SELECT\n\tsum(charge_energy_added) as \"Total Energy added\",\n\tSUM(greatest(charge_energy_added, charge_energy_used)) AS \"Total Energy used\",\n\tSUM(charge_energy_added) * 100 / SUM(greatest(charge_energy_added, charge_energy_used)) AS \"Charging Efficiency\"\nFROM\n\tcharging_processes\nWHERE\n\tcar_id = $car_id AND $__timeFilter(start_date) AND charge_energy_added > 0.01",
           "refId": "A",
           "sql": {
             "columns": [
@@ -515,7 +515,6 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
-          "displayName": "Cost",
           "mappings": [
             {
               "options": {
@@ -535,8 +534,7 @@
                 "value": null
               }
             ]
-          },
-          "unit": "none"
+          }
         },
         "overrides": []
       },
@@ -557,11 +555,11 @@
         },
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "auto",
+        "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "mean"
+            "lastNotNull"
           ],
           "fields": "",
           "values": true
@@ -582,7 +580,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select sum(cost) as \"Cost\" from charging_processes where $__timeFilter(start_date) AND car_id = $car_id;",
+          "rawSql": "select sum(cost) as \"Total Charging Cost\" from charging_processes where $__timeFilter(start_date) AND car_id = $car_id;",
           "refId": "A",
           "select": [
             [
