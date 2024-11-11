@@ -1246,7 +1246,7 @@
               },
               {
                 "id": "custom.minWidth",
-                "value": 5
+                "value": 50
               }
             ]
           },
@@ -1455,8 +1455,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
