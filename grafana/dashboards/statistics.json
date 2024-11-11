@@ -564,12 +564,56 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 115
+                "id": "decimals",
+                "value": 2
               },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "NaN": {
+                        "index": 0,
+                        "text": "--"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 115
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ø Cost / 100 km"
+            },
+            "properties": [
               {
                 "id": "decimals",
                 "value": 2
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 135
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "NaN": {
+                        "index": 0,
+                        "text": "--"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
               }
             ]
           }
@@ -761,7 +805,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "WITH data AS (\r\n    SELECT\r\n        p.car_id,\r\n        date_trunc('$period', TIMEZONE('UTC', p.date)) as date,\r\n        lag(p.${preferred_range}_battery_range_km) OVER (ORDER BY p.date) - p.${preferred_range}_battery_range_km AS range_loss,\r\n        p.odometer - lag(p.odometer) OVER (ORDER BY p.date) AS distance\r\n    from positions p\r\n    WHERE\r\n      p.car_id = $car_id and\r\n      p.ideal_battery_range_km is not null and\r\n      $__timeFilter(p.date)\r\n    ORDER BY date\r\n)\r\n\r\nSELECT\r\n  EXTRACT(EPOCH FROM date)*1000 AS date_from,\r\n  EXTRACT(EPOCH FROM date + interval '1 $period')*1000 AS date_to,\r\n  CASE '$period'\r\n    WHEN 'month' THEN to_char(date, 'YYYY Month')\r\n    WHEN 'year' THEN to_char(date, 'YYYY')\r\n    WHEN 'week' THEN 'week ' || to_char(date, 'WW') || ' starting ' || to_char(date, 'YYYY-MM-DD')\r\n    ELSE to_char(date, 'YYYY-MM-DD')\r\n  END AS display,\r\n  date,\r\n  SUM(range_loss * car.efficiency * 1000) / convert_km(sum(distance)::numeric, '$length_unit') as consumption_gross_$length_unit\r\n  FROM data\r\n  JOIN cars car on car.id = car_id\r\n  WHERE distance >= 0 and range_loss >= 0\r\n  GROUP BY date",
+          "rawSql": "WITH data AS (\r\n    SELECT\r\n        p.car_id,\r\n        date_trunc('$period', TIMEZONE('UTC', p.date)) as date,\r\n        lag(p.${preferred_range}_battery_range_km) OVER (ORDER BY p.date) - p.${preferred_range}_battery_range_km AS range_loss,\r\n        p.odometer - lag(p.odometer) OVER (ORDER BY p.date) AS distance\r\n    from positions p\r\n    WHERE\r\n      p.car_id = $car_id and\r\n      p.ideal_battery_range_km is not null and\r\n      $__timeFilter(p.date)\r\n    ORDER BY date\r\n)\r\n\r\nSELECT\r\n  EXTRACT(EPOCH FROM date)*1000 AS date_from,\r\n  EXTRACT(EPOCH FROM date + interval '1 $period')*1000 AS date_to,\r\n  CASE '$period'\r\n    WHEN 'month' THEN to_char(date, 'YYYY Month')\r\n    WHEN 'year' THEN to_char(date, 'YYYY')\r\n    WHEN 'week' THEN 'week ' || to_char(date, 'WW') || ' starting ' || to_char(date, 'YYYY-MM-DD')\r\n    ELSE to_char(date, 'YYYY-MM-DD')\r\n  END AS display,\r\n  date,\r\n  SUM(range_loss * car.efficiency * 1000) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) as consumption_gross_$length_unit\r\n  FROM data\r\n  JOIN cars car on car.id = car_id\r\n  WHERE distance >= 0 and range_loss >= 0\r\n  GROUP BY date",
           "refId": "D",
           "sql": {
             "columns": [
@@ -889,16 +933,16 @@
               "avg_outside_temp_f": 4,
               "cnt": 5,
               "cnt_charges": 10,
+              "consumption_gross_km": 14,
+              "consumption_gross_mi": 14,
+              "consumption_net_km": 13,
+              "consumption_net_mi": 13,
               "cost_charges": 9,
               "date": 1,
               "date_from": 15,
               "date_to": 16,
               "display": 0,
               "efficiency": 6,
-              "consumption_gross_km": 14,
-              "consumption_gross_mi": 14,
-              "consumption_net_km": 13,
-              "consumption_net_mi": 13,
               "sum_distance_km": 3,
               "sum_distance_mi": 3,
               "sum_duration_h": 2,
@@ -1013,7 +1057,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "month",
           "value": "month"
         },
