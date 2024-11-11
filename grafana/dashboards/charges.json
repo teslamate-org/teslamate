@@ -1154,7 +1154,7 @@
                 "value": "Odometer"
               },
               {
-                "id": "custom.width",
+                "id": "custom.minWidth",
                 "value": 95
               },
               {
@@ -1178,7 +1178,7 @@
                 "value": "Odometer"
               },
               {
-                "id": "custom.width",
+                "id": "custom.minWidth",
                 "value": 95
               },
               {
