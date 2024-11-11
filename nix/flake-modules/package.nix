@@ -13,7 +13,7 @@
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-46RLGX86/soSlEHifFspFGQeDU6s9agFEa9uRw4tZRg=";
+        hash = "sha256-RVsoxqRtOmtFJgzLc0W6WPkcljsebtreAa63n5PMskI=";
         # hash = pkgs.lib.fakeHash;
       };
 
@@ -45,8 +45,8 @@
       cldr = pkgs.fetchFromGitHub {
         owner = "elixir-cldr";
         repo = "cldr";
-        rev = "v2.37.5";
-        sha256 = "sha256-T5Qvuo+xPwpgBsqHNZYnTCA4loToeBn1LKTMsDcCdYs=";
+        rev = "v2.40.0";
+        sha256 = "sha256-B3kIJx684kg3uxdFaWWMn9SBktb1GUqCzSJwN1a0oNo=";
         # sha256 = pkgs.lib.fakeHash;
       };
 

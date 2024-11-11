@@ -7,7 +7,7 @@ providers:
     folderUid: Nr4ofiDZk
     type: file
     disableDeletion: false
-    editable: true
+    allowUiUpdates: true
     updateIntervalSeconds: 86400
     options:
       path: /dashboards
@@ -17,7 +17,7 @@ providers:
     folderUid: Nr5ofiDZk
     type: file
     disableDeletion: false
-    editable: true
+    allowUiUpdates: true
     updateIntervalSeconds: 86400
     options:
       path: /dashboards_internal
@@ -27,7 +27,7 @@ providers:
     folderUid: Nr6ofiDZk
     type: file
     disableDeletion: false
-    editable: true
+    allowUiUpdates: true
     updateIntervalSeconds: 86400
     options:
       path: /dashboards_reports

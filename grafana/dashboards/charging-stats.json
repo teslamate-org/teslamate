@@ -11,7 +11,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.1.0"
+      "version": "11.2.3"
     },
     {
       "type": "datasource",
@@ -139,7 +139,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
+        "w": 3,
         "x": 0,
         "y": 1
       },
@@ -167,7 +167,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -228,8 +228,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 5,
+        "w": 3,
+        "x": 3,
         "y": 1
       },
       "id": 10,
@@ -256,7 +256,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -319,7 +319,7 @@
       "gridPos": {
         "h": 3,
         "w": 3,
-        "x": 10,
+        "x": 6,
         "y": 1
       },
       "id": 14,
@@ -346,7 +346,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -381,7 +381,7 @@
           ]
         }
       ],
-      "title": "Charging Cost at SuC",
+      "title": "SuC Charging Cost",
       "type": "stat"
     },
     {
@@ -409,7 +409,7 @@
       "gridPos": {
         "h": 3,
         "w": 3,
-        "x": 13,
+        "x": 9,
         "y": 1
       },
       "id": 27,
@@ -436,7 +436,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -498,8 +498,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 16,
+        "w": 3,
+        "x": 12,
         "y": 1
       },
       "id": 26,
@@ -520,7 +520,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -573,7 +573,7 @@
           ]
         }
       ],
-      "title": "Cost per 100 $length_unit",
+      "title": "Ø Cost per 100 $length_unit",
       "type": "stat"
     },
     {
@@ -602,8 +602,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 18,
+        "w": 3,
+        "x": 15,
         "y": 1
       },
       "id": 31,
@@ -624,7 +624,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -649,7 +649,7 @@
           ]
         }
       ],
-      "title": "Average Cost per kWh",
+      "title": "Ø Cost per kWh",
       "type": "stat"
     },
     {
@@ -678,8 +678,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 20,
+        "w": 3,
+        "x": 18,
         "y": 1
       },
       "id": 32,
@@ -700,7 +700,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -743,7 +743,7 @@
           ]
         }
       ],
-      "title": "DC Avg Cost per kWh",
+      "title": "Ø Cost per kWh DC",
       "type": "stat"
     },
     {
@@ -772,8 +772,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 22,
+        "w": 3,
+        "x": 21,
         "y": 1
       },
       "id": 33,
@@ -794,7 +794,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -837,7 +837,7 @@
           ]
         }
       ],
-      "title": "AC Avg Cost per kWh",
+      "title": "Ø Cost per kWh AC",
       "type": "stat"
     },
     {
@@ -929,7 +929,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1001,6 +1001,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 35,
             "gradientMode": "none",
@@ -1102,7 +1103,6 @@
           "sort": "desc"
         }
       },
-      "pluginVersion": "8.5.4",
       "targets": [
         {
           "datasource": {
@@ -1472,7 +1472,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -1672,14 +1672,17 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "fillOpacity": 50,
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
+            "pointShape": "circle",
             "pointSize": {
               "fixed": 3
             },
+            "pointStrokeWidth": 1,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -1713,9 +1716,21 @@
                 "value": [
                   {
                     "title": "Show charge details",
-                    "url": "d/BHhxFeZRz?from=${__data.fields.start_date.numeric}&to=${__data.fields.end_date.numeric}&var-car_id=${car_id}&var-charging_process_id=${__data.fields.charging_process_id.numeric}"
+                    "url": "d/BHhxFeZRz/charge-details?from=${__data.fields.start_date.numeric}&to=${__data.fields.end_date.numeric}&var-car_id=${car_id}&var-charging_process_id=${__data.fields.charging_process_id.numeric}"
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "B - Avg Power [kW]"
+            },
+            "properties": [
+              {
+                "id": "custom.pointSize.fixed",
+                "value": 15
               }
             ]
           }
@@ -1729,47 +1744,86 @@
       },
       "id": 29,
       "options": {
-        "dims": {
-          "exclude": [
-            "charging_process_id"
-          ],
-          "frame": 0
-        },
         "legend": {
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": false
         },
+        "mapping": "manual",
         "series": [
           {
-            "pointColor": {
-              "field": "Power [kW]"
+            "color": {
+              "matcher": {
+                "id": "byName",
+                "options": "Power [kW]"
+              }
             },
-            "x": "SOC [%]",
-            "y": "Power [kW]"
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 0
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "SOC [%]"
+              }
+            },
+            "y": {
+              "exclude": {
+                "id": "byNames",
+                "options": [
+                  "charging_process_id"
+                ]
+              },
+              "matcher": {
+                "id": "byName",
+                "options": "Power [kW]"
+              }
+            }
           },
           {
-            "pointColor": {
-              "field": "B - Avg Power [kW]"
+            "color": {
+              "matcher": {
+                "id": "byName",
+                "options": "B - Avg Power [kW]"
+              }
             },
-            "pointSize": {
-              "fixed": 15,
-              "max": 100,
-              "min": 1
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 1
+              }
             },
-            "x": "B - SOC [%]",
-            "y": "B - Avg Power [kW]"
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "B - SOC [%]"
+              }
+            },
+            "y": {
+              "exclude": {
+                "id": "byNames",
+                "options": [
+                  "charging_process_id"
+                ]
+              },
+              "matcher": {
+                "id": "byName",
+                "options": "B - Avg Power [kW]"
+              }
+            }
           }
         ],
-        "seriesMapping": "manual",
         "tooltip": {
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "7.5.11",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "alias": "",
@@ -1870,7 +1924,8 @@
             "cellOptions": {
               "type": "auto"
             },
-            "inspect": false
+            "inspect": false,
+            "minWidth": 50
           },
           "mappings": [],
           "thresholds": {
@@ -1892,7 +1947,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 70
+                "value": 50
               },
               {
                 "id": "displayName",
@@ -1924,7 +1979,8 @@
                 "id": "custom.cellOptions",
                 "value": {
                   "mode": "gradient",
-                  "type": "gauge"
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
                 }
               },
               {
@@ -1933,6 +1989,10 @@
               {
                 "id": "min",
                 "value": 0
+              },
+              {
+                "id": "custom.align",
+                "value": "left"
               }
             ]
           }
@@ -1958,7 +2018,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -2062,7 +2122,8 @@
             "cellOptions": {
               "type": "auto"
             },
-            "inspect": false
+            "inspect": false,
+            "minWidth": 50
           },
           "mappings": [],
           "thresholds": {
@@ -2122,7 +2183,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 70
+                "value": 50
               }
             ]
           },
@@ -2146,6 +2207,10 @@
               {
                 "id": "min",
                 "value": 0
+              },
+              {
+                "id": "custom.align",
+                "value": "left"
               }
             ]
           }
@@ -2171,7 +2236,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -2290,7 +2355,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -2413,7 +2478,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.1.0",
+      "pluginVersion": "11.2.3",
       "targets": [
         {
           "datasource": {
@@ -2465,14 +2530,14 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
         "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, RIGHT(vin, 6)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2562,6 +2627,6 @@
   "timezone": "",
   "title": "Charging Stats",
   "uid": "-pkIkhmRz",
-  "version": 11,
+  "version": 2,
   "weekStart": ""
 }

@@ -6,15 +6,34 @@
 
 ### Improvements and bug fixes
 
+- feat: use Grafana 11.2.3 (#4338 - @swiffer)
+
 #### Build, CI, internal
 
 - ci: remove unknown flag --ref for gh cache delete in cleanup_caches workflow ([3a515df](https://github.com/teslamate-org/teslamate/commit/3a515df5aa400139acf8ef638e5ae37339c553cf) - @JakobLichterfeld)
+- build(deps): bump actions/checkout from 4.2.1 to 4.2.2 (#4340)
+- build(deps): bump actions/cache from 4.0.2 to 4.1.2 (#4341)
+- build(deps): bump cachix/install-nix-action from 27 to 30 (#4342)
+- build(deps): bump tesla from 1.12.1 to 1.13.0 (#4335)
+- build(deps): bump floki from 0.36.2 to 0.36.3 (#4336)
+- feat: add CONTRIBUTING file to exclusion lists for treefmt (#4359 - @JakobLichterfeld)
 
 #### Dashboards
+
+- fix: allow editing of dashboards - [changes will be overwritten on update](https://grafana.com/docs/grafana/latest/administration/provisioning/#making-changes-to-a-provisioned-dashboard) (#4338 - @swiffer)
+- fix: ensure max speed panels are converted according to length unit setting in drive stats dashboard (#4338 - @swiffer)
+- perf: speed up queries used to calculate max speed in drive stats dashboard (#4338 - @swiffer)
+- feat: add a welcome dashboard (#4338 - @swiffer)
+- fix: Charges Dashboard -> Range added renamed to Ø Charge rate (#4349 - @swiffer)
+- fix: Axis Labels for XY Chart in Battery Health and reduces Query count in Visited (#4364 - @swiffer)
 
 #### Translations
 
 #### Documentation
+
+docs: add contributing guidelines link for GitHub (#4345 - @JakobLichterfeld)
+docs: update Home Assistant integration documentation with configuration URL and model name hints (#4359 - @JakobLichterfeld)
+docs: Remove availability from Home Assistant MQTT sensors, as it can be misleading and prevent sensors from receiving updated values (#4362 - @longzheng)
 
 ## [1.31.1] - 2024-10-29
 
