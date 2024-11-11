@@ -891,13 +891,13 @@
               {
                 "id": "custom.cellOptions",
                 "value": {
-                  "mode": "basic",
+                  "mode": "lcd",
                   "type": "gauge"
                 }
               },
               {
                 "id": "max",
-                "value": 1.75
+                "value": 1.25
               },
               {
                 "id": "color",
