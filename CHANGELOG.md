@@ -7,6 +7,8 @@
 ### Improvements and bug fixes
 
 - feat: use Grafana 11.2.3 (#4338 - @swiffer)
+- feat: Update marketing name to recognize Model S LR+ (#4370 - @cwanja)
+- fix(nix): bump hash for dependencies (#4371 - @brianmay)
 
 #### Build, CI, internal
 
