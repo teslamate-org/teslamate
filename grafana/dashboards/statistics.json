@@ -616,6 +616,26 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Overhead"
+            },
+            "properties": [
+              {
+                "id": "custom.minWidth",
+                "value": 90
+              },
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
           }
         ]
       },
@@ -805,7 +825,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "WITH data AS (\r\n    SELECT\r\n        p.car_id,\r\n        date_trunc('$period', TIMEZONE('UTC', p.date)) as date,\r\n        lag(p.${preferred_range}_battery_range_km) OVER (ORDER BY p.date) - p.${preferred_range}_battery_range_km AS range_loss,\r\n        p.odometer - lag(p.odometer) OVER (ORDER BY p.date) AS distance\r\n    from positions p\r\n    WHERE\r\n      p.car_id = $car_id and\r\n      p.ideal_battery_range_km is not null and\r\n      $__timeFilter(p.date)\r\n    ORDER BY date\r\n)\r\n\r\nSELECT\r\n  EXTRACT(EPOCH FROM date)*1000 AS date_from,\r\n  EXTRACT(EPOCH FROM date + interval '1 $period')*1000 AS date_to,\r\n  CASE '$period'\r\n    WHEN 'month' THEN to_char(date, 'YYYY Month')\r\n    WHEN 'year' THEN to_char(date, 'YYYY')\r\n    WHEN 'week' THEN 'week ' || to_char(date, 'WW') || ' starting ' || to_char(date, 'YYYY-MM-DD')\r\n    ELSE to_char(date, 'YYYY-MM-DD')\r\n  END AS display,\r\n  date,\r\n  SUM(range_loss * car.efficiency * 1000) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) as consumption_gross_$length_unit\r\n  FROM data\r\n  JOIN cars car on car.id = car_id\r\n  WHERE distance >= 0 and range_loss >= 0\r\n  GROUP BY date",
+          "rawSql": "WITH data AS (\r\n    SELECT\r\n        p.car_id,\r\n        p.drive_id,\r\n        p.date as __date,\r\n        date_trunc('$period', TIMEZONE('UTC', p.date)) as date,\r\n        lag(p.${preferred_range}_battery_range_km) OVER (ORDER BY p.date) - p.${preferred_range}_battery_range_km AS range_loss,\r\n        p.odometer - lag(p.odometer) OVER (ORDER BY p.date) AS distance\r\n    from positions p\r\n    WHERE\r\n      p.car_id = $car_id and\r\n      p.ideal_battery_range_km is not null and\r\n      $__timeFilter(p.date)\r\n    ORDER BY date\r\n)\r\n\r\nSELECT\r\n  EXTRACT(EPOCH FROM date)*1000 AS date_from,\r\n  EXTRACT(EPOCH FROM date + interval '1 $period')*1000 AS date_to,\r\n  CASE '$period'\r\n    WHEN 'month' THEN to_char(date, 'YYYY Month')\r\n    WHEN 'year' THEN to_char(date, 'YYYY')\r\n    WHEN 'week' THEN 'week ' || to_char(date, 'WW') || ' starting ' || to_char(date, 'YYYY-MM-DD')\r\n    ELSE to_char(date, 'YYYY-MM-DD')\r\n  END AS display,\r\n  date,\r\n  SUM(range_loss * car.efficiency * 1000) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) as consumption_gross_$length_unit\r\n  FROM data\r\n  JOIN cars car on car.id = car_id\r\n  WHERE drive_id is not null or not exists (select 1 from charging_processes cp where (__date between cp.start_date and cp.end_date))\r\n  GROUP BY date",
           "refId": "D",
           "sql": {
             "columns": [
@@ -917,11 +937,73 @@
           }
         },
         {
+          "id": "calculateField",
+          "options": {
+            "alias": "overhead_pct_km_temp",
+            "binary": {
+              "left": "consumption_net_km",
+              "operator": "/",
+              "right": "consumption_gross_km"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "overhead_pct_km",
+            "binary": {
+              "left": "1",
+              "operator": "-",
+              "right": "overhead_pct_km_temp"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "overhead_pct_mi_temp",
+            "binary": {
+              "left": "consumption_net_mi",
+              "operator": "/",
+              "right": "consumption_gross_mi"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "overhead_pct_mi",
+            "binary": {
+              "left": "1",
+              "operator": "-",
+              "right": "overhead_pct_mi_temp"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {
               "avg_cost_km_temp": true,
-              "avg_cost_mi_temp": true
+              "avg_cost_mi_temp": true,
+              "overhead_pct_km_temp": true,
+              "overhead_pct_mi_temp": true
             },
             "includeByName": {},
             "indexByName": {
@@ -943,6 +1025,8 @@
               "date_to": 16,
               "display": 0,
               "efficiency": 6,
+              "overhead_pct_km": 17,
+              "overhead_pct_mi": 17,
               "sum_distance_km": 3,
               "sum_distance_mi": 3,
               "sum_duration_h": 2,
@@ -967,6 +1051,8 @@
               "date_to": "",
               "display": "Period",
               "efficiency": "Driving Efficiency",
+              "overhead_pct_km": "Overhead",
+              "overhead_pct_mi": "Overhead",
               "sum_distance_km": "",
               "sum_distance_mi": "",
               "sum_duration_h": "Time driven",
