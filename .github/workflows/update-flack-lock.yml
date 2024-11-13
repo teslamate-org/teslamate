@@ -26,7 +26,10 @@ jobs:
         id: update
         uses: DeterminateSystems/update-flake-lock@a2bbe0274e3a0c4194390a1e445f734c597ebc37 #v24
         with:
-          pr-title: "Update flake.lock"
+          pr-title: "build(deps): update flake.lock"
+          pr-labels: |
+            dependencies
+            automated
 
       - name: Print PR number
         run: echo Pull request number is ${{ steps.update.outputs.pull-request-number }}.
