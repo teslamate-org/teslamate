@@ -19,6 +19,7 @@
 - build(deps): bump tesla from 1.12.1 to 1.13.0 (#4335)
 - build(deps): bump floki from 0.36.2 to 0.36.3 (#4336)
 - feat: add CONTRIBUTING file to exclusion lists for treefmt (#4359 - @JakobLichterfeld)
+- ci: create PR to udpate flake.lock every saturday (#4372 - @brianmay)
 
 #### Dashboards
 
