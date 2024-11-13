@@ -21,6 +21,7 @@
 - feat: add CONTRIBUTING file to exclusion lists for treefmt (#4359 - @JakobLichterfeld)
 - ci: create PR to update flake.lock every saturday (#4372 - @brianmay)
 - ci(fix): correct permissions for flake.lock updates ([c673ef3](https://github.com/teslamate-org/teslamate/commit/c673ef363ba73ad076680d71ef54bd549582d41f)- @JakobLichterfeld)
+- ci: update flake.lock workflow with appropriate labels for created pr's ([54c41c1](https://github.com/teslamate-org/teslamate/commit/54c41c1fe66664b62d817502d1b2bdb244b70dc2) - @JakobLichterfeld)
 
 #### Dashboards
 
