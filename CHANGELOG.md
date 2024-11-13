@@ -20,6 +20,7 @@
 - build(deps): bump floki from 0.36.2 to 0.36.3 (#4336)
 - feat: add CONTRIBUTING file to exclusion lists for treefmt (#4359 - @JakobLichterfeld)
 - ci: create PR to update flake.lock every saturday (#4372 - @brianmay)
+- ci(fix): correct permissions for flake.lock updates ([c673ef3](https://github.com/teslamate-org/teslamate/commit/c673ef363ba73ad076680d71ef54bd549582d41f)- @JakobLichterfeld)
 
 #### Dashboards
 
