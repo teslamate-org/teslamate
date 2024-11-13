@@ -945,7 +945,7 @@
               },
               {
                 "id": "displayName",
-                "value": "net"
+                "value": "Ø Consumption (net)"
               }
             ]
           }
@@ -1087,7 +1087,7 @@
               },
               {
                 "id": "displayName",
-                "value": "gross"
+                "value": "Ø Consumption (gross)"
               }
             ]
           }
@@ -1135,7 +1135,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n    SELECT\n        p.car_id,\n        p.drive_id,\n        p.date as __date,\n        lag(p.${preferred_range}_battery_range_km) OVER (ORDER BY p.date) - p.${preferred_range}_battery_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY p.date) AS distance\n    from positions p\n    WHERE\n      p.car_id = $car_id and\n      p.ideal_battery_range_km is not null and\n      $__timeFilter(p.date)\n    ORDER BY date\n)\n\nSELECT\n  SUM(range_loss * car.efficiency * 1000) / convert_km(sum(distance)::numeric, '$length_unit') as consumption_$length_unit\nFROM data\n  JOIN cars car on car.id = car_id\n  WHERE drive_id is not null or not exists (select 1 from charging_processes cp where (__date between cp.start_date and cp.end_date))",
+          "rawSql": "WITH data AS (\n    SELECT\n        p.car_id,\n        p.drive_id,\n        p.date as __date,\n        lag(p.${preferred_range}_battery_range_km) OVER (ORDER BY p.date) - p.${preferred_range}_battery_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY p.date) AS distance\n    from positions p\n    WHERE\n      p.car_id = $car_id and\n      p.ideal_battery_range_km is not null and\n      $__timeFilter(p.date)\n    ORDER BY date\n)\n\nSELECT\n  SUM(range_loss * car.efficiency * 1000) / convert_km(sum(distance)::numeric, '$length_unit') as consumption_$length_unit\nFROM data\n  JOIN cars car on car.id = car_id\n  WHERE drive_id is not null or not exists (select 1 from charging_processes cp where __date >= cp.start_date and (__date <= cp.end_date or cp.end_date is null and EXTRACT(day FROM NOW() - TIMEZONE('UTC', cp.start_date)) < 3)))",
           "refId": "A",
           "select": [
             [
