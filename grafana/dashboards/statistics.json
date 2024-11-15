@@ -264,7 +264,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "# Charges"
+              "options": "# of Charges"
             },
             "properties": [
               {
@@ -279,14 +279,14 @@
               },
               {
                 "id": "custom.minWidth",
-                "value": 100
+                "value": 110
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "# Drives"
+              "options": "# of Drives"
             },
             "properties": [
               {
@@ -301,7 +301,7 @@
               },
               {
                 "id": "custom.minWidth",
-                "value": 90
+                "value": 95
               }
             ]
           },
@@ -1039,8 +1039,8 @@
               "avg_energy_charged_kwh": "Ø Energy used / Charge",
               "avg_outside_temp_c": "",
               "avg_outside_temp_f": "",
-              "cnt": "# Drives",
-              "cnt_charges": "# Charges",
+              "cnt": "# of Drives",
+              "cnt_charges": "# of Charges",
               "consumption_gross_km": "",
               "consumption_gross_mi": "",
               "consumption_net_km": "",

@@ -177,7 +177,7 @@
           ]
         }
       ],
-      "title": "Number of Drives",
+      "title": "# of Drives",
       "type": "stat"
     },
     {

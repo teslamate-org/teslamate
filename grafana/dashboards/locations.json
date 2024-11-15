@@ -156,7 +156,7 @@
           ]
         }
       ],
-      "title": "Number of Addresses",
+      "title": "# of Addresses",
       "type": "stat"
     },
     {
@@ -245,7 +245,7 @@
           ]
         }
       ],
-      "title": "Number of Cities",
+      "title": "# of Cities",
       "type": "stat"
     },
     {
@@ -334,7 +334,7 @@
           ]
         }
       ],
-      "title": "Number of States",
+      "title": "# of States",
       "type": "stat"
     },
     {
@@ -423,7 +423,7 @@
           ]
         }
       ],
-      "title": "Number of Countries",
+      "title": "# of Countries",
       "type": "stat"
     },
     {
