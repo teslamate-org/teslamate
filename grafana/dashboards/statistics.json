@@ -1243,7 +1243,7 @@
           "text": "no",
           "value": "0"
         },
-        "description": "When enabled \"Ø Consumption (gross)\" will be calculated by via Charging Processes and Positions instead of Charging Processes and Drives.\n\nWhile being more accurate (especially for shorter periods) this will be slow on slow hardware!",
+        "description": "When enabled \"Ø Consumption (gross)\" will be calculated via Charging Processes and Positions instead of Charging Processes and Drives.\n\nWhile being more accurate (especially for shorter periods) this will be slow on slow hardware!",
         "hide": 0,
         "includeAll": false,
         "label": "High Precision",
