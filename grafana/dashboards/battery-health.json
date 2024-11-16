@@ -1582,7 +1582,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-RdYlGr"
+            "mode": "continuous-RdYlGr",
+            "seriesBy": "last"
           },
           "custom": {
             "axisBorderShow": false,
@@ -1596,9 +1597,10 @@
               "tooltip": false,
               "viz": false
             },
+            "lineWidth": 2,
             "pointShape": "circle",
             "pointSize": {
-              "fixed": 6
+              "fixed": 5
             },
             "pointStrokeWidth": 1,
             "scaleDistribution": {
@@ -1629,12 +1631,27 @@
             },
             "properties": [
               {
-                "id": "custom.lineWidth",
-                "value": 2
-              },
-              {
                 "id": "custom.show",
                 "value": "lines"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Odometer"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Mileage"
               }
             ]
           },
@@ -1645,23 +1662,12 @@
             },
             "properties": [
               {
-                "id": "custom.pointSize.fixed",
-                "value": 5
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "M-kWh"
-            },
-            "properties": [
+                "id": "displayName",
+                "value": "Battery Capacity"
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
+                "id": "unit",
+                "value": "kwatth"
               }
             ]
           }
@@ -1719,13 +1725,13 @@
             "x": {
               "matcher": {
                 "id": "byName",
-                "options": "M-Odometer"
+                "options": "Odometer"
               }
             },
             "y": {
               "matcher": {
                 "id": "byName",
-                "options": "M-kWh"
+                "options": "kWh"
               }
             }
           }
@@ -1800,7 +1806,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \n  ROUND(MIN(convert_km(p.odometer::numeric,'$length_unit')),0) AS \"M-Odometer\",\n\tROUND(PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY c.rated_battery_range_km * ('$aux'::json ->> 'RatedEfficiency')::float / c.usable_battery_level)::numeric,1) AS \"M-kWh\",\n\tto_char(cp.end_date, 'YYYYMM') || CASE WHEN to_char(cp.end_date, 'DD')::int <= 15 THEN '1' ELSE '2' END  AS Title\n\tFROM charging_processes cp\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\tFROM charges WHERE usable_battery_level > 0 GROUP BY charging_process_id) AS last_charges\tON cp.id = last_charges.charging_process_id\n\t\tINNER JOIN charges c\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\n\t\tINNER JOIN positions p ON p.id = cp.position_id\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.charge_energy_added >= ('$aux'::json ->> 'RatedEfficiency')::float\n\tGROUP BY 3",
+          "rawSql": "SELECT \n  ROUND(MIN(convert_km(p.odometer::numeric,'$length_unit')),0) AS \"Odometer\",\n\tROUND(PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY c.rated_battery_range_km * ('$aux'::json ->> 'RatedEfficiency')::float / c.usable_battery_level)::numeric,1) AS \"kWh\",\n\tto_char(cp.end_date, 'YYYYMM') || CASE WHEN to_char(cp.end_date, 'DD')::int <= 15 THEN '1' ELSE '2' END  AS Title\n\tFROM charging_processes cp\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\tFROM charges WHERE usable_battery_level > 0 GROUP BY charging_process_id) AS last_charges\tON cp.id = last_charges.charging_process_id\n\t\tINNER JOIN charges c\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\n\t\tINNER JOIN positions p ON p.id = cp.position_id\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.charge_energy_added >= ('$aux'::json ->> 'RatedEfficiency')::float\n\tGROUP BY 3",
           "refId": "Median",
           "select": [
             [
