@@ -109,6 +109,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "opacity",
@@ -831,6 +832,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "opacity",
@@ -994,6 +996,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "opacity",
@@ -1265,6 +1268,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "opacity",
@@ -2037,7 +2041,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 3,
+        "w": 6,
         "x": 0,
         "y": 28
       },
@@ -2095,102 +2099,7 @@
           ]
         }
       ],
-      "title": "Distance",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 2,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-yellow",
-                "value": null
-              }
-            ]
-          },
-          "unit": "kwatth"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 3,
-        "y": 28
-      },
-      "id": 12,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "value",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          },
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\t(NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) * car.efficiency)\nFROM\n\tdrives d\nJOIN cars car ON car.id = car_id\nWHERE\n\td.id = $drive_id;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Energy Used",
+      "title": "Distance driven",
       "type": "stat"
     },
     {
@@ -2355,57 +2264,45 @@
       },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "No Data",
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "light-yellow",
                 "value": null
               }
             ]
           },
           "unit": "kwatth"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "A"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "red",
-                      "value": null
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 3,
-        "w": 6,
+        "w": 3,
         "x": 0,
         "y": 31
       },
-      "id": 40,
+      "id": 12,
+      "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
+        "graphMode": "none",
+        "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -2414,7 +2311,103 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "auto",
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\t(NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) * car.efficiency)\nFROM\n\tdrives d\nJOIN cars car ON car.id = car_id\nWHERE\n\td.id = $drive_id;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Energy consumed (net)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Shows how much energy has been recovered through regenerative breaking.\n\n\"Energy recovered\" is already included in \"Energy consumed (net)\" and is determined by looking for periods with negative power within your drive. \n\nRequires Streaming API to be enabled and available for this drive.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "kwatth"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 3,
+        "y": 31
+      },
+      "id": 40,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
         "wideLayout": true
       },
       "pluginVersion": "11.2.3",
@@ -2426,9 +2419,21 @@
           },
           "editorMode": "code",
           "format": "table",
+          "group": [],
+          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n    SELECT\n        p.date,\n        p.power,\n        EXTRACT(second FROM p.date - LAG(p.date) OVER (ORDER BY p.date)) AS seconds\n    FROM positions p\n    WHERE\n        car_id = $car_id\n        AND $__timeFilter(date)\n        AND power > 0\n)\n\nSELECT\n    -SUM(power * (seconds / 3600)) AS \"Used\"\nFROM data\nWHERE seconds IS NOT NULL AND seconds < 3;\n",
+          "rawSql": "with data as (\nselect\n\tp.power,\n\textract (second from p.date - lag(p.date) over (order by p.date)) as seconds\nfrom positions p\n\twhere drive_id = ${drive_id} and power < 0\n)\n\nselect sum(power * (seconds / 3600)) * -1 from data where seconds is not null and seconds < 1.5",
           "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
           "sql": {
             "columns": [
               {
@@ -2445,39 +2450,20 @@
               }
             ],
             "limit": 50
-          }
-        },
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
           },
-          "editorMode": "code",
-          "format": "table",
-          "hide": false,
-          "rawQuery": true,
-          "rawSql": "WITH data AS (\n    SELECT\n        p.date,\n        p.power,\n        EXTRACT(second FROM p.date - LAG(p.date) OVER (ORDER BY p.date)) AS seconds\n    FROM positions p\n    WHERE\n        car_id = $car_id\n        AND $__timeFilter(date)\n        AND power < 0\n)\n\nSELECT \n    -SUM(power * (seconds / 3600)) AS \"Regenerative Breaking\"\nFROM data\nWHERE seconds IS NOT NULL AND seconds < 3;\n",
-          "refId": "B",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
+          "table": "addresses",
+          "timeColumn": "inserted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "title": "Detailed Energy Use",
+      "title": "Energy recovered",
       "type": "stat"
     },
     {
@@ -2615,7 +2601,7 @@
           ]
         }
       ],
-      "title": "Consumption",
+      "title": "Consumption (net)",
       "type": "stat"
     },
     {
@@ -2746,7 +2732,7 @@
           ]
         }
       ],
-      "title": "Avg. Speed",
+      "title": "Ø Speed",
       "type": "stat"
     }
   ],
@@ -2757,19 +2743,19 @@
       {
         "current": {
           "selected": false,
-          "text": "1475",
-          "value": "1475"
+          "text": "1514",
+          "value": "1514"
         },
         "hide": 2,
         "name": "drive_id",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "NULL",
             "value": "NULL"
           }
         ],
-        "query": "1475",
+        "query": "1514",
         "skipUrlSync": false,
         "type": "textbox"
       },
@@ -2780,7 +2766,6 @@
           "uid": "TeslaMate"
         },
         "definition": "select unit_of_temperature from settings limit 1;",
-        "error": {},
         "hide": 2,
         "includeAll": false,
         "label": "",
@@ -2804,7 +2789,6 @@
           "uid": "TeslaMate"
         },
         "definition": "select unit_of_length from settings limit 1;",
-        "error": {},
         "hide": 2,
         "includeAll": false,
         "label": "",
@@ -2828,7 +2812,6 @@
           "uid": "TeslaMate"
         },
         "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
-        "error": {},
         "hide": 0,
         "includeAll": false,
         "label": "Car",
@@ -2852,7 +2835,6 @@
           "uid": "TeslaMate"
         },
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
-        "error": {},
         "hide": 2,
         "includeAll": false,
         "label": "",
@@ -2876,7 +2858,6 @@
           "uid": "TeslaMate"
         },
         "definition": "select preferred_range from settings limit 1;",
-        "error": {},
         "hide": 2,
         "includeAll": false,
         "multi": false,
@@ -2899,7 +2880,6 @@
           "uid": "TeslaMate"
         },
         "definition": "select base_url from settings limit 1;",
-        "error": {},
         "hide": 2,
         "includeAll": false,
         "label": "",
@@ -2923,7 +2903,6 @@
           "uid": "TeslaMate"
         },
         "definition": "select unit_of_pressure from settings limit 1;",
-        "error": {},
         "hide": 2,
         "includeAll": false,
         "multi": false,
@@ -2943,7 +2922,6 @@
           "uid": "TeslaMate"
         },
         "definition": "SELECT  CASE WHEN '$length_unit' = 'km' THEN 'km/h' WHEN '$length_unit' = 'mi' THEN 'mph' END",
-        "error": {},
         "hide": 2,
         "includeAll": false,
         "multi": false,
@@ -2962,7 +2940,6 @@
     "from": "now-12h",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {
     "refresh_intervals": [],
     "time_options": []
