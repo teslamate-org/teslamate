@@ -2099,7 +2099,7 @@
           ]
         }
       ],
-      "title": "Distance",
+      "title": "Distance driven",
       "type": "stat"
     },
     {
@@ -2349,7 +2349,7 @@
           ]
         }
       ],
-      "title": "Energy Used",
+      "title": "Energy consumed (net)",
       "type": "stat"
     },
     {
@@ -2487,7 +2487,7 @@
           ]
         }
       ],
-      "title": "Consumption",
+      "title": "Consumption (net)",
       "type": "stat"
     },
     {
@@ -2618,7 +2618,7 @@
           ]
         }
       ],
-      "title": "Avg. Speed",
+      "title": "Ø Speed",
       "type": "stat"
     }
   ],
@@ -2629,8 +2629,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1475",
-          "value": "1475"
+          "text": "1514",
+          "value": "1514"
         },
         "hide": 2,
         "name": "drive_id",
@@ -2641,7 +2641,7 @@
             "value": "NULL"
           }
         ],
-        "query": "1475",
+        "query": "1514",
         "skipUrlSync": false,
         "type": "textbox"
       },

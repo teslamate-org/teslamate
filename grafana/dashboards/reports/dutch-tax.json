@@ -278,7 +278,7 @@
               },
               {
                 "id": "displayName",
-                "value": "km"
+                "value": "Distance"
               }
             ]
           },
@@ -294,7 +294,7 @@
               },
               {
                 "id": "displayName",
-                "value": "mi"
+                "value": "Distance"
               }
             ]
           },

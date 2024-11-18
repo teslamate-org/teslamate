@@ -98,6 +98,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
+      "description": "(Range lost while driving * Efficiency) / Distance driven",
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
@@ -223,7 +224,7 @@
           ]
         }
       ],
-      "title": "Consumption (net)",
+      "title": "Ø Consumption (net)",
       "type": "stat"
     },
     {
@@ -231,6 +232,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
+      "description": "(Range lost between charges * Efficiency) / Distance driven between charges",
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
@@ -356,7 +358,7 @@
           ]
         }
       ],
-      "title": "Consumption (gross) ",
+      "title": "Ø Consumption (gross)",
       "type": "stat"
     },
     {
@@ -364,6 +366,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
+      "description": "Distance of all logged drives",
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
@@ -551,7 +554,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Efficiency"
+                "value": "Driving Efficiency"
               },
               {
                 "id": "unit",
@@ -602,7 +605,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Consumption"
+                "value": "Ø Consumption (net)"
               },
               {
                 "id": "unit",
@@ -622,7 +625,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Consumption"
+                "value": "Ø Consumption (net)"
               },
               {
                 "id": "unit",
@@ -642,7 +645,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "$length_unit"
+                "value": "Distance"
               },
               {
                 "id": "unit",
@@ -662,7 +665,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "$length_unit"
+                "value": "Distance"
               },
               {
                 "id": "unit",
@@ -682,7 +685,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Speed"
+                "value": "Ø Speed"
               },
               {
                 "id": "unit",
@@ -702,7 +705,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Speed"
+                "value": "Ø Speed"
               },
               {
                 "id": "unit",
@@ -794,7 +797,7 @@
           ]
         }
       ],
-      "title": "Temperature – Efficiency",
+      "title": "Temperature – Driving Efficiency",
       "type": "table"
     },
     {
@@ -846,7 +849,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 2,
+        "w": 4,
         "x": 0,
         "y": 16
       },
@@ -993,8 +996,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 11,
-        "x": 2,
+        "w": 10,
+        "x": 4,
         "y": 16
       },
       "id": 12,
@@ -1129,8 +1132,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 11,
-        "x": 13,
+        "w": 10,
+        "x": 14,
         "y": 16
       },
       "id": 15,
