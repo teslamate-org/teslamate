@@ -97,12 +97,6 @@
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 3,
-        "w": 7,
-        "x": 0,
-        "y": 0
-      },
       "id": 12,
       "maxDataPoints": 100,
       "options": {
@@ -162,7 +156,7 @@
           ]
         }
       ],
-      "title": "Total addresses",
+      "title": "# of Addresses",
       "type": "stat"
     },
     {
@@ -188,8 +182,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 7,
-        "x": 7,
+        "w": 6,
+        "x": 6,
         "y": 0
       },
       "id": 20,
@@ -251,7 +245,7 @@
           ]
         }
       ],
-      "title": "Cities",
+      "title": "# of Cities",
       "type": "stat"
     },
     {
@@ -277,8 +271,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 14,
+        "w": 6,
+        "x": 12,
         "y": 0
       },
       "id": 18,
@@ -340,7 +334,7 @@
           ]
         }
       ],
-      "title": "States",
+      "title": "# of States",
       "type": "stat"
     },
     {
@@ -366,8 +360,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 19,
+        "w": 6,
+        "x": 18,
         "y": 0
       },
       "id": 16,
@@ -429,7 +423,7 @@
           ]
         }
       ],
-      "title": "Countries",
+      "title": "# of Countries",
       "type": "stat"
     },
     {
@@ -497,7 +491,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tcity,\n\tcount(*) as \"# addresses\"\nFROM\n\taddresses\nWHERE\n\tcity IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
+          "rawSql": "SELECT\n\tcity,\n\tcount(*) as \"# of Addresses\"\nFROM\n\taddresses\nWHERE\n\tcity IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
           "refId": "A",
           "select": [
             [
@@ -587,7 +581,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tstate,\n\tcount(*) as \"# addresses\"\nFROM\n\taddresses\nWHERE\n\tstate IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
+          "rawSql": "SELECT\n\tstate,\n\tcount(*) as \"# of Addresses\"\nFROM\n\taddresses\nWHERE\n\tstate IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
           "refId": "A",
           "select": [
             [

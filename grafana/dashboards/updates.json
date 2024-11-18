@@ -289,7 +289,7 @@
             },
             "properties": [
               {
-                "id": "custom.width",
+                "id": "custom.minWidth",
                 "value": 200
               },
               {
@@ -309,8 +309,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 100
+                "id": "custom.minWidth",
+                "value": 120
               },
               {
                 "id": "displayName",
@@ -329,8 +329,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 160
+                "id": "custom.minWidth",
+                "value": 180
               },
               {
                 "id": "displayName",
@@ -369,6 +369,10 @@
               {
                 "id": "unit",
                 "value": "string"
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 150
               }
             ]
           },
@@ -379,8 +383,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 100
+                "id": "custom.minWidth",
+                "value": 120
               },
               {
                 "id": "displayName",
@@ -395,8 +399,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
+                "id": "custom.minWidth",
+                "value": 130
               },
               {
                 "id": "decimals",
@@ -408,7 +412,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Avg ideal range"
+                "value": "Ø Ideal range"
               }
             ]
           },
@@ -419,8 +423,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
+                "id": "custom.minWidth",
+                "value": 130
               },
               {
                 "id": "decimals",
@@ -432,7 +436,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Avg rated range"
+                "value": "Ø Rated range"
               }
             ]
           },
@@ -443,8 +447,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
+                "id": "custom.minWidth",
+                "value": 130
               },
               {
                 "id": "decimals",
@@ -456,7 +460,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Avg ideal range"
+                "value": "Ø Ideal range"
               }
             ]
           },
@@ -467,8 +471,8 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
+                "id": "custom.minWidth",
+                "value": 130
               },
               {
                 "id": "decimals",
@@ -480,7 +484,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Avg rated range"
+                "value": "Ø Rated range"
               }
             ]
           }

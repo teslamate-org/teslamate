@@ -481,7 +481,7 @@
           }
         }
       ],
-      "title": "Charging kW",
+      "title": "Charging Power",
       "transformations": [
         {
           "id": "configFromData",
@@ -758,7 +758,7 @@
           ]
         }
       ],
-      "title": "Net",
+      "title": "Ø Consumption (net)",
       "type": "stat"
     },
     {
@@ -865,7 +865,7 @@
           ]
         }
       ],
-      "title": "Gross",
+      "title": "Ø Consumption (gross)",
       "type": "stat"
     },
     {
@@ -976,7 +976,7 @@
           }
         }
       ],
-      "title": "Distance",
+      "title": "Total Distance logged",
       "type": "stat"
     },
     {

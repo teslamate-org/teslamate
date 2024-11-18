@@ -137,10 +137,7 @@
                 ]
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
+                "id": "custom.minWidth",
                 "value": 180
               }
             ]
@@ -160,10 +157,7 @@
                 "value": "dateTimeAsLocal"
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
+                "id": "custom.minWidth",
                 "value": 180
               }
             ]
@@ -176,7 +170,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "TR Loss"
+                "value": "Range loss"
               },
               {
                 "id": "unit",
@@ -187,11 +181,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 95
               }
             ]
           },
@@ -218,9 +209,6 @@
                 "value": {
                   "type": "color-text"
                 }
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "thresholds",
@@ -252,7 +240,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "TR Loss / h"
+                "value": "Ø Range loss / h"
               },
               {
                 "id": "unit",
@@ -263,11 +251,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 135
               }
             ]
           },
@@ -277,17 +262,6 @@
               "options": "/.*_ts/"
             },
             "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -315,9 +289,6 @@
                 }
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "thresholds",
                 "value": {
                   "mode": "absolute",
@@ -342,7 +313,7 @@
                 "value": 0
               },
               {
-                "id": "custom.width",
+                "id": "custom.minWidth",
                 "value": 75
               }
             ]
@@ -355,7 +326,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "kWh"
+                "value": "Energy drained"
               },
               {
                 "id": "unit",
@@ -366,11 +337,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 100
+                "id": "custom.minWidth",
+                "value": 125
               }
             ]
           },
@@ -382,7 +350,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø-Power"
+                "value": "Ø Power"
               },
               {
                 "id": "unit",
@@ -393,10 +361,7 @@
                 "value": 1
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
+                "id": "custom.minWidth",
                 "value": 80
               }
             ]
@@ -409,7 +374,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "TR Loss / h"
+                "value": "Ø Range loss / h"
               },
               {
                 "id": "unit",
@@ -420,11 +385,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 135
               }
             ]
           },
@@ -436,7 +398,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "TR Loss"
+                "value": "Range loss"
               },
               {
                 "id": "unit",
@@ -447,11 +409,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 95
               }
             ]
           },
@@ -463,18 +422,15 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "SOC"
+                "value": "SoC Diff"
               },
               {
                 "id": "unit",
                 "value": "percent"
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 65
+                "id": "custom.minWidth",
+                "value": 80
               }
             ]
           },
@@ -523,7 +479,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 5
+                "value": 50
               }
             ]
           }
@@ -556,6 +512,7 @@
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -572,6 +529,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "time",
           "where": [
             {
