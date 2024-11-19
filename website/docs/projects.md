@@ -90,3 +90,9 @@ For all [TeslaMate](https://www.myteslamate.com) users, MyTeslaMate also provide
 LINK: [MyTeslaMate Website](https://www.myteslamate.com)
 
 LINK: [Follow this guide](/docs/guides/api#myteslamate-fleet-api) to use official Tesla APIs on your Teslamate.
+
+## [TeslaMate Guru on Gurubase](https://gurubase.io/g/teslamate)
+
+TeslaMate Guru is a TeslaMate-focused AI to answer your questions. It primarily uses the TeslaMate documentation and the TeslaMate GitHub repository to generate responses.
+
+LINK: [https://gurubase.io/g/teslamate](https://gurubase.io/g/teslamate)
