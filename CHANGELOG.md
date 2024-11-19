@@ -32,6 +32,7 @@
 - fix: Charges Dashboard -> Range added renamed to Ø Charge rate (#4349 - @swiffer)
 - fix: Axis Labels for XY Chart in Battery Health and reduces Query count in Visited (#4364 - @swiffer)
 - feat: Dashboard refinements and standardization (#4367 - @swiffer)
+- feat: add Detailed Energy Use to drive-details (#4386 - @jameskitt616)
 
 #### Translations
 
