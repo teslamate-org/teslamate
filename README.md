@@ -6,7 +6,6 @@
 [![](https://img.shields.io/docker/v/teslamate/teslamate/latest)](https://hub.docker.com/r/teslamate/teslamate)
 [![](https://img.shields.io/docker/image-size/teslamate/teslamate/latest)](https://hub.docker.com/r/teslamate/teslamate)
 [![](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)](https://hub.docker.com/r/teslamate/teslamate)
-[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20TeslaMate%20Guru-006BFF)](https://gurubase.io/g/teslamate)
 
 A powerful, self-hosted data logger for your Tesla.
 
