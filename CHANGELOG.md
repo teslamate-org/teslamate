@@ -42,6 +42,7 @@
 docs: add contributing guidelines link for GitHub (#4345 - @JakobLichterfeld)
 docs: update Home Assistant integration documentation with configuration URL and model name hints (#4359 - @JakobLichterfeld)
 docs: Remove availability from Home Assistant MQTT sensors, as it can be misleading and prevent sensors from receiving updated values (#4362 - @longzheng)
+docs: Introducing TeslaMate Guru on Gurubase.io (#4390 - @kursataktas)
 
 ## [1.31.1] - 2024-10-29
 
