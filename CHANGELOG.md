@@ -26,6 +26,7 @@ As always, there are many improvements. The focus has been on quality of life im
 - ci: update flake.lock workflow with appropriate labels for created pr's ([54c41c1](https://github.com/teslamate-org/teslamate/commit/54c41c1fe66664b62d817502d1b2bdb244b70dc2) - @JakobLichterfeld)
 - build(deps): bump cross-spawn from 7.0.3 to 7.0.6 in /website (#4391)
 - build(deps): bump crate-ci/typos from 1.26.0 to 1.27.0 (#4344)
+- build(deps): update flake.lock (#4381)
 
 #### Dashboards
 
