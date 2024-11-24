@@ -1,37 +1,4 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "dashlist",
-      "name": "Dashboard list",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.2.3"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "news",
-      "name": "News",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "text",
-      "name": "Text",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -51,13 +18,12 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [],
   "panels": [
     {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
       },
       "gridPos": {
         "h": 20,
@@ -79,13 +45,14 @@
         "showStarred": false,
         "tags": []
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
+      "title": "",
       "type": "dashlist"
     },
     {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
       },
       "gridPos": {
         "h": 20,
@@ -103,13 +70,14 @@
         "content": "<div style=\"background-size: cover; background-image: url(&quot;https://digitalassets.tesla.com/tesla-contents/image/upload/c_pad,dpr_1.0,f_auto,q_auto/c_pad/Group_83?pgw=1&quot;);width:100%;height:100%;background-position:center;\"></div>",
         "mode": "html"
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
+      "title": "",
       "type": "text"
     },
     {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
       },
       "gridPos": {
         "h": 20,
@@ -122,11 +90,13 @@
         "feedUrl": "https://corsproxy.io/?https://github.com/teslamate-org/teslamate/tags.atom",
         "showImage": false
       },
+      "pluginVersion": "11.4.0",
       "title": "Releases",
       "type": "news"
     }
   ],
-  "schemaVersion": 39,
+  "preload": false,
+  "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": []
@@ -135,7 +105,9 @@
     "from": "now-6h",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": {
+    "hidden": true
+  },
   "timezone": "browser",
   "title": "Home",
   "uid": "be2m9kga7b8qoc",

@@ -1,49 +1,4 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.2.3"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "piechart",
-      "name": "Pie chart",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "xychart",
-      "name": "XY Chart",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -70,7 +25,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": null,
   "links": [
     {
       "icon": "dashboard",
@@ -90,7 +44,6 @@
       "type": "dashboards"
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "datasource": {
@@ -150,7 +103,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -298,7 +251,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -402,7 +355,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -658,6 +611,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -773,7 +727,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -856,6 +810,12 @@
       "id": 12,
       "options": {
         "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
@@ -872,7 +832,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -998,7 +958,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1188,6 +1148,12 @@
       "id": 25,
       "options": {
         "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
@@ -1205,7 +1171,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1400,7 +1366,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1483,6 +1449,12 @@
       "id": 27,
       "options": {
         "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
@@ -1500,7 +1472,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1742,7 +1714,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "alias": "",
@@ -1851,8 +1823,9 @@
       "type": "xychart"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "schemaVersion": 39,
+  "schemaVersion": 40,
   "tags": [
     "tesla"
   ],
@@ -1865,21 +1838,14 @@
           "uid": "TeslaMate"
         },
         "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC",
-        "hide": 0,
         "includeAll": false,
         "label": "Car",
-        "multi": false,
         "name": "car_id",
         "options": [],
         "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1890,19 +1856,12 @@
         "definition": "SELECT unit_of_length FROM settings LIMIT 1",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "length_unit",
         "options": [],
         "query": "SELECT unit_of_length FROM settings LIMIT 1",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1913,14 +1872,11 @@
         "definition": "SELECT preferred_range FROM settings LIMIT 1",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "preferred_range",
         "options": [],
         "query": "SELECT preferred_range FROM settings LIMIT 1",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       },
       {
@@ -1932,19 +1888,12 @@
         "definition": "SELECT base_url FROM settings LIMIT 1",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "base_url",
         "options": [],
         "query": "SELECT base_url FROM settings LIMIT 1",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1955,24 +1904,19 @@
         "definition": "-- CONCATENATED JOIN QUERIES TO IMPROVE PERFORMANCE",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "aux",
         "options": [],
         "query": "WITH Aux AS\n(\n\t\tSELECT \n    car_id,\n\t\tCOALESCE(efficiency, \n\t\t(SELECT efficiency\n\t\t\tFROM cars WHERE id = $car_id) * 100) AS efficiency\n\tFROM (\n\t\tSELECT ROUND((charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric, 3) * 100 as efficiency,\n\t\t\tCOUNT(*) as count, $car_id AS car_id \n\t\tFROM charging_processes\n\t\tWHERE car_id = $car_id\n\t\t\tAND duration_min > 10\n\t\t\tAND end_battery_level <= 95\n\t\t\tAND start_rated_range_km IS NOT NULL\n\t\t\tAND end_rated_range_km IS NOT NULL\n\t\t\tAND charge_energy_added > 0\n\t\tGROUP BY 1\n\t\tORDER BY 2 DESC\n\t\tLIMIT 1\n\t) AS DerivatedEfficiency\n),\nCurrentCapacity\t AS\n(\n\tSELECT AVG(Capacity) AS Capacity\nFROM (\nSELECT \n\tc.rated_battery_range_km * aux.efficiency / c.usable_battery_level AS Capacity\n\tFROM charging_processes cp\n\t\tINNER JOIN charges c\n\t\tON c.charging_process_id = cp.id \n                INNER JOIN aux ON cp.car_id = aux.car_id\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.charge_energy_added >= aux.efficiency\n\t\tAND c.usable_battery_level > 0\n\t ORDER BY cp.end_date DESC LIMIT 10) AS lastCharges\n), \nMaxCapacity AS\n(\n\tSELECT \n\t\tMAX(c.rated_battery_range_km * aux.efficiency / c.usable_battery_level) AS Capacity\n\tFROM charging_processes cp\n\t\tINNER JOIN (\n\t\t\tSELECT charging_process_id, MAX(date) as date FROM charges WHERE usable_battery_level > 0 GROUP BY charging_process_id) AS gcharges\t\n\t\t\tON cp.id = gcharges.charging_process_id\n\t\tINNER JOIN charges c\n\t\tON c.charging_process_id = cp.id AND c.date = gcharges.date\n\t\tINNER JOIN aux ON cp.car_id = aux.car_id\n\tWHERE cp.car_id = $car_id\n\t\tAND cp.end_date IS NOT NULL\n\t\tAND cp.charge_energy_added >= aux.efficiency\n), \nCurrentRange AS\n(\n    SELECT (range * 100.0 / usable_battery_level) AS range\n\tFROM (\n\t\t(SELECT date, ${preferred_range}_battery_range_km AS range, usable_battery_level AS usable_battery_level\n\t\t\tFROM positions\tWHERE car_id = $car_id AND ideal_battery_range_km IS NOT NULL AND usable_battery_level > 0  ORDER BY date DESC LIMIT 1)\n\t\tUNION ALL\n\t\t(SELECT date, ${preferred_range}_battery_range_km AS range, usable_battery_level as usable_battery_level\n\t\t\tFROM charges c JOIN charging_processes p ON p.id = c.charging_process_id\n\t\t\tWHERE p.car_id = $car_id AND usable_battery_level > 0 ORDER BY date DESC LIMIT 1)\n\t) AS data\n\tORDER BY date DESC\n\tLIMIT 1\n), \nMaxRange AS\n(\n    SELECT\n\t\tfloor(extract(epoch from date)/86400)*86400 AS time,\n\t    CASE WHEN sum(usable_battery_level) = 0 THEN sum(${preferred_range}_battery_range_km) * 100\n\t\t     ELSE sum(${preferred_range}_battery_range_km) / sum(usable_battery_level) * 100\n\tEND AS range\n    FROM (\n\t\tSELECT battery_level, usable_battery_level, date,  ${preferred_range}_battery_range_km from charges c \n\t\tJOIN charging_processes p ON p.id = c.charging_process_id \n\t\tWHERE p.car_id = $car_id AND usable_battery_level IS NOT NULL) AS data\n\tGROUP BY 1\n\tORDER BY 2 DESC\n\tLIMIT 1\n) \nSELECT\n  json_build_object(\n    'MaxRange', convert_km(MaxRange.range,'$length_unit'),\n    'CurrentRange', convert_km(CurrentRange.range,'$length_unit'),\n    'MaxCapacity', MaxCapacity.Capacity,\n    'CurrentCapacity', CASE WHEN CurrentCapacity.Capacity IS NULL THEN 1 ELSE CurrentCapacity.Capacity END,\n    'RatedEfficiency', aux.efficiency\n  )\nFROM MaxRange, CurrentRange, Aux, MaxCapacity, CurrentCapacity",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       },
       {
         "current": {
-          "selected": false,
           "text": "0",
           "value": "0"
         },
         "description": "Set the capacity of your car battery when it was new, in case you started using Teslamate after a while of having it. If not, leave it at 0, it will be calculated with the data that is logged in Teslamate",
-        "hide": 0,
         "label": "Custom Battery Capacity (kWh) when new",
         "name": "custom_kwh_new",
         "options": [
@@ -1983,17 +1927,14 @@
           }
         ],
         "query": "0",
-        "skipUrlSync": false,
         "type": "textbox"
       },
       {
         "current": {
-          "selected": false,
           "text": "0",
           "value": "0"
         },
         "description": "Set the max range to 100% of your car when it was new, in case you started using Teslamate after a while of having it. If not, leave it at 0, the degradation will be calculated with the data that is logged in Teslamate",
-        "hide": 0,
         "label": "Custom Max Range when new",
         "name": "custom_max_range",
         "options": [
@@ -2004,7 +1945,6 @@
           }
         ],
         "query": "0",
-        "skipUrlSync": false,
         "type": "textbox"
       }
     ]
