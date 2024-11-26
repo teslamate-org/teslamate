@@ -2,7 +2,6 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:286",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": true,
