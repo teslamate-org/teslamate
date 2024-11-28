@@ -16,4 +16,9 @@ defmodule TeslaMateWeb.LayoutView do
 
   @dashboards Enum.sort_by(dashboards, & &1["title"])
   defp list_dashboards, do: @dashboards
+
+  # 在这里定义 get_admin_dashboard_url
+  def get_admin_dashboard_url(conn) do
+    "#{conn.scheme}://#{conn.host}:5050"
+  end
 end

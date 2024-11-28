@@ -102,8 +102,8 @@ config :teslamate,
   default_geofence: System.get_env("DEFAULT_GEOFENCE")
 
 config :teslamate, TeslaMate.Repo,
-  username: Util.fetch_env!("DATABASE_USER", all: "postgres"),
-  password: Util.fetch_env!("DATABASE_PASS", all: "postgres"),
+  username: Util.fetch_env!("DATABASE_USER", all: "teslamate"),
+  password: Util.fetch_env!("DATABASE_PASS", all: "password"),
   database: Util.fetch_env!("DATABASE_NAME", dev: "teslamate_dev", test: "teslamate_test"),
   hostname: Util.fetch_env!("DATABASE_HOST", all: "localhost"),
   port: System.get_env("DATABASE_PORT", "5432"),

@@ -22,7 +22,7 @@ config :logger, :console,
 
 config :phoenix, :json_library, Jason
 
-config :gettext, :default_locale, "en"
+config :gettext, :default_locale, "zh"
 
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 

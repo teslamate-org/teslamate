@@ -58,9 +58,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -98,7 +96,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "(Range lost while driving * Efficiency) / Distance driven",
+      "description": "行程实际续航",
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
@@ -152,18 +150,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -188,9 +182,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -224,7 +216,7 @@
           ]
         }
       ],
-      "title": "Ø Consumption (net)",
+      "title": "Ø 能耗（净值）",
       "type": "stat"
     },
     {
@@ -232,7 +224,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "(Range lost between charges * Efficiency) / Distance driven between charges",
+      "description": "总能耗（包含哨兵、非驾驶的其他电耗）",
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
@@ -286,18 +278,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -322,9 +310,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -358,7 +344,7 @@
           ]
         }
       ],
-      "title": "Ø Consumption (gross)",
+      "title": "Ø 能耗 (总)",
       "type": "stat"
     },
     {
@@ -366,7 +352,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "Distance of all logged drives",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
@@ -420,18 +406,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -455,9 +437,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -474,7 +454,7 @@
           ]
         }
       ],
-      "title": "Logged Distance",
+      "title": "记录里程",
       "type": "stat"
     },
     {
@@ -514,7 +494,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Temperature"
+                "value": "温度"
               },
               {
                 "id": "unit",
@@ -534,7 +514,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Temperature"
+                "value": "温度"
               },
               {
                 "id": "unit",
@@ -554,7 +534,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Driving Efficiency"
+                "value": "驾车效率"
               },
               {
                 "id": "unit",
@@ -605,7 +585,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Consumption (net)"
+                "value": "Ø 能耗（净值）"
               },
               {
                 "id": "unit",
@@ -625,7 +605,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Consumption (net)"
+                "value": "Ø 能耗（净值）"
               },
               {
                 "id": "unit",
@@ -645,7 +625,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Distance"
+                "value": "里程"
               },
               {
                 "id": "unit",
@@ -665,7 +645,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Distance"
+                "value": "里程"
               },
               {
                 "id": "unit",
@@ -685,7 +665,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Speed"
+                "value": "Ø 时速平均值"
               },
               {
                 "id": "unit",
@@ -705,7 +685,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Speed"
+                "value": "Ø 时速平均值"
               },
               {
                 "id": "unit",
@@ -731,16 +711,14 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true,
         "sortBy": [
           {
             "desc": true,
-            "displayName": "Temperature"
+            "displayName": "温度"
           }
         ]
       },
@@ -761,9 +739,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -797,7 +773,7 @@
           ]
         }
       ],
-      "title": "Temperature – Driving Efficiency",
+      "title": "温度 – 行驶效率",
       "type": "table"
     },
     {
@@ -858,18 +834,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -894,9 +866,7 @@
           "select": [
             [
               {
-                "params": [
-                  "charge_energy_added"
-                ],
+                "params": ["charge_energy_added"],
                 "type": "column"
               }
             ]
@@ -930,7 +900,7 @@
           ]
         }
       ],
-      "title": "Current $preferred_range efficiency",
+      "title": "当前 $preferred_range 能耗",
       "type": "stat"
     },
     {
@@ -1006,9 +976,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true
@@ -1030,9 +998,7 @@
           "select": [
             [
               {
-                "params": [
-                  "charge_energy_added"
-                ],
+                "params": ["charge_energy_added"],
                 "type": "column"
               }
             ]
@@ -1066,150 +1032,12 @@
           ]
         }
       ],
-      "title": "Derived ideal efficiencies",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": false,
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "efficiency_km"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "Wh/km"
-              },
-              {
-                "id": "displayName",
-                "value": "Efficiency"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "efficiency_mi"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Efficiency"
-              },
-              {
-                "id": "unit",
-                "value": "Wh/mi"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 10,
-        "x": 14,
-        "y": 16
-      },
-      "id": 15,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "11.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric / convert_km(1, '$length_unit'), 3) * 1000 as \"efficiency_$length_unit\",\n\tcount(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_rated_range_km IS NOT NULL\n  AND end_rated_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "charge_energy_added"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "charges",
-          "timeColumn": "date",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Derived rated efficiencies",
+      "title": "理想能耗",
       "type": "table"
     }
   ],
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -1311,7 +1139,7 @@
         },
         "hide": 0,
         "includeAll": false,
-        "label": "min. distance per drive",
+        "label": "最小. 行程里程",
         "multi": false,
         "name": "min_distance",
         "options": [
@@ -1389,20 +1217,10 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
-  "title": "Efficiency",
+  "title": "能耗统计",
   "uid": "fu4SiQgWz",
   "version": 1,
   "weekStart": ""

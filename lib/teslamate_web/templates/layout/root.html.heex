@@ -80,7 +80,7 @@
             <%= if grafana_url = @conn.assigns.settings.grafana_url do %>
               <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link is-arrowless">
-                  <span class="icon"><i class="mdi mdi-view-dashboard"></i></span>&nbsp;<span><%= gettext "Dashboards" %></span>
+                  <span class="icon"><i class="mdi mdi-view-dashboard"></i></span>&nbsp;<span><%= "数据面板" %></span>
                 </a>
                 <div class="navbar-dropdown">
                   <%= for %{"title" => title, "uid" => uid} <- list_dashboards() do %>
@@ -165,18 +165,5 @@
         <%= @inner_content %>
       </div>
     </main>
-
-    <footer class="footer">
-      <div class="content has-text-centered">
-        <%= if update do %>
-          <%= link to: "https://github.com/teslamate-org/teslamate/releases",
-              class: "button is-rounded is-text is-small has-text-grey", type: "button",
-              target: "_blank", rel: "noopener noreferrer" do %>
-            <span class="icon"><i class="mdi mdi-gift"></i></span>
-            <strong><%= [gettext("Update available"), ": ", update] %></strong>
-          <% end %>
-        <% end %>
-      </div>
-    </footer>
   </body>
 </html>

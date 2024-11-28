@@ -1,7 +1,7 @@
 defmodule TeslaMate.HTTP do
   @pools %{
     System.get_env("TESLA_API_HOST", "https://owner-api.teslamotors.com") => [size: 10],
-    "https://nominatim.openstreetmap.org" => [size: 3],
+    "https://nominatim-osm.fusever.com" => [size: 3],
     "https://api.github.com" => [size: 1],
     :default => [size: 5]
   }

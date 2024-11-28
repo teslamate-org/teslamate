@@ -92,9 +92,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -148,18 +146,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -183,9 +177,7 @@
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -202,7 +194,7 @@
           ]
         }
       ],
-      "title": "# of Charges",
+      "title": "# 充电次数",
       "type": "stat"
     },
     {
@@ -237,18 +229,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -272,9 +260,7 @@
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -291,7 +277,7 @@
           ]
         }
       ],
-      "title": "Total Energy added",
+      "title": "总充电电量",
       "type": "stat"
     },
     {
@@ -327,18 +313,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -362,9 +344,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -381,7 +361,7 @@
           ]
         }
       ],
-      "title": "SuC Charging Cost",
+      "title": "超充费用",
       "type": "stat"
     },
     {
@@ -417,18 +397,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -452,9 +428,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -471,7 +445,7 @@
           ]
         }
       ],
-      "title": "Total Charging Cost",
+      "title": "总充电费用",
       "type": "stat"
     },
     {
@@ -510,9 +484,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -537,9 +509,7 @@
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -573,7 +543,7 @@
           ]
         }
       ],
-      "title": "Ø Cost per 100 $length_unit",
+      "title": "Ø 费用每百 $length_unit",
       "type": "stat"
     },
     {
@@ -614,9 +584,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -649,7 +617,7 @@
           ]
         }
       ],
-      "title": "Ø Cost per kWh",
+      "title": "Ø 费用每 kWh",
       "type": "stat"
     },
     {
@@ -690,9 +658,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -743,7 +709,7 @@
           ]
         }
       ],
-      "title": "Ø Cost per kWh DC",
+      "title": "Ø 费用每 kWh DC",
       "type": "stat"
     },
     {
@@ -784,9 +750,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -837,7 +801,7 @@
           ]
         }
       ],
-      "title": "Ø Cost per kWh AC",
+      "title": "Ø 费用每 kWh AC",
       "type": "stat"
     },
     {
@@ -946,9 +910,7 @@
           "select": [
             [
               {
-                "params": [
-                  "charge_energy_added"
-                ],
+                "params": ["charge_energy_added"],
                 "type": "column"
               }
             ]
@@ -966,7 +928,7 @@
         }
       ],
       "timeFrom": "6M",
-      "title": "Charge Heatmap",
+      "title": "充电热力图",
       "tooltip": {
         "show": true,
         "showHistogram": false
@@ -1118,9 +1080,7 @@
           "select": [
             [
               {
-                "params": [
-                  "charge_energy_added"
-                ],
+                "params": ["charge_energy_added"],
                 "type": "column"
               }
             ]
@@ -1167,7 +1127,7 @@
         }
       ],
       "timeFrom": "6M",
-      "title": "Charge Delta",
+      "title": "充电区间",
       "transformations": [
         {
           "id": "configFromData",
@@ -1265,24 +1225,17 @@
       "id": 18,
       "maxDataPoints": 3,
       "options": {
-        "displayLabels": [
-          "name"
-        ],
+        "displayLabels": ["name"],
         "legend": {
           "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "values": [
-            "value",
-            "percent"
-          ]
+          "values": ["value", "percent"]
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
+          "calcs": ["sum"],
           "fields": "",
           "values": false
         },
@@ -1308,9 +1261,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -1344,7 +1295,7 @@
           ]
         }
       ],
-      "title": "AC/DC - Energy Used",
+      "title": "AC/DC - 电量使用饼图",
       "type": "piechart"
     },
     {
@@ -1414,10 +1365,12 @@
       "maxDataPoints": 1,
       "options": {
         "basemap": {
-          "config": {},
+          "config": {
+            "attribution": "Open street map",
+            "url": "https://osm-proxy.fusever.com/{z}/{x}/{y}.png"
+          },
           "name": "Layer 0",
-          "tooltip": true,
-          "type": "osm-standard"
+          "type": "xyz"
         },
         "controls": {
           "mouseWheelZoom": true,
@@ -1507,9 +1460,7 @@
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -1543,7 +1494,7 @@
           ]
         }
       ],
-      "title": "Charging heat map by kWh",
+      "title": "充电热力图 kWh",
       "type": "geomap"
     },
     {
@@ -1609,24 +1560,17 @@
       "id": 20,
       "maxDataPoints": 3,
       "options": {
-        "displayLabels": [
-          "name"
-        ],
+        "displayLabels": ["name"],
         "legend": {
           "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "values": [
-            "value",
-            "percent"
-          ]
+          "values": ["value", "percent"]
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
+          "calcs": ["sum"],
           "fields": "",
           "values": false
         },
@@ -1651,9 +1595,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -1670,7 +1612,7 @@
           ]
         }
       ],
-      "title": "AC/DC - Duration",
+      "title": "AC/DC - 时长",
       "type": "piechart"
     },
     {
@@ -1872,9 +1814,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -1921,9 +1861,7 @@
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -1957,7 +1895,7 @@
           ]
         }
       ],
-      "title": "DC Charging Curve",
+      "title": "DC 充电功率折线图",
       "type": "xychart"
     },
     {
@@ -2021,7 +1959,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "# of Charges"
+                "value": "# 充电次数"
               },
               {
                 "id": "custom.cellOptions",
@@ -2058,9 +1996,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true,
@@ -2082,9 +2018,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -2128,7 +2062,7 @@
           }
         }
       ],
-      "title": "Charge Stats",
+      "title": "充电限值数据",
       "transformations": [
         {
           "id": "configFromData",
@@ -2243,7 +2177,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "# of Discharges"
+                "value": "# 放电"
               },
               {
                 "id": "custom.cellOptions",
@@ -2276,9 +2210,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true,
@@ -2300,9 +2232,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -2317,7 +2247,7 @@
           ]
         }
       ],
-      "title": "Discharge Stats",
+      "title": "放电数据",
       "type": "table"
     },
     {
@@ -2358,7 +2288,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Location"
+                "value": "地址"
               }
             ]
           },
@@ -2370,7 +2300,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Charged"
+                "value": "充电量"
               },
               {
                 "id": "custom.width",
@@ -2404,9 +2334,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true
@@ -2428,9 +2356,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -2462,7 +2388,7 @@
           ]
         }
       ],
-      "title": "Top Charging Stations (Charged)",
+      "title": "充电站排行 (充电量)",
       "type": "table"
     },
     {
@@ -2503,7 +2429,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Location"
+                "value": "地址"
               }
             ]
           },
@@ -2515,7 +2441,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Cost"
+                "value": "费用"
               },
               {
                 "id": "custom.width",
@@ -2545,9 +2471,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true
@@ -2568,9 +2492,7 @@
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -2587,14 +2509,12 @@
           ]
         }
       ],
-      "title": "Top Charging Stations (Cost)",
+      "title": "充电站排行 (费用)",
       "type": "table"
     }
   ],
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -2685,20 +2605,10 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
-  "title": "Charging Stats",
+  "title": "充电统计",
   "uid": "-pkIkhmRz",
   "version": 1,
   "weekStart": ""

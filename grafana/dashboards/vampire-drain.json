@@ -55,9 +55,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -120,7 +118,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Start"
+                "value": "开始时间"
               },
               {
                 "id": "unit",
@@ -150,7 +148,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "End"
+                "value": "结束时间"
               },
               {
                 "id": "unit",
@@ -170,7 +168,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Range loss"
+                "value": "续航消耗"
               },
               {
                 "id": "unit",
@@ -194,7 +192,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Period"
+                "value": "时长"
               },
               {
                 "id": "unit",
@@ -240,7 +238,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Range loss / h"
+                "value": "Ø 续航消耗 / h"
               },
               {
                 "id": "unit",
@@ -326,7 +324,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Energy drained"
+                "value": "电量消耗"
               },
               {
                 "id": "unit",
@@ -350,7 +348,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Power"
+                "value": "Ø 功率"
               },
               {
                 "id": "unit",
@@ -374,7 +372,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Range loss / h"
+                "value": "Ø 续航消耗 / h"
               },
               {
                 "id": "unit",
@@ -398,7 +396,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Range loss"
+                "value": "续航消耗"
               },
               {
                 "id": "unit",
@@ -422,7 +420,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "SoC Diff"
+                "value": "SoC 消耗"
               },
               {
                 "id": "unit",
@@ -497,9 +495,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true
@@ -522,9 +518,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -556,7 +550,7 @@
           ]
         }
       ],
-      "title": "Vampire Drain",
+      "title": "待机能耗",
       "transformations": [
         {
           "id": "merge",
@@ -569,9 +563,7 @@
     }
   ],
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -736,20 +728,10 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
-  "title": "Vampire Drain",
+  "title": "待机能耗",
   "uid": "zhHx2Fggk",
   "version": 1,
   "weekStart": ""

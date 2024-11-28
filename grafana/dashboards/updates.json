@@ -62,9 +62,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -119,9 +117,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "count"
-          ],
+          "calcs": ["count"],
           "fields": "",
           "values": true
         },
@@ -145,9 +141,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -164,7 +158,7 @@
           ]
         }
       ],
-      "title": "Updates",
+      "title": "更新记录",
       "type": "stat"
     },
     {
@@ -203,9 +197,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": true
         },
@@ -229,9 +221,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -248,7 +238,7 @@
           ]
         }
       ],
-      "title": "Median time between updates",
+      "title": "更新时间间隔",
       "type": "stat"
     },
     {
@@ -294,7 +284,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Date"
+                "value": "时间"
               },
               {
                 "id": "unit",
@@ -314,7 +304,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Duration"
+                "value": "时长"
               },
               {
                 "id": "unit",
@@ -334,7 +324,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Since Previous Update"
+                "value": "间隔"
               }
             ]
           },
@@ -346,7 +336,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Installed Version"
+                "value": "版本"
               },
               {
                 "id": "custom.align",
@@ -388,7 +378,7 @@
               },
               {
                 "id": "displayName",
-                "value": "# of Charges"
+                "value": "# 充电次数"
               }
             ]
           },
@@ -436,7 +426,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Ø Rated range"
+                "value": "Ø 平均续航"
               }
             ]
           },
@@ -484,7 +474,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Ø Rated range"
+                "value": "Ø 平均续航"
               }
             ]
           }
@@ -502,16 +492,14 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true,
         "sortBy": [
           {
             "desc": true,
-            "displayName": "Date"
+            "displayName": "时间"
           }
         ]
       },
@@ -525,7 +513,7 @@
       "styles": [
         {
           "$$hashKey": "object:68",
-          "alias": "Date",
+          "alias": "时间",
           "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "start_date",
@@ -550,7 +538,7 @@
         },
         {
           "$$hashKey": "object:70",
-          "alias": "Installed Version",
+          "alias": "版本",
           "align": "auto",
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -571,7 +559,7 @@
         },
         {
           "$$hashKey": "object:202",
-          "alias": "Duration",
+          "alias": "时长",
           "align": "auto",
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -588,7 +576,7 @@
         },
         {
           "$$hashKey": "object:392",
-          "alias": "Since Previous Update",
+          "alias": "间隔",
           "align": "auto",
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -605,7 +593,7 @@
         },
         {
           "$$hashKey": "object:71",
-          "alias": "# of Charges",
+          "alias": "# 充电次数",
           "align": "auto",
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -635,9 +623,7 @@
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -671,14 +657,12 @@
           ]
         }
       ],
-      "title": "Updates",
+      "title": "更新记录",
       "type": "table"
     }
   ],
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -789,20 +773,10 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
-  "title": "Updates",
+  "title": "更新记录",
   "uid": "IiC07mgWz",
   "version": 1,
   "weekStart": ""

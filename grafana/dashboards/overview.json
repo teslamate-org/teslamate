@@ -75,9 +75,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -138,9 +136,7 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -165,9 +161,7 @@
           "select": [
             [
               {
-                "params": [
-                  "battery_level"
-                ],
+                "params": ["battery_level"],
                 "type": "column"
               }
             ]
@@ -224,7 +218,7 @@
           }
         }
       ],
-      "title": "Battery Level",
+      "title": "电池容量",
       "transformations": [
         {
           "id": "configFromData",
@@ -320,9 +314,7 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "firstNotNull"
-          ],
+          "calcs": ["firstNotNull"],
           "fields": "",
           "values": false
         },
@@ -341,14 +333,12 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH charging_process AS (\n  SELECT id, end_date\n  FROM charging_processes\n  WHERE car_id = $car_id\n  ORDER BY start_date DESC\n  LIMIT 1\n)\nSELECT\n  $__time(date),\n  CASE WHEN charging_process.end_date IS NULL THEN charger_voltage\n       ELSE 0\n  END AS \"Charging Voltage [V]\"\nFROM charges, charging_process\nWHERE charging_process.id = charging_process_id\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "WITH charging_process AS (\n  SELECT id, end_date\n  FROM charging_processes\n  WHERE car_id = $car_id\n  ORDER BY start_date DESC\n  LIMIT 1\n)\nSELECT\n  $__time(date),\n  CASE WHEN charging_process.end_date IS NULL THEN charger_voltage\n       ELSE 0\n  END AS \"充电电压 [V]\"\nFROM charges, charging_process\nWHERE charging_process.id = charging_process_id\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "outside_temp"
-                ],
+                "params": ["outside_temp"],
                 "type": "column"
               }
             ]
@@ -365,7 +355,7 @@
           ]
         }
       ],
-      "title": "Charging Voltage",
+      "title": "充电电压",
       "type": "gauge"
     },
     {
@@ -407,9 +397,7 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "firstNotNull"
-          ],
+          "calcs": ["firstNotNull"],
           "fields": "",
           "values": false
         },
@@ -428,14 +416,12 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH charging_process AS (\n  SELECT id, end_date\n  FROM charging_processes\n  WHERE car_id = $car_id\n  ORDER BY start_date DESC\n  LIMIT 1\n)\nSELECT\n  $__time(date),\n  CASE WHEN charging_process.end_date IS NULL THEN charger_power\n       ELSE 0\n  END AS \"Power [kW]\"\nFROM charges, charging_process\nWHERE charging_process.id = charging_process_id\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "WITH charging_process AS (\n  SELECT id, end_date\n  FROM charging_processes\n  WHERE car_id = $car_id\n  ORDER BY start_date DESC\n  LIMIT 1\n)\nSELECT\n  $__time(date),\n  CASE WHEN charging_process.end_date IS NULL THEN charger_power\n       ELSE 0\n  END AS \"功率 [kW]\"\nFROM charges, charging_process\nWHERE charging_process.id = charging_process_id\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "outside_temp"
-                ],
+                "params": ["outside_temp"],
                 "type": "column"
               }
             ]
@@ -481,7 +467,7 @@
           }
         }
       ],
-      "title": "Charging Power",
+      "title": "充电功率",
       "transformations": [
         {
           "id": "configFromData",
@@ -571,16 +557,13 @@
       "links": [
         {
           "targetBlank": true,
-          "title": "Charge Level",
+          "title": "电量",
           "url": "/d/WopVO_mgz/charge-level?${__url_time_range}"
         }
       ],
       "options": {
         "legend": {
-          "calcs": [
-            "max",
-            "min"
-          ],
+          "calcs": ["max", "min"],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -607,9 +590,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -643,7 +624,7 @@
           ]
         }
       ],
-      "title": "Charge Level",
+      "title": "电量",
       "type": "timeseries"
     },
     {
@@ -704,18 +685,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "first"
-          ]
+          "calcs": ["first"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -739,9 +716,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -758,7 +733,7 @@
           ]
         }
       ],
-      "title": "Ø Consumption (net)",
+      "title": "Ø 能耗 (净值)",
       "type": "stat"
     },
     {
@@ -820,9 +795,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -846,9 +819,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -865,7 +836,7 @@
           ]
         }
       ],
-      "title": "Ø Consumption (gross)",
+      "title": "Ø 能耗 (总)",
       "type": "stat"
     },
     {
@@ -935,9 +906,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -976,7 +945,7 @@
           }
         }
       ],
-      "title": "Total Distance logged",
+      "title": "总记录里程",
       "type": "stat"
     },
     {
@@ -1047,18 +1016,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "first"
-          ]
+          "calcs": ["first"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -1083,9 +1048,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -1117,7 +1080,7 @@
           ]
         }
       ],
-      "title": "Range",
+      "title": "剩余续航",
       "type": "stat"
     },
     {
@@ -1172,18 +1135,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "first"
-          ]
+          "calcs": ["first"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "/^version$/",
           "values": true
         },
@@ -1207,9 +1166,7 @@
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -1226,7 +1183,7 @@
           ]
         }
       ],
-      "title": "Firmware",
+      "title": "车机版本",
       "type": "stat"
     },
     {
@@ -1294,18 +1251,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "first"
-          ]
+          "calcs": ["first"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -1330,9 +1283,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -1364,7 +1315,7 @@
           ]
         }
       ],
-      "title": "Odometer",
+      "title": "总里程",
       "type": "stat"
     },
     {
@@ -1430,7 +1381,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Charging Voltage [V]"
+              "options": "充电电压 [V]"
             },
             "properties": [
               {
@@ -1451,7 +1402,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Power"
+                "value": "功率"
               },
               {
                 "id": "unit",
@@ -1471,7 +1422,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Battery heater"
+                "value": "电池加热"
               },
               {
                 "id": "custom.axisPlacement",
@@ -1511,7 +1462,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Energy added"
+                "value": "充电电量"
               },
               {
                 "id": "unit",
@@ -1537,10 +1488,7 @@
       ],
       "options": {
         "legend": {
-          "calcs": [
-            "max",
-            "min"
-          ],
+          "calcs": ["max", "min"],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1566,9 +1514,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -1594,14 +1540,12 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  charger_voltage as \"Charging Voltage [V]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n  charger_voltage as \"充电电压 [V]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id\nORDER BY\n  date ASC",
           "refId": "C",
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -1618,7 +1562,7 @@
           ]
         }
       ],
-      "title": "Charging Details",
+      "title": "充电折线图",
       "type": "timeseries"
     },
     {
@@ -1660,9 +1604,7 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "firstNotNull"
-          ],
+          "calcs": ["firstNotNull"],
           "fields": "",
           "values": false
         },
@@ -1682,14 +1624,12 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n\t$__time(date),\r\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"Driver Temperature [°$temp_unit]\",\r\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"Inside Temperature [°$temp_unit]\"\r\nFROM positions\r\nWHERE driver_temp_setting IS NOT NULL AND inside_temp IS NOT NULL AND car_id = $car_id AND date >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '60m')\r\nORDER BY date DESC\r\nLIMIT 1;",
+          "rawSql": "SELECT\r\n\t$__time(date),\r\n\tconvert_celsius(driver_temp_setting, '$temp_unit') as \"主驾位置温度erature [°$temp_unit]\",\r\n\tconvert_celsius(inside_temp, '$temp_unit') AS \"车内温度 [°$temp_unit]\"\r\nFROM positions\r\nWHERE driver_temp_setting IS NOT NULL AND inside_temp IS NOT NULL AND car_id = $car_id AND date >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '60m')\r\nORDER BY date DESC\r\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "outside_temp"
-                ],
+                "params": ["outside_temp"],
                 "type": "column"
               }
             ]
@@ -1723,7 +1663,7 @@
           ]
         }
       ],
-      "title": "Driver Temp",
+      "title": "主驾位置温度",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -1776,9 +1716,7 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "firstNotNull"
-          ],
+          "calcs": ["firstNotNull"],
           "fields": "",
           "values": false
         },
@@ -1798,14 +1736,12 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH last_position AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM positions\n\tWHERE car_id = $car_id AND outside_temp IS NOT NULL AND date >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '60m')\n\tORDER BY date DESC\n\tLIMIT 1\n),\nlast_charge AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"Outside Temperature [°$temp_unit]\"\n\tFROM charges\n\tJOIN charging_processes ON charges.charging_process_id = charging_processes.id\n\tWHERE car_id = $car_id AND outside_temp IS NOT NULL AND date >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '60m')\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT * FROM last_position\nUNION ALL\nSELECT * FROM last_charge\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "WITH last_position AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"车外温度 [°$temp_unit]\"\n\tFROM positions\n\tWHERE car_id = $car_id AND outside_temp IS NOT NULL AND date >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '60m')\n\tORDER BY date DESC\n\tLIMIT 1\n),\nlast_charge AS (\n\tSELECT date, convert_celsius(outside_temp, '$temp_unit') AS \"车外温度 [°$temp_unit]\"\n\tFROM charges\n\tJOIN charging_processes ON charges.charging_process_id = charging_processes.id\n\tWHERE car_id = $car_id AND outside_temp IS NOT NULL AND date >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '60m')\n\tORDER BY date DESC\n\tLIMIT 1\n)\nSELECT * FROM last_position\nUNION ALL\nSELECT * FROM last_charge\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "outside_temp"
-                ],
+                "params": ["outside_temp"],
                 "type": "column"
               }
             ]
@@ -1881,9 +1817,7 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "firstNotNull"
-          ],
+          "calcs": ["firstNotNull"],
           "fields": "",
           "values": false
         },
@@ -2008,7 +1942,7 @@
       "links": [
         {
           "targetBlank": true,
-          "title": "States",
+          "title": "状态",
           "url": "/d/xo4BNRkZz/states?${__url_time_range}"
         }
       ],
@@ -2043,9 +1977,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -2062,15 +1994,13 @@
           ]
         }
       ],
-      "title": "States",
+      "title": "状态",
       "type": "state-timeline"
     }
   ],
   "refresh": "30s",
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -2206,20 +2136,10 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
-  "title": "Overview",
+  "title": "总览数据",
   "uid": "kOuP_Fggz",
   "version": 1,
   "weekStart": ""

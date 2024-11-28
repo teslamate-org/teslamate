@@ -67,9 +67,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -102,18 +100,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -137,9 +131,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -156,7 +148,7 @@
           ]
         }
       ],
-      "title": "# of Addresses",
+      "title": "# 地址数",
       "type": "stat"
     },
     {
@@ -191,18 +183,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -226,9 +214,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -245,7 +231,7 @@
           ]
         }
       ],
-      "title": "# of Cities",
+      "title": "# 城市区县",
       "type": "stat"
     },
     {
@@ -280,18 +266,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -315,9 +297,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -334,7 +314,7 @@
           ]
         }
       ],
-      "title": "# of States",
+      "title": "# 省",
       "type": "stat"
     },
     {
@@ -369,18 +349,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -404,9 +380,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -423,7 +397,7 @@
           ]
         }
       ],
-      "title": "# of Countries",
+      "title": "# 国家",
       "type": "stat"
     },
     {
@@ -470,9 +444,7 @@
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": true
         },
@@ -491,14 +463,12 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tcity,\n\tcount(*) as \"# of Addresses\"\nFROM\n\taddresses\nWHERE\n\tcity IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
+          "rawSql": "SELECT\n\tcity,\n\tcount(*) as \"# 地址数\"\nFROM\n\taddresses\nWHERE\n\tcity IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -513,7 +483,7 @@
           ]
         }
       ],
-      "title": "Cities",
+      "title": "城市区县",
       "type": "bargauge"
     },
     {
@@ -560,9 +530,7 @@
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": true
         },
@@ -581,14 +549,12 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tstate,\n\tcount(*) as \"# of Addresses\"\nFROM\n\taddresses\nWHERE\n\tstate IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
+          "rawSql": "SELECT\n\tstate,\n\tcount(*) as \"# 地址数\"\nFROM\n\taddresses\nWHERE\n\tstate IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -605,7 +571,7 @@
           ]
         }
       ],
-      "title": "States",
+      "title": "省",
       "type": "bargauge"
     },
     {
@@ -648,7 +614,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Date"
+              "options": "时间"
             },
             "properties": [
               {
@@ -664,7 +630,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "City"
+              "options": "城市区县"
             },
             "properties": [
               {
@@ -686,16 +652,14 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true,
         "sortBy": [
           {
             "desc": true,
-            "displayName": "Date"
+            "displayName": "时间"
           }
         ]
       },
@@ -710,14 +674,12 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  max(end_date) as \"Date\",\n  count(*) as visited,\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"Address\",\n\tCOALESCE(city, neighbourhood) as \"City\"\nFROM drives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%'\nGROUP BY 3,4\nORDER BY visited DESC\nLIMIT 100",
+          "rawSql": "SELECT\n  max(end_date) as \"时间\",\n  count(*) as visited,\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"地址\",\n\tCOALESCE(city, neighbourhood) as \"城市区县\"\nFROM drives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%'\nGROUP BY 3,4\nORDER BY visited DESC\nLIMIT 100",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -734,7 +696,7 @@
           ]
         }
       ],
-      "title": "Last visited",
+      "title": "近期到达",
       "transformations": [
         {
           "id": "organize",
@@ -812,7 +774,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Name"
+                "value": "名称"
               },
               {
                 "id": "unit",
@@ -845,7 +807,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Neighbourhood"
+                "value": "街道"
               },
               {
                 "id": "unit",
@@ -868,7 +830,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "City"
+                "value": "城市区县"
               },
               {
                 "id": "unit",
@@ -891,7 +853,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "State"
+                "value": "省"
               },
               {
                 "id": "unit",
@@ -914,7 +876,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Country"
+                "value": "国家"
               },
               {
                 "id": "unit",
@@ -958,9 +920,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true
@@ -981,9 +941,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -1000,7 +958,7 @@
           ]
         }
       ],
-      "title": "Addresses",
+      "title": "地址",
       "transformations": [
         {
           "id": "merge",
@@ -1074,7 +1032,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Name"
+                "value": "名称"
               },
               {
                 "id": "unit",
@@ -1128,9 +1086,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true
@@ -1151,9 +1107,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -1168,7 +1122,7 @@
           ]
         }
       ],
-      "title": "Geo-fences",
+      "title": "收藏点",
       "transformations": [
         {
           "id": "merge",
@@ -1181,9 +1135,7 @@
     }
   ],
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -1239,7 +1191,7 @@
           "value": ""
         },
         "hide": 0,
-        "label": "Address",
+        "label": "地址",
         "name": "address_filter",
         "options": [
           {
@@ -1272,20 +1224,10 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
-  "title": "Locations",
+  "title": "地理位置",
   "uid": "ZzhF-aRWz",
   "version": 1,
   "weekStart": ""

@@ -141,7 +141,7 @@ const DirectionArrow = CircleMarker.extend({
 function createMap(opts) {
   const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", opts);
 
-  const osm = new TileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  const osm = new TileLayer("https://osm-proxy.fusever.com/{z}/{x}/{y}.png", {
     maxZoom: 19,
   });
 

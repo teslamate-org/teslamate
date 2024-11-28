@@ -54,9 +54,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -110,7 +108,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Time driven"
+              "options": "驾驶时长"
             },
             "properties": [
               {
@@ -130,7 +128,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Period"
+              "options": "周期"
             },
             "properties": [
               {
@@ -152,7 +150,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Driving Efficiency"
+              "options": "效率"
             },
             "properties": [
               {
@@ -198,7 +196,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Energy used"
+              "options": "电耗"
             },
             "properties": [
               {
@@ -228,7 +226,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Ø Energy used / Charge"
+              "options": "Ø 总电耗 / 充电次数"
             },
             "properties": [
               {
@@ -248,7 +246,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Costs"
+              "options": "费用"
             },
             "properties": [
               {
@@ -264,7 +262,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "# of Charges"
+              "options": "# 充电次数"
             },
             "properties": [
               {
@@ -286,7 +284,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "# of Drives"
+              "options": "# 行程次数"
             },
             "properties": [
               {
@@ -317,7 +315,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Distance"
+                "value": "里程"
               },
               {
                 "id": "custom.minWidth",
@@ -337,7 +335,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Ø Temp"
+                "value": "Ø 温度"
               },
               {
                 "id": "thresholds",
@@ -379,7 +377,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Distance"
+                "value": "里程"
               },
               {
                 "id": "unit",
@@ -407,7 +405,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Ø Consumption (net)"
+                "value": "Ø 能耗 (净值)"
               }
             ]
           },
@@ -419,7 +417,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Consumption (gross)"
+                "value": "Ø 能耗 (总)"
               },
               {
                 "id": "unit",
@@ -439,7 +437,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Consumption (net)"
+                "value": "Ø 能耗 (净值)"
               },
               {
                 "id": "unit",
@@ -459,7 +457,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Consumption (gross)"
+                "value": "Ø 能耗 (总)"
               },
               {
                 "id": "unit",
@@ -479,7 +477,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Temp"
+                "value": "Ø 温度"
               },
               {
                 "id": "unit",
@@ -544,7 +542,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Ø Cost / kWh"
+              "options": "Ø 费用 / kWh"
             },
             "properties": [
               {
@@ -574,7 +572,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Ø Cost / 100 km"
+              "options": "Ø 费用 / 100 km"
             },
             "properties": [
               {
@@ -604,7 +602,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Consumption OH"
+              "options": "能耗 OH"
             },
             "properties": [
               {
@@ -650,9 +648,7 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "frameIndex": 1,
@@ -682,9 +678,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -732,9 +726,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -781,9 +773,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -844,7 +834,7 @@
           }
         }
       ],
-      "title": "per ${period}",
+      "title": "每 ${period}",
       "transformations": [
         {
           "id": "merge",
@@ -1044,30 +1034,30 @@
               "sum_energy_used_kwh": 7
             },
             "renameByName": {
-              "avg_cost_km": "Ø Cost / 100 km",
-              "avg_cost_kwh": "Ø Cost / kWh",
-              "avg_cost_mi": "Ø Cost / 100 mi",
-              "avg_energy_charged_kwh": "Ø Energy used / Charge",
+              "avg_cost_km": "Ø 费用 / 100 km",
+              "avg_cost_kwh": "Ø 费用 / kWh",
+              "avg_cost_mi": "Ø 费用 / 100 mi",
+              "avg_energy_charged_kwh": "Ø 总电耗 / 充电次数",
               "avg_outside_temp_c": "",
               "avg_outside_temp_f": "",
-              "cnt": "# of Drives",
-              "cnt_charges": "# of Charges",
+              "cnt": "# 行程次数",
+              "cnt_charges": "# 充电次数",
               "consumption_gross_km": "",
               "consumption_gross_mi": "",
               "consumption_net_km": "",
               "consumption_net_mi": "",
-              "cost_charges": "Costs",
+              "cost_charges": "费用",
               "date": "",
               "date_from": "",
               "date_to": "",
-              "display": "Period",
-              "efficiency": "Driving Efficiency",
-              "overhead_pct_km": "Consumption OH",
-              "overhead_pct_mi": "Consumption OH",
+              "display": "周期",
+              "efficiency": "效率",
+              "overhead_pct_km": "能耗 OH",
+              "overhead_pct_mi": "能耗 OH",
               "sum_distance_km": "",
               "sum_distance_mi": "",
-              "sum_duration_h": "Time driven",
-              "sum_energy_used_kwh": "Energy used"
+              "sum_duration_h": "驾驶时长",
+              "sum_energy_used_kwh": "电耗"
             }
           }
         }
@@ -1077,9 +1067,7 @@
   ],
   "refresh": false,
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -1160,7 +1148,7 @@
         },
         "hide": 0,
         "includeAll": false,
-        "label": "Period",
+        "label": "周期",
         "multi": false,
         "name": "period",
         "options": [
@@ -1240,7 +1228,7 @@
           "text": "no",
           "value": "0"
         },
-        "description": "When enabled \"Ø Consumption (gross)\" will be calculated via Positions instead of Charging Processes and Drives.\n\nWhile being more accurate (especially for shorter periods) this will be slow on slow hardware!",
+        "description": "When enabled \"Ø 能耗 (总)\" will be calculated via Positions instead of Charging Processes and Drives.\n\nWhile being more accurate (especially for shorter periods) this will be slow on slow hardware!",
         "hide": 0,
         "includeAll": false,
         "label": "High Precision",
@@ -1284,7 +1272,7 @@
     ]
   },
   "timezone": "",
-  "title": "Statistics",
+  "title": "数据汇总",
   "uid": "1EZnXszMk",
   "version": 1,
   "weekStart": ""

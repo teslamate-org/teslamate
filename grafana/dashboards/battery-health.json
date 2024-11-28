@@ -83,9 +83,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -97,7 +95,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "**Usable (now)** is the estimated current battery capacity. It is average of the estimated capacity reported by the last 10 charging sessions to have a better estimation.\n\nIf you see just '1.0 kWh' here, it means that you need at least a long charge session.\n\n**Usable (new)** is the estimated Battery Capacity since you begun to use Teslamate. That's why, the more data you have logged from your brand new car the better. For those who have not used Teslamate since they got their new car, or for those who have bought it second hand,  it's possible to set the max range to 100% and the battery capacity of the car battery when it was new in order to get a better and accurate estimation.",
+      "description": "**电池容量（当前）** 是估算的当前电池容量。它是过去10次充电数据中数据的电池容量的平均值，用以提供更准确的估算。\n\n如果这里显示的是“1.0 kWh”，则意味着您需要进行至少一次长时间的充电。\n\n**电池容量（新）** 是自您开始使用 Teslamate 以来估算的电池容量。因此，您从新车开始记录的数据越多，估算就越准确。对于那些自购买新车以来没有使用 Teslamate，或者购买了二手车的用户，可以将最大续航设置为 100%，并设置新车时的电池容量，以获得更准确的估算。",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -140,9 +138,7 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -161,14 +157,12 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT  \n  CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END as \"Usable (new)\", \n  ('$aux'::json ->> 'CurrentCapacity')::float as \"Usable (now)\",\n  ('$aux'::json ->> 'CurrentCapacity')::float - CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END as \"Difference\"\n  \n  \n  \n  \n   \n  \n  ",
+          "rawSql": "SELECT  \n  CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END as \"电池容量（新）\", \n  ('$aux'::json ->> 'CurrentCapacity')::float as \"电池容量（当前）\",\n  ('$aux'::json ->> 'CurrentCapacity')::float - CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END as \"差值\"\n  \n  \n  \n  \n   \n  \n  ",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -185,7 +179,7 @@
           ]
         }
       ],
-      "title": "Battery Capacity",
+      "title": "电池容量",
       "type": "stat"
     },
     {
@@ -244,7 +238,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Max range (new)"
+                "value": "最大续航（新车）"
               }
             ]
           },
@@ -256,7 +250,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Max range (now)"
+                "value": "最大续航（当前）"
               }
             ]
           },
@@ -268,7 +262,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Range lost"
+                "value": "续航损失"
               }
             ]
           }
@@ -288,9 +282,7 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -315,9 +307,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -351,7 +341,7 @@
           ]
         }
       ],
-      "title": "Ranges [$preferred_range]",
+      "title": "续航里程 [$preferred_range]",
       "type": "stat"
     },
     {
@@ -359,7 +349,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "\"Logged\" is the distance traveled that is saved on Teslamate database.\n\n\"Mileage\" is the distance the car has traveled since using Teslamate.\n\nSo, if there is a difference between both values, it is the distance that for some reason a drive hasn't been fully recorded, for example due to a bug or an unexpected restart and that Teslamate has not been able to record, either due to lack of connection, areas without signal, or that it has been out of service.",
+      "description": "**已记录** 是指保存于 Teslamate 数据库中的行驶距离。\n\n**行驶里程** 是自使用 Teslamate 以来汽车所行驶的总距离。\n\n因此，如果这两个值之间存在差异，说明由于某些原因，某次行程未被完全记录。例如，可能是由于软件故障、意外重启，或者由于信号中断、没有连接，或车辆处于离线状态时，Teslamate 未能成功记录行驶距离。",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -392,9 +382,7 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "/.*/",
           "values": false
         },
@@ -413,7 +401,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "select ROUND(convert_km(sum(distance)::numeric, '$length_unit'),0)|| ' $length_unit' as \"Logged\"\r\nfrom drives \r\nwhere car_id = $car_id;\r\n",
+          "rawSql": "select ROUND(convert_km(sum(distance)::numeric, '$length_unit'),0)|| ' $length_unit' as \"已记录\"\r\nfrom drives \r\nwhere car_id = $car_id;\r\n",
           "refId": "Logged",
           "sql": {
             "columns": [
@@ -444,14 +432,12 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0)|| ' $length_unit' as \"Mileage\"\nFROM drives WHERE car_id = $car_id;",
+          "rawSql": "SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0)|| ' $length_unit' as \"行驶里程\"\nFROM drives WHERE car_id = $car_id;",
           "refId": "Mileage",
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -495,14 +481,12 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(convert_km(max(end_km)::numeric, '$length_unit'),0) || ' $length_unit' as \"Odometer\"\nFROM drives WHERE car_id =  $car_id;",
+          "rawSql": "SELECT ROUND(convert_km(max(end_km)::numeric, '$length_unit'),0) || ' $length_unit' as \"里程表\"\nFROM drives WHERE car_id =  $car_id;",
           "refId": "Odometer",
           "select": [
             [
               {
-                "params": [
-                  "efficiency"
-                ],
+                "params": ["efficiency"],
                 "type": "column"
               }
             ]
@@ -544,7 +528,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT (\r\n (SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0) FROM drives WHERE car_id = $car_id) - \r\n (SELECT ROUND(convert_km(sum(distance)::numeric, '$length_unit'),0) from drives where car_id = $car_id) || ' $length_unit'\r\n)\r\nAS \"Data lost (not logged)\"",
+          "rawSql": "SELECT (\r\n (SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0) FROM drives WHERE car_id = $car_id) - \r\n (SELECT ROUND(convert_km(sum(distance)::numeric, '$length_unit'),0) from drives where car_id = $car_id) || ' $length_unit'\r\n)\r\nAS \"丢失数据（未记录)\"",
           "refId": "Data Lost",
           "sql": {
             "columns": [
@@ -565,7 +549,7 @@
           }
         }
       ],
-      "title": "Drive Stats",
+      "title": "行程数据",
       "type": "stat"
     },
     {
@@ -631,24 +615,16 @@
       "id": 34,
       "maxDataPoints": 3,
       "options": {
-        "displayLabels": [
-          "name",
-          "percent",
-          "value"
-        ],
+        "displayLabels": ["name", "percent", "value"],
         "legend": {
           "displayMode": "list",
           "placement": "right",
           "showLegend": false,
-          "values": [
-            "value"
-          ]
+          "values": ["value"]
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -674,9 +650,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -710,7 +684,7 @@
           ]
         }
       ],
-      "title": "AC/DC - Energy Used",
+      "title": "AC/DC - 能耗",
       "type": "piechart"
     },
     {
@@ -718,7 +692,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "This dashboard is meant to have a look of the Battery health based on the data logged in Teslamate. So, the more data you have logged from your brand new car the better.\n\n**Degradation** is just an estimated value to have a reference, measured on **usable battery level** of every charging session with enough kWh added (in order to avoid dirty data from the sample), calculated according to the rated efficiency of the car.",
+      "description": "这个仪表盘旨在查看基于 Teslamate 中记录的数据的电池健康状况。因此，您从新车开始记录的数据越多，估算就越准确。\n\n**衰减** 只是一个估算值，用于作为参考，基于每次充电会话中的 **可用电量** 来衡量，并且每次充电会话都需要有足够的 kWh 充入（以避免样本中的脏数据），计算时依据车辆的额定效率。",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -789,9 +763,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -808,7 +780,7 @@
           ]
         }
       ],
-      "title": "Estimated Degradation",
+      "title": "预估衰减",
       "type": "gauge"
     },
     {
@@ -862,9 +834,7 @@
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -888,9 +858,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -907,7 +875,7 @@
           ]
         }
       ],
-      "title": "Battery Health",
+      "title": "电池健康",
       "type": "bargauge"
     },
     {
@@ -915,7 +883,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "\"# of Charging cycles\" is estimated by dividing the whole energy added to the battery by the battery capacity when new.\n\n\"Charging Efficiency\" is estimated on the difference between energy used from the charger and energy added to the battery.",
+      "description": "“充电循环次数”是通过将添加到电池的总能量除以新车时的电池容量来估算的。\n\n“充电效率”是通过计算从充电器使用的能量与添加到电池中的能量之间的差异来估算的。",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -933,7 +901,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Total Energy added"
+              "options": "总充电电量"
             },
             "properties": [
               {
@@ -945,7 +913,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Total Energy used"
+              "options": "总电量使用量"
             },
             "properties": [
               {
@@ -957,7 +925,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Charging Efficiency"
+              "options": "充电效率"
             },
             "properties": [
               {
@@ -979,18 +947,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -1009,7 +973,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\r\n\tCOUNT(*) AS \"# of Charges\"\r\nFROM\r\n\tcharging_processes\r\nWHERE\r\n\tcar_id = $car_id AND charge_energy_added > 0.01\r\n\t",
+          "rawSql": "SELECT\r\n\tCOUNT(*) AS \"# 充电次数\"\r\nFROM\r\n\tcharging_processes\r\nWHERE\r\n\tcar_id = $car_id AND charge_energy_added > 0.01\r\n\t",
           "refId": "# of Charges",
           "sql": {
             "columns": [
@@ -1040,7 +1004,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tfloor(sum(charge_energy_added) / CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END) AS \"# of Charging cycles\"\nFROM charging_processes WHERE car_id = $car_id AND charge_energy_added > 0.01",
+          "rawSql": "SELECT\n\tfloor(sum(charge_energy_added) / CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END) AS \"# 充电循环次数\"\nFROM charging_processes WHERE car_id = $car_id AND charge_energy_added > 0.01",
           "refId": "# of Charging cycles",
           "sql": {
             "columns": [
@@ -1070,8 +1034,8 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tsum(charge_energy_added) as \"Total Energy added\"\nFROM\n\tcharging_processes\nWHERE\n\tcar_id = $car_id AND charge_energy_added > 0.01",
-          "refId": "Total Energy added",
+          "rawSql": "SELECT\n\tsum(charge_energy_added) as \"总充电电量\"\nFROM\n\tcharging_processes\nWHERE\n\tcar_id = $car_id AND charge_energy_added > 0.01",
+          "refId": "总充电电量",
           "sql": {
             "columns": [
               {
@@ -1099,8 +1063,8 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\r\n\tSUM(greatest(charge_energy_added, charge_energy_used)) AS \"Total Energy used\"\r\nFROM\r\n\tcharging_processes\r\nWHERE\r\n\tcar_id = $car_id AND charge_energy_added > 0.01\r\n",
-          "refId": "Total Energy used",
+          "rawSql": "SELECT\r\n\tSUM(greatest(charge_energy_added, charge_energy_used)) AS \"总电量使用量\"\r\nFROM\r\n\tcharging_processes\r\nWHERE\r\n\tcar_id = $car_id AND charge_energy_added > 0.01\r\n",
+          "refId": "总电量使用量",
           "sql": {
             "columns": [
               {
@@ -1128,8 +1092,8 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\r\n\tSUM(charge_energy_added) / SUM(greatest(charge_energy_added, charge_energy_used)) AS \"Charging Efficiency\"\r\nFROM\r\n\tcharging_processes\r\nWHERE\r\n\tcar_id = $car_id AND charge_energy_added > 0.01\r\n",
-          "refId": "Charging Efficiency",
+          "rawSql": "SELECT\r\n\tSUM(charge_energy_added) / SUM(greatest(charge_energy_added, charge_energy_used)) AS \"充电效率\"\r\nFROM\r\n\tcharging_processes\r\nWHERE\r\n\tcar_id = $car_id AND charge_energy_added > 0.01\r\n",
+          "refId": "充电效率",
           "sql": {
             "columns": [
               {
@@ -1149,7 +1113,7 @@
           }
         }
       ],
-      "title": "Charging Stats",
+      "title": "充电数据",
       "type": "stat"
     },
     {
@@ -1194,9 +1158,7 @@
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -1216,15 +1178,11 @@
           "group": [],
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
@@ -1239,9 +1197,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -1287,7 +1243,7 @@
           }
         }
       ],
-      "title": "Current SOC",
+      "title": "当前电池容量（SOC）",
       "transformations": [
         {
           "id": "configFromData",
@@ -1331,7 +1287,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "This is the Derived Rated Efficiency that TeslaMate calculates based on battery charges. \nThis information can be seen in more detail on the \"Efficiency\" dashboard.",
+      "description": "这是 TeslaMate 根据电池充电情况计算得出的衍生额定效率。\n有关此信息的更多详细内容，可以在“效率”仪表盘中查看。",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1390,9 +1346,7 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "/.*/",
           "values": false
         },
@@ -1432,7 +1386,7 @@
           }
         }
       ],
-      "title": "Efficiency",
+      "title": "能耗",
       "type": "stat"
     },
     {
@@ -1489,9 +1443,7 @@
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "/^kwh$/",
           "values": false
         },
@@ -1512,15 +1464,11 @@
           "group": [],
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
@@ -1535,9 +1483,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -1571,7 +1517,7 @@
           ]
         }
       ],
-      "title": "Current Stored Energy",
+      "title": "当前电量",
       "type": "bargauge"
     },
     {
@@ -1651,7 +1597,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Mileage"
+                "value": "行驶里程"
               }
             ]
           },
@@ -1663,7 +1609,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Battery Capacity"
+                "value": "电池容量"
               },
               {
                 "id": "unit",
@@ -1761,9 +1707,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -1811,9 +1755,7 @@
           "select": [
             [
               {
-                "params": [
-                  "start_km"
-                ],
+                "params": ["start_km"],
                 "type": "column"
               }
             ]
@@ -1847,15 +1789,13 @@
           ]
         }
       ],
-      "title": "Battery Capacity by Mileage",
+      "title": "行驶里程电池容量图",
       "type": "xychart"
     }
   ],
   "refresh": "",
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -1973,7 +1913,7 @@
         },
         "description": "Set the capacity of your car battery when it was new, in case you started using Teslamate after a while of having it. If not, leave it at 0, it will be calculated with the data that is logged in Teslamate",
         "hide": 0,
-        "label": "Custom Battery Capacity (kWh) when new",
+        "label": "新车时自定义电池容量（kWh）",
         "name": "custom_kwh_new",
         "options": [
           {
@@ -1994,7 +1934,7 @@
         },
         "description": "Set the max range to 100% of your car when it was new, in case you started using Teslamate after a while of having it. If not, leave it at 0, the degradation will be calculated with the data that is logged in Teslamate",
         "hide": 0,
-        "label": "Custom Max Range when new",
+        "label": "新车时自定义续航里程",
         "name": "custom_max_range",
         "options": [
           {
@@ -2017,7 +1957,7 @@
     "hidden": true
   },
   "timezone": "browser",
-  "title": "Battery Health",
+  "title": "电池健康",
   "uid": "jchmRiqUfXgTM",
   "version": 1,
   "weekStart": ""

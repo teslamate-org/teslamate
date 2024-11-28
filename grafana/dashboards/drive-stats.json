@@ -65,9 +65,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -105,18 +103,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "sum"
-          ]
+          "calcs": ["sum"]
         },
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
+          "calcs": ["sum"],
           "fields": "",
           "values": false
         },
@@ -141,9 +135,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -177,7 +169,7 @@
           ]
         }
       ],
-      "title": "# of Drives",
+      "title": "# 行程数",
       "type": "stat"
     },
     {
@@ -237,18 +229,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "sum"
-          ]
+          "calcs": ["sum"]
         },
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
+          "calcs": ["sum"],
           "fields": "",
           "values": false
         },
@@ -273,9 +261,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -309,7 +295,7 @@
           ]
         }
       ],
-      "title": "Total Distance logged",
+      "title": "总记录距离",
       "type": "stat"
     },
     {
@@ -344,18 +330,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "sum"
-          ]
+          "calcs": ["sum"]
         },
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
+          "calcs": ["sum"],
           "fields": "",
           "values": false
         },
@@ -380,9 +362,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -416,7 +396,7 @@
           ]
         }
       ],
-      "title": "Total Energy consumed (net)",
+      "title": "总能量消耗（净值）",
       "type": "stat"
     },
     {
@@ -486,9 +466,7 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
@@ -520,9 +498,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -556,7 +532,7 @@
           ]
         }
       ],
-      "title": "Median distance of a drive",
+      "title": "行程里程平均值",
       "type": "stat"
     },
     {
@@ -617,18 +593,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -647,7 +619,7 @@
           "refId": "A"
         }
       ],
-      "title": "Ø Distance driven per day",
+      "title": "Ø 每日里程平均值",
       "type": "stat"
     },
     {
@@ -683,18 +655,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
+          "calcs": ["lastNotNull"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -713,7 +681,7 @@
           "refId": "A"
         }
       ],
-      "title": "Ø Energy consumed (net) per day",
+      "title": "Ø 每日能耗损耗（净值）平均值",
       "type": "stat"
     },
     {
@@ -783,18 +751,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
+          "calcs": ["last"],
           "fields": "",
           "values": false
         },
@@ -819,9 +783,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -855,7 +817,7 @@
           ]
         }
       ],
-      "title": "Max Speed",
+      "title": "最高时速",
       "type": "stat"
     },
     {
@@ -925,18 +887,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
+          "calcs": ["last"],
           "fields": "",
           "values": false
         },
@@ -961,9 +919,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -998,7 +954,7 @@
         }
       ],
       "timeFrom": "30d",
-      "title": "Max Speed",
+      "title": "最高时速",
       "type": "stat"
     },
     {
@@ -1068,18 +1024,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
+          "calcs": ["mean"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
+          "calcs": ["last"],
           "fields": "",
           "values": false
         },
@@ -1104,9 +1056,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -1141,7 +1091,7 @@
         }
       ],
       "timeFrom": "7d",
-      "title": "Max Speed",
+      "title": "最高时速",
       "type": "stat"
     },
     {
@@ -1258,9 +1208,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -1292,18 +1240,13 @@
           ]
         }
       ],
-      "title": "Speed Histogram ($speed_unit)",
+      "title": "时速柱状图 ($speed_unit)",
       "transformations": [
         {
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": [
-                "Elapsed",
-                "Time",
-                "Speed",
-                "SpeedUnit"
-              ]
+              "names": ["Elapsed", "Time", "Speed", "SpeedUnit"]
             }
           }
         }
@@ -1367,18 +1310,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
+          "calcs": ["lastNotNull"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -1403,9 +1342,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -1439,7 +1376,7 @@
           ]
         }
       ],
-      "title": "Extrapolated monthly mileage",
+      "title": "预估月行驶里程",
       "type": "stat"
     },
     {
@@ -1500,18 +1437,14 @@
       "options": {
         "colorMode": "value",
         "fieldOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
+          "calcs": ["lastNotNull"]
         },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -1530,7 +1463,7 @@
           "refId": "A"
         }
       ],
-      "title": "Extrapolated annual mileage",
+      "title": "预估年行驶里程",
       "transformations": [
         {
           "id": "calculateField",
@@ -1612,9 +1545,7 @@
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": true
         },
@@ -1639,9 +1570,7 @@
           "select": [
             [
               {
-                "params": [
-                  "latitude"
-                ],
+                "params": ["latitude"],
                 "type": "column"
               }
             ]
@@ -1675,15 +1604,13 @@
           ]
         }
       ],
-      "title": "Top 10 Destinations (in this period)",
+      "title": "目的地排行榜",
       "type": "bargauge"
     }
   ],
   "refresh": false,
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -1804,7 +1731,7 @@
         },
         "description": "Comma separated list of locations to exclude. Ex: home, work",
         "hide": 0,
-        "label": "Exclude locations",
+        "label": "不包含地址",
         "name": "exclude",
         "options": [
           {
@@ -1856,20 +1783,10 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
-  "title": "Drive Stats",
+  "title": "行程统计",
   "uid": "_7WkNSyWk",
   "version": 1,
   "weekStart": ""

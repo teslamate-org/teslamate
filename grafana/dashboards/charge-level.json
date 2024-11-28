@@ -55,9 +55,7 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "tags": [
-        "tesla"
-      ],
+      "tags": ["tesla"],
       "title": "Dashboards",
       "type": "dashboards"
     }
@@ -93,7 +91,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Charge Level",
+            "axisLabel": "电池容量",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -149,11 +147,7 @@
       "id": 2,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
+          "calcs": ["mean", "max", "min"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -177,14 +171,12 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tdate_bin('2 minutes'::interval, date at time zone 'UTC', to_timestamp(${__from:date:seconds})) as time,\n\tavg(battery_level) AS \"Battery Level\",\n\tavg(usable_battery_level) AS \"Usable Battery Level\"\nfrom positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id and ideal_battery_range_km is not null\n\tgroup by time\n\tORDER BY time ASC\n;",
+          "rawSql": "SELECT\n\tdate_bin('2 minutes'::interval, date at time zone 'UTC', to_timestamp(${__from:date:seconds})) as time,\n\tavg(battery_level) AS \"电池容量\",\n\tavg(usable_battery_level) AS \"可用电池容量\"\nfrom positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id and ideal_battery_range_km is not null\n\tgroup by time\n\tORDER BY time ASC\n;",
           "refId": "A",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "column"
               }
             ]
@@ -253,7 +245,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "-- To be able to calculate percentiles for unevenly sampled values we are bucketing & gapfilling values before running calculations\r\nwith positions_filtered as (\r\n    select\r\n        date,\r\n        battery_level\r\n    from\r\n        positions p\r\n    where\r\n        p.car_id = $car_id\r\n        -- p.ideal_battery_range_km condition is added to reduce overall amount of data and avoid data biases while driving (unevenly sampled data)\r\n        and p.ideal_battery_range_km is not null\r\n        and 1 = $include_average_percentiles\r\n),\r\ngen_date_series as (\r\n    select\r\n        -- series is used to bucket data and avoid gaps in series used to determine percentiles\r\n        generate_series(to_timestamp(${__from:date:seconds} - (86400 * $days_moving_average_percentiles / 2)), to_timestamp(${__to:date:seconds}), concat($bucket_width, ' seconds')::INTERVAL) as series_id\r\n),\r\ndate_series as (\r\n    select\r\n        series_id at time zone 'UTC' as series_id,\r\n        -- before joining, get beginning of next series to be able to left join `positions_filtered`\r\n        lead(series_id) over (order by series_id asc) at time zone 'UTC' as next_series_id\r\n    from\r\n        gen_date_series\r\n),\r\npositions_bucketed as (\r\n    select\r\n        series_id,\r\n        -- simple average can result in loss of accuracy, see https://www.timescale.com/blog/what-time-weighted-averages-are-and-why-you-should-care/ for details\r\n        avg(battery_level) as battery_level,\r\n        min(positions_filtered.date) as series_min_date\r\n    from\r\n        date_series\r\n    left join positions_filtered on\r\n        positions_filtered.date >= date_series.series_id\r\n        and positions_filtered.date < date_series.next_series_id\r\n    group by\r\n        series_id\r\n),\r\n-- PostgreSQL cannot IGNORE NULLS via Window Functions LAST_VALUE - therefore use natural behavior of COUNT & MAX, see https://www.reddit.com/r/SQL/comments/wb949v/comment/ii5mmmi/ for details\r\npositions_bucketed_gapfilling_locf_intermediate as (\r\n    select\r\n        series_id,\r\n        battery_level,\r\n        series_min_date,\r\n        count(battery_level) over (order by series_id) as i\r\n    from\r\n        positions_bucketed\r\n\r\n),\r\npositions_bucketed_gapfilled_locf as (\r\n    select\r\n        series_id,\r\n        series_min_date,\r\n        max(battery_level) over (partition by i) as battery_level_locf\r\n    from\r\n        positions_bucketed_gapfilling_locf_intermediate\r\n),\r\n-- PostgreSQL cannot use PERCENTILE_DISC as Window Function - therefore use ARRAY_AGG and UNNEST, see https://stackoverflow.com/a/72718604 for details\r\npositions_bucketed_gapfilled_locf_percentile_intermediate as (\r\n    select\r\n        series_id,\r\n        series_min_date,\r\n        min(series_min_date) over () as min_date,\r\n        array_agg(battery_level_locf) over w as arr,\r\n        avg(battery_level_locf) over w as battery_level_avg\r\n    from\r\n        positions_bucketed_gapfilled_locf\r\n    window w as (rows between (86400 / $bucket_width) * ($days_moving_average_percentiles / 2) preceding and (86400 / $bucket_width) * ($days_moving_average_percentiles / 2) following)\r\n)\r\n\r\nselect\r\n    series_id::timestamptz,\r\n    (select percentile_cont(0.075) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles Day Moving 7.5% Percentile (${bucket_width:text} buckets)\",\r\n    battery_level_avg as \"$days_moving_average_percentiles Day Moving Average (${bucket_width:text} buckets)\",\r\n    (select percentile_cont(0.5) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles Day Moving Median (${bucket_width:text} buckets)\",\r\n    (select percentile_cont(0.925) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles Day Moving 92.5% Percentile (${bucket_width:text} buckets)\"\r\nfrom\r\n    positions_bucketed_gapfilled_locf_percentile_intermediate where $__timeFilter(series_id) and series_min_date >= min_date",
+          "rawSql": "-- To be able to calculate percentiles for unevenly sampled values we are bucketing & gapfilling values before running calculations\r\nwith positions_filtered as (\r\n    select\r\n        date,\r\n        battery_level\r\n    from\r\n        positions p\r\n    where\r\n        p.car_id = $car_id\r\n        -- p.ideal_battery_range_km condition is added to reduce overall amount of data and avoid data biases while driving (unevenly sampled data)\r\n        and p.ideal_battery_range_km is not null\r\n        and 1 = $include_average_percentiles\r\n),\r\ngen_date_series as (\r\n    select\r\n        -- series is used to bucket data and avoid gaps in series used to determine percentiles\r\n        generate_series(to_timestamp(${__from:date:seconds} - (86400 * $days_moving_average_percentiles / 2)), to_timestamp(${__to:date:seconds}), concat($bucket_width, ' seconds')::INTERVAL) as series_id\r\n),\r\ndate_series as (\r\n    select\r\n        series_id at time zone 'UTC' as series_id,\r\n        -- before joining, get beginning of next series to be able to left join `positions_filtered`\r\n        lead(series_id) over (order by series_id asc) at time zone 'UTC' as next_series_id\r\n    from\r\n        gen_date_series\r\n),\r\npositions_bucketed as (\r\n    select\r\n        series_id,\r\n        -- simple average can result in loss of accuracy, see https://www.timescale.com/blog/what-time-weighted-averages-are-and-why-you-should-care/ for details\r\n        avg(battery_level) as battery_level,\r\n        min(positions_filtered.date) as series_min_date\r\n    from\r\n        date_series\r\n    left join positions_filtered on\r\n        positions_filtered.date >= date_series.series_id\r\n        and positions_filtered.date < date_series.next_series_id\r\n    group by\r\n        series_id\r\n),\r\n-- PostgreSQL cannot IGNORE NULLS via Window Functions LAST_VALUE - therefore use natural behavior of COUNT & MAX, see https://www.reddit.com/r/SQL/comments/wb949v/comment/ii5mmmi/ for details\r\npositions_bucketed_gapfilling_locf_intermediate as (\r\n    select\r\n        series_id,\r\n        battery_level,\r\n        series_min_date,\r\n        count(battery_level) over (order by series_id) as i\r\n    from\r\n        positions_bucketed\r\n\r\n),\r\npositions_bucketed_gapfilled_locf as (\r\n    select\r\n        series_id,\r\n        series_min_date,\r\n        max(battery_level) over (partition by i) as battery_level_locf\r\n    from\r\n        positions_bucketed_gapfilling_locf_intermediate\r\n),\r\n-- PostgreSQL cannot use PERCENTILE_DISC as Window Function - therefore use ARRAY_AGG and UNNEST, see https://stackoverflow.com/a/72718604 for details\r\npositions_bucketed_gapfilled_locf_percentile_intermediate as (\r\n    select\r\n        series_id,\r\n        series_min_date,\r\n        min(series_min_date) over () as min_date,\r\n        array_agg(battery_level_locf) over w as arr,\r\n        avg(battery_level_locf) over w as battery_level_avg\r\n    from\r\n        positions_bucketed_gapfilled_locf\r\n    window w as (rows between (86400 / $bucket_width) * ($days_moving_average_percentiles / 2) preceding and (86400 / $bucket_width) * ($days_moving_average_percentiles / 2) following)\r\n)\r\n\r\nselect\r\n    series_id::timestamptz,\r\n    (select percentile_cont(0.075) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles 日移动 7.5% 分位数 (${bucket_width:text} 时段)\",\r\n    battery_level_avg as \"$days_moving_average_percentiles 日移动平均 (${bucket_width:text} 时段)\",\r\n    (select percentile_cont(0.5) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles 日移动中位数 (${bucket_width:text} 时段)\",\r\n    (select percentile_cont(0.925) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles Day Moving 92.5% 分位数 (${bucket_width:text} 时段)\"\r\nfrom\r\n    positions_bucketed_gapfilled_locf_percentile_intermediate where $__timeFilter(series_id) and series_min_date >= min_date",
           "refId": "C",
           "sql": {
             "columns": [
@@ -274,7 +266,7 @@
           }
         }
       ],
-      "title": "Charge Level",
+      "title": "电池容量图",
       "transformations": [
         {
           "id": "configFromData",
@@ -312,9 +304,7 @@
   ],
   "refresh": "",
   "schemaVersion": 39,
-  "tags": [
-    "tesla"
-  ],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {
@@ -369,10 +359,10 @@
           "text": "2h",
           "value": "7200"
         },
-        "description": "Data used to calculate Moving Average / Percentiles is unevenly sampled in TeslaMate. To avoid biases towards more frequently sampled values, the data is bucketed. For buckets without sampled values, the last observed value is carried forward. Bucketing is not time-weighted but is a simple average. Increasing the bucket width results in a loss of accuracy.",
+        "description": "在 **TeslaMate** 中，用于计算 **移动平均** 和 **分位数** 的数据是 **不均匀采样的**。为了避免频繁采样的值产生偏差，数据被分组（时段）。对于没有采样值的时段，使用 **最后观察到的值** 来填充。时段化过程不是时间加权的，而是使用 **简单平均** 方法进行计算。**增加时段的宽度** 会导致准确性降低。",
         "hide": 0,
         "includeAll": false,
-        "label": "Bucket Width",
+        "label": "时段时长",
         "multi": false,
         "name": "bucket_width",
         "options": [
@@ -405,7 +395,7 @@
         },
         "hide": 0,
         "includeAll": false,
-        "label": "Include Moving Average / Percentiles",
+        "label": "包括移动平均/百分位",
         "multi": false,
         "name": "include_average_percentiles",
         "options": [
@@ -434,7 +424,7 @@
         "description": "",
         "hide": 0,
         "includeAll": false,
-        "label": "Moving Average / Percentiles Width",
+        "label": "移动平均 / 分位数宽度",
         "multi": false,
         "name": "intervals_moving_average_percentiles",
         "options": [
@@ -492,20 +482,10 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
-  "title": "Charge Level",
+  "title": "电池容量图",
   "uid": "WopVO_mgz",
   "version": 1,
   "weekStart": ""
