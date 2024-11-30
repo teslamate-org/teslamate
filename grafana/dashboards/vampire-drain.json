@@ -105,7 +105,7 @@
                   {
                     "targetBlank": false,
                     "title": "",
-                    "url": "d/zm7wN6Zgz/drive-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}"
+                    "url": "/d/zm7wN6Zgz/drive-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}"
                   }
                 ]
               },

@@ -1609,7 +1609,7 @@
                   {
                     "targetBlank": false,
                     "title": "View drive details",
-                    "url": "d/zm7wN6Zgz/drive-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-drive_id=${__data.fields.drive_id.numeric}"
+                    "url": "/d/zm7wN6Zgz/drive-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-drive_id=${__data.fields.drive_id.numeric}"
                   }
                 ]
               },
@@ -2009,7 +2009,7 @@
                   {
                     "targetBlank": false,
                     "title": "View charge details",
-                    "url": "d/BHhxFeZRz/charge-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric:raw}"
+                    "url": "/d/BHhxFeZRz/charge-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric:raw}"
                   }
                 ]
               },

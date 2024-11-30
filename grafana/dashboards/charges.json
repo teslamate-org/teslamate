@@ -503,7 +503,7 @@
                   {
                     "targetBlank": false,
                     "title": "View charge details",
-                    "url": "d/BHhxFeZRz/charge-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric}"
+                    "url": "/d/BHhxFeZRz/charge-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric}"
                   }
                 ]
               },

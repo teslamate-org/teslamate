@@ -1640,7 +1640,7 @@
                 "value": [
                   {
                     "title": "Show charge details",
-                    "url": "d/BHhxFeZRz/charge-details?from=${__data.fields.start_date.numeric}&to=${__data.fields.end_date.numeric}&var-car_id=${car_id}&var-charging_process_id=${__data.fields.charging_process_id.numeric}"
+                    "url": "/d/BHhxFeZRz/charge-details?from=${__data.fields.start_date.numeric}&to=${__data.fields.end_date.numeric}&var-car_id=${car_id}&var-charging_process_id=${__data.fields.charging_process_id.numeric}"
                   }
                 ]
               }

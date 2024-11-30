@@ -43,7 +43,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "**Usable (now)** is the estimated current battery capacity. It is average of the estimated capacity reported by the last 10 charging sessions to have a better estimation.\n\nIf you see just '1.0 kWh' here, it means that you need at least a long charge session.\n\n**Usable (new)** is the estimated Battery Capacity since you begun to use Teslamate. That's why, the more data you have logged from your brand new car the better. For those who have not used Teslamate since they got their new car, or for those who have bought it second hand,  it's possible to set the max range to 100% and the battery capacity of the car battery when it was new in order to get a better and accurate estimation.",
+      "description": "**Usable (now)** is the estimated current battery capacity. It is average of the estimated capacity reported by the last 10 charging sessions to have a better estimation.\n\nIf you see just '1.0 kWh' here, it means that you need at least a long charge session.\n\n**Usable (new)** is the estimated Battery Capacity since you begun to use TeslaMate. That's why, the more data you have logged from your brand new car the better. For those who have not used TeslaMate since they got their new car, or for those who have bought it second hand,  it's possible to set the max range to 100% and the battery capacity of the car battery when it was new in order to get a better and accurate estimation.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -305,7 +305,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "\"Logged\" is the distance traveled that is saved on Teslamate database.\n\n\"Mileage\" is the distance the car has traveled since using Teslamate.\n\nSo, if there is a difference between both values, it is the distance that for some reason a drive hasn't been fully recorded, for example due to a bug or an unexpected restart and that Teslamate has not been able to record, either due to lack of connection, areas without signal, or that it has been out of service.",
+      "description": "\"Logged\" is the distance traveled that is saved on TeslaMate database.\n\n\"Mileage\" is the distance the car has traveled since using TeslaMate.\n\nSo, if there is a difference between both values, it is the distance that for some reason a drive hasn't been fully recorded, for example due to a bug or an unexpected restart and that TeslaMate has not been able to record, either due to lack of connection, areas without signal, or that it has been out of service.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -331,6 +331,13 @@
         "y": 0
       },
       "id": 37,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Drive Stats",
+          "url": "/d/_7WkNSyWk/drive-stats"
+        }
+      ],
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -665,7 +672,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "This dashboard is meant to have a look of the Battery health based on the data logged in Teslamate. So, the more data you have logged from your brand new car the better.\n\n**Degradation** is just an estimated value to have a reference, measured on **usable battery level** of every charging session with enough kWh added (in order to avoid dirty data from the sample), calculated according to the rated efficiency of the car.",
+      "description": "This dashboard is meant to have a look of the Battery health based on the data logged in TeslaMate. So, the more data you have logged from your brand new car the better.\n\n**Degradation** is just an estimated value to have a reference, measured on **usable battery level** of every charging session with enough kWh added (in order to avoid dirty data from the sample), calculated according to the rated efficiency of the car.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -928,6 +935,13 @@
         "y": 6
       },
       "id": 36,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Charging Stats",
+          "url": "/d/-pkIkhmRz/charging-stats"
+        }
+      ],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -1909,7 +1923,7 @@
           "text": "0",
           "value": "0"
         },
-        "description": "Set the capacity of your car battery when it was new, in case you started using Teslamate after a while of having it. If not, leave it at 0, it will be calculated with the data that is logged in Teslamate",
+        "description": "Set the capacity of your car battery when it was new, in case you started using TeslaMate after a while of having it. If not, leave it at 0, it will be calculated with the data that is logged in TeslaMate",
         "label": "Custom Battery Capacity (kWh) when new",
         "name": "custom_kwh_new",
         "options": [
@@ -1927,7 +1941,7 @@
           "text": "0",
           "value": "0"
         },
-        "description": "Set the max range to 100% of your car when it was new, in case you started using Teslamate after a while of having it. If not, leave it at 0, the degradation will be calculated with the data that is logged in Teslamate",
+        "description": "Set the max range to 100% of your car when it was new, in case you started using TeslaMate after a while of having it. If not, leave it at 0, the degradation will be calculated with the data that is logged in TeslaMate",
         "label": "Custom Max Range when new",
         "name": "custom_max_range",
         "options": [
