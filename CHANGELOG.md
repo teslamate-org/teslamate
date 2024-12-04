@@ -11,6 +11,7 @@
 #### Build, CI, internal
 
 - build(deps): bump castore from 1.0.9 to 1.0.10 (#4414)
+- build(deps): bump @docusaurus/preset-classic from 3.5.2 to 3.6.3 in /website (#4412)
 
 #### Dashboards
 
