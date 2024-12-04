@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- fix(nix): wait for mosquitto to start before starting teslamate (#4419 - @brianmay)
+
 #### Build, CI, internal
 
 #### Dashboards
