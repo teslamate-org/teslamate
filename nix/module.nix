@@ -173,6 +173,7 @@ in
         after = [
           "network.target"
           "postgresql.service"
+          "mosquitto.service"
         ];
         wantedBy = mkIf cfg.autoStart [ "multi-user.target" ];
         serviceConfig = {
