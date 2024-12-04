@@ -15,6 +15,7 @@
 - build(deps): bump path-to-regexp from 1.8.0 to 1.9.0 in /website (#4424)
 - build(deps): bump crate-ci/typos from 1.27.0 to 1.28.1 (#4411)
 - build(deps): bump tesla from 1.13.0 to 1.13.2 (#4416)
+- build(deps): bump postgrex from 0.19.1 to 0.19.3 (#4415)
 
 #### Dashboards
 
