@@ -10,6 +10,8 @@
 
 #### Build, CI, internal
 
+- build(deps): bump castore from 1.0.9 to 1.0.10 (#4414)
+
 #### Dashboards
 
 #### Translations
