@@ -12,6 +12,7 @@
 
 - build(deps): bump castore from 1.0.9 to 1.0.10 (#4414)
 - build(deps): bump @docusaurus/preset-classic from 3.5.2 to 3.6.3 in /website (#4412)
+- build(deps): bump path-to-regexp from 1.8.0 to 1.9.0 in /website (#4424)
 
 #### Dashboards
 
