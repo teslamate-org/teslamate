@@ -17,6 +17,7 @@
 - build(deps): bump tesla from 1.13.0 to 1.13.2 (#4416)
 - build(deps): bump postgrex from 0.19.1 to 0.19.3 (#4415)
 - build(nix): switch to nixos-24.11 (#4420 - @brianmay)
+- build(deps): update flake.lock (#4427)
 
 #### Dashboards
 
