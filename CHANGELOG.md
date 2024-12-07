@@ -18,6 +18,7 @@
 - build(deps): bump postgrex from 0.19.1 to 0.19.3 (#4415)
 - build(nix): switch to nixos-24.11 (#4420 - @brianmay)
 - build(deps): update flake.lock (#4427)
+- fix: update mix deps hash to fix build error on recent NixOS 24.11 update (#4428)
 
 #### Dashboards
 
