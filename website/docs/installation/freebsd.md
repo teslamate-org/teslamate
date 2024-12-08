@@ -94,11 +94,11 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
 </details>
 
 <details>
-  <summary>Node.js (v16+)</summary>
+  <summary>Node.js (v20+)</summary>
 
 ```bash
-pkg install node
-pkg install npm-node20-10.2.0
+pkg install node20-20.18.1
+pkg install npm-node20-10.9.0
 ```
 
 </details>
