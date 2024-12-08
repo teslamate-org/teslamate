@@ -32,7 +32,7 @@ pkg install git
 </details>
 
 <details>
-  <summary>Erlang (v21+)</summary>
+  <summary>Erlang (v25+)</summary>
 
 ```bash
 pkg install erlang
@@ -41,7 +41,7 @@ pkg install erlang
 </details>
 
 <details>
-  <summary>Elixir (v1.12+)</summary>
+  <summary>Elixir (v1.16+)</summary>
 
 ```bash
 pkg install elixir
