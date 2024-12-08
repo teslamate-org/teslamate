@@ -8,10 +8,10 @@ If you are using `docker-compose`, you are using Docker Compose v1, which has be
 
 ## Backup
 
-Create backup file `teslamate.bck`:
+Create backup file `teslamate.bck.zst`:
 
 ```bash
-docker compose exec -T database pg_dump -U teslamate teslamate > ./teslamate.bck
+docker compose exec -T database pg_dump -U teslamate teslamate --format=custom --compress=zstd > ./teslamate.bck.zst
 ```
 
 :::note
@@ -19,7 +19,7 @@ docker compose exec -T database pg_dump -U teslamate teslamate > ./teslamate.bck
 :::
 
 :::note
-Be absolutely certain to move the `teslamate.bck` file to another safe location, as you may lose that backup file if you use a docker-compose GUI to upgrade your teslamate configuration. Some GUIs delete the folder that holds the `docker-compose.yml` when updating.
+Be absolutely certain to move the `teslamate.bck.zst` file to another safe location, as you may lose that backup file if you use a docker-compose GUI to upgrade your teslamate configuration. Some GUIs delete the folder that holds the `docker-compose.yml` when updating.
 :::
 
 :::note
@@ -49,7 +49,7 @@ CREATE EXTENSION earthdistance WITH SCHEMA public;
 .
 
 # Restore
-docker compose exec -T database psql -U teslamate -d teslamate < teslamate.bck
+docker compose exec -T database pg_restore -U teslamate -d teslamate < teslamate.bck.zst
 
 # Restart the teslamate container
 docker compose start teslamate
