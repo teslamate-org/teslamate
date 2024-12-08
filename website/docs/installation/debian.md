@@ -67,14 +67,14 @@ Source: [mosquitto.org/download](https://mosquitto.org/download/)
 </details>
 
 <details>
-  <summary>Node.js (v14+)</summary>
+  <summary>Node.js (v20+)</summary>
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 sudo apt-get install -y nodejs
 ```
 
-Source: [nodejs.org/en/download/package-manager](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions-enterprise-linux-fedora-and-snap-packages)
+Source: [nodejs.org/en/download/package-manager](https://nodejs.org/en/download/package-manager/all#debian-and-ubuntu-based-linux-distributions)
 
 </details>
 
