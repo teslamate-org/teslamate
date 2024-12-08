@@ -1,77 +1,16 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "geomap",
-      "name": "Geomap",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.2.3"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "piechart",
-      "name": "Pie chart",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "state-timeline",
-      "name": "State timeline",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:30",
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
         "type": "dashboard"
       }
     ]
@@ -79,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": null,
   "links": [
     {
       "icon": "doc",
@@ -107,11 +45,9 @@
       "type": "dashboards"
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -273,7 +209,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -326,6 +262,7 @@
           ]
         }
       ],
+      "title": "",
       "transparent": true,
       "type": "geomap"
     },
@@ -413,7 +350,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -466,6 +403,7 @@
           ]
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -573,6 +511,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -737,7 +676,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -772,6 +711,7 @@
           ]
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -858,7 +798,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -893,6 +833,7 @@
           ]
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -982,7 +923,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1035,6 +976,7 @@
           ]
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -1123,7 +1065,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1176,6 +1118,7 @@
           ]
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -1241,7 +1184,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1294,6 +1237,7 @@
           ]
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -1338,6 +1282,12 @@
       "id": 40,
       "options": {
         "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
@@ -1354,7 +1304,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1458,6 +1408,7 @@
           ]
         }
       ],
+      "title": "",
       "type": "bargauge"
     },
     {
@@ -1563,6 +1514,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1597,6 +1549,7 @@
           ]
         }
       ],
+      "title": "",
       "transparent": true,
       "type": "state-timeline"
     },
@@ -1656,7 +1609,7 @@
                   {
                     "targetBlank": false,
                     "title": "View drive details",
-                    "url": "d/zm7wN6Zgz/drive-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-drive_id=${__data.fields.drive_id.numeric}"
+                    "url": "/d/zm7wN6Zgz/drive-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-drive_id=${__data.fields.drive_id.numeric}"
                   }
                 ]
               },
@@ -1946,7 +1899,7 @@
           }
         ]
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "alias": "",
@@ -2025,8 +1978,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2057,7 +2009,7 @@
                   {
                     "targetBlank": false,
                     "title": "View charge details",
-                    "url": "d/BHhxFeZRz/charge-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric:raw}"
+                    "url": "/d/BHhxFeZRz/charge-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric:raw}"
                   }
                 ]
               },
@@ -2297,8 +2249,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "#96D98D",
-                      "value": null
+                      "color": "#96D98D"
                     },
                     {
                       "color": "#56A64B",
@@ -2412,7 +2363,7 @@
           }
         ]
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -2825,8 +2776,9 @@
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "schemaVersion": 39,
+  "schemaVersion": 40,
   "tags": [
     "tesla"
   ],
@@ -2842,18 +2794,12 @@
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": false,
         "name": "car_id",
         "options": [],
         "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2865,18 +2811,12 @@
         "hide": 2,
         "includeAll": false,
         "label": "temperature unit",
-        "multi": false,
         "name": "temp_unit",
         "options": [],
         "query": "select unit_of_temperature from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2888,18 +2828,12 @@
         "hide": 2,
         "includeAll": false,
         "label": "length unit",
-        "multi": false,
         "name": "length_unit",
         "options": [],
         "query": "select unit_of_length from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2910,19 +2844,12 @@
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "alternative_length_unit",
         "options": [],
         "query": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2933,19 +2860,12 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "preferred_range",
         "options": [],
         "query": "select preferred_range from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2956,19 +2876,12 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2979,18 +2892,12 @@
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "from",
         "options": [],
         "query": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       }
     ]
   },
@@ -2998,31 +2905,7 @@
     "from": "now-24h",
     "to": "now"
   },
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",

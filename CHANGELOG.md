@@ -7,6 +7,7 @@
 ### Improvements and bug fixes
 
 - fix(nix): wait for mosquitto to start before starting teslamate (#4419 - @brianmay)
+- feat: use Grafana 11.4.0 (#4299 - @swiffer)
 
 #### Build, CI, internal
 
