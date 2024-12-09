@@ -141,7 +141,7 @@ const DirectionArrow = CircleMarker.extend({
 function createMap(opts) {
   const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", opts);
 
-  const osm = new TileLayer("https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png", {
+    const osm = new TileLayer("https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", {
     maxZoom: 19,
   });
 
