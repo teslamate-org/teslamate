@@ -20,6 +20,7 @@
 - build(nix): switch to nixos-24.11 (#4420 - @brianmay)
 - build(deps): update flake.lock (#4427)
 - fix: update mix deps hash to fix build error on recent NixOS 24.11 update (#4428)
+- build(deps): bump path-to-regexp and express in /website (#4433)
 
 #### Dashboards
 
