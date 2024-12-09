@@ -1323,7 +1323,7 @@
           "config": {},
           "name": "Layer 0",
           "tooltip": true,
-          "type": "osm-standard"
+          "type": "default"
         },
         "controls": {
           "mouseWheelZoom": true,
