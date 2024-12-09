@@ -1,6 +1,13 @@
 name: Build GHCR images
 
 on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
+    branches: ["ci"]
   pull_request_target:
     branches: ["master", "ci"]
     paths:
@@ -31,12 +38,12 @@ jobs:
           - platform: "linux/amd64"
             runs_on: "ubuntu-24.04"
             cache_id: amd64
-          - platform: "linux/arm/v7"
-            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
-            cache_id: arm
-          - platform: "linux/arm64"
-            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
-            cache_id: arm64
+        #   - platform: "linux/arm/v7"
+        #     runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
+        #     cache_id: arm
+        #   - platform: "linux/arm64"
+        #     runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
+        #     cache_id: arm64
 
     runs-on: ${{ matrix.runs_on }}
     timeout-minutes: 10
