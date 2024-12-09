@@ -2,8 +2,8 @@
 {
   perSystem = { lib, pkgs, system, ... }:
     let
-      elixir = pkgs.beam.packages.erlang_26.elixir_1_17;
-      beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_26;
+      elixir = pkgs.beam.packages.erlang_27.elixir_1_17;
+      beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_27;
 
       src = ../..;
       version = builtins.readFile "${src}/VERSION";
