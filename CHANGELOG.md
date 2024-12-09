@@ -27,6 +27,8 @@
 
 #### Documentation
 
+- doc: bump elixir based on availability (#4431 - @swiffer)
+
 ## [1.32.0] - 2024-11-23
 
 As always, there are many improvements. The focus has been on quality of life improvements and standardization across all dashboards. Enjoy it.
