@@ -563,7 +563,7 @@
         "basemap": {
           "config": {},
           "name": "Layer 0",
-          "type": "osm-standard"
+          "type": "default"
         },
         "controls": {
           "mouseWheelZoom": true,
