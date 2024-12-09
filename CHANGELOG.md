@@ -28,6 +28,7 @@
 #### Documentation
 
 - doc: bump elixir based on availability (#4431 - @swiffer)
+- doc: align node req with what is used in CI (#4430 - @swiffer)
 
 ## [1.32.0] - 2024-11-23
 
