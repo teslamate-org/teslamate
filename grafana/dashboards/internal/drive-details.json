@@ -543,8 +543,24 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-red",
                 "value": null
+              },
+              {
+                "color": "dark-orange",
+                "value": 10
+              },
+              {
+                "color": "dark-yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 50
+              },
+              {
+                "color": "dark-green",
+                "value": 70
               }
             ]
           }
@@ -622,7 +638,7 @@
               "arrow": 0,
               "style": {
                 "color": {
-                  "fixed": "dark-blue"
+                  "field": "speed_kmh"
                 },
                 "lineWidth": 2,
                 "opacity": 1,
@@ -697,7 +713,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  latitude,\n  longitude\nFROM positions\nWHERE \n  car_id = $car_id AND \n  $__timeFilter(date)\nORDER BY \n  date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n  convert_km(speed::numeric, '$length_unit') AS speed_${length_unit}h,\n  latitude,\n  longitude\nFROM positions\nWHERE \n  car_id = $car_id AND \n  $__timeFilter(date)\nORDER BY \n  date ASC",
           "refId": "A",
           "select": [
             [
