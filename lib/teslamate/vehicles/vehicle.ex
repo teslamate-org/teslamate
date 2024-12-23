@@ -24,7 +24,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
               deps: %{},
               task: nil,
               import?: false,
-              stream_pid: nil
+              stream_pid: nil,
+              # fake_online_state is introduced because older cars upgraded to MCU2 have a little wakeup every hour to check subsystems.
+              # They report online but if vehicle_data is requested they wake up completely (cars clicks) and is awake for
+              # 15 minutes instead of a 2-3 minutes. The only difference (known at this moment) is that stream reports power=nil
+              # in subsystem online and reports power as a number when it is a real online.
+              fake_online_state: 0
   end
 
   @asleep_interval 30
@@ -333,18 +338,97 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
           # Handle fetch of vehicle/id (non-vehicle_data)
           {%Vehicle{}, %Data{}} ->
-            Logger.warning("Discarded incomplete fetch result", car_id: data.car.id)
-            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(data)]}
+            state =
+              case state do
+                s when is_tuple(s) -> elem(s, 0)
+                s when is_atom(s) -> s
+              end
+
+            # We stay in internal offline state, even though fetch result says online (its only non-vehicle_data)
+            # We connect to stream to check if power is a number and thereby a real online
+            case {data.car.settings, state, data} do
+              {%CarSettings{use_streaming_api: true}, state, %Data{stream_pid: nil}}
+              when state in [:asleep, :offline] ->
+                Logger.info("Vehicle online, connect stream to check for real online",
+                  car_id: data.car.id
+                )
+
+                {:ok, pid} = connect_stream(data)
+
+                {:keep_state, %Data{data | stream_pid: pid, fake_online_state: 1},
+                 [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
+
+              {%CarSettings{use_streaming_api: true}, state, %Data{stream_pid: pid}}
+              when state in [:asleep, :offline] and is_pid(pid) ->
+                case data do
+                  %Data{fake_online_state: 1} ->
+                    # Under normal circumstances stream always give data within @asleep_interval (30s)
+                    # otherwise detect it here and allow vehicle_data in next fetch
+                    Logger.info("Stream connected, but nothing received, allow real online",
+                      car_id: data.car.id
+                    )
+
+                    # fetch now and go through regular :start -> :online by setting fake_online_state=3
+                    {:keep_state, %Data{data | fake_online_state: 3},
+                     [broadcast_fetch(false), schedule_fetch(0, data)]}
+
+                  %Data{fake_online_state: 0} ->
+                    Logger.warning(
+                      "Stream connected, but fake_online_state is 0, shouldnt be possible, allow real online",
+                      car_id: data.car.id
+                    )
+
+                    {:keep_state, %Data{data | fake_online_state: 3},
+                     [broadcast_fetch(false), schedule_fetch(0, data)]}
+
+                  %Data{} ->
+                    {:keep_state, data,
+                     [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
+                end
+
+              # Handle startup and vehicle in online
+              {%CarSettings{use_streaming_api: true}, state, %Data{}}
+              when state in [:start] ->
+                Logger.info("Vehicle online at startup, connect stream to check for real online",
+                  car_id: data.car.id
+                )
+
+                data =
+                  with %Data{last_response: nil} <- data do
+                    {last_response, geofence} = restore_last_known_values(vehicle, data)
+                    %Data{data | last_response: last_response, geofence: geofence}
+                  end
+
+                {:ok, pid} = connect_stream(data)
+
+                {:next_state, {:offline, @asleep_interval},
+                 %Data{data | stream_pid: pid, fake_online_state: 1},
+                 [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
+
+              {%CarSettings{use_streaming_api: true}, _state, %Data{}} ->
+                {:keep_state, data,
+                 [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
+
+              {%CarSettings{}, _state, %Data{}} ->
+                # when not using stream api the fetch is done differently, and
+                # %Vehicle{state: "online"} will always get vehicle_data which is handled above
+                Logger.warning("Discarded incomplete fetch result", car_id: data.car.id)
+                {:keep_state, data, [broadcast_fetch(false), schedule_fetch(data)]}
+            end
         end
 
       {:ok, %Vehicle{state: state} = vehicle} when state in ["offline", "asleep"] ->
+        # disconnect stream in case we started it to detect real online
+        # (in that case we won't go through Start / :offline or Start / :asleep)
+        :ok = disconnect_stream(data)
+
         data =
           with %Data{last_response: nil} <- data do
             {last_response, geofence} = restore_last_known_values(vehicle, data)
             %Data{data | last_response: last_response, geofence: geofence}
           end
 
-        {:keep_state, data,
+        {:keep_state, %Data{data | fake_online_state: 0, stream_pid: nil},
          [
            broadcast_fetch(false),
            {:next_event, :internal, {:update, {String.to_existing_atom(state), vehicle}}}
@@ -436,6 +520,72 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   ### Streaming API
+
+  #### sleep or offline
+  # stream is started in def handle_event(:info, {ref, fetch_result}, state, %Data{task: %Task{ref: ref}} = data)
+
+  def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, {state, _}, data)
+      when state in [:asleep, :offline] do
+    case stream_data do
+      %Stream.Data{power: nil} ->
+        Logger.debug(inspect(stream_data), car_id: data.car.id)
+
+        # stay on stream, keep asking if online and see if a real one appears
+        # set to 2 to avoid triggering real online in fetch_result (fallback if stream doesn't work)
+        case data do
+          %Data{fake_online_state: 1} ->
+            Logger.info("Fake online: power is nil", car_id: data.car.id)
+            {:keep_state, %Data{data | fake_online_state: 2}}
+
+          %Data{fake_online_state: 0} ->
+            Logger.warning(
+              "Fake online: power is nil, but fake_online_state is 0, shouldnt be possible, allow real online",
+              car_id: data.car.id
+            )
+
+            {:keep_state, %Data{data | fake_online_state: 2}}
+
+          %Data{} ->
+            :keep_state_and_data
+        end
+
+      %Stream.Data{power: power} when is_number(power) ->
+        Logger.debug(inspect(stream_data), car_id: data.car.id)
+
+        case data do
+          %Data{fake_online_state: fake_online_state}
+          when is_number(fake_online_state) and fake_online_state in [1, 2] ->
+            Logger.info("Real online detected: power is a number", car_id: data.car.id)
+            # fetch now and go through regular :start -> :online by setting fake_online_state=3
+            {:keep_state, %Data{data | fake_online_state: 3}, schedule_fetch(0, data)}
+
+          %Data{fake_online_state: 0} ->
+            Logger.warning(
+              "Real online detected: power is a number, but fake_online_state is 0, shouldnt be possible, allow real online",
+              car_id: data.car.id
+            )
+
+            {:keep_state, %Data{data | fake_online_state: 3}, schedule_fetch(0, data)}
+
+          %Data{} ->
+            # fake_online_state already set to 3, dont fetch again to avoid 'Fetch already in progress ...'
+            :keep_state_and_data
+        end
+
+      %Stream.Data{} ->
+        Logger.debug(inspect(stream_data), car_id: data.car.id)
+        :keep_state_and_data
+    end
+  end
+
+  def handle_event(:info, {:stream, :inactive}, {state, _}, data)
+      when state in [:asleep, :offline] do
+    Logger.info("Stream :inactive in state #{inspect(state)}, seems to have been a fake online",
+      car_id: data.car.id
+    )
+
+    :keep_state_and_data
+  end
 
   #### Online
 
@@ -752,7 +902,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :ok = disconnect_stream(data)
 
     {:next_state, {:asleep, asleep_interval()},
-     %Data{data | last_state_change: last_state_change, stream_pid: nil},
+     %Data{data | last_state_change: last_state_change, stream_pid: nil, fake_online_state: 0},
      [broadcast_summary(), schedule_fetch(data)]}
   end
 
@@ -765,7 +915,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :ok = disconnect_stream(data)
 
     {:next_state, {:offline, asleep_interval()},
-     %Data{data | last_state_change: last_state_change, stream_pid: nil},
+     %Data{data | last_state_change: last_state_change, stream_pid: nil, fake_online_state: 0},
      [broadcast_summary(), schedule_fetch(data)]}
   end
 
@@ -1263,23 +1413,62 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp fetch(%Data{car: car, deps: deps}, expected_state: expected_state) do
-    reachable? =
-      case expected_state do
-        :online -> true
-        {:driving, _, _} -> true
-        {:updating, _} -> true
-        {:charging, _} -> true
-        :start -> false
-        {:offline, _} -> false
-        {:asleep, _} -> false
-        {:suspended, _} -> false
-      end
+  defp fetch(%Data{car: car, deps: deps} = data, expected_state: expected_state) do
+    case car.settings do
+      %CarSettings{use_streaming_api: true} ->
+        allow_vehicle_data? =
+          case expected_state do
+            # will not go to real state :online unless a stream is received
+            # with power not nil in state :offline/:asleep or if use_streaming api is turned off
+            :online ->
+              true
 
-    if reachable? do
-      fetch_with_reachable_assumption(car.eid, deps)
-    else
-      fetch_with_unreachable_assumption(car.eid, deps)
+            {:driving, _, _} ->
+              true
+
+            {:updating, _} ->
+              true
+
+            {:charging, _} ->
+              true
+
+            :start ->
+              false
+
+            {state, _} when state in [:asleep, :offline] ->
+              case data do
+                %Data{fake_online_state: 3} -> true
+                %Data{} -> false
+              end
+
+            {:suspended, _} ->
+              false
+          end
+
+        if allow_vehicle_data? do
+          call(deps.api, :get_vehicle_with_state, [car.eid])
+        else
+          call(deps.api, :get_vehicle, [car.eid])
+        end
+
+      _ ->
+        reachable? =
+          case expected_state do
+            :online -> true
+            {:driving, _, _} -> true
+            {:updating, _} -> true
+            {:charging, _} -> true
+            :start -> false
+            {:offline, _} -> false
+            {:asleep, _} -> false
+            {:suspended, _} -> false
+          end
+
+        if reachable? do
+          fetch_with_reachable_assumption(car.eid, deps)
+        else
+          fetch_with_unreachable_assumption(car.eid, deps)
+        end
     end
   end
 
