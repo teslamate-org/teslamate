@@ -87,7 +87,7 @@
       },
       "id": 3,
       "options": {
-        "feedUrl": "https://corsproxy.io/?https://github.com/teslamate-org/teslamate/tags.atom",
+        "feedUrl": "https://corsproxy.io/?url=https://github.com/teslamate-org/teslamate/tags.atom",
         "showImage": false
       },
       "pluginVersion": "11.4.0",
