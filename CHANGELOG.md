@@ -24,6 +24,8 @@
 
 #### Dashboards
 
+- fix: for battery health dashboard erroring out if no charge data has been collected so far (#4448 - @swiffer)
+
 #### Translations
 
 #### Documentation
