@@ -463,8 +463,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: nil, power: power} when is_number(power) and power < 0 ->
-        Logger.info("Charging detected: #{power} kW", car_id: data.car.id)
-        {:keep_state_and_data, schedule_fetch(0, data)}
+        vehicle = merge(data.last_response, stream_data, time: true)
+
+        # Only detect as charging if we are not doing something else while plugged in.
+        # In case we are doing both charging and other thing a normal fetch will discover it later
+        case {vehicle} do
+          {%Vehicle{climate_state: %Climate{is_preconditioning: true}}} ->
+            :keep_state_and_data
+
+          {%Vehicle{climate_state: %Climate{climate_keeper_mode: "dog"}}} ->
+            :keep_state_and_data
+
+          {%Vehicle{}} ->
+            Logger.info("Online / Charging detected: #{power} kW", car_id: data.car.id)
+            {:keep_state_and_data, schedule_fetch(0, data)}
+        end
 
       %Stream.Data{} ->
         Logger.debug(inspect(stream_data), car_id: data.car.id)
