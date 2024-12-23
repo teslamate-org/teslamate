@@ -1433,6 +1433,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
          [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
 
+      {:error, :power_usage} ->
+        if suspend?, do: Logger.warning("Power usage ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: DateTime.utc_now()},
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
+
       {:error, :unlocked} ->
         if suspend?, do: Logger.warning("Unlocked ...", car_id: car.id)
 
@@ -1500,6 +1506,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {%Vehicle{vehicle_state: %VehicleState{locked: false}},
        %CarSettings{req_not_unlocked: true}} ->
         {:error, :unlocked}
+
+      {%Vehicle{drive_state: %Drive{power: power}}, _}
+      when is_number(power) and power > 0 ->
+        {:error, :power_usage}
 
       {%Vehicle{}, %CarSettings{}} ->
         :ok
