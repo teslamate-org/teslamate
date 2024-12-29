@@ -108,9 +108,9 @@ case System.get_env("DATABASE_SOCKET_DIR") do
       password: Util.fetch_env!("DATABASE_PASS", all: "postgres"),
       hostname: Util.fetch_env!("DATABASE_HOST", all: "localhost"),
       port: System.get_env("DATABASE_PORT", "5432")
+
   socket_dir ->
-    config :teslamate, TeslaMate.Repo,
-      socket_dir: socket_dir
+    config :teslamate, TeslaMate.Repo, socket_dir: socket_dir
 end
 
 config :teslamate, TeslaMate.Repo,
