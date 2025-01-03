@@ -23,6 +23,11 @@
 - fix: update mix deps hash to fix build error on recent NixOS 24.11 update (#4428)
 - build(deps): bump path-to-regexp and express in /website (#4433)
 - build(deps): update flake.lock (#4440)
+- build(deps): bump actions/cache from 4.1.2 to 4.2.0 (#4465)
+- build(deps): bump phoenix from 1.7.14 to 1.7.18 (#4462)
+- build(deps-dev): bump dialyxir from 1.4.4 to 1.4.5 (#4460)
+- build(deps): bump ex_cldr from 2.40.1 to 2.40.2 (#4461)
+- build(deps): bump crate-ci/typos from 1.28.1 to 1.29.0 (#4464)
 
 #### Dashboards
 
