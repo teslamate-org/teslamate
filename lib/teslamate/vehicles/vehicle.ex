@@ -320,6 +320,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
             {:keep_state, data, [broadcast_fetch(false), schedule_fetch(0, data)]}
 
+          # Handle fetch of vehicle_data
           {%Vehicle{
              drive_state: %Drive{},
              charge_state: %Charge{},
@@ -330,6 +331,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             {:keep_state, %Data{data | last_response: vehicle},
              [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
 
+          # Handle fetch of vehicle/id (non-vehicle_data)
           {%Vehicle{}, %Data{}} ->
             Logger.warning("Discarded incomplete fetch result", car_id: data.car.id)
             {:keep_state, data, [broadcast_fetch(false), schedule_fetch(data)]}
@@ -442,11 +444,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case stream_data do
       %Stream.Data{} when stale_stream_data? ->
-        Logger.warning("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        Logger.warning("Online / Received stale stream data: #{inspect(stream_data)}",
+          car_id: data.car.id
+        )
+
         :keep_state_and_data
 
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
-        Logger.info("Start of drive initiated by: #{inspect(stream_data)}")
+        Logger.info("Online / Start of drive initiated by: #{inspect(stream_data)}")
 
         %{elevation: elevation} = position = create_position(stream_data, data)
         {drive, data} = start_drive(position, data)
@@ -493,11 +498,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case stream_data do
       %Stream.Data{} when stale_stream_data? ->
-        Logger.warning("Received stale stream data: #{inspect(stream_data)}", car_id: data.car.id)
+        Logger.warning("Suspended / Received stale stream data: #{inspect(stream_data)}",
+          car_id: data.car.id
+        )
+
         :keep_state_and_data
 
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
-        Logger.info("Start of drive initiated by: #{inspect(stream_data)}")
+        Logger.info("Suspended / Start of drive initiated by: #{inspect(stream_data)}")
 
         %{elevation: elevation} = position = create_position(stream_data, data)
         {drive, data} = start_drive(position, data)
@@ -510,7 +518,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       %Stream.Data{shift_state: s, power: power}
       when s in [nil, "P"] and is_number(power) and power < 0 ->
-        Logger.info("Charging detected: #{power} kW", car_id: data.car.id)
+        Logger.info("Suspended / Charging detected: #{power} kW", car_id: data.car.id)
         {:next_state, prev_state, data, schedule_fetch(0, data)}
 
       %Stream.Data{} ->
@@ -520,7 +528,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   def handle_event(:info, {:stream, :inactive}, {:suspended, _prev_state}, data) do
-    Logger.info("Fetching vehicle state ...", car_id: data.car.id)
+    Logger.info("Stream :inactive in suspended, fetching vehicle state ...", car_id: data.car.id)
     {:keep_state_and_data, {:next_event, :internal, :fetch_state}}
   end
 
@@ -1617,7 +1625,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp streaming?(%Data{stream_pid: pid}), do: is_pid(pid) and Process.alive?(pid)
 
   defp connect_stream(%Data{car: car} = data) do
-    Logger.info("Connecting ...", car_id: car.id)
+    Logger.info("Stream connecting ...", car_id: car.id)
 
     me = self()
 
@@ -1637,7 +1645,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp disconnect_stream(%Data{stream_pid: nil}), do: :ok
 
   defp disconnect_stream(%Data{stream_pid: pid} = data) when is_pid(pid) do
-    Logger.info("Disconnecting ...", car_id: data.car.id)
+    Logger.info("Stream disconnecting ...", car_id: data.car.id)
     Stream.disconnect(pid)
   end
 
