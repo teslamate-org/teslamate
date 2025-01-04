@@ -86,7 +86,8 @@ defmodule TeslaMate.VehicleCase do
   end
 
   def online_event(opts \\ []) do
-    now = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    now = DateTime.from_unix!(0, :millisecond)
+    # now = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     drive_state =
       Keyword.get(opts, :drive_state, %{latitude: 0.0, longitude: 0.0})
