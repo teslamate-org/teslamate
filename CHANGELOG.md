@@ -41,6 +41,7 @@
 - doc: bump elixir based on availability (#4431 - @swiffer)
 - doc: align node req with what is used in CI (#4430 - @swiffer)
 - doc: added missing topic "charging_state" in mqtt doc (#4466 - @Beme99)
+- docs: Grafana 11.4 for manual install on FreeBSD (#4474 - @swiffer)
 
 ## [1.32.0] - 2024-11-23
 
