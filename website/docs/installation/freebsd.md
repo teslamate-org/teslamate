@@ -70,15 +70,11 @@ service postgresql initdb
 </details>
 
 <details>
-  <summary>Grafana (v10.4.5+)</summary>
-
-(might be obsolete with Grafana 9, I had no issues with a fresh install) The latest Grafana from ports/pkg has a startup issue with the rc script, starting via rc.local is the workaround.
+  <summary>Grafana (v11.4.0+)</summary>
 
 ```bash
-pkg install grafana-10.4.5_1
+pkg install grafana
 echo grafana_enable="yes" >> /etc/rc.conf
-# Only needed if grafana fails to start via rc.conf
-echo "cd /tmp && /usr/local/etc/rc.d/grafana onestart" >> /etc/rc.local
 ```
 
 </details>
