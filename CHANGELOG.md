@@ -9,6 +9,10 @@
 - fix(nix): wait for mosquitto to start before starting teslamate (#4419 - @brianmay)
 - feat: use Grafana 11.4.0 (#4299 - @swiffer)
 - feat: improve logging messages (#4467 - @micves and @brianmay)
+- feat: optimize state transitions (#4473 - @micves and @brianmay)
+    - don't try to sleep if power > 0
+    - cancel an ongoing suspended state/trying to sleep and go back to online
+    - add conditions to enter charging
 
 #### Build, CI, internal
 
