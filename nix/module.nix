@@ -256,7 +256,9 @@ in
           "auth.basic".enabled = false;
           analytics.reporting_enabled = false;
           dashboards.default_home_dashboard_path = "../grafana/dashboards/internal/home.json";
-          date_formats.use_browser_locale = true;
+          # This experimental config option is temporarily disabled (incompatible with Grafana 11.4.0)
+          # https://github.com/grafana/grafana/issues/95209
+          # date_formats.use_browser_locale = true;
         };
         provision = {
           enable = true;
