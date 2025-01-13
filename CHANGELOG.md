@@ -14,6 +14,7 @@
   - cancel an ongoing suspended state/trying to sleep and go back to online
   - add conditions to enter charging
 - feat: support accessing PostgreSQL on unix domain sockets (#4456 - @j-baker)
+- fix(nix): temporarily disable browser locale in date formats for nix deployment as well (#4480 - @swiffer)
 
 #### Build, CI, internal
 
