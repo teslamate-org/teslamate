@@ -34,6 +34,7 @@
 - build(deps-dev): bump dialyxir from 1.4.4 to 1.4.5 (#4460)
 - build(deps): bump ex_cldr from 2.40.1 to 2.40.2 (#4461)
 - build(deps): bump crate-ci/typos from 1.28.1 to 1.29.0 (#4464)
+- ci: update actions/cache to v4.2.0 ([79107d5](https://github.com/teslamate-org/teslamate/commit/79107d53b7712934587bbe40c503e63d5dd9f122) - @JakobLichterfeld)
 
 #### Dashboards
 
