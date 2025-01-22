@@ -867,6 +867,10 @@
                 "value": 1.25
               },
               {
+                "id": "min",
+                "value": 0
+              },
+              {
                 "id": "color",
                 "value": {
                   "mode": "thresholds"

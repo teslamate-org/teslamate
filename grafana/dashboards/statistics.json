@@ -157,6 +157,10 @@
                 "value": 1.15
               },
               {
+                "id": "min",
+                "value": 0
+              },
+              {
                 "id": "custom.cellOptions",
                 "value": {
                   "mode": "lcd",
