@@ -45,7 +45,7 @@
         "showStarred": false,
         "tags": []
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "title": "",
       "type": "dashlist"
     },
@@ -70,7 +70,7 @@
         "content": "<div style=\"background-size: cover; background-image: url(&quot;https://digitalassets.tesla.com/tesla-contents/image/upload/c_pad,dpr_1.0,f_auto,q_auto/c_pad/Group_83?pgw=1&quot;);width:100%;height:100%;background-position:center;\"></div>",
         "mode": "html"
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "title": "",
       "type": "text"
     },
@@ -90,7 +90,7 @@
         "feedUrl": "https://corsproxy.io/?url=https://github.com/teslamate-org/teslamate/tags.atom",
         "showImage": false
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "title": "Releases",
       "type": "news"
     }

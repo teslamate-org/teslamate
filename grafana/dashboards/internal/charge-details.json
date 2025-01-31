@@ -345,11 +345,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "alias": "",
@@ -455,7 +456,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -575,7 +576,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -686,7 +687,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -918,7 +919,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "alias": "",
@@ -1033,7 +1034,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1197,7 +1198,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1326,7 +1327,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1492,7 +1493,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "alias": "Real",
@@ -1812,11 +1813,12 @@
           }
         ],
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "alias": "",

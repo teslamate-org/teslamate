@@ -1,6 +1,6 @@
 # Ensure selecting a tag that is available for arm/v7, arm64, and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
-FROM grafana/grafana:11.4.0
+FROM grafana/grafana:11.5.0
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_AUTH_ANONYMOUS_ENABLED=false \
@@ -15,7 +15,7 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     DATABASE_PORT=5432 \
     DATABASE_SSL_MODE=disable
 
-# This experimental config option is temporarily disabled (incompatible with Grafana 11.4.0)
+# This experimental config option is temporarily disabled (incompatible with Scenes powered Dashboards introduced in Grafana 11.3.0)
 # https://github.com/grafana/grafana/issues/95209
 # ENV GF_DATE_FORMATS_USE_BROWSER_LOCALE=true
     
