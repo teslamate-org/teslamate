@@ -456,12 +456,13 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "alias": "",
@@ -674,7 +675,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "alias": "",
@@ -893,12 +894,13 @@
           "showLegend": false
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1166,12 +1168,13 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1421,12 +1424,13 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "alias": "",
@@ -1503,7 +1507,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-blue"
+                "color": "super-light-blue",
+                "value": null
               }
             ]
           },
@@ -1536,7 +1541,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1616,7 +1621,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text"
+                "color": "text",
+                "value": null
               }
             ]
           },
@@ -1649,7 +1655,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1704,7 +1710,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text"
+                "color": "text",
+                "value": null
               }
             ]
           },
@@ -1736,7 +1743,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1811,7 +1818,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-green"
+                "color": "super-light-green",
+                "value": null
               }
             ]
           }
@@ -1859,6 +1867,7 @@
         "stacking": "none",
         "text": {},
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
@@ -1867,7 +1876,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1961,7 +1970,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-green"
+                "color": "semi-dark-green",
+                "value": null
               }
             ]
           },
@@ -2019,7 +2029,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -2072,7 +2082,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -2104,7 +2115,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -2234,7 +2245,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow"
+                "color": "light-yellow",
+                "value": null
               }
             ]
           },
@@ -2267,7 +2279,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -2329,7 +2341,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow"
+                "color": "light-yellow",
+                "value": null
               }
             ]
           },
@@ -2362,7 +2375,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -2434,7 +2447,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "yellow",
@@ -2499,7 +2513,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -2573,7 +2587,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -2629,7 +2644,7 @@
         "textMode": "value",
         "wideLayout": false
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
