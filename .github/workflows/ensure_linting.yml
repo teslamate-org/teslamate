@@ -18,7 +18,7 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Nix binary cache
-        uses: DeterminateSystems/magic-nix-cache-action@87b14cf437d03d37989d87f0fa5ce4f5dc1a330b #v8
+        uses: DeterminateSystems/magic-nix-cache-action@6221693898146dc97e38ad0e013488a16477a4c4 #v9
 
       - name: Run treefmt in CI mode
         run: nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt --ci
