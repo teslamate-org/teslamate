@@ -1,5 +1,5 @@
 ---
-title: Projects using TeslaMate
+title: Projects using TeslaMate as DataSource
 ---
 
 ## [Gaussmeter](https://github.com/gaussmeter/gaussmeter)
@@ -48,15 +48,9 @@ A python script (also available as a lightweight docker image) that pushes car s
 
 LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
 
-## [CustomGrafanaDashboards](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
-
-Collection of custom dashboards for Grafana.
-
-LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
-
 ## [TeslaMate Custom Dashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
 
-Teslamate Custom Grafana Dashboards, including: Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Mileage Stats, Tracking Drives and more.
+Teslamate Custom Grafana Dashboards, including: Amortization Tracker, Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Database Information, DC Charging Curves By Carrier, Incomplete Data, Range Degradation, Mileage Stats, Speed Rates, Speed & Temperature, Tracking Drives and more.
 Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
 
 LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
@@ -74,12 +68,6 @@ LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Integr
 A lightweight app that will operate your smart garage door openers based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and various smart garage door openers.
 
 LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-geogdo)
-
-## [TeslaBox](https://www.teslarpi.com)
-
-Raspberry Pi project that installs along Tesla's standard USB drive, sends video alerts in real-time & backs up all footage, now comes pre-installed with TeslaMate.
-
-LINK: [https://www.teslarpi.com](https://www.teslarpi.com)
 
 ## [MyTeslaMate](https://www.myteslamate.com)
 
