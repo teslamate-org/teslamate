@@ -6,7 +6,7 @@ defmodule TeslaApi.Middleware.FollowRedirects do
 
   ## Example
 
-  ```
+  ```bash
   defmodule MyClient do
     use Tesla
 

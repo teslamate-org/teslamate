@@ -68,7 +68,7 @@ volumes:
 
 Build and start the docker container with `docker compose up`. To run the containers in the background, add the `-d` flag:
 
-```
+```bash
 docker compose up -d
 ```
 

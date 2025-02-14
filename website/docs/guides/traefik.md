@@ -177,6 +177,6 @@ Start the stack with `docker compose up -d`.
 
 > If you have difficulty logging into your Grafana, e.g. you cannot login with the credentials from either the simple setup or the values stored in the .env file, reset the admin password with the following command:
 
-```
+```bash
 docker compose exec grafana grafana-cli admin reset-admin-password
 ```
