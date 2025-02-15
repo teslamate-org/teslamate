@@ -18,8 +18,11 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Nix binary cache
-        uses: DeterminateSystems/magic-nix-cache-action@6221693898146dc97e38ad0e013488a16477a4c4 #v9
-
+        # Magic Nix Cache has been deprecated due to a change in the underlying GitHub APIs and will stop working on 1 February 2025.
+        # To continue caching Nix builds in GitHub Actions, use FlakeHub Cache instead.
+        #uses: DeterminateSystems/magic-nix-cache-action@6221693898146dc97e38ad0e013488a16477a4c4 #v9  
+        uses: DeterminateSystems/flakehub-cache-action@6221693898146dc97e38ad0e013488a16477a4c4 #v9
+        
       - name: Run treefmt in CI mode
         run: nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt --ci
         # or use: https://github.com/cachix/git-hooks.nix?tab=readme-ov-file
