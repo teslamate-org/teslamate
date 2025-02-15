@@ -1,6 +1,7 @@
 ---
-title: Projects using TeslaMate as DataSource
+title: Projects using TeslaMate
 ---
+Here are some projects that use **TeslaMate** as a data source to enrich its functionality and that can be useful depending on your setup.
 
 ## [TeslaMate ABRP](https://fetzu.github.io/teslamate-abrp/)
 
