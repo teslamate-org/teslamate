@@ -51,6 +51,8 @@
 
 #### Translations
 
+- feat: Translate remaining Spanish sentences (#4529 - @jheredianet)
+
 #### Documentation
 
 - doc: bump elixir based on availability (#4431 - @swiffer)
