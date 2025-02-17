@@ -815,7 +815,7 @@
               "mode": "off"
             }
           },
-          "decimals": 0,
+          "decimals": 1,
           "links": [],
           "mappings": [],
           "thresholds": {
