@@ -659,12 +659,12 @@ msgstr "Hora de Finalización Estimada"
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
-msgstr "Estás usando la clave API (%{token}) proporcionada por %{url}. Esto permitirá que tu TeslaMate acceda a la API oficial de Tesla Fleet y al streaming de Telemetría de Tesla."
+msgstr "Estás usando la clave API (%{token}) obtenida desde %{url}. Esto permitirá que tu TeslaMate acceda a la API oficial de Tesla Fleet y al streaming de Telemetría de Tesla."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
-msgstr "Recolección de Datos"
+msgstr "Colección de Datos"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
@@ -679,4 +679,4 @@ msgstr "Batería LFP"
 #: lib/teslamate_web/live/car_live/summary.html.heex:121
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Sentry Mode recording"
-msgstr "Modo centinela grabando"
+msgstr "Modo centinela activo"
