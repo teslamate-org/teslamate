@@ -7,6 +7,7 @@ sidebar_label: FAQ
 
 There are multiple apps available to securely generate access tokens yourself, for example:
 
+- [Tesla Auth Python](https://github.com/Hotanya/tesla_auth_python) - Python script to get your Tesla token. 
 - [Tesla Auth (macOS, Linux, Windows)](https://github.com/adriankumpf/tesla_auth)
 - [Auth app for Tesla (iOS, macOS)](https://apps.apple.com/us/app/auth-app-for-tesla/id1552058613)
 
