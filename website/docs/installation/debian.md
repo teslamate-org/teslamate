@@ -141,7 +141,7 @@ values={[
 
 Create a systemd service at `/etc/systemd/system/teslamate.service`:
 
-```
+```console
 [Unit]
 Description=TeslaMate
 After=network.target
@@ -203,7 +203,7 @@ You should at least substitute the following details:
 - `TZ` should be your local timezone. Work out your timezone name using the [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) in the linked Wikipedia page.
 - `TESLAMATEPATH` should be the path that you ran the `git clone` within.
 
-```
+```console
 export ENCRYPTION_KEY="your_secure_encryption_key_here"
 export DATABASE_USER="teslamate"
 export DATABASE_PASS="your_secure_password_here"
@@ -247,7 +247,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
 
 2.  Create a data source with the name "TeslaMate":
 
-    ```
+    ```console
     Type: PostgreSQL
     Default: YES
     Name: TeslaMate

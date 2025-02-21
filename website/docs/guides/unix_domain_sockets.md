@@ -25,7 +25,7 @@ Nginx requires that the UDS exist when it is started, but Teslamate will (re)cre
 
 Next configure Teslamate to use the UDS. Modify the teslamate service in docker-compose.yml to include:
 
-```
+```yml
     volumes:
       ...
       - /opt/nginx_uds/teslamate:/uds
@@ -39,7 +39,7 @@ Next configure Teslamate to use the UDS. Modify the teslamate service in docker-
 
 Lastly, configure the Nginx reverse-proxy to forward connections to the UDS. The relevant configuration would look something like:
 
-```
+```console
 upstream teslamate.uds {
     server unix:/opt/nginx_uds/teslamate/teslamate.sock;
 }
