@@ -197,4 +197,4 @@ To quickly identify performance bottlenecks we encourage all contributors to ena
   SELECT query, calls, mean_exec_time, total_exec_time FROM pg_stat_statements ORDER BY calls DESC LIMIT 10;
   ```
 
-Additional details about pg_stat_statements can be found here: <https://www.postgresql.org/docs/current/pgstatstatements.html>
+Additional details about pg_stat_statements can be found here: [https://www.postgresql.org/docs/current/pgstatstatements.html](https://www.postgresql.org/docs/current/pgstatstatements.html)
