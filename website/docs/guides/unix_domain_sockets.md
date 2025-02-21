@@ -2,7 +2,10 @@
 title: Using Unix Domain Sockets with a reverse-proxy
 ---
 
-It is possible to configure Teslamate to communicate over unix-domain sockets (UDS) instea of a typical network socket. This can be useful to improve security by restricting which applications can communicate to the application. A typical configuration would be to use a UDS between a reverse-proxy (like Nginx) and Teslamate. When paired with something like rootless-podman and [socket-activation](https://github.com/containers/podman/blob/main/docs/tutorials/socket_activation.md), Nginx can be configured with `--network=none` providing external access to Teslmate without the Nginx container having any networking at all. While setting up socket-activation and Podman is beyond the scope of this document, it will explain how to configure UDS between Teslamate and an Nginx reverse-proxy.
+It is possible to configure Teslamate to communicate over unix-domain sockets (UDS) instea of a typical network socket.
+This can be useful to improve security by restricting which applications can communicate to the application.
+A typical configuration would be to use a UDS between a reverse-proxy (like Nginx) and Teslamate.
+When paired with something like rootless-podman and [socket-activation](https://github.com/containers/podman/blob/main/docs/tutorials/socket_activation.md), Nginx can be configured with `--network=none` providing external access to Teslmate without the Nginx container having any networking at all. While setting up socket-activation and Podman is beyond the scope of this document, it will explain how to configure UDS between Teslamate and an Nginx reverse-proxy.
 
 ## Requirements
 
@@ -12,7 +15,9 @@ It is possible to configure Teslamate to communicate over unix-domain sockets (U
 
 ## Instructions
 
-Nginx requires that the UDS exist when it is started, but Teslamate will (re)create the UDS on startup. This means that Teslamate must be configured to start before Nginx, or Nginx must be configured to detect a socket change and reload (for example the [socket-gen](https://github.com/PhracturedBlue/socket-gen) utility designed for this purpose). Additionally, because docker-compose does not provide a method to run host-commands prior to starting a container, the directory containing the UDS must be manually created before Teslamate starts. It is easiest to manually create this directory on a persistent volume.
+Nginx requires that the UDS exist when it is started, but Teslamate will (re)create the UDS on startup.
+This means that Teslamate must be configured to start before Nginx, or Nginx must be configured to detect a socket change and reload (for example the [socket-gen](https://github.com/PhracturedBlue/socket-gen) utility designed for this purpose).
+Additionally, because docker-compose does not provide a method to run host-commands prior to starting a container, the directory containing the UDS must be manually created before Teslamate starts. It is easiest to manually create this directory on a persistent volume.
 
 - Create a directory for the UDS:
   `mkdir -p /opt/nginx_uds/teslamate`
