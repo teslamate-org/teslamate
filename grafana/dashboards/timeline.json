@@ -515,7 +515,7 @@
           }
         ]
       },
-      "pluginVersion": "11.5.0",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -665,24 +665,12 @@
         "type": "query"
       },
       {
-        "current": {
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
+        "current": {},
         "includeAll": true,
         "label": "Action",
         "multi": true,
         "name": "action_filter",
         "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
           {
             "selected": false,
             "text": "🚗 Driving",

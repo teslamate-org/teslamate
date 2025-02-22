@@ -130,7 +130,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.0",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -264,7 +264,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.0",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -398,7 +398,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.0",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -707,7 +707,7 @@
           }
         ]
       },
-      "pluginVersion": "11.5.0",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -840,7 +840,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.0",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -976,7 +976,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.5.0",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -1112,7 +1112,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.5.0",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
