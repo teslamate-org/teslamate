@@ -16,6 +16,7 @@
 - feat: support accessing PostgreSQL on unix domain sockets (#4456 - @j-baker)
 - fix(nix): temporarily disable browser locale in date formats for nix deployment as well (#4480 - @swiffer)
 - feat: Grafana 11.5.0 (#4509 - @swiffer)
+- feat: Grafana 11.5.2 (#4551 - @swiffer)
 
 #### Build, CI, internal
 
