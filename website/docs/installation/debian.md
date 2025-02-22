@@ -141,7 +141,7 @@ values={[
 
 Create a systemd service at `/etc/systemd/system/teslamate.service`:
 
-```
+```console
 [Unit]
 Description=TeslaMate
 After=network.target
@@ -203,7 +203,7 @@ You should at least substitute the following details:
 - `TZ` should be your local timezone. Work out your timezone name using the [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) in the linked Wikipedia page.
 - `TESLAMATEPATH` should be the path that you ran the `git clone` within.
 
-```
+```console
 export ENCRYPTION_KEY="your_secure_encryption_key_here"
 export DATABASE_USER="teslamate"
 export DATABASE_PASS="your_secure_password_here"
@@ -243,11 +243,11 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
 
 ## Import Grafana Dashboards
 
-1.  Visit [localhost:3000](http://localhost:3000) and log in. The default credentials are: `admin:admin`.
+1. Visit [localhost:3000](http://localhost:3000) and log in. The default credentials are: `admin:admin`.
 
-2.  Create a data source with the name "TeslaMate":
+2. Create a data source with the name "TeslaMate":
 
-    ```
+    ```console
     Type: PostgreSQL
     Default: YES
     Name: TeslaMate
@@ -258,7 +258,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
     Version: 10
     ```
 
-3.  [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
+3. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
 
     ```bash
     $ ./grafana/dashboards.sh restore
