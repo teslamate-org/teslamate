@@ -43,6 +43,8 @@
 - build(deps-dev): bump excoveralls from 0.18.3 to 0.18.5 (#4524)
 - build(deps-dev): bump credo from 1.7.8 to 1.7.11 (#4523)
 - build(deps): bump @docusaurus/preset-classic from 3.6.3 to 3.7.0 in /website (#4518)
+- build(deps): bump serialize-javascript from 6.0.1 to 6.0.2 in /website (#4548)
+- build(deps): update flake.lock (#4455)
 
 #### Dashboards
 
