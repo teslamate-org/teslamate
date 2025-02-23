@@ -45,9 +45,9 @@
 - build(deps): bump @docusaurus/preset-classic from 3.6.3 to 3.7.0 in /website (#4518)
 - build(deps): bump serialize-javascript from 6.0.1 to 6.0.2 in /website (#4548)
 - build(deps): update flake.lock (#4455)
-- style(markdownlint): allow 'details', 'summary', and 'TabItem' elements ( - @JakobLichterfeld)
-- style(environment_variables): remove multiple whitespaces ( - @JakobLichterfeld)
-- style(docs): fix line length fenced-code-style, no bare url links, multiple whitespaces, alt text, header style (- @JakobLichterfeld)
+- style(markdownlint): allow 'details', 'summary', and 'TabItem' elements ([d5b1a55](https://github.com/teslamate-org/teslamate/commit/d5b1a55007eefedd5d852ecd50d67b8c4d36faa5) - @JakobLichterfeld)
+- style(environment_variables): remove multiple whitespaces ([603ff82](https://github.com/teslamate-org/teslamate/commit/603ff824b052b4465fcce9fe77e5e40ad586c07a) - @JakobLichterfeld)
+- style(docs): fix line length fenced-code-style, no bare url links, multiple whitespaces, alt text, header style ([1972584](https://github.com/teslamate-org/teslamate/commit/1972584d8f9d11c2f640de046a8e9fd47b43c4fb) - @JakobLichterfeld)
 
 #### Dashboards
 
