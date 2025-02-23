@@ -45,6 +45,7 @@
 - build(deps): bump @docusaurus/preset-classic from 3.6.3 to 3.7.0 in /website (#4518)
 - build(deps): bump serialize-javascript from 6.0.1 to 6.0.2 in /website (#4548)
 - build(deps): update flake.lock (#4455)
+- style(markdownlint): allow 'details', 'summary', and 'TabItem' elements ( - @JakobLichterfeld)
 
 #### Dashboards
 
