@@ -46,6 +46,7 @@
 - build(deps): bump serialize-javascript from 6.0.1 to 6.0.2 in /website (#4548)
 - build(deps): update flake.lock (#4455)
 - style(markdownlint): allow 'details', 'summary', and 'TabItem' elements ( - @JakobLichterfeld)
+- style(environment_variables): remove multiple whitespaces ( - @JakobLichterfeld)
 
 #### Dashboards
 
