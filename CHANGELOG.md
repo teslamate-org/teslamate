@@ -47,6 +47,7 @@
 - build(deps): update flake.lock (#4455)
 - style(markdownlint): allow 'details', 'summary', and 'TabItem' elements ( - @JakobLichterfeld)
 - style(environment_variables): remove multiple whitespaces ( - @JakobLichterfeld)
+- style(docs): fix line length fenced-code-style, no bare url links, multiple whitespaces, alt text, header style (- @JakobLichterfeld)
 
 #### Dashboards
 
