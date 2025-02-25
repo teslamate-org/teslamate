@@ -42,7 +42,7 @@ LINK: [https://gurubase.io/g/teslamate](https://gurubase.io/g/teslamate)
 
 The Tesla Home Assistant integration can use the data from the TeslaMate MQTT integration to update car data in near-real time.
 
-LINK: [https://github.com/alandtse/tesla](https://github.com/alandtse/tesla)
+LINK: [github.com/alandtse/tesla](https://github.com/alandtse/tesla)
 
 LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Integration)
 
