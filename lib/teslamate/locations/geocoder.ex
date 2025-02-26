@@ -33,9 +33,7 @@ defmodule TeslaMate.Locations.Geocoder do
     osm_ids =
       addresses
       |> Enum.reject(fn %Address{} = a -> a.osm_id == nil or a.osm_type in [nil, "unknown"] end)
-      |> Enum.map(fn %Address{} = a ->
-        "#{String.upcase(String.at(a.osm_type, 0))}#{a.osm_id}"
-      end)
+      |> Enum.map(fn %Address{} = a -> "#{String.upcase(String.at(a.osm_type, 0))}#{a.osm_id}" end)
       |> Enum.join(",")
 
     params = [
