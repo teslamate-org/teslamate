@@ -159,7 +159,7 @@ LETSENCRYPT_EMAIL=yourperson@example.com
 
 ### .htpasswd
 
-This file contains a user and password for accessing TeslaMate (Basic-auth); note that this is **not** your tesla.com password. You can generate it on the web if you don't have the [Apache tools](https://www.cyberciti.biz/faq/create-update-user-authentication-files/) installed (e.g. <http://www.htaccesstools.com/htpasswd-generator/>). Use BCrypt encryption mode.
+This file contains a user and password for accessing TeslaMate (Basic-auth); note that this is **not** your tesla.com password. You can generate it on the web if you don't have the [Apache tools](https://www.cyberciti.biz/faq/create-update-user-authentication-files/) installed (e.g. with [htaccesstools](http://www.htaccesstools.com/htpasswd-generator/)). Use BCrypt encryption mode.
 
 **Example:**
 
