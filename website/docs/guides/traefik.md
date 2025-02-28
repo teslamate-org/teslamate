@@ -159,7 +159,7 @@ LETSENCRYPT_EMAIL=yourperson@example.com
 
 ### .htpasswd
 
-This file contains a user and password for accessing TeslaMate (Basic-auth); note that this is **not** your tesla.com password. You can generate it on the web if you don't have the [Apache tools](https://www.cyberciti.biz/faq/create-update-user-authentication-files/) installed (e.g. <http://www.htaccesstools.com/htpasswd-generator/>). Use BCrypt encryption mode.
+This file contains a user and password for accessing TeslaMate (Basic-auth); note that this is **not** your tesla.com password. You can generate it on the web if you don't have the [Apache tools](https://www.cyberciti.biz/faq/create-update-user-authentication-files/) installed (e.g. with [htaccesstools](http://www.htaccesstools.com/htpasswd-generator/)). Use BCrypt encryption mode.
 
 **Example:**
 
@@ -171,9 +171,9 @@ teslamate:$2y$10$f7PB3UF3PNzqMIXZmf1dIefOkrv/15Xt6Xw3pzc6mkS/B5qoWBdAG
 
 Start the stack with `docker compose up -d`.
 
-1. Open the web interface <https://teslamate.example.com>
+1. Open the web interface `https://teslamate.example.com`
 2. Sign in with your Tesla account
-3. In the _Settings_ page, update the _URLs_ fields. Set _Web App_ to <https://teslamate.example.com> and _Dashboards_ to <https://teslamate.example.com/grafana>
+3. In the _Settings_ page, update the _URLs_ fields. Set _Web App_ to `https://teslamate.example.com` and _Dashboards_ to `https://teslamate.example.com/grafana`
 
 > If you have difficulty logging into your Grafana, e.g. you cannot login with the credentials from either the simple setup or the values stored in the .env file, reset the admin password with the following command:
 
