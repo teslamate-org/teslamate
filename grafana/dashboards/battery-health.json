@@ -107,7 +107,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT  \n  CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END as \"Usable (new)\", \n  ('$aux'::json ->> 'CurrentCapacity')::float as \"Usable (now)\",\n  ('$aux'::json ->> 'CurrentCapacity')::float - CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END as \"Difference\"\n  \n  \n  \n  \n   \n  \n  ",
+          "rawSql": "SELECT  \n  CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END as \"Usable (new)\", \n  ('$aux'::json ->> 'CurrentCapacity')::float as \"Usable (now)\",\n  CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END - \n  CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new \n  ELSE ('$aux'::json ->> 'MaxCapacity')::float END as \"Difference\"",
           "refId": "A",
           "select": [
             [
