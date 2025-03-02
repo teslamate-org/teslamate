@@ -1958,16 +1958,12 @@
       }
     ]
   },
-  "time": {
-    "from": "now-6h",
-    "to": "now"
-  },
   "timepicker": {
     "hidden": true
   },
   "timezone": "browser",
   "title": "Battery Health",
   "uid": "jchmRiqUfXgTM",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
