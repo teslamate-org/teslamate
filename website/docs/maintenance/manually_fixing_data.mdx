@@ -160,15 +160,7 @@ In summary, you don't necessarily need to run REINDEX periodically unless your d
 2. Run the following script (copy and paste)
 
    ```sql
-   DO $$
-   DECLARE
-       t text;
-   BEGIN
-       FOR t IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND    table_name IS NOT NULL)
-       LOOP
-           EXECUTE 'REINDEX TABLE public.' || t;
-       END LOOP;
-   END $$;
+   REINDEX DATABASE teslamate
    ```
 
 3. Exit the prompt by typing:
