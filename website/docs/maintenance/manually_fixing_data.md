@@ -160,6 +160,18 @@ In summary, you don't necessarily need to run REINDEX periodically unless your d
 2. Run the following script (copy and paste)
 
    ```sql
+   REINDEX DATABASE teslamate
+   ```
+
+3. Exit the prompt by typing:
+
+   ```bash
+   \q  (or press CTRL + C)
+   ```
+
+**NOTE:** If you are using previous versions of PostgreSQL (surely not), the REINDEX DATABASE command was introduced in PostgreSQL 7.4. So, if you're using a version older than 7.4, this command won't be available. In versions older than 7.4, you would need to reindex individual tables or indexes manually. Here’s an example of how you could perform the same operation table by table:
+
+   ```sql
    DO $$
    DECLARE
        t text;
@@ -169,10 +181,4 @@ In summary, you don't necessarily need to run REINDEX periodically unless your d
            EXECUTE 'REINDEX TABLE public.' || t;
        END LOOP;
    END $$;
-   ```
-
-3. Exit the prompt by typing:
-
-   ```bash
-   \q  (or press CTRL + C)
    ```
