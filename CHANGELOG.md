@@ -48,6 +48,10 @@
 - style(markdownlint): allow 'details', 'summary', and 'TabItem' elements ([d5b1a55](https://github.com/teslamate-org/teslamate/commit/d5b1a55007eefedd5d852ecd50d67b8c4d36faa5) - @JakobLichterfeld)
 - style(environment_variables): remove multiple whitespaces ([603ff82](https://github.com/teslamate-org/teslamate/commit/603ff824b052b4465fcce9fe77e5e40ad586c07a) - @JakobLichterfeld)
 - style(docs): fix line length fenced-code-style, no bare url links, multiple whitespaces, alt text, header style ([1972584](https://github.com/teslamate-org/teslamate/commit/1972584d8f9d11c2f640de046a8e9fd47b43c4fb) - @JakobLichterfeld)
+- build(deps): bump actions/cache from 4.2.0 to 4.2.2 (#4564)
+- build(deps): bump crate-ci/typos from 1.29.5 to 1.30.0 (#4563)
+- build(deps): bump castore from 1.0.11 to 1.0.12 (#4565)
+- build(deps): bump plug_cowboy from 2.7.2 to 2.7.3 (#4566)
 
 #### Dashboards
 
