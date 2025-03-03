@@ -73,7 +73,7 @@
 - doc: Fixing typo for sensor psi calculation (#4470 - @Phazz)
 - doc: Simplify Home Assistant sensors, add device_class to allow changing measurement units (#4472 - @longzheng)
 - docs: add reindexing instructions for database maintenance to improve performance in case of index bloat due to frequent updates or deletions (#4558 - @jheredianet)
-- docs: enhance TeslaFi import documentation with updated Python script for bulk data export (- @TheLinuxGuy and @JakobLichterfeld)
+- docs: enhance TeslaFi import documentation with updated Python script for bulk data export (#4575- @TheLinuxGuy and @JakobLichterfeld)
 
 ## [1.32.0] - 2024-11-23
 
