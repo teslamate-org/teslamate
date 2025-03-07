@@ -872,7 +872,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "These statistics can help you evaluate the efficiency of your indexes.\n\nYou should reindex all the database periodically.",
+      "description": "These statistics can help you evaluate the efficiency of your indexes.\n\nIf your database experiences a lot of updates or deletions, like importing data from other sources or deleting a loaner car or some other similar situation, you might encounter index bloat, which can degrade performance. In such cases, reindexing could be beneficial.\n\nCheck https://docs.teslamate.org/docs/maintenance/manually_fixing_data#reindex-database",
       "fieldConfig": {
         "defaults": {
           "color": {
