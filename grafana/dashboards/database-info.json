@@ -638,7 +638,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "You can go to the <a href='./d/jchmIDopVO_mgz/incomplete-data'  target='_blank'>\nIncomplete Data dashboard</a> <br />\nto see details of the **Drives** or **Charges** not closed.\n",
+        "content": "It means you have some **Drives** or **Charges** not closed.\nIf so, you may follow the official guide: \n<a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>\n",
         "mode": "markdown"
       },
       "pluginVersion": "11.5.2",
