@@ -17,6 +17,7 @@
 - fix(nix): temporarily disable browser locale in date formats for nix deployment as well (#4480 - @swiffer)
 - feat: Grafana 11.5.0 (#4509 - @swiffer)
 - feat: Grafana 11.5.2 (#4551 - @swiffer)
+- fix(nix): update mix dependency hash in nix builds. (#4577 - @weiren2)
 
 #### Build, CI, internal
 
