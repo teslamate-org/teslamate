@@ -22,20 +22,20 @@ The documentation is available at [https://docs.teslamate.org](https://docs.tesl
 
 ### Dashboards
 
-- [Drive and charging reports](https://docs.teslamate.org/docs/screenshots#charging-details)
-- [Driving efficiency report](https://docs.teslamate.org/docs/screenshots#efficiency)
-- [Consumption (net / gross)](https://docs.teslamate.org/docs/screenshots#efficiency)
-- [Charge energy added vs energy used](https://docs.teslamate.org/docs/screenshots#charges)
-- [Vampire drain](https://docs.teslamate.org/docs/screenshots#vampire-drain)
-- [Projected 100% range (battery degradation)](https://docs.teslamate.org/docs/screenshots#projected-range)
-- [Charging Stats](https://docs.teslamate.org/docs/screenshots#charging-stats)
-- [Drive Stats](https://docs.teslamate.org/docs/screenshots#drive-stats)
-- [History of installed updates](https://docs.teslamate.org/docs/screenshots#updates)
-- [See when your car was online or asleep](https://docs.teslamate.org/docs/screenshots#states)
-- [Lifetime driving map](https://docs.teslamate.org/docs/screenshots/#lifetime-driving-map)
-- [Visited addresses](https://docs.teslamate.org/docs/screenshots/#visited-addresses)
 - [Battery Health](https://docs.teslamate.org/docs/screenshots/#battery-health)
+- [Charge Level](https://docs.teslamate.org/docs/screenshots/#charge-level)
+- [Charges (Energy added / used)](https://docs.teslamate.org/docs/screenshots#charges)
+- [Charge Details](https://docs.teslamate.org/docs/screenshots#charge-details)
+- [Charging Stats](https://docs.teslamate.org/docs/screenshots#charging-stats)
 - [Database Information](https://docs.teslamate.org/docs/screenshots/#database-information)
+- [Drive Stats](https://docs.teslamate.org/docs/screenshots#drive-stats)
+- [Efficiency / Consumption (net / gross)](https://docs.teslamate.org/docs/screenshots#efficiency)
+- [Locations (addresses)](https://docs.teslamate.org/docs/screenshots/#location-addresses)
+- [Projected Range (battery degradation)](https://docs.teslamate.org/docs/screenshots#projected-range)
+- [See when your car was online or asleep](https://docs.teslamate.org/docs/screenshots#states)
+- [History of installed updates](https://docs.teslamate.org/docs/screenshots#updates)
+- [Vampire Drain](https://docs.teslamate.org/docs/screenshots#vampire-drain)
+- [Visited (Lifetime driving map)](https://docs.teslamate.org/docs/screenshots/#visited-lifetime-driving-map)
 
 ### General
 
