@@ -58,7 +58,8 @@
 - fix: for battery health dashboard erroring out if no charge data has been collected so far (#4448 - @swiffer)
 - fix: url for releases in home dashboard (#4452 -@FLX3009)
 - feat: add 0 as lower bound for gauge to ensure proper scaling (#4498 - @swiffer)
-- eat(dashboards): improve elevation scale in drive stats (#4546 - @swiffer)
+- feat(dashboards): improve elevation scale in drive stats (#4546 - @swiffer)
+- feat: add Database Information Dashboard (#4578 - @jheredianet)
 
 #### Translations
 
