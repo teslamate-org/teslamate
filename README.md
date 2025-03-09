@@ -35,6 +35,7 @@ The documentation is available at [https://docs.teslamate.org](https://docs.tesl
 - [Lifetime driving map](https://docs.teslamate.org/docs/screenshots/#lifetime-driving-map)
 - [Visited addresses](https://docs.teslamate.org/docs/screenshots/#visited-addresses)
 - [Battery Health](https://docs.teslamate.org/docs/screenshots/#battery-health)
+- [Database Information](https://docs.teslamate.org/docs/screenshots/#database-information)
 
 ### General
 
