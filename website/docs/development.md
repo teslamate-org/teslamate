@@ -203,4 +203,4 @@ Additional details about pg_stat_statements can be found [here](https://www.post
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-<img alt="Entity Relationship Model" src={useBaseUrl('entity_relationship_model.png')} />
+<img alt="Entity Relationship Model" src={useBaseUrl('img/entity_relationship_model.png')} />
