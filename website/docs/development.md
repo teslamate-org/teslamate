@@ -198,3 +198,9 @@ To quickly identify performance bottlenecks we encourage all contributors to ena
   ```
 
 Additional details about pg_stat_statements can be found [here](https://www.postgresql.org/docs/current/pgstatstatements.html)
+
+## Entity Relationship Modell (ERM)
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<img alt="Entity Relationship Model" src={useBaseUrl('entity_relationship_modell.png')} />
