@@ -53,6 +53,10 @@
 - build(deps): bump crate-ci/typos from 1.29.5 to 1.30.0 (#4563)
 - build(deps): bump castore from 1.0.11 to 1.0.12 (#4565)
 - build(deps): bump plug_cowboy from 2.7.2 to 2.7.3 (#4566)
+- build(deps): bump prismjs from 1.29.0 to 1.30.0 in /website (#4582)
+- build(deps): bump @babel/runtime from 7.26.0 to 7.26.10 in /website (#4589)
+- build(deps): bump @babel/helpers from 7.26.7 to 7.26.10 in /website (#4588)
+- build(deps): bump @babel/runtime-corejs3 in /website (#4587)
 
 #### Dashboards
 
