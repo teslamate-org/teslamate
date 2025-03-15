@@ -79,6 +79,7 @@
 - doc: Fixing typo for sensor psi calculation (#4470 - @Phazz)
 - doc: Simplify Home Assistant sensors, add device_class to allow changing measurement units (#4472 - @longzheng)
 - docs: add reindexing instructions for database maintenance to improve performance in case of index bloat due to frequent updates or deletions (#4558 and #4574 - @jheredianet)
+- docs: Update projects using TeslaMate (#4573 - @jheredianet)
 
 ## [1.32.0] - 2024-11-23
 
