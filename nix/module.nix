@@ -256,8 +256,8 @@ in
           "auth.basic".enabled = false;
           analytics.reporting_enabled = false;
           dashboards.default_home_dashboard_path = "../grafana/dashboards/internal/home.json";
-          # This experimental config option is temporarily disabled (incompatible with Scenes powered Dashboards introduced in Grafana 11.3.0)
-          # https://github.com/grafana/grafana/issues/95209
+          # Temporarily disabled because of a regression introduced in 11.3.0, fixed in 11.6.0, can be reenabled when 11.6.0 becomes available in NixOS
+          # https://github.com/grafana/grafana/issues/95209 - https://github.com/grafana/grafana/pull/102396 
           # date_formats.use_browser_locale = true;
         };
         provision = {
