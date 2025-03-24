@@ -130,6 +130,8 @@ Access the Grafana at [http://localhost:3000](http://localhost:3000) and sign in
 
 Then edit the respective dashboard(s) locally. To export a dashboard hit the 'Save' button and select `Save JSON to file`. The final JSON file belongs in the directory `./grafana/dashboards/`. To apply the changes rebuild the image and start the container.
 
+When making larger changes to Grafana Dashboards please include updated screenshots (1920x1080 @ x2, Grafana running in Kiosk mode) in `./website/static/screenshots`. Ensure to blur sensitive information.
+
 ### Grafana VS Code Extension
 
 The Grafana VS Code extension allows you to open Grafana dashboards as JSON files in VS Code, and preview them live with data from a Grafana instance of your choice.
