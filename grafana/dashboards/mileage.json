@@ -102,8 +102,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -176,7 +175,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "alias": "",
@@ -217,7 +216,7 @@
   ],
   "preload": false,
   "refresh": "",
-  "schemaVersion": 40,
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -282,6 +281,5 @@
   "timezone": "",
   "title": "Mileage",
   "uid": "NjtMTFggz",
-  "version": 1,
-  "weekStart": ""
+  "version": 1
 }
