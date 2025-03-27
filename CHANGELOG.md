@@ -18,6 +18,7 @@
 - feat: Grafana 11.5.0 (#4509 - @swiffer)
 - feat: Grafana 11.5.2 (#4551 - @swiffer)
 - fix(nix): update mix dependency hash in nix builds. (#4577 - @weiren2)
+- feat: Grafana 11.6.0 (#4570 - @swiffer)
 
 #### Build, CI, internal
 
