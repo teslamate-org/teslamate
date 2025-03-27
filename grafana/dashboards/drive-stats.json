@@ -50,8 +50,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
-                "value": null
+                "color": "semi-dark-blue"
               }
             ]
           },
@@ -89,7 +88,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -157,8 +156,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -221,7 +219,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -289,8 +287,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-yellow",
-                "value": null
+                "color": "semi-dark-yellow"
               }
             ]
           },
@@ -328,7 +325,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -406,8 +403,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -468,7 +464,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -537,8 +533,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -601,7 +596,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -628,8 +623,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -667,7 +661,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -703,8 +697,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -767,7 +760,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -845,8 +838,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -909,7 +901,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -988,8 +980,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -1052,7 +1043,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -1150,8 +1141,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-green",
-                "value": null
+                "color": "super-light-green"
               }
             ]
           }
@@ -1208,7 +1198,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -1289,8 +1279,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -1353,7 +1342,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -1422,8 +1411,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -1433,7 +1421,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "mileage_km"
+              "options": "yearly_mileage_km"
             },
             "properties": [
               {
@@ -1445,7 +1433,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "mileage_mi"
+              "options": "yearly_mileage_mi"
             },
             "properties": [
               {
@@ -1486,7 +1474,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -1502,33 +1490,55 @@
         {
           "id": "calculateField",
           "options": {
-            "alias": "mileage_km",
+            "alias": "yearly_mileage_km",
             "binary": {
-              "left": "mileage_km",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "mileage_km"
+                }
+              },
               "operator": "*",
-              "right": "12"
+              "right": {
+                "fixed": "12"
+              }
             },
             "mode": "binary",
             "reduce": {
               "reducer": "sum"
             },
-            "replaceFields": true
+            "replaceFields": false
           }
         },
         {
           "id": "calculateField",
           "options": {
-            "alias": "mileage_mi",
+            "alias": "yearly_mileage_mi",
             "binary": {
-              "left": "mileage_mi",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "mileage_mi"
+                }
+              },
               "operator": "*",
-              "right": "12"
+              "right": {
+                "fixed": "12"
+              }
             },
             "mode": "binary",
             "reduce": {
               "reducer": "sum"
             },
-            "replaceFields": true
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "yearly.*"
+            }
           }
         }
       ],
@@ -1551,8 +1561,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
-                "value": null
+                "color": "semi-dark-blue"
               },
               {
                 "color": "light-red",
@@ -1595,7 +1604,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -1654,7 +1663,7 @@
   ],
   "preload": false,
   "refresh": false,
-  "schemaVersion": 40,
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -1784,6 +1793,5 @@
   "timezone": "",
   "title": "Drive Stats",
   "uid": "_7WkNSyWk",
-  "version": 1,
-  "weekStart": ""
+  "version": 1
 }

@@ -104,8 +104,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "transparent",
-                "value": null
+                "color": "transparent"
               }
             ]
           },
@@ -138,7 +137,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "alias": "",
@@ -287,7 +286,7 @@
   ],
   "preload": false,
   "refresh": "",
-  "schemaVersion": 40,
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -428,6 +427,5 @@
   "timezone": "",
   "title": "Charge Level",
   "uid": "WopVO_mgz",
-  "version": 1,
-  "weekStart": ""
+  "version": 1
 }
