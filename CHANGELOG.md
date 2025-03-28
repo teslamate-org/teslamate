@@ -16,6 +16,12 @@
 
 ## [1.33.0] - 2025-03-28
 
+As always, there are many improvements.
+
+We now use Grafana 11.6.0 which was release the last days, improved the logging and state transitions, added a new dashboard for database information and improved other dashboards. We also added a new section to the documentation about the Entity Relationship Model (ERM) of TeslaMate. This is a great help for developers who want to understand the data model of TeslaMate and how to extend it.
+
+Enjoy it.
+
 ### New features
 
 ### Improvements and bug fixes
