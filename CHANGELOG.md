@@ -58,6 +58,7 @@
 - build(deps): bump @babel/runtime from 7.26.0 to 7.26.10 in /website (#4589)
 - build(deps): bump @babel/helpers from 7.26.7 to 7.26.10 in /website (#4588)
 - build(deps): bump @babel/runtime-corejs3 in /website (#4587)
+- build(deps): update flake.lock (#4562)
 
 #### Dashboards
 
