@@ -74,8 +74,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -189,8 +188,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "rgb(133, 142, 133)",
-                      "value": null
+                      "color": "rgb(133, 142, 133)"
                     },
                     {
                       "color": "#56A64B",
@@ -267,8 +265,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "#FF7383",
-                      "value": null
+                      "color": "#FF7383"
                     },
                     {
                       "color": "#FFB357",
@@ -477,7 +474,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "alias": "",
@@ -543,7 +540,7 @@
   ],
   "preload": false,
   "refresh": "",
-  "schemaVersion": 40,
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -672,6 +669,5 @@
   "timezone": "",
   "title": "Vampire Drain",
   "uid": "zhHx2Fggk",
-  "version": 1,
-  "weekStart": ""
+  "version": 1
 }

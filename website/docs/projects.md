@@ -2,23 +2,13 @@
 title: Projects using TeslaMate
 ---
 
-## [Gaussmeter](https://github.com/gaussmeter/gaussmeter)
+Here are some projects that use **TeslaMate** as a data source to enrich its functionality and that can be useful depending on your setup.
 
-An LED illuminated acrylic Tesla Model 3. Its color and scale of light depend on the cars current state.
+## [TeslaMate ABRP](https://fetzu.github.io/teslamate-abrp/)
 
-LINK: [github.com/gaussmeter/gaussmeter](https://github.com/gaussmeter/gaussmeter)
+A python script (also available as a lightweight docker image) that pushes car status data to [ABetterRoutePlanner](https://abetterrouteplanner.com) based on contents of TeslaMate MQTT's topic.
 
-## [MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
-
-A [Magic Mirror](https://magicmirror.builders/) Module for TeslaMate.
-
-LINK: [github.com/denverquane/MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
-
-## [Home Assistant Addon](https://github.com/lildude/ha-addon-teslamate)
-
-An unofficial Home Assistant addon for TeslaMate, with a PostgreSQL addon too. Works with the existing community Grafana and Mosquitto addons to provide a complete solution.
-
-LINK: [github.com/lildude/ha-addon-teslamate](https://github.com/lildude/ha-addon-teslamate)
+LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
 
 ## [TeslaMateAgile](https://github.com/MattJeanes/TeslaMateAgile)
 
@@ -36,17 +26,32 @@ The application is written in Golang and data is received from both PostgreSQL a
 
 LINK: [github.com/tobiasehlert/TeslaMateApi](https://github.com/tobiasehlert/teslamateapi)
 
+## [TeslaMate Custom Dashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
+
+Teslamate Custom Grafana Dashboards, including: Amortization Tracker, Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Database Information, DC Charging Curves By Carrier, Incomplete Data, Range Degradation, Mileage Stats, Speed Rates, Speed & Temperature, Tracking Drives and more.
+Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
+
+LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
+
+## [TeslaMate Guru on Gurubase](https://gurubase.io/g/teslamate)
+
+TeslaMate Guru is a TeslaMate-focused AI to answer your questions. It primarily uses the TeslaMate documentation and the TeslaMate GitHub repository to generate responses.
+
+LINK: [https://gurubase.io/g/teslamate](https://gurubase.io/g/teslamate)
+
+## [Tesla Home Assistant Integration](https://github.com/alandtse/tesla)
+
+The Tesla Home Assistant integration can use the data from the TeslaMate MQTT integration to update car data in near-real time.
+
+LINK: [github.com/alandtse/tesla](https://github.com/alandtse/tesla)
+
+LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Integration)
+
 ## [TeslaMate Telegram Bot](https://github.com/JakobLichterfeld/TeslaMate-Telegram-Bot)
 
 This is a telegram bot written in Python to notify by Telegram message when a new SW update for your Tesla is available. It uses the MQTT topic which TeslaMate offers.
 
 LINK: [github.com/JakobLichterfeld/TeslaMate-Telegram-Bot](https://github.com/JakobLichterfeld/TeslaMate-Telegram-Bot)
-
-## [TeslaMate ABRP](https://fetzu.github.io/teslamate-abrp/)
-
-A python script (also available as a lightweight docker image) that pushes car status data to [ABetterRoutePlanner](https://abetterrouteplanner.com) based on contents of TeslaMate MQTT's topic.
-
-LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
 
 ## [CustomGrafanaDashboards](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
 
@@ -54,32 +59,23 @@ Collection of custom dashboards for Grafana.
 
 LINK: [github.com/CarlosCuezva/dashboards-Grafana-Teslamate](https://github.com/CarlosCuezva/dashboards-Grafana-Teslamate)
 
-## [TeslaMate Custom Dashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
+## [Gaussmeter](https://github.com/gaussmeter/gaussmeter)
 
-Teslamate Custom Grafana Dashboards, including: Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Mileage Stats, Tracking Drives and more.
-Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
+An LED illuminated acrylic Tesla Model 3. Its color and scale of light depend on the cars current state.
 
-LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
+LINK: [github.com/gaussmeter/gaussmeter](https://github.com/gaussmeter/gaussmeter)
 
-## [Tesla Home Assistant Integration](https://github.com/alandtse/tesla)
+## [Home Assistant Addon](https://github.com/lildude/ha-addon-teslamate)
 
-The Tesla Home Assistant integration can use the data from the TeslaMate MQTT integration to update car data in near-real time.
+An unofficial Home Assistant addon for TeslaMate, with a PostgreSQL addon too. Works with the existing community Grafana and Mosquitto addons to provide a complete solution.
 
-LINK: [https://github.com/alandtse/tesla](https://github.com/alandtse/tesla)
+LINK: [github.com/lildude/ha-addon-teslamate](https://github.com/lildude/ha-addon-teslamate)
 
-LINK: [Wiki How-To](https://github.com/alandtse/tesla/wiki/Teslamate-MQTT-Integration)
+## [MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
 
-## [Tesla-GeoGDO](https://github.com/brchri/tesla-geogdo) (previously [Tesla-YouQ](https://github.com/brchri/tesla-youq))
+A [Magic Mirror](https://magicmirror.builders/) Module for TeslaMate.
 
-A lightweight app that will operate your smart garage door openers based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and various smart garage door openers.
-
-LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-geogdo)
-
-## [TeslaBox](https://www.teslarpi.com)
-
-Raspberry Pi project that installs along Tesla's standard USB drive, sends video alerts in real-time & backs up all footage, now comes pre-installed with TeslaMate.
-
-LINK: [https://www.teslarpi.com](https://www.teslarpi.com)
+LINK: [github.com/denverquane/MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
 
 ## [MyTeslaMate](https://www.myteslamate.com)
 
@@ -91,8 +87,8 @@ LINK: [MyTeslaMate Website](https://www.myteslamate.com)
 
 LINK: [Follow this guide](/docs/guides/api#myteslamate-fleet-api) to use official Tesla APIs on your Teslamate.
 
-## [TeslaMate Guru on Gurubase](https://gurubase.io/g/teslamate)
+## [Tesla-GeoGDO](https://github.com/brchri/tesla-geogdo) (previously [Tesla-YouQ](https://github.com/brchri/tesla-youq))
 
-TeslaMate Guru is a TeslaMate-focused AI to answer your questions. It primarily uses the TeslaMate documentation and the TeslaMate GitHub repository to generate responses.
+A lightweight app that will operate your smart garage door openers based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and various smart garage door openers.
 
-LINK: [https://gurubase.io/g/teslamate](https://gurubase.io/g/teslamate)
+LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-geogdo)

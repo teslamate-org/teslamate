@@ -17,6 +17,8 @@
 - fix(nix): temporarily disable browser locale in date formats for nix deployment as well (#4480 - @swiffer)
 - feat: Grafana 11.5.0 (#4509 - @swiffer)
 - feat: Grafana 11.5.2 (#4551 - @swiffer)
+- fix(nix): update mix dependency hash in nix builds. (#4577 - @weiren2)
+- feat: Grafana 11.6.0 (#4570 - @swiffer)
 
 #### Build, CI, internal
 
@@ -52,13 +54,19 @@
 - build(deps): bump crate-ci/typos from 1.29.5 to 1.30.0 (#4563)
 - build(deps): bump castore from 1.0.11 to 1.0.12 (#4565)
 - build(deps): bump plug_cowboy from 2.7.2 to 2.7.3 (#4566)
+- build(deps): bump prismjs from 1.29.0 to 1.30.0 in /website (#4582)
+- build(deps): bump @babel/runtime from 7.26.0 to 7.26.10 in /website (#4589)
+- build(deps): bump @babel/helpers from 7.26.7 to 7.26.10 in /website (#4588)
+- build(deps): bump @babel/runtime-corejs3 in /website (#4587)
+- build(deps): update flake.lock (#4562)
 
 #### Dashboards
 
 - fix: for battery health dashboard erroring out if no charge data has been collected so far (#4448 - @swiffer)
 - fix: url for releases in home dashboard (#4452 -@FLX3009)
 - feat: add 0 as lower bound for gauge to ensure proper scaling (#4498 - @swiffer)
-- eat(dashboards): improve elevation scale in drive stats (#4546 - @swiffer)
+- feat(dashboards): improve elevation scale in drive stats (#4546 - @swiffer)
+- feat: add Database Information Dashboard (#4578 - @jheredianet)
 
 #### Translations
 
@@ -73,7 +81,9 @@
 - doc: Fixing typo for sensor psi calculation (#4470 - @Phazz)
 - doc: Simplify Home Assistant sensors, add device_class to allow changing measurement units (#4472 - @longzheng)
 - docs: add reindexing instructions for database maintenance to improve performance in case of index bloat due to frequent updates or deletions (#4558 and #4574 - @jheredianet)
-- docs: enhance TeslaFi import documentation with updated Python script for bulk data export (#4575- @TheLinuxGuy and @JakobLichterfeld)
+- docs: Update projects using TeslaMate (#4573 - @jheredianet)
+- docs: fix and rearrange screenshot links (alphabetical) (#4580 - @swiffer)
+- docs: enhance TeslaFi import documentation with updated Python script for bulk data export (#4575 - @TheLinuxGuy and @JakobLichterfeld)
 
 ## [1.32.0] - 2024-11-23
 
