@@ -83,6 +83,7 @@
 - docs: add reindexing instructions for database maintenance to improve performance in case of index bloat due to frequent updates or deletions (#4558 and #4574 - @jheredianet)
 - docs: Update projects using TeslaMate (#4573 - @jheredianet)
 - docs: fix and rearrange screenshot links (alphabetical) (#4580 - @swiffer)
+- docs: enhance TeslaFi import documentation with updated Python script for bulk data export (#4575 - @TheLinuxGuy and @JakobLichterfeld)
 
 ## [1.32.0] - 2024-11-23
 
