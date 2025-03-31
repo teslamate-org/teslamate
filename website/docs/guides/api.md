@@ -6,7 +6,7 @@ title: Using the Tesla Fleet API and Telemetry Streaming (only for business flee
 
 ### Why Tesla Fleet and Telemetry only have drawbacks
 
-As far as we know, using the Tesla Fleet API and Telemetry API as a user has only drawbacks. The onwly reason to use them is if you are a Tesla Business Fleet user and therefore the Owner API is no longer available for you.
+As far as we know, using the Tesla Fleet API and Telemetry API as a user has only drawbacks. The only reason to use them is if you are a Tesla Business Fleet user and therefore the Owner API is no longer available for you.
 
 ### When Tesla Fleet API and Telemetry API are needed
 
