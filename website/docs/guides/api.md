@@ -28,9 +28,21 @@ Tesla now provides official APIs: the Fleet API and the Telemetry API, which rep
 
 The [Fleet API](https://developer.tesla.com/docs/fleet-api) is similar to the Owner API but more comprehensive. However, retrieving vehicle information (`vehicle_data`) or sending commands is limited. The limits on the Owner API were historically much higher. It is likely that [these limits](https://developer.tesla.com/docs/fleet-api#membership-levels) will also be applied soon to the API Owner.
 
+To limit billing usage, you should reduce polling frequency using the `POLLING_*` environment variables:
+
+```yml
+# Reduce polling frequency
+- POLLING_ASLEEP_INTERVAL=180 
+- POLLING_CHARGING_INTERVAL=180 
+- POLLING_DRIVING_INTERVAL=120 
+- POLLING_ONLINE_INTERVAL=180 
+- POLLING_DEFAULT_INTERVAL=180 
+- POLLING_MINIMUM_INTERVAL=120
+```
+
 #### Tesla Fleet Telemetry: non compatible by default
 
-The [Tesla Fleet Telemetry](https://github.com/teslamotors/fleet-telemetry) differs from the "Owner" streaming. By default, metrics are sent to message queues instead of a websocket as streaming did. Historical streaming could send events every second, whereas Fleet Telemetry will only send information every minute at the minimum.
+The [Tesla Fleet Telemetry](https://github.com/teslamotors/fleet-telemetry) differs from the "Owner" streaming. By default, metrics are sent to message queues instead of a websocket as streaming did.
 
 #### How to Use Tesla APIs
 
