@@ -8,6 +8,8 @@
 
 #### Build, CI, internal
 
+- build(deps): bump image-size from 1.2.0 to 1.2.1 in /website (#4622)
+
 #### Dashboards
 
 #### Translations
