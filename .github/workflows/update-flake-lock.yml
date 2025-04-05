@@ -1,16 +1,21 @@
-name: Ensure Linting
-
+---
+name: Update flake.lock
 on:
-  workflow_call:
+  workflow_dispatch:
+  schedule:
+    # runs weekly on Saturday at 00:00 UTC time
+    - cron: "0 0 * * 6"
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
-  check_linting:
+  lockfile:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Install Nix
         uses: nixbuild/nix-quick-install-action@5bb6a3b3abe66fd09bbf250dce8ada94f856a703 # v30
@@ -36,6 +41,14 @@ jobs:
           # except any version with the key that is the same as the `primary-key`
           purge-primary-key: never
 
-      - name: Run treefmt in CI mode
-        run: nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt --ci
-        # or use: https://github.com/cachix/git-hooks.nix?tab=readme-ov-file
+      - name: Update flake.lock
+        id: update
+        uses: DeterminateSystems/update-flake-lock@a2bbe0274e3a0c4194390a1e445f734c597ebc37 #v24
+        with:
+          pr-title: "build(deps): update flake.lock"
+          pr-labels: |
+            dependencies
+            automated
+
+      - name: Print PR number
+        run: echo Pull request number is ${{ steps.update.outputs.pull-request-number }}.
