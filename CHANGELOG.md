@@ -10,6 +10,7 @@
 
 - build(deps): bump image-size from 1.2.0 to 1.2.1 in /website (#4622)
 - ci: switch to cache-nix-action as Magic Nix Cache is deprecated (#4626 - @JakobLichterfeld)
+- build(deps): update flake.lock (#4603)
 
 #### Dashboards
 
