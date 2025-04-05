@@ -11,6 +11,10 @@
 - build(deps): bump image-size from 1.2.0 to 1.2.1 in /website (#4622)
 - ci: switch to cache-nix-action as Magic Nix Cache is deprecated (#4626 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4603)
+- build(deps): bump crate-ci/typos from 1.30.0 to 1.31.1 (#4611)
+- build(deps): bump docker/login-action from 3.3.0 to 3.4.0 (#4612)
+- build(deps): bump actions/cache from 4.2.2 to 4.2.3 (#4613)
+- build(deps): bump tesla from 1.13.2 to 1.14.1 (#4616)
 
 #### Dashboards
 
