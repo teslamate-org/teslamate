@@ -12,6 +12,7 @@
 - build(deps): update flake.lock (#4603)
 - ci: switch to cache-nix-action as Magic Nix Cache is deprecated (#4626 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4603)
+- ci: switch to cache-nix-action as Magic Nix Cache is deprecated (#4626 - @JakobLichterfeld)
 
 #### Dashboards
 
