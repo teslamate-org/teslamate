@@ -4,9 +4,6 @@ on:
   pull_request:
     types:
       - closed
-  pull_request_target:
-    types:
-      - closed
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
