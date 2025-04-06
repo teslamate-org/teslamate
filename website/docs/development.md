@@ -82,7 +82,7 @@ To ensure a commit passes CI you should run `mix ci` locally, which executes the
 
 ### Testing with our CI which builds the Docker images automatically per PR
 
-Our CI automatically builds the Docker images for each PR. To test the changes introduce by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
+Our CI automatically builds the Docker images for each PR (only for repo own PRs, not for external PRs). To test the changes introduce by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
 
 For TeslaMate:
 

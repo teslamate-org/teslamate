@@ -15,6 +15,7 @@
 - build(deps): bump docker/login-action from 3.3.0 to 3.4.0 (#4612)
 - build(deps): bump actions/cache from 4.2.2 to 4.2.3 (#4613)
 - build(deps): bump tesla from 1.13.2 to 1.14.1 (#4616)
+- ci(sec): remove pull_request_target workflow triggers to improve sec even further, the downside is that test images are now only created for repo's own PRs ( - @JakobLichterfeld)
 
 #### Dashboards
 
