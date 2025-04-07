@@ -10,7 +10,7 @@ This document provides the necessary steps for installation of TeslaMate on a va
 Click on the following items to view detailed installation steps.
 
 <details>
-  <summary>Postgres (v17+)</summary>
+  <summary>Postgres (v17.3+)</summary>
 
 ```bash
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -

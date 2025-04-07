@@ -50,7 +50,7 @@ pkg install elixir
 </details>
 
 <details>
-  <summary>Postgres (v17+)</summary>
+  <summary>Postgres (v17.3+)</summary>
 
 ```bash
 pkg install postgresql17-server-17.0
