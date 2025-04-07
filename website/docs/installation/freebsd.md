@@ -53,8 +53,8 @@ pkg install elixir
   <summary>Postgres (v17.3+)</summary>
 
 ```bash
-pkg install postgresql17-server-17.0
-pkg install postgresql17-contrib-17.0
+pkg install postgresql17-server
+pkg install postgresql17-contrib
 echo postgres_enable="yes" >> /etc/rc.conf
 ```
 
@@ -70,7 +70,7 @@ service postgresql initdb
 </details>
 
 <details>
-  <summary>Grafana (v11.5.0+)</summary>
+  <summary>Grafana (v11.6.0+)</summary>
 
 ```bash
 pkg install grafana
@@ -93,8 +93,8 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
   <summary>Node.js (v20+)</summary>
 
 ```bash
-pkg install node20-20.18.1
-pkg install npm-node20-10.9.0
+pkg install node20
+pkg install npm-node20
 ```
 
 </details>
