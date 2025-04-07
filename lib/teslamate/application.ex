@@ -11,6 +11,8 @@ defmodule TeslaMate.Application do
     :ok = :telemetry.detach({Phoenix.Logger, [:phoenix, :socket_connected]})
     :ok = :telemetry.detach({Phoenix.Logger, [:phoenix, :channel_joined]})
 
+    TeslaMate.DatabaseCheck.check_postgres_version()
+
     Supervisor.start_link(children(), strategy: :one_for_one, name: TeslaMate.Supervisor)
   end
 
