@@ -131,7 +131,7 @@ body:
 
   - type: checkboxes
     attributes:
-      label: Are you running latest PostgreSQL version?
+      label: Are you running latest major supported PostgreSQL version?
       description: |
         Please ensure you are running the latest major supported PostgreSQL version by comparing your installation with the (installation docs)[https://docs.teslamate.org/docs/installation/docker/].
 
