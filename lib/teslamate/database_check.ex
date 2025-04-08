@@ -39,6 +39,9 @@ defmodule TeslaMate.DatabaseCheck do
             IO.puts("PostgreSQL version #{raw_version} is compatible (17.x series).")
         end
 
+      major_int when major_int > 17 ->
+        IO.puts("PostgreSQL version #{raw_version} is not officially tested or supported yet. Use at your own risk.")
+
       _ ->
         raise "PostgreSQL version #{raw_version} is not supported. Only 16.x (min #{@min_version_16}) and 17.x (min #{@min_version_17}) are supported."
     end
