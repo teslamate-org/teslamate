@@ -121,3 +121,22 @@ body:
       placeholder: v1.24.1
     validations:
       required: true
+
+  - type: input
+    id: postgresql_version
+    attributes:
+      label: PostgreSQL version
+      description: What version of PostgreSQL are you running? (see database -> image section in your `docker-compose.yml`)
+      placeholder: v17
+
+  - type: checkboxes
+    attributes:
+      label: Are you running latest PostgreSQL version?
+      description: |
+        Please search check with (installation docs)[https://docs.teslamate.org/docs/installation/docker/] if you are running the latest supported PostgreSQL version.
+
+        If not, please first do a backup and follow [Upgrading PostgreSQL to a new major version](https://docs.teslamate.org/docs/maintenance/upgrading_postgres)
+
+      options:
+        - label: I run the latest major PostgreSQL version
+          required: true

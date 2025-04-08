@@ -23,6 +23,8 @@
 
 #### Documentation
 
+- feat: add PostgreSQL version input and checkbox for latest version check in bug report template (- @JakobLichterfeld)
+
 ## [1.33.0] - 2025-03-28
 
 As always, there are many improvements.
