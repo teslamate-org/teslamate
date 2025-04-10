@@ -19,6 +19,8 @@
 
 #### Dashboards
 
+- fix: improve calc for usable (now) in battery health dashboard (#4644 - @swiffer)
+
 #### Translations
 
 #### Documentation
