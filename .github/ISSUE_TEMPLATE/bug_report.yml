@@ -118,7 +118,7 @@ body:
     attributes:
       label: Version
       description: What version of TeslaMate are you running?
-      placeholder: v1.24.1
+      placeholder: v1.33.0
     validations:
       required: true
 
@@ -133,7 +133,7 @@ body:
     attributes:
       label: Are you running latest major supported PostgreSQL version?
       description: |
-        Please ensure you are running the latest major supported PostgreSQL version by comparing your installation with the (installation docs)[https://docs.teslamate.org/docs/installation/docker/].
+        Please ensure you are running the latest major supported PostgreSQL version by comparing your installation with the [installation docs](https://docs.teslamate.org/docs/installation/docker/).
 
         If not, please first do a backup and follow [Upgrading PostgreSQL to a new major version](https://docs.teslamate.org/docs/maintenance/upgrading_postgres)
 
