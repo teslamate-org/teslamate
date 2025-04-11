@@ -10,7 +10,7 @@ This document provides the necessary steps for installation of TeslaMate on a va
 Click on the following items to view detailed installation steps.
 
 <details>
-  <summary>Postgres (v17+)</summary>
+  <summary>Postgres (v17.3+)</summary>
 
 ```bash
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
@@ -37,7 +37,7 @@ Source: [erlang.org/downloads](https://www.erlang.org/downloads#prebuilt)
 </details>
 
 <details>
-  <summary>Grafana (v11.5.0+)</summary>
+  <summary>Grafana (v11.6.0+)</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
