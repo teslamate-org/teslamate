@@ -55,7 +55,7 @@ jobs:
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ github.ref_name }}
+          version: ${{ github.head_ref || github.ref_name }}
 
   teslamate_merge:
     runs-on: ubuntu-24.04
