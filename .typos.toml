@@ -12,7 +12,6 @@ hd = "hd"
 dur = "dur"
 pn = "pn"
 Derivated = "Derivated"
-ba35f41 = "ba35f41"
 
 [type.po]
 extend-glob = ["*.po"]
