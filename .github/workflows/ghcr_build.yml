@@ -52,7 +52,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ github.ref_name }}
           labels: |
-            org.opencontainers.image.version=${{ github.ref || github.ref_name }}
+            org.opencontainers.image.version=${{ github.ref_name }}
 
   teslamate_merge:
     name: Merge GHCR images
@@ -95,4 +95,4 @@ jobs:
         with:
           image: ${{ env.REGISTRY_IMAGE }}/grafana
           labels: |
-            org.opencontainers.image.version=${{ github.ref || github.ref_name }}
+            org.opencontainers.image.version=${{ github.ref_name }}
