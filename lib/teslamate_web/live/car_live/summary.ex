@@ -121,6 +121,14 @@ defmodule TeslaMateWeb.CarLive.Summary do
     {:noreply, assign(socket, fetch_status: false)}
   end
 
+  def format_tpms(bar, :psi) when is_number(bar) do
+    "#{Float.round(bar * 14.5038, 1)} PSI"
+  end
+
+  def format_tpms(bar, :bar) when is_number(bar) do
+    "#{Float.round(bar, 1)} Bar"
+  end
+
   defp translate_state(:start), do: ""
   defp translate_state(:driving), do: gettext("driving")
   defp translate_state(:charging), do: gettext("charging")
