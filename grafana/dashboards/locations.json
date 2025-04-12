@@ -726,7 +726,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  max(end_date) as \"Date\",\n  count(*) as visited,\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"Address\",\n\tCOALESCE(city, neighbourhood) as \"City\"\nFROM drives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE\n  t.car_id in ($car_id)\n  and $__timeFilter(t.end_date)\n  and (a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%')\nGROUP BY 3,4\nORDER BY visited DESC\nLIMIT 100",
+          "rawSql": "with locations as (\n\n  select address_id, geofence_id, start_date as end_date from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n  union\n  select end_address_id as address_id, end_geofence_id as geofence_id, end_date from drives where car_id in ($car_id) and $__timeFilter(end_date)\n\n)\n\nSELECT\n  max(l.end_date) as \"Date\",\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"Address\",\n\tCOALESCE(city, neighbourhood) as \"City\"\nFROM locations l\nINNER JOIN addresses a ON l.address_id = a.id\nLEFT JOIN geofences g ON l.geofence_id = g.id\nWHERE\n  (a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%')\nGROUP BY 2,3\nLIMIT 100",
           "refId": "A",
           "select": [
             [
@@ -768,18 +768,6 @@
         }
       ],
       "title": "Last visited",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "visited": true
-            },
-            "indexByName": {},
-            "renameByName": {}
-          }
-        }
-      ],
       "type": "table"
     },
     {
