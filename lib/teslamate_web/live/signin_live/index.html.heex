@@ -13,7 +13,7 @@
           Error: <%= @error %>
         </div>
       <% end %>
-
+      
       <%= if @token == "" do %>
         <div class="field">
           <%= label(f, :access, gettext("Access Token"), class: "label") %>
@@ -30,7 +30,7 @@
             </span>
           </div>
         </div>
-
+        
         <div class="field">
           <%= label(f, :refresh, gettext("Refresh Token"), class: "label") %>
           <div class="control has-icons-left">
@@ -53,9 +53,7 @@
               to: @provider,
               target: "_blank",
               rel: "noopener noreferrer"
-            ) %>
-
-          <%= raw(
+            ) %> <%= raw(
             gettext(
               "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming.",
               token: @token,
@@ -64,7 +62,7 @@
           ) %>
         </p>
       <% end %>
-
+      
       <div class="field mt-5">
         <div class="control">
           <%= submit(gettext("Sign in"),
@@ -85,7 +83,7 @@
           ) %>
         </div>
       </div>
-
+      
       <%= if @token == "" do %>
         <p class="is-size-7 has-text-centered is-italic has-text-weight-light">
           <% here_link =
@@ -93,9 +91,7 @@
               to: "https://docs.teslamate.org/docs/faq#how-to-generate-your-own-tokens",
               target: "_blank",
               rel: "noopener noreferrer"
-            ) %>
-
-          <%= raw(
+            ) %> <%= raw(
             gettext(
               "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}.",
               here: safe_to_string(here_link)

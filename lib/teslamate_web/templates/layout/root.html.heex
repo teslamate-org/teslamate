@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang={Plug.Conn.get_session(@conn, :locale)}>
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" /> <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <.live_title suffix=" · TeslaMate">
       <%= assigns[:page_title] || "Home" %>
     </.live_title>
+    
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")} />
     <link
       rel="apple-touch-icon"
@@ -34,15 +34,14 @@
       rel="mask-icon"
       href={Routes.static_path(@conn, "/safari-pinned-tab.svg?v=5AB53N3ALo")}
       color="#363636"
-    />
-    <link rel="shortcut icon" href={Routes.static_path(@conn, "/favicon.ico?v=5AB53N3ALo")} />
+    /> <link rel="shortcut icon" href={Routes.static_path(@conn, "/favicon.ico?v=5AB53N3ALo")} />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="theme-color" content="#363636" />
-    <%= csrf_meta_tag() %>
+    <meta name="theme-color" content="#363636" /> <%= csrf_meta_tag() %>
     <script>
       window.LIVE_PATH = "<%= Routes.static_path(@conn, "/live") %>";
     </script>
+    
     <script
       defer
       phx-track-static
@@ -51,6 +50,7 @@
     >
     </script>
   </head>
+  
   <body tabIndex="0">
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
       <div class="container">
@@ -61,7 +61,7 @@
               width: "90px"
             ) %>
           </a>
-
+          
           <a
             role="button"
             class="navbar-burger burger"
@@ -69,12 +69,11 @@
             aria-expanded="false"
             data-target="navbar"
           >
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span> <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
           </a>
         </div>
-
+        
         <div id="navbar" class="navbar-menu">
           <div class="navbar-end">
             <%= if grafana_url = @conn.assigns.settings.grafana_url do %>
@@ -82,6 +81,7 @@
                 <a class="navbar-link is-arrowless">
                   <span class="icon"><i class="mdi mdi-view-dashboard"></i></span>&nbsp;<span><%= gettext "Dashboards" %></span>
                 </a>
+                
                 <div class="navbar-dropdown">
                   <%= for %{"title" => title, "uid" => uid} <- list_dashboards() do %>
                     <%= link(title,
@@ -94,12 +94,14 @@
                 </div>
               </div>
             <% end %>
+            
             <.link
               navigate={Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index)}
               class="navbar-item  mr-5"
             >
               <span class="icon"><i class="mdi mdi-map-marker-radius"></i></span>&nbsp;<span><%= gettext("Geo-Fences") %></span>
             </.link>
+            
             <.link
               navigate={Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index)}
               class="navbar-item  mr-5"
@@ -110,9 +112,7 @@
         </div>
       </div>
     </nav>
-
-    <% update = TeslaMate.Updater.get_update() %>
-
+     <% update = TeslaMate.Updater.get_update() %>
     <main
       role="main"
       style="overflow: hidden;"
@@ -127,13 +127,13 @@
               target: "_blank",
               rel: "noopener noreferrer"
             ) %>
-
           <div class="notification is-warning">
             <p class="title is-5 is-spaced">
               <span class="icon"><i class="mdi mdi-shield-alert"></i></span>&nbsp;<%= gettext(
                 "No encryption key provided"
               ) %>
             </p>
+            
             <p class="subtitle is-6">
               <%= raw(
                 gettext(
@@ -141,6 +141,7 @@
                 )
               ) %>
             </p>
+            
             <p class="subtitle is-6">
               <%= raw(
                 gettext(
@@ -148,6 +149,7 @@
                 )
               ) %>
             </p>
+            
             <p class="subtitle is-6">
               <%= raw(
                 gettext("For more information, see the updated installation guides on %{link}",
@@ -157,15 +159,14 @@
             </p>
           </div>
         <% end %>
-
+        
         <%= Enum.map(@flash, fn {flash_key, flash_message} -> %>
           <p class={"notification is-#{flash_key}"}><%= flash_message %></p>
         <% end) %>
-
-        <%= @inner_content %>
+         <%= @inner_content %>
       </div>
     </main>
-
+    
     <footer class="footer">
       <div class="content has-text-centered">
         <%= if update do %>
