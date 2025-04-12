@@ -14,7 +14,6 @@
         </div>
       </div>
     </figure>
-    
     <input
       id={"position_#{@car.id}"}
       type="text"
@@ -24,12 +23,10 @@
       disabled
     />
   </div>
-  
   <div class="card-content">
     <div class="media is-flex mb-5">
       <div class="media-content">
         <p class="title is-5"><%= @summary.display_name %></p>
-        
         <%= unless is_nil(@car.model) do %>
           <p class="subtitle is-6 has-text-weight-light">
             Model <%= @car.model %>
@@ -47,7 +44,6 @@
           </p>
         <% end %>
       </div>
-      
       <div class="icons ml-5">
         <span
           class={"#{if @fetch_status, do: "", else: "is-hidden "}spinner has-tooltip-top has-tooltip-left-mobile"}
@@ -55,7 +51,6 @@
         >
           <span class="is-loading"></span>
         </span>
-        
         <%= if @summary.is_preconditioning do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -64,7 +59,6 @@
             <span class="mdi mdi-air-conditioner"></span>
           </span>
         <% end %>
-        
         <%= if @summary.climate_keeper_mode == "dog" do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -73,7 +67,6 @@
             <span class="mdi mdi-dog-side"></span>
           </span>
         <% end %>
-        
         <%= if not is_nil(@summary.battery_level) and not is_nil(@summary.usable_battery_level) and @summary.battery_level - @summary.usable_battery_level > 2 do %>
           <span
             class="icon has-text-link has-tooltip-top has-tooltip-left-mobile"
@@ -82,7 +75,6 @@
             <span class="mdi mdi-snowflake"></span>
           </span>
         <% end %>
-        
         <%= if @summary.state != :driving and @summary.is_user_present do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -91,7 +83,6 @@
             <span class="mdi mdi-account"></span>
           </span>
         <% end %>
-        
         <%= if @summary.plugged_in == true do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -100,7 +91,6 @@
             <span class="mdi mdi-power-plug"></span>
           </span>
         <% end %>
-        
         <%= if @summary.windows_open do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -109,7 +99,6 @@
             <span class="mdi mdi-window-open"></span>
           </span>
         <% end %>
-        
         <%= if @summary.doors_open do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -118,7 +107,6 @@
             <span class="mdi mdi-car-door"></span>
           </span>
         <% end %>
-        
         <%= if @summary.sentry_mode do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -127,7 +115,6 @@
             <span class="mdi mdi-shield-check"></span>
           </span>
         <% end %>
-        
         <%= if @summary.center_display_state == 7 do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -136,7 +123,6 @@
             <span class="mdi mdi-cctv"></span>
           </span>
         <% end %>
-        
         <%= unless is_nil(@summary.locked) do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -149,7 +135,6 @@
             </span>
           </span>
         <% end %>
-        
         <%= if @summary.update_available do %>
           <span
             class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
@@ -160,7 +145,6 @@
             <span class="mdi mdi-gift-outline"></span>
           </span>
         <% end %>
-        
         <%= unless is_nil(@summary.tpms_soft_warning_fl) or is_nil(@summary.tpms_soft_warning_fr) or is_nil(@summary.tpms_soft_warning_rl) or is_nil(@summary.tpms_soft_warning_rr) do %>
           <%= if @summary.tpms_soft_warning_fl or @summary.tpms_soft_warning_fr or @summary.tpms_soft_warning_rl or @summary.tpms_soft_warning_rr do %>
             <% tires = [
@@ -168,25 +152,20 @@
               {:fr, {@summary.tpms_soft_warning_fr, @summary.tpms_pressure_fr}},
               {:rl, {@summary.tpms_soft_warning_rl, @summary.tpms_pressure_rl}},
               {:rr, {@summary.tpms_soft_warning_rr, @summary.tpms_pressure_rr}}
-            ] %> <% tire_warnings =
+            ] %>
+
+            <% tire_warnings =
               Enum.filter(tires, fn {_tire, {warn, _}} -> warn end)
               |> Enum.map(fn
-                {:fl, {true, val}} ->
-                  "Front left (#{format_tpms(val, @settings.unit_of_pressure)})"
-
-                {:fr, {true, val}} ->
-                  "Front right (#{format_tpms(val, @settings.unit_of_pressure)})"
-
-                {:rl, {true, val}} ->
-                  "Rear left (#{format_tpms(val, @settings.unit_of_pressure)})"
-
-                {:rr, {true, val}} ->
-                  "Rear right (#{format_tpms(val, @settings.unit_of_pressure)})"
-
-                _ ->
-                  nil
+                {:fl, {true, val}} -> "Front left (#{format_tpms(val, @settings.unit_of_pressure)})"
+                {:fr, {true, val}} -> "Front right (#{format_tpms(val, @settings.unit_of_pressure)})"
+                {:rl, {true, val}} -> "Rear left (#{format_tpms(val, @settings.unit_of_pressure)})"
+                {:rr, {true, val}} -> "Rear right (#{format_tpms(val, @settings.unit_of_pressure)})"
+                _ -> nil
               end)
-              |> Enum.filter(& &1) %>
+              |> Enum.filter(& &1)
+            %>
+
             <span
               class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
               data-tooltip={
@@ -201,7 +180,6 @@
             </span>
           <% end %>
         <% end %>
-        
         <%= if @summary.healthy == false do %>
           <span
             class="icon has-text-danger has-tooltip-top has-tooltip-left-mobile"
@@ -212,21 +190,17 @@
         <% end %>
       </div>
     </div>
-    
     <div class="content">
       <table class="table is-narrow is-fullwidth">
         <thead>
           <tr>
             <th></th>
-            
             <th></th>
           </tr>
         </thead>
-        
         <tbody style="font-variant-numeric: tabular-nums;">
           <tr>
             <td class="has-text-weight-medium"><%= gettext("Status") %></td>
-            
             <td>
               <%= raw(
                 @translate_state.(@summary.state) <>
@@ -242,7 +216,6 @@
               ) %>
             </td>
           </tr>
-          
           <%= if @summary.state == :charging and not is_nil(@summary.time_to_full_charge) do %>
             <% current_time = Timex.now()
 
@@ -255,7 +228,6 @@
               Timex.format!(local_finish_time, "%Y-%m-%d %H:%M:%S", :strftime) %>
             <tr>
               <td class="has-text-weight-medium"><%= gettext("Remaining Time") %></td>
-              
               <td>
                 <%= round(@summary.time_to_full_charge * 60 * 60)
                 |> Convert.sec_to_str()
@@ -263,14 +235,11 @@
                 |> Enum.join(", ") %>
               </td>
             </tr>
-            
             <tr>
               <td class="has-text-weight-medium"><%= gettext("Expected Finish Time") %></td>
-              
               <td><%= formatted_finish_time %></td>
             </tr>
           <% end %>
-          
           <%= unless is_nil(@summary.ideal_battery_range_km) do %>
             <tr>
               <td class="has-text-weight-medium">
@@ -279,7 +248,6 @@
                   :rated -> gettext("Range (rated)")
                 end %>
               </td>
-              
               <td>
                 <%= range =
                   case @settings.preferred_range do
@@ -295,11 +263,9 @@
               </td>
             </tr>
           <% end %>
-          
           <%= unless is_nil(@summary.est_battery_range_km) do %>
             <tr>
               <td class="has-text-weight-medium"><%= gettext("Range (est.)") %></td>
-              
               <td>
                 <%= if @settings.unit_of_length == :mi do
                   "#{Convert.km_to_miles(@summary.est_battery_range_km, 1)} mi"
@@ -309,30 +275,25 @@
               </td>
             </tr>
           <% end %>
-          
           <%= if @summary.state == :charging do %>
             <%= unless is_nil(@summary.charge_energy_added) do %>
               <tr>
                 <td class="has-text-weight-medium"><%= gettext("Charged") %></td>
-                
                 <td><%= @summary.charge_energy_added %> kWh</td>
               </tr>
             <% end %>
-            
             <%= unless is_nil(@summary.charger_power) do %>
               <tr>
                 <td class="has-text-weight-medium"><%= gettext("Charger Power") %></td>
-                
                 <td><%= @summary.charger_power %> kW</td>
               </tr>
             <% end %>
           <% end %>
-          
+
           <%= if @summary.plugged_in do %>
             <%= unless @summary.scheduled_charging_start_time in [nil, :unknown] do %>
               <tr>
                 <td class="has-text-weight-medium"><%= gettext("Scheduled Charging") %></td>
-                
                 <td>
                   <%= tag(:span,
                     data: [date: @summary.scheduled_charging_start_time |> DateTime.to_iso8601()],
@@ -342,16 +303,13 @@
                 </td>
               </tr>
             <% end %>
-            
             <%= if not is_nil(@summary.charge_limit_soc) do %>
               <tr>
                 <td class="has-text-weight-medium"><%= gettext("Charge Limit") %></td>
-                
                 <td><%= @summary.charge_limit_soc %>%</td>
               </tr>
             <% end %>
           <% end %>
-          
           <%= unless is_nil(@summary.battery_level) do %>
             <% {soc_text, tooltip} =
               (fn ->
@@ -387,7 +345,6 @@
                end).() %>
             <tr>
               <td class="has-text-weight-medium"><%= gettext("State of Charge") %></td>
-              
               <td>
                 <span class="has-tooltip-top has-tooltip-right-desktop" data-tooltip={tooltip}>
                   <%= soc_text %>
@@ -395,11 +352,9 @@
               </td>
             </tr>
           <% end %>
-          
           <%= if @summary.state == :driving and not is_nil(@summary.speed) do %>
             <tr>
               <td class="has-text-weight-medium"><%= gettext("Speed") %></td>
-              
               <td>
                 <%= if @settings.unit_of_length == :mi do
                   "#{Convert.km_to_miles(@summary.speed, 0)} mph"
@@ -409,12 +364,10 @@
               </td>
             </tr>
           <% end %>
-          
           <%= if @summary.state not in [:asleep, :offline, :suspended] or DateTime.diff(DateTime.utc_now(), @summary.since) < 30*60 do %>
             <%= unless is_nil(@summary.outside_temp) do %>
               <tr>
                 <td class="has-text-weight-medium"><%= gettext("Outside Temperature") %></td>
-                
                 <td>
                   <%= if @settings.unit_of_temperature == :F do
                     "#{Convert.celsius_to_fahrenheit(@summary.outside_temp, 1)} °F"
@@ -424,11 +377,9 @@
                 </td>
               </tr>
             <% end %>
-            
             <%= unless is_nil(@summary.inside_temp) do %>
               <tr>
                 <td class="has-text-weight-medium"><%= gettext("Inside Temperature") %></td>
-                
                 <td>
                   <%= if @settings.unit_of_temperature == :F do
                     "#{Convert.celsius_to_fahrenheit(@summary.inside_temp, 1)} °F"
@@ -439,11 +390,9 @@
               </tr>
             <% end %>
           <% end %>
-          
           <%= unless is_nil(@summary.odometer) do %>
             <tr>
               <td class="has-text-weight-medium"><%= gettext("Mileage") %></td>
-              
               <td>
                 <%= if @settings.unit_of_length == :mi do
                   "#{Convert.km_to_miles(@summary.odometer, 0)} mi"
@@ -453,11 +402,9 @@
               </td>
             </tr>
           <% end %>
-          
           <%= unless is_nil(@summary.version) do %>
             <tr>
               <td class="has-text-weight-medium"><%= gettext("Version") %></td>
-              
               <td>
                 <%= link(@summary.version,
                   to:
@@ -470,7 +417,7 @@
           <% end %>
         </tbody>
       </table>
-       <%= cond do
+      <%= cond do
         not is_nil(@error) ->
           link(@error,
             to: "#",

@@ -1,9 +1,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li><.link navigate={~p"/"}><%= gettext("Home") %></.link></li>
-    
     <li><.link navigate={~p"/geo-fences"}><%= gettext("Geo-Fences") %></.link></li>
-    
     <li class="is-active">
       <a href="#">
         <%= case @action do
@@ -20,58 +18,52 @@
     <div class="field-label is-normal">
       <%= label(f, :position, gettext("Position"), class: "label") %>
     </div>
-    
     <div class="field-body">
       <div class="field">
         <div class="control">
           <div id="map_container" phx-update="ignore">
             <figure id="map" style="height: 400px; position: relative;" phx-hook="Map"></figure>
           </div>
-           <%= hidden_input(f, :latitude) %> <%= hidden_input(f, :longitude) %> <%= hidden_input(
-            f,
-            :radius
-          ) %>
+          <%= hidden_input(f, :latitude) %>
+          <%= hidden_input(f, :longitude) %>
+          <%= hidden_input(f, :radius) %>
         </div>
-        
         <%= if @show_errors do %>
           <p class="help is-danger">
-            <%= error_tag(f, :address_id) %> <%= error_tag(f, :latitude) %> <%= error_tag(
-              f,
-              :longitude
-            ) %> <%= error_tag(f, :radius) %>
+            <%= error_tag(f, :address_id) %>
+            <%= error_tag(f, :latitude) %>
+            <%= error_tag(f, :longitude) %>
+            <%= error_tag(f, :radius) %>
           </p>
         <% end %>
       </div>
     </div>
   </div>
-  
+
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <%= label class: "label" do
         gettext("Name")
       end %>
     </div>
-    
     <div class="field-body">
       <div class="field is-expanded">
         <div class="control">
           <%= text_input(f, :name, class: "input", placeholder: gettext("Name")) %>
         </div>
-        
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :name) %></p>
         <% end %>
       </div>
     </div>
   </div>
-  
+
   <div class="field is-horizontal mt-4">
     <div class="field-label is-normal">
       <%= label class: "label" do
         gettext("Cost")
       end %>
     </div>
-    
     <div class="field-body">
       <div class="field has-addons">
         <p class="control">
@@ -82,7 +74,6 @@
             ]) %>
           </span>
         </p>
-        
         <p class="control is-expanded">
           <%= text_input(f, :cost_per_unit,
             class: "input",
@@ -92,21 +83,19 @@
             placeholder: "0.00"
           ) %>
         </p>
-        
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :cost_per_unit) %></p>
         <% end %>
       </div>
     </div>
   </div>
-  
+
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <%= label class: "label" do
         gettext("Session fee")
       end %>
     </div>
-    
     <div class="field-body">
       <div class="field">
         <div class="control">
@@ -119,17 +108,15 @@
             placeholder: "0.00"
           ) %>
         </div>
-        
         <%= if @show_errors do %>
           <p class="help is-danger"><%= error_tag(f, :session_fee) %></p>
         <% end %>
       </div>
     </div>
   </div>
-  
+
   <div class="field is-horizontal mt-5">
     <div class="field-label"></div>
-    
     <div class="field-body">
       <div class="field is-grouped">
         <div class="control">
@@ -137,7 +124,6 @@
             <%= gettext("Back") %>
           </.link>
         </div>
-        
         <div class="control">
           <%= submit(gettext("Save"),
             phx_disable_with: gettext("Saving..."),
@@ -164,16 +150,13 @@
     {if @show_modal, do: [phx_window_keyup: "keyup"], else: []}
   >
   </div>
-  
   <div class="modal-card modal-content">
     <header class="modal-card-head">
       <p class="modal-card-title"><%= gettext("Charging Costs") %></p>
-      
       <button class="button is-text is-rounded" aria-label="close" phx-click="close-modal">
         <span class="icon is-small"><i class="mdi mdi-close"></i></span>
       </button>
     </header>
-    
     <section class="modal-card-body">
       <p>
         <%= raw(
@@ -186,12 +169,10 @@
         ) %>
       </p>
     </section>
-    
     <footer class="modal-card-foot">
       <button class="button" phx-click="calc-costs" phx-value-result="no">
         <%= gettext("Continue") %>
       </button>
-      
       <button class="button is-info" phx-click="calc-costs" phx-value-result="yes">
         <%= gettext("Add costs retroactively") %>
       </button>

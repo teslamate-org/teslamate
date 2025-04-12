@@ -1,7 +1,6 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li><.link navigate={~p"/"}><%= gettext("Home") %></.link></li>
-    
     <li class="is-active"><.link navigate=""><%= gettext("TeslaFi Import") %></.link></li>
   </ul>
 </nav>
@@ -15,7 +14,7 @@
       count: length(@status.files)
     ) %>
   </h2>
-   <%= link(raw("<span class='icon'><span class='mdi mdi-reload'></span></span>"),
+  <%= link(raw("<span class='icon'><span class='mdi mdi-reload'></span></span>"),
     to: "#",
     type: "button",
     class: "button is-text is-inverted",
@@ -27,7 +26,6 @@
 <div class="table-container">
   <table class="table is-narrow is-hoverable is-fullwidth">
     <thead></thead>
-    
     <tbody>
       <%= for %{path: path, date: date, complete: complete} <- @status.files do %>
         <% {year, month} =
@@ -39,9 +37,7 @@
           end %>
         <tr>
           <td style="font-variant-numeric: tabular-nums;"><%= "#{month}/#{year}" %></td>
-          
           <td><%= Path.absname(path) %></td>
-          
           <td class="has-text-centered" style="min-width: 30px;">
             <span class="spinner">
               <%= case {@status.state, complete} do %>
@@ -87,7 +83,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="field">
       <div class="control">
         <%= submit(gettext("Import"),
