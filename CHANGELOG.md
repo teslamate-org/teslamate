@@ -17,10 +17,12 @@
 - build(deps): bump tesla from 1.13.2 to 1.14.1 (#4616)
 - ci(sec): remove pull_request_target workflow triggers to improve sec even further, the downside is that test images are now only created for repo's own PRs (#4637 - @JakobLichterfeld / Thanks to @Firebasky for responsibly disclosing the vulnerability)
 - ci: fix ghcr build ([..ddf85e6](https://github.com/teslamate-org/teslamate/commit/ba35f417014e6be742ee2b0713cfa7876ddf85e6) - @JakobLichterfeld)
+- ci: ensure ghcr images build correctly even if branch contains backslash (#4655 - @JakobLichterfeld)
 
 #### Dashboards
 
 - fix: improve calc for usable (now) in battery health dashboard (#4644 - @swiffer)
+- feat: make use of car filter, add timefilter in locations dashboard (#4647 - @swiffer)
 
 #### Translations
 
