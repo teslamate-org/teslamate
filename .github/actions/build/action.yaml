@@ -30,6 +30,15 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: normalize version name to a valid string
+      # convert backslashes to dashes, so for example dependabot/x/y/z-1.2.3 works
+      id: normalize_version
+      shell: bash
+      run: |
+        VERSION="${{ inputs.version }}"
+        NORMALIZED_VERSION="${VERSION//\//-}"
+        echo "normalized_version=${NORMALIZED_VERSION}" >> $GITHUB_OUTPUT
+
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
@@ -59,8 +68,8 @@ runs:
         platforms: ${{ matrix.platform }}
         labels: ${{ steps.meta.outputs.labels }}
         tags: ${{ steps.docker_meta.outputs.tags }}
-        cache-from: type=registry,ref=ghcr.io/${{ inputs.repository }}:buildcache-${{ matrix.cache_id }}-${{ inputs.version }}
-        cache-to: type=registry,ref=ghcr.io/${{ inputs.repository }}:buildcache-${{ matrix.cache_id }}-${{ inputs.version }},mode=max
+        cache-from: type=registry,ref=ghcr.io/${{ inputs.repository }}:buildcache-${{ matrix.cache_id }}-${{ steps.normalize_version.outputs.normalized_version }}
+        cache-to: type=registry,ref=ghcr.io/${{ inputs.repository }}:buildcache-${{ matrix.cache_id }}-${{ steps.normalize_version.outputs.normalized_version }},mode=max
         outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
     - name: Export digest
       shell: bash
