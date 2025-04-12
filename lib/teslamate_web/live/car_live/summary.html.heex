@@ -157,14 +157,22 @@
             <% tire_warnings =
               Enum.filter(tires, fn {_tire, {warn, _}} -> warn end)
               |> Enum.map(fn
-                {:fl, {true, val}} -> "Front left (#{format_tpms(val, @settings.unit_of_pressure)})"
-                {:fr, {true, val}} -> "Front right (#{format_tpms(val, @settings.unit_of_pressure)})"
-                {:rl, {true, val}} -> "Rear left (#{format_tpms(val, @settings.unit_of_pressure)})"
-                {:rr, {true, val}} -> "Rear right (#{format_tpms(val, @settings.unit_of_pressure)})"
-                _ -> nil
+                {:fl, {true, val}} ->
+                  "Front left (#{format_tpms(val, @settings.unit_of_pressure)})"
+
+                {:fr, {true, val}} ->
+                  "Front right (#{format_tpms(val, @settings.unit_of_pressure)})"
+
+                {:rl, {true, val}} ->
+                  "Rear left (#{format_tpms(val, @settings.unit_of_pressure)})"
+
+                {:rr, {true, val}} ->
+                  "Rear right (#{format_tpms(val, @settings.unit_of_pressure)})"
+
+                _ ->
+                  nil
               end)
-              |> Enum.filter(& &1)
-            %>
+              |> Enum.filter(& &1) %>
 
             <span
               class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
