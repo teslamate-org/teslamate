@@ -147,33 +147,41 @@
         <% end %>
         <%= unless is_nil(@summary.tpms_soft_warning_fl) or is_nil(@summary.tpms_soft_warning_fr) or is_nil(@summary.tpms_soft_warning_rl) or is_nil(@summary.tpms_soft_warning_rr) do %>
           <%= if @summary.tpms_soft_warning_fl or @summary.tpms_soft_warning_fr or @summary.tpms_soft_warning_rl or @summary.tpms_soft_warning_rr do %>
+            <% tires = [
+              {:fl, {@summary.tpms_soft_warning_fl, @summary.tpms_pressure_fl}},
+              {:fr, {@summary.tpms_soft_warning_fr, @summary.tpms_pressure_fr}},
+              {:rl, {@summary.tpms_soft_warning_rl, @summary.tpms_pressure_rl}},
+              {:rr, {@summary.tpms_soft_warning_rr, @summary.tpms_pressure_rr}}
+            ] %>
+
+            <% tire_warnings =
+              Enum.filter(tires, fn {_tire, {warn, _}} -> warn end)
+              |> Enum.map(fn
+                {:fl, {true, val}} ->
+                  "Front left (#{format_tpms(val, @settings.unit_of_pressure)})"
+
+                {:fr, {true, val}} ->
+                  "Front right (#{format_tpms(val, @settings.unit_of_pressure)})"
+
+                {:rl, {true, val}} ->
+                  "Rear left (#{format_tpms(val, @settings.unit_of_pressure)})"
+
+                {:rr, {true, val}} ->
+                  "Rear right (#{format_tpms(val, @settings.unit_of_pressure)})"
+
+                _ ->
+                  nil
+              end)
+              |> Enum.filter(& &1) %>
+
             <span
               class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
               data-tooltip={
-                gettext(
-                  "Low tire pressure, check (%{tire_low}) tire",
-                  %{
-                    tire_low:
-                      Enum.filter(
-                        [
-                          {:fl, @summary.tpms_soft_warning_fl},
-                          {:fr, @summary.tpms_soft_warning_fr},
-                          {:rl, @summary.tpms_soft_warning_rl},
-                          {:rr, @summary.tpms_soft_warning_rr}
-                        ],
-                        fn {_tire, pressure} -> pressure end
-                      )
-                      |> Enum.map(fn
-                        {:fl, true} -> "Front left"
-                        {:fr, true} -> "Front right"
-                        {:rl, true} -> "Rear left"
-                        {:rr, true} -> "Rear right"
-                        _ -> nil
-                      end)
-                      |> Enum.filter(&(&1 != nil))
-                      |> Enum.join(", ")
-                  }
-                )
+                if length(tire_warnings) == 1 do
+                  "Tire with low pressure: #{Enum.join(tire_warnings, ", ")}"
+                else
+                  "Tires with low pressure: #{Enum.join(tire_warnings, ", ")}"
+                end
               }
             >
               <span class="mdi mdi-car-tire-alert"></span>
