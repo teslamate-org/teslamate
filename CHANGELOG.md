@@ -27,6 +27,7 @@
 - ci: skip ghcr build for PRs from outside repo (#4660 and [462b568](https://github.com/teslamate-org/teslamate/commit/462b5680abbfbdfd26f028d88f7a62f4ae4183cd) - @JakobLichterfeld)
 - build(deps): bump estree-util-value-to-estree in /website (#4641)
 - build(deps): update flake.lock (#4653)
+- fix(nix): update mix dependency hash in nix builds ([3d08431](https://github.com/teslamate-org/teslamate/commit/3d08431ee3de0eaf3d3045aa0018c687627c4dac) - @JakobLichterfeld)
 
 #### Dashboards
 
