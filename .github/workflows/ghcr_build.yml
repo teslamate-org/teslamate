@@ -31,11 +31,15 @@ jobs:
         id: check_if_pr_from_outside_repo
         shell: bash
         run: |
+          echo "::group::Check if PR from outside repo"
           if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
+            echo "This PR is from outside the repo"
             echo "is_pr_from_outside_repo=true" >> $GITHUB_OUTPUT
           else
+            echo "This PR is from our own repo"
             echo "is_pr_from_outside_repo=false" >> $GITHUB_OUTPUT
           fi
+          echo "::endgroup::"
 
   teslamate_build:
     name: Build images
