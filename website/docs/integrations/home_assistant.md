@@ -323,6 +323,7 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/charge_energy_added"
     device_class: energy
+    state_class: total
     unit_of_measurement: kWh
     icon: mdi:battery-charging
 
