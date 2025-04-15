@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat:show tpms value to the low pressure tooltip in webview (#4654 -@NirKli)
+
 ### Improvements and bug fixes
 
 #### Build, CI, internal
