@@ -25,6 +25,8 @@ jobs:
     # as we currently only push ghcr images for PRs from our own repo
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder != 'true'
+    outputs:
+      is_pr_from_outside_repo: ${{ steps.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo }}
     runs-on: ubuntu-24.04
     steps:
       - name: check if PR from outside repo
