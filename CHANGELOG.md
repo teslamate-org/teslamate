@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Breaking Changes
+
+- feat: check Postgres version on startup, require 16.7 / 17.3, update earthdistance extension (#4648 - @swiffer)
+
 ### New features
 
 - feat:show tpms value to the low pressure tooltip in webview (#4654 -@NirKli)
