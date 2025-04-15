@@ -25,6 +25,8 @@
 - ci: fix ghcr build ([..ddf85e6](https://github.com/teslamate-org/teslamate/commit/ba35f417014e6be742ee2b0713cfa7876ddf85e6) - @JakobLichterfeld)
 - ci: ensure ghcr images build correctly even if branch contains backslash (#4655 - @JakobLichterfeld)
 - ci: skip ghcr build for PRs from outside repo (#4660 and [462b568](https://github.com/teslamate-org/teslamate/commit/462b5680abbfbdfd26f028d88f7a62f4ae4183cd) - @JakobLichterfeld)
+- build(deps): bump estree-util-value-to-estree in /website (#4641)
+- build(deps): update flake.lock (#4653)
 
 #### Dashboards
 
