@@ -70,7 +70,7 @@ service postgresql initdb
 </details>
 
 <details>
-  <summary>Grafana (v11.6.0+)</summary>
+  <summary>Grafana (v11.6.1+)</summary>
 
 ```bash
 pkg install grafana

@@ -37,7 +37,7 @@ Source: [erlang.org/downloads](https://www.erlang.org/downloads#prebuilt)
 </details>
 
 <details>
-  <summary>Grafana (v11.6.0+)</summary>
+  <summary>Grafana (v11.6.1+)</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
