@@ -31,6 +31,7 @@
 - ci(dependabot): add ignore rules for path-based dependencies (#4666 - @JakobLichterfeld)
 - sec: upgrade esbuild to 0.25.2 and esbuild-sass-plugin to 3.3.1 to avoid GHSA-67mh-4wv8-2f99 (#4669 - @JakobLichterfeld)
 - build(deps): bump http-proxy-middleware from 2.0.7 to 2.0.9 in /website (#4670)
+- build(deps): bump phoenix_html from 4.2.0 to 4.2.1 (#4667)
 
 #### Dashboards
 
