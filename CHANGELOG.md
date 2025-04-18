@@ -29,6 +29,7 @@
 - build(deps): update flake.lock (#4653)
 - fix(nix): update mix dependency hash in nix builds ([3d08431](https://github.com/teslamate-org/teslamate/commit/3d08431ee3de0eaf3d3045aa0018c687627c4dac) - @JakobLichterfeld)
 - ci(dependabot): add ignore rules for path-based dependencies (#4666 - @JakobLichterfeld)
+- sec: upgrade esbuild to 0.25.2 and esbuild-sass-plugin to 3.3.1 to avoid GHSA-67mh-4wv8-2f99 (#4669 - @JakobLichterfeld)
 
 #### Dashboards
 
