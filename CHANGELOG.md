@@ -33,6 +33,7 @@
 - build(deps): bump http-proxy-middleware from 2.0.7 to 2.0.9 in /website (#4670)
 - build(deps): bump phoenix_html from 4.2.0 to 4.2.1 (#4667)
 - build(deps): bump ex_cldr from 2.40.2 to 2.42.0 (#4615)
+- build(deps): bump phoenix_ecto from 4.6.2 to 4.6.3 (#4333)
 
 #### Dashboards
 
