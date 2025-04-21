@@ -33,6 +33,7 @@
 - build(deps): bump http-proxy-middleware from 2.0.7 to 2.0.9 in /website (#4670)
 - build(deps): bump phoenix_html from 4.2.0 to 4.2.1 (#4667)
 - build(deps): bump ex_cldr from 2.40.2 to 2.42.0 (#4615)
+- build(deps): bump react from 18.3.1 to 19.1.0 and docusaurus/core from 3.4.0 to 3.7.0 in /website (#4618 - @JakobLichterfeld)
 
 #### Dashboards
 
