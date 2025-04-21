@@ -25,12 +25,21 @@
 - ci: fix ghcr build ([..ddf85e6](https://github.com/teslamate-org/teslamate/commit/ba35f417014e6be742ee2b0713cfa7876ddf85e6) - @JakobLichterfeld)
 - ci: ensure ghcr images build correctly even if branch contains backslash (#4655 - @JakobLichterfeld)
 - ci: skip ghcr build for PRs from outside repo (#4660 and [462b568](https://github.com/teslamate-org/teslamate/commit/462b5680abbfbdfd26f028d88f7a62f4ae4183cd) - @JakobLichterfeld)
+- build(deps): bump estree-util-value-to-estree in /website (#4641)
+- build(deps): update flake.lock (#4653)
+- fix(nix): update mix dependency hash in nix builds ([3d08431](https://github.com/teslamate-org/teslamate/commit/3d08431ee3de0eaf3d3045aa0018c687627c4dac) - @JakobLichterfeld)
+- ci(dependabot): add ignore rules for path-based dependencies (#4666 - @JakobLichterfeld)
+- sec: upgrade esbuild to 0.25.2 and esbuild-sass-plugin to 3.3.1 to avoid GHSA-67mh-4wv8-2f99 (#4669 - @JakobLichterfeld)
+- build(deps): bump http-proxy-middleware from 2.0.7 to 2.0.9 in /website (#4670)
+- build(deps): bump phoenix_html from 4.2.0 to 4.2.1 (#4667)
+- build(deps): bump ex_cldr from 2.40.2 to 2.42.0 (#4615)
 - build(deps): bump react from 18.3.1 to 19.1.0 and docusaurus/core from 3.4.0 to 3.7.0 in /website (#4618 - @JakobLichterfeld)
 
 #### Dashboards
 
 - fix: improve calc for usable (now) in battery health dashboard (#4644 - @swiffer)
 - feat: make use of car filter, add timefilter in locations dashboard (#4647 - @swiffer)
+- fix: use same rated range calculation in updates dashboard as in battery health dashboard (#4682 - @swiffer)
 
 #### Translations
 
