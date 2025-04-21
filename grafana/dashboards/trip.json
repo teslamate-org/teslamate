@@ -521,7 +521,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tnow() AS time,\n\tsum(extract(epoch FROM end_position.date - start_position.date)) as duration_sec,\n\t'driving' as metric\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date);",
+          "rawSql": "SELECT\n\tnow() AS time,\n\tsum(extract(epoch FROM end_position.date - start_position.date)) as duration_sec,\n\t'driving' as metric\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date)\n\tAND end_date IS NOT NULL;",
           "refId": "A",
           "select": [
             [
@@ -685,7 +685,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  convert_km(sum(end_position.odometer - start_position.odometer)::numeric, '$length_unit') / (sum(extract(epoch FROM end_position.date - start_position.date)) / 3600) as \"speed_$length_unit\"\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date)",
+          "rawSql": "SELECT\n  convert_km(sum(end_position.odometer - start_position.odometer)::numeric, '$length_unit') / (sum(extract(epoch FROM end_position.date - start_position.date)) / 3600) as \"speed_$length_unit\"\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date)\n\tAND end_date IS NOT NULL;",
           "refId": "A",
           "select": [
             [
