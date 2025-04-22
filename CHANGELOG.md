@@ -44,6 +44,7 @@
 - feat: make use of car filter, add timefilter in locations dashboard (#4647 - @swiffer)
 - fix: use same rated range calculation in updates dashboard as in battery health dashboard (#4682 - @swiffer)
 - fix: explicitly set height of home dashboard background image based on current layout & grafana css (#4681 -@swiffer)
+- fix: set $\_\_timezone explicitly in dashboards to ensure truncation is done with respect to the Grafana timezone (#4684 - @swiffer)
 
 #### Translations
 
