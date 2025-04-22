@@ -41,6 +41,7 @@
 - fix: improve calc for usable (now) in battery health dashboard (#4644 - @swiffer)
 - feat: make use of car filter, add timefilter in locations dashboard (#4647 - @swiffer)
 - fix: use same rated range calculation in updates dashboard as in battery health dashboard (#4682 - @swiffer)
+- fix: explicitly set height of home dashboard background image based on current layout & grafana css (#4681 -@swiffer)
 
 #### Translations
 
