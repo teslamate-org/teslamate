@@ -1767,7 +1767,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  c.battery_level as \"SoC\",\r\n  round(avg(c.charger_power), 0) as \"Power\",\r\n  c.charging_process_id as \"charging_process_id\",\r\n  p.start_date as \"start_date\",\r\n  p.end_date as \"end_date\",\r\n  COALESCE(g.name, a.name) || ' ' || to_char(c.date, 'YYYY-MM-dd') as \"Charge\"\r\nFROM\r\n  charges c\r\nJOIN charging_processes p ON p.id = c.charging_process_id \r\nJOIN addresses a ON a.id = p.address_id\r\nLEFT JOIN geofences g ON g.id = p.geofence_id\r\nWHERE\r\n  $__timeFilter(date)\r\n AND p.car_id = $car_id\r\n AND charger_power > 0\r\n AND c.fast_charger_present\r\nGROUP BY c.battery_level, c.charging_process_id, a.name, g.name, p,start_date, p.end_date, to_char(c.date, 'YYYY-MM-dd')",
+          "rawSql": "SELECT\r\n  c.battery_level as \"SoC\",\r\n  round(avg(c.charger_power), 0) as \"Power\",\r\n  c.charging_process_id as \"charging_process_id\",\r\n  p.start_date as \"start_date\",\r\n  p.end_date as \"end_date\",\r\n  COALESCE(g.name, a.name) || ' ' || to_char(timezone('$__timezone', timezone('UTC', c.date)), 'YYYY-MM-dd') as \"Charge\"\r\nFROM\r\n  charges c\r\nJOIN charging_processes p ON p.id = c.charging_process_id \r\nJOIN addresses a ON a.id = p.address_id\r\nLEFT JOIN geofences g ON g.id = p.geofence_id\r\nWHERE\r\n  $__timeFilter(date)\r\n AND p.car_id = $car_id\r\n AND charger_power > 0\r\n AND c.fast_charger_present\r\nGROUP BY c.battery_level, c.charging_process_id, a.name, g.name, p,start_date, p.end_date, to_char(timezone('$__timezone', timezone('UTC', c.date)), 'YYYY-MM-dd')",
           "refId": "A",
           "select": [
             [

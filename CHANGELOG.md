@@ -12,6 +12,8 @@
 
 ### Improvements and bug fixes
 
+- fix(nix): non-recursive provider for ../grafana/dashboards (#4680 - @swiffer)
+
 #### Build, CI, internal
 
 - build(deps): bump image-size from 1.2.0 to 1.2.1 in /website (#4622)
@@ -32,11 +34,18 @@
 - sec: upgrade esbuild to 0.25.2 and esbuild-sass-plugin to 3.3.1 to avoid GHSA-67mh-4wv8-2f99 (#4669 - @JakobLichterfeld)
 - build(deps): bump http-proxy-middleware from 2.0.7 to 2.0.9 in /website (#4670)
 - build(deps): bump phoenix_html from 4.2.0 to 4.2.1 (#4667)
+- build(deps): bump ex_cldr from 2.40.2 to 2.42.0 (#4615)
+- build(deps): bump react from 18.3.1 to 19.1.0 and docusaurus/core from 3.4.0 to 3.7.0 in /website (#4618 - @JakobLichterfeld)
+- build(deps): bump phoenix_ecto from 4.6.2 to 4.6.3 (#4333)
+- build(deps): update flake.lock (#4674)
 
 #### Dashboards
 
 - fix: improve calc for usable (now) in battery health dashboard (#4644 - @swiffer)
 - feat: make use of car filter, add timefilter in locations dashboard (#4647 - @swiffer)
+- fix: use same rated range calculation in updates dashboard as in battery health dashboard (#4682 - @swiffer)
+- fix: explicitly set height of home dashboard background image based on current layout & grafana css (#4681 -@swiffer)
+- fix: set $\_\_timezone explicitly in dashboards to ensure truncation is done with respect to the Grafana timezone (#4684 - @swiffer)
 
 #### Translations
 
