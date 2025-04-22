@@ -12,6 +12,8 @@
 
 ### Improvements and bug fixes
 
+- fix(nix): non-recursive provider for ../grafana/dashboards (#4680 - @swiffer)
+
 #### Build, CI, internal
 
 - build(deps): bump image-size from 1.2.0 to 1.2.1 in /website (#4622)

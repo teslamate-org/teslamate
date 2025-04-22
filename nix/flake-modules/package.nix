@@ -1,6 +1,11 @@
 { ... }:
 {
-  perSystem = { lib, pkgs, system, ... }:
+  perSystem =
+    { lib
+    , pkgs
+    , system
+    , ...
+    }:
     let
       elixir = pkgs.beam.packages.erlang_26.elixir_1_17;
       beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_26;
@@ -13,7 +18,7 @@
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-QgaEcRBayYewkfX+qI2n8jPQwbTPG9HPup+1sHR8joY=";
+        hash = "sha256-Z0gC/eB3pYcTPJJ8bitQQWna4A92yMGrWlEI7tGIRP4=";
         # hash = pkgs.lib.fakeHash;
       };
 
@@ -21,7 +26,7 @@
       nodePackages = pkgs.buildNpmPackage {
         name = "${pname}-assets";
         src = "${src}/assets";
-        npmDepsHash = "sha256-05AKPyms4WP8MHBqWMup8VXR3a1tv/f/7jT8c6EpWBw=";
+        npmDepsHash = "sha256-5bnoGjuFC4jPUkrIsXBHUPCy4nWY7h5fWEWMDoZqaC8=";
         # npmDepsHash = pkgs.lib.fakeHash;
         dontNpmBuild = true;
         inherit nodejs;

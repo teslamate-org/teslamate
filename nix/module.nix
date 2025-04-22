@@ -278,9 +278,9 @@ in
                 disableDeletion = false;
                 allowUiUpdates = true;
                 updateIntervalSeconds = 86400;
-                options.path = lib.sources.sourceFilesBySuffices
+                options.path = lib.sources.sourceByRegex
                   ../grafana/dashboards
-                  [ ".json" ];
+                  [ "^[^\/]*\.json$" ];
               }
               {
                 name = "teslamate_internal";
