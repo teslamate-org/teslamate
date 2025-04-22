@@ -12,6 +12,8 @@
 
 ### Improvements and bug fixes
 
+- fix(nix): non-recursive provider for ../grafana/dashboards (#4680 - @swiffer)
+
 #### Build, CI, internal
 
 - build(deps): bump image-size from 1.2.0 to 1.2.1 in /website (#4622)
@@ -41,6 +43,7 @@
 - fix: improve calc for usable (now) in battery health dashboard (#4644 - @swiffer)
 - feat: make use of car filter, add timefilter in locations dashboard (#4647 - @swiffer)
 - fix: use same rated range calculation in updates dashboard as in battery health dashboard (#4682 - @swiffer)
+- fix: explicitly set height of home dashboard background image based on current layout & grafana css (#4681 -@swiffer)
 - fix: set $__timezone explicitly in dashboards to ensure truncation is done with respect to the Grafana timezone (#4684 - @swiffer)
 
 #### Translations
