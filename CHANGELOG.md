@@ -41,6 +41,7 @@
 - fix: improve calc for usable (now) in battery health dashboard (#4644 - @swiffer)
 - feat: make use of car filter, add timefilter in locations dashboard (#4647 - @swiffer)
 - fix: use same rated range calculation in updates dashboard as in battery health dashboard (#4682 - @swiffer)
+- fix: set $__timezone explicitly in dashboards to ensure truncation is done with respect to the Grafana timezone (#4684 - @swiffer)
 
 #### Translations
 
