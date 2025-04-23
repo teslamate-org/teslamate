@@ -13,6 +13,7 @@
 ### Improvements and bug fixes
 
 - fix(nix): non-recursive provider for ../grafana/dashboards (#4680 - @swiffer)
+- feat: Grafana 11.6.1 (#4662 - @swiffer)
 
 #### Build, CI, internal
 
