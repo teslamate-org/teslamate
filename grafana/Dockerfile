@@ -1,6 +1,6 @@
 # Ensure selecting a tag that is available for arm/v7, arm64, and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
-FROM grafana/grafana:11.6.0
+FROM grafana/grafana:11.6.1
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_AUTH_ANONYMOUS_ENABLED=false \
@@ -13,13 +13,9 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_USERS_ALLOW_SIGN_UP=false \
     GF_USERS_DEFAULT_LANGUAGE=detect \
     GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/dashboards_internal/home.json \
+    GF_DATE_FORMATS_USE_BROWSER_LOCALE=true \
     DATABASE_PORT=5432 \
     DATABASE_SSL_MODE=disable
-
-# This experimental config option is temporarily disabled
-# https://github.com/grafana/grafana/pull/102396 is merged and released in 11.6.0
-# https://github.com/grafana/grafana/pull/102750 is open and yet to be merged & released
-# ENV GF_DATE_FORMATS_USE_BROWSER_LOCALE=true
 
 USER grafana
 
