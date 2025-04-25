@@ -13,7 +13,7 @@
 ### Improvements and bug fixes
 
 - fix(nix): non-recursive provider for ../grafana/dashboards (#4680 - @swiffer)
-- feat: Grafana 11.6.1 (#4662 - @swiffer)
+- feat: use Grafana 11.6.1 (#4662 - @swiffer)
 
 #### Build, CI, internal
 
@@ -47,6 +47,8 @@
 - fix: use same rated range calculation in updates dashboard as in battery health dashboard (#4682 - @swiffer)
 - fix: explicitly set height of home dashboard background image based on current layout & grafana css (#4681 -@swiffer)
 - fix: set $\_\_timezone explicitly in dashboards to ensure truncation is done with respect to the Grafana timezone (#4684 - @swiffer)
+- fix: issues when using browser locale for date formats (#4662 - @swiffer)
+- fix: widens Date Columns to fully show date strings formatted in US locale (#4662 - @swiffer)
 
 #### Translations
 
