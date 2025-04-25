@@ -69,6 +69,7 @@ Enjoy it.
 
 - chore(issue-template): add PostgreSQL version input and checkbox for latest version check in bug report template (#4643 - @JakobLichterfeld)
 - docs: allow to add energy added to the Home Assistant's Energy tab to measure how much energy each session uses (#4659 - @alexsapran)
+- docs: update changelog with breaking changes description (#4691 - @JakobLichterfeld)
 
 ## [1.33.0] - 2025-03-28
 
