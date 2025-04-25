@@ -2,6 +2,17 @@
 
 ## [unreleased]
 
+**This is a breaking change release** TeslaMate uses PostgreSQL as database, this is an external dependency and needs to be updated by yourself. We now require PostgreSQL 16.7 or 17.3 or higher. TeslaMate will now fail to start if you are using an older version. To upgrade PostgreSQL, you need to follow these instructions:
+
+- [Backup your data](https://docs.teslamate.org/docs/maintenance/backup_restore#backup)
+- [Upgrade PostgreSQL to postgres:17](https://docs.teslamate.org/docs/maintenance/upgrading_postgres) (Yes, you will have to erase your data, which is why you need your backup in the first place.)
+- [Upgrade TeslaMate to this version](https://docs.teslamate.org/docs/upgrading)
+- [Backup your data after the upgrade](https://docs.teslamate.org/docs/maintenance/backup_restore#backup)
+
+As always, there are also many improvements. The webview now shows the TPMS values in the low pressure tooltip. We use the latest Grafana 11.6.1 and have improved the battery health dashboard and aligned the range calculation through the dashboards. Additionally time zone handling has been improved and the date formats are now based on the browser locale.
+
+Enjoy it.
+
 ### Breaking Changes
 
 - feat: check Postgres version on startup, require 16.7 / 17.3, update earthdistance extension (#4648 - @swiffer)
