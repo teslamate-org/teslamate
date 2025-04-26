@@ -26,20 +26,20 @@
   <div class="card-content">
     <div class="media is-flex mb-5">
       <div class="media-content">
-        <p class="title is-5"><%= @summary.display_name %></p>
+        <p class="title is-5">{@summary.display_name}</p>
         <%= unless is_nil(@car.model) do %>
           <p class="subtitle is-6 has-text-weight-light">
-            Model <%= @car.model %>
+            Model {@car.model}
             <%= if @car.marketing_name != nil do %>
               <span
                 class="has-tooltip-right has-tooltip-left-mobile"
                 style="border-bottom: none;"
                 data-tooltip={@car.trim_badging}
               >
-                <%= @car.marketing_name %>
+                {@car.marketing_name}
               </span>
             <% else %>
-              <%= @car.trim_badging %>
+              {@car.trim_badging}
             <% end %>
           </p>
         <% end %>
@@ -208,9 +208,9 @@
         </thead>
         <tbody style="font-variant-numeric: tabular-nums;">
           <tr>
-            <td class="has-text-weight-medium"><%= gettext("Status") %></td>
+            <td class="has-text-weight-medium">{gettext("Status")}</td>
             <td>
-              <%= raw(
+              {raw(
                 @translate_state.(@summary.state) <>
                   unless is_nil(@duration) do
                     " #{gettext("for")} " <>
@@ -221,7 +221,7 @@
                   else
                     ""
                   end
-              ) %>
+              )}
             </td>
           </tr>
           <%= if @summary.state == :charging and not is_nil(@summary.time_to_full_charge) do %>
@@ -235,29 +235,29 @@
             formatted_finish_time =
               Timex.format!(local_finish_time, "%Y-%m-%d %H:%M:%S", :strftime) %>
             <tr>
-              <td class="has-text-weight-medium"><%= gettext("Remaining Time") %></td>
+              <td class="has-text-weight-medium">{gettext("Remaining Time")}</td>
               <td>
-                <%= round(@summary.time_to_full_charge * 60 * 60)
+                {round(@summary.time_to_full_charge * 60 * 60)
                 |> Convert.sec_to_str()
                 |> Enum.reject(&String.ends_with?(&1, "s"))
-                |> Enum.join(", ") %>
+                |> Enum.join(", ")}
               </td>
             </tr>
             <tr>
-              <td class="has-text-weight-medium"><%= gettext("Expected Finish Time") %></td>
-              <td><%= formatted_finish_time %></td>
+              <td class="has-text-weight-medium">{gettext("Expected Finish Time")}</td>
+              <td>{formatted_finish_time}</td>
             </tr>
           <% end %>
           <%= unless is_nil(@summary.ideal_battery_range_km) do %>
             <tr>
               <td class="has-text-weight-medium">
-                <%= case @settings.preferred_range do
+                {case @settings.preferred_range do
                   :ideal -> gettext("Range (ideal)")
                   :rated -> gettext("Range (rated)")
-                end %>
+                end}
               </td>
               <td>
-                <%= range =
+                {range =
                   case @settings.preferred_range do
                     :ideal -> @summary.ideal_battery_range_km
                     :rated -> @summary.rated_battery_range_km
@@ -267,33 +267,33 @@
                   "#{Convert.km_to_miles(range, 1)} mi"
                 else
                   "#{range} km"
-                end %>
+                end}
               </td>
             </tr>
           <% end %>
           <%= unless is_nil(@summary.est_battery_range_km) do %>
             <tr>
-              <td class="has-text-weight-medium"><%= gettext("Range (est.)") %></td>
+              <td class="has-text-weight-medium">{gettext("Range (est.)")}</td>
               <td>
-                <%= if @settings.unit_of_length == :mi do
+                {if @settings.unit_of_length == :mi do
                   "#{Convert.km_to_miles(@summary.est_battery_range_km, 1)} mi"
                 else
                   "#{@summary.est_battery_range_km} km"
-                end %>
+                end}
               </td>
             </tr>
           <% end %>
           <%= if @summary.state == :charging do %>
             <%= unless is_nil(@summary.charge_energy_added) do %>
               <tr>
-                <td class="has-text-weight-medium"><%= gettext("Charged") %></td>
-                <td><%= @summary.charge_energy_added %> kWh</td>
+                <td class="has-text-weight-medium">{gettext("Charged")}</td>
+                <td>{@summary.charge_energy_added} kWh</td>
               </tr>
             <% end %>
             <%= unless is_nil(@summary.charger_power) do %>
               <tr>
-                <td class="has-text-weight-medium"><%= gettext("Charger Power") %></td>
-                <td><%= @summary.charger_power %> kW</td>
+                <td class="has-text-weight-medium">{gettext("Charger Power")}</td>
+                <td>{@summary.charger_power} kW</td>
               </tr>
             <% end %>
           <% end %>
@@ -301,20 +301,20 @@
           <%= if @summary.plugged_in do %>
             <%= unless @summary.scheduled_charging_start_time in [nil, :unknown] do %>
               <tr>
-                <td class="has-text-weight-medium"><%= gettext("Scheduled Charging") %></td>
+                <td class="has-text-weight-medium">{gettext("Scheduled Charging")}</td>
                 <td>
-                  <%= tag(:span,
+                  {tag(:span,
                     data: [date: @summary.scheduled_charging_start_time |> DateTime.to_iso8601()],
                     phx_hook: "LocalTime",
                     id: "scheduled_start_time_#{@car.id}"
-                  ) %>
+                  )}
                 </td>
               </tr>
             <% end %>
             <%= if not is_nil(@summary.charge_limit_soc) do %>
               <tr>
-                <td class="has-text-weight-medium"><%= gettext("Charge Limit") %></td>
-                <td><%= @summary.charge_limit_soc %>%</td>
+                <td class="has-text-weight-medium">{gettext("Charge Limit")}</td>
+                <td>{@summary.charge_limit_soc}%</td>
               </tr>
             <% end %>
           <% end %>
@@ -352,80 +352,80 @@
                  {text, tooltip}
                end).() %>
             <tr>
-              <td class="has-text-weight-medium"><%= gettext("State of Charge") %></td>
+              <td class="has-text-weight-medium">{gettext("State of Charge")}</td>
               <td>
                 <span class="has-tooltip-top has-tooltip-right-desktop" data-tooltip={tooltip}>
-                  <%= soc_text %>
+                  {soc_text}
                 </span>
               </td>
             </tr>
           <% end %>
           <%= if @summary.state == :driving and not is_nil(@summary.speed) do %>
             <tr>
-              <td class="has-text-weight-medium"><%= gettext("Speed") %></td>
+              <td class="has-text-weight-medium">{gettext("Speed")}</td>
               <td>
-                <%= if @settings.unit_of_length == :mi do
+                {if @settings.unit_of_length == :mi do
                   "#{Convert.km_to_miles(@summary.speed, 0)} mph"
                 else
                   "#{@summary.speed} km/h"
-                end %>
+                end}
               </td>
             </tr>
           <% end %>
           <%= if @summary.state not in [:asleep, :offline, :suspended] or DateTime.diff(DateTime.utc_now(), @summary.since) < 30*60 do %>
             <%= unless is_nil(@summary.outside_temp) do %>
               <tr>
-                <td class="has-text-weight-medium"><%= gettext("Outside Temperature") %></td>
+                <td class="has-text-weight-medium">{gettext("Outside Temperature")}</td>
                 <td>
-                  <%= if @settings.unit_of_temperature == :F do
+                  {if @settings.unit_of_temperature == :F do
                     "#{Convert.celsius_to_fahrenheit(@summary.outside_temp, 1)} °F"
                   else
                     "#{@summary.outside_temp} °C"
-                  end %>
+                  end}
                 </td>
               </tr>
             <% end %>
             <%= unless is_nil(@summary.inside_temp) do %>
               <tr>
-                <td class="has-text-weight-medium"><%= gettext("Inside Temperature") %></td>
+                <td class="has-text-weight-medium">{gettext("Inside Temperature")}</td>
                 <td>
-                  <%= if @settings.unit_of_temperature == :F do
+                  {if @settings.unit_of_temperature == :F do
                     "#{Convert.celsius_to_fahrenheit(@summary.inside_temp, 1)} °F"
                   else
                     "#{@summary.inside_temp} °C"
-                  end %>
+                  end}
                 </td>
               </tr>
             <% end %>
           <% end %>
           <%= unless is_nil(@summary.odometer) do %>
             <tr>
-              <td class="has-text-weight-medium"><%= gettext("Mileage") %></td>
+              <td class="has-text-weight-medium">{gettext("Mileage")}</td>
               <td>
-                <%= if @settings.unit_of_length == :mi do
+                {if @settings.unit_of_length == :mi do
                   "#{Convert.km_to_miles(@summary.odometer, 0)} mi"
                 else
                   "#{round(@summary.odometer)} km"
-                end %>
+                end}
               </td>
             </tr>
           <% end %>
           <%= unless is_nil(@summary.version) do %>
             <tr>
-              <td class="has-text-weight-medium"><%= gettext("Version") %></td>
+              <td class="has-text-weight-medium">{gettext("Version")}</td>
               <td>
-                <%= link(@summary.version,
+                {link(@summary.version,
                   to:
                     "https://www.notateslaapp.com/software-updates/version/#{@summary.version}/release-notes",
                   target: "_blank",
                   rel: "noopener noreferrer"
-                ) %>
+                )}
               </td>
             </tr>
           <% end %>
         </tbody>
       </table>
-      <%= cond do
+      {cond do
         not is_nil(@error) ->
           link(@error,
             to: "#",
@@ -457,7 +457,7 @@
 
         true ->
           nil
-      end %>
+      end}
     </div>
   </div>
 </div>
