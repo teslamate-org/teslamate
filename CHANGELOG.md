@@ -364,6 +364,7 @@ This is a hotfix release to work around the map fit problem in the new Upstream 
 #### Build, CI, internal
 
 - ci: fix coverage report env variable (#4066 - @JakobLichterfeld)
+- feat: extend version with more build info (#4069 - @JakobLichterfeld)
 
 #### Dashboards
 
