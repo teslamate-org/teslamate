@@ -15,6 +15,8 @@ As always, there are also many improvements. The webview now shows the TPMS valu
 
 Enjoy it.
 
+**Note for contributors:** The default branch was renamed to `main`. Please update your local repository accordingly (see GitHub hint when visiting [teslamate-org/teslamate](https://github.com/teslamate-org/teslamate) or [GitHub documentation](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/renaming-a-branch#updating-a-local-clone-after-a-branch-name-changes) for more information).
+
 ### Breaking Changes
 
 - feat: check Postgres version on startup, require 16.7 / 17.3, update earthdistance extension (#4648 - @swiffer)
@@ -53,6 +55,7 @@ Enjoy it.
 - build(deps): bump phoenix_ecto from 4.6.2 to 4.6.3 (#4333)
 - build(deps): update flake.lock (#4674)
 - fix(nix): update mix dependency hash in nix builds (#4695 - @JakobLichterfeld)
+- chore: rename branch to main (#4700 - @JakobLichterfeld)
 
 #### Dashboards
 

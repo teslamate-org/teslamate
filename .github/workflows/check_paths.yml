@@ -22,7 +22,7 @@ jobs:
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: filter
         with:
-          base: "master" # needed to set as a called workflow does not have direct access to repository.default_branch
+          base: "main" # needed to set as a called workflow does not have direct access to repository.default_branch
           filters: |
             githubfolder:
               - '.github/**'

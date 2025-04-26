@@ -2,7 +2,7 @@ name: Build GHCR images
 
 on:
   pull_request:
-    branches: ["master"]
+    branches: ["main"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run

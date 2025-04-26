@@ -238,7 +238,7 @@ service teslamate start
    Version: 10
    ```
 
-3. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
+3. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/main/grafana/dashboards) or use the `dashboards.sh` script:
 
    ```bash
    $ ./grafana/dashboards.sh restore
