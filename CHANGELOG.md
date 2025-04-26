@@ -55,7 +55,11 @@ Enjoy it.
 - build(deps): bump phoenix_ecto from 4.6.2 to 4.6.3 (#4333)
 - build(deps): update flake.lock (#4674)
 - fix(nix): update mix dependency hash in nix builds (#4695 - @JakobLichterfeld)
-- chore: rename branch to main (#4700 - @JakobLichterfeld)
+- chore: rename branch to main (#4700 - @JakobLichterfeld and @adriankumpf)
+- build(deps-dev): bump phoenix_live_reload from 1.5.3 to 1.6.0 (#4699)
+- build(deps): bump tortoise311 from 0.12.0 to 0.12.1 (#4698)
+- build(deps): bump nix-community/cache-nix-action from 6.1.2 to 6.1.3 (#4696)
+- build(deps): bump floki from 0.36.3 to 0.37.1 (#4697)
 
 #### Dashboards
 
