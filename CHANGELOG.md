@@ -52,7 +52,6 @@ Enjoy it.
 - build(deps): bump react from 18.3.1 to 19.1.0 and docusaurus/core from 3.4.0 to 3.7.0 in /website (#4618 - @JakobLichterfeld)
 - build(deps): bump phoenix_ecto from 4.6.2 to 4.6.3 (#4333)
 - build(deps): update flake.lock (#4674)
-- build(deps): update flake.lock (#4693)
 
 #### Dashboards
 
