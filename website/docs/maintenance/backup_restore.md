@@ -1,6 +1,7 @@
 ---
 title: Backup and Restore
 ---
+
 :::note
 If you are using `docker-compose`, you are using Docker Compose v1, which has been deprecated. Docker Compose commands refer to Docker Compose v2. Consider upgrading your docker setup, see [Migrate to Compose V2](https://docs.docker.com/compose/migrate/)
 :::
@@ -41,16 +42,10 @@ docker compose stop teslamate
 
 # Drop existing data and reinitialize (Don't forget to replace first teslamate if using different TM_DB_USER)
 docker compose exec -T database psql -U teslamate teslamate << .
-drop schema public cascade;
-create schema public;
-create extension cube;
-create extension earthdistance;
-CREATE OR REPLACE FUNCTION public.ll_to_earth(float8, float8)
-    RETURNS public.earth
-    LANGUAGE SQL
-    IMMUTABLE STRICT
-    PARALLEL SAFE
-    AS 'SELECT public.cube(public.cube(public.cube(public.earth()*cos(radians(\$1))*cos(radians(\$2))),public.earth()*cos(radians(\$1))*sin(radians(\$2))),public.earth()*sin(radians(\$1)))::public.earth';
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+CREATE EXTENSION cube WITH SCHEMA public;
+CREATE EXTENSION earthdistance WITH SCHEMA public;
 .
 
 # Restore

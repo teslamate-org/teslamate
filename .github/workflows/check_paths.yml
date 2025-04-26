@@ -1,0 +1,28 @@
+name: Check paths
+
+on:
+  workflow_call:
+    # Map the workflow outputs to job outputs
+    outputs:
+      githubfolder:
+        description: "changes to .github folder"
+        value: ${{ jobs.check_paths.githubfolder }}
+
+permissions:
+  contents: read
+
+jobs:
+  check_paths:
+    runs-on: ubuntu-24.04
+    outputs:
+      githubfolder: ${{ steps.filter.outputs.githubfolder }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: filter
+        with:
+          base: "master" # needed to set as a called workflow does not have direct access to repository.default_branch
+          filters: |
+            githubfolder:
+              - '.github/**'

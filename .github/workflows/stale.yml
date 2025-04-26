@@ -1,4 +1,4 @@
-name: 'Close Stale Issues and Pull Requests'
+name: "Close Stale Issues and Pull Requests"
 
 on:
   schedule:
@@ -10,9 +10,9 @@ permissions:
 
 jobs:
   stale:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/stale@v9
+      - uses: actions/stale@5bef64f19d7facfb25b37b414482c7164d639639 # v9.1.0
         with:
           stale-issue-message: >
             This issue has been automatically marked as stale because
@@ -26,5 +26,5 @@ jobs:
           days-before-close: 7
           days-before-pr-close: -1
           exempt-all-pr-milestones: true
-          exempt-issue-labels: 'area:grafana, area:tesla api, enhancement, kind:bug, kind:documentation, kind:idea, note:needs investigation, security, pinned'
-          exempt-pr-labels: 'awaiting-approval, area:grafana, area:tesla api, enhancement, kind:bug, kind:documentation, kind:idea, note:needs investigation, security, pinned'
+          exempt-issue-labels: "area:grafana, area:tesla api, enhancement, kind:bug, kind:documentation, kind:idea, note:needs investigation, security, pinned"
+          exempt-pr-labels: "awaiting-approval, area:grafana, area:tesla api, enhancement, kind:bug, kind:documentation, kind:idea, note:needs investigation, security, pinned"

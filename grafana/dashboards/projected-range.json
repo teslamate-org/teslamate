@@ -1,30 +1,12 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -51,7 +33,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": null,
   "links": [
     {
       "icon": "dashboard",
@@ -59,7 +40,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -71,11 +52,9 @@
       "type": "dashboards"
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -85,12 +64,6 @@
       "id": 4,
       "panels": [],
       "repeat": "car_id",
-      "targets": [
-        {
-          "datasource": "TeslaMate",
-          "refId": "A"
-        }
-      ],
       "title": "$car_id",
       "type": "row"
     },
@@ -111,6 +84,7 @@
             "axisLabel": "Projected Range",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 30,
             "gradientMode": "opacity",
@@ -144,8 +118,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -196,76 +169,69 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.1",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, [[interval]]) AS time,\n\tconvert_km((sum([[preferred_range]]_battery_range_km) / nullif(sum(coalesce(usable_battery_level,battery_level)),0) * 100)::numeric, '$length_unit') AS \"Projected [[preferred_range]] range [$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nhaving convert_km((sum([[preferred_range]]_battery_range_km) / nullif(sum(coalesce(usable_battery_level,battery_level)),0) * 100)::numeric, '$length_unit') is not null\nORDER BY\n\t1,2  DESC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, $interval) AS time,\n\tconvert_km((sum(${preferred_range}_battery_range_km) / nullif(sum(coalesce(usable_battery_level,battery_level)),0) * 100)::numeric, '$length_unit') AS \"Projected ${preferred_range} range [$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nhaving convert_km((sum(${preferred_range}_battery_range_km) / nullif(sum(coalesce(usable_battery_level,battery_level)),0) * 100)::numeric, '$length_unit') is not null\nORDER BY\n\t1,2  DESC",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         },
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km(avg(odometer)::numeric, '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id  and ideal_battery_range_km is not null\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC;",
+          "rawSql": "SELECT\n\t$__timeGroup(date, $interval) AS time,\n\tconvert_km(avg(odometer)::numeric, '$length_unit') AS \"Mileage [$length_unit]\"\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id  and ideal_battery_range_km is not null\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC;",
           "refId": "B",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "efficiency"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "cars",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Projected Range - Mileage",
@@ -288,6 +254,7 @@
             "axisLabel": "Projected Range",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 30,
             "gradientMode": "opacity",
@@ -321,8 +288,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -374,37 +340,24 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.1",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
           "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km((sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100 ) - (sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100 * (avg(battery_level)-avg(coalesce(usable_battery_level,battery_level)))/100 ), '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\",\n\tconvert_km(max([[preferred_range]]_battery_range_km) / max(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level)[$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, $interval) AS time,\n\tconvert_km((sum(${preferred_range}_battery_range_km) / sum(battery_level) * 100 ) - (sum(${preferred_range}_battery_range_km) / sum(battery_level) * 100 * (avg(battery_level)-avg(coalesce(usable_battery_level,battery_level)))/100 ), '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\",\n\tconvert_km(max(${preferred_range}_battery_range_km) / max(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level)[$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -421,47 +374,35 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         },
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "select \n\t$__timeGroup(date,[[interval]]) AS time,\n  avg(battery_level) AS \"Battery Level [%]\", avg(coalesce(usable_battery_level, battery_level)) as \"Usable Battery Level [%]\"\nfrom\n    (SELECT\n    battery_level, usable_battery_level\n        , date\n    FROM\n    positions\n    WHERE\n    car_id = $car_id AND\n    $__timeFilter(date) and ideal_battery_range_km is not null\n    UNION ALL\n    select\n    battery_level, null as usable_battery_level\n        , date\n    from charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id) as data\n\nGROUP BY\n  1\nORDER BY\n    1 ASC",
+          "rawSql": "select \n\t$__timeGroup(date, $interval) AS time,\n  avg(battery_level) AS \"Battery Level [%]\", avg(coalesce(usable_battery_level, battery_level)) as \"Usable Battery Level [%]\"\nfrom\n    (SELECT\n    battery_level, usable_battery_level\n        , date\n    FROM\n    positions\n    WHERE\n    car_id = $car_id AND\n    $__timeFilter(date) and ideal_battery_range_km is not null\n    UNION ALL\n    select\n    battery_level, null as usable_battery_level\n        , date\n    from charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id) as data\n\nGROUP BY\n  1\nORDER BY\n    1 ASC",
           "refId": "B",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "efficiency"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "cars",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Projected Range - Battery Level",
@@ -484,6 +425,7 @@
             "axisLabel": "Projected Range",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 30,
             "gradientMode": "opacity",
@@ -598,36 +540,23 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.1",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
           "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "\nSELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tconvert_km((sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100 ) - (sum([[preferred_range]]_battery_range_km) / sum(battery_level) * 100 * (avg(battery_level)-avg(coalesce(usable_battery_level,battery_level)))/100 ), '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\",\n\tconvert_km(max([[preferred_range]]_battery_range_km) / max(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level)[$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "rawSql": "\nSELECT\n\t$__timeGroup(date, $interval) AS time,\n\tconvert_km((sum(${preferred_range}_battery_range_km) / sum(battery_level) * 100 ) - (sum(${preferred_range}_battery_range_km) / sum(battery_level) * 100 * (avg(battery_level)-avg(coalesce(usable_battery_level,battery_level)))/100 ), '$length_unit') AS \"Projected Range (using usable_battery_level) [$length_unit]\",\n\tconvert_km(max(${preferred_range}_battery_range_km) / max(battery_level) * 100, '$length_unit') AS \"Projected Range (using battery_level)[$length_unit]\"\nFROM\n\t(\n    select battery_level, usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from positions\n    where\n      car_id = $car_id and $__timeFilter(date) and ideal_battery_range_km is not null\n    union all\n    select battery_level, coalesce(usable_battery_level,battery_level) as usable_battery_level, date,\n      rated_battery_range_km, ideal_battery_range_km, outside_temp\n    from charges c\n    join\n      charging_processes p ON p.id = c.charging_process_id \n    where\n      $__timeFilter(date) and p.car_id = $car_id\n    ) as data\n\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -644,55 +573,44 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         },
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date,[[interval]]) AS time,\n\tavg(convert_celsius(outside_temp, '$temp_unit')) as \"Outdoor Temperature [°$temp_unit]\"\n\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id and ideal_battery_range_km is not null\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, $interval) AS time,\n\tavg(convert_celsius(outside_temp, '$temp_unit')) as \"Outdoor Temperature [°$temp_unit]\"\n\nFROM\n\tpositions\nWHERE\n\t$__timeFilter(date) and\n\tcar_id = $car_id and ideal_battery_range_km is not null\nGROUP BY\n\t1\nORDER BY\n\t1,2  DESC",
           "refId": "B",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Projected Range - Outdoor Temp",
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "schemaVersion": 39,
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -704,22 +622,16 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -730,19 +642,12 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "length_unit",
         "options": [],
         "query": "select unit_of_length from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -753,18 +658,12 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "preferred_range",
         "options": [],
         "query": "select preferred_range from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -775,19 +674,12 @@
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "temp_unit",
         "options": [],
         "query": "select unit_of_temperature from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -798,26 +690,18 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "auto": false,
         "auto_count": 30,
         "auto_min": "10s",
         "current": {
-          "selected": false,
           "text": "6h",
           "value": "6h"
         },
@@ -858,7 +742,6 @@
         ],
         "query": "5m,15m,30m,1h,3h,6h",
         "refresh": 2,
-        "skipUrlSync": false,
         "type": "interval"
       }
     ]
@@ -867,35 +750,9 @@
     "from": "now-6M",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
   "title": "Projected Range",
   "uid": "riqUfXgRz",
-  "version": 2,
-  "weekStart": ""
+  "version": 1
 }

@@ -1,59 +1,16 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "geomap",
-      "name": "Geomap",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "10.4.0"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "xychart",
-      "name": "XY Chart",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
-        "definition": "TeslaMate|U2FsdGVkX1/cEWK+8cz7pjEKXtzJnDN7b21ZDXt1MGneFGPWTLqOPtxKmu02mJPLzi/f29I+NBHd3vi0FB8R4Xn0+GtobWDgk6VAVSBTdSNniOKO8i2WPlhRaOsl2+hG7gnZ7wrf1Th2nxR7f1uYCrbwOek0IzkfLzrkjh7gkr6inT6bbDuJqrmogZajLxmAMrQ6V+/vHxBRGiwjJhgiEeq3hM1q2h04JKkNiZ8RHbsF5Cd/xd8Q9u0JVrZzIrtnhM/SFlaApU7RtRMu8CSj1llTX7WEOj6VDZAMSf+XUAanWdk725kEPN9MNu89o2zEq5P3E3cju8IbbBdPzXLV3oVuzD6/tMnxFToIIV1E/BrpF7s2RtNa8+KJJ1PF8xgs6m+/KTD2hy+WsP0636AgObRAmYg7+qotGrgNvpNPdE0EgrB7WHYlV7R/1q66bcq6tCe51X1Un70k+zo+K6AK0o4B1H6IyMlEVuRH/Fz8QVl9aYu2ztd08RbuKJlYVKpkH+pxVETAO9MclYQ90tzE6TfwDZrQZzsAlMenr4s1ZB1OlFXjLjVjnddnUilzO76cqv4yI2THQEuyQ47nuVQ4gUbx02K59vMQhns3C01JOAYokOaSXe66Y7QYdMlk09Lf|aes-256-cbc",
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
         "type": "dashboard"
       }
     ]
@@ -68,7 +25,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -80,7 +37,6 @@
       "type": "dashboards"
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "datasource": {
@@ -101,6 +57,7 @@
             "axisSoftMax": 100,
             "axisSoftMin": 0,
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "opacity",
@@ -132,8 +89,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -388,43 +344,40 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  battery_level,\n  charger_power,\n  (case when battery_heater_on then 10 when battery_heater then 10 else 0 end) as battery_heater,\n  convert_km([[preferred_range]]_battery_range_km, '$length_unit') as range_$length_unit,\n  charger_voltage,\n  (case when charger_phases = 2 then 3 when charger_phases = 1 then 1 else 0 end) as charger_phases,\n  charger_actual_current,\n  charger_pilot_current,\n  convert_celsius(outside_temp, '$temp_unit') outside_temp_$temp_unit\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n  battery_level,\n  charger_power,\n  (case when battery_heater_on then 10 when battery_heater then 10 else 0 end) as battery_heater,\n  convert_km(${preferred_range}_battery_range_km, '$length_unit') as range_$length_unit,\n  charger_voltage,\n  (case when charger_phases = 2 then 3 when charger_phases = 1 then 1 else 0 end) as charger_phases,\n  charger_actual_current,\n  charger_pilot_current,\n  convert_celsius(outside_temp, '$temp_unit') outside_temp_$temp_unit\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\nORDER BY\n  date ASC",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Charge Details",
@@ -458,8 +411,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -477,7 +429,7 @@
       "links": [
         {
           "title": "Set cost",
-          "url": "[[base_url:raw]]/charge-cost/${charging_process_id}"
+          "url": "${base_url:raw}/charge-cost/${charging_process_id}"
         }
       ],
       "maxDataPoints": 100,
@@ -486,6 +438,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -497,7 +450,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -506,22 +459,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT cost from charging_processes where id = $charging_process_id;",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -538,17 +478,7 @@
               }
             ],
             "limit": 50
-          },
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "Cost",
@@ -579,8 +509,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -605,6 +534,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -616,41 +546,38 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT\n  COALESCE(g.name, CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city))\nFROM\n\tcharging_processes c\n\tLEFT JOIN addresses ON addresses.id = c.address_id\n\tLEFT JOIN geofences g ON g.id = geofence_id\nWHERE\n\tc.id = $charging_process_id",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -679,8 +606,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-yellow",
-                "value": null
+                "color": "semi-dark-yellow"
               }
             ]
           },
@@ -714,6 +640,7 @@
         "graphMode": "area",
         "justifyMode": "center",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -725,7 +652,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -734,21 +661,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT  coalesce(cp_added, c_added) AS \"Added\"\r\nFROM (SELECT cp.charge_energy_added AS cp_added from charging_processes cp where id = $charging_process_id) cp\r\nCROSS JOIN (SELECT max(charge_energy_added) AS c_added FROM charges WHERE charging_process_id=$charging_process_id) c",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -765,17 +680,7 @@
               }
             ],
             "limit": 50
-          },
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         },
         {
           "datasource": {
@@ -784,7 +689,6 @@
           },
           "editorMode": "code",
           "format": "table",
-          "hide": false,
           "rawQuery": true,
           "rawSql": "SELECT  charge_energy_used AS \"Used\"\r\nFROM  charging_processes where id = $charging_process_id",
           "refId": "B",
@@ -813,7 +717,6 @@
           },
           "editorMode": "code",
           "format": "table",
-          "hide": false,
           "rawQuery": true,
           "rawSql": "SELECT  CASE WHEN charge_energy_used IS NULL THEN NULL ELSE LEAST(charge_energy_added / NULLIF(charge_energy_used, 0), 1.0) * 100 END AS \"Efficiency\"\r\nFROM  charging_processes where id = $charging_process_id",
           "refId": "C",
@@ -861,8 +764,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -957,31 +859,18 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
           "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT\n\t$__time(date),\n\tunnest(ARRAY[latitude, latitude]) AS latitude,\n\tunnest(ARRAY[longitude, longitude]) AS longitude\nFROM\n\tcharging_processes c\n\tJOIN positions p ON c.position_id = p.id\nWHERE\n\t$__timeFilter(date)\n\tAND c.car_id = $car_id;",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -998,17 +887,10 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
+      "title": "",
       "type": "geomap"
     },
     {
@@ -1037,8 +919,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-yellow",
-                "value": null
+                "color": "semi-dark-yellow"
               }
             ]
           },
@@ -1059,6 +940,7 @@
         "graphMode": "area",
         "justifyMode": "center",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1070,7 +952,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -1079,21 +961,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT start_battery_level AS \"Start\" FROM  charging_processes WHERE id=$charging_process_id",
           "refId": "Start",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -1110,17 +980,7 @@
               }
             ],
             "limit": 50
-          },
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         },
         {
           "datasource": {
@@ -1129,7 +989,6 @@
           },
           "editorMode": "code",
           "format": "table",
-          "hide": false,
           "rawQuery": true,
           "rawSql": "SELECT end_battery_level - start_battery_level AS \"Added\" FROM  charging_processes WHERE id=$charging_process_id",
           "refId": "Added",
@@ -1158,7 +1017,6 @@
           },
           "editorMode": "code",
           "format": "table",
-          "hide": false,
           "rawQuery": true,
           "rawSql": "SELECT end_battery_level AS \"End\" FROM  charging_processes WHERE id=$charging_process_id\r\n",
           "refId": "End",
@@ -1200,8 +1058,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1221,6 +1078,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -1233,7 +1091,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -1242,22 +1100,9 @@
           },
           "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT $__timeGroupAlias(date,$__interval),\r\navg(\r\n    case when charger_phases >= 1 then (\r\n        case when charger_phases = 2 then 3 when charger_phases = 1 then 1 else 0 end)\r\n    * charger_actual_current * charger_voltage / 1000.0 else charger_power end) as \"Power\" \r\nFROM charges WHERE charging_process_id = $charging_process_id\r\nGROUP BY 1 ORDER BY 1 ",
           "refId": "Current",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -1274,18 +1119,10 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
-      "title": "Average Power",
+      "title": "Ø Power",
       "type": "stat"
     },
     {
@@ -1304,8 +1141,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -1349,6 +1185,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -1361,7 +1198,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -1370,22 +1207,9 @@
           },
           "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT $__timeGroupAlias(date,$__interval),\r\nconvert_celsius(avg(outside_temp), '$temp_unit') as outside_temp_$temp_unit \r\nFROM charges WHERE charging_process_id = $charging_process_id\r\nGROUP BY 1 ORDER BY 1 ",
           "refId": "Current",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -1402,18 +1226,10 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
-      "title": "Average Outdoor Temperature",
+      "title": "Ø Outdoor Temperature",
       "type": "stat"
     },
     {
@@ -1433,8 +1249,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange",
-                "value": null
+                "color": "orange"
               }
             ]
           }
@@ -1514,6 +1329,7 @@
         "graphMode": "area",
         "justifyMode": "center",
         "orientation": "vertical",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1526,41 +1342,18 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "Real",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "groupBy": [],
-          "hide": false,
-          "measurement": "km",
-          "metricColumn": "none",
-          "orderByTime": "ASC",
-          "policy": "default",
           "rawQuery": true,
-          "rawSql": "SELECT convert_km(start_[[preferred_range]]_range_km, '$length_unit') AS start_$length_unit FROM charging_processes WHERE id=$charging_process_id ",
+          "rawSql": "SELECT convert_km(start_${preferred_range}_range_km, '$length_unit') AS start_$length_unit FROM charging_processes WHERE id=$charging_process_id ",
           "refId": "Initial Range",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -1577,49 +1370,18 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         },
         {
-          "alias": "Real",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "groupBy": [],
-          "hide": false,
-          "measurement": "km",
-          "metricColumn": "none",
-          "orderByTime": "ASC",
-          "policy": "default",
           "rawQuery": true,
-          "rawSql": "SELECT convert_km(end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km, '$length_unit') AS added_$length_unit FROM charging_processes WHERE id=$charging_process_id ",
+          "rawSql": "SELECT convert_km(end_${preferred_range}_range_km - start_${preferred_range}_range_km, '$length_unit') AS added_$length_unit FROM charging_processes WHERE id=$charging_process_id ",
           "refId": "Range Added",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -1636,49 +1398,18 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         },
         {
-          "alias": "Estimated",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "groupBy": [],
-          "hide": false,
-          "measurement": "km",
-          "metricColumn": "none",
-          "orderByTime": "ASC",
-          "policy": "default",
           "rawQuery": true,
-          "rawSql": "SELECT convert_km(end_[[preferred_range]]_range_km, '$length_unit') AS end_$length_unit FROM charging_processes WHERE id=$charging_process_id",
+          "rawSql": "SELECT convert_km(end_${preferred_range}_range_km, '$length_unit') AS end_$length_unit FROM charging_processes WHERE id=$charging_process_id",
           "refId": "End Range",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -1695,15 +1426,7 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "Ranges ($preferred_range)",
@@ -1725,14 +1448,17 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "fillOpacity": 50,
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
+            "pointShape": "circle",
             "pointSize": {
               "fixed": 5
             },
+            "pointStrokeWidth": 1,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -1743,8 +1469,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1773,6 +1498,13 @@
               {
                 "id": "custom.lineWidth",
                 "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
               }
             ]
           }
@@ -1792,52 +1524,67 @@
           "placement": "bottom",
           "showLegend": false
         },
+        "mapping": "manual",
         "series": [
           {
-            "pointColor": {},
-            "x": "SOC [%]",
-            "y": "Power [kW]"
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 0
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "SOC [%]"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "Power [kW]"
+              }
+            }
           },
           {
-            "pointColor": {
-              "fixed": "blue"
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 1
+              }
             },
-            "x": "avg SOC [%]",
-            "y": "avg Power [kW]"
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "SOC [%]"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "Power [kW]"
+              }
+            }
           }
         ],
-        "seriesMapping": "manual",
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "7.5.11",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  battery_level as \"SOC [%]\",\n  charger_power  as \"Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  battery_level as \"SOC [%]\",\n  charger_power as \"Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nORDER BY\n  date ASC",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -1854,76 +1601,62 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         },
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  battery_level as \"avg SOC [%]\",\n  avg(charger_power) as \"avg Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nGROUP BY\n  battery_level, fast_charger_present\nORDER BY\n  battery_level ASC  ",
+          "rawSql": "SELECT\n  battery_level as \"SOC [%]\",\n  avg(charger_power) as \"Power [kW]\"\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date)\n AND p.car_id = $car_id\n AND charger_power > 0\nGROUP BY\n  battery_level, fast_charger_present\nORDER BY\n  battery_level ASC  ",
           "refId": "B",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "odometer"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "positions",
-          "timeColumn": "date",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Charging curve",
       "type": "xychart"
     }
   ],
-  "schemaVersion": 39,
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 41,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": false,
           "text": "NULL",
           "value": "NULL"
         },
         "hide": 2,
-        "label": "",
         "name": "charging_process_id",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "NULL",
             "value": "NULL"
           }
         ],
         "query": "NULL",
-        "skipUrlSync": false,
         "type": "textbox"
       },
       {
@@ -1935,19 +1668,12 @@
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "temp_unit",
         "options": [],
         "query": "select unit_of_temperature from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1955,22 +1681,15 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
-        "hide": 0,
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "includeAll": false,
         "label": "Car",
-        "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1981,18 +1700,12 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "length_unit",
         "options": [],
         "query": "select unit_of_length from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2003,18 +1716,12 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "preferred_range",
         "options": [],
         "query": "select preferred_range from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2025,18 +1732,12 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       }
     ]
   },
@@ -2044,34 +1745,9 @@
     "from": "now-12h",
     "to": "now"
   },
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
   "title": "Charge Details",
   "uid": "BHhxFeZRz",
-  "version": 3,
-  "weekStart": ""
+  "version": 1
 }

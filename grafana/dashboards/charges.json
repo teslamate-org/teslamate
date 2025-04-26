@@ -1,53 +1,16 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "text",
-      "name": "Text",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "definition": "TeslaMate|U2FsdGVkX1/cEWK+8cz7pjEKXtzJnDN7b21ZDXt1MGneFGPWTLqOPtxKmu02mJPLzi/f29I+NBHd3vi0FB8R4Xn0+GtobWDgk6VAVSBTdSNniOKO8i2WPlhRaOsl2+hG7gnZ7wrf1Th2nxR7f1uYCrbwOek0IzkfLzrkjh7gkr6inT6bbDuJqrmogZajLxmAMrQ6V+/vHxBRGiwjJhgiEeq3hM1q2h04JKkNiZ8RHbsF5Cd/xd8Q9u0JVrZzIrtnhM/SFlaApU7RtRMu8CSj1llTX7WEOj6VDZAMSf+XUAanWdk725kEPN9MNu89o2zEq5P3E3cju8IbbBdPzXLV3oVuzD6/tMnxFToIIV1E/BrpF7s2RtNa8+KJJ1PF8xgs6m+/KTD2hy+WsP0636AgObRAmYg7+qotGrgNvpNPdE0EgrB7WHYlV7R/1q66bcq6tCe51X1Un70k+zo+K6AK0o4B1H6IyMlEVuRH/Fz8QVl9aYu2ztd08RbuKJlYVKpkH+pxVETAO9MclYQ90tzE6TfwDZrQZzsAlMenr4s1ZB1OlFXjLjVjnddnUilzO76cqv4yI2THQEuyQ47nuVQ4gUbx02K59vMQhns3C01JOAYokOaSXe66Y7QYdMlk09Lf|aes-256-cbc",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
         "type": "dashboard"
       }
     ]
@@ -55,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [
     {
       "icon": "dashboard",
@@ -63,7 +25,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -75,873 +37,14 @@
       "type": "dashboards"
     }
   ],
-  "liveNow": false,
   "panels": [
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
-      },
-      "description": "Browse your charges by Geofence, Location, Type, Cost and Duration in order to have an accurate Total of kWh added and their respective costs",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "center",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": false,
-            "inspect": false,
-            "minWidth": 150
-          },
-          "decimals": 2,
-          "displayName": "",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "start_date"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Date"
-              },
-              {
-                "id": "unit",
-                "value": "dateTimeAsLocal"
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": false,
-                    "title": "View charge details",
-                    "url": "d/BHhxFeZRz?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric}"
-                  }
-                ]
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 160
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "charge_energy_added"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Added"
-              },
-              {
-                "id": "unit",
-                "value": "kwatth"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 80
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "start_battery_level"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "% Start"
-              },
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "decimals",
-                "value": 0
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 62
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "end_battery_level"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "% End"
-              },
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "decimals",
-                "value": 0
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 62
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "duration_min"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Duration"
-              },
-              {
-                "id": "unit",
-                "value": "m"
-              },
-              {
-                "id": "decimals",
-                "value": 1
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 75
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "outside_temp_avg_c"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Temp"
-              },
-              {
-                "id": "unit",
-                "value": "celsius"
-              },
-              {
-                "id": "decimals",
-                "value": 1
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "#C0D8FF",
-                      "value": null
-                    },
-                    {
-                      "color": "#C8F2C2",
-                      "value": 10
-                    },
-                    {
-                      "color": "#FFA6B0",
-                      "value": 20
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 70
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "cost"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Cost"
-              },
-              {
-                "id": "unit",
-                "value": "none"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": false,
-                    "title": "Set Cost",
-                    "url": "[[base_url:raw]]/charge-cost/${__data.fields.id.numeric}"
-                  }
-                ]
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "noValue",
-                "value": "-"
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 65
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*_ts/"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "id"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "address"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Location"
-              },
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "Create or edit geo-fence",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.path}"
-                  }
-                ]
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 300
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "distance_km"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Driven"
-              },
-              {
-                "id": "unit",
-                "value": "lengthkm"
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "decimals",
-                "value": 0
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 90
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "charge_energy_added_per_hour"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "kW"
-              },
-              {
-                "id": "unit",
-                "value": "kwatt"
-              },
-              {
-                "id": "decimals",
-                "value": 1
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "#96D98D",
-                      "value": null
-                    },
-                    {
-                      "color": "#56A64B",
-                      "value": 20
-                    },
-                    {
-                      "color": "#37872D",
-                      "value": 55
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 70
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "range_added_per_hour_km"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Range added"
-              },
-              {
-                "id": "unit",
-                "value": "velocitykmh"
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "decimals",
-                "value": 0
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 120
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "outside_temp_avg_f"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Temp"
-              },
-              {
-                "id": "unit",
-                "value": "fahrenheit"
-              },
-              {
-                "id": "decimals",
-                "value": 1
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 70
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "super-light-blue",
-                      "value": null
-                    },
-                    {
-                      "color": "super-light-green",
-                      "value": 50
-                    },
-                    {
-                      "color": "super-light-red",
-                      "value": 68
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "distance_mi"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Driven"
-              },
-              {
-                "id": "unit",
-                "value": "lengthmi"
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "decimals",
-                "value": 0
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 90
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "range_added_per_hour_mi"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Range added"
-              },
-              {
-                "id": "unit",
-                "value": "velocitymph"
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "decimals",
-                "value": 0
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 120
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "path"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "charge_energy_used"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Used"
-              },
-              {
-                "id": "unit",
-                "value": "kwatth"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 85
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "charging_efficiency"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Efficiency"
-              },
-              {
-                "id": "unit",
-                "value": "percentunit"
-              },
-              {
-                "id": "custom.align",
-                "value": "auto"
-              },
-              {
-                "id": "decimals",
-                "value": 0
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "gauge"
-                }
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "continuous-RdYlGr"
-                }
-              },
-              {
-                "id": "max",
-                "value": 1
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 100
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "car_id"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "end_date"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "cost_per_kwh"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "none"
-              },
-              {
-                "id": "displayName",
-                "value": "Cost/kWh"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "noValue",
-                "value": "-"
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 80
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "charge_type"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Type"
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "super-light-blue",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 40
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Date"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 184
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Type"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 62
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 19,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 6,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "11.0.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          },
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date) - 10) * 1000) AS start_date_ts,\n        (round(extract(epoch FROM end_date) + 10) * 1000) AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, nullif(CONCAT_WS(' ', addresses.road, addresses.house_number), '')), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        cp.charge_energy_added,\n        cp.charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        start_[[preferred_range]]_range_km,\n        end_[[preferred_range]]_range_km,\n        outside_temp_avg,\n        cp.id,\n        lag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        cp.car_id,\n        cost,\n        max(c.charger_voltage) as max_charger_voltage,\n        CASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC' ELSE 'AC' END AS charge_type\n    FROM\n        charging_processes cp\n\t  LEFT JOIN charges c ON cp.id = c.charging_process_id\n    LEFT JOIN positions p ON p.id = cp.position_id\n    LEFT JOIN cars ON cars.id = cp.car_id\n    LEFT JOIN addresses ON addresses.id = cp.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\nWHERE \n    cp.car_id = $car_id AND\n    $__timeFilter(start_date) AND\n    (cp.charge_energy_added IS NULL OR cp.charge_energy_added > 0) AND\n    ('${geofence:pipe}' = '-1' OR geofence_id in ($geofence))\nGROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15,16,17,18,21,p.odometer\nORDER BY\n    start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id,\n    id,\n    -- Columns\n    start_date,\n    end_date,\n    COALESCE(geofence_name, address) as address,    \n    charge_type,\n    duration_min,\n    cost,\n    cost / NULLIF(greatest(charge_energy_added, charge_energy_used), 0) as cost_per_kwh,\n    charge_energy_added,\n    charge_energy_used,\n    CASE WHEN charge_energy_used IS NULL THEN NULL ELSE LEAST(charge_energy_added / NULLIF(charge_energy_used, 0), 1.0) END as charging_efficiency,\n    convert_celsius(outside_temp_avg, '$temp_unit') AS outside_temp_avg_$temp_unit,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    convert_km((end_[[preferred_range]]_range_km - start_[[preferred_range]]_range_km) * 60 / NULLIF (duration_min, 0), '$length_unit') AS range_added_per_hour_$length_unit,\n    start_battery_level,\n    end_battery_level,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit\n FROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL)\n    AND duration_min >= '$min_duration_min'\n    AND CASE WHEN $cost = 0 THEN (cost IS NULL OR cost >= 0) ELSE cost >= $cost END\n    AND charge_type = ANY(CASE WHEN array_to_string(ARRAY[$charge_type], ',') = 'DC' THEN ARRAY['DC'] WHEN array_to_string(ARRAY[$charge_type], ',') = 'AC' THEN ARRAY['AC'] ELSE ARRAY['DC', 'AC'] END)\n    AND address ILIKE '%$location%'\nORDER BY\n  start_date DESC;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Charges: $charge_type",
-      "type": "table"
-    },
     {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 0
       },
       "id": 16,
       "panels": [],
@@ -973,32 +76,41 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
+                "color": "text"
               }
             ]
           },
           "unit": "kwatth"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_energy_added"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total Energy added:"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 4,
+        "h": 2,
         "w": 6,
         "x": 0,
-        "y": 20
+        "y": 1
       },
       "id": 10,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "none",
+        "colorMode": "background",
         "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "sum"
@@ -1010,7 +122,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -1021,7 +133,7 @@
           "refId": "A"
         }
       ],
-      "title": "Energy added",
+      "title": "",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -1062,32 +174,41 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
+                "color": "text"
               }
             ]
           },
           "unit": "kwatth"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_energy_used"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total Energy used:"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 4,
+        "h": 2,
         "w": 6,
         "x": 6,
-        "y": 20
+        "y": 1
       },
-      "id": 12,
+      "id": 20,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "none",
+        "colorMode": "background",
         "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "sum"
@@ -1099,7 +220,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -1110,7 +231,7 @@
           "refId": "A"
         }
       ],
-      "title": "Energy used",
+      "title": "",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -1152,32 +273,41 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
+                "color": "text"
               }
             ]
           },
           "unit": "none"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cost"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total Charging Cost:"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 4,
+        "h": 2,
         "w": 6,
         "x": 12,
-        "y": 20
+        "y": 1
       },
       "id": 14,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "none",
+        "colorMode": "background",
         "graphMode": "none",
-        "justifyMode": "auto",
+        "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "sum"
@@ -1189,7 +319,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -1200,7 +330,7 @@
           "refId": "A"
         }
       ],
-      "title": "Cost",
+      "title": "",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -1243,32 +373,41 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
+                "color": "text"
               }
             ]
           },
           "unit": "m"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration_min"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Ø Duration:"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 4,
+        "h": 2,
         "w": 6,
         "x": 18,
-        "y": 20
+        "y": 1
       },
       "id": 15,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "none",
+        "colorMode": "background",
         "graphMode": "none",
-        "justifyMode": "auto",
+        "justifyMode": "center",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -1280,7 +419,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -1291,7 +430,7 @@
           "refId": "A"
         }
       ],
-      "title": "Average Duration",
+      "title": "",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -1308,12 +447,766 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Browse your charges by Geofence, Location, Type, Cost and Duration in order to have an accurate Total of kWh added and their respective costs",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false,
+            "minWidth": 150
+          },
+          "displayName": "",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_date"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Date"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "View charge details",
+                    "url": "/d/BHhxFeZRz/charge-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 210
+              },
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_energy_added"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Energy added"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 115
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_battery_level"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "% Start"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end_battery_level"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "% End"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 65
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration_min"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Duration"
+              },
+              {
+                "id": "unit",
+                "value": "m"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "outside_temp_avg_c"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Temp"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#C0D8FF"
+                    },
+                    {
+                      "color": "#C8F2C2",
+                      "value": 10
+                    },
+                    {
+                      "color": "#FFA6B0",
+                      "value": 20
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cost"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cost"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Set Cost",
+                    "url": "${base_url:raw}/charge-cost/${__data.fields.id.numeric}"
+                  }
+                ]
+              },
+              {
+                "id": "noValue",
+                "value": "-"
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_ts/"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "id"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "address"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Location"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Create or edit geo-fence",
+                    "url": "${base_url:raw}/geo-fences/${__data.fields.path}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "range_added_km"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Range gained"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 120
+              },
+              {
+                "id": "unit",
+                "value": "lengthkm"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "range_added_mi"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Range gained"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 120
+              },
+              {
+                "id": "unit",
+                "value": "lengthmi"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_energy_added_per_hour"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Ø Power"
+              },
+              {
+                "id": "unit",
+                "value": "kwatt"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#96D98D"
+                    },
+                    {
+                      "color": "#56A64B",
+                      "value": 20
+                    },
+                    {
+                      "color": "#37872D",
+                      "value": 55
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "range_added_per_hour_km"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Ø Charge rate"
+              },
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 120
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "outside_temp_avg_f"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Temp"
+              },
+              {
+                "id": "unit",
+                "value": "fahrenheit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 70
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "super-light-blue"
+                    },
+                    {
+                      "color": "super-light-green",
+                      "value": 50
+                    },
+                    {
+                      "color": "super-light-red",
+                      "value": 68
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "range_added_per_hour_mi"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Ø Charge rate"
+              },
+              {
+                "id": "unit",
+                "value": "velocitymph"
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 120
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "path"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_energy_used"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Energy used"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 105
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charging_efficiency"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Efficiency"
+              },
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-RdYlGr"
+                }
+              },
+              {
+                "id": "max",
+                "value": 1
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "car_id"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end_date"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cost_per_kwh"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cost / kWh"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "noValue",
+                "value": "-"
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge_type"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Type"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 40
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "AC": {
+                        "color": "green",
+                        "index": 0
+                      },
+                      "DC": {
+                        "color": "light-orange",
+                        "index": 1
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "odometer_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "km"
+              },
+              {
+                "id": "displayName",
+                "value": "Odometer"
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 95
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "odometer_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "mi"
+              },
+              {
+                "id": "displayName",
+                "value": "Odometer"
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 95
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 6,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date) - 10) * 1000) AS start_date_ts,\n        (round(extract(epoch FROM end_date) + 10) * 1000) AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, nullif(CONCAT_WS(' ', addresses.road, addresses.house_number), '')), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        cp.charge_energy_added,\n        cp.charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        end_${preferred_range}_range_km - start_${preferred_range}_range_km as range_added,\n        outside_temp_avg,\n        cp.id,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        cp.car_id,\n        cost,\n        max(c.charger_voltage) as max_charger_voltage,\n        CASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC' ELSE 'AC' END AS charge_type,\n        p.odometer as odometer\n    FROM\n        charging_processes cp\n\tLEFT JOIN charges c ON cp.id = c.charging_process_id\n    LEFT JOIN positions p ON p.id = cp.position_id\n    LEFT JOIN cars ON cars.id = cp.car_id\n    LEFT JOIN addresses ON addresses.id = cp.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\n    WHERE \n        cp.car_id = $car_id AND\n        $__timeFilter(start_date) AND\n        (cp.charge_energy_added IS NULL OR cp.charge_energy_added > 0) AND\n        ('${geofence:pipe}' = '-1' OR geofence_id in ($geofence))\n    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, p.odometer\n    ORDER BY\n        start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id,\n    id,\n    -- Columns\n    start_date,\n    end_date,\n    COALESCE(geofence_name, address) as address,    \n    charge_type,\n    duration_min,\n    cost,\n    cost / NULLIF(greatest(charge_energy_added, charge_energy_used), 0) as cost_per_kwh,\n    charge_energy_added,\n    greatest(charge_energy_used, charge_energy_added) as charge_energy_used,\n    charge_energy_added / greatest(charge_energy_used, charge_energy_added) as charging_efficiency,\n    convert_celsius(outside_temp_avg, '$temp_unit') AS outside_temp_avg_$temp_unit,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    convert_km(range_added * 60 / NULLIF (duration_min, 0), '$length_unit') AS range_added_per_hour_$length_unit,\n    convert_km(range_added, '$length_unit') AS range_added_$length_unit,\n    start_battery_level,\n    end_battery_level,\n    convert_km(odometer::numeric, '$length_unit') AS odometer_$length_unit\n FROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL)\n    AND duration_min >= '$min_duration_min'\n    AND \n        CASE\n            WHEN '$cost' !~ '^[0-9]+$' THEN TRUE \n            ELSE cost >= COALESCE(NULLIF('$cost', '')::NUMERIC, 0) \n        END\n    AND charge_type = ANY(CASE WHEN array_to_string(ARRAY[$charge_type], ',') = 'DC' THEN ARRAY['DC'] WHEN array_to_string(ARRAY[$charge_type], ',') = 'AC' THEN ARRAY['AC'] ELSE ARRAY['DC', 'AC'] END)\n    AND address ILIKE '%$location%'\nORDER BY\n  start_date DESC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Charger type: $charge_type",
+      "type": "table"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 22
       },
       "id": 18,
       "panels": [],
@@ -1321,15 +1214,15 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
       },
       "gridPos": {
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 23
       },
       "id": 19,
       "options": {
@@ -1341,41 +1234,8 @@
         "content": "From here you can check if you have \nincomplete data of **Charges** (charges without ending date)\nIf so, you may follow the official \nguide by <a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>",
         "mode": "markdown"
       },
-      "pluginVersion": "11.0.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  start_date AS \"time\",\n  start_km\nFROM drives\nWHERE\n  $__timeFilter(start_date)\nORDER BY 1",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "start_km"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "drives",
-          "timeColumn": "start_date",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
+      "pluginVersion": "11.6.1",
+      "title": "",
       "type": "text"
     },
     {
@@ -1402,8 +1262,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -1411,10 +1270,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 14,
+        "h": 6,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 25
       },
       "id": 17,
       "options": {
@@ -1430,47 +1289,44 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT id as \"Charging Process ID\", start_date, end_date, charge_energy_added, charge_energy_used, start_battery_level, end_battery_level, duration_min\nFROM charging_processes \nWHERE car_id = $car_id AND end_date is null\nORDER BY start_date DESC\n",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Incomplete Charges 🪫",
       "type": "table"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "schemaVersion": 39,
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -1482,22 +1338,15 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
-        "hide": 0,
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "includeAll": false,
         "label": "Car",
-        "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1508,19 +1357,12 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "length_unit",
         "options": [],
         "query": "select unit_of_length from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1531,19 +1373,12 @@
         "definition": "select unit_of_temperature from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "temp_unit",
         "options": [],
         "query": "select unit_of_temperature from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1554,18 +1389,12 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "preferred_range",
         "options": [],
         "query": "select preferred_range from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1576,18 +1405,12 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "allValue": "-1",
@@ -1597,7 +1420,6 @@
           "uid": "TeslaMate"
         },
         "definition": "SELECT name AS __text, id AS __value FROM geofences ORDER BY name COLLATE \"C\" ASC;",
-        "hide": 0,
         "includeAll": true,
         "label": "Geofence",
         "multi": true,
@@ -1606,21 +1428,14 @@
         "query": "SELECT name AS __text, id AS __value FROM geofences ORDER BY name COLLATE \"C\" ASC;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {
-          "selected": false,
           "text": "",
           "value": ""
         },
         "description": "Type a text contained in Location",
-        "hide": 0,
         "label": "Location",
         "name": "location",
         "options": [
@@ -1631,31 +1446,15 @@
           }
         ],
         "query": "",
-        "skipUrlSync": false,
         "type": "textbox"
       },
       {
-        "allValue": "",
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "hide": 0,
+        "current": {},
         "includeAll": true,
         "label": "Type",
         "multi": true,
         "name": "charge_type",
         "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
           {
             "selected": false,
             "text": "AC",
@@ -1668,37 +1467,30 @@
           }
         ],
         "query": "AC, DC",
-        "queryValue": "",
-        "skipUrlSync": false,
         "type": "custom"
       },
       {
         "current": {
-          "selected": false,
-          "text": "0",
-          "value": "0"
+          "text": "",
+          "value": ""
         },
-        "hide": 0,
         "label": "Cost >=",
         "name": "cost",
         "options": [
           {
             "selected": true,
-            "text": "0",
-            "value": "0"
+            "text": "",
+            "value": ""
           }
         ],
-        "query": "0",
-        "skipUrlSync": false,
+        "query": "",
         "type": "textbox"
       },
       {
         "current": {
-          "selected": true,
           "text": "0",
           "value": "0"
         },
-        "hide": 0,
         "label": "Duration (minutes) >=",
         "name": "min_duration_min",
         "options": [
@@ -1709,7 +1501,6 @@
           }
         ],
         "query": "0",
-        "skipUrlSync": false,
         "type": "textbox"
       }
     ]
@@ -1718,35 +1509,9 @@
     "from": "now-3M",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
   "title": "Charges",
   "uid": "TSmNYvRRk",
-  "version": 4,
-  "weekStart": ""
+  "version": 1
 }

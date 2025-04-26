@@ -1,14 +1,15 @@
 name: Purge PR images
 
 on:
-  pull_request_target:
+  workflow_call:
+  pull_request:
     types:
       - closed
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
-      - "!.github/workflows/**" # Important: Exclude PRs related to .github from auto-run
-
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 
 permissions:
   contents: read
@@ -16,27 +17,16 @@ permissions:
 
 jobs:
   check_paths:
-    runs-on: ubuntu-latest
-    outputs:
-      githubfolder: ${{ steps.filter.outputs.githubfolder }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: dorny/paths-filter@v3.0.2
-        id: filter
-        with:
-          filters: |
-            githubfolder:
-              - '.github/**'
+    uses: ./.github/workflows/check_paths.yml
 
   purge-pr-package:
     name: Delete images from ghcr.io when PR is closed
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false'
-    runs-on: ubuntu-latest
+    if: needs.check_paths.outputs.githubfolder != 'true'
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: chipkent/action-cleanup-package@v1.0.3
+      - uses: chipkent/action-cleanup-package@1316a66015b82d745b57acbb6c570f2bb1d108f9 # v1.0.3
         id: cleanup
         continue-on-error: true
         with:
@@ -44,7 +34,7 @@ jobs:
           tag: pr-${{ github.event.pull_request.number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/delete-package-versions@v5
+      - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
         if: job.steps.cleanup.status == success()
         name: Delete untagged images from ghcr.io
         continue-on-error: true

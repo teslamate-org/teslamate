@@ -12,7 +12,7 @@ msgstr ""
 
 ## From Ecto.Changeset.cast/4
 msgid "can't be blank"
-msgstr "no puede estar vacío"
+msgstr "no puede estar en blanco"
 
 ## From Ecto.Changeset.unique_constraint/3
 msgid "has already been taken"

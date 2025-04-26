@@ -1,47 +1,16 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "state-timeline",
-      "name": "State timeline",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:427",
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
         "type": "dashboard"
       }
     ]
@@ -49,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [
     {
       "icon": "dashboard",
@@ -57,7 +25,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -69,10 +37,9 @@
       "type": "dashboards"
     }
   ],
-  "liveNow": false,
   "panels": [
     {
-      "datasource": "TeslaMate",
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -98,8 +65,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -125,6 +91,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -136,38 +103,34 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "select $__time(start_date), state from states where car_id = $car_id order by start_date desc limit 1;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select $__time(start_date), state from states where car_id = $car_id order by start_date desc limit 1;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
@@ -187,8 +150,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -214,6 +176,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -225,38 +188,34 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "select $__time(start_date), state from states where car_id = $car_id order by start_date desc limit 1;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select $__time(start_date), state from states where car_id = $car_id order by start_date desc limit 1;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
@@ -288,8 +247,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -315,6 +273,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -326,38 +285,34 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH  FROM (max(end_date) - min(start_date))) / 60), 1 as time from drives where car_id = $car_id;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH  FROM (max(end_date) - min(start_date))) / 60), 1 as time from drives where car_id = $car_id;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
@@ -375,6 +330,7 @@
             "mode": "continuous-GrYlRd"
           },
           "custom": {
+            "axisPlacement": "auto",
             "fillOpacity": 100,
             "hideFrom": {
               "legend": false,
@@ -435,8 +391,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -462,42 +417,40 @@
         "rowHeight": 0.9,
         "showValue": "auto",
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH states AS (\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [2, 0]) AS state\n  FROM charging_processes\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [1, 0]) AS state\n  FROM drives\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    start_date AS date,\n    CASE\n      WHEN state = 'offline' THEN 3\n      WHEN state = 'asleep' THEN 4\n      WHEN state = 'online' THEN 5\n    END AS state\n  FROM states\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [6, 0]) AS state\n  FROM updates\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND\n  ($__timeFrom() :: timestamp - interval '30 day') < date AND \n  date < ($__timeTo() :: timestamp + interval '30 day') \nORDER BY date ASC, state ASC;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH states AS (\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [2, 0]) AS state\n  FROM charging_processes\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [1, 0]) AS state\n  FROM drives\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    start_date AS date,\n    CASE\n      WHEN state = 'offline' THEN 3\n      WHEN state = 'asleep' THEN 4\n      WHEN state = 'online' THEN 5\n    END AS state\n  FROM states\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [6, 0]) AS state\n  FROM updates\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND\n  ($__timeFrom() :: timestamp - interval '30 day') < date AND \n  date < ($__timeTo() :: timestamp + interval '30 day') \nORDER BY date ASC, state ASC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
@@ -505,8 +458,9 @@
       "type": "state-timeline"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 39,
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -518,22 +472,16 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -544,19 +492,12 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       }
     ]
   },
@@ -564,35 +505,9 @@
     "from": "now-2d",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
   "title": "States",
   "uid": "xo4BNRkZz",
-  "version": 1,
-  "weekStart": ""
+  "version": 1
 }

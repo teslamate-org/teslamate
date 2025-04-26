@@ -1,40 +1,16 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
         "type": "dashboard"
       }
     ]
@@ -42,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [
     {
       "icon": "dashboard",
@@ -50,7 +25,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -62,11 +37,9 @@
       "type": "dashboards"
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -101,8 +74,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -132,16 +104,13 @@
                   {
                     "targetBlank": false,
                     "title": "",
-                    "url": "d/zm7wN6Zgz?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}"
+                    "url": "/d/zm7wN6Zgz/drive-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}"
                   }
                 ]
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 180
+                "id": "custom.minWidth",
+                "value": 210
               }
             ]
           },
@@ -160,11 +129,8 @@
                 "value": "dateTimeAsLocal"
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 180
+                "id": "custom.minWidth",
+                "value": 210
               }
             ]
           },
@@ -176,7 +142,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "TR Loss"
+                "value": "Range loss"
               },
               {
                 "id": "unit",
@@ -187,11 +153,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 95
               }
             ]
           },
@@ -220,16 +183,12 @@
                 }
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "thresholds",
                 "value": {
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "rgb(133, 142, 133)",
-                      "value": null
+                      "color": "rgb(133, 142, 133)"
                     },
                     {
                       "color": "#56A64B",
@@ -252,7 +211,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "TR Loss / h"
+                "value": "Ø Range loss / h"
               },
               {
                 "id": "unit",
@@ -263,11 +222,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 135
               }
             ]
           },
@@ -277,17 +233,6 @@
               "options": "/.*_ts/"
             },
             "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -315,16 +260,12 @@
                 }
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "thresholds",
                 "value": {
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "#FF7383",
-                      "value": null
+                      "color": "#FF7383"
                     },
                     {
                       "color": "#FFB357",
@@ -342,7 +283,7 @@
                 "value": 0
               },
               {
-                "id": "custom.width",
+                "id": "custom.minWidth",
                 "value": 75
               }
             ]
@@ -355,7 +296,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "kWh"
+                "value": "Energy drained"
               },
               {
                 "id": "unit",
@@ -366,11 +307,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 100
+                "id": "custom.minWidth",
+                "value": 125
               }
             ]
           },
@@ -382,7 +320,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø-Power"
+                "value": "Ø Power"
               },
               {
                 "id": "unit",
@@ -393,10 +331,7 @@
                 "value": 1
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
+                "id": "custom.minWidth",
                 "value": 80
               }
             ]
@@ -409,7 +344,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "TR Loss / h"
+                "value": "Ø Range loss / h"
               },
               {
                 "id": "unit",
@@ -420,11 +355,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 135
               }
             ]
           },
@@ -436,7 +368,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "TR Loss"
+                "value": "Range loss"
               },
               {
                 "id": "unit",
@@ -447,11 +379,8 @@
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 90
+                "id": "custom.minWidth",
+                "value": 95
               }
             ]
           },
@@ -463,18 +392,15 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "SOC"
+                "value": "SoC Diff"
               },
               {
                 "id": "unit",
                 "value": "percent"
               },
               {
-                "id": "custom.align"
-              },
-              {
-                "id": "custom.width",
-                "value": 65
+                "id": "custom.minWidth",
+                "value": 80
               }
             ]
           },
@@ -523,7 +449,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 5
+                "value": 50
               }
             ]
           }
@@ -548,38 +474,35 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "with merge as (\n SELECT \n    c.start_date AS start_date,\n    c.end_date AS end_date,\n    c.start_ideal_range_km AS start_ideal_range_km,\n    c.end_ideal_range_km AS end_ideal_range_km,\n    c.start_rated_range_km AS start_rated_range_km,\n    c.end_rated_range_km AS end_rated_range_km,\n    start_battery_level,\n    end_battery_level,\n    p.usable_battery_level AS start_usable_battery_level,\n    NULL AS end_usable_battery_level,\n    p.odometer AS start_km,\n    p.odometer AS end_km\n FROM charging_processes c\n JOIN positions p ON c.position_id = p.id\n WHERE c.car_id = $car_id AND $__timeFilter(start_date)\n UNION\n SELECT \n    d.start_date AS start_date,\n    d.end_date AS end_date,\n    d.start_ideal_range_km AS start_ideal_range_km,\n    d.end_ideal_range_km AS end_ideal_range_km,\n    d.start_rated_range_km AS start_rated_range_km,\n    d.end_rated_range_km AS end_rated_range_km,\n    start_position.battery_level AS start_battery_level,\n    end_position.battery_level AS end_battery_level,\n    start_position.usable_battery_level AS start_usable_battery_level,\n    end_position.usable_battery_level AS end_usable_battery_level,\n    d.start_km AS start_km,\n    d.end_km AS end_km\n FROM drives d\n JOIN positions start_position ON d.start_position_id = start_position.id\n JOIN positions end_position ON d.end_position_id = end_position.id\n WHERE d.car_id = $car_id AND $__timeFilter(start_date)\n), \nv as (\n SELECT\n    lag(t.end_date) OVER w AS start_date,\n    t.start_date AS end_date,\n    lag(t.end_[[preferred_range]]_range_km) OVER w AS start_range,\n    t.start_[[preferred_range]]_range_km AS end_range,\n    lag(t.end_km) OVER w AS start_km,\n    t.start_km AS end_km,\n    EXTRACT(EPOCH FROM age(t.start_date, lag(t.end_date) OVER w)) AS duration,\n    lag(t.end_battery_level) OVER w AS start_battery_level,\n    lag(t.end_usable_battery_level) OVER w AS start_usable_battery_level,\n\t\tstart_battery_level AS end_battery_level,\n\t\tstart_usable_battery_level AS end_usable_battery_level,\n\t\tstart_battery_level > COALESCE(start_usable_battery_level, start_battery_level) AS has_reduced_range\n  FROM merge t\n  WINDOW w AS (ORDER BY t.start_date ASC)\n  ORDER BY start_date DESC\n)\n\nSELECT\n  round(extract(epoch FROM v.start_date)) * 1000 AS start_date_ts,\n  round(extract(epoch FROM v.end_date)) * 1000 AS end_date_ts,\n  -- Columns\n  v.start_date,\n  v.end_date,\n  v.duration,\n  (coalesce(s_asleep.sleep, 0) + coalesce(s_offline.sleep, 0)) / v.duration as standby,\n\t-greatest(v.start_battery_level - v.end_battery_level, 0) as soc_diff,\n\tCASE WHEN has_reduced_range THEN 1 ELSE 0 END as has_reduced_range,\n\tconvert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, '$length_unit') AS range_diff_$length_unit,\n  CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) * c.efficiency END AS consumption,\n  CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 END as avg_power,\n  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) / (v.duration / 3600))::numeric END, '$length_unit') AS range_lost_per_hour_[[length_unit]]\nFROM v,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'asleep' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_asleep,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'offline' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_offline\nJOIN cars c ON c.id = $car_id\nWHERE\n  v.duration > ($duration * 60 * 60)\n  AND v.start_range - v.end_range >= 0\n  AND v.end_km - v.start_km < 1;",
+          "rawSql": "with merge as (\n SELECT \n    c.start_date AS start_date,\n    c.end_date AS end_date,\n    c.start_ideal_range_km AS start_ideal_range_km,\n    c.end_ideal_range_km AS end_ideal_range_km,\n    c.start_rated_range_km AS start_rated_range_km,\n    c.end_rated_range_km AS end_rated_range_km,\n    start_battery_level,\n    end_battery_level,\n    p.usable_battery_level AS start_usable_battery_level,\n    NULL AS end_usable_battery_level,\n    p.odometer AS start_km,\n    p.odometer AS end_km\n FROM charging_processes c\n JOIN positions p ON c.position_id = p.id\n WHERE c.car_id = $car_id AND $__timeFilter(start_date)\n UNION\n SELECT \n    d.start_date AS start_date,\n    d.end_date AS end_date,\n    d.start_ideal_range_km AS start_ideal_range_km,\n    d.end_ideal_range_km AS end_ideal_range_km,\n    d.start_rated_range_km AS start_rated_range_km,\n    d.end_rated_range_km AS end_rated_range_km,\n    start_position.battery_level AS start_battery_level,\n    end_position.battery_level AS end_battery_level,\n    start_position.usable_battery_level AS start_usable_battery_level,\n    end_position.usable_battery_level AS end_usable_battery_level,\n    d.start_km AS start_km,\n    d.end_km AS end_km\n FROM drives d\n JOIN positions start_position ON d.start_position_id = start_position.id\n JOIN positions end_position ON d.end_position_id = end_position.id\n WHERE d.car_id = $car_id AND $__timeFilter(start_date)\n), \nv as (\n SELECT\n    lag(t.end_date) OVER w AS start_date,\n    t.start_date AS end_date,\n    lag(t.end_${preferred_range}_range_km) OVER w AS start_range,\n    t.start_${preferred_range}_range_km AS end_range,\n    lag(t.end_km) OVER w AS start_km,\n    t.start_km AS end_km,\n    EXTRACT(EPOCH FROM age(t.start_date, lag(t.end_date) OVER w)) AS duration,\n    lag(t.end_battery_level) OVER w AS start_battery_level,\n    lag(t.end_usable_battery_level) OVER w AS start_usable_battery_level,\n\t\tstart_battery_level AS end_battery_level,\n\t\tstart_usable_battery_level AS end_usable_battery_level,\n\t\tstart_battery_level > COALESCE(start_usable_battery_level, start_battery_level) AS has_reduced_range\n  FROM merge t\n  WINDOW w AS (ORDER BY t.start_date ASC)\n  ORDER BY start_date DESC\n)\n\nSELECT\n  round(extract(epoch FROM v.start_date)) * 1000 AS start_date_ts,\n  round(extract(epoch FROM v.end_date)) * 1000 AS end_date_ts,\n  -- Columns\n  v.start_date,\n  v.end_date,\n  v.duration,\n  (coalesce(s_asleep.sleep, 0) + coalesce(s_offline.sleep, 0)) / v.duration as standby,\n\t-greatest(v.start_battery_level - v.end_battery_level, 0) as soc_diff,\n\tCASE WHEN has_reduced_range THEN 1 ELSE 0 END as has_reduced_range,\n\tconvert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, '$length_unit') AS range_diff_$length_unit,\n  CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) * c.efficiency END AS consumption,\n  CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 END as avg_power,\n  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) / (v.duration / 3600))::numeric END, '$length_unit') AS range_lost_per_hour_${length_unit}\nFROM v,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'asleep' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_asleep,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(age(s.end_date, s.start_date))) as sleep\n    FROM states s\n    WHERE\n      state = 'offline' AND\n      v.start_date <= s.start_date AND s.end_date <= v.end_date AND\n      s.car_id = $car_id\n  ) s_offline\nJOIN cars c ON c.id = $car_id\nWHERE\n  v.duration > ($duration * 60 * 60)\n  AND v.start_range - v.end_range >= 0\n  AND v.end_km - v.start_km < 1;",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Vampire Drain",
@@ -594,7 +517,9 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 39,
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -606,33 +531,24 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {
-          "selected": false,
           "text": "6",
           "value": "6"
         },
-        "hide": 0,
         "includeAll": false,
         "label": "min. Idle Time (h)",
-        "multi": false,
         "name": "duration",
         "options": [
           {
@@ -672,7 +588,6 @@
           }
         ],
         "query": "0,1,3,6,12,18,24",
-        "skipUrlSync": false,
         "type": "custom"
       },
       {
@@ -684,19 +599,12 @@
         "definition": "select unit_of_length from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "length_unit",
         "options": [],
         "query": "select unit_of_length from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -707,18 +615,12 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "preferred_range",
         "options": [],
         "query": "select preferred_range from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -729,19 +631,12 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       }
     ]
   },
@@ -749,35 +644,9 @@
     "from": "now-90d",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
   "title": "Vampire Drain",
   "uid": "zhHx2Fggk",
-  "version": 1,
-  "weekStart": ""
+  "version": 1
 }

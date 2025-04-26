@@ -1,0 +1,75 @@
+name: "Setup Elixir and Cache Dependencies"
+description: "Setup Elixir, OTP and cache dependencies"
+inputs:
+  elixir-version:
+    description: "Elixir version"
+    required: false
+    default: "1.17.3"
+  otp-version:
+    description: "OTP version"
+    required: false
+    default: "26"
+  cache-name-deps:
+    description: "Cache name for dependencies"
+    required: true
+  cache-name-compiled:
+    description: "Cache name for compiled build"
+    required: true
+  mix-env:
+    description: "Mix environment"
+    required: false
+    default: "dev"
+  ELIXIR_ASSERT_TIMEOUT:
+    description: "Elixir assert timeout"
+    required: false
+    default: "1000"
+outputs:
+  elixir-version:
+    description: "The Elixir version used in the setup"
+    value: ${{ steps.beam.outputs.elixir-version }}
+  otp-version:
+    description: "The OTP version used in the setup"
+    value: ${{ steps.beam.outputs.otp-version }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+
+    - name: Setup Elixir and OTP
+      id: beam
+      uses: erlef/setup-beam@b9c58b0450cd832ccdb3c17cc156a47065d2114f # v1.18.1
+      with:
+        elixir-version: ${{ inputs.elixir-version }}
+        otp-version: ${{ inputs.otp-version }}
+
+    - name: Cache deps
+      id: cache-deps
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ inputs.cache-name-deps }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-mix-${{ inputs.cache-name-deps }}-
+
+    - name: Cache compiled build
+      id: cache-build
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+      with:
+        path: |
+          _build
+          priv/cldr/locales
+        key: ${{ runner.os }}-mix-${{ inputs.cache-name-compiled }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-mix-${{ inputs.cache-name-compiled }}-
+          ${{ runner.os }}-mix-
+
+    - name: Clean to rule out incremental build as a source of flakiness
+      if: github.run_attempt > 3
+      run: |
+        mix deps.clean --all
+        mix clean
+      shell: sh
+
+    - name: Install dependencies
+      run: mix deps.get
+      shell: sh

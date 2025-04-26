@@ -173,25 +173,36 @@ defmodule TeslaMate.Log do
   def get_positions_without_elevation(min_id \\ 0, opts \\ []) do
     limit = Keyword.get(opts, :limit, 100)
 
+    date_earliest =
+      cond do
+        min_id == 0 ->
+          DateTime.add(DateTime.utc_now(), -10, :day)
+
+        true ->
+          {:ok, default_date_earliest, _} = DateTime.from_iso8601("2003-07-01T00:00:00Z")
+          default_date_earliest
+      end
+
+    naive_date_earliest = DateTime.to_naive(date_earliest)
+
     non_streamed_drives =
       Repo.all(
-        from d in subquery(
-               from p in Position,
-                 select: %{
-                   drive_id: p.drive_id,
-                   streamed_count:
-                     count()
-                     |> filter(not is_nil(p.odometer) and is_nil(p.ideal_battery_range_km))
-                 },
-                 where: not is_nil(p.drive_id),
-                 group_by: p.drive_id
-             ),
-             select: d.drive_id,
-             where: d.streamed_count == 0
+        from p in Position,
+          select: p.drive_id,
+          inner_join: d in assoc(p, :drive),
+          where: d.start_date > ^naive_date_earliest and p.id > ^min_id,
+          having:
+            count()
+            |> filter(not is_nil(p.odometer) and is_nil(p.ideal_battery_range_km)) == 0,
+          group_by: p.drive_id
       )
 
     Position
-    |> where([p], p.id > ^min_id and is_nil(p.elevation) and p.drive_id in ^non_streamed_drives)
+    |> where(
+      [p],
+      p.id > ^min_id and is_nil(p.elevation) and p.drive_id in ^non_streamed_drives and
+        p.date > ^naive_date_earliest
+    )
     |> order_by(asc: :id)
     |> limit(^limit)
     |> Repo.all()

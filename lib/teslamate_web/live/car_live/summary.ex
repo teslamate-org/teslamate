@@ -1,7 +1,7 @@
 defmodule TeslaMateWeb.CarLive.Summary do
   use TeslaMateWeb, :live_view
 
-  import TeslaMateWeb.Gettext
+  use Gettext, backend: TeslaMateWeb.Gettext
 
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle
@@ -119,6 +119,14 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   def handle_info(:set_status_to_false, socket) do
     {:noreply, assign(socket, fetch_status: false)}
+  end
+
+  def format_tpms(bar, :psi) when is_number(bar) do
+    "#{Float.round(bar * 14.5038, 1)} PSI"
+  end
+
+  def format_tpms(bar, :bar) when is_number(bar) do
+    "#{Float.round(bar, 1)} Bar"
   end
 
   defp translate_state(:start), do: ""

@@ -1,19 +1,24 @@
 version: 2
 updates:
-  # - package-ecosystem: "mix"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "monthly"
+  - package-ecosystem: "mix"
+    directory: "/"
+    schedule:
+      interval: "monthly"
 
-  # - package-ecosystem: "npm"
-  #   directory: "/assets"
-  #   schedule:
-  #     interval: "monthly"
+  - package-ecosystem: "npm"
+    directory: "/assets"
+    schedule:
+      interval: "monthly"
+    ignore:
+      # ignore the path based dependencies to prevent "Dependabot couldn't fetch all your path-based dependencies"
+      - dependency-name: phoenix
+      - dependency-name: phoenix_html
+      - dependency-name: phoenix_live_view
 
-  # - package-ecosystem: "npm"
-  #   directory: "/website"
-  #   schedule:
-  #     interval: "monthly"
+  - package-ecosystem: "npm"
+    directory: "/website"
+    schedule:
+      interval: "monthly"
 
   - package-ecosystem: "docker"
     directory: "/"

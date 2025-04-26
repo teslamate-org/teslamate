@@ -214,20 +214,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                  html
                  |> Floki.parse_document!()
                  |> Floki.find("form .field-body")
-                 |> Enum.find(
-                   &match?(
-                     {"div", _,
-                      [
-                        {_, _,
-                         [
-                           {_, _,
-                            [{_, _, [{"select", [{"id", "global_settings_language"}, _], _}]}]},
-                           _
-                         ]}
-                      ]},
-                     &1
-                   )
-                 )
                  |> Floki.find("p.help")
                  |> Floki.text()
 

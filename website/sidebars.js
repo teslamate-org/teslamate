@@ -14,12 +14,18 @@ module.exports = {
           ],
         },
         "faq",
+        "screenshots",
       ],
     },
     {
       type: "category",
       label: "Guides",
-      items: ["guides/traefik", "guides/apache", "guides/unix_domain_sockets", "guides/api"],
+      items: [
+        "guides/traefik",
+        "guides/apache",
+        "guides/unix_domain_sockets",
+        "guides/api",
+      ],
     },
     {
       type: "category",

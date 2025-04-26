@@ -1,77 +1,16 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "geomap",
-      "name": "Geomap",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "piechart",
-      "name": "Pie chart",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "state-timeline",
-      "name": "State timeline",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:30",
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
         "type": "dashboard"
       }
     ]
@@ -79,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": null,
   "links": [
     {
       "icon": "doc",
@@ -87,7 +25,7 @@
       "targetBlank": true,
       "title": "Select last three drives",
       "type": "link",
-      "url": "/d/FkUpJpQZk?from=$from"
+      "url": "/d/FkUpJpQZk/trip?from=$from"
     },
     {
       "icon": "dashboard",
@@ -95,7 +33,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -107,11 +45,9 @@
       "type": "dashboards"
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": "TeslaMate",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -146,8 +82,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -177,6 +112,49 @@
           "showZoom": true
         },
         "layers": [
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "fixed": "transparent"
+                },
+                "opacity": 0,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 5,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "name": "Workaround for Grafana Issue #89777, fixed in 11.6.0 via #101391, extra layer to be removed on broad availability of 11.6.0",
+            "tooltip": false,
+            "type": "markers"
+          },
           {
             "config": {
               "arrow": 0,
@@ -230,7 +208,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
@@ -239,21 +217,9 @@
           },
           "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS latitude,\n\tavg(longitude) AS longitude\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -270,19 +236,10 @@
               }
             ],
             "limit": 50
-          },
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
+      "title": "",
       "transparent": true,
       "type": "geomap"
     },
@@ -298,8 +255,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -318,7 +274,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Distance"
+                "value": "Mileage"
               }
             ]
           },
@@ -334,7 +290,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Distance"
+                "value": "Mileage"
               }
             ]
           }
@@ -358,6 +314,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -369,41 +326,38 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)\nORDER BY 1;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date) AND ideal_battery_range_km IS NOT NULL\nORDER BY 1;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -506,77 +460,72 @@
           "values": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\tnow() AS time,\n\tsum(extract(epoch FROM end_position.date - start_position.date)) as duration_sec,\n\t'driving' as metric\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date);",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tnow() AS time,\n\tsum(extract(epoch FROM end_position.date - start_position.date)) as duration_sec,\n\t'driving' as metric\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date)\n\tAND end_date IS NOT NULL;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         },
         {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH charges_current AS (\n  SELECT\n\t\tcp.id,\n  \textract(epoch FROM LEAST(end_date, $__timeTo()) - GREATEST(start_date, $__timeFrom())) as duration_sec,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'charging (DC)'\n\t\t\t\t ELSE 'charging (AC)'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.charge_energy_added > 0\n  \tAND ($__timeFilter(start_date) OR $__timeFilter(end_date))\n  GROUP BY 1,2\n),\n\ncharges_total AS (\n  SELECT\n  \tsum(duration_sec) AS duration_sec,\n  \tcurrent AS metric\n  FROM charges_current\n  GROUP BY 2\n  ORDER BY metric\n)\n\nSELECT\n\tnow() AS time,\n\tcoalesce(duration_sec, 0) as duration_sec,\n  metric\nFROM\n\tcharges_total;",
-          "refId": "B",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH charges_current AS (\n  SELECT\n\t\tcp.id,\n  \textract(epoch FROM LEAST(end_date, $__timeTo()) - GREATEST(start_date, $__timeFrom())) as duration_sec,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'charging (DC)'\n\t\t\t\t ELSE 'charging (AC)'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.charge_energy_added > 0\n  \tAND ($__timeFilter(start_date) OR $__timeFilter(end_date))\n  GROUP BY 1,2\n),\n\ncharges_total AS (\n  SELECT\n  \tsum(duration_sec) AS duration_sec,\n  \tcurrent AS metric\n  FROM charges_current\n  GROUP BY 2\n  ORDER BY metric\n)\n\nSELECT\n\tnow() AS time,\n\tcoalesce(duration_sec, 0) as duration_sec,\n  metric\nFROM\n\tcharges_total;",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "Time spent",
       "type": "piechart"
     },
     {
@@ -602,8 +551,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -622,7 +570,7 @@
               },
               {
                 "id": "displayName",
-                "value": "excl. breaks"
+                "value": "Ø Speed excl. breaks"
               }
             ]
           },
@@ -638,7 +586,7 @@
               },
               {
                 "id": "displayName",
-                "value": "excl. breaks"
+                "value": "Ø Speed excl. breaks"
               }
             ]
           }
@@ -662,6 +610,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -673,41 +622,38 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  convert_km(sum(end_position.odometer - start_position.odometer)::numeric, '$length_unit') / (sum(extract(epoch FROM end_position.date - start_position.date)) / 3600) as \"speed_$length_unit\"\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date)",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  convert_km(sum(end_position.odometer - start_position.odometer)::numeric, '$length_unit') / (sum(extract(epoch FROM end_position.date - start_position.date)) / 3600) as \"speed_$length_unit\"\nFROM\n\tdrives\n\tJOIN positions start_position ON start_position_id = start_position.id\n\tJOIN positions end_position ON end_position_id = end_position.id\nWHERE\n\tdrives.car_id = $car_id\n\tAND $__timeFilter(start_date)\n\tAND end_date IS NOT NULL;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -722,8 +668,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -742,7 +687,7 @@
               },
               {
                 "id": "displayName",
-                "value": "incl. DC charging"
+                "value": "Ø Speed incl. DC charging"
               }
             ]
           },
@@ -758,7 +703,7 @@
               },
               {
                 "id": "displayName",
-                "value": "incl. DC charging"
+                "value": "Ø Speed incl. DC charging"
               }
             ]
           }
@@ -782,6 +727,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -793,41 +739,38 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH dc_charges AS (\n  SELECT\n\t\tcp.id,\n    extract(epoch FROM cp.end_date - cp.start_date) as duration_sec,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.charge_energy_added > 0\n    AND ($__timeFilter(start_date) OR $__timeFilter(end_date))\n  GROUP BY 1,2\n),\n\ndata AS (\n  (\n  SELECT\n    sum(end_position.odometer - start_position.odometer) as distance, \n    sum(extract(epoch FROM end_position.date - start_position.date)) as duration_sec\n  FROM\n    drives\n    JOIN positions start_position ON start_position_id = start_position.id\n    JOIN positions end_position ON end_position_id = end_position.id\n  WHERE\n    drives.car_id = $car_id\n    AND $__timeFilter(start_date)\n  ) UNION ALL (\n  SELECT\n    NULL as distance,\n    sum(duration_sec)\n  FROM\n    dc_charges\n  WHERE\n   current = 'DC'\n  )\n)\n\nSELECT convert_km(sum(distance)::numeric, '$length_unit') / (sum(duration_sec) / 3600) as \"speed_$length_unit\"\nfrom data",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH dc_charges AS (\n  SELECT\n\t\tcp.id,\n    extract(epoch FROM cp.end_date - cp.start_date) as duration_sec,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.charge_energy_added > 0\n    AND ($__timeFilter(start_date) OR $__timeFilter(end_date))\n  GROUP BY 1,2\n),\n\ndata AS (\n  (\n  SELECT\n    sum(end_position.odometer - start_position.odometer) as distance, \n    sum(extract(epoch FROM end_position.date - start_position.date)) as duration_sec\n  FROM\n    drives\n    JOIN positions start_position ON start_position_id = start_position.id\n    JOIN positions end_position ON end_position_id = end_position.id\n  WHERE\n    drives.car_id = $car_id\n    AND $__timeFilter(start_date)\n  ) UNION ALL (\n  SELECT\n    NULL as distance,\n    sum(duration_sec)\n  FROM\n    dc_charges\n  WHERE\n   current = 'DC'\n  )\n)\n\nSELECT convert_km(sum(distance)::numeric, '$length_unit') / (sum(duration_sec) / 3600) as \"speed_$length_unit\"\nfrom data",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -844,8 +787,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -864,7 +806,7 @@
               },
               {
                 "id": "displayName",
-                "value": "net"
+                "value": "Ø Consumption (net)"
               }
             ]
           },
@@ -880,7 +822,7 @@
               },
               {
                 "id": "displayName",
-                "value": "net"
+                "value": "Ø Consumption (net)"
               }
             ]
           }
@@ -904,6 +846,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -916,41 +859,38 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  sum(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit') as \"consumption_$length_unit\"\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(start_date) AND car_id = $car_id",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sum(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit') as \"consumption_$length_unit\"\nFROM drives\nJOIN cars car ON car.id = car_id\nWHERE $__timeFilter(start_date) AND car_id = $car_id",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -967,8 +907,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -987,7 +926,7 @@
               },
               {
                 "id": "displayName",
-                "value": "gross"
+                "value": "Ø Consumption (gross)"
               }
             ]
           },
@@ -1003,7 +942,7 @@
               },
               {
                 "id": "displayName",
-                "value": "gross"
+                "value": "Ø Consumption (gross)"
               }
             ]
           }
@@ -1027,6 +966,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -1038,41 +978,38 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH d AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM charging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id AND\n\t  $__timeFilter(start_date)\n\tORDER BY start_date\n),\n\nrange_loss_between_charges AS (\n  SELECT sum(range_loss) AS range_loss\n  FROM d\n  WHERE distance >= 0 AND range_loss >= 0\n  GROUP BY car_id\n),\n\ncharge_dates AS (\n\tSELECT\n\t\tmin(start_date) as first_charge,\n\t\tmax(end_date) as last_charge\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(start_date)\n),\n\nrange_loss_before_first_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND ((select first_charge from charge_dates) is null OR date < (select first_charge from charge_dates))\n),\n\nrange_loss_after_last_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND date > (select last_charge from charge_dates)\t\n),\n\ntotal_range_loss AS (\n  SELECT sum(range_loss) as range_loss\n  FROM (\n    SELECT range_loss FROM range_loss_between_charges\n    UNION ALL\n    SELECT range_loss FROM range_loss_before_first_charge\n    UNION ALL\n    SELECT range_loss FROM range_loss_after_last_charge\n  ) r\n),\n\ndistance AS (\n  SELECT max(odometer) - min(odometer) as distance\n  FROM positions\n  WHERE car_id = $car_id AND $__timeFilter(date)\n)\n\nSELECT \n  NULLIF(range_loss, 0) * (c.efficiency * 1000) / convert_km(NULLIF(distance::numeric, 0), '$length_unit') as \"consumption_$length_unit\"\nFROM total_range_loss, distance\nLEFT JOIN cars c ON c.id = $car_id",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "with drives_start_event as (\n\n    select\n        'drive_start' as event, start_date as date, start_${preferred_range}_range_km as range, start_km as odometer, car_id\n    from drives\n    where car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\ndrives_end_event as (\n\n    select\n        'drive_end' as event, end_date as date, end_${preferred_range}_range_km as range, end_km as odometer, car_id\n    from drives\n    where car_id = $car_id and $__timeFilter(end_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\ncharging_processes_start_event as (\n\n    select\n        'charging_process_start' as event, start_date as date, start_${preferred_range}_range_km as range, p.odometer, cp.car_id\n    from charging_processes cp\n        inner join positions p on cp.position_id = p.id\n    where cp.car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\ncharging_processes_end_event as (\n\n    select\n        'charging_process_end' as event, end_date as date, end_${preferred_range}_range_km as range, p.odometer, cp.car_id\n    from charging_processes cp\n        inner join positions p on cp.position_id = p.id\n    where cp.car_id = $car_id and $__timeFilter(end_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\npositions as (\n\n    select\n        case\n            when drive_id is not null and lead(drive_id) over w is not null then 'drive_start'\n            else 'something'\n        end as event,\n        date, ${preferred_range}_battery_range_km as range, p.odometer, p.car_id\n    from positions p\n    where ideal_battery_range_km is not null and car_id = $car_id and $__timeFilter(date) and 48 > extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n    window w as (order by date)\n\n),\n\ncombined as (\n\n    select * from drives_start_event\n    union all\n    select * from drives_end_event\n    union all\n    select * from charging_processes_start_event\n    union all\n    select * from charging_processes_end_event\n    union all\n    select * from positions\n\n),\n\nfinal as (\n\n    select\n        car_id,\n        lead(odometer) over w - odometer as distance,\n        case when event != 'drive_start' then greatest(range - lead(range) over w, 0) else range - lead(range) over w end as range_loss\n    from combined\n    window w as (order by date asc)\n\n)\n\nselect\n    (sum(range_loss) * c.efficiency * 1000) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) as consumption_$length_unit\nfrom final\n    inner join cars c on car_id = c.id\ngroup by c.efficiency",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -1083,7 +1020,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "displayName": "Cost",
+          "decimals": 2,
           "mappings": [
             {
               "options": {
@@ -1099,8 +1036,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -1126,6 +1062,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -1137,41 +1074,38 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "select sum(cost) as \"Cost\" from charging_processes where $__timeFilter(start_date) AND car_id = $car_id;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select sum(cost) as \"Total Charging Cost\" from charging_processes where $__timeFilter(end_date) AND car_id = $car_id;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "",
       "type": "stat"
     },
     {
@@ -1181,7 +1115,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "decimals": 1,
+          "decimals": 2,
           "displayName": "${__cell_0}",
           "links": [],
           "mappings": [],
@@ -1190,8 +1124,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow",
-                "value": null
+                "color": "light-yellow"
               },
               {
                 "color": "semi-dark-yellow",
@@ -1216,6 +1149,12 @@
       "id": 40,
       "options": {
         "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
@@ -1232,74 +1171,66 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH d AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM charging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id AND\n\t  $__timeFilter(start_date)\n\tORDER BY start_date\n),\n\nrange_loss_between_charges AS (\n  SELECT sum(range_loss) AS range_loss\n  FROM d\n  WHERE distance >= 0 AND range_loss >= 0\n  GROUP BY car_id\n),\n\ncharge_dates AS (\n\tSELECT\n\t\tmin(start_date) as first_charge,\n\t\tmax(end_date) as last_charge\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tend_date IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND $__timeFilter(start_date)\n),\n\nrange_loss_before_first_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND ((select first_charge from charge_dates) is null OR date < (select first_charge from charge_dates))\n),\n\nrange_loss_after_last_charge AS (\n\tSELECT\n\t\tmax([[preferred_range]]_battery_range_km) - min([[preferred_range]]_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND date > (select last_charge from charge_dates)\t\n),\n\ntotal_range_loss AS (\n\tSELECT range_loss FROM range_loss_between_charges\n\tUNION ALL\n\tSELECT range_loss FROM range_loss_before_first_charge\n\tUNION ALL\n\tSELECT range_loss FROM range_loss_after_last_charge\n)\n\nSELECT 'used' as metric, sum(range_loss * c.efficiency) AS value\nFROM total_range_loss\nLEFT JOIN cars c ON c.id = $car_id;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH d AS (\n\tSELECT\n\t\tc.car_id,\n\t\tlag(end_${preferred_range}_range_km) OVER (ORDER BY start_date) - start_${preferred_range}_range_km AS range_loss,\n\t\tp.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance\n\tFROM charging_processes c\n\tLEFT JOIN positions p ON p.id = c.position_id \n\tWHERE\n\t  end_date IS NOT NULL AND\n\t  c.car_id = $car_id AND\n\t  $__timeFilter(start_date)\n\tORDER BY start_date\n),\n\nrange_loss_between_charges AS (\n  SELECT sum(range_loss) AS range_loss\n  FROM d\n  WHERE distance >= 0 AND range_loss >= 0\n  GROUP BY car_id\n),\n\ncharge_dates AS (\n\tSELECT\n\t\tmin(start_date) as first_charge,\n\t\tmax(end_date) as last_charge\n\tFROM\n\t\tcharging_processes\n\tWHERE\n\t\tend_date IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND $__timeFilter(start_date)\n),\n\nrange_loss_before_first_charge AS (\n\tSELECT\n\t\tmax(${preferred_range}_battery_range_km) - min(${preferred_range}_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND ((select first_charge from charge_dates) is null OR date < (select first_charge from charge_dates))\n),\n\nrange_loss_after_last_charge AS (\n\tSELECT\n\t\tmax(${preferred_range}_battery_range_km) - min(${preferred_range}_battery_range_km) AS range_loss\n\tFROM positions, charge_dates\n\tWHERE\n\t\tcar_id = $car_id\n\t\tAND $__timeFilter(date)\n\t\tAND date > (select last_charge from charge_dates)\t\n),\n\ntotal_range_loss AS (\n\tSELECT range_loss FROM range_loss_between_charges\n\tUNION ALL\n\tSELECT range_loss FROM range_loss_before_first_charge\n\tUNION ALL\n\tSELECT range_loss FROM range_loss_after_last_charge\n)\n\nSELECT 'Total Energy consumed (gross)' as metric, sum(range_loss * c.efficiency) AS value\nFROM total_range_loss\nLEFT JOIN cars c ON c.id = $car_id;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         },
         {
-          "format": "table",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH charges_current AS (\n  SELECT\n\t\tcp.id,\n\t\tcp.charge_energy_added as energy_added,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'added (DC)'\n\t\t\t\t ELSE 'added (AC)'\n\t\tEND AS metric\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.charge_energy_added > 0\n  \tAND ($__timeFilter(start_date) OR $__timeFilter(end_date))\n  GROUP BY 1,2\n)\n\nSELECT metric, sum(energy_added) AS energy_added\nFROM charges_current\nGROUP BY 1\nORDER BY 1 DESC;",
-          "refId": "B",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH charges_current AS (\n  SELECT\n\t\tcp.id,\n\t\tcp.charge_energy_added as energy_added,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'Total Energy added (DC)'\n\t\t\t\t ELSE 'Total Energy added (AC)'\n\t\tEND AS metric\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.charge_energy_added > 0\n  \tAND ($__timeFilter(start_date) OR $__timeFilter(end_date))\n  GROUP BY 1,2\n)\n\nSELECT metric, sum(energy_added) AS energy_added\nFROM charges_current\nGROUP BY 1\nORDER BY 1 DESC;",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "",
       "type": "bargauge"
     },
     {
@@ -1314,6 +1245,7 @@
             "mode": "continuous-GrYlRd"
           },
           "custom": {
+            "axisPlacement": "auto",
             "fillOpacity": 100,
             "hideFrom": {
               "legend": false,
@@ -1374,8 +1306,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -1400,45 +1331,44 @@
         "rowHeight": 1,
         "showValue": "never",
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "WITH states AS (\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [2, 0]) AS state\n  FROM charging_processes\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [1, 0]) AS state\n  FROM drives\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    start_date AS date,\n    CASE\n      WHEN state = 'offline' THEN 3\n      WHEN state = 'asleep' THEN 4\n      WHEN state = 'online' THEN 5\n    END AS state\n  FROM states\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [6, 0]) AS state\n  FROM updates\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND\n  ($__timeFrom() :: timestamp - interval '30 day') < date AND \n  date < ($__timeTo() :: timestamp + interval '30 day') \nORDER BY date ASC, state ASC;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH states AS (\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [2, 0]) AS state\n  FROM charging_processes\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [1, 0]) AS state\n  FROM drives\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    start_date AS date,\n    CASE\n      WHEN state = 'offline' THEN 3\n      WHEN state = 'asleep' THEN 4\n      WHEN state = 'online' THEN 5\n    END AS state\n  FROM states\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [6, 0]) AS state\n  FROM updates\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND\n  ($__timeFrom() :: timestamp - interval '30 day') < date AND \n  date < ($__timeTo() :: timestamp + interval '30 day') \nORDER BY date ASC, state ASC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "",
       "transparent": true,
       "type": "state-timeline"
     },
@@ -1466,8 +1396,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1498,13 +1427,13 @@
                   {
                     "targetBlank": false,
                     "title": "View drive details",
-                    "url": "d/zm7wN6Zgz?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-drive_id=${__data.fields.drive_id.numeric}"
+                    "url": "/d/zm7wN6Zgz/drive-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-drive_id=${__data.fields.drive_id.numeric}"
                   }
                 ]
               },
               {
                 "id": "custom.width",
-                "value": 180
+                "value": 210
               }
             ]
           },
@@ -1516,7 +1445,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Consumption"
+                "value": "Ø Consumption (net)"
               },
               {
                 "id": "unit",
@@ -1528,7 +1457,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 100
+                "value": 165
               }
             ]
           },
@@ -1540,7 +1469,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Consumption"
+                "value": "Ø Consumption (net)"
               },
               {
                 "id": "unit",
@@ -1552,7 +1481,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 100
+                "value": 165
               }
             ]
           },
@@ -1564,7 +1493,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "km"
+                "value": "Distance"
               },
               {
                 "id": "unit",
@@ -1596,7 +1525,7 @@
                   {
                     "targetBlank": true,
                     "title": "Create or edit geo-fence",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.start_path}"
+                    "url": "${base_url:raw}/geo-fences/${__data.fields.start_path}"
                   }
                 ]
               },
@@ -1622,7 +1551,7 @@
                   {
                     "targetBlank": true,
                     "title": "Create or edit geo-fence",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.end_path}"
+                    "url": "${base_url:raw}/geo-fences/${__data.fields.end_path}"
                   }
                 ]
               },
@@ -1685,7 +1614,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "mi"
+                "value": "Distance"
               },
               {
                 "id": "unit",
@@ -1712,7 +1641,8 @@
                 "value": "percent"
               },
               {
-                "id": "custom.align"
+                "id": "custom.align",
+                "value": "auto"
               },
               {
                 "id": "decimals",
@@ -1720,7 +1650,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 65
+                "value": 75
               }
             ]
           },
@@ -1735,7 +1665,8 @@
                 "value": "percent"
               },
               {
-                "id": "custom.align"
+                "id": "custom.align",
+                "value": "auto"
               },
               {
                 "id": "decimals",
@@ -1786,38 +1717,35 @@
           }
         ]
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n  SELECT\n    round(extract(epoch FROM start_date)) * 1000 AS start_date_ts,\n    round(extract(epoch FROM end_date)) * 1000 AS end_date_ts,\n    car.id as car_id,\n    CASE WHEN start_geofence.id IS NULL THEN CONCAT('new?lat=', start_position.latitude, '&lng=', start_position.longitude)\n         WHEN start_geofence.id IS NOT NULL THEN CONCAT(start_geofence.id, '/edit')\n    END as start_path,\n    CASE WHEN end_geofence.id IS NULL THEN CONCAT('new?lat=', end_position.latitude, '&lng=', end_position.longitude)\n         WHEN end_geofence.id IS NOT NULL THEN CONCAT(end_geofence.id, '/edit')\n    END as end_path,\n    TO_CHAR((duration_min * INTERVAL '1 minute'), 'HH24:MI') as duration_str,\n    drives.id as drive_id,\n    -- Columns\n    start_date,\n    COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS start_address,\n    COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS end_address,\n    duration_min,\n    distance,\n    start_position.usable_battery_level as start_usable_battery_level,\n    start_position.battery_level as start_battery_level,\n    end_position.usable_battery_level as end_usable_battery_level,\n    end_position.battery_level as end_battery_level,\n    start_position.battery_level != start_position.usable_battery_level OR end_position.battery_level != end_position.usable_battery_level  as reduced_range,\n    duration_min > 1 AND distance > 1 AND ( \n      start_position.usable_battery_level IS NULL OR end_position.usable_battery_level IS NULL\tOR\n      (end_position.battery_level - end_position.usable_battery_level) = 0 \n    ) as is_sufficiently_precise,\n    NULLIF(GREATEST(start_[[preferred_range]]_range_km - end_[[preferred_range]]_range_km, 0), 0) as range_diff,\n    car.efficiency as car_efficiency,\n    outside_temp_avg,\n    distance / NULLIF(duration_min, 0) * 60 AS avg_speed\n  FROM drives\n  LEFT JOIN addresses start_address ON start_address_id = start_address.id\n  LEFT JOIN addresses end_address ON end_address_id = end_address.id\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id\n  LEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n  LEFT JOIN cars car ON car.id = drives.car_id\n  WHERE $__timeFilter(start_date) AND drives.car_id = $car_id\n  ORDER BY start_date DESC\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    car_id,\n    start_path,\n    end_path,\n    duration_str,\n    drive_id,\n    -- Columns\n    start_date,\n    start_address,\n    end_address,\n    duration_min,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit,\n    start_battery_level as \"% Start\",\n    end_battery_level as \"% End\",\n    CASE WHEN is_sufficiently_precise THEN range_diff * car_efficiency / distance * 1000 * CASE WHEN '$length_unit' = 'km' THEN 1\n                                                                                                WHEN '$length_unit' = 'mi' THEN 1.60934\n                                                                                           END\n    END AS consumption_kWh_$length_unit\nFROM data;",
+          "rawSql": "WITH data AS (\n  SELECT\n    round(extract(epoch FROM start_date)) * 1000 AS start_date_ts,\n    round(extract(epoch FROM end_date)) * 1000 AS end_date_ts,\n    car.id as car_id,\n    CASE WHEN start_geofence.id IS NULL THEN CONCAT('new?lat=', start_position.latitude, '&lng=', start_position.longitude)\n         WHEN start_geofence.id IS NOT NULL THEN CONCAT(start_geofence.id, '/edit')\n    END as start_path,\n    CASE WHEN end_geofence.id IS NULL THEN CONCAT('new?lat=', end_position.latitude, '&lng=', end_position.longitude)\n         WHEN end_geofence.id IS NOT NULL THEN CONCAT(end_geofence.id, '/edit')\n    END as end_path,\n    TO_CHAR((duration_min * INTERVAL '1 minute'), 'HH24:MI') as duration_str,\n    drives.id as drive_id,\n    -- Columns\n    start_date,\n    COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), start_address.city)) AS start_address,\n    COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), end_address.city)) AS end_address,\n    duration_min,\n    distance,\n    start_position.usable_battery_level as start_usable_battery_level,\n    start_position.battery_level as start_battery_level,\n    end_position.usable_battery_level as end_usable_battery_level,\n    end_position.battery_level as end_battery_level,\n    start_position.battery_level != start_position.usable_battery_level OR end_position.battery_level != end_position.usable_battery_level  as reduced_range,\n    duration_min > 1 AND distance > 1 AND ( \n      start_position.usable_battery_level IS NULL OR end_position.usable_battery_level IS NULL\tOR\n      (end_position.battery_level - end_position.usable_battery_level) = 0 \n    ) as is_sufficiently_precise,\n    NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) as range_diff,\n    car.efficiency as car_efficiency,\n    outside_temp_avg,\n    distance / NULLIF(duration_min, 0) * 60 AS avg_speed\n  FROM drives\n  LEFT JOIN addresses start_address ON start_address_id = start_address.id\n  LEFT JOIN addresses end_address ON end_address_id = end_address.id\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id\n  LEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n  LEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n  LEFT JOIN cars car ON car.id = drives.car_id\n  WHERE $__timeFilter(start_date) AND drives.car_id = $car_id\n  ORDER BY start_date DESC\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    car_id,\n    start_path,\n    end_path,\n    duration_str,\n    drive_id,\n    -- Columns\n    start_date,\n    start_address,\n    end_address,\n    duration_min,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit,\n    start_battery_level as \"% Start\",\n    end_battery_level as \"% End\",\n    CASE WHEN is_sufficiently_precise THEN range_diff * car_efficiency / convert_km(distance::numeric, '$length_unit') * 1000\n    END AS consumption_kWh_$length_unit\nFROM data;",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Drives",
@@ -1878,16 +1806,13 @@
                   {
                     "targetBlank": false,
                     "title": "View charge details",
-                    "url": "d/BHhxFeZRz?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric:raw}"
+                    "url": "/d/BHhxFeZRz/charge-details?from=${__data.fields.start_date_ts.numeric}&to=${__data.fields.end_date_ts.numeric}&var-car_id=${__data.fields.car_id.numeric}&var-charging_process_id=${__data.fields.id.numeric:raw}"
                   }
                 ]
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "custom.width",
-                "value": 180
+                "value": 210
               }
             ]
           },
@@ -1899,22 +1824,15 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Added"
-              },
-              {
-                "id": "unit",
-                "value": "kwatth"
+                "value": "Energy added"
               },
               {
                 "id": "decimals",
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "custom.width",
-                "value": 100
+                "value": 115
               }
             ]
           },
@@ -1933,15 +1851,12 @@
                 "value": "percent"
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "decimals",
                 "value": 0
               },
               {
                 "id": "custom.width",
-                "value": 65
+                "value": 72
               }
             ]
           },
@@ -1960,15 +1875,12 @@
                 "value": "percent"
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "decimals",
                 "value": 0
               },
               {
                 "id": "custom.width",
-                "value": 65
+                "value": 62
               }
             ]
           },
@@ -1991,11 +1903,8 @@
                 "value": 1
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "custom.width",
-                "value": 100
+                "value": 80
               }
             ]
           },
@@ -2023,16 +1932,13 @@
                   {
                     "targetBlank": false,
                     "title": "Set Cost",
-                    "url": "[[base_url:raw]]/charge-cost/${__data.fields.id.numeric:raw}"
+                    "url": "${base_url:raw}/charge-cost/${__data.fields.id.numeric:raw}"
                   }
                 ]
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "custom.width",
-                "value": 80
+                "value": 70
               }
             ]
           },
@@ -2042,17 +1948,6 @@
               "options": "/.*_ts/"
             },
             "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -2065,9 +1960,6 @@
               "options": "id"
             },
             "properties": [
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -2090,12 +1982,9 @@
                   {
                     "targetBlank": true,
                     "title": "Create or edit geo-fence",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.path}"
+                    "url": "${base_url:raw}/geo-fences/${__data.fields.path}"
                   }
                 ]
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "custom.minWidth",
@@ -2106,19 +1995,16 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "distance_km"
+              "options": "range_added_km"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Driven"
+                "value": "Range gained"
               },
               {
                 "id": "unit",
                 "value": "lengthkm"
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "decimals",
@@ -2126,7 +2012,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 80
+                "value": 120
               }
             ]
           },
@@ -2138,7 +2024,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "kW"
+                "value": "Ø Power"
               },
               {
                 "id": "unit",
@@ -2153,9 +2039,6 @@
                 "value": {
                   "type": "color-text"
                 }
-              },
-              {
-                "id": "custom.align"
               },
               {
                 "id": "thresholds",
@@ -2185,23 +2068,24 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "distance_mi"
+              "options": "range_added_mi"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Driven"
+                "value": "Range gained"
               },
               {
                 "id": "unit",
                 "value": "lengthmi"
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "decimals",
                 "value": 0
+              },
+              {
+                "id": "custom.minWidth",
+                "value": 120
               }
             ]
           },
@@ -2211,9 +2095,6 @@
               "options": "path"
             },
             "properties": [
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -2228,22 +2109,15 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Used"
-              },
-              {
-                "id": "unit",
-                "value": "kwatth"
+                "value": "Energy used"
               },
               {
                 "id": "decimals",
                 "value": 2
               },
               {
-                "id": "custom.align"
-              },
-              {
                 "id": "custom.width",
-                "value": 100
+                "value": 105
               }
             ]
           },
@@ -2253,9 +2127,6 @@
               "options": "car_id"
             },
             "properties": [
-              {
-                "id": "custom.align"
-              },
               {
                 "id": "custom.hidden",
                 "value": true
@@ -2272,7 +2143,9 @@
       },
       "id": 36,
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -2287,37 +2160,35 @@
           }
         ]
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date) - 10) * 1000) AS start_date_ts,\n        (round(extract(epoch FROM end_date) + 10) * 1000) AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        charge_energy_added,\n        charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        start_[[preferred_range]]_range_km,\n        end_[[preferred_range]]_range_km,\n        outside_temp_avg,\n        c.id,\n        lag(end_[[preferred_range]]_range_km) OVER (ORDER BY start_date) - start_[[preferred_range]]_range_km AS range_loss,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        c.car_id,\n        cost\n    FROM\n        charging_processes c\n    LEFT JOIN positions p ON p.id = c.position_id\n    LEFT JOIN cars ON cars.id = c.car_id\n    LEFT JOIN addresses ON addresses.id = c.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\nWHERE \n    (charge_energy_added IS NULL OR charge_energy_added > 0) AND\n    c.car_id = $car_id AND\n    $__timeFilter(start_date)\nORDER BY\n    start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id,\n    id,\n    -- Columns\n    start_date,\n    COALESCE(geofence_name, address) as address,    \n    duration_min,\n    cost,\n    charge_energy_added,\n    charge_energy_used,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    start_battery_level,\n    end_battery_level,\n    convert_km(distance::numeric, '$length_unit') AS distance_$length_unit\n FROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL)\nORDER BY\n  start_date DESC;\n    ",
+          "rawSql": "WITH data AS (\n    SELECT\n        (round(extract(epoch FROM start_date) - 10) * 1000) AS start_date_ts,\n        (round(extract(epoch FROM end_date) + 10) * 1000) AS end_date_ts,\n        start_date,\n        end_date,\n        CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city) AS address,\n        g.name as geofence_name,\n        g.id as geofence_id,\n        p.latitude,\n        p.longitude,\n        charge_energy_added,\n        charge_energy_used,\n        duration_min,\n        start_battery_level,\n        end_battery_level,\n        end_${preferred_range}_range_km - start_${preferred_range}_range_km as range_added,\n        outside_temp_avg,\n        c.id,\n        p.odometer - lag(p.odometer) OVER (ORDER BY start_date) AS distance,\n        cars.efficiency,\n        c.car_id,\n        cost\n    FROM\n        charging_processes c\n    LEFT JOIN positions p ON p.id = c.position_id\n    LEFT JOIN cars ON cars.id = c.car_id\n    LEFT JOIN addresses ON addresses.id = c.address_id\n    LEFT JOIN geofences g ON g.id = geofence_id\nWHERE \n    (charge_energy_added IS NULL OR charge_energy_added > 0) AND\n    c.car_id = $car_id AND\n    $__timeFilter(start_date)\nORDER BY\n    start_date\n)\nSELECT\n    start_date_ts,\n    end_date_ts,\n    CASE WHEN geofence_id IS NULL THEN CONCAT('new?lat=', latitude, '&lng=', longitude)\n         WHEN geofence_id IS NOT NULL THEN CONCAT(geofence_id, '/edit')\n    END as path,\n    car_id,\n    id,\n    -- Columns\n    start_date,\n    COALESCE(geofence_name, address) as address,    \n    duration_min,\n    cost,\n    charge_energy_added,\n    charge_energy_used,\n    charge_energy_added * 60 / NULLIF (duration_min, 0) AS charge_energy_added_per_hour,\n    convert_km(range_added, '$length_unit') AS range_added_$length_unit,\n    start_battery_level,\n    end_battery_level\nFROM\n    data\nWHERE\n    (distance >= 0 OR distance IS NULL)\nORDER BY\n  start_date DESC;\n    ",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Charges",
@@ -2342,9 +2213,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "opacity",
@@ -2353,6 +2228,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2471,43 +2347,40 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "(\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as battery_level, convert_km(avg([[preferred_range]]_battery_range_km), '$length_unit') as range_[[preferred_range]]_[[length_unit]]\n  FROM positions\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day') AND car_id = $car_id\n  GROUP BY 1\n) UNION ALL (\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as battery_level, convert_km(avg([[preferred_range]]_battery_range_km), '$length_unit') as range_[[preferred_range]]_[[length_unit]]\n  FROM charges c\n  LEFT JOIN charging_processes p ON c.charging_process_id = p.id\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day') AND p.car_id = $car_id\n  GROUP BY 1\n)\nORDER BY 1",
+          "rawSql": "(\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as battery_level, convert_km(avg(${preferred_range}_battery_range_km), '$length_unit') as range_${preferred_range}_${length_unit}\n  FROM positions\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day') AND car_id = $car_id\n  GROUP BY 1\n) UNION ALL (\n  SELECT $__timeGroup(date, '5s'), avg(battery_level) as battery_level, convert_km(avg(${preferred_range}_battery_range_km), '$length_unit') as range_${preferred_range}_${length_unit}\n  FROM charges c\n  LEFT JOIN charging_processes p ON c.charging_process_id = p.id\n  WHERE date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day') AND p.car_id = $car_id\n  GROUP BY 1\n)\nORDER BY 1",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Battery Level & Range",
@@ -2524,9 +2397,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "opacity",
@@ -2535,6 +2412,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2631,51 +2509,49 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "8.5.4",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, '5s'),\n\tROUND(convert_m(avg(elevation), '$alternative_length_unit')) AS elevation_[[alternative_length_unit]]\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\nGROUP BY\n 1\nORDER BY\n 1 ASC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, '5s'),\n\tROUND(convert_m(avg(elevation), '$alternative_length_unit')) AS elevation_${alternative_length_unit}\nFROM\n\tpositions\nWHERE\n car_id = $car_id AND\n date BETWEEN ($__timeFrom()::timestamp - interval '1 day') AND ($__timeTo()::timestamp + interval '1 day')\nGROUP BY\n 1\nORDER BY\n 1 ASC",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Elevation",
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "schemaVersion": 39,
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -2687,22 +2563,16 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
         "label": "Car",
-        "multi": false,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2714,18 +2584,12 @@
         "hide": 2,
         "includeAll": false,
         "label": "temperature unit",
-        "multi": false,
         "name": "temp_unit",
         "options": [],
         "query": "select unit_of_temperature from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2737,18 +2601,12 @@
         "hide": 2,
         "includeAll": false,
         "label": "length unit",
-        "multi": false,
         "name": "length_unit",
         "options": [],
         "query": "select unit_of_length from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2759,19 +2617,12 @@
         "definition": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "alternative_length_unit",
         "options": [],
         "query": "select case when unit_of_length = 'km' then 'm' when unit_of_length = 'mi' then 'ft' end  from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2782,19 +2633,12 @@
         "definition": "select preferred_range from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "preferred_range",
         "options": [],
         "query": "select preferred_range from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2805,19 +2649,12 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -2828,54 +2665,22 @@
         "definition": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "hide": 2,
         "includeAll": false,
-        "multi": false,
         "name": "from",
         "options": [],
         "query": "with last_drives as (select start_date from drives order by start_date desc limit 3)\nselect extract(epoch from min(start_date)) * 1000 from last_drives;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now/d",
+    "from": "now-24h",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
   "title": "Trip",
   "uid": "FkUpJpQZk",
-  "version": 2,
-  "weekStart": ""
+  "version": 1
 }

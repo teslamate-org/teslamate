@@ -1,52 +1,16 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
         "type": "dashboard"
       }
     ]
@@ -54,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [
     {
       "icon": "dashboard",
@@ -62,7 +25,7 @@
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
-      "url": "[[base_url:raw]]"
+      "url": "${base_url:raw}"
     },
     {
       "asDropdown": true,
@@ -74,7 +37,6 @@
       "type": "dashboards"
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "datasource": {
@@ -88,8 +50,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -99,7 +60,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 7,
+        "w": 6,
         "x": 0,
         "y": 0
       },
@@ -115,6 +76,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -126,48 +88,59 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "select count(*) from addresses;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select count(*), count(distinct city) as city_count, count(distinct state) as state_count, count(distinct country) as country_count from addresses where id in (\r\n  select start_address_id from drives where car_id in ($car_id) and $__timeFilter(start_date)\r\n  union\r\n  select end_address_id from drives where car_id in ($car_id) and $__timeFilter(end_date)\r\n  union\r\n  select address_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\r\n);",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
-      "title": "Total addresses",
+      "title": "# of Addresses",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "city_count": true,
+              "country_count": true,
+              "state_count": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
       "type": "stat"
     },
     {
       "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+        "type": "datasource",
+        "uid": "-- Dashboard --"
       },
       "fieldConfig": {
         "defaults": {
@@ -176,8 +149,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -187,8 +159,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 7,
-        "x": 7,
+        "w": 6,
+        "x": 6,
         "y": 0
       },
       "id": 20,
@@ -203,6 +175,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -214,48 +187,39 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\tCOUNT(DISTINCT city)\nFROM\n\taddresses;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 12,
+          "refId": "A"
+        }
+      ],
+      "title": "# of Cities",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "count": true,
+              "country_count": true,
+              "state_count": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
           }
         }
       ],
-      "title": "Cities",
       "type": "stat"
     },
     {
       "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+        "type": "datasource",
+        "uid": "-- Dashboard --"
       },
       "fieldConfig": {
         "defaults": {
@@ -264,8 +228,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -275,8 +238,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 14,
+        "w": 6,
+        "x": 12,
         "y": 0
       },
       "id": 18,
@@ -291,6 +254,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -302,48 +266,39 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\tCOUNT(DISTINCT state)\nFROM\n\taddresses;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 12,
+          "refId": "A"
+        }
+      ],
+      "title": "# of States",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "city_count": true,
+              "count": true,
+              "country_count": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
           }
         }
       ],
-      "title": "States",
       "type": "stat"
     },
     {
       "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+        "type": "datasource",
+        "uid": "-- Dashboard --"
       },
       "fieldConfig": {
         "defaults": {
@@ -352,8 +307,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9",
-                "value": null
+                "color": "#c7d0d9"
               }
             ]
           },
@@ -363,8 +317,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 19,
+        "w": 6,
+        "x": 18,
         "y": 0
       },
       "id": 16,
@@ -379,6 +333,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -390,42 +345,33 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\tCOUNT(DISTINCT country)\nFROM\n\taddresses;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 12,
+          "refId": "A"
+        }
+      ],
+      "title": "# of Countries",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "city_count": true,
+              "count": true,
+              "state_count": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
           }
         }
       ],
-      "title": "Countries",
       "type": "stat"
     },
     {
@@ -445,8 +391,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-green",
-                "value": null
+                "color": "semi-dark-green"
               },
               {
                 "color": "super-light-green",
@@ -466,6 +411,12 @@
       "id": 10,
       "options": {
         "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 16,
         "minVizWidth": 8,
@@ -482,36 +433,34 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\tcity,\n\tcount(*) as \"# addresses\"\nFROM\n\taddresses\nWHERE\n\tcity IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tcity,\n\tcount(*) as \"# of Addresses\"\nFROM\n\taddresses\nWHERE\n\tcity IS NOT NULL and\n  id in (\n\t\tselect start_address_id from drives where car_id in ($car_id) and $__timeFilter(start_date) \n\t\tunion\n\t\tselect end_address_id from drives where car_id in ($car_id) and $__timeFilter(end_date) \n\t\tunion\n\t\tselect address_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n\t)\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
@@ -535,8 +484,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-orange",
-                "value": null
+                "color": "semi-dark-orange"
               },
               {
                 "color": "super-light-orange",
@@ -556,6 +504,12 @@
       "id": 14,
       "options": {
         "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 16,
         "minVizWidth": 8,
@@ -572,38 +526,34 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n\tstate,\n\tcount(*) as \"# addresses\"\nFROM\n\taddresses\nWHERE\n\tstate IS NOT NULL\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tstate,\n\tcount(*) as \"# of Addresses\"\nFROM\n\taddresses\nWHERE\n\tstate IS NOT NULL and\n  id in (\n\t\tselect start_address_id from drives where car_id in ($car_id) and $__timeFilter(start_date)\n\t\tunion\n\t\tselect end_address_id from drives where car_id in ($car_id) and $__timeFilter(end_date)\n\t\tunion\n\t\tselect address_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n\t)\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
@@ -635,8 +585,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
-                "value": null
+                "color": "semi-dark-blue"
               },
               {
                 "color": "light-red",
@@ -659,7 +608,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 180
+                "value": 210
               }
             ]
           },
@@ -701,54 +650,38 @@
           }
         ]
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  max(end_date) as \"Date\",\n  count(*) as visited,\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"Address\",\n\tCOALESCE(city, neighbourhood) as \"City\"\nFROM drives t\nINNER JOIN addresses a ON end_address_id = a.id\nLEFT JOIN geofences g ON end_geofence_id = g.id\nWHERE a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%'\nGROUP BY 3,4\nORDER BY visited DESC\nLIMIT 100",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "with locations as (\n\n  select address_id, geofence_id, start_date as end_date from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n  union\n  select end_address_id as address_id, end_geofence_id as geofence_id, end_date from drives where car_id in ($car_id) and $__timeFilter(end_date)\n\n)\n\nSELECT\n  max(l.end_date) as \"Date\",\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"Address\",\n\tCOALESCE(city, neighbourhood) as \"City\"\nFROM locations l\nINNER JOIN addresses a ON l.address_id = a.id\nLEFT JOIN geofences g ON l.geofence_id = g.id\nWHERE\n  (a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%')\nGROUP BY 2,3\nLIMIT 100",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
       "title": "Last visited",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "visited": true
-            },
-            "indexByName": {},
-            "renameByName": {}
-          }
-        }
-      ],
       "type": "table"
     },
     {
@@ -775,8 +708,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -830,7 +762,7 @@
                   {
                     "targetBlank": true,
                     "title": "",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.path}"
+                    "url": "${base_url:raw}/geo-fences/${__data.fields.path}"
                   }
                 ]
               },
@@ -967,38 +899,34 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT('new?lat=', latitude, '&lng=', longitude) as path,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry\nFROM addresses\nWHERE display_name ilike '%$address_filter%'\nORDER BY inserted_at DESC\nLIMIT 100;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT('new?lat=', latitude, '&lng=', longitude) as path,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry\nFROM addresses\nWHERE display_name ilike '%$address_filter%' and id in (\n  select start_address_id from drives where car_id in ($car_id) and $__timeFilter(start_date)\n  union\n  select end_address_id from drives where car_id in ($car_id) and $__timeFilter(end_date)\n  union\n  select address_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n)\nORDER BY inserted_at DESC\nLIMIT 100;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
@@ -1037,8 +965,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1092,7 +1019,7 @@
                   {
                     "targetBlank": true,
                     "title": "",
-                    "url": "[[base_url:raw]]/geo-fences/${__data.fields.id.numeric:raw}/edit"
+                    "url": "${base_url:raw}/geo-fences/${__data.fields.id.numeric:raw}/edit"
                   }
                 ]
               },
@@ -1137,36 +1064,34 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.6.1",
       "targets": [
         {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT id, name \nFROM geofences \nORDER BY inserted_at DESC\nLIMIT 512;",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ],
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT id, name \nFROM geofences where id in (\n  select start_geofence_id from drives where car_id in ($car_id) and $__timeFilter(start_date)\n  union\n  select end_geofence_id from drives where car_id in ($car_id) and $__timeFilter(end_date)\n  union\n  select geofence_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n)\nORDER BY inserted_at DESC\nLIMIT 100;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
@@ -1182,7 +1107,9 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 39,
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 41,
   "tags": [
     "tesla"
   ],
@@ -1194,22 +1121,17 @@
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 1,
         "includeAll": true,
         "label": "Car",
         "multi": true,
         "name": "car_id",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM cars ORDER BY display_priority ASC, name ASC;",
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -1220,27 +1142,18 @@
         "definition": "select base_url from settings limit 1;",
         "hide": 2,
         "includeAll": false,
-        "label": "",
-        "multi": false,
         "name": "base_url",
         "options": [],
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {
-          "selected": false,
           "text": "",
           "value": ""
         },
-        "hide": 0,
         "label": "Address",
         "name": "address_filter",
         "options": [
@@ -1251,45 +1164,17 @@
           }
         ],
         "query": "",
-        "skipUrlSync": false,
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "now-30d",
+    "from": "now-1y",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
-  "timepicker": {
-    "hidden": true,
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
   "title": "Locations",
   "uid": "ZzhF-aRWz",
-  "version": 2,
-  "weekStart": ""
+  "version": 1
 }

@@ -1,0 +1,64 @@
+# One CLI to format the code tree - https://git.numtide.com/numtide/treefmt
+
+[global]
+excludes = [
+    "*.gitignore",
+    "*.dockerignore",
+    ".envrc",
+    "*.node-version",
+    "CONTRIBUTING",
+    "Dockerfile",
+    "grafana/Dockerfile",
+    "Makefile",
+    "VERSION",
+    "LICENSE",
+    "*.metadata",
+    "*.manifest",
+    "*.webmanifest",
+    "*.dat",
+    "*.lock",
+    "*.txt",
+    "*.csv",
+    "*.ico",
+    "*.png",
+    "*.svg",
+    "*.properties",
+    "*.xml",
+    "*.po",
+    "*.pot",
+    "*.json.example",
+    "*.typos.toml",
+    "treefmt.toml",
+    "grafana/dashboards/*.json", #we use the grafana export style
+    ]
+
+[formatter.mix-format]
+command = "mix"
+excludes = []
+includes = ["*.ex", "*.exs" ,"*.{heex,eex}"]
+options = ["format"]
+
+# run shellcheck first
+[formatter.shellcheck]
+command = "shellcheck"
+includes = ["*.sh"]
+priority = 0    # default is 0, but we set it here for clarity
+
+# shfmt second
+[formatter.shfmt]
+command = "shfmt"
+options = ["-s", "-w"]
+includes = ["*.sh"]
+priority = 1
+
+[formatter.prettier]
+command = "prettier"
+excludes = []
+includes = ["*.cjs", "*.css", "*.html", "*.js", "*.json", "*.json5", "*.jsx", "*.md", "*.mdx", "*.mjs", "*.scss", "*.ts", "*.tsx", "*.vue", "*.yaml", "*.yml"]
+options = ["--write"]
+
+[formatter.nixfmt]
+command = "nixfmt"
+excludes = []
+includes = ["*.nix"]
+options = []

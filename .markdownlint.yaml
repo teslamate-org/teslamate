@@ -3,4 +3,6 @@ default: true
 MD013:
   line_length: 500
 MD024:
-  siblings_only: true  # heading duplication is allowed for non-sibling headings (common in changelogs)
+  siblings_only: true # heading duplication is allowed for non-sibling headings (common in changelogs)
+MD033:
+  allowed_elements: ["details", "summary", "TabItem", "pre"]

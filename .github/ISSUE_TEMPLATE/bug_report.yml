@@ -118,6 +118,25 @@ body:
     attributes:
       label: Version
       description: What version of TeslaMate are you running?
-      placeholder: v1.24.1
+      placeholder: v1.33.0
     validations:
       required: true
+
+  - type: input
+    id: postgresql_version
+    attributes:
+      label: PostgreSQL version
+      description: What version of PostgreSQL are you running? (see Database information dashboard -> PostgreSQL Version (upper right on desktop) or database -> image section in your `docker-compose.yml`)
+      placeholder: v17
+
+  - type: checkboxes
+    attributes:
+      label: Are you running latest major supported PostgreSQL version?
+      description: |
+        Please ensure you are running the latest major supported PostgreSQL version by comparing your installation with the [installation docs](https://docs.teslamate.org/docs/installation/docker/).
+
+        If not, please first do a backup and follow [Upgrading PostgreSQL to a new major version](https://docs.teslamate.org/docs/maintenance/upgrading_postgres)
+
+      options:
+        - label: I run the latest major supported PostgreSQL version
+          required: true

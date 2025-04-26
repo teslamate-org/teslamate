@@ -1,0 +1,32 @@
+name: Cleanup lages 100 caches
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+  actions: write
+
+jobs:
+  cleanup:
+    name: Delete caches when PR is closed
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Cleanup largest 100 caches
+        run: |
+          echo "Fetching list of cache key"
+          cacheKeysLargest=$(gh cache list --repo $REPO --limit 100 --sort size_in_bytes --order desc | cut -f 1 )
+
+          ## Setting this to not fail the workflow while deleting cache keys.
+          set +e
+          echo "Deleting caches..."
+          for cacheKey in $cacheKeysLargest
+          do
+              gh cache delete $cacheKey --repo $REPO
+          done
+          echo "Done"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}

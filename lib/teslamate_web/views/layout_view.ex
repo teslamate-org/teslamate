@@ -1,6 +1,9 @@
 defmodule TeslaMateWeb.LayoutView do
   use TeslaMateWeb, :view
 
+  import Phoenix.Component
+  use PhoenixHTMLHelpers
+
   dashboards =
     for dashboard_path <- Path.wildcard("grafana/dashboards/*.json") do
       @external_resource Path.relative_to_cwd(dashboard_path)

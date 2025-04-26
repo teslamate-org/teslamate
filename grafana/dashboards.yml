@@ -1,33 +1,33 @@
 apiVersion: 1
 
 providers:
-- name: 'teslamate'
-  orgId: 1
-  folder: TeslaMate
-  folderUid: Nr4ofiDZk
-  type: file
-  disableDeletion: false
-  editable: true
-  updateIntervalSeconds: 86400
-  options:
-    path: /dashboards
-- name: 'teslamate_internal'
-  orgId: 1
-  folder: Internal
-  folderUid: Nr5ofiDZk
-  type: file
-  disableDeletion: false
-  editable: true
-  updateIntervalSeconds: 86400
-  options:
-    path: /dashboards_internal
-- name: 'teslamate_reports'
-  orgId: 1
-  folder: Reports
-  folderUid: Nr6ofiDZk
-  type: file
-  disableDeletion: false
-  editable: true
-  updateIntervalSeconds: 86400
-  options:
-    path: /dashboards_reports
+  - name: "teslamate"
+    orgId: 1
+    folder: TeslaMate
+    folderUid: Nr4ofiDZk
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 86400
+    options:
+      path: /dashboards
+  - name: "teslamate_internal"
+    orgId: 1
+    folder: Internal
+    folderUid: Nr5ofiDZk
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 86400
+    options:
+      path: /dashboards_internal
+  - name: "teslamate_reports"
+    orgId: 1
+    folder: Reports
+    folderUid: Nr6ofiDZk
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 86400
+    options:
+      path: /dashboards_reports

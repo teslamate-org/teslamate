@@ -4,7 +4,9 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <%= live_title_tag(assigns[:page_title] || "Home", suffix: " · TeslaMate") %>
+    <.live_title suffix=" · TeslaMate">
+      <%= assigns[:page_title] || "Home" %>
+    </.live_title>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")} />
     <link
       rel="apple-touch-icon"
@@ -92,12 +94,18 @@
                 </div>
               </div>
             <% end %>
-            <%= live_redirect [to: Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index), class: "navbar-item  mr-5"] do %>
+            <.link
+              navigate={Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index)}
+              class="navbar-item  mr-5"
+            >
               <span class="icon"><i class="mdi mdi-map-marker-radius"></i></span>&nbsp;<span><%= gettext("Geo-Fences") %></span>
-            <% end %>
-            <%= live_redirect [to: Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index), class: "navbar-item  mr-5"] do %>
+            </.link>
+            <.link
+              navigate={Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index)}
+              class="navbar-item  mr-5"
+            >
               <span class="icon"><i class="mdi mdi-cog"></i></span>&nbsp;<span><%= gettext("Settings") %></span>
-            <% end %>
+            </.link>
           </div>
         </div>
       </div>

@@ -101,14 +101,22 @@ end
 config :teslamate,
   default_geofence: System.get_env("DEFAULT_GEOFENCE")
 
+case System.get_env("DATABASE_SOCKET_DIR") do
+  nil ->
+    config :teslamate, TeslaMate.Repo,
+      username: Util.fetch_env!("DATABASE_USER", all: "postgres"),
+      password: Util.fetch_env!("DATABASE_PASS", all: "postgres"),
+      hostname: Util.fetch_env!("DATABASE_HOST", all: "localhost"),
+      port: System.get_env("DATABASE_PORT", "5432")
+
+  socket_dir ->
+    config :teslamate, TeslaMate.Repo, socket_dir: socket_dir
+end
+
 config :teslamate, TeslaMate.Repo,
-  username: Util.fetch_env!("DATABASE_USER", all: "postgres"),
-  password: Util.fetch_env!("DATABASE_PASS", all: "postgres"),
-  database: Util.fetch_env!("DATABASE_NAME", dev: "teslamate_dev", test: "teslamate_test"),
-  hostname: Util.fetch_env!("DATABASE_HOST", all: "localhost"),
-  port: System.get_env("DATABASE_PORT", "5432"),
   pool_size: System.get_env("DATABASE_POOL_SIZE", "10") |> String.to_integer(),
-  timeout: System.get_env("DATABASE_TIMEOUT", "60000") |> String.to_integer()
+  timeout: System.get_env("DATABASE_TIMEOUT", "60000") |> String.to_integer(),
+  database: Util.fetch_env!("DATABASE_NAME", dev: "teslamate_dev", test: "teslamate_test")
 
 case System.get_env("DATABASE_SSL") do
   "true" ->

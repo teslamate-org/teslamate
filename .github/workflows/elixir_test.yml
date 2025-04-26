@@ -1,0 +1,55 @@
+name: Elixir Test and report coverage
+
+on:
+  workflow_call:
+
+env:
+  CACHE_NAME_DEPS: cache-elixir-deps
+  CACHE_NAME_COMPILED_TEST: cache-compiled-test-build
+  ELIXIR_ASSERT_TIMEOUT: 1000
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+
+    services:
+      db:
+        image: postgres:17
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Elixir and Cache Dependencies
+        id: setup-elixir-and-cache-deps
+        uses: ./.github/actions/setup-elixir-and-cache-deps
+        with:
+          cache-name-deps: ${{ env.CACHE_NAME_DEPS }}
+          cache-name-compiled: ${{ env.CACHE_NAME_COMPILED_TEST }}
+          mix-env: test
+          ELIXIR_ASSERT_TIMEOUT: ${{ env.ELIXIR_ASSERT_TIMEOUT }}
+
+      - name: Compile without warnings
+        run: mix compile --warnings-as-errors
+        shell: sh
+
+      - name: Run tests
+        run: mix test --warnings-as-errors
+
+      - name: Check Coverage
+        if: github.ref == 'refs/heads/master'
+        run: mix coveralls.github
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
