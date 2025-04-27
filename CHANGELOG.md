@@ -10,6 +10,8 @@
 
 #### Dashboards
 
+- fix: new image on home dashboard as old got removed from Tesla mediaserver (#4702 - @JakobLichterfeld, @swiffer)
+
 #### Translations
 
 #### Documentation
