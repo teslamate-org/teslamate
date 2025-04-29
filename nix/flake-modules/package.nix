@@ -1,10 +1,11 @@
 { ... }:
 {
   perSystem =
-    { lib
-    , pkgs
-    , system
-    , ...
+    {
+      lib,
+      pkgs,
+      system,
+      ...
     }:
     let
       elixir = pkgs.beam.packages.erlang_26.elixir_1_17;
@@ -66,6 +67,7 @@
           ;
 
         LOCALES = "${cldr}/priv/cldr";
+        SKIP_LOCALE_DOWNLOAD = "true";
 
         postBuild = ''
           ln -sf ${mixFodDeps}/deps deps
