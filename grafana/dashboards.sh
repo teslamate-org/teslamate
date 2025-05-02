@@ -57,7 +57,7 @@ backup() {
 restore() {
 	find "$DASHBOARDS_DIRECTORY" -type f -name \*.json -print0 |
 		while IFS= read -r -d '' dashboard_path; do
-			folder_id=$(get_folder_id "$(basename "$dashboard_path" .json)")
+			folder_id=$(get_folder_id "$(jq -r '.uid' <"$dashboard_path")")
 			curl \
 				--silent --fail --show-error --output /dev/null \
 				--user "$LOGIN" \
@@ -105,7 +105,7 @@ get_folder_id() {
 	curl \
 		--silent \
 		--user "$LOGIN" \
-		"$URL/api/dashboards/db/$dashboard" |
+		"$URL/api/dashboards/uid/$dashboard" |
 		jq '.meta | .folderId'
 }
 
