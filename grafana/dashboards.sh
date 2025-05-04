@@ -64,11 +64,7 @@ restore() {
 				-X POST -H "Content-Type: application/json" \
 				-d "{\"dashboard\":$(cat "$dashboard_path"), \
                     \"overwrite\":true, \
-                    \"folderId\":$folder_id, \
-                    \"inputs\":[{\"name\":\"DS_CLOUDWATCH\", \
-                                 \"type\":\"datasource\", \
-                                 \"pluginId\":\"cloudwatch\", \
-                                 \"value\":\"TeslaMate\"}]}" \
+                    \"folderId\":$folder_id}" \
 				"$URL/api/dashboards/import"
 
 			echo "RESTORED $(basename "$dashboard_path")"
