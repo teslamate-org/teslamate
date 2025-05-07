@@ -1,6 +1,6 @@
 # Ensure selecting a tag that is available for arm/v7, arm64, and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
-FROM grafana/grafana:11.6.1
+FROM grafana/grafana:12.0.0
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_AUTH_ANONYMOUS_ENABLED=false \
@@ -14,6 +14,8 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_USERS_DEFAULT_LANGUAGE=detect \
     GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/dashboards_internal/home.json \
     GF_DATE_FORMATS_USE_BROWSER_LOCALE=true \
+    GF_PLUGINS_PREINSTALL_DISABLED=true \
+    GF_UNIFIED_ALERTING_ENABLED=false \
     DATABASE_PORT=5432 \
     DATABASE_SSL_MODE=disable
 
