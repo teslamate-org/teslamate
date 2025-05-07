@@ -11,7 +11,7 @@ If you are using `docker-compose`, you are using Docker Compose v1, which has be
 Create backup file `teslamate.bck`:
 
 ```bash
-docker compose exec -T database pg_dump -U teslamate teslamate > ./teslamate.bck
+docker compose exec -T database pg_dump -U teslamate teslamate > teslamate_database_$(date +%F_%H-%M-%S).sql
 ```
 
 :::note
@@ -36,21 +36,34 @@ If you changed `TM_DB_USER` in the .env file from one of the advanced guides, ma
 Replace the default `teslamate` value below with the value defined in the .env file if you have one (TM_DB_USER and TM_DB_NAME)
 :::
 
-```bash
-# Stop the teslamate container to avoid write conflicts
-docker compose stop teslamate
+1. Stop the teslamate container to avoid write conflicts
 
-# Drop existing data and reinitialize (Don't forget to replace first teslamate if using different TM_DB_USER)
+```bash
+docker compose stop teslamate
+```
+
+2. Drop existing data and reinitialize (Don't forget to replace first teslamate if using different TM_DB_USER)
+
+```bash
 docker compose exec -T database psql -U teslamate teslamate << .
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 CREATE EXTENSION cube WITH SCHEMA public;
 CREATE EXTENSION earthdistance WITH SCHEMA public;
 .
+```
 
-# Restore
-docker compose exec -T database psql -U teslamate -d teslamate < teslamate.bck
+3. Restore
 
-# Restart the teslamate container
+Use the same filename that was used in the backup step.
+Replace `<backup_filename>` with the actual filename generated during the backup step (e.g., `teslamate_database_2025-05-07_07-33-48.sql`).
+
+```bash
+docker compose exec -T database psql -U teslamate -d teslamate < <backup_filename>
+```
+
+4. Restart the teslamate container
+
+```bash
 docker compose start teslamate
 ```

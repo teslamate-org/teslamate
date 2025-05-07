@@ -45,7 +45,7 @@ This setup is recommended only if you are running TeslaMate **on your home netwo
          - POSTGRES_PASSWORD=password #insert your secure database password!
          - POSTGRES_DB=teslamate
        volumes:
-         - teslamate-db:/var/lib/postgresql/data
+         - teslamate-db-17:/var/lib/postgresql/data
 
      grafana:
        image: teslamate/grafana:latest
