@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- fix(nix): update cldr hash (#4723 - @brianmay)
+
 #### Build, CI, internal
 
 #### Dashboards
