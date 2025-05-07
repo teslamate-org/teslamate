@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- feat: use Grafana 12.0.0 (#4721 - @swiffer)
+
 #### Build, CI, internal
 
 #### Dashboards
