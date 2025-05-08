@@ -1,12 +1,14 @@
 defmodule TeslaMate.HTTP do
   @pools %{
-    System.get_env("TESLA_API_HOST", "https://owner-api.teslamotors.com") => [size: 10],
+    System.get_env("TESLA_API_HOST", "https://owner-api.teslamotors.com") => [
+      size: System.get_env("TESLA_API_POOL_SIZE", "10") |> String.to_integer()
+    ],
     "https://nominatim.openstreetmap.org" => [size: 3],
     "https://api.github.com" => [size: 1],
-    :default => [size: 5]
+    :default => [size: System.get_env("HTTP_POOL_SIZE", "5") |> String.to_integer()]
   }
 
-  @pool_timeout 10_000
+  @pool_timeout System.get_env("HTTP_POOL_TIMEOUT", "10000") |> String.to_integer()
 
   def child_spec(_arg) do
     Finch.child_spec(name: __MODULE__, pools: @pools)
