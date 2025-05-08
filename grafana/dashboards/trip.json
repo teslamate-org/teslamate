@@ -90,7 +90,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 13,
+        "h": 15,
         "w": 13,
         "x": 0,
         "y": 1
@@ -430,7 +430,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 5,
         "x": 19,
         "y": 1
@@ -1046,9 +1046,9 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 5,
-        "x": 19,
-        "y": 9
+        "w": 6,
+        "x": 13,
+        "y": 11
       },
       "id": 22,
       "maxDataPoints": 100,
@@ -1116,6 +1116,86 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
+          "displayName": "",
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-orange"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 19,
+        "y": 11
+      },
+      "id": 43,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \n(SELECT sum(cost) FROM charging_processes WHERE $__timeFilter(end_date) AND car_id = $car_id) /\n(SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit')\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date) AND ideal_battery_range_km IS NOT NULL\nORDER BY 1) * 100 AS \"Ø Cost per 100 $length_unit\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
           "displayName": "${__cell_0}",
           "links": [],
           "mappings": [],
@@ -1144,7 +1224,7 @@
         "h": 3,
         "w": 11,
         "x": 13,
-        "y": 11
+        "y": 13
       },
       "id": 40,
       "options": {
@@ -1317,7 +1397,7 @@
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 16
       },
       "id": 20,
       "options": {
@@ -1696,7 +1776,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 18
       },
       "id": 2,
       "options": {
@@ -2139,7 +2219,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 29
       },
       "id": 36,
       "options": {
@@ -2332,7 +2412,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 35
+        "y": 37
       },
       "id": 42,
       "options": {
@@ -2494,7 +2574,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 35
+        "y": 37
       },
       "id": 8,
       "options": {
