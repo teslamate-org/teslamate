@@ -9,8 +9,12 @@ This document provides the necessary steps for installation of TeslaMate on a va
 
 Click on the following items to view detailed installation steps.
 
+Note that in very recent distributions, you might have the required versions already packaged. However, the contents or naming of the Debian/Ubuntu packages might slightly differ than the ones from upstream, so you might need to install extra packages or do other tweaks.
+
 <details>
   <summary>Postgres (v17.3+)</summary>
+
+Either upstream:
 
 ```bash
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
@@ -21,10 +25,18 @@ sudo apt-get install -y postgresql-17 postgresql-client-17
 
 Source: [postgresql.org/download](https://www.postgresql.org/download/)
 
+Or if you run a recent enough distribution (e.g. Debian Trixie:):
+
+```bash
+sudo apt install postgresql-17 postgresql-client-17
+```
+
 </details>
 
 <details>
   <summary>Elixir (v1.16+)</summary>
+
+Either from upstream:
 
 ```bash
 wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb && sudo dpkg -i erlang-solutions_2.0_all.deb
@@ -33,6 +45,12 @@ sudo apt-get install -y elixir esl-erlang
 ```
 
 Source: [erlang.org/downloads](https://www.erlang.org/downloads#prebuilt)
+
+Or if you run a recent enough distribution (e.g. Debian Trixie:):
+
+```bash
+sudo apt install erlang erlang-dev erlang-syntax-tools elixir
+```
 
 </details>
 
@@ -69,12 +87,20 @@ Source: [mosquitto.org/download](https://mosquitto.org/download/)
 <details>
   <summary>Node.js (v20+)</summary>
 
+Either from upstream:
+
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 sudo apt-get install -y nodejs
 ```
 
 Source: [nodejs.org/en/download/package-manager](https://nodejs.org/en/download/package-manager/all#debian-and-ubuntu-based-linux-distributions)
+
+Or if you run a recent enough distribution (e.g. Debian Trixie:):
+
+```bash
+sudo apt install nodejs npm
+```
 
 </details>
 
@@ -258,7 +284,13 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
    Version: 10
    ```
 
-3. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/main/grafana/dashboards) or use the `dashboards.sh` script:
+3. Install `jq`:
+
+   ```bash
+   sudo apt install jq
+   ```
+
+4. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/main/grafana/dashboards) or use the `dashboards.sh` script:
 
    ```bash
    $ ./grafana/dashboards.sh restore
@@ -290,6 +322,15 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
 
    ```bash
    LOGIN=user:password ./grafana/dashboards.sh restore
+   ```
+
+   :::
+
+   :::tip
+   To use a remote Grafana install, set the `URL` variable:
+
+   ```bash
+   URL=http://mygrafana ./grafana/dashboards.sh restore
    ```
 
    :::
