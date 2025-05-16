@@ -14,6 +14,7 @@
 #### Dashboards
 
 - fix: new image on home dashboard as old got removed from Tesla mediaserver (#4702 - @JakobLichterfeld, @swiffer)
+- feat: update image on home dashboard to juniper and back to dark (#4742 - @swiffer)
 
 #### Translations
 
