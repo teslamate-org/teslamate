@@ -327,7 +327,7 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
    :::
 
    :::tip
-   To use a remote Grafana install, set the `URL` variable:
+   In case you use a Grafana installation that runs on a separate server (for example, an already existing Grafana install), set the `URL` variable to point to it (the default points to `localhost:3000`):
 
    ```bash
    URL=http://mygrafana ./grafana/dashboards.sh restore
