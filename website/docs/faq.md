@@ -51,6 +51,9 @@ teslamate_1     | 2021-03-16 12:03:28.123 car_id=1 [info] Start / :asleep
 teslamate_1     | 2021-03-16 12:03:28.139 car_id=1 [info] Disconnecting ...
 ```
 
+The accessory power functionality could also be preventing your car from going to sleep even if no accessory is connected. 
+You can disable it by setting Controls > Charging > Keep Accessory Power Off.   
+
 ![image](https://user-images.githubusercontent.com/2128464/111361149-38238380-8696-11eb-950d-aba298206d2d.png)
 
 **Note!** If you are using some other data logger like TeslaFi at the same time, the sleep attempts probably fail as the other data logger is keeping the car awake. Especially calling the [Vehicle Data API](https://www.teslaapi.io/vehicles/state-and-settings#vehicle-data) will reset the car's inactivity timer.
