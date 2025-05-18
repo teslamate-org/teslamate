@@ -329,10 +329,11 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
    :::tip
    In case you use a Grafana installation that runs on a separate server (for
    example, an already existing Grafana install), set the `URL` variable to
-   point to it (the default points to `localhost:3000`):
+   point to it (the default points to `http://localhost:3000`, use a full URL,
+   including protocol, host and port):
 
    ```bash
-   URL=http://mygrafana ./grafana/dashboards.sh restore
+   URL=<your-grafana-instance-url> ./grafana/dashboards.sh restore
    ```
 
    :::
