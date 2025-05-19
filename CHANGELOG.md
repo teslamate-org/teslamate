@@ -20,6 +20,8 @@
 
 #### Documentation
 
+- docs: improvement to the Debian installation instructions (#4734 - @iustin)
+
 ## [2.0.0] - 2025-04-26
 
 **This is a breaking change release:** TeslaMate uses PostgreSQL as database, this is an external dependency and needs to be updated by yourself. We now require PostgreSQL 16.7 or 17.3 or higher as we are upgrading the bundled earthdistance extension to v1.2. TeslaMate will now fail to start if you are using an older version. Ensure to upgrade your database before upgrading TeslaMate. To upgrade PostgreSQL, you need to follow these instructions:
