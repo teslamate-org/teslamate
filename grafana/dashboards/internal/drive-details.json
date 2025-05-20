@@ -2081,7 +2081,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t(NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) * car.efficiency)\nFROM\n\tdrives d\nJOIN cars car ON car.id = car_id\nWHERE\n\td.id = $drive_id;",
+          "rawSql": "SELECT\n\t(start_${preferred_range}_range_km - end_${preferred_range}_range_km) * car.efficiency\nFROM\n\tdrives d\nJOIN cars car ON car.id = car_id\nWHERE\n\td.id = $drive_id;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2287,7 +2287,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "select\n\t(NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) * car.efficiency) *1000 /\n\t  convert_km(distance::numeric, '$length_unit') as \"$length_unit\"\nfrom drives d\nJOIN cars car ON car.id = car_id\nwhere d.id = $drive_id;",
+          "rawSql": "select\n\t(start_${preferred_range}_range_km - end_${preferred_range}_range_km) * car.efficiency * 1000 /\n\t  convert_km(distance::numeric, '$length_unit') as \"$length_unit\"\nfrom drives d\nJOIN cars car ON car.id = car_id\nwhere d.id = $drive_id;",
           "refId": "A",
           "sql": {
             "columns": [
