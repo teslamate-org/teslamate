@@ -76,6 +76,8 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 
 #### Teslemetry Fleet API
 
+**_Important: Teslemetry's vehicle data polling is [pay-per-use](https://teslemetry.com/blog/road-away-from-polling)._**
+
 1. Log in the [Teslemetry website](https://teslemetry.com) and create your `TOKEN`.
 1. Use this `TOKEN` instead of _`xxxx-xxxx-xxxx-xxxx`_ and add the following environment variables:
 
@@ -90,7 +92,7 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 
 #### Teslemetry Streaming
 
-**_Important: no streaming provided by Teslemetry, you MUST disable manually the streaming in Teslamate settings._**
+**_Important: Teslemetry's streaming is incompatible with Teslamate, you MUST disable manually the streaming in Teslamate settings._**
 
 ## Guide to using the official Tesla API directly (free)
 
