@@ -57,19 +57,15 @@ backup() {
 restore() {
 	find "$DASHBOARDS_DIRECTORY" -type f -name \*.json -print0 |
 		while IFS= read -r -d '' dashboard_path; do
-			folder_id=$(get_folder_id "$(basename "$dashboard_path" .json)")
+			folder_id=$(get_folder_id "$(jq -r '.uid' <"$dashboard_path")")
 			curl \
 				--silent --fail --show-error --output /dev/null \
 				--user "$LOGIN" \
 				-X POST -H "Content-Type: application/json" \
 				-d "{\"dashboard\":$(cat "$dashboard_path"), \
-                    \"overwrite\":true, \
-                    \"folderId\":$folder_id, \
-                    \"inputs\":[{\"name\":\"DS_CLOUDWATCH\", \
-                                 \"type\":\"datasource\", \
-                                 \"pluginId\":\"cloudwatch\", \
-                                 \"value\":\"TeslaMate\"}]}" \
-				"$URL/api/dashboards/import"
+					\"overwrite\":true, \
+					\"folderId\":$folder_id}" \
+				"$URL/api/dashboards/db"
 
 			echo "RESTORED $(basename "$dashboard_path")"
 		done
@@ -105,7 +101,7 @@ get_folder_id() {
 	curl \
 		--silent \
 		--user "$LOGIN" \
-		"$URL/api/dashboards/db/$dashboard" |
+		"$URL/api/dashboards/uid/$dashboard" |
 		jq '.meta | .folderId'
 }
 
