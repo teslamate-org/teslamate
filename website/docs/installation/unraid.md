@@ -13,6 +13,8 @@ This document provides the necessary steps for installation of TeslaMate on Unra
 
 ## Instructions
 
+Unlike the Compose installation which sets up the following containers in one go, on Unraid you will need to install and configure each container individually from Community Apps.
+
 **Postgres Docker**
 1. Go to the Apps tab for the Community Apps and search for postgresql17 (current version supported) and click install.
 2. Verify that no other applications are running on port `5432`
