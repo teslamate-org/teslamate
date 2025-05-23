@@ -155,3 +155,4 @@ rm -r "$TMP_DIR"
 
 echo "Restore completed successfully."
 ```
+Click **RUN SCRIPT**
