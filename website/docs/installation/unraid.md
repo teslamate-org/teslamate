@@ -15,31 +15,31 @@ This document provides the necessary steps for installation of TeslaMate on Unra
 
 **Postgres Docker**
 1. Go to the Apps tab for the Community Apps and search for postgresql17 (current version supported) and click install.
-2. Verify that no other applications are running on port 5432.
+2. Verify that no other applications are running on port `5432`
 3. Pick a password of your choosing for the database
-4. Set POSTGRES_USER to teslamate
-5. Set POSTGRES_DB to teslamate
+4. Set `POSTGRES_USER` to `teslamate`
+5. Set `POSTGRES_DB` to `teslamate`
 6. Click apply and set the container to autostart.
 
 **Mosquito Docker**
 1. Go to the Apps tab for the Community Apps and search for mosquitto (cmccambridge repository works well) and click install.
-2. Verify that no other applications are running on port 1883
-3. Default template items are fine.
+2. Verify that no other applications are running on port `1883`
+3. Default template options are fine.
 4. Click apply and set the container to autostart.
 
 **TeslaMate Docker**
 1. Go to the Apps tab for the Community Apps and search for TeslaMate and click install.
-2. Verify that no other applications are running on port 4000
+2. Verify that no other applications are running on port `4000`
 3. **Choose a secure encryption key** that will be used to encrypt your Tesla API tokens (insert as `ENCRYPTION_KEY`).
-4. Set the postgres user to teslamate and the postgres password to your password from the postgres setup
-5. Set the database teslamate to match the previous config
+4. Set the postgres user to `teslamate` and the postgres password to your password from the postgres setup
+5. Set the database `teslamate` to match the previous config
 6. Set the mqtt host to the ip address of your Unraid server
 7. Create an mqtt user and password (required since the default setup is secure)
 8. Click apply and optionally set the container to autostart
 
 **TeslaMate-Grafana Docker**
 1. Go to the Apps tab for the Community Apps and search for TeslaMate and click install.
-2. Verify that no other applications are running on port 3000 (such as another grafana instance), if so specify a different port like 3333
+2. Verify that no other applications are running on port `3000` (such as another Grafana instance). If so, specify a different port like 3333
 3. Specify the teslamate database name, username, and password
 4. Set the ip of your Unraid server for the host.
 5. 8. Click apply and optionally set the container to autostart
