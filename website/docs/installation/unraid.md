@@ -6,7 +6,7 @@ sidebar_label: Unraid
 This document provides the necessary steps for installation of TeslaMate on Unraid. 
 ## Requirements
 
-- Existing Unraid install with Docker service enabled
+- Existing Unraid install on v6 or higher with Docker service enabled
 - Community Apps store installed
 - appdata share configured
 - External internet access, to talk to tesla.com
