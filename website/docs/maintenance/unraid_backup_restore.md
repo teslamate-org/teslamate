@@ -48,7 +48,7 @@ find $BACKUP_DIR/ -type f -name '*.tgz' -mtime +7 -exec rm {} \;
 ```
 
 :::note
-Change the BACKUP_DIR= path to a share on your server where you want to save backups. Make sure you have the mover settings configured correctly on your share or also have some other backup process for these files since they are still on your server.
+Change the `BACKUP_DIR` path to a share on your server where you want to save backups. Make sure you have the mover settings configured correctly on your share or also have some other backup process for these files since they are still on your server.
 :::
 
 :::note
@@ -60,21 +60,10 @@ Click **RUN SCRIPT** to test and verify that it works. If you are satisfied, you
 
 ## Restore
 
-In the User Scripts plugin, click the Add New Script button. Give the script a name such as `TeslaMate Restore`
-
-Click the gear icon next to the name and Edit Script.
-
-:::note
-Replace the **BACKUP_DIR** value below with the value defined in the previous backup file.
-:::
-
-:::note
-Replace the **DB_CONTAINER** value below with the name of the container you want the restore to go to. In the file below, you can see how an upgrade from 15 to 17 would work.
-:::
-
-:::note
-Replace the default `teslamate` value below with the value defined in the template if you have one (DB_USER and DB_NAME)
-:::
+1. Mannually stop all TeslaMate docker conatiners (TeslaMate-Grafana, TeslaMate).
+2. In the User Scripts plugin, click the Add New Script button. Give the script a name such as `TeslaMate Restore`
+3. Click the gear icon next to the name and Edit Script.
+4. Copy and paste the folliwng script
 
 ```bash
 #!/bin/bash
@@ -155,4 +144,25 @@ rm -r "$TMP_DIR"
 
 echo "Restore completed successfully."
 ```
-Click **RUN SCRIPT**
+:::note
+Replace the `BACKUP_DIR` value with the value defined in the previous backup file.
+:::
+
+:::note
+Replace the `DB_CONTAINER` value with the name of the container you want the restore to go **to**.
+:::
+
+:::note
+Replace the default `teslamate` value below with the value defined in the template if you have one (DB_USER and DB_NAME)
+:::
+
+5. Click **RUN SCRIPT**
+
+## Postgres Upgrade
+1. Run the Backup script (optional)
+2. Go to the Apps tab and search for the latest postgres version and install a new container instance. Then shut it down.
+3. Edit the Restore script `DB_CONTAINER` with the name of the new postgres container you just installed and specify the `BACKUP_DIR`
+4. Click RUN SCRIPT
+5. Select the backup file you want to restore.
+6. Start the new postgres, TeslaMate, and TeslaMate-Grafana containers and verify that your data is correct.
+7. When you are certain everything is working good you can delete the old postgres container and image (optional)
