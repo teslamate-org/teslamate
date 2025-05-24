@@ -8,6 +8,7 @@
 
 - fix(nix): update cldr hash (#4723 - @brianmay)
 - feat: use Grafana 12.0.0 (#4721 - @swiffer)
+- feat: use Grafana 12.0.1 (#4756 - @swiffer)
 
 #### Build, CI, internal
 
