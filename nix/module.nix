@@ -255,8 +255,7 @@ in
           "auth.basic".enabled = false;
           analytics.reporting_enabled = false;
           dashboards.default_home_dashboard_path = "../grafana/dashboards/internal/home.json";
-          # This experimental config option is disabled until Grafana 11.6.1 becomes available in NixOS 25.05
-          # date_formats.use_browser_locale = true;
+          date_formats.use_browser_locale = true;
           plugins.preinstall_disabled = true;
           unified_alerting.enabled = false;
         };
