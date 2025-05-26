@@ -12,6 +12,7 @@
 #### Build, CI, internal
 
 - feat(nix): use nixos-25.05 (#4716 - @JakobLichterfeld)
+- build(deps): update flake.lock (#4716)
 
 #### Dashboards
 
