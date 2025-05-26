@@ -29,6 +29,9 @@
 
 #### Translations
 
+- i18n: create Catalan default.po (#4727 and #4728 - @pellix)
+- i18n: more descriptive italian localization (#4748 -@StarkITA)
+
 #### Documentation
 
 - docs: improvement to the Debian installation instructions (#4734 - @iustin)
