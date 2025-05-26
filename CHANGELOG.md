@@ -11,6 +11,8 @@
 
 #### Build, CI, internal
 
+- feat(nix): use nixos-25.05 (#4716 - @JakobLichterfeld)
+
 #### Dashboards
 
 - fix: new image on home dashboard as old got removed from Tesla mediaserver (#4702 - @JakobLichterfeld, @swiffer)

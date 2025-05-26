@@ -55,14 +55,7 @@
             inotify-tools
             glibcLocales
           ]
-          ++ optional stdenv.isDarwin terminal-notifier
-          ++ optionals stdenv.isDarwin (
-            with darwin.apple_sdk.frameworks;
-            [
-              CoreFoundation
-              CoreServices
-            ]
-          );
+          ++ optional stdenv.isDarwin terminal-notifier;
         enterShell = ''
           export LOCALES="${config.teslamate.cldr}/priv/cldr";
           export PORT="4000"
