@@ -88,7 +88,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -197,7 +197,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -281,7 +281,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -291,7 +291,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "WITH since as (\n\tSELECT timezone('UTC', min(start_date)) as date FROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY car_id\n),\n\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', timezone('UTC', start_date), '$__timezone') AS date,\n\t\tsum(NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) * cars.efficiency) AS energy\n\tFROM drives\n  INNER JOIN cars on drives.car_id = cars.id\n\tWHERE car_id = $car_id and $__timeFilter(start_date) and end_date is not null\n\tGROUP BY 1\n),\n\nbase_line AS (\n\tSELECT date from generate_series(date_trunc('day', (select date from since), '$__timezone'), date_trunc('day', timestamp with time zone $__timeTo(), '$__timezone'), '1 day'::interval, '$__timezone') date)\n\nSELECT\n  base_line.date as time,\n\tcoalesce(energy, 0) as energy\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE date_trunc('day', timestamp with time zone $__timeFrom(), '$__timezone') <= base_line.date\norder by base_line.date\n",
+          "rawSql": "WITH since as (\n\tSELECT timezone('UTC', min(start_date)) as date FROM drives\n\tWHERE car_id = $car_id\n\tGROUP BY car_id\n),\n\nactual AS (\n\tSELECT\n\t\tdate_trunc('day', timezone('UTC', start_date), '$__timezone') AS date,\n\t\tsum((start_${preferred_range}_range_km - end_${preferred_range}_range_km) * cars.efficiency) AS energy\n\tFROM drives\n  INNER JOIN cars on drives.car_id = cars.id\n\tWHERE car_id = $car_id and $__timeFilter(start_date) and end_date is not null\n\tGROUP BY 1\n),\n\nbase_line AS (\n\tSELECT date from generate_series(date_trunc('day', (select date from since), '$__timezone'), date_trunc('day', timestamp with time zone $__timeTo(), '$__timezone'), '1 day'::interval, '$__timezone') date)\n\nSELECT\n  base_line.date as time,\n\tcoalesce(energy, 0) as energy\nFROM base_line\nLEFT JOIN actual ON actual.date = base_line.date\nWHERE date_trunc('day', timestamp with time zone $__timeFrom(), '$__timezone') <= base_line.date\norder by base_line.date\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -398,7 +398,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -508,7 +508,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -573,7 +573,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -672,7 +672,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -791,7 +791,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -911,7 +911,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -1044,7 +1044,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -1168,7 +1168,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -1278,7 +1278,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -1408,7 +1408,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {

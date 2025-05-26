@@ -175,7 +175,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -346,7 +346,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -545,7 +545,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {

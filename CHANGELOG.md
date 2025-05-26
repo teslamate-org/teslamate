@@ -6,17 +6,26 @@
 
 ### Improvements and bug fixes
 
+- fix(nix): update cldr hash (#4723 - @brianmay)
+- feat: use Grafana 12.0.0 (#4721 - @swiffer)
+- feat: use Grafana 12.0.1 (#4756 - @swiffer)
+
 #### Build, CI, internal
 
 #### Dashboards
 
 - fix: new image on home dashboard as old got removed from Tesla mediaserver (#4702 - @JakobLichterfeld, @swiffer)
+- feat: update image on home dashboard to juniper and back to dark (#4742 - @swiffer)
+- fix: consumption for drives with positive soc diff (#4746 - @swiffer)
 
 #### Translations
 
 #### Documentation
 
+- docs: improvement to the Debian installation instructions (#4734 - @iustin)
+- docs: add note on accessory power functionality can prevent car sleep (#4737 - @darox)
 - docs: clarify pricing for Teslemetry (#4705 - @Bre77)
+
 
 ## [2.0.0] - 2025-04-26
 

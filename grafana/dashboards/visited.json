@@ -106,49 +106,6 @@
         "layers": [
           {
             "config": {
-              "showLegend": false,
-              "style": {
-                "color": {
-                  "fixed": "transparent"
-                },
-                "opacity": 0,
-                "rotation": {
-                  "fixed": 0,
-                  "max": 360,
-                  "min": -360,
-                  "mode": "mod"
-                },
-                "size": {
-                  "fixed": 3,
-                  "max": 15,
-                  "min": 2
-                },
-                "symbol": {
-                  "fixed": "img/icons/marker/circle.svg",
-                  "mode": "fixed"
-                },
-                "symbolAlign": {
-                  "horizontal": "center",
-                  "vertical": "center"
-                },
-                "textConfig": {
-                  "fontSize": 12,
-                  "offsetX": 0,
-                  "offsetY": 0,
-                  "textAlign": "center",
-                  "textBaseline": "middle"
-                }
-              }
-            },
-            "location": {
-              "mode": "auto"
-            },
-            "name": "Workaround for Grafana Issue #89777, fixed in 11.6.0 via #101391, extra layer to be removed on broad availability of 11.6.0",
-            "tooltip": false,
-            "type": "markers"
-          },
-          {
-            "config": {
               "arrow": 0,
               "style": {
                 "color": {
@@ -205,7 +162,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -286,7 +243,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginversion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -410,7 +367,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginversion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -505,7 +462,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginversion": "12.0.1",
       "targets": [
         {
           "datasource": {
