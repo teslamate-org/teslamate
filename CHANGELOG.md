@@ -9,8 +9,14 @@
 - fix(nix): update cldr hash (#4723 - @brianmay)
 - feat: use Grafana 12.0.0 (#4721 - @swiffer)
 - feat: use Grafana 12.0.1 (#4756 - @swiffer)
+- feat: preserve the folders when restoring dashboards (#4715 - @IngmarStein)
 
 #### Build, CI, internal
+
+- build(deps): bump tzdata from 1.1.2 to 1.1.3 (#4713)
+- build(deps-dev): bump mock from 0.3.8 to 0.3.9 (#4712)
+- build(deps-dev): bump credo from 1.7.11 to 1.7.12 (#4711)
+- build(deps): bump crate-ci/typos from 1.31.1 to 1.31.2 (#4710)
 
 #### Dashboards
 
