@@ -239,7 +239,7 @@ msgstr "Tentativo di sospensione"
 #: lib/teslamate_web/live/car_live/summary.html.heex:276
 #, elixir-autogen, elixir-format
 msgid "Range (est.)"
-msgstr "Autonomia stimata"
+msgstr "Autonomia (stimata)"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:216
 #, elixir-autogen, elixir-format
@@ -279,7 +279,7 @@ msgstr "Autonomia"
 #: lib/teslamate_web/live/settings_live/index.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "ideal"
-msgstr "Stimata"
+msgstr "Ottimale"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:199
 #, elixir-autogen, elixir-format
@@ -289,7 +289,7 @@ msgstr "Teorica"
 #: lib/teslamate_web/live/car_live/summary.html.heex:255
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
-msgstr "Autonomia (stimata)"
+msgstr "Autonomia (ottimale)"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:189
 #, elixir-autogen, elixir-format
