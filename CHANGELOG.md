@@ -17,6 +17,7 @@
 - build(deps-dev): bump mock from 0.3.8 to 0.3.9 (#4712)
 - build(deps-dev): bump credo from 1.7.11 to 1.7.12 (#4711)
 - build(deps): bump crate-ci/typos from 1.31.1 to 1.31.2 (#4710)
+- fix(nix): update mix dependency hash in nix builds ([08fe0ac](https://github.com/teslamate-org/teslamate/commit/08fe0ac934176484c84fd4329c8d64925b6b0b97) - @JakobLichterfeld)
 
 #### Dashboards
 
