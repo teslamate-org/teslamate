@@ -637,7 +637,7 @@
           }
         ]
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -647,7 +647,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\nSELECT\n  duration_min > 1 AND\n  distance > 1 AND\n  ( \n    start_position.usable_battery_level IS NULL OR\n    (end_position.battery_level - end_position.usable_battery_level) = 0 \n  ) AS is_sufficiently_precise,\n  NULLIF(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0), 0) AS range_diff,\n  date_trunc('$period', timezone('UTC', start_date), '$__timezone') as date,\n  drives.*\nFROM drives\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id)\nSELECT\n  EXTRACT(EPOCH FROM date)*1000 AS date_from,\n  EXTRACT(EPOCH FROM date + interval '1 $period')*1000 AS date_to,\n  CASE '$period'\n    WHEN 'month' THEN to_char(timezone('$__timezone', date), 'YYYY Month')\n    WHEN 'year' THEN to_char(timezone('$__timezone', date), 'YYYY')\n    WHEN 'week' THEN 'week ' || to_char(timezone('$__timezone', date), 'WW') || ' starting ' || to_char(timezone('$__timezone', date), 'YYYY-MM-DD')\n    ELSE to_char(timezone('$__timezone', date), 'YYYY-MM-DD')\n  END AS display,\n  date,\n  sum(duration_min)*60 AS sum_duration_h, \n  convert_km(max(end_km)::integer - min(start_km)::integer, '$length_unit') AS sum_distance_$length_unit,\n  convert_celsius(avg(outside_temp_avg), '$temp_unit') AS avg_outside_temp_$temp_unit,\n  count(*) AS cnt,\n  sum(distance)/sum(range_diff) AS efficiency\nFROM data WHERE\n  car_id = $car_id AND\n  $__timeFilter(start_date)\nGROUP BY date",
+          "rawSql": "WITH data AS (\nSELECT\n  duration_min > 1 AND\n  distance > 1 AND\n  ( \n    start_position.usable_battery_level IS NULL OR\n    (end_position.battery_level - end_position.usable_battery_level) = 0 \n  ) AS is_sufficiently_precise,\n  start_${preferred_range}_range_km - end_${preferred_range}_range_km AS range_diff,\n  date_trunc('$period', timezone('UTC', start_date), '$__timezone') as date,\n  drives.*\nFROM drives\n  LEFT JOIN positions start_position ON start_position_id = start_position.id\n  LEFT JOIN positions end_position ON end_position_id = end_position.id)\nSELECT\n  EXTRACT(EPOCH FROM date)*1000 AS date_from,\n  EXTRACT(EPOCH FROM date + interval '1 $period')*1000 AS date_to,\n  CASE '$period'\n    WHEN 'month' THEN to_char(timezone('$__timezone', date), 'YYYY Month')\n    WHEN 'year' THEN to_char(timezone('$__timezone', date), 'YYYY')\n    WHEN 'week' THEN 'week ' || to_char(timezone('$__timezone', date), 'WW') || ' starting ' || to_char(timezone('$__timezone', date), 'YYYY-MM-DD')\n    ELSE to_char(timezone('$__timezone', date), 'YYYY-MM-DD')\n  END AS display,\n  date,\n  sum(duration_min)*60 AS sum_duration_h, \n  convert_km(max(end_km)::integer - min(start_km)::integer, '$length_unit') AS sum_distance_$length_unit,\n  convert_celsius(avg(outside_temp_avg), '$temp_unit') AS avg_outside_temp_$temp_unit,\n  count(*) AS cnt,\n  case when sum(range_diff) > 0 then sum(distance)/sum(range_diff) else null end AS efficiency\nFROM data WHERE\n  car_id = $car_id AND\n  $__timeFilter(start_date)\nGROUP BY date",
           "refId": "A",
           "sql": {
             "columns": [
@@ -703,7 +703,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n  SELECT\n    drives.*,\n    date_trunc('$period', timezone('UTC', start_date), '$__timezone') as date\n  FROM drives)\nSELECT\n  EXTRACT(EPOCH FROM date)*1000 AS date_from,\n  EXTRACT(EPOCH FROM date + interval '1 $period')*1000 AS date_to,\n  CASE '$period'\n    WHEN 'month' THEN to_char(timezone('$__timezone', date), 'YYYY Month')\n    WHEN 'year' THEN to_char(timezone('$__timezone', date), 'YYYY')\n    WHEN 'week' THEN 'week ' || to_char(timezone('$__timezone', date), 'WW') || ' starting ' || to_char(timezone('$__timezone', date), 'YYYY-MM-DD')\n    ELSE to_char(timezone('$__timezone', date), 'YYYY-MM-DD')\n  END AS display,\n  date,\n  sum(GREATEST(start_${preferred_range}_range_km - end_${preferred_range}_range_km, 0) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit') as consumption_net_$length_unit\nFROM data\nJOIN cars car ON car.id = car_id\nWHERE\n  car_id = $car_id AND\n  $__timeFilter(start_date)\nGROUP BY date",
+          "rawSql": "WITH data AS (\n  SELECT\n    drives.*,\n    date_trunc('$period', timezone('UTC', start_date), '$__timezone') as date\n  FROM drives)\nSELECT\n  EXTRACT(EPOCH FROM date)*1000 AS date_from,\n  EXTRACT(EPOCH FROM date + interval '1 $period')*1000 AS date_to,\n  CASE '$period'\n    WHEN 'month' THEN to_char(timezone('$__timezone', date), 'YYYY Month')\n    WHEN 'year' THEN to_char(timezone('$__timezone', date), 'YYYY')\n    WHEN 'week' THEN 'week ' || to_char(timezone('$__timezone', date), 'WW') || ' starting ' || to_char(timezone('$__timezone', date), 'YYYY-MM-DD')\n    ELSE to_char(timezone('$__timezone', date), 'YYYY-MM-DD')\n  END AS display,\n  date,\n  sum((start_${preferred_range}_range_km - end_${preferred_range}_range_km) * car.efficiency * 1000) / \n  convert_km(sum(distance)::numeric, '$length_unit') as consumption_net_$length_unit\nFROM data\nJOIN cars car ON car.id = car_id\nWHERE\n  car_id = $car_id AND\n  $__timeFilter(start_date)\nGROUP BY date",
           "refId": "C",
           "sql": {
             "columns": [
@@ -781,10 +781,19 @@
           "options": {
             "alias": "avg_cost_kwh",
             "binary": {
-              "left": "cost_charges",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cost_charges"
+                }
+              },
               "operator": "/",
-              "reducer": "sum",
-              "right": "sum_energy_used_kwh"
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sum_energy_used_kwh"
+                }
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -797,10 +806,19 @@
           "options": {
             "alias": "avg_cost_km_temp",
             "binary": {
-              "left": "cost_charges",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cost_charges"
+                }
+              },
               "operator": "/",
-              "reducer": "sum",
-              "right": "sum_distance_km"
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sum_distance_km"
+                }
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -813,10 +831,19 @@
           "options": {
             "alias": "avg_cost_mi_temp",
             "binary": {
-              "left": "cost_charges",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cost_charges"
+                }
+              },
               "operator": "/",
-              "reducer": "sum",
-              "right": "sum_distance_mi"
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sum_distance_mi"
+                }
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -829,9 +856,16 @@
           "options": {
             "alias": "avg_cost_km",
             "binary": {
-              "left": "avg_cost_km_temp",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "avg_cost_km_temp"
+                }
+              },
               "operator": "*",
-              "right": "100"
+              "right": {
+                "fixed": "100"
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -844,9 +878,16 @@
           "options": {
             "alias": "avg_cost_mi",
             "binary": {
-              "left": "avg_cost_mi_temp",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "avg_cost_mi_temp"
+                }
+              },
               "operator": "*",
-              "right": "100"
+              "right": {
+                "fixed": "100"
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -859,9 +900,19 @@
           "options": {
             "alias": "overhead_pct_km_temp",
             "binary": {
-              "left": "consumption_net_km",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "consumption_net_km"
+                }
+              },
               "operator": "/",
-              "right": "consumption_gross_km"
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "consumption_gross_km"
+                }
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -874,9 +925,16 @@
           "options": {
             "alias": "overhead_pct_km",
             "binary": {
-              "left": "1",
+              "left": {
+                "fixed": "1"
+              },
               "operator": "-",
-              "right": "overhead_pct_km_temp"
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "overhead_pct_km_temp"
+                }
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -889,9 +947,19 @@
           "options": {
             "alias": "overhead_pct_mi_temp",
             "binary": {
-              "left": "consumption_net_mi",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "consumption_net_mi"
+                }
+              },
               "operator": "/",
-              "right": "consumption_gross_mi"
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "consumption_gross_mi"
+                }
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -904,9 +972,16 @@
           "options": {
             "alias": "overhead_pct_mi",
             "binary": {
-              "left": "1",
+              "left": {
+                "fixed": "1"
+              },
               "operator": "-",
-              "right": "overhead_pct_mi_temp"
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "overhead_pct_mi_temp"
+                }
+              }
             },
             "mode": "binary",
             "reduce": {
