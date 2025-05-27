@@ -86,3 +86,23 @@ config = services.teslamate = {
     };
 }
 ```
+
+If you want to use the TeslaMate web interface via a reverse proxy, you can use the following snippet if you have already Caddy service running:
+
+```nix
+{
+    services.caddy.virtualHosts."[your-sub-domain for TeslaMate]" = {
+      useACMEHost = "[your-baseDomain]";
+      extraConfig = ''
+        reverse_proxy http://127.0.0.1:4000
+      '';
+    };
+
+    services.caddy.virtualHosts."[your-sub-domain for grafana]" = {
+      useACMEHost = "[your-baseDomain]";
+      extraConfig = ''
+        reverse_proxy http://127.0.0.1:3000
+      '';
+    };
+}
+```
