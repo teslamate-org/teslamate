@@ -5,7 +5,7 @@ sidebar_label: NixOS
 
 This document provides the necessary steps for installation of TeslaMate on [NixOS](https://nixos.org/).
 
-This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk. If you intend to expose TeslaMate directly to the internet use a reverse proxy like [Caddy](https://nixos.wiki/wiki/Caddy).
+This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk. If you intend to expose TeslaMate directly to the internet use a secure connection such as a VPN, Cloudflare Tunnel, Tailscale, Zero Tier and a reverse proxy like [Caddy](https://nixos.wiki/wiki/Caddy).
 
 ## Requirements
 
@@ -38,7 +38,7 @@ If you have a MCU2 upgraded car, you can use the following URL instead to get th
 teslamate.url = "github:teslamate-org/teslamate/mcu2-upgraded-cars";
 ```
 
-To enable the TeslaMate service, your config could look like this:
+To enable the TeslaMate service, your config could look like this (note: this will conflict with any existing PostgreSQL/Grafana servers, because NixOS modules do not support multiple instances).
 
 ```nix
 {
