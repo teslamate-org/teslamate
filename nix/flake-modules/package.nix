@@ -66,7 +66,6 @@
           ;
 
         # set the environment variables for the build
-        MIX_ENV = "prod"; # build for production
         SKIP_LOCALE_DOWNLOAD = "true"; # do not download locales during build as they are already included in the cldr package from github
         LOCALES = "${cldr}/priv/cldr";
 
