@@ -65,6 +65,8 @@
           mixFodDeps
           ;
 
+        # set the environment variables for the build
+        SKIP_LOCALE_DOWNLOAD = "true"; # do not download locales during build as they are already included in the cldr package from github
         LOCALES = "${cldr}/priv/cldr";
 
         postBuild = ''
