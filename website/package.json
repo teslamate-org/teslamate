@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@docusaurus/core": "^3.7.0",
-    "@docusaurus/preset-classic": "^3.7.0",
+    "@docusaurus/preset-classic": "^3.8.0",
     "classnames": "^2.5.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
