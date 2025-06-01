@@ -23,7 +23,18 @@
       disabled
     />
   </div>
-  <div class="card-content">
+  <div class="card-footer">
+    <div class="card-footer-item">
+      <%= link("Open in Google Maps",
+        to: "https://www.google.com/maps?q=#{@summary.latitude},#{@summary.longitude}",
+        target: "_blank",
+        rel: "noopener noreferrer",
+        class: "button is-small is-link is-outlined"
+      ) %>
+    </div>
+  </div>
+  <div class="card-content"></div>
+
     <div class="media is-flex mb-5">
       <div class="media-content">
         <p class="title is-5"><%= @summary.display_name %></p>
