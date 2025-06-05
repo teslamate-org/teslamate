@@ -428,6 +428,57 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                  &match?({"span", [_, {"data-tooltip", "Reduced Battery Range"}], _}, &1)
                )
     end
+  @tag :signed_in
+  test "shows Google Maps link with correct coordinates", %{conn: conn} do
+    _car = car_fixture(%{suspend_min: 60_000, suspend_after_idle_min: 60_000, use_streaming_api: false})
+
+    now = now()
+    test_latitude = 37.7749
+    test_longitude = -122.4194
+
+    events = [
+      {:ok,
+       online_event(
+         display_name: "FooCar",
+         drive_state: %{timestamp: now, latitude: test_latitude, longitude: test_longitude},
+         climate_state: %{timestamp: now, is_preconditioning: false, climate_keeper_mode: "off"},
+         vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
+       )}
+    ]
+
+    :ok = start_vehicles(events)
+
+    assert {:ok, parent_view, _html} =
+             conn
+             |> put_connect_params(%{"baseUrl" => "http://localhost"})
+             |> live("/")
+
+    [view] = live_children(parent_view)
+    html = render(view)
+
+    google_maps_links = 
+      html
+      |> Floki.parse_document!()
+      |> Floki.find("a[href*='google.com/maps']")
+
+    assert length(google_maps_links) == 1
+
+    [google_maps_link] = google_maps_links
+
+    assert {"a", attrs, ["Open in Google Maps"]} = google_maps_link
+
+    attrs_map = Map.new(attrs)
+
+    expected_href = "https://www.google.com/maps?q=#{test_latitude},#{test_longitude}"
+    assert attrs_map["href"] == expected_href
+
+    assert attrs_map["target"] == "_blank"
+    assert attrs_map["rel"] == "noopener noreferrer"
+
+    assert attrs_map["class"] == "button is-small is-link is-outlined"
+  end
+
+
   end
 
   def start_vehicles(events \\ []) do
