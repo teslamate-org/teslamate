@@ -36,6 +36,7 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - build(deps): bump nix-community/cache-nix-action from 7.0.0 to 7.0.2 (#5122)
 - build(deps): bump actions/cache from 5.0.1 to 5.0.3 (#5120)
 - build(deps): bump tesla from 1.14.1 to 1.14.2 (#4780)
+- fix(nix): update mix dependency hash in nix builds (#4780 - @JakobLichterfeld)
 
 #### Dashboards
 
