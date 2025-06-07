@@ -37,6 +37,7 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - build(deps): bump actions/cache from 5.0.1 to 5.0.3 (#5120)
 - build(deps): bump tesla from 1.14.1 to 1.14.2 (#4780)
 - fix(nix): update mix dependency hash in nix builds (#4780 - @JakobLichterfeld)
+- feat(middleware): migrate Tesla HTTP client to v2 Macro to avoid use of soft deprecated configuration (#4780 - @JakobLichterfeld and @brianmay)
 
 #### Dashboards
 
