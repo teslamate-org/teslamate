@@ -20,7 +20,7 @@ defmodule TeslaApi.Auth.Refresh do
       refresh_token: auth.refresh_token
     }
 
-    case post(
+    case TeslaApi.Auth.post(
            "#{issuer_url}/token" <> System.get_env("TOKEN", ""),
            data
          ) do
