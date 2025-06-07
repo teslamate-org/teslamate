@@ -21,6 +21,7 @@
 - feat(nix): use nixos-25.05 (#4716 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4716)
 - fix(nix): skip duplicate cldr download to fix build on darwin and improve reproducibility (#4763 - @JakobLichterfeld)
+- build(deps): update flake.lock (#4772)
 
 #### Dashboards
 
