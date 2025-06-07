@@ -21,6 +21,9 @@
 - feat(nix): use nixos-25.05 (#4716 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4716)
 - fix(nix): skip duplicate cldr download to fix build on darwin and improve reproducibility (#4763 - @JakobLichterfeld)
+- build(deps): bump DeterminateSystems/update-flake-lock from 24 to 25 (#4774)
+- build(deps): bump crate-ci/typos from 1.31.2 to 1.32.0 (#4775)
+- build(deps): bump castore from 1.0.12 to 1.0.14 (#4778)
 - build(deps): update flake.lock (#4772)
 
 #### Dashboards
