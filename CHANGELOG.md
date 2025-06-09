@@ -32,6 +32,7 @@
 - fix: new image on home dashboard as old got removed from Tesla mediaserver (#4702 - @JakobLichterfeld, @swiffer)
 - feat: update image on home dashboard to juniper and back to dark (#4742 - @swiffer)
 - fix: consumption for drives with positive soc diff (#4746 - @swiffer)
+- fix: align usage of time-range filters to fix consumption gross issues in some edge cases (#4787 - @swiffer)
 
 #### Translations
 
