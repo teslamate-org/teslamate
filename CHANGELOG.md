@@ -21,6 +21,11 @@
 - feat(nix): use nixos-25.05 (#4716 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4716)
 - fix(nix): skip duplicate cldr download to fix build on darwin and improve reproducibility (#4763 - @JakobLichterfeld)
+- build(deps): bump DeterminateSystems/update-flake-lock from 24 to 25 (#4774)
+- build(deps): bump crate-ci/typos from 1.31.2 to 1.32.0 (#4775)
+- build(deps): bump castore from 1.0.12 to 1.0.14 (#4778)
+- build(deps): update flake.lock (#4772)
+- build(deps): bump phoenix_ecto from 4.6.3 to 4.6.4 (#4779)
 - build(deps): bump @docusaurus/preset-classic from 3.7.0 to 3.8.0 in /website (#4776)
 
 #### Dashboards
@@ -28,6 +33,7 @@
 - fix: new image on home dashboard as old got removed from Tesla mediaserver (#4702 - @JakobLichterfeld, @swiffer)
 - feat: update image on home dashboard to juniper and back to dark (#4742 - @swiffer)
 - fix: consumption for drives with positive soc diff (#4746 - @swiffer)
+- fix: align usage of time-range filters to fix consumption gross issues in some edge cases (#4787 - @swiffer)
 
 #### Translations
 
