@@ -33,7 +33,9 @@
 - feat: update image on home dashboard to juniper and back to dark (#4742 - @swiffer)
 - fix: consumption for drives with positive soc diff (#4746 - @swiffer)
 - fix: align usage of time-range filters to fix consumption gross issues in some edge cases (#4787 - @swiffer)
-- feat(dashboards): several Improvements for Charging Stats (#4791 - @swiffer)
+- feat(dashboards-Charging-Stats): align query conditions and introduce a min duration filter applied to all panels to ensure consistent charging stats (#4791 - @swiffer)
+- feat(dashboards): reliably calculate charging costs per 100 km for shorter periods and align across trip, statistics and charging stats dashboards (#4791 - @swiffer)
+- feat(dashboards)detect consecutive charges and exclude from Charge / Discharge Stats (#4791 - @swiffer)
 
 #### Translations
 
