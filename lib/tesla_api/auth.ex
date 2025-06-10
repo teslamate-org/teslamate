@@ -22,10 +22,12 @@ defmodule TeslaApi.Auth do
         Tesla.Middleware.JSON,
         {Tesla.Middleware.Logger, debug: true, log_level: &log_level/1}
       ],
-      Tesla.Adapter.Finch,
-      name: TeslaMate.HTTP,
-      receive_timeout: 60_000
+      {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000}
     )
+  end
+
+  def post(url, data) do
+    Tesla.post(client(), url, data)
   end
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]

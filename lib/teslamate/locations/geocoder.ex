@@ -11,9 +11,7 @@ defmodule TeslaMate.Locations.Geocoder do
         Tesla.Middleware.JSON,
         {Tesla.Middleware.Logger, debug: true, log_level: &log_level/1}
       ],
-      Tesla.Adapter.Finch,
-      name: TeslaMate.HTTP,
-      receive_timeout: 30_000
+      {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000}
     )
   end
 

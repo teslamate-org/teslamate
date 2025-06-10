@@ -10,13 +10,16 @@ defmodule TeslaApi do
         {TeslaApi.Middleware.TokenAuth, token},
         {Tesla.Middleware.Logger, debug: true, log_level: &log_level/1}
       ],
-      Tesla.Adapter.Finch,
-      name: TeslaMate.HTTP,
-      receive_timeout: 35_000
+      {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 35_000}
     )
   end
 
   defp log_level(%Tesla.Env{} = env) when env.status >= 500, do: :warning
   defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :info
   defp log_level(%Tesla.Env{}), do: :debug
+
+  def get(url, opts) do
+    token = opts[:access_token]
+    Tesla.get(client(token), url)
+  end
 end
