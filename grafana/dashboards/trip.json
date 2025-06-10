@@ -90,7 +90,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 13,
+        "h": 15,
         "w": 13,
         "x": 0,
         "y": 1
@@ -175,7 +175,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS latitude,\n\tavg(longitude) AS longitude\nFROM\n\tpositions\nWHERE\n  car_id = $car_id AND\n\t$__timeFilter(date)\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
+          "rawSql": "SELECT\n\t$__timeGroup(date, '5s') AS time,\n\tavg(latitude) AS latitude,\n\tavg(longitude) AS longitude\nFROM\n\tpositions\nWHERE\n  car_id = $car_id and (drive_id in (select id from drives where $__timeFilter(start_date)) or drive_id is null and $__timeFilter(date))\nGROUP BY\n\t1\nORDER BY\n\t1 ASC",
           "refId": "A",
           "sql": {
             "columns": [
@@ -293,7 +293,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date) AND ideal_battery_range_km IS NOT NULL\nORDER BY 1;",
+          "rawSql": "SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit') as \"distance_$length_unit\"\nFROM positions\nWHERE car_id = $car_id AND ideal_battery_range_km IS NOT NULL\nand (drive_id in (select id from drives where $__timeFilter(start_date)) or drive_id is null and $__timeFilter(date))\nORDER BY 1",
           "refId": "A",
           "sql": {
             "columns": [
@@ -387,7 +387,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 5,
         "x": 19,
         "y": 1
@@ -945,7 +945,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "-- Query shared between Trip & Statistic Dashboard (with minor changes) - ensure to modify in both places when necessary\n\nwith drives_start_event as (\n\n    select\n        'drive_start' as event, start_date as date, start_${preferred_range}_range_km as range, start_km as odometer, car_id\n    from drives\n    where car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\ndrives_end_event as (\n\n    select\n        'drive_end' as event, end_date as date, end_${preferred_range}_range_km as range, end_km as odometer, car_id\n    from drives\n    where car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\ncharging_processes_start_event as (\n\n    select\n        'charging_process_start' as event, start_date as date, start_${preferred_range}_range_km as range, p.odometer, cp.car_id\n    from charging_processes cp\n        inner join positions p on cp.position_id = p.id\n    where cp.car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\ncharging_processes_end_event as (\n\n    select\n        'charging_process_end' as event, end_date as date, end_${preferred_range}_range_km as range, p.odometer, cp.car_id\n    from charging_processes cp\n        inner join positions p on cp.position_id = p.id\n    where cp.car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\npositions as (\n\n    select\n        case\n            when drive_id is not null and lead(drive_id) over w is not null then 'drive_start'\n            else 'something'\n        end as event,\n        date, ${preferred_range}_battery_range_km as range, p.odometer, p.car_id\n    from positions p\n    where ideal_battery_range_km is not null and car_id = $car_id and 48 > extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n    and (drive_id in (select id from drives where $__timeFilter(start_date)) or drive_id is null and $__timeFilter(date))\n    window w as (order by date)\n\n),\n\ncombined as (\n\n    select * from drives_start_event\n    union all\n    select * from drives_end_event\n    union all\n    select * from charging_processes_start_event\n    union all\n    select * from charging_processes_end_event\n    union all\n    select * from positions\n\n),\n\nfinal as (\n\n    select\n        car_id,\n        lead(odometer) over w - odometer as distance,\n        case when event != 'drive_start' then greatest(range - lead(range) over w, 0) else range - lead(range) over w end as range_loss\n    from combined\n    window w as (order by date asc)\n\n)\n\nselect\n    'Total Energy consumed (gross)' as metric,\n    sum(range_loss) * c.efficiency as value,\n    (sum(range_loss) * c.efficiency * 1000) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) as consumption_$length_unit\nfrom final\n    inner join cars c on car_id = c.id\ngroup by c.efficiency",
+          "rawSql": "-- Query shared between Charging Stats, Statistics & Trip Dashboards (with minor changes) - ensure to modify in all places when necessary\n\nwith drives_start_event as (\n\n    select\n        'drive_start' as event, start_date as date, start_${preferred_range}_range_km as range, start_km as odometer, car_id\n    from drives\n    where car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\ndrives_end_event as (\n\n    select\n        'drive_end' as event, end_date as date, end_${preferred_range}_range_km as range, end_km as odometer, car_id\n    from drives\n    where car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\ncharging_processes_start_event as (\n\n    select\n        'charging_process_start' as event, start_date as date, start_${preferred_range}_range_km as range, p.odometer, cp.car_id\n    from charging_processes cp\n        inner join positions p on cp.position_id = p.id\n    where cp.car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\ncharging_processes_end_event as (\n\n    select\n        'charging_process_end' as event, end_date as date, end_${preferred_range}_range_km as range, p.odometer, cp.car_id\n    from charging_processes cp\n        inner join positions p on cp.position_id = p.id\n    where cp.car_id = $car_id and $__timeFilter(start_date) and 48 <= extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n\n),\n\npositions as (\n\n    select\n        case\n            when drive_id is not null and lead(drive_id) over w is not null then 'drive_start'\n            else 'something'\n        end as event,\n        date, ${preferred_range}_battery_range_km as range, p.odometer, p.car_id\n    from positions p\n    where ideal_battery_range_km is not null and car_id = $car_id and 48 > extract(hour FROM to_timestamp(${__to:date:seconds}) - to_timestamp(${__from:date:seconds}))\n    and (drive_id in (select id from drives where $__timeFilter(start_date)) or drive_id is null and $__timeFilter(date))\n    window w as (order by date)\n\n),\n\ncombined as (\n\n    select * from drives_start_event\n    union all\n    select * from drives_end_event\n    union all\n    select * from charging_processes_start_event\n    union all\n    select * from charging_processes_end_event\n    union all\n    select * from positions\n\n),\n\nfinal as (\n\n    select\n        car_id,\n        lead(odometer) over w - odometer as distance,\n        case when event != 'drive_start' then greatest(range - lead(range) over w, 0) else range - lead(range) over w end as range_loss\n    from combined\n    window w as (order by date asc)\n\n)\n\nselect\n    'Total Energy consumed (gross)' as metric,\n    sum(range_loss) * c.efficiency as value,\n    (sum(range_loss) * c.efficiency * 1000) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) as consumption_$length_unit\nfrom final\n    inner join cars c on car_id = c.id\ngroup by c.efficiency",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1017,9 +1017,9 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 5,
-        "x": 19,
-        "y": 9
+        "w": 6,
+        "x": 13,
+        "y": 11
       },
       "id": 22,
       "maxDataPoints": 100,
@@ -1084,6 +1084,152 @@
         "type": "datasource",
         "uid": "-- Mixed --"
       },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9"
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 19,
+        "y": 11
+      },
+      "id": 43,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH charges as (\r\n  SELECT\r\n    sum(cost) / sum(charge_energy_added) as cost_per_kwh\r\n  FROM charging_processes\r\n  where car_id = $car_id and $__timeFilter(start_date)\r\n),\r\n\r\nmileage as (\r\n  SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit') as distance\r\n  FROM positions\r\n  WHERE car_id = $car_id and ideal_battery_range_km IS NOT NULL\r\n  and (drive_id in (select id from drives where $__timeFilter(start_date)) or drive_id is null and $__timeFilter(date))\r\n)\r\n\r\nselect\r\n  'Total Energy consumed (gross)' as metric, -- Hack required for Join Transformation\r\n  cost_per_kwh / distance * 100 as cost_mileage\r\nfrom mileage cross join charges",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "hide": false,
+          "panelId": 32,
+          "refId": "B"
+        }
+      ],
+      "title": "",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "metric",
+            "mode": "inner"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Ø Cost per 100 $length_unit",
+            "binary": {
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cost_mileage"
+                }
+              },
+              "operator": "*",
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "value"
+                }
+              }
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true,
+            "window": {
+              "reducer": "mean",
+              "windowAlignment": "trailing",
+              "windowSize": 0.1,
+              "windowSizeMode": "percentage"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
@@ -1115,7 +1261,7 @@
         "h": 3,
         "w": 11,
         "x": 13,
-        "y": 11
+        "y": 13
       },
       "id": 40,
       "options": {
@@ -1278,7 +1424,7 @@
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 16
       },
       "id": 20,
       "options": {
@@ -1657,7 +1803,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 18
       },
       "id": 2,
       "options": {
@@ -2100,7 +2246,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 29
       },
       "id": 36,
       "options": {
@@ -2293,7 +2439,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 35
+        "y": 37
       },
       "id": 42,
       "options": {
@@ -2455,7 +2601,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 35
+        "y": 37
       },
       "id": 8,
       "options": {
