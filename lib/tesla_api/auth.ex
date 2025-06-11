@@ -1,6 +1,4 @@
 defmodule TeslaApi.Auth do
-  use Tesla
-
   alias TeslaApi.Error
 
   @web_client_id "ownerapi"
@@ -15,13 +13,22 @@ defmodule TeslaApi.Auth do
     {"Accept-Language", "en-US,de-DE;q=0.5"}
   ]
 
-  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000
+  def client() do
+    Tesla.client(
+      [
+        {TeslaApi.Middleware.FollowRedirects, except: [@redirect_uri]},
+        {Tesla.Middleware.BaseUrl, System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com")},
+        {Tesla.Middleware.Headers, @default_headers},
+        Tesla.Middleware.JSON,
+        {Tesla.Middleware.Logger, debug: true, log_level: &log_level/1}
+      ],
+      {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000}
+    )
+  end
 
-  plug TeslaApi.Middleware.FollowRedirects, except: [@redirect_uri]
-  plug Tesla.Middleware.BaseUrl, System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com")
-  plug Tesla.Middleware.Headers, @default_headers
-  plug Tesla.Middleware.JSON
-  plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
+  def post(url, data) do
+    Tesla.post(client(), url, data)
+  end
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]
 
