@@ -162,7 +162,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "12.0.1",
+      "pluginVersion": "12.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -243,7 +243,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginversion": "12.0.1",
+      "pluginVersion": "12.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -293,7 +293,11 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow"
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           }
@@ -347,11 +351,6 @@
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
-        "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
-        },
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "vertical",
@@ -361,13 +360,13 @@
             "mean"
           ],
           "fields": "",
-          "values": true
+          "values": false
         },
         "showPercentChange": false,
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginversion": "12.0.1",
+      "pluginVersion": "12.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -410,22 +409,16 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9"
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           }
@@ -442,11 +435,6 @@
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
-        "fieldOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
@@ -456,13 +444,13 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": true
+          "values": false
         },
         "showPercentChange": false,
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginversion": "12.0.1",
+      "pluginVersion": "12.0.1+security-01",
       "targets": [
         {
           "datasource": {
