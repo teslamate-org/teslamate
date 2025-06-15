@@ -273,4 +273,90 @@ defmodule TeslaMate.LogDriveTest do
       assert drive.end_geofence_id == end_id
     end
   end
+
+  describe "elevation calculation" do
+    test "calculates ascent and descent correctly" do
+      car = car_fixture()
+
+      positions = [
+        %{
+          date: "2019-04-06 10:19:02",
+          latitude: 50.112198,
+          longitude: 11.597669,
+          ideal_battery_range_km: 338.8,
+          speed: 23,
+          odometer: 284.85156
+        },
+        %{
+          date: "2019-04-06 10:20:08",
+          latitude: 50.112214,
+          longitude: 11.598471,
+          elevation: 150,
+          speed: 42,
+          odometer: 285.90556
+        },
+        %{
+          date: "2019-04-06 10:21:14",
+          latitude: 50.112167,
+          longitude: 11.599395,
+          elevation: 120,
+          speed: 34,
+          odometer: 286.969561
+        },
+        %{
+          date: "2019-04-06 10:22:20",
+          latitude: 50.112118,
+          longitude: 11.599919,
+          elevation: 180,
+          speed: 21,
+          odometer: 287.00556
+        }
+      ]
+
+      assert {:ok, drive} = Log.start_drive(car)
+
+      for p <- positions do
+        assert {:ok, _} = Log.insert_position(drive, p)
+      end
+
+      assert {:ok, drive} = Log.close_drive(drive)
+
+      assert drive.ascent == 60
+      assert drive.descent == 30
+    end
+
+    test "handles single elevation point gracefully" do
+      car = car_fixture()
+
+      positions = [
+        %{
+          date: "2019-04-06 10:19:02",
+          latitude: 50.112198,
+          longitude: 11.597669,
+          elevation: 100,
+          speed: 23,
+          odometer: 284.85156
+        },
+        %{
+          date: "2019-04-06 10:20:08",
+          latitude: 50.112214,
+          longitude: 11.598471,
+          ideal_battery_range_km: 338.8,
+          speed: 42,
+          odometer: 285.90556
+        }
+      ]
+
+      assert {:ok, drive} = Log.start_drive(car)
+
+      for p <- positions do
+        assert {:ok, _} = Log.insert_position(drive, p)
+      end
+
+      assert {:ok, drive} = Log.close_drive(drive)
+
+      assert drive.ascent == 0
+      assert drive.descent == 0
+    end
+  end
 end
