@@ -296,17 +296,8 @@ defmodule TeslaMate.Log do
              from p in Position,
                where: p.drive_id == ^id and not is_nil(p.elevation),
                select: %{
-                 elevation_diff: p.elevation - (lag(p.elevation) |> over(:w))
-               },
-               windows: [
-                 w: [
-                   order_by:
-                     fragment(
-                       "? RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING",
-                       p.date
-                     )
-                 ]
-               ]
+                 elevation_diff: p.elevation - (lag(p.elevation) |> over(p.date))
+               }
            ),
            select: %{
              elevation_gains:
