@@ -1,16 +1,19 @@
 defmodule TeslaMate.Locations.Geocoder do
-  use Tesla, only: [:get]
-
   @version Mix.Project.config()[:version]
 
-  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000
-
-  plug Tesla.Middleware.BaseUrl, "https://nominatim.openstreetmap.org"
-  plug Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]
-  plug Tesla.Middleware.JSON
-  plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
-
   alias TeslaMate.Locations.Address
+
+  def client() do
+    Tesla.client(
+      [
+        {Tesla.Middleware.BaseUrl, "https://nominatim.openstreetmap.org"},
+        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]},
+        Tesla.Middleware.JSON,
+        {Tesla.Middleware.Logger, debug: true, log_level: &log_level/1}
+      ],
+      {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000}
+    )
+  end
 
   def reverse_lookup(lat, lon, lang \\ "en") do
     opts = [
@@ -64,7 +67,9 @@ defmodule TeslaMate.Locations.Geocoder do
   end
 
   defp query(url, lang, params) do
-    case get(url, query: params, headers: [{"Accept-Language", lang}]) do
+    client = client()
+
+    case Tesla.get(client, url, query: params, headers: [{"Accept-Language", lang}]) do
       {:ok, %Tesla.Env{status: 200, body: body}} -> {:ok, body}
       {:ok, %Tesla.Env{body: %{"error" => reason}}} -> {:error, reason}
       {:ok, %Tesla.Env{} = env} -> {:error, reason: "Unexpected response", env: env}
