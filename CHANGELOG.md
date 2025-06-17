@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat: add total ascent & descent to the drive table to use in the drives dashboards (#4798 - @swiffer)
+
 ### Improvements and bug fixes
 
 - fix(nix): update cldr hash (#4723 - @brianmay)
