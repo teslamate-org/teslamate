@@ -60,12 +60,14 @@ defmodule TeslaMate.DatabaseCheck do
     Repo.stop()
   end
 
-  # Helper function to normalize PostgreSQL version to SemVer
+  # Helper function to normalize PostgreSQL version to SemVer (incl. Beta/RC)
   defp normalize_version(version) do
-    case String.split(version, ".") do
-      [major, minor] -> "#{major}.#{minor}.0"
-      [major, minor, patch | _] -> "#{major}.#{minor}.#{patch}"
-      _ -> raise "Invalid PostgreSQL version format: #{version}"
+    case Regex.run(~r/^(\d+)(?:\.(\d+))?(?:\.(\d+))?((?:beta|rc)\d+)?$/, version) do
+      [_, major] -> "#{major}.0.0"
+      [_, major, minor] -> "#{major}.#{minor}.0"
+      [_, major, minor, patch] -> "#{major}.#{minor}.#{patch}"
+      [_, major, minor, patch, pre] -> "#{major}.#{minor}.#{patch}-#{pre}"
+      nil -> raise "Invalid PostgreSQL version format: #{version}"
     end
   end
 end
