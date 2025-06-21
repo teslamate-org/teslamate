@@ -11,6 +11,7 @@
 - feat: use Grafana 12.0.1 (#4756 - @swiffer)
 - feat: preserve the folders when restoring dashboards (#4715 - @IngmarStein)
 - feat: use Grafana 12.0.1+security-01 (#4799 - @swiffer)
+- feat: use Grafana 12.0.2 (#4805 - @swiffer)
 
 #### Build, CI, internal
 
