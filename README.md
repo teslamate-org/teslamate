@@ -60,7 +60,7 @@ Sample screenshots of bundled dashboards can be seen by clicking the links below
 
 ## Screenshots
 
-Sneak peek into TeslaMate interface and bundled dashboards. See [the docs](https://docs.teslamate.org/docs/screenshots) for additional screenshots.
+Sneak peak into TeslaMate interface and bundled dashboards. See [the docs](https://docs.teslamate.org/docs/screenshots) for additional screenshots.
 
 ![Web Interface](/website/static/screenshots/web_interface.png)
 
