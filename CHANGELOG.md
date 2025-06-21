@@ -11,6 +11,7 @@
 - feat: use Grafana 12.0.1 (#4756 - @swiffer)
 - feat: preserve the folders when restoring dashboards (#4715 - @IngmarStein)
 - feat: use Grafana 12.0.1+security-01 (#4799 - @swiffer)
+- feat: use Grafana 12.0.2 (#4805 - @swiffer)
 
 #### Build, CI, internal
 
@@ -51,6 +52,7 @@
 - docs: add note on accessory power functionality can prevent car sleep (#4737 - @darox)
 - docs: clarify pricing for Teslemetry (#4705 - @Bre77)
 - docs: add NixOS installation guide (#4768 - @JakobLichterfeld)
+- docs: Update README.md to fix typo (#4804 - @ozywuli)
 
 ## [2.0.0] - 2025-04-26
 
