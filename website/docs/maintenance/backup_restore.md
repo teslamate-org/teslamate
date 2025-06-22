@@ -8,10 +8,10 @@ If you are using `docker-compose`, you are using Docker Compose v1, which has be
 
 ## Backup
 
-Create backup file `teslamate.bck`:
+Create backup file:
 
 ```bash
-docker compose exec -T database pg_dump -U teslamate teslamate > ./teslamate.bck
+docker compose exec -T database pg_dump -U teslamate teslamate > teslamate_database_$(date +%F_%H-%M-%S).sql
 ```
 
 :::note
@@ -19,7 +19,7 @@ docker compose exec -T database pg_dump -U teslamate teslamate > ./teslamate.bck
 :::
 
 :::note
-Be absolutely certain to move the `teslamate.bck` file to another safe location, as you may lose that backup file if you use a docker-compose GUI to upgrade your teslamate configuration. Some GUIs delete the folder that holds the `docker-compose.yml` when updating.
+Be absolutely certain to move the backup file to another safe location, as you may lose that backup file if you use a docker-compose GUI to upgrade your teslamate configuration. Some GUIs delete the folder that holds the `docker-compose.yml` when updating.
 :::
 
 :::note
@@ -36,21 +36,36 @@ If you changed `TM_DB_USER` in the .env file from one of the advanced guides, ma
 Replace the default `teslamate` value below with the value defined in the .env file if you have one (TM_DB_USER and TM_DB_NAME)
 :::
 
-```bash
-# Stop the teslamate container to avoid write conflicts
-docker compose stop teslamate
+1. Stop the teslamate container to avoid write conflicts
 
-# Drop existing data and reinitialize (Don't forget to replace first teslamate if using different TM_DB_USER)
-docker compose exec -T database psql -U teslamate teslamate << .
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
-CREATE EXTENSION cube WITH SCHEMA public;
-CREATE EXTENSION earthdistance WITH SCHEMA public;
-.
+   ```bash
+   docker compose stop teslamate
+   ```
 
-# Restore
-docker compose exec -T database psql -U teslamate -d teslamate < teslamate.bck
+2. Drop existing data and reinitialize (Don't forget to replace first teslamate if using different TM_DB_USER)
 
-# Restart the teslamate container
-docker compose start teslamate
-```
+   ```bash
+   docker compose exec -T database psql -U teslamate teslamate << .
+   DROP SCHEMA public CASCADE;
+   CREATE SCHEMA public;
+   CREATE EXTENSION cube WITH SCHEMA public;
+   CREATE EXTENSION earthdistance WITH SCHEMA public;
+   .
+   ```
+
+3. Restore
+
+   Use the same filename that was used in the backup step.
+
+   Replace `teslamate_database_2025-05-07_07-33-48.sql` with the actual filename generated during the backup step.
+
+   ```bash
+   DATABASE="teslamate_database_2025-05-07_07-33-48.sql"
+   docker compose exec -T database psql -U teslamate -d teslamate < "$DATABASE"
+   ```
+
+4. Restart the teslamate container
+
+   ```bash
+   docker compose start teslamate
+   ```
