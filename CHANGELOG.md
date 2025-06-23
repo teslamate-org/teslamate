@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat: add total ascent & descent to the drive table to use in the drives dashboards (#4798 - @swiffer)
+
 ### Improvements and bug fixes
 
 - fix(nix): update cldr hash (#4723 - @brianmay)
@@ -39,7 +41,8 @@
 - fix: align usage of time-range filters to fix consumption gross issues in some edge cases (#4787 - @swiffer)
 - feat(dashboards-Charging-Stats): align query conditions and introduce a min duration filter applied to all panels to ensure consistent charging stats (#4791 - @swiffer)
 - feat(dashboards): reliably calculate charging costs per 100 km for shorter periods and align across trip, statistics and charging stats dashboards (#4791 - @swiffer)
-- feat(dashboards)detect consecutive charges and exclude from Charge / Discharge Stats (#4791 - @swiffer)
+- feat(dashboards): detect consecutive charges and exclude from Charge / Discharge Stats (#4791 - @swiffer)
+- feat(dashboards): introduce slope-adjusted efficiency metric in drives dashboard (#4798 - @swiffer)
 
 #### Translations
 

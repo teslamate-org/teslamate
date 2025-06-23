@@ -258,7 +258,9 @@ defmodule TeslaMate.Log do
           start_ideal_range_km: -1,
           end_ideal_range_km: -1,
           start_rated_range_km: -1,
-          end_rated_range_km: -1
+          end_rated_range_km: -1,
+          ascent: 0,
+          descent: 0
         },
         windows: [
           w: [
@@ -289,16 +291,47 @@ defmodule TeslaMate.Log do
             not is_nil(p.odometer),
         limit: 1
 
+    elevation_data =
+      from p1 in subquery(
+             from p in Position,
+               where: p.drive_id == ^id and not is_nil(p.elevation),
+               select: %{
+                 elevation_diff: p.elevation - (lag(p.elevation) |> over(order_by: [asc: p.date]))
+               }
+           ),
+           select: %{
+             elevation_gains:
+               sum(
+                 fragment(
+                   "CASE WHEN ? > 0 THEN ? ELSE 0 END",
+                   p1.elevation_diff,
+                   p1.elevation_diff
+                 )
+               ),
+             elevation_losses:
+               sum(
+                 fragment(
+                   "CASE WHEN ? < 0 THEN ABS(?) ELSE 0 END",
+                   p1.elevation_diff,
+                   p1.elevation_diff
+                 )
+               )
+           }
+
     query =
       from d0 in subquery(drive_data),
         join: d1 in subquery(non_streamed_drive_data),
+        on: true,
+        join: e in subquery(elevation_data),
         on: true,
         select: %{
           d0
           | start_ideal_range_km: d1.start_ideal_range_km,
             end_ideal_range_km: d1.end_ideal_range_km,
             start_rated_range_km: d1.start_rated_range_km,
-            end_rated_range_km: d1.end_rated_range_km
+            end_rated_range_km: d1.end_rated_range_km,
+            ascent: e.elevation_gains,
+            descent: e.elevation_losses
         }
 
     case Repo.one(query) do
