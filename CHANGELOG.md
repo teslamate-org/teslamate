@@ -52,6 +52,7 @@
 - docs: add note on accessory power functionality can prevent car sleep (#4737 - @darox)
 - docs: clarify pricing for Teslemetry (#4705 - @Bre77)
 - docs: add NixOS installation guide (#4768 - @JakobLichterfeld)
+- doc: add OpenSSF scorecard (#4819 - @JakobLichterfeld)
 
 ## [2.0.0] - 2025-04-26
 
