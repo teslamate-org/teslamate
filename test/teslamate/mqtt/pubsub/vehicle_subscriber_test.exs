@@ -71,7 +71,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
         not is_nil(val) and key not in [:since, :geofence] do
       topic = "teslamate/cars/0/#{key}"
       data = to_string(val)
-      assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: true, qos: 1]}}
+      retain = key not in [:healthy]
+      assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: ^retain, qos: 1]}}
     end
 
     iso_time = DateTime.to_iso8601(summary.since)
@@ -122,6 +123,11 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       assert Jason.decode!(data) == %{"error" => "No active route available"}
     end
 
+    # The healthy topic is published with retain: true to clean up previously retained messages
+    # See: https://github.com/teslamate-org/teslamate/pull/4817
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/healthy", "", [retain: true, qos: 1]}}
+
     refute_receive _
   end
 
@@ -150,11 +156,17 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     send(pid, summary)
 
+    # The healthy topic is published with retain: true to clean up previously retained messages
+    # See: https://github.com/teslamate-org/teslamate/pull/4817
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/healthy", "", [retain: true, qos: 1]}}
+
     for {key, val} <- Map.from_struct(summary),
         not is_nil(val) and key != :scheduled_charging_start_time do
       topic = "teslamate/cars/0/#{key}"
       data = to_string(val)
-      assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: true, qos: 1]}}
+      retain = key not in [:healthy]
+      assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: ^retain, qos: 1]}}
     end
 
     # Formatted dates
@@ -192,6 +204,11 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       assert_receive {MqttPublisherMock, {:publish, ^topic, data, [retain: true, qos: 1]}}
       assert Jason.decode!(data) == %{"error" => "No active route available"}
     end
+
+    # The healthy topic is always published without retain to prevent stale status
+    # See: https://github.com/teslamate-org/teslamate/pull/4817
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/healthy", "", [retain: false, qos: 1]}}
 
     refute_receive _
   end
@@ -231,6 +248,11 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     }
 
     send(pid, summary)
+
+    # The healthy topic is published with retain: true to clean up previously retained messages
+    # See: https://github.com/teslamate-org/teslamate/pull/4817
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/account_0/cars/0/healthy", "", [retain: true, qos: 1]}}
 
     assert_receive {MqttPublisherMock,
                     {:publish, "teslamate/account_0/cars/0/display_name", "Foo",
@@ -275,6 +297,11 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       assert_receive {MqttPublisherMock, {:publish, ^topic, data, [retain: true, qos: 1]}}
       assert Jason.decode!(data) == %{"error" => "No active route available"}
     end
+
+    # The healthy topic is always published without retain to prevent stale status
+    # See: https://github.com/teslamate-org/teslamate/pull/4817
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/account_0/cars/0/healthy", "", [retain: false, qos: 1]}}
 
     refute_receive _
   end
