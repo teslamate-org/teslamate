@@ -24,15 +24,18 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   @do_not_retain ~w(healthy)a
 
+  # Clears previously retained messages for topics that should not be retained
+  # This ensures backward compatibility by cleaning up stale retained messages
+  # from installations before PR #4817: https://github.com/teslamate-org/teslamate/pull/4817
   defp clear_retained(car_id, namespace, publisher) do
-    for key <- @do_not_retain do
+    Enum.each(@do_not_retain, fn key ->
       topic =
         ["teslamate", namespace, "cars", car_id, key]
         |> Enum.reject(&is_nil(&1))
         |> Enum.join("/")
 
       call(publisher, :publish, [topic, "", [retain: true, qos: 1]])
-    end
+    end)
   end
 
   @impl true
