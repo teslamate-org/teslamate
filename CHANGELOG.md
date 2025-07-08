@@ -12,6 +12,7 @@
 - feat: preserve the folders when restoring dashboards (#4715 - @IngmarStein)
 - feat: use Grafana 12.0.1+security-01 (#4799 - @swiffer)
 - feat: use Grafana 12.0.2 (#4805 - @swiffer)
+- feat(mqtt): always publish healthy status and disable retain to prevent stale healthy status via mqtt (#4817 - @allivshits)
 
 #### Build, CI, internal
 

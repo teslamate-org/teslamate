@@ -146,8 +146,13 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
           ] do
         topic = "teslamate/cars/#{car.id}/#{key}"
         data = to_string(val)
-        assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: true, qos: 1]}}
+        retain = key not in [:healthy]
+        assert_receive {MqttPublisherMock, {:publish, ^topic, ^data, [retain: ^retain, qos: 1]}}
       end
+
+      # Handle the healthy message that's published separately with retain: true
+      topic = "teslamate/cars/#{car.id}/healthy"
+      assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
 
       topic = "teslamate/cars/#{car.id}/location"
       assert_receive {MqttPublisherMock, {:publish, ^topic, data, [retain: true, qos: 1]}}
