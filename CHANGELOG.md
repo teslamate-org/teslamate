@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat(webview): add Google Maps link for car's current location (#4781 - @clhuang)
+
 ### Improvements and bug fixes
 
 - fix(nix): update cldr hash (#4723 - @brianmay)
