@@ -33,6 +33,9 @@
 - build(deps): bump phoenix_ecto from 4.6.3 to 4.6.4 (#4779)
 - build(deps): bump @docusaurus/preset-classic from 3.7.0 to 3.8.0 in /website (#4776)
 - build(deps): bump @docusaurus/core from 3.7.0 to 3.8.0, @docusaurus/preset-classic from 3.8.0 to 3.8.1, bump dependencies in /website (#4777 - @JakobLichterfeld)
+- build(deps): bump tesla from 1.14.1 to 1.14.2 (#4780)
+- fix(nix): update mix dependency hash in nix builds (#4780 - @JakobLichterfeld)
+- feat(middleware): migrate Tesla HTTP client to v2 Macro to avoid use of soft deprecated configuration (#4780 - @JakobLichterfeld and @brianmay)
 
 #### Dashboards
 
