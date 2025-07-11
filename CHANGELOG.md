@@ -4,12 +4,17 @@
 
 ### New features
 
+- feat(webview): add Google Maps link for car's current location (#4781 - @clhuang)
+
 ### Improvements and bug fixes
 
 - fix(nix): update cldr hash (#4723 - @brianmay)
 - feat: use Grafana 12.0.0 (#4721 - @swiffer)
 - feat: use Grafana 12.0.1 (#4756 - @swiffer)
 - feat: preserve the folders when restoring dashboards (#4715 - @IngmarStein)
+- feat: use Grafana 12.0.1+security-01 (#4799 - @swiffer)
+- feat: use Grafana 12.0.2 (#4805 - @swiffer)
+- feat(mqtt): always publish healthy status and disable retain to prevent stale healthy status via mqtt (#4817 - @allivshits)
 - feat: use the k8s-style API introduced in Grafana v12 if using manual dashboard setup (#4764- @IngmarStein)
 
 #### Build, CI, internal
@@ -21,12 +26,24 @@
 - fix(nix): update mix dependency hash in nix builds ([08fe0ac](https://github.com/teslamate-org/teslamate/commit/08fe0ac934176484c84fd4329c8d64925b6b0b97) - @JakobLichterfeld)
 - feat(nix): use nixos-25.05 (#4716 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4716)
+- fix(nix): skip duplicate cldr download to fix build on darwin and improve reproducibility (#4763 - @JakobLichterfeld)
+- build(deps): bump DeterminateSystems/update-flake-lock from 24 to 25 (#4774)
+- build(deps): bump crate-ci/typos from 1.31.2 to 1.32.0 (#4775)
+- build(deps): bump castore from 1.0.12 to 1.0.14 (#4778)
+- build(deps): update flake.lock (#4772)
+- build(deps): bump phoenix_ecto from 4.6.3 to 4.6.4 (#4779)
+- build(deps): bump @docusaurus/preset-classic from 3.7.0 to 3.8.0 in /website (#4776)
+- build(deps): bump @docusaurus/core from 3.7.0 to 3.8.0, @docusaurus/preset-classic from 3.8.0 to 3.8.1, bump dependencies in /website (#4777 - @JakobLichterfeld)
 
 #### Dashboards
 
 - fix: new image on home dashboard as old got removed from Tesla mediaserver (#4702 - @JakobLichterfeld, @swiffer)
 - feat: update image on home dashboard to juniper and back to dark (#4742 - @swiffer)
 - fix: consumption for drives with positive soc diff (#4746 - @swiffer)
+- fix: align usage of time-range filters to fix consumption gross issues in some edge cases (#4787 - @swiffer)
+- feat(dashboards-Charging-Stats): align query conditions and introduce a min duration filter applied to all panels to ensure consistent charging stats (#4791 - @swiffer)
+- feat(dashboards): reliably calculate charging costs per 100 km for shorter periods and align across trip, statistics and charging stats dashboards (#4791 - @swiffer)
+- feat(dashboards)detect consecutive charges and exclude from Charge / Discharge Stats (#4791 - @swiffer)
 
 #### Translations
 
@@ -38,6 +55,7 @@
 - docs: improvement to the Debian installation instructions (#4734 - @iustin)
 - docs: add note on accessory power functionality can prevent car sleep (#4737 - @darox)
 - docs: clarify pricing for Teslemetry (#4705 - @Bre77)
+- docs: add NixOS installation guide (#4768 - @JakobLichterfeld)
 
 ## [2.0.0] - 2025-04-26
 

@@ -1,6 +1,6 @@
 # Ensure selecting a tag that is available for arm/v7, arm64, and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
-FROM grafana/grafana-oss:12.0.1
+FROM grafana/grafana-oss:12.0.2
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_AUTH_ANONYMOUS_ENABLED=false \

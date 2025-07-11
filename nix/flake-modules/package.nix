@@ -18,7 +18,7 @@
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-aAHunhPGKRtLQuCGXahcsTajjc6RiizyV1NV71NloHU=";
+        hash = "sha256-WSnjB7iXM/GvE+K/3Tb4Vu1zxP00xQdmhvVXrPl8mYw=";
         # hash = pkgs.lib.fakeHash;
       };
 
@@ -65,6 +65,8 @@
           mixFodDeps
           ;
 
+        # set the environment variables for the build
+        SKIP_LOCALE_DOWNLOAD = "true"; # do not download locales during build as they are already included in the cldr package from github
         LOCALES = "${cldr}/priv/cldr";
 
         postBuild = ''
