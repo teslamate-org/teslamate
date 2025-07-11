@@ -10,6 +10,7 @@
 - feat: use Grafana 12.0.0 (#4721 - @swiffer)
 - feat: use Grafana 12.0.1 (#4756 - @swiffer)
 - feat: preserve the folders when restoring dashboards (#4715 - @IngmarStein)
+- feat: use the k8s-style API introduced in Grafana v12 if using manual dashboard setup (#4764- @IngmarStein)
 
 #### Build, CI, internal
 
