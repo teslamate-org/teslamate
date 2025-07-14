@@ -16,6 +16,7 @@
 - feat: use Grafana 12.0.2 (#4805 - @swiffer)
 - feat(mqtt): always publish healthy status and disable retain to prevent stale healthy status via mqtt (#4817 - @allivshits)
 - feat: use the k8s-style API introduced in Grafana v12 if using manual dashboard setup (#4764- @IngmarStein)
+- feat(db-check): allow beta / rc PostgreSQL versions for testing (#4795 - @swiffer)
 
 #### Build, CI, internal
 
