@@ -65,6 +65,7 @@
 - docs: clarify pricing for Teslemetry (#4705 - @Bre77)
 - docs: add NixOS installation guide (#4768 - @JakobLichterfeld)
 - docs: streamline installation guides (#4829 - @JakobLichterfeld)
+- docs: add nix develop to run treefmt to support non nix direnv users (#4829 - @JakobLichterfeld)
 
 ## [2.0.0] - 2025-04-26
 
