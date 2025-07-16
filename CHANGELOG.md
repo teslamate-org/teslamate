@@ -42,6 +42,7 @@
 - build(deps): bump timex from 3.7.11 to 3.7.13 (#4815)
 - build(deps): update flake.lock (#4828 - @JakobLichterfeld)
 - build(nix): update mix dependency hash in nix builds (#4828 - @JakobLichterfeld)
+- chore(issue-template): enhance bug report template with additional fields and guidance (#4827 - @JakobLichterfeld)
 
 #### Dashboards
 
