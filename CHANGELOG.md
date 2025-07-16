@@ -30,6 +30,7 @@
 - build(deps): bump phoenix_ecto from 4.6.3 to 4.6.4 (#4779)
 - build(deps): bump @docusaurus/preset-classic from 3.7.0 to 3.8.0 in /website (#4776)
 - build(deps): bump @docusaurus/core from 3.7.0 to 3.8.0, @docusaurus/preset-classic from 3.8.0 to 3.8.1, bump dependencies in /website (#4777 - @JakobLichterfeld)
+- build(deps): bump crate-ci/typos from 1.33.1 to 1.34.0 (#4814)
 
 #### Dashboards
 
