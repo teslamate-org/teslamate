@@ -22,6 +22,22 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     GenServer.start_link(__MODULE__, opts)
   end
 
+  @do_not_retain ~w(healthy)a
+
+  # Clears previously retained messages for topics that should not be retained
+  # This ensures backward compatibility by cleaning up stale retained messages
+  # from installations before PR #4817: https://github.com/teslamate-org/teslamate/pull/4817
+  defp clear_retained(car_id, namespace, publisher) do
+    Enum.each(@do_not_retain, fn key ->
+      topic =
+        ["teslamate", namespace, "cars", car_id, key]
+        |> Enum.reject(&is_nil(&1))
+        |> Enum.join("/")
+
+      call(publisher, :publish, [topic, "", [retain: true, qos: 1]])
+    end)
+  end
+
   @impl true
   def init(opts) do
     car_id = Keyword.fetch!(opts, :car_id)
@@ -33,11 +49,12 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     }
 
     :ok = call(deps.vehicles, :subscribe_to_summary, [car_id])
+    :ok = clear_retained(car_id, namespace, deps.publisher)
 
     {:ok, %State{car_id: car_id, namespace: namespace, deps: deps}}
   end
 
-  @always_published ~w(charge_energy_added charger_actual_current charger_phases
+  @publish_if_nil ~w(charge_energy_added charger_actual_current charger_phases
                        charger_power charger_voltage scheduled_charging_start_time
                        time_to_full_charge shift_state geofence trim_badging)a
 
@@ -54,16 +71,21 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     {:noreply, %State{state | last_values: values}}
   end
 
-  defp publish_values(values, %State{last_values: values}) do
-    nil
+  defp publish_values(values, %State{last_values: values} = state) do
+    values
+    |> Map.take(@do_not_retain)
+    |> Enum.each(fn {key, value} ->
+      publish({key, value}, state)
+    end)
   end
 
   defp publish_values(values, state) do
     values
     |> Stream.reject(&match?({_key, :unknown}, &1))
     |> Stream.filter(fn {key, value} ->
-      (key in @always_published or value != nil) and
-        (state.last_values == nil or Map.get(state.last_values, key) != value)
+      ((key in @publish_if_nil or value != nil) and
+         (state.last_values == nil or Map.get(state.last_values, key) != value)) or
+        key in @do_not_retain
     end)
     |> Task.async_stream(&publish(&1, state),
       max_concurrency: 10,
@@ -182,7 +204,11 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> Enum.reject(&is_nil(&1))
       |> Enum.join("/")
 
-    call(deps.publisher, :publish, [topic, to_str(value), [retain: true, qos: 1]])
+    call(deps.publisher, :publish, [
+      topic,
+      to_str(value),
+      [retain: key not in @do_not_retain, qos: 1]
+    ])
   end
 
   defp to_str(%DateTime{} = datetime), do: DateTime.to_iso8601(datetime)
