@@ -152,8 +152,8 @@ body:
 
       options:
         - label: I run the latest major supported PostgreSQL version
-      validations:
-        required: true
+    validations:
+      required: true
 
   - type: dropdown
     id: reverse_proxy
