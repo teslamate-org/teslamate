@@ -36,6 +36,7 @@
 - build(deps): bump @docusaurus/preset-classic from 3.7.0 to 3.8.0 in /website (#4776)
 - build(deps): bump @docusaurus/core from 3.7.0 to 3.8.0, @docusaurus/preset-classic from 3.8.0 to 3.8.1, bump dependencies in /website (#4777 - @JakobLichterfeld)
 - build(deps): bump nixbuild/nix-quick-install-action from 30 to 32 (#4813)
+- build(deps): bump brace-expansion from 1.1.11 to 1.1.12 in /website (#4821)
 
 #### Dashboards
 
