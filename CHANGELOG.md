@@ -40,6 +40,8 @@
 - build(deps): bump plug_cowboy from 2.7.3 to 2.7.4 (#4816)
 - build(deps): bump crate-ci/typos from 1.33.1 to 1.34.0 (#4814)
 - build(deps): bump timex from 3.7.11 to 3.7.13 (#4815)
+- build(deps): update flake.lock (#4828 - @JakobLichterfeld)
+- build(nix): update mix dependency hash in nix builds (#4828 - @JakobLichterfeld)
 - chore(issue-template): enhance bug report template with additional fields and guidance (#4827 - @JakobLichterfeld)
 
 #### Dashboards
