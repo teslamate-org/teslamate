@@ -160,8 +160,8 @@ body:
     attributes:
       label: Are you using a reverse Proxy for TeslaMate?
       options:
-        - "Yes (specify in next field)"
         - "No"
+        - "Yes (specify in next field)"
     validations:
       required: true
 
@@ -171,4 +171,4 @@ body:
       label: Details about your reverse Proxy if applicable
       description: If you use a reverse Proxy, please provide details about your setup
     validations:
-      required: true
+      required: false
