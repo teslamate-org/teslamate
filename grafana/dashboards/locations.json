@@ -88,7 +88,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -97,21 +97,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "select count(*), count(distinct city) as city_count, count(distinct state) as state_count, count(distinct country) as country_count from addresses where id in (\r\n  select start_address_id from drives where car_id in ($car_id) and $__timeFilter(start_date)\r\n  union\r\n  select end_address_id from drives where car_id in ($car_id) and $__timeFilter(end_date)\r\n  union\r\n  select address_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\r\n);",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -128,17 +116,7 @@
               }
             ],
             "limit": 50
-          },
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "# of Addresses",
@@ -209,7 +187,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -288,7 +266,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -367,7 +345,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -455,7 +433,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -464,21 +442,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT\n\tcity,\n\tcount(*) as \"# of Addresses\"\nFROM\n\taddresses\nWHERE\n\tcity IS NOT NULL and\n  id in (\n\t\tselect start_address_id from drives where car_id in ($car_id) and $__timeFilter(start_date) \n\t\tunion\n\t\tselect end_address_id from drives where car_id in ($car_id) and $__timeFilter(end_date) \n\t\tunion\n\t\tselect address_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n\t)\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -495,15 +461,7 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "Cities",
@@ -568,7 +526,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -577,21 +535,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT\n\tstate,\n\tcount(*) as \"# of Addresses\"\nFROM\n\taddresses\nWHERE\n\tstate IS NOT NULL and\n  id in (\n\t\tselect start_address_id from drives where car_id in ($car_id) and $__timeFilter(start_date)\n\t\tunion\n\t\tselect end_address_id from drives where car_id in ($car_id) and $__timeFilter(end_date)\n\t\tunion\n\t\tselect address_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n\t)\nGROUP BY\n\t1\nORDER BY\n\t2 DESC\nLIMIT 10;",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -608,17 +554,7 @@
               }
             ],
             "limit": 50
-          },
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "States",
@@ -672,7 +608,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 180
+                "value": 210
               }
             ]
           },
@@ -714,7 +650,7 @@
           }
         ]
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -723,21 +659,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "with locations as (\n\n  select address_id, geofence_id, start_date as end_date from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n  union\n  select end_address_id as address_id, end_geofence_id as geofence_id, end_date from drives where car_id in ($car_id) and $__timeFilter(end_date)\n\n)\n\nSELECT\n  max(l.end_date) as \"Date\",\n  COALESCE(g.name, array_to_string(((string_to_array(a.display_name, ', ', ''))[0:2]), ', ')) AS \"Address\",\n\tCOALESCE(city, neighbourhood) as \"City\"\nFROM locations l\nINNER JOIN addresses a ON l.address_id = a.id\nLEFT JOIN geofences g ON l.geofence_id = g.id\nWHERE\n  (a.display_name ilike '%$address_filter%' or g.name ilike '%$address_filter%')\nGROUP BY 2,3\nLIMIT 100",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -754,17 +678,7 @@
               }
             ],
             "limit": 50
-          },
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "Last visited",
@@ -985,7 +899,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -994,21 +908,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT\n  CONCAT('new?lat=', latitude, '&lng=', longitude) as path,\n\tCOALESCE(name, CONCAT(road, ' ', house_number)) AS name,\n\tneighbourhood,\n\tcity,\n\tstate,\n\tcountry\nFROM addresses\nWHERE display_name ilike '%$address_filter%' and id in (\n  select start_address_id from drives where car_id in ($car_id) and $__timeFilter(start_date)\n  union\n  select end_address_id from drives where car_id in ($car_id) and $__timeFilter(end_date)\n  union\n  select address_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n)\nORDER BY inserted_at DESC\nLIMIT 100;",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -1025,17 +927,7 @@
               }
             ],
             "limit": 50
-          },
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "Addresses",
@@ -1172,7 +1064,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -1181,21 +1073,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT id, name \nFROM geofences where id in (\n  select start_geofence_id from drives where car_id in ($car_id) and $__timeFilter(start_date)\n  union\n  select end_geofence_id from drives where car_id in ($car_id) and $__timeFilter(end_date)\n  union\n  select geofence_id from charging_processes where car_id in ($car_id) and ($__timeFilter(start_date) or $__timeFilter(end_date))\n)\nORDER BY inserted_at DESC\nLIMIT 100;",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -1212,15 +1092,7 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "Geo-fences",

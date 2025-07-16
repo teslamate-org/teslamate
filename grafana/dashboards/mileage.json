@@ -175,39 +175,35 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
-          "alias": "",
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "WITH o AS (SELECT\n  start_date AS time,\n  car_id,\n  start_km  AS \"odometer\"\nFROM drives\nUNION ALL\nSELECT\n  end_date,\n  car_id,\n  end_km AS \"odometer\"\nFROM drives)\n\nSELECT\n  time, \n  convert_km(odometer::numeric, '$length_unit') as mileage_$length_unit\nFROM o\nWHERE\n\tcar_id = $car_id AND\n\t$__timeFilter(time)\norder by 1;",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Mileage",

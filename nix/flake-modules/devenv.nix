@@ -55,14 +55,7 @@
             inotify-tools
             glibcLocales
           ]
-          ++ optional stdenv.isDarwin terminal-notifier
-          ++ optionals stdenv.isDarwin (
-            with darwin.apple_sdk.frameworks;
-            [
-              CoreFoundation
-              CoreServices
-            ]
-          );
+          ++ optional stdenv.isDarwin terminal-notifier;
         enterShell = ''
           export LOCALES="${config.teslamate.cldr}/priv/cldr";
           export PORT="4000"
@@ -91,7 +84,7 @@
         };
         services.postgres = {
           enable = true;
-          package = pkgs.postgresql_16; # 17 is not yet available in nixpkgs
+          package = pkgs.postgresql;
           listen_addresses = "127.0.0.1";
           port = postgres_port;
           initialDatabases = [{ name = "teslamate"; }];

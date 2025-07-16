@@ -27,6 +27,8 @@ At the moment geo-fences are a way to create custom locations like `🏡 Home` o
 
 ## Help, my car does not fall asleep
 
+The accessory power functionality prevents your car from going to sleep even if no accessory is connected. You can disable it by setting Controls > Charging > Keep Accessory Power Off.
+
 Cars with Media Control Unit version 1 (MCU1) require certain settings to be able to fall asleep. Model S and Model X cars built before 3/2018 have the MCU1 unit, this can also be checked from the Software -> Additional vehicle information. If the 'Infotainment processor' is 'NVIDIA Tegra', the car is equipped with MCU1.
 
 The settings needed to enable the sleep mode with MCU1 are:

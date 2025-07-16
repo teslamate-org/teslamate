@@ -9,6 +9,7 @@ module.exports = {
           label: "Installation",
           items: [
             "installation/docker",
+            "installation/nixos",
             "installation/debian",
             "installation/freebsd",
           ],

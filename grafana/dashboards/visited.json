@@ -106,49 +106,6 @@
         "layers": [
           {
             "config": {
-              "showLegend": false,
-              "style": {
-                "color": {
-                  "fixed": "transparent"
-                },
-                "opacity": 0,
-                "rotation": {
-                  "fixed": 0,
-                  "max": 360,
-                  "min": -360,
-                  "mode": "mod"
-                },
-                "size": {
-                  "fixed": 3,
-                  "max": 15,
-                  "min": 2
-                },
-                "symbol": {
-                  "fixed": "img/icons/marker/circle.svg",
-                  "mode": "fixed"
-                },
-                "symbolAlign": {
-                  "horizontal": "center",
-                  "vertical": "center"
-                },
-                "textConfig": {
-                  "fontSize": 12,
-                  "offsetX": 0,
-                  "offsetY": 0,
-                  "textAlign": "center",
-                  "textBaseline": "middle"
-                }
-              }
-            },
-            "location": {
-              "mode": "auto"
-            },
-            "name": "Workaround for Grafana Issue #89777, fixed in 11.6.0 via #101391, extra layer to be removed on broad availability of 11.6.0",
-            "tooltip": false,
-            "type": "markers"
-          },
-          {
-            "config": {
               "arrow": 0,
               "style": {
                 "color": {
@@ -205,7 +162,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -214,7 +171,6 @@
           },
           "editorMode": "code",
           "format": "table",
-          "hide": false,
           "rawQuery": true,
           "rawSql": "SELECT\n  date_trunc('minute', timezone('UTC', date), '$__timezone') as time,\n  avg(latitude) as latitude,\n  avg(longitude) as longitude\nFROM\n  positions\nWHERE\n  car_id = $car_id AND $__timeFilter(date) and ideal_battery_range_km is not null\nGROUP BY 1\nORDER BY 1",
           "refId": "Positions",
@@ -232,7 +188,8 @@
                 },
                 "type": "groupBy"
               }
-            ]
+            ],
+            "limit": 50
           }
         }
       ],
@@ -286,7 +243,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -295,22 +252,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0)|| ' $length_unit' as \"Mileage\"\nFROM drives WHERE car_id = $car_id AND $__timeFilter(start_date)",
           "refId": "distance traveled",
-          "select": [
-            [
-              {
-                "params": [
-                  "efficiency"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -327,17 +271,7 @@
               }
             ],
             "limit": 50
-          },
-          "table": "cars",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "",
@@ -359,7 +293,11 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-yellow"
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           }
@@ -413,11 +351,6 @@
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
-        "fieldOptions": {
-          "calcs": [
-            "mean"
-          ]
-        },
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "vertical",
@@ -427,13 +360,13 @@
             "mean"
           ],
           "fields": "",
-          "values": true
+          "values": false
         },
         "showPercentChange": false,
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -442,8 +375,6 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "SELECT\n\tsum(charge_energy_added) as \"Total Energy added\",\n\tSUM(greatest(charge_energy_added, charge_energy_used)) AS \"Total Energy used\",\n\tSUM(charge_energy_added) * 100 / SUM(greatest(charge_energy_added, charge_energy_used)) AS \"Charging Efficiency\"\nFROM\n\tcharging_processes\nWHERE\n\tcar_id = $car_id AND $__timeFilter(start_date) AND charge_energy_added > 0.01",
           "refId": "A",
@@ -478,22 +409,16 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#c7d0d9"
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           }
@@ -510,11 +435,6 @@
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
-        "fieldOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
@@ -524,13 +444,13 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": true
+          "values": false
         },
         "showPercentChange": false,
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -539,21 +459,9 @@
           },
           "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "select sum(cost) as \"Total Charging Cost\" from charging_processes where $__timeFilter(start_date) AND car_id = $car_id;",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -570,17 +478,7 @@
               }
             ],
             "limit": 50
-          },
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          }
         }
       ],
       "title": "",

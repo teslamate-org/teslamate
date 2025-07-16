@@ -9,7 +9,7 @@ on:
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
   pull_request:
-    branches: ["master"]
+    branches: ["main"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
