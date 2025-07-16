@@ -38,6 +38,7 @@
 - build(deps): bump nixbuild/nix-quick-install-action from 30 to 32 (#4813)
 - build(deps): bump brace-expansion from 1.1.11 to 1.1.12 in /website (#4821)
 - build(deps): bump plug_cowboy from 2.7.3 to 2.7.4 (#4816)
+- build(deps): bump crate-ci/typos from 1.33.1 to 1.34.0 (#4814)
 
 #### Dashboards
 
