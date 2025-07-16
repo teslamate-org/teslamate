@@ -3,7 +3,7 @@ title: Docker install
 sidebar_label: Docker
 ---
 
-This document provides the necessary steps for installation of TeslaMate on any system that runs Docker. You run NixOS? We got you covered, see [NixOS install](nixos.md). For a walkthrough that provides the necessary steps for manual installation see [Manual installation](debian.md).
+This document provides the necessary steps for installation of TeslaMate on any system that runs Docker. You run NixOS? We got you covered, see [NixOS install](nixos.md).
 
 This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk. If you intend to expose TeslaMate directly to the internet check out the [advanced guides](../guides/traefik.md).
 
