@@ -2,6 +2,9 @@
 
 ## [unreleased]
 
+We have introduced new database fields to store the total ascent and descent of a drive, which can be used in the drives and efficiency dashboards. This is a valuable addition for users who wish to analyse their driving patterns and performance in hilly areas, and it enhances the efficiency metrics.
+The database will be migrated automatically to include these new fields. Depending on your host and the size of your database, this migration may take some time. Please be patient and wait for the process to finish (this will take from a few seconds up to approximately one minute on a Raspberry Pi 3B+ with a 1 GB database).
+
 ### New features
 
 - feat: add total ascent & descent to the drive table to use in the drives dashboards (#4798 - @swiffer)
