@@ -42,6 +42,9 @@
 - build(deps): bump timex from 3.7.11 to 3.7.13 (#4815)
 - build(deps): update flake.lock (#4828 - @JakobLichterfeld)
 - build(nix): update mix dependency hash in nix builds (#4828 - @JakobLichterfeld)
+- chore(issue-template): enhance bug report template with additional fields and guidance (#4827 - @JakobLichterfeld)
+- build(deps): bump on-headers from 1.0.2 to 1.1.0 and compression from 1.0.2 to 1.1.0 in /website (#4831)
+- sec(deps): override webpack-dev-server to version 5.2.1 to fix CVE-2025-30360 (#4833 - @JakobLichterfeld)
 
 #### Dashboards
 
@@ -64,6 +67,7 @@
 - docs: add note on accessory power functionality can prevent car sleep (#4737 - @darox)
 - docs: clarify pricing for Teslemetry (#4705 - @Bre77)
 - docs: add NixOS installation guide (#4768 - @JakobLichterfeld)
+- doc: add OpenSSF scorecard (#4819 - @JakobLichterfeld)
 - docs: streamline installation guides (#4829 - @JakobLichterfeld)
 - docs: add nix develop to run treefmt to support non nix direnv users (#4829 - @JakobLichterfeld)
 - docs: add Unraid installation and maintenance instructions (no support) (#4758, #4829 - @vypergts and @JakobLichterfeld)
