@@ -12,6 +12,7 @@ module.exports = {
             "installation/nixos",
             "installation/debian",
             "installation/freebsd",
+            "installation/unraid",
           ],
         },
         "faq",
