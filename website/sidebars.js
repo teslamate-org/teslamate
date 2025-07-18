@@ -10,6 +10,12 @@ module.exports = {
           items: [
             "installation/docker",
             "installation/nixos",
+          ],
+        },
+        {
+          type: "category",
+          label: "Installation (unsupported",
+          items: [
             "installation/debian",
             "installation/freebsd",
             "installation/unraid",
