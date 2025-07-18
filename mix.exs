@@ -19,6 +19,7 @@ defmodule TeslaMate.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
+        "coveralls.github": :test,
         ci: :test
       ]
     ]
@@ -40,7 +41,7 @@ defmodule TeslaMate.MixProject do
       {:ecto_sql, "~> 3.0"},
       {:ex_cldr, "~> 2.42.0"},
       {:ex_cldr_plugs, "~> 1.0"},
-      {:excoveralls, "~> 0.10", only: :test},
+      {:excoveralls, "~> 0.18.5", only: :test},
       {:finch, "~> 0.3"},
       {:floki, "~> 0.23"},
       {:fuse, "~> 2.4"},
