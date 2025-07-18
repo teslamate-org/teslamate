@@ -2,7 +2,7 @@ name: Purge PR images
 
 on:
   workflow_call:
-  pull_request_target:
+  pull_request:
     types:
       - closed
     paths:

@@ -50,11 +50,11 @@ pkg install elixir
 </details>
 
 <details>
-  <summary>Postgres (v17+)</summary>
+  <summary>Postgres (v17.3+)</summary>
 
 ```bash
-pkg install postgresql17-server-17.0
-pkg install postgresql17-contrib-17.0
+pkg install postgresql17-server
+pkg install postgresql17-contrib
 echo postgres_enable="yes" >> /etc/rc.conf
 ```
 
@@ -70,7 +70,7 @@ service postgresql initdb
 </details>
 
 <details>
-  <summary>Grafana (v11.5.0+)</summary>
+  <summary>Grafana (v12.0.1+)</summary>
 
 ```bash
 pkg install grafana
@@ -93,8 +93,8 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
   <summary>Node.js (v20+)</summary>
 
 ```bash
-pkg install node20-20.18.1
-pkg install npm-node20-10.9.0
+pkg install node20
+pkg install npm-node20
 ```
 
 </details>
@@ -238,7 +238,7 @@ service teslamate start
    Version: 10
    ```
 
-3. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/master/grafana/dashboards) or use the `dashboards.sh` script:
+3. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/main/grafana/dashboards) or use the `dashboards.sh` script:
 
    ```bash
    $ ./grafana/dashboards.sh restore

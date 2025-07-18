@@ -103,39 +103,35 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "select $__time(start_date), state from states where car_id = $car_id order by start_date desc limit 1;",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Last state change",
@@ -192,39 +188,35 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "table",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "select $__time(start_date), state from states where car_id = $car_id order by start_date desc limit 1;",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Current State",
@@ -293,39 +285,35 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "select 1 - sum(duration_min) / (EXTRACT(EPOCH  FROM (max(end_date) - min(start_date))) / 60), 1 as time from drives where car_id = $car_id;",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "parked (%)",
@@ -435,39 +423,35 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.6.0",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "TeslaMate"
           },
+          "editorMode": "code",
           "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
           "rawQuery": true,
           "rawSql": "WITH states AS (\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [2, 0]) AS state\n  FROM charging_processes\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [1, 0]) AS state\n  FROM drives\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    start_date AS date,\n    CASE\n      WHEN state = 'offline' THEN 3\n      WHEN state = 'asleep' THEN 4\n      WHEN state = 'online' THEN 5\n    END AS state\n  FROM states\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n  UNION\n  SELECT\n    unnest(ARRAY [start_date + interval '1 second', end_date]) AS date,\n    unnest(ARRAY [6, 0]) AS state\n  FROM updates\n  WHERE\n    car_id = $car_id AND \n    ($__timeFrom() :: timestamp - interval '30 day') < start_date AND \n    (end_date < ($__timeTo() :: timestamp + interval '30 day') OR end_date IS NULL)\n)\nSELECT date AS \"time\", state\nFROM states\nWHERE \n  date IS NOT NULL AND\n  ($__timeFrom() :: timestamp - interval '30 day') < date AND \n  date < ($__timeTo() :: timestamp + interval '30 day') \nORDER BY date ASC, state ASC;",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "latitude"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "table": "addresses",
-          "timeColumn": "inserted_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "States",

@@ -43,7 +43,7 @@ jobs:
 
       - name: Restore PLT cache
         id: plt_cache
-        uses: actions/cache/restore@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           key: |
             ${{ runner.os }}-${{ steps.setup-elixir-and-cache-deps.outputs.elixir-version }}-${{ steps.setup-elixir-and-cache-deps.outputs.otp-version }}-plt
@@ -58,7 +58,7 @@ jobs:
 
       - name: Save PLT cache
         id: plt_cache_save
-        uses: actions/cache/save@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         if: steps.plt_cache.outputs.cache-hit != 'true'
         with:
           key: |

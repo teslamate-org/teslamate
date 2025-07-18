@@ -1,8 +1,8 @@
 name: Build GHCR images
 
 on:
-  pull_request_target:
-    branches: ["master", "ci"]
+  pull_request:
+    branches: ["main"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
@@ -20,10 +20,35 @@ jobs:
   check_paths:
     uses: ./.github/workflows/check_paths.yml
 
-  teslamate_build:
-    name: Build images
+  check_if_pr_from_outside_repo:
+    name: Check if PR from outside repo
+    # as we currently only push ghcr images for PRs from our own repo
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder != 'true'
+    outputs:
+      is_pr_from_outside_repo: ${{ steps.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: check if PR from outside repo
+        id: check_if_pr_from_outside_repo
+        shell: bash
+        run: |
+          echo "::group::Check if PR from outside repo"
+          if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
+            echo "This PR is from outside the repo"
+            echo "is_pr_from_outside_repo=true" >> $GITHUB_OUTPUT
+          else
+            echo "This PR is from our own repo"
+            echo "is_pr_from_outside_repo=false" >> $GITHUB_OUTPUT
+          fi
+          echo "::endgroup::"
+
+  teslamate_build:
+    name: Build images
+    needs:
+      - check_paths
+      - check_if_pr_from_outside_repo
+    if: needs.check_paths.outputs.githubfolder != 'true' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
     strategy:
       fail-fast: false
       matrix:
@@ -42,12 +67,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        if: ${{ github.event_name != 'pull_request_target' }}
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        if: ${{ github.event_name == 'pull_request_target' }}
-        with:
-          ref: ${{github.event.pull_request.head.ref}}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - name: Buildx
         uses: ./.github/actions/build
@@ -56,7 +75,7 @@ jobs:
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ github.ref_name }}
+          version: ${{ github.head_ref || github.ref_name }}
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
 
@@ -72,7 +91,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -84,20 +103,16 @@ jobs:
           image: ${{ env.REGISTRY_IMAGE }}
 
   grafana:
-    needs: check_paths
-    if: needs.check_paths.outputs.githubfolder != 'true'
+    needs:
+      - check_paths
+      - check_if_pr_from_outside_repo
+    if: needs.check_paths.outputs.githubfolder != 'true' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        if: ${{ github.event_name != 'pull_request_target' }}
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        if: ${{ github.event_name == 'pull_request_target' }}
-        with:
-          ref: ${{github.event.pull_request.head.ref}}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}

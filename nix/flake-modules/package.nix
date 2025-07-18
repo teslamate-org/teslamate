@@ -1,6 +1,11 @@
 { ... }:
 {
-  perSystem = { lib, pkgs, system, ... }:
+  perSystem =
+    { lib
+    , pkgs
+    , system
+    , ...
+    }:
     let
       elixir = pkgs.beam.packages.erlang_26.elixir_1_17;
       beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_26;
@@ -13,7 +18,7 @@
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-hdZJP6LIAY4VZDkuGJ/EdhofA6hTF+ZlTqRbSmPxKHk=";
+        hash = "sha256-/PZHgfBTufpc0fP6GKUzW1ACwvuceBIjJ2loTxt36FQ=";
         # hash = pkgs.lib.fakeHash;
       };
 
@@ -21,7 +26,7 @@
       nodePackages = pkgs.buildNpmPackage {
         name = "${pname}-assets";
         src = "${src}/assets";
-        npmDepsHash = "sha256-05AKPyms4WP8MHBqWMup8VXR3a1tv/f/7jT8c6EpWBw=";
+        npmDepsHash = "sha256-5bnoGjuFC4jPUkrIsXBHUPCy4nWY7h5fWEWMDoZqaC8=";
         # npmDepsHash = pkgs.lib.fakeHash;
         dontNpmBuild = true;
         inherit nodejs;
@@ -45,8 +50,8 @@
       cldr = pkgs.fetchFromGitHub {
         owner = "elixir-cldr";
         repo = "cldr";
-        rev = "v2.40.0";
-        sha256 = "sha256-B3kIJx684kg3uxdFaWWMn9SBktb1GUqCzSJwN1a0oNo=";
+        rev = "v2.42.0";
+        sha256 = "sha256-FLGUKfAKAKL2nqf/7YXQuuuEvVuSy2RVhZves9XOI1Q=";
         # sha256 = pkgs.lib.fakeHash;
       };
 
@@ -60,6 +65,8 @@
           mixFodDeps
           ;
 
+        # set the environment variables for the build
+        SKIP_LOCALE_DOWNLOAD = "true"; # do not download locales during build as they are already included in the cldr package from github
         LOCALES = "${cldr}/priv/cldr";
 
         postBuild = ''
