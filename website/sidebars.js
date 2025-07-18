@@ -21,12 +21,12 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Guides",
+      label: "Advanced Guides",
       items: [
-        "guides/traefik",
-        "guides/apache",
-        "guides/unix_domain_sockets",
-        "guides/api",
+        "advanced_guides/traefik",
+        "advanced_guides/apache",
+        "advanced_guides/unix_domain_sockets",
+        "advanced_guides/api",
       ],
     },
     {
@@ -46,7 +46,7 @@ module.exports = {
     {
       type: "category",
       label: "Advanced Configuration",
-      items: ["configuration/environment_variables"],
+      items: ["configuration/environment_variables", "configuration/api"],
     },
     {
       type: "category",

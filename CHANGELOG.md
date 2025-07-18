@@ -72,6 +72,7 @@
 - docs: add nix develop to run treefmt to support non nix direnv users (#4829 - @JakobLichterfeld)
 - docs: add Unraid installation and maintenance instructions (no support) (#4758, #4829 - @vypergts and @JakobLichterfeld)
 - docs: clarify the use of secure connection to access TeslaMate (#4829 - @JakobLichterfeld)
+- docs: reorder guides into advanced guides, categories FleetAPI documentation as config (#4829 - @JakobLichterfeld)
 
 ## [2.0.0] - 2025-04-26
 
