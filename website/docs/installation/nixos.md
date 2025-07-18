@@ -5,7 +5,10 @@ sidebar_label: NixOS
 
 This document provides the necessary steps for installation of TeslaMate on [NixOS](https://nixos.org/).
 
-This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk. If you intend to expose TeslaMate directly to the internet use a secure connection such as a VPN, Cloudflare Tunnel, Tailscale, Zero Tier and a reverse proxy like [Caddy](https://nixos.wiki/wiki/Caddy).
+This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk.
+
+If you intend to access TeslaMate from the Internet, the recommended way is to use a secure connection (such as a VPN, Cloudflare Tunnel, Tailscale, Zero Tier and a reverse proxy for portless access like [Caddy](https://nixos.wiki/wiki/Caddy)) for secured access to your TeslaMate instance outside your home network.
+Alternatively, you can use a reverse proxy (such as Traefik or [Caddy](https://nixos.wiki/wiki/Caddy)) with appropriate hardening to secure your TeslaMate instance before expose it to the internet.
 
 ## Requirements
 

@@ -5,7 +5,9 @@ sidebar_label: Docker
 
 This document provides the necessary steps for installation of TeslaMate on any system that runs Docker. You run NixOS? We got you covered, see [NixOS install](nixos.md).
 
-This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk. If you intend to expose TeslaMate directly to the internet check out the [advanced guides](../guides/traefik.md).
+This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk.
+If you intend to access TeslaMate from the Internet, the recommended way is to use a secure connection (such as a VPN, Cloudflare Tunnel, Tailscale, Zero Tier and a reverse proxy for portless access) for secured access to your TeslaMate instance outside your home network.
+Alternatively, you can use a reverse proxy (such as Traefik, Apache2 or Caddy) with appropriate hardening to secure your TeslaMate instance before expose it to the internet, check out the [advanced guides with Traefik](../advanced_guides/traefik.md) for an example how to use Traefik with TeslaMate. Or you can use the [advanced guides with Apache](../advanced_guides/apache.md) to set up TeslaMate with Apache2, TLS and HTTP Basic Auth.
 
 ## Requirements
 
