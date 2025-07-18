@@ -14,9 +14,9 @@ module.exports = {
               type: "category",
               label: "unsupported Installation methods",
               items: [
-                "installation/debian",
-                "installation/freebsd",
-                "installation/unraid",
+                "installation/unsupported/debian",
+                "installation/unsupported/freebsd",
+                "installation/unsupported/unraid",
               ],
             },
           ],
