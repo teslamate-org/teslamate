@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- feat: enhance HTTP limits for managing fleets with over 10 vehicles (#4607 - @jlestel)
+
 #### Build, CI, internal
 
 #### Dashboards
