@@ -43,6 +43,7 @@
 - build(deps): update flake.lock (#4828 - @JakobLichterfeld)
 - build(nix): update mix dependency hash in nix builds (#4828 - @JakobLichterfeld)
 - chore(issue-template): enhance bug report template with additional fields and guidance (#4827 - @JakobLichterfeld)
+- build(deps): bump on-headers from 1.0.2 to 1.1.0 and compression from 1.0.2 to 1.1.0 in /website (#4831)
 
 #### Dashboards
 
