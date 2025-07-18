@@ -44,6 +44,7 @@
 - build(nix): update mix dependency hash in nix builds (#4828 - @JakobLichterfeld)
 - chore(issue-template): enhance bug report template with additional fields and guidance (#4827 - @JakobLichterfeld)
 - build(deps): bump on-headers from 1.0.2 to 1.1.0 and compression from 1.0.2 to 1.1.0 in /website (#4831)
+- sec(deps): override webpack-dev-server to version 5.2.1 to fix CVE-2025-30360 (#4833 - @JakobLichterfeld)
 
 #### Dashboards
 
