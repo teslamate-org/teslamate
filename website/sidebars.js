@@ -32,7 +32,6 @@ module.exports = {
         "advanced_guides/traefik",
         "advanced_guides/apache",
         "advanced_guides/unix_domain_sockets",
-        "advanced_guides/api",
       ],
     },
     {
