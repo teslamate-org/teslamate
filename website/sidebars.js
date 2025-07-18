@@ -10,17 +10,18 @@ module.exports = {
           items: [
             "installation/docker",
             "installation/nixos",
+            {
+              type: "category",
+              label: "unsupported Installation methods",
+              items: [
+                "installation/debian",
+                "installation/freebsd",
+                "installation/unraid",
+              ],
+            },
           ],
         },
-        {
-          type: "category",
-          label: "Installation (unsupported)",
-          items: [
-            "installation/debian",
-            "installation/freebsd",
-            "installation/unraid",
-          ],
-        },
+
         "faq",
         "screenshots",
       ],
