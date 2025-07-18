@@ -15,6 +15,9 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
+  "overrides": {
+    "webpack-dev-server": "^5.2.1"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
