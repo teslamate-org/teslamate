@@ -14,7 +14,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Installation (unsupported",
+          label: "Installation (unsupported)",
           items: [
             "installation/debian",
             "installation/freebsd",
