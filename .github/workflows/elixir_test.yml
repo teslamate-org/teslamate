@@ -52,5 +52,5 @@ jobs:
         run: mix coveralls.github
         continue-on-error: true
         env:
-          mix-env: test
+          MIX_ENV: test
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
