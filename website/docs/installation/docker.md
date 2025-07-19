@@ -87,6 +87,10 @@ Alternatively, you can use a reverse proxy (such as Traefik, Apache2 or Caddy) w
    docker compose up -d
    ```
 
+### MCU2 upgraded car
+
+If you have a MCU2 upgraded car, you can replace `image: teslamate/teslamate:latest` with `image: ghcr.io/teslamate-org/teslamate:pr-4453` to get the latest version of TeslaMate that supports MCU2 upgraded cars (improved sleeping behavior for MCU2 upgraded cars).
+
 ## Usage
 
 1. Open the web interface [http://your-ip-address:4000](http://localhost:4000)
