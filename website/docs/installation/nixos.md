@@ -5,7 +5,10 @@ sidebar_label: NixOS
 
 This document provides the necessary steps for installation of TeslaMate on [NixOS](https://nixos.org/).
 
-This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk. If you intend to expose TeslaMate directly to the internet use a secure connection such as a VPN, Cloudflare Tunnel, Tailscale, Zero Tier and a reverse proxy like [Caddy](https://nixos.wiki/wiki/Caddy).
+This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk.
+
+If you intend to access TeslaMate from the Internet, the recommended way is to use a secure connection (such as a VPN, Cloudflare Tunnel, Tailscale, Zero Tier and a reverse proxy for portless access like [Caddy](https://nixos.wiki/wiki/Caddy)) for secured access to your TeslaMate instance outside your home network.
+Alternatively, you can use a reverse proxy (such as Traefik or [Caddy](https://nixos.wiki/wiki/Caddy)) with appropriate hardening to secure your TeslaMate instance before expose it to the internet.
 
 ## Requirements
 
@@ -32,7 +35,7 @@ If you would like to pin to a specific version, you can do so for example like t
 teslamate.url = "github:teslamate-org/teslamate?rev=c37638b320e0beea97c5d51fea51cd9fdbd07ce0"; # v2.0.0
 ```
 
-If you have a MCU2 upgraded car, you can use the following URL instead to get the latest version of TeslaMate that supports MCU2 upgraded cars:
+If you have a MCU2 upgraded car, you can use the following URL instead to get the latest version of TeslaMate that supports MCU2 upgraded cars (improved sleeping behavior for MCU2 upgraded cars):
 
 ```nix
 teslamate.url = "github:teslamate-org/teslamate/mcu2-upgraded-cars";

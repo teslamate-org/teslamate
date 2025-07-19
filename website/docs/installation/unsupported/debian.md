@@ -1,9 +1,9 @@
 ---
-title: Manual install (Debian)
-sidebar_label: Manual (Debian)
+title: Manual install - Debian (no support)
+sidebar_label: Manual - Debian (no support)
 ---
 
-This document provides the necessary steps for installation of TeslaMate on a vanilla Debian or Ubuntu system. The **recommended and most straightforward installation approach is through the use of [Docker](docker.md)**, however this walkthrough provides the necessary steps for manual installation in an aptitude (Debian/Ubuntu) environment.
+This document provides the necessary steps for installation of TeslaMate on a vanilla Debian or Ubuntu system. The **recommended and most straightforward installation approach is through the use of [Docker](../docker.md)**, however this walkthrough provides the necessary steps for manual installation in an aptitude (Debian/Ubuntu) environment.
 
 ## Requirements
 

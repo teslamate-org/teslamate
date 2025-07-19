@@ -53,10 +53,16 @@ mix compile
 
 ### Format all files
 
-Install [Treefmt](https://github.com/numtide/treefmt/releases) or use the nix devenv (via direnv) setup.
+Install [Treefmt](https://github.com/numtide/treefmt/releases) or use nix develop or the nix devenv (via direnv) setup.
 
 ```bash
 treefmt
+```
+
+or with nix, when not using direnv:
+
+```bash
+nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt
 ```
 
 You can even use a VS Code extension like [treefmt](https://marketplace.visualstudio.com/items?itemName=ibecker.treefmt-vscode) to format the files on save.

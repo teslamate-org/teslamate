@@ -85,7 +85,7 @@ For all [TeslaMate](https://www.myteslamate.com) users, MyTeslaMate also provide
 
 LINK: [MyTeslaMate Website](https://www.myteslamate.com)
 
-LINK: [Follow this guide](/docs/guides/api#myteslamate-fleet-api) to use official Tesla APIs on your Teslamate.
+LINK: [Follow this guide](/docs/configuration/api#myteslamate-fleet-api) to use official Tesla APIs on your Teslamate.
 
 ## [Tesla-GeoGDO](https://github.com/brchri/tesla-geogdo) (previously [Tesla-YouQ](https://github.com/brchri/tesla-youq))
 
