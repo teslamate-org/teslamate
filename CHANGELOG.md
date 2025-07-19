@@ -38,6 +38,7 @@
 
 - fix: improve calc for usable (now) in battery health dashboard (#4644 - @swiffer)
 - feat: make use of car filter, add timefilter in locations dashboard (#4647 - @swiffer)
+- feat: add duration time to charges details dashboard (#4677 - @jheredianet)
 
 #### Translations
 
