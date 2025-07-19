@@ -143,6 +143,7 @@ Enjoy it.
 - fix: set $\_\_timezone explicitly in dashboards to ensure truncation is done with respect to the Grafana timezone (#4684 - @swiffer)
 - fix: issues when using browser locale for date formats (#4662 - @swiffer)
 - fix: widens Date Columns to fully show date strings formatted in US locale (#4662 - @swiffer)
+- feat: add duration time to charges details dashboard (#4677 - @jheredianet)
 
 #### Translations
 
