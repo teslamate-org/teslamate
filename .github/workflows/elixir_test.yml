@@ -48,8 +48,9 @@ jobs:
         run: mix test --warnings-as-errors
 
       - name: Check Coverage
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: mix coveralls.github
         continue-on-error: true
         env:
+          MIX_ENV: test
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

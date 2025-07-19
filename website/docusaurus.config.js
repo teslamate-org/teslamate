@@ -56,7 +56,7 @@ module.exports = {
           sidebarCollapsible: false,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl:
-            "https://github.com/teslamate-org/teslamate/edit/master/website/",
+            "https://github.com/teslamate-org/teslamate/edit/main/website/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
