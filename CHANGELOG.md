@@ -15,6 +15,7 @@ Enjoy it.
 
 - feat(webview): add Google Maps link for car's current location (#4781 - @clhuang)
 - feat: add total ascent & descent to the drive table to use in the drives dashboards (#4798 - @swiffer)
+- feat(nix): add idiomatic backup and restore scripts (#4835 - @JakobLichterfeld)
 
 ### Improvements and bug fixes
 
