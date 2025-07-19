@@ -59,6 +59,9 @@ Enjoy it.
 - ci(coverage): explicitly set mix-env to test ([322c2a2](https://github.com/teslamate-org/teslamate/commit/322c2a26e61ce68d5b44cb7f0f1a7c1820e0164d) and [e6931ab](https://github.com/teslamate-org/teslamate/commit/e6931aba6809c457cc7224aec934b8e419d2c116) - @JakobLichterfeld)
 - fix(mix): add "coveralls.github" to preferred_cli_env to avoid missing task error in CI runs ([1c76994](https://github.com/teslamate-org/teslamate/commit/1c76994b563a4e61514a1cf62c310532775add46) - @JakobLichterfeld)
 - build(deps): update flake.lock (#4834)
+- build(deps): bump tesla from 1.14.1 to 1.14.2 (#4780)
+- fix(nix): update mix dependency hash in nix builds (#4780 - @JakobLichterfeld)
+- feat(middleware): migrate Tesla HTTP client to v2 Macro to avoid use of soft deprecated configuration (#4780 - @JakobLichterfeld and @brianmay)
 
 #### Dashboards
 
