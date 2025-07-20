@@ -206,6 +206,14 @@ in
           })
         ];
       };
+
+      # idiomatic backup and restore scripts
+      environment.systemPackages = with pkgs; [
+        (callPackage ./backup_and_restore.nix {
+          databaseUser = cfg.postgres.user;
+          databaseName = cfg.postgres.database;
+        })
+      ];
     }
     (mkIf cfg.postgres.enable_server {
       services.postgresql = {
