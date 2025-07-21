@@ -3,9 +3,9 @@
 ## [unreleased]
 
 As always, there are many improvements. We have introduced new database fields to store the total ascent and descent of a drive, which can be used in the drives and efficiency dashboards. This is a valuable addition for users who wish to analyze their driving patterns and performance in hilly areas, and it enhances the efficiency metrics.
-The database will be migrated automatically to include these new fields. Depending on your host and the size of your database, this process may take some time. Please be patient and wait for the process to finish (this will take from a few seconds up to approximately one minute on a Raspberry Pi 3B+ with a 1 GB database).
+The database will be migrated automatically to include these new fields. Depending on your host and the size of your database, this process may take some time. Please be patient and wait for the process to finish (depending on your host, it takes a few seconds to about a minute on a Raspberry Pi 3B+ with a 1 GB database).
 
-We now use the latest Grafana 12.0.1, and you can now open a Google Maps link for the car's current location by clicking on the location in the webview to quickly navigate to your car's location.
+We now use the latest Grafana 12.0.1, and you can now open a Google Maps link for the car's current location by clicking on the location marker icon in the webview to quickly navigate to your car's location, without having to open the Tesla app.
 Additionally, we have fixed some issues with the consumption for drives with a positive SOC difference, and we have aligned the usage of time-range filters to resolve consumption gross issues in some edge cases.
 The charging stats are now even more consistent. We now detect consecutive charges and exclude them from the charge / discharge stats (PV surplus charging: we've got you covered).
 
@@ -13,7 +13,7 @@ Enjoy it.
 
 ### New features
 
-- feat(webview): add Google Maps link for car's current location (#4781 - @clhuang)
+- feat(webview): add map marker icon to open Google Maps link with car's current location (#4838 - @JakobLichterfeld)
 - feat: add total ascent & descent to the drive table to use in the drives dashboards (#4798 - @swiffer)
 - feat(nix): add idiomatic backup and restore scripts (#4835 - @JakobLichterfeld)
 
