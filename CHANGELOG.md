@@ -8,6 +8,8 @@
 
 #### Build, CI, internal
 
+- style(issue-template): typo fix in Unraid (#4842 - @JakobLichterfeld)
+
 #### Dashboards
 
 #### Translations
