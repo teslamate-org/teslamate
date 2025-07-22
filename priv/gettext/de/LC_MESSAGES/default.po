@@ -678,5 +678,5 @@ msgstr "Wächtermodus"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:99
 #, elixir-autogen, elixir-format
-msgid "Fahrzeugstandort auf Google Maps"
-msgstr ""
+msgid "car location on Google Maps"
+msgstr "Fahrzeugstandort auf Google Maps"
