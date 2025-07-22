@@ -14,6 +14,8 @@
 
 #### Translations
 
+- i18n: fix de translation for car location link (#4844 - @JakobLichterfeld)
+
 #### Documentation
 
 ## [2.1.0] - 2025-07-21
