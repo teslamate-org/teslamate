@@ -122,7 +122,7 @@ body:
         - Docker (https://docs.teslamate.org/docs/installation/docker/)
         - NixOS (https://docs.teslamate.org/docs/installation/nixos)
         - Manual (no support)
-        - Unraind (no support, if not using docker compose)
+        - Unraid (no support, if not using docker compose)
         - Other (no support)
     validations:
       required: true
