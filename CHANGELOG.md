@@ -7,6 +7,7 @@
 ### Improvements and bug fixes
 
 - feat(webview): show offline duration in extended view on mobile as well to improve UX (#4848 - @JakobLichterfeld)
+- feat(nix): add idiomatic maintenance scripts (#4849 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
