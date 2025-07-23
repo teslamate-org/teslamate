@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- feat(webview): show offline duration in extended view on mobile as well to improve UX (#4848 - @JakobLichterfeld)
+
 #### Build, CI, internal
 
 - style(issue-template): typo fix in Unraid (#4842 - @JakobLichterfeld)
