@@ -73,7 +73,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": 0
               }
             ]
           }
@@ -137,7 +138,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-orange"
+                      "color": "super-light-orange",
+                      "value": 0
                     },
                     {
                       "color": "light-orange",
@@ -320,7 +322,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-blue"
+                      "color": "super-light-blue",
+                      "value": 0
                     },
                     {
                       "color": "super-light-green",
@@ -471,7 +474,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-blue"
+                      "color": "super-light-blue",
+                      "value": 0
                     },
                     {
                       "color": "super-light-green",
@@ -637,7 +641,7 @@
           }
         ]
       },
-      "pluginVersion": "12.0.2",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
