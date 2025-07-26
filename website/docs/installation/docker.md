@@ -47,7 +47,7 @@ Alternatively, you can use a reverse proxy (such as Traefik, Apache2 or Caddy) w
          - POSTGRES_PASSWORD=password #insert your secure database password!
          - POSTGRES_DB=teslamate
        volumes:
-         - teslamate-db:/var/lib/postgresql/data
+         - teslamate-db-17:/var/lib/postgresql/data
 
      grafana:
        image: teslamate/grafana:latest
@@ -73,7 +73,7 @@ Alternatively, you can use a reverse proxy (such as Traefik, Apache2 or Caddy) w
          - mosquitto-data:/mosquitto/data
 
    volumes:
-     teslamate-db:
+     teslamate-db-17:
      teslamate-grafana-data:
      mosquitto-conf:
      mosquitto-data:
