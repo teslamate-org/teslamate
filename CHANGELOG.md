@@ -12,6 +12,7 @@
 #### Build, CI, internal
 
 - style(issue-template): typo fix in Unraid (#4842 - @JakobLichterfeld)
+- build(deps): update flake.lock (#4858)
 
 #### Dashboards
 
