@@ -7,6 +7,7 @@
 ### Improvements and bug fixes
 
 - feat(webview): show offline duration in extended view on mobile as well to improve UX (#4848 - @JakobLichterfeld)
+- feat: use Grafana 12.1.0 (#4855 - @swiffer)
 
 #### Build, CI, internal
 
