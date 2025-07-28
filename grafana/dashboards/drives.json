@@ -4,9 +4,9 @@
       {
         "builtIn": 1,
         "datasource": {
-           "type": "grafana",
-           "uid": "-- Grafana --"
-         },
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -82,7 +82,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text"
+                "color": "text",
+                "value": 0
               }
             ]
           },
@@ -128,7 +129,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -182,7 +183,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text"
+                "color": "text",
+                "value": 0
               }
             ]
           },
@@ -228,7 +230,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -282,7 +284,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text"
+                "color": "text",
+                "value": 0
               }
             ]
           }
@@ -347,7 +350,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -403,7 +406,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text"
+                "color": "text",
+                "value": 0
               }
             ]
           }
@@ -466,7 +470,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -563,7 +567,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               }
             ]
           }
@@ -693,7 +698,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-green"
+                      "color": "super-light-green",
+                      "value": 0
                     },
                     {
                       "color": "green",
@@ -798,7 +804,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-blue"
+                      "color": "super-light-blue",
+                      "value": 0
                     },
                     {
                       "color": "super-light-green",
@@ -882,7 +889,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-orange"
+                      "color": "super-light-orange",
+                      "value": 0
                     },
                     {
                       "color": "light-orange",
@@ -1006,7 +1014,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "super-light-blue"
+                      "color": "super-light-blue",
+                      "value": 0
                     },
                     {
                       "color": "super-light-green",
@@ -1270,7 +1279,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "12.0.2",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -1338,7 +1347,7 @@
         "content": "From here you can check if you have \nincomplete data of **Drives** (drives without ending date)\nIf so, you may follow the official \nguide by <a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>",
         "mode": "markdown"
       },
-      "pluginVersion": "12.0.2",
+      "pluginVersion": "12.1.0",
       "title": "",
       "type": "text"
     },
@@ -1366,7 +1375,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               }
             ]
           }
@@ -1393,7 +1403,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "12.0.2",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
