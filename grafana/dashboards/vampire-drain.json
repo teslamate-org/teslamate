@@ -74,7 +74,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -188,7 +189,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "rgb(133, 142, 133)"
+                      "color": "rgb(133, 142, 133)",
+                      "value": 0
                     },
                     {
                       "color": "#56A64B",
@@ -265,7 +267,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "#FF7383"
+                      "color": "#FF7383",
+                      "value": 0
                     },
                     {
                       "color": "#FFB357",
@@ -474,7 +477,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "12.0.2",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
