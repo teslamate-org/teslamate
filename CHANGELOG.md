@@ -4,11 +4,12 @@
 
 ### New features
 
+- feat(nix): add idiomatic maintenance scripts (#4849 - @JakobLichterfeld)
+
 ### Improvements and bug fixes
 
 - feat(webview): show offline duration in extended view on mobile as well to improve UX (#4848 - @JakobLichterfeld)
 - feat: use Grafana 12.1.0 (#4855 - @swiffer)
-- feat(nix): add idiomatic maintenance scripts (#4849 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
