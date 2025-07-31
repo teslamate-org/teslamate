@@ -27,10 +27,9 @@
     <div class="media is-flex mb-5">
       <div class="media-content">
         <p class="title is-5">
-          <span 
-            style="cursor: pointer;"
-            onclick={"navigator.clipboard.writeText(#{Phoenix.HTML.Javascript.javascript_escape(@car.vin)}); this.setAttribute('data-tooltip', 'Copied!');"}
+          <span
             class="has-tooltip-right has-tooltip-left-mobile"
+            style="border-bottom: none;"
             data-tooltip={@car.vin}
           >
             <%= @summary.display_name %>
