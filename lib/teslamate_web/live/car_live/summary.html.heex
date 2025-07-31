@@ -432,6 +432,12 @@
               </td>
             </tr>
           <% end %>
+          <%= unless is_nil(@car.vin) do %>
+            <tr>
+              <td class="has-text-weight-medium"><%= gettext("VIN") %></td>
+              <td><%= @car.vin %></td>
+            </tr>
+          <% end %>
         </tbody>
       </table>
       <%= cond do
