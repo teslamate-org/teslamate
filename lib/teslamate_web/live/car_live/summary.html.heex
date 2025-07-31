@@ -26,7 +26,16 @@
   <div class="card-content">
     <div class="media is-flex mb-5">
       <div class="media-content">
-        <p class="title is-5"><%= @summary.display_name %></p>
+        <p class="title is-5">
+          <span 
+            style="cursor: pointer;"
+            onclick="navigator.clipboard.writeText('<%= @car.vin %>'); this.setAttribute('data-tooltip', 'Copied!'); setTimeout(() => this.setAttribute('data-tooltip', '<%= @car.vin %>'), 2000);"
+            class="has-tooltip-right has-tooltip-left-mobile"
+            data-tooltip="<%= @car.vin %>"
+          >
+            <%= @summary.display_name %>
+          </span>
+        </p>
         <%= unless is_nil(@car.model) do %>
           <p class="subtitle is-6 has-text-weight-light">
             Model <%= @car.model %>
@@ -430,12 +439,6 @@
                   rel: "noopener noreferrer"
                 ) %>
               </td>
-            </tr>
-          <% end %>
-          <%= unless is_nil(@car.vin) do %>
-            <tr>
-              <td class="has-text-weight-medium"><%= gettext("VIN") %></td>
-              <td><%= @car.vin %></td>
             </tr>
           <% end %>
         </tbody>
