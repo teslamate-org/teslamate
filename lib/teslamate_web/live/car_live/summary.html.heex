@@ -29,7 +29,7 @@
         <p class="title is-5">
           <span 
             style="cursor: pointer;"
-            onclick="navigator.clipboard.writeText('<%= @car.vin %>'); this.setAttribute('data-tooltip', 'Copied!');"
+            onclick={"navigator.clipboard.writeText(#{Phoenix.HTML.Javascript.javascript_escape(@car.vin)}); this.setAttribute('data-tooltip', 'Copied!');"}
             class="has-tooltip-right has-tooltip-left-mobile"
             data-tooltip={@car.vin}
           >
