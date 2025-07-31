@@ -29,7 +29,7 @@
         <p class="title is-5">
           <span 
             style="cursor: pointer;"
-            onclick="navigator.clipboard.writeText({@car.vin}); this.setAttribute('data-tooltip', 'Copied!'); setTimeout(() => this.setAttribute('data-tooltip', {@car.vin}), 2000);"
+            onclick="navigator.clipboard.writeText('<%= @car.vin %>'); this.setAttribute('data-tooltip', 'Copied!');"
             class="has-tooltip-right has-tooltip-left-mobile"
             data-tooltip={@car.vin}
           >
