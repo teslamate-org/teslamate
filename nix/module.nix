@@ -137,6 +137,12 @@ in
         default = "/";
         description = "Path that grafana is mounted on. Useful if using a reverse proxy to vend teslamate and grafana on the same port";
       };
+
+      setDefaultDashboard = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Whether to set the TeslaMate home dashboard as the default dashboard in Grafana";
+      };
     };
 
     mqtt = {
@@ -262,7 +268,7 @@ in
           "auth.anonymous".enabled = false;
           "auth.basic".enabled = false;
           analytics.reporting_enabled = false;
-          default_home_dashboard_path = "${pkgs.lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [".json"]}/home.json";
+          default_home_dashboard_path = mkIf cfg.grafana.setDefaultDashboard "${pkgs.lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [".json"]}/home.json";
           date_formats.use_browser_locale = true;
           plugins.preinstall_disabled = true;
           unified_alerting.enabled = false;
