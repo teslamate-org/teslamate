@@ -266,7 +266,8 @@ in
           date_formats.use_browser_locale = true;
           plugins.preinstall_disabled = true;
           unified_alerting.enabled = false;
-          datasources.settings.datasources = [ # extracted from ../grafana/datasource.yml
+          datasources.settings.datasources = [
+            # extracted from ../grafana/datasource.yml
             {
               name = "TeslaMate";
               type = "postgres";
