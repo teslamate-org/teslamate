@@ -217,6 +217,8 @@ in
           databaseUser = cfg.postgres.user;
           databaseName = cfg.postgres.database;
           environmentFilePath = cfg.secretsFile;
+          getExe = getExe;
+          teslamate = teslamate;
         })
       ];
     }
