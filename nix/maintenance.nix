@@ -22,6 +22,7 @@ let
     # load env file to have RELEASE_COOKIE set
     if [ -f ${environmentFilePath} ]; then
       source ${environmentFilePath}
+      export RELEASE_COOKIE
     else
       echo "Environment file ${environmentFilePath} not found!" >&2
       exit 1
@@ -44,6 +45,7 @@ let
     # load env file to have RELEASE_COOKIE set
     if [ -f ${environmentFilePath} ]; then
       source ${environmentFilePath}
+      export RELEASE_COOKIE
     else
       echo "Environment file ${environmentFilePath} not found!" >&2
       exit 1
