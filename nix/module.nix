@@ -268,7 +268,7 @@ in
           "auth.anonymous".enabled = false;
           "auth.basic".enabled = false;
           analytics.reporting_enabled = false;
-          default_home_dashboard_path = mkIf cfg.grafana.setDefaultDashboard "${pkgs.lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [".json"]}/home.json";
+          dashboards.default_home_dashboard_path = mkIf cfg.grafana.setDefaultDashboard "${pkgs.lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [".json"]}/home.json";
           date_formats.use_browser_locale = true;
           plugins.preinstall_disabled = true;
           unified_alerting.enabled = false;
