@@ -8,6 +8,7 @@
 
 - feat(webview): show offline duration in extended view on mobile as well to improve UX (#4848 - @JakobLichterfeld)
 - feat: use Grafana 12.1.0 (#4855 - @swiffer)
+- feat(nix): use datasources.settings.datasources to allow merging Grafana sources from multiple modules (#4870 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
