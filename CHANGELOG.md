@@ -25,6 +25,7 @@
 #### Documentation
 
 - docs: add reference to idiomatic nix backup and restore scripts (#4849 - @JakobLichterfeld)
+- docs: add reference to idiomatic nix maintenance scripts (#4849 - @JakobLichterfeld)
 
 ## [2.1.0] - 2025-07-21
 
