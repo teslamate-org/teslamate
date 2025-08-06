@@ -13,7 +13,7 @@
     "@docusaurus/preset-classic": "^3.8.1",
     "classnames": "^2.5.1",
     "react": "^19.1.1",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.1"
   },
   "overrides": {
     "webpack-dev-server": "^5.2.1"
