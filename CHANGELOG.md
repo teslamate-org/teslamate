@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat(nix): add idiomatic maintenance scripts (#4849 - @JakobLichterfeld)
+
 ### Improvements and bug fixes
 
 - feat(webview): show offline duration in extended view on mobile as well to improve UX (#4848 - @JakobLichterfeld)
@@ -24,6 +26,9 @@
 - i18n: fix de translation for car location link (#4844 - @JakobLichterfeld)
 
 #### Documentation
+
+- docs: add reference to idiomatic nix backup and restore scripts (#4849 - @JakobLichterfeld)
+- docs: add reference to idiomatic nix maintenance scripts (#4849 - @JakobLichterfeld)
 
 ## [2.1.0] - 2025-07-21
 

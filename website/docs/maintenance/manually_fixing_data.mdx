@@ -46,6 +46,8 @@ groupId="type"
 values={[
     { label: 'Drive', value: 'drive', },
     { label: 'Charge', value: 'charge', },
+    { label: 'Drive (NixOS)', value: 'drive-nixos', },
+    { label: 'Charge (NixOS)', value: 'charge-nixos', },
 ]}>
 <TabItem value="drive">
 
@@ -63,11 +65,36 @@ docker compose exec teslamate bin/teslamate rpc \
 ```
 
 </TabItem>
+<TabItem value="drive-nixos">
+
+```bash
+teslamate-close-drive 9999
+```
+
+</TabItem>
+<TabItem value="charge-nixos">
+
+```bash
+teslamate-close-charge 9999
+```
+
+</TabItem>
 </Tabs>
 
 ## Delete a drive or charge
 
 If for some reason a drive or charge was recorded incorrectly, you can delete it.
+
+<Tabs
+defaultValue="drive"
+groupId="type"
+values={[
+    { label: 'Drive', value: 'drive', },
+    { label: 'Charge', value: 'charge', },
+    { label: 'Drive (NixOS)', value: 'drive-nixos', },
+    { label: 'Charge (NixOS)', value: 'charge-nixos', },
+]}>
+<TabItem value="drive">
 
 1.  Attach to the **running** database container:
 
@@ -81,32 +108,50 @@ If for some reason a drive or charge was recorded incorrectly, you can delete it
 
 2.  Afterwards replace `9999` with the actual ID then run the query:
 
-        <Tabs
+                ```sql
+                DELETE FROM drives WHERE id = 9999;
+                ```
 
-    defaultValue="drive"
-    groupId="type"
-    values={[
-    { label: 'Drive', value: 'drive', },
-    { label: 'Charge', value: 'charge', },
-    ]}>
+</TabItem>
+<TabItem value="charge">
 
-    <TabItem value="drive">
+1.  Attach to the **running** database container:
 
-        ```sql
-        DELETE FROM drives WHERE id = 9999;
-        ```
+    ```bash
+    docker compose exec database psql teslamate teslamate
+    ```
 
-        </TabItem>
+    :::note
+    If you get the error `No such service: database`, update your _docker-compose.yml_ or use `db` instead of `database` in the above command.
+    :::
 
-    <TabItem value="charge">
+2.  Afterwards replace `9999` with the actual ID then run the query:
 
-        ```sql
-        DELETE FROM charging_processes WHERE id = 9999;
-        ```
+    ```sql
+    DELETE FROM charging_processes WHERE id = 9999;
+    ```
 
-        </TabItem>
+</TabItem>
 
-    </Tabs>
+<TabItem value="drive-nixos">
+
+You can use the idiomatic maintenance script:
+
+    ```bash
+    teslamate-delete-drive 9999
+    ```
+
+</TabItem>
+<TabItem value="charge-nixos">
+
+You can use the idiomatic maintenance script:
+
+    ```bash
+    teslamate-delete-charge 9999
+    ```
+
+</TabItem>
+</Tabs>
 
 ## Remove a vehicle from the database
 

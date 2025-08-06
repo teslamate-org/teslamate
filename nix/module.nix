@@ -213,11 +213,18 @@ in
         ];
       };
 
-      # idiomatic backup and restore scripts
+      # idiomatic backup and restore and maintenance scripts
       environment.systemPackages = with pkgs; [
         (callPackage ./backup_and_restore.nix {
           databaseUser = cfg.postgres.user;
           databaseName = cfg.postgres.database;
+        })
+        (callPackage ./maintenance.nix {
+          databaseUser = cfg.postgres.user;
+          databaseName = cfg.postgres.database;
+          environmentFilePath = cfg.secretsFile;
+          getExe = getExe;
+          teslamate = teslamate;
         })
       ];
     }
