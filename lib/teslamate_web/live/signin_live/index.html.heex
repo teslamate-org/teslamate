@@ -10,21 +10,21 @@
     >
       <%= if @error do %>
         <div class="notification is-danger">
-          Error: <%= @error %>
+          Error: {@error}
         </div>
       <% end %>
 
       <%= if @token == "" do %>
         <div class="field">
-          <%= label(f, :access, gettext("Access Token"), class: "label") %>
+          {label(f, :access, gettext("Access Token"), class: "label")}
           <div class="control has-icons-left">
-            <%= text_input(f, :access,
+            {text_input(f, :access,
               class: "input is-rounded",
               autocorrect: "off",
               autocapitalize: "none",
               spellcheck: "false",
               disabled: !!@task
-            ) %>
+            )}
             <span class="icon is-small is-left">
               <i class="mdi mdi-api"></i>
             </span>
@@ -32,15 +32,15 @@
         </div>
 
         <div class="field">
-          <%= label(f, :refresh, gettext("Refresh Token"), class: "label") %>
+          {label(f, :refresh, gettext("Refresh Token"), class: "label")}
           <div class="control has-icons-left">
-            <%= text_input(f, :refresh,
+            {text_input(f, :refresh,
               class: "input is-rounded",
               autocorrect: "off",
               autocapitalize: "none",
               spellcheck: "false",
               disabled: !!@task
-            ) %>
+            )}
             <span class="icon is-small is-left">
               <i class="mdi mdi-cloud-refresh"></i>
             </span>
@@ -55,19 +55,19 @@
               rel: "noopener noreferrer"
             ) %>
 
-          <%= raw(
+          {raw(
             gettext(
               "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming.",
               token: @token,
               url: safe_to_string(provider_link)
             )
-          ) %>
+          )}
         </p>
       <% end %>
 
       <div class="field mt-5">
         <div class="control">
-          <%= submit(gettext("Sign in"),
+          {submit(gettext("Sign in"),
             class: [
               "button",
               "is-rounded",
@@ -82,7 +82,7 @@
                 false
               end,
             phx_disable_with: gettext("Saving...")
-          ) %>
+          )}
         </div>
       </div>
 
@@ -95,12 +95,12 @@
               rel: "noopener noreferrer"
             ) %>
 
-          <%= raw(
+          {raw(
             gettext(
               "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}.",
               here: safe_to_string(here_link)
             )
-          ) %>
+          )}
         </p>
       <% end %>
     </.form>
