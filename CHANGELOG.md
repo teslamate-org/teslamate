@@ -13,6 +13,7 @@
 
 - style(issue-template): typo fix in Unraid (#4842 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4858)
+- build(deps): bump ecto_sql from 3.12.1 to 3.13.2 (#4863)
 
 #### Dashboards
 
