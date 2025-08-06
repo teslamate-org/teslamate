@@ -430,7 +430,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     end
 
     @tag :signed_in
-    test "shows car location on Google Maps with correct coordinates", %{conn: conn} do
+    test "View car location on Google Maps with correct coordinates", %{conn: conn} do
       _car =
         car_fixture(%{
           suspend_min: 60_000,
@@ -479,7 +479,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert attrs_map["target"] == "_blank"
       assert attrs_map["rel"] == "noopener noreferrer"
       assert attrs_map["class"] =~ "icon"
-      assert attrs_map["data-tooltip"] == "car location on Google Maps"
+      assert attrs_map["data-tooltip"] == "View car location on Google Maps"
     end
   end
 
