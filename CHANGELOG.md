@@ -4,15 +4,21 @@
 
 ### New features
 
+- feat(nix): add idiomatic maintenance scripts (#4849 - @JakobLichterfeld)
+
 ### Improvements and bug fixes
 
 - feat(webview): show offline duration in extended view on mobile as well to improve UX (#4848 - @JakobLichterfeld)
 - feat: use Grafana 12.1.0 (#4855 - @swiffer)
+- feat(nix): use datasources.settings.datasources to allow merging Grafana sources from multiple modules (#4870 - @JakobLichterfeld)
+- fix(nix): correctly set default Grafana dashboard path (#4870 - @JakobLichterfeld)
+- feat(nix): allow disabling default Grafana dashboard with setDefaultDashboard option (#4870 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
 - style(issue-template): typo fix in Unraid (#4842 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4858)
+- build(deps): bump DeterminateSystems/update-flake-lock from 25 to 27 (#4864)
 - build(deps): bump react and react-dom from 19.1.0 to 19.1.1 in /website (#4865 - @JakobLichterfeld)
 
 #### Dashboards
@@ -22,6 +28,9 @@
 - i18n: fix de translation for car location link (#4844 - @JakobLichterfeld)
 
 #### Documentation
+
+- docs: add reference to idiomatic nix backup and restore scripts (#4849 - @JakobLichterfeld)
+- docs: add reference to idiomatic nix maintenance scripts (#4849 - @JakobLichterfeld)
 
 ## [2.1.0] - 2025-07-21
 
