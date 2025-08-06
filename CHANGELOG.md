@@ -13,6 +13,7 @@
 
 - style(issue-template): typo fix in Unraid (#4842 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4858)
+- build(deps): bump react and react-dom from 19.1.0 to 19.1.1 in /website (#4865 - @JakobLichterfeld)
 
 #### Dashboards
 
