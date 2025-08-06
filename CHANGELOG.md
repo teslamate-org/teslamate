@@ -13,6 +13,7 @@
 
 - style(issue-template): typo fix in Unraid (#4842 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4858)
+- build(deps): bump DeterminateSystems/update-flake-lock from 25 to 27 (#4864)
 
 #### Dashboards
 
