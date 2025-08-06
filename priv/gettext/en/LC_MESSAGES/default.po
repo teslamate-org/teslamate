@@ -677,6 +677,6 @@ msgid "Sentry Mode recording"
 msgstr ""
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:99
-#, elixir-autogen, elixir-format
-msgid "car location on Google Maps"
+#, elixir-autogen, elixir-format, fuzzy
+msgid "View car location on Google Maps"
 msgstr ""
