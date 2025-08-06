@@ -20,6 +20,7 @@
 - build(deps): update flake.lock (#4858)
 - build(deps): bump DeterminateSystems/update-flake-lock from 25 to 27 (#4864)
 - build(deps): bump react and react-dom from 19.1.0 to 19.1.1 in /website (#4865 - @JakobLichterfeld)
+- build(deps): bump ecto_sql from 3.12.1 to 3.13.2 (#4863)
 
 #### Dashboards
 
