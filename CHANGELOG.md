@@ -24,6 +24,8 @@
 
 #### Documentation
 
+- docs: add reference to idiomatic nix backup and restore scripts (#4849 - @JakobLichterfeld)
+
 ## [2.1.0] - 2025-07-21
 
 As always, there are many improvements. We have introduced new database fields to store the total ascent and descent of a drive, which can be used in the drives and efficiency dashboards. This is a valuable addition for users who wish to analyze their driving patterns and performance in hilly areas, and it enhances the efficiency metrics.
