@@ -13,6 +13,7 @@
 - feat(nix): use datasources.settings.datasources to allow merging Grafana sources from multiple modules (#4870 - @JakobLichterfeld)
 - fix(nix): correctly set default Grafana dashboard path (#4870 - @JakobLichterfeld)
 - feat(nix): allow disabling default Grafana dashboard with setDefaultDashboard option (#4870 - @JakobLichterfeld)
+- feat(webview): update wording to View car location on Google Maps for clarity (#4875 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
