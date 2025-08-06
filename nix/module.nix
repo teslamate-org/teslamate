@@ -137,6 +137,12 @@ in
         default = "/";
         description = "Path that grafana is mounted on. Useful if using a reverse proxy to vend teslamate and grafana on the same port";
       };
+
+      setDefaultDashboard = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Whether to set the TeslaMate home dashboard as the default dashboard in Grafana";
+      };
     };
 
     mqtt = {
@@ -262,14 +268,34 @@ in
           "auth.anonymous".enabled = false;
           "auth.basic".enabled = false;
           analytics.reporting_enabled = false;
-          dashboards.default_home_dashboard_path = "../grafana/dashboards/internal/home.json";
+          dashboards.default_home_dashboard_path = mkIf cfg.grafana.setDefaultDashboard "${pkgs.lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [".json"]}/home.json";
           date_formats.use_browser_locale = true;
           plugins.preinstall_disabled = true;
           unified_alerting.enabled = false;
         };
         provision = {
           enable = true;
-          datasources.path = ../grafana/datasource.yml;
+          datasources.settings.datasources = [
+            # extracted from ../grafana/datasource.yml
+            {
+              name = "TeslaMate";
+              type = "postgres";
+              url = "http://${cfg.postgres.host}:${toString cfg.postgres.port}";
+              user = cfg.postgres.user;
+              access = "proxy";
+              basicAuth = false;
+              withCredentials = false;
+              isDefault = true;
+              secureJsonData.password = "\${DATABASE_PASS}";
+              jsonData = {
+                postgresVersion = 1500;
+                sslmode = "disable";
+                database = cfg.postgres.database;
+              };
+              version = 1;
+              editable = true;
+            }
+          ];
           # Need to duplicate dashboards.yml since it contains absolute paths
           # which are incompatible with NixOS
           dashboards.settings = {
