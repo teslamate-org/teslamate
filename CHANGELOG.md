@@ -15,6 +15,7 @@
 - feat(nix): allow disabling default Grafana dashboard with setDefaultDashboard option (#4870 - @JakobLichterfeld)
 - fix: set descent and ascent to 0 when out of bounds (> 32767 meters) to ensure migration succeeds (#4882 - @swiffer)
 - feat: use Grafana 12.1.1 (#4886 - @swiffer)
+- feat(webview): update wording to View car location on Google Maps for clarity (#4875 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
