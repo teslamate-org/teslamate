@@ -13,6 +13,7 @@
 - feat(nix): use datasources.settings.datasources to allow merging Grafana sources from multiple modules (#4870 - @JakobLichterfeld)
 - fix(nix): correctly set default Grafana dashboard path (#4870 - @JakobLichterfeld)
 - feat(nix): allow disabling default Grafana dashboard with setDefaultDashboard option (#4870 - @JakobLichterfeld)
+- fix: set descent and ascent to 0 when out of bounds (> 32767 meters) to ensure migration succeeds (#4882 - @swiffer)
 
 #### Build, CI, internal
 
