@@ -301,20 +301,16 @@ defmodule TeslaMate.Log do
            ),
            select: %{
              elevation_gains:
-               sum(
-                 fragment(
-                   "CASE WHEN ? > 0 THEN ? ELSE 0 END",
-                   p1.elevation_diff,
-                   p1.elevation_diff
-                 )
+               fragment(
+                 "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? > 0 THEN ? ELSE 0 END), 32768), 32768), 0)",
+                 p1.elevation_diff,
+                 p1.elevation_diff
                ),
              elevation_losses:
-               sum(
-                 fragment(
-                   "CASE WHEN ? < 0 THEN ABS(?) ELSE 0 END",
-                   p1.elevation_diff,
-                   p1.elevation_diff
-                 )
+               fragment(
+                 "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? < 0 THEN ABS(?) ELSE 0 END), 32768), 32768), 0)",
+                 p1.elevation_diff,
+                 p1.elevation_diff
                )
            }
 
