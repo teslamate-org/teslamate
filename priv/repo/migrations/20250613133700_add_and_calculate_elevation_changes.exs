@@ -7,6 +7,9 @@ defmodule TeslaMate.Repo.Migrations.AddAndCalculateElevationChanges do
       add :descent, :smallint
     end
 
+    # If the sum of elevation gains exceeds the max value of a smallint (32767), set it to 0.
+    # If the sum of elevation losses exceeds the max value of a smallint (32767), set it to 0.
+
     execute """
     WITH elevation_changes AS (
       SELECT

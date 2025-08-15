@@ -291,6 +291,8 @@ defmodule TeslaMate.Log do
             not is_nil(p.odometer),
         limit: 1
 
+    # If the sum of elevation gains exceeds the max value of a smallint (32767), set it to 0.
+    # If the sum of elevation losses exceeds the max value of a smallint (32767), set it to 0.
     elevation_data =
       from p1 in subquery(
              from p in Position,
