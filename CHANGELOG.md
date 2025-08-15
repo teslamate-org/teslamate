@@ -25,6 +25,7 @@
 - build(deps): bump ecto_sql from 3.12.1 to 3.13.2 (#4863)
 - build(deps): update flake.lock (#4867)
 - build(deps): bump phoenix_ecto from 4.6.4 to 4.6.5 (#4862)
+- build(deps): update flake.lock (#4881)
 
 #### Dashboards
 
