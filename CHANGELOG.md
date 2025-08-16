@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased]
+## [2.1.1] - 2025-08-16
 
 ### New features
 
@@ -2549,7 +2549,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v2.1.0...HEAD
+[2.1.1]: https://github.com/teslamate-org/teslamate/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/teslamate-org/teslamate/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/teslamate-org/teslamate/compare/v1.33.0...v2.0.0
 [1.33.0]: https://github.com/teslamate-org/teslamate/compare/v1.32.0...v1.33.0
