@@ -2,6 +2,10 @@
 
 ## [2.1.1] - 2025-08-16
 
+As always, there have been many improvements. We now use the latest version of Grafana (12.1.1) and have enhanced the database migration process to include the new ascent and descent values, allowing successful migration even when entries are faulty. Previously, this prevented the migration from succeeding for some users. This highlights the importance of user feedback. Such cases never occurred in our testing.
+
+Enjoy it.
+
 ### New features
 
 - feat(nix): add idiomatic maintenance scripts (#4849 - @JakobLichterfeld)
