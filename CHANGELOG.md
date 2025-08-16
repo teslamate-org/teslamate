@@ -12,6 +12,8 @@
 
 #### Translations
 
+- i18n: add spanish car location translation (#4892 - @jpizquierdo)
+
 #### Documentation
 
 ## [2.1.1] - 2025-08-16
