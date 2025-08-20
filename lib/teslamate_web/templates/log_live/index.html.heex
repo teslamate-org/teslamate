@@ -1,0 +1,9 @@
+<h1>Logs</h1>
+
+<button phx-click="refresh_logs" class="button is-primary">Refresh</button>
+
+<pre class="logs">
+<%= for log <- @logs do %>
+  <%= log %>
+<% end %>
+</pre>

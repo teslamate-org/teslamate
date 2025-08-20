@@ -16,9 +16,28 @@ config :teslamate,
     TeslaMate.Auth.Tokens
   ]
 
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:car_id]
+config :logger,
+  backends:
+    [
+      :console
+    ] ++
+      if(System.get_env("TESLAMATE_FILE_LOGGING_ENABLED") == "true",
+        do: [{Logger.Handlers.File, :file_logger_for_webview}],
+        else: []
+      ),
+  console: [
+    format: "$time $metadata[$level] $message\n",
+    metadata: [:car_id]
+  ],
+  file_logger_for_webview: [
+    format: "$time $metadata[$level] $message\n",
+    metadata: [:car_id],
+    path:
+      System.get_env("TESLAMATE_FILE_LOGGING_PATH") ||
+        Path.join(File.cwd!(), "data/logs/teslamate.log"),
+    # sync every 5 messages to file
+    sync_threshold: 5
+  ]
 
 config :phoenix, :json_library, Jason
 
