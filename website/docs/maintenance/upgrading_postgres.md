@@ -23,6 +23,18 @@ sidebar_label: Upgrading PostgreSQL
      image: postgres:xx-trixie
    ```
 
+   :::warning
+   When upgrading postgres to `postgres:18-trixie` ensure to change the volume mount as well!
+
+   ```yml {2}
+   database:
+     volumes:
+       - teslamate-db:/var/lib/postgresql
+   ```
+
+   details: https://hub.docker.com/_/postgres#pgdata
+   :::
+
    ```bash
    docker compose up -d database
    ```
