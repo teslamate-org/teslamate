@@ -95,7 +95,7 @@ msgstr "Ricarica pianificata"
 #: lib/teslamate_web/live/car_live/summary.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Plugged In"
-msgstr "Collegato"
+msgstr "Collegata"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:325
 #, elixir-autogen, elixir-format
