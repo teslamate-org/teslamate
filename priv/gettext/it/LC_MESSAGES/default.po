@@ -136,7 +136,7 @@ msgstr "Indietro"
 #: lib/teslamate_web/live/geofence_live/form.ex:188
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
-msgstr "Geo-fence \"%{name}\" creato"
+msgstr "Geo-Fence \"%{name}\" creata"
 
 #: lib/teslamate_web/live/geofence_live/form.ex:110
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
@@ -145,7 +145,7 @@ msgstr "Geo-fence \"%{name}\" creato"
 #: lib/teslamate_web/templates/layout/root.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
-msgstr "Geo-Fences"
+msgstr "Geo-Fence"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:74
 #, elixir-autogen, elixir-format
@@ -373,7 +373,7 @@ msgstr "Modalità sospensione"
 #: lib/teslamate_web/live/geofence_live/form.ex:189
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
-msgstr "Geo-fence \"%{name}\" aggiornato"
+msgstr "Geo-fence \"%{name}\" aggiornata"
 
 #: lib/teslamate_web/live/car_live/summary.ex:152
 #, elixir-autogen, elixir-format
@@ -506,13 +506,13 @@ msgstr "Totale"
 #, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
-msgstr[0] "C'è <strong>%{n} sessione di addebito </strong> in questa posizione per la quale non è stato ancora aggiunto alcun costo."
-msgstr[1] "Ci sono <strong>%{n} sessioni di addebito </strong> in questa posizione per le quali non è stato ancora aggiunto alcun costo."
+msgstr[0] "C'è <strong>%{n} sessione di addebito</strong> in questa posizione per la quale non è stato ancora aggiunto alcun costo."
+msgstr[1] "Ci sono <strong>%{n} sessioni di addebito</strong> in questa posizione per le quali non è stato ancora aggiunto alcun costo."
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:177
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
-msgstr "Aggiungi i costi retroattivamente"
+msgstr "Aggiungere i costi retroattivamente"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:155
 #, elixir-autogen, elixir-format
