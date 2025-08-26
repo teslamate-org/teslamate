@@ -6,13 +6,50 @@
 
 ### Improvements and bug fixes
 
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+- i18n: add spanish car location translation (#4892 - @jpizquierdo)
+
+#### Documentation
+
+- docs: for new installs, pin postgres container to debian trixie to avoid collation version mismatch (#4901 - @swiffer)
+
+## [2.1.1] - 2025-08-16
+
+As always, there have been many improvements. We now use the latest version of Grafana (12.1.1) and have enhanced the database migration process to include the new ascent and descent values, allowing successful migration even when entries are faulty. Previously, this prevented the migration from succeeding for some users. This highlights the importance of user feedback. Such cases never occurred in our testing.
+
+Enjoy it.
+
+### New features
+
+- feat(nix): add idiomatic maintenance scripts (#4849 - @JakobLichterfeld)
+
+### Improvements and bug fixes
+
 - feat(webview): show offline duration in extended view on mobile as well to improve UX (#4848 - @JakobLichterfeld)
 - feat: use Grafana 12.1.0 (#4855 - @swiffer)
+- feat(nix): use datasources.settings.datasources to allow merging Grafana sources from multiple modules (#4870 - @JakobLichterfeld)
+- fix(nix): correctly set default Grafana dashboard path (#4870 - @JakobLichterfeld)
+- feat(nix): allow disabling default Grafana dashboard with setDefaultDashboard option (#4870 - @JakobLichterfeld)
+- fix: set descent and ascent to 0 when out of bounds (> 32767 meters) to ensure migration succeeds (#4882 - @swiffer)
+- feat: use Grafana 12.1.1 (#4886 - @swiffer)
+- feat(webview): update wording to View car location on Google Maps for clarity (#4875 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
 - style(issue-template): typo fix in Unraid (#4842 - @JakobLichterfeld)
 - build(deps): update flake.lock (#4858)
+- build(deps): bump DeterminateSystems/update-flake-lock from 25 to 27 (#4864)
+- build(deps): bump react and react-dom from 19.1.0 to 19.1.1 in /website (#4865 - @JakobLichterfeld)
+- build(deps): bump ecto_sql from 3.12.1 to 3.13.2 (#4863)
+- build(deps): update flake.lock (#4867)
+- build(deps): bump phoenix_ecto from 4.6.4 to 4.6.5 (#4862)
+- build(deps): update flake.lock (#4881)
+- build(deps): update flake.lock (#4888)
 
 #### Dashboards
 
@@ -21,6 +58,9 @@
 - i18n: fix de translation for car location link (#4844 - @JakobLichterfeld)
 
 #### Documentation
+
+- docs: add reference to idiomatic nix backup and restore scripts (#4849 - @JakobLichterfeld)
+- docs: add reference to idiomatic nix maintenance scripts (#4849 - @JakobLichterfeld)
 
 ## [2.1.0] - 2025-07-21
 
@@ -2531,7 +2571,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v2.1.0...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/teslamate-org/teslamate/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/teslamate-org/teslamate/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/teslamate-org/teslamate/compare/v1.33.0...v2.0.0
 [1.33.0]: https://github.com/teslamate-org/teslamate/compare/v1.32.0...v1.33.0

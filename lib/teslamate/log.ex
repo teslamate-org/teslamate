@@ -291,6 +291,8 @@ defmodule TeslaMate.Log do
             not is_nil(p.odometer),
         limit: 1
 
+    # If the sum of elevation gains exceeds the max value of a smallint (32767), set it to 0.
+    # If the sum of elevation losses exceeds the max value of a smallint (32767), set it to 0.
     elevation_data =
       from p1 in subquery(
              from p in Position,
@@ -301,20 +303,16 @@ defmodule TeslaMate.Log do
            ),
            select: %{
              elevation_gains:
-               sum(
-                 fragment(
-                   "CASE WHEN ? > 0 THEN ? ELSE 0 END",
-                   p1.elevation_diff,
-                   p1.elevation_diff
-                 )
+               fragment(
+                 "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? > 0 THEN ? ELSE 0 END), 32768), 32768), 0)",
+                 p1.elevation_diff,
+                 p1.elevation_diff
                ),
              elevation_losses:
-               sum(
-                 fragment(
-                   "CASE WHEN ? < 0 THEN ABS(?) ELSE 0 END",
-                   p1.elevation_diff,
-                   p1.elevation_diff
-                 )
+               fragment(
+                 "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? < 0 THEN ABS(?) ELSE 0 END), 32768), 32768), 0)",
+                 p1.elevation_diff,
+                 p1.elevation_diff
                )
            }
 

@@ -5,7 +5,7 @@ sidebar_label: TeslaFi
 
 ## Requirements
 
-- **CREATE A [BACKUP](../maintenance/backup_restore.md) OF YOUR DATA‼️**
+- **CREATE A [BACKUP](../maintenance/backup_restore.mdx) OF YOUR DATA‼️**
 
 - If you have been using TeslaMate since before the 1.16 release, the [docker-compose.yml](../installation/docker.md) needs to be updated. Add the following volume mapping to the `teslamate` service:
 

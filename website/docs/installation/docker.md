@@ -40,7 +40,7 @@ Alternatively, you can use a reverse proxy (such as Traefik, Apache2 or Caddy) w
          - all
 
      database:
-       image: postgres:17
+       image: postgres:17-trixie
        restart: always
        environment:
          - POSTGRES_USER=teslamate
