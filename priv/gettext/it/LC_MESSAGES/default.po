@@ -609,74 +609,74 @@ msgstr "Il tuo account Tesla è bloccato a causa di troppi tentativi di accesso.
 #: lib/teslamate_web/live/car_live/summary.ex:149
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
-msgstr ""
+msgstr "Download dell'aggiornamento in corso"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:133
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
-msgstr ""
+msgstr "Non è stata fornita nessuna chiave di crittazione"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:153
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr ""
+msgstr "Per maggiori informazioni, si veda le guide di installazione aggiornate a %{link}"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:146
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
-msgstr ""
+msgstr "La chiave di crittazione generata automaticamente ed usata per la sessione corrente può essere trovata <strong>nei log dell'applicazione</strong>."
 
 #: lib/teslamate_web/templates/layout/root.html.heex:139
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr ""
+msgstr "Per assicurarsi che <strong>i token Tesla API siano salvati in maniera sicura</strong>, deve essere fornita a TeslaMate una chive di crittazione tramice la variabile di ambiente <code>ENCRYPTION_KEY</code>. Altrimenti, un <strong>login sarà richiesto dopo ogni riavvio</strong>."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:284
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
-msgstr ""
+msgstr "Pressione pneumatici"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Dog Mode"
-msgstr ""
+msgstr "Modalità Cane"
 
 #: lib/teslamate_web/live/car_live/summary.ex:147
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
-msgstr ""
+msgstr "Modalità Cane attiva"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:256
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
-msgstr ""
+msgstr "Tempo di completamento stimato"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
-msgstr ""
+msgstr "Stai usando la chiave API (%{token}) fornita da %{url}. Questa permette al tuo TeslaMate di accedere alle API Tesla Fleet ufficiali e allo streaming della telemetria di Tesla."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
-msgstr ""
+msgstr "Raccolta dati"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Battery"
-msgstr ""
+msgstr "Batteria"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:163
 #, elixir-autogen, elixir-format
 msgid "LFP Battery"
-msgstr ""
+msgstr "Batteria LFP"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:130
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Sentry Mode recording"
-msgstr "Modalità Sentinella"
+msgstr "Modalità Sentinella in registrazione"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:99
 #, elixir-autogen, elixir-format, fuzzy
 msgid "View car location on Google Maps"
-msgstr ""
+msgstr "Visualizza la posizione dell'auto in Google Maps"
