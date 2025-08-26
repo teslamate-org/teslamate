@@ -33,7 +33,7 @@ msgstr "Caricato"
 #: lib/teslamate_web/live/car_live/summary.ex:139
 #, elixir-autogen, elixir-format
 msgid "asleep"
-msgstr "a riposo"
+msgstr "sospesa"
 
 #: lib/teslamate_web/live/car_live/summary.ex:134
 #, elixir-autogen, elixir-format
@@ -150,7 +150,7 @@ msgstr "Geo-Fence"
 #: lib/teslamate_web/live/settings_live/index.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Idle Time Before Trying to Sleep"
-msgstr "Tempo di inattività prima di provare a dormire"
+msgstr "Tempo di inattività prima di tentare la sospensione"
 
 #: lib/teslamate_web/live/geofence_live/form.html.heex:46
 #: lib/teslamate_web/live/geofence_live/form.html.heex:52
@@ -186,7 +186,7 @@ msgstr "Salvataggio..."
 #: lib/teslamate_web/live/settings_live/index.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "Time to Try Sleeping"
-msgstr "Tempo prima di provare a dormire"
+msgstr "Tempo prima di tentare la sospensione"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:64
 #: lib/teslamate_web/live/settings_live/index.html.heex:87
