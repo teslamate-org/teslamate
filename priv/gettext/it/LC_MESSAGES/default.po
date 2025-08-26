@@ -63,7 +63,7 @@ msgstr "aggiornamento in corso"
 #: lib/teslamate_web/live/car_live/summary.html.heex:138
 #, elixir-autogen, elixir-format
 msgid "Locked"
-msgstr "Bloccato"
+msgstr "Chiusa"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:122
 #, elixir-autogen, elixir-format
@@ -279,7 +279,7 @@ msgstr "Autonomia"
 #: lib/teslamate_web/live/settings_live/index.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "ideal"
-msgstr "Ideale"
+msgstr "Stimata"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:199
 #, elixir-autogen, elixir-format
@@ -289,7 +289,7 @@ msgstr "Nominale"
 #: lib/teslamate_web/live/car_live/summary.html.heex:264
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
-msgstr "Autonomia (ideale)"
+msgstr "Autonomia (stimata)"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:189
 #, elixir-autogen, elixir-format
@@ -335,7 +335,7 @@ msgstr "Controllo integrità non riuscito"
 #: lib/teslamate_web/live/car_live/summary.html.heex:138
 #, elixir-autogen, elixir-format
 msgid "Unlocked"
-msgstr "Sbloccato"
+msgstr "Aperta"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:247
 #, elixir-autogen, elixir-format
