@@ -92,3 +92,9 @@ LINK: [Follow this guide](/docs/configuration/api#myteslamate-fleet-api) to use 
 A lightweight app that will operate your smart garage door openers based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and various smart garage door openers.
 
 LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-geogdo)
+
+## [Fastcruise](https://apps.apple.com/us/app/fastcruise-for-teslamate/id6747918869)
+
+An iOS app for TeslaMate that connects to your TeslaMate instance using [TeslaMateApi](https://github.com/tobiasehlert/teslamateapi)
+
+LINK: [https://apps.apple.com/us/app/fastcruise-for-teslamate/id6747918869](https://apps.apple.com/us/app/fastcruise-for-teslamate/id6747918869)
