@@ -38,9 +38,9 @@ defmodule TeslaMateWeb.CarControllerTest do
   end
 
   defp assert_car_title(html, name) do
-    title_eles = Floki.find(html, "p.title.is-5")
+    title_elements = Floki.find(html, "p.title.is-5")
 
-    [{"p", _, content}] = title_eles
+    [{"p", _, content}] = title_elements
 
     assert Floki.text(content) |> String.trim() == name
   end
