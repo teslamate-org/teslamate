@@ -10,7 +10,7 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
+        "name": "注释和警报",
         "type": "dashboard"
       }
     ]
@@ -33,7 +33,7 @@
       "tags": [
         "tesla"
       ],
-      "title": "Dashboards",
+      "title": "仪表板",
       "type": "dashboards"
     }
   ],
@@ -127,7 +127,7 @@
           }
         }
       ],
-      "title": "Updates",
+      "title": "更新",
       "type": "stat"
     },
     {
@@ -207,7 +207,7 @@
           }
         }
       ],
-      "title": "Median time between updates",
+      "title": "更新间隔中位数时间",
       "type": "stat"
     },
     {
@@ -320,7 +320,7 @@
                 "value": [
                   {
                     "targetBlank": true,
-                    "title": "${__data.fields[version]} release notes",
+                    "title": "${__data.fields[version]} 发布说明",
                     "url": "https://www.notateslaapp.com/software-updates/version/${__data.fields[version]}/release-notes"
                   }
                 ]
@@ -505,7 +505,7 @@
           }
         }
       ],
-      "title": "Updates",
+      "title": "更新",
       "type": "table"
     }
   ],
@@ -526,7 +526,7 @@
         "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
-        "label": "Car",
+        "label": "车辆",
         "name": "car_id",
         "options": [],
         "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
@@ -602,7 +602,7 @@
     ]
   },
   "timezone": "",
-  "title": "Updates",
+  "title": "更新",
   "uid": "IiC07mgWz",
   "version": 1
 }

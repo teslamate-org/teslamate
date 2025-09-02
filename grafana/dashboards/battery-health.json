@@ -10,7 +10,7 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
+        "name": "注释和警报",
         "type": "dashboard"
       }
     ]
@@ -33,7 +33,7 @@
       "tags": [
         "tesla"
       ],
-      "title": "Dashboards",
+      "title": "仪表板",
       "type": "dashboards"
     }
   ],
@@ -127,7 +127,7 @@
           }
         }
       ],
-      "title": "Battery Capacity",
+      "title": "电池容量",
       "type": "stat"
     },
     {
@@ -271,7 +271,7 @@
           }
         }
       ],
-      "title": "Ranges [$preferred_range]",
+      "title": "续航 [$preferred_range]",
       "type": "stat"
     },
     {
@@ -308,7 +308,7 @@
       "links": [
         {
           "targetBlank": true,
-          "title": "Drive Stats",
+          "title": "驾驶统计",
           "url": "/d/_7WkNSyWk/drive-stats"
         }
       ],
@@ -444,7 +444,7 @@
           }
         }
       ],
-      "title": "Drive Stats",
+      "title": "驾驶统计",
       "type": "stat"
     },
     {
@@ -569,7 +569,7 @@
           }
         }
       ],
-      "title": "AC/DC - Energy Used",
+      "title": "交流/直流 - 使用能量",
       "type": "piechart"
     },
     {
@@ -663,7 +663,7 @@
           }
         }
       ],
-      "title": "Estimated Degradation",
+      "title": "预计衰减",
       "type": "gauge"
     },
     {
@@ -764,7 +764,7 @@
           }
         }
       ],
-      "title": "Battery Health",
+      "title": "电池健康",
       "type": "bargauge"
     },
     {
@@ -835,7 +835,7 @@
       "links": [
         {
           "targetBlank": true,
-          "title": "Charging Stats",
+          "title": "充电统计",
           "url": "/d/-pkIkhmRz/charging-stats"
         }
       ],
@@ -1005,7 +1005,7 @@
           }
         }
       ],
-      "title": "Charging Stats",
+      "title": "充电统计",
       "type": "stat"
     },
     {
@@ -1744,7 +1744,7 @@
     "hidden": true
   },
   "timezone": "browser",
-  "title": "Battery Health",
+  "title": "电池健康",
   "uid": "jchmRiqUfXgTM",
   "version": 1
 }

@@ -10,7 +10,7 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
+        "name": "注释和警报",
         "type": "dashboard"
       }
     ]
@@ -33,7 +33,7 @@
       "tags": [
         "tesla"
       ],
-      "title": "Dashboards",
+      "title": "仪表板",
       "type": "dashboards"
     }
   ],
@@ -148,7 +148,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tdate_bin('2 minutes'::interval, timezone('UTC', date), to_timestamp(${__from:date:seconds})) as time,\n\tavg(battery_level) AS \"Battery Level\",\n\tavg(usable_battery_level) AS \"Usable Battery Level\"\nfrom positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id and ideal_battery_range_km is not null\n\tgroup by time\n\tORDER BY time ASC\n;",
+          "rawSql": "SELECT\n\tdate_bin('2 minutes'::interval, timezone('UTC', date), to_timestamp(${__from:date:seconds})) as time,\n\tavg(battery_level) AS \"电池水平\",\n\tavg(usable_battery_level) AS \"可用电池水平\"\nfrom positions\n\tWHERE $__timeFilter(date) AND car_id = $car_id and ideal_battery_range_km is not null\n\tgroup by time\n\tORDER BY time ASC\n;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -204,7 +204,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "-- To be able to calculate percentiles for unevenly sampled values we are bucketing & gapfilling values before running calculations\r\nwith positions_filtered as (\r\n    select\r\n        date,\r\n        battery_level\r\n    from\r\n        positions p\r\n    where\r\n        p.car_id = $car_id\r\n        -- p.ideal_battery_range_km condition is added to reduce overall amount of data and avoid data biases while driving (unevenly sampled data)\r\n        and p.ideal_battery_range_km is not null\r\n        and 1 = $include_average_percentiles\r\n),\r\ngen_date_series as (\r\n    select\r\n        -- series is used to bucket data and avoid gaps in series used to determine percentiles\r\n        generate_series(to_timestamp(${__from:date:seconds} - (86400 * $days_moving_average_percentiles / 2)), to_timestamp(${__to:date:seconds}), concat($bucket_width, ' seconds')::INTERVAL) as series_id\r\n),\r\ndate_series as (\r\n    select\r\n        timezone('UTC', series_id) as series_id,\r\n        -- before joining, get beginning of next series to be able to left join `positions_filtered`\r\n        timezone('UTC', lead(series_id) over (order by series_id asc)) as next_series_id\r\n    from\r\n        gen_date_series\r\n),\r\npositions_bucketed as (\r\n    select\r\n        series_id,\r\n        -- simple average can result in loss of accuracy, see https://www.timescale.com/blog/what-time-weighted-averages-are-and-why-you-should-care/ for details\r\n        avg(battery_level) as battery_level,\r\n        min(positions_filtered.date) as series_min_date\r\n    from\r\n        date_series\r\n    left join positions_filtered on\r\n        positions_filtered.date >= date_series.series_id\r\n        and positions_filtered.date < date_series.next_series_id\r\n    group by\r\n        series_id\r\n),\r\n-- PostgreSQL cannot IGNORE NULLS via Window Functions LAST_VALUE - therefore use natural behavior of COUNT & MAX, see https://www.reddit.com/r/SQL/comments/wb949v/comment/ii5mmmi/ for details\r\npositions_bucketed_gapfilling_locf_intermediate as (\r\n    select\r\n        series_id,\r\n        battery_level,\r\n        series_min_date,\r\n        count(battery_level) over (order by series_id) as i\r\n    from\r\n        positions_bucketed\r\n\r\n),\r\npositions_bucketed_gapfilled_locf as (\r\n    select\r\n        series_id,\r\n        series_min_date,\r\n        max(battery_level) over (partition by i) as battery_level_locf\r\n    from\r\n        positions_bucketed_gapfilling_locf_intermediate\r\n),\r\n-- PostgreSQL cannot use PERCENTILE_DISC as Window Function - therefore use ARRAY_AGG and UNNEST, see https://stackoverflow.com/a/72718604 for details\r\npositions_bucketed_gapfilled_locf_percentile_intermediate as (\r\n    select\r\n        series_id,\r\n        series_min_date,\r\n        min(series_min_date) over () as min_date,\r\n        array_agg(battery_level_locf) over w as arr,\r\n        avg(battery_level_locf) over w as battery_level_avg\r\n    from\r\n        positions_bucketed_gapfilled_locf\r\n    window w as (rows between (86400 / $bucket_width) * ($days_moving_average_percentiles / 2) preceding and (86400 / $bucket_width) * ($days_moving_average_percentiles / 2) following)\r\n)\r\n\r\nselect\r\n    series_id::timestamptz,\r\n    (select percentile_cont(0.075) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles Day Moving 7.5% Percentile (${bucket_width:text} buckets)\",\r\n    battery_level_avg as \"$days_moving_average_percentiles Day Moving Average (${bucket_width:text} buckets)\",\r\n    (select percentile_cont(0.5) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles Day Moving Median (${bucket_width:text} buckets)\",\r\n    (select percentile_cont(0.925) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles Day Moving 92.5% Percentile (${bucket_width:text} buckets)\"\r\nfrom\r\n    positions_bucketed_gapfilled_locf_percentile_intermediate where $__timeFilter(series_id) and series_min_date >= min_date",
+          "rawSql": "-- To be able to calculate percentiles for unevenly sampled values we are bucketing & gapfilling values before running calculations\r\nwith positions_filtered as (\r\n    select\r\n        date,\r\n        battery_level\r\n    from\r\n        positions p\r\n    where\r\n        p.car_id = $car_id\r\n        -- p.ideal_battery_range_km condition is added to reduce overall amount of data and avoid data biases while driving (unevenly sampled data)\r\n        and p.ideal_battery_range_km is not null\r\n        and 1 = $include_average_percentiles\r\n),\r\ngen_date_series as (\r\n    select\r\n        -- series is used to bucket data and avoid gaps in series used to determine percentiles\r\n        generate_series(to_timestamp(${__from:date:seconds} - (86400 * $days_moving_average_percentiles / 2)), to_timestamp(${__to:date:seconds}), concat($bucket_width, ' seconds')::INTERVAL) as series_id\r\n),\r\ndate_series as (\r\n    select\r\n        timezone('UTC', series_id) as series_id,\r\n        -- before joining, get beginning of next series to be able to left join `positions_filtered`\r\n        timezone('UTC', lead(series_id) over (order by series_id asc)) as next_series_id\r\n    from\r\n        gen_date_series\r\n),\r\npositions_bucketed as (\r\n    select\r\n        series_id,\r\n        -- simple average can result in loss of accuracy, see https://www.timescale.com/blog/what-time-weighted-averages-are-and-why-you-should-care/ for details\r\n        avg(battery_level) as battery_level,\r\n        min(positions_filtered.date) as series_min_date\r\n    from\r\n        date_series\r\n    left join positions_filtered on\r\n        positions_filtered.date >= date_series.series_id\r\n        and positions_filtered.date < date_series.next_series_id\r\n    group by\r\n        series_id\r\n),\r\n-- PostgreSQL cannot IGNORE NULLS via Window Functions LAST_VALUE - therefore use natural behavior of COUNT & MAX, see https://www.reddit.com/r/SQL/comments/wb949v/comment/ii5mmmi/ for details\r\npositions_bucketed_gapfilling_locf_intermediate as (\r\n    select\r\n        series_id,\r\n        battery_level,\r\n        series_min_date,\r\n        count(battery_level) over (order by series_id) as i\r\n    from\r\n        positions_bucketed\r\n\r\n),\r\npositions_bucketed_gapfilled_locf as (\r\n    select\r\n        series_id,\r\n        series_min_date,\r\n        max(battery_level) over (partition by i) as battery_level_locf\r\n    from\r\n        positions_bucketed_gapfilling_locf_intermediate\r\n),\r\n-- PostgreSQL cannot use PERCENTILE_DISC as Window Function - therefore use ARRAY_AGG and UNNEST, see https://stackoverflow.com/a/72718604 for details\r\npositions_bucketed_gapfilled_locf_percentile_intermediate as (\r\n    select\r\n        series_id,\r\n        series_min_date,\r\n        min(series_min_date) over () as min_date,\r\n        array_agg(battery_level_locf) over w as arr,\r\n        avg(battery_level_locf) over w as battery_level_avg\r\n    from\r\n        positions_bucketed_gapfilled_locf\r\n    window w as (rows between (86400 / $bucket_width) * ($days_moving_average_percentiles / 2) preceding and (86400 / $bucket_width) * ($days_moving_average_percentiles / 2) following)\r\n)\r\n\r\nselect\r\n    series_id::timestamptz,\r\n    (select percentile_cont(0.075) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles 天移动 7.5% 百分位数 (${bucket_width:text} 桶)\",\r\n    battery_level_avg as \"$days_moving_average_percentiles 天移动平均值 (${bucket_width:text} 桶)\",\r\n    (select percentile_cont(0.5) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles 天移动中位数 (${bucket_width:text} 桶)\",\r\n    (select percentile_cont(0.925) within group (order by s) from unnest(arr) trick(s)) as \"$days_moving_average_percentiles 天移动 92.5% 百分位数 (${bucket_width:text} 桶)\"\r\nfrom\r\n    positions_bucketed_gapfilled_locf_percentile_intermediate where $__timeFilter(series_id) and series_min_date >= min_date",
           "refId": "C",
           "sql": {
             "columns": [
@@ -225,7 +225,7 @@
           }
         }
       ],
-      "title": "Charge Level",
+      "title": "充电水平",
       "transformations": [
         {
           "id": "configFromData",
@@ -278,7 +278,7 @@
         "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
-        "label": "Car",
+        "label": "车辆",
         "name": "car_id",
         "options": [],
         "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
@@ -307,24 +307,24 @@
           "text": "2h",
           "value": "7200"
         },
-        "description": "Data used to calculate Moving Average / Percentiles is unevenly sampled in TeslaMate. To avoid biases towards more frequently sampled values, the data is bucketed. For buckets without sampled values, the last observed value is carried forward. Bucketing is not time-weighted but is a simple average. Increasing the bucket width results in a loss of accuracy.",
+        "description": "用于计算移动平均值/百分位数的数据在 TeslaMate 中采样不均匀。为避免偏向更频繁采样的值，数据被分桶处理。对于没有采样值的桶，使用最后观察到的值。分桶不是时间加权的，而是简单平均值。增加桶宽度会导致精度损失。",
         "includeAll": false,
-        "label": "Bucket Width",
+        "label": "桶宽度",
         "name": "bucket_width",
         "options": [
           {
             "selected": false,
-            "text": "1h",
+            "text": "1小时",
             "value": "3600"
           },
           {
             "selected": true,
-            "text": "2h",
+            "text": "2小时",
             "value": "7200"
           },
           {
             "selected": false,
-            "text": "4h",
+            "text": "4小时",
             "value": "14400"
           }
         ],
@@ -333,21 +333,21 @@
       },
       {
         "current": {
-          "text": "yes",
+          "text": "是",
           "value": "1"
         },
         "includeAll": false,
-        "label": "Include Moving Average / Percentiles",
+        "label": "包含移动平均值/百分位数",
         "name": "include_average_percentiles",
         "options": [
           {
             "selected": false,
-            "text": "no",
+            "text": "否",
             "value": "0"
           },
           {
             "selected": true,
-            "text": "yes",
+            "text": "是",
             "value": "1"
           }
         ],
@@ -356,22 +356,22 @@
       },
       {
         "current": {
-          "text": "1/6 of interval",
+          "text": "间隔的1/6",
           "value": "6"
         },
         "description": "",
         "includeAll": false,
-        "label": "Moving Average / Percentiles Width",
+        "label": "移动平均值/百分位数宽度",
         "name": "intervals_moving_average_percentiles",
         "options": [
           {
             "selected": true,
-            "text": "1/6 of interval",
+            "text": "间隔的1/6",
             "value": "6"
           },
           {
             "selected": false,
-            "text": "1/12 of interval",
+            "text": "间隔的1/12",
             "value": "12"
           }
         ],
@@ -402,7 +402,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Charge Level",
+  "title": "充电水平",
   "uid": "WopVO_mgz",
   "version": 1
 }

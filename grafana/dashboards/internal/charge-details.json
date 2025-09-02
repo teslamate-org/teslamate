@@ -10,7 +10,7 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
+        "name": "注释和警报",
         "type": "dashboard"
       }
     ]
@@ -33,7 +33,7 @@
       "tags": [
         "tesla"
       ],
-      "title": "Dashboards",
+      "title": "仪表板",
       "type": "dashboards"
     }
   ],
@@ -381,7 +381,7 @@
           }
         }
       ],
-      "title": "Charge Details",
+      "title": "充电详情",
       "type": "timeseries"
     },
     {
@@ -402,7 +402,7 @@
               "options": {
                 "match": "null",
                 "result": {
-                  "text": "N/A"
+                  "text": "不适用"
                 }
               },
               "type": "special"
@@ -430,7 +430,7 @@
       "id": 6,
       "links": [
         {
-          "title": "Set cost",
+          "title": "设置费用",
           "url": "${base_url:raw}/charge-cost/${charging_process_id}"
         }
       ],
@@ -483,7 +483,7 @@
           }
         }
       ],
-      "title": "Cost",
+      "title": "费用",
       "type": "stat"
     },
     {
@@ -607,7 +607,7 @@
           ]
         }
       ],
-      "title": "Duration",
+      "title": "时长",
       "type": "stat"
     },
     {
@@ -625,7 +625,7 @@
               "options": {
                 "match": "null",
                 "result": {
-                  "text": "N/A"
+                  "text": "不适用"
                 }
               },
               "type": "special"
@@ -723,7 +723,7 @@
               "options": {
                 "match": "null",
                 "result": {
-                  "text": "N/A"
+                  "text": "不适用"
                 }
               },
               "type": "special"
@@ -867,7 +867,7 @@
           }
         }
       ],
-      "title": "Charge Energy",
+      "title": "充电能量",
       "type": "stat"
     },
     {
@@ -915,7 +915,7 @@
       "options": {
         "basemap": {
           "config": {},
-          "name": "Layer 0",
+          "name": "图层 0",
           "type": "osm-standard"
         },
         "controls": {
@@ -972,7 +972,7 @@
               "longitude": "longitude",
               "mode": "auto"
             },
-            "name": "Layer 1",
+            "name": "图层 1",
             "tooltip": true,
             "type": "markers"
           }
@@ -1038,7 +1038,7 @@
               "options": {
                 "match": "null",
                 "result": {
-                  "text": "N/A"
+                  "text": "不适用"
                 }
               },
               "type": "special"
@@ -1169,7 +1169,7 @@
           }
         }
       ],
-      "title": "Battery Level",
+      "title": "电池水平",
       "type": "stat"
     },
     {
@@ -1253,7 +1253,7 @@
           }
         }
       ],
-      "title": "Ø Power",
+      "title": "平均功率",
       "type": "stat"
     },
     {
@@ -1361,7 +1361,7 @@
           }
         }
       ],
-      "title": "Ø Outdoor Temperature",
+      "title": "平均室外温度",
       "type": "stat"
     },
     {
@@ -1562,7 +1562,7 @@
           }
         }
       ],
-      "title": "Ranges ($preferred_range)",
+      "title": "续航 ($preferred_range)",
       "type": "stat"
     },
     {
@@ -1766,7 +1766,7 @@
           }
         }
       ],
-      "title": "Charging curve",
+      "title": "充电曲线",
       "type": "xychart"
     }
   ],
@@ -1817,7 +1817,7 @@
         },
         "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "includeAll": false,
-        "label": "Car",
+        "label": "车辆",
         "name": "car_id",
         "options": [],
         "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
@@ -1881,7 +1881,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Charge Details",
+  "title": "充电详情",
   "uid": "BHhxFeZRz",
   "version": 1
 }

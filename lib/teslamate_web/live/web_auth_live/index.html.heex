@@ -1,0 +1,61 @@
+<div class="columns is-centered">
+  <div class="column is-one-third">
+    <div class="box">
+      <div class="has-text-centered mb-5">
+        <%= img_tag(Routes.static_path(@socket, "/images/logo.svg"),
+          alt: "TeslaMate",
+          width: "120px"
+        ) %>
+        <h1 class="title is-4 mt-3"><%= gettext("登录") %></h1>
+        <p class="subtitle is-6 has-text-grey"><%= gettext("请输入密码以访问") %></p>
+      </div>
+
+      <.form
+        :let={f}
+        for={%{}}
+        action={Routes.auth_path(@socket, :authenticate)}
+        method="post"
+        phx-change="validate"
+        class="field"
+      >
+        <%= if @error do %>
+          <div class="notification is-danger">
+            <%= @error %>
+          </div>
+        <% end %>
+
+        <div class="field">
+          <label class="label"><%= gettext("密码") %></label>
+          <div class="control has-icons-left">
+            <%= password_input(f, :password,
+              value: @password,
+              class: "input is-rounded",
+              placeholder: gettext("请输入访问密码"),
+              required: true
+            ) %>
+            <span class="icon is-small is-left">
+              <i class="mdi mdi-lock"></i>
+            </span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <button type="submit" class="button is-primary is-fullwidth is-rounded">
+              <span class="icon">
+                <i class="mdi mdi-login"></i>
+              </span>
+              <span><%= gettext("登录") %></span>
+            </button>
+          </div>
+        </div>
+      </.form>
+
+      <div class="has-text-centered mt-4">
+        <p class="is-size-7 has-text-grey">
+          <%= gettext("忘记密码请联系管理员") %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

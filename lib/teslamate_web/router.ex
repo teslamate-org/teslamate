@@ -26,12 +26,16 @@ defmodule TeslaMateWeb.Router do
     plug :fetch_settings
   end
 
+  pipeline :web_auth do
+    plug TeslaMateWeb.Plugs.WebAuth
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
   scope "/", TeslaMateWeb do
-    pipe_through :browser
+    pipe_through [:browser, :web_auth]
 
     get "/", CarController, :index
     get "/drive/:id/gpx", DriveController, :gpx
@@ -45,6 +49,19 @@ defmodule TeslaMateWeb.Router do
       live "/charge-cost/:id", ChargeLive.Cost
       live "/import", ImportLive.Index
     end
+  end
+
+  # Web认证页面，不需要认证
+  scope "/", TeslaMateWeb do
+    pipe_through :browser
+
+    live_session :web_auth do
+      live "/web_auth", WebAuthLive.Index
+    end
+
+    # 认证相关路由
+    post "/auth/authenticate", AuthController, :authenticate
+    delete "/auth/logout", AuthController, :logout
   end
 
   scope "/api", TeslaMateWeb do

@@ -10,7 +10,7 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
+        "name": "注释和警报",
         "type": "dashboard"
       }
     ]
@@ -33,7 +33,7 @@
       "tags": [
         "tesla"
       ],
-      "title": "Dashboards",
+      "title": "仪表板",
       "type": "dashboards"
     }
   ],
@@ -120,7 +120,7 @@
           }
         }
       ],
-      "title": "# of Addresses",
+      "title": "地址数量",
       "transformations": [
         {
           "id": "organize",
@@ -200,7 +200,7 @@
           "refId": "A"
         }
       ],
-      "title": "# of Cities",
+      "title": "城市数量",
       "transformations": [
         {
           "id": "organize",
@@ -280,7 +280,7 @@
           "refId": "A"
         }
       ],
-      "title": "# of States",
+      "title": "州/省数量",
       "transformations": [
         {
           "id": "organize",
@@ -360,7 +360,7 @@
           "refId": "A"
         }
       ],
-      "title": "# of Countries",
+      "title": "国家数量",
       "transformations": [
         {
           "id": "organize",
@@ -469,7 +469,7 @@
           }
         }
       ],
-      "title": "Cities",
+      "title": "城市",
       "type": "bargauge"
     },
     {
@@ -563,7 +563,7 @@
           }
         }
       ],
-      "title": "States",
+      "title": "州/省",
       "type": "bargauge"
     },
     {
@@ -688,7 +688,7 @@
           }
         }
       ],
-      "title": "Last visited",
+      "title": "最后访问",
       "type": "table"
     },
     {
@@ -938,7 +938,7 @@
           }
         }
       ],
-      "title": "Addresses",
+      "title": "地址",
       "transformations": [
         {
           "id": "merge",
@@ -1104,7 +1104,7 @@
           }
         }
       ],
-      "title": "Geo-fences",
+      "title": "地理围栏",
       "transformations": [
         {
           "id": "merge",
@@ -1133,7 +1133,7 @@
         "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 1,
         "includeAll": true,
-        "label": "Car",
+        "label": "车辆",
         "multi": true,
         "name": "car_id",
         "options": [],
@@ -1163,7 +1163,7 @@
           "text": "",
           "value": ""
         },
-        "label": "Address",
+        "label": "地址",
         "name": "address_filter",
         "options": [
           {
@@ -1183,7 +1183,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Locations",
+  "title": "位置",
   "uid": "ZzhF-aRWz",
   "version": 1
 }

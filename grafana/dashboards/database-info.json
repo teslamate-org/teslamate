@@ -1703,7 +1703,7 @@
     "refresh_intervals": []
   },
   "timezone": "browser",
-  "title": "Database Information",
+  "title": "数据库信息",
   "uid": "jchmDbInfo",
   "version": 1
 }

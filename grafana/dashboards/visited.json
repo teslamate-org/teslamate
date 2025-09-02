@@ -10,7 +10,7 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
+        "name": "注释和警报",
         "type": "dashboard"
       }
     ]
@@ -33,7 +33,7 @@
       "tags": [
         "tesla"
       ],
-      "title": "Dashboards",
+      "title": "仪表板",
       "type": "dashboards"
     }
   ],
@@ -93,7 +93,7 @@
       "options": {
         "basemap": {
           "config": {},
-          "name": "Layer 0",
+          "name": "图层 0",
           "type": "osm-standard"
         },
         "controls": {
@@ -147,7 +147,7 @@
               "longitude": "long",
               "mode": "auto"
             },
-            "name": "Layer 1",
+            "name": "图层 1",
             "tooltip": true,
             "type": "route"
           }
@@ -506,7 +506,7 @@
         "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "hide": 2,
         "includeAll": true,
-        "label": "Car",
+        "label": "车辆",
         "name": "car_id",
         "options": [],
         "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
@@ -554,7 +554,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Visited",
+  "title": "访问地点",
   "uid": "RG_DxSmgk",
   "version": 1
 }
