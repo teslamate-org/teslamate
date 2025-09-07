@@ -238,38 +238,26 @@ service teslamate start
    Version: 10
    ```
 
-3. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/main/grafana/dashboards) or use the `dashboards.sh` script:
+3. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/main/grafana/dashboards) or use the `dashboards.sh` script. First create a "Service Account" called `TeslaMate` under Grafana's Administration > User and access menu. Then create an API token for this service account (in place of `<mytoken>` below) and run the script:
 
    ```bash
-   $ ./grafana/dashboards.sh restore
+   $ env GRAFANA_API_TOKEN=<mytoken> ./grafana/dashboards.sh restore
 
-   URL:                  http://localhost:3000
-   LOGIN:                admin:admin
-   DASHBOARDS_DIRECTORY: ./grafana/dashboards
+   URL:                    http://localhost:3000
+   GRAFANA_API_TOKEN:      mytoken
+   DASHBOARDS_DIRECTORY:   ./grafana/dashboards
+   GRAFANA_ORG_NAMESPACE:  default
 
-   RESTORED locations.json
-   RESTORED drive-stats.json
-   RESTORED updates.json
-   RESTORED drive-details.json
-   RESTORED charge-details.json
-   RESTORED states.json
-   RESTORED overview.json
-   RESTORED vampire-drain.json
-   RESTORED visited.json
-   RESTORED drives.json
-   RESTORED projected-range.json
-   RESTORED charge-level.json
-   RESTORED charging-stats.json
-   RESTORED mileage.json
-   RESTORED charges.json
-   RESTORED efficiency.json
+   RESTORED locations.json into Grafana folder 'TeslaMate' ...
+   RESTORED drive-stats.json into Grafana folder 'TeslaMate' ...
+   ...
    ```
 
    :::tip
-   To use credentials other than the default, set the `LOGIN` variable:
+   To point to a different Grafana instance use the URL variable:
 
    ```bash
-   LOGIN=user:password ./grafana/dashboards.sh restore
+   env URL=https://mygrafana.example.net GRAFANA_API_TOKEN=<mytoken> ./grafana/dashboards.sh restore
    ```
 
    :::
