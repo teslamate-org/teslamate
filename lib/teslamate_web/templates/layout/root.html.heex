@@ -95,19 +95,19 @@
               </div>
             <% end %>
             <.link
-              navigate={Routes.live_path(@conn, TeslaMateWeb.GeoFenceLive.Index)}
+              navigate={~p"/geo-fences"}
               class="navbar-item  mr-5"
             >
               <span class="icon"><i class="mdi mdi-map-marker-radius"></i></span>&nbsp;<span><%= gettext("Geo-Fences") %></span>
             </.link>
             <.link
-              navigate={Routes.live_path(@conn, TeslaMateWeb.DriveLive.Index, :index)}
+              navigate={~p"/drives"}
               class="navbar-item  mr-5"
             >
               <span class="icon"><i class="mdi mdi-car"></i></span>&nbsp;<span><%= gettext("Drives") %></span>
             </.link>
             <.link
-              navigate={Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index)}
+              navigate={~p"/settings"}
               class="navbar-item  mr-5"
             >
               <span class="icon"><i class="mdi mdi-cog"></i></span>&nbsp;<span><%= gettext("Settings") %></span>

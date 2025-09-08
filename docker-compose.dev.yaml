@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: builder
     restart: unless-stopped
     environment:
       - ENCRYPTION_KEY=MQwgm91uuWkoUYkt6+lwRKf2wiFmpED326+NVwlaI4Y=
@@ -20,29 +21,32 @@ services:
       - .:/opt/app
       # Mount import directory
       - ./import:/opt/app/import
+      # Cache dependencies and build artifacts
+      - _build:/opt/app/_build
+      - deps:/opt/app/deps
+      - node_modules:/opt/app/assets/node_modules
     cap_drop:
       - all
     # Override the default command to run in development mode
-    command:
-      [
-        "sh",
-        "-c",
-        "mix deps.get && cd assets && npm install && cd .. && mix phx.server",
-      ]
+    command: ["mix", "phx.server"]
+    depends_on:
+      - database
 
   database:
     image: postgres:17-trixie
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=teslamate
       - POSTGRES_PASSWORD=J_\+8ot264M2
       - POSTGRES_DB=teslamate
     volumes:
       - teslamate-db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432 # Expose for local development
 
   grafana:
     image: teslamate/grafana:latest
-    restart: always
+    restart: unless-stopped
     environment:
       - DATABASE_USER=teslamate
       - DATABASE_PASS=J_\+8ot264M2
@@ -55,20 +59,19 @@ services:
 
   mosquitto:
     image: eclipse-mosquitto:2
-    restart: always
+    restart: unless-stopped
     command: mosquitto -c /mosquitto-no-auth.conf
-    # ports:
-    #   - 1883:1883
+    ports:
+      - 1883:1883 # Expose MQTT for development
     volumes:
       - mosquitto-conf:/mosquitto/config
       - mosquitto-data:/mosquitto/data
 
-  # Development-specific volumes
+# Development-specific volumes for caching
+volumes:
   _build:
   deps:
   node_modules:
-
-volumes:
   teslamate-db:
   teslamate-grafana-data:
   mosquitto-conf:

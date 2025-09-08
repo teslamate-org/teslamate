@@ -21,3 +21,9 @@ defmodule TeslaMate.Log.Tag do
     |> unique_constraint(:name)
   end
 end
+
+defimpl Phoenix.HTML.Safe, for: TeslaMate.Log.Tag do
+  def to_iodata(%TeslaMate.Log.Tag{name: name, id: id}) do
+    "#{name} (ID: #{id})"
+  end
+end

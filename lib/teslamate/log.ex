@@ -231,6 +231,27 @@ defmodule TeslaMate.Log do
     |> Repo.all()
   end
 
+  def list_all_drives do
+    Drive
+    |> preload([:car, :start_address, :end_address, :tags])
+    |> order_by(desc: :start_date)
+    |> Repo.all()
+  end
+
+  def list_completed_drives do
+    Drive
+    |> where([d], not is_nil(d.end_date))
+    |> preload([:car, :start_address, :end_address, :tags])
+    |> order_by(desc: :start_date)
+    |> Repo.all()
+  end
+
+  def get_drive(id) do
+    Drive
+    |> preload([:car, :start_address, :end_address, :tags])
+    |> Repo.get(id)
+  end
+
   def get_drive!(id) do
     Drive
     |> preload([:car, :start_address, :end_address, :tags])
@@ -267,6 +288,10 @@ defmodule TeslaMate.Log do
     |> Repo.all()
   end
 
+  def get_tag(id) do
+    Repo.get(Tag, id)
+  end
+
   def get_tag!(id) do
     Repo.get!(Tag, id)
   end
@@ -284,7 +309,19 @@ defmodule TeslaMate.Log do
   end
 
   def delete_tag(%Tag{} = tag) do
-    Repo.delete(tag)
+    Repo.transaction(fn ->
+      # First delete all associated drive_tags
+      from(dt in DriveTag, where: dt.tag_id == ^tag.id)
+      |> Repo.delete_all()
+
+      # Then delete the tag itself
+      Repo.delete(tag)
+    end)
+  end
+
+  def count_tag_usage(%Tag{} = tag) do
+    from(dt in DriveTag, where: dt.tag_id == ^tag.id)
+    |> Repo.aggregate(:count, :id)
   end
 
   def add_tag_to_drive(%Drive{} = drive, %Tag{} = tag) do
@@ -298,9 +335,13 @@ defmodule TeslaMate.Log do
       from dt in DriveTag,
         where: dt.drive_id == ^drive.id and dt.tag_id == ^tag.id
 
-    case Repo.one(query) do
-      nil -> {:error, :not_found}
-      drive_tag -> Repo.delete(drive_tag)
+    drive_tag = Repo.one(query)
+
+    case drive_tag do
+      nil ->
+        {:error, :not_found}
+      drive_tag ->
+        Repo.delete(drive_tag)
     end
   end
 
