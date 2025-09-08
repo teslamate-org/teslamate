@@ -8,7 +8,7 @@ defmodule TeslaMate.Log do
   import TeslaMate.CustomExpressions
   import Ecto.Query, warn: false
 
-  alias __MODULE__.{Car, Drive, Update, ChargingProcess, Charge, Position, State}
+  alias __MODULE__.{Car, Drive, Update, ChargingProcess, Charge, Position, State, Tag, DriveTag}
   alias TeslaMate.{Repo, Locations, Settings}
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Settings.{CarSettings, GlobalSettings}
@@ -224,10 +224,84 @@ defmodule TeslaMate.Log do
 
   ## Drive
 
+  def list_drives do
+    Drive
+    |> preload([:car, :start_address, :end_address, :tags])
+    |> order_by(desc: :start_date)
+    |> Repo.all()
+  end
+
+  def get_drive!(id) do
+    Drive
+    |> preload([:car, :start_address, :end_address, :tags])
+    |> Repo.get!(id)
+  end
+
+  def create_drive(attrs) do
+    %Drive{}
+    |> Drive.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_drive(%Drive{} = drive, attrs) do
+    drive
+    |> Drive.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_drive(%Drive{} = drive) do
+    Repo.delete(drive)
+  end
+
   def start_drive(%Car{id: id}) do
     %Drive{car_id: id}
     |> Drive.changeset(%{start_date: DateTime.utc_now()})
     |> Repo.insert()
+  end
+
+  ## Tag
+
+  def list_tags do
+    Tag
+    |> order_by(:name)
+    |> Repo.all()
+  end
+
+  def get_tag!(id) do
+    Repo.get!(Tag, id)
+  end
+
+  def create_tag(attrs) do
+    %Tag{}
+    |> Tag.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_tag(%Tag{} = tag, attrs) do
+    tag
+    |> Tag.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_tag(%Tag{} = tag) do
+    Repo.delete(tag)
+  end
+
+  def add_tag_to_drive(%Drive{} = drive, %Tag{} = tag) do
+    %DriveTag{}
+    |> DriveTag.changeset(%{drive_id: drive.id, tag_id: tag.id})
+    |> Repo.insert()
+  end
+
+  def remove_tag_from_drive(%Drive{} = drive, %Tag{} = tag) do
+    query =
+      from dt in DriveTag,
+        where: dt.drive_id == ^drive.id and dt.tag_id == ^tag.id
+
+    case Repo.one(query) do
+      nil -> {:error, :not_found}
+      drive_tag -> Repo.delete(drive_tag)
+    end
   end
 
   def close_drive(%Drive{id: id} = drive, opts \\ []) do

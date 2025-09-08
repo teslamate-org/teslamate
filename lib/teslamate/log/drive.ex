@@ -23,6 +23,7 @@ defmodule TeslaMate.Log.Drive do
     field :duration_min, :integer
     field :ascent, :integer
     field :descent, :integer
+    field :notes, :string
 
     belongs_to :start_position, Position
     belongs_to :end_position, Position
@@ -36,6 +37,8 @@ defmodule TeslaMate.Log.Drive do
     belongs_to :car, Car
 
     has_many :positions, Position
+
+    many_to_many :tags, TeslaMate.Log.Tag, join_through: TeslaMate.Log.DriveTag
   end
 
   @doc false
@@ -64,7 +67,8 @@ defmodule TeslaMate.Log.Drive do
       :distance,
       :duration_min,
       :ascent,
-      :descent
+      :descent,
+      :notes
     ])
     |> validate_required([:car_id, :start_date])
     |> foreign_key_constraint(:car_id)

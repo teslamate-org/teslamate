@@ -1,0 +1,107 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Drives</h1>
+    <.link navigate={~p"/drives/new"} class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+      New Drive
+    </.link>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-md">
+    <ul role="list" class="divide-y divide-gray-200">
+      <%= for drive <- @drives do %>
+        <li>
+          <div class="px-4 py-4 sm:px-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                    <svg class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="ml-4">
+                  <div class="flex items-center">
+                    <h3 class="text-lg font-medium text-gray-900">
+                      <%= format_drive_date(drive.start_date) %>
+                    </h3>
+                    <%= if drive.end_date do %>
+                      <span class="ml-2 text-sm text-gray-500">
+                        to <%= format_drive_date(drive.end_date) %>
+                      </span>
+                    <% end %>
+                  </div>
+                  <div class="mt-1">
+                    <%= if drive.start_address do %>
+                      <p class="text-sm text-gray-600">
+                        From: <%= drive.start_address.name %>
+                      </p>
+                    <% end %>
+                    <%= if drive.end_address do %>
+                      <p class="text-sm text-gray-600">
+                        To: <%= drive.end_address.name %>
+                      </p>
+                    <% end %>
+                  </div>
+                  <div class="mt-2 flex items-center space-x-4">
+                    <%= if drive.distance do %>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <%= format_distance(drive.distance) %> km
+                      </span>
+                    <% end %>
+                    <%= if drive.duration_min do %>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <%= format_duration(drive.duration_min) %>
+                      </span>
+                    <% end %>
+                  </div>
+                  <%= if length(drive.tags) > 0 do %>
+                    <div class="mt-2 flex flex-wrap gap-1">
+                      <%= for tag <- drive.tags do %>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                              style={"background-color: #{tag.color}; color: white;"}>
+                          <%= tag.name %>
+                        </span>
+                      <% end %>
+                    </div>
+                  <% end %>
+                  <%= if drive.notes do %>
+                    <div class="mt-2">
+                      <p class="text-sm text-gray-700 italic">
+                        "<%= drive.notes %>"
+                      </p>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <.link patch={~p"/drives/#{drive.id}/edit"} class="text-blue-600 hover:text-blue-900">
+                  Edit
+                </.link>
+                <.link href="#" phx-click="delete" phx-value-id={drive.id}
+                       data-confirm="Are you sure?"
+                       class="text-red-600 hover:text-red-900">
+                  Delete
+                </.link>
+              </div>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+
+<%= if @live_action == :edit && @drive do %>
+  <.modal id="drive-modal" show={true} on_cancel={JS.patch(~p"/drives")}>
+    <.live_component
+      module={TeslaMateWeb.DriveLive.FormComponent}
+      id={@drive.id}
+      title={@page_title}
+      action={@live_action}
+      drive={@drive}
+      tags={@tags}
+      patch={~p"/drives"}
+    />
+  </.modal>
+<% end %>
