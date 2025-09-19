@@ -678,4 +678,4 @@ msgstr "การบันทึกใน Sentry โหมด"
 #: lib/teslamate_web/live/car_live/summary.html.heex:99
 #, elixir-autogen, elixir-format, fuzzy
 msgid "View car location on Google Maps"
-msgstr ""
+msgstr "ดูตำแหน่งรถบน Google Maps"
