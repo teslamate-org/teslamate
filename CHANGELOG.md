@@ -14,6 +14,7 @@
 
 - i18n: add spanish car location translation (#4892 - @jpizquierdo)
 - i18n: add missing italian translations, correct the gender of some words and use more uniform translations (#4920 - @giovaorama)
+- i18n: add thai car location translation (#4956 - @tomzt)
 
 #### Documentation
 
