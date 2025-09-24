@@ -5,6 +5,8 @@ defmodule TeslaMate.Auth.Tokens do
 
   alias TeslaMate.Vault.Encrypted
 
+  @schema_prefix :private
+
   schema "tokens" do
     field :refresh, Encrypted.Binary, redact: true
     field :access, Encrypted.Binary, redact: true
