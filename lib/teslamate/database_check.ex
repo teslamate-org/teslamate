@@ -8,7 +8,8 @@ defmodule TeslaMate.DatabaseCheck do
 
   @version_requirements %{
     1600 => %{min_version: "16.7", min_version_num: 160_007},
-    1700 => %{min_version: "17.3", min_version_num: 170_003}
+    1700 => %{min_version: "17.3", min_version_num: 170_003},
+    1800 => %{min_version: "18.0", min_version_num: 180_000}
   }
 
   def check_postgres_version do
@@ -49,7 +50,7 @@ defmodule TeslaMate.DatabaseCheck do
          version_num: version_num
        }) do
     cond do
-      major > 1700 ->
+      major > 1800 ->
         IO.puts(
           "PostgreSQL version #{version} is not officially tested or supported yet. Use at your own risk."
         )

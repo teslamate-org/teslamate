@@ -40,14 +40,14 @@ Alternatively, you can use a reverse proxy (such as Traefik, Apache2 or Caddy) w
          - all
 
      database:
-       image: postgres:17-trixie
+       image: postgres:18-trixie
        restart: always
        environment:
          - POSTGRES_USER=teslamate
          - POSTGRES_PASSWORD=password #insert your secure database password!
          - POSTGRES_DB=teslamate
        volumes:
-         - teslamate-db:/var/lib/postgresql/data
+         - teslamate-db:/var/lib/postgresql
 
      grafana:
        image: teslamate/grafana:latest
