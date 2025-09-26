@@ -183,7 +183,7 @@ To quickly identify performance bottlenecks we encourage all contributors to ena
   ```yml
   services:
     database:
-      image: postgres:17
+      image: postgres:18-trixie
       ...
       command: postgres -c shared_preload_libraries=pg_stat_statements
       ...

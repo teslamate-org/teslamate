@@ -57,14 +57,14 @@ services:
       - ALL
 
   database:
-    image: postgres:17
+    image: postgres:18-trixie
     restart: always
     environment:
       - POSTGRES_USER=${TM_DB_USER}
       - POSTGRES_PASSWORD=${TM_DB_PASS}
       - POSTGRES_DB=${TM_DB_NAME}
     volumes:
-      - teslamate-db:/var/lib/postgresql/data
+      - teslamate-db:/var/lib/postgresql
 
   grafana:
     image: teslamate/grafana:latest
