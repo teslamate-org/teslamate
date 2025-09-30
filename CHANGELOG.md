@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- build(deps): use elixir 1.18.4, node 22 & debian trixie (#4889 - @swiffer)
+
 #### Build, CI, internal
 
 #### Dashboards
