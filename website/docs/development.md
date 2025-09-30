@@ -157,17 +157,17 @@ Datetime values are currently stored in columns of type `timestamp`. [This is NO
 
 While [Grafana macros](https://grafana.com/docs/grafana/latest/datasources/postgres/#macros) like `$__timeFilter` & `$__timeGroup` are working PostgreSQL functions like `DATE_TRUNC()` require additional treatment.
 
-Grafana is not setting the PostgreSQL session timezone. To ensure truncation is done with respect to the Grafana timezone setting set the [optional time_zone argument](https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-TRUNC) for `DATE_TRUNC()`.
+Grafana is not setting the PostgreSQL session timezone. To ensure truncation is done with respect to the Grafana timezone setting, set the [optional time_zone argument](https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-TRUNC) for `DATE_TRUNC()`.
 
 ```sql
 DATE_TRUNC('day', TIMEZONE('UTC', date), '$__timezone')
 ```
 
-In addition ensure to compare either values with or without time zone.
+In addition, ensure to compare either values with or without time zone.
 
 ### Streaming API data / positions table usage in dashboard queries
 
-When Streaming API is enabled roughly 1 GB of data is gathered per car and 30.000km. Most of that data (95+ percent) is stored in positions table. For optimal dashboard performance these recommendations should be followed:
+When Streaming API is enabled roughly 1 GB of data is gathered per car and 30 000 km. Most of that data (95+ percent) is stored in positions table. For optimal dashboard performance these recommendations should be followed:
 
 - only query positions table when really needed
 - if data in 15 second intervals is sufficient consider excluding streaming data by adding `ideal_battery_range_km IS NOT NULL and car_id = $car_id` as WHERE conditions
@@ -207,10 +207,26 @@ To quickly identify performance bottlenecks we encourage all contributors to ena
   SELECT query, calls, mean_exec_time, total_exec_time FROM pg_stat_statements ORDER BY calls DESC LIMIT 10;
   ```
 
-Additional details about pg_stat_statements can be found [here](https://www.postgresql.org/docs/current/pgstatstatements.html)
+Additional details about pg_stat_statements can be found [in the PostgreSQL docs](https://www.postgresql.org/docs/current/pgstatstatements.html)
 
 ## Entity Relationship Model (ERM)
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 <img alt="Entity Relationship Model" src={useBaseUrl('img/entity_relationship_model.png')} />
+
+## check before merging a dependency update
+
+Before merging a dependency (dep) update PR, switch to the relevant branch and ensure that Nix Flake performs as expected.
+
+This may include:
+
+`nix flake check --override-input devenv-root "file+file://"<(printf %s "$PWD") . --all-systems`
+
+`nix build --override-input devenv-root "file+file://"<(printf %s "$PWD")`
+
+`nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt`
+
+`devenv up`
+
+If the PR updates a dependency, it is most likely you need to change the hash in [package.nix](/nix/flake-modules/package.nix). This includes: `mixFodDeps`, `npmDepsHash` or cldr `sha256`.
