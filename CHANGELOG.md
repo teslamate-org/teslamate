@@ -24,6 +24,7 @@
 
 - docs: for new installs, pin postgres container to debian trixie to avoid collation version mismatch (#4901 - @swiffer)
 - docs: Update FreeBSD and Debian instructions to use GRAFANA_API_TOKEN for the dashboard writes (#4942 - @uqs)
+- docs(dev): provide guidelines for checking dependency updates before merging (#4969 - @JakobLichterfeld)
 
 ## [2.1.1] - 2025-08-16
 
