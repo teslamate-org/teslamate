@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- sec: set tokens to private schema (#4968 -@brianmay)
+
 #### Build, CI, internal
 
 - build(deps): update flake.lock (#4911)
