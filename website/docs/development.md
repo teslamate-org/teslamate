@@ -215,18 +215,21 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 <img alt="Entity Relationship Model" src={useBaseUrl('img/entity_relationship_model.png')} />
 
-## check before merging a dependency update
+## Pre-Merge Checks for Dependency Updates
 
-Before merging a dependency (dep) update PR, switch to the relevant branch and ensure that Nix Flake performs as expected.
+When reviewing a pull request that updates dependencies, it's crucial to verify that the changes are correct and don't break the Nix-based development environment. After checking out the branch of the PR, run the following commands:
 
-This may include:
+- `nix flake check ...`: Verifies the flake's integrity across different systems.
+- `nix build ...`: Ensures the project builds successfully with the new dependencies.
+- `nix develop ... --command treefmt`: Checks if the code formatting still runs.
+- `devenv up`: Confirms that the development environment starts up as expected.
 
-`nix flake check --override-input devenv-root "file+file://"<(printf %s "$PWD") . --all-systems`
+```bash
+# Run these commands to ensure everything works as expected
+nix flake check --override-input devenv-root "file+file://"<(printf %s "$PWD") . --all-systems
+nix build --override-input devenv-root "file+file://"<(printf %s "$PWD")
+nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt
+devenv up
+```
 
-`nix build --override-input devenv-root "file+file://"<(printf %s "$PWD")`
-
-`nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt`
-
-`devenv up`
-
-If the PR updates a dependency, it is most likely you need to change the hash in [package.nix](../../nix/flake-modules/package.nix). This includes: `mixFodDeps`, `npmDepsHash` or cldr `sha256`.
+It is most likely you need to change the hash in `./nix/flake-modules/package.nix`. This could be `mixFodDeps`, `npmDepsHash`, or the `sha256` for `cldr`.
