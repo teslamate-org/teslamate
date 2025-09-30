@@ -6,9 +6,12 @@
 
 ### Improvements and bug fixes
 
+- sec: set tokens to private schema (#4968 -@brianmay)
 - build(deps): use elixir 1.18.4, node 22 & debian trixie (#4889 - @swiffer)
 
 #### Build, CI, internal
+
+- build(deps): update flake.lock (#4911)
 
 #### Dashboards
 
