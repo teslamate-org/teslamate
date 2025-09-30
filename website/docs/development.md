@@ -229,4 +229,4 @@ This may include:
 
 `devenv up`
 
-If the PR updates a dependency, it is most likely you need to change the hash in [package.nix](/nix/flake-modules/package.nix). This includes: `mixFodDeps`, `npmDepsHash` or cldr `sha256`.
+If the PR updates a dependency, it is most likely you need to change the hash in [package.nix](../../nix/flake-modules/package.nix). This includes: `mixFodDeps`, `npmDepsHash` or cldr `sha256`.
