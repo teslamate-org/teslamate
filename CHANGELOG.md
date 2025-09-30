@@ -8,6 +8,8 @@
 
 #### Build, CI, internal
 
+- build(deps): update flake.lock (#4911)
+
 #### Dashboards
 
 #### Translations
