@@ -11,7 +11,25 @@ defmodule TeslaMate.HTTP do
   @pool_timeout System.get_env("HTTP_POOL_TIMEOUT", "10000") |> String.to_integer()
 
   def child_spec(_arg) do
-    Finch.child_spec(name: __MODULE__, pools: @pools)
+    proxy_url = Application.get_env(:teslamate, :nominatim_proxy)
+
+    pools =
+      case proxy_url do
+        nil ->
+          @pools
+
+        _ ->
+          uri = URI.parse(proxy_url)
+          proxy_conn_opts = [conn_opts: [proxy: {:http, uri.host, uri.port, []}]]
+          # some url need proxy
+          Map.update!(
+            @pools,
+            "https://nominatim.openstreetmap.org",
+            &Keyword.merge(&1, proxy_conn_opts)
+          )
+      end
+
+    Finch.child_spec(name: __MODULE__, pools: pools)
   end
 
   def get(url, opts \\ []) do
