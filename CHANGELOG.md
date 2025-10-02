@@ -24,6 +24,7 @@
 
 - docs: for new installs, pin postgres container to debian trixie to avoid collation version mismatch (#4901 - @swiffer)
 - docs: Update FreeBSD and Debian instructions to use GRAFANA_API_TOKEN for the dashboard writes (#4942 - @uqs)
+- docs: rename Home Assistant object_id to default_entity_id to be compliant with latest HA (#4980 - @MrPaulAR)
 
 ## [2.1.1] - 2025-08-16
 
