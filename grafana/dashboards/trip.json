@@ -176,7 +176,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  t.time AS time,\n  avg(t.latitude)  AS latitude,\n  avg(t.longitude) AS longitude\nFROM (\n  SELECT\n    $__timeGroup(p.date, '5s') AS time,\n    avg(p.latitude)  AS latitude,\n    avg(p.longitude) AS longitude\n  FROM positions p\n  JOIN drives d ON d.id = p.drive_id\n  WHERE p.car_id = $car_id\n    AND $__timeFilter(d.start_date)\n  GROUP BY 1\n\n  UNION ALL\n\n  SELECT\n    $__timeGroup(p.date, '5s') AS time,\n    avg(p.latitude)  AS latitude,\n    avg(p.longitude) AS longitude\n  FROM positions p\n  WHERE p.car_id = $car_id\n    AND p.drive_id IS NULL\n    AND $__timeFilter(p.date)\n  GROUP BY 1\n) AS t\nGROUP BY 1\nORDER BY 1 ASC\n",
+          "rawSql": "with unioned_positions as (\n\n    -- fetch all positions based on start_date of drives so the map aligns with data shown in other panels\n    select p.*\n    from positions p\n             inner join drives d on p.drive_id = d.id\n    where p.car_id = $car_id and $__timeFilter(d.start_date)\n\n    union all\n\n    -- get all positions logged while not driving\n    select *\n    from positions p\n    where p.car_id = $car_id and drive_id is null and $__timeFilter(date))\n\nSELECT $__timeGroup(date, '5s')                AS time,\n       avg(latitude)                           AS latitude,\n       avg(longitude)                          AS longitude\nfrom unioned_positions\nGROUP BY 1\nORDER BY 1 ASC",
           "refId": "A",
           "sql": {
             "columns": [
