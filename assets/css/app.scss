@@ -306,3 +306,13 @@ main.full-height {
     background-color: initial;
   }
 }
+
+.logs {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  padding: 10px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  height: 500px;
+  overflow-y: scroll;
+}
