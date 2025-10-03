@@ -7,12 +7,22 @@
 ### Improvements and bug fixes
 
 - sec: set tokens to private schema (#4968 -@brianmay)
+- build(deps): use elixir 1.18.4, node 22 & debian trixie (#4889 - @swiffer)
 
 #### Build, CI, internal
 
 - build(deps): update flake.lock (#4911)
+- build(deps): bump @docusaurus/core from 3.8.1 to 3.9.1, @docusaurus/preset-classic from 3.8.1 to 3.9.1, bump dependencies in /website (#4977 - @JakobLichterfeld)
+- build(deps): bump actions/checkout from 4.2.2 to 5.0.0 (#4933)
+- build(deps): bump actions/cache from 4.2.3 to 4.3.0 (#4972)
+- build(deps): bump nixbuild/nix-quick-install-action from 32 to 34 (#4974)
+- build(deps): bump docker/login-action from 3.4.0 to 3.6.0 (#4975)
+- build(deps): bump crate-ci/typos from 1.34.0 to 1.37.0 (#4976)
+- build(deps): bump finch from 0.19.0 to 0.20.0 (#4929)
 
 #### Dashboards
+
+- fix: charging stats now correctly calculate cost when set to miles (#4983 -@DrMichael)
 
 #### Translations
 
@@ -24,6 +34,8 @@
 
 - docs: for new installs, pin postgres container to debian trixie to avoid collation version mismatch (#4901 - @swiffer)
 - docs: Update FreeBSD and Debian instructions to use GRAFANA_API_TOKEN for the dashboard writes (#4942 - @uqs)
+- docs: rename Home Assistant object_id to default_entity_id to be compliant with latest HA (#4980 - @MrPaulAR)
+- docs: explain MQTT in Readme via link to Wikipedia (#4985 - @DanCard)
 - docs(dev): provide guidelines for checking dependency updates before merging (#4969 - @JakobLichterfeld)
 
 ## [2.1.1] - 2025-08-16

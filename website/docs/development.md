@@ -6,7 +6,7 @@ sidebar_label: Development and Contributing
 
 ## Requirements
 
-- **Elixir** >= 1.17.3-otp-26
+- **Elixir** >= 1.18.4-otp-26
 - **Postgres** >= 17.3
 - An **MQTT broker** e.g. mosquitto (_optional_)
 - **NodeJS** >= 20.15.0
