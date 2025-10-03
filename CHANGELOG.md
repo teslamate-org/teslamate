@@ -11,6 +11,7 @@
 #### Build, CI, internal
 
 - build(deps): update flake.lock (#4911)
+- build(deps): bump @docusaurus/core from 3.8.1 to 3.9.1, @docusaurus/preset-classic from 3.8.1 to 3.9.1, bump dependencies in /website (#4977 - @JakobLichterfeld)
 
 #### Dashboards
 
