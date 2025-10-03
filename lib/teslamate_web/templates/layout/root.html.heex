@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <.live_title suffix=" · TeslaMate">
-      <%= assigns[:page_title] || "Home" %>
+      {assigns[:page_title] || "Home"}
     </.live_title>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")} />
     <link
@@ -39,7 +39,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="msapplication-TileColor" content="#ffffff" />
     <meta name="theme-color" content="#363636" />
-    <%= csrf_meta_tag() %>
+    {csrf_meta_tag()}
     <script>
       window.LIVE_PATH = "<%= Routes.static_path(@conn, "/live") %>";
     </script>
@@ -56,10 +56,10 @@
       <div class="container">
         <div class="navbar-brand">
           <a class="navbar-item" href={Routes.static_path(@conn, "/")}>
-            <%= img_tag(Routes.static_path(@conn, "/images/logo.svg"),
+            {img_tag(Routes.static_path(@conn, "/images/logo.svg"),
               alt: "TeslaMate",
               width: "90px"
-            ) %>
+            )}
           </a>
 
           <a
@@ -84,12 +84,12 @@
                 </a>
                 <div class="navbar-dropdown">
                   <%= for %{"title" => title, "uid" => uid} <- list_dashboards() do %>
-                    <%= link(title,
+                    {link(title,
                       to: "#{grafana_url}/d/#{uid}",
                       class: "navbar-item",
                       data_uid: uid,
                       target: "_blank"
-                    ) %>
+                    )}
                   <% end %>
                 </div>
               </div>
@@ -130,39 +130,39 @@
 
           <div class="notification is-warning">
             <p class="title is-5 is-spaced">
-              <span class="icon"><i class="mdi mdi-shield-alert"></i></span>&nbsp;<%= gettext(
+              <span class="icon"><i class="mdi mdi-shield-alert"></i></span>&nbsp;{gettext(
                 "No encryption key provided"
-              ) %>
+              )}
             </p>
             <p class="subtitle is-6">
-              <%= raw(
+              {raw(
                 gettext(
                   "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
                 )
-              ) %>
+              )}
             </p>
             <p class="subtitle is-6">
-              <%= raw(
+              {raw(
                 gettext(
                   "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
                 )
-              ) %>
+              )}
             </p>
             <p class="subtitle is-6">
-              <%= raw(
+              {raw(
                 gettext("For more information, see the updated installation guides on %{link}",
                   link: safe_to_string(docs_link)
                 )
-              ) %>
+              )}
             </p>
           </div>
         <% end %>
 
         <%= Enum.map(@flash, fn {flash_key, flash_message} -> %>
-          <p class={"notification is-#{flash_key}"}><%= flash_message %></p>
+          <p class={"notification is-#{flash_key}"}>{flash_message}</p>
         <% end) %>
 
-        <%= @inner_content %>
+        {@inner_content}
       </div>
     </main>
 
@@ -173,7 +173,7 @@
               class: "button is-rounded is-text is-small has-text-grey", type: "button",
               target: "_blank", rel: "noopener noreferrer" do %>
             <span class="icon"><i class="mdi mdi-gift"></i></span>
-            <strong><%= [gettext("Update available"), ": ", update] %></strong>
+            <strong>{[gettext("Update available"), ": ", update]}</strong>
           <% end %>
         <% end %>
       </div>
