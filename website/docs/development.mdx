@@ -211,9 +211,12 @@ Additional details about pg_stat_statements can be found [in the PostgreSQL docs
 
 ## Entity Relationship Model (ERM)
 
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
-<img alt="Entity Relationship Model" src={useBaseUrl('img/entity_relationship_model.png')} />
+<img
+  alt="Entity Relationship Model"
+  src={useBaseUrl("img/entity_relationship_model.png")}
+/>
 
 ## Pre-Merge Checks for Dependency Updates
 
@@ -233,3 +236,7 @@ devenv up
 ```
 
 It is most likely you need to change the hash in `./nix/flake-modules/package.nix`. This could be `mixFodDeps`, `npmDepsHash`, or the `sha256` for `cldr`.
+
+:::note
+A `cldr` version update is particularly critical. The old hashes will still appear to work if you previously built using the old hash. But will silently get the old file not the new file.
+:::
