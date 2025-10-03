@@ -13,6 +13,11 @@
 
 - build(deps): update flake.lock (#4911)
 - build(deps): bump @docusaurus/core from 3.8.1 to 3.9.1, @docusaurus/preset-classic from 3.8.1 to 3.9.1, bump dependencies in /website (#4977 - @JakobLichterfeld)
+- build(deps): bump actions/checkout from 4.2.2 to 5.0.0 (#4933)
+- build(deps): bump actions/cache from 4.2.3 to 4.3.0 (#4972)
+- build(deps): bump nixbuild/nix-quick-install-action from 32 to 34 (#4974)
+- build(deps): bump docker/login-action from 3.4.0 to 3.6.0 (#4975)
+- build(deps): bump crate-ci/typos from 1.34.0 to 1.37.0 (#4976)
 
 #### Dashboards
 
