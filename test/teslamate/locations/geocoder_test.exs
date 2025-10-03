@@ -201,7 +201,7 @@ defmodule TeslaMate.Locations.GeocoderTest do
 
     refute is_nil(nominatim_opts)
     assert Keyword.get(nominatim_opts, :size) == 3
-    expected_conn_opts = [proxy: {:http, to_charlist("127.0.0.1"), 7897, []}]
+    expected_conn_opts = [proxy: {:http, "127.0.0.1", 7897, []}]
     assert Keyword.get(nominatim_opts, :conn_opts) == expected_conn_opts
 
     Application.delete_env(:teslamate, :nominatim_proxy)
