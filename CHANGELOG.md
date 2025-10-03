@@ -15,6 +15,8 @@
 
 #### Dashboards
 
+- fix: charging stats now correctly calculate cost when set to miles (#4983 -@DrMichael)
+
 #### Translations
 
 - i18n: add spanish car location translation (#4892 - @jpizquierdo)
@@ -26,6 +28,7 @@
 - docs: for new installs, pin postgres container to debian trixie to avoid collation version mismatch (#4901 - @swiffer)
 - docs: Update FreeBSD and Debian instructions to use GRAFANA_API_TOKEN for the dashboard writes (#4942 - @uqs)
 - docs: rename Home Assistant object_id to default_entity_id to be compliant with latest HA (#4980 - @MrPaulAR)
+- docs: explain MQTT in Readme via link to Wikipedia (#4985 - @DanCard)
 
 ## [2.1.1] - 2025-08-16
 
