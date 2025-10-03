@@ -6,17 +6,35 @@
 
 ### Improvements and bug fixes
 
+- sec: set tokens to private schema (#4968 -@brianmay)
+- build(deps): use elixir 1.18.4, node 22 & debian trixie (#4889 - @swiffer)
+
 #### Build, CI, internal
 
+- build(deps): update flake.lock (#4911)
+- build(deps): bump @docusaurus/core from 3.8.1 to 3.9.1, @docusaurus/preset-classic from 3.8.1 to 3.9.1, bump dependencies in /website (#4977 - @JakobLichterfeld)
+- build(deps): bump actions/checkout from 4.2.2 to 5.0.0 (#4933)
+- build(deps): bump actions/cache from 4.2.3 to 4.3.0 (#4972)
+- build(deps): bump nixbuild/nix-quick-install-action from 32 to 34 (#4974)
+- build(deps): bump docker/login-action from 3.4.0 to 3.6.0 (#4975)
+- build(deps): bump crate-ci/typos from 1.34.0 to 1.37.0 (#4976)
+
 #### Dashboards
+
+- fix: charging stats now correctly calculate cost when set to miles (#4983 -@DrMichael)
 
 #### Translations
 
 - i18n: add spanish car location translation (#4892 - @jpizquierdo)
+- i18n: add missing italian translations, correct the gender of some words and use more uniform translations (#4920 - @giovaorama)
+- i18n: add thai car location translation (#4956 - @tomzt)
 
 #### Documentation
 
 - docs: for new installs, pin postgres container to debian trixie to avoid collation version mismatch (#4901 - @swiffer)
+- docs: Update FreeBSD and Debian instructions to use GRAFANA_API_TOKEN for the dashboard writes (#4942 - @uqs)
+- docs: rename Home Assistant object_id to default_entity_id to be compliant with latest HA (#4980 - @MrPaulAR)
+- docs: explain MQTT in Readme via link to Wikipedia (#4985 - @DanCard)
 
 ## [2.1.1] - 2025-08-16
 
