@@ -22,6 +22,10 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=false \
 USER grafana
 
 COPY logo.svg /usr/share/grafana/public/img/grafana_icon.svg
+
+RUN LOGO_PATH=$(find /usr/share/grafana/public/build/static/img/ -type f -name 'grafana_icon.*.svg') && \
+    cp /usr/share/grafana/public/img/grafana_icon.svg "$LOGO_PATH" || true
+
 COPY favicon.png /usr/share/grafana/public/img/fav32.png
 COPY apple-touch-icon.png /usr/share/grafana/public/img/apple-touch-icon.png
 
