@@ -23,6 +23,7 @@
 #### Dashboards
 
 - fix: charging stats now correctly calculate cost when set to miles (#4983 -@DrMichael)
+- feat: add shared buffers size to db info dashboard (#4989 -@swiffer)
 
 #### Translations
 
