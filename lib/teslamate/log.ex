@@ -187,14 +187,24 @@ defmodule TeslaMate.Log do
 
     non_streamed_drives =
       Repo.all(
-        from p in Position,
-          select: p.drive_id,
-          inner_join: d in assoc(p, :drive),
-          where: d.start_date > ^naive_date_earliest and p.id > ^min_id,
-          having:
-            count()
-            |> filter(not is_nil(p.odometer) and is_nil(p.ideal_battery_range_km)) == 0,
-          group_by: p.drive_id
+        from(d in Drive,
+          as: :d,
+          where:
+            d.start_date > ^naive_date_earliest and
+              exists(
+                from(p in Position,
+                  where: p.drive_id == parent_as(:d).id and p.id > ^min_id
+                )
+              ) and
+              not exists(
+                from(p in Position,
+                  where:
+                    p.drive_id == parent_as(:d).id and p.id > ^min_id and
+                      not is_nil(p.odometer) and is_nil(p.ideal_battery_range_km)
+                )
+              ),
+          select: d.id
+        )
       )
 
     Position
