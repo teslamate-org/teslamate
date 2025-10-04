@@ -8,6 +8,7 @@
 
 - sec: set tokens to private schema (#4968 -@brianmay)
 - build(deps): use elixir 1.18.4, node 22 & debian trixie (#4889 - @swiffer)
+- fix: allow using different PostgreSQL port than default when using socket_dir connection (#4979 - @jaypark0006)
 
 #### Build, CI, internal
 
