@@ -110,7 +110,9 @@ case System.get_env("DATABASE_SOCKET_DIR") do
       port: System.get_env("DATABASE_PORT", "5432")
 
   socket_dir ->
-    config :teslamate, TeslaMate.Repo, socket_dir: socket_dir
+    config :teslamate, TeslaMate.Repo,
+      socket_dir: socket_dir,
+      port: System.get_env("DATABASE_PORT", "5432")
 end
 
 config :teslamate, TeslaMate.Repo,
