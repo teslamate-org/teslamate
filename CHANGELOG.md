@@ -9,6 +9,7 @@
 - sec: set tokens to private schema (#4968 -@brianmay)
 - build(deps): use elixir 1.18.4, node 22 & debian trixie (#4889 - @swiffer)
 - fix: allow using different PostgreSQL port than default when using socket_dir connection (#4979 - @jaypark0006)
+- feat: officially support PostgreSQL 18 (#4890 - @swiffer)
 
 #### Build, CI, internal
 
@@ -43,6 +44,7 @@
 - docs: rename Home Assistant object_id to default_entity_id to be compliant with latest HA (#4980 - @MrPaulAR)
 - docs: explain MQTT in Readme via link to Wikipedia (#4985 - @DanCard)
 - docs(dev): provide guidelines for checking dependency updates before merging (#4969 - @JakobLichterfeld)
+- docs: add docs for volume mount change with PostgreSQL 18 (#4890 - @swiffer)
 
 ## [2.1.1] - 2025-08-16
 

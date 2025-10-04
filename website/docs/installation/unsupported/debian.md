@@ -12,7 +12,7 @@ Click on the following items to view detailed installation steps.
 Note that in very recent distributions, you might have the required versions already packaged. However, the contents or naming of the Debian/Ubuntu packages might slightly differ than the ones from upstream, so you might need to install extra packages or do other tweaks.
 
 <details>
-  <summary>Postgres (v17.3+)</summary>
+  <summary>Postgres (v16.7+, v17.3+ or v18.0+)</summary>
 
 Either upstream:
 
@@ -20,7 +20,7 @@ Either upstream:
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
 sudo apt-get update
-sudo apt-get install -y postgresql-17 postgresql-client-17
+sudo apt-get install -y postgresql-18 postgresql-client-18
 ```
 
 Source: [postgresql.org/download](https://www.postgresql.org/download/)

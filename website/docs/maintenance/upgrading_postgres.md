@@ -16,11 +16,14 @@ sidebar_label: Upgrading PostgreSQL
    docker volume rm "$(basename "$PWD")_teslamate-db"
    ```
 
-4. Change the postgres version in docker-compose.yml and start the container
+4. Change the postgres version and ensure your volume mount is [configured correctly](https://hub.docker.com/_/postgres#pgdata) in docker-compose.yml and start the container
 
    ```yml {2}
    database:
-     image: postgres:xx-trixie
+     image: postgres:18-trixie
+     ...
+     volumes:
+       - teslamate-db:/var/lib/postgresql
    ```
 
    ```bash
