@@ -23,9 +23,10 @@
 
 #### Dashboards
 
-- fix: charging stats now correctly calculate cost when set to miles (#4983 -@DrMichael)
+- fix: charging stats now correctly calculate cost when set to miles (#4983 - @DrMichael)
 - perf: Optimize Grafana query for trip view to leverage indexes more effectively (#4964 - @jaypark0006)
-- feat: add shared buffers size to db info dashboard (#4989 -@swiffer)
+- feat: add shared buffers size to db info dashboard (#4989 - @swiffer)
+- fix: cast to numeric instead of integer when converting from km to miles to avoid rounding issues in all dashboards (#4986 - @swiffer)
 
 #### Translations
 
