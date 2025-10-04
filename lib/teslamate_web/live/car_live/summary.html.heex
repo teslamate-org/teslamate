@@ -26,7 +26,15 @@
   <div class="card-content">
     <div class="media is-flex mb-5">
       <div class="media-content">
-        <p class="title is-5"><%= @summary.display_name %></p>
+        <p class="title is-5">
+          <span
+            class="has-tooltip-right has-tooltip-left-mobile"
+            style="border-bottom: none;"
+            data-tooltip={@car.vin}
+          >
+            <%= @summary.display_name %>
+          </span>
+        </p>
         <%= unless is_nil(@car.model) do %>
           <p class="subtitle is-6 has-text-weight-light">
             Model <%= @car.model %>
