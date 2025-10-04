@@ -23,6 +23,7 @@
 #### Dashboards
 
 - fix: charging stats now correctly calculate cost when set to miles (#4983 -@DrMichael)
+- perf: Optimize Grafana query for trip view to leverage indexes more effectively (#4964 - @jaypark0006)
 
 #### Translations
 
