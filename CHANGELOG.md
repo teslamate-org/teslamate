@@ -28,6 +28,7 @@
 - perf: Optimize Grafana query for trip view to leverage indexes more effectively (#4964 - @jaypark0006)
 - feat: add shared buffers size to db info dashboard (#4989 - @swiffer)
 - fix: cast to numeric instead of integer when converting from km to miles to avoid rounding issues in all dashboards (#4986 - @swiffer)
+- fix: correctly determine charging phases in charge detail dashboard (#4988 - @swiffer)
 
 #### Translations
 
