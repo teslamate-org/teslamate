@@ -19,10 +19,12 @@
 - build(deps): bump docker/login-action from 3.4.0 to 3.6.0 (#4975)
 - build(deps): bump crate-ci/typos from 1.34.0 to 1.37.0 (#4976)
 - build(deps): bump finch from 0.19.0 to 0.20.0 (#4929)
+- build(deps): update flake.lock (#4991)
 
 #### Dashboards
 
 - fix: charging stats now correctly calculate cost when set to miles (#4983 -@DrMichael)
+- perf: Optimize Grafana query for trip view to leverage indexes more effectively (#4964 - @jaypark0006)
 - feat: add shared buffers size to db info dashboard (#4989 -@swiffer)
 
 #### Translations
@@ -37,6 +39,7 @@
 - docs: Update FreeBSD and Debian instructions to use GRAFANA_API_TOKEN for the dashboard writes (#4942 - @uqs)
 - docs: rename Home Assistant object_id to default_entity_id to be compliant with latest HA (#4980 - @MrPaulAR)
 - docs: explain MQTT in Readme via link to Wikipedia (#4985 - @DanCard)
+- docs(dev): provide guidelines for checking dependency updates before merging (#4969 - @JakobLichterfeld)
 
 ## [2.1.1] - 2025-08-16
 
