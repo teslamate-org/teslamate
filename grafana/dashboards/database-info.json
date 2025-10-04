@@ -506,7 +506,7 @@
           "format": "table",
           "rawQuery": true,
           "rawSql": "SELECT regexp_replace(version(), 'PostgreSQL ([^ ]+) .*', '\\1') AS version;",
-          "refId": "A",
+          "refId": "PostgreSQL Version",
           "sql": {
             "columns": [
               {
@@ -964,7 +964,7 @@
           "format": "table",
           "rawQuery": true,
           "rawSql": "SELECT \n    SUM(pg_total_relation_size(relid)) As \"Size\"\nFROM \n    pg_catalog.pg_statio_user_tables;",
-          "refId": "DistanceLogged",
+          "refId": "Database Total Size",
           "sql": {
             "columns": [
               {
@@ -992,7 +992,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "",
+      "description": "<b>Shared Buffers:</b> This metric shows the amount of memory PostgreSQL uses to store frequently accessed data, like tables and indexes, to make queries faster by avoiding slow disk reads.\n\n<b>Recommended value:</b> Use about 25% of your system's total RAM (e.g., 1GB for a system with 4GB RAM). Start with a modest value and adjust based on your app's needs. Setting it too high can waste memory.\n\n<b>To change in a Postgres Docker Compose file:</b> In your docker-compose.yml, add or update the command field under the Postgres service to include the shared_buffers setting. For example:\n\n<pre>\nservices:\n  database:\n    image: postgres:18-trixie\n    command: postgres -c shared_buffers=1GB\n    ...\n</pre>\n\nAfter updating the file, run <code>docker compose down</code> and <code>docker compose up -d</code> to restart the container and apply the change.\n\nFor more details: <a href='https://www.postgresql.org/docs/18/runtime-config-resource.html#GUC-SHARED-BUFFERS' target='_blank'>PostgreSQL: Documentation: 18: 19.4. Resource Consumption</a>",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1047,7 +1047,7 @@
           "format": "table",
           "rawQuery": true,
           "rawSql": "SELECT cast(setting as numeric) * 8 * 1024 FROM pg_catalog.pg_settings WHERE name = 'shared_buffers';",
-          "refId": "DistanceLogged",
+          "refId": "Shared Buffers",
           "sql": {
             "columns": [
               {
@@ -1129,7 +1129,7 @@
           "format": "table",
           "rawQuery": true,
           "rawSql": "show timezone;",
-          "refId": "DistanceLogged",
+          "refId": "Timezone",
           "sql": {
             "columns": [
               {
