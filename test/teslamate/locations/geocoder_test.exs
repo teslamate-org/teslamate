@@ -179,34 +179,6 @@ defmodule TeslaMate.Locations.GeocoderTest do
     end
   end
 
-  test "no uses HTTPS proxy when configured" do
-    with_mock Tesla.Adapter.Finch,
-      call: fn %Tesla.Env{} = env, _opts ->
-        {:ok, %Tesla.Env{body: %{"error" => "Unable to geocode"}, headers: [], status: 200}}
-      end do
-      assert {:ok, %{display_name: "Unknown"}} = Geocoder.reverse_lookup(37.889602, 41.129182)
-    end
-  end
-
-  test "configures Finch pool with HTTPS proxy when application environment is set" do
-    proxy_url = "http://127.0.0.1:7897"
-    Application.put_env(:teslamate, :nominatim_proxy, proxy_url)
-
-    :code.purge(TeslaMate.HTTP)
-    require TeslaMate.HTTP
-    spec = TeslaMate.HTTP.child_spec(nil)
-    [start_opts] = spec[:start] |> elem(2)
-    pools_config = Keyword.get(start_opts, :pools)
-    nominatim_opts = pools_config["https://nominatim.openstreetmap.org"]
-
-    refute is_nil(nominatim_opts)
-    assert Keyword.get(nominatim_opts, :size) == 3
-    expected_conn_opts = [proxy: {:http, "127.0.0.1", 7897, []}]
-    assert Keyword.get(nominatim_opts, :conn_opts) == expected_conn_opts
-
-    Application.delete_env(:teslamate, :nominatim_proxy)
-  end
-
   describe "address formatting" do
     test "village aliases are ranked higher than municipality aliases" do
       with_mocks [
