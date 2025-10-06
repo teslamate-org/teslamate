@@ -186,4 +186,4 @@ config :teslamate, TeslaMate.Vault, key: Util.get_env("ENCRYPTION_KEY", test: "s
 
 config :tzdata, :data_dir, System.get_env("TZDATA_DIR", "/tmp")
 
-config :teslamate, :nominatim_proxy, System.get_env("HTTPS_PROXY")
+config :teslamate, :nominatim_proxy, System.get_env("NOMINATIM_PROXY")
