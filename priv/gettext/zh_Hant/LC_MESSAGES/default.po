@@ -131,7 +131,7 @@ msgstr "單位"
 #: lib/teslamate_web/live/geofence_live/form.html.heex:124
 #, elixir-autogen, elixir-format
 msgid "Back"
-msgstr "後退"
+msgstr "上一步"
 
 #: lib/teslamate_web/live/geofence_live/form.ex:188
 #, elixir-autogen, elixir-format
@@ -420,7 +420,7 @@ msgstr "已儲存!"
 #: lib/teslamate_web/live/car_live/summary.html.heex:50
 #, elixir-autogen, elixir-format
 msgid "Fetching vehicle data ..."
-msgstr "正在獲取車輛數據"
+msgstr "正在讀取車輛數據"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:231
 #, elixir-autogen, elixir-format
@@ -435,7 +435,7 @@ msgstr "語言"
 #: lib/teslamate_web/live/settings_live/index.ex:64
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
-msgstr "在獲取地圖資訊時發成錯誤，請稍後再試。"
+msgstr "讀取地圖資訊時發成錯誤，請稍後再試。"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:4
 #, elixir-autogen, elixir-format
@@ -592,7 +592,7 @@ msgstr "Tokens無效"
 #: lib/teslamate_web/live/signin_live/index.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr "勾過 Tesla API 獲得Token需要有程式編寫經驗或者藉由第三方服務。更多資訊詳見 %{here}。"
+msgstr "透過 Tesla API 獲得Token需要有程式編寫經驗或者藉由第三方服務。更多資訊詳見 %{here}。"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:92
 #, elixir-autogen, elixir-format
@@ -602,7 +602,7 @@ msgstr "這裡"
 #: lib/teslamate_web/live/signin_live/index.ex:61
 #, elixir-autogen, elixir-format
 msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr "您的 Tesla 帳號因登入失敗次數過多而被鎖定。要解鎖您的帳戶，請重置您的密碼"
+msgstr "您的 Tesla 帳號因登入失敗次數過多而被鎖定。要解鎖您的帳戶，請重設您的密碼"
 
 #: lib/teslamate_web/live/car_live/summary.ex:149
 #, elixir-autogen, elixir-format
@@ -627,7 +627,7 @@ msgstr "目前對話自動生成的密鑰可在<strong>應用程式日誌</stron
 #: lib/teslamate_web/templates/layout/root.html.heex:139
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr "為了確保你的<strong>Tesla API tokens安全儲存</strong>,密鑰必須通過<code>ENCRYPTION_KEY</code>環境變數提供给Teslamate.否則每次重啟都會被要求登入"
+msgstr "為了確保你的<strong>Tesla API tokens安全儲存</strong>,密鑰必須透過<code>ENCRYPTION_KEY</code>環境變數提供给Teslamate.否則每次重啟都會被要求登入"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:284
 #, elixir-autogen, elixir-format
@@ -652,29 +652,29 @@ msgstr "預計充電完成時間"
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
-msgstr ""
+msgstr "正在使用由 %{url} 提供的API key (%{token})。它將允許TeslaMate透過特斯拉官方車隊API和Telemetry數據流讀取你的車輛。"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
-msgstr ""
+msgstr "數據收集"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Battery"
-msgstr ""
+msgstr "電池類型"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:163
 #, elixir-autogen, elixir-format
 msgid "LFP Battery"
-msgstr ""
+msgstr "鋰鐵磷酸電池（LFP）"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:130
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Sentry Mode recording"
-msgstr "哨兵模式"
+msgstr "哨兵模式錄影中"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:99
 #, elixir-autogen, elixir-format, fuzzy
 msgid "View car location on Google Maps"
-msgstr ""
+msgstr "在Google Maps查看車輛位置"
