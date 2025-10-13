@@ -38,6 +38,8 @@ Alternatively, you can use a reverse proxy (such as Traefik, Apache2 or Caddy) w
          - ./import:/opt/app/import
        cap_drop:
          - all
+       ulimits:
+         nofile: 65536
 
      database:
        image: postgres:17-trixie

@@ -58,6 +58,8 @@ services:
       traefik.http.routers.teslamate.tls.certresolver: "tmhttpchallenge"
     cap_drop:
       - ALL
+    ulimits:
+      nofile: 65536
 
   database:
     image: postgres:17

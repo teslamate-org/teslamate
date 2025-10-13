@@ -48,6 +48,8 @@ services:
       - 127.0.0.1:4000:4000
     cap_drop:
       - all
+    ulimits:
+      nofile: 65536
 
   database:
     image: postgres:17
