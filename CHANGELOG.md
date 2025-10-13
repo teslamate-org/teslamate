@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat: support proxy for openstreet API (#4970 - @jaypark0006)
+
 ### Improvements and bug fixes
 
 - sec: set tokens to private schema (#4968 -@brianmay)
