@@ -5,7 +5,7 @@ set -e
 : "${DATABASE_PORT:=5432}"
 
 # prevent memory bloat in some misconfigured versions of Docker/containerd
-export ERL_MAX_PORTS=65536
+ulimit -n 65536
 
 # wait until Postgres is ready
 while ! nc -z "${DATABASE_HOST}" "${DATABASE_PORT}" 2>/dev/null; do
