@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env dash
 set -e
 
 : "${DATABASE_HOST:="127.0.0.1"}"
