@@ -7,7 +7,7 @@ set -e
 
 # prevent memory bloat in some misconfigured versions of Docker/containerd
 # where the nofiles limit is very large. 0 means don't set it.
-if test "${ULIMIT_MAX_NOFILE}" != 0 && test `ulimit -n` -gt "${ULIMIT_MAX_NOFILE}"; then
+if test "${ULIMIT_MAX_NOFILE}" != 0 && test "$(ulimit -n)" -gt "${ULIMIT_MAX_NOFILE}"; then
 	ulimit -n "${ULIMIT_MAX_NOFILE}"
 fi
 
