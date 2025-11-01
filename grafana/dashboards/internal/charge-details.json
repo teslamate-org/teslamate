@@ -1879,12 +1879,12 @@
           "text": "2",
           "value": "2"
         },
-        "definition": "with data as (\n\n\tselect\n\t\tavg(c.charger_power * 1000.0 / nullif(c.charger_actual_current * c.charger_voltage, 0)) p,\n\t    avg(c.charger_phases) r,\n\t    avg(c.charger_voltage) v,\n\t    count(*) as n\n\tfrom charges c\n\twhere c.charging_process_id = ${charging_process_id}\n\n)\n\nselect\n\tcase\n\t\twhen r = round(p) then r\n\t\twhen r = 3 and abs(p / sqrt(r) - 1) <= 0.1 then sqrt(r)\n\t\twhen abs(round(p) - p) <= 0.3 then round(p)\n\t\telse null\n\tend as phases\nfrom data",
+        "definition": "with data as (\n\n    select\n        avg(c.charger_power * 1000.0 / nullif(c.charger_actual_current * c.charger_voltage, 0)) p,\n        avg(c.charger_phases) r,\n        avg(c.charger_voltage) v,\n        count(*) as n\n    from charges c\n    where c.charging_process_id = ${charging_process_id}\n\n)\n\nselect\n    case\n        when p is not null and p > 0 and n > 15 then case\n            when r = round(p) then r\n            when r = 3 and abs(p / sqrt(r) - 1) <= 0.1 then sqrt(r)\n            when abs(round(p) - p) <= 0.3 then round(p)\n            else null\n        end\n        else null\n    end as phases\nfrom data",
         "description": "",
         "hide": 2,
         "name": "determine_phases",
         "options": [],
-        "query": "with data as (\n\n\tselect\n\t\tavg(c.charger_power * 1000.0 / nullif(c.charger_actual_current * c.charger_voltage, 0)) p,\n\t    avg(c.charger_phases) r,\n\t    avg(c.charger_voltage) v,\n\t    count(*) as n\n\tfrom charges c\n\twhere c.charging_process_id = ${charging_process_id}\n\n)\n\nselect\n\tcase\n\t\twhen r = round(p) then r\n\t\twhen r = 3 and abs(p / sqrt(r) - 1) <= 0.1 then sqrt(r)\n\t\twhen abs(round(p) - p) <= 0.3 then round(p)\n\t\telse null\n\tend as phases\nfrom data",
+        "query": "with data as (\n\n    select\n        avg(c.charger_power * 1000.0 / nullif(c.charger_actual_current * c.charger_voltage, 0)) p,\n        avg(c.charger_phases) r,\n        avg(c.charger_voltage) v,\n        count(*) as n\n    from charges c\n    where c.charging_process_id = ${charging_process_id}\n\n)\n\nselect\n    case\n        when p is not null and p > 0 and n > 15 then case\n            when r = round(p) then r\n            when r = 3 and abs(p / sqrt(r) - 1) <= 0.1 then sqrt(r)\n            when abs(round(p) - p) <= 0.3 then round(p)\n            else null\n        end\n        else null\n    end as phases\nfrom data",
         "refresh": 1,
         "regex": "",
         "type": "query"
