@@ -48,6 +48,7 @@
 - docs: explain MQTT in Readme via link to Wikipedia (#4985 - @DanCard)
 - docs(dev): provide guidelines for checking dependency updates before merging (#4969 - @JakobLichterfeld)
 - docs: add domain prefix to Home Assistant default_entity_id (#5014 - @gym22)
+- docs: add star history (#5024 - @JakobLichterfeld)
 
 ## [2.1.1] - 2025-08-16
 
