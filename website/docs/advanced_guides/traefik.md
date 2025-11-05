@@ -43,15 +43,12 @@ services:
       - ./import:/opt/app/import
     labels:
       traefik.enable: "true"
-      traefik.port: "4000"
+      traefik.http.services.teslamate.loadbalancer.server.port: "4000"
       traefik.http.middlewares.redirect.redirectscheme.scheme: "https"
       traefik.http.middlewares.teslamate-auth.basicauth.realm: "teslamate"
       traefik.http.middlewares.teslamate-auth.basicauth.usersfile: "/auth/.htpasswd"
       traefik.http.routers.teslamate-insecure.rule: "Host(`${FQDN_TM}`)"
       traefik.http.routers.teslamate-insecure.middlewares: "redirect"
-      traefik.http.routers.teslamate-ws.rule: "Host(`${FQDN_TM}`) && Path(`/live/websocket`)"
-      traefik.http.routers.teslamate-ws.entrypoints: "websecure"
-      traefik.http.routers.teslamate-ws.tls: ""
       traefik.http.routers.teslamate.rule: "Host(`${FQDN_TM}`)"
       traefik.http.routers.teslamate.middlewares: "teslamate-auth"
       traefik.http.routers.teslamate.entrypoints: "websecure"
@@ -89,7 +86,7 @@ services:
       - teslamate-grafana-data:/var/lib/grafana
     labels:
       traefik.enable: "true"
-      traefik.port: "3000"
+      traefik.http.services.grafana.loadbalancer.server.port: "3000"
       traefik.http.middlewares.redirect.redirectscheme.scheme: "https"
       traefik.http.routers.grafana-insecure.rule: "Host(`${FQDN_TM}`)"
       traefik.http.routers.grafana-insecure.middlewares: "redirect"
@@ -108,7 +105,7 @@ services:
       - mosquitto-data:/mosquitto/data
 
   proxy:
-    image: traefik:v2.7
+    image: traefik:v3.5
     restart: always
     command:
       - "--global.sendAnonymousUsage=false"
@@ -116,13 +113,15 @@ services:
       - "--providers.docker.exposedByDefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http3.advertisedPort=443"
       - "--certificatesresolvers.tmhttpchallenge.acme.httpchallenge=true"
       - "--certificatesresolvers.tmhttpchallenge.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.tmhttpchallenge.acme.email=${LETSENCRYPT_EMAIL}"
       - "--certificatesresolvers.tmhttpchallenge.acme.storage=/etc/acme/acme.json"
     ports:
       - "80:80"
-      - "443:443"
+      - "443:443/tcp"
+      - "443:443/udp"
     volumes:
       - ./.htpasswd:/auth/.htpasswd
       - ./acme/:/etc/acme/
