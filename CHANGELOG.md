@@ -26,6 +26,7 @@
 - build(deps): update flake.lock (#4991)
 - build(deps): update flake.lock (#4997)
 - build(deps): bump actions/stale from 9.1.0 to 10.1.0 (#5019)
+- build(deps): bump @docusaurus/core from 3.9.1 to 3.9.2, @docusaurus/preset-classic from 3.9.1 to 3.9.2 and dependencies in /website (#5020)
 
 #### Dashboards
 
