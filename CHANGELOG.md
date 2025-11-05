@@ -24,6 +24,7 @@
 - build(deps): bump crate-ci/typos from 1.34.0 to 1.37.0 (#4976)
 - build(deps): bump finch from 0.19.0 to 0.20.0 (#4929)
 - build(deps): update flake.lock (#4991)
+- build(deps): update flake.lock (#4997)
 - build(deps): bump actions/stale from 9.1.0 to 10.1.0 (#5019)
 
 #### Dashboards
