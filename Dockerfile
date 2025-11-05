@@ -76,5 +76,5 @@ RUN mkdir $SRTM_CACHE
 
 EXPOSE 4000
 
-ENTRYPOINT ["tini", "--", "/bin/sh", "/entrypoint.sh"]
+ENTRYPOINT ["tini", "--", "/bin/dash", "/entrypoint.sh"]
 CMD ["bin/teslamate", "start"]
