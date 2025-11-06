@@ -1,5 +1,19 @@
 # Changelog
 
+## [unreleased]
+
+### New features
+
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [2.2.0] - 2025-11-06
 
 As always, there have been many improvements. We now support a proxy for the OpenStreetMap API. If you live in a geo-blocked location, this could simplify your setup. Your tokens are now more secure.
@@ -2617,6 +2631,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v2.2.0...HEAD
 [2.2.0]: https://github.com/teslamate-org/teslamate/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/teslamate-org/teslamate/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/teslamate-org/teslamate/compare/v2.0.0...v2.1.0
