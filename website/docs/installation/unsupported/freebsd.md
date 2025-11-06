@@ -50,11 +50,11 @@ pkg install elixir
 </details>
 
 <details>
-  <summary>Postgres (v17.3+)</summary>
+  <summary>Postgres (v16.7+, v17.3+ or v18.0+)</summary>
 
 ```bash
-pkg install postgresql17-server
-pkg install postgresql17-contrib
+pkg install postgresql18-server
+pkg install postgresql18-contrib
 echo postgres_enable="yes" >> /etc/rc.conf
 ```
 
