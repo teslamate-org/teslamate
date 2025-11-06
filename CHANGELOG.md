@@ -17,7 +17,7 @@
 ## [2.2.0] - 2025-11-06
 
 As always, there have been many improvements. We now support a proxy for the OpenStreetMap API. If you live in a geo-blocked location, this could simplify your setup. Your tokens are now more secure.
-We use the latest dependencies and support PostgreSQL 18 (To update, back up your data and follow[the guide and replace xx with 18](https://docs.teslamate.org/docs/maintenance/upgrading_postgres)).
+We use the latest dependencies and support PostgreSQL 18 (To update, back up your data and follow [the guide](https://docs.teslamate.org/docs/maintenance/upgrading_postgres) **Please note: Volume mounts have changed in PostgreSQL18, see point 4 of the guide.**).
 We also avoid memory bloat on misconfigured Docker hosts. If your host has limited hardware, this will greatly improve your experience.
 The dashboards have been improved in terms of performance, and all dashboards now function as expected when set to miles.
 
