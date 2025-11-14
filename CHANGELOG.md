@@ -14,6 +14,8 @@
 
 #### Documentation
 
+- docs(traefik): update to v3.6 as 3.6.1 solves issues with docker 29.0 (#5034 - @JakobLichterfeld)
+
 ## [2.2.0] - 2025-11-06
 
 As always, there have been many improvements. We now support a proxy for the OpenStreetMap API. If you live in a geo-blocked location, this could simplify your setup. Your tokens are now more secure.
