@@ -80,7 +80,33 @@ defmodule TeslaMateWeb.SettingsLive.Index do
         assign(socket, settings.())
       end
 
+    if Map.has_key?(params, "file_logging_enabled") do
+      enabled = params["file_logging_enabled"]
+      toggle_file_logger(enabled)
+    end
+
     {:noreply, socket}
+  end
+
+  defp toggle_file_logger(true) do
+    unless System.get_env("TESLAMATE_FILE_LOGGING_ENABLED") == "true" do
+      Logger.add_handler(:file_logger_webview, Logger.Handlers.File,
+        format: "$time $metadata[$level] $message\n",
+        metadata: [:car_id],
+        path: "priv/logs/teslamate.log",
+        # sync every 5 messages to file
+        sync_threshold: 5
+      )
+
+      Logger.info("File logging enabled via UI.")
+    end
+  end
+
+  defp toggle_file_logger(false) do
+    if System.get_env("TESLAMATE_FILE_LOGGING_ENABLED") != "true" do
+      Logger.remove_handler(:file_logger_webview)
+      Logger.info("File logging disabled via UI.")
+    end
   end
 
   def handle_event("change", params, %{assigns: %{car_settings: settings, car: id}} = socket) do
