@@ -105,7 +105,7 @@ services:
       - mosquitto-data:/mosquitto/data
 
   proxy:
-    image: traefik:v3.5
+    image: traefik:v3.6
     restart: always
     command:
       - "--global.sendAnonymousUsage=false"
