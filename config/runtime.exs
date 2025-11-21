@@ -155,7 +155,7 @@ end
 config :teslamate, TeslaMateWeb.Endpoint,
   http:
     Util.choose_http_binding_address()
-    |> Keyword.merge([protocol_options: [max_header_value_length: 16384]]),
+    |> Keyword.merge(protocol_options: [max_header_value_length: 16384]),
   url: [
     host: System.get_env("VIRTUAL_HOST", "localhost"),
     path: System.get_env("URL_PATH", "/"),
