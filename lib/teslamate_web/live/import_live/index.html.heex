@@ -1,26 +1,26 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><.link navigate={~p"/"}><%= gettext("Home") %></.link></li>
-    <li class="is-active"><.link navigate=""><%= gettext("TeslaFi Import") %></.link></li>
+    <li><.link navigate={~p"/"}>{gettext("Home")}</.link></li>
+    <li class="is-active"><.link navigate="">{gettext("TeslaFi Import")}</.link></li>
   </ul>
 </nav>
 
 <div class="container is-flex mb-3" style="align-items: center; justify-content: space-between;">
   <h2 class="title is-4 is-marginless">
-    <%= ngettext(
+    {ngettext(
       "Found %{count} file",
       "Found %{count} files",
       length(@status.files),
       count: length(@status.files)
-    ) %>
+    )}
   </h2>
-  <%= link(raw("<span class='icon'><span class='mdi mdi-reload'></span></span>"),
+  {link(raw("<span class='icon'><span class='mdi mdi-reload'></span></span>"),
     to: "#",
     type: "button",
     class: "button is-text is-inverted",
     phx_click: "reload",
     disabled: @status.state != :idle
-  ) %>
+  )}
 </div>
 
 <div class="table-container">
@@ -36,8 +36,8 @@
             _ -> {"????", "??"}
           end %>
         <tr>
-          <td style="font-variant-numeric: tabular-nums;"><%= "#{month}/#{year}" %></td>
-          <td><%= Path.absname(path) %></td>
+          <td style="font-variant-numeric: tabular-nums;">{"#{month}/#{year}"}</td>
+          <td>{Path.absname(path)}</td>
           <td class="has-text-centered" style="min-width: 30px;">
             <span class="spinner">
               <%= case {@status.state, complete} do %>
@@ -46,7 +46,7 @@
                     <span class="mdi mdi-check-bold"></span>
                   </span>
                 <% {:running, false}  -> %>
-                  <%= content_tag(:span, nil, class: "is-loading") %>
+                  {content_tag(:span, nil, class: "is-loading")}
                 <% {:error, true}     -> %>
                   <span class="icon has-text-success">
                     <span class="mdi mdi-check-bold"></span>
@@ -76,22 +76,22 @@
 <%= if @status.state == :idle do %>
   <.form :let={f} for={@changeset} phx-change="change" phx-submit="import">
     <div class="field mb-6">
-      <%= label(f, :timezone, gettext("Time zone"), class: "label is-medium ") %>
+      {label(f, :timezone, gettext("Time zone"), class: "label is-medium ")}
       <div class="control">
         <div class="select is-fullwidth">
-          <%= select(f, :timezone, @timezones, disabled: @status.state != :idle) %>
+          {select(f, :timezone, @timezones, disabled: @status.state != :idle)}
         </div>
       </div>
     </div>
 
     <div class="field">
       <div class="control">
-        <%= submit(gettext("Import"),
+        {submit(gettext("Import"),
           class: "button is-success is-fullwidth",
           disabled: !@changeset.valid? or length(@status.files) < 1,
           phx_disable_with: "Saving...",
           phx_loading_class: "is-loading"
-        ) %>
+        )}
       </div>
     </div>
   </.form>
@@ -99,6 +99,6 @@
 
 <%= if @status.state == :error do %>
   <code class="box has-text-danger">
-    <%= inspect(@status.message, pretty: true) %>
+    {inspect(@status.message, pretty: true)}
   </code>
 <% end %>
