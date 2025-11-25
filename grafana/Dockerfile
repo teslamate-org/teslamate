@@ -1,6 +1,6 @@
 # Ensure selecting a tag that is available for arm/v7, arm64, and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
-FROM grafana/grafana:12.1.1
+FROM grafana/grafana:12.3.0
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_AUTH_ANONYMOUS_ENABLED=false \
@@ -16,12 +16,18 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_DATE_FORMATS_USE_BROWSER_LOCALE=true \
     GF_PLUGINS_PREINSTALL_DISABLED=true \
     GF_UNIFIED_ALERTING_ENABLED=false \
+    GF_METRICS_ENABLED=false \
+    GF_RECORDING_RULES_ENABLED=false \
     DATABASE_PORT=5432 \
     DATABASE_SSL_MODE=disable
 
 USER grafana
 
 COPY logo.svg /usr/share/grafana/public/img/grafana_icon.svg
+
+RUN LOGO_PATH=$(find /usr/share/grafana/public/build/static/img/ -type f -name 'grafana_icon.*.svg') && \
+    cp /usr/share/grafana/public/img/grafana_icon.svg "$LOGO_PATH" || true
+
 COPY favicon.png /usr/share/grafana/public/img/fav32.png
 COPY apple-touch-icon.png /usr/share/grafana/public/img/apple-touch-icon.png
 
