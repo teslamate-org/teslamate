@@ -1,4 +1,6 @@
 defmodule TeslaMate.DatabaseCheck do
+  require Logger
+
   alias Ecto.Adapters.SQL
   alias TeslaMate.Repo
 
@@ -51,7 +53,7 @@ defmodule TeslaMate.DatabaseCheck do
        }) do
     cond do
       major > 1800 ->
-        IO.puts(
+        Logger.warning(
           "PostgreSQL version #{version} is not officially tested or supported yet. Use at your own risk."
         )
 
@@ -67,7 +69,7 @@ defmodule TeslaMate.DatabaseCheck do
         raise "PostgreSQL version #{version} is not supported. Minimum required for #{div(major, 100)}.x is #{@version_requirements[major].min_version}."
 
       true ->
-        IO.puts("PostgreSQL version #{version} is compatible (#{div(major, 100)}.x series).")
+        Logger.info("PostgreSQL version #{version} is compatible (#{div(major, 100)}.x series).")
     end
   end
 end
