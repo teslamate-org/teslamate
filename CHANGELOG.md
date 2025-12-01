@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- feat: use Logger instead of IO.puts in DB check (#5050 - @swiffer)
+
 #### Build, CI, internal
 
 #### Dashboards
