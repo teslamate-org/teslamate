@@ -18,6 +18,7 @@
 - build(deps): bump express from 4.21.2 to 4.22.1 in /website (#5060)
 - build(deps): update flake.lock (#5027)
 - fix(website): Bump node-forge to 1.3.3 to resolve CVE-2025-12816, CVE-2025-66030 and CVE-2025-66031 (#5071 - @JakobLichterfeld)
+- build(deps): bump ex_cldr from 2.42.0 to 2.44.1 (#5053 - @JakobLichterfeld)
 
 #### Dashboards
 
