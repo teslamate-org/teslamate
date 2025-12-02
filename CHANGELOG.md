@@ -17,6 +17,7 @@
 - build(deps): bump DeterminateSystems/update-flake-lock from 27 to 28 (#5056)
 - build(deps): bump express from 4.21.2 to 4.22.1 in /website (#5060)
 - build(deps): update flake.lock (#5027)
+- build(deps): bump ex_cldr from 2.42.0 to 2.44.1 (#5053 - @JakobLichterfeld)
 
 #### Dashboards
 
