@@ -66,7 +66,7 @@ jobs:
     runs-on: ${{ matrix.runs_on }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Buildx
         uses: ./.github/actions/build
@@ -89,7 +89,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Login to GitHub Container Registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
@@ -109,7 +109,7 @@ jobs:
     if: needs.check_paths.outputs.githubfolder != 'true' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0

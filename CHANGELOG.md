@@ -15,7 +15,6 @@
 - build(deps): bump js-yaml from 3.14.1 to 3.14.2 in /website (#5043)
 - build(deps): bump crate-ci/typos from 1.39.0 to 1.40.0 (#5055)
 - build(deps): bump DeterminateSystems/update-flake-lock from 27 to 28 (#5056)
-- build(deps): bump actions/checkout from 5.0.0 to 6.0.0 (#5057)
 - build(deps): bump express from 4.21.2 to 4.22.1 in /website (#5060)
 - build(deps): update flake.lock (#5027)
 
