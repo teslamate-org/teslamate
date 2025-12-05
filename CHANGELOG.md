@@ -17,6 +17,7 @@
 - build(deps): bump DeterminateSystems/update-flake-lock from 27 to 28 (#5056)
 - build(deps): bump express from 4.21.2 to 4.22.1 in /website (#5060)
 - build(deps): update flake.lock (#5027)
+- feat(nix): use nixos-25.11 (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
