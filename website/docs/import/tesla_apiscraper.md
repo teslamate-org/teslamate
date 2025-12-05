@@ -38,7 +38,6 @@ All of this is experimental and has not been extensively tested. If you encounte
    ```
 
 3. Run the `influxdb-export.sh` script (or `influxdb-export.bat` if you're on Windows). You may need to `sudo` it / run it in an Administrator command line prompt if your Docker install needs root. It will do the following:
-
    - Create the `influxdb-csv` output folder, if it doesn't exist yet
    - Start an InfluxDB Docker container with the `influxdb-data` and `influxdb-csv` folders mounted (on Windows, you may need to allow your Docker to access the drive you are working on for the mounts to work)
    - Wait for the container to report as _healthy_
@@ -50,12 +49,10 @@ All of this is experimental and has not been extensively tested. If you encounte
 ### Part 2: Converting exported InfluxDB CSV files to TeslaFi CSV
 
 1. Obtain your Tesla's **vehicle ID** number. It's a 10- or 11-digit number that uniquely identifies your car, and is part of the TeslaFi data format, but it's not included in tesla-apiscraper data - so you need to source it separately. There are several ways you can get it:
-
    - Manually using the Tesla API. The number is listed under `vehicle_id` in the `vehicles` response, as documented here: [https://tesla-api.timdorr.com/api-basics/vehicles](https://tesla-api.timdorr.com/api-basics/vehicles).
    - From the database of another Tesla API tracker you're already using, such as TeslaMate (**docker compose exec database psql teslamate teslamate -c 'select vid from cars;'**).
 
 2. Run the `teslafi-convert.sh` script (or `teslafi-convert.bat` if you're on Windows). You may need to `sudo` it / run it in an Administrator command line prompt if your Docker install needs root. It will do the following:
-
    - Create the `teslafi-csv` output folder, if it doesn't exist yet
    - Build and start a Docker container with the `converter` app and its few dependencies, with the `influxdb-csv` and `teslafi-csv` folders mounted (on Windows, you may need to allow your Docker to access the drive you are working on for the mounts to work)
    - Ask you for the vehicle ID mentioned above
