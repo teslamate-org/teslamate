@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang={Plug.Conn.get_session(@conn, :locale)}>
+<html lang={Plug.Conn.get_session(@conn, :locale)} data-theme-mode={@conn.assigns.settings.theme_mode}>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -42,6 +42,15 @@
     <%= csrf_meta_tag() %>
     <script>
       window.LIVE_PATH = "<%= Routes.static_path(@conn, "/live") %>";
+      // Apply theme immediately to prevent flash
+      (function() {
+        const themeMode = document.documentElement.getAttribute('data-theme-mode');
+        let actualTheme = themeMode;
+        if (themeMode === 'system') {
+          actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', actualTheme);
+      })();
     </script>
     <script
       defer
