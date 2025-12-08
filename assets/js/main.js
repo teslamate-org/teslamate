@@ -47,9 +47,11 @@ function applyTheme() {
 
   // Apply the theme
   document.documentElement.setAttribute("data-theme", actualTheme);
-  
+
   // Trigger a custom event for components that need to react to theme changes
-  window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: actualTheme } }));
+  window.dispatchEvent(
+    new CustomEvent("themechange", { detail: { theme: actualTheme } }),
+  );
 }
 
 // Apply theme on load
@@ -57,10 +59,13 @@ applyTheme();
 
 // Listen for system theme changes when in system mode
 if (window.matchMedia) {
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    const themeMode = document.documentElement.getAttribute("data-theme-mode");
-    if (themeMode === "system") {
-      applyTheme();
-    }
-  });
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", () => {
+      const themeMode =
+        document.documentElement.getAttribute("data-theme-mode");
+      if (themeMode === "system") {
+        applyTheme();
+      }
+    });
 }

@@ -142,11 +142,12 @@ function createMap(opts) {
   const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", opts);
 
   // Detect dark mode to use appropriate tiles
-  const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-  
+  const isDarkMode =
+    document.documentElement.getAttribute("data-theme") === "dark";
+
   const osm = new TileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
-    className: isDarkMode ? 'dark-mode-tiles' : '',
+    className: isDarkMode ? "dark-mode-tiles" : "",
   });
 
   if (opts.enableHybridLayer) {
@@ -333,18 +334,21 @@ export const NumericInput = {
 
 export const ThemeSelector = {
   mounted() {
-    const select = this.el.querySelector('select');
+    const select = this.el.querySelector("select");
     if (select) {
-      select.addEventListener('change', (e) => {
+      select.addEventListener("change", (e) => {
         const themeMode = e.target.value;
-        document.documentElement.setAttribute('data-theme-mode', themeMode);
-        
+        document.documentElement.setAttribute("data-theme-mode", themeMode);
+
         // Apply theme immediately
         let actualTheme = themeMode;
-        if (themeMode === 'system') {
-          actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (themeMode === "system") {
+          actualTheme = window.matchMedia("(prefers-color-scheme: dark)")
+            .matches
+            ? "dark"
+            : "light";
         }
-        document.documentElement.setAttribute('data-theme', actualTheme);
+        document.documentElement.setAttribute("data-theme", actualTheme);
       });
     }
   },
