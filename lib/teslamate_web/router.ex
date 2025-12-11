@@ -44,6 +44,7 @@ defmodule TeslaMateWeb.Router do
       live "/geo-fences/:id/edit", GeoFenceLive.Form
       live "/charge-cost/:id", ChargeLive.Cost
       live "/import", ImportLive.Index
+      live "/logs", LogLive.Index
     end
   end
 
