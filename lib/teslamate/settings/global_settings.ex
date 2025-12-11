@@ -13,7 +13,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
     field :grafana_url, :string
 
     field :language, :string
-    field :theme_mode, Ecto.Enum, values: [:light, :system, :dark], default: :light
+    field :theme_mode, Ecto.Enum, values: [:light, :system, :dark], default: :system
 
     timestamps()
   end
