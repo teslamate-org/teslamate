@@ -11,7 +11,9 @@
   --border-color: #4a4a4a;
   --hover-bg: #3a3a3a;
 
-  // Body and background
+  // HTML and body background
+  background-color: var(--background);
+
   body {
     background-color: var(--background);
     color: var(--text-primary);
