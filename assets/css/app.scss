@@ -284,9 +284,20 @@ main.full-height {
   min-height: calc((var(--vh, 1vh) * 100) - 102px);
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main.section {
+  flex: 1;
+}
+
 .footer {
   height: 50px;
   opacity: 0.8;
+  margin-top: auto;
 
   .button.is-text {
     text-decoration: initial;
