@@ -18,6 +18,8 @@
 - build(deps): bump express from 4.21.2 to 4.22.1 in /website (#5060)
 - build(deps): update flake.lock (#5027)
 - fix(website): Bump node-forge to 1.3.3 to resolve CVE-2025-12816, CVE-2025-66030 and CVE-2025-66031 (#5071 - @JakobLichterfeld)
+- feat(nix): use nixos-25.11 (#5062 - @JakobLichterfeld)
+- chore(nix): update flake.lock with new dependency revisions (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
@@ -1702,7 +1704,6 @@ Additional:
 - Overview: Update battery gauge thresholds ([#651](https://github.com/adriankumpf/teslamate/pull/651) by [wooter](https://github.com/wooter))
 - Drives: Add column header for reduced range ([#662](https://github.com/adriankumpf/teslamate/pull/662) by [Dulanic](https://github.com/Dulanic))
 - Charging Stats: Show map with frequently used chargers ([#666](https://github.com/adriankumpf/teslamate/pull/666) by [Dulanic](https://github.com/Dulanic))
-
   - _Manual install: requires Grafana plugin **grafana-map-panel**_
 
     ```bash
