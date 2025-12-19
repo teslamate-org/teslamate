@@ -96,7 +96,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -240,7 +240,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -329,7 +329,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -531,6 +531,7 @@
           "fields": "",
           "values": false
         },
+        "sort": "desc",
         "tooltip": {
           "hideZeros": false,
           "maxHeight": 600,
@@ -538,7 +539,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -632,7 +633,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -733,7 +734,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -862,7 +863,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -1067,7 +1068,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -1239,7 +1240,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -1344,7 +1345,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -1547,7 +1548,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -1612,7 +1613,7 @@
   ],
   "preload": false,
   "refresh": "",
-  "schemaVersion": 41,
+  "schemaVersion": 42,
   "tags": [
     "tesla"
   ],
