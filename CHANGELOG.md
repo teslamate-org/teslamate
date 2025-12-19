@@ -45,6 +45,7 @@ Enjoy!
 - build(deps): bump nix-community/cache-nix-action from 7.0.0 to 7.0.2 (#5122)
 - build(deps): bump actions/cache from 5.0.1 to 5.0.3 (#5120)
 - feat(nix): use nixos-25.11 (#5062 - @JakobLichterfeld)
+- chore(nix): update flake.lock with new dependency revisions (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
