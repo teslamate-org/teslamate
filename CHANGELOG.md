@@ -19,6 +19,7 @@
 - build(deps): update flake.lock (#5027)
 - fix(website): Bump node-forge to 1.3.3 to resolve CVE-2025-12816, CVE-2025-66030 and CVE-2025-66031 (#5071 - @JakobLichterfeld)
 - feat(nix): use nixos-25.11 (#5062 - @JakobLichterfeld)
+- chore(nix): update flake.lock with new dependency revisions (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
