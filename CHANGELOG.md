@@ -25,6 +25,7 @@
 #### Documentation
 
 - docs(traefik): update to v3.6 as 3.6.1 solves issues with docker 29.0 (#5034 - @JakobLichterfeld)
+- docs: fix the formatting of the `DATABASE_SOCKET_DIR` description (#5026 - @IngmarStein)
 
 ## [2.2.0] - 2025-11-06
 

@@ -71,6 +71,7 @@ Sneak peak into TeslaMate interface and bundled dashboards. See [the docs](https
 
 ## Star History
 
+<!-- markdownlint-disable MD033 -->
 <a href="https://www.star-history.com/#teslamate-org/teslamate&type=date&legend=top-left">
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=teslamate-org/teslamate&type=date&theme=dark&legend=top-left" />
@@ -78,6 +79,7 @@ Sneak peak into TeslaMate interface and bundled dashboards. See [the docs](https
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=teslamate-org/teslamate&type=date&legend=top-left" />
  </picture>
 </a>
+<!-- markdownlint-enable MD033 -->
 
 ## Credits
 
