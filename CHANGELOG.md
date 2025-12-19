@@ -28,6 +28,7 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - build(deps): bump crate-ci/typos from 1.40.0 to 1.41.0 (#5079)
 - build(deps): bump actions/stale from 10.1.0 to 10.1.1 (#5080)
 - feat(nix): use nixos-25.11 (#5062 - @JakobLichterfeld)
+- chore(nix): update flake.lock with new dependency revisions (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
