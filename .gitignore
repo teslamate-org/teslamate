@@ -71,4 +71,3 @@ config/*.env
 
 # Used during tests
 /tmp/
-WARP.md
