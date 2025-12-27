@@ -13,6 +13,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
     field :grafana_url, :string
 
     field :language, :string
+    field :theme_mode, Ecto.Enum, values: [:light, :system, :dark], default: :system
 
     timestamps()
   end
@@ -91,14 +92,16 @@ defmodule TeslaMate.Settings.GlobalSettings do
       :preferred_range,
       :base_url,
       :grafana_url,
-      :language
+      :language,
+      :theme_mode
     ])
     |> validate_required([
       :unit_of_length,
       :unit_of_temperature,
       :unit_of_pressure,
       :preferred_range,
-      :language
+      :language,
+      :theme_mode
     ])
     |> update_change(:base_url, &trim_url/1)
     |> update_change(:grafana_url, &trim_url/1)
