@@ -32,6 +32,7 @@ The documentation is available at [https://docs.teslamate.org](https://docs.tesl
 - Supports multiple vehicles per Tesla Account
 - Charge cost tracking
 - Import from TeslaFi and tesla-apiscraper
+- Customizable theme mode (light, dark, or system default)
 
 ### Dashboards
 
