@@ -50,8 +50,8 @@
       cldr = pkgs.fetchFromGitHub {
         owner = "elixir-cldr";
         repo = "cldr";
-        rev = "v2.42.0";
-        sha256 = "sha256-FLGUKfAKAKL2nqf/7YXQuuuEvVuSy2RVhZves9XOI1Q=";
+        rev = "v2.44.1";
+        sha256 = "sha256-5XLPQYDW9yV0ZkWbyiB2s213GTccFjdqckBmx09n4eE=";
         # sha256 = pkgs.lib.fakeHash;
       };
 
