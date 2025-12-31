@@ -39,7 +39,7 @@
         packages =
           with pkgs; [
             elixir
-            elixir_ls
+            elixir-ls
             node2nix
             nodejs
             prefetch-npm-deps
