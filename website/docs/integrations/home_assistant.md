@@ -519,10 +519,10 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     state_topic: "teslamate/cars/1/active_route"
     value_template: >
       {% if not value_json.error and value_json.miles_to_arrival %}
-        {{ value_json.miles_to_arrival }}
+        {{ (value_json.miles_to_arrival | float * 1.60934) | round(2) }}
       {% endif %}
     device_class: distance
-    unit_of_measurement: mi
+    unit_of_measurement: km
     icon: mdi:map-marker-distance
 
 - sensor:
