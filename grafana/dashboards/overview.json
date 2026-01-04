@@ -1424,7 +1424,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  charger_power,\n  (case when battery_heater_on then 1 else 0 end) as battery_heater,\n  charger_actual_current,\n  c.charge_energy_added\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id\nORDER BY\n  date ASC",
+          "rawSql": "SELECT\n  $__time(date),\n  charger_power,\n  (case when battery_heater_on then 1 when battery_heater then 1 else 0 end) as battery_heater,\n  charger_actual_current,\n  c.charge_energy_added\nFROM\n  charges c\njoin\n  charging_processes p ON p.id = c.charging_process_id \nWHERE\n  $__timeFilter(date) and\n  p.car_id = $car_id\nORDER BY\n  date ASC",
           "refId": "B",
           "sql": {
             "columns": [
