@@ -8,6 +8,7 @@
 
 - feat: use Logger instead of IO.puts in DB check (#5050 - @swiffer)
 - feat: Increase max_header_value_length to support oauth2-proxy (#5031 - @ultravail)
+- feat: use Grafana 12.3.1 (#4965 - @swiffer)
 
 #### Build, CI, internal
 
