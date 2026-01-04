@@ -17,7 +17,8 @@
   },
   "overrides": {
     "webpack-dev-server": "^5.2.1",
-    "node-forge": "^1.3.3"
+    "node-forge": "^1.3.3",
+    "qs": "^6.14.1"
   },
   "browserslist": {
     "production": [
