@@ -21,6 +21,8 @@
 
 #### Dashboards
 
+- feat(overview): show battery heating on overview dashboard as well (#5090 - @kaistian)
+
 #### Translations
 
 #### Documentation
