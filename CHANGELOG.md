@@ -24,6 +24,7 @@
 - build(deps): bump actions/cache from 4.3.0 to 5.0.1 (#5077)
 - build(deps): bump crate-ci/typos from 1.40.0 to 1.41.0 (#5079)
 - build(deps): bump actions/stale from 10.1.0 to 10.1.1 (#5080)
+- build(deps): bump actions/checkout from 5.0.0 to 6.0.1 (#5083)
 
 #### Dashboards
 
