@@ -23,6 +23,7 @@
 - build(deps): bump nix-community/cache-nix-action from 6.1.3 to 7.0.0 (#5082)
 - build(deps): bump actions/cache from 4.3.0 to 5.0.1 (#5077)
 - build(deps): bump crate-ci/typos from 1.40.0 to 1.41.0 (#5079)
+- build(deps): bump actions/stale from 10.1.0 to 10.1.1 (#5080)
 
 #### Dashboards
 
