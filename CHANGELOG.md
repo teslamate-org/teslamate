@@ -20,6 +20,7 @@
 - fix(website): Bump node-forge to 1.3.3 to resolve CVE-2025-12816, CVE-2025-66030 and CVE-2025-66031 (#5071 - @JakobLichterfeld)
 - chore(website): bump qs to fix CVE-2025-15284 (#5091 - @JakobLichterfeld)
 - build(deps): bump react and react-dom from 19.2.0 to 19.2.3 in /website (#5084)
+- build(deps): bump nix-community/cache-nix-action from 6.1.3 to 7.0.0 (#5082)
 
 #### Dashboards
 
