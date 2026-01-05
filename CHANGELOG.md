@@ -21,6 +21,7 @@
 - chore(website): bump qs to fix CVE-2025-15284 (#5091 - @JakobLichterfeld)
 - build(deps): bump react and react-dom from 19.2.0 to 19.2.3 in /website (#5084)
 - build(deps): bump nix-community/cache-nix-action from 6.1.3 to 7.0.0 (#5082)
+- build(deps): bump actions/cache from 4.3.0 to 5.0.1 (#5077)
 
 #### Dashboards
 
