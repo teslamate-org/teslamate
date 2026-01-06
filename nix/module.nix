@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  teslamate = self.packages.${pkgs.system}.default;
+  teslamate = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
   cfg = config.services.teslamate;
 
   inherit (lib)
