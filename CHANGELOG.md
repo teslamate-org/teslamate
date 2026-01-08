@@ -29,6 +29,7 @@
 #### Dashboards
 
 - feat(overview): show battery heating on overview dashboard as well (#5090 - @kaistian)
+- feat: optimize reduced_range query and always show consumption kwh in drives dashboard (#5089 - @swiffer)
 
 #### Translations
 
