@@ -50,6 +50,8 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - docs: fix external image rendering with Traefik SSL (#5074 - @swiffer)
 - docs(home_assistant): default tesla_active_route_distance_to_arrival sensor to kilometers (#5086 - @kenni)
 - docs: Remove hints to now deprecated Grafana VS Code Extension in contribution guide (#5110 - @swiffer)
+- docs: add Matedroid Android app reference (#5094 - @vide)
+- docs: add T-Buddy iOS app reference (#5097 - @JakobLichterfeld)
 
 ## [2.2.0] - 2025-11-06
 
