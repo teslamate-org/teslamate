@@ -93,6 +93,12 @@ LINK: [MyTeslaMate Website](https://www.myteslamate.com)
 
 LINK: [Follow this guide](/docs/configuration/api#myteslamate-fleet-api) to use official Tesla APIs on your Teslamate.
 
+## [T-Buddy](https://github.com/garanda21/t-buddy)
+
+A modern, native iOS companion app for TeslaMate. Monitor your Tesla's telemetry, charges, drives, and battery health with a beautiful SwiftUI interface.
+
+LINK: [T-Buddy](https://github.com/garanda21/t-buddy)
+
 ## [Tesla-GeoGDO](https://github.com/brchri/tesla-geogdo) (previously [Tesla-YouQ](https://github.com/brchri/tesla-youq))
 
 A lightweight app that will operate your smart garage door openers based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and various smart garage door openers.
