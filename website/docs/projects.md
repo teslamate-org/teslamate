@@ -71,6 +71,12 @@ An unofficial Home Assistant addon for TeslaMate, with a PostgreSQL addon too. W
 
 LINK: [github.com/lildude/ha-addon-teslamate](https://github.com/lildude/ha-addon-teslamate)
 
+## [MateDroid](https://github.com/vide/matedroid)
+
+MateDroid is a native Android app for viewing Tesla vehicle data from your self-hosted TeslaMate instance. It uses the [TeslaMate API](https://github.com/tobiasehlert/teslamateapi) project to retrieve the data and display it in a beautiful and clean way.
+
+LINK: [https://github.com/vide/matedroid](https://github.com/vide/matedroid)
+
 ## [MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
 
 A [Magic Mirror](https://magicmirror.builders/) Module for TeslaMate.
@@ -92,9 +98,3 @@ LINK: [Follow this guide](/docs/configuration/api#myteslamate-fleet-api) to use 
 A lightweight app that will operate your smart garage door openers based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and various smart garage door openers.
 
 LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-geogdo)
-
-## [MateDroid](https://github.com/vide/matedroid) 
-
-MateDroid is a native Android app for viewing Tesla vehicle data from your self-hosted Teslamate instance. It uses the [Teslamate API](https://github.com/tobiasehlert/teslamateapi) project to retrieve the data and display it in a beatiful and clean way.
-
-LINK: [https://github.com/vide/matedroid](https://github.com/vide/matedroid)
