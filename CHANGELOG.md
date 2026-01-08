@@ -39,6 +39,8 @@
 - docs: fix the formatting of the `DATABASE_SOCKET_DIR` description (#5026 - @IngmarStein)
 - docs: fix external image rendering with Traefik SSL (#5074 - @swiffer)
 - docs(home_assistant): default tesla_active_route_distance_to_arrival sensor to kilometers (#5086 - @kenni)
+- docs: add Matedroid Android app reference (#5094 - @vide)
+- docs: add T-Buddy iOS app reference (#5097 - @JakobLichterfeld)
 
 ## [2.2.0] - 2025-11-06
 
