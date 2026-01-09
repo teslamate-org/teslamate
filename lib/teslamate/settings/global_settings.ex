@@ -13,6 +13,7 @@ defmodule TeslaMate.Settings.GlobalSettings do
     field :grafana_url, :string
 
     field :language, :string
+    field :file_logging_enabled, :boolean, default: false
 
     timestamps()
   end
@@ -91,7 +92,8 @@ defmodule TeslaMate.Settings.GlobalSettings do
       :preferred_range,
       :base_url,
       :grafana_url,
-      :language
+      :language,
+      :file_logging_enabled
     ])
     |> validate_required([
       :unit_of_length,

@@ -339,6 +339,33 @@
       </div>
     </div>
   </div>
+
+  <div class="columns is-mobile is-centered">
+    <div class="column">
+      <h2 class="title is-4"><%= gettext("Logging") %></h2>
+      <%= if System.get_env("TESLAMATE_FILE_LOGGING_ENABLED") == "true" do %>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <%= label(f, :file_logging_enabled, gettext("File Logging"), class: "label") %>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <%= checkbox(f, :file_logging_enabled, class: "switch is-rounded is-success") %>
+                <%= label(f, :file_logging_enabled, nil) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <p class="help">
+          <%= gettext(
+            "File logging can be enabled by setting the TESLAMATE_FILE_LOGGING_ENABLED environment variable to 'true'."
+          ) %>
+        </p>
+      <% end %>
+    </div>
+  </div>
 </.form>
 
 <div class="columns is-mobile is-centered">

@@ -101,6 +101,12 @@
               <span class="icon"><i class="mdi mdi-map-marker-radius"></i></span>&nbsp;<span><%= gettext("Geo-Fences") %></span>
             </.link>
             <.link
+              navigate={Routes.live_path(@conn, TeslaMateWeb.LogLive.Index)}
+              class="navbar-item  mr-5"
+            >
+              <span class="icon"><i class="mdi mdi-math-log"></i></span>&nbsp;<span><%= gettext("Logs") %></span>
+            </.link>
+            <.link
               navigate={Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index)}
               class="navbar-item  mr-5"
             >
