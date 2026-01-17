@@ -31,3 +31,33 @@ providers:
     updateIntervalSeconds: 86400
     options:
       path: /dashboards_reports
+  - name: "teslamate_fr"
+    orgId: 1
+    folder: "TeslaMate (FR)"
+    folderUid: Nr4ofiDZk-fr
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 86400
+    options:
+      path: /dashboards_fr
+  - name: "teslamate_internal_fr"
+    orgId: 1
+    folder: "Interne (FR)"
+    folderUid: Nr5ofiDZk-fr
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 86400
+    options:
+      path: /dashboards_internal_fr
+  - name: "teslamate_reports_fr"
+    orgId: 1
+    folder: "Rapports (FR)"
+    folderUid: Nr6ofiDZk-fr
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 86400
+    options:
+      path: /dashboards_reports_fr

@@ -28,7 +28,10 @@ COPY apple-touch-icon.png /usr/share/grafana/public/img/apple-touch-icon.png
 COPY datasource.yml /etc/grafana/provisioning/datasources/
 COPY dashboards.yml /etc/grafana/provisioning/dashboards/
 COPY dashboards/internal/*.json /dashboards_internal/
+COPY dashboards/internal/fr/*.json /dashboards_internal_fr/
 COPY dashboards/reports/*.json /dashboards_reports/
+COPY dashboards/reports/fr/*.json /dashboards_reports_fr/
 COPY dashboards/*.json /dashboards/
+COPY dashboards/fr/*.json /dashboards_fr/
 
 EXPOSE 3000
