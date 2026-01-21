@@ -65,6 +65,14 @@
       border-bottom-color: var(--border-color);
     }
 
+    // Allow opting out for "headerless" tables (e.g., car summary)
+    &.thead-transparent {
+      thead th,
+      thead td {
+        background-color: var(--surface);
+      }
+    }
+
     tbody td,
     tbody th {
       border-color: var(--border-color);
