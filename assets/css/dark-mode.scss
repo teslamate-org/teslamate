@@ -289,6 +289,36 @@
         color: #4a9fd9;
       }
     }
+
+    // Inverted light buttons (edit/delete buttons in tables)
+    &.is-inverted.is-light {
+      background-color: var(--surface-light);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+
+      &:hover {
+        background-color: var(--hover-bg);
+        border-color: #5a5a5a;
+      }
+
+      &.is-info {
+        color: #7bc8ff;
+
+        &:hover {
+          background-color: var(--hover-bg);
+          color: #4a9fd9;
+        }
+      }
+
+      &.is-danger {
+        color: #ff7b7b;
+
+        &:hover {
+          background-color: var(--hover-bg);
+          color: #ff5555;
+        }
+      }
+    }
   }
 
   // Links
