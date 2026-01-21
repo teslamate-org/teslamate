@@ -304,18 +304,34 @@
       &.is-info {
         color: #7bc8ff;
 
+        .icon {
+          color: #7bc8ff;
+        }
+
         &:hover {
           background-color: var(--hover-bg);
           color: #4a9fd9;
+
+          .icon {
+            color: #4a9fd9;
+          }
         }
       }
 
       &.is-danger {
         color: #ff7b7b;
 
+        .icon {
+          color: #ff7b7b;
+        }
+
         &:hover {
           background-color: var(--hover-bg);
           color: #ff5555;
+
+          .icon {
+            color: #ff5555;
+          }
         }
       }
     }
