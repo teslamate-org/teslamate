@@ -255,6 +255,14 @@
           background-color: var(--hover-bg);
         }
       }
+
+      // When a menu entry is marked active (e.g., previously opened dashboard)
+      // Bulma uses a light background by default. Override for dark mode.
+      .navbar-item.is-active,
+      a.navbar-item.is-active {
+        background-color: var(--surface-light);
+        color: var(--text-primary);
+      }
     }
   }
 
