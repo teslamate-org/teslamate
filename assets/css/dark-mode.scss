@@ -199,6 +199,24 @@
     ul {
       border-bottom-color: var(--border-color);
     }
+
+    &.is-boxed {
+      a {
+        background-color: transparent;
+        border-color: var(--border-color);
+      }
+
+      a:hover {
+        background-color: var(--surface-light);
+      }
+
+      li.is-active a {
+        background-color: var(--surface);
+        color: #3273dc;
+        border-color: #3273dc;
+        border-bottom-color: transparent; // keep the active tab visually connected
+      }
+    }
   }
 
   // Dropdowns
