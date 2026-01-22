@@ -82,7 +82,7 @@ msgstr "Accueil"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:107
+#: lib/teslamate_web/templates/layout/root.html.heex:119
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Réglages"
@@ -112,17 +112,17 @@ msgstr "S'endort"
 msgid "unavailable"
 msgstr "Indisponible"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:254
+#: lib/teslamate_web/live/settings_live/index.html.heex:279
 #, elixir-autogen, elixir-format
 msgid "Length"
 msgstr "Distance"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:269
+#: lib/teslamate_web/live/settings_live/index.html.heex:294
 #, elixir-autogen, elixir-format
 msgid "Temperature"
 msgstr "Température"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:251
+#: lib/teslamate_web/live/settings_live/index.html.heex:276
 #, elixir-autogen, elixir-format
 msgid "Units"
 msgstr "Unités"
@@ -142,7 +142,7 @@ msgstr "Géorepérage \"%{name}\" créé"
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
 #: lib/teslamate_web/live/geofence_live/index.ex:22
 #: lib/teslamate_web/live/geofence_live/index.html.heex:5
-#: lib/teslamate_web/templates/layout/root.html.heex:101
+#: lib/teslamate_web/templates/layout/root.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "Geo-Fences"
 msgstr "Géorepérages"
@@ -322,7 +322,7 @@ msgid "Outside Temperature"
 msgstr "Température extérieure"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:424
-#: lib/teslamate_web/live/settings_live/index.html.heex:349
+#: lib/teslamate_web/live/settings_live/index.html.heex:374
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "Version"
@@ -342,19 +342,19 @@ msgstr "Déverouillée"
 msgid "Remaining Time"
 msgstr "Temps restant"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:324
-#: lib/teslamate_web/templates/layout/root.html.heex:83
+#: lib/teslamate_web/live/settings_live/index.html.heex:349
+#: lib/teslamate_web/templates/layout/root.html.heex:95
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "Tableaux de bord"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:302
+#: lib/teslamate_web/live/settings_live/index.html.heex:327
 #, elixir-autogen, elixir-format
 msgid "URLs"
 msgstr "URLs"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:216
-#: lib/teslamate_web/live/settings_live/index.html.heex:305
+#: lib/teslamate_web/live/settings_live/index.html.heex:330
 #, elixir-autogen, elixir-format
 msgid "Web App"
 msgstr "App Web"
@@ -534,18 +534,18 @@ msgstr "Kilométrage"
 msgid "Streaming API"
 msgstr "API de Streaming"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:370
+#: lib/teslamate_web/live/settings_live/index.html.heex:395
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr "Documentation"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:360
+#: lib/teslamate_web/live/settings_live/index.html.heex:385
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr "GitHub"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:355
-#: lib/teslamate_web/templates/layout/root.html.heex:176
+#: lib/teslamate_web/live/settings_live/index.html.heex:380
+#: lib/teslamate_web/templates/layout/root.html.heex:188
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "Mise à jour disponible"
@@ -571,7 +571,7 @@ msgstr "Par minute"
 msgid "Software Update available (%{version})"
 msgstr "Mise à jour disponible (%{version})"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:388
+#: lib/teslamate_web/live/settings_live/index.html.heex:413
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Déconnexion"
@@ -611,27 +611,27 @@ msgstr "Votre compte Tesla est verrouillé en raison d'un trop grand nombre de t
 msgid "Downloading update"
 msgstr "Mise à jour en cours de téléchargement"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:133
+#: lib/teslamate_web/templates/layout/root.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "Aucune clé de chiffrement renseignée"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:153
+#: lib/teslamate_web/templates/layout/root.html.heex:165
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "Pour plus d'informations, dirigez-vous vers le guide d'installation en suivant le lien %{link}"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:146
+#: lib/teslamate_web/templates/layout/root.html.heex:158
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "La clé de chiffrement générée automatiquement pour la session actuelle peut être trouvée dans <strong>les logs de l'application</strong>"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:139
+#: lib/teslamate_web/templates/layout/root.html.heex:151
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "Pour s'assurer que votre <strong>jeton d'API Tesla est stocké de façon sécurisée</strong>, une clé de chiffrement doit être renseignée à TeslaMate via la variable d'environnement <code>ENCRYPTION_KEY</code>. Sinon, <strong>une authentification sera requise à chaque redémarrage</strong>."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:284
+#: lib/teslamate_web/live/settings_live/index.html.heex:309
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
 msgstr "Pression des pneus"
@@ -680,3 +680,28 @@ msgstr "Mode sentinelle"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "View car location on Google Maps"
 msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:254
+#, elixir-autogen, elixir-format
+msgid "Appearance"
+msgstr "Apparence"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:263
+#, elixir-autogen, elixir-format
+msgid "Dark"
+msgstr "Sombre"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:262
+#, elixir-autogen, elixir-format
+msgid "Follow System"
+msgstr "Suivre le système"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:261
+#, elixir-autogen, elixir-format
+msgid "Light"
+msgstr "Clair"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:251
+#, elixir-autogen, elixir-format
+msgid "Theme"
+msgstr "Thème"
