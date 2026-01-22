@@ -4,6 +4,8 @@
 
 ### New features
 
+feat: add optional dark mode feature (#5065 - @wooter)
+
 ### Improvements and bug fixes
 
 - feat: use Logger instead of IO.puts in DB check (#5050 - @swiffer)
