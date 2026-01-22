@@ -27,6 +27,8 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - build(deps): bump actions/cache from 4.3.0 to 5.0.1 (#5077)
 - build(deps): bump crate-ci/typos from 1.40.0 to 1.41.0 (#5079)
 - build(deps): bump actions/stale from 10.1.0 to 10.1.1 (#5080)
+- feat(nix): use nixos-25.11 (#5062 - @JakobLichterfeld)
+- chore(nix): update flake.lock with new dependency revisions (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
@@ -1716,7 +1718,6 @@ Additional:
 - Overview: Update battery gauge thresholds ([#651](https://github.com/adriankumpf/teslamate/pull/651) by [wooter](https://github.com/wooter))
 - Drives: Add column header for reduced range ([#662](https://github.com/adriankumpf/teslamate/pull/662) by [Dulanic](https://github.com/Dulanic))
 - Charging Stats: Show map with frequently used chargers ([#666](https://github.com/adriankumpf/teslamate/pull/666) by [Dulanic](https://github.com/Dulanic))
-
   - _Manual install: requires Grafana plugin **grafana-map-panel**_
 
     ```bash
