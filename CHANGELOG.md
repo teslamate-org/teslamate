@@ -27,6 +27,7 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - build(deps): bump actions/cache from 4.3.0 to 5.0.1 (#5077)
 - build(deps): bump crate-ci/typos from 1.40.0 to 1.41.0 (#5079)
 - build(deps): bump actions/stale from 10.1.0 to 10.1.1 (#5080)
+- build(deps): bump lodash from 4.17.21 to 4.17.23 in /website (#5109)
 
 #### Dashboards
 
@@ -41,6 +42,7 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - docs: fix the formatting of the `DATABASE_SOCKET_DIR` description (#5026 - @IngmarStein)
 - docs: fix external image rendering with Traefik SSL (#5074 - @swiffer)
 - docs(home_assistant): default tesla_active_route_distance_to_arrival sensor to kilometers (#5086 - @kenni)
+- docs: Remove hints to now deprecated Grafana VS Code Extension in contribution guide (#5110 - @swiffer)
 
 ## [2.2.0] - 2025-11-06
 
@@ -105,7 +107,6 @@ Enjoy it.
 - docs: add star history (#5024 - @JakobLichterfeld)
 - docs: bump Traefik to v3.5 and enable http3 in advanced guide (#5023 - @swiffer)
 - docs: add docs for volume mount change with PostgreSQL 18 (#4890 - @swiffer)
-- docs: Remove hints to now deprecated Grafana VS Code Extension in contribution guide (#5110 - @swiffer)
 
 ## [2.1.1] - 2025-08-16
 
