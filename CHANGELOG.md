@@ -105,6 +105,7 @@ Enjoy it.
 - docs: add star history (#5024 - @JakobLichterfeld)
 - docs: bump Traefik to v3.5 and enable http3 in advanced guide (#5023 - @swiffer)
 - docs: add docs for volume mount change with PostgreSQL 18 (#4890 - @swiffer)
+- docs: Remove hints to now deprecated Grafana VS Code Extension in contribution guide (#5110 - @swiffer)
 
 ## [2.1.1] - 2025-08-16
 
