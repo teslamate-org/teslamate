@@ -1,51 +1,68 @@
 @charset "utf-8";
 
+// Override global Sass variables from the /utilities folder
+@use "bulma/sass/utilities" with (
+  $widescreen-enabled: false,
+  $fullhd-enabled: false
+);
+@use "bulma/sass/utilities/mixins";
+
+// Navbar customization
+@use "bulma/sass/components/navbar" with (
+  $navbar-dropdown-radius: initial,
+  $navbar-dropdown-border-style: none
+);
+
+// Card customization
+@use "bulma/sass/components/card" with (
+  $card-radius: none
+);
+
+// Modal customization
+@use "bulma/sass/components/modal" with (
+  $modal-z: 1010,
+  $modal-content-width: 560px,
+  $modal-card-head-padding: 15px,
+  $modal-card-body-padding: 5px 15px 10px,
+  $modal-card-head-background-color: utilities.$white
+);
+
+// Notification customization
+@use "bulma/sass/elements/notification" with (
+  $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem
+);
+
+// Import the components you need
+@forward "bulma/sass/base";
+@forward "bulma/sass/components/breadcrumb";
+@forward "bulma/sass/components/dropdown";
+@forward "bulma/sass/components/message";
+@forward "bulma/sass/components/tabs";
+@forward "bulma/sass/elements/box";
+@forward "bulma/sass/elements/button";
+@forward "bulma/sass/elements/icon";
+@forward "bulma/sass/elements/table";
+@forward "bulma/sass/elements/tag";
+@forward "bulma/sass/elements/title";
+@forward "bulma/sass/form";
+@forward "bulma/sass/grid";
+@forward "bulma/sass/helpers";
+@forward "bulma/sass/layout/container";
+@forward "bulma/sass/layout/section";
+
+// Import the themes so that all CSS variables have a value
+@forward "bulma/sass/themes";
+
+@import "@creativebulma/bulma-tooltip/dist/bulma-tooltip.css";
+@import "@creativebulma/bulma-divider/dist/bulma-divider.css";
+@import "bulma-switch/dist/css/bulma-switch.min.css";
+
 @import "leaflet/dist/leaflet.css";
 @import "leaflet-control-geocoder/dist/Control.Geocoder.css";
 @import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
 $mdi-font-path: "@mdi/font/fonts";
 @import "@mdi/font/scss/materialdesignicons.scss";
-
-$notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem;
-$widescreen-enabled: false;
-$fullhd-enabled: false;
-
-@import "bulma/sass/utilities/_all";
-@import "bulma/sass/base/_all";
-@import "bulma/sass/helpers/_all.sass";
-
-// Modal customization
-$modal-z: 1010;
-$modal-content-width: 560px;
-$modal-card-head-padding: 15px;
-$modal-card-body-padding: 5px 15px 10px;
-$modal-card-head-background-color: $white;
-$modal-card-head-border-bottom: none;
-$modal-card-foot-border-top: none;
-
-@import "bulma/sass/components/breadcrumb";
-@import "bulma/sass/components/card";
-@import "bulma/sass/components/dropdown";
-@import "bulma/sass/components/message";
-@import "bulma/sass/components/modal";
-@import "bulma/sass/components/navbar";
-@import "bulma/sass/components/tabs";
-@import "bulma/sass/elements/box";
-@import "bulma/sass/elements/button";
-@import "bulma/sass/elements/container";
-@import "bulma/sass/elements/icon";
-@import "bulma/sass/elements/notification";
-@import "bulma/sass/elements/table";
-@import "bulma/sass/elements/tag";
-@import "bulma/sass/elements/title";
-@import "bulma/sass/form/_all";
-@import "bulma/sass/layout/section";
-@import "bulma/sass/grid/_all";
-
-@import "@creativebulma/bulma-tooltip/dist/bulma-tooltip.css";
-@import "@creativebulma/bulma-divider/dist/bulma-divider.css";
-@import "bulma-switch/dist/css/bulma-switch.min.css";
 
 @import "./vendor/modal-fx";
 @import "./dark-mode";
@@ -127,7 +144,7 @@ nav.navbar {
     }
   }
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: utilities.$tablet) {
     flex-direction: row;
 
     .card-image {
@@ -205,7 +222,7 @@ nav.navbar {
   font-size: 1.25em;
 }
 
-@media screen and (orientation: landscape) and (max-width: $desktop - 1) {
+@media screen and (orientation: landscape) and (max-width: utilities.$desktop - 1) {
   body {
     -webkit-text-size-adjust: none;
   }
@@ -222,7 +239,7 @@ nav.navbar {
   }
 }
 
-@media screen and (max-width: $tablet) {
+@media screen and (max-width: utilities.$tablet) {
   .navbar-item.has-dropdown {
     .navbar-dropdown {
       display: none;
@@ -269,7 +286,7 @@ nav.navbar {
     pointer-events: none;
     &:after {
       @extend %loader;
-      @include center(1em);
+      @include mixins.center(1em);
       position: absolute !important;
     }
   }
