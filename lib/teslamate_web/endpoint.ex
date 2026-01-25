@@ -16,7 +16,7 @@ defmodule TeslaMateWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :teslamate,
-    gzip: true,
+    encodings: [{"zstd", ".zst"}, {"br", ".br"}, {"gzip", ".gz"}],
     only: TeslaMateWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
