@@ -4,7 +4,8 @@
 
 ### New features
 
-feat: add optional dark mode feature (#5065 - @wooter)
+- feat: add optional dark mode feature (#5065 - @wooter)
+- feat: use Bulma 1 for dark theme and revised it (#5112 - @swiffer)
 
 ### Improvements and bug fixes
 
