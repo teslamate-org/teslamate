@@ -33,6 +33,7 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - build(deps): bump crate-ci/typos from 1.41.0 to 1.42.3 (#5123)
 - build(deps): bump docker/login-action from 3.6.0 to 3.7.0 (#5119)
 - build(deps): bump nix-community/cache-nix-action from 7.0.0 to 7.0.2 (#5122)
+- build(deps): bump actions/cache from 5.0.1 to 5.0.3 (#5120)
 
 #### Dashboards
 
