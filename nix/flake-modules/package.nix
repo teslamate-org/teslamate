@@ -18,7 +18,7 @@
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-OFfvY/3iWvt6qQSGMBux2x64pIrreZK48bjq/mrUzOI=";
+        hash = "sha256-VhWA+9wC3ZBidrBk/Eu7a6k2IMG8CQnsF/psaJhQF/Q="; # if you change the mix deps, you need to update this hash
         # hash = pkgs.lib.fakeHash;
       };
 
@@ -26,7 +26,7 @@
       nodePackages = pkgs.buildNpmPackage {
         name = "${pname}-assets";
         src = "${src}/assets";
-        npmDepsHash = "sha256-TEJlbLU75UJe6aY4tp1wO4EbKowleLN7/8K+S5JB6eE=";
+        npmDepsHash = "sha256-TEJlbLU75UJe6aY4tp1wO4EbKowleLN7/8K+S5JB6eE="; # if you change the npm deps, you need to update this hash
         # npmDepsHash = pkgs.lib.fakeHash;
         dontNpmBuild = true;
         inherit nodejs;
@@ -50,8 +50,8 @@
       cldr = pkgs.fetchFromGitHub {
         owner = "elixir-cldr";
         repo = "cldr";
-        rev = "v2.42.0";
-        sha256 = "sha256-FLGUKfAKAKL2nqf/7YXQuuuEvVuSy2RVhZves9XOI1Q=";
+        rev = "v2.42.0"; # this must match the version in the mix file
+        sha256 = "sha256-FLGUKfAKAKL2nqf/7YXQuuuEvVuSy2RVhZves9XOI1Q="; # # if you change the cldr version in the mix file, you need to update this hash
         # sha256 = pkgs.lib.fakeHash;
       };
 
