@@ -4,7 +4,7 @@
 
 ### New features
 
-feat: add optional dark mode feature (#5065 - @wooter)
+- feat: add optional dark mode feature (#5065 - @wooter)
 
 ### Improvements and bug fixes
 
@@ -12,6 +12,7 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - feat: Increase max_header_value_length to support oauth2-proxy (#5031 - @ultravail)
 - perf: Replace positions indexes from BTREE to BRIN to reduce memory usage (#5075 - @ilya-y-synth)
 - feat(grafana): disable update checks as version is handled via docker image (#5115 - @fatbasstard)
+- perf: use static asset compression via brotli and zstandard to enhance HTTP Compression (#5113 - @swiffer)
 
 #### Build, CI, internal
 

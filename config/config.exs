@@ -20,7 +20,13 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:car_id]
 
-config :phoenix, :json_library, Jason
+config :phoenix,
+  json_library: Jason,
+  static_compressors: [
+    PhoenixBakery.Gzip,
+    PhoenixBakery.Brotli,
+    PhoenixBakery.Zstd
+  ]
 
 config :gettext, :default_locale, "en"
 
