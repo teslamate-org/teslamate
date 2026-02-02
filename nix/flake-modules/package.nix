@@ -50,8 +50,8 @@
       cldr = pkgs.fetchFromGitHub {
         owner = "elixir-cldr";
         repo = "cldr";
-        rev = "v2.44.1"; # this must match the version in the mix file
-        sha256 = "sha256-5XLPQYDW9yV0ZkWbyiB2s213GTccFjdqckBmx09n4eE="; # if you change the cldr version in the mix file, you need to update this hash
+        rev = "v2.46.0"; # this must match the version in the mix file
+        sha256 = "sha256-Ufq+eiLVbrNEKQmUf43o0jIrm456I3e3OJSUw1qan8c="; # if you change the cldr version in the mix file, you need to update this hash
         # sha256 = pkgs.lib.fakeHash;
       };
 
