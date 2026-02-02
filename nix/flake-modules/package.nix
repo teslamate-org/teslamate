@@ -26,7 +26,7 @@
       nodePackages = pkgs.buildNpmPackage {
         name = "${pname}-assets";
         src = "${src}/assets";
-        npmDepsHash = "sha256-5bnoGjuFC4jPUkrIsXBHUPCy4nWY7h5fWEWMDoZqaC8=";
+        npmDepsHash = "sha256-TEJlbLU75UJe6aY4tp1wO4EbKowleLN7/8K+S5JB6eE=";
         # npmDepsHash = pkgs.lib.fakeHash;
         dontNpmBuild = true;
         inherit nodejs;
