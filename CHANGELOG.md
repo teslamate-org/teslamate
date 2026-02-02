@@ -30,6 +30,7 @@ feat: add optional dark mode feature (#5065 - @wooter)
 - build(deps): bump lodash from 4.17.21 to 4.17.23 in /website (#5109)
 - build(deps): bump lodash and @geoman-io/leaflet-geoman-free in /assets (#5126)
 - build(deps): bump react and react-dom from 19.2.3 to 19.2.4 in /website (#5124)
+- build(deps): bump crate-ci/typos from 1.41.0 to 1.42.3 (#5123)
 
 #### Dashboards
 
