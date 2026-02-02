@@ -47,6 +47,7 @@ Enjoy!
 - feat(nix): use nixos-25.11 (#5062 - @JakobLichterfeld)
 - chore(nix): update flake.lock with new dependency revisions (#5062 - @JakobLichterfeld)
 - build(nix): use elixir 1.19 to align with dockerfile (#5062 - @JakobLichterfeld)
+- chore: reorganize CLI definition to avoid elixir 1.19 warning (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
