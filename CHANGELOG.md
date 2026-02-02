@@ -46,6 +46,7 @@ Enjoy!
 - build(deps): bump actions/cache from 5.0.1 to 5.0.3 (#5120)
 - feat(nix): use nixos-25.11 (#5062 - @JakobLichterfeld)
 - chore(nix): update flake.lock with new dependency revisions (#5062 - @JakobLichterfeld)
+- build(nix): use elixir 1.19 to align with dockerfile (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
