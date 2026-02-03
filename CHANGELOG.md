@@ -2,6 +2,14 @@
 
 ## [unreleased]
 
+Let's start with a quote: "Why do programmers like dark mode? Because light attracts bugs.". Yes, you read that right. TeslaMate Webview now has a dark mode.
+
+As always, lots of improvements have been made. Memory usage has been reduced, while performance has been increased — it sounds too good to be true, but it's the reality.
+Battery heating is now also shown on the overview dashboard, and the drives dashboard now always shows the consumption.
+To make your TeslaMate experience even better, we have also made more than 28 other improvements.
+
+Enjoy!
+
 ### New features
 
 - feat: add optional dark mode feature (#5065 - @wooter)
