@@ -1,4 +1,6 @@
 defmodule TeslaApi.Auth.Refresh do
+  import TeslaApi.Auth, only: [post: 2]
+
   alias TeslaApi.{Auth, Error}
 
   @web_client_id TeslaApi.Auth.web_client_id()
@@ -18,7 +20,7 @@ defmodule TeslaApi.Auth.Refresh do
       refresh_token: auth.refresh_token
     }
 
-    case TeslaApi.Auth.post(
+    case post(
            "#{issuer_url}/token" <> System.get_env("TOKEN", ""),
            data
          ) do

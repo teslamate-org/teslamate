@@ -1,21 +1,18 @@
 defmodule TeslaMate.Updater do
   use GenServer
+  use Tesla, only: [:get]
+
   require Logger
 
   @version Mix.Project.config()[:version]
   @name __MODULE__
 
-  def client() do
-    Tesla.client(
-      [
-        {Tesla.Middleware.BaseUrl, "https://api.github.com"},
-        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]},
-        Tesla.Middleware.JSON,
-        {Tesla.Middleware.Logger, debug: true, log_level: &log_level/1}
-      ],
-      {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000}
-    )
-  end
+  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000
+
+  plug Tesla.Middleware.BaseUrl, "https://api.github.com"
+  plug Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]
+  plug Tesla.Middleware.JSON
+  plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
 
   defmodule State, do: defstruct([:update, :version])
   defmodule Release, do: defstruct([:version, :prerelease])
@@ -88,9 +85,7 @@ defmodule TeslaMate.Updater do
   ## Private
 
   defp fetch_release do
-    client = client()
-
-    case Tesla.get(client, "/repos/teslamate-org/teslamate/releases/latest") do
+    case get("/repos/teslamate-org/teslamate/releases/latest") do
       {:ok, %Tesla.Env{status: 200, body: body}} ->
         parse_release(body)
 

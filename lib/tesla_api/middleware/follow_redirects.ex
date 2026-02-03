@@ -1,25 +1,24 @@
 defmodule TeslaApi.Middleware.FollowRedirects do
   @moduledoc """
-  Follow HTTP 3xx redirects.
+  Follow 3xx redirects
 
   Source: https://github.com/teamon/tesla/blob/master/lib/tesla/middleware/follow_redirects.ex
 
-  ## Examples
+  ## Example
 
-  ```elixir
+  ```
   defmodule MyClient do
-    def client do
-    # defaults to 5
-      Tesla.client([
-        {Tesla.Middleware.FollowRedirects, max_redirects: 3}
-      ])
-    end
+    use Tesla
+
+    plug Tesla.Middleware.FollowRedirects, max_redirects: 3, except: ["http:/www.example.com"]
   end
   ```
 
   ## Options
 
-  - `:max_redirects` - limit number of redirects (default: `5`)
+  - `:max_redirects` - limit number of redirects (default: `3`)
+  - `:except` - redirect locations which should not be followed (default: `[]`)
+
   """
 
   @behaviour Tesla.Middleware
