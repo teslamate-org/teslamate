@@ -44,6 +44,7 @@ Enjoy!
 - build(deps): bump docker/login-action from 3.6.0 to 3.7.0 (#5119)
 - build(deps): bump nix-community/cache-nix-action from 7.0.0 to 7.0.2 (#5122)
 - build(deps): bump actions/cache from 5.0.1 to 5.0.3 (#5120)
+- build: use Elixir 1.19.5 OTP 26 (#5036 - @swiffer)
 
 #### Dashboards
 
