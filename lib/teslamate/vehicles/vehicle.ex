@@ -1147,7 +1147,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
           car_id: data.car.id
         )
 
-        {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+        modified_rec = if match?(%Data{}, data), do: put_in(data.__struct__, Data) |> then(fn x -> %{x | last_used: DateTime.utc_now()} end), else: data
+
+        {:next_state, :start, modified_rec,
          {:next_event, :internal, {:update, {:online, vehicle}}}}
 
       %VehicleState{timestamp: ts, car_version: vsn, software_update: %SW{} = software_update} ->
@@ -1168,7 +1170,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         Logger.info("Update / Installed #{vsn}", car_id: data.car.id)
 
-        {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+        timestamp_rec = if match?(%Data{}, data), do: put_in(data.__struct__, Data) |> then(fn r -> %{r | last_used: DateTime.utc_now()} end), else: data
+
+        {:next_state, :start, timestamp_rec,
          {:next_event, :internal, {:update, {:online, vehicle}}}}
     end
   end
@@ -1196,7 +1200,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {:online, _}} = event, {state, _interval}, data)
       when state in [:asleep, :offline] do
-    {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+    updated_rec = if match?(%Data{}, data), do: put_in(data.__struct__, Data) |> then(fn d -> %{d | last_used: DateTime.utc_now()} end), else: data
+
+    {:next_state, :start, updated_rec,
      {:next_event, :internal, event}}
   end
 
@@ -1247,13 +1253,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
           end
       }
 
-      vehicle = %Vehicle{
-        vehicle
-        | drive_state: drive,
-          charge_state: charge,
-          climate_state: climate,
-          vehicle_state: vehicle_state
-      }
+      vehicle = if match?(%Vehicle{}, vehicle), 
+        do: put_in(vehicle.__struct__, Vehicle) |> then(fn v -> %{v | drive_state: drive, charge_state: charge, climate_state: climate, vehicle_state: vehicle_state} end),
+        else: vehicle
 
       geofence = call(data.deps.locations, :find_geofence, [position])
 
@@ -1574,27 +1576,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
         vehicle.drive_state.timestamp
       end
 
-    %Vehicle{
-      vehicle
-      | drive_state: %Drive{
-          vehicle.drive_state
-          | timestamp: timestamp,
-            latitude: stream_data.est_lat,
-            longitude: stream_data.est_lng,
-            speed: stream_data.speed,
-            power: stream_data.power,
-            heading: stream_data.est_heading,
-            shift_state: stream_data.shift_state
-        },
-        charge_state: %Charge{
-          vehicle.charge_state
-          | battery_level: stream_data.soc
-        },
-        vehicle_state: %VehicleState{
-          vehicle.vehicle_state
-          | odometer: stream_data.odometer
-        }
-    }
+    updated_drive = if match?(%Drive{}, vehicle.drive_state),
+      do: put_in(vehicle.drive_state.__struct__, Drive) |> then(fn ds -> %{ds | timestamp: timestamp, latitude: stream_data.est_lat, longitude: stream_data.est_lng, speed: stream_data.speed, power: stream_data.power, heading: stream_data.est_heading, shift_state: stream_data.shift_state} end),
+      else: vehicle.drive_state
+
+    updated_charge = if match?(%Charge{}, vehicle.charge_state),
+      do: put_in(vehicle.charge_state.__struct__, Charge) |> then(fn cs -> %{cs | battery_level: stream_data.soc} end),
+      else: vehicle.charge_state
+
+    updated_vstate = if match?(%VehicleState{}, vehicle.vehicle_state),
+      do: put_in(vehicle.vehicle_state.__struct__, VehicleState) |> then(fn vs -> %{vs | odometer: stream_data.odometer} end),
+      else: vehicle.vehicle_state
+
+    if match?(%Vehicle{}, vehicle),
+      do: put_in(vehicle.__struct__, Vehicle) |> then(fn v -> %{v | drive_state: updated_drive, charge_state: updated_charge, vehicle_state: updated_vstate} end),
+      else: vehicle
   end
 
   defp put_charge_defaults(vehicle) do
