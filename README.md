@@ -119,4 +119,6 @@ Key Requirements:
 - No "Closed" Forks: This license ensures that improvements made by commercial entities or third parties remain open to the entire community.
 - Attribution: You must keep all original copyright notices and license information intact.
 
-Trademark Policy: The use of the TeslaMate name and logo is governed by our [Trademark Policy](https://github.com/teslamate-org/teslamate/blob/main/TRADEMARK.md).
+**Trademark Policy**: The use of the TeslaMate name and logo is governed by our [Trademark Policy](https://github.com/teslamate-org/teslamate/blob/main/TRADEMARK.md).
+
+**Contributions:** All contributors must sign our [Contributor License Agreement](https://github.com/teslamate-org/legal/blob/main/CLA.md). This is handled via cla-assistant.io
