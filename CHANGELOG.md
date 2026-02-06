@@ -10,9 +10,22 @@ To make your TeslaMate experience even better, we have also made more than 28 ot
 
 Enjoy!
 
+### 📄 License Change Notice
+
+As of PR #5131, TeslaMate has transitioned from the MIT License to the GNU Affero General Public License v3.0 (AGPLv3).
+
+What does this mean for you?
+
+- For Private Users: Nothing changes. You can continue to use, host, and modify TeslaMate for your personal use for free, just as before.
+- For the Community: This change ensures that TeslaMate remains open and free. It prevents companies from taking the community's hard work and turning it into a closed-source commercial service without giving back.
+- For Developers: If you modify or use TeslaMate, you must now share your source code modifications under the same license.
+
+We believe this step is necessary to protect the project from exploitation and to ensure its long-term sustainability.
+
 ### New features
 
 - feat: add optional dark mode feature (#5065 - @wooter)
+- legal: relicense under AGPLv3 (#5131 - @JakobLichterfeld)
 
 ### Improvements and bug fixes
 
