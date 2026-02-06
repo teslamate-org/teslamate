@@ -1,7 +1,7 @@
 {
   "repository": {},
   "description": "...",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "scripts": {
     "deploy": "node scripts/build.js"
   },
