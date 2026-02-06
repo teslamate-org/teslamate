@@ -116,7 +116,7 @@ For the full legal terms, please refer to the [LICENSE](https://github.com/tesla
 Key Requirements:
 
 - Copyleft: If you modify TeslaMate and distribute it (e.g., as an app, binary, or package) or offer it as a service over a network (SaaS), you must make your modified source code available to all users under the same AGPLv3 license.
-
 - No "Closed" Forks: This license ensures that improvements made by commercial entities or third parties remain open to the entire community.
-
 - Attribution: You must keep all original copyright notices and license information intact.
+
+Trademark Policy: The use of the TeslaMate name and logo is governed by our [Trademark Policy](https://github.com/teslamate-org/teslamate/blob/main/TRADEMARK.md).
