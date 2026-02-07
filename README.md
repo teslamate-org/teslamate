@@ -83,24 +83,6 @@ Sneak peak into TeslaMate interface and bundled dashboards. See [the docs](https
 
 ![Battery Health](/website/static/screenshots/battery-health.png)
 
-## Star History
-
-<!-- markdownlint-disable MD033 -->
-<a href="https://www.star-history.com/#teslamate-org/teslamate&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=teslamate-org/teslamate&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=teslamate-org/teslamate&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=teslamate-org/teslamate&type=date&legend=top-left" />
- </picture>
-</a>
-<!-- markdownlint-enable MD033 -->
-
-## Credits
-
-- Initial Author: Adrian Kumpf
-- List of Contributors:
-- [![TeslaMate Contributors](https://contrib.rocks/image?repo=teslamate-org/teslamate)](https://github.com/teslamate-org/teslamate/graphs/contributors)
-
 ## License
 
 TeslaMate is licensed under the **GNU Affero General Public License v3.0 (AGPLv3)**.
@@ -121,4 +103,22 @@ Key Requirements:
 
 **Trademark Policy**: The use of the TeslaMate name and logo is governed by our [Trademark Policy](https://github.com/teslamate-org/teslamate/blob/main/TRADEMARK.md).
 
-**Contributions:** All contributors must sign our [Contributor License Agreement](https://github.com/teslamate-org/legal/blob/main/CLA.md). This is handled via cla-assistant.io
+**Contributions:** All contributors must sign our [Contributor License Agreement](https://github.com/teslamate-org/legal/blob/main/CLA.md). This is handled via cla-assistant.io automatically on first PR and does not take long.
+
+## Star History
+
+<!-- markdownlint-disable MD033 -->
+<a href="https://www.star-history.com/#teslamate-org/teslamate&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=teslamate-org/teslamate&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=teslamate-org/teslamate&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=teslamate-org/teslamate&type=date&legend=top-left" />
+ </picture>
+</a>
+<!-- markdownlint-enable MD033 -->
+
+## Credits
+
+- Initial Author: Adrian Kumpf
+- List of Contributors:
+- [![TeslaMate Contributors](https://contrib.rocks/image?repo=teslamate-org/teslamate)](https://github.com/teslamate-org/teslamate/graphs/contributors)
