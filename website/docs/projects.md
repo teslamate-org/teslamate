@@ -98,3 +98,9 @@ LINK: [Follow this guide](/docs/configuration/api#myteslamate-fleet-api) to use 
 A lightweight app that will operate your smart garage door openers based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and various smart garage door openers.
 
 LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-geogdo)
+
+## [TeslaMate Achievements](https://github.com/crstian19/teslamate-achievements)
+
+A gamification add-on for TeslaMate that analyzes your historical data to unlock achievements. It features a collection of badges based on driving milestones, charging habits, efficiency, and phantom drain, turning your ownership statistics into a fun progression system.
+
+LINK: [github.com/crstian19/teslamate-achievements](https://github.com/crstian19/teslamate-achievements)
