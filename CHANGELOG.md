@@ -6,7 +6,7 @@ Let's start with a quote: "Why do programmers like dark mode? Because light attr
 
 As always, lots of improvements have been made. Memory usage has been reduced, while performance has been increased — it sounds too good to be true, but it's the reality.
 Battery heating is now also shown on the overview dashboard, and the drives dashboard now always shows the consumption.
-To make your TeslaMate experience even better, we have also made more than 36 other improvements.
+To make your TeslaMate experience even better, we have also made more than 37 other improvements.
 
 Enjoy!
 
@@ -50,6 +50,7 @@ Enjoy!
 - build(nix): use elixir 1.19 to align with dockerfile (#5062 - @JakobLichterfeld)
 - chore: reorganize CLI definition to avoid elixir 1.19 warning (#5062 - @JakobLichterfeld)
 - build: update db_connection to version 2.9.0 (#5062 - @JakobLichterfeld)
+- refactor(nix): remove now un-needed rabar3 export (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
