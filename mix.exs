@@ -13,7 +13,12 @@ defmodule TeslaMate.MixProject do
       releases: releases(),
       deps: deps(),
       dialyzer: dialyzer(),
-      test_coverage: [tool: ExCoveralls],
+      test_coverage: [tool: ExCoveralls]
+    ]
+  end
+
+  def cli do
+    [
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.detail": :test,
