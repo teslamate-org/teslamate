@@ -59,7 +59,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
                        time_to_full_charge shift_state geofence trim_badging)a
 
   @impl true
-  def handle_info(%Summary{} = summary, state) do
+  def handle_info(%Summary{} = summary, %State{} = state) do
     values =
       %{}
       |> add_simple_values(summary)
@@ -68,7 +68,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> add_active_route(summary)
 
     publish_values(values, state)
-    {:noreply, %State{state | last_values: values}}
+    {:noreply, %{state | last_values: values}}
   end
 
   defp publish_values(values, %State{last_values: values} = state) do

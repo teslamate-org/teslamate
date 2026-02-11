@@ -65,8 +65,8 @@ defmodule TeslaMate.Import do
   ## Calls
 
   @impl true
-  def handle_event({:call, from}, {:run, tz}, :idle, data) do
-    {:next_state, :running, %Data{data | timezone: tz},
+  def handle_event({:call, from}, {:run, tz}, :idle, %Data{} = data) do
+    {:next_state, :running, %{data | timezone: tz},
      [
        {:reply, from, :ok},
        {:next_event, :internal, :broadcast},

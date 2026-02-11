@@ -52,8 +52,8 @@ defmodule TeslaMate.Import.FakeApi do
   @impl true
   def handle_call(_action, from, %State{} = state) do
     case pop(state) do
-      {:error, :chunk_not_yet_received, state} ->
-        {:noreply, %State{state | from: from}}
+      {:error, :chunk_not_yet_received, %State{} = state} ->
+        {:noreply, %{state | from: from}}
 
       {:done, state} ->
         processing_complete(state)
