@@ -102,9 +102,13 @@ defmodule LogMock do
     {:reply, {:ok, %ChargingProcess{id: 99, start_date: DateTime.utc_now()}}, state}
   end
 
-  def handle_call({:complete_charging_process, cproc} = action, _from, %State{} = state) do
+  def handle_call(
+        {:complete_charging_process, %ChargingProcess{} = cproc} = action,
+        _from,
+        %State{} = state
+      ) do
     send(state.pid, action)
-    new_cproc = %ChargingProcess{cproc | charge_energy_added: 45, end_date: DateTime.utc_now()}
+    new_cproc = %{cproc | charge_energy_added: 45, end_date: DateTime.utc_now()}
     {:reply, {:ok, new_cproc}, state}
   end
 

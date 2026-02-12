@@ -44,7 +44,11 @@ defmodule TeslaMateWeb.ImportLive.Index do
     {:noreply, assign(socket, changeset: Settings.changeset(attrs))}
   end
 
-  def handle_event("import", %{"settings" => attrs}, %{assigns: %{status: status}} = socket) do
+  def handle_event(
+        "import",
+        %{"settings" => attrs},
+        %{assigns: %{status: %Import.Status{} = status}} = socket
+      ) do
     %Settings{timezone: tz} =
       attrs
       |> Settings.changeset()
@@ -52,7 +56,7 @@ defmodule TeslaMateWeb.ImportLive.Index do
 
     :ok = Import.run(tz)
 
-    {:noreply, assign(socket, status: %Import.Status{status | state: :running})}
+    {:noreply, assign(socket, status: %{status | state: :running})}
   end
 
   def handle_event("reload", _params, socket) do

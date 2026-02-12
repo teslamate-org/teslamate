@@ -200,7 +200,8 @@ defmodule TeslaApi.Stream do
   end
 
   @impl true
-  def handle_disconnect(%{reason: reason, attempt_number: n}, state) when is_number(n) do
+  def handle_disconnect(%{reason: reason, attempt_number: n}, %State{} = state)
+      when is_number(n) do
     cancel_timer(state.timer)
 
     case reason do
@@ -218,7 +219,7 @@ defmodule TeslaApi.Stream do
         |> exp_backoff_ms(max_seconds: 10)
         |> Process.sleep()
 
-        {:reconnect, %State{state | last_data: nil}}
+        {:reconnect, %{state | last_data: nil}}
 
       %WebSockex.ConnError{} = e ->
         Logger.warning("Disconnected! #{Exception.message(e)} | #{n}")
