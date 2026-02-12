@@ -34,7 +34,7 @@ defmodule TeslaMate.Vault do
 
   For more information see `Cloak.Ciphers.AES.GCM`.
   """
-  def default_chipher(key) do
+  def default_cipher(key) do
     {Cloak.Ciphers.AES.GCM, tag: "AES.GCM.V1", key: key, iv_length: @iv_length}
   end
 
@@ -79,7 +79,7 @@ defmodule TeslaMate.Vault do
 
     config =
       Keyword.put(config, :ciphers,
-        default: default_chipher(:crypto.hash(:sha256, encryption_key))
+        default: default_cipher(:crypto.hash(:sha256, encryption_key))
       )
 
     {:ok, config}
