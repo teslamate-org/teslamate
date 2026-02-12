@@ -163,10 +163,11 @@
           "id": "fit",
           "lat": 0,
           "lon": 0,
+          "noRepeat": false,
           "zoom": 15
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -285,7 +286,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -418,6 +419,7 @@
           "fields": "",
           "values": true
         },
+        "sort": "desc",
         "tooltip": {
           "hideZeros": false,
           "maxHeight": 600,
@@ -425,7 +427,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -582,7 +584,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -700,7 +702,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -821,7 +823,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -941,7 +943,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1052,7 +1054,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1149,7 +1151,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1297,7 +1299,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1454,7 +1456,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1503,6 +1505,9 @@
             "align": "auto",
             "cellOptions": {
               "type": "auto"
+            },
+            "footer": {
+              "reducers": []
             },
             "inspect": false
           },
@@ -1719,7 +1724,7 @@
             },
             "properties": [
               {
-                "id": "custom.hidden",
+                "id": "custom.hideFrom.viz",
                 "value": true
               }
             ]
@@ -1803,7 +1808,7 @@
             },
             "properties": [
               {
-                "id": "custom.hidden",
+                "id": "custom.hideFrom.viz",
                 "value": true
               }
             ]
@@ -1819,14 +1824,6 @@
       "id": 2,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "showHeader": true,
         "sortBy": [
           {
@@ -1835,7 +1832,7 @@
           }
         ]
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1883,6 +1880,9 @@
             "align": "auto",
             "cellOptions": {
               "type": "auto"
+            },
+            "footer": {
+              "reducers": []
             },
             "inspect": false
           },
@@ -2068,7 +2068,7 @@
             },
             "properties": [
               {
-                "id": "custom.hidden",
+                "id": "custom.hideFrom.viz",
                 "value": true
               }
             ]
@@ -2080,7 +2080,7 @@
             },
             "properties": [
               {
-                "id": "custom.hidden",
+                "id": "custom.hideFrom.viz",
                 "value": true
               }
             ]
@@ -2216,7 +2216,7 @@
             },
             "properties": [
               {
-                "id": "custom.hidden",
+                "id": "custom.hideFrom.viz",
                 "value": true
               }
             ]
@@ -2248,7 +2248,7 @@
             },
             "properties": [
               {
-                "id": "custom.hidden",
+                "id": "custom.hideFrom.viz",
                 "value": true
               }
             ]
@@ -2264,14 +2264,6 @@
       "id": 36,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "showHeader": true,
         "sortBy": [
           {
@@ -2280,7 +2272,7 @@
           }
         ]
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -2473,7 +2465,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -2636,7 +2628,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -2673,7 +2665,7 @@
   ],
   "preload": false,
   "refresh": "",
-  "schemaVersion": 41,
+  "schemaVersion": 42,
   "tags": [
     "tesla"
   ],

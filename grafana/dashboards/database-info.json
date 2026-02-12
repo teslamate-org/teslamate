@@ -86,7 +86,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -168,7 +168,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -278,7 +278,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -388,7 +388,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -495,7 +495,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -557,6 +557,9 @@
             "cellOptions": {
               "type": "auto"
             },
+            "footer": {
+              "reducers": []
+            },
             "inspect": false,
             "minWidth": 80
           },
@@ -604,17 +607,9 @@
       "id": 33,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "showHeader": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -663,6 +658,9 @@
             "cellOptions": {
               "type": "auto"
             },
+            "footer": {
+              "reducers": []
+            },
             "inspect": false,
             "minWidth": 160
           },
@@ -709,17 +707,9 @@
       "id": 38,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "showHeader": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -768,6 +758,9 @@
             "align": "right",
             "cellOptions": {
               "type": "auto"
+            },
+            "footer": {
+              "reducers": []
             },
             "inspect": false,
             "minWidth": 110
@@ -859,18 +852,10 @@
       "id": 41,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": true,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
+        "enablePagination": true,
         "showHeader": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -953,7 +938,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1036,7 +1021,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1118,7 +1103,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1211,7 +1196,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1291,7 +1276,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1346,7 +1331,7 @@
         "content": "Check the [contribution docs](https://docs.teslamate.org/docs/development#enable-pg_stat_statements-to-collect-query-statistics) on how to enable tracking planning and execution statistics of all SQL statements executed by a server.\n",
         "mode": "markdown"
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "title": "About pg_stat_statements (track statistics of SQL planning and execution)",
       "type": "text"
     },
@@ -1365,6 +1350,9 @@
             "cellOptions": {
               "type": "auto",
               "wrapText": false
+            },
+            "footer": {
+              "reducers": []
             },
             "inspect": false
           },
@@ -1448,19 +1436,11 @@
       "id": 45,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": true,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
+        "enablePagination": true,
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1509,6 +1489,9 @@
             "cellOptions": {
               "type": "auto",
               "wrapText": false
+            },
+            "footer": {
+              "reducers": []
             },
             "inspect": false
           },
@@ -1592,19 +1575,11 @@
       "id": 46,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": true,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
+        "enablePagination": true,
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1641,7 +1616,7 @@
   ],
   "preload": false,
   "refresh": "",
-  "schemaVersion": 41,
+  "schemaVersion": 42,
   "tags": [
     "tesla"
   ],
