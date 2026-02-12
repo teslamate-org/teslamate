@@ -6,7 +6,7 @@ Let's start with a quote: "Why do programmers like dark mode? Because light attr
 
 As always, lots of improvements have been made. Memory usage has been reduced, while performance has been increased — it sounds too good to be true, but it's the reality.
 Battery heating is now also shown on the overview dashboard, and the drives dashboard now always shows the consumption.
-To make your TeslaMate experience even better, we have also made more than 30 other improvements.
+To make your TeslaMate experience even better, we have also made more than 36 other improvements.
 
 Enjoy!
 
@@ -58,6 +58,12 @@ We believe this step is necessary to protect the project from exploitation and t
 - build(deps): bump docker/login-action from 3.6.0 to 3.7.0 (#5119)
 - build(deps): bump nix-community/cache-nix-action from 7.0.0 to 7.0.2 (#5122)
 - build(deps): bump actions/cache from 5.0.1 to 5.0.3 (#5120)
+- build(deps): bump webpack from 5.102.0 to 5.105.0 in /website (#5135)
+- feat(nix): use nixos-25.11 (#5062 - @JakobLichterfeld)
+- chore(nix): update flake.lock with new dependency revisions (#5062 - @JakobLichterfeld)
+- build(nix): use elixir 1.19 to align with dockerfile (#5062 - @JakobLichterfeld)
+- chore: reorganize CLI definition to avoid elixir 1.19 warning (#5062 - @JakobLichterfeld)
+- build: update db_connection to version 2.9.0 (#5062 - @JakobLichterfeld)
 
 #### Dashboards
 
@@ -1748,7 +1754,6 @@ Additional:
 - Overview: Update battery gauge thresholds ([#651](https://github.com/adriankumpf/teslamate/pull/651) by [wooter](https://github.com/wooter))
 - Drives: Add column header for reduced range ([#662](https://github.com/adriankumpf/teslamate/pull/662) by [Dulanic](https://github.com/Dulanic))
 - Charging Stats: Show map with frequently used chargers ([#666](https://github.com/adriankumpf/teslamate/pull/666) by [Dulanic](https://github.com/Dulanic))
-
   - _Manual install: requires Grafana plugin **grafana-map-panel**_
 
     ```bash
