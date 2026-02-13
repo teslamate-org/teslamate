@@ -6,13 +6,14 @@ defmodule TeslaMate.VaultTest do
   import Mock
 
   defp key_equals?(key) do
-    {_cipher_module, cipher_opts} =
-      Vault.Config
-      |> Cloak.Vault.read_config()
-      |> Access.fetch!(:ciphers)
-      |> Access.fetch!(:default)
+    with {:ok, config} <- Vault.Config |> Cloak.Vault.read_config() do
+      {_cipher_module, cipher_opts} =
+        config
+        |> Access.fetch!(:ciphers)
+        |> Access.fetch!(:default)
 
-    :crypto.hash(:sha256, key) == cipher_opts[:key]
+      :crypto.hash(:sha256, key) == cipher_opts[:key]
+    end
   end
 
   setup context do
@@ -73,7 +74,7 @@ defmodule TeslaMate.VaultTest do
     stop_supervised!(Vault)
     start_supervised!(Vault)
 
-    # decrytping the ciphertext won't work with the new key
+    # decrypting the ciphertext won't work with the new key
     assert {:ok, :error} = Vault.decrypt(ciphertext)
   end
 
@@ -94,10 +95,10 @@ defmodule TeslaMate.VaultTest do
     end
   end
 
-  describe "default_chipher/1" do
+  describe "default_cipher/1" do
     test "uses AES in GCM mode with a 12 byte IV-length" do
       assert {Cloak.Ciphers.AES.GCM, [tag: "AES.GCM.V1", key: "$key", iv_length: 12]} ==
-               Vault.default_chipher("$key")
+               Vault.default_cipher("$key")
     end
   end
 end

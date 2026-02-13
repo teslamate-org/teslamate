@@ -39,7 +39,7 @@ defmodule TeslaMate.Repo.Migrations.EncryptApiTokens do
     defp setup_vault(key) do
       Cloak.Vault.save_config(TeslaMate.Vault.Config,
         ciphers: [
-          default: TeslaMate.Vault.default_chipher(:crypto.hash(:sha256, key))
+          default: TeslaMate.Vault.default_cipher(:crypto.hash(:sha256, key))
         ]
       )
     end
