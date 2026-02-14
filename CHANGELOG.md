@@ -6,7 +6,7 @@ Let's start with a quote: "Why do programmers like dark mode? Because light attr
 
 As always, lots of improvements have been made. Memory usage has been reduced, while performance has been increased — it sounds too good to be true, but it's the reality.
 Battery heating is now also shown on the overview dashboard, and the drives dashboard now always shows the consumption.
-To make your TeslaMate experience even better, we have also made more than 42 other improvements.
+To make your TeslaMate experience even better, we have also made more than 43 other improvements.
 
 Enjoy!
 
@@ -70,6 +70,7 @@ We believe this step is necessary to protect the project from exploitation and t
 - build(deps): bump ex_cldr from 2.42.0 to 2.46.0 (#5053 - @JakobLichterfeld)
 - build(deps): bump floki & gettext, remove override on ranch, require elixir 1.19 (#5142 - @swiffer)
 - feat(grafana-home-dashboard): change cors proxy (#5143 - @swiffer)
+- build(deps): update flake.lock (#5141)
 
 #### Dashboards
 
