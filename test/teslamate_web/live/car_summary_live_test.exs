@@ -460,7 +460,8 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                |> live("/")
 
       # Check if the map marker icon is present
-      assert Floki.find(html, "a.icon span.mdi.mdi-map-marker") != []
+      parsed_html = Floki.parse_document!(html)
+      assert Floki.find(parsed_html, "a.icon span.mdi.mdi-map-marker") != []
 
       # Check if the link to Google Maps is present
       [view] = live_children(parent_view)
