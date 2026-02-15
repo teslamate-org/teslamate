@@ -5,7 +5,7 @@ defmodule TeslaMate.MixProject do
     [
       app: :teslamate,
       version: version(),
-      elixir: "~> 1.19",
+      elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,

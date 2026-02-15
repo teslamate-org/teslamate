@@ -6,10 +6,14 @@ sidebar_label: Development and Contributing
 
 ## Requirements
 
+TeslaMate officially supports the versions listed below. However, TeslaMate aims to maintain compatibility with the last three major releases of Erlang and Postgres, as well as the last three minor releases of Elixir.
+When contributing, please use the versions listed below, which match those used in official TeslaMate distributions.
+
 - **Elixir** >= 1.19.5-otp-26
-- **Postgres** >= 17.3
+- **Postgres** >= 18.0
+- **Grafana** = 12.1.1
 - An **MQTT broker** e.g. mosquitto (_optional_)
-- **NodeJS** >= 20.15.0
+- **NodeJS** >= 22.22.0
 
 or [Nix](https://nixos.org/download/). You can then use the nix devenv (via direnv) setup.
 
