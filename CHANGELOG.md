@@ -35,6 +35,7 @@ We believe this step is necessary to protect the project from exploitation and t
 - perf: Replace positions indexes from BTREE to BRIN to reduce memory usage (#5075 - @ilya-y-synth)
 - feat(grafana): disable update checks as version is handled via docker image (#5115 - @fatbasstard)
 - perf: use static asset compression via brotli and zstandard to enhance HTTP Compression (#5113 - @swiffer)
+- feat: use Grafana 12.4.0 (#4965 - @swiffer)
 
 #### Build, CI, internal
 
