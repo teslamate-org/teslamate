@@ -32,7 +32,7 @@ pkg install git
 </details>
 
 <details>
-  <summary>Erlang (v25+)</summary>
+  <summary>Erlang (v26+)</summary>
 
 ```bash
 pkg install erlang
@@ -41,7 +41,7 @@ pkg install erlang
 </details>
 
 <details>
-  <summary>Elixir (v1.16+)</summary>
+  <summary>Elixir (v1.17+)</summary>
 
 ```bash
 pkg install elixir
@@ -70,7 +70,7 @@ service postgresql initdb
 </details>
 
 <details>
-  <summary>Grafana (v12.0.1+)</summary>
+  <summary>Grafana (v12.1.1+)</summary>
 
 ```bash
 pkg install grafana
@@ -90,11 +90,11 @@ echo mosquitto_enable="yes" >> /etc/rc.conf
 </details>
 
 <details>
-  <summary>Node.js (v20+)</summary>
+  <summary>Node.js (v22+)</summary>
 
 ```bash
-pkg install node20
-pkg install npm-node20
+pkg install node22
+pkg install npm-node22
 ```
 
 </details>

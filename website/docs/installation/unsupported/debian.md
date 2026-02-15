@@ -34,7 +34,7 @@ sudo apt install postgresql-17 postgresql-client-17
 </details>
 
 <details>
-  <summary>Elixir (v1.16+)</summary>
+  <summary>Elixir (v1.17+)</summary>
 
 Either from upstream:
 
@@ -55,7 +55,7 @@ sudo apt install erlang erlang-dev erlang-syntax-tools elixir
 </details>
 
 <details>
-  <summary>Grafana (v12.0.1+)</summary>
+  <summary>Grafana (v12.1.1+)</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
@@ -85,12 +85,12 @@ Source: [mosquitto.org/download](https://mosquitto.org/download/)
 </details>
 
 <details>
-  <summary>Node.js (v20+)</summary>
+  <summary>Node.js (v22+)</summary>
 
 Either from upstream:
 
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
 sudo apt-get install -y nodejs
 ```
 
