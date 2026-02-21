@@ -27,6 +27,7 @@ We believe this step is necessary to protect the project from exploitation and t
 - feat: add optional dark mode feature (#5065 - @wooter)
 - legal: relicense under AGPLv3 (#5131 - @JakobLichterfeld)
 - legal: add Trademark notice (#5131 - @JakobLichterfeld)
+- feat: use Bulma 1 for dark theme and revised it (#5112 - @swiffer)
 
 ### Improvements and bug fixes
 
