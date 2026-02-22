@@ -1017,7 +1017,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:driving, {:offline, _last}, nil},
         %Data{} = data
       ) do
-    {:keep_state, %{data | last_used: DateTime.utc_now()}, schedule_fetch(30, data)}
+    {:next_state, :start, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
   end
 
   def handle_event(
