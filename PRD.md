@@ -82,6 +82,24 @@ TeslaMate is licensed under **GNU Affero General Public License v3.0 (AGPLv3)**.
 - Release the iOS app under AGPLv3 as well (aligned with the project's values, avoids legal ambiguity)
 - Use a distinct app name and branding (not "TeslaMate")
 
+### Upstream Contribution Strategy
+
+The long-term goal is to **submit a PR to the main TeslaMate project** to add the API layer as a built-in feature, enabling the entire community to benefit. This means:
+
+1. **The API layer must be designed as a clean, mergeable module** — not a standalone fork or separate codebase that duplicates TeslaMate internals
+2. **Follow TeslaMate's existing conventions exactly** — Elixir/Phoenix, Ecto, environment-variable configuration, Docker deployment patterns
+3. **No hardcoded secrets, API keys, or vendor lock-in** — all credentials (APNs, JWT signing keys, etc.) provided via environment variables, same as TeslaMate's existing `ENCRYPTION_KEY`, `MQTT_HOST`, etc.
+4. **Feature-flagged** — the API layer should be opt-in via an environment variable (e.g. `ENABLE_API=true`) so existing users are unaffected
+5. **No new runtime dependencies that burden existing users** — if push notifications require APNs keys, they should be optional and disabled by default
+6. **Code quality matching TeslaMate's standards** — tests, documentation, and coding style consistent with the existing codebase
+
+**Development path:**
+- Phase 1: Build as a **separate companion container** (fastest path to a working app, no upstream dependency)
+- Phase 2+: Refactor the API layer into a **PR-ready module** that could be merged into TeslaMate's Phoenix app as a new router pipeline
+- Submit PR to TeslaMate once the API is proven and stable
+
+This dual approach lets us ship quickly (separate container) while keeping the code structured for eventual upstream integration.
+
 ### App Name
 The app needs its own name due to trademark restrictions. Working title for this PRD: **"TeslaPulse"** (placeholder — final name TBD, subject to trademark search).
 
@@ -154,10 +172,32 @@ A **separate, lightweight service** deployed as an additional Docker container a
 - **Read-only by default** — The API server connects to PostgreSQL with a read-only user, minimising risk to data integrity
 - **Simpler maintenance** — No need to track upstream TeslaMate changes or manage fork conflicts
 
-**Technology options for the API server:**
-- **Option A: Elixir/Phoenix** — Same stack as TeslaMate; can reuse Ecto schemas; natural fit for WebSockets via Phoenix Channels
-- **Option B: Go or Rust** — Lighter resource footprint on Raspberry Pi; but requires reimplementing data access
-- **Recommended: Elixir/Phoenix** — Leverages the existing Ecto schema definitions, Phoenix Channels for real-time, and runs efficiently on the same BEAM VM ecosystem
+**Technology: Elixir/Phoenix** (same stack as TeslaMate — required for upstream PR compatibility)
+
+Since the goal is to eventually submit a PR to TeslaMate, the API server must use the same stack:
+- **Elixir/Phoenix** — reuses TeslaMate's existing Ecto schemas, Phoenix Channels for WebSocket, and configuration patterns
+- **Same Ecto repo** — queries run against the same database using the same schema definitions, so they stay in sync with TeslaMate's migrations automatically
+- **PR-ready structure** — the API routes, controllers, and channel handlers are written as a Phoenix router pipeline that can be mounted into TeslaMate's existing endpoint
+
+#### Upstream-Friendly Design Principles
+- **Zero hardcoded secrets** — all credentials via environment variables (following TeslaMate's existing pattern)
+- **Feature-flagged** — API layer enabled via `ENABLE_API=true` (disabled by default, no impact on existing users)
+- **No vendor lock-in** — push notification provider is configurable (APNs, ntfy.sh, Pushover, or none); not baked to a single service
+- **Additive only** — no modifications to existing TeslaMate schemas, migrations, or behaviour; new migrations are strictly additive (e.g. `device_tokens` table for push notification registration)
+- **Configuration via environment variables** — consistent with TeslaMate's existing approach:
+
+| Variable | Purpose | Default |
+|----------|---------|---------|
+| `ENABLE_API` | Enable the companion API endpoints | `false` |
+| `API_PORT` | Port for the API server | `4001` |
+| `API_AUTH_TOKEN` | Bearer token for API authentication (simple auth) | (required if API enabled) |
+| `API_JWT_SECRET` | JWT signing secret (if using JWT auth) | (auto-generated from `SECRET_KEY_BASE`) |
+| `PUSH_PROVIDER` | Push notification provider (`apns`, `ntfy`, `pushover`, `none`) | `none` |
+| `APNS_KEY_ID` | APNs key ID (only if `PUSH_PROVIDER=apns`) | — |
+| `APNS_TEAM_ID` | APNs team ID | — |
+| `APNS_KEY_PATH` | Path to APNs `.p8` key file | — |
+| `NTFY_TOPIC` | ntfy.sh topic (only if `PUSH_PROVIDER=ntfy`) | — |
+| `PUSHOVER_APP_TOKEN` | Pushover token (only if `PUSH_PROVIDER=pushover`) | — |
 
 #### Deployment: Adding to Existing Docker Compose
 
@@ -189,12 +229,18 @@ services:
     environment:
       DATABASE_HOST: database
       DATABASE_NAME: teslamate
-      DATABASE_USER: teslamate_readonly  # read-only DB user recommended
+      DATABASE_USER: ${DATABASE_USER:-teslamate}  # read-only DB user recommended
       DATABASE_PASS: ${DATABASE_PASS}
       MQTT_HOST: mosquitto
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
-      APNS_KEY_ID: ${APNS_KEY_ID}        # optional, for push notifications
-      APNS_TEAM_ID: ${APNS_TEAM_ID}      # optional, for push notifications
+      ENABLE_API: "true"
+      API_PORT: 4001
+      API_AUTH_TOKEN: ${API_AUTH_TOKEN}    # bearer token for iOS app authentication
+      PUSH_PROVIDER: ${PUSH_PROVIDER:-none}  # apns | ntfy | pushover | none
+      # Optional push notification config (only needed if PUSH_PROVIDER is set):
+      # APNS_KEY_ID, APNS_TEAM_ID, APNS_KEY_PATH
+      # NTFY_TOPIC
+      # PUSHOVER_APP_TOKEN, PUSHOVER_USER_KEY
     ports:
       - "4001:4001"   # API on a different port than TeslaMate's 4000
     depends_on:
@@ -729,7 +775,16 @@ The companion API server subscribes to TeslaMate's existing MQTT topics and rela
 
 ### 7.5 Push Notifications
 
-Push notifications are delivered via APNs (Apple Push Notification service) from the companion API server. The API server monitors MQTT topics for trigger conditions and sends push notifications to registered iOS devices. This requires the user to configure APNs credentials (provided via the app's onboarding flow).
+Push notifications are delivered from the companion API server, which monitors MQTT topics for trigger conditions. The push provider is **configurable** via the `PUSH_PROVIDER` environment variable — no hardcoded keys or vendor lock-in:
+
+| Provider | `PUSH_PROVIDER` | Config Required | Notes |
+|----------|----------------|-----------------|-------|
+| **APNs** | `apns` | `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_KEY_PATH` | Native iOS push; best experience; requires Apple Developer account |
+| **ntfy.sh** | `ntfy` | `NTFY_TOPIC` | Free, self-hostable; works via ntfy iOS app; no Apple Developer account needed |
+| **Pushover** | `pushover` | `PUSHOVER_APP_TOKEN`, `PUSHOVER_USER_KEY` | Established push service; one-time $5 purchase |
+| **None** | `none` (default) | — | Push disabled; real-time updates still work via WebSocket when app is open |
+
+For the App Store version, APNs is the primary provider (push notifications work natively). For self-hosted/sideloaded builds, ntfy.sh provides a zero-cost alternative that doesn't require Apple Developer credentials.
 
 | Notification | Trigger | Content |
 |-------------|---------|---------|
@@ -1072,7 +1127,7 @@ The backend API layer should support:
 | Risk | Probability | Impact | Mitigation |
 |------|------------|--------|------------|
 | TeslaMate schema changes break companion API | Medium | High | Version-pin supported TeslaMate versions. Integration tests against TeslaMate DB schema. |
-| Companion API server too heavy for Raspberry Pi | Low-Medium | Medium | Profile aggressively. Consider Go/Rust if Elixir/Phoenix is too heavy. Target < 128MB RAM. |
+| Companion API server too heavy for Raspberry Pi | Low-Medium | Medium | Profile aggressively. Elixir/Phoenix is required for upstream compatibility, but BEAM VM is efficient on ARM. If merged into TeslaMate (upstream PR), the overhead is minimal since TeslaMate's BEAM VM is already running. Target < 128MB RAM as standalone container. |
 | Cloudflare Tunnel WebSocket reliability | Low | Medium | Cloudflare supports WebSockets. Test long-lived Phoenix Channel connections. Implement reconnection with exponential backoff on the iOS client. |
 | Performance issues with large datasets (years of positions) | Medium | Medium | Server-side pagination, aggregation queries, database indexes. SwiftData for client-side caching with TTL. |
 | AGPL license dispute | Low | Medium | Companion API is an independent service (not a TeslaMate fork). Engage with community. Open-source the API server. |
@@ -1095,17 +1150,18 @@ The backend API layer should support:
 
 ## 13. Open Questions
 
-| # | Question | Decision Needed By |
-|---|---------|-------------------|
-| 1 | **Final app name and branding** — "TeslaPulse" is a working title. Needs trademark search. | Before App Store submission |
-| 2 | **Companion API server technology** — Elixir/Phoenix (recommended for Ecto schema reuse) vs Go/Rust (lighter on Raspberry Pi). Profile resource usage on Pi. | Phase 1 |
-| 3 | **Database write access** — Should the companion API be strictly read-only, or also handle writes (geofence CRUD, charge cost editing)? Writes require a shared-write DB user. | Phase 1 |
-| 4 | **Push notification architecture** — APNs requires server-side credentials. Should we bundle a relay service, or use a third-party push service (e.g. ntfy.sh, Pushover) as an interim? | Phase 3 |
-| 5 | **AGPL compliance for iOS app** — The companion API server reads from TeslaMate's database (not TeslaMate's code). Likely independent work. Legal review still recommended. | Before App Store submission |
-| 6 | **Vehicle commands in scope?** — Phase 4 lists commands (lock, climate, etc.). This goes beyond read-only and requires Tesla Fleet API partner registration. Confirm priority. | Before Phase 4 |
-| 7 | **Monetisation model** — Free? Freemium? One-time purchase? Since it's self-hosted, recurring subscription may not fit. | Before App Store submission |
-| 8 | **Raspberry Pi resource budget** — How much CPU/RAM overhead is acceptable for the companion API server on a Pi 4 that's already running TeslaMate + Grafana + Mosquitto + PostgreSQL? | Phase 1 |
-| 9 | **WebSocket over Cloudflare Tunnel** — Verify Phoenix Channel WebSocket connections work reliably through Cloudflare Tunnel (they should, but needs testing with long-lived connections and reconnection). | Phase 1 |
+| # | Question | Decision Needed By | Status |
+|---|---------|-------------------|--------|
+| 1 | **Final app name and branding** — "TeslaPulse" is a working title. Needs trademark search. | Before App Store submission | Open |
+| 2 | ~~**Companion API server technology**~~ | — | **Resolved: Elixir/Phoenix** (required for upstream PR compatibility with TeslaMate) |
+| 3 | **Database write access** — Should the companion API be strictly read-only, or also handle writes (geofence CRUD, charge cost editing)? Writes require a shared-write DB user. For upstream PR, writes would go through TeslaMate's existing Ecto changesets. | Phase 1 | Open |
+| 4 | ~~**Push notification architecture**~~ | — | **Resolved: Pluggable provider** via `PUSH_PROVIDER` env var (APNs, ntfy.sh, Pushover, or none). No hardcoded keys. |
+| 5 | **AGPL compliance for iOS app** — If the API layer is merged into TeslaMate (upstream PR), the server code is definitively AGPLv3. The iOS client communicates over a network API. Legal review still recommended for iOS app license. | Before App Store submission | Open |
+| 6 | **Vehicle commands in scope?** — Phase 4 lists commands (lock, climate, etc.). This goes beyond read-only and requires Tesla Fleet API partner registration. Confirm priority. | Before Phase 4 | Open |
+| 7 | **Monetisation model** — Free? Freemium? One-time purchase? Since it's self-hosted and intended for upstream contribution, free + open-source may be the right fit. | Before App Store submission | Open |
+| 8 | **Raspberry Pi resource budget** — How much CPU/RAM overhead is acceptable for the companion API server on a Pi 4 that's already running TeslaMate + Grafana + Mosquitto + PostgreSQL? | Phase 1 | Open |
+| 9 | **WebSocket over Cloudflare Tunnel** — Verify Phoenix Channel WebSocket connections work reliably through Cloudflare Tunnel (they should, but needs testing with long-lived connections and reconnection). | Phase 1 | Open |
+| 10 | **TeslaMate upstream PR timing** — When to submit the PR? After Phase 1 is stable? After Phase 2? Engage with TeslaMate maintainers early to align on API design and coding standards. | Phase 2 | Open |
 
 ---
 
