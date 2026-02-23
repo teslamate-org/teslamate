@@ -8,50 +8,62 @@
 
 ## 1. Executive Summary
 
-This document defines the product requirements for a native iOS and iPadOS application that provides a mobile-first interface to TeslaMate, the self-hosted Tesla data logger. The app replaces the current Grafana-based dashboard experience with a purpose-built native application optimised for iPhone and iPad, delivering real-time vehicle monitoring, historical data visualisation, and comprehensive Tesla telemetry analytics.
+This document defines the product requirements for a native iOS and iPadOS application that serves as a **companion to an existing TeslaMate installation**. The app does **not** replace TeslaMate or its Grafana dashboards — it runs alongside them, connecting to the same PostgreSQL database on the user's existing hardware (e.g. a Raspberry Pi), and provides a purpose-built native experience optimised for iPhone and iPad.
 
-The backend (Elixir/Phoenix + PostgreSQL) will be retained for data collection and storage, with a new REST API layer added to serve the mobile app. The system will be deployable on cloud infrastructure (Evroc or equivalent European sovereign cloud), with the iOS app distributed via the App Store.
+TeslaMate continues to handle all data collection, Tesla API communication, MQTT publishing, and Grafana dashboards as it does today. The iOS app adds a **read-optimised native layer** that queries the same database and delivers real-time vehicle monitoring, historical data visualisation, and comprehensive Tesla telemetry analytics — with future iOS-native features like push notifications, Live Activities, and widgets.
+
+A lightweight API server will be deployed alongside the existing TeslaMate stack (on the same Raspberry Pi or home server), exposing a JSON API over the local network (and optionally via a reverse proxy for remote access). The iOS app distributed via the App Store connects to this API.
 
 ---
 
 ## 2. Problem Statement
 
-TeslaMate is a powerful, self-hosted Tesla data logger with over 6,000 GitHub stars. However, it has significant UX limitations:
+TeslaMate is a powerful, self-hosted Tesla data logger with over 6,000 GitHub stars. It excels at data collection and storage but has UX limitations when accessed from mobile devices:
 
 1. **No native mobile experience** — The web UI is a basic Phoenix LiveView interface for configuration only (sign-in, settings, geofences). All data visualisation depends on Grafana dashboards, which are not optimised for mobile.
-2. **Grafana dependency** — Users must self-host Grafana and navigate complex dashboard URLs. The mobile browser experience is poor: small text, no gestures, no offline capability.
+2. **Poor mobile Grafana experience** — Grafana dashboards on a phone or tablet browser mean small text, no gestures, no offline capability, and no native interactions.
 3. **No push notifications** — Users cannot receive alerts for charging completion, vampire drain, geofence events, software updates, or anomalies.
 4. **No offline or at-a-glance access** — No widgets, no Apple Watch complications, no quick-glance capability.
-5. **Technical barrier to entry** — Setting up TeslaMate requires Docker, PostgreSQL, Grafana, and MQTT knowledge. A cloud-hosted option with a native app would dramatically lower the barrier.
+5. **No iOS-native features** — No Live Activities for charging/driving, no Lock Screen widgets, no Siri Shortcuts.
+
+**What works well today (and should be preserved):**
+- TeslaMate's rock-solid data collection running 24/7 on a Raspberry Pi
+- Full Grafana dashboard suite for desktop/power-user analysis
+- MQTT integration for home automation
+- Self-hosted, privacy-preserving architecture
 
 ---
 
 ## 3. Vision & Goals
 
 ### Vision
-Deliver the most comprehensive Tesla ownership analytics platform as a native iOS/iPadOS experience, combining the depth of TeslaMate's data collection with the polish and convenience of a first-party Apple app.
+Provide the best native iOS/iPadOS companion experience for TeslaMate users — complementing (not replacing) the existing Grafana dashboards with a polished, touch-first app that brings iOS-native capabilities to the TeslaMate data they already have.
 
 ### Goals
 | # | Goal | Success Metric |
 |---|------|----------------|
-| G1 | Replace Grafana with native iOS dashboards | 100% feature parity with all 23 Grafana dashboards |
+| G1 | Native iOS access to TeslaMate data | 100% feature parity with all 23 Grafana dashboards, optimised for touch |
 | G2 | Real-time vehicle monitoring on mobile | < 5 second latency from vehicle event to app display |
 | G3 | Push notifications for key events | Charging complete, geofence enter/exit, vampire drain alert, software update available |
 | G4 | iPad-optimised experience | Multi-column layouts, Split View & Slide Over support |
-| G5 | Cloud-hosted backend option | One-click deployment to Evroc (or alternative) with managed PostgreSQL |
+| G5 | Zero disruption to existing TeslaMate setup | Existing TeslaMate + Grafana + MQTT continue running unchanged |
 | G6 | App Store distribution | Published on the iOS App Store |
+
+### Non-Goals (Explicit)
+- **Not replacing TeslaMate** — the app does not collect data from Tesla's API; TeslaMate continues to do that
+- **Not replacing Grafana** — users can continue using Grafana on desktop alongside the iOS app
+- **Not a cloud migration** — the primary deployment target is the user's existing hardware (Raspberry Pi, NAS, home server)
 
 ---
 
 ## 4. Target Audience
 
 ### Primary
-- **Existing TeslaMate users** who want a native mobile experience instead of Grafana
-- **Tesla owners** who want detailed vehicle analytics without the self-hosting complexity
+- **Existing TeslaMate users** (like those running TeslaMate on a Raspberry Pi) who want a native iOS/iPad experience alongside their Grafana dashboards
 
 ### Secondary
-- **Multi-vehicle fleet owners** who need to monitor multiple Tesla vehicles
-- **Tesla enthusiasts** who want long-term battery health, efficiency, and cost tracking
+- **Multi-vehicle TeslaMate users** who need to monitor multiple Tesla vehicles from their phone/tablet
+- **Tesla enthusiasts** who want long-term battery health, efficiency, and cost tracking on the go
 
 ---
 
@@ -77,32 +89,53 @@ The app needs its own name due to trademark restrictions. Working title for this
 
 ## 6. System Architecture
 
-### 6.1 High-Level Architecture
+### 6.1 Design Philosophy: Companion, Not Replacement
+
+The key architectural principle is **coexistence**. The user's existing TeslaMate stack (TeslaMate, PostgreSQL, Grafana, Mosquitto MQTT) continues running exactly as it does today. We add a **separate, lightweight API server** alongside it that:
+
+1. **Reads from the same PostgreSQL database** (read-only connection by default)
+2. **Subscribes to the same MQTT broker** for real-time vehicle state
+3. **Serves a JSON API** to the iOS app over the local network
+4. **Optionally exposes itself** via the user's existing reverse proxy for remote access
+
+Nothing about the existing TeslaMate installation changes. If the companion API server is stopped or removed, TeslaMate and Grafana continue working exactly as before.
+
+### 6.2 High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        Tesla API                             │
-│              (Fleet API / Owner API / Streaming)             │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    TeslaMate Backend                         │
-│              (Elixir/Phoenix + PostgreSQL)                    │
-│                                                              │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐   │
-│  │ Data Logger   │  │  MQTT Broker │  │  New: REST API   │   │
-│  │ (existing)    │  │  (existing)  │  │  Layer (Phoenix) │   │
-│  └──────────────┘  └──────────────┘  └────────┬─────────┘   │
-│                                                │             │
-│  ┌──────────────────────────────────────────┐  │             │
-│  │           PostgreSQL Database             │  │             │
-│  └──────────────────────────────────────────┘  │             │
-└────────────────────────────────────────────────┼─────────────┘
-                                                 │
-                              HTTPS + WebSocket  │
-                                                 │
-                    ┌────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
+│                     Raspberry Pi / Home Server                     │
+│                                                                    │
+│  ┌────────────────────────────────────────────────────────────┐   │
+│  │               EXISTING (unchanged)                          │   │
+│  │                                                             │   │
+│  │  ┌──────────────┐    ┌──────────────┐    ┌─────────────┐   │   │
+│  │  │  TeslaMate    │───▶│  PostgreSQL  │◀───│   Grafana    │   │   │
+│  │  │  (Elixir)     │    │  Database    │    │  Dashboards  │   │   │
+│  │  └──────┬───────┘    └──────▲───────┘    └─────────────┘   │   │
+│  │         │                   │                               │   │
+│  │         ▼                   │ (read-only)                   │   │
+│  │  ┌──────────────┐          │                               │   │
+│  │  │ MQTT Broker   │          │                               │   │
+│  │  │ (Mosquitto)   │          │                               │   │
+│  │  └──────┬───────┘          │                               │   │
+│  └─────────┼──────────────────┼───────────────────────────────┘   │
+│            │ (subscribe)      │                                    │
+│  ┌─────────▼──────────────────┼───────────────────────────────┐   │
+│  │            NEW: Companion API Server                        │   │
+│  │            (lightweight service)                             │   │
+│  │                                                             │   │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │   │
+│  │  │ REST API      │  │ WebSocket    │  │ Push Notification│  │   │
+│  │  │ (JSON)        │  │ (real-time)  │  │ Relay (APNs)     │  │   │
+│  │  └──────────────┘  └──────────────┘  └──────────────────┘  │   │
+│  └─────────────────────────────┬──────────────────────────────┘   │
+│                                │                                    │
+└────────────────────────────────┼────────────────────────────────────┘
+                                 │
+                  LAN / Tailscale / Reverse Proxy
+                                 │
+                    ┌────────────┴───────────────┐
                     │                            │
               ┌─────▼─────┐              ┌──────▼──────┐
               │  iOS App   │              │  iPad App   │
@@ -110,27 +143,93 @@ The app needs its own name due to trademark restrictions. Working title for this
               └────────────┘              └─────────────┘
 ```
 
-### 6.2 Backend: API Layer (New)
+### 6.3 Companion API Server (New)
 
-The existing TeslaMate backend will be extended with a JSON REST API served by Phoenix. This approach:
-- Preserves the battle-tested data collection pipeline
-- Avoids rewriting the Tesla API integration, streaming, and logging logic
-- Adds a thin API layer on top of the existing Ecto schemas and database
+A **separate, lightweight service** deployed as an additional Docker container alongside the existing TeslaMate stack. It does NOT modify TeslaMate's code — it is an independent service that connects to the same infrastructure.
+
+**Why a separate service (not a TeslaMate fork)?**
+- **Zero risk to existing setup** — TeslaMate continues running unmodified
+- **Independent release cycle** — API server can be updated without touching TeslaMate
+- **Easy to add/remove** — Just add one container to `docker-compose.yml`
+- **Read-only by default** — The API server connects to PostgreSQL with a read-only user, minimising risk to data integrity
+- **Simpler maintenance** — No need to track upstream TeslaMate changes or manage fork conflicts
+
+**Technology options for the API server:**
+- **Option A: Elixir/Phoenix** — Same stack as TeslaMate; can reuse Ecto schemas; natural fit for WebSockets via Phoenix Channels
+- **Option B: Go or Rust** — Lighter resource footprint on Raspberry Pi; but requires reimplementing data access
+- **Recommended: Elixir/Phoenix** — Leverages the existing Ecto schema definitions, Phoenix Channels for real-time, and runs efficiently on the same BEAM VM ecosystem
+
+#### Deployment: Adding to Existing Docker Compose
+
+Users add one service to their existing `docker-compose.yml`:
+
+```yaml
+# Existing services (unchanged)
+services:
+  teslamate:
+    image: teslamate/teslamate:latest
+    # ... existing config ...
+
+  database:
+    image: postgres:16
+    # ... existing config ...
+
+  grafana:
+    image: teslamate/grafana:latest
+    # ... existing config ...
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    # ... existing config ...
+
+  # NEW: Companion API server for iOS app
+  teslapulse-api:
+    image: teslapulse/api:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_HOST: database
+      DATABASE_NAME: teslamate
+      DATABASE_USER: teslamate_readonly  # read-only DB user recommended
+      DATABASE_PASS: ${DATABASE_PASS}
+      MQTT_HOST: mosquitto
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      APNS_KEY_ID: ${APNS_KEY_ID}        # optional, for push notifications
+      APNS_TEAM_ID: ${APNS_TEAM_ID}      # optional, for push notifications
+    ports:
+      - "4001:4001"   # API on a different port than TeslaMate's 4000
+    depends_on:
+      - database
+      - mosquitto
+```
+
+#### Network Access Patterns
+
+| Scenario | How it works |
+|----------|-------------|
+| **At home (LAN)** | iOS app connects directly to `http://raspberrypi.local:4001` or the Pi's LAN IP |
+| **Remote via Tailscale** | iOS app connects via Tailscale VPN to the Pi's Tailscale IP |
+| **Remote via reverse proxy** | User's existing Nginx/Caddy/Traefik exposes the API with TLS (e.g. `https://tesla.mydomain.com/api/`) |
+| **Remote via Cloudflare Tunnel** | Zero-config remote access via Cloudflare Tunnel |
+
+The app's settings screen lets users configure the server URL. mDNS/Bonjour discovery on the local network is a future convenience feature.
 
 #### API Design Principles
 - RESTful JSON API with versioned endpoints (`/api/v1/...`)
-- Token-based authentication (JWT or Phoenix token)
-- WebSocket channel for real-time updates (leveraging Phoenix Channels, which already power the LiveView)
+- Token-based authentication (JWT or Phoenix token) — **not** Tesla credentials (those stay in TeslaMate)
+- WebSocket channel for real-time updates (powered by MQTT subscription on the backend)
+- Read-only database access by default; write operations limited to app-specific data (notification preferences, display settings)
 - Pagination, filtering, and date range support on all list endpoints
 - OpenAPI 3.0 specification for documentation
 
 #### Core API Endpoints
 
+All endpoints are served by the companion API server (not TeslaMate itself). The companion API reads from the shared PostgreSQL database.
+
 | Category | Endpoint | Method | Description |
 |----------|----------|--------|-------------|
-| **Auth** | `/api/v1/auth/login` | POST | Authenticate user, return JWT |
+| **Auth** | `/api/v1/auth/login` | POST | Authenticate with companion API, return JWT |
 | **Auth** | `/api/v1/auth/refresh` | POST | Refresh JWT token |
-| **Auth** | `/api/v1/auth/tesla/callback` | POST | Handle Tesla OAuth callback |
+| **Health** | `/api/v1/health` | GET | Health check (DB connection, MQTT status, TeslaMate version) |
 | **Cars** | `/api/v1/cars` | GET | List all vehicles |
 | **Cars** | `/api/v1/cars/:id` | GET | Get vehicle details + current state |
 | **Cars** | `/api/v1/cars/:id/summary` | GET | Live summary (state, SOC, location, etc.) |
@@ -154,45 +253,24 @@ The existing TeslaMate backend will be extended with a JSON REST API served by P
 | **Settings** | `/api/v1/cars/:id/settings` | GET/PUT | Per-vehicle settings |
 | **Real-time** | `wss://.../socket/v1/car/:id` | WS | Real-time vehicle updates via Phoenix Channel |
 
-### 6.3 Cloud Deployment (Evroc or Alternative)
+### 6.4 Remote Access (Optional)
 
-#### Requirements
-- European sovereign cloud hosting (Evroc preferred, alternatives: Scaleway, Hetzner, OVH)
-- Managed PostgreSQL (or containerised)
-- Container orchestration (Docker Compose for single-user, Kubernetes for multi-tenant)
-- TLS termination (Let's Encrypt or managed certificates)
-- MQTT broker (Mosquitto, containerised)
-- Automated backups for PostgreSQL
+Most users will want to access their data when away from home. Since TeslaMate already runs on a home server, the companion API server can be exposed remotely using common patterns:
 
-#### Deployment Architecture
-```
-┌──────────────────────────────────────────┐
-│              Evroc Cloud                  │
-│                                           │
-│  ┌─────────────────────────────────────┐  │
-│  │        Reverse Proxy (Caddy)        │  │
-│  │        TLS termination              │  │
-│  └──────────────┬──────────────────────┘  │
-│                 │                          │
-│  ┌──────────────▼──────────────────────┐  │
-│  │     TeslaMate + API (Container)     │  │
-│  │     Elixir/Phoenix                  │  │
-│  └──────────────┬──────────────────────┘  │
-│                 │                          │
-│  ┌──────────────▼──────────────────────┐  │
-│  │     PostgreSQL (Managed/Container)  │  │
-│  └─────────────────────────────────────┘  │
-│                                           │
-│  ┌─────────────────────────────────────┐  │
-│  │     Mosquitto MQTT (Container)      │  │
-│  └─────────────────────────────────────┘  │
-│                                           │
-│  ┌─────────────────────────────────────┐  │
-│  │     Push Notification Service       │  │
-│  │     (APNs relay)                    │  │
-│  └─────────────────────────────────────┘  │
-└───────────────────────────────────────────┘
-```
+| Method | Complexity | Security | Notes |
+|--------|-----------|----------|-------|
+| **Tailscale** | Low | High | Mesh VPN; iOS app connects via Tailscale IP; no port forwarding needed |
+| **Cloudflare Tunnel** | Low | High | Free tunnels; no port forwarding; adds TLS automatically |
+| **Reverse proxy + DDNS** | Medium | High (with TLS) | User's existing Nginx/Caddy; requires port forwarding and Let's Encrypt |
+| **WireGuard VPN** | Medium | High | Self-hosted VPN; requires port forwarding |
+
+The recommended approach for most users is **Tailscale** — it's free for personal use, requires no port forwarding, and the iOS Tailscale app makes it seamless.
+
+### 6.5 Future: Optional Cloud Deployment
+
+A future phase may offer cloud-hosted deployment for users who don't want to self-host, but this is **not** the primary use case. The architecture is Docker-based and cloud-agnostic. Potential providers if a hosted option is explored:
+- European sovereign cloud (Evroc, Scaleway, Hetzner, OVH)
+- Standard providers (any VPS or container hosting)
 
 ---
 
@@ -303,7 +381,7 @@ Each screen below maps to one or more of the existing Grafana dashboards, reimag
 └─────────────────────────────────┘
 ```
 
-**Data Source:** `GET /api/v1/cars/:id/summary` + WebSocket real-time channel
+**Data Source:** `GET /api/v1/cars/:id/summary` (from PostgreSQL) + WebSocket real-time channel (from MQTT relay)
 
 **Key Features:**
 - Real-time updates via WebSocket (battery, state, location update live)
@@ -590,33 +668,41 @@ Each screen below maps to one or more of the existing Grafana dashboards, reimag
   - Enabled/disabled
   - LFP battery flag
   - Sleep mode enabled
-- **Backend connection:** Server URL, authentication
+- **Server connection:**
+  - Server URL (e.g. `http://raspberrypi.local:4001` or Tailscale IP or remote URL)
+  - Connection status indicator (connected / disconnected / error)
+  - Test connection button
+  - API token / authentication
+  - Auto-discovery via Bonjour/mDNS on local network (future)
 - **Notifications:** Toggle per notification type
-- **Data management:** Import from TeslaFi, export data
-- **About:** Version, licenses, source code link
+- **Data management:** Export data
+- **About:** Version, licenses, source code link, TeslaMate version detected
 
 ---
 
 ### 7.4 Real-Time Updates
 
-The app maintains a persistent WebSocket connection (Phoenix Channel) for real-time vehicle data:
+The companion API server subscribes to TeslaMate's existing MQTT topics and relays updates to connected iOS clients via WebSocket (Phoenix Channel). This means:
+- **No changes to TeslaMate** — it already publishes to MQTT
+- **No additional Tesla API calls** — all data flows through the existing pipeline
+- **Low latency** — MQTT → API server → WebSocket → iOS app (typically < 2 seconds)
 
 **Channel:** `car:<car_id>`
 
-**Events pushed to client:**
-| Event | Payload | Trigger |
-|-------|---------|---------|
-| `summary` | Full vehicle summary | Any state change |
-| `position` | lat, lon, speed, power, elevation | While driving (every ~1-5 seconds) |
-| `charge_update` | SOC, power, voltage, current, energy | While charging (every ~30 seconds) |
-| `state_change` | New state (online/offline/asleep/driving/charging) | State transition |
-| `geofence` | Geofence entered/exited | Location change near geofence boundary |
+**Events pushed to client (sourced from MQTT topics):**
+| Event | Payload | MQTT Source Topics |
+|-------|---------|-------------------|
+| `summary` | Full vehicle summary | Multiple `teslamate/cars/<id>/*` topics |
+| `position` | lat, lon, speed, power, elevation | `latitude`, `longitude`, `speed`, `power`, `elevation` |
+| `charge_update` | SOC, power, voltage, current, energy | `battery_level`, `charger_power`, `charger_voltage`, `charge_energy_added` |
+| `state_change` | New state (online/offline/asleep/driving/charging) | `state` |
+| `geofence` | Geofence entered/exited | `geofence` |
 
 **Reconnection:** Exponential backoff (1s, 2s, 4s, 8s... max 30s), automatic resume on network change.
 
 ### 7.5 Push Notifications
 
-Push notifications are delivered via APNs (Apple Push Notification service) from a notification service running alongside the TeslaMate backend.
+Push notifications are delivered via APNs (Apple Push Notification service) from the companion API server. The API server monitors MQTT topics for trigger conditions and sends push notifications to registered iOS devices. This requires the user to configure APNs credentials (provided via the app's onboarding flow).
 
 | Notification | Trigger | Content |
 |-------------|---------|---------|
@@ -632,7 +718,19 @@ Push notifications are delivered via APNs (Apple Push Notification service) from
 | Vehicle Woke Up | State changes from `asleep` to `online` | (Optional, default off) |
 | Sentry Mode Alert | Sentry mode activated/deactivated | (Optional, default off) |
 
-### 7.6 Widgets (WidgetKit)
+### 7.6 Live Activities (Phase 3)
+
+Live Activities display real-time information on the Lock Screen and Dynamic Island while an event is in progress.
+
+| Activity | Trigger | Lock Screen Display | Dynamic Island (Compact) |
+|----------|---------|-------------------|------------------------|
+| **Charging** | Charging session starts | SOC gauge filling, current power, time remaining, energy added | SOC % + time remaining |
+| **Driving** | Drive starts (shift state != P) | Speed, distance from start, current efficiency, elapsed time | Speed + distance |
+| **Software Update** | Update starts installing | Version number, progress indicator | Update progress % |
+
+**Data Flow:** Companion API server detects state changes via MQTT → sends push notification with Live Activity payload → iOS updates the Live Activity in real-time via subsequent pushes.
+
+### 7.7 Widgets (WidgetKit)
 
 #### Home Screen Widgets
 
@@ -656,14 +754,14 @@ Push notifications are delivered via APNs (Apple Push Notification service) from
 #### StandBy Mode
 - Clock-style widget showing SOC and vehicle state
 
-### 7.7 Offline Support
+### 7.8 Offline Support
 
 - **SwiftData local cache:** Recent summaries, last 30 drives, last 30 charges cached locally
 - **Graceful degradation:** App shows cached data with "Last updated X ago" indicator when offline
 - **Background refresh:** Periodic background fetch to update cached data and widgets
 - **Offline-first widgets:** Widgets always show the most recent cached data
 
-### 7.8 Accessibility
+### 7.9 Accessibility
 
 - Full VoiceOver support on all screens
 - Dynamic Type support (all text sizes)
@@ -671,7 +769,7 @@ Push notifications are delivered via APNs (Apple Push Notification service) from
 - Chart accessibility: data table alternatives for all charts
 - Reduce Motion support (minimise animations)
 
-### 7.9 Multi-Vehicle Support
+### 7.10 Multi-Vehicle Support
 
 - Vehicle picker in navigation (segmented control on iPhone, sidebar grouping on iPad)
 - Per-vehicle notification preferences
@@ -855,12 +953,13 @@ struct FirmwareUpdate: Identifiable, Codable {
 
 | Requirement | Implementation |
 |-------------|----------------|
-| API authentication | JWT tokens stored in iOS Keychain |
+| API authentication | JWT tokens for companion API, stored in iOS Keychain |
 | Token refresh | Automatic refresh before expiry |
-| Data in transit | TLS 1.3 minimum |
+| Data in transit | TLS 1.3 minimum (when accessed via reverse proxy / Tailscale) |
+| Data in transit (LAN) | HTTP acceptable on trusted local network; HTTPS recommended |
 | Data at rest (device) | iOS Data Protection (NSFileProtectionComplete) |
-| Tesla credentials | Never stored on device; handled server-side only |
-| Certificate pinning | Pin backend server certificate |
+| Tesla credentials | **Never touched by the companion API or iOS app** — they remain encrypted in TeslaMate's database, managed solely by TeslaMate |
+| Certificate pinning | Pin backend server certificate (when using TLS) |
 | Biometric lock | Optional Face ID / Touch ID to open app |
 
 ### 9.3 Reliability
@@ -892,26 +991,29 @@ The backend API layer should support:
 ## 10. Phased Delivery
 
 ### Phase 1: Foundation (MVP)
-- Backend API layer (all core endpoints)
-- iOS app with: Overview, Drives (list + detail + map), Charges (list + detail), Settings
-- Authentication flow (Tesla OAuth via backend)
-- Real-time updates via WebSocket
+- **Companion API server** as a Docker container (connects to existing PostgreSQL + MQTT)
+- Docker Compose snippet for easy addition to existing TeslaMate stack
+- Core API endpoints (cars, drives, charges, positions, summary)
+- iOS app with: Overview, Drives (list + detail + map), Charges (list + detail), Settings (including server URL configuration)
+- Simple authentication (API token or basic auth for the companion API)
+- Real-time updates via WebSocket (sourced from MQTT)
 - Basic offline caching
 - Single vehicle support
-- Cloud deployment (Docker Compose on Evroc or chosen provider)
+- LAN access (connect to Pi's local IP)
 
 ### Phase 2: Full Dashboard Parity
 - All remaining dashboard screens (Battery Health, Charging Stats, Drive Stats, Efficiency, Mileage, Projected Range, States, Timeline, Statistics, Trip, Updates, Vampire Drain, Visited)
 - Multi-vehicle support
-- Geofence management (CRUD with map)
+- Geofence management (CRUD with map — writes to the shared PostgreSQL database)
 - Charge cost editing
 - iPad optimised layouts (NavigationSplitView, multi-column)
+- Remote access documentation (Tailscale, Cloudflare Tunnel, reverse proxy guides)
 
-### Phase 3: Native Mobile Features
-- Push notifications (all types)
+### Phase 3: Native iOS Features
+- Push notifications (all types) — requires APNs relay in companion API server
 - WidgetKit widgets (Home Screen, Lock Screen, StandBy)
+- Live Activities (charging progress on Lock Screen / Dynamic Island, drive in progress)
 - GPX export / share
-- Data import from TeslaFi
 - Biometric app lock
 - Full internationalisation
 - App Store submission
@@ -919,12 +1021,11 @@ The backend API layer should support:
 ### Phase 4: Advanced Features (Post-Launch)
 - Apple Watch app (glanceable SOC, state, notifications)
 - Siri Shortcuts integration ("Hey Siri, what's my Tesla's battery?")
-- Live Activities (charging progress, drive in progress on Lock Screen / Dynamic Island)
 - CarPlay dashboard (if applicable)
-- Vehicle commands (lock/unlock, climate control, charge port, etc.) — requires Tesla Fleet API partner authentication
-- Multi-user support (shared vehicle access)
+- Vehicle commands (lock/unlock, climate control, charge port, etc.) — requires Tesla Fleet API partner authentication and goes beyond read-only access
 - Data export (CSV, JSON)
 - Comparison analytics (vehicle vs vehicle, period vs period)
+- Optional cloud-hosted deployment for non-self-hosting users
 
 ---
 
@@ -934,20 +1035,22 @@ The backend API layer should support:
 
 | Dependency | Risk Level | Mitigation |
 |-----------|-----------|------------|
-| Tesla API availability | High | Implement retry logic, caching, graceful degradation. Monitor Tesla API changes. |
-| Tesla Fleet API migration | High | Tesla is transitioning from Owner API to Fleet API with partner auth. Must register as a Fleet API partner. |
-| Evroc cloud availability | Medium | Architecture is Docker-based; can deploy to any cloud provider. |
-| Apple App Store approval | Medium | Follow Apple guidelines strictly. AGPL compliance may require source code link in app. |
-| TeslaMate upstream changes | Medium | Fork may diverge. Maintain ability to merge upstream updates. |
+| Existing TeslaMate installation | Required | App is designed for users who already run TeslaMate. Clear documentation and setup guides. |
+| TeslaMate database schema stability | Medium | Monitor TeslaMate releases for schema changes. Pin to supported TeslaMate versions. |
+| PostgreSQL access from companion service | Low | Standard Docker networking. Read-only DB user for safety. |
+| MQTT broker access | Low | Companion API subscribes to existing MQTT topics published by TeslaMate. |
+| Apple App Store approval | Medium | Follow Apple guidelines strictly. Source code link in app for AGPL compliance. |
+| Raspberry Pi resource headroom | Medium | Profile companion API server memory/CPU on Pi 4. Keep it lightweight. |
 
 ### Risks
 
 | Risk | Probability | Impact | Mitigation |
 |------|------------|--------|------------|
-| Tesla blocks third-party API access | Low | Critical | Monitor Tesla developer communications. The Fleet API programme suggests continued support. |
-| AGPL license dispute with TeslaMate org | Medium | High | Engage early with the TeslaMate community. Comply fully with AGPL. Consider contributing the API layer upstream. |
-| Performance issues with large datasets | Medium | Medium | Implement server-side pagination, aggregation queries, and database indexes. Use SwiftData for client-side caching with TTL. |
-| App Store rejection for AGPL compliance | Low | Medium | Include source code link in app, host source publicly on GitHub. Apple has approved AGPL apps (e.g., Signal components). |
+| TeslaMate schema changes break companion API | Medium | High | Version-pin supported TeslaMate versions. Integration tests against TeslaMate DB schema. |
+| Companion API server too heavy for Raspberry Pi | Low-Medium | Medium | Profile aggressively. Consider Go/Rust if Elixir/Phoenix is too heavy. Target < 128MB RAM. |
+| Remote access complexity discourages users | Medium | Medium | Provide step-by-step guides for Tailscale (simplest). Consider built-in tunnel in future. |
+| Performance issues with large datasets (years of positions) | Medium | Medium | Server-side pagination, aggregation queries, database indexes. SwiftData for client-side caching with TTL. |
+| AGPL license dispute | Low | Medium | Companion API is an independent service (not a TeslaMate fork). Engage with community. Open-source the API server. |
 
 ---
 
@@ -970,13 +1073,14 @@ The backend API layer should support:
 | # | Question | Decision Needed By |
 |---|---------|-------------------|
 | 1 | **Final app name and branding** — "TeslaPulse" is a working title. Needs trademark search. | Before App Store submission |
-| 2 | **Evroc vs alternative cloud** — Evroc is preferred but availability and pricing need validation. Alternatives: Scaleway, Hetzner, OVH. | Before Phase 1 deployment |
-| 3 | **Tesla Fleet API partner registration** — Required for continued API access. Process and timeline? | Immediately |
-| 4 | **Monetisation model** — Free? Freemium? Subscription? One-time purchase? This affects architecture (multi-tenant vs single-tenant). | Before Phase 3 |
-| 5 | **Vehicle commands in scope?** — Phase 4 lists commands (lock, climate, etc.). This significantly increases scope and security requirements. Confirm priority. | Before Phase 4 |
-| 6 | **AGPL compliance for iOS app** — Legal review needed on whether the iOS client must be AGPL. | Before Phase 3 |
-| 7 | **Multi-tenant architecture** — If this becomes a hosted service, the backend needs user isolation, billing, and tenant management. | Before Phase 1 if multi-tenant |
-| 8 | **Grafana retention** — Keep Grafana as a power-user option alongside the iOS app, or deprecate? | Phase 2 |
+| 2 | **Companion API server technology** — Elixir/Phoenix (recommended for Ecto schema reuse) vs Go/Rust (lighter on Raspberry Pi). Profile resource usage on Pi. | Phase 1 |
+| 3 | **Database write access** — Should the companion API be strictly read-only, or also handle writes (geofence CRUD, charge cost editing)? Writes require a shared-write DB user. | Phase 1 |
+| 4 | **Push notification architecture** — APNs requires server-side credentials. Should we bundle a relay service, or use a third-party push service (e.g. ntfy.sh, Pushover) as an interim? | Phase 3 |
+| 5 | **AGPL compliance for iOS app** — The companion API server reads from TeslaMate's database (not TeslaMate's code). Likely independent work. Legal review still recommended. | Before App Store submission |
+| 6 | **Vehicle commands in scope?** — Phase 4 lists commands (lock, climate, etc.). This goes beyond read-only and requires Tesla Fleet API partner registration. Confirm priority. | Before Phase 4 |
+| 7 | **Monetisation model** — Free? Freemium? One-time purchase? Since it's self-hosted, recurring subscription may not fit. | Before App Store submission |
+| 8 | **Raspberry Pi resource budget** — How much CPU/RAM overhead is acceptable for the companion API server on a Pi 4 that's already running TeslaMate + Grafana + Mosquitto + PostgreSQL? | Phase 1 |
+| 9 | **Remote access recommendation** — Should we officially recommend Tailscale, or provide a built-in tunnel solution? | Phase 2 |
 
 ---
 
