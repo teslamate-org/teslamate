@@ -1127,7 +1127,7 @@ The backend API layer should support:
 | Risk | Probability | Impact | Mitigation |
 |------|------------|--------|------------|
 | TeslaMate schema changes break companion API | Medium | High | Version-pin supported TeslaMate versions. Integration tests against TeslaMate DB schema. |
-| Companion API server too heavy for Raspberry Pi | Low-Medium | Medium | Profile aggressively. Elixir/Phoenix is required for upstream compatibility, but BEAM VM is efficient on ARM. If merged into TeslaMate (upstream PR), the overhead is minimal since TeslaMate's BEAM VM is already running. Target < 128MB RAM as standalone container. |
+| Companion API server too heavy for Raspberry Pi | Low | Medium | Target hardware is Pi 5 with 8GB RAM — ample headroom. Elixir/Phoenix is required for upstream compatibility, and the BEAM VM is efficient on ARM. If merged into TeslaMate (upstream PR), overhead is near-zero since TeslaMate's BEAM VM is already running. Target < 128MB RAM as standalone container. |
 | Cloudflare Tunnel WebSocket reliability | Low | Medium | Cloudflare supports WebSockets. Test long-lived Phoenix Channel connections. Implement reconnection with exponential backoff on the iOS client. |
 | Performance issues with large datasets (years of positions) | Medium | Medium | Server-side pagination, aggregation queries, database indexes. SwiftData for client-side caching with TTL. |
 | AGPL license dispute | Low | Medium | Companion API is an independent service (not a TeslaMate fork). Engage with community. Open-source the API server. |
@@ -1154,12 +1154,12 @@ The backend API layer should support:
 |---|---------|-------------------|--------|
 | 1 | **Final app name and branding** — "TeslaPulse" is a working title. Needs trademark search. | Before App Store submission | Open |
 | 2 | ~~**Companion API server technology**~~ | — | **Resolved: Elixir/Phoenix** (required for upstream PR compatibility with TeslaMate) |
-| 3 | **Database write access** — Should the companion API be strictly read-only, or also handle writes (geofence CRUD, charge cost editing)? Writes require a shared-write DB user. For upstream PR, writes would go through TeslaMate's existing Ecto changesets. | Phase 1 | Open |
+| 3 | ~~**Database write access**~~ | — | **Resolved: Read-only for Phase 1.** Write access deferred to a later phase. When writes are added, they should go through TeslaMate's existing Ecto changesets for upstream compatibility. |
 | 4 | ~~**Push notification architecture**~~ | — | **Resolved: Pluggable provider** via `PUSH_PROVIDER` env var (APNs, ntfy.sh, Pushover, or none). No hardcoded keys. |
 | 5 | **AGPL compliance for iOS app** — If the API layer is merged into TeslaMate (upstream PR), the server code is definitively AGPLv3. The iOS client communicates over a network API. Legal review still recommended for iOS app license. | Before App Store submission | Open |
 | 6 | **Vehicle commands in scope?** — Phase 4 lists commands (lock, climate, etc.). This goes beyond read-only and requires Tesla Fleet API partner registration. Confirm priority. | Before Phase 4 | Open |
 | 7 | **Monetisation model** — Free? Freemium? One-time purchase? Since it's self-hosted and intended for upstream contribution, free + open-source may be the right fit. | Before App Store submission | Open |
-| 8 | **Raspberry Pi resource budget** — How much CPU/RAM overhead is acceptable for the companion API server on a Pi 4 that's already running TeslaMate + Grafana + Mosquitto + PostgreSQL? | Phase 1 | Open |
+| 8 | ~~**Raspberry Pi resource budget**~~ | — | **Resolved: Pi 5 with 8GB RAM.** Plenty of headroom. Target < 128MB RAM for the companion API container. If merged into TeslaMate's BEAM VM (upstream PR), overhead is near-zero. |
 | 9 | **WebSocket over Cloudflare Tunnel** — Verify Phoenix Channel WebSocket connections work reliably through Cloudflare Tunnel (they should, but needs testing with long-lived connections and reconnection). | Phase 1 | Open |
 | 10 | **TeslaMate upstream PR timing** — When to submit the PR? After Phase 1 is stable? After Phase 2? Engage with TeslaMate maintainers early to align on API design and coding standards. | Phase 2 | Open |
 
