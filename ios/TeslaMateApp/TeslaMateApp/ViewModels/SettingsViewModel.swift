@@ -77,7 +77,7 @@ class SettingsViewModel {
             url.removeLast()
         }
         if !url.hasPrefix("http://") && !url.hasPrefix("https://") {
-            url = "http://" + url
+            url = "https://" + url
         }
         return url
     }
