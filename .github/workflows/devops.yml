@@ -49,3 +49,9 @@ jobs:
       - ensure_linting
     if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
     uses: ./.github/workflows/elixir_test.yml
+
+  ios_test:
+    needs:
+      - check_paths
+    if: needs.check_paths.outputs.githubfolder != 'true' || github.event_name == 'schedule'
+    uses: ./.github/workflows/ios_test.yml

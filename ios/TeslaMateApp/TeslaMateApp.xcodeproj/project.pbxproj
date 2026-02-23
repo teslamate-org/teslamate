@@ -49,7 +49,23 @@
 		A10000000000000000000034 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C10000000000000000000005 /* Security.framework */; };
 		A10000000000000000000035 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C10000000000000000000006 /* CoreLocation.framework */; };
 		A10000000000000000000040 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000040 /* Assets.xcassets */; };
+		A20000000000000000000001 /* CarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* CarTests.swift */; };
+		A20000000000000000000002 /* VehicleSummaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* VehicleSummaryTests.swift */; };
+		A20000000000000000000003 /* DriveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000003 /* DriveTests.swift */; };
+		A20000000000000000000004 /* ChargingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000004 /* ChargingSessionTests.swift */; };
+		A20000000000000000000005 /* APITypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000005 /* APITypesTests.swift */; };
+		A20000000000000000000006 /* EndpointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000006 /* EndpointTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E20000000000000000000009 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E10000000000000000000006 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E10000000000000000000002;
+			remoteInfo = TeslaMateApp;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B10000000000000000000001 /* TeslaMateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeslaMateApp.swift; sourceTree = "<group>"; };
@@ -95,6 +111,13 @@
 		C10000000000000000000006 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		D10000000000000000000001 /* TeslaMateApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeslaMateApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B10000000000000000000040 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B20000000000000000000001 /* CarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarTests.swift; sourceTree = "<group>"; };
+		B20000000000000000000002 /* VehicleSummaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleSummaryTests.swift; sourceTree = "<group>"; };
+		B20000000000000000000003 /* DriveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveTests.swift; sourceTree = "<group>"; };
+		B20000000000000000000004 /* ChargingSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargingSessionTests.swift; sourceTree = "<group>"; };
+		B20000000000000000000005 /* APITypesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APITypesTests.swift; sourceTree = "<group>"; };
+		B20000000000000000000006 /* EndpointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointTests.swift; sourceTree = "<group>"; };
+		D20000000000000000000001 /* TeslaMateAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TeslaMateAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +134,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E20000000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -118,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				F10000000000000000000002 /* TeslaMateApp */,
+				F20000000000000000000001 /* TeslaMateAppTests */,
 				F10000000000000000000010 /* Frameworks */,
 				F10000000000000000000011 /* Products */,
 			);
@@ -255,8 +286,38 @@
 			isa = PBXGroup;
 			children = (
 				D10000000000000000000001 /* TeslaMateApp.app */,
+				D20000000000000000000001 /* TeslaMateAppTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F20000000000000000000001 /* TeslaMateAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				F20000000000000000000002 /* Models */,
+				F20000000000000000000003 /* Services */,
+			);
+			path = TeslaMateAppTests;
+			sourceTree = "<group>";
+		};
+		F20000000000000000000002 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000001 /* CarTests.swift */,
+				B20000000000000000000002 /* VehicleSummaryTests.swift */,
+				B20000000000000000000003 /* DriveTests.swift */,
+				B20000000000000000000004 /* ChargingSessionTests.swift */,
+				B20000000000000000000005 /* APITypesTests.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		F20000000000000000000003 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000006 /* EndpointTests.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -279,6 +340,24 @@
 			productReference = D10000000000000000000001 /* TeslaMateApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E20000000000000000000001 /* TeslaMateAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E20000000000000000000007 /* Build configuration list for PBXNativeTarget "TeslaMateAppTests" */;
+			buildPhases = (
+				E20000000000000000000002 /* Sources */,
+				E20000000000000000000003 /* Frameworks */,
+				E20000000000000000000004 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E20000000000000000000008 /* PBXTargetDependency */,
+			);
+			name = TeslaMateAppTests;
+			productName = TeslaMateAppTests;
+			productReference = D20000000000000000000001 /* TeslaMateAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -292,6 +371,10 @@
 				TargetAttributes = {
 					E10000000000000000000002 = {
 						CreatedOnToolsVersion = 16.0;
+					};
+					E20000000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = E10000000000000000000002;
 					};
 				};
 			};
@@ -309,6 +392,7 @@
 			projectRoot = "";
 			targets = (
 				E10000000000000000000002 /* TeslaMateApp */,
+				E20000000000000000000001 /* TeslaMateAppTests */,
 			);
 		};
 /* End PBXProject section */
@@ -319,6 +403,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000040 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000004 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,7 +458,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E20000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A20000000000000000000001 /* CarTests.swift in Sources */,
+				A20000000000000000000002 /* VehicleSummaryTests.swift in Sources */,
+				A20000000000000000000003 /* DriveTests.swift in Sources */,
+				A20000000000000000000004 /* ChargingSessionTests.swift in Sources */,
+				A20000000000000000000005 /* APITypesTests.swift in Sources */,
+				A20000000000000000000006 /* EndpointTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E20000000000000000000008 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E10000000000000000000002 /* TeslaMateApp */;
+			targetProxy = E20000000000000000000009 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E10000000000000000000008 /* Debug */ = {
@@ -547,6 +659,42 @@
 			};
 			name = Release;
 		};
+		E20000000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U5EC8WF2Y6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.drewpost.TeslaMateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TeslaMateApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TeslaMateApp";
+			};
+			name = Debug;
+		};
+		E20000000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U5EC8WF2Y6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.drewpost.TeslaMateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TeslaMateApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TeslaMateApp";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -564,6 +712,15 @@
 			buildConfigurations = (
 				E1000000000000000000000A /* Debug */,
 				E1000000000000000000000B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E20000000000000000000007 /* Build configuration list for PBXNativeTarget "TeslaMateAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E20000000000000000000005 /* Debug */,
+				E20000000000000000000006 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
