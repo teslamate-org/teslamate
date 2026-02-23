@@ -71,3 +71,11 @@ config/*.env
 
 # Used during tests
 /tmp/
+
+# Xcode / iOS
+ios/TeslaMateApp/TeslaMateApp.xcodeproj/xcuserdata/
+ios/TeslaMateApp/TeslaMateApp.xcodeproj/project.xcworkspace/xcuserdata/
+ios/TeslaMateApp/DerivedData/
+ios/TeslaMateApp/build/
+*.xcuserstate
+*.xcuserdatad

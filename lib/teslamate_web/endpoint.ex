@@ -13,6 +13,9 @@ defmodule TeslaMateWeb.Endpoint do
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options], transport_log: :debug]
 
+  socket "/api/v1/ws", TeslaMateWeb.Api.UserSocket,
+    websocket: true
+
   plug Plug.Static,
     at: "/",
     from: :teslamate,

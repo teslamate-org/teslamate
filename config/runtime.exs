@@ -187,3 +187,18 @@ config :teslamate, :srtm_cache, System.get_env("SRTM_CACHE", ".srtm_cache")
 config :teslamate, TeslaMate.Vault, key: Util.get_env("ENCRYPTION_KEY", test: "secret")
 
 config :tzdata, :data_dir, System.get_env("TZDATA_DIR", "/tmp")
+
+if System.get_env("ENABLE_API") == "true" do
+  jwt_secret = System.get_env("API_JWT_SECRET", Util.random_string(64))
+
+  config :teslamate, :api,
+    enabled: true,
+    auth_token: System.fetch_env!("API_AUTH_TOKEN"),
+    jwt_secret: jwt_secret
+
+  config :joken,
+    default_signer: [
+      signer_alg: "HS256",
+      key_octet: jwt_secret
+    ]
+end

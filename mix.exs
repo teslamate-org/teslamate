@@ -54,6 +54,7 @@ defmodule TeslaMate.MixProject do
       # https://github.com/bitwalker/timex/pull/783
       {:gettext, "~> 1.0", override: true},
       {:jason, "~> 1.4"},
+      {:joken, "~> 2.6"},
       {:mock, "~> 0.3", only: :test},
       {:nimble_csv, "~> 1.3"},
       {:phoenix, "~> 1.7.0"},

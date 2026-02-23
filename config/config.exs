@@ -32,4 +32,7 @@ config :gettext, :default_locale, "en"
 
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
+# API (disabled by default, enable with ENABLE_API=true)
+config :teslamate, :api, enabled: false
+
 import_config "#{config_env()}.exs"

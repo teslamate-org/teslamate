@@ -53,6 +53,136 @@ defmodule TeslaMate.Log do
     :ok
   end
 
+  ## API Queries
+
+  def list_drives(car_id, opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per_page = Keyword.get(opts, :per_page, 20) |> min(100)
+    offset = (page - 1) * per_page
+
+    query =
+      from d in Drive,
+        where: d.car_id == ^car_id and not is_nil(d.end_date),
+        order_by: [desc: d.start_date],
+        preload: [:start_address, :end_address, :start_geofence, :end_geofence],
+        offset: ^offset,
+        limit: ^per_page
+
+    query =
+      case {Keyword.get(opts, :since), Keyword.get(opts, :until)} do
+        {nil, nil} -> query
+        {since, nil} -> from d in query, where: d.start_date >= ^since
+        {nil, until_dt} -> from d in query, where: d.start_date <= ^until_dt
+        {since, until_dt} -> from d in query, where: d.start_date >= ^since and d.start_date <= ^until_dt
+      end
+
+    count_query = from d in Drive, where: d.car_id == ^car_id and not is_nil(d.end_date), select: count()
+    total = Repo.one(count_query)
+    entries = Repo.all(query)
+
+    %{entries: entries, page: page, per_page: per_page, total: total}
+  end
+
+  def get_drive(id) do
+    Drive
+    |> where(id: ^id)
+    |> preload([:start_address, :end_address, :start_geofence, :end_geofence, :car])
+    |> Repo.one()
+  end
+
+  def get_drive_with_positions(id) do
+    case get_drive(id) do
+      nil ->
+        nil
+
+      drive ->
+        positions =
+          from(p in Position,
+            where: p.drive_id == ^id,
+            order_by: [asc: p.date]
+          )
+          |> Repo.all()
+
+        {drive, positions}
+    end
+  end
+
+  def list_charging_processes(car_id, opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per_page = Keyword.get(opts, :per_page, 20) |> min(100)
+    offset = (page - 1) * per_page
+
+    query =
+      from cp in ChargingProcess,
+        where: cp.car_id == ^car_id and not is_nil(cp.end_date),
+        order_by: [desc: cp.start_date],
+        preload: [:address, :geofence],
+        offset: ^offset,
+        limit: ^per_page
+
+    query =
+      case {Keyword.get(opts, :since), Keyword.get(opts, :until)} do
+        {nil, nil} -> query
+        {since, nil} -> from cp in query, where: cp.start_date >= ^since
+        {nil, until_dt} -> from cp in query, where: cp.start_date <= ^until_dt
+        {since, until_dt} -> from cp in query, where: cp.start_date >= ^since and cp.start_date <= ^until_dt
+      end
+
+    count_query = from cp in ChargingProcess, where: cp.car_id == ^car_id and not is_nil(cp.end_date), select: count()
+    total = Repo.one(count_query)
+    entries = Repo.all(query)
+
+    %{entries: entries, page: page, per_page: per_page, total: total}
+  end
+
+  def get_charging_process_with_charges(id) do
+    case Repo.get(ChargingProcess, id) do
+      nil ->
+        nil
+
+      cp ->
+        cp = Repo.preload(cp, [:address, :geofence, :car, :position])
+
+        charges =
+          from(c in Charge,
+            where: c.charging_process_id == ^id,
+            order_by: [asc: c.date]
+          )
+          |> Repo.all()
+
+        {cp, charges}
+    end
+  end
+
+  def list_positions(car_id, opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per_page = Keyword.get(opts, :per_page, 100) |> min(1000)
+    offset = (page - 1) * per_page
+
+    query =
+      from p in Position,
+        where: p.car_id == ^car_id,
+        order_by: [desc: p.date],
+        offset: ^offset,
+        limit: ^per_page
+
+    query =
+      case {Keyword.get(opts, :since), Keyword.get(opts, :until)} do
+        {nil, nil} -> query
+        {since, nil} -> from p in query, where: p.date >= ^since
+        {nil, until_dt} -> from p in query, where: p.date <= ^until_dt
+        {since, until_dt} -> from p in query, where: p.date >= ^since and p.date <= ^until_dt
+      end
+
+    Repo.all(query)
+  end
+
+  def get_car(id) do
+    Car
+    |> Repo.get(id)
+    |> Repo.preload(:settings)
+  end
+
   ## State
 
   def start_state(%Car{} = car, state, opts \\ []) when not is_nil(state) do

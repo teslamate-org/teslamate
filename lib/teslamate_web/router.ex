@@ -30,6 +30,15 @@ defmodule TeslaMateWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :api_v1 do
+    plug :accepts, ["json"]
+    plug TeslaMateWeb.Api.EnableApiPlug
+  end
+
+  pipeline :api_auth do
+    plug TeslaMateWeb.Api.Auth.Plug
+  end
+
   scope "/", TeslaMateWeb do
     pipe_through :browser
 
@@ -52,6 +61,28 @@ defmodule TeslaMateWeb.Router do
 
     put "/car/:id/logging/resume", CarController, :resume_logging
     put "/car/:id/logging/suspend", CarController, :suspend_logging
+  end
+
+  scope "/api/v1", TeslaMateWeb.Api do
+    pipe_through :api_v1
+
+    post "/auth/login", Auth.AuthController, :login
+    get "/health", HealthController, :index
+
+    scope "/" do
+      pipe_through :api_auth
+
+      get "/cars", CarController, :index
+      get "/cars/:id", CarController, :show
+      get "/cars/:car_id/summary", CarController, :summary
+      get "/cars/:car_id/drives", DriveController, :index
+      get "/cars/:car_id/charges", ChargeController, :index
+      get "/cars/:car_id/positions", PositionController, :index
+
+      get "/drives/:id", DriveController, :show
+      get "/drives/:id/gpx", DriveController, :gpx
+      get "/charges/:id", ChargeController, :show
+    end
   end
 
   def fetch_settings(conn, _opts) do
