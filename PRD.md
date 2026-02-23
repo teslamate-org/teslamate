@@ -202,16 +202,45 @@ services:
       - mosquitto
 ```
 
-#### Network Access Patterns
+Then add a route in the existing Cloudflare Tunnel config (`~/.cloudflared/config.yml`):
 
-| Scenario | How it works |
-|----------|-------------|
-| **At home (LAN)** | iOS app connects directly to `http://raspberrypi.local:4001` or the Pi's LAN IP |
-| **Remote via Tailscale** | iOS app connects via Tailscale VPN to the Pi's Tailscale IP |
-| **Remote via reverse proxy** | User's existing Nginx/Caddy/Traefik exposes the API with TLS (e.g. `https://tesla.mydomain.com/api/`) |
-| **Remote via Cloudflare Tunnel** | Zero-config remote access via Cloudflare Tunnel |
+```yaml
+ingress:
+  # ... existing rules (e.g. API scraper) ...
+  - hostname: teslapulse.yourdomain.com
+    service: http://localhost:4001
+  - service: http_status:404
+```
 
-The app's settings screen lets users configure the server URL. mDNS/Bonjour discovery on the local network is a future convenience feature.
+The app is then configured with `https://teslapulse.yourdomain.com` — accessible from anywhere.
+
+#### Network Access: Single URL via Cloudflare Tunnel
+
+The app connects to a single HTTPS URL regardless of network — at home on WiFi, on cellular, or anywhere else. The user's existing Cloudflare Tunnel on the Raspberry Pi handles all routing and TLS.
+
+**How it works:**
+1. User already has `cloudflared` running on the Pi (for their existing API scraper)
+2. Add one route to the tunnel config pointing a subdomain to the companion API (e.g. `teslapulse.yourdomain.com → localhost:4001`)
+3. App is configured once with `https://teslapulse.yourdomain.com` — works everywhere, always HTTPS
+
+**Benefits:**
+- **One URL, always works** — no switching between LAN/remote, no split-DNS logic in the app
+- **TLS built-in** — Cloudflare manages certificates automatically
+- **No port forwarding** — tunnel handles everything
+- **WebSocket support** — Cloudflare Tunnels support WebSocket connections for real-time updates
+- **Already deployed** — user already has the tunnel infrastructure running
+
+**LAN latency trade-off:** Requests from the iPad on the same WiFi network take a small detour through Cloudflare's edge (~10-30ms added). This is negligible for a dashboard app.
+
+**Alternative access methods** (for users without Cloudflare Tunnel):
+
+| Method | Complexity | Notes |
+|--------|-----------|-------|
+| **Tailscale** | Low | Mesh VPN; free for personal use; no port forwarding |
+| **Reverse proxy + DDNS** | Medium | User's own Nginx/Caddy with Let's Encrypt |
+| **Direct LAN** | Lowest | `http://raspberrypi.local:4001` — home network only, no TLS |
+
+The app's settings screen lets users configure the server URL once during onboarding.
 
 #### API Design Principles
 - RESTful JSON API with versioned endpoints (`/api/v1/...`)
@@ -253,18 +282,17 @@ All endpoints are served by the companion API server (not TeslaMate itself). The
 | **Settings** | `/api/v1/cars/:id/settings` | GET/PUT | Per-vehicle settings |
 | **Real-time** | `wss://.../socket/v1/car/:id` | WS | Real-time vehicle updates via Phoenix Channel |
 
-### 6.4 Remote Access (Optional)
+### 6.4 Connectivity Model
 
-Most users will want to access their data when away from home. Since TeslaMate already runs on a home server, the companion API server can be exposed remotely using common patterns:
+The app uses a **single server URL** configured once during onboarding. The recommended setup is a **Cloudflare Tunnel** subdomain (e.g. `https://teslapulse.yourdomain.com`) which works identically from any network.
 
-| Method | Complexity | Security | Notes |
-|--------|-----------|----------|-------|
-| **Tailscale** | Low | High | Mesh VPN; iOS app connects via Tailscale IP; no port forwarding needed |
-| **Cloudflare Tunnel** | Low | High | Free tunnels; no port forwarding; adds TLS automatically |
-| **Reverse proxy + DDNS** | Medium | High (with TLS) | User's existing Nginx/Caddy; requires port forwarding and Let's Encrypt |
-| **WireGuard VPN** | Medium | High | Self-hosted VPN; requires port forwarding |
+From the app's perspective, connectivity is simple:
+1. User enters their server URL in settings
+2. App connects to that URL for REST API calls and WebSocket
+3. If connection drops, app shows cached data with a "Last updated X ago" indicator and retries with exponential backoff
+4. When connection resumes, real-time updates resume automatically
 
-The recommended approach for most users is **Tailscale** — it's free for personal use, requires no port forwarding, and the iOS Tailscale app makes it seamless.
+There is no LAN-vs-remote switching logic in the app — the URL is the URL. How that URL resolves (Cloudflare Tunnel, Tailscale, direct LAN, VPN) is the user's infrastructure concern, handled once at setup time.
 
 ### 6.5 Future: Optional Cloud Deployment
 
@@ -669,11 +697,10 @@ Each screen below maps to one or more of the existing Grafana dashboards, reimag
   - LFP battery flag
   - Sleep mode enabled
 - **Server connection:**
-  - Server URL (e.g. `http://raspberrypi.local:4001` or Tailscale IP or remote URL)
+  - Server URL (e.g. `https://teslapulse.yourdomain.com`) — configured once during onboarding
   - Connection status indicator (connected / disconnected / error)
   - Test connection button
   - API token / authentication
-  - Auto-discovery via Bonjour/mDNS on local network (future)
 - **Notifications:** Toggle per notification type
 - **Data management:** Export data
 - **About:** Version, licenses, source code link, TeslaMate version detected
@@ -955,8 +982,7 @@ struct FirmwareUpdate: Identifiable, Codable {
 |-------------|----------------|
 | API authentication | JWT tokens for companion API, stored in iOS Keychain |
 | Token refresh | Automatic refresh before expiry |
-| Data in transit | TLS 1.3 minimum (when accessed via reverse proxy / Tailscale) |
-| Data in transit (LAN) | HTTP acceptable on trusted local network; HTTPS recommended |
+| Data in transit | TLS 1.3 minimum — always HTTPS via Cloudflare Tunnel (recommended setup) |
 | Data at rest (device) | iOS Data Protection (NSFileProtectionComplete) |
 | Tesla credentials | **Never touched by the companion API or iOS app** — they remain encrypted in TeslaMate's database, managed solely by TeslaMate |
 | Certificate pinning | Pin backend server certificate (when using TLS) |
@@ -996,10 +1022,10 @@ The backend API layer should support:
 - Core API endpoints (cars, drives, charges, positions, summary)
 - iOS app with: Overview, Drives (list + detail + map), Charges (list + detail), Settings (including server URL configuration)
 - Simple authentication (API token or basic auth for the companion API)
-- Real-time updates via WebSocket (sourced from MQTT)
+- Real-time updates via WebSocket (sourced from MQTT, through Cloudflare Tunnel)
 - Basic offline caching
 - Single vehicle support
-- LAN access (connect to Pi's local IP)
+- Connectivity via Cloudflare Tunnel (single HTTPS URL, works from any network)
 
 ### Phase 2: Full Dashboard Parity
 - All remaining dashboard screens (Battery Health, Charging Stats, Drive Stats, Efficiency, Mileage, Projected Range, States, Timeline, Statistics, Trip, Updates, Vampire Drain, Visited)
@@ -1007,7 +1033,6 @@ The backend API layer should support:
 - Geofence management (CRUD with map — writes to the shared PostgreSQL database)
 - Charge cost editing
 - iPad optimised layouts (NavigationSplitView, multi-column)
-- Remote access documentation (Tailscale, Cloudflare Tunnel, reverse proxy guides)
 
 ### Phase 3: Native iOS Features
 - Push notifications (all types) — requires APNs relay in companion API server
@@ -1048,7 +1073,7 @@ The backend API layer should support:
 |------|------------|--------|------------|
 | TeslaMate schema changes break companion API | Medium | High | Version-pin supported TeslaMate versions. Integration tests against TeslaMate DB schema. |
 | Companion API server too heavy for Raspberry Pi | Low-Medium | Medium | Profile aggressively. Consider Go/Rust if Elixir/Phoenix is too heavy. Target < 128MB RAM. |
-| Remote access complexity discourages users | Medium | Medium | Provide step-by-step guides for Tailscale (simplest). Consider built-in tunnel in future. |
+| Cloudflare Tunnel WebSocket reliability | Low | Medium | Cloudflare supports WebSockets. Test long-lived Phoenix Channel connections. Implement reconnection with exponential backoff on the iOS client. |
 | Performance issues with large datasets (years of positions) | Medium | Medium | Server-side pagination, aggregation queries, database indexes. SwiftData for client-side caching with TTL. |
 | AGPL license dispute | Low | Medium | Companion API is an independent service (not a TeslaMate fork). Engage with community. Open-source the API server. |
 
@@ -1080,7 +1105,7 @@ The backend API layer should support:
 | 6 | **Vehicle commands in scope?** — Phase 4 lists commands (lock, climate, etc.). This goes beyond read-only and requires Tesla Fleet API partner registration. Confirm priority. | Before Phase 4 |
 | 7 | **Monetisation model** — Free? Freemium? One-time purchase? Since it's self-hosted, recurring subscription may not fit. | Before App Store submission |
 | 8 | **Raspberry Pi resource budget** — How much CPU/RAM overhead is acceptable for the companion API server on a Pi 4 that's already running TeslaMate + Grafana + Mosquitto + PostgreSQL? | Phase 1 |
-| 9 | **Remote access recommendation** — Should we officially recommend Tailscale, or provide a built-in tunnel solution? | Phase 2 |
+| 9 | **WebSocket over Cloudflare Tunnel** — Verify Phoenix Channel WebSocket connections work reliably through Cloudflare Tunnel (they should, but needs testing with long-lived connections and reconnection). | Phase 1 |
 
 ---
 
