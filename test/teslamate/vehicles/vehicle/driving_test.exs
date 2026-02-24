@@ -338,7 +338,44 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}, 200
       assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
 
-      refute_receive _
+      # After drive timeout, vehicle stays offline → state machine must transition to :offline
+      assert_receive {:start_state, ^car, :offline, []}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
+    end
+
+    @tag :capture_log
+    test "transitions to offline state when vehicle stays offline after drive times out (underground parking)",
+         %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      # Vehicle loses network (underground parking) and never comes back online
+      events = [
+        {:ok, online_event()},
+        drive_event(now_ts, 0.1, 30, 20, 200, nil),
+        drive_event(now_ts, 0.1, 30, 20, 200, nil),
+        {:ok, %TeslaApi.Vehicle{state: "offline"}}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      date = DateTime.from_unix!(now_ts, :millisecond)
+      assert_receive {:start_state, car, :online, date: ^date}
+      assert_receive {ApiMock, {:stream, 1000, _}}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 48}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
+
+      # Drive is closed after timeout
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}, 200
+      assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
+
+      # Regression: state must transition to :offline, not stay stuck in :driving state
+      assert_receive {:start_state, ^car, :offline, []}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
     end
 
     test "times out a drive when rececing sleep event", %{test: name} do
