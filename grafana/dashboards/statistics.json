@@ -56,7 +56,6 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -65,6 +64,9 @@
               "type": "auto"
             },
             "filterable": false,
+            "footer": {
+              "reducers": []
+            },
             "inspect": false
           },
           "mappings": [],
@@ -501,7 +503,7 @@
             },
             "properties": [
               {
-                "id": "custom.hidden",
+                "id": "custom.hideFrom.viz",
                 "value": true
               }
             ]
@@ -513,7 +515,7 @@
             },
             "properties": [
               {
-                "id": "custom.hidden",
+                "id": "custom.hideFrom.viz",
                 "value": true
               }
             ]
@@ -624,14 +626,6 @@
       "maxPerRow": 2,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "frameIndex": 1,
         "showHeader": true,
         "sortBy": [
@@ -641,7 +635,7 @@
           }
         ]
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -1091,7 +1085,7 @@
   ],
   "preload": false,
   "refresh": "",
-  "schemaVersion": 41,
+  "schemaVersion": 42,
   "tags": [
     "tesla"
   ],
@@ -1112,6 +1106,7 @@
         "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
+        "regexApplyTo": "value",
         "type": "query"
       },
       {
@@ -1129,6 +1124,7 @@
         "query": "select unit_of_length from settings limit 1;",
         "refresh": 1,
         "regex": "",
+        "regexApplyTo": "value",
         "type": "query"
       },
       {
@@ -1146,6 +1142,7 @@
         "query": "select unit_of_temperature from settings limit 1;",
         "refresh": 1,
         "regex": "",
+        "regexApplyTo": "value",
         "type": "query"
       },
       {
@@ -1156,30 +1153,10 @@
         "includeAll": false,
         "label": "Period",
         "name": "period",
-        "options": [
-          {
-            "selected": false,
-            "text": "day",
-            "value": "day"
-          },
-          {
-            "selected": false,
-            "text": "week",
-            "value": "week"
-          },
-          {
-            "selected": true,
-            "text": "month",
-            "value": "month"
-          },
-          {
-            "selected": false,
-            "text": "year",
-            "value": "year"
-          }
-        ],
+        "options": [],
         "query": "day,week,month,year",
-        "type": "custom"
+        "type": "custom",
+        "valuesFormat": "csv"
       },
       {
         "current": {},
@@ -1195,6 +1172,7 @@
         "query": "select preferred_range from settings limit 1;",
         "refresh": 1,
         "regex": "",
+        "regexApplyTo": "value",
         "type": "query"
       },
       {
@@ -1211,31 +1189,22 @@
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
+        "regexApplyTo": "value",
         "type": "query"
       },
       {
         "current": {
-          "text": "no",
+          "text": "0",
           "value": "0"
         },
         "description": "When enabled \"Ø Consumption (gross)\" will be calculated via Positions instead of Charging Processes and Drives.\n\nWhile being more accurate (especially for shorter periods) this will be slow on slow hardware!",
         "includeAll": false,
         "label": "High Precision",
         "name": "high_precision",
-        "options": [
-          {
-            "selected": true,
-            "text": "no",
-            "value": "0"
-          },
-          {
-            "selected": false,
-            "text": "yes",
-            "value": "1"
-          }
-        ],
+        "options": [],
         "query": "no : 0, yes : 1",
-        "type": "custom"
+        "type": "custom",
+        "valuesFormat": "csv"
       }
     ]
   },
@@ -1244,8 +1213,9 @@
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "",
+  "timezone": "browser",
   "title": "Statistics",
   "uid": "1EZnXszMk",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }

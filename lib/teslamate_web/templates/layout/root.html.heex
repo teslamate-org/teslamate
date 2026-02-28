@@ -94,7 +94,7 @@
                 <a class="navbar-link is-arrowless">
                   <span class="icon"><i class="mdi mdi-view-dashboard"></i></span>&nbsp;<span><%= gettext "Dashboards" %></span>
                 </a>
-                <div class="navbar-dropdown">
+                <div class="navbar-dropdown is-boxed">
                   <%= for %{"title" => title, "uid" => uid} <- list_dashboards() do %>
                     <%= link(title,
                       to: "#{grafana_url}/d/#{uid}",

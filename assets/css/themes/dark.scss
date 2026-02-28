@@ -1,0 +1,48 @@
+// Dark theme overrides via CSS variables for TeslaMate
+// Applied when [data-theme="dark"] is set on the html element
+
+@use "bulma/sass/utilities/css-variables" as cv;
+@use "bulma/sass/utilities/mixins" as mx;
+
+@include cv.bulma-theme($name: "dark") {
+  --bulma-shadow: none;
+  --bulma-scheme-main-h: 214;
+  --bulma-scheme-main-s: 13%;
+  --bulma-scheme-main-l: 11%;
+  --bulma-body-background-color: rgb(17, 18, 23);
+  --bulma-text: rgb(204, 204, 220, 0.75);
+  --bulma-text-strong: rgb(204, 204, 220);
+  --bulma-dark-h: 214;
+  --bulma-dark-s: 13%;
+  --bulma-dark-l: 11%;
+  --bulma-link: rgb(110, 159, 255);
+  --bulma-link-text: rgb(110, 159, 255);
+  --bulma-link-text-active: rgb(110, 159, 255);
+  --bulma-hover-background-l-delta: 7.5%;
+
+  .box,
+  .card {
+    border: 1px solid rgba(204, 204, 220, 0.12);
+  }
+
+  .navbar {
+    --bulma-navbar-dropdown-item-background-l: 13.5%;
+    --bulma-navbar-dropdown-boxed-shadow: rgb(1, 4, 9) 0px 8px 24px;
+    --bulma-navbar-burger-color: rgba(204, 204, 220, 0.65);
+  }
+
+  .navbar.is-dark {
+    border-bottom: 1px solid rgba(204, 204, 220, 0.12);
+  }
+
+  .breadcrumb {
+    --bulma-breadcrumb-item-color: rgb(204, 204, 220);
+    --bulma-breadcrumb-item-active-color: rgba(204, 204, 220, 0.65);
+    --bulma-breadcrumb-item-hover-color: rgba(204, 204, 220, 0.65);
+  }
+
+  // Map tiles - monochrome style like Tesla's in-car maps
+  .dark-mode-tiles {
+    filter: grayscale(100%) invert(100%) brightness(0.95) contrast(1.1);
+  }
+}

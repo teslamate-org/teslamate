@@ -86,6 +86,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": true,
             "stacking": {
               "group": "A",
@@ -138,7 +139,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "datasource": {
@@ -263,7 +264,7 @@
   ],
   "preload": false,
   "refresh": "",
-  "schemaVersion": 41,
+  "schemaVersion": 42,
   "tags": [
     "tesla"
   ],
@@ -284,6 +285,7 @@
         "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
         "refresh": 1,
         "regex": "",
+        "regexApplyTo": "value",
         "type": "query"
       },
       {
@@ -300,83 +302,49 @@
         "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
+        "regexApplyTo": "value",
         "type": "query"
       },
       {
         "current": {
-          "text": "2h",
+          "text": "7200",
           "value": "7200"
         },
         "description": "Data used to calculate Moving Average / Percentiles is unevenly sampled in TeslaMate. To avoid biases towards more frequently sampled values, the data is bucketed. For buckets without sampled values, the last observed value is carried forward. Bucketing is not time-weighted but is a simple average. Increasing the bucket width results in a loss of accuracy.",
         "includeAll": false,
         "label": "Bucket Width",
         "name": "bucket_width",
-        "options": [
-          {
-            "selected": false,
-            "text": "1h",
-            "value": "3600"
-          },
-          {
-            "selected": true,
-            "text": "2h",
-            "value": "7200"
-          },
-          {
-            "selected": false,
-            "text": "4h",
-            "value": "14400"
-          }
-        ],
+        "options": [],
         "query": "1h : 3600, 2h : 7200, 4h : 14400",
-        "type": "custom"
+        "type": "custom",
+        "valuesFormat": "csv"
       },
       {
         "current": {
-          "text": "yes",
+          "text": "1",
           "value": "1"
         },
         "includeAll": false,
         "label": "Include Moving Average / Percentiles",
         "name": "include_average_percentiles",
-        "options": [
-          {
-            "selected": false,
-            "text": "no",
-            "value": "0"
-          },
-          {
-            "selected": true,
-            "text": "yes",
-            "value": "1"
-          }
-        ],
+        "options": [],
         "query": "no : 0, yes : 1",
-        "type": "custom"
+        "type": "custom",
+        "valuesFormat": "csv"
       },
       {
         "current": {
-          "text": "1/6 of interval",
+          "text": "6",
           "value": "6"
         },
         "description": "",
         "includeAll": false,
         "label": "Moving Average / Percentiles Width",
         "name": "intervals_moving_average_percentiles",
-        "options": [
-          {
-            "selected": true,
-            "text": "1/6 of interval",
-            "value": "6"
-          },
-          {
-            "selected": false,
-            "text": "1/12 of interval",
-            "value": "12"
-          }
-        ],
+        "options": [],
         "query": "1/6 of interval : 6, 1/12 of interval : 12",
-        "type": "custom"
+        "type": "custom",
+        "valuesFormat": "csv"
       },
       {
         "current": {},
@@ -392,6 +360,7 @@
         "query": "select ((${__to:date:seconds} - ${__from:date:seconds}) / 86400 / $intervals_moving_average_percentiles)",
         "refresh": 2,
         "regex": "",
+        "regexApplyTo": "value",
         "type": "query"
       }
     ]
@@ -401,8 +370,9 @@
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "",
+  "timezone": "browser",
   "title": "Charge Level",
   "uid": "WopVO_mgz",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }

@@ -55,7 +55,7 @@ sudo apt install erlang erlang-dev erlang-syntax-tools elixir
 </details>
 
 <details>
-  <summary>Grafana (v12.1.1+)</summary>
+  <summary>Grafana (v12.4.0+)</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common

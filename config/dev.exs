@@ -5,9 +5,8 @@ config :teslamate, TeslaMateWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    npm: [
-      "run",
-      "deploy",
+    node: [
+      "scripts/build.js",
       cd: Path.expand("../assets", __DIR__),
       env: %{"NODE_ENV" => "development"}
     ]

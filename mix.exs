@@ -85,7 +85,7 @@ defmodule TeslaMate.MixProject do
       setup: ["deps.get", "ecto.setup", "cmd --cd assets npm ci --no-audit --loglevel=error"],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "assets.deploy": ["cmd --cd assets npm run deploy", "phx.digest"],
+      "assets.deploy": ["cmd --cd assets node scripts/build.js", "phx.digest"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test --no-start"],
       ci: ["format --check-formatted", "deps.unlock --check-unused", "test --raise"]
     ]
