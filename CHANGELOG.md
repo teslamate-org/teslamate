@@ -78,6 +78,7 @@ We believe this step is necessary to protect the project from exploitation and t
 - build(deps): update flake.lock (#5148)
 - build(deps): update flake.lock (#5154)
 - build(deps): bump ajv in /website (#5149)
+- chore(website): bump mimimatch to version 3.1.4 to solve CVE-2026-26996, CVE-2026-27903 and CVE-2026-27904 (#5155 - @JakobLichterfeld)
 
 #### Dashboards
 
