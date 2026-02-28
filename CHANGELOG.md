@@ -6,7 +6,7 @@ Let's start with a quote: "Why do programmers like dark mode? Because light attr
 
 As always, lots of improvements have been made. Memory usage has been reduced, while performance has been increased — it sounds too good to be true, but it's the reality.
 Battery heating is now also shown on the overview dashboard, and the drives dashboard now always shows the consumption.
-To make your TeslaMate experience even better, we have also made more than 50 other improvements.
+To make your TeslaMate experience even better, we have also made more than 52 other improvements.
 
 Enjoy!
 
@@ -79,6 +79,7 @@ We believe this step is necessary to protect the project from exploitation and t
 - build(deps): update flake.lock (#5154)
 - build(deps): bump ajv in /website (#5149)
 - chore(website): bump mimimatch to version 3.1.5 to solve CVE-2026-26996, CVE-2026-27903 and CVE-2026-27904 (#5155 - @JakobLichterfeld)
+- chore(website): bump serialize-javascript to version 7.0.3 to solve CWE-96 (#5156 - @JakobLichterfeld)
 
 #### Dashboards
 
