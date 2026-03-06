@@ -22,7 +22,9 @@ defmodule TeslaMate.Vehicles do
       timeout: 5000
     )
     |> Enum.map(fn {:ok, vehicle} -> vehicle end)
-    |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id}} -> id end)
+    |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id, display_priority: dp}} ->
+      {dp, id}
+    end)
   end
 
   def kill do

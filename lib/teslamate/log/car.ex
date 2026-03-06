@@ -19,6 +19,7 @@ defmodule TeslaMate.Log.Car do
     field :vid, :integer
     # TODO: with v2.0 mark as non nullable
     field :vin, :string
+    field :display_priority, :integer
 
     belongs_to :settings, CarSettings
 
