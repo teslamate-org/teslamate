@@ -19,6 +19,7 @@ defmodule TeslaMate.Log.Car do
     field :vid, :integer
     # TODO: with v2.0 mark as non nullable
     field :vin, :string
+    field :display_priority, :integer
 
     belongs_to :settings, CarSettings
 
@@ -43,7 +44,8 @@ defmodule TeslaMate.Log.Car do
       :marketing_name,
       :exterior_color,
       :wheel_type,
-      :spoiler_type
+      :spoiler_type,
+      :display_priority
     ])
     |> validate_required([:eid, :vid, :vin])
     |> unique_constraint(:settings_id)
