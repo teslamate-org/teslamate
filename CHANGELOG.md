@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- fix(grafana): use FLOOR/CEIL over ROUND for timestamps used in dashboard links to avoid timeranges becoming to narrow (#5187 - @swiffer)
+
 #### Build, CI, internal
 
 - build(deps): bump ex_cldr from 2.46.0 to 2.47.1 to fix 100% CPU lock when accessing TeslaMate web (#5166)
