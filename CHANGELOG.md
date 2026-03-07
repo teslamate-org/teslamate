@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- feat(webview): Sort vehicles by display_priority (#5188 - @olsoybakk and @swiffer)
+
 #### Build, CI, internal
 
 - build(deps): bump ex_cldr from 2.46.0 to 2.47.1 to fix 100% CPU lock when accessing TeslaMate web (#5166)

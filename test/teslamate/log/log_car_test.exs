@@ -14,7 +14,8 @@ defmodule TeslaMate.LogCarTest do
     vin: "12345F",
     exterior_color: "White",
     spoiler_type: "None",
-    wheel_type: "AeroTurbine19"
+    wheel_type: "AeroTurbine19",
+    display_priority: 1
   }
   @update_attrs %{
     efficiency: 0.190,
@@ -26,7 +27,8 @@ defmodule TeslaMate.LogCarTest do
     vin: "6789R",
     exterior_color: "MetallicBlack",
     spoiler_type: "Passive",
-    wheel_type: "AeroTurbine20"
+    wheel_type: "AeroTurbine20",
+    display_priority: 2
   }
   @invalid_attrs %{
     efficiency: nil,
@@ -50,7 +52,7 @@ defmodule TeslaMate.LogCarTest do
     car
   end
 
-  test "list_cars/0 returns all car" do
+  test "list_cars/0 returns all cars" do
     car = car_fixture()
     assert Log.list_cars() |> Enum.map(&Repo.preload(&1, :settings)) == [car]
   end
@@ -78,6 +80,7 @@ defmodule TeslaMate.LogCarTest do
     assert car.exterior_color == "White"
     assert car.spoiler_type == "None"
     assert car.wheel_type == "AeroTurbine19"
+    assert car.display_priority == 1
   end
 
   test "create_or_update_car/1 with invalid data returns error changeset" do
@@ -111,6 +114,7 @@ defmodule TeslaMate.LogCarTest do
     assert car.exterior_color == "MetallicBlack"
     assert car.spoiler_type == "Passive"
     assert car.wheel_type == "AeroTurbine20"
+    assert car.display_priority == 2
   end
 
   test "create_or_update_car/2 with invalid data returns error changeset" do
