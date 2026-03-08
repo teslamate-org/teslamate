@@ -76,6 +76,7 @@ docker compose stop teslamate
 # Drop existing data and reinitialize (Don't forget to replace first teslamate if using different TM_DB_USER)
 docker compose exec -T database psql -U teslamate teslamate << .
 DROP SCHEMA public CASCADE;
+DROP SCHEMA private CASCADE;
 CREATE SCHEMA public;
 CREATE EXTENSION cube WITH SCHEMA public;
 CREATE EXTENSION earthdistance WITH SCHEMA public;

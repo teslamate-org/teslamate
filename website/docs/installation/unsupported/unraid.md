@@ -183,6 +183,7 @@ docker stop teslamate
 echo "Resetting database..."
 docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" "$DB_NAME" <<SQL
 DROP SCHEMA public CASCADE;
+DROP SCHEMA private CASCADE;
 CREATE SCHEMA public;
 CREATE EXTENSION cube WITH SCHEMA public;
 CREATE EXTENSION earthdistance WITH SCHEMA public;
