@@ -7,6 +7,7 @@
 ### Improvements and bug fixes
 
 - feat(webview): Sort vehicles by display_priority (#5188 - @olsoybakk and @swiffer)
+- fix(grafana): use FLOOR/CEIL over ROUND for timestamps used in dashboard links to avoid timeranges becoming to narrow (#5187 - @swiffer)
 
 #### Build, CI, internal
 
