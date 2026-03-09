@@ -18,6 +18,8 @@
 
 #### Documentation
 
+- docs: drop private schema before restore (#5190 - @brianmay)
+
 ## [3.0.0] - 2026-02-28
 
 Let's start with a quote: "Why do programmers like dark mode? Because light attracts bugs.". Yes, you read that right. TeslaMate Webview now has a dark mode.
