@@ -46,7 +46,7 @@ We believe this step is necessary to protect the project from exploitation and t
 
 - We have received reports from users suffering with "No Data" errors when viewing dashboards in Grafana (#5157).
 This issue is currently assumed to be instance specific and caused by changes in Grafana (v12.1.1 -> v12.4.0). If you are affected please try saving the TeslaMate datasource by clicking on "Save & test" in Grafana -> Connections -> Data sources -> TeslaMate.
-- Dashboards containing a Geofence filter fail to load if no Geofence is defined (#5191). While beeing a regression in Grafana v12.4.0 most likely it can be fixed by defining at least one Geofence. We will provide a workaround in TeslaMate v3.0.1 until it's fixed upstream.
+- Dashboards containing a Geofence filter fail to load if no Geofence is defined (#5191). While being a regression in Grafana v12.4.0 most likely it can be fixed by defining at least one Geofence. We will provide a workaround in TeslaMate v3.0.1 until it's fixed upstream.
 
 
 ### New features
