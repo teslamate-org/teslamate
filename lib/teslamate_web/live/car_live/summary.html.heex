@@ -53,7 +53,7 @@
         </span>
         <%= if @summary.is_preconditioning do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={gettext("Preconditioning")}
           >
             <span class="mdi mdi-air-conditioner"></span>
@@ -61,7 +61,7 @@
         <% end %>
         <%= if @summary.climate_keeper_mode == "dog" do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={gettext("Dog Mode")}
           >
             <span class="mdi mdi-dog-side"></span>
@@ -77,7 +77,7 @@
         <% end %>
         <%= if @summary.state != :driving and @summary.is_user_present do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={gettext("Driver present")}
           >
             <span class="mdi mdi-account"></span>
@@ -85,7 +85,7 @@
         <% end %>
         <%= if @summary.plugged_in == true do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={gettext("Plugged In")}
           >
             <span class="mdi mdi-power-plug"></span>
@@ -95,14 +95,14 @@
           <%= link to: "https://www.google.com/maps?q=#{@summary.latitude},#{@summary.longitude}",
                   target: "_blank",
                   rel: "noopener noreferrer",
-                  class: "icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile",
+                  class: "icon has-text-inherit has-tooltip-top has-tooltip-left-mobile",
                   data: [tooltip: gettext("View car location on Google Maps")] do %>
             <span class="mdi mdi-map-marker"></span>
           <% end %>
         <% end %>
         <%= if @summary.windows_open do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={gettext("Windows open")}
           >
             <span class="mdi mdi-window-open"></span>
@@ -110,7 +110,7 @@
         <% end %>
         <%= if @summary.doors_open do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={gettext("Doors open")}
           >
             <span class="mdi mdi-car-door"></span>
@@ -118,7 +118,7 @@
         <% end %>
         <%= if @summary.sentry_mode do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={gettext("Sentry Mode")}
           >
             <span class="mdi mdi-shield-check"></span>
@@ -126,7 +126,7 @@
         <% end %>
         <%= if @summary.center_display_state == 7 do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={gettext("Sentry Mode recording")}
           >
             <span class="mdi mdi-cctv"></span>
@@ -134,7 +134,7 @@
         <% end %>
         <%= unless is_nil(@summary.locked) do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={if @summary.locked, do: gettext("Locked"), else: gettext("Unlocked")}
           >
             <span class={[
@@ -146,7 +146,7 @@
         <% end %>
         <%= if @summary.update_available do %>
           <span
-            class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={
               gettext("Software Update available (%{version})", version: @summary.update_version)
             }
@@ -184,7 +184,7 @@
               |> Enum.filter(& &1) %>
 
             <span
-              class="icon has-text-grey-dark has-tooltip-top has-tooltip-left-mobile"
+              class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
               data-tooltip={
                 if length(tire_warnings) == 1 do
                   "Tire with low pressure: #{Enum.join(tire_warnings, ", ")}"
