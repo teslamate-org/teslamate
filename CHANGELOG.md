@@ -8,6 +8,7 @@
 
 - feat(webview): Sort vehicles by display_priority (#5188 - @olsoybakk and @swiffer)
 - fix(grafana): use FLOOR/CEIL over ROUND for timestamps used in dashboard links to avoid timeranges becoming to narrow (#5187 - @swiffer)
+- feat(webview): Make icons inherit text color for better contrast in dark mode (#5193 - @olsoybakk)
 
 #### Build, CI, internal
 
@@ -107,7 +108,6 @@ We believe this step is necessary to protect the project from exploitation and t
 - build(deps): bump ajv in /website (#5149)
 - chore(website): bump mimimatch to version 3.1.5 to solve CVE-2026-26996, CVE-2026-27903 and CVE-2026-27904 (#5155 - @JakobLichterfeld)
 - chore(website): bump serialize-javascript to version 7.0.3 to solve CWE-96 (#5156 - @JakobLichterfeld)
-- feat(website): Make icons inherit text color for better contrast in dark mode (#5193 - @olsoybakk)
 
 #### Dashboards
 
