@@ -13,6 +13,7 @@
 
 - build(deps): bump ex_cldr from 2.46.0 to 2.47.1 to fix 100% CPU lock when accessing TeslaMate web (#5166)
 - ci: migrate runners for arm from buildjet to gha native (#5206 - @adriankumpf)
+- build(deps): update flake.lock (#5186)
 
 #### Dashboards
 
