@@ -30,6 +30,8 @@
 
 #### Translations
 
+- i18n: updated Catalan default.po (#5180 - @pellix)
+
 #### Documentation
 
 - docs: drop private schema before restore (#5190 - @brianmay)
