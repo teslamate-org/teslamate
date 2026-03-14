@@ -16,7 +16,8 @@
 
 #### Dashboards
 
-- fix(grafana): use FLOOR/CEIL over ROUND for timestamps used in dashboard links to avoid timeranges becoming to narrow (#5187 - @swiffer)
+- fix: use FLOOR/CEIL over ROUND for timestamps used in dashboard links to avoid timeranges becoming to narrow (#5187 - @swiffer)
+- fix: ensure Charges / Drives dashboards load correctly if no Geofence exists (#5199 - @swiffer)
 
 #### Translations
 

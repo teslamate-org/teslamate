@@ -1438,19 +1438,20 @@
       },
       {
         "allValue": "-1",
+        "allowCustomValue": false,
         "current": {},
         "datasource": {
           "type": "grafana-postgresql-datasource",
           "uid": "TeslaMate"
         },
-        "definition": "SELECT name AS __text, id AS __value FROM geofences ORDER BY name COLLATE \"C\" ASC;",
+        "definition": "-- The \"Include All option\" built into Grafana is not initializing correctly if no value is returned by the SQL query anymore\r\n-- Create the option via SQL as a temporary workaround until fixed (https://github.com/grafana/grafana/issues/119793)\r\n\r\nwith geofences_incl_all_option as (\r\n\r\n  select 'All' as __text, -1 as __value, '_all' as name\r\n\r\n  union all\r\n\r\n  SELECT name AS __text, id AS __value, name from geofences\r\n\r\n)\r\n\r\nSELECT __text, __value from geofences_incl_all_option order by name asc",
         "description": "Start or Destination Geofence",
-        "includeAll": true,
+        "includeAll": false,
         "label": "Geofence",
         "multi": true,
         "name": "geofence",
         "options": [],
-        "query": "SELECT name AS __text, id AS __value FROM geofences ORDER BY name COLLATE \"C\" ASC;",
+        "query": "-- The \"Include All option\" built into Grafana is not initializing correctly if no value is returned by the SQL query anymore\r\n-- Create the option via SQL as a temporary workaround until fixed (https://github.com/grafana/grafana/issues/119793)\r\n\r\nwith geofences_incl_all_option as (\r\n\r\n  select 'All' as __text, -1 as __value, '_all' as name\r\n\r\n  union all\r\n\r\n  SELECT name AS __text, id AS __value, name from geofences\r\n\r\n)\r\n\r\nSELECT __text, __value from geofences_incl_all_option order by name asc",
         "refresh": 1,
         "regex": "",
         "regexApplyTo": "value",
@@ -1461,7 +1462,7 @@
           "text": "",
           "value": ""
         },
-        "description": "Type a text contained in Start or Destination Location ",
+        "description": "Type a text contained in Start or Destination Location",
         "label": "Location",
         "name": "location",
         "options": [
