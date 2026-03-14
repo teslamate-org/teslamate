@@ -1156,7 +1156,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH charges as (\r\n  SELECT\r\n    sum(cost) / sum(charge_energy_added) as cost_per_kwh\r\n  FROM charging_processes\r\n  where car_id = $car_id and $__timeFilter(start_date)\r\n),\r\n\r\nmileage as (\r\n  SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit') as distance\r\n  FROM positions\r\n  WHERE car_id = $car_id and ideal_battery_range_km IS NOT NULL\r\n  and (drive_id in (select id from drives where $__timeFilter(start_date)) or drive_id is null and $__timeFilter(date))\r\n)\r\n\r\nselect\r\n  'Total Energy consumed (gross)' as metric, -- Hack required for Join Transformation\r\n  cost_per_kwh / distance * 100 as cost_mileage\r\nfrom mileage cross join charges",
+          "rawSql": "WITH charges as (\r\n  SELECT\r\n    sum(cost) / nullif(sum(charge_energy_added), 0) as cost_per_kwh\r\n  FROM charging_processes\r\n  where car_id = $car_id and $__timeFilter(start_date)\r\n),\r\n\r\nmileage as (\r\n  SELECT convert_km((max(odometer) - min(odometer))::numeric, '$length_unit') as distance\r\n  FROM positions\r\n  WHERE car_id = $car_id and ideal_battery_range_km IS NOT NULL\r\n  and (drive_id in (select id from drives where $__timeFilter(start_date)) or drive_id is null and $__timeFilter(date))\r\n)\r\n\r\nselect\r\n  'Total Energy consumed (gross)' as metric, -- Hack required for Join Transformation\r\n  cost_per_kwh / nullif(distance, 0) * 100 as cost_mileage\r\nfrom mileage cross join charges",
           "refId": "A",
           "sql": {
             "columns": [
