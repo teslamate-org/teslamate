@@ -13,7 +13,7 @@
 
 - build(deps): bump ex_cldr from 2.46.0 to 2.47.1 to fix 100% CPU lock when accessing TeslaMate web (#5166)
 - ci: migrate runners for arm from buildjet to gha native (#5206 - @adriankumpf)
-- ci: ensure not running 2 workflows when pushing to a branch that has a PR open (#5209 - @swiffer)
+- ci: limit DevOps workflow runs of type push to branch main to prevent duplicate runs on PR (#5211 - @swiffer)
 - build(deps): update flake.lock (#5186)
 - fix(nix): update mix dependency hash in nix builds (#5186 - @JakobLichterfeld)
 - build(deps): bump actions/stale from 10.1.1 to 10.2.0 (#5162)

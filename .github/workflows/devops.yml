@@ -3,6 +3,7 @@ name: DevOps
 on:
   workflow_dispatch:
   push:
+    branches: ["main"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
@@ -16,9 +17,9 @@ on:
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 
-# Avoid running multiple concurrent workflows for the same branch or PR, and cancel any in-progress runs when a new commit is pushed
+# Cancel any in-progress runs when a new commit is pushed
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
