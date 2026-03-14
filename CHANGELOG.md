@@ -8,6 +8,7 @@
 
 - feat(webview): Sort vehicles by display_priority (#5188 - @olsoybakk and @swiffer)
 - fix(grafana): use FLOOR/CEIL over ROUND for timestamps used in dashboard links to avoid timeranges becoming to narrow (#5187 - @swiffer)
+- feat(webview): Make icons inherit text color for better contrast in dark mode (#5193 - @olsoybakk)
 
 #### Build, CI, internal
 
