@@ -16,6 +16,7 @@
 - ci: ensure not running 2 workflows when pushing to a branch that has a PR open (#5209 - @swiffer)
 - build(deps): update flake.lock (#5186)
 - fix(nix): update mix dependency hash in nix builds (#5186 - @JakobLichterfeld)
+- build(deps): bump actions/stale from 10.1.1 to 10.2.0 (#5162)
 
 #### Dashboards
 
