@@ -18,6 +18,7 @@
 - fix(nix): update mix dependency hash in nix builds (#5186 - @JakobLichterfeld)
 - build(deps): bump actions/stale from 10.1.1 to 10.2.0 (#5162)
 - build(deps): bump crate-ci/typos from 1.42.3 to 1.44.0 (#5163)
+- build(deps): bump finch from 0.20.0 to 0.21.0 (#5165)
 - build(deps): bump immutable from 5.1.4 to 5.1.5 in /assets (#5176)
 
 #### Dashboards
