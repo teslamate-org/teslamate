@@ -17,6 +17,7 @@
 - build(deps): update flake.lock (#5186)
 - fix(nix): update mix dependency hash in nix builds (#5186 - @JakobLichterfeld)
 - build(deps): bump actions/stale from 10.1.1 to 10.2.0 (#5162)
+- build(deps): bump crate-ci/typos from 1.42.3 to 1.44.0 (#5163)
 
 #### Dashboards
 
