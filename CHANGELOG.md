@@ -15,6 +15,7 @@
 - ci: migrate runners for arm from buildjet to gha native (#5206 - @adriankumpf)
 - ci: ensure not running 2 workflows when pushing to a branch that has a PR open (#5209 - @swiffer)
 - build(deps): update flake.lock (#5186)
+- fix(nix): update mix dependency hash in nix builds (#5186 - @JakobLichterfeld)
 
 #### Dashboards
 
