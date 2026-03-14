@@ -26,6 +26,7 @@
 
 - fix: use FLOOR/CEIL over ROUND for timestamps used in dashboard links to avoid timeranges becoming to narrow (#5187 - @swiffer)
 - fix: ensure Charges / Drives dashboards load correctly if no Geofence exists (#5199 - @swiffer)
+- fix: division by zero in SQL query for cost_mileage in Trips dashboard (#5198 - @DrMichael)
 
 #### Translations
 
