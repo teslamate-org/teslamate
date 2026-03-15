@@ -41,7 +41,7 @@ jobs:
         shell: bash
         run: |
           echo "::group::Check if PR from outside repo"
-          if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
+          if [[ "${{ github.event_name }}" == "pull_request" && "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
             echo "This PR is from outside the repo"
             echo "is_pr_from_outside_repo=true" >> $GITHUB_OUTPUT
           else
