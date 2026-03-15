@@ -1,4 +1,4 @@
-name: Cleanup lages 100 caches
+name: Cleanup largest 100 caches
 
 on:
   workflow_dispatch:
