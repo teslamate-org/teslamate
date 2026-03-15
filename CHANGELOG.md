@@ -1,6 +1,8 @@
 # Changelog
 blablabla
 
+add a second commit to existing pr
+
 ## [unreleased]
 
 ### New features
