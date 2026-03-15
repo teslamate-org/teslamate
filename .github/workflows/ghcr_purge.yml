@@ -24,23 +24,43 @@ jobs:
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder != 'true'
     runs-on: ubuntu-24.04
+    concurrency:
+      group: "purge-pr-images"
 
     steps:
-      - uses: chipkent/action-cleanup-package@1316a66015b82d745b57acbb6c570f2bb1d108f9 # v1.0.3
-        id: cleanup
-        continue-on-error: true
-        with:
-          package-name: ${{ github.event.repository.name }}
-          tag: pr-${{ github.event.pull_request.number }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: normalize version name to a valid string
+        # convert backslashes to dashes, so for example dependabot/x/y/z-1.2.3 works
+        id: normalize_version
+        shell: bash
+        run: |
+          VERSION="${{ github.head_ref }}"
+          NORMALIZED_VERSION="${VERSION//\//-}"
+          echo "normalized_version=${NORMALIZED_VERSION}" >> $GITHUB_OUTPUT
 
-      - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
-        if: job.steps.cleanup.status == success()
-        name: Delete untagged images from ghcr.io
-        continue-on-error: true
+      - uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
+        name: Delete images for teslamate and teslamate/grafana from ghcr.io
         with:
-          package-name: "teslamate"
-          package-type: "container"
-          min-versions-to-keep: 0
-          delete-only-untagged-versions: "true"
+          repository: ${{ github.repository }}
+          packages: "teslamate,teslamate/grafana"
           token: ${{ secrets.GITHUB_TOKEN }}
+          delete-tags: "pr-${{ github.event.pull_request.number }}"
+          dry-run: "true"
+
+      - uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
+        name: Delete build cache images for teslamate from ghcr.io
+        with:
+          repository: ${{ github.repository }}
+          packages: "teslamate"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-tags: "buildcache-arm-${{ steps.normalize_version.outputs.normalized_version }},buildcache-arm64-${{ steps.normalize_version.outputs.normalized_version }},buildcache-amd64-${{ steps.normalize_version.outputs.normalized_version }}"
+          dry-run: "true"
+      
+      - uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
+        name: Delete untagged images from ghcr.io
+        with:
+          repository: ${{ github.repository }}
+          packages: "teslamate,teslamate/grafana"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-untagged: "true"
+          delete-ghost-images: "true"
+          dry-run: "true"
