@@ -19,10 +19,17 @@ jobs:
   check_paths:
     uses: ./.github/workflows/check_paths.yml
 
-  purge-pr-package:
-    name: Delete images from ghcr.io when PR is closed
+  check_if_pr_from_outside_repo:
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder != 'true'
+    uses: ./.github/workflows/check_if_pr_from_outside_repo.yml
+
+  purge-pr-package:
+    name: Delete images from ghcr.io when PR is closed
+    needs:
+      - check_paths
+      - check_if_pr_from_outside_repo
+    if: needs.check_paths.outputs.githubfolder != 'true' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
     runs-on: ubuntu-24.04
     concurrency:
       group: "purge-pr-images"
