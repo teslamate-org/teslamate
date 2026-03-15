@@ -23,6 +23,7 @@
 - build(deps): bump svgo from 3.3.2 to 3.3.3 in /website (#5177)
 - ci: bump actions to avoid warnings for node 20 (#5213 - @swiffer)
 - ci: ensure fully purging PR related tags for images hosted on GHCR on PR close (#5212 - @swiffer)
+- ci: build images for main branch and use buildcache of main as fallback for PR builds (#5212 - @swiffer)
 
 #### Dashboards
 

@@ -1,6 +1,13 @@
 name: Build GHCR images
 
 on:
+  push:
+    branches: ["main"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude pushes related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude pushes related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude pushes related to .github/actions from auto-run
   pull_request:
     branches: ["main"]
     paths:
