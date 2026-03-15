@@ -54,7 +54,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           delete-tags: "buildcache-arm-${{ steps.normalize_version.outputs.normalized_version }},buildcache-arm64-${{ steps.normalize_version.outputs.normalized_version }},buildcache-amd64-${{ steps.normalize_version.outputs.normalized_version }}"
           dry-run: "true"
-      
+
       - uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
         name: Delete untagged images from ghcr.io
         with:
