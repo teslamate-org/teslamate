@@ -6,7 +6,7 @@ on:
     outputs:
       is_pr_from_outside_repo:
         description: "Indicates if the PR is from an outside repository"
-        value: ${{ jobs.check_if_pr_from_outside_repo.is_pr_from_outside_repo }}
+        value: ${{ jobs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo }}
 
 permissions:
   contents: read

@@ -6,7 +6,7 @@ on:
     outputs:
       githubfolder:
         description: "changes to .github folder"
-        value: ${{ jobs.check_paths.githubfolder }}
+        value: ${{ jobs.check_paths.outputs.githubfolder }}
 
 permissions:
   contents: read
