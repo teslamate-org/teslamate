@@ -22,7 +22,7 @@ jobs:
   cleanup:
     name: Delete caches when PR is closed
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder != 'true'
+    if: needs.check_paths.outputs.githubfolder == 'false'
     runs-on: ubuntu-24.04
 
     steps:

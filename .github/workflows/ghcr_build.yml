@@ -29,7 +29,7 @@ jobs:
 
   check_if_pr_from_outside_repo:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder != 'true'
+    if: needs.check_paths.outputs.githubfolder == 'false'
     uses: ./.github/workflows/check_if_pr_from_outside_repo.yml
 
   teslamate_build:
@@ -37,7 +37,7 @@ jobs:
     needs:
       - check_paths
       - check_if_pr_from_outside_repo
-    if: needs.check_paths.outputs.githubfolder != 'true' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
+    if: needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
     strategy:
       fail-fast: false
       matrix:
@@ -73,7 +73,7 @@ jobs:
     needs:
       - check_paths
       - teslamate_build
-    if: needs.check_paths.outputs.githubfolder != 'true'
+    if: needs.check_paths.outputs.githubfolder == 'false'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -95,7 +95,7 @@ jobs:
     needs:
       - check_paths
       - check_if_pr_from_outside_repo
-    if: needs.check_paths.outputs.githubfolder != 'true' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
+    if: needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
