@@ -32,6 +32,9 @@ Alternatively, you can use a reverse proxy (such as Traefik, Apache2 or Caddy) w
          - DATABASE_NAME=teslamate
          - DATABASE_HOST=database
          - MQTT_HOST=mosquitto
+         #- MQTT_USERNAME=teslamate #Optional for external MQTT server
+         #- MQTT_PASSWORD=changeme #Optional for external MQTT server
+
        ports:
          - 4000:4000
        volumes:
