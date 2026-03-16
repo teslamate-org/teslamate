@@ -654,22 +654,22 @@ msgstr "예상 종료 시간"
 #: lib/teslamate_web/live/signin_live/index.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
-msgstr ""
+msgstr "%{url} 에서 제공한 API 키 (%{token}) 를 사용하고 있습니다. 이 키를 통해 TeslaMate는 공식 Tesla Fleet API 및 Tesla 텔레메트리 스트리밍에 액세스할 수 있습니다."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
-msgstr ""
+msgstr "데이터 컬렉션"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Battery"
-msgstr ""
+msgstr "배터리"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:163
 #, elixir-autogen, elixir-format
 msgid "LFP Battery"
-msgstr ""
+msgstr "LFP 배터리"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:130
 #, elixir-autogen, elixir-format, fuzzy
@@ -679,4 +679,4 @@ msgstr "감시모드"
 #: lib/teslamate_web/live/car_live/summary.html.heex:99
 #, elixir-autogen, elixir-format, fuzzy
 msgid "View car location on Google Maps"
-msgstr ""
+msgstr "구글지도에서 현재 차량위치 보기"
