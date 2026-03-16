@@ -1,4 +1,4 @@
-name: Check if PR from outside repo
+name: alter the name and see what happens
 
 on:
   workflow_call:
