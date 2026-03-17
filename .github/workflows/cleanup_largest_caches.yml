@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   cleanup:
-    name: Delete caches when PR is closed
+    name: Delete largest 100 caches
     runs-on: ubuntu-24.04
 
     steps:
