@@ -1,6 +1,4 @@
 # Changelog
-- test if buildcache of main still works after running a full purge
-- measure purge pr workflow execution time after initial purge
 
 ## [unreleased]
 
