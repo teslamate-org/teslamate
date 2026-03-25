@@ -271,7 +271,7 @@ restore() {
 				-d "$final_payload" \
 				"$api_endpoint"
 
-			echo "RESTORED $(basename "$dashboard_path") into Grafana folder '${target_grafana_folder_titles_array[-1]}' (UID: $leaf_folder_to_assign_dashboard_uid) (Conceptual path: $(
+			echo "RESTORED $(basename "$dashboard_path") into Grafana folder '${target_grafana_folder_titles_array[${#target_grafana_folder_titles_array[@]}-1]}' (UID: $leaf_folder_to_assign_dashboard_uid) (Conceptual path: $(
 				IFS=/
 				echo "${target_grafana_folder_titles_array[*]}"
 			))"
@@ -383,7 +383,10 @@ create_folder() {
 	local new_folder_uid
 
 	local json_payload
-	json_payload=$(jq -cn --arg title "$folder_title" '{spec: {title: $title}}')
+	local slug
+	slug=$(slugify "$folder_title")
+	json_payload=$(jq -cn --arg title "$folder_title" --arg prefix "${slug:-folder}-" \
+		'{metadata: {generateName: $prefix}, spec: {title: $title}}')
 
 	new_folder_uid=$(curl --silent --fail --show-error -X POST \
 		-H "Authorization: Bearer $GRAFANA_API_TOKEN" \
