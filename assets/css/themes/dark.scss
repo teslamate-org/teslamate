@@ -45,4 +45,20 @@
   .dark-mode-tiles {
     filter: grayscale(100%) invert(100%) brightness(0.95) contrast(1.1);
   }
+
+  .dark-mode-map {
+    background-color: var(--bulma-card-background-color);
+  }
+  .dark-mode-zoom-control {
+    border-color: var(--bulma-border-weak);
+    a {
+      background-color: var(--bulma-body-background-color);
+      border-bottom-color: var(--bulma-border-weak);
+      color: var(--bulma-text-strong);
+    }
+    a:hover,
+    a:focus {
+      background-color: var(--bulma-card-background-color);
+    }
+  }
 }

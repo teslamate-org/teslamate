@@ -194,6 +194,7 @@ export const SimpleMap = {
 
     map.on("mouseover", function (e) {
       map.addControl(map.zoomControl);
+      map.zoomControl.getContainer().classList.add("dark-mode-zoom-control")
     });
     map.on("mouseout", function (e) {
       map.removeControl(map.zoomControl);
