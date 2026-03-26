@@ -378,15 +378,32 @@ build_grafana_folder_path_array() {
 	echo "${path_components[*]}"
 }
 
+folder_uid_for_title() {
+	case "$1" in
+	TeslaMate) echo "Nr4ofiDZk" ;;
+	Internal) echo "Nr5ofiDZk" ;;
+	Reports) echo "Nr6ofiDZk" ;;
+	*) echo "" ;;
+	esac
+}
+
 create_folder() {
 	local folder_title=$1
 	local new_folder_uid
 
 	local json_payload
-	local slug
-	slug=$(slugify "$folder_title")
-	json_payload=$(jq -cn --arg title "$folder_title" --arg prefix "${slug:-folder}-" \
-		'{metadata: {generateName: $prefix}, spec: {title: $title}}')
+	local known_uid
+	known_uid=$(folder_uid_for_title "$folder_title")
+
+	if [[ -n $known_uid ]]; then
+		json_payload=$(jq -cn --arg title "$folder_title" --arg name "$known_uid" \
+			'{metadata: {name: $name}, spec: {title: $title}}')
+	else
+		local slug
+		slug=$(slugify "$folder_title")
+		json_payload=$(jq -cn --arg title "$folder_title" --arg prefix "${slug:-folder}-" \
+			'{metadata: {generateName: $prefix}, spec: {title: $title}}')
+	fi
 
 	new_folder_uid=$(curl --silent --fail --show-error -X POST \
 		-H "Authorization: Bearer $GRAFANA_API_TOKEN" \
