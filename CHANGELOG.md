@@ -8,6 +8,7 @@
 
 - feat(webview): Sort vehicles by display_priority (#5188 - @olsoybakk and @swiffer)
 - feat(webview): Make icons inherit text color for better contrast in dark mode (#5193 - @olsoybakk)
+- feat(webview): Add dark mode support for background and buttons in the map (#5240 - @olsoybakk and @swiffer)
 
 #### Build, CI, internal
 

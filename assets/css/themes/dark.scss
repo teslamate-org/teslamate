@@ -42,7 +42,14 @@
   }
 
   // Map tiles - monochrome style like Tesla's in-car maps
-  .dark-mode-tiles {
+  .leaflet-layer,
+  .leaflet-control-zoom-in,
+  .leaflet-control-zoom-out,
+  .leaflet-control-attribution {
     filter: grayscale(100%) invert(100%) brightness(0.95) contrast(1.1);
+  }
+
+  .leaflet-container {
+    background-color: var(--bulma-card-background-color);
   }
 }

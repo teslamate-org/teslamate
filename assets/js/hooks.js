@@ -141,13 +141,8 @@ const DirectionArrow = CircleMarker.extend({
 function createMap(opts) {
   const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", opts);
 
-  // Detect dark mode to use appropriate tiles
-  const isDarkMode =
-    document.documentElement.getAttribute("data-theme") === "dark";
-
   const osm = new TileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
-    className: isDarkMode ? "dark-mode-tiles" : "",
   });
 
   if (opts.enableHybridLayer) {
