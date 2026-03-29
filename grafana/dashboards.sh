@@ -271,7 +271,7 @@ restore() {
 				-d "$final_payload" \
 				"$api_endpoint"
 
-			echo "RESTORED $(basename "$dashboard_path") into Grafana folder '${target_grafana_folder_titles_array[${#target_grafana_folder_titles_array[@]} - 1]}' (UID: $leaf_folder_to_assign_dashboard_uid) (Conceptual path: $(
+			echo "RESTORED $(basename "$dashboard_path") into Grafana folder '${target_grafana_folder_titles_array[${#target_grafana_folder_titles_array[@]}-1]}' (UID: $leaf_folder_to_assign_dashboard_uid) (Conceptual path: $(
 				IFS=/
 				echo "${target_grafana_folder_titles_array[*]}"
 			))"
