@@ -399,7 +399,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
                   car_id: data.car.id
                 )
 
-                data =
+                %Data{} =
+                  data =
                   with %Data{last_response: nil} <- data do
                     {last_response, geofence} = restore_last_known_values(vehicle, data)
                     %Data{data | last_response: last_response, geofence: geofence}
@@ -428,7 +429,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         # (in that case we won't go through Start / :offline or Start / :asleep)
         :ok = disconnect_stream(data)
 
-        data =
+        %Data{} =
+          data =
           with %Data{last_response: nil} <- data do
             {last_response, geofence} = restore_last_known_values(vehicle, data)
             %Data{data | last_response: last_response, geofence: geofence}
@@ -530,7 +532,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   #### sleep or offline
   # stream is started in def handle_event(:info, {ref, fetch_result}, state, %Data{task: %Task{ref: ref}} = data)
 
-  def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, {state, _}, data)
+  def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, {state, _}, %Data{} = data)
       when state in [:asleep, :offline] do
     case stream_data do
       %Stream.Data{power: nil} ->
