@@ -25,18 +25,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
               task: nil,
               import?: false,
               stream_pid: nil,
-              # mcu2_online_check tracks whether an apparent online event for MCU2-upgraded cars is a real
-              # wakeup or a brief subsystem check. These older cars wake briefly (~2-3 min) each hour for
-              # subsystem checks and report online, but requesting vehicle_data causes a full wakeup (~15 min).
-              # The distinguishing signal is the streaming API: power=nil means a subsystem check (fake online),
-              # a numeric power value means a genuine wakeup (real online).
+              # pre_online_check tracks whether an apparent online event is a real wakeup or a brief
+              # subsystem check. Some vehicles (especially MCU2-upgraded cars) wake briefly (~2-3 min)
+              # each hour for subsystem checks and report online, but requesting vehicle_data causes a
+              # full wakeup (~15 min). The distinguishing signal is the streaming API: power=nil means
+              # a subsystem check (fake online), a numeric power value means a genuine wakeup (real online).
               #
               # Values:
-              #   :idle             – no MCU2 check in progress (default)
+              #   :idle             – no pre-online check in progress (default)
               #   :probing          – stream connected, waiting for first power reading
               #   :confirmed_fake   – stream reported power=nil, treating as fake online
               #   :confirmed_real   – stream reported numeric power, treating as real online
-              mcu2_online_check: :idle
+              pre_online_check: :idle
   end
 
   @asleep_interval 30
@@ -362,29 +362,29 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
                 {:ok, pid} = connect_stream(data)
 
-                {:keep_state, %Data{data | stream_pid: pid, mcu2_online_check: :probing},
+                {:keep_state, %Data{data | stream_pid: pid, pre_online_check: :probing},
                  [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
 
               {%CarSettings{use_streaming_api: true}, state, %Data{stream_pid: pid}}
               when state in [:asleep, :offline] and is_pid(pid) ->
                 case data do
-                  %Data{mcu2_online_check: :probing} ->
+                  %Data{pre_online_check: :probing} ->
                     # Under normal circumstances stream always give data within @asleep_interval (30s)
                     # otherwise detect it here and allow vehicle_data in next fetch
                     Logger.info("Stream connected, but nothing received, allow real online",
                       car_id: data.car.id
                     )
 
-                    {:keep_state, %Data{data | mcu2_online_check: :confirmed_real},
+                    {:keep_state, %Data{data | pre_online_check: :confirmed_real},
                      [broadcast_fetch(false), schedule_fetch(0, data)]}
 
-                  %Data{mcu2_online_check: :idle} ->
+                  %Data{pre_online_check: :idle} ->
                     Logger.warning(
-                      "Stream connected, but mcu2_online_check is :idle, shouldn't be possible, allow real online",
+                      "Stream connected, but pre_online_check is :idle, shouldn't be possible, allow real online",
                       car_id: data.car.id
                     )
 
-                    {:keep_state, %Data{data | mcu2_online_check: :confirmed_real},
+                    {:keep_state, %Data{data | pre_online_check: :confirmed_real},
                      [broadcast_fetch(false), schedule_fetch(0, data)]}
 
                   %Data{} ->
@@ -409,7 +409,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
                 {:ok, pid} = connect_stream(data)
 
                 {:next_state, {:offline, @asleep_interval},
-                 %Data{data | stream_pid: pid, mcu2_online_check: :probing},
+                 %Data{data | stream_pid: pid, pre_online_check: :probing},
                  [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
 
               {%CarSettings{use_streaming_api: true}, _state, %Data{}} ->
@@ -436,7 +436,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             %Data{data | last_response: last_response, geofence: geofence}
           end
 
-        {:keep_state, %Data{data | mcu2_online_check: :idle, stream_pid: nil},
+        {:keep_state, %Data{data | pre_online_check: :idle, stream_pid: nil},
          [
            broadcast_fetch(false),
            {:next_event, :internal, {:update, {String.to_existing_atom(state), vehicle}}}
@@ -542,20 +542,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
         # Transition to :confirmed_fake so the fetch fallback (if stream stalls) won't
         # re-trigger a confirmed_real promotion.
         case data do
-          %Data{mcu2_online_check: :probing} ->
-            Logger.info("MCU2 subsystem check: power is nil, treating as fake online",
+          %Data{pre_online_check: :probing} ->
+            Logger.info("Subsystem check detected: power is nil, treating as fake online",
               car_id: data.car.id
             )
 
-            {:keep_state, %Data{data | mcu2_online_check: :confirmed_fake}}
+            {:keep_state, %Data{data | pre_online_check: :confirmed_fake}}
 
-          %Data{mcu2_online_check: :idle} ->
+          %Data{pre_online_check: :idle} ->
             Logger.warning(
-              "MCU2 subsystem check: power is nil, but mcu2_online_check is :idle, shouldn't be possible, treating as fake online",
+              "Subsystem check detected: power is nil, but pre_online_check is :idle, shouldn't be possible, treating as fake online",
               car_id: data.car.id
             )
 
-            {:keep_state, %Data{data | mcu2_online_check: :confirmed_fake}}
+            {:keep_state, %Data{data | pre_online_check: :confirmed_fake}}
 
           %Data{} ->
             :keep_state_and_data
@@ -565,23 +565,23 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.debug(inspect(stream_data), car_id: data.car.id)
 
         case data do
-          %Data{mcu2_online_check: check} when check in [:probing, :confirmed_fake] ->
-            Logger.info("MCU2 real online detected: power is a number", car_id: data.car.id)
+          %Data{pre_online_check: check} when check in [:probing, :confirmed_fake] ->
+            Logger.info("Real online detected: power is a number", car_id: data.car.id)
 
-            {:keep_state, %Data{data | mcu2_online_check: :confirmed_real},
+            {:keep_state, %Data{data | pre_online_check: :confirmed_real},
              schedule_fetch(0, data)}
 
-          %Data{mcu2_online_check: :idle} ->
+          %Data{pre_online_check: :idle} ->
             Logger.warning(
-              "MCU2 real online detected: power is a number, but mcu2_online_check is :idle, shouldn't be possible, treating as real online",
+              "Real online detected: power is a number, but pre_online_check is :idle, shouldn't be possible, treating as real online",
               car_id: data.car.id
             )
 
-            {:keep_state, %Data{data | mcu2_online_check: :confirmed_real},
+            {:keep_state, %Data{data | pre_online_check: :confirmed_real},
              schedule_fetch(0, data)}
 
           %Data{} ->
-            # mcu2_online_check already :confirmed_real — don't fetch again to avoid 'Fetch already in progress'
+            # pre_online_check already :confirmed_real — don't fetch again to avoid 'Fetch already in progress'
             :keep_state_and_data
         end
 
@@ -924,7 +924,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :ok = disconnect_stream(data)
 
     {:next_state, {:asleep, asleep_interval()},
-     %{data | last_state_change: last_state_change, stream_pid: nil, mcu2_online_check: :idle},
+     %{data | last_state_change: last_state_change, stream_pid: nil, pre_online_check: :idle},
      [broadcast_summary(), schedule_fetch(data)]}
   end
 
@@ -937,7 +937,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :ok = disconnect_stream(data)
 
     {:next_state, {:offline, asleep_interval()},
-     %{data | last_state_change: last_state_change, stream_pid: nil, mcu2_online_check: :idle},
+     %{data | last_state_change: last_state_change, stream_pid: nil, pre_online_check: :idle},
      [broadcast_summary(), schedule_fetch(data)]}
   end
 
@@ -1498,7 +1498,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
             {state, _} when state in [:asleep, :offline] ->
               case data do
-                %Data{mcu2_online_check: :confirmed_real} -> true
+                %Data{pre_online_check: :confirmed_real} -> true
                 %Data{} -> false
               end
 
