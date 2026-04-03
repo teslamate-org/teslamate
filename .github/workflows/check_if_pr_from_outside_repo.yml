@@ -1,0 +1,34 @@
+name: Check if PR from outside repo
+
+on:
+  workflow_call:
+    # Map the workflow outputs to job outputs
+    outputs:
+      is_pr_from_outside_repo:
+        description: "Indicates if the PR is from an outside repository"
+        value: ${{ jobs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo }}
+
+permissions:
+  contents: read
+
+jobs:
+  check_if_pr_from_outside_repo:
+    name: Check if PR from outside repo
+    # as we currently only push ghcr images for PRs from our own repo
+    outputs:
+      is_pr_from_outside_repo: ${{ steps.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: check if PR from outside repo
+        id: check_if_pr_from_outside_repo
+        shell: bash
+        run: |
+          echo "::group::Check if PR from outside repo"
+          if [[ "${{ github.event_name }}" == "pull_request" && "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
+            echo "This PR is from outside the repo"
+            echo "is_pr_from_outside_repo=true" >> $GITHUB_OUTPUT
+          else
+            echo "This PR is from our own repo"
+            echo "is_pr_from_outside_repo=false" >> $GITHUB_OUTPUT
+          fi
+          echo "::endgroup::"

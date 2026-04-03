@@ -24,12 +24,15 @@
 - ci: bump actions to avoid warnings for node 20 (#5213 - @swiffer)
 - ci: ensure fully purging PR related tags for images hosted on GHCR on PR close (#5212 - @swiffer)
 - ci: build images for main branch and use buildcache of main as fallback for PR builds (#5212 - @swiffer)
+- ci: run Purge PR images workflow only if PR is from our own repo (#5217 - @swiffer)
+- ci: for check_paths ensure the job value is retrieved and set as workflow output correctly (#5219 - @swiffer)
 
 #### Dashboards
 
 - fix: use FLOOR/CEIL over ROUND for timestamps used in dashboard links to avoid timeranges becoming to narrow (#5187 - @swiffer)
 - fix: ensure Charges / Drives dashboards load correctly if no Geofence exists (#5199 - @swiffer)
 - fix: division by zero in SQL query for cost_mileage in Trips dashboard (#5198 - @DrMichael)
+- fix: handle incomplete data correctly in Charging Stats / Statistics / Trips dashboards (#5229 - @swiffer)
 
 #### Translations
 
