@@ -36,7 +36,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
               #   :probing          – stream connected, waiting for first power reading
               #   :confirmed_fake   – stream reported power=nil, treating as fake online
               #   :confirmed_real   – stream reported numeric power, treating as real online
-              pre_online_check: :idle
+              pre_online_check: :idle,
+              # Future fields for extracting DB records from state tuples (not used yet)
+              # These will allow moving from {:driving, status, %Log.Drive{}} to :driving + data fields
+              # %Log.Drive{} | nil (will replace drive in {:driving, _, drive})
+              current_drive: nil,
+              # %Log.ChargingProcess{} | nil (will replace cproc in {:charging, cproc})  
+              current_charging_process: nil,
+              # %Log.Update{} | nil (will replace update in {:updating, update})
+              current_update: nil,
+              # :available | {:unavailable, n} | {:offline, last} (will replace status in {:driving, status, _})
+              driving_status: :available
   end
 
   @asleep_interval 30
