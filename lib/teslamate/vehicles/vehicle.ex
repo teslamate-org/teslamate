@@ -686,8 +686,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
         vehicle = merge(data.last_response, stream_data, time: true)
 
         {:next_state, {:driving, :available, drive},
-         %Data{data | last_response: vehicle, elevation: elevation},
-         [broadcast_summary(), schedule_fetch(0, data)]}
+         %Data{
+           data
+           | last_response: vehicle,
+             elevation: elevation,
+             current_drive: drive,
+             driving_status: :available
+         }, [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: nil, power: power} when is_number(power) and power < 0 ->
         vehicle = merge(data.last_response, stream_data, time: true)
@@ -775,8 +780,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
         vehicle = merge(data.last_response, stream_data, time: true)
 
         {:next_state, {:driving, :available, drive},
-         %Data{data | last_response: vehicle, elevation: elevation},
-         [broadcast_summary(), schedule_fetch(0, data)]}
+         %Data{
+           data
+           | last_response: vehicle,
+             elevation: elevation,
+             current_drive: drive,
+             driving_status: :available
+         }, [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: s, power: power}
       when s in [nil, "P"] and is_number(power) and power < 0 ->
@@ -1104,7 +1114,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
            data
            | last_state_change: DateTime.utc_now(),
              last_used: DateTime.utc_now(),
-             stream_pid: nil
+             stream_pid: nil,
+             current_update: update
          }, [broadcast_summary(), schedule_fetch(15, data)]}
 
       %V{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
@@ -1113,7 +1124,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {drive, data} = start_drive(create_position(vehicle, data), data)
         interval = if streaming?(data), do: default_interval(), else: driving_interval()
 
-        {:next_state, {:driving, :available, drive}, data,
+        {:next_state, {:driving, :available, drive},
+         %{data | current_drive: drive, driving_status: :available},
          [
            broadcast_summary(),
            schedule_fetch(interval, data)
@@ -1149,7 +1161,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
            data
            | last_state_change: DateTime.utc_now(),
              last_used: DateTime.utc_now(),
-             stream_pid: nil
+             stream_pid: nil,
+             current_charging_process: cproc
          }, [broadcast_summary(), schedule_fetch(5, data), schedule_position_storing()]}
 
       _ ->
@@ -1194,7 +1207,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           |> Map.get(:charger_power)
           |> determince_interval()
 
-        {:next_state, {:charging, cproc}, data,
+        {:next_state, {:charging, cproc}, %{data | current_charging_process: cproc},
          [broadcast_summary(), schedule_fetch(interval, data)]}
 
       %Vehicle{charge_state: %Charge{charging_state: state}} ->
@@ -1226,7 +1239,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       ) do
     Logger.warning("Vehicle went offline while driving", car_id: data.car.id)
 
-    {:next_state, {:driving, {:unavailable, 0}, drive}, %{data | last_used: DateTime.utc_now()},
+    {:next_state, {:driving, {:unavailable, 0}, drive},
+     %{data | last_used: DateTime.utc_now(), driving_status: {:unavailable, 0}},
      schedule_fetch(5, data)}
   end
 
@@ -1237,7 +1251,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         %Data{} = data
       )
       when n < 15 do
-    {:next_state, {:driving, {:unavailable, n + 1}, drv}, %{data | last_used: DateTime.utc_now()},
+    {:next_state, {:driving, {:unavailable, n + 1}, drv},
+     %{data | last_used: DateTime.utc_now(), driving_status: {:unavailable, n + 1}},
      schedule_fetch(5, data)}
   end
 
@@ -1248,7 +1263,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         %Data{} = data
       ) do
     {:next_state, {:driving, {:offline, data.last_response}, drv},
-     %{data | last_used: DateTime.utc_now()}, [broadcast_summary(), schedule_fetch(30, data)]}
+     %{data | last_used: DateTime.utc_now(), driving_status: {:offline, data.last_response}},
+     [broadcast_summary(), schedule_fetch(30, data)]}
   end
 
   def handle_event(
@@ -1272,7 +1288,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       min when min >= @drive_timeout_min ->
         timeout_drive(drive, data)
 
-        {:next_state, {:driving, {:offline, last}, nil}, %{data | last_used: DateTime.utc_now()},
+        {:next_state, {:driving, {:offline, last}, nil},
+         %{data | last_used: DateTime.utc_now(), current_drive: nil},
          [broadcast_summary(), schedule_fetch(30, data)]}
 
       _min ->
@@ -1331,7 +1348,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       not is_nil(drv) ->
         data = maybe_reconnect_stream(data)
 
-        {:next_state, {:driving, :available, drv}, %{data | last_used: DateTime.utc_now()},
+        {:next_state, {:driving, :available, drv},
+         %{data | last_used: DateTime.utc_now(), driving_status: :available},
          {:next_event, :internal, {:update, {:online, now}}}}
     end
   end
@@ -1355,7 +1373,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     data = maybe_reconnect_stream(data)
 
-    {:next_state, {:driving, :available, drv}, %{data | last_used: DateTime.utc_now()},
+    {:next_state, {:driving, :available, drv},
+     %{data | last_used: DateTime.utc_now(), driving_status: :available},
      {:next_event, :internal, {:update, e}}}
   end
 
