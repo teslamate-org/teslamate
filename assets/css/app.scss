@@ -351,3 +351,8 @@ main.section {
     background-color: initial;
   }
 }
+
+img.leaflet-tile {
+  border-start-start-radius: none;
+  border-start-end-radius: none;
+}
