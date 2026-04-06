@@ -34,6 +34,9 @@
 - build(deps): bump dorny/paths-filter from 4.0.0 to 4.0.1 (#5247)
 - build(deps): bump ecto_sql from 3.13.4 to 3.13.5 (#5260 - @swiffer)
 - build(deps): bump ex_cldr from 2.47.1 to 2.47.2 (#5260 - @swiffer)
+- build(deps-dev): bump esbuild from 0.27.3 to 0.27.7 in /assets (#5261 - @swiffer)
+- build(deps-dev): bump esbuild-sass-plugin from 3.6.0 to 3.7.0 in /assets (#5261 - @swiffer)
+- build(deps-dev): bump sass from 1.97.3 to 1.99.0 in /assets (#5261 - @swiffer)
 
 #### Dashboards
 
