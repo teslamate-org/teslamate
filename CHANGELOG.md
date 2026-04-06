@@ -38,6 +38,7 @@
 - build(deps-dev): bump esbuild from 0.27.3 to 0.27.7 in /assets (#5261 - @swiffer)
 - build(deps-dev): bump esbuild-sass-plugin from 3.6.0 to 3.7.0 in /assets (#5261 - @swiffer)
 - build(deps-dev): bump sass from 1.97.3 to 1.99.0 in /assets (#5261 - @swiffer)
+- build(deps): update packages in /website and remove obsolete overrides (#5264 - @swiffer)
 
 #### Dashboards
 
