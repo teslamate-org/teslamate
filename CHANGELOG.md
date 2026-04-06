@@ -32,6 +32,8 @@
 - build(deps): bump crate-ci/typos from 1.44.0 to 1.45.0 (#5251)
 - build(deps): bump actions/cache from 5.0.3 to 5.0.4 (#5248)
 - build(deps): bump dorny/paths-filter from 4.0.0 to 4.0.1 (#5247)
+- build(deps): bump ecto_sql from 3.13.4 to 3.13.5 (#5260 - @swiffer)
+- build(deps): bump ex_cldr from 2.47.1 to 2.47.2 (#5260 - @swiffer)
 
 #### Dashboards
 
