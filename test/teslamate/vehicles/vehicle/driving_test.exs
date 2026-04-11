@@ -16,11 +16,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, online_event(drive_state: %{timestamp: now_ts + 4, latitude: 0.2, longitude: 0.2})}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     start_date = DateTime.from_unix!(now_ts + 1, :millisecond)
     assert_receive {:start_state, car, :online, date: ^start_date}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, since: s1}}}
@@ -64,11 +63,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, online_event(drive_state: %{timestamp: now_ts + 4, latitude: 0.2, longitude: 0.2})}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     start_date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^start_date}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -103,11 +101,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       fn -> Process.sleep(10_000) end
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     start_date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^start_date}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -129,11 +126,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, drive_event(now_ts, "N", 0)}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     start_date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^start_date}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -157,11 +153,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, drive_event(now_ts, "P", 0)}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^date}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
@@ -179,11 +174,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       {:ok, drive_event(now_ts + 2, "P", 0)}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     start_date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^start_date}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -248,11 +242,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
              )}
           ]
 
-      :ok = start_vehicle(name, events)
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
       date = DateTime.from_unix!(now_ts, :millisecond)
       assert_receive {:start_state, car, :online, date: ^date}
-      assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -321,11 +314,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
         {:ok, %TeslaApi.Vehicle{state: "offline"}}
       ]
 
-      :ok = start_vehicle(name, events)
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
       date = DateTime.from_unix!(now_ts, :millisecond)
       assert_receive {:start_state, car, :online, date: ^date}
-      assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -356,11 +348,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
         {:ok, %TeslaApi.Vehicle{state: "offline"}}
       ]
 
-      :ok = start_vehicle(name, events)
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
       date = DateTime.from_unix!(now_ts, :millisecond)
       assert_receive {:start_state, car, :online, date: ^date}
-      assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -388,11 +379,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
         {:ok, %TeslaApi.Vehicle{state: "asleep"}}
       ]
 
-      :ok = start_vehicle(name, events)
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
       date = DateTime.from_unix!(now_ts, :millisecond)
       assert_receive {:start_state, car, :online, date: ^date}
-      assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -404,7 +394,6 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       # Timeout
       assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
       assert_receive {:start_state, _car, :asleep, []}
-      assert_receive {:"$websockex_cast", :disconnect}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
       refute_receive _
@@ -435,11 +424,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
              )}
           ]
 
-      :ok = start_vehicle(name, events)
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
       d0 = DateTime.from_unix!(now_ts, :millisecond)
       assert_receive {:start_state, car, :online, date: ^d0}
-      assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -498,11 +486,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
              )}
           ]
 
-      :ok = start_vehicle(name, events)
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
       d0 = DateTime.from_unix!(now_ts, :millisecond)
       assert_receive {:start_state, car, :online, date: ^d0}
-      assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
@@ -546,10 +533,9 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
         {:ok, drive_event.("P", 90, 45)}
       ]
 
-      :ok = start_vehicle(name, events)
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
       assert_receive {:start_state, car, :online, date: _}
-      assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{longitude: 45}}
 
       assert_receive {:pubsub,
