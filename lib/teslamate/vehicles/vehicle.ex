@@ -525,18 +525,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
         end
 
         interval =
-          case {data.current_drive != nil, data.current_charging_process != nil} do
-            {true, _} ->
-              10
-
-            {_, true} ->
-              15
-
-            _ ->
-              case state do
-                :online -> 20
-                _ -> 30
-              end
+          case state do
+            :driving -> 10
+            :charging -> 15
+            :online -> 20
+            _ -> 30
           end
 
         {:keep_state, data,
