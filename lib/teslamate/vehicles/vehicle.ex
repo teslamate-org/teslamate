@@ -591,13 +591,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  def handle_event(:info, {:stream, :inactive}, {state, _}, data)
+  def handle_event(:info, {:stream, :inactive}, {state, _}, %Data{} = data)
       when state in [:asleep, :offline] do
     Logger.info("Stream :inactive in state #{inspect(state)}, seems to have been a fake online",
       car_id: data.car.id
     )
 
-    :keep_state_and_data
+    {:keep_state, %Data{data | pre_online_check: :idle}}
   end
 
   #### Online
