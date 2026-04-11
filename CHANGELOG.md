@@ -10,6 +10,7 @@
 - feat(webview): Make icons inherit text color for better contrast in dark mode (#5193 - @olsoybakk)
 - feat(webview): Add dark mode support for background and buttons in the map (#5240 - @olsoybakk and @swiffer)
 - fix(webview): Prevent rounding of map tiles via Bulma CSS (#5265 - @swiffer)
+- perf: ensure BRIN indexes don't degrade over time (#5276 - @swiffer)
 
 #### Build, CI, internal
 
