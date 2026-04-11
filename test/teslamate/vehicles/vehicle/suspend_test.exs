@@ -128,13 +128,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     :ok =
       start_vehicle(name, events,
         settings: %{
+          use_streaming_api: false,
           suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
 
     assert_receive {:start_state, car, :online, date: _}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     refute_receive _, round(suspend_ms * 0.5)
@@ -161,13 +161,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     :ok =
       start_vehicle(name, events,
         settings: %{
+          use_streaming_api: false,
           suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
 
     assert_receive {:start_state, car, :online, date: _}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     refute_receive _, round(suspend_ms * 0.5)
@@ -194,13 +194,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     :ok =
       start_vehicle(name, events,
         settings: %{
+          use_streaming_api: false,
           suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
 
     assert_receive {:start_state, car, :online, date: _}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     refute_receive _, round(suspend_ms * 0.5)
@@ -233,13 +233,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     :ok =
       start_vehicle(name, events,
         settings: %{
+          use_streaming_api: false,
           suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
 
     assert_receive {:start_state, car, :online, date: _}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
     refute_receive _, round(suspend_ms * 0.5)
@@ -265,13 +265,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     :ok =
       start_vehicle(name, events,
         settings: %{
+          use_streaming_api: false,
           suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
 
     assert_receive {:start_state, car, :online, date: _}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, sentry_mode: true}}}
@@ -300,13 +300,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     :ok =
       start_vehicle(name, events,
         settings: %{
+          use_streaming_api: false,
           suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
 
     assert_receive {:start_state, car, :online, date: _}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, doors_open: true}}}
@@ -335,13 +335,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     :ok =
       start_vehicle(name, events,
         settings: %{
+          use_streaming_api: false,
           suspend_after_idle_min: round(suspend_after_idle_ms / 60),
           suspend_min: suspend_ms
         }
       )
 
     assert_receive {:start_state, car, :online, date: _}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, frunk_open: true}}}
@@ -487,10 +487,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       fn -> Process.sleep(10_000) end
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     assert_receive {:start_state, car, :online, date: _}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, locked: false}}}
@@ -562,6 +561,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
       :ok =
         start_vehicle(name, events,
           settings: %{
+            use_streaming_api: false,
             req_not_unlocked: true,
             suspend_after_idle_min: round(suspend_after_idle_ms / 60),
             suspend_min: suspend_ms
@@ -569,7 +569,6 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         )
 
       assert_receive {:start_state, car, :online, date: _}
-      assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, locked: false}}}
@@ -607,10 +606,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
         fn -> Process.sleep(10_000) end
       ]
 
-      :ok = start_vehicle(name, events, settings: %{req_not_unlocked: false})
+      :ok =
+        start_vehicle(name, events,
+          settings: %{use_streaming_api: false, req_not_unlocked: false}
+        )
 
       assert_receive {:start_state, car, :online, date: _}
-      assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 

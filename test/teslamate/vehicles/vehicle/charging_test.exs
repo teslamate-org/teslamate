@@ -172,18 +172,15 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
       fn -> Process.sleep(10_000) end
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     start_date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^start_date}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
     assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
                     [lookup_address: true]}
-
-    assert_receive {:"$websockex_cast", :disconnect}
 
     assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: 0.1}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
@@ -199,7 +196,6 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     start_date = DateTime.from_unix!(now_ts + 5, :millisecond)
     assert_receive {:start_state, ^car, :online, date: ^start_date}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 

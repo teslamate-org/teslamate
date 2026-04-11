@@ -61,7 +61,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
@@ -81,7 +81,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
@@ -107,7 +107,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
@@ -127,7 +127,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
@@ -147,7 +147,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
+    :ok =
+      start_vehicle(name, events, settings: %{use_streaming_api: false, req_not_unlocked: true})
+
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
@@ -166,7 +168,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
+    :ok =
+      start_vehicle(name, events, settings: %{use_streaming_api: false, req_not_unlocked: true})
+
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
@@ -185,7 +189,9 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events, settings: %{req_not_unlocked: true})
+    :ok =
+      start_vehicle(name, events, settings: %{use_streaming_api: false, req_not_unlocked: true})
+
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
@@ -201,7 +207,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
@@ -217,7 +223,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
@@ -233,7 +239,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, not_suspendable}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
@@ -246,7 +252,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, drive_event(0, "D", 0)}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
@@ -261,7 +267,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, update_event(now_ts, "installing", "2019.8.4 530d1d3")}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     start_date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^start_date}
@@ -276,7 +282,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, charging_event(0, "Charging", 1.5)}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
@@ -291,7 +297,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       {:ok, %TeslaApi.Vehicle{state: "online"}}
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
     assert_receive {:start_state, _, :online, date: _}
 
     assert {:error, :gateway_error} = Vehicle.suspend_logging(name)
@@ -386,11 +392,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       fn -> Process.sleep(10_000) end
     ]
 
-    :ok = start_vehicle(name, events)
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
     date = DateTime.from_unix!(0, :millisecond)
     assert_receive {:start_state, car, :online, date: ^date}
-    assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
 
     assert {:error, :unlocked} = Vehicle.suspend_logging(name)

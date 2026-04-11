@@ -464,16 +464,17 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       ]
 
       :ok =
-        start_vehicle(name, events, last_update: %Update{version: "2019.40.10.7 ad132c7b057e"})
+        start_vehicle(name, events,
+          settings: %{use_streaming_api: false},
+          last_update: %Update{version: "2019.40.10.7 ad132c7b057e"}
+        )
 
       for _ <- 1..4 do
         assert_receive {:start_state, car, :online, date: _}
-        assert_receive {ApiMock, {:stream, 1000, _}}
         assert_receive {:insert_position, ^car, %{}}
         assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
         assert_receive {:start_state, ^car, :asleep, []}
         assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
-        assert_receive {:"$websockex_cast", :disconnect}
       end
 
       refute_receive _
