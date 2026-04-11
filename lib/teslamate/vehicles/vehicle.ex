@@ -468,7 +468,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("Vehicle is currently in service", car_id: data.car.id)
 
         case state do
-          {:driving, _, %Log.Drive{} = drive} ->
+          {:driving, _, _} when data.current_drive != nil ->
+            drive = data.current_drive
+
             {:ok, %Log.Drive{distance: km, duration_min: min}} =
               call(data.deps.log, :close_drive, [drive])
 
@@ -478,7 +480,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
               car_id: data.car.id
             )
 
-            {:next_state, :start, %Data{data | last_used: DateTime.utc_now()},
+            {:next_state, :start,
+             %Data{data | last_used: DateTime.utc_now(), driving_status: nil, current_drive: nil},
              [
                broadcast_fetch(false),
                broadcast_summary(),
@@ -525,11 +528,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
         end
 
         interval =
-          case state do
-            {:driving, _, _} -> 10
-            {:charging, _} -> 15
-            :online -> 20
-            _ -> 30
+          case {data.current_drive != nil, data.current_charging_process != nil} do
+            {true, _} ->
+              10
+
+            {_, true} ->
+              15
+
+            _ ->
+              case state do
+                :online -> 20
+                _ -> 30
+              end
           end
 
         {:keep_state, data,
@@ -1206,7 +1216,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:driving, {:offline, _last}, nil},
         %Data{} = data
       ) do
-    {:next_state, :start, %Data{data | last_used: DateTime.utc_now()}, schedule_fetch(data)}
+    {:next_state, :start, %Data{data | last_used: DateTime.utc_now(), driving_status: nil},
+     schedule_fetch(data)}
   end
 
   def handle_event(
@@ -1269,13 +1280,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         Logger.info("Vehicle was charged while being offline: #{added} kWh", car_id: data.car.id)
 
-        {:next_state, :start, %{data | last_used: DateTime.utc_now()},
+        {:next_state, :start, %{data | last_used: DateTime.utc_now(), driving_status: nil},
          {:next_event, :internal, {:update, {:online, now}}}}
 
       not has_gained_range? and offline_min >= @drive_timeout_min ->
         unless is_nil(drv), do: timeout_drive(drv, data)
 
-        {:next_state, :start, %{data | last_used: DateTime.utc_now()},
+        {:next_state, :start, %{data | last_used: DateTime.utc_now(), driving_status: nil},
          {:next_event, :internal, {:update, {:online, now}}}}
 
       not is_nil(drv) ->
@@ -1289,7 +1300,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:internal, {:update, {:asleep, _vehicle}}, {:driving, _, drv}, data) do
     unless is_nil(drv), do: timeout_drive(drv, data)
-    {:next_state, :start, data, schedule_fetch(data)}
+    {:next_state, :start, %{data | driving_status: nil}, schedule_fetch(data)}
   end
 
   #### msg: :online
@@ -1345,7 +1356,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("End of drive initiated by: #{inspect(vehicle.drive_state)}")
         Logger.info("Driving / Ended / #{km && round(km)} km – #{min} min", car_id: data.car.id)
 
-        {:next_state, :start, %{data | last_used: DateTime.utc_now(), geofence: geofence},
+        {:next_state, :start,
+         %{data | last_used: DateTime.utc_now(), driving_status: nil, geofence: geofence},
          {:next_event, :internal, {:update, {:online, vehicle}}}}
 
       %Vehicle{drive_state: nil} ->
@@ -1513,13 +1525,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
             :online ->
               true
 
-            {:driving, _, _} ->
+            {:driving, _, _} when data.current_drive != nil ->
               true
 
-            {:updating, _} ->
+            {:updating, _} when data.current_update != nil ->
               true
 
-            {:charging, _} ->
+            {:charging, _} when data.current_charging_process != nil ->
               true
 
             :start ->
@@ -1545,9 +1557,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
         reachable? =
           case expected_state do
             :online -> true
-            {:driving, _, _} -> true
-            {:updating, _} -> true
-            {:charging, _} -> true
+            {:driving, _, _} when data.current_drive != nil -> true
+            {:updating, _} when data.current_update != nil -> true
+            {:charging, _} when data.current_charging_process != nil -> true
             :start -> false
             {:offline, _} -> false
             {:asleep, _} -> false
