@@ -1534,13 +1534,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
             :online ->
               true
 
-            :driving when data.current_drive != nil ->
+            :driving ->
               true
 
-            :updating when data.current_update != nil ->
+            :updating ->
               true
 
-            :charging when data.current_charging_process != nil ->
+            :charging ->
               true
 
             :start ->
@@ -1566,9 +1566,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
         reachable? =
           case expected_state do
             :online -> true
-            :driving when data.current_drive != nil -> true
-            :updating when data.current_update != nil -> true
-            :charging when data.current_charging_process != nil -> true
+            :driving -> true
+            :updating -> true
+            :charging -> true
             :start -> false
             {:offline, _} -> false
             {:asleep, _} -> false
