@@ -139,6 +139,13 @@ defmodule TeslaMate.VehicleCase do
   end
 
   def update_event(ts, state, car_version, opts \\ []) do
+    ts =
+      if ts == 0 do
+        DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+      else
+        ts
+      end
+
     alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
 
     update_version = Keyword.get(opts, :update_version)
