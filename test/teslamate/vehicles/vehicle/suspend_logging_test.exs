@@ -56,7 +56,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         climate_state: %{is_preconditioning: true}
       )
 
@@ -67,7 +67,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :preconditioning} = Vehicle.suspend_logging(name)
@@ -78,7 +78,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{is_user_present: true, car_version: ""}
       )
 
@@ -89,7 +89,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :user_present} = Vehicle.suspend_logging(name)
@@ -100,7 +100,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{
           software_update: %TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate{
             status: "downloading",
@@ -117,7 +117,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :downloading_update} = Vehicle.suspend_logging(name)
@@ -128,7 +128,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{sentry_mode: true, car_version: ""}
       )
 
@@ -139,7 +139,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :sentry_mode} = Vehicle.suspend_logging(name)
@@ -150,7 +150,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: false, car_version: ""}
       )
 
@@ -162,7 +162,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     :ok =
       start_vehicle(name, events, settings: %{use_streaming_api: false, req_not_unlocked: true})
 
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :unlocked} = Vehicle.suspend_logging(name)
@@ -173,7 +173,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{df: 0, dr: 0, pf: 1, pr: 0, car_version: ""}
       )
 
@@ -185,7 +185,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     :ok =
       start_vehicle(name, events, settings: %{use_streaming_api: false, req_not_unlocked: true})
 
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :doors_open} = Vehicle.suspend_logging(name)
@@ -196,7 +196,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{rt: 1, ft: 1, car_version: ""}
       )
 
@@ -208,7 +208,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     :ok =
       start_vehicle(name, events, settings: %{use_streaming_api: false, req_not_unlocked: true})
 
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :trunk_open} = Vehicle.suspend_logging(name)
@@ -219,7 +219,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, shift_state: "D", latitude: 0.0, longitude: 0.0}
+        drive_state: %{timestamp: now_ts, shift_state: "D", latitude: 0.0, longitude: 0.0}
       )
 
     events = [
@@ -228,7 +228,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
@@ -239,7 +239,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, shift_state: "R", latitude: 0.0, longitude: 0.0}
+        drive_state: %{timestamp: now_ts, shift_state: "R", latitude: 0.0, longitude: 0.0}
       )
 
     events = [
@@ -248,7 +248,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
@@ -259,7 +259,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, shift_state: "N", latitude: 0.0, longitude: 0.0}
+        drive_state: %{timestamp: now_ts, shift_state: "N", latitude: 0.0, longitude: 0.0}
       )
 
     events = [
@@ -268,7 +268,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
@@ -279,11 +279,11 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event(now_ts)},
-      {:ok, drive_event(0, "D", 0)}
+      {:ok, drive_event(now_ts, "D", 0)}
     ]
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :vehicle_not_parked} = Vehicle.suspend_logging(name)
@@ -311,12 +311,12 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     events = [
       {:ok, online_event(now_ts)},
-      {:ok, charging_event(0, "Charging", 1.5)}
+      {:ok, charging_event(now_ts, "Charging", 1.5)}
     ]
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, _, :online, date: ^date}
 
     assert {:error, :charging_in_progress} = Vehicle.suspend_logging(name)
@@ -412,13 +412,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     unlocked =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: false, car_version: ""}
       )
 
     locked =
-      online_event(now_ts + 1,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+      online_event(now_ts,
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: true}
       )
 
@@ -432,7 +432,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
 
     :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
 
-    date = DateTime.from_unix!(0, :millisecond)
+    date = DateTime.from_unix!(now_ts, :millisecond)
     assert_receive {:start_state, car, :online, date: ^date}
     assert_receive {:insert_position, ^car, %{}}
 

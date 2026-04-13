@@ -17,7 +17,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
     events = [
       {:ok, online_event(now_ts)},
       {:ok,
-       online_event(now_ts + 1, drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+       online_event(now_ts + 1, drive_state: %{timestamp: now_ts + 1, latitude: 0.0, longitude: 0.0})},
       {:ok, charging_event(now_ts + 2, "Charging", 0.1, range: nil)},
       {:ok, charging_event(now_ts + 3, "Charging", 0.1, range: nil)},
       {:ok, charging_event(now_ts + 4, "Charging", 0.2, range: 10)}

@@ -35,7 +35,7 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationTest do
        )},
       {:ok,
        online_event(
-         ts,
+         ts + 1,
          display_name: "FooBar",
          drive_state: %{timestamp: ts + 1, latitude: 0, longitude: 0}
        )},
@@ -43,13 +43,13 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationTest do
       {:ok, %TeslaApi.Vehicle{state: "offline"}},
       {:ok,
        online_event(
-         ts,
+         ts + 1_000_000,
          display_name: "Bar",
          drive_state: %{timestamp: ts + 1_000_000, latitude: 0, longitude: 0}
        )},
       {:ok,
        online_event(
-         ts,
+         ts + 1_000_001,
          display_name: "Bar",
          drive_state: %{timestamp: ts + 1_000_001, latitude: 0, longitude: 0}
        )}

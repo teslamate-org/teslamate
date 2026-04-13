@@ -92,8 +92,12 @@ defmodule TeslaMate.VehicleCase do
     drive_state =
       Keyword.get(opts, :drive_state, %{latitude: 0.0, longitude: 0.0})
       |> Map.update(:timestamp, now, fn
-        nil -> now
-        ts -> ts
+        nil ->
+          now
+
+        ts ->
+          assert now == ts
+          ts
       end)
 
     charge_state = Keyword.get(opts, :charge_state, %{timestamp: 0})

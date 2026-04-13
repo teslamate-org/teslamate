@@ -261,7 +261,7 @@ defmodule TeslaMateWeb.CarControllerTest do
          online_event(
            now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
            charge_state: %{
              timestamp: now_ts,
              charger_power: 11,
@@ -574,7 +574,7 @@ defmodule TeslaMateWeb.CarControllerTest do
          online_event(
            now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
            climate_state: %{is_preconditioning: false}
          )}
       ]
@@ -597,7 +597,7 @@ defmodule TeslaMateWeb.CarControllerTest do
          online_event(
            now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
            climate_state: %{is_preconditioning: true}
          )}
       ]
@@ -623,7 +623,7 @@ defmodule TeslaMateWeb.CarControllerTest do
          online_event(
            now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
            climate_state: %{is_preconditioning: false}
          )}
       ]

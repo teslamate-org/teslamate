@@ -130,7 +130,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         climate_state: %{is_preconditioning: true}
       )
 
@@ -165,7 +165,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         climate_state: %{climate_keeper_mode: "dog"}
       )
 
@@ -200,7 +200,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{is_user_present: true, car_version: ""}
       )
 
@@ -235,7 +235,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{
           software_update: %TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate{
             status: "downloading",
@@ -275,7 +275,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{sentry_mode: true, car_version: ""}
       )
 
@@ -312,7 +312,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{df: 0, dr: 0, pf: 1, pr: 0, car_version: ""}
       )
 
@@ -349,7 +349,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     not_suspendable =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{rt: 0, ft: 1, car_version: ""}
       )
 
@@ -498,13 +498,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     unlocked =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: false, car_version: ""}
       )
 
     locked =
-      online_event(now_ts + 1,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+      online_event(now_ts,
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: true, car_version: ""}
       )
 
@@ -535,13 +535,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
     sentry_mode_on =
       online_event(now_ts,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{sentry_mode: true, car_version: ""}
       )
 
     sentry_mode_off =
-      online_event(now_ts + 1,
-        drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+      online_event(now_ts,
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{sentry_mode: false, car_version: ""}
       )
 
@@ -580,7 +580,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
 
       not_suspendable =
         online_event(now_ts,
-          drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+          drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
           vehicle_state: %{locked: false, car_version: ""}
         )
 
