@@ -163,7 +163,6 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       events = [
         {:ok, online_event(now_ts)},
-        {:ok, online_event(now_ts, drive_state: %{timestamp: now_ts})},
         fn ->
           send(me, :continue?)
 
