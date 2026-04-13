@@ -481,10 +481,24 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended}}}
 
-    stream(name, %{shift_state: "P", speed: 0, power: 0, elevation: 50, time: now})
+    stream(name, %{
+      shift_state: "P",
+      speed: 0,
+      power: 0,
+      elevation: 50,
+      time: DateTime.add(now, 3, :millisecond)
+    })
+
     refute_receive _
 
-    stream(name, %{shift_state: "D", speed: 50, power: 5, elevation: 50, time: now})
+    stream(name, %{
+      shift_state: "D",
+      speed: 50,
+      power: 5,
+      elevation: 50,
+      time: DateTime.add(now, 3, :millisecond)
+    })
+
     assert_receive {:start_drive, ^car}
     assert_receive {:insert_position, _drive, position}
 
@@ -496,7 +510,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
              longitude: 42.0,
              speed: 80,
              battery_level: 60,
-             date: now,
+             date: DateTime.add(now, 3, :millisecond),
              elevation: 50,
              odometer: 1609.344,
              power: 5
