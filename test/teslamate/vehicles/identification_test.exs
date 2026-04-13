@@ -5,9 +5,12 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationTest do
   alias TeslaMate.Log
 
   test "identifies the vehicle" do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     events = [
       {:ok,
        online_event(
+         now_ts,
          display_name: "FooBar",
          vehicle_config: %{car_type: "models", trim_badging: "p100d"}
        )}
@@ -26,11 +29,13 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationTest do
     events = [
       {:ok,
        online_event(
+         ts,
          display_name: "FooBar",
          drive_state: %{timestamp: ts, latitude: 0, longitude: 0}
        )},
       {:ok,
        online_event(
+         ts,
          display_name: "FooBar",
          drive_state: %{timestamp: ts + 1, latitude: 0, longitude: 0}
        )},
@@ -38,11 +43,13 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationTest do
       {:ok, %TeslaApi.Vehicle{state: "offline"}},
       {:ok,
        online_event(
+         ts,
          display_name: "Bar",
          drive_state: %{timestamp: ts + 1_000_000, latitude: 0, longitude: 0}
        )},
       {:ok,
        online_event(
+         ts,
          display_name: "Bar",
          drive_state: %{timestamp: ts + 1_000_001, latitude: 0, longitude: 0}
        )}

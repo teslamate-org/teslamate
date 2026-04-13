@@ -13,15 +13,19 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
-      {:ok, online_event()},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, online_event(now_ts)},
+      {:ok,
+       online_event(now_ts, drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
       {:ok, charging_event(now_ts + 1, "Starting", 0.1, range: 1)},
       {:ok, charging_event(now_ts + 2, "Charging", 0.2, range: 2)},
       {:ok, charging_event(now_ts + 3, "Charging", 0.3, range: 3)},
       {:ok, charging_event(now_ts + 4, "Complete", 0.4, range: 4)},
       {:ok, charging_event(now_ts + 5, "Complete", 0.4, range: 4)},
       {:ok, charging_event(now_ts + 6, "Unplugged", 0.4, range: 4)},
-      {:ok, online_event(drive_state: %{timestamp: now_ts + 7, latitude: 0.2, longitude: 0.2})},
+      {:ok,
+       online_event(now_ts + 7,
+         drive_state: %{timestamp: now_ts + 7, latitude: 0.2, longitude: 0.2}
+       )},
       fn -> Process.sleep(10_000) end
     ]
 
@@ -100,8 +104,9 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
-      {:ok, online_event()},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
+      {:ok, online_event(now_ts)},
+      {:ok,
+       online_event(now_ts, drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, charging_event(now_ts + 2, "Charging", 0.2)},
       {:error, :vehicle_unavailable},
@@ -112,7 +117,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
       {:ok, charging_event(now_ts + 4, "Complete", 0.3)},
       {:ok, charging_event(now_ts + 5, "Complete", 0.3)},
       {:ok, charging_event(now_ts + 6, "Unplugged", 0.3)},
-      {:ok, online_event(drive_state: %{timestamp: now_ts + 7, latitude: 0.2, longitude: 0.2})},
+      {:ok,
+       online_event(now_ts + 7,
+         drive_state: %{timestamp: now_ts + 7, latitude: 0.2, longitude: 0.2}
+       )},
       fn -> Process.sleep(10_000) end
     ]
 
@@ -160,15 +168,19 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
-      {:ok, online_event()},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
+      {:ok, online_event(now_ts)},
+      {:ok,
+       online_event(now_ts, drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, %TeslaApi.Vehicle{state: "online", charge_state: nil}},
       {:ok, %TeslaApi.Vehicle{state: "online", charge_state: nil}},
       {:ok, %TeslaApi.Vehicle{state: "online", charge_state: nil}},
       {:ok, charging_event(now_ts + 3, "Charging", 0.3)},
       {:ok, charging_event(now_ts + 5, "Complete", 0.3)},
-      {:ok, online_event(drive_state: %{timestamp: now_ts + 6, latitude: 0.2, longitude: 0.2})},
+      {:ok,
+       online_event(now_ts + 6,
+         drive_state: %{timestamp: now_ts + 6, latitude: 0.2, longitude: 0.2}
+       )},
       fn -> Process.sleep(10_000) end
     ]
 
@@ -208,7 +220,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts)},
       {:ok, charging_event(now_ts, "Charging", 22)},
       fn -> Process.sleep(10_000) end
     ]
@@ -236,8 +248,9 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
-      {:ok, online_event()},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
+      {:ok, online_event(now_ts)},
+      {:ok,
+       online_event(now_ts, drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
       {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
       {:ok, charging_event(now_ts + 2, "Charging", 0.2)},
       {:error, :vehicle_unavailable},

@@ -85,8 +85,9 @@ defmodule TeslaMate.VehicleCase do
     :ok
   end
 
-  def online_event(opts \\ []) do
-    now = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+  def online_event(ts, opts \\ []) do
+    assert is_integer(ts)
+    now = ts
 
     drive_state =
       Keyword.get(opts, :drive_state, %{latitude: 0.0, longitude: 0.0})
@@ -113,6 +114,7 @@ defmodule TeslaMate.VehicleCase do
 
   def drive_event(ts, shift_state, speed_mph) do
     online_event(
+      ts,
       drive_state: %{
         timestamp: ts,
         latitude: 0.1,
@@ -127,6 +129,7 @@ defmodule TeslaMate.VehicleCase do
     range = Keyword.get(opts, :range)
 
     online_event(
+      ts,
       charge_state: %{
         timestamp: ts,
         charging_state: charging_state,
@@ -139,18 +142,12 @@ defmodule TeslaMate.VehicleCase do
   end
 
   def update_event(ts, state, car_version, opts \\ []) do
-    ts =
-      if ts == 0 do
-        DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-      else
-        ts
-      end
-
     alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
 
     update_version = Keyword.get(opts, :update_version)
 
     online_event(
+      ts,
       vehicle_state: %{
         timestamp: ts,
         car_version: car_version,

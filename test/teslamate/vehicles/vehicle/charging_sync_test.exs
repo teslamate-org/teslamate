@@ -15,11 +15,12 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
-      {:ok, online_event()},
-      {:ok, online_event(drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
-      {:ok, charging_event(now_ts, "Charging", 0.1, range: nil)},
-      {:ok, charging_event(now_ts, "Charging", 0.1, range: nil)},
-      {:ok, charging_event(now_ts, "Charging", 0.2, range: 10)}
+      {:ok, online_event(now_ts)},
+      {:ok,
+       online_event(now_ts + 1, drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0})},
+      {:ok, charging_event(now_ts + 2, "Charging", 0.1, range: nil)},
+      {:ok, charging_event(now_ts + 3, "Charging", 0.1, range: nil)},
+      {:ok, charging_event(now_ts + 4, "Charging", 0.2, range: 10)}
     ]
 
     assert capture_log(@log_opts, fn ->

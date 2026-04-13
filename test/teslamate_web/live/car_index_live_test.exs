@@ -8,7 +8,8 @@ defmodule TeslaMateWeb.CarLive.Indextest do
   describe "base URL" do
     @tag :signed_in
     test "sets the base URL", %{conn: conn} do
-      :ok = start_vehicles([{:ok, online_event()}])
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+      :ok = start_vehicles([{:ok, online_event(now_ts)}])
 
       assert %GlobalSettings{base_url: nil} = Settings.get_global_settings!()
 
@@ -22,7 +23,8 @@ defmodule TeslaMateWeb.CarLive.Indextest do
 
     @tag :signed_in
     test "does not update the base URL if exists already", %{conn: conn} do
-      :ok = start_vehicles([{:ok, online_event()}])
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+      :ok = start_vehicles([{:ok, online_event(now_ts)}])
 
       assert {:ok, _settings} =
                Settings.get_global_settings!()
@@ -39,7 +41,8 @@ defmodule TeslaMateWeb.CarLive.Indextest do
     @tag :signed_in
     @tag :capture_log
     test "handles invalid base URLs", %{conn: conn} do
-      :ok = start_vehicles([{:ok, online_event()}])
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+      :ok = start_vehicles([{:ok, online_event(now_ts)}])
 
       for base_url <- [nil, "udp://10.0.0.1", "", "example.com"] do
         assert {:ok, _parent_view, _html} =

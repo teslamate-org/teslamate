@@ -31,8 +31,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "immediately returns :ok if already suspending", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     events = [
-      {:ok, online_event()}
+      {:ok, online_event(now_ts)}
     ]
 
     :ok = start_vehicle(name, events)
@@ -50,14 +52,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if vehicle is preconditioning", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(
+      online_event(now_ts,
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         climate_state: %{is_preconditioning: true}
       )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -70,14 +74,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if user is present", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(
+      online_event(now_ts,
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{is_user_present: true, car_version: ""}
       )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -90,8 +96,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if a download is in progress", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(
+      online_event(now_ts,
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{
           software_update: %TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate{
@@ -103,7 +111,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
       )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -116,14 +124,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if sentry mode is active", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(
+      online_event(now_ts,
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{sentry_mode: true, car_version: ""}
       )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -136,14 +146,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if vehicle is unlocked", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(
+      online_event(now_ts,
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: false, car_version: ""}
       )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -157,14 +169,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if any of the doors are open", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(
+      online_event(now_ts,
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{df: 0, dr: 0, pf: 1, pr: 0, car_version: ""}
       )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -178,14 +192,16 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if the rear or front trunk is open", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(
+      online_event(now_ts,
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{rt: 1, ft: 1, car_version: ""}
       )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -199,11 +215,15 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if shift_state is D", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(drive_state: %{timestamp: 0, shift_state: "D", latitude: 0.0, longitude: 0.0})
+      online_event(now_ts,
+        drive_state: %{timestamp: 0, shift_state: "D", latitude: 0.0, longitude: 0.0}
+      )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -215,11 +235,15 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if shift_state is R", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(drive_state: %{timestamp: 0, shift_state: "R", latitude: 0.0, longitude: 0.0})
+      online_event(now_ts,
+        drive_state: %{timestamp: 0, shift_state: "R", latitude: 0.0, longitude: 0.0}
+      )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -231,11 +255,15 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if shift_state is N", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     not_suspendable =
-      online_event(drive_state: %{timestamp: 0, shift_state: "N", latitude: 0.0, longitude: 0.0})
+      online_event(now_ts,
+        drive_state: %{timestamp: 0, shift_state: "N", latitude: 0.0, longitude: 0.0}
+      )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, not_suspendable}
     ]
 
@@ -247,8 +275,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended while driving", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts)},
       {:ok, drive_event(0, "D", 0)}
     ]
 
@@ -263,7 +293,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, update_event(now_ts, "installing", "2019.8.4 530d1d3")}
     ]
 
@@ -277,8 +307,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended while charing is not complete", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts)},
       {:ok, charging_event(0, "Charging", 1.5)}
     ]
 
@@ -291,9 +323,11 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "cannot be suspended if the data is incomplete", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     events = [
-      {:ok, online_event()},
-      {:ok, online_event()},
+      {:ok, online_event(now_ts)},
+      {:ok, online_event(now_ts + 1)},
       {:ok, %TeslaApi.Vehicle{state: "online"}}
     ]
 
@@ -307,7 +341,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts)},
       {:ok, charging_event(now_ts, "Charging", 1.5)},
       {:ok, charging_event(now_ts + 1, "Complete", 1.5)},
       {:ok, charging_event(now_ts + 2, "Complete", 1.5)},
@@ -350,8 +384,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   end
 
   test "is suspendable when idling", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     events = [
-      {:ok, online_event()}
+      {:ok, online_event(now_ts)}
     ]
 
     :ok = start_vehicle(name, events)
@@ -372,20 +408,22 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
   test "detects if vehicle was locked", %{
     test: name
   } do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     unlocked =
-      online_event(
+      online_event(now_ts,
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: false, car_version: ""}
       )
 
     locked =
-      online_event(
+      online_event(now_ts + 1,
         drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
         vehicle_state: %{locked: true}
       )
 
     events = [
-      {:ok, online_event()},
+      {:ok, online_event(now_ts - 1)},
       {:ok, unlocked},
       {:ok, unlocked},
       {:ok, locked},

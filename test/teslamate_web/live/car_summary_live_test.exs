@@ -54,15 +54,19 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           use_streaming_api: false
         })
 
-      now = now()
+      now_ts = now()
 
       events = [
         {:ok,
-         online_event(
+         online_event(now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
-           climate_state: %{timestamp: now, is_preconditioning: false, climate_keeper_mode: "off"},
-           vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
+           climate_state: %{
+             timestamp: now_ts,
+             is_preconditioning: false,
+             climate_keeper_mode: "off"
+           },
+           vehicle_state: %{timestamp: now_ts, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
 
@@ -126,17 +130,18 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           )
 
         _car = car_fixture(settings)
-        now = now()
+        now_ts = now()
 
         events = [
           {:ok,
            online_event(
+             now_ts,
              Keyword.merge(
                [
                  display_name: "FooCar",
-                 drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
+                 drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
                  vehicle_state: %{
-                   timestamp: now,
+                   timestamp: now_ts,
                    sentry_mode: false,
                    locked: true,
                    car_version: ""
@@ -178,15 +183,19 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           use_streaming_api: false
         })
 
-      now = now()
+      now_ts = now()
 
       events = [
         {:ok,
-         online_event(
+         online_event(now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
-           climate_state: %{timestamp: now, is_preconditioning: false, climate_keeper_mode: "off"},
-           vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
+           climate_state: %{
+             timestamp: now_ts,
+             is_preconditioning: false,
+             climate_keeper_mode: "off"
+           },
+           vehicle_state: %{timestamp: now_ts, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
 
@@ -240,9 +249,11 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     @tag :signed_in
     @tag :capture_log
     test "reports health status", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event(display_name: "FooCar")},
-        {:ok, online_event(display_name: "FooCar")},
+        {:ok, online_event(now_ts, display_name: "FooCar")},
+        {:ok, online_event(now_ts + 1, display_name: "FooCar")},
         {:error, :unknown}
       ]
 
@@ -269,10 +280,12 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     @tag :signed_in
     @tag :capture_log
     test "shows spinner if fetching vehicle data on first render", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
         fn ->
           :timer.sleep(10_0000)
-          {:ok, online_event()}
+          {:ok, online_event(now_ts)}
         end
       ]
 
@@ -298,11 +311,13 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     @tag :signed_in
     @tag :capture_log
     test "shows spinner while fetching vehicle data", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
+        {:ok, online_event(now_ts)},
         fn ->
           :timer.sleep(50)
-          {:ok, online_event()}
+          {:ok, online_event(now_ts + 1)}
         end
       ]
 
@@ -337,11 +352,13 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     @tag :signed_in
     @tag :capture_log
     test "shows spinner while fetching vehicle data ", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
+        {:ok, online_event(now_ts)},
         fn ->
           :timer.sleep(50)
-          {:ok, online_event()}
+          {:ok, online_event(now_ts + 1)}
         end
       ]
 
@@ -374,10 +391,14 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     @tag :signed_in
     @tag :capture_log
     test "shows tag if update is available ", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
+        {:ok, online_event(now_ts)},
         {:ok,
-         update_event(0, "available", "2019.8.4 530d1d3", update_version: "2019.8.5 3aaad23")},
+         update_event(now_ts + 1, "available", "2019.8.4 530d1d3",
+           update_version: "2019.8.5 3aaad23"
+         )},
         {:error, :unknown}
       ]
 
@@ -405,9 +426,12 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     @tag :signed_in
     @tag :capture_log
     test "shows snowflake if usable_battery_level differs from battery_level", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
-        {:ok, online_event(charge_state: %{battery_level: 73, usable_battery_level: 70})},
+        {:ok, online_event(now_ts)},
+        {:ok,
+         online_event(now_ts + 1, charge_state: %{battery_level: 73, usable_battery_level: 70})},
         {:error, :unknown}
       ]
 
@@ -438,17 +462,21 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           use_streaming_api: false
         })
 
-      now = now()
+      now_ts = now()
       test_latitude = 52.3950657
       test_longitude = 13.78956
 
       events = [
         {:ok,
-         online_event(
+         online_event(now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: now, latitude: test_latitude, longitude: test_longitude},
-           climate_state: %{timestamp: now, is_preconditioning: false, climate_keeper_mode: "off"},
-           vehicle_state: %{timestamp: now, sentry_mode: false, locked: true, car_version: ""}
+           drive_state: %{timestamp: now_ts, latitude: test_latitude, longitude: test_longitude},
+           climate_state: %{
+             timestamp: now_ts,
+             is_preconditioning: false,
+             climate_keeper_mode: "off"
+           },
+           vehicle_state: %{timestamp: now_ts, sentry_mode: false, locked: true, car_version: ""}
          )}
       ]
 

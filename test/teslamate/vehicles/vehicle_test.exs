@@ -22,8 +22,10 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     end
 
     test "handles online state", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()}
+        {:ok, online_event(now_ts)}
       ]
 
       :ok = start_vehicle(name, events)
@@ -67,8 +69,10 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     alias TeslaMate.Vehicles.Vehicle
 
     test "does nothing of already online", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()}
+        {:ok, online_event(now_ts)}
       ]
 
       :ok = start_vehicle(name, events)
@@ -84,6 +88,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     end
 
     test "increases polling frequency if asleep", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
@@ -92,7 +98,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
-        {:ok, online_event()}
+        {:ok, online_event(now_ts)}
       ]
 
       :ok = start_vehicle(name, events)
@@ -111,6 +117,8 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     end
 
     test "increases polling frequency if offline", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
         {:ok, %TeslaApi.Vehicle{state: "offline"}},
         {:ok, %TeslaApi.Vehicle{state: "offline"}},
@@ -119,7 +127,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
         {:ok, %TeslaApi.Vehicle{state: "offline"}},
         {:ok, %TeslaApi.Vehicle{state: "offline"}},
         {:ok, %TeslaApi.Vehicle{state: "offline"}},
-        {:ok, online_event()}
+        {:ok, online_event(now_ts)}
       ]
 
       :ok = start_vehicle(name, events)
@@ -143,8 +151,10 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     alias TeslaMate.Settings.CarSettings
 
     test "applies new sleep settings", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()}
+        {:ok, online_event(now_ts)}
       ]
 
       :ok =
@@ -185,9 +195,11 @@ defmodule TeslaMate.Vehicles.VehicleTest do
   describe "error handling" do
     @tag :capture_log
     test "restarts if the eid changed", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
-        {:ok, online_event()},
+        {:ok, online_event(now_ts)},
+        {:ok, online_event(now_ts + 1)},
         {:error, :vehicle_not_found}
       ]
 
@@ -208,9 +220,11 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
     @tag :capture_log
     test "reports the health status", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
-        {:ok, online_event()},
+        {:ok, online_event(now_ts)},
+        {:ok, online_event(now_ts + 1)},
         {:error, :unknown}
       ]
 
@@ -228,22 +242,24 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
     @tag :capture_log
     test "handles timeout errors", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
-        {:ok, online_event()},
+        {:ok, online_event(now_ts)},
+        {:ok, online_event(now_ts + 1)},
         {:error, :timeout},
         {:error, :timeout},
         {:error, :timeout},
         {:error, :timeout},
-        {:ok, online_event()},
-        {:ok, online_event()},
+        {:ok, online_event(now_ts + 2)},
+        {:ok, online_event(now_ts + 3)},
         {:error, :timeout},
         {:error, :timeout},
         {:error, :closed},
         {:error, :closed},
         {:error, :timeout},
-        {:ok, online_event()},
-        {:ok, online_event()}
+        {:ok, online_event(now_ts + 4)},
+        {:ok, online_event(now_ts + 5)}
       ]
 
       :ok = start_vehicle(name, events)
@@ -259,12 +275,13 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
     @tag :capture_log
     test "notices if vehicle is in service ", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
-        {:ok, online_event()},
+        {:ok, online_event(now_ts - 1)},
+        {:ok, online_event(now_ts)},
         {:error, :vehicle_in_service},
-        {:error, :vehicle_in_service},
-        {:ok, online_event()},
+        {:ok, online_event(now_ts + 1)},
         fn -> Process.sleep(10_000) end
       ]
 
@@ -282,7 +299,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
-        {:ok, online_event()},
+        {:ok, online_event(now_ts - 1)},
         {:ok, drive_event(now_ts + 0, "D", 5)},
         {:ok, drive_event(now_ts + 1, "D", 50)},
         {:error, :vehicle_in_service},
@@ -311,13 +328,15 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
     @tag :capture_log
     test "stops polling if signed out", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
-        {:ok, online_event()},
+        {:ok, online_event(now_ts)},
+        {:ok, online_event(now_ts + 1)},
         {:error, :not_signed_in},
         # next events shall just show that polling stops
-        {:ok, online_event()},
-        {:ok, online_event()}
+        {:ok, online_event(now_ts + 2)},
+        {:ok, online_event(now_ts + 3)}
       ]
 
       :ok = start_vehicle(name, events)
@@ -367,10 +386,12 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
   describe "summary" do
     test "returns the summary if no api request was completed yet", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
         fn ->
           Process.sleep(10_000)
-          {:ok, online_event()}
+          {:ok, online_event(now_ts)}
         end
       ]
 
@@ -382,12 +403,14 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     end
 
     test "returns the summary even if the api call is blocked", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
-        {:ok, online_event()},
+        {:ok, online_event(now_ts)},
+        {:ok, online_event(now_ts + 1)},
         fn ->
           Process.sleep(10_000)
-          {:ok, online_event()}
+          {:ok, online_event(now_ts + 2)}
         end
       ]
 
@@ -408,7 +431,9 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       events = [
         {:ok,
-         online_event(vehicle_state: %{timestamp: now_ts, car_version: "42.42.42.0 b2ab650"})}
+         online_event(now_ts,
+           vehicle_state: %{timestamp: now_ts, car_version: "42.42.42.0 b2ab650"}
+         )}
       ]
 
       :ok = start_vehicle(name, events, last_update: nil)
@@ -428,7 +453,9 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       events = [
         {:ok,
-         online_event(vehicle_state: %{timestamp: now_ts, car_version: "2020.12.10 e0ccfda3d911"})}
+         online_event(now_ts,
+           vehicle_state: %{timestamp: now_ts, car_version: "2020.12.10 e0ccfda3d911"}
+         )}
       ]
 
       :ok = start_vehicle(name, events, last_update: %Update{version: "2020.12.5 e2179e0650f0"})
@@ -444,21 +471,24 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     end
 
     test "does not log updates <= current version", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event()},
-        {:ok, online_event(vehicle_state: %{car_version: "2019.40.10.7 ad132c7b057e"})},
+        {:ok, online_event(now_ts)},
+        {:ok,
+         online_event(now_ts + 1, vehicle_state: %{car_version: "2019.40.10.7 ad132c7b057e"})},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
-        {:ok, online_event()},
-        {:ok, online_event(vehicle_state: %{car_version: "2019.40.10.6"})},
+        {:ok, online_event(now_ts + 2)},
+        {:ok, online_event(now_ts + 3, vehicle_state: %{car_version: "2019.40.10.6"})},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
-        {:ok, online_event()},
-        {:ok, online_event(vehicle_state: %{car_version: "2019.40.2.6"})},
+        {:ok, online_event(now_ts + 4)},
+        {:ok, online_event(now_ts + 5, vehicle_state: %{car_version: "2019.40.2.6"})},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
-        {:ok, online_event()},
-        {:ok, online_event(vehicle_state: %{car_version: "2019.40.9"})},
+        {:ok, online_event(now_ts + 6)},
+        {:ok, online_event(now_ts + 7, vehicle_state: %{car_version: "2019.40.9"})},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}},
         {:ok, %TeslaApi.Vehicle{state: "asleep"}}
       ]
@@ -482,8 +512,10 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
     @tag :capture_log
     test "handles unexpected :car_version's", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
-        {:ok, online_event(vehicle_state: %{car_version: nil})}
+        {:ok, online_event(now_ts, vehicle_state: %{car_version: nil})}
       ]
 
       :ok = start_vehicle(name, events, last_update: nil)

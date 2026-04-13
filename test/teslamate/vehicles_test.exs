@@ -17,9 +17,11 @@ defmodule TeslaMate.VehiclesTest do
   end
 
   test "restart/0" do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
     {:ok, _pid} =
       start_supervised(
-        {ApiMock, name: :api_vehicle, events: [{:ok, online_event()}], pid: self()}
+        {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
       )
 
     {:ok, _pid} =
@@ -62,9 +64,11 @@ defmodule TeslaMate.VehiclesTest do
         |> Log.create_or_update_car()
 
       with_mock Api, list_vehicles: fn -> {:ok, []} end do
+        now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
         {:ok, _pid} =
           start_supervised(
-            {ApiMock, name: :api_vehicle, events: [{:ok, online_event()}], pid: self()}
+            {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
           )
 
         {:ok, _pid} = start_supervised({Vehicles, vehicle: VehicleMock})
@@ -80,10 +84,12 @@ defmodule TeslaMate.VehiclesTest do
         |> Car.changeset(%{vid: 333_333, eid: 2_222_222, vin: "1234"})
         |> Log.create_or_update_car()
 
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       with_mock Api, list_vehicles: fn -> {:error, :not_signed_in} end do
         {:ok, _pid} =
           start_supervised(
-            {ApiMock, name: :api_vehicle, events: [{:ok, online_event()}], pid: self()}
+            {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
           )
 
         start_supervised!({Vehicles, vehicle: VehicleMock})
@@ -103,9 +109,11 @@ defmodule TeslaMate.VehiclesTest do
 
     @tag :capture_log
     test "lowers the suspend min for vehicles with modern MCU" do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       {:ok, _pid} =
         start_supervised(
-          {ApiMock, name: :api_vehicle, events: [{:ok, online_event()}], pid: self()}
+          {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
         )
 
       {:ok, _pid} =

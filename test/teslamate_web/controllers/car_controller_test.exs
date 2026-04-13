@@ -65,9 +65,11 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "lists all active vehicles", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       {:ok, _pid} =
         start_supervised(
-          {ApiMock, name: :api_vehicle, events: [{:ok, online_event()}], pid: self()}
+          {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
         )
 
       {:ok, _pid} =
@@ -132,13 +134,14 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "displays the friendly name", %{conn: conn} do
-      now = (DateTime.utc_now() |> DateTime.to_unix()) * 1000
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
            vehicle_config: %{car_type: "model3", trim_badging: "p74d"}
          )}
       ]
@@ -165,13 +168,14 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "renders current vehicle stats [:online]", %{conn: conn} do
-      now = (DateTime.utc_now() |> DateTime.to_unix()) * 1000
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: now, latitude: 0.0, longitude: 0.0},
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
            charge_state: %{
              battery_range: 200,
              est_battery_range: 180,
@@ -181,7 +185,7 @@ defmodule TeslaMateWeb.CarControllerTest do
            },
            climate_state: %{is_preconditioning: true, outside_temp: 24, inside_temp: 23.2},
            vehicle_state: %{
-             timestamp: 0,
+             timestamp: now_ts,
              car_version: "2019.40.50.7 ad132c7b057e",
              software_update: %{status: "available", version: "2020.4.1 4a4ad401858f"},
              locked: true,
@@ -250,14 +254,16 @@ defmodule TeslaMateWeb.CarControllerTest do
     @tag :signed_in
     test "renders current vehicle stats [:charging]", %{conn: conn} do
       car = car_fixture(%{})
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
            drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
            charge_state: %{
-             timestamp: 0,
+             timestamp: now_ts,
              charger_power: 11,
              charger_phases: 3,
              charger_voltage: 229,
@@ -307,12 +313,15 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "does not render remaining seconds", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
         {:ok,
          online_event(
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           now_ts,
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
            charge_state: %{
-             timestamp: 0,
+             timestamp: now_ts,
              charging_state: "Charging",
              charge_energy_added: "4.32",
              ideal_battery_range: 200,
@@ -331,12 +340,15 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     @tag :signed_in
     test "renders current vehicle stats [:driving]", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
            drive_state: %{
-             timestamp: 0,
+             timestamp: now_ts,
              latitude: 0.0,
              longitude: 0.0,
              shift_state: "D",
@@ -358,13 +370,15 @@ defmodule TeslaMateWeb.CarControllerTest do
     @tag :signed_in
     test "renders current vehicle stats [:updating]", %{conn: conn} do
       alias TeslaApi.Vehicle.State.VehicleState.SoftwareUpdate
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
            vehicle_state: %{
-             timestamp: 0,
+             timestamp: now_ts,
              car_version: "2019.8.4 530d1d3",
              software_update: %SoftwareUpdate{expected_duration_sec: 2700, status: "installing"}
            }
@@ -413,12 +427,14 @@ defmodule TeslaMateWeb.CarControllerTest do
     @tag :signed_in
     test "renders current vehicle stats [:falling asleep]", %{conn: conn} do
       _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1, use_streaming_api: false})
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
            climate_state: %{is_preconditioning: false}
          )}
       ]
@@ -456,11 +472,14 @@ defmodule TeslaMateWeb.CarControllerTest do
         Settings.get_global_settings!()
         |> Settings.update_global_settings(%{preferred_range: :rated})
 
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
-           drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
+           drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
            charge_state: %{
              ideal_battery_range: 200,
              est_battery_range: 180,
@@ -468,7 +487,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              battery_level: 69
            },
            climate_state: %{is_preconditioning: false, outside_temp: 24, inside_temp: 23.2},
-           vehicle_state: %{timestamp: 0, locked: true, sentry_mode: true, car_version: ""},
+           vehicle_state: %{timestamp: now_ts, locked: true, sentry_mode: true, car_version: ""},
            vehicle_config: %{car_type: "models2", trim_badging: "p90d"}
          )}
       ]
@@ -492,12 +511,15 @@ defmodule TeslaMateWeb.CarControllerTest do
         Settings.get_global_settings!()
         |> Settings.update_global_settings(%{unit_of_length: :mi, unit_of_temperature: :F})
 
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
            drive_state: %{
-             timestamp: 0,
+             timestamp: now_ts,
              latitude: 0.0,
              longitude: 0.0,
              shift_state: "D",
@@ -545,10 +567,12 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     test "suspends logging", %{conn: conn} do
       _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60, use_streaming_api: false})
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
            drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
            climate_state: %{is_preconditioning: false}
@@ -566,10 +590,12 @@ defmodule TeslaMateWeb.CarControllerTest do
 
     test "returns error if suspending is not possible", %{conn: conn} do
       _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60, use_streaming_api: false})
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
            drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
            climate_state: %{is_preconditioning: true}
@@ -590,10 +616,12 @@ defmodule TeslaMateWeb.CarControllerTest do
       alias TeslaMate.Vehicles.Vehicle.Summary
 
       _car = car_fixture(%{suspend_min: 60, suspend_after_idle_min: 1, use_streaming_api: false})
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
         {:ok,
          online_event(
+           now_ts,
            display_name: "FooCar",
            drive_state: %{timestamp: 0, latitude: 0.0, longitude: 0.0},
            climate_state: %{is_preconditioning: false}
