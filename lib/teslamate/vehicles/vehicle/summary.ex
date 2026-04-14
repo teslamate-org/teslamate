@@ -41,12 +41,13 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       healthy?: healthy?,
       car: car,
       elevation: elevation,
-      geofence: gf
+      geofence: gf,
+      driving_status: driving_status
     } = attrs
 
     %__MODULE__{
       format_vehicle(vehicle)
-      | state: format_state(state),
+      | state: format_state(state, driving_status),
         since: since,
         healthy: healthy?,
         elevation: elevation,
@@ -60,11 +61,9 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     }
   end
 
-  defp format_state({:driving, {:offline, _}, _id}), do: :offline
-  defp format_state({:driving, _state, _id}), do: :driving
-  defp format_state({state, _, _}) when is_atom(state), do: state
-  defp format_state({state, _}) when is_atom(state), do: state
-  defp format_state(state) when is_atom(state), do: state
+  defp format_state(:driving, {:offline, _}), do: :offline
+  defp format_state({state, _}, _driving_status) when is_atom(state), do: state
+  defp format_state(state, _driving_status) when is_atom(state), do: state
 
   defp get_car_attr(%Car{exterior_color: v}, :exterior_color), do: v
   defp get_car_attr(%Car{spoiler_type: v}, :spoiler_type), do: v
