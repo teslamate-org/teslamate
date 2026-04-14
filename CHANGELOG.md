@@ -49,6 +49,8 @@
 - fix: ensure Charges / Drives dashboards load correctly if no Geofence exists (#5199 - @swiffer)
 - fix: division by zero in SQL query for cost_mileage in Trips dashboard (#5198 - @DrMichael)
 - fix: handle incomplete data correctly in Charging Stats / Statistics / Trips dashboards (#5229 - @swiffer)
+- feat: enable timepicker in efficiency dashboard (#5257 - @swiffer)
+- fix: ensure low precision mode is used for consumption gross for larger intervals (#5257 - @swiffer)
 
 #### Translations
 
