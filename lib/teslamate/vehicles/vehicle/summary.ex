@@ -18,7 +18,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
     active_route_destination active_route_latitude active_route_longitude active_route_energy_at_arrival
     active_route_miles_to_arrival active_route_minutes_to_arrival active_route_traffic_minutes_delay
-    center_display_state
+    center_display_state center_display_state_name
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -149,9 +149,22 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       tpms_soft_warning_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fr]),
       tpms_soft_warning_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rl]),
       tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr]),
-      center_display_state: get_in_struct(vehicle, [:vehicle_state, :center_display_state])
+      center_display_state: get_in_struct(vehicle, [:vehicle_state, :center_display_state]),
+      center_display_state_name:
+        center_display_state_name(get_in_struct(vehicle, [:vehicle_state, :center_display_state]))
     }
   end
+
+  defp center_display_state_name(0), do: "Off"
+  defp center_display_state_name(2), do: "On, standby or Camp Mode"
+  defp center_display_state_name(3), do: "On, charging screen"
+  defp center_display_state_name(4), do: "On"
+  defp center_display_state_name(5), do: "On, Big charging screen"
+  defp center_display_state_name(6), do: "On, Ready to unlock"
+  defp center_display_state_name(7), do: "Sentry Mode"
+  defp center_display_state_name(8), do: "Dog Mode"
+  defp center_display_state_name(9), do: "Media"
+  defp center_display_state_name(_), do: nil
 
   defp charge(vehicle, key), do: get_in_struct(vehicle, [:charge_state, key])
 

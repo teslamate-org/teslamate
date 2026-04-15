@@ -33,6 +33,7 @@ defmodule TeslaMate.Log.Position do
     field :tpms_pressure_fr, :decimal
     field :tpms_pressure_rl, :decimal
     field :tpms_pressure_rr, :decimal
+    field :center_display_state, :integer
 
     belongs_to(:car, Car)
     belongs_to(:drive, Drive)
@@ -69,7 +70,8 @@ defmodule TeslaMate.Log.Position do
       :tpms_pressure_fl,
       :tpms_pressure_fr,
       :tpms_pressure_rl,
-      :tpms_pressure_rr
+      :tpms_pressure_rr,
+      :center_display_state
     ])
     |> validate_required([:car_id, :date, :latitude, :longitude])
     |> foreign_key_constraint(:car_id)

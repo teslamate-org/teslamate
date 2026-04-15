@@ -1,0 +1,518 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [
+    {
+      "icon": "dashboard",
+      "tags": [],
+      "title": "TeslaMate",
+      "tooltip": "",
+      "type": "link",
+      "url": "${base_url:raw}"
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "tags": [
+        "tesla"
+      ],
+      "title": "Dashboards",
+      "type": "dashboards"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 10,
+      "panels": [],
+      "repeat": "car_id",
+      "title": "$car_id",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Current center display state of the vehicle.",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": { "text": "Off", "color": "dark-gray" },
+                "2": { "text": "On, standby or Camp Mode", "color": "dark-green" },
+                "3": { "text": "On, charging screen", "color": "dark-blue" },
+                "4": { "text": "On", "color": "green" },
+                "5": { "text": "On, Big charging screen", "color": "blue" },
+                "6": { "text": "On, Ready to unlock", "color": "dark-yellow" },
+                "7": { "text": "Sentry Mode", "color": "dark-red" },
+                "8": { "text": "Dog Mode", "color": "dark-orange" },
+                "9": { "text": "Media", "color": "dark-purple" }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#c7d0d9", "value": null }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "/^center_display_state$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT center_display_state\nFROM positions\nWHERE car_id = $car_id\n  AND center_display_state IS NOT NULL\nORDER BY date DESC\nLIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Display State",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Sentry Mode activation events within the selected time range.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 8,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS sentry_activations\nFROM (\n  SELECT date, center_display_state,\n    LAG(center_display_state) OVER (ORDER BY date) AS prev_state\n  FROM positions\n  WHERE car_id = $car_id\n    AND $__timeFilter(date)\n    AND center_display_state IS NOT NULL\n) sub\nWHERE center_display_state = 7 AND (prev_state IS NULL OR prev_state != 7);",
+          "refId": "A"
+        }
+      ],
+      "title": "Sentry Mode Activations",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Time spent in Sentry Mode within the selected time range.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 60 },
+              { "color": "red", "value": 480 }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 16,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ROUND(EXTRACT(EPOCH FROM SUM(\n  LEAD(date) OVER (ORDER BY date) - date\n)) / 60.0, 1) AS sentry_minutes\nFROM positions\nWHERE car_id = $car_id\n  AND $__timeFilter(date)\n  AND center_display_state = 7;",
+          "refId": "A"
+        }
+      ],
+      "title": "Time in Sentry Mode (min)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Center display state over time. Hover to see state names.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": { "text": "Off" },
+                "2": { "text": "Standby/Camp" },
+                "3": { "text": "Charging screen" },
+                "4": { "text": "On" },
+                "5": { "text": "Big charging screen" },
+                "6": { "text": "Ready to unlock" },
+                "7": { "text": "Sentry Mode" },
+                "8": { "text": "Dog Mode" },
+                "9": { "text": "Media" }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 4,
+      "options": {
+        "mergeValues": true,
+        "showValue": "auto",
+        "alignValue": "left",
+        "rowHeight": 0.9
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__time(date),\n  center_display_state\nFROM positions\nWHERE car_id = $car_id\n  AND $__timeFilter(date)\n  AND center_display_state IS NOT NULL\nORDER BY date;",
+          "refId": "A"
+        }
+      ],
+      "title": "Display State Timeline",
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Distribution of center display states within the selected time range.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": { "text": "Off" },
+                "2": { "text": "Standby/Camp" },
+                "3": { "text": "Charging screen" },
+                "4": { "text": "On" },
+                "5": { "text": "Big charging screen" },
+                "6": { "text": "Ready to unlock" },
+                "7": { "text": "Sentry Mode" },
+                "8": { "text": "Dog Mode" },
+                "9": { "text": "Media" }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 13
+      },
+      "id": 5,
+      "options": {
+        "displayLabels": ["name", "percent"],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": ["value", "percent"]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": ["sum"],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CASE center_display_state\n    WHEN 0 THEN 'Off'\n    WHEN 2 THEN 'Standby/Camp Mode'\n    WHEN 3 THEN 'Charging screen'\n    WHEN 4 THEN 'On'\n    WHEN 5 THEN 'Big charging screen'\n    WHEN 6 THEN 'Ready to unlock'\n    WHEN 7 THEN 'Sentry Mode'\n    WHEN 8 THEN 'Dog Mode'\n    WHEN 9 THEN 'Media'\n    ELSE 'Unknown (' || center_display_state || ')'\n  END AS state,\n  COUNT(*) AS count\nFROM positions\nWHERE car_id = $car_id\n  AND $__timeFilter(date)\n  AND center_display_state IS NOT NULL\nGROUP BY center_display_state\nORDER BY count DESC;",
+          "refId": "A"
+        }
+      ],
+      "title": "Display State Distribution",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Recent Sentry Mode activation events.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "duration_min" },
+            "properties": [
+              { "id": "unit", "value": "m" },
+              { "id": "displayName", "value": "Duration" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "started_at" },
+            "properties": [
+              { "id": "unit", "value": "dateTimeAsLocal" },
+              { "id": "displayName", "value": "Started" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "ended_at" },
+            "properties": [
+              { "id": "unit", "value": "dateTimeAsLocal" },
+              { "id": "displayName", "value": "Ended" }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 13
+      },
+      "id": 6,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          { "desc": true, "displayName": "Started" }
+        ]
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH sentry_events AS (\n  SELECT date,\n    center_display_state,\n    LAG(center_display_state) OVER (ORDER BY date) AS prev_state,\n    LEAD(date) OVER (ORDER BY date) AS next_date,\n    LEAD(center_display_state) OVER (ORDER BY date) AS next_state\n  FROM positions\n  WHERE car_id = $car_id\n    AND $__timeFilter(date)\n    AND center_display_state IS NOT NULL\n)\nSELECT\n  s.date AS started_at,\n  MIN(e.date) AS ended_at,\n  ROUND(EXTRACT(EPOCH FROM (MIN(e.date) - s.date)) / 60.0, 1) AS duration_min\nFROM sentry_events s\nLEFT JOIN sentry_events e\n  ON e.date > s.date AND e.center_display_state != 7\nWHERE s.center_display_state = 7\n  AND (s.prev_state IS NULL OR s.prev_state != 7)\nGROUP BY s.date\nORDER BY s.date DESC\nLIMIT 50;",
+          "refId": "A"
+        }
+      ],
+      "title": "Sentry Mode Events",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 42,
+  "tags": [
+    "tesla"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
+        },
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
+        "hide": 2,
+        "includeAll": true,
+        "label": "Car",
+        "name": "car_id",
+        "options": [],
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
+        },
+        "definition": "select base_url from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "name": "base_url",
+        "options": [],
+        "query": "select base_url from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Display State",
+  "uid": "center-display-state",
+  "version": 1,
+  "weekStart": ""
+}

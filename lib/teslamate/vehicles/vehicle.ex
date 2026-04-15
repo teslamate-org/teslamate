@@ -1390,7 +1390,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       tpms_pressure_fl: vehicle.vehicle_state.tpms_pressure_fl,
       tpms_pressure_fr: vehicle.vehicle_state.tpms_pressure_fr,
       tpms_pressure_rl: vehicle.vehicle_state.tpms_pressure_rl,
-      tpms_pressure_rr: vehicle.vehicle_state.tpms_pressure_rr
+      tpms_pressure_rr: vehicle.vehicle_state.tpms_pressure_rr,
+      center_display_state: vehicle.vehicle_state.center_display_state
     }
 
     elevation =

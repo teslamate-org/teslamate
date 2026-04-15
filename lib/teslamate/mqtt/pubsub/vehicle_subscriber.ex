@@ -67,6 +67,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> add_geofence(summary)
       |> add_active_route(summary)
 
+    maybe_alert_sentry_mode(summary, state)
     publish_values(values, state)
     {:noreply, %{state | last_values: values}}
   end
@@ -112,6 +113,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode center_display_state
+    center_display_state_name
   )a
 
   defp add_simple_values(map, %Summary{} = summary) do
@@ -197,6 +199,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       active_route: active_route
     })
   end
+
+  defp maybe_alert_sentry_mode(%Summary{center_display_state: 7, display_name: name}, %State{last_values: last})
+       when is_nil(last) or :erlang.map_get(:center_display_state, last) != 7 do
+    Logger.warning("[Vehicle: #{name}] Sentry Mode activated (center_display_state: 7)")
+  end
+
+  defp maybe_alert_sentry_mode(_summary, _state), do: :ok
 
   defp publish({key, value}, %State{car_id: car_id, namespace: namespace, deps: deps}) do
     topic =
