@@ -129,6 +129,8 @@ defmodule TeslaMateWeb.CarLive.Summary do
     "#{Float.round(bar, 1)} Bar"
   end
 
+  def format_tpms(_, _), do: "—"
+
   defp translate_state(:start), do: ""
   defp translate_state(:driving), do: gettext("driving")
   defp translate_state(:charging), do: gettext("charging")
