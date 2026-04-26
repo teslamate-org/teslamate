@@ -9,6 +9,8 @@ updates:
     directory: "/assets"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     ignore:
       # ignore the path based dependencies to prevent "Dependabot couldn't fetch all your path-based dependencies"
       - dependency-name: phoenix
