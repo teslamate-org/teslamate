@@ -19,6 +19,8 @@ updates:
     directory: "/website"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "docker"
     directory: "/"

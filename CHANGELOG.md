@@ -43,6 +43,7 @@
 - build(deps): update packages in /website and remove obsolete overrides (#5264 - @swiffer)
 - build(deps): update flake.lock (#5275)
 - build(deps): update flake.lock (#5288)
+- build(deps): bump docusaurus from 3.9.2 to 3.10.0 in /website (#5302 - @swiffer)
 
 #### Dashboards
 
