@@ -49,6 +49,7 @@
 - build(deps): update flake.lock (#5288)
 - build(deps): bump docusaurus from 3.9.2 to 3.10.0 in /website (#5302 - @swiffer)
 - refactor: replace fake_online_state integer with typed mcu2_online_check atom (#5245 - @brianmay)
+- fix: update GitHub Actions configuration for Dependabot to include action directories
 
 #### Dashboards
 

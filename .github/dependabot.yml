@@ -33,6 +33,12 @@ updates:
       interval: "monthly"
 
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directories:
+      - "/"
+      - "/.github/actions/*"
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
     schedule:
       interval: "monthly"
