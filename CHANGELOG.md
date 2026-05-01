@@ -50,6 +50,7 @@
 - build(deps): bump docusaurus from 3.9.2 to 3.10.0 in /website (#5302 - @swiffer)
 - refactor: replace fake_online_state integer with typed mcu2_online_check atom (#5245 - @brianmay)
 - fix: update GitHub Actions configuration for Dependabot to include action directories (#5316 - @swiffer)
+- build(deps): bump docker/login-action from 4.0.0 to 4.1.0, docker/build-push-action from 7.0.0 to 7.1.0, actions/upload-artifact from 7.0.0 to 7.0.1, actions/upload-artifact/merge from 7.0.0 to 7.0.1, erlef/setup-beam from 1.18.1 to 1.24.0, actions/cache from 5.0.4 to 5.0.5, actions/cache/restore from 5.0.4 to 5.0.5, actions/cache/save from 5.0.4 to 5.0.5 and crate-ci/typos from 1.45.0 to 1.46.0 (#5317)
 
 #### Dashboards
 
