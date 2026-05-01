@@ -35,14 +35,14 @@ runs:
   steps:
     - name: Setup Elixir and OTP
       id: beam
-      uses: erlef/setup-beam@b9c58b0450cd832ccdb3c17cc156a47065d2114f # v1.18.1
+      uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1.24.0
       with:
         elixir-version: ${{ inputs.elixir-version }}
         otp-version: ${{ inputs.otp-version }}
 
     - name: Cache deps
       id: cache-deps
-      uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ inputs.cache-name-deps }}-${{ hashFiles('**/mix.lock') }}
@@ -51,7 +51,7 @@ runs:
 
     - name: Cache compiled build
       id: cache-build
-      uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: |
           _build
