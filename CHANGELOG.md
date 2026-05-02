@@ -55,6 +55,7 @@
 - build(deps): bump plug_cowboy from 2.8.0 to 2.8.1 (#5314)
 - build(deps-dev): bump esbuild from 0.27.7 to 0.28.0 in /assets (#5312)
 - build(deps-dev): bump credo from 1.7.17 to 1.7.18 (#5315)
+- sec(deps): add uuid override to version 14.0.0 in /website (#5320 - @JakobLichterfeld)
 
 #### Dashboards
 
