@@ -4,7 +4,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   require Logger
 
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
-  alias TeslaMate.{Settings, Updater, Api}
+  alias TeslaMate.{Settings, Updater, Api, Log}
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
@@ -84,21 +84,10 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   end
 
   def handle_event("change", params, %{assigns: %{car_settings: settings, car: id}} = socket) do
-    params = params["car_settings_#{id}"]
-
     settings =
-      get_in(settings, [id, :original])
-      |> Settings.update_car_settings(params)
-      |> case do
-        {:error, changeset} ->
-          Logger.warning(inspect(changeset))
-          put_in(settings, [id, :changeset], changeset)
-
-        {:ok, car_settings} ->
-          settings
-          |> put_in([id, :original], car_settings)
-          |> put_in([id, :changeset], Settings.change_car_settings(car_settings))
-      end
+      settings
+      |> update_car_settings(id, params["car_settings_#{id}"])
+      |> update_car(id, params["car_#{id}"])
 
     {:noreply, assign(socket, :car_settings, settings)}
   end
@@ -182,5 +171,82 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     Enum.reduce(settings, %{}, fn %CarSettings{car: car} = s, acc ->
       Map.put(acc, car.id, %{original: s, changeset: Settings.change_car_settings(s)})
     end)
+  end
+
+  defp update_car_settings(settings, _id, nil), do: settings
+
+  defp update_car_settings(settings, id, params) do
+    get_in(settings, [id, :original])
+    |> Settings.update_car_settings(params)
+    |> case do
+      {:error, changeset} ->
+        Logger.warning(inspect(changeset))
+        put_in(settings, [id, :changeset], changeset)
+
+      {:ok, car_settings} ->
+        settings
+        |> put_in([id, :original], car_settings)
+        |> put_in([id, :changeset], Settings.change_car_settings(car_settings))
+    end
+  end
+
+  defp update_car(settings, _id, nil), do: settings
+
+  defp update_car(settings, id, %{"show_in_dashboards" => "false"}) do
+    with car when not is_nil(car) <- car(settings, id),
+         {:ok, car} <- Log.update_car(car, %{display_priority: 0}) do
+      put_car(settings, id, car)
+    else
+      {:error, changeset} ->
+        Logger.warning(inspect(changeset))
+        settings
+
+      _ ->
+        settings
+    end
+  end
+
+  defp update_car(settings, id, %{"show_in_dashboards" => "true"} = params) do
+    with display_priority when not is_nil(display_priority) <-
+           display_priority(params["display_priority"], car(settings, id)),
+         car when not is_nil(car) <- car(settings, id),
+         {:ok, car} <- Log.update_car(car, %{display_priority: display_priority}) do
+      put_car(settings, id, car)
+    else
+      {:error, changeset} ->
+        Logger.warning(inspect(changeset))
+        settings
+
+      _ ->
+        settings
+    end
+  end
+
+  defp display_priority("", car), do: display_priority(nil, car)
+
+  defp display_priority(nil, %{display_priority: display_priority}) when display_priority > 0 do
+    display_priority
+  end
+
+  defp display_priority(nil, _car), do: 1
+
+  defp display_priority(value, _car) do
+    with {display_priority, ""} <- Integer.parse(value),
+         true <- display_priority in 1..32767 do
+      display_priority
+    else
+      _ -> nil
+    end
+  end
+
+  defp car(settings, id) do
+    settings
+    |> get_in([id, :original])
+    |> Map.fetch!(:car)
+  end
+
+  defp put_car(settings, id, car) do
+    %CarSettings{} = car_settings = get_in(settings, [id, :original])
+    put_in(settings, [id, :original], %{car_settings | car: car})
   end
 end

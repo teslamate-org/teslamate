@@ -24,6 +24,8 @@
     phx-change="change"
     as={:"car_settings_#{@car}"}
   >
+    <% current_car = @car_settings |> get_in([@car, :original]) |> Map.fetch!(:car) %>
+
     <div class="columns is-mobile is-centered">
       <div class="column">
         <h2 class="title is-4"><%= gettext("Data Collection") %></h2>
@@ -36,6 +38,58 @@
               <div class="control">
                 <%= checkbox(f, :enabled, class: "switch is-rounded is-success") %>
                 <%= label(f, :enabled, nil) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-mobile is-centered">
+      <div class="column">
+        <h2 class="title is-4"><%= gettext("Visualization") %></h2>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <label class="label" for={"car_#{@car}_show_in_dashboards"}>
+              <%= gettext("Show in dashboards") %>
+            </label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input type="hidden" name={"car_#{@car}[show_in_dashboards]"} value="false" />
+                <input
+                  id={"car_#{@car}_show_in_dashboards"}
+                  type="checkbox"
+                  name={"car_#{@car}[show_in_dashboards]"}
+                  value="true"
+                  checked={current_car.display_priority > 0}
+                  class="switch is-rounded is-success"
+                />
+                <label for={"car_#{@car}_show_in_dashboards"}></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <label class="label" for={"car_#{@car}_display_priority"}>
+              <%= gettext("Display priority") %>
+            </label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input
+                  id={"car_#{@car}_display_priority"}
+                  class="input"
+                  type="number"
+                  min="1"
+                  max="32767"
+                  name={"car_#{@car}[display_priority]"}
+                  value={if current_car.display_priority > 0, do: current_car.display_priority}
+                  disabled={current_car.display_priority == 0}
+                />
               </div>
             </div>
           </div>
