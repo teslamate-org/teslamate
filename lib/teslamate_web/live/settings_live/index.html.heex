@@ -6,10 +6,11 @@
 </nav>
 
 <%= if Enum.count(@car_settings) > 0 do %>
-  <%= if Enum.count(@car_settings) > 1 do %>
+  <%= if Enum.count(@car_ids) > 1 do %>
     <div class="tabs is-centered is-boxed">
       <ul>
-        <%= for {car_id, %{original: %{car: car}}} <- @car_settings do %>
+        <%= for car_id <- @car_ids do %>
+          <% car = @car_settings |> get_in([car_id, :original]) |> Map.fetch!(:car) %>
           <li class={if car_id == @car, do: "is-active"}>
             <%= link(car.name || "???", to: "#", phx_click: "car", phx_value_id: car_id) %>
           </li>
@@ -24,18 +25,103 @@
     phx-change="change"
     as={:"car_settings_#{@car}"}
   >
+    <% current_car = @car_settings |> get_in([@car, :original]) |> Map.fetch!(:car) %>
+    <% current_index = Enum.find_index(@car_ids, &(&1 == @car)) || 0 %>
+
     <div class="columns is-mobile is-centered">
       <div class="column">
         <h2 class="title is-4"><%= gettext("Data Collection") %></h2>
         <div class="field is-horizontal center-vertically">
           <div class="field-label is-normal is-paddingless">
-            <%= label(f, :enabled, gettext("Enabled"), class: "label") %>
+            <%= label(f, :enabled,
+              class: "label has-tooltip-multiline",
+              data_tooltip:
+                gettext(
+                  "Disabling hides the car from the Home page and stops active data collection. To hide it from Grafana, use Show in dashboards."
+                )
+            ) do %>
+              <%= gettext("Enabled") %><span class="icon is-small">&nbsp;<span class="mdi mdi-information"></span></span>
+            <% end %>
           </div>
           <div class="field-body">
             <div class="field">
               <div class="control">
                 <%= checkbox(f, :enabled, class: "switch is-rounded is-success") %>
                 <%= label(f, :enabled, nil) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-mobile is-centered">
+      <div class="column">
+        <h2 class="title is-4"><%= gettext("Visualization") %></h2>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label
+              class="label has-tooltip-multiline"
+              data-tooltip={
+                gettext("Lower numbers appear first in dashboards and vehicle lists.")
+              }
+            >
+              <%= gettext("Display order") %><span class="icon is-small">&nbsp;<span class="mdi mdi-information"></span></span>
+            </label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control is-flex is-align-items-center">
+                <button
+                  id={"move_car_#{@car}_up"}
+                  type="button"
+                  class="button is-small"
+                  phx-click="move-car"
+                  phx-value-direction="up"
+                  disabled={current_index == 0}
+                >
+                  <span class="icon is-small"><span class="mdi mdi-arrow-up"></span></span>
+                </button>
+                <button
+                  id={"move_car_#{@car}_down"}
+                  type="button"
+                  class="button is-small ml-2"
+                  phx-click="move-car"
+                  phx-value-direction="down"
+                  disabled={current_index == length(@car_ids) - 1}
+                >
+                  <span class="icon is-small"><span class="mdi mdi-arrow-down"></span></span>
+                </button>
+                <div class="ml-4" style="max-width: 90px;">
+                  <input
+                    id={"car_display_priority_#{@car}"}
+                    class="input"
+                    type="number"
+                    readonly
+                    value={current_car.display_priority || current_index + 1}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal is-paddingless">
+            <%= label(f, :show_in_dashboards,
+              class: "label has-tooltip-multiline",
+              data_tooltip:
+                gettext(
+                  "Removes the car from Grafana dashboard selectors. Settings and data collection are unchanged."
+                )
+            ) do %>
+              <%= gettext("Show in dashboards") %><span class="icon is-small">&nbsp;<span class="mdi mdi-information"></span></span>
+            <% end %>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <%= checkbox(f, :show_in_dashboards, class: "switch is-rounded is-success") %>
+                <%= label(f, :show_in_dashboards, nil) %>
               </div>
             </div>
           </div>
@@ -176,7 +262,7 @@
   </.form>
 <% end %>
 
-<div class={["divider", if(Enum.count(@car_settings) <= 1, do: " is-invisible")]}>
+<div class={["divider", if(Enum.count(@car_ids) <= 1, do: " is-invisible")]}>
   <%= gettext("General Settings") %>
 </div>
 

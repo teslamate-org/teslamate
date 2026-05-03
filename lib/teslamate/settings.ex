@@ -19,7 +19,11 @@ defmodule TeslaMate.Settings do
   end
 
   def get_car_settings do
-    from(s in CarSettings, order_by: s.id, preload: [:car])
+    from(s in CarSettings,
+      join: c in assoc(s, :car),
+      order_by: [asc: fragment("COALESCE(?, ?)", c.display_priority, c.id), asc: c.id],
+      preload: [car: c]
+    )
     |> Repo.all()
   end
 
@@ -54,6 +58,36 @@ defmodule TeslaMate.Settings do
         {:error, reason} -> Repo.rollback(reason)
       end
     end)
+  end
+
+  def move_car(%CarSettings{car: %Car{id: car_id}} = settings, direction)
+      when direction in [:up, :down] do
+    cars = ordered_cars()
+    ordered_ids = Enum.map(cars, & &1.id)
+
+    reordered_ids =
+      case Enum.find_index(ordered_ids, &(&1 == car_id)) do
+        nil ->
+          ordered_ids
+
+        index ->
+          swap_index =
+            case direction do
+              :up -> index - 1
+              :down -> index + 1
+            end
+
+          if swap_index in 0..(length(ordered_ids) - 1) do
+            swap(ordered_ids, index, swap_index)
+          else
+            ordered_ids
+          end
+      end
+
+    with {:ok, updated_cars} <- persist_car_order(cars, reordered_ids) do
+      Enum.each(updated_cars, &broadcast_car/1)
+      {:ok, updated_car(updated_cars, settings.car)}
+    end
   end
 
   def change_global_settings(%GlobalSettings{} = settings, attrs \\ %{}) do
@@ -98,5 +132,56 @@ defmodule TeslaMate.Settings do
     Phoenix.PubSub.broadcast(TeslaMate.PubSub, topic(car), settings)
   rescue
     _ -> :ok
+  end
+
+  defp broadcast_car(%Car{} = car) do
+    Phoenix.PubSub.broadcast(TeslaMate.PubSub, topic(car), {:car_updated, car})
+  rescue
+    _ -> :ok
+  end
+
+  defp ordered_cars do
+    from(c in Car,
+      order_by: [asc: fragment("COALESCE(?, ?)", c.display_priority, c.id), asc: c.id],
+      preload: [:settings]
+    )
+    |> Repo.all()
+  end
+
+  defp persist_car_order(cars, ordered_ids) do
+    cars_by_id = Map.new(cars, &{&1.id, &1})
+
+    Repo.transaction(fn ->
+      ordered_ids
+      |> Enum.with_index(1)
+      |> Enum.reduce([], fn {id, priority}, acc ->
+        car = Map.fetch!(cars_by_id, id)
+
+        case car.display_priority do
+          ^priority ->
+            [car | acc]
+
+          _ ->
+            case Log.update_car(car, %{display_priority: priority}, preload: [:settings]) do
+              {:ok, updated_car} -> [updated_car | acc]
+              {:error, reason} -> Repo.rollback(reason)
+            end
+        end
+      end)
+      |> Enum.reverse()
+    end)
+  end
+
+  defp updated_car(cars, %Car{id: car_id}) do
+    Enum.find(cars, &(&1.id == car_id))
+  end
+
+  defp swap(ids, left, right) do
+    left_id = Enum.at(ids, left)
+    right_id = Enum.at(ids, right)
+
+    ids
+    |> List.replace_at(left, right_id)
+    |> List.replace_at(right, left_id)
   end
 end

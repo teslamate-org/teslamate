@@ -80,7 +80,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.ex:21
+#: lib/teslamate_web/live/settings_live/index.ex:23
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
 #: lib/teslamate_web/templates/layout/root.html.heex:119
 #, elixir-autogen, elixir-format
@@ -112,17 +112,17 @@ msgstr ""
 msgid "unavailable"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:279
+#: lib/teslamate_web/live/settings_live/index.html.heex:365
 #, elixir-autogen, elixir-format
 msgid "Length"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:294
+#: lib/teslamate_web/live/settings_live/index.html.heex:380
 #, elixir-autogen, elixir-format
 msgid "Temperature"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:276
+#: lib/teslamate_web/live/settings_live/index.html.heex:362
 #, elixir-autogen, elixir-format
 msgid "Units"
 msgstr ""
@@ -147,7 +147,7 @@ msgstr ""
 msgid "Geo-Fences"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:74
+#: lib/teslamate_web/live/settings_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Idle Time Before Trying to Sleep"
 msgstr ""
@@ -183,13 +183,13 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:53
+#: lib/teslamate_web/live/settings_live/index.html.heex:139
 #, elixir-autogen, elixir-format
 msgid "Time to Try Sleeping"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:64
-#: lib/teslamate_web/live/settings_live/index.html.heex:87
+#: lib/teslamate_web/live/settings_live/index.html.heex:150
+#: lib/teslamate_web/live/settings_live/index.html.heex:173
 #, elixir-autogen, elixir-format
 msgid "min"
 msgstr ""
@@ -246,12 +246,12 @@ msgstr ""
 msgid "for"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:99
+#: lib/teslamate_web/live/settings_live/index.html.heex:185
 #, elixir-autogen, elixir-format
 msgid "Requirements"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:107
+#: lib/teslamate_web/live/settings_live/index.html.heex:193
 #, elixir-autogen, elixir-format
 msgid "Vehicle must be locked"
 msgstr ""
@@ -266,22 +266,22 @@ msgstr ""
 msgid "Charger Power"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:190
+#: lib/teslamate_web/live/settings_live/index.html.heex:276
 #, elixir-autogen, elixir-format
 msgid "Preferred Range"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:186
+#: lib/teslamate_web/live/settings_live/index.html.heex:272
 #, elixir-autogen, elixir-format
 msgid "Range"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:198
+#: lib/teslamate_web/live/settings_live/index.html.heex:284
 #, elixir-autogen, elixir-format
 msgid "ideal"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:199
+#: lib/teslamate_web/live/settings_live/index.html.heex:285
 #, elixir-autogen, elixir-format
 msgid "rated"
 msgstr ""
@@ -291,7 +291,7 @@ msgstr ""
 msgid "Range (ideal)"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:189
+#: lib/teslamate_web/live/settings_live/index.html.heex:275
 #, elixir-autogen, elixir-format
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
 msgstr ""
@@ -322,7 +322,7 @@ msgid "Outside Temperature"
 msgstr ""
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:424
-#: lib/teslamate_web/live/settings_live/index.html.heex:374
+#: lib/teslamate_web/live/settings_live/index.html.heex:460
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr ""
@@ -342,32 +342,62 @@ msgstr ""
 msgid "Remaining Time"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:349
+#: lib/teslamate_web/live/settings_live/index.html.heex:435
 #: lib/teslamate_web/templates/layout/root.html.heex:95
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:327
+#: lib/teslamate_web/live/settings_live/index.html.heex:413
 #, elixir-autogen, elixir-format
 msgid "URLs"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:216
-#: lib/teslamate_web/live/settings_live/index.html.heex:330
+#: lib/teslamate_web/live/settings_live/index.html.heex:302
+#: lib/teslamate_web/live/settings_live/index.html.heex:416
 #, elixir-autogen, elixir-format
 msgid "Web App"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:32
-#: lib/teslamate_web/live/settings_live/index.html.heex:144
+#: lib/teslamate_web/live/settings_live/index.html.heex:43
+#: lib/teslamate_web/live/settings_live/index.html.heex:230
 #, elixir-autogen, elixir-format
 msgid "Enabled"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:48
+#: lib/teslamate_web/live/settings_live/index.html.heex:117
+#, elixir-autogen, elixir-format
+msgid "Show in dashboards"
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:134
 #, elixir-autogen, elixir-format
 msgid "Sleep Mode"
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:39
+#, elixir-autogen, elixir-format
+msgid "Disabling hides the car from the Home page and stops active data collection. To hide it from Grafana, use Show in dashboards."
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:60
+#, elixir-autogen, elixir-format
+msgid "Visualization"
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:69
+#, elixir-autogen, elixir-format
+msgid "Display order"
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:66
+#, elixir-autogen, elixir-format
+msgid "Lower numbers appear first in dashboards and vehicle lists."
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:113
+#, elixir-autogen, elixir-format
+msgid "Removes the car from Grafana dashboard selectors. Settings and data collection are unchanged."
 msgstr ""
 
 #: lib/teslamate_web/live/geofence_live/form.ex:189
@@ -422,17 +452,17 @@ msgstr ""
 msgid "Fetching vehicle data ..."
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:231
+#: lib/teslamate_web/live/settings_live/index.html.heex:317
 #, elixir-autogen, elixir-format
 msgid "Addresses"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:212
+#: lib/teslamate_web/live/settings_live/index.html.heex:298
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.ex:64
+#: lib/teslamate_web/live/settings_live/index.ex:67
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr ""
@@ -466,17 +496,17 @@ msgstr ""
 msgid "Sign in"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:122
+#: lib/teslamate_web/live/settings_live/index.html.heex:208
 #, elixir-autogen, elixir-format
 msgid "Charge cost"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:125
+#: lib/teslamate_web/live/settings_live/index.html.heex:211
 #, elixir-autogen, elixir-format
 msgid "Free Supercharging"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:180
+#: lib/teslamate_web/live/settings_live/index.html.heex:266
 #, elixir-autogen, elixir-format
 msgid "General Settings"
 msgstr ""
@@ -529,22 +559,22 @@ msgstr ""
 msgid "Mileage"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:141
+#: lib/teslamate_web/live/settings_live/index.html.heex:227
 #, elixir-autogen, elixir-format
 msgid "Streaming API"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:395
+#: lib/teslamate_web/live/settings_live/index.html.heex:481
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:385
+#: lib/teslamate_web/live/settings_live/index.html.heex:471
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:380
+#: lib/teslamate_web/live/settings_live/index.html.heex:466
 #: lib/teslamate_web/templates/layout/root.html.heex:188
 #, elixir-autogen, elixir-format
 msgid "Update available"
@@ -571,7 +601,7 @@ msgstr ""
 msgid "Software Update available (%{version})"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:413
+#: lib/teslamate_web/live/settings_live/index.html.heex:499
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr ""
@@ -631,7 +661,7 @@ msgstr ""
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:309
+#: lib/teslamate_web/live/settings_live/index.html.heex:395
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
 msgstr ""
@@ -656,17 +686,17 @@ msgstr ""
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:29
+#: lib/teslamate_web/live/settings_live/index.html.heex:33
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:160
+#: lib/teslamate_web/live/settings_live/index.html.heex:246
 #, elixir-autogen, elixir-format
 msgid "Battery"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:163
+#: lib/teslamate_web/live/settings_live/index.html.heex:249
 #, elixir-autogen, elixir-format
 msgid "LFP Battery"
 msgstr ""
@@ -681,27 +711,27 @@ msgstr ""
 msgid "View car location on Google Maps"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:254
+#: lib/teslamate_web/live/settings_live/index.html.heex:340
 #, elixir-autogen, elixir-format
 msgid "Appearance"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:263
+#: lib/teslamate_web/live/settings_live/index.html.heex:349
 #, elixir-autogen, elixir-format
 msgid "Dark"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:262
+#: lib/teslamate_web/live/settings_live/index.html.heex:348
 #, elixir-autogen, elixir-format
 msgid "Follow System"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:261
+#: lib/teslamate_web/live/settings_live/index.html.heex:347
 #, elixir-autogen, elixir-format
 msgid "Light"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:251
+#: lib/teslamate_web/live/settings_live/index.html.heex:337
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr ""

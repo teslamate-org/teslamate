@@ -280,6 +280,13 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       car
     end
 
+    defp tab_names(html) do
+      html
+      |> Floki.parse_document!()
+      |> Floki.find(".tabs li a")
+      |> Enum.map(&Floki.text/1)
+    end
+
     test "hides most of the sleep mode settings if streaming is enabled", %{conn: conn} do
       car = car_fixture(settings: %{use_streaming_api: true})
 
@@ -360,7 +367,8 @@ defmodule TeslaMateWeb.SettingsLiveTest do
             suspend_after_idle_min: 15,
             req_not_unlocked: true,
             free_supercharging: false,
-            use_streaming_api: false
+            use_streaming_api: false,
+            show_in_dashboards: true
           }
         )
 
@@ -437,6 +445,129 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert [settings] = Settings.get_car_settings()
       assert settings.use_streaming_api == true
+
+      ## Dashboard visibility
+
+      assert ["checked"] ==
+               html
+               |> Floki.find("#car_settings_#{car.id}_show_in_dashboards")
+               |> Floki.attribute("checked")
+
+      assert [] ==
+               render_change(view, :change, %{
+                 "car_settings_#{car.id}" => %{show_in_dashboards: false}
+               })
+               |> Floki.parse_document!()
+               |> Floki.find("#car_settings_#{car.id}_show_in_dashboards")
+               |> Floki.attribute("checked")
+
+      assert [settings] = Settings.get_car_settings()
+      assert settings.show_in_dashboards == false
+    end
+
+    test "shows visualization settings and reorders cars", %{conn: conn} do
+      first =
+        car_fixture(
+          id: 11001,
+          name: "one",
+          eid: 11001,
+          vid: 1101,
+          vin: "11001",
+          display_priority: 1
+        )
+
+      second =
+        car_fixture(
+          id: 11002,
+          name: "two",
+          eid: 11002,
+          vid: 1102,
+          vin: "11002",
+          display_priority: 2
+        )
+
+      third =
+        car_fixture(
+          id: 11003,
+          name: "three",
+          eid: 11003,
+          vid: 1103,
+          vin: "11003",
+          display_priority: 3
+        )
+
+      assert {:ok, view, html} = live(conn, "/settings")
+      doc = Floki.parse_document!(html)
+
+      assert ["Visualization"] ==
+               Floki.find(doc, "h2.title")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.filter(&(&1 == "Visualization"))
+
+      assert [_] = Floki.find(doc, "#car_settings_#{first.id}_show_in_dashboards")
+      assert [_] = Floki.find(doc, "#car_display_priority_#{first.id}")
+
+      assert ["one", "two", "three"] == tab_names(html)
+
+      assert ["disabled"] ==
+               doc
+               |> Floki.find("#move_car_#{first.id}_up")
+               |> Floki.attribute("disabled")
+
+      html =
+        view
+        |> element("#move_car_#{first.id}_down")
+        |> render_click()
+
+      assert ["two", "one", "three"] == tab_names(html)
+
+      assert ["2"] ==
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#car_display_priority_#{first.id}")
+               |> Floki.attribute("value")
+
+      assert [settings_two, settings_one, settings_three] = Settings.get_car_settings()
+
+      assert [second.id, first.id, third.id] ==
+               Enum.map([settings_two, settings_one, settings_three], & &1.car.id)
+    end
+
+    test "disables the move down button for the last car", %{conn: conn} do
+      _first =
+        car_fixture(
+          id: 12001,
+          name: "one",
+          eid: 12001,
+          vid: 1201,
+          vin: "12001",
+          display_priority: 1
+        )
+
+      last =
+        car_fixture(
+          id: 12002,
+          name: "two",
+          eid: 12002,
+          vid: 1202,
+          vin: "12002",
+          display_priority: 2
+        )
+
+      assert {:ok, view, _html} = live(conn, "/settings")
+
+      view
+      |> element(".tabs li a", last.name)
+      |> render_click()
+
+      assert_redirect(view, path = "/settings?car=#{last.id}")
+      assert {:ok, _view, html} = live(conn, path)
+
+      assert ["disabled"] ==
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#move_car_#{last.id}_down")
+               |> Floki.attribute("disabled")
     end
 
     test "changes between cars", %{conn: conn} do

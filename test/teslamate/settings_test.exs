@@ -4,6 +4,7 @@ defmodule TeslaMate.SettingsTest do
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
   alias TeslaMate.{Settings, Log}
 
+  import Mock
   import TestHelper, only: [decimal: 1]
 
   defp car_fixture(attrs \\ %{}) do
@@ -131,6 +132,7 @@ defmodule TeslaMate.SettingsTest do
       free_supercharging: true,
       use_streaming_api: false,
       enabled: true,
+      show_in_dashboards: false,
       lfp_battery: false
     }
     @invalid_attrs %{
@@ -140,6 +142,7 @@ defmodule TeslaMate.SettingsTest do
       free_supercharging: nil,
       use_streaming_api: nil,
       enabled: nil,
+      show_in_dashboards: nil,
       lfp_battery: nil
     }
 
@@ -154,6 +157,7 @@ defmodule TeslaMate.SettingsTest do
       assert settings.free_supercharging == false
       assert settings.use_streaming_api == true
       assert settings.enabled == true
+      assert settings.show_in_dashboards == true
       assert settings.lfp_battery == false
     end
 
@@ -171,7 +175,88 @@ defmodule TeslaMate.SettingsTest do
       assert settings.free_supercharging == true
       assert settings.use_streaming_api == false
       assert settings.enabled == true
+      assert settings.show_in_dashboards == false
       assert settings.lfp_battery == false
+    end
+
+    test "update_car_settings/2 does not restart vehicles when only dashboard visibility changes" do
+      parent = self()
+      _car = car_fixture()
+      [settings] = Settings.get_car_settings()
+
+      with_mock TeslaMate.Vehicles,
+        restart: fn ->
+          send(parent, :vehicles_restart)
+          :ok
+        end do
+        assert {:ok, %CarSettings{show_in_dashboards: false}} =
+                 Settings.update_car_settings(settings, %{show_in_dashboards: false})
+
+        refute_receive :vehicles_restart
+      end
+    end
+
+    test "get_car_settings/0 returns settings in display order" do
+      third =
+        car_fixture(%{eid: 52, vid: 52, vin: "vin-52", display_priority: 3, name: "third"})
+
+      first =
+        car_fixture(%{eid: 53, vid: 53, vin: "vin-53", display_priority: 1, name: "first"})
+
+      second =
+        car_fixture(%{eid: 54, vid: 54, vin: "vin-54", display_priority: 2, name: "second"})
+
+      assert [first_settings, second_settings, third_settings] = Settings.get_car_settings()
+
+      assert [first.id, second.id, third.id] ==
+               Enum.map([first_settings, second_settings, third_settings], & &1.car.id)
+    end
+
+    test "move_car/2 swaps adjacent cars and renormalizes priorities" do
+      first =
+        car_fixture(%{eid: 61, vid: 61, vin: "vin-61", display_priority: 1, name: "first"})
+
+      second =
+        car_fixture(%{eid: 62, vid: 62, vin: "vin-62", display_priority: 2, name: "second"})
+
+      third =
+        car_fixture(%{eid: 63, vid: 63, vin: "vin-63", display_priority: 3, name: "third"})
+
+      second_settings = Enum.find(Settings.get_car_settings(), &(&1.car.id == second.id))
+
+      assert {:ok, moved_car} = Settings.move_car(second_settings, :up)
+      assert moved_car.id == second.id
+      assert moved_car.display_priority == 1
+
+      assert [second_settings, first_settings, third_settings] = Settings.get_car_settings()
+
+      assert [second.id, first.id, third.id] ==
+               Enum.map([second_settings, first_settings, third_settings], & &1.car.id)
+
+      assert Log.get_car!(first.id).display_priority == 2
+      assert Log.get_car!(second.id).display_priority == 1
+      assert Log.get_car!(third.id).display_priority == 3
+    end
+
+    test "move_car/2 is a no-op at the list boundaries" do
+      first =
+        car_fixture(%{eid: 71, vid: 71, vin: "vin-71", display_priority: 1, name: "first"})
+
+      second =
+        car_fixture(%{eid: 72, vid: 72, vin: "vin-72", display_priority: 2, name: "second"})
+
+      [first_settings, second_settings] = Settings.get_car_settings()
+
+      assert {:ok, moved_first} = Settings.move_car(first_settings, :up)
+      assert moved_first.id == first.id
+      assert moved_first.display_priority == 1
+
+      assert {:ok, moved_second} = Settings.move_car(second_settings, :down)
+      assert moved_second.id == second.id
+      assert moved_second.display_priority == 2
+
+      assert [first_settings, second_settings] = Settings.get_car_settings()
+      assert [first.id, second.id] == Enum.map([first_settings, second_settings], & &1.car.id)
     end
 
     test "update_car_settings/2 publishes the settings" do
@@ -200,6 +285,7 @@ defmodule TeslaMate.SettingsTest do
                free_supercharging: ["can't be blank"],
                use_streaming_api: ["can't be blank"],
                enabled: ["can't be blank"],
+               show_in_dashboards: ["can't be blank"],
                lfp_battery: ["can't be blank"]
              }
 

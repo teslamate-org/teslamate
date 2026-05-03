@@ -663,6 +663,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state, %{data | car: Map.put(data.car, :settings, settings), stream_pid: stream_pid}}
   end
 
+  def handle_event(:info, {:car_updated, %Car{} = car}, _state, %Data{} = data) do
+    {:keep_state,
+     %{data | car: %{data.car | display_priority: car.display_priority, name: car.name}}}
+  end
+
   def handle_event(:info, message, _state, data) do
     Logger.info("Unhandled message: #{inspect(message, pretty: true)}", car_id: data.car.id)
     :keep_state_and_data

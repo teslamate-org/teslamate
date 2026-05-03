@@ -10,23 +10,26 @@ defmodule TeslaMateWeb.SettingsLive.Index do
 
   @impl true
   def mount(_params, %{"settings" => settings}, socket) do
-    assigns = %{
-      addresses_migrated?: addresses_migrated?(),
-      car_settings: Settings.get_car_settings() |> prepare(),
-      car: nil,
-      global_settings: settings |> prepare(),
-      update: Updater.get_update(),
-      refreshing_addresses?: nil,
-      refresh_error: nil,
-      page_title: gettext("Settings")
-    }
+    assigns =
+      %{
+        addresses_migrated?: addresses_migrated?(),
+        car_settings: %{},
+        car_ids: [],
+        car: nil,
+        global_settings: settings |> prepare(),
+        update: Updater.get_update(),
+        refreshing_addresses?: nil,
+        refresh_error: nil,
+        page_title: gettext("Settings")
+      }
+      |> Map.merge(load_car_settings())
 
     {:ok, assign(socket, assigns)}
   end
 
   @impl true
   def handle_params(params, _uri, socket) do
-    %{car_settings: settings, car: car} = socket.assigns
+    %{car_settings: settings, car_ids: car_ids, car: car} = socket.assigns
 
     car =
       with id when not is_nil(id) <- Map.get(params, "car"),
@@ -34,7 +37,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
            true <- Map.has_key?(settings, id) do
         id
       else
-        _ -> car || settings |> Map.keys() |> List.first()
+        _ -> car || List.first(car_ids)
       end
 
     {:noreply, assign(socket, car: car)}
@@ -101,6 +104,23 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       end
 
     {:noreply, assign(socket, :car_settings, settings)}
+  end
+
+  def handle_event(
+        "move-car",
+        %{"direction" => direction},
+        %{assigns: %{car_settings: settings, car: id}} = socket
+      ) do
+    direction =
+      case direction do
+        "up" -> :up
+        "down" -> :down
+      end
+
+    with %CarSettings{} = current <- get_in(settings, [id, :original]),
+         {:ok, _car} <- Settings.move_car(current, direction) do
+      {:noreply, socket |> assign(load_car_settings()) |> assign(:car, id)}
+    end
   end
 
   def handle_event("sign_out", _params, socket) do
@@ -179,8 +199,17 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   end
 
   defp prepare(settings) do
-    Enum.reduce(settings, %{}, fn %CarSettings{car: car} = s, acc ->
-      Map.put(acc, car.id, %{original: s, changeset: Settings.change_car_settings(s)})
-    end)
+    %{
+      car_ids: Enum.map(settings, & &1.car.id),
+      car_settings:
+        Enum.reduce(settings, %{}, fn %CarSettings{car: car} = s, acc ->
+          Map.put(acc, car.id, %{original: s, changeset: Settings.change_car_settings(s)})
+        end)
+    }
+  end
+
+  defp load_car_settings do
+    Settings.get_car_settings()
+    |> prepare()
   end
 end
