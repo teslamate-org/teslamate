@@ -167,7 +167,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -286,7 +286,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -427,7 +427,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -583,7 +583,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -701,7 +701,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -821,7 +821,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -940,7 +940,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -1050,7 +1050,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -1146,7 +1146,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -1293,7 +1293,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -1449,7 +1449,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -1825,7 +1825,7 @@
           }
         ]
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -2265,7 +2265,7 @@
           }
         ]
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -2459,7 +2459,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -2623,7 +2623,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {

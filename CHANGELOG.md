@@ -15,6 +15,7 @@
 - perf: ensure BRIN indexes don't degrade over time (#5276 - @swiffer)
 - fix: fix folder creation and bash 3.2 compatibility in dashboards.sh (#5233 - @svennergr)
 - fix: handle nil tire pressure values in summary view (#5297 - @elemated)
+- feat: use Grafana 12.4.3 (#5280 - @swiffer)
 
 #### Build, CI, internal
 
