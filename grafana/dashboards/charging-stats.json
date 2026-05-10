@@ -614,7 +614,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n    cp.cost,\n    cp.charge_energy_added,\n    cp.charge_energy_used,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n    AND duration_min >= $min_duration\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1\n)\n\nSELECT \n  sum(cost) / sum(greatest(charge_energy_added, charge_energy_used))\nFROM data\n  WHERE current = 'DC'",
+          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n    cp.cost,\n    cp.charge_energy_added,\n    cp.charge_energy_used,\n\t\tCASE\n\t\t\tWHEN NULLIF(mode() within group (order by charger_phases), 0) IS NOT NULL THEN 'AC'\n\t\t\tWHEN bool_or(fast_charger_present) = true THEN 'DC'\n\t\t\tWHEN MAX(g.charge_type::text) IS NOT NULL THEN MAX(g.charge_type::text)\n\t\t\tELSE 'DC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  LEFT JOIN geofences g ON g.id = cp.geofence_id\n  WHERE\n\t  cp.car_id = $car_id\n    AND duration_min >= $min_duration\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1\n)\n\nSELECT \n  sum(cost) / sum(greatest(charge_energy_added, charge_energy_used))\nFROM data\n  WHERE current = 'DC'",
           "refId": "A",
           "sql": {
             "columns": [
@@ -696,7 +696,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n    cp.cost,\n    cp.charge_energy_added,\n    cp.charge_energy_used,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n    AND duration_min >= $min_duration\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1\n)\n\nSELECT \n  sum(cost) / sum(greatest(charge_energy_added, charge_energy_used))\nFROM data\n  WHERE current = 'AC'",
+          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n    cp.cost,\n    cp.charge_energy_added,\n    cp.charge_energy_used,\n\t\tCASE\n\t\t\tWHEN NULLIF(mode() within group (order by charger_phases), 0) IS NOT NULL THEN 'AC'\n\t\t\tWHEN bool_or(fast_charger_present) = true THEN 'DC'\n\t\t\tWHEN MAX(g.charge_type::text) IS NOT NULL THEN MAX(g.charge_type::text)\n\t\t\tELSE 'DC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  LEFT JOIN geofences g ON g.id = cp.geofence_id\n  WHERE\n\t  cp.car_id = $car_id\n    AND duration_min >= $min_duration\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1\n)\n\nSELECT \n  sum(cost) / sum(greatest(charge_energy_added, charge_energy_used))\nFROM data\n  WHERE current = 'AC'",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1146,7 +1146,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n\t\tcp.charge_energy_added,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current,\n\t\tcp.charge_energy_used\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND duration_min >= $min_duration\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1,2\n)\nSELECT\n\tnow() AS time,\n\tSUM(GREATEST(charge_energy_added, charge_energy_used)) AS value,\n\tcurrent AS metric\nFROM data\nGROUP BY 3\nORDER BY metric DESC;",
+          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n\t\tcp.charge_energy_added,\n\t\tCASE\n\t\t\tWHEN NULLIF(mode() within group (order by charger_phases), 0) IS NOT NULL THEN 'AC'\n\t\t\tWHEN bool_or(fast_charger_present) = true THEN 'DC'\n\t\t\tWHEN MAX(g.charge_type::text) IS NOT NULL THEN MAX(g.charge_type::text)\n\t\t\tELSE 'DC'\n\t\tEND AS current,\n\t\tcp.charge_energy_used\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  LEFT JOIN geofences g ON g.id = cp.geofence_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND duration_min >= $min_duration\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1,2\n)\nSELECT\n\tnow() AS time,\n\tSUM(GREATEST(charge_energy_added, charge_energy_used)) AS value,\n\tcurrent AS metric\nFROM data\nGROUP BY 3\nORDER BY metric DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1449,7 +1449,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n\t\tcp.duration_min,\n\t\tCASE WHEN NULLIF(mode() within group (order by charger_phases),0) is null THEN 'DC'\n\t\t\t\t ELSE 'AC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.duration_min >= $min_duration\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1,2\n)\nSELECT\n\tnow() AS time,\n\tsum(duration_min) * 60 AS value,\n\tcurrent AS metric\nFROM data\nGROUP BY 3\nORDER BY metric DESC;",
+          "rawSql": "WITH data AS (\n  SELECT\n\t\tcp.id,\n\t\tcp.duration_min,\n\t\tCASE\n\t\t\tWHEN NULLIF(mode() within group (order by charger_phases), 0) IS NOT NULL THEN 'AC'\n\t\t\tWHEN bool_or(fast_charger_present) = true THEN 'DC'\n\t\t\tWHEN MAX(g.charge_type::text) IS NOT NULL THEN MAX(g.charge_type::text)\n\t\t\tELSE 'DC'\n\t\tEND AS current\n\tFROM charging_processes cp\n  RIGHT JOIN charges ON cp.id = charges.charging_process_id\n  LEFT JOIN geofences g ON g.id = cp.geofence_id\n  WHERE\n\t  cp.car_id = $car_id\n\t  AND cp.duration_min >= $min_duration\n\t  AND $__timeFilter(end_date)\n  GROUP BY 1,2\n)\nSELECT\n\tnow() AS time,\n\tsum(duration_min) * 60 AS value,\n\tcurrent AS metric\nFROM data\nGROUP BY 3\nORDER BY metric DESC;",
           "refId": "A",
           "sql": {
             "columns": [

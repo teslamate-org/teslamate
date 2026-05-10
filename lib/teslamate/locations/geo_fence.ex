@@ -12,6 +12,7 @@ defmodule TeslaMate.Locations.GeoFence do
     field :billing_type, Ecto.Enum, values: [:per_kwh, :per_minute], read_after_writes: true
     field :cost_per_unit, :decimal, read_after_writes: true
     field :session_fee, :decimal, read_after_writes: true
+    field :charge_type, Ecto.Enum, values: [:AC, :DC]
 
     timestamps()
   end
@@ -26,7 +27,8 @@ defmodule TeslaMate.Locations.GeoFence do
       :longitude,
       :cost_per_unit,
       :session_fee,
-      :billing_type
+      :billing_type,
+      :charge_type
     ])
     |> validate_required([:name, :latitude, :longitude, :radius])
     |> validate_number(:radius, greater_than: 0, less_than: 5000)
