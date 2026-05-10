@@ -8,7 +8,7 @@ defmodule TeslaMate.HealthCheck do
 
   @name __MODULE__
   @ping_url "https://hc-ping.com/2d5316dd-9c01-45c6-aca8-f85d0f17d767"
-  @ping_interval :timer.minutes(10)
+  @ping_interval :timer.minutes(5)
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
@@ -29,7 +29,7 @@ defmodule TeslaMate.HealthCheck do
   def handle_info(:ping, state) do
     Logger.debug("Sending health check ping to #{@ping_url}")
 
-    case TeslaMate.HTTP.get(@ping_url) do
+    case TeslaMate.HTTP.post(@ping_url, "") do
       {:ok, %Finch.Response{status: status}} when status in 200..299 ->
         Logger.debug("Health check ping successful (status: #{status})")
 

@@ -1,9 +1,7 @@
 services:
   teslamate:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: unless-stopped
+    image: teslamate/teslamate:latest
+    restart: always
     environment:
       - ENCRYPTION_KEY=MQwgm91uuWkoUYkt6+lwRKf2wiFmpED326+NVwlaI4Y=
       - DATABASE_USER=teslamate
@@ -11,24 +9,12 @@ services:
       - DATABASE_NAME=teslamate
       - DATABASE_HOST=database
       - MQTT_HOST=mosquitto
-      - MIX_ENV=dev
-      - PORT=4000
     ports:
       - 4000:4000
     volumes:
-      # Mount source code for hot reloading
-      - .:/opt/app
-      # Mount import directory
       - ./import:/opt/app/import
     cap_drop:
       - all
-    # Override the default command to run in development mode
-    command:
-      [
-        "sh",
-        "-c",
-        "mix deps.get && cd assets && npm install && cd .. && mix phx.server",
-      ]
 
   database:
     image: postgres:17-trixie
@@ -62,11 +48,6 @@ services:
     volumes:
       - mosquitto-conf:/mosquitto/config
       - mosquitto-data:/mosquitto/data
-
-  # Development-specific volumes
-  _build:
-  deps:
-  node_modules:
 
 volumes:
   teslamate-db:

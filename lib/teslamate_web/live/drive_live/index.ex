@@ -336,7 +336,11 @@ defmodule TeslaMateWeb.DriveLive.Index do
 
   # Helper functions
   def format_drive_date(datetime) do
-    format!(datetime, "{YYYY}-{0M}-{0D} {h24}:{m}")
+    # Convert UTC datetime to PST/PDT
+    pst_datetime = datetime
+    |> Timex.to_datetime("America/Los_Angeles")
+
+    format!(pst_datetime, "{WDfull}, {YYYY}-{0M}-{0D} {h24}:{m}")
   end
 
   def format_distance(distance) when is_number(distance) do

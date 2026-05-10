@@ -7,10 +7,14 @@ services:
     restart: unless-stopped
     environment:
       - ENCRYPTION_KEY=MQwgm91uuWkoUYkt6+lwRKf2wiFmpED326+NVwlaI4Y=
-      - DATABASE_USER=teslamate
-      - DATABASE_PASS=J_\+8ot264M2
-      - DATABASE_NAME=teslamate
-      - DATABASE_HOST=database
+      # Neon PostgreSQL configuration - UPDATE THESE VALUES with your Neon credentials
+      - DATABASE_USER=YOUR_NEON_USER
+      - DATABASE_PASS=YOUR_NEON_PASSWORD
+      - DATABASE_NAME=YOUR_NEON_DATABASE
+      - DATABASE_HOST=YOUR_NEON_HOST.neon.tech
+      - DATABASE_PORT=5432
+      - DATABASE_SSL=noverify
+      - DATABASE_SSL_SNI=YOUR_NEON_HOST.neon.tech
       - MQTT_HOST=mosquitto
       - MIX_ENV=dev
       - PORT=4000
@@ -29,29 +33,32 @@ services:
       - all
     # Override the default command to run in development mode
     command: ["mix", "phx.server"]
-    depends_on:
-      - database
+    # Removed depends_on: database since we're using Neon now
 
-  database:
-    image: postgres:17-trixie
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=teslamate
-      - POSTGRES_PASSWORD=J_\+8ot264M2
-      - POSTGRES_DB=teslamate
-    volumes:
-      - teslamate-db:/var/lib/postgresql/data
-    ports:
-      - 5432:5432 # Expose for local development
+  # Local database service - commented out since we're using Neon
+  # database:
+  #   image: postgres:17-trixie
+  #   restart: unless-stopped
+  #   environment:
+  #     - POSTGRES_USER=teslamate
+  #     - POSTGRES_PASSWORD=J_\+8ot264M2
+  #     - POSTGRES_DB=teslamate
+  #   volumes:
+  #     - teslamate-db:/var/lib/postgresql/data
+  #   ports:
+  #     - 5432:5432 # Expose for local development
 
   grafana:
     image: teslamate/grafana:latest
     restart: unless-stopped
     environment:
-      - DATABASE_USER=teslamate
-      - DATABASE_PASS=J_\+8ot264M2
-      - DATABASE_NAME=teslamate
-      - DATABASE_HOST=database
+      # Neon PostgreSQL configuration - UPDATE THESE VALUES with your Neon credentials
+      - DATABASE_USER=YOUR_NEON_USER
+      - DATABASE_PASS=YOUR_NEON_PASSWORD
+      - DATABASE_NAME=YOUR_NEON_DATABASE
+      - DATABASE_HOST=YOUR_NEON_HOST.neon.tech
+      - DATABASE_PORT=5432
+      - DATABASE_SSL_MODE=require
     ports:
       - 3000:3000
     volumes:
@@ -72,7 +79,7 @@ volumes:
   _build:
   deps:
   node_modules:
-  teslamate-db:
+  # teslamate-db:  # Commented out since we're using Neon
   teslamate-grafana-data:
   mosquitto-conf:
   mosquitto-data:

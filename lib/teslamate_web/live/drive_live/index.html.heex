@@ -6,65 +6,94 @@
     </div>
   </div>
 
-  <div class="bg-white shadow overflow-hidden sm:rounded-md" style="border: 2px solid black !important;">
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200" style="table-layout: fixed; border: 3px solid black !important; border-collapse: collapse;">
-        <thead class="bg-gray-50" style="border-bottom: 3px solid black !important;">
+  <!-- Mobile responsive table container with borders and proper scrolling -->
+  <div style="background-color: white; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border-radius: 0.75rem; border: 2px solid #1f2937;">
+    <div class="table-container" style="overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; scrollbar-width: thin; max-width: 100%;">
+      <table style="min-width: 1200px; width: 100%; border-collapse: collapse; border: 2px solid #1f2937;">
+        <thead style="background: linear-gradient(to right, #f9fafb, #f3f4f6); border-bottom: 3px solid #1f2937; position: sticky; top: 0; z-index: 10;">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20" style="border-right: 2px solid black !important;">From</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20" style="border-right: 2px solid black !important;">To</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16" style="border-right: 2px solid black !important;">Distance</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16" style="border-right: 2px solid black !important;">Duration</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 45%; border-right: 2px solid black !important;">Route</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 40%;">Tags & Notes</th>
+            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style="min-width: 120px; border-right: 2px solid #1f2937;">🚗 Vehicle</th>
+            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style="min-width: 150px; border-right: 2px solid #1f2937;">📅 From</th>
+            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style="min-width: 150px; border-right: 2px solid #1f2937;">🏁 To</th>
+            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style="min-width: 100px; border-right: 2px solid #1f2937;">📏 Distance</th>
+            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style="min-width: 100px; border-right: 2px solid #1f2937;">⏱️ Duration</th>
+            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style="min-width: 300px; border-right: 2px solid #1f2937;">🗺️ Route</th>
+            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style="min-width: 250px;">🏷️ Tags & Notes</th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200" style="border: 1px solid black !important;">
+        <tbody style="background-color: white;">
           <%= for drive <- @drives do %>
-            <tr class="hover:bg-gray-50" style="border-bottom: 1px solid black !important;">
-              <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900" style="border-right: 2px solid black !important;">
-                <%= format_drive_date(drive.start_date) %>
+            <tr style="border-bottom: 1px solid #d1d5db; transition: background-color 0.2s;">
+              <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-800" style="border-right: 2px solid #1f2937;">
+                <div class="flex items-center space-x-2">
+                  <div class="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0"></div>
+                  <span>
+                    <%= if drive.car do %>
+                      <%= drive.car.name || drive.car.model || "Unknown" %>
+                    <% else %>
+                      Unknown
+                    <% end %>
+                  </span>
+                </div>
               </td>
-              <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500" style="border-right: 2px solid black !important;">
+              <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-800" style="border-right: 2px solid #1f2937;">
+                <div class="text-gray-900 font-medium"><%= format_drive_date(drive.start_date) %></div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600" style="border-right: 2px solid #1f2937;">
                 <%= if drive.end_date do %>
-                  <%= format_drive_date(drive.end_date) %>
+                  <div class="text-gray-900 font-medium"><%= format_drive_date(drive.end_date) %></div>
                 <% else %>
-                  <span class="text-orange-600 font-medium">In Progress</span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                    🔄 In Progress
+                  </span>
                 <% end %>
               </td>
-              <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900" style="border-right: 2px solid black !important;">
+              <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-800" style="border-right: 2px solid #1f2937;">
                 <%= if drive.distance do %>
-                  <%= format_distance(drive.distance) %> km
+                  <span class="font-medium"><%= format_distance(drive.distance) %></span>
+                  <span class="text-gray-500 text-xs ml-1">km</span>
                 <% else %>
-                  N/A
+                  <span class="text-gray-400">N/A</span>
                 <% end %>
               </td>
-              <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900" style="border-right: 2px solid black !important;">
+              <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-800" style="border-right: 2px solid #1f2937;">
                 <%= if drive.duration_min do %>
-                  <%= format_duration(drive.duration_min) %>
+                  <span class="font-medium"><%= format_duration(drive.duration_min) %></span>
                 <% else %>
-                  N/A
+                  <span class="text-gray-400">N/A</span>
                 <% end %>
               </td>
-              <td class="px-4 py-4 text-sm text-gray-900 max-h-16 overflow-hidden" style="border-right: 2px solid black !important;">
-                <div class="overflow-x-auto overflow-y-auto max-h-16 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <td class="px-4 py-4 text-sm text-gray-800" style="border-right: 2px solid #1f2937;">
+                <div class="max-h-16 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                   <div class="whitespace-normal break-words leading-tight">
                     <%= if drive.start_address && drive.end_address do %>
-                      <%= drive.start_address.display_name %> → <%= drive.end_address.display_name %>
+                      <div class="flex items-center space-x-2">
+                        <span class="text-green-600 font-medium"><%= drive.start_address.display_name %></span>
+                        <span class="text-gray-400">→</span>
+                        <span class="text-red-600 font-medium"><%= drive.end_address.display_name %></span>
+                      </div>
                     <% else %>
                       <%= cond do %>
                         <% drive.start_address -> %>
-                          <%= drive.start_address.display_name %> → <%= if drive.end_date, do: "Unknown destination", else: "In progress..." %>
+                          <div class="flex items-center space-x-2">
+                            <span class="text-green-600 font-medium"><%= drive.start_address.display_name %></span>
+                            <span class="text-gray-400">→</span>
+                            <span class="text-gray-500"><%= if drive.end_date, do: "Unknown destination", else: "In progress..." %></span>
+                          </div>
                         <% drive.end_address -> %>
-                          Unknown origin → <%= drive.end_address.display_name %>
+                          <div class="flex items-center space-x-2">
+                            <span class="text-gray-500">Unknown origin</span>
+                            <span class="text-gray-400">→</span>
+                            <span class="text-red-600 font-medium"><%= drive.end_address.display_name %></span>
+                          </div>
                         <% true -> %>
-                          Unknown route
+                          <span class="text-gray-500">Unknown route</span>
                       <% end %>
                     <% end %>
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-900 max-w-sm">
+              <td class="px-4 py-4 text-sm text-gray-800">
                 <div class="relative">
                   <!-- Tag Input -->
                   <div class="flex flex-wrap gap-1 mb-2">
@@ -243,4 +272,45 @@ document.addEventListener('focusout', (e) => {
   }
 });
 </script>
+
+<style>
+/* Zebra striping with CSS */
+tbody tr:nth-child(even) {
+  background-color: #f9fafb !important;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: white !important;
+}
+
+/* Hover effects */
+tbody tr:hover {
+  background-color: #dbeafe !important;
+}
+
+/* Ensure scrolling works on all devices */
+.table-container {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: thin !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+}
+
+/* Sticky header enhancement */
+thead {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  background: linear-gradient(to right, #f9fafb, #f3f4f6) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Ensure header cells stay sticky */
+thead th {
+  position: sticky !important;
+  top: 0 !important;
+  background: inherit !important;
+}
+</style>
 
