@@ -37,7 +37,8 @@
           in
           pkgs.lib.mkIf (devenvRootFileContent != "") devenvRootFileContent;
         packages =
-          with pkgs; [
+          with pkgs;
+          [
             elixir
             elixir-ls
             node2nix
@@ -49,6 +50,7 @@
             mosquitto
             mosquitto_sub
             config.treefmt.build.wrapper
+            pkgs.osv-scanner
           ]
           ++ builtins.attrValues config.treefmt.build.programs
           ++ optionals stdenv.isLinux [
