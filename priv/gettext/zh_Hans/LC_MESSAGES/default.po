@@ -487,6 +487,31 @@ msgstr "通用设置"
 msgid "Session fee"
 msgstr "手续费"
 
+#: lib/teslamate_web/live/geofence_live/form.html.heex:121
+#, elixir-autogen, elixir-format
+msgid "Default charge type"
+msgstr "默认充电类型"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:129
+#, elixir-autogen, elixir-format
+msgid "Auto-detect"
+msgstr "自动检测"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:130
+#, elixir-autogen, elixir-format
+msgid "AC"
+msgstr "AC"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:131
+#, elixir-autogen, elixir-format
+msgid "DC"
+msgstr "DC"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#, elixir-autogen, elixir-format
+msgid "Used as a fallback when the charge type cannot be detected (e.g. during offline charging)."
+msgstr "当无法检测充电类型时（例如离线充电期间）作为备用方案使用。"
+
 #: lib/teslamate_web/live/car_live/summary.html.heex:114
 #, elixir-autogen, elixir-format
 msgid "Doors open"
