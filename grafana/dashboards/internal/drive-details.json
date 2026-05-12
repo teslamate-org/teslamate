@@ -1816,7 +1816,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 6,
+        "w": 3,
         "x": 0,
         "y": 28
       },
@@ -1898,8 +1898,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 6,
-        "x": 6,
+        "w": 3,
+        "x": 3,
         "y": 28
       },
       "id": 20,
@@ -2388,6 +2388,190 @@
         }
       ],
       "title": "Ø Speed",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Estimated trip cost. Cost/kWh uses the average of charges that ended within 24 h before this drive; if none have cost data, falls back to the single most recent charge before the trip.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "super-light-blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 6,
+        "y": 28
+      },
+      "id": 41,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH drive AS (\n  SELECT\n    d.start_date,\n    (start_${preferred_range}_range_km - end_${preferred_range}_range_km) * car.efficiency AS energy_kwh\n  FROM drives d\n  JOIN cars car ON car.id = d.car_id\n  WHERE d.id = $drive_id\n),\nrecent_cost AS (\n  SELECT sum(cp.cost) / NULLIF(sum(cp.charge_energy_added), 0) AS cost_per_kwh\n  FROM charging_processes cp\n  CROSS JOIN drive\n  WHERE cp.car_id = $car_id\n    AND cp.cost IS NOT NULL AND cp.charge_energy_added > 0\n    AND cp.end_date <= drive.start_date\n    AND cp.end_date >= drive.start_date - INTERVAL '24 hours'\n),\nlast_charge_cost AS (\n  SELECT cp.cost / NULLIF(cp.charge_energy_added, 0) AS cost_per_kwh\n  FROM charging_processes cp\n  CROSS JOIN drive\n  WHERE cp.car_id = $car_id\n    AND cp.cost IS NOT NULL AND cp.charge_energy_added > 0\n    AND cp.end_date <= drive.start_date\n  ORDER BY cp.end_date DESC\n  LIMIT 1\n),\neffective_cost AS (\n  SELECT COALESCE(recent_cost.cost_per_kwh, last_charge_cost.cost_per_kwh) AS cost_per_kwh\n  FROM last_charge_cost LEFT JOIN recent_cost ON true\n)\nSELECT ROUND((drive.energy_kwh * effective_cost.cost_per_kwh)::numeric, 2) AS \"Trip Cost\"\nFROM drive CROSS JOIN effective_cost",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Trip Cost (est.)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Estimated cost per 100 km/mi. Cost/kWh uses the average of charges that ended within 24 h before this drive; if none have cost data, falls back to the single most recent charge before the trip.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "super-light-blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 9,
+        "y": 28
+      },
+      "id": 42,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH drive AS (\n  SELECT\n    d.start_date,\n    (start_${preferred_range}_range_km - end_${preferred_range}_range_km) * car.efficiency AS energy_kwh,\n    convert_km(d.distance::numeric, '$length_unit') AS dist\n  FROM drives d\n  JOIN cars car ON car.id = d.car_id\n  WHERE d.id = $drive_id\n),\nrecent_cost AS (\n  SELECT sum(cp.cost) / NULLIF(sum(cp.charge_energy_added), 0) AS cost_per_kwh\n  FROM charging_processes cp\n  CROSS JOIN drive\n  WHERE cp.car_id = $car_id\n    AND cp.cost IS NOT NULL AND cp.charge_energy_added > 0\n    AND cp.end_date <= drive.start_date\n    AND cp.end_date >= drive.start_date - INTERVAL '24 hours'\n),\nlast_charge_cost AS (\n  SELECT cp.cost / NULLIF(cp.charge_energy_added, 0) AS cost_per_kwh\n  FROM charging_processes cp\n  CROSS JOIN drive\n  WHERE cp.car_id = $car_id\n    AND cp.cost IS NOT NULL AND cp.charge_energy_added > 0\n    AND cp.end_date <= drive.start_date\n  ORDER BY cp.end_date DESC\n  LIMIT 1\n),\neffective_cost AS (\n  SELECT COALESCE(recent_cost.cost_per_kwh, last_charge_cost.cost_per_kwh) AS cost_per_kwh\n  FROM last_charge_cost LEFT JOIN recent_cost ON true\n)\nSELECT ROUND((drive.energy_kwh / NULLIF(drive.dist, 0) * 100 * effective_cost.cost_per_kwh)::numeric, 2) AS \"Ø Cost / 100 $length_unit\"\nFROM drive CROSS JOIN effective_cost",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Ø Cost / 100 $length_unit",
       "type": "stat"
     }
   ],
