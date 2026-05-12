@@ -128,7 +128,7 @@ msgid "Units"
 msgstr ""
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:165
-#: lib/teslamate_web/live/geofence_live/form.html.heex:124
+#: lib/teslamate_web/live/geofence_live/form.html.heex:150
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr ""
@@ -171,13 +171,13 @@ msgid "Radius"
 msgstr ""
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:168
-#: lib/teslamate_web/live/geofence_live/form.html.heex:128
+#: lib/teslamate_web/live/geofence_live/form.html.heex:154
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:169
-#: lib/teslamate_web/live/geofence_live/form.html.heex:129
+#: lib/teslamate_web/live/geofence_live/form.html.heex:155
 #: lib/teslamate_web/live/signin_live/index.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -527,24 +527,24 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:163
+#: lib/teslamate_web/live/geofence_live/form.html.heex:189
 #, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:177
+#: lib/teslamate_web/live/geofence_live/form.html.heex:203
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr ""
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:155
+#: lib/teslamate_web/live/geofence_live/form.html.heex:181
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr ""
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:174
+#: lib/teslamate_web/live/geofence_live/form.html.heex:200
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr ""
