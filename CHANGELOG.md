@@ -4,7 +4,7 @@
 
 ### New features
 
-- feat: handle sleep behavior of MCU2 upgraded cars (#4453 - @micves, @JakobLichterfeld and @brianmay)
+- feat: handle sleep behavior of MCU2 upgraded cars (#4453 -> [f58df80](https://github.com/teslamate-org/teslamate/commit/f58df8088c3b935851e84e2f935a041fc393b3ff) - @micves, @JakobLichterfeld and @brianmay)
 
 ### Improvements and bug fixes
 
