@@ -57,6 +57,7 @@
 - build(deps-dev): bump credo from 1.7.17 to 1.7.18 (#5315)
 - sec(deps): add uuid override to version 14.0.0 in /website (#5320 - @JakobLichterfeld)
 - build(deps): bump @babel/plugin-transform-modules-systemjs from 7.29.0 to 7.29.4 in /website (#5328)
+- build(deps): bump fast-uri from 3.1.0 to 3.1.2 in /website (#5327)
 
 #### Dashboards
 
