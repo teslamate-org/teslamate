@@ -123,7 +123,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -134,7 +134,6 @@
           "refId": "A"
         }
       ],
-      "title": "",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -222,7 +221,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -233,7 +232,6 @@
           "refId": "A"
         }
       ],
-      "title": "",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -322,7 +320,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -333,7 +331,6 @@
           "refId": "A"
         }
       ],
-      "title": "",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -422,7 +419,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -433,7 +430,6 @@
           "refId": "A"
         }
       ],
-      "title": "",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -1168,7 +1164,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -1216,10 +1212,6 @@
       "type": "row"
     },
     {
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -1236,8 +1228,7 @@
         "content": "From here you can check if you have \nincomplete data of **Charges** (charges without ending date)\nIf so, you may follow the official \nguide by <a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>",
         "mode": "markdown"
       },
-      "pluginVersion": "12.4.0",
-      "title": "",
+      "pluginVersion": "13.0.1+security-01",
       "type": "text"
     },
     {
@@ -1286,7 +1277,7 @@
         "enablePagination": true,
         "showHeader": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
