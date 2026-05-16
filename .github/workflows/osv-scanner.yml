@@ -1,0 +1,48 @@
+name: OSV-Scanner
+
+on:
+  schedule:
+    - cron: "19 11 * * 1"
+  push:
+    branches: ["main"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  merge_group:
+    branches: ["main"]
+
+permissions:
+  actions: read
+  security-events: write
+  contents: read
+
+jobs:
+  check_paths:
+    uses: ./.github/workflows/check_paths.yml
+
+  scan-scheduled:
+    needs: check_paths
+    if: ( github.event_name == 'push' && needs.check_paths.outputs.githubfolder == 'false' ) || github.event_name == 'schedule'
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@8dc09193bb540e09b23da07ad7e30bd33bf87018" # v2.3.8
+    with:
+      scan-args: |-
+        -r
+        ./
+
+  scan-pr:
+    needs: check_paths
+    if: ( github.event_name == 'pull_request' && needs.check_paths.outputs.githubfolder == 'false' ) || ( github.event_name == 'merge_group' && needs.check_paths.outputs.githubfolder == 'false' )
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@8dc09193bb540e09b23da07ad7e30bd33bf87018" # v2.3.8
+    with:
+      scan-args: |-
+        -r
+        ./
