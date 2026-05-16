@@ -60,6 +60,9 @@
 - build(deps): bump @babel/plugin-transform-modules-systemjs from 7.29.0 to 7.29.4 in /website (#5328)
 - build(deps): bump fast-uri from 3.1.0 to 3.1.2 in /website (#5327)
 - build(deps): update flake.lock (#5326)
+- sec(deps): fix OSV vulnerabilities - update cowlib, decimal, and phoenix to patched versions (#5332 - @brianmay)
+- ci: add osv scanner to scan for vulnerabilities (#5332 - @brianmay and @JakobLichterfeld)
+
 
 #### Dashboards
 
