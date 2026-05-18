@@ -63,6 +63,7 @@
 - sec(deps): fix OSV vulnerabilities - update cowlib, decimal, and phoenix to patched versions (#5332 - @brianmay)
 - ci: add osv scanner to scan for vulnerabilities (#5332 - @brianmay and @JakobLichterfeld)
 - build(deps): update flake.lock (#5338)
+- refactor: use frame key when specifying window to improve readability (#5339 - @swiffer)
 
 #### Dashboards
 
