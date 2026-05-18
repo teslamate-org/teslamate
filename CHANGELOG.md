@@ -64,6 +64,7 @@
 - ci: add osv scanner to scan for vulnerabilities (#5332 - @brianmay and @JakobLichterfeld)
 - build(deps): update flake.lock (#5338)
 - refactor: use frame key when specifying window to improve readability (#5339 - @swiffer)
+- build(deps): bump cowlib from 2.16.0 to 2.16.1 (#5342 - @JakobLichterfeld)
 
 #### Dashboards
 
