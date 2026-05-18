@@ -72,6 +72,7 @@
 - fix: handle incomplete data correctly in Charging Stats / Statistics / Trips dashboards (#5229 - @swiffer)
 - feat: enable timepicker in efficiency dashboard (#5257 - @swiffer)
 - fix: ensure low precision mode is used for consumption gross for larger intervals (#5257 - @swiffer)
+- feat: improve filters in Statistics dashboard (#5340 - @DrMichael)
 
 #### Translations
 
