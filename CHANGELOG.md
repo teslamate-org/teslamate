@@ -66,6 +66,7 @@
 - refactor: use frame key when specifying window to improve readability (#5339 - @swiffer)
 - build(deps): bump cowlib from 2.16.0 to 2.16.1 (#5342 - @JakobLichterfeld)
 - build(deps): bump cowboy from 2.14.2 to 2.15.0 (#5342 - @JakobLichterfeld)
+- build(deps): bump plug from 1.19.1 to 1.19.2 (#5342 - @JakobLichterfeld)
 
 #### Dashboards
 
