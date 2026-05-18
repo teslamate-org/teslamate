@@ -274,8 +274,8 @@ defmodule TeslaMate.Log do
         },
         windows: [
           w: [
-            order_by:
-              fragment("? RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING", p.date)
+            order_by: p.date,
+            frame: fragment("RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING")
           ]
         ],
         where: p.drive_id == ^id,
@@ -291,8 +291,8 @@ defmodule TeslaMate.Log do
         },
         windows: [
           w: [
-            order_by:
-              fragment("? RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING", p.date)
+            order_by: p.date,
+            frame: fragment("RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING")
           ]
         ],
         where:
@@ -480,8 +480,8 @@ defmodule TeslaMate.Log do
         },
         windows: [
           w: [
-            order_by:
-              fragment("? RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING", c.date)
+            order_by: c.date,
+            frame: fragment("RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING")
           ]
         ],
         where: [charging_process_id: ^charging_process.id],
