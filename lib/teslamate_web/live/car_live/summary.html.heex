@@ -91,6 +91,14 @@
             <span class="mdi mdi-power-plug"></span>
           </span>
         <% end %>
+        <%= if @summary.service_mode do %>
+          <span
+            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
+            data-tooltip={gettext("Service Mode")}
+          >
+            <span class="mdi mdi-wrench"></span>
+          </span>
+        <% end %>
         <%= unless is_nil(@summary.latitude) or is_nil(@summary.longitude) do %>
           <%= link to: "https://www.google.com/maps?q=#{@summary.latitude},#{@summary.longitude}",
                   target: "_blank",
