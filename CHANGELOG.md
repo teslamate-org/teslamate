@@ -69,6 +69,7 @@
 - build(deps): bump plug from 1.19.1 to 1.19.2 (#5342 - @JakobLichterfeld)
 - build(deps): bump postgrex from 0.22.0 to 0.22.2 and db_connection from 2.9.0 to 2.10.1 (#5342 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5342 - @JakobLichterfeld)
+- build(deps): bump webpack-dev-server from 5.2.3 to 5.2.4 in /website (#5343)
 
 #### Dashboards
 
