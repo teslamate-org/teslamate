@@ -486,6 +486,31 @@ msgstr "Allgemeine Einstellungen"
 msgid "Session fee"
 msgstr "Sessionpreis"
 
+#: lib/teslamate_web/live/geofence_live/form.html.heex:121
+#, elixir-autogen, elixir-format
+msgid "Default charge type"
+msgstr "Standard-Ladetyp"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:129
+#, elixir-autogen, elixir-format
+msgid "Auto-detect"
+msgstr "Automatisch erkennen"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:130
+#, elixir-autogen, elixir-format
+msgid "AC"
+msgstr "AC"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:131
+#, elixir-autogen, elixir-format
+msgid "DC"
+msgstr "DC"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#, elixir-autogen, elixir-format
+msgid "Used as a fallback when the charge type cannot be detected (e.g. during offline charging)."
+msgstr "Wird als Fallback verwendet, wenn der Ladetyp nicht erkannt werden kann (z. B. beim Laden ohne Internetverbindung)."
+
 #: lib/teslamate_web/live/car_live/summary.html.heex:114
 #, elixir-autogen, elixir-format
 msgid "Doors open"

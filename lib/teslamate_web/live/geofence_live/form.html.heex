@@ -115,6 +115,32 @@
     </div>
   </div>
 
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label class: "label" do %>
+        <%= gettext("Default charge type") %>
+      <% end %>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <span class="select">
+            <%= select(f, :charge_type, [
+              {gettext("Auto-detect"), nil},
+              {gettext("AC"), :AC},
+              {gettext("DC"), :DC}
+            ]) %>
+          </span>
+        </div>
+        <p class="help">
+          <%= gettext(
+            "Used as a fallback when the charge type cannot be detected (e.g. during offline charging)."
+          ) %>
+        </p>
+      </div>
+    </div>
+  </div>
+
   <div class="field is-horizontal mt-5">
     <div class="field-label"></div>
     <div class="field-body">

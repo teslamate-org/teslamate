@@ -486,6 +486,31 @@ msgstr "일반설정"
 msgid "Session fee"
 msgstr "세션수수료"
 
+#: lib/teslamate_web/live/geofence_live/form.html.heex:121
+#, elixir-autogen, elixir-format
+msgid "Default charge type"
+msgstr "기본 충전 유형"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:129
+#, elixir-autogen, elixir-format
+msgid "Auto-detect"
+msgstr "자동 감지"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:130
+#, elixir-autogen, elixir-format
+msgid "AC"
+msgstr "AC"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:131
+#, elixir-autogen, elixir-format
+msgid "DC"
+msgstr "DC"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#, elixir-autogen, elixir-format
+msgid "Used as a fallback when the charge type cannot be detected (e.g. during offline charging)."
+msgstr "충전 유형을 감지할 수 없을 때(예: 오프라인 충전 중) 대체값으로 사용됩니다."
+
 #: lib/teslamate_web/live/car_live/summary.html.heex:114
 #, elixir-autogen, elixir-format
 msgid "Doors open"
