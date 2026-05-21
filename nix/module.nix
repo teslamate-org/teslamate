@@ -237,13 +237,17 @@ in
           inherit (cfg.postgres) port;
         };
 
-        initialScript = pkgs.writeText "teslamate-psql-init" ''
-          \set password `echo $DATABASE_PASS`
-          CREATE DATABASE ${cfg.postgres.database};
-          CREATE USER ${cfg.postgres.user} with encrypted password :'password';
-          GRANT ALL PRIVILEGES ON DATABASE ${cfg.postgres.database} TO ${cfg.postgres.user};
-          ALTER USER ${cfg.postgres.user} WITH SUPERUSER;
-        '';
+        ensureDatabases = [ cfg.postgres.database ];
+        ensureUsers = [
+          {
+            name = cfg.postgres.user;
+            ensureDBOwnership = true;
+            ensureClauses = {
+              superuser = true;
+              password = "\${DATABASE_PASS}";
+            };
+          }
+        ];
       };
 
       # Include secrets in postgres as well
