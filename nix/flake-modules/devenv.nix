@@ -41,7 +41,6 @@
           [
             elixir
             elixir-ls
-            node2nix
             nodejs
             prefetch-npm-deps
             # for dashboard scripts
@@ -71,7 +70,7 @@
           export MQTT_PORT="${toString mosquitto_port}"
           export RELEASE_COOKIE="1234567890123456789"
           export TZDATA_DIR="$PWD/tzdata"
-          export MIX_REBAR3="${pkgs.beam26Packages.rebar3}/bin/rebar3";
+          export MIX_REBAR3="${pkgs.beam27Packages.rebar3}/bin/rebar3";
           mix deps.get
         '';
         enterTest = ''

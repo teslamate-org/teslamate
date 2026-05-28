@@ -143,6 +143,12 @@ in
         default = true;
         description = "Whether to set the TeslaMate home dashboard as the default dashboard in Grafana";
       };
+
+      secretKeyFile = lib.mkOption {
+        type = lib.types.path;
+        description = "File with the Grafana secret_key for signing data source settings like secrets and passwords";
+        default = "/run/secrets/grafanaSecretKeyFile.env"; # default as otherwise nix flake check fails as it is accessed with $__file
+      };
     };
 
     mqtt = {
@@ -267,6 +273,7 @@ in
           security = {
             allow_embedding = true;
             disable_gravatar = true;
+            secret_key = "$__file{${cfg.grafana.secretKeyFile}}";
           };
           users = {
             allow_sign_up = false;
