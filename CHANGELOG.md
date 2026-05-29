@@ -72,6 +72,7 @@
 - build(deps): bump webpack-dev-server from 5.2.3 to 5.2.4 in /website (#5343)
 - sec(deps): add ws override to version 8.20.1 in /website (#5344 - @JakobLichterfeld)
 - feat(nix): update NixOS version to 26.05 (#5350 - @JakobLichterfeld)
+- fix(nix): correct URL format for PostgreSQL connection(#5351 - @JakobLichterfeld)
 
 #### Dashboards
 
