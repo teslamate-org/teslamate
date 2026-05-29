@@ -294,7 +294,7 @@ in
             {
               name = "TeslaMate";
               type = "postgres";
-              url = "http://${cfg.postgres.host}:${toString cfg.postgres.port}";
+              url = "${cfg.postgres.host}:${toString cfg.postgres.port}";
               user = cfg.postgres.user;
               access = "proxy";
               basicAuth = false;
