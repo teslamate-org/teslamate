@@ -147,7 +147,7 @@ in
       secretKeyFile = lib.mkOption {
         type = lib.types.path;
         description = "File with the Grafana secret_key for signing data source settings like secrets and passwords";
-        default = "/run/secrets/grafanaSecretKeyFile.env"; # default as otherwise nix flake check fails as it is accessed with $__file
+        default = /dev/null; # default as otherwise nix flake check fails as it is accessed with $__file
       };
     };
 
@@ -260,6 +260,8 @@ in
       };
     })
     (mkIf cfg.grafana.enable {
+      warnings = lib.optional (cfg.grafana.secretKeyFile == /dev/null)
+        "teslamate: grafana.secretKeyFile is not set. Using the insecure default secret_key. Set grafana.secretKeyFile to a file containing a secure random key.";
       services.grafana = {
         enable = true;
         settings = {
@@ -273,7 +275,10 @@ in
           security = {
             allow_embedding = true;
             disable_gravatar = true;
-            secret_key = "$__file{${cfg.grafana.secretKeyFile}}";
+            secret_key =
+              if cfg.grafana.secretKeyFile == /dev/null
+              then "SW2YcwTIb9zpOOhoPsMm" # old default value, see https://github.com/grafana/grafana/blob/0920e8bcc69f555a34462d0d2029a882272a0184/conf/defaults.ini#L334
+              else "$__file{${cfg.grafana.secretKeyFile}}";
           };
           users = {
             allow_sign_up = false;
