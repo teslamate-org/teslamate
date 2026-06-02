@@ -32,7 +32,7 @@ jobs:
   scan-scheduled:
     needs: check_paths
     if: ( github.event_name == 'push' && needs.check_paths.outputs.githubfolder == 'false' ) || github.event_name == 'schedule'
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@8dc09193bb540e09b23da07ad7e30bd33bf87018" # v2.3.8
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@fa4ff678dd5d0a4fa3d628e57af8162873e93cd6" # v2.3.8
     with:
       scan-args: |-
         -r
@@ -41,7 +41,7 @@ jobs:
   scan-pr:
     needs: check_paths
     if: ( github.event_name == 'pull_request' && needs.check_paths.outputs.githubfolder == 'false' ) || ( github.event_name == 'merge_group' && needs.check_paths.outputs.githubfolder == 'false' )
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@8dc09193bb540e09b23da07ad7e30bd33bf87018" # v2.3.8
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@fa4ff678dd5d0a4fa3d628e57af8162873e93cd6" # v2.3.8
     with:
       scan-args: |-
         -r
