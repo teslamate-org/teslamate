@@ -18,7 +18,7 @@
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-+qWEOuBSEngHL4+RSTUSmbFqdAptMG9hDj7AFnsxFZQ="; # if you change the mix deps, you need to update this hash
+        hash = "sha256-FkbKFO+BNppDfuJJ6VZw4sPd3678OgMEPTANMer5hXA="; # if you change the mix deps, you need to update this hash
         # hash = pkgs.lib.fakeHash;
       };
 
@@ -50,8 +50,8 @@
       cldr = pkgs.fetchFromGitHub {
         owner = "elixir-cldr";
         repo = "cldr";
-        rev = "v2.47.2"; # this must match the version in the mix file
-        sha256 = "sha256-XiShurm4i/Qxop1nE4Z/8tMj5953kUqn+4kBrILxO+Y="; # if you change the cldr version in the mix file, you need to update this hash
+        rev = "v2.47.4"; # this must match the version in the mix file
+        sha256 = "sha256-LIQK6pZRAW1T3Ej2XAjnuPo82hPJ2KiMPWYmHWgx008="; # if you change the cldr version in the mix file, you need to update this hash
         # sha256 = pkgs.lib.fakeHash;
       };
 
