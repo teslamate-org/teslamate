@@ -93,6 +93,7 @@
 #### Documentation
 
 - docs: drop private schema before restore (#5190 - @brianmay)
+- docs: remove references to mcu2-upgraded-cars branch (#5371- @brianmay)
 
 ## [3.0.0] - 2026-02-28
 
