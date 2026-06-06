@@ -14,7 +14,7 @@ LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
 
 A TeslaMate integration for calculating cost of charges. This application will automatically update your cost for charge sessions in TeslaMate within a specified geofence (usually home) using data from your smart electricity tariff.
 
-The supported energy providers / tarriffs are either [Octopus Agile](https://octopus.energy/agile/), [Tibber](https://tibber.com/en/), [aWATTar](https://www.awattar.de/) or fixed pricing (manually specified).
+The supported energy providers / tariffs are either [Octopus Agile](https://octopus.energy/agile/), [Tibber](https://tibber.com/en/), [aWATTar](https://www.awattar.de/) or fixed pricing (manually specified).
 
 LINK: [github.com/MattJeanes/TeslaMateAgile](https://github.com/MattJeanes/TeslaMateAgile)
 
