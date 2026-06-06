@@ -74,6 +74,7 @@
 - feat(nix): update NixOS version to 26.05 (#5350 - @JakobLichterfeld)
 - fix(nix): correct URL format for PostgreSQL connection in Grafana 13+ (#5351 - @JakobLichterfeld)
 - fix(nix): make grafana.secretKeyFile optional with old insecure grafana default fallback (#5352 - @JakobLichterfeld)
+- build(deps): bump ex_cldr from 2.47.2 to 2.47.4 (#5361)
 
 #### Dashboards
 
