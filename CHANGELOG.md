@@ -75,6 +75,7 @@
 - fix(nix): correct URL format for PostgreSQL connection in Grafana 13+ (#5351 - @JakobLichterfeld)
 - fix(nix): make grafana.secretKeyFile optional with old insecure grafana default fallback (#5352 - @JakobLichterfeld)
 - build(deps): bump ex_cldr from 2.47.2 to 2.47.4 (#5361)
+- ci(deps): bump the actions-deps group across 4 directories with 11 updates (#5368)
 
 #### Dashboards
 
