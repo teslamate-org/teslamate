@@ -101,6 +101,7 @@
 
 - docs: drop private schema before restore (#5190 - @brianmay)
 - docs: remove references to mcu2-upgraded-cars branch (#5371- @brianmay)
+- docs: update DROP SCHEMA commands to include IF EXISTS to avoid issues with old installations (@5372- @JakobLichterfeld)
 
 ## [3.0.0] - 2026-02-28
 
