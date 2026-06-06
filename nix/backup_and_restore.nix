@@ -21,8 +21,9 @@ let
 
     # Drop existing data and reinitialize
     sudo -u teslamate psql -U ${databaseUser} << .
-      drop schema public cascade;
-      create schema public;
+      DROP SCHEMA IF EXISTS public cascade;
+      DROP SCHEMA IF EXISTS private CASCADE;
+      CREATE SCHEMA public;
       CREATE EXTENSION cube WITH SCHEMA public;
       CREATE EXTENSION earthdistance WITH SCHEMA public;
     .
