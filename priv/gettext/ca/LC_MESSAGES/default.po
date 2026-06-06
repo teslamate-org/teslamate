@@ -371,6 +371,31 @@ msgstr "Paràmetres generals"
 msgid "Session fee"
 msgstr "Quota de sessió"
 
+#: lib/teslamate_web/live/geofence_live/form.html.heex:121
+#, elixir-autogen, elixir-format
+msgid "Default charge type"
+msgstr "Tipus de càrrega predeterminat"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:129
+#, elixir-autogen, elixir-format
+msgid "Auto-detect"
+msgstr "Detecció automàtica"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:130
+#, elixir-autogen, elixir-format
+msgid "AC"
+msgstr "AC"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:131
+#, elixir-autogen, elixir-format
+msgid "DC"
+msgstr "DC"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#, elixir-autogen, elixir-format
+msgid "Used as a fallback when the charge type cannot be detected (e.g. during offline charging)."
+msgstr "S'utilitza com a alternativa quan no es pot detectar el tipus de càrrega (p. ex., durant la càrrega sense connexió)."
+
 #: lib/teslamate_web/live/car_live/summary.html.heex:114
 msgid "Doors open"
 msgstr "Portes obertes"
