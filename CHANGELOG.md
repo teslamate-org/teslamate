@@ -80,6 +80,7 @@
 - build(deps): bump finch from 0.21.0 to 0.22.0 (#5358)
 - build(deps): bump react and react-dom from 19.2.5 to 19.2.6 in /website (#5366)
 - build(deps-dev): bump sass from 1.99.0 to 1.100.0 in /assets (#5360)
+- build(deps): bump @docusaurus/preset-classic from 3.10.0 to 3.10.1 in /website (#5365)
 
 #### Dashboards
 
