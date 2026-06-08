@@ -96,7 +96,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -239,7 +239,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -328,7 +328,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -538,7 +538,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -645,7 +645,7 @@
         "sparkline": false,
         "textMode": "auto"
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -745,7 +745,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -874,7 +874,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -1079,7 +1079,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -1251,7 +1251,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -1355,7 +1355,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -1558,7 +1558,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {

@@ -181,7 +181,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -358,7 +358,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
@@ -563,7 +563,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
           "datasource": {
