@@ -12,6 +12,7 @@ defmodule AuthMock do
 
   def get_tokens(name), do: GenServer.call(name, :get_tokens)
   def save(name, auth), do: GenServer.call(name, {:save, auth})
+  def delete_tokens(name), do: GenServer.call(name, :delete_tokens)
 
   # Callbacks
 
@@ -32,5 +33,10 @@ defmodule AuthMock do
   def handle_call({:save, _auth} = event, _from, %State{pid: pid} = state) do
     send(pid, {AuthMock, event})
     {:reply, :ok, state}
+  end
+
+  def handle_call(:delete_tokens = event, _from, %State{pid: pid} = state) do
+    send(pid, {AuthMock, event})
+    {:reply, :ok, %State{state | tokens: nil}}
   end
 end

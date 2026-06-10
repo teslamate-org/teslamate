@@ -165,6 +165,37 @@ defmodule TeslaMate.ApiTest do
     end
   end
 
+  describe "sign out" do
+    test "deletes the tokens and restarts the vehicles", %{test: name} do
+      with_mocks [auth_mock(self()), vehicle_mock(self())] do
+        :ok = start_api(name, tokens: @valid_tokens)
+
+        assert_receive {TeslaApi.Auth, {:refresh, %TeslaApi.Auth{}}}
+        assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
+        assert true == Api.signed_in?(name)
+
+        assert :ok = Api.sign_out(name)
+
+        assert_receive {AuthMock, :delete_tokens}
+        assert_receive {VehiclesMock, :restart}
+        assert false == Api.signed_in?(name)
+
+        refute_receive _
+      end
+    end
+
+    test "fails if not signed in", %{test: name} do
+      with_mocks [auth_mock(self()), vehicle_mock(self())] do
+        :ok = start_api(name, tokens: nil)
+
+        assert false == Api.signed_in?(name)
+        assert {:error, :not_signed_in} = Api.sign_out(name)
+
+        refute_receive _
+      end
+    end
+  end
+
   describe "refresh" do
     test "refreshes tokens", %{test: name} do
       with_mocks [auth_mock(self()), vehicle_mock(self())] do

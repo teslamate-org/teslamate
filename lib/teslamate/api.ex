@@ -81,10 +81,10 @@ defmodule TeslaMate.Api do
   end
 
   def sign_out(name \\ @name) do
-    true = :ets.delete(name, :auth)
-    :ok
-  rescue
-    _ in ArgumentError -> {:error, :not_signed_in}
+    case fetch_auth(name) do
+      {:error, :not_signed_in} -> {:error, :not_signed_in}
+      {:ok, %Auth{}} -> GenServer.call(name, :sign_out, @timeout)
+    end
   end
 
   # Callbacks
@@ -171,6 +171,14 @@ defmodule TeslaMate.Api do
       {:error, %TeslaApi.Error{} = e} ->
         {:reply, {:error, e}, state}
     end
+  end
+
+  def handle_call(:sign_out, _from, %State{name: name} = state) do
+    :ets.delete(name, :auth)
+    if is_reference(state.refresh_timer), do: Process.cancel_timer(state.refresh_timer)
+    :ok = call(state.deps.auth, :delete_tokens)
+    :ok = call(state.deps.vehicles, :restart)
+    {:reply, :ok, %State{state | refresh_timer: nil}}
   end
 
   @impl true
