@@ -1507,7 +1507,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           end
 
         if allow_vehicle_data? do
-          call(deps.api, :get_vehicle_with_state, [car.eid])
+          fetch_with_reachable_assumption(car.eid, deps)
         else
           call(deps.api, :get_vehicle, [car.eid])
         end

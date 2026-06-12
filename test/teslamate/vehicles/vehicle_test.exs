@@ -241,6 +241,32 @@ defmodule TeslaMate.Vehicles.VehicleTest do
     end
 
     @tag :capture_log
+    test "falls back to vehicle state when vehicle data is unavailable while streaming", %{
+      test: name
+    } do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events = [
+        {:ok, online_event(now_ts)},
+        {:error, :vehicle_unavailable},
+        {:get_vehicle, {:ok, %TeslaApi.Vehicle{state: "asleep"}}}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {ApiMock, {:stream, 1000, _}}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      assert_receive {:start_state, ^car, :asleep, []}
+      assert_receive {:"$websockex_cast", :disconnect}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
+
+      refute_receive _
+    end
+
+    @tag :capture_log
     test "handles timeout errors", %{test: name} do
       now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
