@@ -32,12 +32,12 @@ defmodule ApiMock do
   @impl true
   def handle_call({action, _id}, _from, %State{events: [event | []]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
-    {:reply, exec(event), state}
+    {:reply, exec(event, action), state}
   end
 
   def handle_call({action, _id}, _from, %State{events: [event | events]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
-    {:reply, exec(event), %State{state | events: events}}
+    {:reply, exec(event, action), %State{state | events: events}}
   end
 
   def handle_call({:sign_in, _tokens} = event, _from, %State{pid: pid} = state) do
@@ -50,6 +50,17 @@ defmodule ApiMock do
     {:reply, {:ok, pid}, state}
   end
 
-  defp exec(event) when is_function(event), do: event.()
-  defp exec(event), do: event
+  # Events tagged with :get_vehicle or :get_vehicle_with_state may only be
+  # consumed by that API call, allowing tests to pin which endpoint was used.
+  defp exec({expected_action, event}, action)
+       when expected_action in [:get_vehicle, :get_vehicle_with_state] do
+    if expected_action != action do
+      raise "expected #{inspect(expected_action)} to be called, but got #{inspect(action)}"
+    end
+
+    exec(event, action)
+  end
+
+  defp exec(event, _action) when is_function(event), do: event.()
+  defp exec(event, _action), do: event
 end

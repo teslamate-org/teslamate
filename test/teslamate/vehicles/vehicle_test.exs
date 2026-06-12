@@ -249,7 +249,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       events = [
         {:ok, online_event(now_ts)},
         {:error, :vehicle_unavailable},
-        {:ok, %TeslaApi.Vehicle{state: "asleep"}}
+        {:get_vehicle, {:ok, %TeslaApi.Vehicle{state: "asleep"}}}
       ]
 
       :ok = start_vehicle(name, events)
