@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- fix: restore vehicle_unavailable fallback for streaming fetches to prevent unwanted vehicle online state (#5378 - @ciyahu)
+
 #### Build, CI, internal
 
 #### Dashboards
