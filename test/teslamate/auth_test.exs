@@ -36,5 +36,19 @@ defmodule TeslaMate.AuthTest do
       assert %{refresh: ["can't be blank"], access: ["can't be blank"]} ==
                errors_on(changeset)
     end
+
+    test "delete_tokens/0 removes the stored tokens" do
+      assert :ok = Auth.save(@valid_attrs)
+      assert Auth.get_tokens()
+
+      assert :ok = Auth.delete_tokens()
+      assert Auth.get_tokens() == nil
+    end
+
+    test "delete_tokens/0 is a no-op when there are no tokens" do
+      assert Auth.get_tokens() == nil
+      assert :ok = Auth.delete_tokens()
+      assert Auth.get_tokens() == nil
+    end
   end
 end

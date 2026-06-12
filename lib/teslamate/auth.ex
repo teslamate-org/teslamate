@@ -57,6 +57,11 @@ defmodule TeslaMate.Auth do
     end
   end
 
+  def delete_tokens do
+    Repo.delete_all(Tokens)
+    :ok
+  end
+
   defp create_tokens(attrs) do
     %Tokens{}
     |> Tokens.changeset(attrs)
