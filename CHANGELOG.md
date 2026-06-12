@@ -7,6 +7,7 @@
 ### Improvements and bug fixes
 
 - fix: restore vehicle_unavailable fallback for streaming fetches to prevent unwanted vehicle online state (#5378 - @ciyahu)
+- fix: properly clean up state and delete tokens on sign out (#5379 - @jlestel)
 
 #### Build, CI, internal
 
