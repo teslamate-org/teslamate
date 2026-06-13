@@ -1,4 +1,4 @@
-# Ensure selecting a tag that is available for arm/v7, arm64, and amd64
+# Ensure selecting a tag that is available for arm64 and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
 FROM grafana/grafana:13.0.1-security-01
 
