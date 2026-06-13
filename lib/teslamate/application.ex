@@ -4,7 +4,7 @@ defmodule TeslaMate.Application do
   require Logger
 
   def start(_type, _args) do
-    Logger.info("System Info: #{system_info()}")
+    Logger.info("System Info: Erlang/OTP #{otp_release()} (#{emu_flavor()})")
     Logger.info("Version: #{Application.spec(:teslamate, :vsn) || "???"}")
 
     # Disable log entries
@@ -49,13 +49,6 @@ defmodule TeslaMate.Application do
           {TeslaMate.Repair, limit: 250},
           {TeslaMate.Import, directory: import_directory}
         ]
-    end
-  end
-
-  defp system_info do
-    case otp_release() do
-      vsn when vsn <= 23 -> "Erlang/OTP #{vsn}"
-      vsn -> "Erlang/OTP #{vsn} (#{emu_flavor()})"
     end
   end
 
