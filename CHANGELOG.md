@@ -1,5 +1,19 @@
 # Changelog
 
+## [unreleased]
+
+### New features
+
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [4.0.0] - 2026-06-13
 
 **This is a breaking change release:**
@@ -2864,6 +2878,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.0.0...HEAD
 [4.0.0]: https://github.com/teslamate-org/teslamate/compare/v3.1.0...v4.0.0
 [3.1.0]: https://github.com/teslamate-org/teslamate/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/teslamate-org/teslamate/compare/v2.2.0...v3.0.0
