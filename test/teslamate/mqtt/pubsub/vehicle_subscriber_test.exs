@@ -66,7 +66,10 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       wheel_type: "AeroTurbine19",
       frunk_open: true,
       trunk_open: false,
-      elevation: 100
+      elevation: 100,
+      sun_roof_state: "open",
+      sun_roof_installed: 1,
+      sun_roof_percent_open: 80
     }
 
     send(pid, summary)
