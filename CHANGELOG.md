@@ -11,7 +11,8 @@
 
 #### Build, CI, internal
 
-- build: use Elixir 1.19.5 OTP 28
+- build: use Elixir 1.19.5 OTP 28 (#5391 - @NirKli and @JakobLichterfeld)
+- build: drop ARMv7 support as announced in Changelog of v3.1.0 (#5391 - @JakobLichterfeld)
 
 #### Dashboards
 
