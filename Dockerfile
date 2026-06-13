@@ -3,7 +3,7 @@ FROM elixir:1.19.5-otp-28 AS builder
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apt-get update \
-    && apt-get install -y ca-certificates curl gnupg zstd brotli \
+    && apt-get install -y ca-certificates curl gnupg brotli \
     && mkdir -p /etc/apt/keyrings \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
      | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
