@@ -7,8 +7,8 @@
     , ...
     }:
     let
-      beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_28;
-      elixir = beamPackages.elixir_1_19;
+      elixir = pkgs.beam.packages.erlang_27.elixir_1_19;
+      beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_27;
 
       src = ../..;
       version = builtins.readFile "${src}/VERSION";
