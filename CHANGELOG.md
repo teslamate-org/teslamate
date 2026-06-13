@@ -1,6 +1,13 @@
 # Changelog
 
-## [unreleased]
+## [4.0.0] - 2026-06-13
+
+**This is a breaking change release:**
+
+This release resolves the issue of 403 Forbidden errors with Owner API tokens. To accomplish this, we had to drop ARMv7 support, a plan that had been in place for a long time, as it held us back from recent updates. The need for this change in such a short time span was unforeseeable.
+To make your TeslaMate experience even better, we have also made more than 4 other improvements.
+
+Enjoy!
 
 ### New features
 
@@ -2857,7 +2864,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v3.1.0...HEAD
+[4.0.0]: https://github.com/teslamate-org/teslamate/compare/v3.1.0...v4.0.0
 [3.1.0]: https://github.com/teslamate-org/teslamate/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/teslamate-org/teslamate/compare/v2.2.0...v3.0.0
 [2.2.0]: https://github.com/teslamate-org/teslamate/compare/v2.1.1...v2.2.0
