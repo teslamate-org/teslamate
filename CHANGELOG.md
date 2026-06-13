@@ -11,6 +11,8 @@
 
 #### Build, CI, internal
 
+- build: use Elixir 1.19.5 OTP 28
+
 #### Dashboards
 
 #### Translations
