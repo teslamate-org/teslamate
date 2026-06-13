@@ -8,7 +8,7 @@ inputs:
   otp-version:
     description: "OTP version"
     required: false
-    default: "26"
+    default: "28"
   cache-name-deps:
     description: "Cache name for dependencies"
     required: true

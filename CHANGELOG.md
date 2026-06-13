@@ -6,10 +6,36 @@
 
 ### Improvements and bug fixes
 
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
+## [4.0.0] - 2026-06-13
+
+**This is a breaking change release:**
+
+This release resolves the issue of 403 Forbidden errors with Owner API tokens. To accomplish this, we had to drop ARMv7 support, a plan that had been in place for a long time, as it held us back from recent updates. The need for this change in such a short time span was unforeseeable.
+To make your TeslaMate experience even better, we have also made more than 4 other improvements.
+
+Enjoy!
+
+### New features
+
+### Improvements and bug fixes
+
 - fix: restore vehicle_unavailable fallback for streaming fetches to prevent unwanted vehicle online state (#5378 - @ciyahu)
 - fix: properly clean up state and delete tokens on sign out (#5379 - @jlestel)
 
 #### Build, CI, internal
+
+- build: use Elixir 1.19.5 OTP 28 (#5391 - @NirKli and @JakobLichterfeld)
+- build: drop ARMv7 support as announced in Changelog of v3.1.0 (#5391 - @JakobLichterfeld)
+- build(deps): update flake.lock (#5386)
+- build(deps): bump shell-quote from 1.8.3 to 1.8.4 in /website (#5381)
 
 #### Dashboards
 
@@ -2852,7 +2878,8 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v3.1.0...HEAD
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/teslamate-org/teslamate/compare/v3.1.0...v4.0.0
 [3.1.0]: https://github.com/teslamate-org/teslamate/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/teslamate-org/teslamate/compare/v2.2.0...v3.0.0
 [2.2.0]: https://github.com/teslamate-org/teslamate/compare/v2.1.1...v2.2.0
