@@ -15,6 +15,14 @@ defmodule TeslaMate.HTTP do
       ],
       "https://nominatim.openstreetmap.org" => [size: 3] ++ nominatim_proxy,
       "https://api.github.com" => [size: 1],
+      System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com") => [
+        protocols: [:http1, :http2],
+        conn_opts: [
+          transport_opts: [
+            versions: [:"tlsv1.3"]
+          ]
+        ]
+      ],
       :default => [size: System.get_env("HTTP_POOL_SIZE", "5") |> String.to_integer()]
     }
   end
