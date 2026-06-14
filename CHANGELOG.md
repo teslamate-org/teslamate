@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- fix: enable HTTP/2 and set TLS to 1.3 for TESLA_AUTH_HOST (#5406 - @kenc420 and @longzheng)
+
 #### Build, CI, internal
 
 #### Dashboards
