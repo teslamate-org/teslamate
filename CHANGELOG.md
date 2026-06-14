@@ -14,6 +14,7 @@
 - ci: remove now obsolete ARMv7 buildcache (#5397 - @swiffer)
 - build: remove now unused zstd compression tool to reduce docker image size (#5397 - @swiffer)
 - build(deps): bump floki from 0.38.1 to 0.38.3 (#5359)
+- ci(osv-scanner): don't fail on main pushes and merge queue (#5410 - @JakobLichterfeld)
 
 #### Dashboards
 
