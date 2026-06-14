@@ -14,6 +14,7 @@ defmodule TeslaMate.HTTP do
         size: System.get_env("TESLA_API_POOL_SIZE", "10") |> String.to_integer()
       ],
       System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com") => [
+        protocols: [:http2],
         conn_opts: [
           transport_opts: [
             versions: [:"tlsv1.3"]
