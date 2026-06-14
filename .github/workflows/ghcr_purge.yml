@@ -56,7 +56,7 @@ jobs:
         with:
           packages: "teslamate"
           token: ${{ secrets.GITHUB_TOKEN }}
-          delete-tags: "buildcache-arm-${{ steps.normalize_version.outputs.normalized_version }},buildcache-arm64-${{ steps.normalize_version.outputs.normalized_version }},buildcache-amd64-${{ steps.normalize_version.outputs.normalized_version }}"
+          delete-tags: "buildcache-arm64-${{ steps.normalize_version.outputs.normalized_version }},buildcache-amd64-${{ steps.normalize_version.outputs.normalized_version }}"
 
       - uses: dataaxiom/ghcr-cleanup-action@f092b48ba3b604b2a83690dc4b2bbb3392e1045f # v1.2.1
         name: Delete untagged images from ghcr.io
