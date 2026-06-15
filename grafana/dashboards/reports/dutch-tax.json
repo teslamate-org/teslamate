@@ -308,7 +308,7 @@
           }
         ]
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {

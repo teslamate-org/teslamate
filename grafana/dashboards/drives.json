@@ -129,7 +129,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -228,7 +228,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -346,7 +346,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -464,7 +464,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -1254,7 +1254,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
@@ -1318,7 +1318,7 @@
         "content": "From here you can check if you have \nincomplete data of **Drives** (drives without ending date)\nIf so, you may follow the official \nguide by <a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>",
         "mode": "markdown"
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.0.1+security-01",
       "type": "text"
     },
     {
@@ -1367,7 +1367,7 @@
         "enablePagination": true,
         "showHeader": true
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": {
