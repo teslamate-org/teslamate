@@ -1035,11 +1035,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("Start of drive initiated by: #{inspect(vehicle.drive_state)}")
 
         {drive, data} = start_drive(create_position(vehicle, data), data)
+        interval = if streaming?(data), do: default_interval(), else: driving_interval()
 
         {:next_state, {:driving, :available, drive}, data,
          [
            broadcast_summary(),
-           schedule_fetch(driving_interval(), data)
+           schedule_fetch(interval, data)
          ]}
 
       %V{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
