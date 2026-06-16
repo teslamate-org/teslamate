@@ -9,6 +9,16 @@
 [![docker image size](https://img.shields.io/docker/image-size/teslamate/teslamate/latest)](https://hub.docker.com/r/teslamate/teslamate)
 [![docker pulls](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)](https://hub.docker.com/r/teslamate/teslamate)
 
+<!-- Keep these links, translations synced daily. -->
+[Deutsch](https://zdoc.app/de/teslamate-org/teslamate) |
+[Español](https://zdoc.app/es/teslamate-org/teslamate) |
+[français](https://zdoc.app/fr/teslamate-org/teslamate) |
+[日本語](https://zdoc.app/ja/teslamate-org/teslamate) |
+[한국어](https://zdoc.app/ko/teslamate-org/teslamate) |
+[Português](https://zdoc.app/pt/teslamate-org/teslamate) |
+[Русский](https://zdoc.app/ru/teslamate-org/teslamate) |
+[中文](https://zdoc.app/zh/teslamate-org/teslamate)
+
 A powerful, self-hosted data logger for your Tesla.
 
 - Written in **[Elixir](https://elixir-lang.org/)**
