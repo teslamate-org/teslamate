@@ -437,6 +437,57 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert [settings] = Settings.get_car_settings()
       assert settings.use_streaming_api == true
+
+      ## Visualization
+
+      assert ["checked"] ==
+               render_change(view, :change, %{
+                 "car_#{car.id}" => %{
+                   "show_in_dashboards" => "true",
+                   "display_priority" => "2"
+                 }
+               })
+               |> Floki.parse_document!()
+               |> Floki.find("#car_#{car.id}_show_in_dashboards")
+               |> Floki.attribute("checked")
+
+      assert Log.get_car!(car.id).display_priority == 2
+
+      html =
+        render_change(view, :change, %{
+          "car_#{car.id}" => %{"show_in_dashboards" => "false"}
+        })
+        |> Floki.parse_document!()
+
+      assert [] =
+               html
+               |> Floki.find("#car_#{car.id}_show_in_dashboards")
+               |> Floki.attribute("checked")
+
+      assert ["disabled"] =
+               html
+               |> Floki.find("#car_#{car.id}_display_priority")
+               |> Floki.attribute("disabled")
+
+      assert Log.get_car!(car.id).display_priority == 0
+
+      html =
+        render_change(view, :change, %{
+          "car_#{car.id}" => %{"show_in_dashboards" => "true"}
+        })
+        |> Floki.parse_document!()
+
+      assert ["checked"] =
+               html
+               |> Floki.find("#car_#{car.id}_show_in_dashboards")
+               |> Floki.attribute("checked")
+
+      assert [] =
+               html
+               |> Floki.find("#car_#{car.id}_display_priority")
+               |> Floki.attribute("disabled")
+
+      assert Log.get_car!(car.id).display_priority == 1
     end
 
     test "changes between cars", %{conn: conn} do
