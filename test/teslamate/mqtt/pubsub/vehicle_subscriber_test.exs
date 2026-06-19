@@ -72,7 +72,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       trunk_open: false,
       elevation: 100,
       sun_roof_state: "open",
-      sun_roof_installed: 1,
+      sun_roof_installed: true,
       sun_roof_percent_open: 80
     }
 

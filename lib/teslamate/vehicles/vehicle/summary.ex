@@ -1,7 +1,7 @@
 defmodule TeslaMate.Vehicles.Vehicle.Summary do
   import TeslaMate.Convert, only: [miles_to_km: 2, mph_to_kmh: 1]
 
-  alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleState}
+  alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleConfig, VehicleState}
   alias TeslaApi.Vehicle
   alias TeslaMate.Log.Car
 
@@ -157,7 +157,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr]),
       center_display_state: get_in_struct(vehicle, [:vehicle_state, :center_display_state]),
       sun_roof_state: get_in_struct(vehicle, [:vehicle_state, :sun_roof_state]),
-      sun_roof_installed: get_in_struct(vehicle, [:vehicle_config, :sun_roof_installed]),
+      sun_roof_installed: sun_roof_installed(vehicle),
       sun_roof_percent_open: get_in_struct(vehicle, [:vehicle_state, :sun_roof_percent_open])
     }
   end
@@ -210,6 +210,12 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
        do: rp > 0
 
   defp passenger_rear_window_open(_vehicle), do: nil
+
+  defp sun_roof_installed(%Vehicle{vehicle_config: %VehicleConfig{sun_roof_installed: installed}})
+       when is_number(installed),
+       do: installed > 0
+
+  defp sun_roof_installed(_vehicle), do: nil
 
   defp doors_open(%Vehicle{vehicle_state: vehicle_state}) do
     case vehicle_state do
