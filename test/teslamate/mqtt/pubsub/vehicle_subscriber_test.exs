@@ -11,8 +11,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     {:ok, _pid} =
       start_supervised(
-        {MqttPublisherMock,
-         name: publisher_name, pid: self(), responses: publisher_responses}
+        {MqttPublisherMock, name: publisher_name, pid: self(), responses: publisher_responses}
       )
 
     {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
