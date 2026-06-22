@@ -43,6 +43,27 @@ export const LocalTime = {
   },
 };
 
+export const LocalDateTime = {
+  render() {
+    const dateStr = this.el.dataset.date;
+    const date = toLocalDate(dateStr, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const time = toLocalTime(dateStr);
+    this.el.innerText = `${date}, ${time}`;
+  },
+
+  mounted() {
+    this.render();
+  },
+
+  updated() {
+    this.render();
+  },
+};
+
 export const LocalTimeRange = {
   exec() {
     const date = toLocalDate(this.el.dataset.startDate, {
