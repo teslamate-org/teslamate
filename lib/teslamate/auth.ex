@@ -4,7 +4,6 @@ defmodule TeslaMate.Auth do
   """
 
   import Ecto.Query, warn: false
-  require Logger
 
   alias TeslaMate.Repo
 
