@@ -1,8 +1,6 @@
 defmodule TeslaMate.Mqtt.Publisher do
   use GenServer
 
-  require Logger
-
   @name __MODULE__
   @timeout :timer.seconds(10)
 
