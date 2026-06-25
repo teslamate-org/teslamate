@@ -14,8 +14,8 @@
 - build(deps): bump launch-editor from 2.13.2 to 2.14.1 in /website (#5426)
 - build(deps): update flake.lock (#5427)
 - build(deps): bump webpack-dev-server from 5.2.4 to 5.2.5 in /website (#5445)
-- chore: add .codegraph to .gitignore (- @JakobLichterfeld)
-- ci: speed up check_linting by running treefmt in a lean app (- @JakobLichterfeld)
+- chore: add .codegraph to .gitignore (#5440- @JakobLichterfeld)
+- ci: speed up check_linting by running treefmt in a lean app (#5440- @JakobLichterfeld)
 
 #### Dashboards
 
