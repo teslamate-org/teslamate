@@ -184,6 +184,9 @@ in
         after = [
           "network.target"
           "postgresql.service"
+          # Database, role and password are provisioned here (no-op when using
+          # an external database server, where the unit is absent).
+          "postgresql-setup.service"
           "mosquitto.service"
         ];
         wantedBy = mkIf cfg.autoStart [ "multi-user.target" ];
@@ -212,6 +215,13 @@ in
             HTTP_BINDING_ADDRESS = mkIf (cfg.listenAddress != null) cfg.listenAddress;
             DISABLE_MQTT = mkIf (!cfg.mqtt.enable) "true";
           }
+          # When PostgreSQL runs on the same host, connect via the local socket
+          # using peer authentication instead of TCP with a password. This only
+          # works for the default role name, since the socket branch in
+          # runtime.exs authenticates as the systemd unit's OS user (teslamate).
+          (mkIf (cfg.postgres.enable_server && cfg.postgres.user == "teslamate") {
+            DATABASE_SOCKET_DIR = "/run/postgresql";
+          })
           (mkIf cfg.mqtt.enable {
             MQTT_HOST = cfg.mqtt.host;
             MQTT_PORT = mkIf (cfg.mqtt.port != null) (toString cfg.mqtt.port);
@@ -243,20 +253,33 @@ in
           inherit (cfg.postgres) port;
         };
 
-        initialScript = pkgs.writeText "teslamate-psql-init" ''
-          \set password `echo $DATABASE_PASS`
-          CREATE DATABASE ${cfg.postgres.database};
-          CREATE USER ${cfg.postgres.user} with encrypted password :'password';
-          GRANT ALL PRIVILEGES ON DATABASE ${cfg.postgres.database} TO ${cfg.postgres.user};
-          ALTER USER ${cfg.postgres.user} WITH SUPERUSER;
-        '';
+        ensureDatabases = [ cfg.postgres.database ];
+        ensureUsers = [
+          {
+            name = cfg.postgres.user;
+            ensureDBOwnership = cfg.postgres.user == cfg.postgres.database;
+            # TeslaMate's migrations create the cube and earthdistance
+            # extensions (see priv/repo/migrations/20190925152807_create_geo_extensions.exs).
+            # These are not trusted extensions, so CREATE EXTENSION requires a
+            # database superuser.
+            ensureClauses.superuser = true;
+          }
+        ];
       };
 
-      # Include secrets in postgres as well
-      systemd.services.postgresql = {
-        serviceConfig = {
-          EnvironmentFile = cfg.secretsFile;
-        };
+      # ensureUsers creates the role without a password. Apply it out-of-band
+      # from DATABASE_PASS so the secret never lands in the world-readable Nix
+      # store (ensureUsers cannot set passwords). It is still required for
+      # Grafana and for the TCP fallback (remote DB or a non-default role name),
+      # even though TeslaMate itself connects via the socket with peer auth.
+      #
+      # ensureDatabases/ensureUsers run inside postgresql-setup.service, so we
+      # hook there (after the role exists) and scope the secret to that unit.
+      systemd.services.postgresql-setup = {
+        serviceConfig.EnvironmentFile = cfg.secretsFile;
+        postStart = ''
+          psql -tAc "ALTER USER \"${cfg.postgres.user}\" WITH ENCRYPTED PASSWORD '$DATABASE_PASS'"
+        '';
       };
     })
     (mkIf cfg.grafana.enable {
