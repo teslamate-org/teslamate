@@ -277,8 +277,15 @@ in
       # hook there (after the role exists) and scope the secret to that unit.
       systemd.services.postgresql-setup = {
         serviceConfig.EnvironmentFile = cfg.secretsFile;
+        # Read the password from the environment with psql's \getenv (so it is
+        # never placed on the command line or shell-expanded) and quote it with
+        # :'password', which produces a correctly escaped SQL string literal.
+        # This is safe for any password, including ones containing single
+        # quotes. Requires PostgreSQL >= 14 for \getenv.
         postStart = ''
-          psql -tAc "ALTER USER \"${cfg.postgres.user}\" WITH ENCRYPTED PASSWORD '$DATABASE_PASS'"
+          psql -v ON_ERROR_STOP=1 -d postgres \
+            -c '\getenv password DATABASE_PASS' \
+            -c "ALTER USER \"${cfg.postgres.user}\" WITH ENCRYPTED PASSWORD :'password'"
         '';
       };
     })
