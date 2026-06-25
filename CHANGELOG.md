@@ -8,6 +8,8 @@
 
 #### Build, CI, internal
 
+- build(nix): update mixFodDeps hash in nix builds ([954e8739](https://github.com/teslamate-org/teslamate/commit/954e8739326e092f7cddf7308dd4b704cc008f62) - @JakobLichterfeld)
+
 #### Dashboards
 
 #### Translations
@@ -15,6 +17,7 @@
 #### Documentation
 
 - docs: update security policy to emphasize network-level protection ([27172cba](https://github.com/teslamate-org/teslamate/commit/27172cba54782f9a8eb7fdd9ea3a481dfd9d8f2b) - @JakobLichterfeld)
+- docs: fix typo in DATABASE_SSL_SNI description (#5346 - @dashitongzhi)
 
 ## [4.0.1] - 2026-06-14
 
