@@ -27,6 +27,7 @@
 - fix(geofences): increase cost precision (#5508 - @magrathean-uk)
 - fix: reconnect stream when a drive resumes after mid-drive offline phase to avoid missing elevation (#5535 - @JakobLichterfeld)
 - refactor(nix,postgres): provision database declaratively, connect via socket (#5337 - @JakobLichterfeld)
+- fix(nix,maintenance): read RELEASE_COOKIE without sourcing the env file (#5337 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
