@@ -63,10 +63,10 @@ Install [Treefmt](https://github.com/numtide/treefmt/releases) or use nix develo
 treefmt
 ```
 
-or with nix, when not using direnv:
+or with nix flake app, when not using direnv:
 
 ```bash
-nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt
+nix run .#lint
 ```
 
 You can even use a VS Code extension like [treefmt](https://marketplace.visualstudio.com/items?itemName=ibecker.treefmt-vscode) to format the files on save.
