@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- fix(webview): show charging finish time in browser local time (#5436 - @Ashok28)
+
 #### Build, CI, internal
 
 - build(nix): update mixFodDeps hash in nix builds ([954e8739](https://github.com/teslamate-org/teslamate/commit/954e8739326e092f7cddf7308dd4b704cc008f62) - @JakobLichterfeld)
