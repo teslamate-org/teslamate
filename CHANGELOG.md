@@ -11,6 +11,7 @@
 #### Build, CI, internal
 
 - build(nix): update mixFodDeps hash in nix builds ([954e8739](https://github.com/teslamate-org/teslamate/commit/954e8739326e092f7cddf7308dd4b704cc008f62) - @JakobLichterfeld)
+- build(deps): bump launch-editor from 2.13.2 to 2.14.1 in /website (#5426)
 
 #### Dashboards
 
