@@ -64,5 +64,31 @@
 
         programs.nixpkgs-fmt.enable = true;
       };
+
+      # Lean treefmt entrypoint for CI: `nix run .#lint -- --ci`
+      # (locally just `nix run .#lint`; any extra args are passed to treefmt).
+      #
+      # The default devenv shell pulls in the whole development closure
+      # (elixir-ls, postgres, nodejs, mosquitto, osv-scanner, …), which is
+      # several GB and does not fit the cache GC budget, so CI rebuilds it on
+      # every run. Linting only needs the treefmt wrapper (which already bundles
+      # all formatters via absolute store paths) plus Elixir, which is the same
+      # one as the release (see package.nix), so the formatter runs against the
+      # project's toolchain. mix-format needs its plugin
+      # (Phoenix.LiveView.HTMLFormatter) and that plugin's deps compiled, so
+      # MIX_REBAR3 is pinned (a clean CI MIX_HOME has no rebar3), mirroring the
+      # devenv shell. mix deps.get fetches the formatter plugin deps first.
+      packages.lint = pkgs.writeShellApplication {
+        name = "lint";
+        runtimeInputs = [
+          config.teslamate.elixir
+          config.treefmt.build.wrapper
+        ];
+        runtimeEnv.MIX_REBAR3 = "${config.teslamate.rebar3}/bin/rebar3";
+        text = ''
+          mix deps.get
+          exec treefmt "$@"
+        '';
+      };
     };
 }

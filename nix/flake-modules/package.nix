@@ -9,6 +9,7 @@
     let
       beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_28;
       elixir = beamPackages.elixir_1_19;
+      rebar3 = beamPackages.rebar3;
 
       src = ../..;
       version = builtins.readFile "${src}/VERSION";
@@ -96,11 +97,15 @@
           type = lib.types.package;
           readOnly = true;
         };
+        teslamate.rebar3 = lib.mkOption {
+          type = lib.types.package;
+          readOnly = true;
+        };
       };
 
       config = {
         teslamate = {
-          inherit cldr elixir;
+          inherit cldr elixir rebar3;
         };
 
         packages = {

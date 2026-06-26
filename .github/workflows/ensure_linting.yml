@@ -24,8 +24,10 @@ jobs:
           restore-prefixes-first-match: nix-${{ runner.os }}-
           # collect garbage until Nix store size (in bytes) is at most this number
           # before trying to save a new cache
-          # 1G = 1073741824
-          gc-max-store-size-linux: 1073741824
+          # 1G = 1073741824, 2G = 2147483648
+          # The lean lint shell (.#lint) closure is well below this, so the
+          # whole closure gets cached instead of being GC'd away every run.
+          gc-max-store-size-linux: 2147483648
           # do purge caches
           purge: true
           # purge all versions of the cache
@@ -37,5 +39,10 @@ jobs:
           purge-primary-key: never
 
       - name: Run treefmt in CI mode
-        run: nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt --ci
+        # Use the lean `.#lint` app instead of the full devenv shell: it only
+        # provides the treefmt wrapper + Elixir, so CI does not have to realize
+        # (and fail to cache) the multi-GB development closure on every run.
+        # It runs `mix deps.get` (so mix-format finds its plugin deps) and then
+        # treefmt, passing through `--ci`.
+        run: nix run .#lint -- --ci
         # or use: https://github.com/cachix/git-hooks.nix?tab=readme-ov-file

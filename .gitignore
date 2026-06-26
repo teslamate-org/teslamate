@@ -71,3 +71,6 @@ config/*.env
 
 # Used during tests
 /tmp/
+
+# Codegraph
+.codegraph/

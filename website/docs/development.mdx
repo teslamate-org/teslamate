@@ -63,10 +63,10 @@ Install [Treefmt](https://github.com/numtide/treefmt/releases) or use nix develo
 treefmt
 ```
 
-or with nix, when not using direnv:
+or with nix flake app, when not using direnv:
 
 ```bash
-nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt
+nix run .#lint
 ```
 
 You can even use a VS Code extension like [treefmt](https://marketplace.visualstudio.com/items?itemName=ibecker.treefmt-vscode) to format the files on save.
@@ -233,14 +233,14 @@ When reviewing a pull request that updates dependencies, it's crucial to verify 
 
 - `nix flake check ...`: Verifies the flake's integrity across different systems.
 - `nix build ...`: Ensures the project builds successfully with the new dependencies.
-- `nix develop ... --command treefmt`: Checks if the code formatting still runs.
+- `nix run .#lint`: Checks if the code formatting still runs.
 - `devenv up`: Confirms that the development environment starts up as expected.
 
 ```bash
 # Run these commands to ensure everything works as expected
 nix flake check --override-input devenv-root "file+file://"<(printf %s "$PWD") . --all-systems
 nix build --override-input devenv-root "file+file://"<(printf %s "$PWD")
-nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") . --command treefmt
+nix run .#lint
 devenv up
 ```
 
