@@ -16,6 +16,7 @@
 - build(deps): bump webpack-dev-server from 5.2.4 to 5.2.5 in /website (#5445)
 - chore: add .codegraph to .gitignore (#5440- @JakobLichterfeld)
 - ci: speed up check_linting by running treefmt in a lean app (#5440- @JakobLichterfeld)
+- sec(deps): add ws override to version 8.21.0 in /website (#5446 - @JakobLichterfeld)
 
 #### Dashboards
 
