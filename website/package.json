@@ -20,7 +20,8 @@
     "serialize-javascript": "^7.0.5",
     "webpackbar": "^7.0.0",
     "uuid": "^14.0.0",
-    "ws": "^8.21.0"
+    "ws": "^8.21.0",
+    "joi": "^17.13.4"
   },
   "browserslist": {
     "production": [
