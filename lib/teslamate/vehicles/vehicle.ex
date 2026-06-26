@@ -340,6 +340,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
              vehicle_state: %VehicleState{},
              vehicle_config: %VehicleConfig{}
            }, %Data{}} ->
+            log_service_mode_transition(data.last_response, vehicle, data.car.id)
+
             {:keep_state, %Data{data | last_response: vehicle},
              [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
 
@@ -1669,6 +1671,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
     suspend? = diff_seconds(DateTime.utc_now(), data.last_used) / 60 >= suspend_after_idle_min
     service_mode? = service_mode?(vehicle)
 
+    if suspend? and not service_mode? and unlocked?(vehicle) and
+         not car.settings.req_not_unlocked do
+      Logger.debug("Unlocked ...", car_id: car.id)
+    end
+
     case can_fall_asleep(vehicle, data) do
       {:error, :sentry_mode} ->
         {:keep_state, %Data{data | last_used: DateTime.utc_now()},
@@ -1795,6 +1802,22 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp service_mode?(%Vehicle{vehicle_state: %VehicleState{service_mode: true}}), do: true
   defp service_mode?(_vehicle), do: false
+
+  defp unlocked?(%Vehicle{vehicle_state: %VehicleState{locked: false}}), do: true
+  defp unlocked?(_vehicle), do: false
+
+  defp log_service_mode_transition(prev, current, car_id) do
+    case {service_mode?(prev), service_mode?(current)} do
+      {false, true} ->
+        Logger.info("Car is in service mode, data collection suspended", car_id: car_id)
+
+      {true, false} ->
+        Logger.info("Car left service mode, data collection resumed", car_id: car_id)
+
+      _ ->
+        :ok
+    end
+  end
 
   defp start_drive(position, %Data{car: car, deps: deps} = data) do
     Logger.info("Driving / Start", car_id: car.id)
