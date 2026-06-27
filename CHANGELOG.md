@@ -19,6 +19,7 @@
 - sec(deps): add ws override to version 8.21.0 in /website (#5446 - @JakobLichterfeld)
 - build(deps-dev): bump esbuild from 0.28.0 to 0.28.1 in /assets (#5444)
 - sec(deps): add joi override to version 17.13.4 in /website (#5448 - @JakobLichterfeld)
+- build(deps): update flake.lock (#5449)
 
 #### Dashboards
 
