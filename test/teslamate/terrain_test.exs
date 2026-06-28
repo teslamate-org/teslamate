@@ -100,14 +100,9 @@ defmodule TeslaMate.TerrainTest do
       assert Terrain.get_elevation(name, {0, 0}) == nil
 
       # circuit broke after 3 attempts
-      TestHelper.eventually(
-        fn ->
-          assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
-          assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
-          assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
-        end,
-        attempts: 25
-      )
+      assert_receive {SRTM, {:get_elevation, 0, 0, _opts}}, 1_000
+      assert_receive {SRTM, {:get_elevation, 0, 0, _opts}}, 1_000
+      assert_receive {SRTM, {:get_elevation, 0, 0, _opts}}, 1_000
 
       refute_receive _
     end

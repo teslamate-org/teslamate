@@ -240,8 +240,12 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       |> element(".button", "cancel sleep attempt")
       |> render_click()
 
-      assert html = render(view)
-      assert table_row(html, "Status", "online")
+      TestHelper.eventually(
+        fn ->
+          view |> render() |> table_row("Status", "online")
+        end,
+        delay: 5
+      )
     end
   end
 

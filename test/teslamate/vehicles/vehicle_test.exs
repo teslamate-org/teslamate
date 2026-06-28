@@ -77,7 +77,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car, :online, date: _}, 100
+      assert_receive {:start_state, car, :online, date: _}
       assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -108,7 +108,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       assert :ok = Vehicle.resume_logging(name)
 
-      assert_receive {:start_state, ^car, :online, date: _}, 100
+      assert_receive {:start_state, ^car, :online, date: _}
       assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -137,7 +137,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       assert :ok = Vehicle.resume_logging(name)
 
-      assert_receive {:start_state, ^car, :online, date: _}, 100
+      assert_receive {:start_state, ^car, :online, date: _}
       assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -551,7 +551,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-      refute_receive _
+      refute_receive _, 100
     end
   end
 end
