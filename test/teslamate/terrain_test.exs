@@ -30,7 +30,7 @@ defmodule TeslaMate.TerrainTest do
       assert 42 == Terrain.get_elevation(name, {0, 0})
       assert_received {SRTM, {:get_elevation, 0, 0, [disk_cache_path: ".srtm_cache"]}}
 
-      refute_receive _
+      refute_receive _, 50
     end
 
     @tag :capture_log
@@ -43,7 +43,7 @@ defmodule TeslaMate.TerrainTest do
         assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
       end)
 
-      refute_receive _
+      refute_receive _, 50
     end
 
     test "returns nil if the task takes longer than 100ms", %{test: name} do
@@ -83,7 +83,7 @@ defmodule TeslaMate.TerrainTest do
         assert_received {SRTM, {:get_elevation, 1, 1, _opts}}
       end)
 
-      refute_receive _
+      refute_receive _, 50
     end
 
     @tag :capture_log
@@ -104,7 +104,7 @@ defmodule TeslaMate.TerrainTest do
       assert_receive {SRTM, {:get_elevation, 0, 0, _opts}}
       assert_receive {SRTM, {:get_elevation, 0, 0, _opts}}
 
-      refute_receive _
+      refute_receive _, 50
     end
   end
 end

@@ -182,10 +182,10 @@ defmodule TeslaMate.SupportDiagnostics do
   end
 
   defp cars_payload do
-    from(s in CarSettings,
-      left_join: c in Car,
+    from(c in Car,
+      join: s in CarSettings,
       on: c.settings_id == s.id,
-      order_by: s.id,
+      order_by: c.id,
       select: %{
         "id" => c.id,
         "settings" => %{
@@ -225,7 +225,10 @@ defmodule TeslaMate.SupportDiagnostics do
     )
     |> String.replace(~r/https?:\/\/[^\s"']+/i, "https://<redacted>")
     |> String.replace(~r/(^|[\s"'`])\/[^\s"'`,]+/, "\\1/<redacted-path>")
-    |> String.replace(~r/[A-Z0-9]{11,17}/, "<redacted>")
+    |> String.replace(
+      ~r/(^|[^A-Z0-9])(?=[A-HJ-NPR-Z0-9]{0,16}[A-HJ-NPR-Z])([A-HJ-NPR-Z0-9]{17})(?=[^A-Z0-9]|$)/i,
+      "\\1<redacted>"
+    )
     |> String.slice(0, 240)
   end
 

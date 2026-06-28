@@ -29,6 +29,8 @@ defmodule TeslaMateWeb.SupportControllerTest do
       assert headers["content-disposition"] ==
                ~s(attachment; filename="teslamate-support-bundle.json")
 
+      assert headers["cache-control"] == "no-store"
+      assert headers["pragma"] == "no-cache"
       assert payload["schemaVersion"] == 1
       assert payload["redaction"]["mode"] == "allowlist"
       refute body =~ "Private Vehicle Name"

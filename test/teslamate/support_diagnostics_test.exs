@@ -1,7 +1,10 @@
 defmodule TeslaMate.SupportDiagnosticsTest do
   use TeslaMate.DataCase
 
+  import Mock
+
   alias TeslaMate.Log.ChargingProcess
+  alias TeslaMate.Settings.CarSettings
   alias TeslaMate.{Log, Repo, SupportDiagnostics}
 
   describe "build/0" do
@@ -29,6 +32,8 @@ defmodule TeslaMate.SupportDiagnosticsTest do
       %ChargingProcess{car_id: car.id, position_id: position.id}
       |> ChargingProcess.changeset(%{start_date: DateTime.utc_now()})
       |> Repo.insert!()
+
+      %CarSettings{} |> Repo.insert!()
 
       payload = SupportDiagnostics.build()
       encoded = Jason.encode!(payload)
@@ -60,6 +65,24 @@ defmodule TeslaMate.SupportDiagnosticsTest do
       refute encoded =~ "5YJREDACTEDVIN123"
       refute encoded =~ "51.501"
       refute encoded =~ "-0.141"
+    end
+
+    test "redacts VIN-shaped values in section errors without hiding migration versions" do
+      with_mock TeslaMate.Settings,
+        get_global_settings!: fn ->
+          raise RuntimeError,
+                "failed migration 20240603152807 for vin 5YJ3E1EA7KF317000 at /tmp/private"
+        end do
+        payload = SupportDiagnostics.build()
+        message = payload["settings"]["global"]["error"]["message"]
+
+        assert payload["settings"]["global"]["status"] == "error"
+        assert message =~ "20240603152807"
+        assert message =~ "<redacted>"
+        assert message =~ "/<redacted-path>"
+        refute message =~ "5YJ3E1EA7KF317000"
+        refute message =~ "/tmp/private"
+      end
     end
 
     test "summarizes configuration without serializing secrets or URLs" do
