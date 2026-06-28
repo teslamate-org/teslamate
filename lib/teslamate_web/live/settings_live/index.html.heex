@@ -366,6 +366,16 @@
   </div>
 </.form>
 
+<div class="columns is-mobile is-centered" id="support">
+  <div class="column">
+    <h2 class="title is-4"><%= gettext("Support") %></h2>
+    <a class="button is-rounded is-link" href={Routes.support_path(@socket, :download)}>
+      <span class="icon"><i class="mdi mdi-download"></i></span>
+      <span><%= gettext("Download support bundle") %></span>
+    </a>
+  </div>
+</div>
+
 <div class="columns is-mobile is-centered">
   <div class="column is-narrow table-container">
     <table class="about table is-narrow">
