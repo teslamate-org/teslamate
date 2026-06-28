@@ -49,8 +49,10 @@ defmodule TeslaMate.UpdaterTest do
 
       ## current_version < new_version
       {:ok, pid} = start_updater(name, "4.99.0", id: 2)
-      Process.sleep(100)
-      assert "5.1.2" == Updater.get_update(pid)
+
+      TestHelper.eventually(fn ->
+        assert "5.1.2" == Updater.get_update(pid)
+      end)
     end
   end
 
