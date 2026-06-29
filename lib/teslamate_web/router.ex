@@ -31,12 +31,6 @@ defmodule TeslaMateWeb.Router do
   end
 
   scope "/", TeslaMateWeb do
-    pipe_through :api
-
-    get "/settings/support-bundle.json", SupportController, :download
-  end
-
-  scope "/", TeslaMateWeb do
     pipe_through :browser
 
     get "/", CarController, :index

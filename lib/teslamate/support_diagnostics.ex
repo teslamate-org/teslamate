@@ -1,5 +1,12 @@
 defmodule TeslaMate.SupportDiagnostics do
-  @moduledoc false
+  @moduledoc """
+  Builds a redacted support diagnostics report.
+
+  Intended for explicit maintainer-requested report generation, for example:
+
+      TeslaMate.SupportDiagnostics.print()
+
+  """
 
   import Ecto.Query
 
@@ -23,6 +30,18 @@ defmodule TeslaMate.SupportDiagnostics do
       "openRecords" => safe_section(&open_records_payload/0),
       "cars" => safe_section(&cars_payload/0)
     }
+  end
+
+  @doc "Returns the support diagnostics report as redacted JSON."
+  def json do
+    build()
+    |> Jason.encode!(pretty: true)
+  end
+
+  @doc "Writes the redacted support diagnostics report to stdout."
+  def print do
+    json()
+    |> IO.puts()
   end
 
   defp redaction_payload do

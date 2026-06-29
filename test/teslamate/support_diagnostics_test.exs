@@ -1,6 +1,7 @@
 defmodule TeslaMate.SupportDiagnosticsTest do
   use TeslaMate.DataCase
 
+  import ExUnit.CaptureIO
   import Mock
 
   alias TeslaMate.Log.ChargingProcess
@@ -124,6 +125,26 @@ defmodule TeslaMate.SupportDiagnosticsTest do
       refute encoded =~ "mqtt_password"
       refute encoded =~ "teslamate.private.example"
       refute encoded =~ "grafana.private.example"
+    end
+
+    test "prints a redacted JSON report for explicit support commands" do
+      {:ok, _car} =
+        Log.create_car(%{
+          efficiency: 0.153,
+          eid: 4242,
+          model: "M3",
+          name: "Private Vehicle Name",
+          vid: 2424,
+          vin: "5YJREDACTEDVIN123"
+        })
+
+      output = capture_io(fn -> assert :ok = SupportDiagnostics.print() end)
+      payload = Jason.decode!(output)
+
+      assert payload["schemaVersion"] == 1
+      assert payload["redaction"]["mode"] == "allowlist"
+      refute output =~ "Private Vehicle Name"
+      refute output =~ "5YJREDACTEDVIN123"
     end
   end
 end

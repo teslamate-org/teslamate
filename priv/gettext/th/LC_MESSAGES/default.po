@@ -322,7 +322,7 @@ msgid "Outside Temperature"
 msgstr "อุณหภูมิภายนอก"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:425
-#: lib/teslamate_web/live/settings_live/index.html.heex:384
+#: lib/teslamate_web/live/settings_live/index.html.heex:374
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "รุ่น"
@@ -533,17 +533,17 @@ msgstr "ระยะทาง"
 msgid "Streaming API"
 msgstr "สตรีมมิ่ง API"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:405
+#: lib/teslamate_web/live/settings_live/index.html.heex:395
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr "เอกสาร"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:395
+#: lib/teslamate_web/live/settings_live/index.html.heex:385
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr "GitHub"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:390
+#: lib/teslamate_web/live/settings_live/index.html.heex:380
 #: lib/teslamate_web/templates/layout/root.html.heex:188
 #, elixir-autogen, elixir-format
 msgid "Update available"
@@ -570,7 +570,7 @@ msgstr "ต่อนาที"
 msgid "Software Update available (%{version})"
 msgstr "มีการอัปเดตซอฟต์แวร์ (%{version})"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:423
+#: lib/teslamate_web/live/settings_live/index.html.heex:413
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "ออกจากระบบ"
@@ -703,14 +703,4 @@ msgstr ""
 #: lib/teslamate_web/live/settings_live/index.html.heex:251
 #, elixir-autogen, elixir-format
 msgid "Theme"
-msgstr ""
-
-#: lib/teslamate_web/live/settings_live/index.html.heex:374
-#, elixir-autogen, elixir-format
-msgid "Download support bundle"
-msgstr ""
-
-#: lib/teslamate_web/live/settings_live/index.html.heex:371
-#, elixir-autogen, elixir-format
-msgid "Support"
 msgstr ""

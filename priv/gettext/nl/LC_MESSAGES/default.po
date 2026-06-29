@@ -322,7 +322,7 @@ msgid "Outside Temperature"
 msgstr "Buitentemperatuur"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:425
-#: lib/teslamate_web/live/settings_live/index.html.heex:384
+#: lib/teslamate_web/live/settings_live/index.html.heex:374
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "Versie"
@@ -534,17 +534,17 @@ msgstr "Kilometerstand"
 msgid "Streaming API"
 msgstr "Streaming API"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:405
+#: lib/teslamate_web/live/settings_live/index.html.heex:395
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr "Documentatie"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:395
+#: lib/teslamate_web/live/settings_live/index.html.heex:385
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr "GitHub"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:390
+#: lib/teslamate_web/live/settings_live/index.html.heex:380
 #: lib/teslamate_web/templates/layout/root.html.heex:188
 #, elixir-autogen, elixir-format
 msgid "Update available"
@@ -571,7 +571,7 @@ msgstr "Per minuut"
 msgid "Software Update available (%{version})"
 msgstr "Software-update beschikbaar (%{version})"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:423
+#: lib/teslamate_web/live/settings_live/index.html.heex:413
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Uitloggen"
@@ -705,13 +705,3 @@ msgstr "Licht"
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr "Thema"
-
-#: lib/teslamate_web/live/settings_live/index.html.heex:374
-#, elixir-autogen, elixir-format
-msgid "Download support bundle"
-msgstr ""
-
-#: lib/teslamate_web/live/settings_live/index.html.heex:371
-#, elixir-autogen, elixir-format
-msgid "Support"
-msgstr ""

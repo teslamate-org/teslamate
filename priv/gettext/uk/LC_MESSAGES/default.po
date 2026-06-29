@@ -322,7 +322,7 @@ msgid "Outside Temperature"
 msgstr "Температура ззовні"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:425
-#: lib/teslamate_web/live/settings_live/index.html.heex:384
+#: lib/teslamate_web/live/settings_live/index.html.heex:374
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "Версія"
@@ -536,17 +536,17 @@ msgstr "Пробіг"
 msgid "Streaming API"
 msgstr "Потокове API"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:405
+#: lib/teslamate_web/live/settings_live/index.html.heex:395
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr "Документація"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:395
+#: lib/teslamate_web/live/settings_live/index.html.heex:385
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:390
+#: lib/teslamate_web/live/settings_live/index.html.heex:380
 #: lib/teslamate_web/templates/layout/root.html.heex:188
 #, elixir-autogen, elixir-format
 msgid "Update available"
@@ -573,7 +573,7 @@ msgstr "За хвилину"
 msgid "Software Update available (%{version})"
 msgstr "Доступне оновлення ПЗ (%{version})"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:423
+#: lib/teslamate_web/live/settings_live/index.html.heex:413
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Вийти"
@@ -706,14 +706,4 @@ msgstr ""
 #: lib/teslamate_web/live/settings_live/index.html.heex:251
 #, elixir-autogen, elixir-format
 msgid "Theme"
-msgstr ""
-
-#: lib/teslamate_web/live/settings_live/index.html.heex:374
-#, elixir-autogen, elixir-format
-msgid "Download support bundle"
-msgstr ""
-
-#: lib/teslamate_web/live/settings_live/index.html.heex:371
-#, elixir-autogen, elixir-format
-msgid "Support"
 msgstr ""

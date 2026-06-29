@@ -95,23 +95,6 @@ defmodule TeslaMateWeb.SettingsLiveTest do
   end
 
   describe "global settings" do
-    test "links to the support diagnostics bundle", %{conn: conn} do
-      assert {:ok, _view, html} = live(conn, "/settings")
-
-      document = Floki.parse_document!(html)
-
-      assert "Support" =
-               document
-               |> Floki.find("#support h2")
-               |> Floki.text()
-               |> String.trim()
-
-      assert ["/settings/support-bundle.json"] =
-               document
-               |> Floki.find("#support a")
-               |> Floki.attribute("href")
-    end
-
     test "shows :rated by default", %{conn: conn} do
       assert {:ok, _view, html} = live(conn, "/settings")
 
