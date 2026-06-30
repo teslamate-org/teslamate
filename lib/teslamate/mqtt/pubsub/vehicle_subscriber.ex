@@ -67,37 +67,36 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> add_geofence(summary)
       |> add_active_route(summary)
 
-    publish_values(values, state)
-    {:noreply, %{state | last_values: values}}
-  end
-
-  defp publish_values(values, %State{last_values: values} = state) do
-    values
-    |> Map.take(@do_not_retain)
-    |> Enum.each(fn {key, value} ->
-      publish({key, value}, state)
-    end)
+    last_values = publish_values(values, state)
+    {:noreply, %{state | last_values: last_values}}
   end
 
   defp publish_values(values, state) do
+    last_values = state.last_values || %{}
+
     values
     |> Stream.reject(&match?({_key, :unknown}, &1))
     |> Stream.filter(fn {key, value} ->
       ((key in @publish_if_nil or value != nil) and
-         (state.last_values == nil or Map.get(state.last_values, key) != value)) or
+         (not Map.has_key?(last_values, key) or Map.get(last_values, key) != value)) or
         key in @do_not_retain
     end)
-    |> Task.async_stream(&publish(&1, state),
+    |> Task.async_stream(fn entry -> {entry, publish(entry, state)} end,
       max_concurrency: 10,
       on_timeout: :kill_task,
       ordered: false
     )
-    |> Enum.each(fn
-      {_, reason} when reason != :ok ->
-        Logger.warning("MQTT publishing failed: #{inspect(reason)}")
+    |> Enum.reduce(last_values, fn
+      {:ok, {{key, value}, :ok}}, acc ->
+        Map.put(acc, key, value)
 
-      _ok ->
-        nil
+      {:ok, {_entry, reason}}, acc ->
+        Logger.warning("MQTT publishing failed: #{inspect(reason)}")
+        acc
+
+      {:exit, reason}, acc ->
+        Logger.warning("MQTT publishing failed: #{inspect(reason)}")
+        acc
     end)
   end
 

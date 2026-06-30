@@ -5,11 +5,15 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Locations.GeoFence
 
-  defp start_subscriber(name, car_id, namespace \\ nil) do
+  defp start_subscriber(name, car_id, namespace \\ nil, publisher_responses \\ %{}) do
     publisher_name = :"mqtt_publisher_#{name}"
     vehicles_name = :"vehicles_#{name}"
 
-    {:ok, _pid} = start_supervised({MqttPublisherMock, name: publisher_name, pid: self()})
+    {:ok, _pid} =
+      start_supervised(
+        {MqttPublisherMock, name: publisher_name, pid: self(), responses: publisher_responses}
+      )
+
     {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
 
     start_supervised(
@@ -235,6 +239,39 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(pid, %Summary{geofence: other_geofence, version: "3"})
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/geofence", "Work", _}}
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "3", _}}
+  end
+
+  @tag :capture_log
+  test "retries failed values until they are published successfully", %{test: name} do
+    display_name_topic = "teslamate/cars/0/display_name"
+    shift_state_topic = "teslamate/cars/0/shift_state"
+
+    responses = %{
+      display_name_topic => [{:error, :disconnected}, :ok],
+      shift_state_topic => [{:error, :disconnected}, :ok]
+    }
+
+    {:ok, pid} = start_subscriber(name, 0, nil, responses)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    summary = %Summary{display_name: "Foo", version: "1"}
+    send(pid, summary)
+
+    assert_receive {MqttPublisherMock, {:publish, ^display_name_topic, "Foo", _}}
+    assert_receive {MqttPublisherMock, {:publish, ^shift_state_topic, "", _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "1", _}}
+
+    send(pid, summary)
+
+    assert_receive {MqttPublisherMock, {:publish, ^display_name_topic, "Foo", _}}
+    assert_receive {MqttPublisherMock, {:publish, ^shift_state_topic, "", _}}
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "1", _}}
+
+    send(pid, summary)
+
+    refute_receive {MqttPublisherMock, {:publish, ^display_name_topic, "Foo", _}}
+    refute_receive {MqttPublisherMock, {:publish, ^shift_state_topic, "", _}}
   end
 
   test "allows namespaces", %{test: name} do
