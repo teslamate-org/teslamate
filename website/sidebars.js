@@ -21,7 +21,7 @@ module.exports = {
             },
           ],
         },
-
+        "pwa",
         "faq",
         "screenshots",
       ],

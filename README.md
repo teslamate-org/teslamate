@@ -47,6 +47,10 @@ The documentation is available at [https://docs.teslamate.org](https://docs.tesl
 - Import from TeslaFi and tesla-apiscraper
 - Customizable theme mode (light, dark, or system default)
 
+### Use as App — Progressive Web App (PWA)
+
+TeslaMate can be installed as a Progressive Web App (PWA) from your self‑hosted instance. Add your instance to your device's home screen and use it like a native app. See the PWA documentation: [Use as App — Progressive Web App (PWA)](website/docs/pwa.md).
+
 ### Dashboards
 
 Sample screenshots of bundled dashboards can be seen by clicking the links below.
