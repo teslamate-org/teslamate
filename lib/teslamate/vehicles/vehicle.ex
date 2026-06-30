@@ -1809,10 +1809,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp log_service_mode_transition(prev, current, car_id) do
     case {service_mode?(prev), service_mode?(current)} do
       {false, true} ->
-        Logger.info("Car is in service mode, data collection suspended", car_id: car_id)
+        Logger.info("Car entered service mode", car_id: car_id)
 
       {true, false} ->
-        Logger.info("Car left service mode, data collection resumed", car_id: car_id)
+        Logger.info("Car left service mode", car_id: car_id)
 
       _ ->
         :ok
