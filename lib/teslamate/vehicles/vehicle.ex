@@ -340,6 +340,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
              vehicle_state: %VehicleState{},
              vehicle_config: %VehicleConfig{}
            }, %Data{}} ->
+            log_service_mode_transition(data.last_response, vehicle, data.car.id)
+
             {:keep_state, %Data{data | last_response: vehicle},
              [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
 
@@ -1668,6 +1670,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
       end
 
     suspend? = diff_seconds(DateTime.utc_now(), data.last_used) / 60 >= suspend_after_idle_min
+    service_mode? = service_mode?(vehicle)
+
+    if suspend? and not service_mode? and unlocked?(vehicle) and
+         not car.settings.req_not_unlocked do
+      Logger.debug("Unlocked ...", car_id: car.id)
+    end
 
     case can_fall_asleep(vehicle, data) do
       {:error, :sentry_mode} ->
@@ -1717,7 +1725,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
 
       {:error, :unlocked} ->
-        if suspend?, do: Logger.warning("Unlocked ...", car_id: car.id)
+        if suspend? and not service_mode?, do: Logger.warning("Unlocked ...", car_id: car.id)
 
         {:keep_state_and_data,
          [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
@@ -1789,6 +1797,25 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:error, :power_usage}
 
       {%Vehicle{}, %CarSettings{}} ->
+        :ok
+    end
+  end
+
+  defp service_mode?(%Vehicle{vehicle_state: %VehicleState{service_mode: true}}), do: true
+  defp service_mode?(_vehicle), do: false
+
+  defp unlocked?(%Vehicle{vehicle_state: %VehicleState{locked: false}}), do: true
+  defp unlocked?(_vehicle), do: false
+
+  defp log_service_mode_transition(prev, current, car_id) do
+    case {service_mode?(prev), service_mode?(current)} do
+      {false, true} ->
+        Logger.info("Car entered service mode", car_id: car_id)
+
+      {true, false} ->
+        Logger.info("Car left service mode", car_id: car_id)
+
+      _ ->
         :ok
     end
   end
