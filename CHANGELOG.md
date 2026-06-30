@@ -10,6 +10,7 @@
 
 - fix(webview): show charging finish time in browser local time (#5436 - @Ashok28)
 - fix(vehicle): use streaming-aware interval when a drive starts (#5417 - @evanclan)
+- fix(mqtt): retry failed value publications (#5429 - @ciyahu)
 
 #### Build, CI, internal
 
