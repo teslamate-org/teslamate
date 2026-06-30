@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat: add service mode to webview and reduce log when car is Unlocked at service mode (#5289 - @NirKli)
+
 ### Improvements and bug fixes
 
 - fix(webview): show charging finish time in browser local time (#5436 - @Ashok28)
