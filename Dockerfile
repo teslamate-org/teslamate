@@ -1,4 +1,4 @@
-FROM elixir:1.19.5-otp-28 AS builder
+FROM elixir:1.20.0-otp-29 AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
