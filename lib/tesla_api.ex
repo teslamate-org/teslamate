@@ -9,6 +9,7 @@ defmodule TeslaApi do
   plug Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]
   plug Tesla.Middleware.JSON
   plug TeslaApi.Middleware.TokenAuth
+  plug TeslaApi.Middleware.FleetAuth
   plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
 
   defp log_level(%Tesla.Env{} = env) when env.status >= 500, do: :warning
