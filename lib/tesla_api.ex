@@ -13,6 +13,8 @@ defmodule TeslaApi do
   plug Tesla.Middleware.JSON
   plug TeslaApi.Middleware.TokenAuth
 
+  plug TeslaApi.Middleware.FleetAuth
+
   plug Tesla.Middleware.Logger,
     debug: true,
     filter_headers: @sensitive_headers,
