@@ -26,6 +26,7 @@
 - build(deps): update flake.lock (#5449)
 - build(deps): bump the actions-deps group across 3 directories with 9 updates (#5469)
 - build(deps): bump ex_cldr_plugs from 1.3.4 to 1.4.0 (#5465)
+- build(deps): bump react and react-dom from 19.2.6 to 19.2.7 in /website (#5466)
 
 #### Dashboards
 
