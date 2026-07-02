@@ -25,6 +25,7 @@
 - sec(deps): add joi override to version 17.13.4 in /website (#5448 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5449)
 - build(deps): bump the actions-deps group across 3 directories with 9 updates (#5469)
+- build(deps): bump ex_cldr_plugs from 1.3.4 to 1.4.0 (#5465)
 
 #### Dashboards
 
