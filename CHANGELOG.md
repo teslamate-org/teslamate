@@ -28,6 +28,7 @@
 - build(deps): bump ex_cldr_plugs from 1.3.4 to 1.4.0 (#5465)
 - build(deps): bump react and react-dom from 19.2.6 to 19.2.7 in /website (#5466)
 - build(deps): bump @geoman-io/leaflet-geoman-free from 2.19.3 to 2.20.0 in /assets (#5464)
+- build(deps-dev): bump sass from 1.100.0 to 1.101.0 in /assets (#5462)
 
 #### Dashboards
 
