@@ -19,7 +19,7 @@
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-77XaVABXDpKv9oCmnSC/JLUXLsYGxA1B3Og0xvzrXVM="; # if you change the mix deps, you need to update this hash
+        hash = "sha256-ZwmfuJARA1d6zWa02e9WUbsJS3LOYzNRP3f5DjgQGyA="; # if you change the mix deps, you need to update this hash
         # hash = pkgs.lib.fakeHash;
       };
 
