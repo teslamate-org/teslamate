@@ -38,6 +38,10 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       display_name: "Foo",
       odometer: 42_000,
       windows_open: true,
+      driver_front_window_open: true,
+      driver_rear_window_open: false,
+      passenger_front_window_open: false,
+      passenger_rear_window_open: true,
       doors_open: true,
       shift_state: "D",
       state: :online,
@@ -66,7 +70,10 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       wheel_type: "AeroTurbine19",
       frunk_open: true,
       trunk_open: false,
-      elevation: 100
+      elevation: 100,
+      sun_roof_state: "open",
+      sun_roof_installed: true,
+      sun_roof_percent_open: 80
     }
 
     send(pid, summary)

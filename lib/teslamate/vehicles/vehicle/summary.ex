@@ -1,7 +1,7 @@
 defmodule TeslaMate.Vehicles.Vehicle.Summary do
   import TeslaMate.Convert, only: [miles_to_km: 2, mph_to_kmh: 1]
 
-  alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleState}
+  alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleConfig, VehicleState}
   alias TeslaApi.Vehicle
   alias TeslaMate.Log.Car
 
@@ -10,6 +10,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
+    driver_front_window_open driver_rear_window_open passenger_front_window_open passenger_rear_window_open
     doors_open driver_front_door_open driver_rear_door_open passenger_front_door_open passenger_rear_door_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available update_version is_user_present geofence
@@ -18,7 +19,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
     active_route_destination active_route_latitude active_route_longitude active_route_energy_at_arrival
     active_route_miles_to_arrival active_route_minutes_to_arrival active_route_traffic_minutes_delay
-    center_display_state service_mode
+    center_display_state service_mode sun_roof_state sun_roof_installed sun_roof_percent_open
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -131,6 +132,10 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
       service_mode: get_in_struct(vehicle, [:vehicle_state, :service_mode]),
       windows_open: window_open(vehicle),
+      driver_front_window_open: driver_front_window_open(vehicle),
+      driver_rear_window_open: driver_rear_window_open(vehicle),
+      passenger_front_window_open: passenger_front_window_open(vehicle),
+      passenger_rear_window_open: passenger_rear_window_open(vehicle),
       doors_open: doors_open(vehicle),
       driver_front_door_open: driver_front_door_open(vehicle),
       driver_rear_door_open: driver_rear_door_open(vehicle),
@@ -150,7 +155,10 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       tpms_soft_warning_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fr]),
       tpms_soft_warning_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rl]),
       tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr]),
-      center_display_state: get_in_struct(vehicle, [:vehicle_state, :center_display_state])
+      center_display_state: get_in_struct(vehicle, [:vehicle_state, :center_display_state]),
+      sun_roof_state: get_in_struct(vehicle, [:vehicle_state, :sun_roof_state]),
+      sun_roof_installed: sun_roof_installed(vehicle),
+      sun_roof_percent_open: get_in_struct(vehicle, [:vehicle_state, :sun_roof_percent_open])
     }
   end
 
@@ -178,6 +186,36 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         nil
     end
   end
+
+  defp driver_front_window_open(%Vehicle{vehicle_state: %VehicleState{fd_window: fd}})
+       when is_number(fd),
+       do: fd > 0
+
+  defp driver_front_window_open(_vehicle), do: nil
+
+  defp driver_rear_window_open(%Vehicle{vehicle_state: %VehicleState{rd_window: rd}})
+       when is_number(rd),
+       do: rd > 0
+
+  defp driver_rear_window_open(_vehicle), do: nil
+
+  defp passenger_front_window_open(%Vehicle{vehicle_state: %VehicleState{fp_window: fp}})
+       when is_number(fp),
+       do: fp > 0
+
+  defp passenger_front_window_open(_vehicle), do: nil
+
+  defp passenger_rear_window_open(%Vehicle{vehicle_state: %VehicleState{rp_window: rp}})
+       when is_number(rp),
+       do: rp > 0
+
+  defp passenger_rear_window_open(_vehicle), do: nil
+
+  defp sun_roof_installed(%Vehicle{vehicle_config: %VehicleConfig{sun_roof_installed: installed}})
+       when is_number(installed),
+       do: installed > 0
+
+  defp sun_roof_installed(_vehicle), do: nil
 
   defp doors_open(%Vehicle{vehicle_state: vehicle_state}) do
     case vehicle_state do

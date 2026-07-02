@@ -105,13 +105,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
+    driver_front_window_open driver_rear_window_open passenger_front_window_open passenger_rear_window_open
     doors_open driver_front_door_open driver_rear_door_open passenger_front_door_open passenger_rear_door_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
     charger_actual_current charger_voltage version update_available update_version is_user_present
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode center_display_state
-    service_mode
+    service_mode sun_roof_state sun_roof_installed sun_roof_percent_open
   )a
 
   defp add_simple_values(map, %Summary{} = summary) do
