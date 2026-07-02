@@ -5,6 +5,7 @@
 ### New features
 
 - feat: add service mode to webview and reduce log when car is Unlocked at service mode (#5289 - @NirKli)
+- feat: add Sun roof and individual window status via MQTT (#5393 - @nebhale)
 
 ### Improvements and bug fixes
 
