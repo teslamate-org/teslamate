@@ -42,6 +42,7 @@
 - docs: update security policy to emphasize network-level protection ([27172cba](https://github.com/teslamate-org/teslamate/commit/27172cba54782f9a8eb7fdd9ea3a481dfd9d8f2b) - @JakobLichterfeld)
 - docs: fix typo in DATABASE_SSL_SNI description (#5346 - @dashitongzhi)
 - docs: update upgrading instructions to emphasize backup before updating more clearly (#5453 - @JakobLichterfeld)
+- docs(mqtt): add service mode topic to MQTT integration documentation (#5472 - @JakobLichterfeld)
 
 ## [4.0.1] - 2026-06-14
 

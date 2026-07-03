@@ -93,6 +93,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/active_route_longitude`        | 29.744801                                                                                   | DEPRECATED: Navigation destination longitude (or "nil")                               |
 | `teslamate/cars/$car_id/active_route`                  | _See below_                                                                                 | Navigation details (json blob)                                                        |
 | `teslamate/cars/$car_id/center_display_state`          | 0                                                                                           | Center Display State                                                                  |
+| `teslamate/cars/$car_id/service_mode`                  | false                                                                                       | Whether Service Mode is active or not                                                 |
 
 :::note
 `$car_id` usually starts at 1
