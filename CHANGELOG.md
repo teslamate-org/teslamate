@@ -32,6 +32,7 @@
 - build(deps-dev): bump sass from 1.100.0 to 1.101.0 in /assets (#5462)
 - build(deps): bump plug_cowboy from 2.8.1 to 2.9.0 (#5463)
 - build(deps): bump floki from 0.38.3 to 0.38.4 (#5461)
+- test: harden async waits (#5456 - @magrathean-uk)
 
 #### Dashboards
 
