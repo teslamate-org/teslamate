@@ -35,6 +35,7 @@
 - build(deps): bump plug_cowboy from 2.8.1 to 2.9.0 (#5463)
 - build(deps): bump floki from 0.38.3 to 0.38.4 (#5461)
 - test: harden async waits (#5456 - @magrathean-uk)
+- build(deps): update flake.lock (#5477)
 
 #### Dashboards
 
