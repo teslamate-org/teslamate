@@ -83,6 +83,10 @@ defmodule TeslaMate.Vehicles do
       {:error, :not_signed_in} ->
         fallback_vehicles()
 
+      {:error, :too_many_request, retry_after} ->
+        Logger.warning("Could not get vehicles: rate limited, retry after #{retry_after}s")
+        fallback_vehicles()
+
       {:error, reason} ->
         Logger.warning("Could not get vehicles: #{inspect(reason)}")
         fallback_vehicles()

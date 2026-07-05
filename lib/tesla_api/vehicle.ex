@@ -125,6 +125,11 @@ defmodule TeslaApi.Vehicle do
 
         {:error, %Error{reason: :too_many_request, message: String.to_integer(retry_after)}}
 
+      %Tesla.Env{status: 403, body: %{"error" => "account disabled: EXCEEDED_LIMIT"}} ->
+        # Tesla sends no retry-after header for this error, so back off for 15
+        # minutes instead of falling through to the :unknown handler's 10-30s retry.
+        {:error, %Error{reason: :too_many_request, message: 900}}
+
       %Tesla.Env{status: 504} = env ->
         {:error, %Error{reason: :timeout, env: env}}
 

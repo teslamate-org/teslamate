@@ -1558,6 +1558,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:ok, %V{}} ->
         {:error, :gateway_error}
 
+      {:error, :too_many_request, retry_after} ->
+        {:error, {:too_many_request, retry_after}}
+
       {:error, reason} ->
         {:error, reason}
     end

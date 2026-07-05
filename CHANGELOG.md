@@ -12,6 +12,7 @@
 - fix(webview): show charging finish time in browser local time (#5436 - @Ashok28)
 - fix(vehicle): use streaming-aware interval when a drive starts (#5417 - @evanclan)
 - fix(mqtt): retry failed value publications (#5429 - @ciyahu)
+- fix(vehicle): back off for 15 minutes on Fleet API `EXCEEDED_LIMIT` responses instead of retrying every 10-30s (@hossamnagy)
 
 #### Build, CI, internal
 
