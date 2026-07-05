@@ -12,6 +12,7 @@ defmodule TeslaApi do
   plug Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]
   plug Tesla.Middleware.JSON
   plug TeslaApi.Middleware.TokenAuth
+  plug TeslaApi.Middleware.FleetAuth
 
   plug Tesla.Middleware.Logger,
     debug: true,
