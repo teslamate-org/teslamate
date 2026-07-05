@@ -1,0 +1,712 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: hu\n"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:228
+#, elixir-autogen, elixir-format
+msgid "Status"
+msgstr "Állapot"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:383
+#, elixir-autogen, elixir-format
+msgid "Speed"
+msgstr "Sebesség"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:373
+#, elixir-autogen, elixir-format
+msgid "State of Charge"
+msgstr "Töltöttségi szint"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:307
+#, elixir-autogen, elixir-format
+msgid "Charged"
+msgstr "Feltöltve"
+
+#: lib/teslamate_web/live/car_live/summary.ex:141
+#, elixir-autogen, elixir-format
+msgid "asleep"
+msgstr "alvó"
+
+#: lib/teslamate_web/live/car_live/summary.ex:136
+#, elixir-autogen, elixir-format
+msgid "charging"
+msgstr "töltés"
+
+#: lib/teslamate_web/live/car_live/summary.ex:135
+#, elixir-autogen, elixir-format
+msgid "driving"
+msgstr "vezetés"
+
+#: lib/teslamate_web/live/car_live/summary.ex:140
+#, elixir-autogen, elixir-format
+msgid "offline"
+msgstr "offline"
+
+#: lib/teslamate_web/live/car_live/summary.ex:139
+#, elixir-autogen, elixir-format
+msgid "online"
+msgstr "online"
+
+#: lib/teslamate_web/live/car_live/summary.ex:137
+#, elixir-autogen, elixir-format
+msgid "updating"
+msgstr "frissítés alatt"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:146
+#, elixir-autogen, elixir-format
+msgid "Locked"
+msgstr "Zárva"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:130
+#, elixir-autogen, elixir-format
+msgid "Sentry Mode"
+msgstr "Őrszem mód"
+
+#: lib/teslamate_web/live/car_live/index.ex:15
+#: lib/teslamate_web/live/charge_live/cost.html.heex:3
+#: lib/teslamate_web/live/geofence_live/form.html.heex:3
+#: lib/teslamate_web/live/geofence_live/index.html.heex:3
+#: lib/teslamate_web/live/import_live/index.html.heex:3
+#: lib/teslamate_web/live/settings_live/index.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Home"
+msgstr "Kezdőlap"
+
+#: lib/teslamate_web/live/settings_live/index.ex:21
+#: lib/teslamate_web/live/settings_live/index.html.heex:4
+#: lib/teslamate_web/templates/layout/root.html.heex:119
+#, elixir-autogen, elixir-format
+msgid "Settings"
+msgstr "Beállítások"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:322
+#, elixir-autogen, elixir-format
+msgid "Scheduled Charging"
+msgstr "Ütemezett töltés"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:89
+#, elixir-autogen, elixir-format
+msgid "Plugged In"
+msgstr "Csatlakoztatva"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:334
+#, elixir-autogen, elixir-format
+msgid "Charge Limit"
+msgstr "Töltési limit"
+
+#: lib/teslamate_web/live/car_live/summary.ex:138
+#, elixir-autogen, elixir-format
+msgid "falling asleep"
+msgstr "elalvás folyamatban"
+
+#: lib/teslamate_web/live/car_live/summary.ex:142
+#, elixir-autogen, elixir-format
+msgid "unavailable"
+msgstr "nem elérhető"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:279
+#, elixir-autogen, elixir-format
+msgid "Length"
+msgstr "Távolság"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:294
+#, elixir-autogen, elixir-format
+msgid "Temperature"
+msgstr "Hőmérséklet"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:276
+#, elixir-autogen, elixir-format
+msgid "Units"
+msgstr "Mértékegységek"
+
+#: lib/teslamate_web/live/charge_live/cost.html.heex:165
+#: lib/teslamate_web/live/geofence_live/form.html.heex:124
+#, elixir-autogen, elixir-format
+msgid "Back"
+msgstr "Vissza"
+
+#: lib/teslamate_web/live/geofence_live/form.ex:188
+#, elixir-autogen, elixir-format
+msgid "Geo-fence \"%{name}\" created"
+msgstr "A(z) \"%{name}\" geokerítés létrehozva"
+
+#: lib/teslamate_web/live/geofence_live/form.ex:110
+#: lib/teslamate_web/live/geofence_live/form.html.heex:4
+#: lib/teslamate_web/live/geofence_live/index.ex:22
+#: lib/teslamate_web/live/geofence_live/index.html.heex:5
+#: lib/teslamate_web/templates/layout/root.html.heex:113
+#, elixir-autogen, elixir-format
+msgid "Geo-Fences"
+msgstr "Geokerítések"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:74
+#, elixir-autogen, elixir-format
+msgid "Idle Time Before Trying to Sleep"
+msgstr "Inaktív idő az elalvási próbálkozás előtt"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:46
+#: lib/teslamate_web/live/geofence_live/form.html.heex:52
+#: lib/teslamate_web/live/geofence_live/index.html.heex:23
+#, elixir-autogen, elixir-format
+msgid "Name"
+msgstr "Név"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:19
+#: lib/teslamate_web/live/geofence_live/index.html.heex:24
+#, elixir-autogen, elixir-format
+msgid "Position"
+msgstr "Pozíció"
+
+#: lib/teslamate_web/live/geofence_live/index.html.heex:25
+#, elixir-autogen, elixir-format
+msgid "Radius"
+msgstr "Sugár"
+
+#: lib/teslamate_web/live/charge_live/cost.html.heex:168
+#: lib/teslamate_web/live/geofence_live/form.html.heex:128
+#, elixir-autogen, elixir-format
+msgid "Save"
+msgstr "Mentés"
+
+#: lib/teslamate_web/live/charge_live/cost.html.heex:169
+#: lib/teslamate_web/live/geofence_live/form.html.heex:129
+#: lib/teslamate_web/live/signin_live/index.html.heex:84
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr "Mentés..."
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:53
+#, elixir-autogen, elixir-format
+msgid "Time to Try Sleeping"
+msgstr "Idő az elalvási próbálkozásig"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:64
+#: lib/teslamate_web/live/settings_live/index.html.heex:87
+#, elixir-autogen, elixir-format
+msgid "min"
+msgstr "perc"
+
+#: lib/teslamate_web/live/signin_live/index.ex:83
+#, elixir-autogen, elixir-format
+msgid "Signed in successfully"
+msgstr "Sikeres bejelentkezés"
+
+#: lib/teslamate_web/live/car_live/summary.ex:144
+#, elixir-autogen, elixir-format
+msgid "Car is unlocked"
+msgstr "Az autó nyitva van"
+
+#: lib/teslamate_web/live/geofence_live/index.html.heex:14
+#, elixir-autogen, elixir-format
+msgid "Create"
+msgstr "Létrehozás"
+
+#: lib/teslamate_web/live/car_live/summary.ex:148
+#: lib/teslamate_web/live/car_live/summary.html.heex:57
+#, elixir-autogen, elixir-format
+msgid "Preconditioning"
+msgstr "Előklimatizálás"
+
+#: lib/teslamate_web/live/car_live/summary.ex:147
+#, elixir-autogen, elixir-format
+msgid "Sentry mode is enabled"
+msgstr "Az Őrszem mód be van kapcsolva"
+
+#: lib/teslamate_web/live/car_live/summary.ex:150
+#: lib/teslamate_web/live/car_live/summary.html.heex:81
+#, elixir-autogen, elixir-format
+msgid "Driver present"
+msgstr "Vezető jelen"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:468
+#, elixir-autogen, elixir-format
+msgid "cancel sleep attempt"
+msgstr "elalvási próbálkozás megszakítása"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:459
+#, elixir-autogen, elixir-format
+msgid "try to sleep"
+msgstr "elalvás megkísérlése"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:294
+#, elixir-autogen, elixir-format
+msgid "Range (est.)"
+msgstr "Hatótáv (becsült)"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:233
+#, elixir-autogen, elixir-format
+msgid "for"
+msgstr "óta"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:99
+#, elixir-autogen, elixir-format
+msgid "Requirements"
+msgstr "Feltételek"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:107
+#, elixir-autogen, elixir-format
+msgid "Vehicle must be locked"
+msgstr "A járműnek zárva kell lennie"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:274
+#, elixir-autogen, elixir-format
+msgid "Range (rated)"
+msgstr "Hatótáv (névleges)"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:313
+#, elixir-autogen, elixir-format
+msgid "Charger Power"
+msgstr "Töltési teljesítmény"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:190
+#, elixir-autogen, elixir-format
+msgid "Preferred Range"
+msgstr "Előnyben részesített hatótáv"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:186
+#, elixir-autogen, elixir-format
+msgid "Range"
+msgstr "Hatótáv"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:198
+#, elixir-autogen, elixir-format
+msgid "ideal"
+msgstr "ideális"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:199
+#, elixir-autogen, elixir-format
+msgid "rated"
+msgstr "névleges"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:273
+#, elixir-autogen, elixir-format
+msgid "Range (ideal)"
+msgstr "Hatótáv (ideális)"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:189
+#, elixir-autogen, elixir-format
+msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
+msgstr "Az autó a fennmaradó hatótávot rögzített Wh/km energiafogyasztás alapján becsüli. A Wh/km értéket a Tesla határozza meg, és nem országspecifikus, míg a névleges hatótáv az adott jármű különböző piacain alkalmazott szabályozási teszteken alapul."
+
+#: lib/teslamate_web/live/car_live/summary.ex:152
+#, elixir-autogen, elixir-format
+msgid "Update in progress"
+msgstr "Frissítés folyamatban"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:114
+#, elixir-autogen, elixir-format
+msgid "Windows open"
+msgstr "Ablakok nyitva"
+
+#: lib/teslamate_web/live/geofence_live/index.html.heex:60
+#, elixir-autogen, elixir-format
+msgid "Delete '%{geo_fence}'?"
+msgstr "Törli ezt: '%{geo_fence}'?"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:408
+#, elixir-autogen, elixir-format
+msgid "Inside Temperature"
+msgstr "Belső hőmérséklet"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:396
+#, elixir-autogen, elixir-format
+msgid "Outside Temperature"
+msgstr "Külső hőmérséklet"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:433
+#: lib/teslamate_web/live/settings_live/index.html.heex:374
+#, elixir-autogen, elixir-format
+msgid "Version"
+msgstr "Verzió"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:211
+#, elixir-autogen, elixir-format
+msgid "Health check failed"
+msgstr "Az állapotellenőrzés sikertelen"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:146
+#, elixir-autogen, elixir-format
+msgid "Unlocked"
+msgstr "Nyitva"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:250
+#, elixir-autogen, elixir-format
+msgid "Remaining Time"
+msgstr "Hátralévő idő"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:349
+#: lib/teslamate_web/templates/layout/root.html.heex:95
+#, elixir-autogen, elixir-format
+msgid "Dashboards"
+msgstr "Irányítópultok"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:327
+#, elixir-autogen, elixir-format
+msgid "URLs"
+msgstr "URL-ek"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:216
+#: lib/teslamate_web/live/settings_live/index.html.heex:330
+#, elixir-autogen, elixir-format
+msgid "Web App"
+msgstr "Webalkalmazás"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:32
+#: lib/teslamate_web/live/settings_live/index.html.heex:144
+#, elixir-autogen, elixir-format
+msgid "Enabled"
+msgstr "Engedélyezve"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:48
+#, elixir-autogen, elixir-format
+msgid "Sleep Mode"
+msgstr "Alvó mód"
+
+#: lib/teslamate_web/live/geofence_live/form.ex:189
+#, elixir-autogen, elixir-format
+msgid "Geo-fence \"%{name}\" updated"
+msgstr "A(z) \"%{name}\" geokerítés frissítve"
+
+#: lib/teslamate_web/live/car_live/summary.ex:154
+#, elixir-autogen, elixir-format
+msgid "An error occurred"
+msgstr "Hiba történt"
+
+#: lib/teslamate_web/live/car_live/summary.ex:153
+#, elixir-autogen, elixir-format
+msgid "Timeout"
+msgstr "Időtúllépés"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:73
+#, elixir-autogen, elixir-format
+msgid "Reduced Battery Range"
+msgstr "Csökkentett akkumulátor-hatótáv"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:367
+#, elixir-autogen, elixir-format
+msgid "≈ %{range} at 100%"
+msgstr "≈ %{range} 100%-nál"
+
+#: lib/teslamate_web/live/charge_live/cost.ex:20
+#: lib/teslamate_web/live/charge_live/cost.html.heex:4
+#, elixir-autogen, elixir-format
+msgid "Charge Cost"
+msgstr "Töltési költség"
+
+#: lib/teslamate_web/live/charge_live/cost.html.heex:132
+#: lib/teslamate_web/live/geofence_live/form.html.heex:64
+#, elixir-autogen, elixir-format
+msgid "Cost"
+msgstr "Költség"
+
+#: lib/teslamate_web/live/charge_live/cost.html.heex:151
+#, elixir-autogen, elixir-format
+msgid "Enter charge cost"
+msgstr "Add meg a töltési költséget"
+
+#: lib/teslamate_web/live/charge_live/cost.ex:87
+#, elixir-autogen, elixir-format
+msgid "Saved!"
+msgstr "Mentve!"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:50
+#, elixir-autogen, elixir-format
+msgid "Fetching vehicle data ..."
+msgstr "Járműadatok lekérése ..."
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:231
+#, elixir-autogen, elixir-format
+msgid "Addresses"
+msgstr "Címek"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:212
+#, elixir-autogen, elixir-format
+msgid "Language"
+msgstr "Nyelv"
+
+#: lib/teslamate_web/live/settings_live/index.ex:64
+#, elixir-autogen, elixir-format
+msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
+msgstr "Probléma történt az adatok lekérésekor az OpenStreetMapből. Próbáld újra később."
+
+#: lib/teslamate_web/live/import_live/index.html.heex:4
+#, elixir-autogen, elixir-format
+msgid "TeslaFi Import"
+msgstr "TeslaFi import"
+
+#: lib/teslamate_web/live/import_live/index.html.heex:10
+#, elixir-format, elixir-autogen
+msgid "Found %{count} file"
+msgid_plural "Found %{count} files"
+msgstr[0] "%{count} fájl található"
+msgstr[1] "%{count} fájl található"
+
+#: lib/teslamate_web/live/import_live/index.ex:34
+#: lib/teslamate_web/live/import_live/index.html.heex:89
+#, elixir-autogen, elixir-format
+msgid "Import"
+msgstr "Importálás"
+
+#: lib/teslamate_web/live/import_live/index.html.heex:79
+#, elixir-autogen, elixir-format
+msgid "Time zone"
+msgstr "Időzóna"
+
+#: lib/teslamate_web/live/signin_live/index.ex:13
+#: lib/teslamate_web/live/signin_live/index.html.heex:70
+#, elixir-autogen, elixir-format
+msgid "Sign in"
+msgstr "Bejelentkezés"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:122
+#, elixir-autogen, elixir-format
+msgid "Charge cost"
+msgstr "Töltési költség"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:125
+#, elixir-autogen, elixir-format
+msgid "Free Supercharging"
+msgstr "Ingyenes Supercharging"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:180
+#, elixir-autogen, elixir-format
+msgid "General Settings"
+msgstr "Általános beállítások"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:96
+#, elixir-autogen, elixir-format
+msgid "Session fee"
+msgstr "Alapdíj"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:122
+#, elixir-autogen, elixir-format
+msgid "Doors open"
+msgstr "Ajtók nyitva"
+
+#: lib/teslamate_web/live/charge_live/cost.html.heex:140
+#: lib/teslamate_web/live/geofence_live/form.html.heex:72
+#, elixir-autogen, elixir-format
+msgid "Per kWh"
+msgstr "kWh-nként"
+
+#: lib/teslamate_web/live/charge_live/cost.html.heex:139
+#, elixir-autogen, elixir-format
+msgid "Total"
+msgstr "Összesen"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:163
+#, elixir-format, elixir-autogen
+msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
+msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
+msgstr[0] "Ezen a helyen <strong>%{n} töltési munkamenet</strong> van, amelyhez még nincs költség megadva."
+msgstr[1] "Ezen a helyen <strong>%{n} töltési munkamenet</strong> van, amelyhez még nincs költség megadva."
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:177
+#, elixir-autogen, elixir-format
+msgid "Add costs retroactively"
+msgstr "Költségek utólagos hozzáadása"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:155
+#, elixir-autogen, elixir-format
+msgid "Charging Costs"
+msgstr "Töltési költségek"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:174
+#, elixir-autogen, elixir-format
+msgid "Continue"
+msgstr "Folytatás"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:421
+#, elixir-autogen, elixir-format
+msgid "Mileage"
+msgstr "Futásteljesítmény"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:141
+#, elixir-autogen, elixir-format
+msgid "Streaming API"
+msgstr "Streaming API"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:395
+#, elixir-autogen, elixir-format
+msgid "Documentation"
+msgstr "Dokumentáció"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:385
+#, elixir-autogen, elixir-format
+msgid "GitHub"
+msgstr "GitHub"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:380
+#: lib/teslamate_web/templates/layout/root.html.heex:188
+#, elixir-autogen, elixir-format
+msgid "Update available"
+msgstr "Frissítés elérhető"
+
+#: lib/teslamate_web/live/car_live/summary.ex:145
+#, elixir-autogen, elixir-format
+msgid "Doors are open"
+msgstr "Az ajtók nyitva vannak"
+
+#: lib/teslamate_web/live/car_live/summary.ex:146
+#, elixir-autogen, elixir-format
+msgid "Trunk is open"
+msgstr "A csomagtartó nyitva van"
+
+#: lib/teslamate_web/live/charge_live/cost.html.heex:141
+#: lib/teslamate_web/live/geofence_live/form.html.heex:73
+#, elixir-autogen, elixir-format
+msgid "Per Minute"
+msgstr "Percenként"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:159
+#, elixir-autogen, elixir-format
+msgid "Software Update available (%{version})"
+msgstr "Szoftverfrissítés elérhető (%{version})"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:413
+#, elixir-autogen, elixir-format
+msgid "Sign out"
+msgstr "Kijelentkezés"
+
+#: lib/teslamate_web/live/signin_live/index.html.heex:19
+#, elixir-autogen, elixir-format
+msgid "Access Token"
+msgstr "Hozzáférési token"
+
+#: lib/teslamate_web/live/signin_live/index.html.heex:35
+#, elixir-autogen, elixir-format
+msgid "Refresh Token"
+msgstr "Frissítési token"
+
+#: lib/teslamate_web/live/signin_live/index.ex:58
+#, elixir-autogen, elixir-format
+msgid "Tokens are invalid"
+msgstr "A tokenek érvénytelenek"
+
+#: lib/teslamate_web/live/signin_live/index.html.heex:99
+#, elixir-autogen, elixir-format
+msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
+msgstr "A Tesla API-n keresztüli tokenek beszerzéséhez programozási tapasztalat vagy harmadik féltől származó szolgáltatás szükséges. További információ %{here} található."
+
+#: lib/teslamate_web/live/signin_live/index.html.heex:92
+#, elixir-autogen, elixir-format
+msgid "here"
+msgstr "itt"
+
+#: lib/teslamate_web/live/signin_live/index.ex:61
+#, elixir-autogen, elixir-format
+msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
+msgstr "A Tesla-fiókod túl sok sikertelen bejelentkezési kísérlet miatt zárolva van. A feloldáshoz állítsd vissza a jelszavadat"
+
+#: lib/teslamate_web/live/car_live/summary.ex:151
+#, elixir-autogen, elixir-format
+msgid "Downloading update"
+msgstr "Frissítés letöltése"
+
+#: lib/teslamate_web/templates/layout/root.html.heex:145
+#, elixir-autogen, elixir-format
+msgid "No encryption key provided"
+msgstr "Nincs megadva titkosítási kulcs"
+
+#: lib/teslamate_web/templates/layout/root.html.heex:165
+#, elixir-autogen, elixir-format
+msgid "For more information, see the updated installation guides on %{link}"
+msgstr "További információért lásd a frissített telepítési útmutatókat itt: %{link}"
+
+#: lib/teslamate_web/templates/layout/root.html.heex:158
+#, elixir-autogen, elixir-format
+msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
+msgstr "Az aktuális munkamenethez automatikusan létrehozott titkosítási kulcs <strong>az alkalmazásnaplókban</strong> található."
+
+#: lib/teslamate_web/templates/layout/root.html.heex:151
+#, elixir-autogen, elixir-format
+msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
+msgstr "Ahhoz, hogy <strong>a Tesla API-tokenek biztonságosan legyenek tárolva</strong>, meg kell adni egy titkosítási kulcsot a TeslaMate számára az <code>ENCRYPTION_KEY</code> környezeti változóval. Ellenkező esetben <strong>minden újraindítás után be kell jelentkezni</strong>."
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:309
+#, elixir-autogen, elixir-format
+msgid "Tire Pressure"
+msgstr "Abroncsnyomás"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "Dog Mode"
+msgstr "Kutya mód"
+
+#: lib/teslamate_web/live/car_live/summary.ex:149
+#, elixir-autogen, elixir-format
+msgid "Dog mode is enabled"
+msgstr "A Kutya mód be van kapcsolva"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:259
+#, elixir-autogen, elixir-format
+msgid "Expected Finish Time"
+msgstr "Várható befejezési idő"
+
+#: lib/teslamate_web/live/signin_live/index.html.heex:59
+#, elixir-autogen, elixir-format
+msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
+msgstr "A(z) %{url} által biztosított API-kulcsot (%{token}) használod. Ez lehetővé teszi, hogy a TeslaMate hozzáférjen a hivatalos Tesla Fleet API-hoz és a Tesla Telemetry streaminghez."
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "Data Collection"
+msgstr "Adatgyűjtés"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:160
+#, elixir-autogen, elixir-format
+msgid "Battery"
+msgstr "Akkumulátor"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:163
+#, elixir-autogen, elixir-format
+msgid "LFP Battery"
+msgstr "LFP akkumulátor"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:138
+#, elixir-autogen, elixir-format
+msgid "Sentry Mode recording"
+msgstr "Őrszem mód felvétel"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:107
+#, elixir-autogen, elixir-format
+msgid "View car location on Google Maps"
+msgstr "Autó helyzetének megnyitása a Google Térképen"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:254
+#, elixir-autogen, elixir-format
+msgid "Appearance"
+msgstr "Megjelenés"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:263
+#, elixir-autogen, elixir-format
+msgid "Dark"
+msgstr "Sötét"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:262
+#, elixir-autogen, elixir-format
+msgid "Follow System"
+msgstr "Rendszer követése"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:261
+#, elixir-autogen, elixir-format
+msgid "Light"
+msgstr "Világos"
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:251
+#, elixir-autogen, elixir-format
+msgid "Theme"
+msgstr "Téma"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:97
+#, elixir-autogen, elixir-format
+msgid "Service Mode"
+msgstr "Szerviz mód"
