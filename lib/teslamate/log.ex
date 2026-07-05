@@ -155,16 +155,26 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
+  # Ordered by `id` (primary key) rather than `date` so this uses the
+  # always-present `positions_pkey` index instead of sequential-scanning after
+  # the btree on positions(date) was replaced with BRIN. Only used to centre the
+  # map when creating a geofence, where "most recently inserted position" is the
+  # answer we want.
   def get_latest_position do
     Position
-    |> order_by(desc: :date)
+    |> order_by(desc: :id)
     |> limit(1)
     |> Repo.one()
   end
 
+  # `ideal_battery_range_km IS NOT NULL` selects the latest *complete* position
+  # (full vehicle sample) and skips lightweight streaming-API rows, which never
+  # carry battery/climate data. It also matches the partial index
+  # `positions(car_id, date) WHERE ideal_battery_range_km IS NOT NULL`, so this
+  # resolves to an index scan instead of a sequential scan on large tables.
   def get_latest_position(%Car{id: id}) do
     Position
-    |> where(car_id: ^id)
+    |> where([p], p.car_id == ^id and not is_nil(p.ideal_battery_range_km))
     |> order_by(desc: :date)
     |> limit(1)
     |> Repo.one()
