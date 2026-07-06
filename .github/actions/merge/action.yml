@@ -49,26 +49,16 @@ runs:
         DIGEST="$(docker buildx imagetools inspect "$TAG" --format '{{json .Manifest}}' | jq -r .digest)"
         echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
         echo "manifest list digest: ${DIGEST}"
-    - name: Resolve attestation subject name
-      # See build action: qualify Docker Hub short names with docker.io so
-      # actions/attest-* can find the registry, without pinning REGISTRY_IMAGE.
-      id: subject
-      if: github.event_name != 'pull_request'
-      shell: bash
-      env:
-        IMAGE: ${{ env.REGISTRY_IMAGE }}
-      run: |
-        case "${IMAGE%%/*}" in
-          *.* | *:* | localhost) name="$IMAGE" ;;
-          *) name="docker.io/$IMAGE" ;;
-        esac
-        echo "name=$name" >> "$GITHUB_OUTPUT"
     - name: Attest manifest provenance
       # Skip on pull_request: see build action for the rationale.
       if: github.event_name != 'pull_request'
       uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
       with:
-        subject-name: ${{ steps.subject.outputs.name }}
+        # See build action: qualify Docker Hub short names with docker.io.
+        subject-name: >-
+          ${{ startsWith(env.REGISTRY_IMAGE, 'ghcr.io/')
+              && env.REGISTRY_IMAGE
+              || format('docker.io/{0}', env.REGISTRY_IMAGE) }}
         subject-digest: ${{ steps.manifest.outputs.digest }}
         push-to-registry: true
     - name: Inspect image

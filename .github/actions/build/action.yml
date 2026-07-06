@@ -93,33 +93,26 @@ runs:
         output-file: /tmp/sbom-${{ matrix.cache_id }}.spdx.json
         upload-artifact: false
         upload-release-assets: false
-    - name: Resolve attestation subject name
-      # attest-* reads the registry from subject-name's first path segment, so a
-      # bare "teslamate/teslamate" fails. Qualify short names with docker.io;
-      # leave already-qualified names (ghcr.io/...) so REGISTRY_IMAGE stays repointable.
-      id: subject
-      if: github.event_name != 'pull_request'
-      shell: bash
-      env:
-        IMAGE: ${{ env.REGISTRY_IMAGE }}
-      run: |
-        case "${IMAGE%%/*}" in
-          *.* | *:* | localhost) name="$IMAGE" ;;
-          *) name="docker.io/$IMAGE" ;;
-        esac
-        echo "name=$name" >> "$GITHUB_OUTPUT"
     - name: Attest build provenance
       if: github.event_name != 'pull_request'
       uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
       with:
-        subject-name: ${{ steps.subject.outputs.name }}
+        # attest-* reads the registry from the first path segment of subject-name,
+        # so qualify Docker Hub short names with docker.io; leave ghcr.io as-is.
+        subject-name: >-
+          ${{ startsWith(env.REGISTRY_IMAGE, 'ghcr.io/')
+              && env.REGISTRY_IMAGE
+              || format('docker.io/{0}', env.REGISTRY_IMAGE) }}
         subject-digest: ${{ steps.build.outputs.digest }}
         push-to-registry: true
     - name: Attest SBOM
       if: github.event_name != 'pull_request'
       uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
       with:
-        subject-name: ${{ steps.subject.outputs.name }}
+        subject-name: >-
+          ${{ startsWith(env.REGISTRY_IMAGE, 'ghcr.io/')
+              && env.REGISTRY_IMAGE
+              || format('docker.io/{0}', env.REGISTRY_IMAGE) }}
         subject-digest: ${{ steps.build.outputs.digest }}
         predicate-type: "https://spdx.dev/Document"
         predicate-path: /tmp/sbom-${{ matrix.cache_id }}.spdx.json

@@ -41,20 +41,6 @@ runs:
         sbom: false
         cache-from: type=gha
         cache-to: type=gha,mode=max
-    - name: Resolve attestation subject name
-      # See build action: qualify Docker Hub short names with docker.io so
-      # actions/attest-* can find the registry, without pinning the image input.
-      id: subject
-      if: github.event_name != 'pull_request'
-      shell: bash
-      env:
-        IMAGE: ${{ inputs.image }}
-      run: |
-        case "${IMAGE%%/*}" in
-          *.* | *:* | localhost) name="$IMAGE" ;;
-          *) name="docker.io/$IMAGE" ;;
-        esac
-        echo "name=$name" >> "$GITHUB_OUTPUT"
     - name: Attest grafana provenance
       # grafana is a single multi-arch build, so steps.build.outputs.digest is
       # the manifest-list digest that `gh attestation verify oci://...:tag`
@@ -62,6 +48,10 @@ runs:
       if: github.event_name != 'pull_request'
       uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
       with:
-        subject-name: ${{ steps.subject.outputs.name }}
+        # See build action: qualify Docker Hub short names with docker.io.
+        subject-name: >-
+          ${{ startsWith(inputs.image, 'ghcr.io/')
+              && inputs.image
+              || format('docker.io/{0}', inputs.image) }}
         subject-digest: ${{ steps.build.outputs.digest }}
         push-to-registry: true
