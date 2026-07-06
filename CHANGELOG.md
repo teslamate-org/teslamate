@@ -37,6 +37,7 @@
 - build(deps): bump floki from 0.38.3 to 0.38.4 (#5461)
 - test: harden async waits (#5456 - @magrathean-uk)
 - build(deps): update flake.lock (#5477)
+- ci: sign published images with SLSA provenance + SBOM attestations (#5380 - @oivindoh)
 
 #### Dashboards
 
