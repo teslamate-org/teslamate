@@ -40,6 +40,27 @@ runs:
       run: |
         docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
           $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+    - name: Capture manifest digest
+      id: manifest
+      shell: bash
+      env:
+        TAG: ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+      run: |
+        DIGEST="$(docker buildx imagetools inspect "$TAG" --format '{{json .Manifest}}' | jq -r .digest)"
+        echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+        echo "manifest list digest: ${DIGEST}"
+    - name: Attest manifest provenance
+      # Skip on pull_request: see build action for the rationale.
+      if: github.event_name != 'pull_request'
+      uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
+      with:
+        # See build action: qualify Docker Hub short names with docker.io.
+        subject-name: >-
+          ${{ startsWith(env.REGISTRY_IMAGE, 'ghcr.io/')
+              && env.REGISTRY_IMAGE
+              || format('docker.io/{0}', env.REGISTRY_IMAGE) }}
+        subject-digest: ${{ steps.manifest.outputs.digest }}
+        push-to-registry: true
     - name: Inspect image
       shell: bash
       run: |

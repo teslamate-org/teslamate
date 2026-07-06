@@ -68,11 +68,55 @@ runs:
         platforms: ${{ matrix.platform }}
         labels: ${{ steps.meta.outputs.labels }}
         tags: ${{ steps.docker_meta.outputs.tags }}
+        # Disable BuildKit-side attestations so outputs.digest is the bare image
+        # manifest digest. With provenance enabled, BuildKit wraps the image in
+        # an OCI index whose digest does NOT appear in the multi-arch manifest
+        # list produced by `imagetools create`, which would make tag-based
+        # attestation verification fail. Signed SLSA provenance is added by
+        # actions/attest-build-provenance below.
+        provenance: false
+        sbom: false
         cache-from: |
           type=registry,ref=ghcr.io/${{ inputs.repository }}:buildcache-${{ matrix.cache_id }}-${{ steps.normalize_version.outputs.normalized_version }}
           type=registry,ref=ghcr.io/${{ inputs.repository }}:buildcache-${{ matrix.cache_id }}-main
         cache-to: type=registry,ref=ghcr.io/${{ inputs.repository }}:buildcache-${{ matrix.cache_id }}-${{ steps.normalize_version.outputs.normalized_version }},mode=max
         outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+    - name: Generate SBOM for pushed image
+      # Skip on pull_request: PR builds are unreviewed code. Attesting them
+      # would yield signed attestations that pass `gh attestation verify
+      # --repo teslamate-org/teslamate`, which consumers read as "official".
+      if: github.event_name != 'pull_request'
+      uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
+      with:
+        image: ${{ env.REGISTRY_IMAGE }}@${{ steps.build.outputs.digest }}
+        format: spdx-json
+        output-file: /tmp/sbom-${{ matrix.cache_id }}.spdx.json
+        upload-artifact: false
+        upload-release-assets: false
+    - name: Attest build provenance
+      if: github.event_name != 'pull_request'
+      uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
+      with:
+        # attest-* reads the registry from the first path segment of subject-name,
+        # so qualify Docker Hub short names with docker.io; leave ghcr.io as-is.
+        subject-name: >-
+          ${{ startsWith(env.REGISTRY_IMAGE, 'ghcr.io/')
+              && env.REGISTRY_IMAGE
+              || format('docker.io/{0}', env.REGISTRY_IMAGE) }}
+        subject-digest: ${{ steps.build.outputs.digest }}
+        push-to-registry: true
+    - name: Attest SBOM
+      if: github.event_name != 'pull_request'
+      uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+      with:
+        subject-name: >-
+          ${{ startsWith(env.REGISTRY_IMAGE, 'ghcr.io/')
+              && env.REGISTRY_IMAGE
+              || format('docker.io/{0}', env.REGISTRY_IMAGE) }}
+        subject-digest: ${{ steps.build.outputs.digest }}
+        predicate-type: "https://spdx.dev/Document"
+        predicate-path: /tmp/sbom-${{ matrix.cache_id }}.spdx.json
+        push-to-registry: true
     - name: Export digest
       shell: bash
       run: |
