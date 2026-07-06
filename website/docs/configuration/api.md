@@ -51,7 +51,7 @@ You must use the `URL` and the `TOKEN` given by the third party API provider.
 
 ```yml
 # API Fleet
-- TOKEN=?token=xxxx-xxxx-xxxx-xxxx
+- TOKEN=xxxx-xxxx-xxxx-xxxx
 - TESLA_API_HOST=https://api.myteslamate.com
 - TESLA_AUTH_HOST=https://api.myteslamate.com
 - TESLA_AUTH_PATH=/api/oauth2/v3
@@ -82,7 +82,7 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 1. Use this `TOKEN` instead of _`xxxx-xxxx-xxxx-xxxx`_ and add the following environment variables:
 
    ```yml
-   - TOKEN=?token=xxxx-xxxx-xxxx-xxxx
+   - TOKEN=xxxx-xxxx-xxxx-xxxx
    - TESLA_API_HOST=https://api.teslemetry.com
    - TESLA_AUTH_HOST=https://api.teslemetry.com
    - TESLA_AUTH_PATH=/api/oauth2/v3

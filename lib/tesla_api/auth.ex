@@ -21,6 +21,7 @@ defmodule TeslaApi.Auth do
   plug Tesla.Middleware.BaseUrl, System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com")
   plug Tesla.Middleware.Headers, @default_headers
   plug Tesla.Middleware.JSON
+  plug TeslaApi.Middleware.FleetAuth
   plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
 
   defstruct [:token, :type, :expires_in, :refresh_token, :created_at]

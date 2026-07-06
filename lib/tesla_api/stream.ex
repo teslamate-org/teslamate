@@ -3,6 +3,7 @@ defmodule TeslaApi.Stream do
 
   require Logger
   alias TeslaApi.Auth
+  alias TeslaApi.Middleware.FleetAuth
   alias __MODULE__.Data
 
   defmodule State do
@@ -33,14 +34,10 @@ defmodule TeslaApi.Stream do
     endpoint_url =
       case Auth.region(state.auth) do
         :chinese ->
-          System.get_env("TESLA_WSS_HOST", "wss://streaming.vn.cloud.tesla.cn") <>
-            "/streaming/" <>
-            System.get_env("TOKEN", "")
+          System.get_env("TESLA_WSS_HOST", "wss://streaming.vn.cloud.tesla.cn") <> "/streaming/"
 
         _global ->
-          System.get_env("TESLA_WSS_HOST", "wss://streaming.vn.teslamotors.com") <>
-            "/streaming/" <>
-            System.get_env("TOKEN", "")
+          System.get_env("TESLA_WSS_HOST", "wss://streaming.vn.teslamotors.com") <> "/streaming/"
       end
 
     WebSockex.start_link(endpoint_url, __MODULE__, state,
@@ -71,7 +68,7 @@ defmodule TeslaApi.Stream do
   end
 
   @impl true
-  def handle_info(:subscribe, %State{auth: %Auth{token: token}, vehicle_id: vid} = state) do
+  def handle_info(:subscribe, %State{auth: %Auth{token: access_token}, vehicle_id: vid} = state) do
     Logger.debug("Subscribing …")
 
     cancel_timer(state.timer)
@@ -80,7 +77,7 @@ defmodule TeslaApi.Stream do
 
     connect_message = %{
       msg_type: "data:subscribe_oauth",
-      token: token,
+      token: FleetAuth.token() || access_token,
       value: Enum.join(@columns, ","),
       tag: "#{vid}"
     }
