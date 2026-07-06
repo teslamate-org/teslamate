@@ -14,6 +14,7 @@
 - fix(mqtt): retry failed value publications (#5429 - @ciyahu)
 - fix: redact Tesla API tokens from logs (#5475 - @magrathean-uk)
 - fix(vehicle): back off for 15 minutes on Fleet API `EXCEEDED_LIMIT` responses instead of retrying every 10-30s (#5476 - @hossamnagy)
+- refactor: send TOKEN as Bearer header via FleetAuth middleware (#5470 - @jlestel)
 
 #### Build, CI, internal
 
