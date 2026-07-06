@@ -38,6 +38,7 @@
 - test: harden async waits (#5456 - @magrathean-uk)
 - build(deps): update flake.lock (#5477)
 - ci: sign published images with SLSA provenance + SBOM attestations (#5380 - @oivindoh)
+- fix(ci): add artifact-metadata permission for workflows (#5484 - @JakobLichterfeld)
 
 #### Dashboards
 
