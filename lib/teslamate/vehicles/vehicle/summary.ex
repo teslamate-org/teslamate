@@ -13,13 +13,13 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     driver_front_window_open driver_rear_window_open passenger_front_window_open passenger_rear_window_open
     doors_open driver_front_door_open driver_rear_door_open passenger_front_door_open passenger_rear_door_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
-    charger_actual_current charger_voltage version update_available update_version is_user_present geofence
+    charger_actual_current charger_voltage version update_available update_version update_status is_user_present geofence
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
     active_route_destination active_route_latitude active_route_longitude active_route_energy_at_arrival
     active_route_miles_to_arrival active_route_minutes_to_arrival active_route_traffic_minutes_delay
-    center_display_state service_mode sun_roof_state sun_roof_installed sun_roof_percent_open
+    center_display_state service_mode sun_roof_state sun_roof_installed sun_roof_percent_open download_perc install_perc
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -147,6 +147,9 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       version: version(vehicle),
       update_available: update_available(vehicle),
       update_version: update_version(vehicle),
+      update_status: get_in_struct(vehicle, [:vehicle_state, :software_update, :status]),
+      download_perc: get_in_struct(vehicle, [:vehicle_state, :software_update, :download_perc]),
+      install_perc: get_in_struct(vehicle, [:vehicle_state, :software_update, :install_perc]),
       tpms_pressure_fl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fl]),
       tpms_pressure_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fr]),
       tpms_pressure_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rl]),
@@ -267,9 +270,21 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
   defp update_available(vehicle) do
     case get_in_struct(vehicle, [:vehicle_state, :software_update, :status]) do
-      status when status in ["available", "downloading", "downloading_wifi_wait"] -> true
-      status when is_binary(status) -> false
-      nil -> nil
+      status
+      when status in [
+             "available",
+             "downloading",
+             "downloading_wifi_wait",
+             "scheduled",
+             "installing"
+           ] ->
+        true
+
+      status when is_binary(status) ->
+        false
+
+      nil ->
+        nil
     end
   end
 
