@@ -10,22 +10,22 @@ msgid ""
 msgstr ""
 "Language: th\n"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:246
+#: lib/teslamate_web/live/car_live/summary.html.heex:248
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "สถานะ"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:401
+#: lib/teslamate_web/live/car_live/summary.html.heex:403
 #, elixir-autogen, elixir-format
 msgid "Speed"
 msgstr "ความเร็ว"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:391
+#: lib/teslamate_web/live/car_live/summary.html.heex:393
 #, elixir-autogen, elixir-format
 msgid "State of Charge"
 msgstr "สถานะการชาร์จ"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:325
+#: lib/teslamate_web/live/car_live/summary.html.heex:327
 #, elixir-autogen, elixir-format
 msgid "Charged"
 msgstr "ชาร์จเรียบร้อยแล้ว"
@@ -87,7 +87,7 @@ msgstr "บ้าน"
 msgid "Settings"
 msgstr "การตั้งค่า"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:340
+#: lib/teslamate_web/live/car_live/summary.html.heex:342
 #, elixir-autogen, elixir-format
 msgid "Scheduled Charging"
 msgstr "การชาร์จตามกำหนดเวลา"
@@ -97,7 +97,7 @@ msgstr "การชาร์จตามกำหนดเวลา"
 msgid "Plugged In"
 msgstr "เสียบปลั๊กแล้ว"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:352
+#: lib/teslamate_web/live/car_live/summary.html.heex:354
 #, elixir-autogen, elixir-format
 msgid "Charge Limit"
 msgstr "การจำกัดการชาร์จ"
@@ -226,22 +226,22 @@ msgstr "โหมด Sentry เปิดแล้ว"
 msgid "Driver present"
 msgstr "มีผู้ขับรถอยู่"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:486
+#: lib/teslamate_web/live/car_live/summary.html.heex:488
 #, elixir-autogen, elixir-format
 msgid "cancel sleep attempt"
 msgstr "ยกเลิกการพยายามเข้าสู่โหมดหลับ"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:477
+#: lib/teslamate_web/live/car_live/summary.html.heex:479
 #, elixir-autogen, elixir-format
 msgid "try to sleep"
 msgstr "พยายามเข้าสู่โหมดหลับ"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:312
+#: lib/teslamate_web/live/car_live/summary.html.heex:314
 #, elixir-autogen, elixir-format
 msgid "Range (est.)"
 msgstr "ระยะทาง (โดยประมาณ)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:251
+#: lib/teslamate_web/live/car_live/summary.html.heex:253
 #, elixir-autogen, elixir-format
 msgid "for"
 msgstr "สำหรับ"
@@ -256,12 +256,12 @@ msgstr "ความต้องการ"
 msgid "Vehicle must be locked"
 msgstr "รถควรจะต้องถูกล็อค"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:292
+#: lib/teslamate_web/live/car_live/summary.html.heex:294
 #, elixir-autogen, elixir-format
 msgid "Range (rated)"
 msgstr "ระยะทาง (จัดอันดับ)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:331
+#: lib/teslamate_web/live/car_live/summary.html.heex:333
 #, elixir-autogen, elixir-format
 msgid "Charger Power"
 msgstr "กำลังการชาร์จ"
@@ -286,7 +286,7 @@ msgstr "ในอุดมคติ"
 msgid "rated"
 msgstr "จัดอันดับแล้ว"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:291
+#: lib/teslamate_web/live/car_live/summary.html.heex:293
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
 msgstr "ระยะทาง (ในอุดมคติ)"
@@ -311,23 +311,23 @@ msgstr "หน้าต่างเปิดอยู่"
 msgid "Delete '%{geo_fence}'?"
 msgstr "ลบ '%{geo_fence}' หรือไม่?"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:426
+#: lib/teslamate_web/live/car_live/summary.html.heex:428
 #, elixir-autogen, elixir-format
 msgid "Inside Temperature"
 msgstr "อุณหภูมิภายใน"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:414
+#: lib/teslamate_web/live/car_live/summary.html.heex:416
 #, elixir-autogen, elixir-format
 msgid "Outside Temperature"
 msgstr "อุณหภูมิภายนอก"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:451
+#: lib/teslamate_web/live/car_live/summary.html.heex:453
 #: lib/teslamate_web/live/settings_live/index.html.heex:374
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "รุ่น"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:229
+#: lib/teslamate_web/live/car_live/summary.html.heex:231
 #, elixir-autogen, elixir-format
 msgid "Health check failed"
 msgstr "การตรวจสุขภาพล้มเหลว"
@@ -337,7 +337,7 @@ msgstr "การตรวจสุขภาพล้มเหลว"
 msgid "Unlocked"
 msgstr "ปลดล็อคแล้ว"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:268
+#: lib/teslamate_web/live/car_live/summary.html.heex:270
 #, elixir-autogen, elixir-format
 msgid "Remaining Time"
 msgstr "เวลาที่เหลือ"
@@ -390,7 +390,7 @@ msgstr "หมดเวลา"
 msgid "Reduced Battery Range"
 msgstr "ระยะแบตเตอรี่ลดลง"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:385
+#: lib/teslamate_web/live/car_live/summary.html.heex:387
 #, elixir-autogen, elixir-format
 msgid "≈ %{range} at 100%"
 msgstr "≈ %{range} ที่ 100%"
@@ -523,7 +523,7 @@ msgstr "ค่าใช้จ่ายในการชาร์จ"
 msgid "Continue"
 msgstr "ดำเนินการต่อ"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:439
+#: lib/teslamate_web/live/car_live/summary.html.heex:441
 #, elixir-autogen, elixir-format
 msgid "Mileage"
 msgstr "ระยะทาง"
@@ -645,7 +645,7 @@ msgstr "โหมดสำหรับสุนัข"
 msgid "Dog mode is enabled"
 msgstr "เปิดใช้งานโหมดสำหรับสุนัขแล้ว"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:277
+#: lib/teslamate_web/live/car_live/summary.html.heex:279
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
 msgstr "เวลาที่คาดว่าจะเสร็จสิ้น"
