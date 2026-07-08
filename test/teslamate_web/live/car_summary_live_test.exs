@@ -415,16 +415,23 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                |> put_connect_params(%{"baseUrl" => "http://localhost"})
                |> live("/")
 
-      assert {"span", _, [{"span", [{"class", "mdi mdi-gift-outline"}], _}]} =
-               html
-               |> Floki.parse_document!()
-               |> Floki.find(".icons .icon")
-               |> Enum.find(
-                 &match?(
-                   {"span", [_, {"data-tooltip", "Software Update available (2019.8.5)"}], _},
-                   &1
-                 )
-               )
+      icon =
+        html
+        |> Floki.parse_document!()
+        |> Floki.find(".icons .icon")
+        |> Enum.find(
+          &match?(
+            {"a", _, [{"span", [{"class", "mdi mdi-gift-outline"}], _}]},
+            &1
+          )
+        )
+
+      assert {"a", attrs, [{"span", [{"class", "mdi mdi-gift-outline"}], _}]} = icon
+      attrs_map = Map.new(attrs)
+      assert attrs_map["data-tooltip"] == "Software Update available (2019.8.5)"
+
+      assert attrs_map["href"] ==
+               "https://www.notateslaapp.com/software-updates/version/2019.8.5/release-notes"
     end
 
     defp software_update_icon(conn, software_update) do
@@ -455,9 +462,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       html
       |> Floki.parse_document!()
       |> Floki.find(".icons .icon")
-      |> Enum.find(
-        &match?({"span", _, [{"span", [{"class", "mdi mdi-gift-outline"} | _], _}]}, &1)
-      )
+      |> Enum.find(&match?({"a", _, [{"span", [{"class", "mdi mdi-gift-outline"} | _], _}]}, &1))
     end
 
     @tag :signed_in
@@ -470,7 +475,15 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           download_perc: 42
         })
 
-      assert {"span", [_, {"data-tooltip", "Downloading 42%"}], [inner]} = icon
+      assert {"a", attrs, [inner]} = icon
+      attrs_map = Map.new(attrs)
+      assert attrs_map["data-tooltip"] == "Downloading 42%"
+
+      assert attrs_map["href"] ==
+               "https://www.notateslaapp.com/software-updates/version/2019.8.5/release-notes"
+
+      assert attrs_map["target"] == "_blank"
+      assert attrs_map["rel"] == "noopener noreferrer"
       assert {"span", [{"class", "mdi mdi-gift-outline"}], _} = inner
     end
 
@@ -485,7 +498,12 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           install_perc: 25
         })
 
-      assert {"span", [_, {"data-tooltip", "Installing 25%"}], [inner]} = icon
+      assert {"a", attrs, [inner]} = icon
+      attrs_map = Map.new(attrs)
+      assert attrs_map["data-tooltip"] == "Installing 25%"
+
+      assert attrs_map["href"] ==
+               "https://www.notateslaapp.com/software-updates/version/2019.8.5/release-notes"
 
       assert {"span", [{"class", "mdi mdi-gift-outline"}, {"style", "color: #4caf50;"}], _} =
                inner
@@ -503,8 +521,12 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
           scheduled_time_ms: 1_783_467_240_116
         })
 
-      assert {"span", [_, {"data-tooltip", "Software Update available (2026.20.6.1)"}], [inner]} =
-               icon
+      assert {"a", attrs, [inner]} = icon
+      attrs_map = Map.new(attrs)
+      assert attrs_map["data-tooltip"] == "Software Update available (2026.20.6.1)"
+
+      assert attrs_map["href"] ==
+               "https://www.notateslaapp.com/software-updates/version/2026.20.6.1/release-notes"
 
       assert {"span", [{"class", "mdi mdi-gift-outline"}, {"style", "color: #e8a33d;"}], _} =
                inner
