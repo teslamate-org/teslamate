@@ -10,22 +10,22 @@ msgid ""
 msgstr ""
 "Language: hu\n"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:228
+#: lib/teslamate_web/live/car_live/summary.html.heex:257
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Állapot"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:383
+#: lib/teslamate_web/live/car_live/summary.html.heex:412
 #, elixir-autogen, elixir-format
 msgid "Speed"
 msgstr "Sebesség"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:373
+#: lib/teslamate_web/live/car_live/summary.html.heex:402
 #, elixir-autogen, elixir-format
 msgid "State of Charge"
 msgstr "Töltöttségi szint"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:307
+#: lib/teslamate_web/live/car_live/summary.html.heex:336
 #, elixir-autogen, elixir-format
 msgid "Charged"
 msgstr "Feltöltve"
@@ -87,7 +87,7 @@ msgstr "Kezdőlap"
 msgid "Settings"
 msgstr "Beállítások"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:322
+#: lib/teslamate_web/live/car_live/summary.html.heex:351
 #, elixir-autogen, elixir-format
 msgid "Scheduled Charging"
 msgstr "Ütemezett töltés"
@@ -97,7 +97,7 @@ msgstr "Ütemezett töltés"
 msgid "Plugged In"
 msgstr "Csatlakoztatva"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:334
+#: lib/teslamate_web/live/car_live/summary.html.heex:363
 #, elixir-autogen, elixir-format
 msgid "Charge Limit"
 msgstr "Töltési limit"
@@ -226,22 +226,22 @@ msgstr "Az Őrszem mód be van kapcsolva"
 msgid "Driver present"
 msgstr "Vezető jelen"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:468
+#: lib/teslamate_web/live/car_live/summary.html.heex:497
 #, elixir-autogen, elixir-format
 msgid "cancel sleep attempt"
 msgstr "elalvási próbálkozás megszakítása"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:459
+#: lib/teslamate_web/live/car_live/summary.html.heex:488
 #, elixir-autogen, elixir-format
 msgid "try to sleep"
 msgstr "elalvás megkísérlése"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:294
+#: lib/teslamate_web/live/car_live/summary.html.heex:323
 #, elixir-autogen, elixir-format
 msgid "Range (est.)"
 msgstr "Hatótáv (becsült)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:233
+#: lib/teslamate_web/live/car_live/summary.html.heex:262
 #, elixir-autogen, elixir-format
 msgid "for"
 msgstr "óta"
@@ -256,12 +256,12 @@ msgstr "Feltételek"
 msgid "Vehicle must be locked"
 msgstr "A járműnek zárva kell lennie"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:274
+#: lib/teslamate_web/live/car_live/summary.html.heex:303
 #, elixir-autogen, elixir-format
 msgid "Range (rated)"
 msgstr "Hatótáv (névleges)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:313
+#: lib/teslamate_web/live/car_live/summary.html.heex:342
 #, elixir-autogen, elixir-format
 msgid "Charger Power"
 msgstr "Töltési teljesítmény"
@@ -286,7 +286,7 @@ msgstr "ideális"
 msgid "rated"
 msgstr "névleges"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:273
+#: lib/teslamate_web/live/car_live/summary.html.heex:302
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
 msgstr "Hatótáv (ideális)"
@@ -311,23 +311,23 @@ msgstr "Ablakok nyitva"
 msgid "Delete '%{geo_fence}'?"
 msgstr "Törli ezt: '%{geo_fence}'?"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:408
+#: lib/teslamate_web/live/car_live/summary.html.heex:437
 #, elixir-autogen, elixir-format
 msgid "Inside Temperature"
 msgstr "Belső hőmérséklet"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:396
+#: lib/teslamate_web/live/car_live/summary.html.heex:425
 #, elixir-autogen, elixir-format
 msgid "Outside Temperature"
 msgstr "Külső hőmérséklet"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:433
+#: lib/teslamate_web/live/car_live/summary.html.heex:462
 #: lib/teslamate_web/live/settings_live/index.html.heex:374
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "Verzió"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:211
+#: lib/teslamate_web/live/car_live/summary.html.heex:240
 #, elixir-autogen, elixir-format
 msgid "Health check failed"
 msgstr "Az állapotellenőrzés sikertelen"
@@ -337,7 +337,7 @@ msgstr "Az állapotellenőrzés sikertelen"
 msgid "Unlocked"
 msgstr "Nyitva"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:250
+#: lib/teslamate_web/live/car_live/summary.html.heex:279
 #, elixir-autogen, elixir-format
 msgid "Remaining Time"
 msgstr "Hátralévő idő"
@@ -390,7 +390,7 @@ msgstr "Időtúllépés"
 msgid "Reduced Battery Range"
 msgstr "Csökkentett akkumulátor-hatótáv"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:367
+#: lib/teslamate_web/live/car_live/summary.html.heex:396
 #, elixir-autogen, elixir-format
 msgid "≈ %{range} at 100%"
 msgstr "≈ %{range} 100%-nál"
@@ -524,7 +524,7 @@ msgstr "Töltési költségek"
 msgid "Continue"
 msgstr "Folytatás"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:421
+#: lib/teslamate_web/live/car_live/summary.html.heex:450
 #, elixir-autogen, elixir-format
 msgid "Mileage"
 msgstr "Futásteljesítmény"
@@ -566,7 +566,7 @@ msgstr "A csomagtartó nyitva van"
 msgid "Per Minute"
 msgstr "Percenként"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:159
+#: lib/teslamate_web/live/car_live/summary.html.heex:166
 #, elixir-autogen, elixir-format
 msgid "Software Update available (%{version})"
 msgstr "Szoftverfrissítés elérhető (%{version})"
@@ -646,7 +646,7 @@ msgstr "Kutya mód"
 msgid "Dog mode is enabled"
 msgstr "A Kutya mód be van kapcsolva"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:259
+#: lib/teslamate_web/live/car_live/summary.html.heex:288
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
 msgstr "Várható befejezési idő"
@@ -710,3 +710,13 @@ msgstr "Téma"
 #, elixir-autogen, elixir-format
 msgid "Service Mode"
 msgstr "Szerviz mód"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:163
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Downloading %{percent}%"
+msgstr "Frissítés letöltése"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex:159
+#, elixir-autogen, elixir-format
+msgid "Installing %{percent}%"
+msgstr ""

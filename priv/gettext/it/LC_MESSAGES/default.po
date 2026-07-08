@@ -10,22 +10,22 @@
 msgid ""
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:248
+#: lib/teslamate_web/live/car_live/summary.html.heex:257
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Stato"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:403
+#: lib/teslamate_web/live/car_live/summary.html.heex:412
 #, elixir-autogen, elixir-format
 msgid "Speed"
 msgstr "Velocità"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:393
+#: lib/teslamate_web/live/car_live/summary.html.heex:402
 #, elixir-autogen, elixir-format
 msgid "State of Charge"
 msgstr "Livello di carica"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:327
+#: lib/teslamate_web/live/car_live/summary.html.heex:336
 #, elixir-autogen, elixir-format
 msgid "Charged"
 msgstr "Caricato"
@@ -87,7 +87,7 @@ msgstr "Home"
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:342
+#: lib/teslamate_web/live/car_live/summary.html.heex:351
 #, elixir-autogen, elixir-format
 msgid "Scheduled Charging"
 msgstr "Ricarica pianificata"
@@ -97,7 +97,7 @@ msgstr "Ricarica pianificata"
 msgid "Plugged In"
 msgstr "Collegata"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:354
+#: lib/teslamate_web/live/car_live/summary.html.heex:363
 #, elixir-autogen, elixir-format
 msgid "Charge Limit"
 msgstr "Limite di carica"
@@ -226,22 +226,22 @@ msgstr "Modalità sentinella attiva"
 msgid "Driver present"
 msgstr "Guidatore presente"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:488
+#: lib/teslamate_web/live/car_live/summary.html.heex:497
 #, elixir-autogen, elixir-format
 msgid "cancel sleep attempt"
 msgstr "Annulla il tentativo di sospensione"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:479
+#: lib/teslamate_web/live/car_live/summary.html.heex:488
 #, elixir-autogen, elixir-format
 msgid "try to sleep"
 msgstr "Prova a sospondere"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:314
+#: lib/teslamate_web/live/car_live/summary.html.heex:323
 #, elixir-autogen, elixir-format
 msgid "Range (est.)"
 msgstr "Autonomia (stimata)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:253
+#: lib/teslamate_web/live/car_live/summary.html.heex:262
 #, elixir-autogen, elixir-format
 msgid "for"
 msgstr "da"
@@ -256,12 +256,12 @@ msgstr "Impostazioni"
 msgid "Vehicle must be locked"
 msgstr "Il veicolo deve essere bloccato"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:294
+#: lib/teslamate_web/live/car_live/summary.html.heex:303
 #, elixir-autogen, elixir-format
 msgid "Range (rated)"
 msgstr "Autonomia (teorica)"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:333
+#: lib/teslamate_web/live/car_live/summary.html.heex:342
 #, elixir-autogen, elixir-format
 msgid "Charger Power"
 msgstr "Potenza di ricarica"
@@ -286,7 +286,7 @@ msgstr "Stimata"
 msgid "rated"
 msgstr "Nominale"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:293
+#: lib/teslamate_web/live/car_live/summary.html.heex:302
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
 msgstr "Autonomia (stimata)"
@@ -311,23 +311,23 @@ msgstr "Finestrini aperti"
 msgid "Delete '%{geo_fence}'?"
 msgstr "Cancellare '%{geo_fence}'?"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:428
+#: lib/teslamate_web/live/car_live/summary.html.heex:437
 #, elixir-autogen, elixir-format
 msgid "Inside Temperature"
 msgstr "Temperatura abitacolo"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:416
+#: lib/teslamate_web/live/car_live/summary.html.heex:425
 #, elixir-autogen, elixir-format
 msgid "Outside Temperature"
 msgstr "Temperatura esterna"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:453
+#: lib/teslamate_web/live/car_live/summary.html.heex:462
 #: lib/teslamate_web/live/settings_live/index.html.heex:374
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "Versione"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:231
+#: lib/teslamate_web/live/car_live/summary.html.heex:240
 #, elixir-autogen, elixir-format
 msgid "Health check failed"
 msgstr "Controllo integrità non riuscito"
@@ -337,7 +337,7 @@ msgstr "Controllo integrità non riuscito"
 msgid "Unlocked"
 msgstr "Aperta"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:270
+#: lib/teslamate_web/live/car_live/summary.html.heex:279
 #, elixir-autogen, elixir-format
 msgid "Remaining Time"
 msgstr "Tempo rimanente"
@@ -390,7 +390,7 @@ msgstr "Tempo massimo scaduto"
 msgid "Reduced Battery Range"
 msgstr "Durata della batteria ridotta"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:387
+#: lib/teslamate_web/live/car_live/summary.html.heex:396
 #, elixir-autogen, elixir-format
 msgid "≈ %{range} at 100%"
 msgstr "≈ %{range} al 100%"
@@ -524,7 +524,7 @@ msgstr "Costo di ricarica"
 msgid "Continue"
 msgstr "Continuare"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:441
+#: lib/teslamate_web/live/car_live/summary.html.heex:450
 #, elixir-autogen, elixir-format
 msgid "Mileage"
 msgstr "Chilometraggio"
@@ -566,7 +566,7 @@ msgstr "Il baule è aperto"
 msgid "Per Minute"
 msgstr "Al minuto"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:168
+#: lib/teslamate_web/live/car_live/summary.html.heex:166
 #, elixir-autogen, elixir-format
 msgid "Software Update available (%{version})"
 msgstr "Aggiornamento disponibile (%{version})"
@@ -646,7 +646,7 @@ msgstr "Modalità Cane"
 msgid "Dog mode is enabled"
 msgstr "Modalità Cane attiva"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:279
+#: lib/teslamate_web/live/car_live/summary.html.heex:288
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
 msgstr "Tempo di completamento stimato"
@@ -711,12 +711,12 @@ msgstr ""
 msgid "Service Mode"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:165
+#: lib/teslamate_web/live/car_live/summary.html.heex:163
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Downloading %{percent}%"
 msgstr "Download dell'aggiornamento in corso"
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:161
+#: lib/teslamate_web/live/car_live/summary.html.heex:159
 #, elixir-autogen, elixir-format
 msgid "Installing %{percent}%"
 msgstr ""
