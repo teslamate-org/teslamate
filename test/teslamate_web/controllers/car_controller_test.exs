@@ -233,7 +233,20 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Sentry Mode", "shield-check")
       assert icon(html, "Windows open", "window-open")
       assert icon(html, "Doors open", "car-door")
-      assert icon(html, "Software Update available (2020.4.1)", "gift-outline")
+
+      software_update_icon =
+        html
+        |> Floki.parse_document!()
+        |> Floki.find(".icons .icon")
+        |> Enum.find(&match?({"a", _, [{"span", [{"class", "mdi mdi-gift-outline"}], _}]}, &1))
+
+      assert {"a", update_attrs, _} = software_update_icon
+      update_attrs_map = Map.new(update_attrs)
+      assert update_attrs_map["data-tooltip"] == "Software Update available (2020.4.1)"
+
+      assert update_attrs_map["href"] ==
+               "https://www.notateslaapp.com/software-updates/version/2020.4.1/release-notes"
+
       assert table_row(html, "Outside Temperature", "24 °C")
       assert table_row(html, "Inside Temperature", "23.2 °C")
       assert table_row(html, "Mileage", "42000 km")
