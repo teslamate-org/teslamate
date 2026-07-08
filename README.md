@@ -108,11 +108,11 @@ Key Requirements:
 ## Star History
 
 <!-- markdownlint-disable MD033 -->
-<a href="https://www.star-history.com/?repos=teslamate%2Fteslamate%2Cteslamate-org%2Fteslamate&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=teslamate-org%2Fteslamate&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=teslamate/teslamate%2Cteslamate-org/teslamate&type=date&theme=dark&legend=top-left&sealed_token=g6mgwMuUrbZjZJUuh0a4UjeHVmompdKkj0wkj1nadRZ6TF5ahf2oqTqNIAtib7Ra1cb-LYxGyA3E8a-bYGf2Q26jtVaInEaA1lVzoB_PA7Zep7AdHMqcSa3UqYYWJIU2JoDsjSpHYpf-fqENPRgxjro-veJuap9xP9g8ykKjukAEATtufZ1ZALZghAGm" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=teslamate/teslamate%2Cteslamate-org/teslamate&type=date&legend=top-left&sealed_token=g6mgwMuUrbZjZJUuh0a4UjeHVmompdKkj0wkj1nadRZ6TF5ahf2oqTqNIAtib7Ra1cb-LYxGyA3E8a-bYGf2Q26jtVaInEaA1lVzoB_PA7Zep7AdHMqcSa3UqYYWJIU2JoDsjSpHYpf-fqENPRgxjro-veJuap9xP9g8ykKjukAEATtufZ1ZALZghAGm" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=teslamate/teslamate%2Cteslamate-org/teslamate&type=date&legend=top-left&sealed_token=g6mgwMuUrbZjZJUuh0a4UjeHVmompdKkj0wkj1nadRZ6TF5ahf2oqTqNIAtib7Ra1cb-LYxGyA3E8a-bYGf2Q26jtVaInEaA1lVzoB_PA7Zep7AdHMqcSa3UqYYWJIU2JoDsjSpHYpf-fqENPRgxjro-veJuap9xP9g8ykKjukAEATtufZ1ZALZghAGm" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=teslamate-org/teslamate&type=date&theme=dark&legend=top-left&sealed_token=fwiuAlNEUj8eYQn1rfDBWuO1X-8D__oKgCwEMpguLFI2sKX84ySGDr-ZyaTvrmyCVFq6FMq3S9tbx08hNAB0n7zSsvxhhy12ywx2HW3RImbgY6xKsBIcDS0TeHVg9eReGL2CPHWQkQ8DWva51A5f-SCzPaoknJ3R82Vvm813x8wPAQIeuTurVEG5VnSw" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=teslamate-org/teslamate&type=date&legend=top-left&sealed_token=fwiuAlNEUj8eYQn1rfDBWuO1X-8D__oKgCwEMpguLFI2sKX84ySGDr-ZyaTvrmyCVFq6FMq3S9tbx08hNAB0n7zSsvxhhy12ywx2HW3RImbgY6xKsBIcDS0TeHVg9eReGL2CPHWQkQ8DWva51A5f-SCzPaoknJ3R82Vvm813x8wPAQIeuTurVEG5VnSw" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=teslamate-org/teslamate&type=date&legend=top-left&sealed_token=fwiuAlNEUj8eYQn1rfDBWuO1X-8D__oKgCwEMpguLFI2sKX84ySGDr-ZyaTvrmyCVFq6FMq3S9tbx08hNAB0n7zSsvxhhy12ywx2HW3RImbgY6xKsBIcDS0TeHVg9eReGL2CPHWQkQ8DWva51A5f-SCzPaoknJ3R82Vvm813x8wPAQIeuTurVEG5VnSw" />
  </picture>
 </a>
 <!-- markdownlint-enable MD033 -->

@@ -53,7 +53,7 @@
 - docs: update upgrading instructions to emphasize backup before updating more clearly (#5453 - @JakobLichterfeld)
 - docs(mqtt): add service mode topic to MQTT integration documentation (#5472 - @JakobLichterfeld)
 - docs: update star history chart links to new format in README (#5482 - @JakobLichterfeld)
-- docs: update star history links in README with to include the now needed sealed token (#5488 - @JakobLichterfeld)
+- docs: update star history links in README with to include the now needed sealed token (#5489 - @JakobLichterfeld)
 
 ## [4.0.1] - 2026-06-14
 
