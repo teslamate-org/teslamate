@@ -156,10 +156,30 @@
           <span
             class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
             data-tooltip={
-              gettext("Software Update available (%{version})", version: @summary.update_version)
+              cond do
+                @summary.update_status == "installing" and (@summary.install_perc || 0) > 0 ->
+                  gettext("Installing %{percent}%", percent: @summary.install_perc)
+
+                @summary.update_status in ["downloading", "downloading_wifi_wait"] and
+                    (@summary.download_perc || 0) > 0 ->
+                  gettext("Downloading %{percent}%", percent: @summary.download_perc)
+
+                true ->
+                  gettext("Software Update available (%{version})",
+                    version: @summary.update_version
+                  )
+              end
             }
           >
-            <span class="mdi mdi-gift-outline"></span>
+            <span
+              class="mdi mdi-gift-outline"
+              {cond do
+                @summary.update_status == "installing" -> [style: "color: #4caf50;"]
+                (@summary.download_perc || 0) >= 100 -> [style: "color: #e8a33d;"]
+                true -> []
+              end}
+            >
+            </span>
           </span>
         <% end %>
         <%= unless is_nil(@summary.tpms_soft_warning_fl) or is_nil(@summary.tpms_soft_warning_fr) or is_nil(@summary.tpms_soft_warning_rl) or is_nil(@summary.tpms_soft_warning_rr) do %>

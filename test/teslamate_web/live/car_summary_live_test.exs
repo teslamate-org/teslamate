@@ -427,6 +427,89 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                )
     end
 
+    defp software_update_icon(conn, software_update) do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events = [
+        {:ok, online_event(now_ts)},
+        {:ok,
+         online_event(now_ts + 1,
+           vehicle_state: %{
+             timestamp: now_ts + 1,
+             car_version: "2019.8.4 530d1d3",
+             software_update: software_update
+           }
+         )},
+        {:error, :unknown}
+      ]
+
+      :ok = start_vehicles(events)
+
+      Process.sleep(300)
+
+      assert {:ok, _parent_view, html} =
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
+
+      html
+      |> Floki.parse_document!()
+      |> Floki.find(".icons .icon")
+      |> Enum.find(
+        &match?({"span", _, [{"span", [{"class", "mdi mdi-gift-outline"} | _], _}]}, &1)
+      )
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "shows 'Downloading' and no color while downloading", %{conn: conn} do
+      icon =
+        software_update_icon(conn, %SoftwareUpdate{
+          status: "downloading",
+          version: "2019.8.5 3aaad23",
+          download_perc: 42
+        })
+
+      assert {"span", [_, {"data-tooltip", "Downloading 42%"}], [inner]} = icon
+      assert {"span", [{"class", "mdi mdi-gift-outline"}], _} = inner
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "shows 'Installing' and colors the icon while installing", %{conn: conn} do
+      icon =
+        software_update_icon(conn, %SoftwareUpdate{
+          status: "installing",
+          version: "2019.8.5 3aaad23",
+          download_perc: 100,
+          install_perc: 25
+        })
+
+      assert {"span", [_, {"data-tooltip", "Installing 25%"}], [inner]} = icon
+
+      assert {"span", [{"class", "mdi mdi-gift-outline"}, {"style", "color: #4caf50;"}], _} =
+               inner
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "shows 'available' tooltip and colors the icon when update is scheduled", %{conn: conn} do
+      icon =
+        software_update_icon(conn, %SoftwareUpdate{
+          status: "scheduled",
+          version: "2026.20.6.1 3aaad23",
+          download_perc: 100,
+          install_perc: 10,
+          scheduled_time_ms: 1_783_467_240_116
+        })
+
+      assert {"span", [_, {"data-tooltip", "Software Update available (2026.20.6.1)"}], [inner]} =
+               icon
+
+      assert {"span", [{"class", "mdi mdi-gift-outline"}, {"style", "color: #e8a33d;"}], _} =
+               inner
+    end
+
     @tag :signed_in
     @tag :capture_log
     test "shows snowflake if usable_battery_level differs from battery_level", %{conn: conn} do
