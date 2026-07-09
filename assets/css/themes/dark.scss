@@ -52,4 +52,14 @@
   .leaflet-container {
     background-color: var(--bulma-card-background-color);
   }
+
+  .map-fullscreen-button {
+    --map-fullscreen-button-border-color: rgba(204, 204, 220, 0.14);
+    --map-fullscreen-button-background-color: rgba(24, 27, 33, 0.72);
+    --map-fullscreen-button-color: rgba(204, 204, 220, 0.82);
+    --map-fullscreen-button-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+    --map-fullscreen-button-hover-border-color: rgba(204, 204, 220, 0.24);
+    --map-fullscreen-button-hover-background-color: rgba(34, 38, 46, 0.9);
+    --map-fullscreen-button-hover-color: rgb(204, 204, 220);
+  }
 }
