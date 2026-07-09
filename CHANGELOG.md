@@ -5,8 +5,11 @@
 ### New features
 
 - feat: add service mode to webview and reduce log when car is Unlocked at service mode (#5289 - @NirKli)
+- feat(mqtt): add service_mode (#5289 - @NirKli)
 - feat: add Sun roof and individual window status via MQTT (#5393 - @nebhale)
 - feat: show and color the software update icon through the update lifecycle (#5487 - @NirKli)
+- feat(mqtt): add download_perc and install_perc for pending sw install (#5487 - @NirKli)
+- feat: link the software update icon to the notateslaapp release notes (#5490 - @NirKli)
 
 ### Improvements and bug fixes
 
