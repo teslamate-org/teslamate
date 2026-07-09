@@ -153,34 +153,43 @@
           </span>
         <% end %>
         <%= if @summary.update_available do %>
-          <span
-            class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
-            data-tooltip={
-              cond do
-                @summary.update_status == "installing" and (@summary.install_perc || 0) > 0 ->
-                  gettext("Installing %{percent}%", percent: @summary.install_perc)
+          <% update_tooltip =
+            cond do
+              @summary.update_status == "installing" and (@summary.install_perc || 0) > 0 ->
+                gettext("Installing %{percent}%", percent: @summary.install_perc)
 
-                @summary.update_status in ["downloading", "downloading_wifi_wait"] and
-                    (@summary.download_perc || 0) > 0 ->
-                  gettext("Downloading %{percent}%", percent: @summary.download_perc)
+              @summary.update_status in ["downloading", "downloading_wifi_wait"] and
+                  (@summary.download_perc || 0) > 0 ->
+                gettext("Downloading %{percent}%", percent: @summary.download_perc)
 
-                true ->
-                  gettext("Software Update available (%{version})",
-                    version: @summary.update_version
-                  )
-              end
-            }
-          >
+              true ->
+                gettext("Software Update available (%{version})",
+                  version: @summary.update_version
+                )
+            end %>
+          <% update_icon_color =
+            cond do
+              @summary.update_status == "installing" -> [style: "color: #4caf50;"]
+              (@summary.download_perc || 0) >= 100 -> [style: "color: #e8a33d;"]
+              true -> []
+            end %>
+          <%= if @summary.update_version do %>
+            <%= link to:
+                      "https://www.notateslaapp.com/software-updates/version/#{@summary.update_version}/release-notes",
+                    target: "_blank",
+                    rel: "noopener noreferrer",
+                    class: "icon has-text-inherit has-tooltip-top has-tooltip-left-mobile",
+                    data: [tooltip: update_tooltip] do %>
+              <span class="mdi mdi-gift-outline" {update_icon_color}></span>
+            <% end %>
+          <% else %>
             <span
-              class="mdi mdi-gift-outline"
-              {cond do
-                @summary.update_status == "installing" -> [style: "color: #4caf50;"]
-                (@summary.download_perc || 0) >= 100 -> [style: "color: #e8a33d;"]
-                true -> []
-              end}
+              class="icon has-text-inherit has-tooltip-top has-tooltip-left-mobile"
+              data-tooltip={update_tooltip}
             >
+              <span class="mdi mdi-gift-outline" {update_icon_color}></span>
             </span>
-          </span>
+          <% end %>
         <% end %>
         <%= unless is_nil(@summary.tpms_soft_warning_fl) or is_nil(@summary.tpms_soft_warning_fr) or is_nil(@summary.tpms_soft_warning_rl) or is_nil(@summary.tpms_soft_warning_rr) do %>
           <%= if @summary.tpms_soft_warning_fl or @summary.tpms_soft_warning_fr or @summary.tpms_soft_warning_rl or @summary.tpms_soft_warning_rr do %>
