@@ -104,3 +104,9 @@ LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-g
 A gamification add-on for TeslaMate that analyzes your historical data to unlock achievements. It features a collection of badges based on driving milestones, charging habits, efficiency, and phantom drain, turning your ownership statistics into a fun progression system.
 
 LINK: [github.com/crstian19/teslamate-achievements](https://github.com/crstian19/teslamate-achievements)
+
+## [TeslaMate Dash](https://github.com/gmaslowski/teslamate-dash)
+
+A read-only, map-first dashboard for browsing your TeslaMate history without navigating Grafana. Every drive is drawn from its GPS trace and colored by speed; drives and charges open detail panels with speed/battery charts and charging curves, and a selection of activities can be turned into a route-planner-style trip summary. Ships as a single Go binary / Docker container (multi-arch images on GHCR) with a built-in demo mode, connects to the TeslaMate Postgres database with forced read-only sessions, and sends no telemetry.
+
+LINK: [github.com/gmaslowski/teslamate-dash](https://github.com/gmaslowski/teslamate-dash)
