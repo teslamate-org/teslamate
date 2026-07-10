@@ -265,7 +265,6 @@ export const SimpleMap = {
         : $fullscreenButton.dataset.enterLabel;
 
       $fullscreenButton.setAttribute("aria-label", label);
-      $fullscreenButton.setAttribute("aria-pressed", isFullscreen);
       $fullscreenButton.dataset.tooltip = label;
       $fullscreenIcon.classList.toggle("mdi-fullscreen-exit", isFullscreen);
       $fullscreenIcon.classList.toggle("mdi-fullscreen", !isFullscreen);
