@@ -210,7 +210,8 @@ export const SimpleMap = {
       ? new DirectionArrow([lat, lng], heading)
       : new Marker([lat, lng], { icon });
 
-    map.setView([lat, lng], 17);
+    const compactZoom = 17;
+    map.setView([lat, lng], compactZoom);
     marker.addTo(map);
 
     const setZoomControlVisible = (visible) => {
@@ -255,8 +256,8 @@ export const SimpleMap = {
       }, 0);
     };
 
-    const centerMapOnMarker = () => {
-      map.setView(marker.getLatLng(), map.getZoom(), { animate: false });
+    const resetMapView = () => {
+      map.setView(marker.getLatLng(), compactZoom, { animate: false });
     };
 
     const setFullscreenButtonState = (isFullscreen) => {
@@ -276,7 +277,7 @@ export const SimpleMap = {
       setFullscreenButtonState(isFullscreen);
       setZoomControlVisible(isFullscreen);
       setInteractive(isFullscreen);
-      invalidateMapSize(isFullscreen ? null : centerMapOnMarker);
+      invalidateMapSize(isFullscreen ? null : resetMapView);
     };
 
     if ($fullscreenButton && $fullscreenIcon) {
