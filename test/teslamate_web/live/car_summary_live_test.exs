@@ -352,6 +352,32 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
     end
   end
 
+  describe "map" do
+    @tag :signed_in
+    test "shows fullscreen button", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      :ok = start_vehicles([{:ok, online_event(now_ts, display_name: "FooCar")}])
+
+      assert {:ok, _parent_view, html} =
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/")
+
+      assert [{"button", attrs, _children} = button] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("button.map-fullscreen-button")
+
+      attrs = Map.new(attrs)
+      assert attrs["type"] == "button"
+      assert attrs["data-tooltip"] == "Maximize map"
+      assert attrs["data-exit-label"] == "Minimize map"
+      assert attrs["aria-label"] == "Maximize map"
+      assert Floki.find(button, ".mdi-fullscreen") != []
+    end
+  end
+
   describe "tags" do
     @tag :signed_in
     @tag :capture_log

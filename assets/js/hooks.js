@@ -183,6 +183,12 @@ function createMap(opts) {
 export const SimpleMap = {
   mounted() {
     const $position = document.querySelector(`#position_${this.el.dataset.id}`);
+    const $fullscreenButton = this.el.querySelector(".map-fullscreen-button");
+    const $fullscreenIcon = $fullscreenButton
+      ? $fullscreenButton.querySelector(".mdi")
+      : null;
+    this.positionInput = $position;
+    this.fullscreenButton = $fullscreenButton;
 
     const map = createMap({
       elId: this.el.dataset.id,
@@ -195,6 +201,7 @@ export const SimpleMap = {
       dragging: false,
       touchZoom: false,
     });
+    this.map = map;
 
     const isArrow = this.el.dataset.marker === "arrow";
     const [lat, lng, heading] = $position.value.split(",");
@@ -203,17 +210,92 @@ export const SimpleMap = {
       ? new DirectionArrow([lat, lng], heading)
       : new Marker([lat, lng], { icon });
 
-    map.setView([lat, lng], 17);
+    const compactZoom = 17;
+    map.setView([lat, lng], compactZoom);
     marker.addTo(map);
 
-    map.removeControl(map.zoomControl);
+    const setZoomControlVisible = (visible) => {
+      if (map.zoomControl) {
+        if (visible) {
+          map.addControl(map.zoomControl);
+        } else {
+          map.removeControl(map.zoomControl);
+        }
+      }
+    };
 
-    map.on("mouseover", function (e) {
-      map.addControl(map.zoomControl);
+    setZoomControlVisible(false);
+
+    map.on("mouseover", () => setZoomControlVisible(true));
+    map.on("mouseout", () => {
+      if (!this.el.classList.contains("is-map-fullscreen")) {
+        setZoomControlVisible(false);
+      }
     });
-    map.on("mouseout", function (e) {
-      map.removeControl(map.zoomControl);
-    });
+
+    const setInteractive = (enabled) => {
+      for (const handler of [
+        map.boxZoom,
+        map.doubleClickZoom,
+        map.dragging,
+        map.keyboard,
+        map.scrollWheelZoom,
+        map.tap,
+        map.touchZoom,
+      ]) {
+        if (handler) {
+          enabled ? handler.enable() : handler.disable();
+        }
+      }
+    };
+
+    const invalidateMapSize = (callback) => {
+      window.setTimeout(() => {
+        map.invalidateSize();
+        if (callback) callback();
+      }, 0);
+    };
+
+    const resetMapView = () => {
+      map.setView(marker.getLatLng(), compactZoom, { animate: false });
+    };
+
+    const setFullscreenButtonState = (isFullscreen) => {
+      const label = isFullscreen
+        ? $fullscreenButton.dataset.exitLabel
+        : $fullscreenButton.dataset.enterLabel;
+
+      $fullscreenButton.setAttribute("aria-label", label);
+      $fullscreenButton.dataset.tooltip = label;
+      $fullscreenIcon.classList.toggle("mdi-fullscreen-exit", isFullscreen);
+      $fullscreenIcon.classList.toggle("mdi-fullscreen", !isFullscreen);
+    };
+
+    const toggleFullscreen = () => {
+      const isFullscreen = this.el.classList.toggle("is-map-fullscreen");
+      document.documentElement.classList.toggle("is-clipped", isFullscreen);
+      setFullscreenButtonState(isFullscreen);
+      setZoomControlVisible(isFullscreen);
+      setInteractive(isFullscreen);
+      invalidateMapSize(isFullscreen ? null : resetMapView);
+    };
+
+    if ($fullscreenButton && $fullscreenIcon) {
+      $fullscreenButton.dataset.enterLabel =
+        $fullscreenButton.getAttribute("aria-label");
+      this.handleFullscreenClick = toggleFullscreen;
+      this.handleFullscreenKeyup = (e) => {
+        if (
+          e.key === "Escape" &&
+          this.el.classList.contains("is-map-fullscreen")
+        ) {
+          toggleFullscreen();
+        }
+      };
+
+      $fullscreenButton.addEventListener("click", this.handleFullscreenClick);
+      document.addEventListener("keyup", this.handleFullscreenKeyup);
+    }
 
     if (isArrow) {
       const setView = () => {
@@ -223,7 +305,36 @@ export const SimpleMap = {
         map.setView([lat, lng], map.getZoom());
       };
 
-      $position.addEventListener("change", setView);
+      this.handlePositionChange = setView;
+      $position.addEventListener("change", this.handlePositionChange);
+    }
+  },
+
+  destroyed() {
+    if (this.fullscreenButton && this.handleFullscreenClick) {
+      this.fullscreenButton.removeEventListener(
+        "click",
+        this.handleFullscreenClick,
+      );
+    }
+
+    if (this.handleFullscreenKeyup) {
+      document.removeEventListener("keyup", this.handleFullscreenKeyup);
+    }
+
+    if (this.positionInput && this.handlePositionChange) {
+      this.positionInput.removeEventListener(
+        "change",
+        this.handlePositionChange,
+      );
+    }
+
+    if (this.el.classList.contains("is-map-fullscreen")) {
+      document.documentElement.classList.remove("is-clipped");
+    }
+
+    if (this.map) {
+      this.map.remove();
     }
   },
 };
