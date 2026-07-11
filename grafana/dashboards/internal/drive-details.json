@@ -2382,7 +2382,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tconvert_km(avg(speed)::numeric, '$length_unit') AS speed_${length_unit}h\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)",
+          "rawSql": "WITH pts AS (\n\tSELECT speed, EXTRACT(EPOCH FROM (LEAD(date) OVER (ORDER BY date) - date)) AS dt\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date) AND speed IS NOT NULL\n)\n-- Time-weighted average: the stream downsamples at standstill, so a plain point\n-- average underweights stopped time and overstates speed. Cap gaps at 60s.\nSELECT\n\tconvert_km((SUM(speed * dt) / NULLIF(SUM(dt), 0))::numeric, '$length_unit') AS speed_${length_unit}h\nFROM pts\nWHERE dt BETWEEN 0 AND 60",
           "refId": "A",
           "sql": {
             "columns": [
