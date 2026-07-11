@@ -30,4 +30,4 @@ sidebar_label: Upgrading PostgreSQL
    docker compose up -d database
    ```
 
-5. [Restore](backup_restore.mdx) the backup
+5. [Restore](backup_restore.mdx#restore) the backup
