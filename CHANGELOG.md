@@ -10,6 +10,7 @@
 - feat: show and color the software update icon through the update lifecycle (#5487 - @NirKli)
 - feat(mqtt): add download_perc and install_perc for pending sw install (#5487 - @NirKli)
 - feat: link the software update icon to the notateslaapp release notes (#5490 - @NirKli)
+- feat: add fullscreen mode to vehicle summary map (#5495 - @hakong)
 
 ### Improvements and bug fixes
 
