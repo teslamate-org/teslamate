@@ -187,6 +187,8 @@ DROP SCHEMA IF EXISTS private CASCADE;
 CREATE SCHEMA public;
 CREATE EXTENSION cube WITH SCHEMA public;
 CREATE EXTENSION earthdistance WITH SCHEMA public;
+ALTER FUNCTION ll_to_earth SET search_path = public;
+ALTER FUNCTION earth_box SET search_path = public;
 SQL
 
 if [ $? -ne 0 ]; then
