@@ -110,9 +110,16 @@ case System.get_env("DATABASE_SOCKET_DIR") do
       port: System.get_env("DATABASE_PORT", "5432")
 
   socket_dir ->
-    config :teslamate, TeslaMate.Repo,
-      socket_dir: socket_dir,
-      port: System.get_env("DATABASE_PORT", "5432")
+    repo_config =
+      [
+        socket_dir: socket_dir,
+        port: System.get_env("DATABASE_PORT", "5432"),
+        username: System.get_env("DATABASE_USER"),
+        password: System.get_env("DATABASE_PASS")
+      ]
+      |> Enum.reject(fn {_key, value} -> is_nil(value) end)
+
+    config :teslamate, TeslaMate.Repo, repo_config
 end
 
 config :teslamate, TeslaMate.Repo,
