@@ -71,4 +71,17 @@ module.exports = {
       },
     ],
   ],
+  plugins: [
+    [
+      "@docusaurus/plugin-client-redirects",
+      {
+        redirects: [
+          {
+            from: "/docs/maintenance/backup_restore",
+            to: "/docs/maintenance/backup",
+          },
+        ],
+      },
+    ],
+  ],
 };
