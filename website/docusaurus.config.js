@@ -27,7 +27,6 @@ module.exports = {
           label: "Docs",
           position: "left",
         },
-        // { to: "blog", label: "Blog", position: "left" },
         {
           href: "https://github.com/teslamate-org/teslamate",
           label: "GitHub",
@@ -35,21 +34,6 @@ module.exports = {
         },
       ],
     },
-    // footer: {
-    //   style: "dark",
-    //   items: [
-    //     {
-    //       title: "Community",
-    //       items: [
-    //         {
-    //           label: "Discord",
-    //           href: "https://discordapp.com/invite/docusaurus",
-    //         },
-    //       ],
-    //     },
-    //   ],
-    //   copyright: `Copyright © ${new Date().getFullYear()} Adrian Kumpf`,
-    // },
     prism: {
       additionalLanguages: ["apacheconf", "sql"],
     },
@@ -59,7 +43,6 @@ module.exports = {
       "@docusaurus/preset-classic",
       {
         docs: {
-          // routeBasePath: "", // Docs-only
           sidebarCollapsible: false,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl:
@@ -68,6 +51,19 @@ module.exports = {
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
+      },
+    ],
+  ],
+  plugins: [
+    [
+      "@docusaurus/plugin-client-redirects",
+      {
+        redirects: [
+          {
+            from: "/docs/maintenance/backup_restore",
+            to: "/docs/maintenance/backup",
+          },
+        ],
       },
     ],
   ],

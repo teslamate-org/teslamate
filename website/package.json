@@ -11,6 +11,7 @@
   "dependencies": {
     "@docusaurus/core": "^3.10.1",
     "@docusaurus/faster": "^3.10.1",
+    "@docusaurus/plugin-client-redirects": "^3.10.1",
     "@docusaurus/preset-classic": "^3.10.1",
     "classnames": "^2.5.1",
     "react": "^19.2.7",

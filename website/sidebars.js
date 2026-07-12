@@ -60,7 +60,8 @@ module.exports = {
       label: "Maintenance",
       items: [
         "upgrading",
-        "maintenance/backup_restore",
+        "maintenance/backup",
+        "maintenance/restore",
         "maintenance/manually_fixing_data",
         "maintenance/upgrading_postgres",
       ],
