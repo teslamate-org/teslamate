@@ -154,8 +154,8 @@ sudo localectl set-locale LANG=en_US.UTF-8
 
 ## Starting TeslaMate at boot time
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 <Tabs
 defaultValue="systemd"
