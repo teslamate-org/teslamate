@@ -20,6 +20,7 @@
 - fix: redact Tesla API tokens from logs (#5475 - @magrathean-uk)
 - fix(vehicle): back off for 15 minutes on Fleet API `EXCEEDED_LIMIT` responses instead of retrying every 10-30s (#5476 - @hossamnagy)
 - refactor: send TOKEN as Bearer header via FleetAuth middleware (#5470 - @jlestel)
+- fix: honor DATABASE_USER/DATABASE_PASS with DATABASE_SOCKET_DIR (#5503 - @mvanhorn)
 
 #### Build, CI, internal
 
