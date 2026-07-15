@@ -7,7 +7,7 @@ sidebar_label: FAQ
 
 There are multiple apps available to securely generate access tokens yourself, for example:
 
-- [Tesla Auth (macOS, Linux, Windows)](https://github.com/adriankumpf/tesla_auth)
+- [Tesla Auth 0.13.0 or newer (macOS, Linux, Windows)](https://github.com/adriankumpf/tesla_auth/releases/latest)
 - [Auth app for Tesla (iOS, macOS)](https://apps.apple.com/us/app/auth-app-for-tesla/id1552058613)
 
 ## Why are no consumption values displayed in Grafana?
