@@ -17,7 +17,6 @@ defmodule TeslaMate.Log.Car do
 
     field :eid, :integer
     field :vid, :integer
-    # TODO: with v2.0 mark as non nullable
     field :vin, :string
     field :display_priority, :integer
 
