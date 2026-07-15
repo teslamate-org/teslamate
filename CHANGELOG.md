@@ -24,7 +24,7 @@
 - fix(import): accept fractional TeslaFi battery levels (#5513 - @magrathean-uk)
 - fix(cars): enforce non-null VINs (#5512 - @magrathean-uk)
 - fix(mqtt): return publish errors without crashing (#5514 - @magrathean-uk)
-- fix(performance): use existing indexes for latest-position lookups to avoid sequential scans on large databases (#5306 - @magrathean-uk)
+- fix(performance): use existing indexes for latest-position lookups to avoid sequential scans on large databases (#5483 - @magrathean-uk)
 
 #### Build, CI, internal
 
@@ -54,7 +54,7 @@
 
 #### Dashboards
 
-- fix(dashboards): filter latest-value position panels on complete rows so they use the partial index (#5306 - @magrathean-uk)
+- fix(dashboards): filter latest-value position panels on complete rows so they use the partial index (#5483 - @magrathean-uk)
 
 #### Translations
 
