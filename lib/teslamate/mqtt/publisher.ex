@@ -17,6 +17,9 @@ defmodule TeslaMate.Mqtt.Publisher do
 
   def publish(topic, msg \\ nil, opts \\ []) do
     GenServer.call(@name, {:publish, topic, msg, opts}, @timeout)
+  catch
+    :exit, {:timeout, _call} -> {:error, :timeout}
+    :exit, _reason -> {:error, :publisher_unavailable}
   end
 
   # Callbacks

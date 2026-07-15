@@ -32,6 +32,24 @@ defmodule TeslaMate.Mqtt.PublisherTest do
     end
   end
 
+  test "returns QoS 1 acknowledgement errors" do
+    parent = self()
+    publisher = Process.whereis(Publisher)
+
+    with_mock Tortoise311,
+      publish: fn _id, _topic, _msg, _opts ->
+        send(parent, :published)
+        {:ok, :publish_ref}
+      end do
+      task = Task.async(fn -> Publisher.publish("test/topic", "value", qos: 1) end)
+
+      assert_receive :published
+      send(Publisher, {{Tortoise311, "test_client"}, :publish_ref, {:error, :timeout}})
+      assert {:error, :timeout} = Task.await(task, :timer.seconds(1))
+      assert Process.whereis(Publisher) == publisher
+    end
+  end
+
   test "keeps running when a QoS 0 publish fails" do
     publisher = Process.whereis(Publisher)
 
@@ -76,6 +94,11 @@ defmodule TeslaMate.Mqtt.PublisherTest do
 
       assert Process.whereis(Publisher) == publisher
     end
+  end
+
+  test "returns an error when the publisher is unavailable" do
+    assert :ok = stop_supervised(Publisher)
+    assert {:error, :publisher_unavailable} = Publisher.publish("test/topic", "value")
   end
 
   test "ignores acknowledgements for unknown references and clients" do
