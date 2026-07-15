@@ -9,10 +9,10 @@ This document provides the necessary steps for installation of TeslaMate on a va
 
 Click on the following items to view detailed installation steps.
 
-Note that in very recent distributions, you might have the required versions already packaged. However, the contents or naming of the Debian/Ubuntu packages might slightly differ than the ones from upstream, so you might need to install extra packages or do other tweaks.
+Distribution packages may lag behind TeslaMate's runtime requirements. Verify the installed Elixir and Erlang/OTP versions before compiling TeslaMate.
 
 <details>
-  <summary>Postgres (v16.7+, v17.3+ or v18.0+)</summary>
+  <summary>Postgres (v18.0+)</summary>
 
 Either upstream:
 
@@ -25,32 +25,18 @@ sudo apt-get install -y postgresql-18 postgresql-client-18
 
 Source: [postgresql.org/download](https://www.postgresql.org/download/)
 
-Or if you run a recent enough distribution (e.g. Debian Trixie:):
-
-```bash
-sudo apt install postgresql-17 postgresql-client-17
-```
-
 </details>
 
 <details>
-  <summary>Elixir (v1.17+)</summary>
+  <summary>Erlang/OTP (v28+) and Elixir (v1.19.5+)</summary>
 
-Either from upstream:
-
-```bash
-wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb && sudo dpkg -i erlang-solutions_2.0_all.deb
-sudo apt-get update
-sudo apt-get install -y elixir esl-erlang
-```
-
-Source: [erlang.org/downloads](https://www.erlang.org/downloads#prebuilt)
-
-Or if you run a recent enough distribution (e.g. Debian Trixie:):
+Install both runtimes using one of the methods in the [official Elixir installation guide](https://elixir-lang.org/install.html). The Elixir install scripts, version managers and precompiled packages can provide current versions when distribution packages are too old.
 
 ```bash
-sudo apt install erlang erlang-dev erlang-syntax-tools elixir
+elixir --version
 ```
+
+The output must report Elixir 1.19.5 or newer running on Erlang/OTP 28 or newer.
 
 </details>
 
