@@ -660,14 +660,26 @@ defmodule TeslaMate.Vehicles.Vehicle do
       ) do
     case {status, stream_data} do
       {:available, %Stream.Data{shift_state: shift_state}} when shift_state in ~w(D N R) ->
-        {:ok, %{elevation: elevation}} =
-          call(data.deps.log, :insert_position, [drv, create_position(stream_data, data)])
+        {elevation, geofence} =
+          Repo.checkout(fn ->
+            {:ok, %{elevation: elevation} = position} =
+              call(data.deps.log, :insert_position, [drv, create_position(stream_data, data)])
+
+            geofence = call(data.deps.locations, :find_geofence, [position])
+            {elevation, geofence}
+          end)
 
         vehicle = merge(data.last_response, stream_data)
         now = DateTime.utc_now()
 
-        {:keep_state, %{data | last_used: now, last_response: vehicle, elevation: elevation},
-         broadcast_summary()}
+        {:keep_state,
+         %{
+           data
+           | last_used: now,
+             last_response: vehicle,
+             elevation: elevation,
+             geofence: geofence
+         }, broadcast_summary()}
 
       {_status, %Stream.Data{}} ->
         {:keep_state_and_data, schedule_fetch(0, data)}

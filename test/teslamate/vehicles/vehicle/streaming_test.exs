@@ -3,6 +3,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
   import ExUnit.CaptureLog
 
+  alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle
   alias TeslaApi.Stream
@@ -154,6 +155,55 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, elevation: 4}}}
 
       refute_receive _
+    end
+
+    test "updates the geofence from streaming positions", %{test: name} do
+      now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
+
+      events = [
+        {:ok,
+         online_event(now_ts,
+           drive_state: %{timestamp: now_ts, latitude: 90, longitude: 45}
+         )},
+        fn -> Process.sleep(10_000) end
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{latitude: 90, longitude: 45}}
+      assert_receive {ApiMock, {:stream, _eid, func}} when is_function(func)
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :online, geofence: %GeoFence{name: "South Pole"}}}}
+
+      stream(name, %{shift_state: "D", est_lat: 90, est_lng: 45, time: now})
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{latitude: 90, longitude: 45}}
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :driving, geofence: %GeoFence{name: "South Pole"}}}}
+
+      stream(name, %{shift_state: "D", est_lat: 90, est_lng: 45.01, time: now})
+      assert_receive {:insert_position, ^drive, %{latitude: 90, longitude: 45.01}}
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :driving, geofence: %GeoFence{name: "Garage"}}}}
+
+      stream(name, %{shift_state: "D", est_lat: 90, est_lng: 45.1, time: now})
+      assert_receive {:insert_position, ^drive, %{latitude: 90, longitude: 45.1}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, geofence: nil}}}
+
+      stream(name, %{shift_state: "D", est_lat: 90, est_lng: 45, time: now})
+      assert_receive {:insert_position, ^drive, %{latitude: 90, longitude: 45}}
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :driving, geofence: %GeoFence{name: "South Pole"}}}}
     end
 
     test "discards fetch result", %{test: name} do
