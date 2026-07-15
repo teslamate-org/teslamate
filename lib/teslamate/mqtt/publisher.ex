@@ -1,8 +1,6 @@
 defmodule TeslaMate.Mqtt.Publisher do
   use GenServer
 
-  require Logger
-
   @name __MODULE__
   @timeout :timer.seconds(10)
 
@@ -29,24 +27,45 @@ defmodule TeslaMate.Mqtt.Publisher do
   end
 
   @impl true
-  def handle_call({:publish, topic, msg, opts}, from, %State{client_id: id, refs: refs} = state) do
+  def handle_call({:publish, topic, msg, opts}, from, %State{client_id: id} = state) do
     opts = Keyword.put_new(opts, :timeout, round(@timeout * 0.95))
 
     case Keyword.get(opts, :qos, 0) do
-      0 ->
-        :ok = Tortoise311.publish(id, topic, msg, opts)
-        {:reply, :ok, state}
+      qos when qos in [0, 1, 2] ->
+        do_publish(id, topic, msg, opts, qos, from, state)
 
-      _ ->
-        {:ok, ref} = Tortoise311.publish(id, topic, msg, opts)
-        {:noreply, %State{state | refs: Map.put(refs, ref, from)}}
+      qos ->
+        {:reply, {:error, {:invalid_qos, qos}}, state}
     end
   end
 
   @impl true
   def handle_info({{Tortoise311, id}, ref, result}, %State{client_id: id, refs: refs} = state) do
-    {from, refs} = Map.pop(refs, ref)
-    GenServer.reply(from, result)
-    {:noreply, %State{state | refs: refs}}
+    case Map.pop(refs, ref) do
+      {nil, _refs} ->
+        {:noreply, state}
+
+      {from, refs} ->
+        GenServer.reply(from, result)
+        {:noreply, %State{state | refs: refs}}
+    end
+  end
+
+  def handle_info({{Tortoise311, _id}, _ref, _result}, state), do: {:noreply, state}
+
+  defp do_publish(id, topic, msg, opts, qos, from, %State{refs: refs} = state) do
+    case Tortoise311.publish(id, topic, msg, opts) do
+      :ok when qos == 0 ->
+        {:reply, :ok, state}
+
+      {:ok, ref} when qos in [1, 2] ->
+        {:noreply, %State{state | refs: Map.put(refs, ref, from)}}
+
+      {:error, _reason} = error ->
+        {:reply, error, state}
+
+      result ->
+        {:reply, {:error, {:unexpected_publish_result, result}}, state}
+    end
   end
 end
