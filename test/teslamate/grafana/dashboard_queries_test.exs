@@ -13,7 +13,7 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   #
   # `(?:(?!\bfrom\b).)*?` keeps a match from spilling across into a following
   # `FROM charges`/CTE, so the filter must appear inside the *same* positions block.
-  @latest_position_block ~r/from positions\b(?:(?!\bfrom\b).)*?order by date desc(?:(?!\bfrom\b).)*?limit 1/
+  @latest_position_block ~r/from positions\b(?:(?!\bfrom\b).)*?order by date desc(?:(?!\bfrom\b).)*?limit 1\b/
 
   test "latest position queries use complete position rows" do
     offenders =
@@ -46,6 +46,35 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
         "ORDER BY date DESC LIMIT 1"
 
     assert unfiltered_latest_position_blocks(query) == []
+  end
+
+  test "detector ignores queries with a larger limit" do
+    query = "SELECT date FROM positions WHERE car_id = 1 ORDER BY date DESC LIMIT 10"
+
+    assert unfiltered_latest_position_blocks(query) == []
+  end
+
+  test "latest usable battery unions select the newest source row" do
+    queries =
+      "grafana/dashboards/battery-health.json"
+      |> dashboard_queries()
+      |> Enum.map(fn {_path, query} ->
+        query
+        |> String.downcase()
+        |> String.replace(~r/\s+/, " ")
+      end)
+      |> Enum.filter(&String.contains?(&1, "last_usable_battery_level"))
+
+    assert length(queries) == 2
+
+    for query <- queries do
+      assert String.contains?(query, "union all")
+
+      assert String.contains?(
+               query,
+               "as last_usable_battery_level order by date desc limit 1"
+             )
+    end
   end
 
   defp dashboard_queries(path) do
