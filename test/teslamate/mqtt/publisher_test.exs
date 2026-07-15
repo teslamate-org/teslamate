@@ -75,6 +75,50 @@ defmodule TeslaMate.Mqtt.PublisherTest do
     end
   end
 
+  test "clamps publish timeouts to the call budget" do
+    parent = self()
+
+    with_mock Tortoise311,
+      publish: fn _id, _topic, _msg, opts ->
+        send(parent, {:publish_timeout, Keyword.fetch!(opts, :timeout)})
+        :ok
+      end do
+      assert :ok = Publisher.publish("test/topic", "value", timeout: :timer.minutes(1))
+      assert_receive {:publish_timeout, 9_500}
+    end
+  end
+
+  test "rejects invalid timeout values without publishing" do
+    publisher = Process.whereis(Publisher)
+
+    with_mock Tortoise311,
+      publish: fn _id, _topic, _msg, _opts -> flunk("publish should not be called") end do
+      for timeout <- [-1, "20", 1.0] do
+        assert {:error, {:invalid_timeout, ^timeout}} =
+                 Publisher.publish("test/topic", "value", timeout: timeout)
+      end
+
+      assert Process.whereis(Publisher) == publisher
+    end
+  end
+
+  test "does not hide unexpected publisher exits" do
+    parent = self()
+
+    with_mock Tortoise311,
+      publish: fn _id, _topic, _msg, _opts ->
+        send(parent, :publishing)
+        Process.sleep(:infinity)
+      end do
+      task = Task.async(fn -> catch_exit(Publisher.publish("test/topic", "value")) end)
+
+      assert_receive :publishing
+      Process.exit(Process.whereis(Publisher), :unexpected)
+
+      assert {:unexpected, {GenServer, :call, _call}} = Task.await(task, :timer.seconds(1))
+    end
+  end
+
   test "keeps running when a QoS 0 publish fails" do
     publisher = Process.whereis(Publisher)
 
