@@ -44,6 +44,16 @@ defmodule TeslaMate.Vehicles.ApiMockTest do
     assert_receive :event_evaluated
   end
 
+  test "reuses a snapshot nested inside an endpoint wrapper" do
+    first = {:ok, %TeslaApi.Vehicle{state: "online", display_name: "first"}}
+    second = {:ok, %TeslaApi.Vehicle{state: "online", display_name: "second"}}
+    name = start_api_mock([{:get_vehicle, {:snapshot, first}}, second])
+
+    assert ApiMock.get_vehicle(name, 1) == first
+    assert ApiMock.get_vehicle_with_state(name, 1) == first
+    assert ApiMock.get_vehicle(name, 1) == second
+  end
+
   defp start_api_mock(events) do
     start_supervised!({ApiMock, events: events, pid: self()})
   end

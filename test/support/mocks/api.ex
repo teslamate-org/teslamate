@@ -79,6 +79,10 @@ defmodule ApiMock do
   defp exec(event, _action), do: event
 
   defp snapshot?({:snapshot, _event}), do: true
+
+  defp snapshot?({action, event}) when action in [:get_vehicle, :get_vehicle_with_state],
+    do: snapshot?(event)
+
   defp snapshot?(_event), do: false
 
   defp advance_event(%State{events: [_event]} = state),
