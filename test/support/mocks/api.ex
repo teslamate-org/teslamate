@@ -31,21 +31,21 @@ defmodule ApiMock do
 
   @impl true
   def handle_call(
-        {:get_vehicle_with_state, _id},
+        {:get_vehicle_with_state, id},
         _from,
-        %State{pending_vehicle_data: result} = state
+        %State{pending_vehicle_data: {id, result}} = state
       )
       when not is_nil(result) do
-    {:reply, result, state |> advance_event() |> Map.put(:pending_vehicle_data, nil)}
+    {:reply, result, advance_event(state)}
   end
 
-  def handle_call({action, _id}, _from, %State{events: [event | _events]} = state)
+  def handle_call({action, id}, _from, %State{events: [event | _events]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
     result = exec(event, action)
 
     case {action, snapshot?(event), result} do
       {:get_vehicle, true, {:ok, %TeslaApi.Vehicle{state: "online"}}} ->
-        {:reply, result, %State{state | pending_vehicle_data: result}}
+        {:reply, result, %State{state | pending_vehicle_data: {id, result}}}
 
       _ ->
         {:reply, result, advance_event(state)}
@@ -81,8 +81,9 @@ defmodule ApiMock do
   defp snapshot?({:snapshot, _event}), do: true
   defp snapshot?(_event), do: false
 
-  defp advance_event(%State{events: [_event]} = state), do: state
+  defp advance_event(%State{events: [_event]} = state),
+    do: %State{state | pending_vehicle_data: nil}
 
   defp advance_event(%State{events: [_event | events]} = state),
-    do: %State{state | events: events}
+    do: %State{state | events: events, pending_vehicle_data: nil}
 end
