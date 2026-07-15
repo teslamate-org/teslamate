@@ -4,9 +4,17 @@ defmodule TeslaMate.LogPositionTest do
   alias TeslaMate.Log
 
   def car_fixture(attrs \\ %{}) do
+    id = System.unique_integer([:positive, :monotonic])
+
     {:ok, car} =
       attrs
-      |> Enum.into(%{efficiency: 0.153, eid: 42, model: "M3", vid: 42, vin: "xxxxx"})
+      |> Enum.into(%{
+        efficiency: 0.153,
+        eid: id,
+        model: "M3",
+        vid: id,
+        vin: "test-#{id}"
+      })
       |> Log.create_car()
 
     car
@@ -15,7 +23,7 @@ defmodule TeslaMate.LogPositionTest do
   describe "get_latest_position/1" do
     test "returns the latest complete position for a car" do
       car = car_fixture()
-      other_car = car_fixture(eid: 43, vid: 43, vin: "yyyyy")
+      other_car = car_fixture()
 
       {:ok, complete_position} =
         Log.insert_position(car, %{
@@ -61,7 +69,7 @@ defmodule TeslaMate.LogPositionTest do
   describe "get_last_inserted_position/0" do
     test "returns the most recently inserted position across all cars, including incomplete ones" do
       car = car_fixture()
-      other_car = car_fixture(eid: 43, vid: 43, vin: "yyyyy")
+      other_car = car_fixture()
 
       {:ok, _latest_by_date_position} =
         Log.insert_position(car, %{
