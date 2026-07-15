@@ -1212,8 +1212,8 @@
       "links": [
         {
           "targetBlank": true,
-          "title": "Mileage",
-          "url": "/d/NjtMTFggz/mileage"
+          "title": "Projected Range",
+          "url": "/d/riqUfXgRz/projected-range"
         }
       ],
       "maxDataPoints": 100,

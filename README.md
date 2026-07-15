@@ -62,7 +62,6 @@ Sample screenshots of bundled dashboards can be seen by clicking the links below
 - [Drive Details](https://docs.teslamate.org/docs/screenshots/#drive-details)
 - [Efficiency (Consumption (net / gross))](https://docs.teslamate.org/docs/screenshots#efficiency)
 - [Locations (addresses)](https://docs.teslamate.org/docs/screenshots/#location-addresses)
-- [Mileage](https://docs.teslamate.org/docs/screenshots/#mileage)
 - [Overview](https://docs.teslamate.org/docs/screenshots/#overview)
 - [Projected Range (battery degradation)](https://docs.teslamate.org/docs/screenshots#projected-range)
 - [States (see when your car was online or asleep)](https://docs.teslamate.org/docs/screenshots#states)
