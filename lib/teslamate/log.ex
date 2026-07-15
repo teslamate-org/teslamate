@@ -160,7 +160,7 @@ defmodule TeslaMate.Log do
   # the btree on positions(date) was replaced with BRIN. Only used to centre the
   # map when creating a geofence, where "most recently inserted position" is the
   # answer we want.
-  def get_latest_position do
+  def get_last_inserted_position do
     Position
     |> order_by(desc: :id)
     |> limit(1)

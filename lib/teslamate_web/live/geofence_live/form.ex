@@ -33,7 +33,7 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
 
   def mount(_params, %{"settings" => settings}, socket) do
     %{latitude: lat, longitude: lng} =
-      case Log.get_latest_position() do
+      case Log.get_last_inserted_position() do
         %Position{latitude: lat, longitude: lng} -> %{latitude: lat, longitude: lng}
         nil -> %{latitude: 0.0, longitude: 0.0}
       end

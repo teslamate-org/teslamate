@@ -58,7 +58,7 @@ defmodule TeslaMate.LogPositionTest do
     end
   end
 
-  describe "get_latest_position/0" do
+  describe "get_last_inserted_position/0" do
     test "returns the most recently inserted position across all cars, including incomplete ones" do
       car = car_fixture()
       other_car = car_fixture(eid: 43, vid: 43, vin: "yyyyy")
@@ -78,7 +78,7 @@ defmodule TeslaMate.LogPositionTest do
           longitude: 2.0
         })
 
-      assert %{id: id} = Log.get_latest_position()
+      assert %{id: id} = Log.get_last_inserted_position()
       assert id == latest_position.id
     end
   end
