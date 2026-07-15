@@ -50,6 +50,31 @@ defmodule TeslaMate.Mqtt.PublisherTest do
     end
   end
 
+  test "expires unacknowledged QoS 1 publishes" do
+    parent = self()
+    publisher = Process.whereis(Publisher)
+
+    with_mock Tortoise311,
+      publish: fn _id, _topic, _msg, _opts ->
+        send(parent, :published)
+        {:ok, :publish_ref}
+      end do
+      task =
+        Task.async(fn ->
+          Publisher.publish("test/topic", "value", qos: 1, timeout: 20)
+        end)
+
+      assert_receive :published
+      assert {:error, :timeout} = Task.await(task, :timer.seconds(1))
+      assert %{refs: %{}} = :sys.get_state(Publisher)
+      assert Process.whereis(Publisher) == publisher
+
+      send(Publisher, {{Tortoise311, "test_client"}, :publish_ref, :ok})
+      assert %{refs: %{}} = :sys.get_state(Publisher)
+      assert Process.whereis(Publisher) == publisher
+    end
+  end
+
   test "keeps running when a QoS 0 publish fails" do
     publisher = Process.whereis(Publisher)
 

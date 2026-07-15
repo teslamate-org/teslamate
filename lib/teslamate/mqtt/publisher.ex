@@ -48,7 +48,8 @@ defmodule TeslaMate.Mqtt.Publisher do
       {nil, _refs} ->
         {:noreply, state}
 
-      {from, refs} ->
+      {{from, timer}, refs} ->
+        Process.cancel_timer(timer)
         GenServer.reply(from, result)
         {:noreply, %State{state | refs: refs}}
     end
@@ -56,13 +57,27 @@ defmodule TeslaMate.Mqtt.Publisher do
 
   def handle_info({{Tortoise311, _id}, _ref, _result}, state), do: {:noreply, state}
 
+  def handle_info({:publish_timeout, ref}, %State{refs: refs} = state) do
+    case Map.pop(refs, ref) do
+      {nil, _refs} ->
+        {:noreply, state}
+
+      {{from, _timer}, refs} ->
+        GenServer.reply(from, {:error, :timeout})
+        {:noreply, %State{state | refs: refs}}
+    end
+  end
+
   defp do_publish(id, topic, msg, opts, qos, from, %State{refs: refs} = state) do
     case Tortoise311.publish(id, topic, msg, opts) do
       :ok when qos == 0 ->
         {:reply, :ok, state}
 
       {:ok, ref} when qos in [1, 2] ->
-        {:noreply, %State{state | refs: Map.put(refs, ref, from)}}
+        timer =
+          Process.send_after(self(), {:publish_timeout, ref}, Keyword.fetch!(opts, :timeout))
+
+        {:noreply, %State{state | refs: Map.put(refs, ref, {from, timer})}}
 
       {:error, _reason} = error ->
         {:reply, error, state}
