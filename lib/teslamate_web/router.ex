@@ -52,6 +52,7 @@ defmodule TeslaMateWeb.Router do
 
     put "/car/:id/logging/resume", CarController, :resume_logging
     put "/car/:id/logging/suspend", CarController, :suspend_logging
+    get "/car/:id/data-quality", CarController, :data_quality
   end
 
   def fetch_settings(conn, _opts) do

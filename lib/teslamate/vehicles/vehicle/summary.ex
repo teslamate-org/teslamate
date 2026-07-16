@@ -1,11 +1,12 @@
 defmodule TeslaMate.Vehicles.Vehicle.Summary do
   import TeslaMate.Convert, only: [miles_to_km: 2, mph_to_kmh: 1]
 
+  alias TeslaMate.Vehicles.Vehicle.DataQuality
   alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleConfig, VehicleState}
   alias TeslaApi.Vehicle
   alias TeslaMate.Log.Car
 
-  defstruct ~w(
+  @fields ~w(
     car display_name state since healthy latitude longitude heading battery_level charging_state usable_battery_level
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
@@ -22,17 +23,22 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     center_display_state service_mode sun_roof_state sun_roof_installed sun_roof_percent_open download_perc install_perc
   )a
 
-  def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
-    %__MODULE__{
-      state: :unavailable,
-      healthy: healthy?,
-      trim_badging: get_car_attr(car, :trim_badging),
-      exterior_color: get_car_attr(car, :exterior_color),
-      spoiler_type: get_car_attr(car, :spoiler_type),
-      wheel_type: get_car_attr(car, :wheel_type),
-      model: get_car_attr(car, :model),
-      car: car
-    }
+  defstruct @fields ++ [quality: %{}]
+
+  def into(nil, %{state: :start, healthy?: healthy?, car: car} = attrs) do
+    summary =
+      %__MODULE__{
+        state: :unavailable,
+        healthy: healthy?,
+        trim_badging: get_car_attr(car, :trim_badging),
+        exterior_color: get_car_attr(car, :exterior_color),
+        spoiler_type: get_car_attr(car, :spoiler_type),
+        wheel_type: get_car_attr(car, :wheel_type),
+        model: get_car_attr(car, :model),
+        car: car
+      }
+
+    put_quality(summary, attrs)
   end
 
   def into(vehicle, attrs) do
@@ -45,20 +51,27 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       geofence: gf
     } = attrs
 
-    %__MODULE__{
-      format_vehicle(vehicle)
-      | state: format_state(state),
-        since: since,
-        healthy: healthy?,
-        elevation: elevation,
-        geofence: gf,
-        trim_badging: get_car_attr(car, :trim_badging),
-        exterior_color: get_car_attr(car, :exterior_color),
-        spoiler_type: get_car_attr(car, :spoiler_type),
-        wheel_type: get_car_attr(car, :wheel_type),
-        model: get_car_attr(car, :model),
-        car: car
-    }
+    summary =
+      %__MODULE__{
+        format_vehicle(vehicle)
+        | state: format_state(state),
+          since: since,
+          healthy: healthy?,
+          elevation: elevation,
+          geofence: gf,
+          trim_badging: get_car_attr(car, :trim_badging),
+          exterior_color: get_car_attr(car, :exterior_color),
+          spoiler_type: get_car_attr(car, :spoiler_type),
+          wheel_type: get_car_attr(car, :wheel_type),
+          model: get_car_attr(car, :model),
+          car: car
+      }
+
+    put_quality(summary, attrs)
+  end
+
+  defp put_quality(summary, attrs) do
+    %{summary | quality: DataQuality.for_summary(summary, Map.get(attrs, :quality, %{}), attrs)}
   end
 
   defp format_state({:driving, {:offline, _}, _id}), do: :offline

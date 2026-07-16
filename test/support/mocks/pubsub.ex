@@ -27,6 +27,22 @@ defmodule PubSubMock do
     {:reply, :ok, state}
   end
 
+  def handle_call(
+        {:broadcast, server, topic, %TeslaMate.Vehicles.Vehicle.Summary{} = summary} = event,
+        _from,
+        %State{
+          last_event:
+            {:broadcast, server, topic, %TeslaMate.Vehicles.Vehicle.Summary{} = last_summary}
+        } = state
+      ) do
+    if %{summary | quality: %{}} == %{last_summary | quality: %{}} do
+      {:reply, :ok, state}
+    else
+      send(state.pid, {:pubsub, event})
+      {:reply, :ok, %State{state | last_event: event}}
+    end
+  end
+
   def handle_call({:broadcast, _, _, _} = event, _from, %State{last_event: event} = state) do
     {:reply, :ok, state}
   end

@@ -6,6 +6,7 @@ defmodule TeslaMateWeb.CarController do
 
   alias TeslaMate.Api, warn: false
   alias TeslaMate.{Log, Vehicles}
+  alias TeslaMate.Vehicles.Vehicle.DataQuality
 
   plug :redirect_if_importing when action in [:index]
   plug :fetch_signed_in when action in [:index]
@@ -42,6 +43,28 @@ defmodule TeslaMateWeb.CarController do
     car = Log.get_car!(id)
     :ok = Vehicles.resume_logging(car.id)
     send_resp(conn, :no_content, "")
+  end
+
+  def data_quality(conn, %{"id" => id}) do
+    car = Log.get_car!(id)
+    conn = put_resp_header(conn, "cache-control", "no-store")
+
+    case Process.whereis(:"#{car.id}") do
+      pid when is_pid(pid) ->
+        payload =
+          pid
+          |> Vehicles.summary()
+          |> Map.fetch!(:quality)
+          |> DataQuality.public_payload()
+          |> Map.put(:car_id, car.id)
+
+        json(conn, payload)
+
+      nil ->
+        conn
+        |> put_status(:service_unavailable)
+        |> json(%{error: "vehicle_unavailable"})
+    end
   end
 
   case Mix.env() do

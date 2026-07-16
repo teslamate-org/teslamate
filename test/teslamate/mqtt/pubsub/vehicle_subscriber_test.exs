@@ -79,7 +79,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(pid, summary)
 
     for {key, val} <- Map.from_struct(summary),
-        not is_nil(val) and key not in [:since, :geofence] do
+        not is_nil(val) and key not in [:since, :geofence, :quality] do
       topic = "teslamate/cars/0/#{key}"
       data = to_string(val)
       retain = key not in [:healthy]
@@ -173,7 +173,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                     {:publish, "teslamate/cars/0/healthy", "", [retain: true, qos: 1]}}
 
     for {key, val} <- Map.from_struct(summary),
-        not is_nil(val) and key != :scheduled_charging_start_time do
+        not is_nil(val) and key not in [:quality, :scheduled_charging_start_time] do
       topic = "teslamate/cars/0/#{key}"
       data = to_string(val)
       retain = key not in [:healthy]
@@ -246,6 +246,55 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(pid, %Summary{geofence: other_geofence, version: "3"})
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/geofence", "Work", _}}
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "3", _}}
+  end
+
+  test "publishes retained, redacted data quality only when it changes", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    observed_at = DateTime.utc_now()
+
+    summary = %Summary{
+      display_name: "Blue Thunder",
+      quality: %{
+        display_name: %TeslaMate.Vehicles.Vehicle.DataQuality{
+          confidence: :exact,
+          freshness: :fresh,
+          availability: :available,
+          source: :tesla_rest,
+          observed_at: observed_at,
+          reason: nil
+        }
+      }
+    }
+
+    send(pid, summary)
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/data_quality", payload, [retain: true, qos: 1]}}
+
+    assert %{
+             "schema_version" => 1,
+             "groups" => [
+               %{
+                 "fields" => ["display_name"],
+                 "source" => "tesla_rest",
+                 "confidence" => "exact"
+               } = group
+             ]
+           } = Jason.decode!(payload)
+
+    refute Map.has_key?(group, "age_seconds")
+
+    assert Enum.sort(Map.keys(group)) ==
+             ~w(availability confidence fields freshness label observed_at reason source)
+
+    refute payload =~ "Blue Thunder"
+
+    send(pid, summary)
+
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/data_quality", _, _}}
   end
 
   @tag :capture_log

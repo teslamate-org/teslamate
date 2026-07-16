@@ -86,7 +86,12 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       assert_receive {:pubsub,
                       {:broadcast, _, _,
-                       %Summary{state: :driving, speed: 16, power: 5, elevation: 1}}}
+                       %Summary{state: :driving, speed: 16, power: 5, elevation: 1} = summary}}
+
+      assert summary.quality.speed.source == :tesla_stream
+      assert summary.quality.speed.observed_at == now
+      assert summary.quality.elevation.source == :tesla_stream
+      assert summary.quality.locked.source == :tesla_rest
 
       assert position == %{
                latitude: 42.1,

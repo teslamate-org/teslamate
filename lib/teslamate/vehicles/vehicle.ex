@@ -3,7 +3,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   require Logger
 
-  alias __MODULE__.Summary
+  alias __MODULE__.{DataQuality, Summary}
   alias TeslaMate.{Vehicles, Api, Log, Locations, Settings, Convert, Repo, Terrain}
   alias TeslaMate.Settings.CarSettings
   alias TeslaMate.Locations.GeoFence
@@ -18,6 +18,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     defstruct car: nil,
               last_used: nil,
               last_response: nil,
+              quality: %{},
               last_state_change: nil,
               elevation: nil,
               geofence: nil,
@@ -223,7 +224,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         healthy?: healthy?(data.car.id),
         elevation: data.elevation,
         geofence: data.geofence,
-        car: data.car
+        car: data.car,
+        quality: data.quality
       })
 
     {:keep_state_and_data, {:reply, from, summary}}
@@ -298,7 +300,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
         end
 
       {:next_state, {:suspended, :online},
-       %Data{data | last_state_change: DateTime.utc_now(), last_response: vehicle, task: nil},
+       %Data{
+         data
+         | last_state_change: DateTime.utc_now(),
+           last_response: vehicle,
+           quality: DataQuality.from_rest(vehicle),
+           task: nil
+       },
        [
          {:reply, from, :ok},
          broadcast_fetch(false),
@@ -342,8 +350,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
            }, %Data{}} ->
             log_service_mode_transition(data.last_response, vehicle, data.car.id)
 
-            {:keep_state, %Data{data | last_response: vehicle},
-             [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
+            {:keep_state,
+             %Data{
+               data
+               | last_response: vehicle,
+                 quality: DataQuality.from_rest(vehicle)
+             }, [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
 
           # Handle fetch of vehicle/id (non-vehicle_data)
           {%Vehicle{}, %Data{}} ->
@@ -404,8 +416,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
                 %Data{} =
                   data =
                   with %Data{last_response: nil} <- data do
-                    {last_response, geofence} = restore_last_known_values(vehicle, data)
-                    %Data{data | last_response: last_response, geofence: geofence}
+                    {last_response, geofence, quality} = restore_last_known_values(vehicle, data)
+
+                    %Data{
+                      data
+                      | last_response: last_response,
+                        geofence: geofence,
+                        quality: quality
+                    }
                   end
 
                 {:ok, pid} = connect_stream(data)
@@ -434,8 +452,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
         %Data{} =
           data =
           with %Data{last_response: nil} <- data do
-            {last_response, geofence} = restore_last_known_values(vehicle, data)
-            %Data{data | last_response: last_response, geofence: geofence}
+            {last_response, geofence, quality} = restore_last_known_values(vehicle, data)
+
+            %Data{
+              data
+              | last_response: last_response,
+                geofence: geofence,
+                quality: quality
+            }
           end
 
         {:keep_state, %Data{data | pre_online_check: :idle, stream_pid: nil},
@@ -624,8 +648,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         vehicle = merge(data.last_response, stream_data, time: true)
 
         {:next_state, {:driving, :available, drive},
-         %Data{data | last_response: vehicle, elevation: elevation},
-         [broadcast_summary(), schedule_fetch(0, data)]}
+         %Data{
+           data
+           | last_response: vehicle,
+             elevation: elevation,
+             quality: DataQuality.merge_stream(data.quality, stream_data)
+         }, [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: nil, power: power} when is_number(power) and power < 0 ->
         vehicle = merge(data.last_response, stream_data, time: true)
@@ -666,8 +694,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
         vehicle = merge(data.last_response, stream_data)
         now = DateTime.utc_now()
 
-        {:keep_state, %{data | last_used: now, last_response: vehicle, elevation: elevation},
-         broadcast_summary()}
+        {:keep_state,
+         %{
+           data
+           | last_used: now,
+             last_response: vehicle,
+             elevation: elevation,
+             quality: DataQuality.merge_stream(data.quality, stream_data)
+         }, broadcast_summary()}
 
       {_status, %Stream.Data{}} ->
         {:keep_state_and_data, schedule_fetch(0, data)}
@@ -701,8 +735,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         vehicle = merge(data.last_response, stream_data, time: true)
 
         {:next_state, {:driving, :available, drive},
-         %Data{data | last_response: vehicle, elevation: elevation},
-         [broadcast_summary(), schedule_fetch(0, data)]}
+         %Data{
+           data
+           | last_response: vehicle,
+             elevation: elevation,
+             quality: DataQuality.merge_stream(data.quality, stream_data)
+         }, [broadcast_summary(), schedule_fetch(0, data)]}
 
       %Stream.Data{shift_state: s, power: power}
       when s in [nil, "P"] and is_number(power) and power < 0 ->
@@ -719,8 +757,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         vehicle = merge(data.last_response, stream_data, time: true)
 
         {:next_state, prev_state,
-         %Data{data | last_response: vehicle, last_used: DateTime.utc_now()},
-         schedule_fetch(0, data)}
+         %Data{
+           data
+           | last_response: vehicle,
+             last_used: DateTime.utc_now(),
+             quality: DataQuality.merge_stream(data.quality, stream_data)
+         }, schedule_fetch(0, data)}
 
       %Stream.Data{} ->
         Logger.debug(inspect(stream_data), car_id: data.car.id)
@@ -875,7 +917,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         healthy?: healthy?(data.car.id),
         elevation: data.elevation,
         geofence: data.geofence,
-        car: data.car
+        car: data.car,
+        quality: data.quality
       })
 
     :ok =
@@ -1452,13 +1495,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
         inside_temp: position.inside_temp
       }
 
+      {version, version_observed_at} =
+        case call(data.deps.log, :get_latest_update, [data.car]) do
+          %Log.Update{version: version, start_date: start_date, end_date: end_date} ->
+            {version, end_date || start_date}
+
+          _ ->
+            {nil, nil}
+        end
+
       vehicle_state = %VehicleState{
         odometer: position.odometer |> Convert.km_to_miles(6),
-        car_version:
-          case call(data.deps.log, :get_latest_update, [data.car]) do
-            %Log.Update{version: version} -> version
-            _ -> nil
-          end
+        car_version: version
       }
 
       vehicle = %{
@@ -1471,9 +1519,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       geofence = call(data.deps.locations, :find_geofence, [position])
 
-      {vehicle, geofence}
+      quality =
+        DataQuality.from_restored_position(position, vehicle,
+          version_observed_at: version_observed_at
+        )
+
+      {vehicle, geofence, quality}
     else
-      _ -> {vehicle, nil}
+      _ -> {vehicle, nil, DataQuality.from_rest(vehicle)}
     end
   end
 

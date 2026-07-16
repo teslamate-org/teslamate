@@ -15,6 +15,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/state`                         | asleep                                                                                      | Status of the vehicle (e.g. `online`, `asleep`, `charging`)                           |
 | `teslamate/cars/$car_id/since`                         | 2019-02-29T23:00:07Z                                                                        | Date of the last status change                                                        |
 | `teslamate/cars/$car_id/healthy`                       | true                                                                                        | Health status of the logger for that vehicle                                          |
+| `teslamate/cars/$car_id/data_quality`                  | _See below_                                                                                 | Retained, metadata-only provenance and trust status for vehicle fields                |
 | `teslamate/cars/$car_id/version`                       | 2019.32.12.2                                                                                | Software Version                                                                      |
 | `teslamate/cars/$car_id/update_available`              | false                                                                                       | Indicates if a software update is available                                           |
 | `teslamate/cars/$car_id/update_version`                | 2019.32.12.3                                                                                | Software version of the available update                                              |
@@ -100,6 +101,42 @@ Vehicle data will be published to the following topics:
 :::note
 `$car_id` usually starts at 1
 :::
+
+### `data_quality` payload
+
+The retained `data_quality` topic describes each field without repeating its value. Existing
+value topics and payloads are unchanged. Fields with identical metadata are grouped together,
+field names are sorted, and observation times use minute precision so streaming updates do not
+republish otherwise unchanged metadata every second.
+
+```json
+{
+  "schema_version": 1,
+  "groups": [
+    {
+      "fields": ["battery_level", "usable_battery_level"],
+      "label": "exact",
+      "confidence": "exact",
+      "freshness": "fresh",
+      "availability": "available",
+      "source": "tesla_rest",
+      "observed_at": "2026-07-16T10:00:00Z",
+      "reason": null
+    }
+  ]
+}
+```
+
+### REST data-quality endpoint
+
+`GET /api/car/$car_id/data-quality` returns the same metadata as an ungrouped JSON
+object and adds `age_seconds` for each field. It does not include the field values and
+responses use `Cache-Control: no-store`.
+
+This endpoint does not authenticate requests. Observation timestamps and field availability can
+still reveal when TeslaMate last received particular kinds of data. Protect access to TeslaMate
+with a reverse proxy or another access-control layer if the service is reachable outside a trusted
+network.
 
 ### `active_route` payload examples
 

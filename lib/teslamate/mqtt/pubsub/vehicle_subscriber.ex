@@ -5,6 +5,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   import Core.Dependency, only: [call: 3]
 
   alias TeslaMate.Mqtt.Publisher
+  alias TeslaMate.Vehicles.Vehicle.DataQuality
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles
 
@@ -66,6 +67,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> add_car_latitude_longitude(summary)
       |> add_geofence(summary)
       |> add_active_route(summary)
+      |> add_data_quality(summary)
 
     last_values = publish_values(values, state)
     {:noreply, %{state | last_values: last_values}}
@@ -197,6 +199,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       active_route_longitude: summary.active_route_longitude,
       active_route: active_route
     })
+  end
+
+  defp add_data_quality(map, %Summary{quality: quality}) do
+    case DataQuality.mqtt_payload(quality) do
+      nil -> map
+      payload -> Map.put(map, :data_quality, payload)
+    end
   end
 
   defp publish({key, value}, %State{car_id: car_id, namespace: namespace, deps: deps}) do

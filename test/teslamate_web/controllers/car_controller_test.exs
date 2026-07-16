@@ -573,6 +573,59 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
   end
 
+  describe "data quality" do
+    test "returns redacted field metadata", %{conn: conn} do
+      car =
+        car_fixture(%{suspend_min: 60, suspend_after_idle_min: 60, use_streaming_api: false})
+
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events = [
+        {:ok,
+         online_event(
+           now_ts,
+           display_name: "Blue Thunder",
+           drive_state: %{timestamp: now_ts, latitude: 51.5, longitude: -0.1}
+         )}
+      ]
+
+      :ok = start_vehicles(events)
+      Process.sleep(100)
+
+      conn = get(conn, Routes.car_path(conn, :data_quality, car.id))
+      payload = json_response(conn, 200)
+
+      assert payload["schema_version"] == 1
+      assert payload["car_id"] == car.id
+      assert payload["fields"]["latitude"]["source"] == "tesla_rest"
+      assert payload["fields"]["latitude"]["availability"] == "available"
+      assert is_integer(payload["fields"]["latitude"]["age_seconds"])
+      assert get_resp_header(conn, "cache-control") == ["no-store"]
+
+      assert Enum.all?(payload["fields"], fn {_field, metadata} ->
+               Enum.sort(Map.keys(metadata)) ==
+                 ~w(age_seconds availability confidence freshness label observed_at reason source)
+             end)
+
+      refute Enum.any?(payload["fields"], fn {_field, metadata} ->
+               51.5 in Map.values(metadata) or -0.1 in Map.values(metadata)
+             end)
+
+      refute conn.resp_body =~ "Blue Thunder"
+      refute conn.resp_body =~ "xxxxx"
+      refute conn.resp_body =~ "\"value\""
+    end
+
+    test "returns service unavailable when the car logger is unavailable", %{conn: conn} do
+      car = car_fixture(%{})
+
+      conn = get(conn, Routes.car_path(conn, :data_quality, car.id))
+
+      assert json_response(conn, 503) == %{"error" => "vehicle_unavailable"}
+      assert get_resp_header(conn, "cache-control") == ["no-store"]
+    end
+  end
+
   describe "suspend" do
     setup %{conn: conn} do
       {:ok, conn: put_req_header(conn, "accept", "application/json")}

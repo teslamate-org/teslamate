@@ -74,6 +74,12 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep} = summary}}
 
+      assert summary.quality.latitude.source == :teslamate_database
+      assert summary.quality.latitude.freshness == :stale
+      assert summary.quality.shift_state.availability == :unavailable
+      assert summary.quality.shift_state.source == :unknown
+      assert summary.quality.charge_energy_added.source == :unknown
+
       assert summary == %Summary{
                battery_level: 64,
                car: car,
@@ -105,6 +111,7 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
                odometer: 91887.73,
                outside_temp: Decimal.from_float(16.5),
                plugged_in: :unknown,
+               quality: summary.quality,
                rated_battery_range_km: 315.06,
                scheduled_charging_start_time: :unknown,
                sentry_mode: nil,
@@ -180,6 +187,16 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
         assert_receive {MqttPublisherMock, {:publish, ^topic, data, [retain: true, qos: 1]}}
         assert Jason.decode!(data) == %{"error" => "No active route available"}
       end
+
+      topic = "teslamate/cars/#{car.id}/data_quality"
+      assert_receive {MqttPublisherMock, {:publish, ^topic, payload, [retain: true, qos: 1]}}
+
+      assert %{"schema_version" => 1, "groups" => groups} = Jason.decode!(payload)
+
+      assert Enum.any?(groups, fn
+               %{"fields" => fields, "freshness" => "stale"} -> "latitude" in fields
+               _group -> false
+             end)
 
       refute_receive _
     end
