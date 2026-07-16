@@ -53,7 +53,11 @@ module.exports = {
     {
       type: "category",
       label: "Advanced Configuration",
-      items: ["configuration/environment_variables", "configuration/api"],
+      items: [
+        "configuration/environment_variables",
+        "configuration/api",
+        "configuration/runtime-health",
+      ],
     },
     {
       type: "category",

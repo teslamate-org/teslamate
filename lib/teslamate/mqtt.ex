@@ -53,7 +53,7 @@ defmodule TeslaMate.Mqtt do
       user_name: opts[:username],
       password: opts[:password],
       server: server,
-      handler: {Handler, []},
+      handler: {Handler, [runtime_health: TeslaMate.RuntimeHealth]},
       subscriptions: []
     ]
   end

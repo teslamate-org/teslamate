@@ -50,6 +50,7 @@ defmodule TeslaMateWeb.Router do
   scope "/api", TeslaMateWeb do
     pipe_through :api
 
+    get "/health", HealthController, :index
     put "/car/:id/logging/resume", CarController, :resume_logging
     put "/car/:id/logging/suspend", CarController, :suspend_logging
   end

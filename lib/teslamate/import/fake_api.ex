@@ -33,6 +33,10 @@ defmodule TeslaMate.Import.FakeApi do
     {:ok, nil}
   end
 
+  def stream(_name, _vid, _receiver, _opts) do
+    {:ok, nil}
+  end
+
   # Callbacks
 
   @impl true

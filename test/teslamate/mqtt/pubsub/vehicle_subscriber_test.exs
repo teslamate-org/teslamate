@@ -5,7 +5,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Locations.GeoFence
 
-  defp start_subscriber(name, car_id, namespace \\ nil, publisher_responses \\ %{}) do
+  defp start_subscriber(
+         name,
+         car_id,
+         namespace \\ nil,
+         publisher_responses \\ %{},
+         opts \\ []
+       ) do
     publisher_name = :"mqtt_publisher_#{name}"
     vehicles_name = :"vehicles_#{name}"
 
@@ -14,7 +20,10 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
         {MqttPublisherMock, name: publisher_name, pid: self(), responses: publisher_responses}
       )
 
-    {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
+    {:ok, _pid} =
+      start_supervised(
+        {VehiclesMock, name: vehicles_name, pid: self(), summary: Keyword.get(opts, :summary)}
+      )
 
     start_supervised(
       {VehicleSubscriber,
@@ -23,7 +32,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
          car_id: car_id,
          namespace: namespace,
          deps_publisher: {MqttPublisherMock, publisher_name},
-         deps_vehicles: {VehiclesMock, vehicles_name}
+         deps_vehicles: {VehiclesMock, vehicles_name},
+         deps_runtime_health: Keyword.get(opts, :runtime_health, TeslaMate.RuntimeHealth)
        ]}
     )
   end
@@ -281,6 +291,163 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive {MqttPublisherMock, {:publish, ^shift_state_topic, "", _}}
   end
 
+  test "republishes one retained snapshot after a real broker reconnect", %{test: name} do
+    health_name = {:global, {__MODULE__, name, self()}}
+
+    start_supervised!({TeslaMate.RuntimeHealth, name: health_name, mqtt_enabled: true})
+
+    summary = %Summary{display_name: "Foo", state: :online, version: "2026.20"}
+
+    {:ok, pid} =
+      start_subscriber(name, 0, nil, %{},
+        runtime_health: {TeslaMate.RuntimeHealth, health_name},
+        summary: summary
+      )
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/healthy", "", [retain: true, qos: 1]}}
+
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :up)
+    _report = TeslaMate.RuntimeHealth.report(health_name)
+    refute_receive {VehiclesMock, {:summary, 0}}
+
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :down)
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :up)
+    _report = TeslaMate.RuntimeHealth.report(health_name)
+
+    assert_receive {VehiclesMock, {:summary, 0}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/display_name", "Foo", [retain: true, qos: 1]}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/version", "2026.20", [retain: true, qos: 1]}}
+
+    _state = :sys.get_state(pid)
+
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/display_name", "Foo", _}}
+
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "2026.20", _}}
+
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :up)
+    _report = TeslaMate.RuntimeHealth.report(health_name)
+    refute_receive {VehiclesMock, {:summary, 0}}
+  end
+
+  test "publishes one snapshot when subscribing after MQTT is already up", %{test: name} do
+    health_name = {:global, {__MODULE__, name, self()}}
+    start_supervised!({TeslaMate.RuntimeHealth, name: health_name, mqtt_enabled: true})
+
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :up)
+    _report = TeslaMate.RuntimeHealth.report(health_name)
+
+    summary = %Summary{display_name: "Foo", state: :online, version: "2026.20"}
+
+    {:ok, pid} =
+      start_subscriber(name, 0, nil, %{},
+        runtime_health: {TeslaMate.RuntimeHealth, health_name},
+        summary: summary
+      )
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+    assert_receive {VehiclesMock, {:summary, 0}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/display_name", "Foo", [retain: true, qos: 1]}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/version", "2026.20", [retain: true, qos: 1]}}
+
+    _state = :sys.get_state(pid)
+
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/display_name", "Foo", _}}
+
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "2026.20", _}}
+  end
+
+  test "coalesces a queued summary with its reconnect snapshot", %{test: name} do
+    health_name = {:global, {__MODULE__, name, self()}}
+    start_supervised!({TeslaMate.RuntimeHealth, name: health_name, mqtt_enabled: true})
+
+    initial = %Summary{display_name: "Foo", state: :online, version: "1"}
+
+    {:ok, pid} =
+      start_subscriber(name, 0, nil, %{},
+        runtime_health: {TeslaMate.RuntimeHealth, health_name},
+        summary: initial
+      )
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+    send(pid, initial)
+
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/display_name", "Foo", _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "1", _}}
+    _state = :sys.get_state(pid)
+
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :up)
+    _report = TeslaMate.RuntimeHealth.report(health_name)
+
+    :ok = :sys.suspend(pid)
+    send(pid, %Summary{display_name: "Bar", state: :online, version: "2"})
+
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :down)
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :up)
+    _report = TeslaMate.RuntimeHealth.report(health_name)
+    :ok = :sys.resume(pid)
+
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/display_name", "Bar", _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "2", _}}
+    _state = :sys.get_state(pid)
+
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/display_name", "Bar", _}}
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "2", _}}
+    refute_receive {VehiclesMock, {:summary, 0}}
+  end
+
+  test "republishes after RuntimeHealth restarts", %{test: name} do
+    health_name = {:global, {__MODULE__, name, self()}}
+
+    health_pid =
+      start_supervised!({TeslaMate.RuntimeHealth, name: health_name, mqtt_enabled: true})
+
+    summary = %Summary{display_name: "Foo", state: :online, version: "2026.20"}
+
+    {:ok, pid} =
+      start_subscriber(name, 0, nil, %{},
+        runtime_health: {TeslaMate.RuntimeHealth, health_name},
+        summary: summary
+      )
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :up)
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :down)
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :up)
+    _report = TeslaMate.RuntimeHealth.report(health_name)
+
+    assert_receive {VehiclesMock, {:summary, 0}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/display_name", "Foo", _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "2026.20", _}}
+    _state = :sys.get_state(pid)
+
+    Process.exit(health_pid, :kill)
+    _new_health_pid = wait_for_restart(health_name, health_pid)
+
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :down)
+    :ok = TeslaMate.RuntimeHealth.record_mqtt_connection(health_name, :up)
+    _report = TeslaMate.RuntimeHealth.report(health_name)
+
+    assert_receive {VehiclesMock, {:summary, 0}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/display_name", "Foo", _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "2026.20", _}}
+    _state = :sys.get_state(pid)
+
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/display_name", "Foo", _}}
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "2026.20", _}}
+  end
+
   test "allows namespaces", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0, "account_0")
 
@@ -348,5 +515,20 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                     {:publish, "teslamate/account_0/cars/0/healthy", "", [retain: false, qos: 1]}}
 
     refute_receive _
+  end
+
+  defp wait_for_restart(name, old_pid, attempts \\ 100)
+
+  defp wait_for_restart(_name, _old_pid, 0), do: flunk("RuntimeHealth did not restart")
+
+  defp wait_for_restart(name, old_pid, attempts) do
+    case GenServer.whereis(name) do
+      pid when is_pid(pid) and pid != old_pid ->
+        pid
+
+      _other ->
+        Process.sleep(10)
+        wait_for_restart(name, old_pid, attempts - 1)
+    end
   end
 end

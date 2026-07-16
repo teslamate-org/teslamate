@@ -4,7 +4,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   require Logger
 
   alias __MODULE__.Summary
-  alias TeslaMate.{Vehicles, Api, Log, Locations, Settings, Convert, Repo, Terrain}
+  alias TeslaMate.{Vehicles, Api, Log, Locations, Settings, Convert, Repo, RuntimeHealth, Terrain}
   alias TeslaMate.Settings.CarSettings
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Log.Car
@@ -179,7 +179,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       settings: Keyword.get(opts, :deps_settings, Settings),
       locations: Keyword.get(opts, :deps_locations, Locations),
       vehicles: Keyword.get(opts, :deps_vehicles, Vehicles),
-      pubsub: Keyword.get(opts, :deps_pubsub, Phoenix.PubSub)
+      pubsub: Keyword.get(opts, :deps_pubsub, Phoenix.PubSub),
+      runtime_health: Keyword.get(opts, :deps_runtime_health, RuntimeHealth)
     }
 
     last_state_change =
@@ -216,6 +217,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ### Summary
 
   def handle_event({:call, from}, :summary, state, %Data{last_response: vehicle} = data) do
+    :ok = call(data.deps.runtime_health, :record_summary, [data.car.id, state])
+
     summary =
       Summary.into(vehicle, %{
         state: state,
@@ -316,6 +319,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:info, {ref, fetch_result}, state, %Data{task: %Task{ref: ref}} = data)
       when is_reference(ref) do
     data = %Data{data | task: nil}
+    :ok = call(data.deps.runtime_health, :record_api, [data.car.id, fetch_result])
 
     case fetch_result do
       {:ok, %Vehicle{state: "online"} = vehicle} ->
@@ -868,6 +872,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ### Broadcast Summary
 
   def handle_event(:internal, :broadcast_summary, state, %Data{last_response: vehicle} = data) do
+    :ok = call(data.deps.runtime_health, :record_summary, [data.car.id, state])
+
     payload =
       Summary.into(vehicle, %{
         state: state,
@@ -1951,6 +1957,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     me = self()
 
+    receiver = fn stream_data ->
+      :ok = call(data.deps.runtime_health, :record_stream, [car.id, stream_data])
+      send(me, {:stream, stream_data})
+    end
+
+    liveness_receiver = fn event ->
+      call(data.deps.runtime_health, :record_stream, [car.id, {:liveness, event}])
+    end
+
     id =
       if System.get_env("TESLA_WSS_USE_VIN") do
         data.car.vin
@@ -1960,7 +1975,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     call(data.deps.api, :stream, [
       id,
-      fn stream_data -> send(me, {:stream, stream_data}) end
+      receiver,
+      [liveness_receiver: liveness_receiver]
     ])
   end
 
@@ -2000,6 +2016,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp schedule_fetch(_n, _unit, %Data{import?: true}), do: {:state_timeout, 0, :fetch}
   defp schedule_fetch(n, unit, _), do: {:state_timeout, fetch_timeout(n, unit), :fetch}
+
+  @impl true
+  def terminate(_reason, _state, %Data{car: car, deps: deps}) do
+    call(deps.runtime_health, :remove_vehicle, [car.id])
+    :ok
+  end
 
   case(Mix.env()) do
     :test -> defp fetch_timeout(n, _), do: round(n)

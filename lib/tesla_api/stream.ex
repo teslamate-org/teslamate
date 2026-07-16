@@ -11,6 +11,7 @@ defmodule TeslaApi.Stream do
               vehicle_id: nil,
               timer: nil,
               receiver: &IO.inspect/1,
+              liveness_receiver: nil,
               last_data: nil,
               timeouts: 0,
               disconnects: 0
@@ -27,6 +28,7 @@ defmodule TeslaApi.Stream do
   def start_link(args) do
     state = %State{
       receiver: Keyword.get(args, :receiver, &Logger.debug(inspect(&1))),
+      liveness_receiver: Keyword.get(args, :liveness_receiver, fn _event -> :ok end),
       vehicle_id: Keyword.fetch!(args, :vehicle_id),
       auth: Keyword.fetch!(args, :auth)
     }
@@ -56,13 +58,15 @@ defmodule TeslaApi.Stream do
 
   @impl true
   def handle_cast(:disconnect, %State{vehicle_id: vid} = state) do
+    notify_liveness(state, :disconnected)
     send(self(), :exit)
     {:reply, frame!(%{msg_type: "data:unsubscribe", tag: "#{vid}"}), state}
   end
 
   @impl true
-  def handle_connect(_conn, state) do
+  def handle_connect(_conn, %State{} = state) do
     Logger.debug("Connection established")
+    notify_liveness(state, :connected)
     send(self(), :subscribe)
     {:ok, state}
   end
@@ -203,6 +207,8 @@ defmodule TeslaApi.Stream do
 
     case reason do
       {:local, :normal} ->
+        notify_liveness(state, :reconnecting)
+
         Logger.debug(
           "Connection was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}). Reconnecting …"
         )
@@ -210,6 +216,7 @@ defmodule TeslaApi.Stream do
         {:reconnect, state}
 
       {:remote, :closed} ->
+        notify_liveness(state, :reconnecting)
         Logger.warning("WebSocket disconnected. Reconnecting …")
 
         n
@@ -219,6 +226,7 @@ defmodule TeslaApi.Stream do
         {:reconnect, %{state | last_data: nil}}
 
       %WebSockex.ConnError{} = e ->
+        notify_liveness(state, :reconnecting)
         Logger.warning("Disconnected! #{Exception.message(e)} | #{n}")
 
         n
@@ -228,6 +236,7 @@ defmodule TeslaApi.Stream do
         {:reconnect, state}
 
       %WebSockex.RequestError{} = e ->
+        notify_liveness(state, :reconnecting)
         Logger.warning("Disconnected! #{Exception.message(e)} | #{n}")
 
         n
@@ -241,7 +250,9 @@ defmodule TeslaApi.Stream do
   @impl true
   def terminate(:normal, _state), do: :ok
 
-  def terminate(reason, _state) do
+  def terminate(reason, %State{} = state) do
+    notify_liveness(state, :terminated)
+
     # https://github.com/Azolo/websockex/issues/51
     with {exception, stacktrace} <- reason, true <- is_exception(exception) do
       Logger.error(fn -> Exception.format(:error, exception, stacktrace) end)
@@ -263,6 +274,9 @@ defmodule TeslaApi.Stream do
 
     :math.pow(base, n) |> min(max) |> max(min) |> round() |> :timer.seconds()
   end
+
+  defp notify_liveness(%State{liveness_receiver: nil}, _event), do: :ok
+  defp notify_liveness(%State{liveness_receiver: receiver}, event), do: receiver.(event)
 
   defp cancel_timer(nil), do: :ok
   defp cancel_timer(ref) when is_reference(ref), do: Process.cancel_timer(ref)

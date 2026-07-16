@@ -5,10 +5,11 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   import Core.Dependency, only: [call: 3]
 
   alias TeslaMate.Mqtt.Publisher
+  alias TeslaMate.RuntimeHealth
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles
 
-  defstruct [:car_id, :last_values, :deps, :namespace]
+  defstruct [:car_id, :last_values, :deps, :namespace, mqtt_generation: 0]
   alias __MODULE__, as: State
 
   def child_spec(arg) do
@@ -45,13 +46,31 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
     deps = %{
       vehicles: Keyword.get(opts, :deps_vehicles, Vehicles),
-      publisher: Keyword.get(opts, :deps_publisher, Publisher)
+      publisher: Keyword.get(opts, :deps_publisher, Publisher),
+      runtime_health: Keyword.get(opts, :deps_runtime_health, RuntimeHealth)
     }
 
     :ok = call(deps.vehicles, :subscribe_to_summary, [car_id])
+    :ok = call(deps.runtime_health, :subscribe_mqtt, [])
     :ok = clear_retained(car_id, namespace, deps.publisher)
 
-    {:ok, %State{car_id: car_id, namespace: namespace, deps: deps}}
+    mqtt_snapshot = call(deps.runtime_health, :mqtt_snapshot, [])
+
+    mqtt_generation =
+      if mqtt_snapshot.status == :ok do
+        send(self(), {:mqtt_reconnected, mqtt_snapshot.generation})
+        nil
+      else
+        mqtt_snapshot.generation
+      end
+
+    {:ok,
+     %State{
+       car_id: car_id,
+       namespace: namespace,
+       deps: deps,
+       mqtt_generation: mqtt_generation
+     }}
   end
 
   @publish_if_nil ~w(charge_energy_added charger_actual_current charger_phases
@@ -60,6 +79,27 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   @impl true
   def handle_info(%Summary{} = summary, %State{} = state) do
+    state = reconcile_mqtt_generation(state)
+    publish_summary(summary, state)
+  end
+
+  def handle_info({:mqtt_reconnected, generation}, %State{} = state) do
+    mqtt_snapshot = current_mqtt_snapshot(state)
+
+    if mqtt_snapshot.status == :ok and mqtt_snapshot.generation == generation and
+         generation != state.mqtt_generation do
+      state = %{state | last_values: nil, mqtt_generation: generation}
+
+      case current_summary(state) do
+        %Summary{} = summary -> publish_summary(summary, state)
+        _other -> {:noreply, state}
+      end
+    else
+      {:noreply, state}
+    end
+  end
+
+  defp publish_summary(%Summary{} = summary, %State{} = state) do
     values =
       %{}
       |> add_simple_values(summary)
@@ -67,7 +107,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> add_geofence(summary)
       |> add_active_route(summary)
 
-    last_values = publish_values(values, state)
+    {last_values, result} = publish_values(values, state)
+    :ok = call(state.deps.runtime_health, :record_mqtt_publish, [state.car_id, result])
     {:noreply, %{state | last_values: last_values}}
   end
 
@@ -86,17 +127,21 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       on_timeout: :kill_task,
       ordered: false
     )
-    |> Enum.reduce(last_values, fn
-      {:ok, {{key, value}, :ok}}, acc ->
-        Map.put(acc, key, value)
+    |> Enum.reduce({last_values, 0}, fn
+      {:ok, {{key, value}, :ok}}, {acc, failures} ->
+        {Map.put(acc, key, value), failures}
 
-      {:ok, {_entry, reason}}, acc ->
+      {:ok, {_entry, reason}}, {acc, failures} ->
         Logger.warning("MQTT publishing failed: #{inspect(reason)}")
-        acc
+        {acc, failures + 1}
 
-      {:exit, reason}, acc ->
+      {:exit, reason}, {acc, failures} ->
         Logger.warning("MQTT publishing failed: #{inspect(reason)}")
-        acc
+        {acc, failures + 1}
+    end)
+    |> then(fn
+      {values, 0} -> {values, :ok}
+      {values, _failures} -> {values, {:error, :publish_failed}}
     end)
   end
 
@@ -214,4 +259,29 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   defp to_str(%DateTime{} = datetime), do: DateTime.to_iso8601(datetime)
   defp to_str(value), do: to_string(value)
+
+  defp current_summary(%State{car_id: car_id, deps: deps}) do
+    call(deps.vehicles, :summary, [car_id])
+  catch
+    :exit, reason ->
+      Logger.warning("Could not republish MQTT snapshot: #{inspect(reason)}")
+      nil
+  end
+
+  defp reconcile_mqtt_generation(%State{} = state) do
+    case current_mqtt_snapshot(state) do
+      %{status: :ok, generation: generation}
+      when not is_nil(generation) and generation != state.mqtt_generation ->
+        %{state | last_values: nil, mqtt_generation: generation}
+
+      _snapshot ->
+        state
+    end
+  end
+
+  defp current_mqtt_snapshot(%State{deps: deps}) do
+    call(deps.runtime_health, :mqtt_snapshot, [])
+  catch
+    :exit, _reason -> %{status: :unavailable, generation: nil}
+  end
 end

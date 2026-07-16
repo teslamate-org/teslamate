@@ -15,6 +15,10 @@ defmodule ApiMock do
   def get_vehicle_with_state(name, id), do: GenServer.call(name, {:get_vehicle_with_state, id})
   def stream(name, vid, receiver), do: GenServer.call(name, {:stream, vid, receiver})
 
+  def stream(name, vid, receiver, opts) do
+    GenServer.call(name, {:stream, vid, receiver, opts})
+  end
+
   def sign_in(name, tokens), do: GenServer.call(name, {:sign_in, tokens})
 
   # Callbacks
@@ -47,6 +51,15 @@ defmodule ApiMock do
 
   def handle_call({:stream, _vid, _receiver} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
+    {:reply, {:ok, pid}, state}
+  end
+
+  def handle_call(
+        {:stream, vid, receiver, _opts},
+        _from,
+        %State{pid: pid} = state
+      ) do
+    send(pid, {ApiMock, {:stream, vid, receiver}})
     {:reply, {:ok, pid}, state}
   end
 

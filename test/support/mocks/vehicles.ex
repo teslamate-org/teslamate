@@ -1,7 +1,7 @@
 defmodule VehiclesMock do
   use GenServer
 
-  defstruct [:pid]
+  defstruct [:pid, :summary]
   alias __MODULE__, as: State
 
   # API
@@ -17,17 +17,24 @@ defmodule VehiclesMock do
     GenServer.call(name, {:subscribe_to_summary, car_id})
   end
 
+  def summary(name, car_id), do: GenServer.call(name, {:summary, car_id})
+
   # Callbacks
 
   @impl true
   def init(opts) do
-    {:ok, %State{pid: Keyword.fetch!(opts, :pid)}}
+    {:ok, %State{pid: Keyword.fetch!(opts, :pid), summary: Keyword.get(opts, :summary)}}
   end
 
   @impl true
   def handle_call({:subscribe_to_summary, _car_id} = action, _from, %State{pid: pid} = state) do
     send(pid, {VehiclesMock, action})
     {:reply, :ok, state}
+  end
+
+  def handle_call({:summary, _car_id} = action, _from, %State{pid: pid, summary: summary} = state) do
+    send(pid, {VehiclesMock, action})
+    {:reply, summary, state}
   end
 
   def handle_call(:kill, _from, %State{pid: pid} = state) do

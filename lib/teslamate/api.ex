@@ -49,9 +49,26 @@ defmodule TeslaMate.Api do
     end
   end
 
-  def stream(name \\ @name, vid, receiver) do
+  def stream(vid, receiver) when is_function(receiver, 1) do
+    stream(@name, vid, receiver, [])
+  end
+
+  def stream(vid, receiver, opts) when is_function(receiver, 1) and is_list(opts) do
+    stream(@name, vid, receiver, opts)
+  end
+
+  def stream(name, vid, receiver) when is_function(receiver, 1) do
+    stream(name, vid, receiver, [])
+  end
+
+  def stream(name, vid, receiver, opts) when is_function(receiver, 1) and is_list(opts) do
     with {:ok, %Auth{} = auth} <- fetch_auth(name) do
-      TeslaApi.Stream.start_link(auth: auth, vehicle_id: vid, receiver: receiver)
+      TeslaApi.Stream.start_link(
+        auth: auth,
+        vehicle_id: vid,
+        receiver: receiver,
+        liveness_receiver: Keyword.get(opts, :liveness_receiver, fn _event -> :ok end)
+      )
     end
   end
 
