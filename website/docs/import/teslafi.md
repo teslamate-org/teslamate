@@ -222,6 +222,23 @@ go()
 4. After the import is complete, **empty the `import` directory** (or remove but ensure docker doesn't have a volume mapping) and **restart** the `teslamate` service.
 5. Reindex PostgreSQL data: `REINDEX TABLE positions;`
 
+:::caution
+If an individual CSV row cannot be parsed or contains values that TeslaMate cannot safely store,
+TeslaMate skips that row and continues with the remaining valid rows. The import page lists the
+source file, CSV row number, and invalid field names without displaying the row's values. Review
+that report before removing the import files. The raw-free rejection details persist if the import
+is interrupted. A skipped row can make a nearby drive or charging summary incomplete.
+:::
+
+:::note
+If TeslaMate restarts during an import, it skips only files that reached a committed file boundary
+and whose content fingerprint still matches. The file that was active during the interruption is
+processed again from its beginning. Rows already stored from that file may be imported again. This
+is file-level recovery, not row-exact or exactly-once recovery; keep the original CSV files
+unchanged until the import finishes. TeslaMate also keeps the time zone selected when the run
+started and reuses it after a restart so timestamps cannot shift partway through the import.
+:::
+
 :::note
 If there is an overlap between the already existing TeslaMate and TeslaFi data, only the data prior to the first TeslaMate data will be imported.
 :::

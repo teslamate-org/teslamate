@@ -12,6 +12,7 @@ defmodule TeslaMateWeb.ImportLive.Index do
   end
 
   alias TeslaMate.Import
+  alias TeslaMate.Import.RejectedRow
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
@@ -25,11 +26,14 @@ defmodule TeslaMateWeb.ImportLive.Index do
 
     if Import.enabled?() do
       timezones = Timex.timezones()
-      timezone = get_timezone() || Enum.find(timezones, &match?(^tz, &1))
+      status = Import.get_status()
+
+      timezone =
+        status.resume_timezone || get_timezone() || Enum.find(timezones, &match?(^tz, &1))
 
       socket =
         socket
-        |> assign(status: Import.get_status())
+        |> assign(status: status)
         |> assign(changeset: Settings.changeset(%{timezone: timezone}))
         |> assign(timezones: timezones, page_title: gettext("Import"))
 
@@ -70,6 +74,34 @@ defmodule TeslaMateWeb.ImportLive.Index do
   end
 
   ## Private
+
+  defp rejection_reason(%RejectedRow{reason: :invalid_fields, fields: fields}) do
+    gettext("invalid values for %{fields}", fields: Enum.join(fields, ", "))
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :invalid_date}) do
+    gettext("invalid date")
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :ambiguous_local_time}) do
+    gettext("ambiguous local time")
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :nonexistent_local_time}) do
+    gettext("nonexistent local time")
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :invalid_timezone}) do
+    gettext("date could not be converted in the selected time zone")
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :column_count_mismatch}) do
+    gettext("column count does not match the header")
+  end
+
+  defp rejection_reason(%RejectedRow{}) do
+    gettext("row could not be parsed")
+  end
 
   defp get_timezone do
     case Timex.local() do

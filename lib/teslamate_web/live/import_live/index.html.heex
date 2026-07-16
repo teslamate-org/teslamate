@@ -73,14 +73,71 @@
   </table>
 </div>
 
+<p class="help mb-4">
+  <%= gettext(
+    "After a restart, unchanged completed files are skipped. The file active during a crash starts again from its beginning and may replay rows already stored; row-exact crash resume is not provided."
+  ) %>
+</p>
+
+<%= if @status.rejected_rows > 0 do %>
+  <article class="message is-warning">
+    <div class="message-body">
+      <p class="has-text-weight-semibold">
+        <%= ngettext(
+          "Skipped %{count} malformed row. Valid rows continued.",
+          "Skipped %{count} malformed rows. Valid rows continued.",
+          @status.rejected_rows,
+          count: @status.rejected_rows
+        ) %>
+      </p>
+      <p>
+        <%= gettext(
+          "Skipped rows were not imported. Nearby drive or charge summaries may be incomplete."
+        ) %>
+      </p>
+      <p>
+        <%= gettext(
+          "Rejected-row details are stored without source values so this report survives an interrupted import."
+        ) %>
+      </p>
+      <ul class="mt-2">
+        <%= for rejection <- @status.rejection_examples do %>
+          <li>
+            <%= gettext("%{file}, row %{row}: %{reason}",
+              file: rejection.file,
+              row: rejection.row,
+              reason: rejection_reason(rejection)
+            ) %>
+          </li>
+        <% end %>
+      </ul>
+      <%= if @status.rejection_examples_truncated do %>
+        <p class="mt-2"><%= gettext("Showing the first 100 malformed rows.") %></p>
+      <% end %>
+    </div>
+  </article>
+<% end %>
+
 <%= if @status.state == :idle do %>
   <.form :let={f} for={@changeset} phx-change="change" phx-submit="import">
     <div class="field mb-6">
       <%= label(f, :timezone, gettext("Time zone"), class: "label is-medium ") %>
       <div class="control">
-        <div class="select is-fullwidth">
-          <%= select(f, :timezone, @timezones, disabled: @status.state != :idle) %>
-        </div>
+        <%= if @status.resume_timezone do %>
+          <%= hidden_input(f, :timezone, id: "settings_resume_timezone") %>
+          <p id="saved-import-timezone" class="input is-static">
+            <%= @status.resume_timezone %>
+          </p>
+          <p class="help">
+            <%= gettext(
+              "This interrupted import will resume with its saved time zone. The time zone cannot be changed until the run finishes."
+            ) %>
+          </p>
+        <% else %>
+          <div class="select is-fullwidth">
+            <%= select(f, :timezone, @timezones, disabled: @status.state != :idle) %>
+          </div>
+        <% end %>
       </div>
     </div>
 

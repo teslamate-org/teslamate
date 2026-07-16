@@ -449,13 +449,13 @@ msgid_plural "Found %{count} files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/teslamate_web/live/import_live/index.ex:34
-#: lib/teslamate_web/live/import_live/index.html.heex:89
+#: lib/teslamate_web/live/import_live/index.ex:38
+#: lib/teslamate_web/live/import_live/index.html.heex:146
 #, elixir-autogen, elixir-format
 msgid "Import"
 msgstr ""
 
-#: lib/teslamate_web/live/import_live/index.html.heex:79
+#: lib/teslamate_web/live/import_live/index.html.heex:124
 #, elixir-autogen, elixir-format
 msgid "Time zone"
 msgstr ""
@@ -730,4 +730,76 @@ msgstr ""
 #: lib/teslamate_web/live/car_live/summary.html.heex:15
 #, elixir-autogen, elixir-format
 msgid "Minimize map"
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.ex:79
+#, elixir-autogen, elixir-format
+msgid "invalid values for %{fields}"
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.ex:103
+#, elixir-autogen, elixir-format
+msgid "row could not be parsed"
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.html.heex:86
+#, elixir-autogen, elixir-format
+msgid "Skipped %{count} malformed row. Valid rows continued."
+msgid_plural "Skipped %{count} malformed rows. Valid rows continued."
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/teslamate_web/live/import_live/index.html.heex:94
+#, elixir-autogen, elixir-format
+msgid "Skipped rows were not imported. Nearby drive or charge summaries may be incomplete."
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.html.heex:106
+#, elixir-autogen, elixir-format
+msgid "%{file}, row %{row}: %{reason}"
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.html.heex:115
+#, elixir-autogen, elixir-format
+msgid "Showing the first 100 malformed rows."
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.ex:87
+#, elixir-autogen, elixir-format
+msgid "ambiguous local time"
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.ex:99
+#, elixir-autogen, elixir-format
+msgid "column count does not match the header"
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.ex:95
+#, elixir-autogen, elixir-format
+msgid "date could not be converted in the selected time zone"
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.ex:83
+#, elixir-autogen, elixir-format
+msgid "invalid date"
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.ex:91
+#, elixir-autogen, elixir-format
+msgid "nonexistent local time"
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.html.heex:77
+#, elixir-autogen, elixir-format
+msgid "After a restart, unchanged completed files are skipped. The file active during a crash starts again from its beginning and may replay rows already stored; row-exact crash resume is not provided."
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.html.heex:99
+#, elixir-autogen, elixir-format
+msgid "Rejected-row details are stored without source values so this report survives an interrupted import."
+msgstr ""
+
+#: lib/teslamate_web/live/import_live/index.html.heex:132
+#, elixir-autogen, elixir-format
+msgid "This interrupted import will resume with its saved time zone. The time zone cannot be changed until the run finishes."
 msgstr ""

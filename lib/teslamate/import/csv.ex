@@ -16,12 +16,20 @@ defmodule TeslaMate.Import.CSV do
         {:error, :no_contents}
 
       [headers, _] ->
+        column_count = length(headers)
+
         rows =
           file_stream
           |> Parser.parse_stream()
           |> Stream.flat_map(fn
-            [""] -> []
-            row -> [headers |> Enum.zip(row) |> Enum.into(%{})]
+            [""] ->
+              []
+
+            row when length(row) == column_count ->
+              [{:ok, headers |> Enum.zip(row) |> Enum.into(%{})}]
+
+            _row ->
+              [{:error, :column_count_mismatch, ["columns"]}]
           end)
 
         {:ok, rows}
