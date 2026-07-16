@@ -113,6 +113,12 @@
               <span class="icon"><i class="mdi mdi-map-marker-radius"></i></span>&nbsp;<span><%= gettext("Geo-Fences") %></span>
             </.link>
             <.link
+              navigate={Routes.live_path(@conn, TeslaMateWeb.MaintenanceLive.Index)}
+              class="navbar-item  mr-5"
+            >
+              <span class="icon"><i class="mdi mdi-wrench-outline"></i></span>&nbsp;<span><%= gettext("Maintenance") %></span>
+            </.link>
+            <.link
               navigate={Routes.live_path(@conn, TeslaMateWeb.SettingsLive.Index)}
               class="navbar-item  mr-5"
             >

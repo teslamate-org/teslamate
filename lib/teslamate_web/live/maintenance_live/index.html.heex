@@ -1,0 +1,128 @@
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><.link navigate={~p"/"}><%= gettext("Home") %></.link></li>
+    <li class="is-active">
+      <.link navigate={~p"/maintenance"}><%= gettext("Maintenance") %></.link>
+    </li>
+  </ul>
+</nav>
+
+<div id="maintenance-read-only" class="notification is-info is-light">
+  <p class="has-text-weight-semibold">
+    <%= gettext("Read-only. TeslaMate has not changed any data.") %>
+  </p>
+  <p>
+    <%= gettext(
+      "These checks only list drives and charging sessions that have stayed open for more than %{hours} hours.",
+      hours: open_hours(@report)
+    ) %>
+  </p>
+  <p><%= gettext("A long-running session is not automatically corrupt.") %></p>
+</div>
+
+<div id="maintenance-summary" class="box">
+  <div class="level is-mobile">
+    <div class="level-left">
+      <div>
+        <p class="heading"><%= gettext("Data health") %></p>
+        <p class="title is-5">
+          <%= if Enum.empty?(@report.findings) do %>
+            <%= gettext("No long-running sessions") %>
+          <% else %>
+            <%= ngettext(
+              "%{count} session needs review",
+              "%{count} sessions need review",
+              length(@report.findings),
+              count: length(@report.findings)
+            ) %>
+          <% end %>
+        </p>
+      </div>
+    </div>
+    <div class="level-right">
+      <button
+        id="maintenance-refresh"
+        type="button"
+        class="button is-info is-light is-small"
+        phx-click="refresh"
+      >
+        <span class="icon"><span class="mdi mdi-refresh"></span></span>
+        <span><%= gettext("Refresh") %></span>
+      </button>
+    </div>
+  </div>
+
+  <p class="is-size-7 has-text-grey">
+    <%= gettext("Checked") %>:
+    <span
+      id="maintenance-checked-at"
+      data-date={iso_datetime(@report.checked_at)}
+      phx-hook="LocalDateTime"
+    >
+      <%= iso_datetime(@report.checked_at) %>
+    </span>
+  </p>
+
+  <%= if @report.truncated? do %>
+    <p id="maintenance-truncated" class="help is-warning mt-2">
+      <%= gettext("Only the oldest findings are shown.") %>
+    </p>
+  <% end %>
+</div>
+
+<%= if Enum.empty?(@report.findings) do %>
+  <div id="maintenance-empty" class="notification is-success is-light">
+    <%= gettext("No long-running open drives or charging sessions found.") %>
+  </div>
+<% else %>
+  <div id="maintenance-findings">
+    <%= for finding <- @report.findings do %>
+      <article
+        id={finding_dom_id(finding)}
+        class="box"
+        data-finding-code={to_string(finding.code)}
+        data-entity-id={finding.entity_id}
+      >
+        <div class="media">
+          <div class="media-left">
+            <span class="icon is-medium has-text-warning">
+              <span class={["mdi", finding_icon(finding), "mdi-24px"]}></span>
+            </span>
+          </div>
+          <div class="media-content">
+            <p class="title is-5"><%= finding_title(finding) %></p>
+            <p class="subtitle is-6"><%= car_name(finding) %></p>
+
+            <dl>
+              <div class="columns is-mobile mb-0">
+                <dt class="column is-one-third has-text-weight-medium">
+                  <%= gettext("Started") %>
+                </dt>
+                <dd class="column">
+                  <span
+                    id={"#{finding_dom_id(finding)}-started-at"}
+                    data-date={iso_datetime(finding.started_at)}
+                    phx-hook="LocalDateTime"
+                  >
+                    <%= iso_datetime(finding.started_at) %>
+                  </span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </article>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content has-text-centered mt-5">
+  <p><%= gettext("Review each session before choosing a manual maintenance action.") %></p>
+  <a
+    href="https://docs.teslamate.org/docs/maintenance/manually_fixing_data"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <%= gettext("Open the manual maintenance guide") %>
+  </a>
+</div>
