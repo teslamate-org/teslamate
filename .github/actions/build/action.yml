@@ -27,6 +27,18 @@ inputs:
     description: "Branch deployed"
     required: false
     default: ""
+  build_revision:
+    description: "Source revision included in the image"
+    required: false
+    default: ""
+  build_ref:
+    description: "Source ref included in the image"
+    required: false
+    default: ""
+  build_source:
+    description: "Source repository included in the image"
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -46,6 +58,10 @@ runs:
         images: ${{ env.REGISTRY_IMAGE }}
         labels: |
           {{ inputs.labels }}
+    - name: Prepare build metadata
+      id: build_metadata
+      shell: bash
+      run: echo "built_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
     - name: Login to Docker Hub
@@ -68,6 +84,11 @@ runs:
         platforms: ${{ matrix.platform }}
         labels: ${{ steps.meta.outputs.labels }}
         tags: ${{ steps.docker_meta.outputs.tags }}
+        build-args: |
+          TESLAMATE_BUILD_DATE=${{ steps.build_metadata.outputs.built_at }}
+          TESLAMATE_BUILD_REF=${{ inputs.build_ref }}
+          TESLAMATE_BUILD_REVISION=${{ inputs.build_revision }}
+          TESLAMATE_BUILD_SOURCE=${{ inputs.build_source }}
         # Disable BuildKit-side attestations so outputs.digest is the bare image
         # manifest digest. With provenance enabled, BuildKit wraps the image in
         # an OCI index whose digest does NOT appear in the multi-arch manifest

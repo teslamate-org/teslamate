@@ -65,6 +65,9 @@ jobs:
           repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ github.head_ref || github.ref_name }}
+          build_revision: ${{ github.event.pull_request.head.sha || github.sha }}
+          build_ref: ${{ github.head_ref || github.ref_name }}
+          build_source: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
 

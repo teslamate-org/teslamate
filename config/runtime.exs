@@ -101,6 +101,12 @@ end
 config :teslamate,
   default_geofence: System.get_env("DEFAULT_GEOFENCE")
 
+config :teslamate, :build_info,
+  revision: System.get_env("TESLAMATE_BUILD_REVISION"),
+  ref: System.get_env("TESLAMATE_BUILD_REF"),
+  source: System.get_env("TESLAMATE_BUILD_SOURCE"),
+  built_at: System.get_env("TESLAMATE_BUILD_DATE")
+
 case System.get_env("DATABASE_SOCKET_DIR") do
   nil ->
     config :teslamate, TeslaMate.Repo,
