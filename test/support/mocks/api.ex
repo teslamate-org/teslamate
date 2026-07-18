@@ -34,8 +34,7 @@ defmodule ApiMock do
         {:get_vehicle_with_state, id},
         _from,
         %State{pending_vehicle_data: {id, result}} = state
-      )
-      when not is_nil(result) do
+      ) do
     {:reply, result, advance_event(state)}
   end
 
