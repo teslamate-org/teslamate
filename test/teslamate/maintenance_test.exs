@@ -9,6 +9,35 @@ defmodule TeslaMate.MaintenanceTest do
   @now ~U[2026-07-18 10:00:00.000000Z]
   @old DateTime.add(@now, -3 * 24 * 60 * 60, :second)
 
+  test "lists only old open sessions as close candidates" do
+    car = car_fixture()
+    old_drive = drive_fixture(car, @old)
+    old_charge = charging_process_fixture(car, DateTime.add(@old, -60, :second))
+    recent_drive = drive_fixture(car, DateTime.add(@now, -60, :second))
+    closed_drive = drive_fixture(car, @old, end_date: DateTime.add(@old, 300, :second))
+
+    report = Maintenance.candidates(now: @now)
+
+    assert Enum.map(report.candidates, &{&1.entity_type, &1.entity_id}) == [
+             {:charging_process, old_charge.id},
+             {:drive, old_drive.id}
+           ]
+
+    refute Enum.any?(report.candidates, &(&1.entity_id in [recent_drive.id, closed_drive.id]))
+    refute report.truncated?
+  end
+
+  test "bounds the close candidate list" do
+    car = car_fixture()
+    drive_fixture(car, DateTime.add(@old, -60, :second))
+    drive_fixture(car, @old)
+
+    report = Maintenance.candidates(now: @now, limit: 1)
+
+    assert length(report.candidates) == 1
+    assert report.truncated?
+  end
+
   test "closes an eligible drive without allowing the logger to delete it" do
     car = car_fixture()
     drive = drive_fixture(car, @old)

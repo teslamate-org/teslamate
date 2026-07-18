@@ -1,14 +1,12 @@
 ---
-title: Operations and diagnostics
-sidebar_label: Operations and diagnostics
+title: Maintenance and logs
+sidebar_label: Maintenance and logs
 ---
 
-The **Maintenance** page combines build identity, runtime connection health and a read-only data-health report. This overview is available without enabling any maintenance feature.
-
-Two sensitive capabilities can be enabled separately:
+The **Maintenance** page is linked from Settings. It shows the running image's build identity and can expose two optional capabilities:
 
 - a bounded, redacted view of recent TeslaMate file logs
-- confirmation-only close actions for long-running open drives and charging sessions
+- confirmation-only close actions for eligible open drives and charging sessions
 
 Both capabilities are disabled by default. Enabling either one protects the Maintenance page with HTTP Basic Auth and requires these variables:
 
@@ -54,7 +52,7 @@ environment:
   - TESLAMATE_MAINTENANCE_ACTIONS_ENABLED=true
 ```
 
-The page only offers an action for drives and charging sessions that are still open more than 48 hours after their start time. Selecting **Close session** opens a confirmation dialog. At confirmation time TeslaMate locks and rechecks the exact database record, then refuses the action if the record is no longer open, is too recent, the vehicle is currently in the matching active state or its activity cannot be confirmed.
+The page queries open drives and charging sessions only when maintenance actions are enabled. It offers an action after a session has remained open for more than 48 hours. Selecting **Close session** opens a confirmation dialog. At confirmation time TeslaMate locks and rechecks the exact database record, then refuses the action if the record is no longer open, is too recent, the vehicle is currently in the matching active state or its activity cannot be confirmed.
 
 The action uses TeslaMate's existing completion logic. It never deletes a record. A drive without enough position data to calculate a valid end state is left unchanged for manual review.
 

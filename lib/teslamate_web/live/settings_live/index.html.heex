@@ -373,12 +373,27 @@
         <tr>
           <th align="right"><%= gettext("Version") %></th>
           <td>
-            <%= Application.spec(:teslamate, :vsn) %><strong><%= if @update do
+            <%= @build_info.version %><strong><%= if @update do
                   vsn = link @update, to: "https://github.com/teslamate-org/teslamate/releases",
                                       target: "_blank", rel: "noopener noreferrer"
 
                   [" (", gettext("Update available"), ": ", vsn, ")"]
                 end %></strong>
+          </td>
+        </tr>
+        <%= if @build_info.revision do %>
+          <tr>
+            <th align="right"><%= gettext("Revision") %></th>
+            <td><code><%= @build_info.revision %></code></td>
+          </tr>
+        <% end %>
+        <tr>
+          <th align="right"><%= gettext("Maintenance") %></th>
+          <td>
+            <.link navigate={~p"/maintenance"}>
+              <span class="icon is-small"><span class="mdi mdi-tools"></span></span>
+              <span><%= gettext("Open maintenance") %></span>
+            </.link>
           </td>
         </tr>
         <tr>

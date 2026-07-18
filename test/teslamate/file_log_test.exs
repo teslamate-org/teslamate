@@ -28,6 +28,11 @@ defmodule TeslaMate.FileLogTest do
     assert :ok = FileLog.install(config: config, handler_id: @handler_id)
 
     Logger.error("Authorization: Bearer file-secret")
+
+    Logger.error(
+      ~s(vehicle=%TeslaApi.Vehicle{vin: "5YJ3E1EA7JF000001", tokens: ["vehicle-secret"]})
+    )
+
     assert :ok = :logger_std_h.filesync(@handler_id)
 
     assert {:ok, handler_config} = :logger.get_handler_config(@handler_id)
@@ -44,7 +49,10 @@ defmodule TeslaMate.FileLogTest do
 
     content = File.read!(path)
     assert content =~ "Authorization: [REDACTED]"
+    assert content =~ ~s(vin: "[REDACTED]")
     refute content =~ "file-secret"
+    refute content =~ "5YJ3E1EA7JF000001"
+    refute content =~ "vehicle-secret"
   end
 
   test "reads only a bounded redacted tail", %{path: path} do

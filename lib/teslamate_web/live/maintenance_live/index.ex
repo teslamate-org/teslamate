@@ -1,7 +1,7 @@
 defmodule TeslaMateWeb.MaintenanceLive.Index do
   use TeslaMateWeb, :live_view
 
-  alias TeslaMate.{BuildInfo, DataHealth, FileLog, Maintenance, RuntimeHealth}
+  alias TeslaMate.{BuildInfo, FileLog, Maintenance}
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
@@ -16,7 +16,9 @@ defmodule TeslaMateWeb.MaintenanceLive.Index do
   end
 
   def handle_event("request-close", %{"finding-id" => finding_id}, socket) do
-    case Enum.find(socket.assigns.report.findings, &(&1.id == finding_id)) do
+    candidates = if socket.assigns.report, do: socket.assigns.report.candidates, else: []
+
+    case Enum.find(candidates, &(&1.id == finding_id)) do
       nil ->
         {:noreply,
          socket
@@ -61,28 +63,17 @@ defmodule TeslaMateWeb.MaintenanceLive.Index do
 
   defp load_report(socket) do
     file_log_status = FileLog.status()
+    maintenance_actions_enabled? = Maintenance.enabled?()
 
     assign(socket,
       page_title: gettext("Maintenance"),
-      report: DataHealth.report(),
+      report: if(maintenance_actions_enabled?, do: Maintenance.candidates()),
       build_info: BuildInfo.current(),
-      runtime_health: runtime_health(),
       file_log_status: file_log_status,
       log_tail: log_tail(file_log_status),
-      maintenance_actions_enabled?: Maintenance.enabled?(),
+      maintenance_actions_enabled?: maintenance_actions_enabled?,
       pending_action: nil
     )
-  end
-
-  defp runtime_health do
-    case RuntimeHealth.report() do
-      %{status: _status, mqtt: %{status: _mqtt_status}, vehicles: vehicles} = report
-      when is_list(vehicles) ->
-        report
-
-      _other ->
-        %{status: :unavailable, mqtt: %{status: :unavailable}, vehicles: []}
-    end
   end
 
   defp log_tail(%{enabled?: true}), do: FileLog.tail()
@@ -109,34 +100,9 @@ defmodule TeslaMateWeb.MaintenanceLive.Index do
 
   defp open_hours(%{open_after_seconds: seconds}), do: div(seconds, 60 * 60)
 
-  defp status_label(:ok), do: gettext("Healthy")
-  defp status_label(:idle), do: gettext("Idle")
-  defp status_label(:degraded), do: gettext("Degraded")
-  defp status_label(:down), do: gettext("Down")
-  defp status_label(:disabled), do: gettext("Disabled")
-  defp status_label(:unknown), do: gettext("Unknown")
-  defp status_label(:unavailable), do: gettext("Unavailable")
-  defp status_label(_status), do: gettext("Unknown")
-
   defp status_class(:ok), do: "is-success"
-  defp status_class(:idle), do: "is-info is-light"
   defp status_class(:degraded), do: "is-warning"
-  defp status_class(:down), do: "is-danger"
   defp status_class(:disabled), do: "is-light"
-  defp status_class(_status), do: "is-light"
-
-  defp component_reason(%{reason: nil}), do: nil
-  defp component_reason(%{reason: reason}), do: format_atom(reason)
-  defp component_reason(_component), do: nil
-
-  defp format_atom(value) when is_atom(value) do
-    value
-    |> Atom.to_string()
-    |> String.replace("_", " ")
-    |> String.capitalize()
-  end
-
-  defp format_atom(value), do: to_string(value)
 
   defp format_bytes(nil), do: gettext("Unknown")
   defp format_bytes(bytes) when bytes < 1_000, do: gettext("%{bytes} B", bytes: bytes)

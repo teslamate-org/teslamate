@@ -1,10 +1,9 @@
 defmodule TeslaMateWeb.Plugs.OperationsAuth do
   @moduledoc """
-  Protects the operations surface when sensitive capabilities are enabled.
+  Protects the maintenance surface when sensitive capabilities are enabled.
 
-  Authentication remains optional while the page is read-only and does not
-  expose logs. Runtime configuration requires credentials before enabling
-  either sensitive capability.
+  Runtime configuration requires credentials before enabling file logs or
+  maintenance actions.
   """
 
   import Plug.Conn

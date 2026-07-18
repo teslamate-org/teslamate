@@ -4,7 +4,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   require Logger
 
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
-  alias TeslaMate.{Settings, Updater, Api}
+  alias TeslaMate.{Api, BuildInfo, Settings, Updater}
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
@@ -18,6 +18,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       update: Updater.get_update(),
       refreshing_addresses?: nil,
       refresh_error: nil,
+      build_info: BuildInfo.current(),
       page_title: gettext("Settings")
     }
 

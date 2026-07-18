@@ -2,8 +2,8 @@ defmodule TeslaMateWeb.MaintenanceLiveTest do
   use TeslaMateWeb.ConnCase
 
   alias Plug.BasicAuth
-  alias TeslaMate.{Log, RuntimeHealth}
-  alias TeslaMate.Log.{ChargingProcess, Drive, Position}
+  alias TeslaMate.Log
+  alias TeslaMate.Log.{Drive, Position}
   alias TeslaMate.Repo
   alias TeslaMate.Vehicles.Vehicle.Summary
 
@@ -21,21 +21,20 @@ defmodule TeslaMateWeb.MaintenanceLiveTest do
     :ok
   end
 
-  test "shows the scoped read-only empty state", %{conn: conn} do
+  test "keeps maintenance queries and actions disabled by default", %{conn: conn} do
     assert {:ok, view, html} = live(conn, "/maintenance")
 
-    assert has_element?(view, "#maintenance-read-only")
-    assert has_element?(view, "#maintenance-summary")
-    assert has_element?(view, "#maintenance-empty")
+    assert has_element?(view, "#maintenance-actions-disabled")
+    refute has_element?(view, "#maintenance-summary")
+    refute has_element?(view, "#maintenance-empty")
     assert has_element?(view, "#maintenance-refresh[phx-click=refresh]")
     refute has_element?(view, "#maintenance-findings")
 
-    assert html =~ "Read-only. TeslaMate has not changed any data."
-    assert html =~ "No long-running open drives or charging sessions found."
+    assert html =~ "Maintenance actions are disabled."
     assert html =~ ~s(href="/maintenance")
   end
 
-  test "shows long-running sessions without claiming corruption", %{conn: conn} do
+  test "does not expose open sessions while actions are disabled", %{conn: conn} do
     now = DateTime.utc_now()
     car = car_fixture(%{name: "Atlas"})
 
@@ -44,40 +43,16 @@ defmodule TeslaMateWeb.MaintenanceLiveTest do
         start_date: DateTime.add(now, -3 * 24 * 60 * 60, :second)
       )
 
-    long_running_charging_process =
-      charging_process_fixture(car,
-        start_date: DateTime.add(now, -4 * 24 * 60 * 60, :second)
-      )
-
-    recent_drive =
-      drive_fixture(car,
-        start_date: DateTime.add(now, -60, :second)
-      )
-
     assert {:ok, view, _html} = live(conn, "/maintenance")
-
-    assert has_element?(
-             view,
-             "#finding-drive-#{long_running_drive.id}[data-finding-code=long_running_open_drive]"
-           )
-
-    assert has_element?(
-             view,
-             "#finding-charging_process-#{long_running_charging_process.id}[data-finding-code=long_running_open_charging_process]"
-           )
-
-    refute has_element?(view, "#finding-drive-#{recent_drive.id}")
-    refute has_element?(view, "#maintenance-empty")
-
-    html = render(view)
-    assert html =~ "Atlas"
-    assert html =~ "Drive ##{long_running_drive.id}"
-    assert html =~ "Charging session ##{long_running_charging_process.id}"
-    assert html =~ "A long-running session is not automatically corrupt."
+    refute has_element?(view, "#finding-drive-#{long_running_drive.id}")
+    refute render(view) =~ "Atlas"
   end
 
-  test "refreshes the report without exposing maintenance mutations", %{conn: conn} do
-    assert {:ok, view, _html} = live(conn, "/maintenance")
+  test "lists eligible sessions only when authenticated actions are enabled", %{conn: conn} do
+    Application.put_env(:teslamate, :maintenance_actions, enabled: true)
+    enable_operations_auth()
+
+    assert {:ok, view, _html} = live(authenticate(conn), "/maintenance")
     assert has_element?(view, "#maintenance-empty")
 
     car = car_fixture()
@@ -93,19 +68,10 @@ defmodule TeslaMateWeb.MaintenanceLiveTest do
 
     assert has_element?(view, "#finding-drive-#{long_running_drive.id}")
     refute has_element?(view, "#maintenance-empty")
-
-    html = render(view) |> Floki.parse_document!()
-
-    assert ["refresh"] ==
-             html
-             |> Floki.find("button[phx-click]")
-             |> Floki.attribute("phx-click")
-
-    assert [] == Floki.find(html, "form")
-    assert [] == Floki.find(html, "[phx-click=close], [phx-click=delete], [phx-click=repair]")
+    assert has_element?(view, "#finding-drive-#{long_running_drive.id}-close")
   end
 
-  test "shows build identity and per-car runtime health", %{conn: conn} do
+  test "shows build identity without runtime instrumentation", %{conn: conn} do
     Application.put_env(:teslamate, :build_info,
       source: "teslamate-org/teslamate",
       ref: "refs/heads/main",
@@ -113,23 +79,13 @@ defmodule TeslaMateWeb.MaintenanceLiveTest do
       built_at: "2026-07-18T09:00:00Z"
     )
 
-    start_supervised!({RuntimeHealth, name: RuntimeHealth, mqtt_enabled: true})
-
-    RuntimeHealth.record_summary(42, :online)
-    RuntimeHealth.record_api(42, {:ok, %{}})
-    RuntimeHealth.record_stream(42, :inactive)
-    RuntimeHealth.record_mqtt_connection(:up)
-    RuntimeHealth.record_mqtt_publish(42, :ok)
-    assert %{vehicles: [%{car_id: 42}]} = RuntimeHealth.report()
-
     assert {:ok, view, html} = live(conn, "/maintenance")
 
     assert has_element?(view, "#operations-overview")
     assert has_element?(view, "#operations-build-version")
-    assert has_element?(view, "#runtime-health #runtime-car-42")
+    refute has_element?(view, "#runtime-health")
     assert html =~ "teslamate-org/teslamate"
     assert html =~ "abcdef1234567890"
-    assert html =~ "Car 42"
   end
 
   test "shows only a bounded redacted log tail behind authentication", %{conn: conn} do
@@ -271,21 +227,6 @@ defmodule TeslaMateWeb.MaintenanceLiveTest do
   defp drive_fixture(car, attrs) do
     attrs = Enum.into(attrs, %{car_id: car.id})
     Repo.insert!(struct!(Drive, attrs))
-  end
-
-  defp charging_process_fixture(car, attrs) do
-    attrs = Enum.into(attrs, %{car_id: car.id})
-
-    position =
-      Repo.insert!(%Position{
-        car_id: car.id,
-        date: Map.fetch!(attrs, :start_date),
-        latitude: Decimal.new("0"),
-        longitude: Decimal.new("0")
-      })
-
-    attrs = Map.put(attrs, :position_id, position.id)
-    Repo.insert!(struct!(ChargingProcess, attrs))
   end
 
   defp position_fixture(car, drive, date, odometer) do

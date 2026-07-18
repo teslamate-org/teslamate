@@ -5,6 +5,11 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
   import TestHelper, only: [decimal: 1]
 
+  test "links to the maintenance page", %{conn: conn} do
+    assert {:ok, view, _html} = live(conn, "/settings")
+    assert has_element?(view, "a[href='/maintenance']", "Open maintenance")
+  end
+
   describe "units" do
     test "unit of length: shows 'km' by default", %{conn: conn} do
       assert {:ok, view, html} = live(conn, "/settings")
