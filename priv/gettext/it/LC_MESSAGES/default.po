@@ -75,6 +75,7 @@ msgstr "Modalità Sentinella"
 #: lib/teslamate_web/live/geofence_live/form.html.heex:3
 #: lib/teslamate_web/live/geofence_live/index.html.heex:3
 #: lib/teslamate_web/live/import_live/index.html.heex:3
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:3
 #: lib/teslamate_web/live/settings_live/index.html.heex:3
 #, elixir-autogen, elixir-format
 msgid "Home"
@@ -82,7 +83,7 @@ msgstr "Home"
 
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
-#: lib/teslamate_web/templates/layout/root.html.heex:119
+#: lib/teslamate_web/templates/layout/root.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Impostazioni"
@@ -545,7 +546,7 @@ msgid "GitHub"
 msgstr "GitHub"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:380
-#: lib/teslamate_web/templates/layout/root.html.heex:188
+#: lib/teslamate_web/templates/layout/root.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "Aggiornamento disponibile"
@@ -611,22 +612,22 @@ msgstr "Il tuo account Tesla è bloccato a causa di troppi tentativi di accesso.
 msgid "Downloading update"
 msgstr "Download dell'aggiornamento in corso"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:145
+#: lib/teslamate_web/templates/layout/root.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "Non è stata fornita nessuna chiave di crittazione"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:165
+#: lib/teslamate_web/templates/layout/root.html.heex:171
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "Per maggiori informazioni, si veda le guide di installazione aggiornate a %{link}"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:158
+#: lib/teslamate_web/templates/layout/root.html.heex:164
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "La chiave di crittazione generata automaticamente ed usata per la sessione corrente può essere trovata <strong>nei log dell'applicazione</strong>."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:151
+#: lib/teslamate_web/templates/layout/root.html.heex:157
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "Per assicurarsi che <strong>i token Tesla API siano salvati in maniera sicura</strong>, deve essere fornita a TeslaMate una chive di crittazione tramice la variabile di ambiente <code>ENCRYPTION_KEY</code>. Altrimenti, un <strong>login sarà richiesto dopo ogni riavvio</strong>."
@@ -730,4 +731,326 @@ msgstr ""
 #: lib/teslamate_web/live/car_live/summary.html.heex:15
 #, elixir-autogen, elixir-format
 msgid "Minimize map"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:203
+#, elixir-autogen, elixir-format
+msgid "%{count} session needs review"
+msgid_plural "%{count} sessions need review"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:103
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:171
+#, elixir-autogen, elixir-format
+msgid "Car %{id}"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:96
+#, elixir-autogen, elixir-format
+msgid "Charging session #%{id}"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:216
+#, elixir-autogen, elixir-format
+msgid "Checked"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:198
+#, elixir-autogen, elixir-format
+msgid "Data health"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:92
+#, elixir-autogen, elixir-format
+msgid "Drive #%{id}"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:66
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:5
+#: lib/teslamate_web/templates/layout/root.html.heex:119
+#, elixir-autogen, elixir-format
+msgid "Maintenance"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:228
+#, elixir-autogen, elixir-format
+msgid "Only the oldest findings are shown."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:348
+#, elixir-autogen, elixir-format
+msgid "Open the manual maintenance guide"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:32
+#, elixir-autogen, elixir-format
+msgid "Read-only. TeslaMate has not changed any data."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:60
+#, elixir-autogen, elixir-format
+msgid "Refresh"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:342
+#, elixir-autogen, elixir-format
+msgid "Review each session before choosing a manual maintenance action."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:259
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:380
+#, elixir-autogen, elixir-format
+msgid "Started"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:35
+#, elixir-autogen, elixir-format
+msgid "These checks only list drives and charging sessions that have stayed open for more than %{hours} hours."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:40
+#, elixir-autogen, elixir-format
+msgid "A long-running session is not automatically corrupt."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:235
+#, elixir-autogen, elixir-format
+msgid "No long-running open drives or charging sessions found."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:201
+#, elixir-autogen, elixir-format
+msgid "No long-running sessions"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:142
+#, elixir-autogen, elixir-format
+msgid "%{bytes} B"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:85
+#, elixir-autogen, elixir-format
+msgid "%{count} vehicle"
+msgid_plural "%{count} vehicles"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:145
+#, elixir-autogen, elixir-format
+msgid "%{kilobytes} KB"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:149
+#, elixir-autogen, elixir-format
+msgid "%{megabytes} MB"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:162
+#, elixir-autogen, elixir-format
+msgid "API"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:67
+#, elixir-autogen, elixir-format
+msgid "Build"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:143
+#, elixir-autogen, elixir-format
+msgid "Built"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:370
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:402
+#, elixir-autogen, elixir-format
+msgid "Cancel"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:283
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:364
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:411
+#, elixir-autogen, elixir-format
+msgid "Close session"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:114
+#, elixir-autogen, elixir-format
+msgid "Degraded"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:298
+#, elixir-autogen, elixir-format
+msgid "Diagnostics"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:116
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:121
+#, elixir-autogen, elixir-format
+msgid "Disabled"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:115
+#, elixir-autogen, elixir-format
+msgid "Down"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:105
+#, elixir-autogen, elixir-format
+msgid "File logs"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:112
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:123
+#, elixir-autogen, elixir-format
+msgid "Healthy"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:113
+#, elixir-autogen, elixir-format
+msgid "Idle"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:161
+#, elixir-autogen, elixir-format
+msgid "Logger"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:95
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:164
+#, elixir-autogen, elixir-format
+msgid "MQTT"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:156
+#, elixir-autogen, elixir-format
+msgid "Maintenance actions are disabled."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:22
+#, elixir-autogen, elixir-format
+msgid "Maintenance actions are enabled."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:310
+#, elixir-autogen, elixir-format
+msgid "No log entries yet."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:332
+#, elixir-autogen, elixir-format
+msgid "No log file has been created yet."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:327
+#, elixir-autogen, elixir-format
+msgid "Only the newest bounded log entries are shown."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:48
+#, elixir-autogen, elixir-format
+msgid "Operations"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:316
+#, elixir-autogen, elixir-format
+msgid "Read"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:299
+#, elixir-autogen, elixir-format
+msgid "Recent logs"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:335
+#, elixir-autogen, elixir-format
+msgid "Recent logs are unavailable."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:138
+#, elixir-autogen, elixir-format
+msgid "Revision"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:80
+#, elixir-autogen, elixir-format
+msgid "Runtime"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:303
+#, elixir-autogen, elixir-format
+msgid "Sensitive"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:50
+#, elixir-autogen, elixir-format
+msgid "Session closed."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:163
+#, elixir-autogen, elixir-format
+msgid "Streaming"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:49
+#, elixir-autogen, elixir-format
+msgid "System overview"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:24
+#, elixir-autogen, elixir-format
+msgid "TeslaMate rechecks each session before closing it and never deletes it from this page."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:390
+#, elixir-autogen, elixir-format
+msgid "TeslaMate will recheck that this session is still open, old enough, and not active. The record will not be deleted."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:166
+#, elixir-autogen, elixir-format
+msgid "The drive does not have enough position data to close safely. Nothing was changed."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:159
+#, elixir-autogen, elixir-format
+msgid "The session changed and is no longer eligible. Nothing was changed."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:171
+#, elixir-autogen, elixir-format
+msgid "The session could not be closed. Nothing was changed."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:162
+#, elixir-autogen, elixir-format
+msgid "The vehicle is currently active. Nothing was changed."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:26
+#, elixir-autogen, elixir-format
+msgid "This session is no longer listed. Refresh and try again."
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:118
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:125
+#, elixir-autogen, elixir-format
+msgid "Unavailable"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.ex:117
+#: lib/teslamate_web/live/maintenance_live/index.ex:119
+#: lib/teslamate_web/live/maintenance_live/index.ex:141
+#, elixir-autogen, elixir-format
+msgid "Unknown"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:160
+#, elixir-autogen, elixir-format
+msgid "Vehicle"
+msgstr ""
+
+#: lib/teslamate_web/live/maintenance_live/index.html.heex:155
+#, elixir-autogen, elixir-format
+msgid "Vehicle connections"
 msgstr ""

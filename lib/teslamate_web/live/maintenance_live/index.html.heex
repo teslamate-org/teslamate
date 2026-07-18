@@ -1,0 +1,416 @@
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><.link navigate={~p"/"}><%= gettext("Home") %></.link></li>
+    <li class="is-active">
+      <.link navigate={~p"/maintenance"}><%= gettext("Maintenance") %></.link>
+    </li>
+  </ul>
+</nav>
+
+<%= for {flash_key, flash_message} <- @flash do %>
+  <p
+    id={"maintenance-flash-#{flash_key}"}
+    class={["notification", flash_class(flash_key)]}
+    role="status"
+  >
+    <%= flash_message %>
+  </p>
+<% end %>
+
+<%= if @maintenance_actions_enabled? do %>
+  <div id="maintenance-actions-enabled" class="notification is-warning is-light">
+    <p class="has-text-weight-semibold"><%= gettext("Maintenance actions are enabled.") %></p>
+    <p>
+      <%= gettext(
+        "TeslaMate rechecks each session before closing it and never deletes it from this page."
+      ) %>
+    </p>
+  </div>
+<% else %>
+  <div id="maintenance-read-only" class="notification is-info is-light">
+    <p class="has-text-weight-semibold">
+      <%= gettext("Read-only. TeslaMate has not changed any data.") %>
+    </p>
+    <p>
+      <%= gettext(
+        "These checks only list drives and charging sessions that have stayed open for more than %{hours} hours.",
+        hours: open_hours(@report)
+      ) %>
+    </p>
+    <p><%= gettext("A long-running session is not automatically corrupt.") %></p>
+  </div>
+<% end %>
+
+<section id="operations-overview" class="box">
+  <div class="level is-mobile mb-4">
+    <div class="level-left">
+      <div>
+        <p class="heading"><%= gettext("Operations") %></p>
+        <p class="title is-5"><%= gettext("System overview") %></p>
+      </div>
+    </div>
+    <div class="level-right">
+      <button
+        id="maintenance-refresh"
+        type="button"
+        class="button is-info is-light is-small"
+        phx-click="refresh"
+      >
+        <span class="icon"><span class="mdi mdi-refresh"></span></span>
+        <span><%= gettext("Refresh") %></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="columns is-multiline">
+    <div class="column is-half-tablet is-one-quarter-desktop">
+      <p class="heading"><%= gettext("Build") %></p>
+      <p id="operations-build-version" class="has-text-weight-semibold">
+        <%= @build_info.version %>
+      </p>
+      <%= if @build_info.source do %>
+        <p class="is-size-7"><%= @build_info.source %></p>
+      <% end %>
+      <%= if @build_info.ref do %>
+        <p class="is-size-7 operations-wrap"><%= @build_info.ref %></p>
+      <% end %>
+    </div>
+
+    <div class="column is-half-tablet is-one-quarter-desktop">
+      <p class="heading"><%= gettext("Runtime") %></p>
+      <span id="operations-runtime-status" class={["tag", status_class(@runtime_health.status)]}>
+        <%= status_label(@runtime_health.status) %>
+      </span>
+      <p class="is-size-7 mt-2">
+        <%= ngettext(
+          "%{count} vehicle",
+          "%{count} vehicles",
+          length(@runtime_health.vehicles),
+          count: length(@runtime_health.vehicles)
+        ) %>
+      </p>
+    </div>
+
+    <div class="column is-half-tablet is-one-quarter-desktop">
+      <p class="heading"><%= gettext("MQTT") %></p>
+      <span id="operations-mqtt-status" class={["tag", status_class(@runtime_health.mqtt.status)]}>
+        <%= status_label(@runtime_health.mqtt.status) %>
+      </span>
+      <%= if reason = component_reason(@runtime_health.mqtt) do %>
+        <p class="is-size-7 mt-2"><%= reason %></p>
+      <% end %>
+    </div>
+
+    <div class="column is-half-tablet is-one-quarter-desktop">
+      <p class="heading"><%= gettext("File logs") %></p>
+      <span
+        id="operations-file-log-status"
+        class={[
+          "tag",
+          status_class(
+            cond do
+              not @file_log_status.enabled? -> :disabled
+              @file_log_status.active? and @file_log_status.readable? -> :ok
+              true -> :degraded
+            end
+          )
+        ]}
+      >
+        <%= cond do %>
+          <% not @file_log_status.enabled? -> %>
+            <%= gettext("Disabled") %>
+          <% @file_log_status.active? and @file_log_status.readable? -> %>
+            <%= gettext("Healthy") %>
+          <% true -> %>
+            <%= gettext("Unavailable") %>
+        <% end %>
+      </span>
+      <%= if @file_log_status.enabled? do %>
+        <p class="is-size-7 mt-2"><%= format_bytes(@file_log_status.size_bytes) %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <%= if @build_info.revision || @build_info.built_at do %>
+    <div class="content is-small mt-3 mb-0">
+      <%= if @build_info.revision do %>
+        <p class="operations-wrap mb-1">
+          <strong><%= gettext("Revision") %>:</strong> <code><%= @build_info.revision %></code>
+        </p>
+      <% end %>
+      <%= if @build_info.built_at do %>
+        <p class="mb-0">
+          <strong><%= gettext("Built") %>:</strong>
+          <span id="operations-built-at" data-date={@build_info.built_at} phx-hook="LocalDateTime">
+            <%= @build_info.built_at %>
+          </span>
+        </p>
+      <% end %>
+    </div>
+  <% end %>
+</section>
+
+<%= if @runtime_health.vehicles != [] do %>
+  <section id="runtime-health" class="box">
+    <h2 class="title is-5"><%= gettext("Vehicle connections") %></h2>
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+          <tr>
+            <th><%= gettext("Vehicle") %></th>
+            <th><%= gettext("Logger") %></th>
+            <th><%= gettext("API") %></th>
+            <th><%= gettext("Streaming") %></th>
+            <th><%= gettext("MQTT") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for vehicle <- @runtime_health.vehicles do %>
+            <tr id={"runtime-car-#{vehicle.car_id}"}>
+              <th>
+                <%= gettext("Car %{id}", id: vehicle.car_id) %>
+                <span class="is-size-7 has-text-grey">
+                  <%= format_atom(vehicle.logger_state) %>
+                </span>
+              </th>
+              <%= for component <- [vehicle.logger, vehicle.api, vehicle.stream, vehicle.mqtt] do %>
+                <td>
+                  <span class={["tag", status_class(component.status)]}>
+                    <%= status_label(component.status) %>
+                  </span>
+                  <%= if reason = component_reason(component) do %>
+                    <span class="is-block is-size-7 mt-1"><%= reason %></span>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% end %>
+
+<div id="maintenance-summary" class="box">
+  <div class="level is-mobile">
+    <div class="level-left">
+      <div>
+        <p class="heading"><%= gettext("Data health") %></p>
+        <p class="title is-5">
+          <%= if Enum.empty?(@report.findings) do %>
+            <%= gettext("No long-running sessions") %>
+          <% else %>
+            <%= ngettext(
+              "%{count} session needs review",
+              "%{count} sessions need review",
+              length(@report.findings),
+              count: length(@report.findings)
+            ) %>
+          <% end %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <p class="is-size-7 has-text-grey">
+    <%= gettext("Checked") %>:
+    <span
+      id="maintenance-checked-at"
+      data-date={iso_datetime(@report.checked_at)}
+      phx-hook="LocalDateTime"
+    >
+      <%= iso_datetime(@report.checked_at) %>
+    </span>
+  </p>
+
+  <%= if @report.truncated? do %>
+    <p id="maintenance-truncated" class="help is-warning mt-2">
+      <%= gettext("Only the oldest findings are shown.") %>
+    </p>
+  <% end %>
+</div>
+
+<%= if Enum.empty?(@report.findings) do %>
+  <div id="maintenance-empty" class="notification is-success is-light">
+    <%= gettext("No long-running open drives or charging sessions found.") %>
+  </div>
+<% else %>
+  <div id="maintenance-findings">
+    <%= for finding <- @report.findings do %>
+      <article
+        id={finding_dom_id(finding)}
+        class="box"
+        data-finding-code={to_string(finding.code)}
+        data-entity-id={finding.entity_id}
+      >
+        <div class="media">
+          <div class="media-left">
+            <span class="icon is-medium has-text-warning">
+              <span class={["mdi", finding_icon(finding), "mdi-24px"]}></span>
+            </span>
+          </div>
+          <div class="media-content">
+            <p class="title is-5"><%= finding_title(finding) %></p>
+            <p class="subtitle is-6"><%= car_name(finding) %></p>
+
+            <dl>
+              <div class="columns is-mobile mb-0">
+                <dt class="column is-one-third has-text-weight-medium">
+                  <%= gettext("Started") %>
+                </dt>
+                <dd class="column">
+                  <span
+                    id={"#{finding_dom_id(finding)}-started-at"}
+                    data-date={iso_datetime(finding.started_at)}
+                    phx-hook="LocalDateTime"
+                  >
+                    <%= iso_datetime(finding.started_at) %>
+                  </span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <%= if @maintenance_actions_enabled? do %>
+            <div class="media-right">
+              <button
+                id={"#{finding_dom_id(finding)}-close"}
+                type="button"
+                class="button is-warning is-light is-small"
+                phx-click="request-close"
+                phx-value-finding-id={finding.id}
+              >
+                <span class="icon"><span class="mdi mdi-check-circle-outline"></span></span>
+                <span><%= gettext("Close session") %></span>
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </article>
+    <% end %>
+  </div>
+<% end %>
+
+<%= if @file_log_status.enabled? do %>
+  <section id="maintenance-logs" class="box">
+    <div class="level is-mobile">
+      <div class="level-left">
+        <div>
+          <p class="heading"><%= gettext("Diagnostics") %></p>
+          <h2 class="title is-5"><%= gettext("Recent logs") %></h2>
+        </div>
+      </div>
+      <div class="level-right">
+        <span class="tag is-warning is-light"><%= gettext("Sensitive") %></span>
+      </div>
+    </div>
+
+    <%= case @log_tail do %>
+      <% {:ok, tail} -> %>
+        <%= if Enum.empty?(tail.lines) do %>
+          <p id="maintenance-log-empty"><%= gettext("No log entries yet.") %></p>
+        <% else %>
+          <pre id="maintenance-log-tail" class="operations-log-view"><%= Enum.join(tail.lines, "\n") %></pre>
+        <% end %>
+        <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap mt-2">
+          <p class="is-size-7 has-text-grey">
+            <%= gettext("Read") %>:
+            <span
+              id="maintenance-log-read-at"
+              data-date={iso_datetime(tail.read_at)}
+              phx-hook="LocalDateTime"
+            >
+              <%= iso_datetime(tail.read_at) %>
+            </span>
+          </p>
+          <%= if tail.truncated? do %>
+            <p id="maintenance-log-truncated" class="is-size-7 has-text-warning">
+              <%= gettext("Only the newest bounded log entries are shown.") %>
+            </p>
+          <% end %>
+        </div>
+      <% {:error, :not_found} -> %>
+        <p id="maintenance-log-empty"><%= gettext("No log file has been created yet.") %></p>
+      <% {:error, _reason} -> %>
+        <div id="maintenance-log-unavailable" class="notification is-warning is-light">
+          <%= gettext("Recent logs are unavailable.") %>
+        </div>
+    <% end %>
+  </section>
+<% end %>
+
+<div class="content has-text-centered mt-5">
+  <p><%= gettext("Review each session before choosing a manual maintenance action.") %></p>
+  <a
+    href="https://docs.teslamate.org/docs/maintenance/manually_fixing_data"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <%= gettext("Open the manual maintenance guide") %>
+  </a>
+</div>
+
+<%= if @pending_action do %>
+  <div
+    id="maintenance-close-modal"
+    class="modal modal-fx-fadeInScale is-active"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="maintenance-close-title"
+  >
+    <div class="modal-background" phx-click="cancel-close"></div>
+    <div class="modal-card modal-content">
+      <header class="modal-card-head">
+        <p id="maintenance-close-title" class="modal-card-title">
+          <%= gettext("Close session") %>
+        </p>
+        <button
+          id="maintenance-cancel-close-icon"
+          type="button"
+          class="button is-text is-rounded"
+          aria-label={gettext("Cancel")}
+          phx-click="cancel-close"
+        >
+          <span class="icon is-small"><i class="mdi mdi-close"></i></span>
+        </button>
+      </header>
+      <section class="modal-card-body content">
+        <p class="has-text-weight-semibold"><%= finding_title(@pending_action) %></p>
+        <p><%= car_name(@pending_action) %></p>
+        <p>
+          <%= gettext("Started") %>:
+          <span
+            id="maintenance-close-started-at"
+            data-date={iso_datetime(@pending_action.started_at)}
+            phx-hook="LocalDateTime"
+          >
+            <%= iso_datetime(@pending_action.started_at) %>
+          </span>
+        </p>
+        <p>
+          <%= gettext(
+            "TeslaMate will recheck that this session is still open, old enough, and not active. The record will not be deleted."
+          ) %>
+        </p>
+      </section>
+      <footer class="modal-card-foot">
+        <button
+          id="maintenance-cancel-close"
+          type="button"
+          class="button"
+          phx-click="cancel-close"
+        >
+          <%= gettext("Cancel") %>
+        </button>
+        <button
+          id="maintenance-confirm-close"
+          type="button"
+          class="button is-warning"
+          phx-click="confirm-close"
+        >
+          <span class="icon"><span class="mdi mdi-check-circle-outline"></span></span>
+          <span><%= gettext("Close session") %></span>
+        </button>
+      </footer>
+    </div>
+  </div>
+<% end %>

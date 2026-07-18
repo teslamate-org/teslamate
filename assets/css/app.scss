@@ -50,6 +50,8 @@
 @forward "bulma/sass/grid";
 @forward "bulma/sass/helpers";
 @forward "bulma/sass/layout/container";
+@forward "bulma/sass/layout/level";
+@forward "bulma/sass/layout/media";
 @forward "bulma/sass/layout/section";
 
 // Import the themes so that all CSS variables have a value
@@ -87,6 +89,23 @@ a:hover {
 
 .alert:empty {
   display: none;
+}
+
+.operations-wrap {
+  overflow-wrap: anywhere;
+}
+
+.operations-log-view {
+  max-height: 28rem;
+  overflow: auto;
+  padding: 1rem;
+  border: 1px solid var(--bulma-border);
+  border-radius: 6px;
+  background: var(--bulma-scheme-main-bis);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+  line-height: 1.45;
 }
 
 nav.navbar {
