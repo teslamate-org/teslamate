@@ -125,14 +125,14 @@ defmodule TeslaMateWeb.ImportLiveTest do
   test "shows and submits the saved timezone for an interrupted run", %{conn: conn} do
     directory = "./test/fixtures/import/01_complete"
 
-    assert {:ok, _run} =
+    assert {:ok, run} =
              directory
              |> Checkpoint.source_key()
              |> Checkpoint.start_run("America/Los_Angeles")
 
     {:ok, _} = start_supervised({Import, directory: directory})
 
-    assert {:ok, _view, html} = live(conn, "/import")
+    assert {:ok, view, html} = live(conn, "/import")
 
     assert html =~ "interrupted import will resume with its saved time zone"
 
@@ -147,5 +147,42 @@ defmodule TeslaMateWeb.ImportLiveTest do
            |> Floki.text() =~ "America/Los_Angeles"
 
     refute html |> Floki.parse_document!() |> Floki.find("#settings_timezone") |> Enum.any?()
+
+    assert has_element?(view, ~s|button[phx-click="discard-interrupted-import"]|)
+
+    html = render_click(view, "discard-interrupted-import")
+
+    refute html =~ "saved-import-timezone"
+    refute has_element?(view, ~s|button[phx-click="discard-interrupted-import"]|)
+    assert TeslaMate.Repo.get!(Import.Run, run.id).status == :abandoned
+  end
+
+  test "shows a friendly message for incomplete vehicle data", %{conn: conn} do
+    {:ok, _} = start_supervised({Import, directory: "./test/fixtures/import/04_error"})
+
+    assert {:ok, view, _html} = live(conn, "/import")
+    render_submit(view, :import, %{settings: %{timezone: "Europe/Berlin"}})
+
+    TestHelper.eventually(
+      fn ->
+        html = render(view)
+        assert html =~ "No complete vehicle data was found in the import files."
+        refute html =~ "vehicle_data_incomplete"
+      end,
+      delay: 50,
+      attempts: 100
+    )
+  end
+
+  test "handles a stale import submission without crashing", %{conn: conn} do
+    {:ok, _} = start_supervised({Import, directory: "./test/fixtures/import/08_resilient"})
+    {:ok, _} = start_supervised(Repair)
+
+    assert {:ok, view, _html} = live(conn, "/import")
+    assert :ok = Import.run("Etc/UTC")
+
+    render_submit(view, :import, %{settings: %{timezone: "Etc/UTC"}})
+
+    assert Process.alive?(Process.whereis(Import))
   end
 end

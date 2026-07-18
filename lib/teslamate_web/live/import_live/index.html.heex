@@ -112,7 +112,11 @@
         <% end %>
       </ul>
       <%= if @status.rejection_examples_truncated do %>
-        <p class="mt-2"><%= gettext("Showing the first 100 malformed rows.") %></p>
+        <p class="mt-2">
+          <%= gettext("Showing the first %{count} malformed rows.",
+            count: @status.rejection_example_limit
+          ) %>
+        </p>
       <% end %>
     </div>
   </article>
@@ -130,7 +134,7 @@
           </p>
           <p class="help">
             <%= gettext(
-              "This interrupted import will resume with its saved time zone. The time zone cannot be changed until the run finishes."
+              "This interrupted import will resume with its saved time zone. The time zone cannot be changed while resuming this run."
             ) %>
           </p>
         <% else %>
@@ -154,8 +158,27 @@
   </.form>
 <% end %>
 
+<%= if @status.resume_timezone && @status.state in [:idle, :error] do %>
+  <div class="field mt-4">
+    <div class="control">
+      <button
+        type="button"
+        class="button is-danger is-light"
+        phx-click="discard-interrupted-import"
+        data-confirm={
+          gettext(
+            "Discard this interrupted import? Its completed-file checkpoints and rejection report will no longer be used. Imported TeslaMate data is kept."
+          )
+        }
+      >
+        <%= gettext("Discard interrupted import") %>
+      </button>
+    </div>
+  </div>
+<% end %>
+
 <%= if @status.state == :error do %>
   <code class="box has-text-danger">
-    <%= inspect(@status.message, pretty: true) %>
+    <%= import_error(@status.message) %>
   </code>
 <% end %>

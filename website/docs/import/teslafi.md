@@ -237,6 +237,10 @@ processed again from its beginning. Rows already stored from that file may be im
 is file-level recovery, not row-exact or exactly-once recovery; keep the original CSV files
 unchanged until the import finishes. TeslaMate also keeps the time zone selected when the run
 started and reuses it after a restart so timestamps cannot shift partway through the import.
+
+If the saved time zone is wrong or the source files were replaced, use **Discard interrupted
+import** before starting again. The saved checkpoints and rejection report for that run are no
+longer used. Data already imported into TeslaMate is not deleted.
 :::
 
 :::note

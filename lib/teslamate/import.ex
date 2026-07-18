@@ -47,6 +47,7 @@ defmodule TeslaMate.Import do
       rejected_rows: 0,
       rejection_examples: [],
       rejection_examples_truncated: false,
+      rejection_example_limit: RejectionReport.max_examples(),
       resume_timezone: nil
     )
 
@@ -96,6 +97,7 @@ defmodule TeslaMate.Import do
   def valid_file_name?(fname), do: parse_fname(fname) != nil
   def get_status, do: GenStateMachine.call(@name, :get_status)
   def reload_directory, do: GenStateMachine.call(@name, :reload_directory)
+  def discard_interrupted_run, do: GenStateMachine.call(@name, :discard_interrupted_run)
   def subscribe, do: Phoenix.PubSub.subscribe(TeslaMate.PubSub, @topic)
 
   @impl true
@@ -135,6 +137,30 @@ defmodule TeslaMate.Import do
 
   def handle_event({:call, from}, :get_status, state, data) do
     {:keep_state_and_data, {:reply, from, Status.into(state, data)}}
+  end
+
+  def handle_event(
+        {:call, from},
+        :discard_interrupted_run,
+        :idle,
+        %Data{run_id: run_id} = data
+      )
+      when is_integer(run_id) do
+    discard_run(from, data)
+  end
+
+  def handle_event(
+        {:call, from},
+        :discard_interrupted_run,
+        {:error, _reason},
+        %Data{run_id: run_id} = data
+      )
+      when is_integer(run_id) do
+    discard_run(from, data)
+  end
+
+  def handle_event({:call, from}, :discard_interrupted_run, _state, _data) do
+    {:keep_state_and_data, {:reply, from, {:error, :not_allowed}}}
   end
 
   def handle_event({:call, from}, :reload_directory, _state, _data) do
@@ -275,12 +301,16 @@ defmodule TeslaMate.Import do
   def handle_event(:info, {:EXIT, _from, :normal}, _state, _data), do: :keep_state_and_data
   def handle_event(:info, {:EXIT, _from, :killed}, _state, _data), do: :keep_state_and_data
 
-  def handle_event(:info, {:EXIT, _from, reason}, _state, data) do
+  def handle_event(:info, {:EXIT, from, reason}, _state, data) do
     Logger.warning("Import failed: #{inspect(reason, pretty: true)}")
-    {:next_state, {:error, reason}, data, {:next_event, :internal, :broadcast}}
+
+    {:next_state, {:error, reason}, stop_import_processes(data, from),
+     {:next_event, :internal, :broadcast}}
   end
 
   ## Private
+
+  defp prepare_run(%Data{files: []}, _timezone), do: {:error, :no_files}
 
   defp prepare_run(%Data{source_key: source_key} = data, timezone) do
     case Checkpoint.get_active_run(source_key) do
@@ -317,20 +347,59 @@ defmodule TeslaMate.Import do
         apply_run(data, run)
 
       nil ->
+        data
+        |> clear_run()
+        |> restore_last_completed_report()
+    end
+  end
+
+  defp clear_run(%Data{} = data) do
+    %Data{
+      data
+      | completed: MapSet.new(),
+        rejection_report: %RejectionReport{},
+        run_id: nil,
+        run_timezone: nil,
+        run_car_id: nil,
+        date_limit: nil,
+        date_limit_captured: false,
+        car: nil,
+        pids: %{}
+    }
+  end
+
+  defp discard_run(from, %Data{run_id: run_id} = data) do
+    :ok = Checkpoint.abandon_run(run_id)
+
+    {:next_state, :idle, clear_run(data),
+     [{:reply, from, :ok}, {:next_event, :internal, :broadcast}]}
+  end
+
+  defp stop_import_processes(%Data{pids: pids} = data, exited_pid) do
+    pids
+    |> Map.values()
+    |> Enum.reject(&(&1 == exited_pid))
+    |> Enum.filter(&Process.alive?/1)
+    |> Enum.each(&Process.exit(&1, :kill))
+
+    %Data{data | pids: %{}}
+  end
+
+  defp restore_last_completed_report(%Data{source_key: source_key} = data) do
+    case Checkpoint.get_last_completed_run(source_key) do
+      %Run{id: run_id} ->
         %Data{
           data
-          | completed: MapSet.new(),
-            rejection_report: %RejectionReport{},
-            run_id: nil,
-            run_timezone: nil,
-            run_car_id: nil,
-            date_limit: nil,
-            date_limit_captured: false
+          | rejection_report: Checkpoint.rejection_report(run_id, current_file_ids(data))
         }
+
+      nil ->
+        data
     end
   end
 
   defp build_files(path, names) do
+    # Hash before restoring checkpoints so changed files are never shown as complete.
     names
     |> Enum.map(fn name -> %{date: parse_fname(name), path: Path.join([path, name])} end)
     |> Enum.reject(fn %{date: date} -> is_nil(date) end)
@@ -484,23 +553,20 @@ defmodule TeslaMate.Import do
             {:ok, rows} ->
               stream =
                 rows
-                |> Stream.with_index(2)
                 |> Task.async_stream(
-                  fn {row, row_number} ->
-                    case row do
-                      {:ok, row} ->
-                        case RowValidator.parse(row, tz) do
-                          {:ok, vehicle} ->
-                            {:vehicle, vehicle}
+                  fn
+                    {:ok, row_number, row} ->
+                      case RowValidator.parse(row, tz) do
+                        {:ok, vehicle} ->
+                          {:vehicle, vehicle}
 
-                          {:error, reason, fields} ->
-                            {:reject,
-                             RejectedRow.new(path, row_number, reason, fields, fingerprint)}
-                        end
+                        {:error, reason, fields} ->
+                          {:reject,
+                           RejectedRow.new(path, row_number, reason, fields, fingerprint)}
+                      end
 
-                      {:error, reason, fields} ->
-                        {:reject, RejectedRow.new(path, row_number, reason, fields, fingerprint)}
-                    end
+                    {:error, row_number, reason, fields} ->
+                      {:reject, RejectedRow.new(path, row_number, reason, fields, fingerprint)}
                   end,
                   timeout: :infinity,
                   ordered: true

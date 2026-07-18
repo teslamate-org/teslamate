@@ -16,8 +16,13 @@ defmodule TeslaMate.Import.LineParser do
   }
 
   def parse(line, tz) when is_map(line) do
+    {:ok, timestamp} = parse_timestamp(Map.get(line, "Date"), tz)
+    parse(line, tz, timestamp)
+  end
+
+  def parse(line, _tz, timestamp) when is_map(line) and is_integer(timestamp) do
     line
-    |> Enum.reduce(@default_vehicle, &into_vehicle(&1, &2, tz))
+    |> Enum.reduce(@default_vehicle, &into_vehicle(&1, &2, timestamp))
     |> Vehicle.result()
   end
 
@@ -48,8 +53,9 @@ defmodule TeslaMate.Import.LineParser do
   @vehicle_config %VehicleConfig{} |> Map.keys() |> Enum.map(&to_string/1)
   @vehicle_state %VehicleState{} |> Map.keys() |> Enum.map(&to_string/1)
 
-  @boolean ~w(battery_heater_on is_climate_on is_front_defroster_on is_rear_defroster_on
-              fast_charger_present not_enough_power_to_heat)
+  @boolean ~w(battery_heater battery_heater_no_power battery_heater_on fast_charger_present
+              is_climate_on is_front_defroster_on is_rear_defroster_on
+              not_enough_power_to_heat)
 
   defp map_value(_, ""), do: nil
   defp map_value(_, "None"), do: nil
@@ -93,7 +99,7 @@ defmodule TeslaMate.Import.LineParser do
     end
   end
 
-  defp into_vehicle({key, val}, acc, tz) do
+  defp into_vehicle({key, val}, acc, timestamp) do
     case {key, val} do
       {"id", _val} ->
         Map.put(acc, "id", :rand.uniform(65536))
@@ -101,11 +107,9 @@ defmodule TeslaMate.Import.LineParser do
       {"vehicle_id", ""} ->
         Map.put(acc, "vehicle_id", System.get_env("TESLAFI_IMPORT_VEHICLE_ID", "1"))
 
-      {"Date", val} ->
-        {:ok, ts} = parse_timestamp(val, tz)
-
+      {"Date", _val} ->
         ["vehicle_config", "vehicle_state", "drive_state", "climate_state", "charge_state"]
-        |> Enum.reduce(acc, fn key, acc -> put_in(acc, [key, "timestamp"], ts) end)
+        |> Enum.reduce(acc, fn key, acc -> put_in(acc, [key, "timestamp"], timestamp) end)
 
       {key, val} when key in @charge_state ->
         put_in(acc, ["charge_state", key], map_value(key, val))

@@ -58,9 +58,28 @@ defmodule TeslaMateWeb.ImportLive.Index do
       |> Settings.changeset()
       |> Settings.apply()
 
-    :ok = Import.run(tz)
+    case Import.run(tz) do
+      :ok ->
+        {:noreply, assign(socket, status: %{status | state: :running})}
 
-    {:noreply, assign(socket, status: %{status | state: :running})}
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, import_start_error(reason))}
+    end
+  end
+
+  def handle_event("discard-interrupted-import", _params, socket) do
+    case Import.discard_interrupted_run() do
+      :ok ->
+        socket =
+          socket
+          |> assign(status: Import.get_status())
+          |> put_flash(:info, gettext("Interrupted import discarded."))
+
+        {:noreply, socket}
+
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, gettext("The import can no longer be discarded."))}
+    end
   end
 
   def handle_event("reload", _params, socket) do
@@ -102,6 +121,24 @@ defmodule TeslaMateWeb.ImportLive.Index do
   defp rejection_reason(%RejectedRow{}) do
     gettext("row could not be parsed")
   end
+
+  defp import_error(:vehicle_data_incomplete) do
+    gettext("No complete vehicle data was found in the import files.")
+  end
+
+  defp import_error(:vehicle_changed) do
+    gettext("The import files contain data for more than one vehicle.")
+  end
+
+  defp import_error(message), do: inspect(message, pretty: true)
+
+  defp import_start_error(:no_files), do: gettext("No import files were found.")
+
+  defp import_start_error(:not_allowed) do
+    gettext("The import is no longer idle. Reload and try again.")
+  end
+
+  defp import_start_error(_reason), do: gettext("The import could not be started.")
 
   defp get_timezone do
     case Timex.local() do

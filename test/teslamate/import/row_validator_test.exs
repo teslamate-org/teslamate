@@ -64,9 +64,13 @@ defmodule TeslaMate.Import.RowValidatorTest do
     assert {:ok, vehicle} =
              @valid_row
              |> Map.put("is_front_defroster_on", "3")
+             |> Map.put("battery_heater", "1")
+             |> Map.put("battery_heater_no_power", "0")
              |> RowValidator.parse("Etc/UTC")
 
     assert vehicle.climate_state.is_front_defroster_on
+    assert vehicle.climate_state.battery_heater
+    refute vehicle.climate_state.battery_heater_no_power
   end
 
   test "rejects ambiguous local timestamps" do
@@ -114,7 +118,7 @@ defmodule TeslaMate.Import.RowValidatorTest do
       end)
 
     assert report.count == 105
-    assert length(report.examples) == 100
+    assert length(report.examples) == RejectionReport.max_examples()
     assert RejectionReport.truncated?(report)
     assert Enum.map(report.examples, & &1.row) == Enum.to_list(1..100)
   end

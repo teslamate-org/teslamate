@@ -5,7 +5,7 @@ defmodule TeslaMate.ImportTest do
   alias TeslaMate.{Repo, Log, Repair}
 
   alias TeslaMate.Import
-  alias TeslaMate.Import.{Checkpoint, FileCheckpoint, Rejection, Run, Status}
+  alias TeslaMate.Import.{Checkpoint, FileCheckpoint, RejectedRow, Rejection, Run, Status}
 
   import TestHelper, only: [decimal: 1]
   import Mock
@@ -677,6 +677,120 @@ defmodule TeslaMate.ImportTest do
 
     assert %Status{state: :idle, files: [%{path: ^path, complete: false}]} =
              Import.get_status()
+  end
+
+  test "discards an interrupted run and permits a fresh run" do
+    directory = tmp_import_dir!()
+    name = "TeslaFi12018.csv"
+    path = Path.join(directory, name)
+    File.cp!(Path.join([@dir, "08_resilient", name]), path)
+
+    source_key = Checkpoint.source_key(directory)
+    {:ok, fingerprint} = Checkpoint.file_fingerprint(path)
+    {:ok, run} = Checkpoint.start_run(source_key, "America/Los_Angeles")
+    :ok = Checkpoint.complete_file(run.id, {name, fingerprint})
+
+    assert :inserted =
+             Checkpoint.record_rejection(
+               run.id,
+               RejectedRow.new(path, 3, :parse_error, [], fingerprint)
+             )
+
+    {:ok, _pid} = start_supervised({Import, directory: directory})
+
+    assert %Status{
+             state: :idle,
+             resume_timezone: "America/Los_Angeles",
+             rejected_rows: 1,
+             files: [%{complete: true}]
+           } = Import.get_status()
+
+    assert :ok = Import.discard_interrupted_run()
+
+    assert %Status{
+             state: :idle,
+             resume_timezone: nil,
+             rejected_rows: 0,
+             files: [%{complete: false}]
+           } = Import.get_status()
+
+    assert %Run{status: :abandoned} = Repo.get!(Run, run.id)
+    assert Checkpoint.get_active_run(source_key) == nil
+
+    assert {:ok, %Run{timezone: "Etc/UTC"} = new_run} =
+             Checkpoint.start_run(source_key, "Etc/UTC")
+
+    assert Repo.get(Run, run.id) == nil
+    assert Repo.get!(Run, new_run.id).status == :running
+  end
+
+  test "restores the last completed rejection report after restart" do
+    directory = tmp_import_dir!()
+    name = "TeslaFi12018.csv"
+    path = Path.join(directory, name)
+    File.cp!(Path.join([@dir, "08_resilient", name]), path)
+
+    {:ok, fingerprint} = Checkpoint.file_fingerprint(path)
+    {:ok, run} = Checkpoint.start_run(Checkpoint.source_key(directory), "Etc/UTC")
+
+    assert :inserted =
+             Checkpoint.record_rejection(
+               run.id,
+               RejectedRow.new(path, 3, :parse_error, [], fingerprint)
+             )
+
+    :ok = Checkpoint.complete_run(run.id)
+    {:ok, _pid} = start_supervised({Import, directory: directory})
+
+    assert %Status{
+             state: :idle,
+             resume_timezone: nil,
+             rejected_rows: 1,
+             rejection_examples: [%RejectedRow{file: ^name, row: 3}]
+           } = Import.get_status()
+  end
+
+  test "rejects an empty import without creating a run" do
+    directory = tmp_import_dir!()
+    {:ok, _pid} = start_supervised({Import, directory: directory})
+
+    assert {:error, :no_files} = Import.run("Etc/UTC")
+    assert Repo.aggregate(Run, :count) == 0
+    assert %Status{state: :idle, files: []} = Import.get_status()
+  end
+
+  test "returns a safe error when a source already has an active run" do
+    source_key = Checkpoint.source_key(tmp_import_dir!())
+
+    assert {:ok, %Run{}} = Checkpoint.start_run(source_key, "Etc/UTC")
+    assert {:error, %Ecto.Changeset{} = changeset} = Checkpoint.start_run(source_key, "Etc/UTC")
+    assert {"has already been taken", _metadata} = changeset.errors[:source_key]
+  end
+
+  @tag :capture_log
+  test "captures a runtime failure inside the vehicle process" do
+    {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/01_complete"})
+
+    with_mock Repair, trigger_run: fn -> :ok end do
+      with_mock Log, [:passthrough],
+        insert_position: fn _car_or_drive, _attrs ->
+          raise "injected position insert failure"
+        end do
+        assert :ok = Import.run("America/Los_Angeles")
+
+        TestHelper.eventually(
+          fn ->
+            assert %Status{state: :error, message: message} = Import.get_status()
+            assert inspect(message) =~ "injected position insert failure"
+            assert Process.alive?(Process.whereis(Import))
+            refute Process.whereis(:api_82420)
+            refute Process.whereis(:import_82420)
+          end,
+          delay: 50,
+          attempts: 100
+        )
+      end
+    end
   end
 
   defp ok_fn(name, pid) do

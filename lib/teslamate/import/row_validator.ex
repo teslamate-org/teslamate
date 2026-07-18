@@ -59,8 +59,8 @@ defmodule TeslaMate.Import.RowValidator do
   ]
 
   def parse(row, timezone) when is_map(row) do
-    with {:ok, _timestamp} <- LineParser.parse_timestamp(Map.get(row, "Date"), timezone) do
-      vehicle = LineParser.parse(row, timezone)
+    with {:ok, timestamp} <- LineParser.parse_timestamp(Map.get(row, "Date"), timezone) do
+      vehicle = LineParser.parse(row, timezone, timestamp)
 
       case invalid_fields(vehicle) do
         [] -> {:ok, vehicle}

@@ -9,9 +9,20 @@ defmodule TeslaMate.Import.CSVTest do
     assert {:ok, rows} = CSV.parse(csv)
 
     assert [
-             {:ok, %{"a" => "1", "b" => "2"}},
-             {:error, :column_count_mismatch, ["columns"]},
-             {:error, :column_count_mismatch, ["columns"]}
+             {:ok, 2, %{"a" => "1", "b" => "2"}},
+             {:error, 3, :column_count_mismatch, ["columns"]},
+             {:error, 4, :column_count_mismatch, ["columns"]}
+           ] = Enum.to_list(rows)
+  end
+
+  test "preserves source row numbers after blank lines" do
+    csv = ["a,b\n", "1,2\n", "\n", "3\n"]
+
+    assert {:ok, rows} = CSV.parse(csv)
+
+    assert [
+             {:ok, 2, %{"a" => "1", "b" => "2"}},
+             {:error, 4, :column_count_mismatch, ["columns"]}
            ] = Enum.to_list(rows)
   end
 end

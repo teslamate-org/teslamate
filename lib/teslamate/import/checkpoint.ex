@@ -1,63 +1,3 @@
-defmodule TeslaMate.Import.Run do
-  @moduledoc false
-
-  use Ecto.Schema
-
-  schema "import_runs" do
-    field :source_key, :string
-    field :status, Ecto.Enum, values: [:running, :complete, :abandoned]
-    field :timezone, :string
-    field :date_limit, :utc_datetime_usec
-    field :date_limit_captured, :boolean, default: false
-    field :car_id, :integer
-
-    timestamps(type: :utc_datetime_usec)
-  end
-end
-
-defmodule TeslaMate.Import.FileCheckpoint do
-  @moduledoc false
-
-  use Ecto.Schema
-
-  schema "import_file_checkpoints" do
-    field :file_name, :string
-    field :file_fingerprint, :string
-    field :completed_at, :utc_datetime_usec
-    field :run_id, :integer
-
-    timestamps(type: :utc_datetime_usec)
-  end
-end
-
-defmodule TeslaMate.Import.Rejection do
-  @moduledoc false
-
-  use Ecto.Schema
-
-  schema "import_rejections" do
-    field :file_name, :string
-    field :file_fingerprint, :string
-    field :row, :integer
-
-    field :reason, Ecto.Enum,
-      values: [
-        :invalid_fields,
-        :parse_error,
-        :invalid_date,
-        :ambiguous_local_time,
-        :nonexistent_local_time,
-        :invalid_timezone,
-        :column_count_mismatch
-      ]
-
-    field :fields, {:array, :string}, default: []
-    field :run_id, :integer
-
-    timestamps(type: :utc_datetime_usec)
-  end
-end
-
 defmodule TeslaMate.Import.Checkpoint do
   @moduledoc false
 
@@ -65,8 +5,6 @@ defmodule TeslaMate.Import.Checkpoint do
 
   alias TeslaMate.Import.{FileCheckpoint, RejectedRow, Rejection, RejectionReport, Run}
   alias TeslaMate.Repo
-
-  @max_examples 100
 
   def source_key(path) do
     path
@@ -101,17 +39,41 @@ defmodule TeslaMate.Import.Checkpoint do
     |> Repo.one()
   end
 
+  def get_last_completed_run(source_key) do
+    Run
+    |> where(source_key: ^source_key, status: :complete)
+    |> order_by(desc: :id)
+    |> limit(1)
+    |> Repo.one()
+  end
+
   def start_run(source_key, timezone) do
     now = DateTime.utc_now()
 
-    %Run{
-      source_key: source_key,
-      status: :running,
-      timezone: timezone,
-      inserted_at: now,
-      updated_at: now
-    }
-    |> Repo.insert()
+    Repo.transaction(fn ->
+      Run
+      |> where([r], r.source_key == ^source_key and r.status != :running)
+      |> Repo.delete_all()
+
+      result =
+        %Run{
+          source_key: source_key,
+          status: :running,
+          timezone: timezone,
+          inserted_at: now,
+          updated_at: now
+        }
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.unique_constraint(:source_key,
+          name: :import_runs_one_running_per_source
+        )
+        |> Repo.insert()
+
+      case result do
+        {:ok, run} -> run
+        {:error, changeset} -> Repo.rollback(changeset)
+      end
+    end)
   end
 
   def abandon_run(run_id), do: set_run_status(run_id, :abandoned)
@@ -201,6 +163,8 @@ defmodule TeslaMate.Import.Checkpoint do
   def rejection_report(_run_id, []), do: %RejectionReport{}
 
   def rejection_report(run_id, file_ids) do
+    max_examples = RejectionReport.max_examples()
+
     identity_filter =
       Enum.reduce(file_ids, dynamic(false), fn {file_name, fingerprint}, filter ->
         dynamic(
@@ -219,7 +183,7 @@ defmodule TeslaMate.Import.Checkpoint do
     examples =
       query
       |> order_by(asc: :id)
-      |> limit(@max_examples)
+      |> limit(^max_examples)
       |> Repo.all()
       |> Enum.map(fn rejection ->
         RejectedRow.new(
