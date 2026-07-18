@@ -9,8 +9,8 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
     now_ts = DateTime.to_unix(now, :millisecond)
 
     events = [
-      {:ok, online_event(now_ts - 2)},
-      {:ok, update_event(now_ts - 1, "available", nil, update_version: "2019.8.5 3aaa23d")},
+      {:snapshot,
+       {:ok, update_event(now_ts - 1, "available", nil, update_version: "2019.8.5 3aaa23d")}},
       {:ok, update_event(now_ts, "installing", "2019.8.4 530d1d3")},
       {:ok, update_event(now_ts + 1, "installing", "2019.8.4 530d1d3")},
       {:ok, update_event(now_ts + 2, "installing", "2019.8.4 530d1d3")},
