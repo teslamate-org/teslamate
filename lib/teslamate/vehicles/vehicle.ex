@@ -452,6 +452,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         {:keep_state, data, [broadcast_fetch(false), schedule_fetch(data)]}
 
+      {:error, :import_complete} when data.import? ->
+        {:keep_state, data, broadcast_fetch(false)}
+
       {:error, :closed} ->
         Logger.warning("Error / connection closed", car_id: data.car.id)
         {:keep_state, data, [broadcast_fetch(false), schedule_fetch(5, data)]}

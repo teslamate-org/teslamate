@@ -115,7 +115,7 @@ defmodule TeslaMate.Import.FakeApiTest do
 
     assert_receive {:done, ^file_id}, 1000
     assert_receive :done, 1000
-    Task.shutdown(next_fetch, :brutal_kill)
+    assert {:error, :import_complete} = Task.await(next_fetch, 1000)
   end
 
   test "finishes cleanly when the final event stream is empty" do
@@ -139,8 +139,34 @@ defmodule TeslaMate.Import.FakeApiTest do
     assert_receive {:done, ^file_id}, 1000
     assert_receive :done, 1000
     refute_receive {:DOWN, ^ref, :process, ^fake_api, _reason}
-    assert %{finished?: true} = :sys.get_state(name)
+    assert %{finished?: true, waiters: waiters} = :sys.get_state(name)
+    assert :queue.is_empty(waiters)
+    assert {:error, :import_complete} = Task.await(next_fetch, 1000)
+    assert {:error, :import_complete} = FakeApi.get_vehicle(name, 1)
+  end
 
-    Task.shutdown(next_fetch, :brutal_kill)
+  test "releases queued callers when the import aborts" do
+    name = :"fake_api_#{System.unique_integer([:positive])}"
+
+    stream =
+      Stream.map([:event], fn _event ->
+        throw(:vehicle_changed)
+      end)
+
+    start_supervised!(
+      {FakeApi,
+       name: name,
+       event_streams: [{"TeslaFi12018.csv", stream}],
+       date_limit: ~U[2100-01-01 00:00:00Z],
+       pid: self()}
+    )
+
+    caller = Task.async(fn -> FakeApi.get_vehicle(name, 1) end)
+
+    assert_receive {:import_aborted, :vehicle_changed}, 1000
+    assert {:error, :import_complete} = Task.await(caller, 1000)
+    assert %{finished?: true, waiters: waiters} = :sys.get_state(name)
+    assert :queue.is_empty(waiters)
+    assert {:error, :import_complete} = FakeApi.get_vehicle_with_state(name, 1)
   end
 end

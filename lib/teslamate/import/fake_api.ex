@@ -53,6 +53,10 @@ defmodule TeslaMate.Import.FakeApi do
   end
 
   @impl true
+  def handle_call(_action, _from, %State{finished?: true} = state) do
+    {:reply, {:error, :import_complete}, state}
+  end
+
   def handle_call(_action, from, %State{} = state) do
     state = %State{state | waiters: :queue.in(from, state.waiters)}
     {:noreply, serve_waiters(state)}
@@ -196,12 +200,17 @@ defmodule TeslaMate.Import.FakeApi do
 
   defp processing_complete(%State{abort_reason: reason} = state) when not is_nil(reason) do
     send(state.pid, {:import_aborted, reason})
-    %State{state | finished?: true}
+    finish_processing(state)
   end
 
   defp processing_complete(%State{} = state) do
     send(state.pid, {:done, state.current_chunk})
     send(state.pid, :done)
-    %State{state | finished?: true}
+    finish_processing(state)
+  end
+
+  defp finish_processing(%State{waiters: waiters} = state) do
+    Enum.each(:queue.to_list(waiters), &GenServer.reply(&1, {:error, :import_complete}))
+    %State{state | waiters: :queue.new(), finished?: true}
   end
 end
