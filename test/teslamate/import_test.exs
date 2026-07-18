@@ -680,6 +680,38 @@ defmodule TeslaMate.ImportTest do
     assert Enum.map(examples, &{&1.file, &1.row}) == [{"first.csv", 2}, {"second.csv", 3}]
   end
 
+  @tag :capture_log
+  test "reports a file error between car discovery and import startup" do
+    directory = tmp_import_dir!()
+    name = "TeslaFi12018.csv"
+    path = Path.join(directory, name)
+    File.cp!(Path.join([@dir, "08_resilient", name]), path)
+
+    {:ok, import} = start_supervised({Import, directory: directory})
+
+    with_mock Checkpoint, [:passthrough],
+      set_car: fn run_id, car_id ->
+        result = passthrough([run_id, car_id])
+        File.write!(path, "unsupported delimiter\nsecond row\n")
+        result
+      end do
+      assert :ok = Import.run("Etc/UTC")
+
+      TestHelper.eventually(
+        fn ->
+          assert %Status{
+                   state: :error,
+                   message: %RuntimeError{message: "Unsupported delimiter"}
+                 } = Import.get_status()
+
+          assert Process.alive?(import)
+        end,
+        delay: 50,
+        attempts: 100
+      )
+    end
+  end
+
   test "restores an interrupted run with its saved timezone and imports the remaining file" do
     directory = tmp_import_dir!()
     first_name = "TeslaFi62016.csv"

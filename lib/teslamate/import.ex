@@ -399,7 +399,8 @@ defmodule TeslaMate.Import do
   end
 
   defp build_files(path, names) do
-    # Hash before restoring checkpoints so changed files are never shown as complete.
+    # Content hashing is deliberately paid before status restoration. Size or mtime shortcuts
+    # could mark replaced files complete, and completed-run reports use the same identity.
     names
     |> Enum.map(fn name -> %{date: parse_fname(name), path: Path.join([path, name])} end)
     |> Enum.reject(fn %{date: date} -> is_nil(date) end)
@@ -474,8 +475,16 @@ defmodule TeslaMate.Import do
   end
 
   defp start_import(%Data{} = data, %Car{} = car) do
-    {:ok, streams} = create_event_streams(data, car)
+    case create_event_streams(data, car) do
+      {:ok, streams} ->
+        start_import(data, car, streams)
 
+      {:error, reason} ->
+        {:next_state, {:error, reason}, data, {:next_event, :internal, :broadcast}}
+    end
+  end
+
+  defp start_import(%Data{} = data, %Car{} = car, streams) do
     :ok = Log.complete_current_state(car)
 
     {date_limit, data} = original_date_limit(data, car)
