@@ -23,6 +23,7 @@
 - fix: honor DATABASE_USER/DATABASE_PASS with DATABASE_SOCKET_DIR (#5503 - @mvanhorn)
 - fix(import): accept fractional TeslaFi battery levels (#5513 - @magrathean-uk)
 - fix(cars): enforce non-null VINs (#5512 - @magrathean-uk)
+- fix(mqtt): return publish errors without crashing (#5514 - @magrathean-uk)
 
 #### Build, CI, internal
 
