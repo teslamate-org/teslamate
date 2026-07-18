@@ -47,6 +47,7 @@
 - ci: sign published images with SLSA provenance + SBOM attestations (#5380 - @oivindoh)
 - fix(ci): add artifact-metadata permission for workflows as it is essential for generating attestations (#5484 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5498)
+- test: reuse API snapshots across paired fetches (#5510 - @magrathean-uk)
 
 #### Dashboards
 
