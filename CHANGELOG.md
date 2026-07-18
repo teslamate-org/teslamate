@@ -22,6 +22,7 @@
 - refactor: send TOKEN as Bearer header via FleetAuth middleware (#5470 - @jlestel)
 - fix: honor DATABASE_USER/DATABASE_PASS with DATABASE_SOCKET_DIR (#5503 - @mvanhorn)
 - fix(import): accept fractional TeslaFi battery levels (#5513 - @magrathean-uk)
+- fix(cars): enforce non-null VINs (#5512 - @magrathean-uk)
 
 #### Build, CI, internal
 
