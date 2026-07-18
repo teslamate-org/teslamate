@@ -44,6 +44,13 @@ defmodule TeslaMate.Import.LineParser do
   defp map_value("state", "waking"), do: "online"
   defp map_value("state", "shutdown"), do: "online"
 
+  defp map_value(key, val) when key in ["battery_level", "usable_battery_level"] do
+    case map_value(nil, val) do
+      number when is_float(number) -> round(number)
+      value -> value
+    end
+  end
+
   defp map_value("scheduled_charging_start_time", _val), do: nil
 
   @boolean ~w(battery_heater_on is_climate_on is_front_defroster_on is_rear_defroster_on
