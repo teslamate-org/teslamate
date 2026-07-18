@@ -86,6 +86,7 @@ defmodule TeslaMate.Import do
 
   @name __MODULE__
   @topic "#{@name}/state"
+  @process_stop_timeout 5_000
 
   def start_link(opts) do
     GenStateMachine.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
@@ -290,7 +291,12 @@ defmodule TeslaMate.Import do
     true = Process.exit(veh, :kill)
 
     receive do
-      {:DOWN, ^ref, :process, ^veh, :killed} -> :ok
+      {:DOWN, ^ref, :process, ^veh, _reason} ->
+        :ok
+    after
+      @process_stop_timeout ->
+        Process.demonitor(ref, [:flush])
+        Logger.warning("Timed out waiting for the import vehicle process to stop")
     end
 
     :ok = GenServer.stop(api, :normal)

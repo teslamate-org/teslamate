@@ -3,6 +3,7 @@ defmodule TeslaMate.ImportTest do
 
   alias TeslaMate.Log.{Car, Drive, ChargingProcess, Position, State, Update}
   alias TeslaMate.{Repo, Log, Repair}
+  alias TeslaMate.Vehicles.Vehicle
 
   alias TeslaMate.Import
 
@@ -709,6 +710,40 @@ defmodule TeslaMate.ImportTest do
         delay: 50,
         attempts: 100
       )
+    end
+  end
+
+  @tag :capture_log
+  test "finishes abort cleanup when the vehicle process already exited" do
+    {:ok, import} = start_supervised({Import, directory: "#{@dir}/08_resilient"})
+
+    with_mock Vehicle, [:passthrough],
+      start_link: fn _opts ->
+        Task.start_link(fn -> Process.sleep(:infinity) end)
+      end do
+      assert :ok = Import.run("Etc/UTC")
+
+      TestHelper.eventually(
+        fn ->
+          assert {:running, %Import{pids: %{api: api, veh: veh}}} = :sys.get_state(import)
+          assert Process.alive?(api)
+          assert Process.alive?(veh)
+        end,
+        delay: 10,
+        attempts: 100
+      )
+
+      {:running, %Import{pids: %{api: api, veh: veh}}} = :sys.get_state(import)
+      vehicle_ref = Process.monitor(veh)
+      api_ref = Process.monitor(api)
+
+      Process.exit(veh, :kill)
+      assert_receive {:DOWN, ^vehicle_ref, :process, ^veh, :killed}, 1000
+
+      send(import, {:import_aborted, :vehicle_changed})
+
+      assert_receive {:DOWN, ^api_ref, :process, ^api, :normal}, 1000
+      assert %Status{state: :error, message: :vehicle_changed} = Import.get_status()
     end
   end
 
