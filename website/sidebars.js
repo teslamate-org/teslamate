@@ -62,6 +62,7 @@ module.exports = {
         "upgrading",
         "maintenance/backup",
         "maintenance/restore",
+        "maintenance/operations",
         "maintenance/manually_fixing_data",
         "maintenance/upgrading_postgres",
       ],
