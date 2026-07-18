@@ -107,6 +107,13 @@ config :teslamate, :build_info,
   source: System.get_env("TESLAMATE_BUILD_SOURCE"),
   built_at: System.get_env("TESLAMATE_BUILD_DATE")
 
+config :teslamate, :file_logging,
+  enabled: config_env() != :test and System.get_env("TESLAMATE_FILE_LOGGING_ENABLED") == "true",
+  path: System.get_env("TESLAMATE_FILE_LOGGING_PATH", "data/logs/teslamate.log"),
+  max_bytes: 5_000_000,
+  max_files: 3,
+  filesync_interval: 10_000
+
 case System.get_env("DATABASE_SOCKET_DIR") do
   nil ->
     config :teslamate, TeslaMate.Repo,

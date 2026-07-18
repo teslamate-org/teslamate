@@ -3,9 +3,10 @@ defmodule TeslaMate.Application do
 
   require Logger
 
-  alias TeslaMate.BuildInfo
+  alias TeslaMate.{BuildInfo, FileLog}
 
   def start(_type, _args) do
+    file_logging = FileLog.install()
     build_info = BuildInfo.current()
 
     Logger.info("System Info: Erlang/OTP #{otp_release()} (#{emu_flavor()})")
@@ -13,6 +14,12 @@ defmodule TeslaMate.Application do
 
     if BuildInfo.metadata?(build_info) do
       Logger.info(BuildInfo.log_line(build_info))
+    end
+
+    case file_logging do
+      :ok -> Logger.info("File logging enabled")
+      {:error, reason} -> Logger.warning("File logging unavailable: #{reason}")
+      :disabled -> :ok
     end
 
     # Disable log entries

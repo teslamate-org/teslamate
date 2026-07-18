@@ -81,7 +81,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 USER nonroot:nonroot
 COPY --chown=nonroot:nonroot --chmod=555 entrypoint.sh /
 COPY --from=builder --chown=nonroot:nonroot --chmod=555 /opt/built .
-RUN mkdir $SRTM_CACHE
+RUN mkdir -p "$SRTM_CACHE" data/logs
 
 EXPOSE 4000
 
