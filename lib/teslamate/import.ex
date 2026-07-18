@@ -558,7 +558,13 @@ defmodule TeslaMate.Import do
                     {:ok, row_number, row} ->
                       case RowValidator.parse(row, tz) do
                         {:ok, vehicle} ->
-                          {:vehicle, vehicle}
+                          classify_vehicle(
+                            vehicle,
+                            car,
+                            path,
+                            row_number,
+                            fingerprint
+                          )
 
                         {:error, reason, fields} ->
                           {:reject,
@@ -582,11 +588,7 @@ defmodule TeslaMate.Import do
                   {:vehicle, %Veh{drive_state: %Drive{timestamp: nil}}} ->
                     false
 
-                  # TeslaFi rows can omit vehicle_id, and LineParser replaces id with a random
-                  # compatibility value. Only the VIN and vehicle_id together establish a change.
-                  {:vehicle, %Veh{vin: vin, vehicle_id: vid} = v}
-                  when car != nil and nil not in [vin, vid] and
-                         vin != car.vin and vid != car.vid ->
+                  {:vehicle_changed, %Veh{} = v} ->
                     Logger.warning(
                       "'#{path}' contains data for more than one vehicle: #{car.name}" <>
                         " -> #{v.display_name}!"
@@ -609,6 +611,30 @@ defmodule TeslaMate.Import do
     rescue
       e in File.Error -> {:error, e.reason}
       e -> {:error, e}
+    end
+  end
+
+  defp classify_vehicle(vehicle, nil, _path, _row_number, _fingerprint),
+    do: {:vehicle, vehicle}
+
+  defp classify_vehicle(
+         %TeslaApi.Vehicle{vin: vin, vehicle_id: vehicle_id} = vehicle,
+         %Car{} = car,
+         path,
+         row_number,
+         fingerprint
+       ) do
+    # Some TeslaFi variants omit VINs and use a configured vehicle ID fallback. A differing
+    # VIN and vehicle ID together establish a change; a lone VIN conflict is quarantined.
+    cond do
+      vin == nil or vin == car.vin ->
+        {:vehicle, vehicle}
+
+      vehicle_id != nil and vehicle_id != car.vid ->
+        {:vehicle_changed, vehicle}
+
+      true ->
+        {:reject, RejectedRow.new(path, row_number, :invalid_fields, ["vin"], fingerprint)}
     end
   end
 

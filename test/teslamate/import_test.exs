@@ -5,7 +5,16 @@ defmodule TeslaMate.ImportTest do
   alias TeslaMate.{Repo, Log, Repair}
 
   alias TeslaMate.Import
-  alias TeslaMate.Import.{Checkpoint, FileCheckpoint, RejectedRow, Rejection, Run, Status}
+
+  alias TeslaMate.Import.{
+    Checkpoint,
+    FileCheckpoint,
+    RejectedRow,
+    Rejection,
+    RejectionReport,
+    Run,
+    Status
+  }
 
   import TestHelper, only: [decimal: 1]
   import Mock
@@ -608,6 +617,67 @@ defmodule TeslaMate.ImportTest do
 
     assert %Status{files: [%{complete: true}, %{complete: false}]} =
              Status.into(:running, data)
+  end
+
+  @tag :capture_log
+  test "quarantines a conflicting VIN without rejecting fallback vehicle IDs" do
+    {:ok, _pid} =
+      start_supervised({Import, directory: "#{@dir}/09_identity_conflicts"})
+
+    with_mock Repair, trigger_run: fn -> :ok end do
+      assert :ok = Import.run("Etc/UTC")
+
+      TestHelper.eventually(
+        fn ->
+          assert %Status{
+                   state: :complete,
+                   rejected_rows: 1,
+                   rejection_examples: [
+                     %RejectedRow{row: 4, fields: ["vin"]}
+                   ]
+                 } = Import.get_status()
+        end,
+        delay: 50,
+        attempts: 100
+      )
+    end
+
+    position_dates = Position |> all() |> Enum.map(& &1.date)
+
+    assert ~U[2018-01-01 10:01:00.000000Z] in position_dates
+    assert ~U[2018-01-01 10:03:00.000000Z] in position_dates
+    assert ~U[2018-01-01 10:04:00.000000Z] in position_dates
+    refute ~U[2018-01-01 10:02:00.000000Z] in position_dates
+  end
+
+  test "filters rejection reports by exact file identities" do
+    {:ok, run} = Checkpoint.start_run(Checkpoint.source_key(tmp_import_dir!()), "Etc/UTC")
+
+    assert :inserted =
+             Checkpoint.record_rejection(
+               run.id,
+               RejectedRow.new("first.csv", 2, :parse_error, [], "fingerprint-1")
+             )
+
+    assert :inserted =
+             Checkpoint.record_rejection(
+               run.id,
+               RejectedRow.new("second.csv", 3, :parse_error, [], "fingerprint-2")
+             )
+
+    assert :inserted =
+             Checkpoint.record_rejection(
+               run.id,
+               RejectedRow.new("first.csv", 4, :parse_error, [], "fingerprint-2")
+             )
+
+    assert %RejectionReport{count: 2, examples: examples} =
+             Checkpoint.rejection_report(run.id, [
+               {"first.csv", "fingerprint-1"},
+               {"second.csv", "fingerprint-2"}
+             ])
+
+    assert Enum.map(examples, &{&1.file, &1.row}) == [{"first.csv", 2}, {"second.csv", 3}]
   end
 
   test "restores an interrupted run with its saved timezone and imports the remaining file" do

@@ -165,18 +165,22 @@ defmodule TeslaMate.Import.Checkpoint do
   def rejection_report(run_id, file_ids) do
     max_examples = RejectionReport.max_examples()
 
-    identity_filter =
-      Enum.reduce(file_ids, dynamic(false), fn {file_name, fingerprint}, filter ->
-        dynamic(
-          [r],
-          ^filter or (r.file_name == ^file_name and r.file_fingerprint == ^fingerprint)
-        )
+    identities =
+      file_ids
+      |> Enum.uniq()
+      |> Enum.map(fn {file_name, file_fingerprint} ->
+        %{file_name: file_name, file_fingerprint: file_fingerprint}
       end)
 
+    types = %{file_name: :string, file_fingerprint: :string}
+
     query =
-      Rejection
-      |> where([r], r.run_id == ^run_id)
-      |> where(^identity_filter)
+      from r in Rejection,
+        join: identity in values(identities, types),
+        on:
+          r.file_name == identity.file_name and
+            r.file_fingerprint == identity.file_fingerprint,
+        where: r.run_id == ^run_id
 
     count = Repo.aggregate(query, :count, :id)
 

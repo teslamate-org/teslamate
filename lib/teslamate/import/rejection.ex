@@ -3,6 +3,8 @@ defmodule TeslaMate.Import.Rejection do
 
   use Ecto.Schema
 
+  alias TeslaMate.Import.Run
+
   schema "import_rejections" do
     field :file_name, :string
     field :file_fingerprint, :string
@@ -20,7 +22,8 @@ defmodule TeslaMate.Import.Rejection do
       ]
 
     field :fields, {:array, :string}, default: []
-    field :run_id, :integer
+
+    belongs_to :run, Run
 
     timestamps(type: :utc_datetime_usec)
   end
