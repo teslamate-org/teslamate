@@ -114,6 +114,10 @@ config :teslamate, :file_logging,
   max_files: 3,
   filesync_interval: 10_000
 
+config :teslamate, :maintenance_actions,
+  enabled:
+    config_env() != :test and System.get_env("TESLAMATE_MAINTENANCE_ACTIONS_ENABLED") == "true"
+
 case System.get_env("DATABASE_SOCKET_DIR") do
   nil ->
     config :teslamate, TeslaMate.Repo,

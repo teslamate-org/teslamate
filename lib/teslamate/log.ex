@@ -368,9 +368,13 @@ defmodule TeslaMate.Log do
         |> Repo.update()
 
       _ ->
-        drive
-        |> Drive.changeset(%{distance: 0, duration_min: 0})
-        |> Repo.delete()
+        if Keyword.get(opts, :delete_invalid, true) do
+          drive
+          |> Drive.changeset(%{distance: 0, duration_min: 0})
+          |> Repo.delete()
+        else
+          {:error, :insufficient_data}
+        end
     end
   end
 
