@@ -117,4 +117,30 @@ defmodule TeslaMate.Import.FakeApiTest do
     assert_receive :done, 1000
     Task.shutdown(next_fetch, :brutal_kill)
   end
+
+  test "finishes cleanly when the final event stream is empty" do
+    name = :"fake_api_#{System.unique_integer([:positive])}"
+    file_id = {"TeslaFi12018.csv", "fingerprint"}
+
+    child_spec =
+      Supervisor.child_spec(
+        {FakeApi,
+         name: name,
+         event_streams: [{file_id, Stream.map([], & &1)}],
+         date_limit: ~U[2100-01-01 00:00:00Z],
+         pid: self()},
+        restart: :temporary
+      )
+
+    fake_api = start_supervised!(child_spec)
+    ref = Process.monitor(fake_api)
+    next_fetch = Task.async(fn -> FakeApi.get_vehicle(name, 1) end)
+
+    assert_receive {:done, ^file_id}, 1000
+    assert_receive :done, 1000
+    refute_receive {:DOWN, ^ref, :process, ^fake_api, _reason}
+    assert %{finished?: true} = :sys.get_state(name)
+
+    Task.shutdown(next_fetch, :brutal_kill)
+  end
 end

@@ -132,7 +132,7 @@ defmodule TeslaMate.Import.FakeApi do
 
       :no_events ->
         Logger.warning("Processed empty chunk: #{inspect(c)}")
-        pop(%State{state | events: [], event_chunks: {%{}, nil, nil}})
+        pop(%State{state | events: [], event_chunks: {%{}, 0, 0}})
 
       {:events, [event | events], 0} ->
         pop(%State{state | events: [event | events], event_chunks: {%{}, 0, nil}})
