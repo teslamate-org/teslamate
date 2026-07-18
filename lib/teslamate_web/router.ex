@@ -30,6 +30,10 @@ defmodule TeslaMateWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :operations do
+    plug TeslaMateWeb.Plugs.OperationsAuth
+  end
+
   scope "/", TeslaMateWeb do
     pipe_through :browser
 
@@ -44,6 +48,14 @@ defmodule TeslaMateWeb.Router do
       live "/geo-fences/:id/edit", GeoFenceLive.Form
       live "/charge-cost/:id", ChargeLive.Cost
       live "/import", ImportLive.Index
+    end
+  end
+
+  scope "/", TeslaMateWeb do
+    pipe_through [:operations, :browser]
+
+    live_session :operations do
+      live "/maintenance", MaintenanceLive.Index
     end
   end
 

@@ -96,6 +96,16 @@ defmodule Util do
   def get_env(varname, defaults \\ []) do
     System.get_env(varname, defaults[config_env()])
   end
+
+  def fetch_non_empty_env!(varname) do
+    case System.get_env(varname) do
+      value when is_binary(value) ->
+        if String.trim(value) == "", do: raise("#{varname} must not be empty"), else: value
+
+      nil ->
+        raise "environment variable #{varname} is missing"
+    end
+  end
 end
 
 config :teslamate,
@@ -107,16 +117,42 @@ config :teslamate, :build_info,
   source: System.get_env("TESLAMATE_BUILD_SOURCE"),
   built_at: System.get_env("TESLAMATE_BUILD_DATE")
 
+file_logging_enabled =
+  config_env() != :test and System.get_env("TESLAMATE_FILE_LOGGING_ENABLED") == "true"
+
+maintenance_actions_enabled =
+  config_env() != :test and System.get_env("TESLAMATE_MAINTENANCE_ACTIONS_ENABLED") == "true"
+
+operations_auth_required = file_logging_enabled or maintenance_actions_enabled
+
+operations_credentials =
+  if operations_auth_required do
+    username = Util.fetch_non_empty_env!("TESLAMATE_OPERATIONS_USERNAME")
+
+    if String.contains?(username, ":") do
+      raise "TESLAMATE_OPERATIONS_USERNAME must not contain ':'"
+    end
+
+    [
+      username: username,
+      password: Util.fetch_non_empty_env!("TESLAMATE_OPERATIONS_PASSWORD")
+    ]
+  else
+    []
+  end
+
 config :teslamate, :file_logging,
-  enabled: config_env() != :test and System.get_env("TESLAMATE_FILE_LOGGING_ENABLED") == "true",
+  enabled: file_logging_enabled,
   path: System.get_env("TESLAMATE_FILE_LOGGING_PATH", "data/logs/teslamate.log"),
   max_bytes: 5_000_000,
   max_files: 3,
   filesync_interval: 10_000
 
-config :teslamate, :maintenance_actions,
-  enabled:
-    config_env() != :test and System.get_env("TESLAMATE_MAINTENANCE_ACTIONS_ENABLED") == "true"
+config :teslamate, :maintenance_actions, enabled: maintenance_actions_enabled
+
+config :teslamate,
+       :operations_auth,
+       [required: operations_auth_required] ++ operations_credentials
 
 case System.get_env("DATABASE_SOCKET_DIR") do
   nil ->
