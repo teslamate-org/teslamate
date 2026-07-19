@@ -342,7 +342,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "This means you have some **Drives** or **Charges** not closed.\nIf so, you may follow the official guide: \n<a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>",
+      "description": "Open **Drives** or **Charges** can be active sessions and are not necessarily incomplete. Select a count to review the matching records.\nIf a record is incomplete, follow the official guide: \n<a href='https://docs.teslamate.org/docs/maintenance/manually_fixing_data' target='_blank'>Manually fixing data</a>",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -353,13 +353,54 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-blue",
+                "color": "green",
                 "value": 0
+              },
+              {
+                "color": "red",
+                "value": 1
               }
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Charges not closed"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Review incomplete charges",
+                    "url": "/d/TSmNYvRRk/charges?var-car_id=$car_id&viewPanel=17"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Drives not closed"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Review incomplete drives",
+                    "url": "/d/Y8upc6ZRk/drives?var-car_id=$car_id&viewPanel=9"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 4,
@@ -444,7 +485,7 @@
           }
         }
       ],
-      "title": "Incomplete Data",
+      "title": "Data Health",
       "type": "stat"
     },
     {
