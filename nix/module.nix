@@ -29,6 +29,9 @@ in
       description = lib.mdDoc ''
         Path to an env file containing the secrets used by TeslaMate.
 
+        The file uses systemd `EnvironmentFile` syntax (`KEY="value"` lines,
+        values may be wrapped in one pair of double quotes).
+
         Must contain at least:
         - `ENCRYPTION_KEY` - encryption key used to encrypt database
         - `DATABASE_PASS` - password used to authenticate to database
@@ -283,6 +286,10 @@ in
         # This is safe for any password, including ones containing single
         # quotes. Requires PostgreSQL >= 14 for \getenv.
         postStart = ''
+          if [ -z "''${DATABASE_PASS:-}" ]; then
+            echo "DATABASE_PASS must be set in ${cfg.secretsFile} (services.teslamate.secretsFile)" >&2
+            exit 1
+          fi
           psql -v ON_ERROR_STOP=1 -d postgres \
             -c '\getenv password DATABASE_PASS' \
             -c "ALTER USER \"${cfg.postgres.user}\" WITH ENCRYPTED PASSWORD :'password'"
