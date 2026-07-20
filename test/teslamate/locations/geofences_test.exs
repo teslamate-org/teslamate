@@ -57,6 +57,42 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.session_fee == nil
     end
 
+    test "create_geofence/1 accepts high-value local currency costs" do
+      attrs =
+        Map.merge(@valid_attrs, %{
+          cost_per_unit: Decimal.new("99999.9999"),
+          session_fee: Decimal.new("999999.99")
+        })
+
+      assert {:ok, %GeoFence{} = geofence} = Locations.create_geofence(attrs)
+      assert geofence.cost_per_unit == Decimal.new("99999.9999")
+      assert geofence.session_fee == Decimal.new("999999.99")
+    end
+
+    test "calculate_charge_costs/1 stores high-value local currency totals" do
+      car = car_fixture()
+
+      assert %ChargingProcess{id: id, geofence_id: nil, cost: nil} =
+               create_charging_process(car, %{latitude: 52.514521, longitude: 13.350144})
+
+      geofence =
+        geofence_fixture(%{
+          latitude: 52.514521,
+          longitude: 13.350144,
+          radius: 250,
+          cost_per_unit: Decimal.new("99999.9999")
+        })
+
+      geofence_id = geofence.id
+
+      assert %ChargingProcess{geofence_id: ^geofence_id, cost: nil} =
+               Repo.get!(ChargingProcess, id)
+
+      assert :ok = Locations.calculate_charge_costs(geofence)
+      assert %ChargingProcess{cost: cost} = Repo.get!(ChargingProcess, id)
+      assert cost == Decimal.new("31000.00")
+    end
+
     test "create_geofence/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{} = changeset} = Locations.create_geofence(@invalid_attrs)
 
