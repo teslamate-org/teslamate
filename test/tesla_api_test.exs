@@ -49,7 +49,7 @@ defmodule TeslaApiTest do
   end
 
   defp tesla_api_logger_opts do
-    TeslaApi.__middleware__()
+    TeslaApi.client().pre
     |> Enum.find(fn
       {Tesla.Middleware.Logger, :call, [_opts]} -> true
       _middleware -> false
