@@ -1,6 +1,6 @@
 # Ensure selecting a tag that is available for arm64 and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
-FROM grafana/grafana:13.0.1-security-01
+FROM grafana/grafana:13.0.2
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_ANALYTICS_CHECK_FOR_UPDATES=false \
@@ -26,6 +26,7 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_FEATURE_TOGGLES_splashScreen=false \
     GF_FEATURE_TOGGLES_newPanelPadding=false \
     GF_FEATURE_TOGGLES_dashboardNewLayouts=false \
+    GF_UNIFIED_STORAGE_MIGRATION_PARQUET_BUFFER=true \
     DATABASE_PORT=5432 \
     DATABASE_SSL_MODE=disable
 
