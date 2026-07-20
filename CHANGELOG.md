@@ -24,6 +24,7 @@
 - fix(import): accept fractional TeslaFi battery levels (#5513 - @magrathean-uk)
 - fix(cars): enforce non-null VINs (#5512 - @magrathean-uk)
 - fix(mqtt): return publish errors without crashing (#5514 - @magrathean-uk)
+- feat(import): continue past malformed rows and resume completed files (#5519 - @magrathean-uk)
 
 #### Build, CI, internal
 
