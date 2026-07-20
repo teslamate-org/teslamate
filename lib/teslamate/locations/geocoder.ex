@@ -1,16 +1,21 @@
 defmodule TeslaMate.Locations.Geocoder do
-  use Tesla, only: [:get]
-
   @version Mix.Project.config()[:version]
 
-  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000
-
-  plug Tesla.Middleware.BaseUrl, "https://nominatim.openstreetmap.org"
-  plug Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]
-  plug Tesla.Middleware.JSON
-  plug Tesla.Middleware.Logger, debug: true, log_level: &log_level/1
-
   alias TeslaMate.Locations.Address
+
+  defp client do
+    Tesla.client(
+      [
+        {Tesla.Middleware.BaseUrl, "https://nominatim.openstreetmap.org"},
+        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]},
+        Tesla.Middleware.JSON,
+        {Tesla.Middleware.Logger, debug: true, level: &log_level/1}
+      ],
+      {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 30_000}
+    )
+  end
+
+  defp get(url, opts), do: Tesla.get(client(), url, opts)
 
   def reverse_lookup(lat, lon, lang \\ "en") do
     opts = [
@@ -180,6 +185,7 @@ defmodule TeslaMate.Locations.Geocoder do
     with nil <- Map.get(address, key), do: get_first(address, aliases)
   end
 
-  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :warning
-  defp log_level(%Tesla.Env{}), do: :info
+  defp log_level({:ok, %Tesla.Env{} = env}) when env.status >= 400, do: :warning
+  defp log_level({:ok, %Tesla.Env{}}), do: :info
+  defp log_level({:error, _reason}), do: :error
 end

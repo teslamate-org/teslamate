@@ -1,25 +1,32 @@
 defmodule TeslaApi do
-  use Tesla
-
   @version Mix.Project.config()[:version]
   @redacted "[redacted]"
   @sensitive_headers ~w(Authorization authorization)
   @sensitive_query_params ~w(access_token refresh_token token)
 
-  adapter Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 35_000
+  def client do
+    Tesla.client(
+      [
+        {Tesla.Middleware.BaseUrl, "https://owner-api.teslamotors.com"},
+        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]},
+        Tesla.Middleware.JSON,
+        TeslaApi.Middleware.TokenAuth,
+        TeslaApi.Middleware.FleetAuth,
+        {Tesla.Middleware.Logger,
+         debug: true,
+         filter_headers: @sensitive_headers,
+         format: &__MODULE__.format_log/3,
+         level: &log_level/1}
+      ],
+      {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 35_000}
+    )
+  end
 
-  plug Tesla.Middleware.BaseUrl, "https://owner-api.teslamotors.com"
-  plug Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]
-  plug Tesla.Middleware.JSON
-  plug TeslaApi.Middleware.TokenAuth
-
-  plug TeslaApi.Middleware.FleetAuth
-
-  plug Tesla.Middleware.Logger,
-    debug: true,
-    filter_headers: @sensitive_headers,
-    format: &__MODULE__.format_log/3,
-    log_level: &log_level/1
+  # Request opts (`query:`, `opts: [access_token: ...]`) must be forwarded:
+  # TokenAuth reads the token from `env.opts`.
+  def get(url, opts \\ []) do
+    Tesla.get(client(), url, opts)
+  end
 
   def format_log(%Tesla.Env{} = request, response, time) do
     [
@@ -34,9 +41,10 @@ defmodule TeslaApi do
     ]
   end
 
-  defp log_level(%Tesla.Env{} = env) when env.status >= 500, do: :warning
-  defp log_level(%Tesla.Env{} = env) when env.status >= 400, do: :info
-  defp log_level(%Tesla.Env{}), do: :debug
+  defp log_level({:ok, %Tesla.Env{} = env}) when env.status >= 500, do: :warning
+  defp log_level({:ok, %Tesla.Env{} = env}) when env.status >= 400, do: :info
+  defp log_level({:ok, %Tesla.Env{}}), do: :debug
+  defp log_level({:error, _reason}), do: :error
 
   defp response_status({:ok, %Tesla.Env{} = env}), do: to_string(env.status)
   defp response_status({:error, reason}), do: "error: " <> inspect(reason)
