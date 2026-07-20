@@ -449,13 +449,13 @@ msgid_plural "Found %{count} files"
 msgstr[0] "Löytyi %{count} tiedosto"
 msgstr[1] "Löytyi %{count} tiedostoa"
 
-#: lib/teslamate_web/live/import_live/index.ex:38
-#: lib/teslamate_web/live/import_live/index.html.heex:150
+#: lib/teslamate_web/live/import_live/index.ex:34
+#: lib/teslamate_web/live/import_live/index.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Import"
 msgstr "Tuo"
 
-#: lib/teslamate_web/live/import_live/index.html.heex:128
+#: lib/teslamate_web/live/import_live/index.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Time zone"
 msgstr "Aikavyöhyke"
@@ -730,121 +730,4 @@ msgstr ""
 #: lib/teslamate_web/live/car_live/summary.html.heex:15
 #, elixir-autogen, elixir-format
 msgid "Minimize map"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:98
-#, elixir-autogen, elixir-format
-msgid "invalid values for %{fields}"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:122
-#, elixir-autogen, elixir-format
-msgid "row could not be parsed"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.html.heex:86
-#, elixir-autogen, elixir-format
-msgid "Skipped %{count} malformed row. Valid rows continued."
-msgid_plural "Skipped %{count} malformed rows. Valid rows continued."
-msgstr[0] ""
-msgstr[1] ""
-
-#: lib/teslamate_web/live/import_live/index.html.heex:94
-#, elixir-autogen, elixir-format
-msgid "Skipped rows were not imported. Nearby drive or charge summaries may be incomplete."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.html.heex:106
-#, elixir-autogen, elixir-format
-msgid "%{file}, row %{row}: %{reason}"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:106
-#, elixir-autogen, elixir-format
-msgid "ambiguous local time"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:118
-#, elixir-autogen, elixir-format
-msgid "column count does not match the header"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:114
-#, elixir-autogen, elixir-format
-msgid "date could not be converted in the selected time zone"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:102
-#, elixir-autogen, elixir-format
-msgid "invalid date"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:110
-#, elixir-autogen, elixir-format
-msgid "nonexistent local time"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.html.heex:77
-#, elixir-autogen, elixir-format
-msgid "After a restart, unchanged completed files are skipped. The file active during a crash starts again from its beginning and may replay rows already stored; row-exact crash resume is not provided."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.html.heex:99
-#, elixir-autogen, elixir-format
-msgid "Rejected-row details are stored without source values so this report survives an interrupted import."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.html.heex:174
-#, elixir-autogen, elixir-format
-msgid "Discard interrupted import"
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.html.heex:169
-#, elixir-autogen, elixir-format
-msgid "Discard this interrupted import? Its completed-file checkpoints and rejection report will no longer be used. Imported TeslaMate data is kept."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:76
-#, elixir-autogen, elixir-format
-msgid "Interrupted import discarded."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:126
-#, elixir-autogen, elixir-format
-msgid "No complete vehicle data was found in the import files."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:135
-#, elixir-autogen, elixir-format
-msgid "No import files were found."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.html.heex:116
-#, elixir-autogen, elixir-format
-msgid "Showing the first %{count} malformed rows."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:81
-#, elixir-autogen, elixir-format
-msgid "The import can no longer be discarded."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:141
-#, elixir-autogen, elixir-format
-msgid "The import could not be started."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:130
-#, elixir-autogen, elixir-format
-msgid "The import files contain data for more than one vehicle."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.ex:138
-#, elixir-autogen, elixir-format
-msgid "The import is no longer idle. Reload and try again."
-msgstr ""
-
-#: lib/teslamate_web/live/import_live/index.html.heex:136
-#, elixir-autogen, elixir-format
-msgid "This interrupted import will resume with its saved time zone. The time zone cannot be changed while resuming this run."
 msgstr ""
