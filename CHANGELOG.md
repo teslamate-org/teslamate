@@ -58,6 +58,7 @@
 #### Translations
 
 - i18n: add Hungarian translation (#5480 - @magrathean-uk)
+- i18n: improve Traditional Chinese translations (#5527 - @occultsound)
 
 #### Documentation
 
@@ -69,6 +70,7 @@
 - docs: update star history links in README with to include the now needed sealed token (#5489 - @JakobLichterfeld)
 - docs: link directly to restore section in upgrading PostgreSQL guide (#5501 - @JakobLichterfeld)
 - docs: split the backup and restore guides into two separate guides and highlight that you should transfer your backup of the host (#5502 - @JakobLichterfeld)
+- - docs: point Tesla Auth users to fixed releases (#5509 - @magrathean-uk)
 
 ## [4.0.1] - 2026-06-14
 
