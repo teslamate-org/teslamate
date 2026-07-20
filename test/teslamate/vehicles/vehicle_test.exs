@@ -6,22 +6,6 @@ defmodule TeslaMate.Vehicles.VehicleTest do
   alias TeslaMate.Log.{Car, Update}
 
   describe "starting" do
-    test "does not fetch again after an import completes", %{test: name} do
-      parent = self()
-
-      events = [
-        fn ->
-          send(parent, :import_fetch)
-          {:error, :import_complete}
-        end
-      ]
-
-      :ok = start_vehicle(name, events, import?: true)
-
-      assert_receive :import_fetch
-      refute_receive :import_fetch, 100
-    end
-
     @tag :capture_log
     test "handles unknown and faulty states", %{test: name} do
       events = [

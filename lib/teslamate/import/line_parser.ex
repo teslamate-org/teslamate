@@ -16,35 +16,10 @@ defmodule TeslaMate.Import.LineParser do
   }
 
   def parse(line, tz) when is_map(line) do
-    {:ok, timestamp} = parse_timestamp(Map.get(line, "Date"), tz)
-    parse(line, tz, timestamp)
-  end
-
-  def parse(line, _tz, timestamp) when is_map(line) and is_integer(timestamp) do
     line
-    |> Enum.reduce(@default_vehicle, &into_vehicle(&1, &2, timestamp))
+    |> Enum.reduce(@default_vehicle, &into_vehicle(&1, &2, tz))
     |> Vehicle.result()
   end
-
-  def parse_timestamp(value, tz) when is_binary(value) do
-    with {:ok, datetime} <- parse_datetime(value) do
-      case DateTime.from_naive(datetime, tz) do
-        {:ok, datetime} ->
-          {:ok, DateTime.to_unix(datetime, :millisecond)}
-
-        {:ambiguous, _first_dt, _second_dt} ->
-          {:error, :ambiguous_local_time}
-
-        {:gap, _first_dt, _second_dt} ->
-          {:error, :nonexistent_local_time}
-
-        {:error, _reason} ->
-          {:error, :invalid_timezone}
-      end
-    end
-  end
-
-  def parse_timestamp(_value, _tz), do: {:error, :invalid_date}
 
   @charge_state %Charge{} |> Map.keys() |> Enum.map(&to_string/1)
   @climate_state %Climate{} |> Map.keys() |> Enum.map(&to_string/1)
@@ -52,10 +27,6 @@ defmodule TeslaMate.Import.LineParser do
   @vehicle %Vehicle{} |> Map.keys() |> Enum.map(&to_string/1)
   @vehicle_config %VehicleConfig{} |> Map.keys() |> Enum.map(&to_string/1)
   @vehicle_state %VehicleState{} |> Map.keys() |> Enum.map(&to_string/1)
-
-  @boolean ~w(battery_heater battery_heater_no_power battery_heater_on fast_charger_present
-              is_climate_on is_front_defroster_on is_rear_defroster_on
-              not_enough_power_to_heat)
 
   defp map_value(_, ""), do: nil
   defp map_value(_, "None"), do: nil
@@ -82,11 +53,12 @@ defmodule TeslaMate.Import.LineParser do
 
   defp map_value("scheduled_charging_start_time", _val), do: nil
 
+  @boolean ~w(battery_heater_on is_climate_on is_front_defroster_on is_rear_defroster_on
+              fast_charger_present not_enough_power_to_heat)
+
   defp map_value(key, val) when key in @boolean do
-    case Integer.parse(val) do
-      {0, ""} -> false
-      {_nonzero, ""} -> true
-      _ -> map_value(nil, val)
+    with v when v not in [nil, false, true] <- map_value(nil, val) do
+      nil
     end
   end
 
@@ -106,7 +78,7 @@ defmodule TeslaMate.Import.LineParser do
     end
   end
 
-  defp into_vehicle({key, val}, acc, timestamp) do
+  defp into_vehicle({key, val}, acc, tz) do
     case {key, val} do
       {"id", _val} ->
         Map.put(acc, "id", :rand.uniform(65536))
@@ -114,9 +86,34 @@ defmodule TeslaMate.Import.LineParser do
       {"vehicle_id", ""} ->
         Map.put(acc, "vehicle_id", System.get_env("TESLAFI_IMPORT_VEHICLE_ID", "1"))
 
-      {"Date", _val} ->
+      {"Date", val} ->
+        {:ok, datetime} =
+          with {:error, _reason} <- Timex.parse(val, "{YYYY}-{M}-{D} {h24}:{m}:{s}"),
+               {:error, _reason} <- Timex.parse(val, "{M}/{D}/{YYYY} {h12}:{m}:{s} {AM}"),
+               {:error, _reason} <- Timex.parse(val, "{M}/{D}/{YYYY} {h24}:{m}") do
+            {:error, {:invalid_date_format, val}}
+          end
+
+        ts =
+          case DateTime.from_naive(datetime, tz) do
+            {:ok, datetime} ->
+              DateTime.to_unix(datetime, :millisecond)
+
+            {kind, _first_dt, _second_dt} when kind in [:ambiguous, :gap] ->
+              # To keep things simple, return nil to ignore these ambiguous responses
+              nil
+
+            {:error, reason} ->
+              Logger.warning("""
+              Could not convert date #{inspect(datetime)} w/ time zone #{inspect(tz)}:
+              #{inspect(reason)}
+              """)
+
+              nil
+          end
+
         ["vehicle_config", "vehicle_state", "drive_state", "climate_state", "charge_state"]
-        |> Enum.reduce(acc, fn key, acc -> put_in(acc, [key, "timestamp"], timestamp) end)
+        |> Enum.reduce(acc, fn key, acc -> put_in(acc, [key, "timestamp"], ts) end)
 
       {key, val} when key in @charge_state ->
         put_in(acc, ["charge_state", key], map_value(key, val))
@@ -136,17 +133,9 @@ defmodule TeslaMate.Import.LineParser do
       {key, val} when key in @vehicle ->
         Map.put(acc, key, map_value(key, val))
 
-      {key, _val} ->
-        Logger.debug("Unhandled import column: #{inspect(key)}")
+      {key, val} ->
+        Logger.debug("unhandled: #{inspect({key, val})}")
         acc
-    end
-  end
-
-  defp parse_datetime(value) do
-    with {:error, _reason} <- Timex.parse(value, "{YYYY}-{M}-{D} {h24}:{m}:{s}"),
-         {:error, _reason} <- Timex.parse(value, "{M}/{D}/{YYYY} {h12}:{m}:{s} {AM}"),
-         {:error, _reason} <- Timex.parse(value, "{M}/{D}/{YYYY} {h24}:{m}") do
-      {:error, :invalid_date}
     end
   end
 end

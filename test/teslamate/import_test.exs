@@ -1,21 +1,11 @@
 defmodule TeslaMate.ImportTest do
   use TeslaMate.DataCase
 
-  alias TeslaMate.Log.{Car, Drive, ChargingProcess, Position, State, Update}
+  alias TeslaMate.Log.{Car, Drive, ChargingProcess, State, Update}
   alias TeslaMate.{Repo, Log, Repair}
-  alias TeslaMate.Vehicles.Vehicle
 
+  alias TeslaMate.Import.Status
   alias TeslaMate.Import
-
-  alias TeslaMate.Import.{
-    Checkpoint,
-    FileCheckpoint,
-    RejectedRow,
-    Rejection,
-    RejectionReport,
-    Run,
-    Status
-  }
 
   import TestHelper, only: [decimal: 1]
   import Mock
@@ -469,16 +459,11 @@ defmodule TeslaMate.ImportTest do
 
       assert_receive %Status{files: [%{complete: false}], state: :running}, 1500
       assert_receive %Status{files: [%{complete: false}], state: :running}, 1500
+      assert_receive %Status{files: [%{complete: true}], state: :running}, 1500
+      assert_receive %Status{files: [%{complete: true}], state: :complete}, 1500
 
-      assert_receive %Status{
-                       files: [%{complete: false}],
-                       state: :error,
-                       message: :vehicle_changed
-                     },
-                     1500
-
-      refute Process.whereis(:"api_Car-A")
-      refute Process.whereis(:"import_Car-A")
+      assert_receive :trigger_run
+      assert_receive :trigger_run
 
       refute_receive _
     end
@@ -515,419 +500,59 @@ defmodule TeslaMate.ImportTest do
   end
 
   @tag :capture_log
-  test "continues after a malformed row and reports it once", %{pid: _pid} do
-    {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/08_resilient"})
-
-    with_mock Repair, trigger_run: fn -> :ok end do
-      assert :ok = Import.run("Etc/UTC")
-
-      TestHelper.eventually(
-        fn ->
-          assert %Status{
-                   state: :complete,
-                   rejected_rows: 1,
-                   rejection_examples: [
-                     %Import.RejectedRow{
-                       file: "TeslaFi12018.csv",
-                       row: 3,
-                       reason: :invalid_fields,
-                       fields: fields
-                     }
-                   ]
-                 } = Import.get_status()
-
-          assert "drive_state.latitude" in fields
-          assert "drive_state.longitude" in fields
-        end,
-        delay: 50,
-        attempts: 100
-      )
-    end
-
-    positions = all(Position)
-    assert Enum.any?(positions, &(&1.date == ~U[2018-01-01 10:02:00.000000Z]))
-    refute Enum.any?(positions, &(&1.date == ~U[2018-01-01 10:01:00.000000Z]))
-    refute inspect(Import.get_status()) =~ "PRIVATE_COORDINATE_SENTINEL"
-
-    assert %Rejection{
-             file_name: "TeslaFi12018.csv",
-             file_fingerprint: fingerprint,
-             row: 3,
-             reason: :invalid_fields,
-             fields: fields
-           } = Repo.one!(Rejection)
-
-    assert byte_size(fingerprint) == 64
-    assert "drive_state.latitude" in fields
-    assert "drive_state.longitude" in fields
-    refute inspect(Repo.one!(Rejection)) =~ "PRIVATE_COORDINATE_SENTINEL"
-    refute inspect(Repo.one!(Rejection)) =~ @dir
-
-    assert %FileCheckpoint{
-             file_name: "TeslaFi12018.csv",
-             file_fingerprint: ^fingerprint
-           } = Repo.one!(FileCheckpoint)
-  end
-
-  @tag :capture_log
-  test "reports deterministic row errors when no complete vehicle row remains", %{
-    pid: _pid
-  } do
+  test "captures errors of the vehicle process", %{pid: _pid} do
     {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/04_error"})
 
     assert %Import.Status{files: [_, _, _], message: nil, state: :idle} = Import.get_status()
 
-    with_mock Repair, trigger_run: fn -> :ok end do
-      assert :ok = Import.run("Europe/Berlin")
-
-      TestHelper.eventually(
-        fn ->
-          assert %Status{
-                   files: [
-                     %{complete: false},
-                     %{complete: false},
-                     %{complete: false}
-                   ],
-                   state: :error,
-                   message: :vehicle_data_incomplete,
-                   rejected_rows: 4,
-                   rejection_examples: examples
-                 } = Import.get_status()
-
-          assert length(examples) == 4
-          assert Enum.map(examples, & &1.row) == [2, 3, 4, 5]
-          assert Process.alive?(Process.whereis(Import))
-        end,
-        delay: 50,
-        attempts: 100
-      )
-    end
-  end
-
-  test "tracks completion by file identity when dates match" do
-    first = "/import/012018.csv"
-    second = "/import/TeslaFi12018.csv"
-
-    data = %Import{
-      files: [
-        %{date: [2018, 1], path: first, fingerprint: "first-fingerprint"},
-        %{date: [2018, 1], path: second, fingerprint: "second-fingerprint"}
-      ],
-      completed: MapSet.new([{"012018.csv", "first-fingerprint"}])
-    }
-
-    assert %Status{files: [%{complete: true}, %{complete: false}]} =
-             Status.into(:running, data)
-  end
-
-  @tag :capture_log
-  test "quarantines a conflicting VIN without rejecting fallback vehicle IDs" do
-    {:ok, _pid} =
-      start_supervised({Import, directory: "#{@dir}/09_identity_conflicts"})
-
-    with_mock Repair, trigger_run: fn -> :ok end do
-      assert :ok = Import.run("Etc/UTC")
-
-      TestHelper.eventually(
-        fn ->
-          assert %Status{
-                   state: :complete,
-                   rejected_rows: 1,
-                   rejection_examples: [
-                     %RejectedRow{row: 4, fields: ["vin"]}
-                   ]
-                 } = Import.get_status()
-        end,
-        delay: 50,
-        attempts: 100
-      )
-    end
-
-    position_dates = Position |> all() |> Enum.map(& &1.date)
-
-    assert ~U[2018-01-01 10:01:00.000000Z] in position_dates
-    assert ~U[2018-01-01 10:03:00.000000Z] in position_dates
-    assert ~U[2018-01-01 10:04:00.000000Z] in position_dates
-    refute ~U[2018-01-01 10:02:00.000000Z] in position_dates
-  end
-
-  test "filters rejection reports by exact file identities" do
-    {:ok, run} = Checkpoint.start_run(Checkpoint.source_key(tmp_import_dir!()), "Etc/UTC")
-
-    assert :inserted =
-             Checkpoint.record_rejection(
-               run.id,
-               RejectedRow.new("first.csv", 2, :parse_error, [], "fingerprint-1")
-             )
-
-    assert :inserted =
-             Checkpoint.record_rejection(
-               run.id,
-               RejectedRow.new("second.csv", 3, :parse_error, [], "fingerprint-2")
-             )
-
-    assert :inserted =
-             Checkpoint.record_rejection(
-               run.id,
-               RejectedRow.new("first.csv", 4, :parse_error, [], "fingerprint-2")
-             )
-
-    assert %RejectionReport{count: 2, examples: examples} =
-             Checkpoint.rejection_report(run.id, [
-               {"first.csv", "fingerprint-1"},
-               {"second.csv", "fingerprint-2"}
-             ])
-
-    assert Enum.map(examples, &{&1.file, &1.row}) == [{"first.csv", 2}, {"second.csv", 3}]
-  end
-
-  @tag :capture_log
-  test "reports a file error between car discovery and import startup" do
-    directory = tmp_import_dir!()
-    name = "TeslaFi12018.csv"
-    path = Path.join(directory, name)
-    File.cp!(Path.join([@dir, "08_resilient", name]), path)
-
-    {:ok, import} = start_supervised({Import, directory: directory})
-
-    with_mock Checkpoint, [:passthrough],
-      set_car: fn run_id, car_id ->
-        result = passthrough([run_id, car_id])
-        File.write!(path, "unsupported delimiter\nsecond row\n")
-        result
-      end do
-      assert :ok = Import.run("Etc/UTC")
-
-      TestHelper.eventually(
-        fn ->
-          assert %Status{
-                   state: :error,
-                   message: %RuntimeError{message: "Unsupported delimiter"}
-                 } = Import.get_status()
-
-          assert Process.alive?(import)
-        end,
-        delay: 50,
-        attempts: 100
-      )
-    end
-  end
-
-  @tag :capture_log
-  test "finishes abort cleanup when the vehicle process already exited" do
-    {:ok, import} = start_supervised({Import, directory: "#{@dir}/08_resilient"})
-
-    with_mock Vehicle, [:passthrough],
-      start_link: fn _opts ->
-        Task.start_link(fn -> Process.sleep(:infinity) end)
-      end do
-      assert :ok = Import.run("Etc/UTC")
-
-      TestHelper.eventually(
-        fn ->
-          assert {:running, %Import{pids: %{api: api, veh: veh}}} = :sys.get_state(import)
-          assert Process.alive?(api)
-          assert Process.alive?(veh)
-        end,
-        delay: 10,
-        attempts: 100
-      )
-
-      {:running, %Import{pids: %{api: api, veh: veh}}} = :sys.get_state(import)
-      vehicle_ref = Process.monitor(veh)
-      api_ref = Process.monitor(api)
-
-      Process.exit(veh, :kill)
-      assert_receive {:DOWN, ^vehicle_ref, :process, ^veh, :killed}, 1000
-
-      send(import, {:import_aborted, :vehicle_changed})
-
-      assert_receive {:DOWN, ^api_ref, :process, ^api, :normal}, 1000
-      assert %Status{state: :error, message: :vehicle_changed} = Import.get_status()
-    end
-  end
-
-  test "restores an interrupted run with its saved timezone and imports the remaining file" do
-    directory = tmp_import_dir!()
-    first_name = "TeslaFi62016.csv"
-    second_name = "TeslaFi72016.csv"
-
-    File.cp!(Path.join([@dir, "01_complete", first_name]), Path.join(directory, first_name))
-    File.cp!(Path.join([@dir, "01_complete", second_name]), Path.join(directory, second_name))
-
-    first_path = Path.join(directory, first_name)
-    {:ok, fingerprint} = Checkpoint.file_fingerprint(first_path)
-    {:ok, run} = Checkpoint.start_run(Checkpoint.source_key(directory), "America/Los_Angeles")
-    :ok = Checkpoint.complete_file(run.id, {first_name, fingerprint})
-
-    {:ok, _pid} = start_supervised({Import, directory: directory})
-
-    assert %Status{
-             state: :idle,
-             resume_timezone: "America/Los_Angeles",
-             files: [
-               %{path: ^first_path, complete: true},
-               %{path: second_path, complete: false}
-             ]
-           } = Import.get_status()
-
-    assert second_path == Path.join(directory, second_name)
-
-    with_mock Repair, trigger_run: fn -> :ok end do
-      assert :ok = Import.run("Europe/Berlin")
-
-      TestHelper.eventually(
-        fn ->
-          assert %Status{state: :complete, files: [%{complete: true}, %{complete: true}]} =
-                   Import.get_status()
-        end,
-        delay: 50,
-        attempts: 100
-      )
-    end
-
-    assert [%Run{status: :complete, timezone: "America/Los_Angeles"}] = Repo.all(Run)
-
-    positions = all(Position)
-    assert positions != []
-
-    assert Enum.all?(positions, fn position ->
-             DateTime.compare(position.date, ~U[2016-07-01 00:00:00Z]) != :lt
-           end)
-  end
-
-  test "does not restore a completed checkpoint after the file changes" do
-    directory = tmp_import_dir!()
-    name = "TeslaFi12018.csv"
-    path = Path.join(directory, name)
-    File.cp!(Path.join([@dir, "08_resilient", name]), path)
-
-    {:ok, old_fingerprint} = Checkpoint.file_fingerprint(path)
-    {:ok, run} = Checkpoint.start_run(Checkpoint.source_key(directory), "Etc/UTC")
-    :ok = Checkpoint.complete_file(run.id, {name, old_fingerprint})
-
-    File.write!(path, "\n", [:append])
-    {:ok, new_fingerprint} = Checkpoint.file_fingerprint(path)
-    refute new_fingerprint == old_fingerprint
-
-    {:ok, _pid} = start_supervised({Import, directory: directory})
-
-    assert %Status{state: :idle, files: [%{path: ^path, complete: false}]} =
-             Import.get_status()
-  end
-
-  test "discards an interrupted run and permits a fresh run" do
-    directory = tmp_import_dir!()
-    name = "TeslaFi12018.csv"
-    path = Path.join(directory, name)
-    File.cp!(Path.join([@dir, "08_resilient", name]), path)
-
-    source_key = Checkpoint.source_key(directory)
-    {:ok, fingerprint} = Checkpoint.file_fingerprint(path)
-    {:ok, run} = Checkpoint.start_run(source_key, "America/Los_Angeles")
-    :ok = Checkpoint.complete_file(run.id, {name, fingerprint})
-
-    assert :inserted =
-             Checkpoint.record_rejection(
-               run.id,
-               RejectedRow.new(path, 3, :parse_error, [], fingerprint)
-             )
-
-    {:ok, _pid} = start_supervised({Import, directory: directory})
-
-    assert %Status{
-             state: :idle,
-             resume_timezone: "America/Los_Angeles",
-             rejected_rows: 1,
-             files: [%{complete: true}]
-           } = Import.get_status()
-
-    assert :ok = Import.discard_interrupted_run()
-
-    assert %Status{
-             state: :idle,
-             resume_timezone: nil,
-             rejected_rows: 0,
-             files: [%{complete: false}]
-           } = Import.get_status()
-
-    assert %Run{status: :abandoned} = Repo.get!(Run, run.id)
-    assert Checkpoint.get_active_run(source_key) == nil
-
-    assert {:ok, %Run{timezone: "Etc/UTC"} = new_run} =
-             Checkpoint.start_run(source_key, "Etc/UTC")
-
-    assert Repo.get(Run, run.id) == nil
-    assert Repo.get!(Run, new_run.id).status == :running
-  end
-
-  test "restores the last completed rejection report after restart" do
-    directory = tmp_import_dir!()
-    name = "TeslaFi12018.csv"
-    path = Path.join(directory, name)
-    File.cp!(Path.join([@dir, "08_resilient", name]), path)
-
-    {:ok, fingerprint} = Checkpoint.file_fingerprint(path)
-    {:ok, run} = Checkpoint.start_run(Checkpoint.source_key(directory), "Etc/UTC")
-
-    assert :inserted =
-             Checkpoint.record_rejection(
-               run.id,
-               RejectedRow.new(path, 3, :parse_error, [], fingerprint)
-             )
-
-    :ok = Checkpoint.complete_run(run.id)
-    {:ok, _pid} = start_supervised({Import, directory: directory})
-
-    assert %Status{
-             state: :idle,
-             resume_timezone: nil,
-             rejected_rows: 1,
-             rejection_examples: [%RejectedRow{file: ^name, row: 3}]
-           } = Import.get_status()
-  end
-
-  test "rejects an empty import without creating a run" do
-    directory = tmp_import_dir!()
-    {:ok, _pid} = start_supervised({Import, directory: directory})
-
-    assert {:error, :no_files} = Import.run("Etc/UTC")
-    assert Repo.aggregate(Run, :count) == 0
-    assert %Status{state: :idle, files: []} = Import.get_status()
-  end
-
-  test "returns a safe error when a source already has an active run" do
-    source_key = Checkpoint.source_key(tmp_import_dir!())
-
-    assert {:ok, %Run{}} = Checkpoint.start_run(source_key, "Etc/UTC")
-    assert {:error, %Ecto.Changeset{} = changeset} = Checkpoint.start_run(source_key, "Etc/UTC")
-    assert {"has already been taken", _metadata} = changeset.errors[:source_key]
-  end
-
-  @tag :capture_log
-  test "captures a runtime failure inside the vehicle process" do
-    {:ok, _pid} = start_supervised({Import, directory: "#{@dir}/01_complete"})
-
-    with_mock Repair, trigger_run: fn -> :ok end do
-      with_mock Log, [:passthrough],
-        insert_position: fn _car_or_drive, _attrs ->
-          raise "injected position insert failure"
-        end do
-        assert :ok = Import.run("America/Los_Angeles")
-
-        TestHelper.eventually(
-          fn ->
-            assert %Status{state: :error, message: message} = Import.get_status()
-            assert inspect(message) =~ "injected position insert failure"
-            assert Process.alive?(Process.whereis(Import))
-            refute Process.whereis(:api_82420)
-            refute Process.whereis(:import_82420)
-          end,
-          delay: 50,
-          attempts: 100
-        )
-      end
-    end
+    assert :ok = Import.subscribe()
+    assert :ok = Import.run("Europe/Berlin")
+
+    assert_receive %Status{
+                     files: [%{complete: false}, %{complete: false}, %{complete: false}],
+                     state: :running
+                   },
+                   1000
+
+    assert_receive %Status{
+                     files: [%{complete: false}, %{complete: false}, %{complete: false}],
+                     state: :running
+                   },
+                   1000
+
+    assert_receive %Status{
+                     files: [%{complete: true}, %{complete: false}, %{complete: false}],
+                     state: :running
+                   },
+                   1000
+
+    assert_receive %Status{
+                     files: [%{complete: true}, %{complete: true}, %{complete: false}],
+                     state: :running
+                   },
+                   1000
+
+    assert_receive %Status{
+                     files: [%{complete: true}, %{complete: true}, %{complete: false}],
+                     state: :error,
+                     message: msg
+                   },
+                   1000
+
+    assert {{:badmatch,
+             {:error,
+              %Ecto.Changeset{
+                action: :insert,
+                changes: %{date: ~U[2017-12-01 13:36:14.000000Z]},
+                errors: [
+                  latitude: {"is invalid", [type: :decimal, validation: :cast]},
+                  longitude: {"is invalid", [type: :decimal, validation: :cast]}
+                ],
+                data: %Log.Position{},
+                valid?: false
+              }}}, [_ | _]} = msg
+
+    refute_receive _
   end
 
   defp ok_fn(name, pid) do
@@ -939,17 +564,5 @@ defmodule TeslaMate.ImportTest do
     struct
     |> order_by(:id)
     |> Repo.all()
-  end
-
-  defp tmp_import_dir! do
-    directory =
-      Path.join(
-        System.tmp_dir!(),
-        "teslamate-import-#{System.unique_integer([:positive, :monotonic])}"
-      )
-
-    File.mkdir_p!(directory)
-    on_exit(fn -> File.rm_rf!(directory) end)
-    directory
   end
 end
