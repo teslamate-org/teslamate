@@ -42,7 +42,7 @@ let
 
     # load RELEASE_COOKIE from the env file
     ${loadFromEnvFile "RELEASE_COOKIE"}
-    : ''${RELEASE_COOKIE?'RELEASE_COOKIE must be set in the environment file'}
+    : ''${RELEASE_COOKIE:?'RELEASE_COOKIE must be set in the environment file'}
 
     echo "Attempt to close the drive with ID ''${1}."
     ${getExe teslamate} rpc "TeslaMate.Repo.get!(TeslaMate.Log.Drive, ''${1}) |> TeslaMate.Log.close_drive()"
@@ -59,7 +59,7 @@ let
 
     # load RELEASE_COOKIE from the env file
     ${loadFromEnvFile "RELEASE_COOKIE"}
-    : ''${RELEASE_COOKIE?'RELEASE_COOKIE must be set in the environment file'}
+    : ''${RELEASE_COOKIE:?'RELEASE_COOKIE must be set in the environment file'}
 
     echo "Attempt to close the charge with ID ''${1}."
     ${getExe teslamate} rpc "TeslaMate.Repo.get!(TeslaMate.Log.ChargingProcess, ''${1}) |> TeslaMate.Log.complete_charging_process()"
