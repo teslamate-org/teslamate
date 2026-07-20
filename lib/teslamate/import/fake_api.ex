@@ -4,15 +4,18 @@ defmodule TeslaMate.Import.FakeApi do
   require Logger
 
   alias TeslaApi.Vehicle
+  alias TeslaMate.Import.RejectedRow
 
   defmodule State do
     defstruct pid: nil,
-              from: nil,
+              waiters: :queue.new(),
               events: [],
               event_chunks: {%{}, _idx = nil, _max_idx = nil},
               event_streams: [],
               current_chunk: nil,
-              date_limit: nil
+              date_limit: nil,
+              finished?: false,
+              abort_reason: nil
   end
 
   # API
@@ -50,59 +53,44 @@ defmodule TeslaMate.Import.FakeApi do
   end
 
   @impl true
+  def handle_call(_action, _from, %State{finished?: true} = state) do
+    {:reply, {:error, :import_complete}, state}
+  end
+
   def handle_call(_action, from, %State{} = state) do
-    case pop(state) do
-      {:error, :chunk_not_yet_received, %State{} = state} ->
-        {:noreply, %{state | from: from}}
-
-      {:done, state} ->
-        processing_complete(state)
-        {:noreply, state}
-
-      {:event, %Vehicle{} = vehicle, state}
-      when vehicle.drive_state.timestamp >= state.date_limit ->
-        processing_complete(state)
-        {:noreply, state}
-
-      {:event, %Vehicle{} = vehicle, state} ->
-        {:reply, {:ok, vehicle}, state}
-    end
+    state = %State{state | waiters: :queue.in(from, state.waiters)}
+    {:noreply, serve_waiters(state)}
   end
 
   @impl true
   def handle_info({:processed_events, max_idx}, %State{} = state) do
-    {:noreply, %State{state | event_chunks: set_max_chunk_idx(state.event_chunks, max_idx)}}
-  end
-
-  def handle_info({:events, events, idx}, %State{from: nil} = state) do
-    {:noreply, %State{state | event_chunks: insert_event_chunk(state.event_chunks, idx, events)}}
-  end
-
-  def handle_info({:events, events, idx}, %State{from: from} = state) do
     state = %State{
       state
-      | event_chunks: insert_event_chunk(state.event_chunks, idx, events),
-        from: nil
+      | event_chunks: set_max_chunk_idx(state.event_chunks, max_idx)
     }
 
-    case pop(state) do
-      {:done, state} ->
-        processing_complete(state)
-        {:noreply, state}
+    {:noreply, serve_waiters(state)}
+  end
 
-      {:event, %Vehicle{} = vehicle, state}
-      when vehicle.drive_state.timestamp >= state.date_limit ->
-        processing_complete(state)
-        {:noreply, state}
+  def handle_info({:events, events, idx}, %State{} = state) do
+    state = %State{
+      state
+      | event_chunks: insert_event_chunk(state.event_chunks, idx, events)
+    }
 
-      {:event, %Vehicle{} = vehicle, state} ->
-        GenServer.reply(from, {:ok, vehicle})
-        {:noreply, state}
-    end
+    {:noreply, serve_waiters(state)}
   end
 
   def handle_info(:abort, %State{} = state) do
-    {:noreply, %State{state | events: [], event_chunks: {%{}, 0, 0}, event_streams: []}}
+    state = %State{
+      state
+      | events: [],
+        event_chunks: {%{}, 0, 0},
+        event_streams: [],
+        abort_reason: :vehicle_changed
+    }
+
+    {:noreply, serve_waiters(state)}
   end
 
   ## Private
@@ -138,14 +126,20 @@ defmodule TeslaMate.Import.FakeApi do
 
     receive do
       :abort ->
-        pop(%State{state | events: [], event_chunks: {%{}, 0, 0}, event_streams: []})
+        pop(%State{
+          state
+          | events: [],
+            event_chunks: {%{}, 0, 0},
+            event_streams: [],
+            abort_reason: :vehicle_changed
+        })
 
       :no_events ->
         Logger.warning("Processed empty chunk: #{inspect(c)}")
-        pop(%State{state | events: [], event_chunks: {%{}, nil, nil}})
+        pop(%State{state | events: [], event_chunks: {%{}, 0, 0}})
 
       {:events, [event | events], 0} ->
-        {:event, event, %State{state | events: events, event_chunks: {%{}, 0, nil}}}
+        pop(%State{state | events: [event | events], event_chunks: {%{}, 0, nil}})
     end
   end
 
@@ -159,8 +153,13 @@ defmodule TeslaMate.Import.FakeApi do
     end
   end
 
-  defp pop(%State{events: [event | events]} = state) do
-    {:event, event, %State{state | events: events}}
+  defp pop(%State{events: [{:reject, %RejectedRow{} = rejected_row} | events]} = state) do
+    send(state.pid, {:rejected_row, rejected_row})
+    pop(%State{state | events: events})
+  end
+
+  defp pop(%State{events: [{:vehicle, %Vehicle{} = vehicle} | events]} = state) do
+    {:event, vehicle, %State{state | events: events}}
   end
 
   defp insert_event_chunk({chunks, chunk_idx, chunk_max_idx}, idx, events) do
@@ -171,8 +170,47 @@ defmodule TeslaMate.Import.FakeApi do
     {chunks, chunk_idx, chunk_max_idx}
   end
 
+  defp serve_waiters(%State{finished?: true} = state), do: state
+
+  defp serve_waiters(%State{waiters: waiters} = state) do
+    case :queue.peek(waiters) do
+      :empty ->
+        state
+
+      {:value, from} ->
+        case pop(state) do
+          {:done, %State{} = state} ->
+            processing_complete(state)
+
+          {:event, %Vehicle{} = vehicle, %State{} = state}
+          when vehicle.drive_state.timestamp >= state.date_limit ->
+            processing_complete(state)
+
+          {:event, %Vehicle{} = vehicle, %State{} = state} ->
+            GenServer.reply(from, {:ok, vehicle})
+
+            state = %State{state | waiters: :queue.drop(state.waiters)}
+            serve_waiters(state)
+
+          {:error, :chunk_not_yet_received, %State{} = state} ->
+            state
+        end
+    end
+  end
+
+  defp processing_complete(%State{abort_reason: reason} = state) when not is_nil(reason) do
+    send(state.pid, {:import_aborted, reason})
+    finish_processing(state)
+  end
+
   defp processing_complete(%State{} = state) do
     send(state.pid, {:done, state.current_chunk})
     send(state.pid, :done)
+    finish_processing(state)
+  end
+
+  defp finish_processing(%State{waiters: waiters} = state) do
+    Enum.each(:queue.to_list(waiters), &GenServer.reply(&1, {:error, :import_complete}))
+    %State{state | waiters: :queue.new(), finished?: true}
   end
 end

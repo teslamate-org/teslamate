@@ -12,6 +12,7 @@ defmodule TeslaMateWeb.ImportLive.Index do
   end
 
   alias TeslaMate.Import
+  alias TeslaMate.Import.RejectedRow
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
@@ -25,11 +26,14 @@ defmodule TeslaMateWeb.ImportLive.Index do
 
     if Import.enabled?() do
       timezones = Timex.timezones()
-      timezone = get_timezone() || Enum.find(timezones, &match?(^tz, &1))
+      status = Import.get_status()
+
+      timezone =
+        status.resume_timezone || get_timezone() || Enum.find(timezones, &match?(^tz, &1))
 
       socket =
         socket
-        |> assign(status: Import.get_status())
+        |> assign(status: status)
         |> assign(changeset: Settings.changeset(%{timezone: timezone}))
         |> assign(timezones: timezones, page_title: gettext("Import"))
 
@@ -54,9 +58,28 @@ defmodule TeslaMateWeb.ImportLive.Index do
       |> Settings.changeset()
       |> Settings.apply()
 
-    :ok = Import.run(tz)
+    case Import.run(tz) do
+      :ok ->
+        {:noreply, assign(socket, status: %{status | state: :running})}
 
-    {:noreply, assign(socket, status: %{status | state: :running})}
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, import_start_error(reason))}
+    end
+  end
+
+  def handle_event("discard-interrupted-import", _params, socket) do
+    case Import.discard_interrupted_run() do
+      :ok ->
+        socket =
+          socket
+          |> assign(status: Import.get_status())
+          |> put_flash(:info, gettext("Interrupted import discarded."))
+
+        {:noreply, socket}
+
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, gettext("The import can no longer be discarded."))}
+    end
   end
 
   def handle_event("reload", _params, socket) do
@@ -70,6 +93,52 @@ defmodule TeslaMateWeb.ImportLive.Index do
   end
 
   ## Private
+
+  defp rejection_reason(%RejectedRow{reason: :invalid_fields, fields: fields}) do
+    gettext("invalid values for %{fields}", fields: Enum.join(fields, ", "))
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :invalid_date}) do
+    gettext("invalid date")
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :ambiguous_local_time}) do
+    gettext("ambiguous local time")
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :nonexistent_local_time}) do
+    gettext("nonexistent local time")
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :invalid_timezone}) do
+    gettext("date could not be converted in the selected time zone")
+  end
+
+  defp rejection_reason(%RejectedRow{reason: :column_count_mismatch}) do
+    gettext("column count does not match the header")
+  end
+
+  defp rejection_reason(%RejectedRow{}) do
+    gettext("row could not be parsed")
+  end
+
+  defp import_error(:vehicle_data_incomplete) do
+    gettext("No complete vehicle data was found in the import files.")
+  end
+
+  defp import_error(:vehicle_changed) do
+    gettext("The import files contain data for more than one vehicle.")
+  end
+
+  defp import_error(message), do: inspect(message, pretty: true)
+
+  defp import_start_error(:no_files), do: gettext("No import files were found.")
+
+  defp import_start_error(:not_allowed) do
+    gettext("The import is no longer idle. Reload and try again.")
+  end
+
+  defp import_start_error(_reason), do: gettext("The import could not be started.")
 
   defp get_timezone do
     case Timex.local() do
