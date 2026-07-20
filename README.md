@@ -81,6 +81,8 @@ Sneak peak into TeslaMate interface and bundled dashboards. See [the docs](https
 
 ![Drive Details](/website/static/screenshots/drive.png)
 
+![Statistics](/website/static/screenshots/statistics.png)
+
 ![Battery Health](/website/static/screenshots/battery-health.png)
 
 ## License
