@@ -8,6 +8,8 @@ defmodule TeslaMate.DatabaseCheck do
     defstruct [:version_string, :version_num, :major]
   end
 
+  # When changing these requirements, also update the eval-time assertion in
+  # nix/module.nix (services.teslamate.postgres.package), which mirrors them.
   @version_requirements %{
     1600 => %{min_version: "16.7", min_version_num: 160_007},
     1700 => %{min_version: "17.3", min_version_num: 170_003},
