@@ -30,6 +30,7 @@
 - fix(nix,maintenance): read RELEASE_COOKIE without sourcing the env file (#5337 - @JakobLichterfeld)
 - fix(nix,postgres): set role password safely for any value (#5337 - @JakobLichterfeld)
 - fix(nix): drop schemas in the configured database during restore (#5337 - @JakobLichterfeld)
+- fix(nix,grafana): disable the periodic plugin update check (#5337 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

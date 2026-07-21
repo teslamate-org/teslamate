@@ -346,6 +346,11 @@ in
           "auth.anonymous".enabled = false;
           "auth.basic".enabled = false;
           analytics.reporting_enabled = false;
+          # The NixOS module disables the Grafana and plugin update checks by
+          # default -- except the plugin check when declarativePlugins is unset.
+          # Plugins only ever change through nixpkgs here, so the 10-minute check
+          # is pure log noise and an unnecessary call to grafana.com.
+          analytics.check_for_plugin_updates = false;
           dashboards.default_home_dashboard_path = mkIf cfg.grafana.setDefaultDashboard "${pkgs.lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [".json"]}/home.json";
           date_formats.use_browser_locale = true;
           plugins.preinstall_disabled = true;
