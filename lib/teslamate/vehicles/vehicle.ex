@@ -1255,6 +1255,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
          {:next_event, :internal, {:update, {:online, now}}}}
 
       not is_nil(drv) ->
+        data = maybe_reconnect_stream(data)
+
         {:next_state, {:driving, :available, drv}, %{data | last_used: DateTime.utc_now()},
          {:next_event, :internal, {:update, {:online, now}}}}
     end
@@ -1276,6 +1278,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         %Data{} = data
       ) do
     Logger.info("Vehicle is back online", car_id: data.car.id)
+
+    data = maybe_reconnect_stream(data)
 
     {:next_state, {:driving, :available, drv}, %{data | last_used: DateTime.utc_now()},
      {:next_event, :internal, {:update, e}}}
@@ -1969,6 +1973,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp disconnect_stream(%Data{stream_pid: pid} = data) when is_pid(pid) do
     Logger.info("Stream disconnecting ...", car_id: data.car.id)
     Stream.disconnect(pid)
+  end
+
+  defp maybe_reconnect_stream(%Data{car: %Car{settings: settings}} = data) do
+    case {settings, streaming?(data)} do
+      {%CarSettings{use_streaming_api: true}, false} ->
+        {:ok, pid} = connect_stream(data)
+        %Data{data | stream_pid: pid}
+
+      {%CarSettings{}, _} ->
+        data
+    end
   end
 
   defp summary_topic(car_id) when is_number(car_id), do: "#{__MODULE__}/summary/#{car_id}"
