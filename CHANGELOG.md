@@ -56,6 +56,7 @@
 - build(deps): bump websocket-driver from 0.7.4 to 0.7.5 in /website (#5516)
 - build(deps): update flake.lock (#5522)
 - build(deps): bump svgo from 3.3.3 to 3.3.4 in /website (#5536)
+- build(deps): bump shell-quote from 1.8.4 to 1.10.0 in /website (#5537)
 
 #### Dashboards
 
