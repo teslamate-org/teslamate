@@ -53,6 +53,7 @@
 - build(deps): update flake.lock (#5498)
 - test: reuse API snapshots across paired fetches (#5510 - @magrathean-uk)
 - build(deps): bump tesla from 1.14.1 to 1.20.0, migrate to Tesla.client/2 and update mix nix hash (#5468 - @JakobLichterfeld)
+- build(deps): bump websocket-driver from 0.7.4 to 0.7.5 in /website (#5516)
 
 #### Dashboards
 
