@@ -60,6 +60,7 @@
 - build(deps): bump webpack-dev-server from 5.2.5 to 5.2.6 in /website (#5538)
 - build(deps): bump body-parser from 1.20.5 to 1.20.6 in /website (#5539)
 - build(deps): bump fast-uri from 3.1.2 to 3.1.4 in /website (#5540)
+- build(deps): bump immutable from 5.1.5 to 5.1.9 in /assets (#5541)
 
 #### Dashboards
 
