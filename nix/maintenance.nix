@@ -10,6 +10,27 @@
 , ...
 }:
 let
+  # Extract a single KEY=value from the environment file literally, without
+  # sourcing it. Sourcing would execute the file as a shell script (arbitrary
+  # code execution if a secret contains e.g. $(...) or backticks) and break on
+  # values containing quotes. sed prints everything after the first '=' as-is,
+  # so the value may contain any character (single quotes, spaces, $, ...).
+  # tail -n1 mirrors systemd's "last assignment wins" for duplicate keys.
+  #
+  # The env file wraps values in double quotes (e.g. RELEASE_COOKIE="..."), so
+  # we strip one optional surrounding pair afterwards. The inner value is left
+  # untouched and may still contain anything.
+  loadFromEnvFile = key: ''
+    if [ ! -f ${environmentFilePath} ]; then
+      echo "Environment file ${environmentFilePath} not found!" >&2
+      exit 1
+    fi
+    ${key}="$(sed -n 's/^${key}=//p' ${environmentFilePath} | tail -n1)"
+    ${key}="''${${key}#\"}"
+    ${key}="''${${key}%\"}"
+    export ${key}
+  '';
+
   closeDrive = writeShellScript "teslamate-close-drive" ''
     set -euo pipefail
     : ''${1?'Please provide a drive ID to close'}
@@ -19,15 +40,9 @@ let
       exit 1
     fi
 
-    # load env file to have RELEASE_COOKIE set
-    if [ -f ${environmentFilePath} ]; then
-      source ${environmentFilePath}
-      export RELEASE_COOKIE
-    else
-      echo "Environment file ${environmentFilePath} not found!" >&2
-      exit 1
-    fi
-    : ''${RELEASE_COOKIE?'RELEASE_COOKIE must be set in the environment file'}
+    # load RELEASE_COOKIE from the env file
+    ${loadFromEnvFile "RELEASE_COOKIE"}
+    : ''${RELEASE_COOKIE:?'RELEASE_COOKIE must be set in the environment file'}
 
     echo "Attempt to close the drive with ID ''${1}."
     ${getExe teslamate} rpc "TeslaMate.Repo.get!(TeslaMate.Log.Drive, ''${1}) |> TeslaMate.Log.close_drive()"
@@ -42,15 +57,9 @@ let
       exit 1
     fi
 
-    # load env file to have RELEASE_COOKIE set
-    if [ -f ${environmentFilePath} ]; then
-      source ${environmentFilePath}
-      export RELEASE_COOKIE
-    else
-      echo "Environment file ${environmentFilePath} not found!" >&2
-      exit 1
-    fi
-    : ''${RELEASE_COOKIE?'RELEASE_COOKIE must be set in the environment file'}
+    # load RELEASE_COOKIE from the env file
+    ${loadFromEnvFile "RELEASE_COOKIE"}
+    : ''${RELEASE_COOKIE:?'RELEASE_COOKIE must be set in the environment file'}
 
     echo "Attempt to close the charge with ID ''${1}."
     ${getExe teslamate} rpc "TeslaMate.Repo.get!(TeslaMate.Log.ChargingProcess, ''${1}) |> TeslaMate.Log.complete_charging_process()"

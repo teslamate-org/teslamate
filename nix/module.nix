@@ -29,6 +29,9 @@ in
       description = lib.mdDoc ''
         Path to an env file containing the secrets used by TeslaMate.
 
+        The file uses systemd `EnvironmentFile` syntax (`KEY="value"` lines,
+        values may be wrapped in one pair of double quotes).
+
         Must contain at least:
         - `ENCRYPTION_KEY` - encryption key used to encrypt database
         - `DATABASE_PASS` - password used to authenticate to database
@@ -184,6 +187,9 @@ in
         after = [
           "network.target"
           "postgresql.service"
+          # Database, role and password are provisioned here (no-op when using
+          # an external database server, where the unit is absent).
+          "postgresql-setup.service"
           "mosquitto.service"
         ];
         wantedBy = mkIf cfg.autoStart [ "multi-user.target" ];
@@ -212,6 +218,13 @@ in
             HTTP_BINDING_ADDRESS = mkIf (cfg.listenAddress != null) cfg.listenAddress;
             DISABLE_MQTT = mkIf (!cfg.mqtt.enable) "true";
           }
+          # When PostgreSQL runs on the same host, connect via the local socket
+          # using peer authentication instead of TCP with a password. This only
+          # works for the default role name, since the socket branch in
+          # runtime.exs authenticates as the systemd unit's OS user (teslamate).
+          (mkIf (cfg.postgres.enable_server && cfg.postgres.user == "teslamate") {
+            DATABASE_SOCKET_DIR = "/run/postgresql";
+          })
           (mkIf cfg.mqtt.enable {
             MQTT_HOST = cfg.mqtt.host;
             MQTT_PORT = mkIf (cfg.mqtt.port != null) (toString cfg.mqtt.port);
@@ -235,6 +248,22 @@ in
       ];
     }
     (mkIf cfg.postgres.enable_server {
+      assertions = [
+        {
+          # Mirror TeslaMate's runtime requirement (see
+          # lib/teslamate/database_check.ex): >= 16.7 for 16.x, >= 17.3 for
+          # 17.x, or >= 18. Newer majors only produce a runtime warning there,
+          # so they are allowed here as well. This also covers the psql
+          # \getenv used in postStart, which needs PostgreSQL >= 14.
+          assertion =
+            let v = cfg.postgres.package.version; in
+            lib.versionAtLeast v "18"
+            || (lib.versionAtLeast v "17.3" && lib.versionOlder v "18")
+            || (lib.versionAtLeast v "16.7" && lib.versionOlder v "17");
+          message = "services.teslamate.postgres.package (${cfg.postgres.package.version}) is not supported by TeslaMate: required is PostgreSQL >= 16.7 (16.x), >= 17.3 (17.x), or >= 18 (see lib/teslamate/database_check.ex).";
+        }
+      ];
+
       services.postgresql = {
         enable = true;
         inherit (cfg.postgres) package;
@@ -243,20 +272,50 @@ in
           inherit (cfg.postgres) port;
         };
 
-        initialScript = pkgs.writeText "teslamate-psql-init" ''
-          \set password `echo $DATABASE_PASS`
-          CREATE DATABASE ${cfg.postgres.database};
-          CREATE USER ${cfg.postgres.user} with encrypted password :'password';
-          GRANT ALL PRIVILEGES ON DATABASE ${cfg.postgres.database} TO ${cfg.postgres.user};
-          ALTER USER ${cfg.postgres.user} WITH SUPERUSER;
-        '';
+        ensureDatabases = [ cfg.postgres.database ];
+        ensureUsers = [
+          {
+            name = cfg.postgres.user;
+            ensureDBOwnership = cfg.postgres.user == cfg.postgres.database;
+            # TeslaMate's migrations create the cube and earthdistance
+            # extensions (see priv/repo/migrations/20190925152807_create_geo_extensions.exs).
+            # These are not trusted extensions, so CREATE EXTENSION requires a
+            # database superuser.
+            ensureClauses.superuser = true;
+          }
+        ];
       };
 
-      # Include secrets in postgres as well
-      systemd.services.postgresql = {
-        serviceConfig = {
-          EnvironmentFile = cfg.secretsFile;
-        };
+      # ensureUsers creates the role without a password. Apply it out-of-band
+      # from DATABASE_PASS so the secret never lands in the world-readable Nix
+      # store (ensureUsers cannot set passwords). It is still required for
+      # Grafana and for the TCP fallback (remote DB or a non-default role name),
+      # even though TeslaMate itself connects via the socket with peer auth.
+      #
+      # ensureDatabases/ensureUsers run inside postgresql-setup.service, so we
+      # hook there (after the role exists) and scope the secret to that unit.
+      systemd.services.postgresql-setup = {
+        serviceConfig.EnvironmentFile = cfg.secretsFile;
+        # Read the password from the environment with psql's \getenv (so it is
+        # never placed on the command line or shell-expanded) and quote it with
+        # :'password', which produces a correctly escaped SQL string literal.
+        # This is safe for any password, including ones containing single
+        # quotes. Requires PostgreSQL >= 14 for \getenv.
+        postStart = ''
+          # A read-only standby cannot execute ALTER USER; the password is
+          # replicated from the primary anyway.
+          if [ "$(psql -d postgres -tAc 'SELECT pg_is_in_recovery()')" = "t" ]; then
+            echo "PostgreSQL is in recovery (standby); skipping role password setup."
+            exit 0
+          fi
+          if [ -z "''${DATABASE_PASS:-}" ]; then
+            echo "DATABASE_PASS must be set in ${cfg.secretsFile} (services.teslamate.secretsFile)" >&2
+            exit 1
+          fi
+          psql -v ON_ERROR_STOP=1 -d postgres \
+            -c '\getenv password DATABASE_PASS' \
+            -c "ALTER USER \"${cfg.postgres.user}\" WITH ENCRYPTED PASSWORD :'password'"
+        '';
       };
     })
     (mkIf cfg.grafana.enable {
@@ -287,6 +346,11 @@ in
           "auth.anonymous".enabled = false;
           "auth.basic".enabled = false;
           analytics.reporting_enabled = false;
+          # The NixOS module disables the Grafana and plugin update checks by
+          # default -- except the plugin check when declarativePlugins is unset.
+          # Plugins only ever change through nixpkgs here, so the 10-minute check
+          # is pure log noise and an unnecessary call to grafana.com.
+          analytics.check_for_plugin_updates = false;
           dashboards.default_home_dashboard_path = mkIf cfg.grafana.setDefaultDashboard "${pkgs.lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [".json"]}/home.json";
           date_formats.use_browser_locale = true;
           plugins.preinstall_disabled = true;
