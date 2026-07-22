@@ -57,6 +57,7 @@
 - build(deps): update flake.lock (#5522)
 - build(deps): bump svgo from 3.3.3 to 3.3.4 in /website (#5536)
 - build(deps): bump shell-quote from 1.8.4 to 1.10.0 in /website (#5537)
+- build(deps): bump webpack-dev-server from 5.2.5 to 5.2.6 in /website (#5538)
 
 #### Dashboards
 
