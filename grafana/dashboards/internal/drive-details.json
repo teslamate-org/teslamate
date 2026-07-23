@@ -2490,7 +2490,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH pts AS (\n\tSELECT speed, EXTRACT(EPOCH FROM (LEAD(date) OVER (ORDER BY date) - date)) AS dt\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date) AND speed > 0\n)\n-- Time-weighted average while moving: speed > 0 excludes standstill so parked\n-- time doesn't pull the average down. Cap gaps at 60s to avoid stream dropouts.\nSELECT\n\tconvert_km((SUM(speed * dt) / NULLIF(SUM(dt), 0))::numeric, '$length_unit') AS speed_${length_unit}h\nFROM pts\nWHERE dt BETWEEN 0 AND 60",
+          "rawSql": "WITH pts AS (\n\tSELECT speed, EXTRACT(EPOCH FROM (LEAD(date) OVER (ORDER BY date) - date)) AS dt\n\tFROM positions\n\tWHERE drive_id = $drive_id AND speed > 0\n)\n-- Time-weighted average while moving: speed > 0 excludes standstill so parked\n-- time doesn't pull the average down. Cap gaps at 60s to avoid stream dropouts.\nSELECT\n\tconvert_km((SUM(speed * dt) / NULLIF(SUM(dt), 0))::numeric, '$length_unit') AS speed_${length_unit}h\nFROM pts\nWHERE dt BETWEEN 0 AND 60",
           "refId": "A",
           "sql": {
             "columns": [
