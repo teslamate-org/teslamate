@@ -2382,7 +2382,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH pts AS (\n\tSELECT speed, EXTRACT(EPOCH FROM (LEAD(date) OVER (ORDER BY date) - date)) AS dt\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date) AND speed IS NOT NULL\n)\n-- Time-weighted average: the stream downsamples at standstill, so a plain point\n-- average underweights stopped time and overstates speed. Cap gaps at 60s.\nSELECT\n\tconvert_km((SUM(speed * dt) / NULLIF(SUM(dt), 0))::numeric, '$length_unit') AS speed_${length_unit}h\nFROM pts\nWHERE dt BETWEEN 0 AND 60",
+          "rawSql": "SELECT convert_km((distance / NULLIF(EXTRACT(EPOCH FROM end_date - start_date), 0) * 3600)::numeric, '$length_unit') AS speed_${length_unit}h\nFROM drives\nWHERE id = $drive_id",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2404,6 +2404,114 @@
         }
       ],
       "title": "Ø Speed",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "super-light-blue",
+            "mode": "fixed"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_mih/"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocitymph"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_kmh/"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 9,
+        "y": 34
+      },
+      "id": 41,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": false
+      },
+      "pluginVersion": "13.0.1+security-01",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH pts AS (\n\tSELECT speed, EXTRACT(EPOCH FROM (LEAD(date) OVER (ORDER BY date) - date)) AS dt\n\tFROM positions\n\tWHERE car_id = $car_id AND $__timeFilter(date) AND speed > 0\n)\n-- Time-weighted average while moving: speed > 0 excludes standstill so parked\n-- time doesn't pull the average down. Cap gaps at 60s to avoid stream dropouts.\nSELECT\n\tconvert_km((SUM(speed * dt) / NULLIF(SUM(dt), 0))::numeric, '$length_unit') AS speed_${length_unit}h\nFROM pts\nWHERE dt BETWEEN 0 AND 60",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Ø Moving Speed",
       "type": "stat"
     }
   ],
