@@ -1,8 +1,6 @@
 defmodule TeslaMateWeb.ChargeLive.Cost do
   use TeslaMateWeb, :live_view
 
-  require Logger
-
   alias TeslaMate.Locations.{GeoFence, Address}
   alias TeslaMate.Log.ChargingProcess
   alias TeslaMate.Log
