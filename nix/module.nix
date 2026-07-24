@@ -301,6 +301,19 @@ in
         # :'password', which produces a correctly escaped SQL string literal.
         # This is safe for any password, including ones containing single
         # quotes. Requires PostgreSQL >= 14 for \getenv.
+        #
+        # Both commands must be fed through a single stdin stream, not two
+        # separate -c options: psql only performs :'var' interpolation when
+        # reading from stdin/a file, and a \getenv variable set in one -c is not
+        # available for interpolation in a following -c (it is sent verbatim,
+        # producing a `syntax error at or near ":"`).
+        #
+        # The interpolated ALTER USER contains the cleartext password, which
+        # would land in the PostgreSQL server log if the operator enabled
+        # statement logging (log_statement, log_min_duration_statement) or
+        # error-statement logging. Turn all three off for this session first
+        # (allowed since we connect as the postgres superuser) so the secret is
+        # never written to the log regardless of the server configuration.
         postStart = ''
           # A read-only standby cannot execute ALTER USER; the password is
           # replicated from the primary anyway.
@@ -312,9 +325,13 @@ in
             echo "DATABASE_PASS must be set in ${cfg.secretsFile} (services.teslamate.secretsFile)" >&2
             exit 1
           fi
-          psql -v ON_ERROR_STOP=1 -d postgres \
-            -c '\getenv password DATABASE_PASS' \
-            -c "ALTER USER \"${cfg.postgres.user}\" WITH ENCRYPTED PASSWORD :'password'"
+          printf '%s\n' \
+            "SET log_statement = 'none';" \
+            "SET log_min_duration_statement = -1;" \
+            "SET log_min_error_statement = 'panic';" \
+            '\getenv password DATABASE_PASS' \
+            "ALTER USER \"${cfg.postgres.user}\" WITH ENCRYPTED PASSWORD :'password'" \
+            | psql -v ON_ERROR_STOP=1 -d postgres
         '';
       };
     })
