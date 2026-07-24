@@ -20,7 +20,7 @@ let
     systemctl stop teslamate.service
 
     # Drop existing data and reinitialize
-    sudo -u teslamate psql -U ${databaseUser} << .
+    sudo -u teslamate psql -U ${databaseUser} -d ${databaseName} << .
       DROP SCHEMA IF EXISTS public cascade;
       DROP SCHEMA IF EXISTS private CASCADE;
       CREATE SCHEMA public;
