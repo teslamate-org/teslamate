@@ -357,7 +357,7 @@
                 "value": 0
               },
               {
-                "color": "red",
+                "color": "orange",
                 "value": 1
               }
             ]
@@ -485,7 +485,7 @@
           }
         }
       ],
-      "title": "Data Health",
+      "title": "Incomplete Data",
       "type": "stat"
     },
     {
