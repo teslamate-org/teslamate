@@ -3,8 +3,8 @@ title: Manual install - FreeBSD (no support)
 sidebar_label: Manual - FreeBSD (no support)
 ---
 
-This document provides the necessary steps for installation of TeslaMate in a FreeBSD jail. The **recommended and most straightforward installation approach is through the use of [Docker](../docker.md)**, however this walkthrough provides the necessary steps for manual installation in a FreeBSD 13.0 environment.
-It assumes that pre-requisites are met and only basic instructions are provided and should also work in FreeBSD before 13.0.
+This document provides the necessary steps for installation of TeslaMate in a FreeBSD jail. The **recommended and most straightforward installation approach is through the use of [Docker](../docker.md)**, however this walkthrough provides the necessary steps for manual installation in a FreeBSD 14.x environment using the [latest package repository](https://docs.freebsd.org/en/books/handbook/ports/#quarterly-latest-branch).
+Older FreeBSD releases and quarterly package repositories may not provide the required Erlang/OTP and Elixir versions.
 
 ## Requirements
 
@@ -32,7 +32,7 @@ pkg install git
 </details>
 
 <details>
-  <summary>Erlang (v26+)</summary>
+  <summary>Erlang/OTP (v28+)</summary>
 
 ```bash
 pkg install erlang
@@ -41,16 +41,19 @@ pkg install erlang
 </details>
 
 <details>
-  <summary>Elixir (v1.17+)</summary>
+  <summary>Elixir (v1.19.5+)</summary>
 
 ```bash
 pkg install elixir
+elixir --version
 ```
+
+The output must report Elixir 1.19.5 or newer running on Erlang/OTP 28 or newer. If `lang/elixir` is older, use the latest package repository or the `lang/elixir-devel` port described in the [official Elixir installation guide](https://elixir-lang.org/install.html#bsd).
 
 </details>
 
 <details>
-  <summary>Postgres (v16.7+, v17.3+ or v18.0+)</summary>
+  <summary>Postgres (v18.0+)</summary>
 
 ```bash
 pkg install postgresql18-server
