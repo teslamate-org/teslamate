@@ -100,7 +100,7 @@
 
         programs.prettier.enable = true;
 
-        programs.nixpkgs-fmt.enable = true;
+        programs.nixfmt.enable = true;
       };
 
       # Exposed twice on purpose: as a check so `nix flake check` covers it, and
