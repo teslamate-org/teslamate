@@ -1,6 +1,14 @@
 # One CLI to format the code tree - https://git.numtide.com/numtide/treefmt
+#
+# GENERATED FILE - DO NOT EDIT.
+# Source of truth: nix/flake-modules/formatter.nix
+# Regenerate with: nix run .#update-treefmt-toml
+#
+# This copy exists for contributors without Nix, who run a bare `treefmt`.
+# Nix users (`nix fmt`, `nix run .#lint`) and CI use the generated config
+# directly and never read this file. Note that it resolves formatters from
+# PATH, so their versions are not pinned the way the Nix config pins them.
 
-[global]
 excludes = [
     "*.gitignore",
     "*.dockerignore",
@@ -29,36 +37,65 @@ excludes = [
     "*.json.example",
     "*.typos.toml",
     "treefmt.toml",
-    "grafana/dashboards/*.json", #we use the grafana export style
-    ]
+    "grafana/dashboards/*.json",
+    "*.lock",
+    "*.patch",
+    "package-lock.json",
+    "go.mod",
+    "go.sum",
+    ".gitattributes",
+    ".gitignore",
+    ".gitmodules",
+    ".hgignore",
+    ".svnignore",
+    "LICENSE",
+]
 
 [formatter.mix-format]
 command = "mix"
 excludes = []
-includes = ["*.ex", "*.exs" ,"*.{heex,eex}"]
+includes = ["*.ex", "*.exs", "*.ex", "*.exs", "*.{heex,eex}"]
 options = ["format"]
-
-# run shellcheck first
-[formatter.shellcheck]
-command = "shellcheck"
-includes = ["*.sh"]
-priority = 0    # default is 0, but we set it here for clarity
-
-# shfmt second
-[formatter.shfmt]
-command = "shfmt"
-options = ["-s", "-w"]
-includes = ["*.sh"]
-priority = 1
-
-[formatter.prettier]
-command = "prettier"
-excludes = []
-includes = ["*.cjs", "*.css", "*.html", "*.js", "*.json", "*.json5", "*.jsx", "*.md", "*.mdx", "*.mjs", "*.scss", "*.ts", "*.tsx", "*.vue", "*.yaml", "*.yml"]
-options = ["--write"]
 
 [formatter.nixfmt]
 command = "nixfmt"
 excludes = []
 includes = ["*.nix"]
 options = []
+
+[formatter.prettier]
+command = "prettier"
+excludes = []
+includes = [
+    "*.cjs",
+    "*.css",
+    "*.html",
+    "*.js",
+    "*.json",
+    "*.json5",
+    "*.jsx",
+    "*.md",
+    "*.mdx",
+    "*.mjs",
+    "*.scss",
+    "*.ts",
+    "*.tsx",
+    "*.vue",
+    "*.yaml",
+    "*.yml",
+]
+options = ["--write"]
+
+[formatter.shellcheck]
+command = "shellcheck"
+excludes = []
+includes = ["*.sh", "*.bash", "*.envrc", "*.envrc.*"]
+options = []
+priority = 0
+
+[formatter.shfmt]
+command = "shfmt"
+excludes = []
+includes = ["*.sh", "*.bash", "*.envrc", "*.envrc.*"]
+options = ["-w", "-i", "0", "-s"]
+priority = 1

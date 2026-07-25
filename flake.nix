@@ -12,7 +12,8 @@
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, flake-parts, ... }:
+  outputs =
+    inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       flake.nixosModules.default = import ./nix/module.nix { inherit self; };
 

@@ -66,6 +66,8 @@
 - build(deps): bump body-parser from 1.20.5 to 1.20.6 in /website (#5539)
 - build(deps): bump fast-uri from 3.1.2 to 3.1.4 in /website (#5540)
 - build(deps): bump immutable from 5.1.5 to 5.1.9 in /assets (#5541)
+- ci(treefmt): stop treefmt.toml from drifting out of sync with the flake (#5545 - @JakobLichterfeld)
+- style(nix): format Nix code with nixfmt instead of the archived nixpkgs-fmt (#5545 - @JakobLichterfeld)
 
 #### Dashboards
 

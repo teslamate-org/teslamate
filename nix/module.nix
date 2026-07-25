@@ -1,8 +1,9 @@
 { self }:
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   teslamate = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -256,7 +257,9 @@ in
           # so they are allowed here as well. This also covers the psql
           # \getenv used in postStart, which needs PostgreSQL >= 14.
           assertion =
-            let v = cfg.postgres.package.version; in
+            let
+              v = cfg.postgres.package.version;
+            in
             lib.versionAtLeast v "18"
             || (lib.versionAtLeast v "17.3" && lib.versionOlder v "18")
             || (lib.versionAtLeast v "16.7" && lib.versionOlder v "17");
@@ -336,8 +339,9 @@ in
       };
     })
     (mkIf cfg.grafana.enable {
-      warnings = lib.optional (cfg.grafana.secretKeyFile == /dev/null)
-        "teslamate: grafana.secretKeyFile is not set. Using the insecure default secret_key. Set grafana.secretKeyFile to a file containing a secure random key.";
+      warnings =
+        lib.optional (cfg.grafana.secretKeyFile == /dev/null)
+          "teslamate: grafana.secretKeyFile is not set. Using the insecure default secret_key. Set grafana.secretKeyFile to a file containing a secure random key.";
       services.grafana = {
         enable = true;
         settings = {
@@ -352,9 +356,10 @@ in
             allow_embedding = true;
             disable_gravatar = true;
             secret_key =
-              if cfg.grafana.secretKeyFile == /dev/null
-              then "SW2YcwTIb9zpOOhoPsMm" # old default value, see https://github.com/grafana/grafana/blob/0920e8bcc69f555a34462d0d2029a882272a0184/conf/defaults.ini#L334
-              else "$__file{${cfg.grafana.secretKeyFile}}";
+              if cfg.grafana.secretKeyFile == /dev/null then
+                "SW2YcwTIb9zpOOhoPsMm" # old default value, see https://github.com/grafana/grafana/blob/0920e8bcc69f555a34462d0d2029a882272a0184/conf/defaults.ini#L334
+              else
+                "$__file{${cfg.grafana.secretKeyFile}}";
           };
           users = {
             allow_sign_up = false;
@@ -368,7 +373,9 @@ in
           # Plugins only ever change through nixpkgs here, so the 10-minute check
           # is pure log noise and an unnecessary call to grafana.com.
           analytics.check_for_plugin_updates = false;
-          dashboards.default_home_dashboard_path = mkIf cfg.grafana.setDefaultDashboard "${pkgs.lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [".json"]}/home.json";
+          dashboards.default_home_dashboard_path = mkIf cfg.grafana.setDefaultDashboard "${
+            pkgs.lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [ ".json" ]
+          }/home.json";
           date_formats.use_browser_locale = true;
           plugins.preinstall_disabled = true;
           unified_alerting.enabled = false;
@@ -410,9 +417,7 @@ in
                 disableDeletion = false;
                 allowUiUpdates = true;
                 updateIntervalSeconds = 86400;
-                options.path = lib.sources.sourceByRegex
-                  ../grafana/dashboards
-                  [ "^[^\/]*\.json$" ];
+                options.path = lib.sources.sourceByRegex ../grafana/dashboards [ "^[^\/]*\.json$" ];
               }
               {
                 name = "teslamate_internal";
@@ -423,9 +428,7 @@ in
                 disableDeletion = false;
                 allowUiUpdates = true;
                 updateIntervalSeconds = 86400;
-                options.path = lib.sources.sourceFilesBySuffices
-                  ../grafana/dashboards/internal
-                  [ ".json" ];
+                options.path = lib.sources.sourceFilesBySuffices ../grafana/dashboards/internal [ ".json" ];
               }
               {
                 name = "teslamate_reports";
@@ -436,9 +439,7 @@ in
                 disableDeletion = false;
                 allowUiUpdates = true;
                 updateIntervalSeconds = 86400;
-                options.path = lib.sources.sourceFilesBySuffices
-                  ../grafana/dashboards/reports
-                  [ ".json" ];
+                options.path = lib.sources.sourceFilesBySuffices ../grafana/dashboards/reports [ ".json" ];
               }
             ];
           };

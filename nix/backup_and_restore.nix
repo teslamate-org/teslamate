@@ -1,10 +1,11 @@
-{ stdenv
-, lib
-, pkgs
-, writeShellScript
-, databaseUser
-, databaseName
-, ...
+{
+  stdenv,
+  lib,
+  pkgs,
+  writeShellScript,
+  databaseUser,
+  databaseName,
+  ...
 }:
 let
   backup = writeShellScript "teslamate-backup" ''
