@@ -69,6 +69,8 @@
 
 #### Dashboards
 
+- feat(grafana): make data health summary actionable (#5526 - @magrathean-uk)
+
 #### Translations
 
 - i18n: add Hungarian translation (#5480 - @magrathean-uk)
