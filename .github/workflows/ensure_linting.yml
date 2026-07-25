@@ -38,6 +38,12 @@ jobs:
           # except any version with the key that is the same as the `primary-key`
           purge-primary-key: never
 
+      - name: Ensure treefmt.toml matches the Nix formatter config
+        # treefmt.toml is generated from nix/flake-modules/formatter.nix and only
+        # consumed by contributors without Nix. If it goes stale, those
+        # contributors format against a different config than this job enforces.
+        run: nix build .#check-treefmt-toml --no-link
+
       - name: Run treefmt in CI mode
         # Use the lean `.#lint` app instead of the full devenv shell: it only
         # provides the treefmt wrapper + Elixir, so CI does not have to realize
