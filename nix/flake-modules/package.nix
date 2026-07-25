@@ -1,10 +1,11 @@
 { ... }:
 {
   perSystem =
-    { lib
-    , pkgs
-    , system
-    , ...
+    {
+      lib,
+      pkgs,
+      system,
+      ...
     }:
     let
       beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_28;

@@ -5,10 +5,11 @@
   ];
 
   perSystem =
-    { config
-    , pkgs
-    , lib
-    , ...
+    {
+      config,
+      pkgs,
+      lib,
+      ...
     }:
     # legacy
     let
@@ -88,7 +89,7 @@
           package = pkgs.postgresql;
           listen_addresses = "127.0.0.1";
           port = postgres_port;
-          initialDatabases = [{ name = "teslamate"; }];
+          initialDatabases = [ { name = "teslamate"; } ];
           initialScript = ''
             CREATE USER teslamate with encrypted password 'your_secure_password_here';
             GRANT ALL PRIVILEGES ON DATABASE teslamate TO teslamate;

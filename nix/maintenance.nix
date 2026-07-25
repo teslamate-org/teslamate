@@ -1,13 +1,14 @@
-{ stdenv
-, lib
-, pkgs
-, writeShellScript
-, databaseUser
-, databaseName
-, getExe
-, teslamate
-, environmentFilePath
-, ...
+{
+  stdenv,
+  lib,
+  pkgs,
+  writeShellScript,
+  databaseUser,
+  databaseName,
+  getExe,
+  teslamate,
+  environmentFilePath,
+  ...
 }:
 let
   # Extract a single KEY=value from the environment file literally, without
