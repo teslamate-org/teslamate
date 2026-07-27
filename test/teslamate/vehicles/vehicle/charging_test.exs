@@ -96,6 +96,14 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: ^s2}}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+    assert %{
+             current_drive: nil,
+             current_charging_process: nil,
+             current_update: nil,
+             driving_status: nil
+           } = activity_data(name)
+
     refute_receive _
   end
 

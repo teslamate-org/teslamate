@@ -45,6 +45,13 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
     assert DateTime.diff(s1, s2, :nanosecond) < 0
 
+    assert %{
+             current_drive: nil,
+             current_charging_process: nil,
+             current_update: nil,
+             driving_status: nil
+           } = activity_data(name)
+
     refute_receive _
   end
 

@@ -59,6 +59,13 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
 
     assert DateTime.diff(s1, s2, :nanosecond) < 0
 
+    assert %{
+             current_drive: nil,
+             current_charging_process: nil,
+             current_update: nil,
+             driving_status: nil
+           } = activity_data(name)
+
     refute_receive _
   end
 

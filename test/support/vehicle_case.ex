@@ -85,6 +85,17 @@ defmodule TeslaMate.VehicleCase do
     :ok
   end
 
+  def activity_data(name) do
+    {_state, %Vehicle.Data{} = data} = :sys.get_state(name)
+
+    Map.take(data, [
+      :current_drive,
+      :current_charging_process,
+      :current_update,
+      :driving_status
+    ])
+  end
+
   def online_event(ts, opts \\ []) do
     assert is_integer(ts)
     now = ts

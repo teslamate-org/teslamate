@@ -8,12 +8,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SummaryTest do
 
   defp attrs do
     %{
-      state: {:online, nil},
+      state: :online,
       since: DateTime.utc_now(),
       healthy?: true,
       car: nil,
       elevation: nil,
-      geofence: nil
+      geofence: nil,
+      driving_status: nil
     }
   end
 
@@ -60,6 +61,23 @@ defmodule TeslaMate.Vehicles.Vehicle.SummaryTest do
       vehicle = %Vehicle{vehicle_state: %VehicleState{software_update: nil}}
       summary = Summary.into(vehicle, attrs())
       assert summary.update_available == nil
+    end
+  end
+
+  describe "state" do
+    test "formats an active drive" do
+      attrs = %{attrs() | state: :driving, driving_status: :available}
+      assert %Summary{state: :driving} = Summary.into(%Vehicle{}, attrs)
+    end
+
+    test "formats an offline drive as offline" do
+      attrs = %{attrs() | state: :driving, driving_status: {:offline, %Vehicle{}}}
+      assert %Summary{state: :offline} = Summary.into(%Vehicle{}, attrs)
+    end
+
+    test "formats a suspended state" do
+      attrs = %{attrs() | state: {:suspended, :online}}
+      assert %Summary{state: :suspended} = Summary.into(%Vehicle{}, attrs)
     end
   end
 
