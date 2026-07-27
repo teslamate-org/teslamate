@@ -238,10 +238,12 @@ in
         (callPackage ./backup_and_restore.nix {
           databaseUser = cfg.postgres.user;
           databaseName = cfg.postgres.database;
+          databaseHost = cfg.postgres.host;
+          databasePort = cfg.postgres.port;
+          environmentFilePath = cfg.secretsFile;
+          postgresql = cfg.postgres.package;
         })
         (callPackage ./maintenance.nix {
-          databaseUser = cfg.postgres.user;
-          databaseName = cfg.postgres.database;
           environmentFilePath = cfg.secretsFile;
           getExe = getExe;
           teslamate = teslamate;

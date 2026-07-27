@@ -21,6 +21,18 @@ defmodule TeslaMate.LogDriveTest do
     assert {:ok, %Drive{car_id: ^id}} = Log.start_drive(car)
   end
 
+  test "delete_drive/1 deletes the drive" do
+    car = car_fixture()
+
+    assert {:ok, %Drive{} = drive} = Log.start_drive(car)
+    assert :ok = Log.delete_drive(drive.id)
+    assert nil == Repo.get(Drive, drive.id)
+  end
+
+  test "delete_drive/1 returns :not_found for an unknown drive" do
+    assert :not_found = Log.delete_drive(0)
+  end
+
   describe "insert_position/1" do
     test "with valid data creates a position" do
       car = car_fixture()

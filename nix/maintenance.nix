@@ -3,8 +3,6 @@
   lib,
   pkgs,
   writeShellScript,
-  databaseUser,
-  databaseName,
   getExe,
   teslamate,
   environmentFilePath,
@@ -75,15 +73,23 @@ let
       exit 1
     fi
 
-    # Check if drive exists
-    if [ "$(sudo -u teslamate psql -U ${databaseUser} -d ${databaseName} -tAc "SELECT 1 FROM drives WHERE id = ''${1};")" != "1" ]; then
-      echo "Warning: Drive with ID ''${1} does not exist. Nothing to delete." >&2
-      exit 0
-    fi
+    # load RELEASE_COOKIE from the env file
+    ${loadFromEnvFile "RELEASE_COOKIE"}
+    : ''${RELEASE_COOKIE:?'RELEASE_COOKIE must be set in the environment file'}
 
     echo "Attempt to delete the drive with ID ''${1}."
-    sudo -u teslamate psql -U ${databaseUser} -d ${databaseName} -c "DELETE FROM drives WHERE id = ''${1};"
-    echo "Successfully deleted drive with ID ''${1}."
+    case "$(${getExe teslamate} rpc "TeslaMate.Log.delete_drive(''${1})")" in
+      :ok)
+        echo "Successfully deleted drive with ID ''${1}."
+        ;;
+      :not_found)
+        echo "Warning: Drive with ID ''${1} does not exist. Nothing to delete." >&2
+        ;;
+      *)
+        echo "Error: Failed to delete drive with ID ''${1}." >&2
+        exit 1
+        ;;
+    esac
   '';
 
   deleteCharge = writeShellScript "teslamate-delete-charge" ''
@@ -95,15 +101,23 @@ let
       exit 1
     fi
 
-    # Check if charging process exists
-    if [ "$(sudo -u teslamate psql -U ${databaseUser} -d ${databaseName} -tAc "SELECT 1 FROM charging_processes WHERE id = ''${1};")" != "1" ]; then
-      echo "Warning: Charging process with ID ''${1} does not exist. Nothing to delete." >&2
-      exit 0
-    fi
+    # load RELEASE_COOKIE from the env file
+    ${loadFromEnvFile "RELEASE_COOKIE"}
+    : ''${RELEASE_COOKIE:?'RELEASE_COOKIE must be set in the environment file'}
 
     echo "Attempt to delete the charge with ID ''${1}."
-    sudo -u teslamate psql -U ${databaseUser} -d ${databaseName} -c "DELETE FROM charging_processes WHERE id = ''${1};"
-    echo "Successfully deleted charging process with ID ''${1}."
+    case "$(${getExe teslamate} rpc "TeslaMate.Log.delete_charging_process(''${1})")" in
+      :ok)
+        echo "Successfully deleted charging process with ID ''${1}."
+        ;;
+      :not_found)
+        echo "Warning: Charging process with ID ''${1} does not exist. Nothing to delete." >&2
+        ;;
+      *)
+        echo "Error: Failed to delete charging process with ID ''${1}." >&2
+        exit 1
+        ;;
+    esac
   '';
 in
 stdenv.mkDerivation {

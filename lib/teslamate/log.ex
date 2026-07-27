@@ -240,6 +240,13 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
+  def delete_drive(id) when is_integer(id) do
+    case Repo.get(Drive, id) do
+      nil -> :not_found
+      drive -> delete(drive)
+    end
+  end
+
   def close_drive(%Drive{id: id} = drive, opts \\ []) do
     drive = Repo.preload(drive, [:car])
 
@@ -405,6 +412,13 @@ defmodule TeslaMate.Log do
     charge
     |> ChargingProcess.changeset(attrs)
     |> Repo.update()
+  end
+
+  def delete_charging_process(id) when is_integer(id) do
+    case Repo.get(ChargingProcess, id) do
+      nil -> :not_found
+      charging_process -> delete(charging_process)
+    end
   end
 
   def start_charging_process(%Car{id: id}, %{latitude: _, longitude: _} = attrs, opts \\ []) do
@@ -707,5 +721,12 @@ defmodule TeslaMate.Log do
     %Update{car_id: id}
     |> Update.changeset(%{start_date: date, end_date: date, version: version})
     |> Repo.insert()
+  end
+
+  defp delete(struct) do
+    case Repo.delete(struct) do
+      {:ok, _struct} -> :ok
+      {:error, _changeset} = error -> error
+    end
   end
 end

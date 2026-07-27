@@ -125,6 +125,21 @@ defmodule TeslaMate.LogChargingTest do
     end
   end
 
+  test "delete_charging_process/1 deletes the charging process and its charges" do
+    car = car_fixture()
+
+    assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
+    assert {:ok, charge} = Log.insert_charge(cproc, @valid_attrs)
+
+    assert :ok = Log.delete_charging_process(cproc.id)
+    assert nil == Repo.get(ChargingProcess, cproc.id)
+    assert nil == Repo.get(Charge, charge.id)
+  end
+
+  test "delete_charging_process/1 returns :not_found for an unknown charging process" do
+    assert :not_found = Log.delete_charging_process(0)
+  end
+
   describe "insert_charge/2" do
     test "with valid data creates a position" do
       car = car_fixture()
