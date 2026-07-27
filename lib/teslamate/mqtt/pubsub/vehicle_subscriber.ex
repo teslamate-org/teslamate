@@ -17,7 +17,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     :discovery,
     :discovery_base_url,
     :discovery_prefix,
-    discovery_published: false
+    discovery_synced: false
   ]
 
   alias __MODULE__, as: State
@@ -59,7 +59,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       publisher: Keyword.get(opts, :deps_publisher, Publisher)
     }
 
-    discovery = Keyword.get(opts, :discovery, false)
+    discovery = Keyword.get(opts, :discovery)
     discovery_base_url = Keyword.get(opts, :discovery_base_url)
     discovery_prefix = Keyword.get(opts, :discovery_prefix)
 
@@ -93,26 +93,32 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
     last_values = publish_values(values, state)
 
-    state =
-      if state.discovery and not state.discovery_published do
-        publish_discovery(summary, state)
-        %{state | discovery_published: true}
-      else
-        state
-      end
+    state = sync_discovery(summary, state)
 
     {:noreply, %{state | last_values: last_values}}
   end
 
-  defp publish_discovery(%Summary{} = summary, %State{deps: deps} = state) do
+  defp sync_discovery(_summary, %State{discovery_synced: true} = state), do: state
+  defp sync_discovery(_summary, %State{discovery: nil} = state), do: state
+
+  defp sync_discovery(%Summary{} = summary, %State{deps: deps} = state) do
     opts = discovery_opts(state)
 
-    case HomeAssistant.publish(summary, opts, deps.publisher) do
+    result =
+      if state.discovery do
+        HomeAssistant.publish(summary, opts, deps.publisher)
+      else
+        HomeAssistant.clear(state.car_id, opts, deps.publisher)
+      end
+
+    case result do
       :ok ->
-        :ok
+        %{state | discovery_synced: true}
 
       {:error, reason} ->
-        Logger.warning("MQTT HA discovery publishing failed: #{inspect(reason)}")
+        action = if state.discovery, do: "publishing", else: "cleanup"
+        Logger.warning("MQTT HA discovery #{action} failed: #{inspect(reason)}")
+        state
     end
   end
 

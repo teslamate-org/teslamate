@@ -19,7 +19,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
           car_id: pos_integer(),
           namespace: String.t() | nil,
           base_url: String.t() | nil,
-          discovery_prefix: String.t()
+          discovery_prefix: String.t() | nil
         ]
 
   @doc """
@@ -35,7 +35,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     car_id = Keyword.fetch!(opts, :car_id)
     namespace = Keyword.get(opts, :namespace)
     base_url = Keyword.get(opts, :base_url)
-    prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
+    prefix = discovery_prefix(opts)
     node = "#{@node}_#{car_id}"
 
     device = device(summary, car_id, base_url)
@@ -47,7 +47,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
         config
         |> resolve_topics(car_id, namespace)
         |> Map.put(:unique_id, "teslamate_#{car_id}_#{object_id}")
-        |> Map.put(:object_id, object_id)
+        |> Map.put(:default_entity_id, default_entity_id(component, object_id))
         |> Map.put(:device, device)
         |> Jason.encode!()
 
@@ -59,13 +59,11 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   end
 
   @doc """
-  Publishes an empty retained payload to clear a discovery topic, so entities
-  are removed from Home Assistant when discovery is disabled or a vehicle is
-  removed.
+  Publishes an empty retained payload to every discovery topic for a car.
   """
   @spec clear(pos_integer(), publish_opts(), term()) :: :ok | {:error, term()}
   def clear(car_id, opts, publisher) do
-    prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
+    prefix = discovery_prefix(opts)
     node = "#{@node}_#{car_id}"
 
     Enum.reduce_while(entities(), :ok, fn {component, object_id, _config}, _acc ->
@@ -81,6 +79,21 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   defp discovery_topic(prefix, component, node, object_id) do
     Enum.join([prefix, component, node, object_id, "config"], "/")
   end
+
+  defp discovery_prefix(opts) do
+    case Keyword.get(opts, :discovery_prefix) do
+      nil -> @discovery_prefix
+      "" -> @discovery_prefix
+      prefix -> prefix
+    end
+  end
+
+  defp default_entity_id("sensor", range)
+       when range in ~w(est_battery_range_km rated_battery_range_km ideal_battery_range_km) do
+    "sensor.tesla_#{String.replace_suffix(range, "_km", "")}"
+  end
+
+  defp default_entity_id(component, object_id), do: "#{component}.tesla_#{object_id}"
 
   defp resolve_topics(config, car_id, namespace) do
     Enum.reduce(config, %{}, fn
@@ -142,6 +155,20 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
        %{state_topic_key: :version, name: "Version", icon: "mdi:alphabetical"}},
       {"sensor", "update_version",
        %{state_topic_key: :update_version, name: "Update Version", icon: "mdi:alphabetical"}},
+      {"sensor", "download_perc",
+       %{
+         state_topic_key: :download_perc,
+         name: "Download Progress",
+         unit_of_measurement: "%",
+         icon: "mdi:download"
+       }},
+      {"sensor", "install_perc",
+       %{
+         state_topic_key: :install_perc,
+         name: "Install Progress",
+         unit_of_measurement: "%",
+         icon: "mdi:update"
+       }},
       {"sensor", "model", %{state_topic_key: :model, name: "Model"}},
       {"sensor", "trim_badging",
        %{state_topic_key: :trim_badging, name: "Trim Badging", icon: "mdi:shield-star-outline"}},
@@ -264,9 +291,15 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          state_topic_key: :charge_energy_added,
          name: "Charge Energy Added",
          device_class: "energy",
-         state_class: "total",
+         state_class: "total_increasing",
          unit_of_measurement: "kWh",
          icon: "mdi:battery-charging"
+       }},
+      {"sensor", "charging_state",
+       %{
+         state_topic_key: :charging_state,
+         name: "Charging State",
+         icon: "mdi:ev-station"
        }},
       {"sensor", "charge_limit_soc",
        %{
@@ -301,6 +334,22 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          device_class: "voltage",
          unit_of_measurement: "V",
          icon: "mdi:lightning-bolt"
+       }},
+      {"sensor", "charge_current_request",
+       %{
+         state_topic_key: :charge_current_request,
+         name: "Charge Current Request",
+         device_class: "current",
+         unit_of_measurement: "A",
+         icon: "mdi:current-ac"
+       }},
+      {"sensor", "charge_current_request_max",
+       %{
+         state_topic_key: :charge_current_request_max,
+         name: "Maximum Charge Current Request",
+         device_class: "current",
+         unit_of_measurement: "A",
+         icon: "mdi:current-ac"
        }},
       {"sensor", "scheduled_charging_start_time",
        %{
@@ -392,6 +441,25 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          icon: "mdi:car-tire-alert",
          value_template: "{{ (value | float * 14.50377) | round(2) }}",
          suggested_display_precision: 2
+       }},
+      {"sensor", "center_display_state",
+       %{
+         state_topic_key: :center_display_state,
+         name: "Center Display State",
+         icon: "mdi:monitor-dashboard"
+       }},
+      {"sensor", "sun_roof_state",
+       %{
+         state_topic_key: :sun_roof_state,
+         name: "Sun Roof State",
+         icon: "mdi:car-convertible"
+       }},
+      {"sensor", "sun_roof_percent_open",
+       %{
+         state_topic_key: :sun_roof_percent_open,
+         name: "Sun Roof Open",
+         unit_of_measurement: "%",
+         icon: "mdi:car-convertible"
        }},
 
       # --- Active route sensors (derived from the JSON active_route topic) ---
@@ -488,10 +556,66 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          device_class: "window",
          icon: "mdi:car-door"
        })},
+      {"binary_sensor", "driver_front_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_front_window_open,
+         name: "Driver Front Window Open",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "driver_rear_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_rear_window_open,
+         name: "Driver Rear Window Open",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_front_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_front_window_open,
+         name: "Passenger Front Window Open",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_rear_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_rear_window_open,
+         name: "Passenger Rear Window Open",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
       {"binary_sensor", "doors_open",
        Map.merge(true_false, %{
          state_topic_key: :doors_open,
          name: "Doors Open",
+         device_class: "door",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "driver_front_door_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_front_door_open,
+         name: "Driver Front Door Open",
+         device_class: "door",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "driver_rear_door_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_rear_door_open,
+         name: "Driver Rear Door Open",
+         device_class: "door",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_front_door_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_front_door_open,
+         name: "Passenger Front Door Open",
+         device_class: "door",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_rear_door_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_rear_door_open,
+         name: "Passenger Rear Door Open",
          device_class: "door",
          icon: "mdi:car-door"
        })},
@@ -541,6 +665,46 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Charge Port Door OPEN",
          device_class: "opening",
          icon: "mdi:ev-plug-tesla"
+       })},
+      {"binary_sensor", "service_mode",
+       Map.merge(true_false, %{
+         state_topic_key: :service_mode,
+         name: "Service Mode",
+         icon: "mdi:wrench"
+       })},
+      {"binary_sensor", "sun_roof_installed",
+       Map.merge(true_false, %{
+         state_topic_key: :sun_roof_installed,
+         name: "Sun Roof Installed",
+         icon: "mdi:car-convertible"
+       })},
+      {"binary_sensor", "tpms_soft_warning_fl",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_fl,
+         name: "TPMS Soft Warning Front Left",
+         device_class: "problem",
+         icon: "mdi:car-tire-alert"
+       })},
+      {"binary_sensor", "tpms_soft_warning_fr",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_fr,
+         name: "TPMS Soft Warning Front Right",
+         device_class: "problem",
+         icon: "mdi:car-tire-alert"
+       })},
+      {"binary_sensor", "tpms_soft_warning_rl",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_rl,
+         name: "TPMS Soft Warning Rear Left",
+         device_class: "problem",
+         icon: "mdi:car-tire-alert"
+       })},
+      {"binary_sensor", "tpms_soft_warning_rr",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_rr,
+         name: "TPMS Soft Warning Rear Right",
+         device_class: "problem",
+         icon: "mdi:car-tire-alert"
        })},
 
       # Lock - inverted (locked when "false")

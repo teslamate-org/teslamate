@@ -389,14 +389,49 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
   end
 
-  test "does not publish discovery config when discovery is disabled", %{test: name} do
+  test "does not touch retained discovery config when discovery is not configured", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
 
     send(pid, %Summary{healthy: true, display_name: "Foo", state: :online})
 
-    refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
+    refute_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
+  end
+
+  test "clears retained discovery config when discovery is disabled", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0, nil, %{}, discovery: false)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    send(pid, %Summary{healthy: true, display_name: "Foo", state: :online})
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/sensor/teslamate_0/display_name/config", "",
+                     [retain: true, qos: 1]}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/binary_sensor/teslamate_0/locked/config", "",
+                     [retain: true, qos: 1]}}
+  end
+
+  @tag :capture_log
+  test "retries discovery cleanup after a publish failure", %{test: name} do
+    topic = "homeassistant/sensor/teslamate_0/display_name/config"
+    responses = %{topic => [{:error, :unavailable}, :ok]}
+    {:ok, pid} = start_subscriber(name, 0, nil, responses, discovery: false)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    summary = %Summary{healthy: true, display_name: "Foo", state: :online}
+    send(pid, summary)
+
+    assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
+
+    send(pid, %Summary{summary | version: "1"})
+
+    assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
   end
 
   defp drain_discovery_configs do

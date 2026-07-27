@@ -25,7 +25,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 ## MQTT Discovery (automatic configuration)
 
-TeslaMate can publish [Home Assistant MQTT discovery](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery) payloads, so the entities below are created automatically and you no longer need to maintain `mqtt_sensors.yaml`.
+TeslaMate can publish [Home Assistant MQTT discovery](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery) payloads, so vehicle entities are created automatically.
 
 Enable it with the following environment variables (see [Environment variables](../configuration/environment_variables.md)):
 
@@ -35,11 +35,37 @@ Enable it with the following environment variables (see [Environment variables](
 | `MQTT_HOME_ASSISTANT_DISCOVERY_URL`    | TeslaMate URL surfaced in the discovered device panel (e.g. `https://teslamate.example.com/`). | _none_          |
 | `MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX` | Discovery topic prefix. Must match Home Assistant's `discovery_prefix` setting.                | `homeassistant` |
 
+:::warning
+
+Remove the manual `mqtt_sensors.yaml` configuration and restart Home Assistant
+before enabling discovery. The manual and discovered entities use the same
+unique IDs, so loading both at once produces duplicate-ID errors.
+
+:::
+
 When enabled, TeslaMate publishes a retained `config` payload per entity to
 `<discovery_prefix>/<component>/<node>_<car_id>/<object_id>/config` on the first
 vehicle summary, where `<node>` is `teslamate`. The device is grouped under the
-`teslamate_car_<car_id>` identifier, and the entity IDs match those produced by
-the manual `mqtt_sensors.yaml` below.
+`teslamate_car_<car_id>` identifier. Discovery requests the same default entity
+IDs as the manual configuration below, preserving names such as
+`sensor.tesla_speed` when they are available. Home Assistant adds a suffix if an
+entity ID is already in use.
+
+Discovery creates entities for every non-deprecated vehicle topic listed in the
+[MQTT integration](mqtt.md):
+
+- Scalar MQTT topics become sensors or binary sensors.
+- `location` becomes a device tracker.
+- The `active_route` JSON creates a device tracker and route sensors.
+- A parking-brake binary sensor and PSI tyre-pressure sensors are derived from
+  `shift_state` and the four BAR pressure topics.
+- Deprecated raw latitude, longitude, and `active_route_*` topics are not used.
+
+To disable discovery, set `MQTT_HOME_ASSISTANT_DISCOVERY=false` and restart
+TeslaMate. On the first vehicle summary, TeslaMate clears its retained discovery
+payloads. If a vehicle was deleted before cleanup, use an MQTT client to remove
+retained topics matching
+`<discovery_prefix>/+/teslamate_<car_id>/+/config`.
 
 ## Configuration
 
@@ -203,7 +229,7 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
 
 - binary_sensor:
     name: Parking Brake
-    default_entity_id: sensor.tesla_park_brake
+    default_entity_id: binary_sensor.tesla_park_brake
     unique_id: teslamate_1_park_brake
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/shift_state"

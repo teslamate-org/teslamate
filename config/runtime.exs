@@ -8,6 +8,9 @@ defmodule Util do
   def to_integer(nil), do: nil
   def to_integer(str), do: String.to_integer(str)
 
+  def optional_boolean(nil), do: nil
+  def optional_boolean(value), do: value == "true"
+
   def validate_namespace!(nil), do: nil
   def validate_namespace!(""), do: nil
 
@@ -15,6 +18,19 @@ defmodule Util do
     case String.contains?(ns, "/") do
       true -> raise "MQTT_NAMESPACE must not contain '/'"
       false -> ns
+    end
+  end
+
+  def validate_discovery_prefix!(nil), do: nil
+  def validate_discovery_prefix!(""), do: nil
+
+  def validate_discovery_prefix!(prefix) when is_binary(prefix) do
+    case String.contains?(prefix, ["+", "#"]) do
+      true ->
+        raise "MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX must not contain MQTT wildcards"
+
+      false ->
+        prefix
     end
   end
 
@@ -182,9 +198,11 @@ if System.get_env("DISABLE_MQTT") != "true" or config_env() == :test do
     accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS") == "true",
     namespace: System.get_env("MQTT_NAMESPACE") |> Util.validate_namespace!(),
     ipv6: System.get_env("MQTT_IPV6") == "true",
-    discovery: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY") == "true",
+    discovery: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY") |> Util.optional_boolean(),
     discovery_base_url: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_URL"),
-    discovery_prefix: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX")
+    discovery_prefix:
+      System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX")
+      |> Util.validate_discovery_prefix!()
 end
 
 if config_env() != :test do
