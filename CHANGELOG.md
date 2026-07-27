@@ -72,6 +72,7 @@
 #### Dashboards
 
 - feat(grafana): make data health summary actionable (#5526 - @magrathean-uk)
+- fix(grafana): drop the Releases panel from the home dashboard to end the CORS proxy dependency (#5548 - @JakobLichterfeld)
 
 #### Translations
 
