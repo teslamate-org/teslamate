@@ -23,6 +23,26 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationTest do
     end)
   end
 
+  test "identifies a MY2022 base Model 3 through the vehicle update pipeline" do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    events = [
+      {:ok,
+       online_event(
+         now_ts,
+         vin: "5YJ3E1EA1NF000000",
+         vehicle_config: %{car_type: "model3", trim_badging: "50"}
+       )}
+    ]
+
+    :ok = start_vehicles(events)
+
+    TestHelper.eventually(fn ->
+      assert %Car{model: "3", trim_badging: "50", marketing_name: "RWD"} =
+               Log.get_car_by(vid: 90211)
+    end)
+  end
+
   test "changes the car name" do
     ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
