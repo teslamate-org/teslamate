@@ -68,6 +68,7 @@
 - build(deps): bump immutable from 5.1.5 to 5.1.9 in /assets (#5541)
 - ci(treefmt): stop treefmt.toml from drifting out of sync with the flake (#5545 - @JakobLichterfeld)
 - style(nix): format Nix code with nixfmt instead of the archived nixpkgs-fmt (#5545 - @JakobLichterfeld)
+- build(deps): update flake.lock (#5544)
 
 #### Dashboards
 
