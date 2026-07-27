@@ -10,7 +10,8 @@ defmodule TeslaMate.Import.LineParserTest do
            } =
              LineParser.parse(
                %{"battery_level" => "28.01", "usable_battery_level" => "28.5"},
-               "Etc/UTC"
+               "Etc/UTC",
+               0
              )
 
     assert %TeslaApi.Vehicle{
@@ -18,7 +19,13 @@ defmodule TeslaMate.Import.LineParserTest do
            } =
              LineParser.parse(
                %{"battery_level" => "29", "usable_battery_level" => "30"},
-               "Etc/UTC"
+               "Etc/UTC",
+               0
              )
+  end
+
+  test "requires a prevalidated timestamp" do
+    Code.ensure_loaded!(LineParser)
+    refute function_exported?(LineParser, :parse, 2)
   end
 end

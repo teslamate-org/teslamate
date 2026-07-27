@@ -1,0 +1,4 @@
+Date,vehicle_id,display_name,vin,id,state,latitude,longitude,shift_state,speed,power,odometer,battery_level,usable_battery_level,ideal_battery_range,est_battery_range,battery_range,outside_temp,inside_temp,fan_status,driver_temp_setting,passenger_temp_setting,car_type,trim_badging,wheel_type
+2018-01-01 10:00:00,1111111111,Resilient,1YYSA1YYYFF08YYYY,42,online,51.5000,-0.1200,D,10,1,1000.0,60,60,200.0,195.0,198.0,8.0,20.0,1,21.0,21.0,model3,74D,AeroTurbine19
+2018-01-01 10:01:00,1111111111,Resilient,1YYSA1YYYFF08YYYY,42,online,PRIVATE_COORDINATE_SENTINEL,PRIVATE_LONGITUDE_SENTINEL,D,11,1,1000.1,60,60,199.9,194.9,197.9,8.0,20.0,1,21.0,21.0,model3,74D,AeroTurbine19
+2018-01-01 10:02:00,1111111111,Resilient,1YYSA1YYYFF08YYYY,42,online,51.5100,-0.1100,D,12,2,1000.2,59,59,199.8,194.8,197.8,8.0,20.0,1,21.0,21.0,model3,74D,AeroTurbine19
