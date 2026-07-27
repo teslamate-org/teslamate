@@ -10,22 +10,22 @@
 msgid ""
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:268
+#: lib/teslamate_web/live/car_live/summary.html.heex:276
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:423
+#: lib/teslamate_web/live/car_live/summary.html.heex:431
 #, elixir-autogen, elixir-format
 msgid "Speed"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:413
+#: lib/teslamate_web/live/car_live/summary.html.heex:421
 #, elixir-autogen, elixir-format
 msgid "State of Charge"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:347
+#: lib/teslamate_web/live/car_live/summary.html.heex:355
 #, elixir-autogen, elixir-format
 msgid "Charged"
 msgstr ""
@@ -60,12 +60,12 @@ msgstr ""
 msgid "updating"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:157
+#: lib/teslamate_web/live/car_live/summary.html.heex:165
 #, elixir-autogen, elixir-format
 msgid "Locked"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:141
+#: lib/teslamate_web/live/car_live/summary.html.heex:149
 #, elixir-autogen, elixir-format
 msgid "Sentry Mode"
 msgstr ""
@@ -87,17 +87,17 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:362
+#: lib/teslamate_web/live/car_live/summary.html.heex:370
 #, elixir-autogen, elixir-format
 msgid "Scheduled Charging"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:100
+#: lib/teslamate_web/live/car_live/summary.html.heex:108
 #, elixir-autogen, elixir-format
 msgid "Plugged In"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:374
+#: lib/teslamate_web/live/car_live/summary.html.heex:382
 #, elixir-autogen, elixir-format
 msgid "Charge Limit"
 msgstr ""
@@ -210,7 +210,7 @@ msgid "Create"
 msgstr ""
 
 #: lib/teslamate_web/live/car_live/summary.ex:148
-#: lib/teslamate_web/live/car_live/summary.html.heex:68
+#: lib/teslamate_web/live/car_live/summary.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "Preconditioning"
 msgstr ""
@@ -221,27 +221,27 @@ msgid "Sentry mode is enabled"
 msgstr ""
 
 #: lib/teslamate_web/live/car_live/summary.ex:150
-#: lib/teslamate_web/live/car_live/summary.html.heex:92
+#: lib/teslamate_web/live/car_live/summary.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "Driver present"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:508
+#: lib/teslamate_web/live/car_live/summary.html.heex:516
 #, elixir-autogen, elixir-format
 msgid "cancel sleep attempt"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:499
+#: lib/teslamate_web/live/car_live/summary.html.heex:507
 #, elixir-autogen, elixir-format
 msgid "try to sleep"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:334
+#: lib/teslamate_web/live/car_live/summary.html.heex:342
 #, elixir-autogen, elixir-format
 msgid "Range (est.)"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:273
+#: lib/teslamate_web/live/car_live/summary.html.heex:281
 #, elixir-autogen, elixir-format
 msgid "for"
 msgstr ""
@@ -256,12 +256,12 @@ msgstr ""
 msgid "Vehicle must be locked"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:314
+#: lib/teslamate_web/live/car_live/summary.html.heex:322
 #, elixir-autogen, elixir-format
 msgid "Range (rated)"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:353
+#: lib/teslamate_web/live/car_live/summary.html.heex:361
 #, elixir-autogen, elixir-format
 msgid "Charger Power"
 msgstr ""
@@ -286,7 +286,7 @@ msgstr ""
 msgid "rated"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:313
+#: lib/teslamate_web/live/car_live/summary.html.heex:321
 #, elixir-autogen, elixir-format
 msgid "Range (ideal)"
 msgstr ""
@@ -301,7 +301,7 @@ msgstr ""
 msgid "Update in progress"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:125
+#: lib/teslamate_web/live/car_live/summary.html.heex:133
 #, elixir-autogen, elixir-format
 msgid "Windows open"
 msgstr ""
@@ -311,33 +311,33 @@ msgstr ""
 msgid "Delete '%{geo_fence}'?"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:448
+#: lib/teslamate_web/live/car_live/summary.html.heex:456
 #, elixir-autogen, elixir-format
 msgid "Inside Temperature"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:436
+#: lib/teslamate_web/live/car_live/summary.html.heex:444
 #, elixir-autogen, elixir-format
 msgid "Outside Temperature"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:473
+#: lib/teslamate_web/live/car_live/summary.html.heex:481
 #: lib/teslamate_web/live/settings_live/index.html.heex:374
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:251
+#: lib/teslamate_web/live/car_live/summary.html.heex:259
 #, elixir-autogen, elixir-format
 msgid "Health check failed"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:157
+#: lib/teslamate_web/live/car_live/summary.html.heex:165
 #, elixir-autogen, elixir-format
 msgid "Unlocked"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:290
+#: lib/teslamate_web/live/car_live/summary.html.heex:298
 #, elixir-autogen, elixir-format
 msgid "Remaining Time"
 msgstr ""
@@ -385,12 +385,12 @@ msgstr ""
 msgid "Timeout"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:84
+#: lib/teslamate_web/live/car_live/summary.html.heex:92
 #, elixir-autogen, elixir-format
 msgid "Reduced Battery Range"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:407
+#: lib/teslamate_web/live/car_live/summary.html.heex:415
 #, elixir-autogen, elixir-format
 msgid "≈ %{range} at 100%"
 msgstr ""
@@ -417,7 +417,7 @@ msgstr ""
 msgid "Saved!"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:61
+#: lib/teslamate_web/live/car_live/summary.html.heex:69
 #, elixir-autogen, elixir-format
 msgid "Fetching vehicle data ..."
 msgstr ""
@@ -486,7 +486,7 @@ msgstr ""
 msgid "Session fee"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:133
+#: lib/teslamate_web/live/car_live/summary.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Doors open"
 msgstr ""
@@ -524,7 +524,7 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:461
+#: lib/teslamate_web/live/car_live/summary.html.heex:469
 #, elixir-autogen, elixir-format
 msgid "Mileage"
 msgstr ""
@@ -566,7 +566,7 @@ msgstr ""
 msgid "Per Minute"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:177
+#: lib/teslamate_web/live/car_live/summary.html.heex:185
 #, elixir-autogen, elixir-format
 msgid "Software Update available (%{version})"
 msgstr ""
@@ -636,7 +636,7 @@ msgstr ""
 msgid "Tire Pressure"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:76
+#: lib/teslamate_web/live/car_live/summary.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "Dog Mode"
 msgstr ""
@@ -646,7 +646,7 @@ msgstr ""
 msgid "Dog mode is enabled"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:299
+#: lib/teslamate_web/live/car_live/summary.html.heex:307
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
 msgstr ""
@@ -671,12 +671,12 @@ msgstr ""
 msgid "LFP Battery"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:149
+#: lib/teslamate_web/live/car_live/summary.html.heex:157
 #, elixir-autogen, elixir-format
 msgid "Sentry Mode recording"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:118
+#: lib/teslamate_web/live/car_live/summary.html.heex:126
 #, elixir-autogen, elixir-format
 msgid "View car location on Google Maps"
 msgstr ""
@@ -706,17 +706,17 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:108
+#: lib/teslamate_web/live/car_live/summary.html.heex:116
 #, elixir-autogen, elixir-format
 msgid "Service Mode"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:174
+#: lib/teslamate_web/live/car_live/summary.html.heex:182
 #, elixir-autogen, elixir-format
 msgid "Downloading %{percent}%"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/summary.html.heex:170
+#: lib/teslamate_web/live/car_live/summary.html.heex:178
 #, elixir-autogen, elixir-format
 msgid "Installing %{percent}%"
 msgstr ""
