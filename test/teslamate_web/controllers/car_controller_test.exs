@@ -42,6 +42,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              html
              |> Floki.parse_document!()
              |> Floki.find(".car .title")
+             |> Floki.filter_out(".is-sr-only")
              |> Floki.text()
              |> String.trim()
   end
@@ -52,9 +53,20 @@ defmodule TeslaMateWeb.CarControllerTest do
              |> Floki.parse_document!()
              |> Floki.find(".car .title [data-tooltip]")
 
-    assert content |> Floki.text() |> String.trim() == name
-    assert Map.new(attrs)["data-tooltip"] == vin_label
-    assert Map.new(attrs)["title"] == vin_label
+    attrs = Map.new(attrs)
+
+    assert content |> Floki.filter_out(".is-sr-only") |> Floki.text() |> String.trim() == name
+    assert attrs["data-tooltip"] == vin_label
+    refute Map.has_key?(attrs, "title")
+
+    case name do
+      ^vin_label ->
+        assert [] == Floki.find(content, ".is-sr-only")
+
+      _name ->
+        assert content |> Floki.find(".is-sr-only") |> Floki.text() |> String.trim() ==
+                 ", #{vin_label}"
+    end
   end
 
   defp car_fixture(settings) do

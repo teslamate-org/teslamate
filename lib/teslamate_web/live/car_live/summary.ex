@@ -132,12 +132,12 @@ defmodule TeslaMateWeb.CarLive.Summary do
   def format_tpms(_, _), do: "—"
 
   def format_car_title(display_name, vin) when display_name in [nil, ""] do
-    label = "VIN #{vin}"
+    label = gettext("VIN %{vin}", vin: vin)
     {label, label}
   end
 
   def format_car_title(display_name, vin) do
-    {display_name, "VIN #{String.slice(vin, -6, 6)}"}
+    {display_name, gettext("VIN %{vin}", vin: String.slice(vin, -6, 6))}
   end
 
   defp translate_state(:start), do: ""

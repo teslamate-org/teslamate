@@ -43,9 +43,9 @@
             class="has-tooltip-right has-tooltip-left-mobile"
             style="border-bottom: none;"
             data-tooltip={vin_label}
-            title={vin_label}
           >
             <%= display_name %>
+            <span :if={display_name != vin_label} class="is-sr-only">, <%= vin_label %></span>
           </span>
         </p>
         <%= unless is_nil(@car.model) do %>

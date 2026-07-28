@@ -853,3 +853,9 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "row belongs to a different vehicle"
 msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.ex:135
+#: lib/teslamate_web/live/car_live/summary.ex:140
+#, elixir-autogen, elixir-format
+msgid "VIN %{vin}"
+msgstr ""
