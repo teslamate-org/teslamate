@@ -37,7 +37,17 @@
   <div class="card-content">
     <div class="media is-flex mb-5">
       <div class="media-content">
-        <p class="title is-5"><%= @summary.display_name %></p>
+        <% {display_name, vin_label} = format_car_title(@summary.display_name, @car.vin) %>
+        <p class="title is-5">
+          <span
+            class="has-tooltip-right has-tooltip-left-mobile"
+            style="border-bottom: none;"
+            data-tooltip={vin_label}
+          >
+            <%= display_name %>
+            <span :if={display_name != vin_label} class="is-sr-only">, <%= vin_label %></span>
+          </span>
+        </p>
         <%= unless is_nil(@car.model) do %>
           <p class="subtitle is-6 has-text-weight-light">
             Model <%= @car.model %>
