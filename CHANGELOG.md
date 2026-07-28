@@ -11,6 +11,7 @@
 - feat(mqtt): add download_perc and install_perc for pending sw install (#5487 - @NirKli)
 - feat: link the software update icon to the notateslaapp release notes (#5490 - @NirKli)
 - feat: add fullscreen mode to vehicle summary map (#5495 - @hakong)
+- feat(web): expose VIN in car summary ( #5556 - @Helvio88, @magrathean-uk)
 
 ### Improvements and bug fixes
 
