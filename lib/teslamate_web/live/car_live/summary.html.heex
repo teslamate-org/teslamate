@@ -37,13 +37,15 @@
   <div class="card-content">
     <div class="media is-flex mb-5">
       <div class="media-content">
+        <% {display_name, vin_label} = format_car_title(@summary.display_name, @car.vin) %>
         <p class="title is-5">
           <span
             class="has-tooltip-right has-tooltip-left-mobile"
             style="border-bottom: none;"
-            data-tooltip={@car.vin}
+            data-tooltip={vin_label}
+            title={vin_label}
           >
-            <%= @summary.display_name %>
+            <%= display_name %>
           </span>
         </p>
         <%= unless is_nil(@car.model) do %>
