@@ -66,9 +66,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(subscriber_pid, :continue)
 
     assert_receive {BlockingPublisher, {:publish, "teslamate/cars/0/healthy", message, opts},
-                    ^subscriber_pid}
+                    from_pid}
 
-    assert {message, opts} == {"", [retain: true, qos: 1]}
+    assert {message, opts, from_pid} == {"", [retain: true, qos: 1], subscriber_pid}
 
     assert_receive {BlockingPublisher,
                     {:publish, "teslamate/cars/0/healthy", "true", [retain: false, qos: 1]},
