@@ -43,6 +43,39 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   @drive_timeout_min 15
 
+  @vin_model_years %{
+    "A" => 2010,
+    "B" => 2011,
+    "C" => 2012,
+    "D" => 2013,
+    "E" => 2014,
+    "F" => 2015,
+    "G" => 2016,
+    "H" => 2017,
+    "J" => 2018,
+    "K" => 2019,
+    "L" => 2020,
+    "M" => 2021,
+    "N" => 2022,
+    "P" => 2023,
+    "R" => 2024,
+    "S" => 2025,
+    "T" => 2026,
+    "V" => 2027,
+    "W" => 2028,
+    "X" => 2029,
+    "Y" => 2030,
+    "1" => 2031,
+    "2" => 2032,
+    "3" => 2033,
+    "4" => 2034,
+    "5" => 2035,
+    "6" => 2036,
+    "7" => 2037,
+    "8" => 2038,
+    "9" => 2039
+  }
+
   # Static
   def interval(env_var, default) do
     System.get_env(env_var)
@@ -59,7 +92,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def charging_interval, do: interval("POLLING_CHARGING_INTERVAL", 5)
   def minimum_interval, do: interval("POLLING_MINIMUM_INTERVAL", 0)
 
-  def identify(%Vehicle{display_name: name, vehicle_config: config}) do
+  def identify(%Vehicle{display_name: name, vin: vin, vehicle_config: config}) do
     case config do
       %VehicleConfig{
         car_type: type,
@@ -96,7 +129,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             {"3", "74D", _} -> "LR AWD"
             {"3", "74", _} -> "LR"
             {"3", "62", _} -> "MR"
-            {"3", "50", _} -> "SR+"
+            {"3", "50", _} -> model_3_base_trim(vin)
             {"X", "100D", "tamarind"} -> "LR"
             {"X", "P100D", "tamarind"} -> "Plaid"
             {"Y", "P74D", _} -> "LR AWD Performance"
@@ -119,6 +152,22 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       nil ->
         {:error, :vehicle_config_not_available}
+    end
+  end
+
+  # Position 10 of a 17-character VIN encodes the model year. Codes repeat every
+  # 30 years; current Tesla VINs are resolved against the 2010-2039 cycle.
+  defp vin_model_year(<<_::binary-size(9), code::binary-size(1), _::binary-size(7)>>),
+    do: Map.get(@vin_model_years, code)
+
+  defp vin_model_year(_vin), do: nil
+
+  # Model year is only a proxy for the naming change. A MY2021 car renamed or
+  # sold later still falls back to SR+ because the API exposes no rename date.
+  defp model_3_base_trim(vin) do
+    case vin_model_year(vin) do
+      year when is_integer(year) and year >= 2022 -> "RWD"
+      _year -> "SR+"
     end
   end
 
