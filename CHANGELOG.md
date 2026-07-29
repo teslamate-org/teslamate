@@ -32,6 +32,7 @@
 - fix(nix,postgres): set role password safely for any value (#5337 - @JakobLichterfeld)
 - fix(nix): drop schemas in the configured database during restore (#5337 - @JakobLichterfeld)
 - fix(nix,grafana): disable the periodic plugin update check (#5337 - @JakobLichterfeld)
+- feat(import): continue past malformed rows and resume completed TeslaFi files- (#5552 - @magrathean-uk)
 
 #### Build, CI, internal
 
