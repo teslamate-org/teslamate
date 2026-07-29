@@ -5,6 +5,20 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Locations.GeoFence
 
+  defmodule BlockingPublisher do
+    def publish(test_pid, topic, message, opts) do
+      send(test_pid, {__MODULE__, {:publish, topic, message, opts}, self()})
+
+      if String.ends_with?(topic, "/healthy") and message == "" do
+        receive do
+          :continue -> :ok
+        end
+      else
+        :ok
+      end
+    end
+  end
+
   defp start_subscriber(name, car_id, namespace \\ nil, publisher_responses \\ %{}) do
     publisher_name = :"mqtt_publisher_#{name}"
     vehicles_name = :"vehicles_#{name}"
@@ -26,6 +40,58 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
          deps_vehicles: {VehiclesMock, vehicles_name}
        ]}
     )
+  end
+
+  test "starts before retained topic cleanup completes", %{test: name} do
+    vehicles_name = :"vehicles_#{name}"
+    {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
+
+    test_pid = self()
+
+    task =
+      Task.async(fn ->
+        VehicleSubscriber.start_link(
+          car_id: 0,
+          namespace: nil,
+          deps_publisher: {BlockingPublisher, test_pid},
+          deps_vehicles: {VehiclesMock, vehicles_name}
+        )
+      end)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    assert {:ok, {:ok, subscriber_pid}} = Task.yield(task, 2_000)
+
+    send(subscriber_pid, %Summary{healthy: true})
+    send(subscriber_pid, :continue)
+
+    assert_receive {BlockingPublisher, {:publish, "teslamate/cars/0/healthy", message, opts},
+                    from_pid}
+
+    assert {message, opts, from_pid} == {"", [retain: true, qos: 1], subscriber_pid}
+
+    assert_receive {BlockingPublisher,
+                    {:publish, "teslamate/cars/0/healthy", "true", [retain: false, qos: 1]},
+                    _publisher_pid}
+
+    :ok = GenServer.stop(subscriber_pid, :normal, 1_000)
+  end
+
+  @tag :capture_log
+  test "logs retained cleanup publish failures", %{test: name} do
+    topic = "teslamate/cars/0/healthy"
+
+    log =
+      ExUnit.CaptureLog.capture_log(fn ->
+        {:ok, pid} = start_subscriber(name, 0, nil, %{topic => [{:error, :disconnected}]})
+
+        assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
+
+        send(pid, %Summary{healthy: true})
+        assert_receive {MqttPublisherMock, {:publish, ^topic, "true", [retain: false, qos: 1]}}
+      end)
+
+    assert log =~ "MQTT retained cleanup failed for #{topic}: {:error, :disconnected}"
   end
 
   test "publishes vehicle data", %{test: name} do
