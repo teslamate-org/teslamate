@@ -181,7 +181,10 @@ if System.get_env("DISABLE_MQTT") != "true" or config_env() == :test do
     tls: System.get_env("MQTT_TLS") == "true",
     accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS") == "true",
     namespace: System.get_env("MQTT_NAMESPACE") |> Util.validate_namespace!(),
-    ipv6: System.get_env("MQTT_IPV6") == "true"
+    ipv6: System.get_env("MQTT_IPV6") == "true",
+    discovery: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY") == "true",
+    discovery_base_url: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_URL"),
+    discovery_prefix: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX")
 end
 
 if config_env() != :test do

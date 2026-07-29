@@ -5,10 +5,21 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   import Core.Dependency, only: [call: 3]
 
   alias TeslaMate.Mqtt.Publisher
+  alias TeslaMate.Mqtt.PubSub.HomeAssistant
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles
 
-  defstruct [:car_id, :last_values, :deps, :namespace]
+  defstruct [
+    :car_id,
+    :last_values,
+    :deps,
+    :namespace,
+    :discovery,
+    :discovery_base_url,
+    :discovery_prefix,
+    discovery_published: false
+  ]
+
   alias __MODULE__, as: State
 
   def child_spec(arg) do
@@ -48,10 +59,23 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       publisher: Keyword.get(opts, :deps_publisher, Publisher)
     }
 
+    discovery = Keyword.get(opts, :discovery, false)
+    discovery_base_url = Keyword.get(opts, :discovery_base_url)
+    discovery_prefix = Keyword.get(opts, :discovery_prefix)
+
     :ok = call(deps.vehicles, :subscribe_to_summary, [car_id])
     :ok = clear_retained(car_id, namespace, deps.publisher)
 
-    {:ok, %State{car_id: car_id, namespace: namespace, deps: deps}}
+    state = %State{
+      car_id: car_id,
+      namespace: namespace,
+      deps: deps,
+      discovery: discovery,
+      discovery_base_url: discovery_base_url,
+      discovery_prefix: discovery_prefix
+    }
+
+    {:ok, state}
   end
 
   @publish_if_nil ~w(charge_energy_added charger_actual_current charger_phases
@@ -68,7 +92,38 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> add_active_route(summary)
 
     last_values = publish_values(values, state)
+
+    state =
+      if state.discovery and not state.discovery_published do
+        publish_discovery(summary, state)
+        %{state | discovery_published: true}
+      else
+        state
+      end
+
     {:noreply, %{state | last_values: last_values}}
+  end
+
+  defp publish_discovery(%Summary{} = summary, %State{deps: deps} = state) do
+    opts = discovery_opts(state)
+
+    case HomeAssistant.publish(summary, opts, deps.publisher) do
+      :ok ->
+        :ok
+
+      {:error, reason} ->
+        Logger.warning("MQTT HA discovery publishing failed: #{inspect(reason)}")
+    end
+  end
+
+  defp discovery_opts(%State{} = state) do
+    [
+      car_id: state.car_id,
+      namespace: state.namespace,
+      base_url: state.discovery_base_url,
+      discovery_prefix: state.discovery_prefix
+    ]
+    |> Enum.reject(fn {_k, v} -> is_nil(v) end)
   end
 
   defp publish_values(values, state) do

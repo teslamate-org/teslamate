@@ -23,6 +23,24 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 - Locks: Not implemented
 - Climate: Not implemented
 
+## MQTT Discovery (automatic configuration)
+
+TeslaMate can publish [Home Assistant MQTT discovery](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery) payloads, so the entities below are created automatically and you no longer need to maintain `mqtt_sensors.yaml`.
+
+Enable it with the following environment variables (see [Environment variables](../configuration/environment_variables.md)):
+
+| Variable                               | Description                                                                                    | Default         |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------- |
+| `MQTT_HOME_ASSISTANT_DISCOVERY`        | Set to `true` to enable discovery.                                                             | `false`         |
+| `MQTT_HOME_ASSISTANT_DISCOVERY_URL`    | TeslaMate URL surfaced in the discovered device panel (e.g. `https://teslamate.example.com/`). | _none_          |
+| `MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX` | Discovery topic prefix. Must match Home Assistant's `discovery_prefix` setting.                | `homeassistant` |
+
+When enabled, TeslaMate publishes a retained `config` payload per entity to
+`<discovery_prefix>/<component>/<node>_<car_id>/<object_id>/config` on the first
+vehicle summary, where `<node>` is `teslamate`. The device is grouped under the
+`teslamate_car_<car_id>` identifier, and the entity IDs match those produced by
+the manual `mqtt_sensors.yaml` below.
+
 ## Configuration
 
 The following configurations assume a car ID of 1 (`teslamate/cars/1`). It usually starts at 1, but it can be different if you have multiple cars in TeslaMate for example.
