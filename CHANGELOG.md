@@ -35,6 +35,7 @@
 - feat(import): continue past malformed rows and resume completed TeslaFi files- (#5552 - @magrathean-uk)
 - fix(vehicle): update geofence while driving with streaming API (#5515 - @magrathean-uk)
 - fix(vehicle): identify base Model 3 from model year 2022 as RWD instead of SR+ (#5551 - @magrathean-uk)
+- fix(mqtt): avoid blocking startup on retained cleanup (#5549 - @magrathean-uk)
 
 #### Build, CI, internal
 
