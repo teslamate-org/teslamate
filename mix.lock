@@ -1,6 +1,6 @@
 %{
   "bunt": {:hex, :bunt, "1.0.0", "081c2c665f086849e6d57900292b3a161727ab40431219529f13c4ddcf3e7a44", [:mix], [], "hexpm", "dc5f86aa08a5f6fa6b8096f0735c4e76d54ae5c9fa2c143e5a1fc7c1cd9bb6b5"},
-  "castore": {:hex, :castore, "1.0.19", "6903cabdfd9d1af46454126e7c8385186659dd33ecfb74a885cae52221ad6109", [:mix], [], "hexpm", "3669e6cab13f54c2df26b3e6833745d647f35b6e30d8ddd5975df0d5c842ca98"},
+  "castore": {:hex, :castore, "1.0.20", "455e48f7115eca98c9f2b0e7a152b5a2e8f2a8a4f964c96e95bd31645ee5fa59", [:mix], [], "hexpm", "940eafbfd8b14bee649f083bc11b3b54ec555b54c3e4ea8213351ff6fee39c10"},
   "certifi": {:hex, :certifi, "2.15.0", "0e6e882fcdaaa0a5a9f2b3db55b1394dba07e8d6d9bcad08318fb604c6839712", [:rebar3], [], "hexpm", "b147ed22ce71d72eafdad94f055165c1c182f61a2ff49df28bcc71d1d5b94a60"},
   "cldr_utils": {:hex, :cldr_utils, "2.29.7", "2189bc0117efe91c684558e79174b45eb43135595b7d1fe9b57f53917be195c1", [:mix], [{:castore, "~> 0.1 or ~> 1.0", [hex: :castore, repo: "hexpm", optional: true]}, {:certifi, "~> 2.5", [hex: :certifi, repo: "hexpm", optional: true]}, {:decimal, "~> 1.9 or ~> 2.0 or ~> 3.0", [hex: :decimal, repo: "hexpm", optional: false]}], "hexpm", "4bddcd597fee34e2d2829ae9ef62bcfef8d97ae5f6b75f0c6ee37a3db31aa73a"},
   "cloak": {:hex, :cloak, "1.1.4", "aba387b22ea4d80d92d38ab1890cc528b06e0e7ef2a4581d71c3fdad59e997e7", [:mix], [{:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: true]}], "hexpm", "92b20527b9aba3d939fab0dd32ce592ff86361547cfdc87d74edce6f980eb3d7"},
