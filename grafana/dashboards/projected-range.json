@@ -171,6 +171,8 @@
             "min"
           ],
           "displayMode": "table",
+          "enableFacetedFilter": false,
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": true
         },
@@ -181,7 +183,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -348,6 +350,8 @@
             "min"
           ],
           "displayMode": "table",
+          "enableFacetedFilter": false,
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": true
         },
@@ -358,7 +362,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -554,6 +558,8 @@
             "min"
           ],
           "displayMode": "table",
+          "enableFacetedFilter": false,
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": true
         },
@@ -563,7 +569,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -776,7 +782,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Projected Range",
-  "uid": "riqUfXgRz",
+  "weekStart": "",
   "version": 1,
-  "weekStart": ""
+  "uid": "riqUfXgRz"
 }

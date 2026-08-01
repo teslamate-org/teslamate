@@ -103,7 +103,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -188,7 +188,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -274,7 +274,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -360,7 +360,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -440,7 +440,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -522,7 +522,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -604,7 +604,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -686,7 +686,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -775,7 +775,7 @@
           "color": "rgba(255,0,255,0.7)"
         },
         "filterValues": {
-          "le": 1e-09
+          "le": 1e-9
         },
         "legend": {
           "show": false
@@ -797,7 +797,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -947,6 +947,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
+          "enableFacetedFilter": false,
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": false
         },
@@ -957,7 +959,7 @@
           "sort": "desc"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1060,6 +1062,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "fixedColor": "#73BF69",
             "mode": "palette-classic"
           },
           "custom": {
@@ -1121,6 +1124,7 @@
         "legend": {
           "calcs": [],
           "displayMode": "table",
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": true,
           "values": [
@@ -1144,7 +1148,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1322,7 +1326,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1364,6 +1368,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "fixedColor": "#73BF69",
             "mode": "palette-classic"
           },
           "custom": {
@@ -1425,6 +1430,7 @@
         "legend": {
           "calcs": [],
           "displayMode": "table",
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": true,
           "values": [
@@ -1448,7 +1454,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1598,6 +1604,7 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": false
         },
@@ -1663,7 +1670,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1827,7 +1834,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -2038,7 +2045,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -2158,7 +2165,7 @@
         "cellHeight": "sm",
         "showHeader": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -2274,7 +2281,7 @@
         "cellHeight": "sm",
         "showHeader": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -2428,7 +2435,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Charging Stats",
-  "uid": "-pkIkhmRz",
+  "weekStart": "",
   "version": 1,
-  "weekStart": ""
+  "uid": "-pkIkhmRz"
 }

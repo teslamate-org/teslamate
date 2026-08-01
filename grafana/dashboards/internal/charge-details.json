@@ -346,6 +346,8 @@
             "max"
           ],
           "displayMode": "list",
+          "enableFacetedFilter": false,
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": true
         },
@@ -355,7 +357,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -457,7 +459,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -538,7 +540,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "alias": "Elapsed Time",
@@ -678,7 +680,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -784,7 +786,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -994,7 +996,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1087,7 +1089,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1227,7 +1229,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1335,7 +1337,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1479,7 +1481,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1659,6 +1661,7 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": false
         },
@@ -1711,7 +1714,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1908,7 +1911,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Charge Details",
-  "uid": "BHhxFeZRz",
+  "weekStart": "",
   "version": 1,
-  "weekStart": ""
+  "uid": "BHhxFeZRz"
 }

@@ -510,7 +510,7 @@
           }
         ]
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -729,7 +729,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Timeline",
-  "uid": "SUBgwtigz",
+  "weekStart": "",
   "version": 1,
-  "weekStart": ""
+  "uid": "SUBgwtigz"
 }
