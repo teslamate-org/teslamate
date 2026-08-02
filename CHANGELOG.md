@@ -14,6 +14,8 @@
 
 #### Documentation
 
+- docs: add AI-assisted contribution policy and Grafana dashboard notes (#5578 - @swiffer)
+
 ## [4.2.0] - 2026-08-23
 
 With Fleet Telemetry streaming enabled, TeslaMate now checks every 10 minutes instead of every 30 whether the vehicle has fallen asleep, so sleep transitions show up in dashboards up to 20 minutes sooner — at no extra API cost and with no impact on the vehicle's ability to sleep. We also refined the Home Assistant MQTT discovery, fixed a startup crash of the charging recalculation on unusual DC charging data (two reports) and enhanced the documentation.
