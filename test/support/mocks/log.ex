@@ -99,7 +99,15 @@ defmodule LogMock do
 
   def handle_call({:start_charging_process, _, _, _} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %ChargingProcess{id: 99, start_date: DateTime.utc_now()}}, state}
+
+    {:reply,
+     {:ok,
+      %ChargingProcess{
+        id: 99,
+        start_date: DateTime.utc_now(),
+        address: nil,
+        geofence: nil
+      }}, state}
   end
 
   def handle_call(
