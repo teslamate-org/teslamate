@@ -82,6 +82,7 @@
 - feat(grafana): make data health summary actionable (#5526 - @magrathean-uk)
 - fix(grafana): drop the Releases panel from the home dashboard to end the CORS proxy dependency (#5548 - @JakobLichterfeld)
 - fix(dashboards): filter latest-value position panels on complete rows so they use the partial index (#5438 - @swiffer)
+- fix(grafana): Battery Health latest SOC/kWh panels pick the newest UNION row and use `usable_battery_level` on charges (#5438 - @swiffer)
 - fix(grafana): use local calendar for Statistics period end boundaries (#5562 - @wjsall)
 
 #### Translations
