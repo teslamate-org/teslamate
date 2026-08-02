@@ -8,8 +8,8 @@
       ...
     }:
     let
-      beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_28;
-      elixir = beamPackages.elixir_1_19;
+      beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_29;
+      elixir = beamPackages.elixir_1_20;
       rebar3 = beamPackages.rebar3;
 
       src = ../..;
