@@ -165,7 +165,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
         assert html = render(view)
         assert table_row(html, "Status", unquote(Macro.escape(status)))
 
-        assert [{"a", [_, {"disabled", "disabled"}, _], [unquote(msg)]}] =
+        assert [{"a", [_, {"disabled", ""}, _], [unquote(msg)]}] =
                  html
                  |> Floki.parse_document!()
                  |> Floki.find(".button.is-danger")

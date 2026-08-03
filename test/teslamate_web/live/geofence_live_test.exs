@@ -160,7 +160,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           |> Enum.join()
 
         assert error_html ==
-                 "<span class=\"help is-danger pl-15\" phx-feedback-for=\"geo_fence[#{kind}]\">can't be blank</span>"
+                 "<span class=\"help is-danger pl-15\">can't be blank</span>"
       end
     end
 
