@@ -77,6 +77,7 @@
 - style(nix): format Nix code with nixfmt instead of the archived nixpkgs-fmt (#5545 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5544)
 - build(deps): bump phoenix_live_view from 0.20.17 to 1.2.8 and migrate accordingly (#5580 - @JakobLichterfeld)
+- build(deps): bump all @docusaurus from 3.10.1 to 3.10.2 in /website (#5571)
 
 #### Dashboards
 
