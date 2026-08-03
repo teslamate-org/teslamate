@@ -79,6 +79,7 @@
 - build(deps): bump phoenix_live_view from 0.20.17 to 1.2.8 and migrate accordingly (#5580 - @JakobLichterfeld)
 - build(deps): bump all @docusaurus from 3.10.1 to 3.10.2 in /website (#5571)
 - build(deps): bump react and react-dom from 19.2.7 to 19.2.8 in /website (#5574)
+- build(deps): bump postcss from 8.5.15 to 8.5.25 in /website (#5582)
 
 #### Dashboards
 
