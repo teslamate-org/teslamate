@@ -76,6 +76,7 @@
 - ci(treefmt): stop treefmt.toml from drifting out of sync with the flake (#5545 - @JakobLichterfeld)
 - style(nix): format Nix code with nixfmt instead of the archived nixpkgs-fmt (#5545 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5544)
+- build(deps): bump phoenix_live_view from 0.20.17 to 1.2.8 and migrate accordingly (#5580 - @JakobLichterfeld)
 
 #### Dashboards
 
