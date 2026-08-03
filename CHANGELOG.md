@@ -80,6 +80,7 @@
 - build(deps): bump all @docusaurus from 3.10.1 to 3.10.2 in /website (#5571)
 - build(deps): bump react and react-dom from 19.2.7 to 19.2.8 in /website (#5574)
 - build(deps): bump postcss from 8.5.15 to 8.5.25 in /website (#5582)
+- build(deps): bump the actions-deps group across 4 directories with 11 updates (#5576)
 
 #### Dashboards
 
