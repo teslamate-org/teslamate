@@ -201,7 +201,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   end
 
   describe "New" do
-    test "pre-fills the coordinates with the most recent position", %{conn: conn} do
+    test "pre-fills the coordinates with the last inserted position", %{conn: conn} do
       car = car_fixture()
 
       assert {:ok, _} =

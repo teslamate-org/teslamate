@@ -155,16 +155,18 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
-  def get_latest_position do
+  # Order by id for PK scan; geofence map center only.
+  def get_last_inserted_position do
     Position
-    |> order_by(desc: :date)
+    |> order_by(desc: :id)
     |> limit(1)
     |> Repo.one()
   end
 
+  # Filter ideal_battery_range_km so restore uses partial index, not seq scan.
   def get_latest_position(%Car{id: id}) do
     Position
-    |> where(car_id: ^id)
+    |> where([p], p.car_id == ^id and not is_nil(p.ideal_battery_range_km))
     |> order_by(desc: :date)
     |> limit(1)
     |> Repo.one()

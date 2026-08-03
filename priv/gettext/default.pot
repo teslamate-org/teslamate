@@ -395,7 +395,7 @@ msgstr ""
 msgid "≈ %{range} at 100%"
 msgstr ""
 
-#: lib/teslamate_web/live/charge_live/cost.ex:20
+#: lib/teslamate_web/live/charge_live/cost.ex:18
 #: lib/teslamate_web/live/charge_live/cost.html.heex:4
 #, elixir-autogen, elixir-format
 msgid "Charge Cost"
@@ -412,7 +412,7 @@ msgstr ""
 msgid "Enter charge cost"
 msgstr ""
 
-#: lib/teslamate_web/live/charge_live/cost.ex:87
+#: lib/teslamate_web/live/charge_live/cost.ex:85
 #, elixir-autogen, elixir-format
 msgid "Saved!"
 msgstr ""
