@@ -104,3 +104,9 @@ LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-g
 A gamification add-on for TeslaMate that analyzes your historical data to unlock achievements. It features a collection of badges based on driving milestones, charging habits, efficiency, and phantom drain, turning your ownership statistics into a fun progression system.
 
 LINK: [github.com/crstian19/teslamate-achievements](https://github.com/crstian19/teslamate-achievements)
+
+## [TeslaMate LLM Bridge](https://github.com/jakezai250808-sudo/teslamate-llm-bridge)
+
+A bridge that exposes a TeslaMate Postgres database to ChatGPT, Claude Desktop, and Coze through declarative-YAML "plays" — each play is a read-only SQL query plus a compute pipeline plus a creative-prompt template, and the same play definition is rendered as a ChatGPT Action, a Coze plugin, and an MCP tool. Includes 13 plays out of the box (driving personality, monthly wrapped, night-owl, cumulative climb, charging habits, ...) plus a 90-second demo with synthetic data so it can be tried without a Tesla. Java 21 + Python 3.11, multi-arch Docker, AGPL-3.0.
+
+LINK: [github.com/jakezai250808-sudo/teslamate-llm-bridge](https://github.com/jakezai250808-sudo/teslamate-llm-bridge)
