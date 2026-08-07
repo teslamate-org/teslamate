@@ -13,7 +13,7 @@ defmodule TeslaMate.Log.Charge do
     field :usable_battery_level, :integer
     field :charge_energy_added, :decimal, read_after_writes: true
     field :charger_actual_current, :integer
-    field :charger_phases, :integer, default: 1
+    field :charger_phases, :integer
     field :charger_pilot_current, :integer
     field :charger_power, :integer
     field :charger_voltage, :integer
