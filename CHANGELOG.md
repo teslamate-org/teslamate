@@ -40,6 +40,7 @@
 - fix(performance): use existing indexes for last-inserted / latest complete position lookups (#5438 - @swiffer)
 - fix(geocoder): resolve state for Australian territories (#3868 - mattew124)
 - fix(charging): fall back to charger_power when phase detection fails (#5590 - @JakobLichterfeld)
+- fix(charges): enforce positive charger phases at the database (#5590 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

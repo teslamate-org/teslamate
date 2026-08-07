@@ -143,6 +143,17 @@ defmodule TeslaMate.LogChargingTest do
       assert charge.ideal_battery_range_km == Decimal.new("250.00")
     end
 
+    test "does not invent a phase count when charger_phases is missing" do
+      car = car_fixture()
+
+      assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
+
+      assert {:ok, %Charge{} = charge} =
+               Log.insert_charge(cproc, Map.delete(@valid_attrs, :charger_phases))
+
+      assert charge.charger_phases == nil
+    end
+
     test "with invalid data returns error changeset" do
       car = car_fixture()
 
