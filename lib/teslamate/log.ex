@@ -526,7 +526,10 @@ defmodule TeslaMate.Log do
             c_if is_nil(c.charger_phases) do
               c.charger_power
             else
-              c.charger_actual_current * c.charger_voltage * type(^phases, :float) / 1000.0
+              coalesce(
+                c.charger_actual_current * c.charger_voltage * type(^phases, :float) / 1000.0,
+                c.charger_power
+              )
             end *
               fragment(
                 "EXTRACT(epoch FROM (?))",
@@ -568,7 +571,7 @@ defmodule TeslaMate.Log do
 
             :math.sqrt(r)
 
-          abs(round(p) - p) <= 0.3 ->
+          round(p) > 0 and abs(round(p) - p) <= 0.3 ->
             Logger.info("Phase correction: #{r} -> #{round(p)}", car_id: car_id)
             round(p)
 

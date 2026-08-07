@@ -41,6 +41,7 @@
 - fix(geocoder): resolve state for Australian territories (#3868 - mattew124)
 - refactor(vehicles): make the geofence name lookup in the charging log total (#5599 - @JakobLichterfeld)
 - feat: use Grafana 13.1.3 (#5587 - @swiffer)
+- fix(charging): fall back to charger_power when phase detection fails (#5590 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
