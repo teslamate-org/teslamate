@@ -25,35 +25,60 @@
       };
 
       nodejs = pkgs.nodejs;
-      nodePackages = pkgs.buildNpmPackage {
-        name = "${pname}-assets";
-        src = "${src}/assets";
-        npmDepsHash = "sha256-x0/2/j1nsWhJHo1f+7KDdI2ks4rB3th1Ty/ad76cRts="; # if you change the npm deps, you need to update this hash
-        # npmDepsHash = pkgs.lib.fakeHash;
-        dontNpmBuild = true;
-        inherit nodejs;
+      assetsRoot = src + "/assets";
 
-        installPhase = ''
-          mkdir $out
-          cp -r node_modules $out
-          ln -s $out/node_modules/.bin $out/bin
-
-          rm $out/node_modules/phoenix
-          ln -s ${mixFodDeps}/phoenix $out/node_modules
-
-          rm $out/node_modules/phoenix_html
-          ln -s ${mixFodDeps}/phoenix_html $out/node_modules
-
-          rm $out/node_modules/phoenix_live_view
-          ln -s ${mixFodDeps}/phoenix_live_view $out/node_modules
-        '';
+      # assets/package-lock.json links phoenix, phoenix_html and
+      # phoenix_live_view as `file:../deps/*`. That directory only exists in a
+      # working tree after `mix deps.get`, so the already fetched mix deps are
+      # substituted for them here. Every other dependency is fetched from the
+      # integrity hashes in package-lock.json, which is why this needs no
+      # aggregate hash of its own.
+      npmSources = pkgs.importNpmLock {
+        npmRoot = assetsRoot;
+        packageSourceOverrides = {
+          "node_modules/phoenix" = "${mixFodDeps}/phoenix";
+          "node_modules/phoenix_html" = "${mixFodDeps}/phoenix_html";
+          "node_modules/phoenix_live_view" = "${mixFodDeps}/phoenix_live_view";
+        };
       };
+
+      nodePackages = pkgs.importNpmLock.buildNodeModules {
+        npmRoot = assetsRoot;
+        inherit nodejs;
+        derivationArgs = {
+          pname = "${pname}-assets";
+          inherit version;
+          # Overrides the sources buildNodeModules would derive itself, so that
+          # the phoenix packages resolve to mixFodDeps (see npmSources above).
+          npmDeps = npmSources;
+          postInstall = ''
+            ln -s $out/node_modules/.bin $out/bin
+          '';
+        };
+      };
+
+      # The locale data must come from the same release as the ex_cldr version
+      # resolved in mix.lock. Reading the version from the lockfile keeps the
+      # two from drifting apart; a stale rev otherwise builds green and just
+      # ships the wrong locales.
+      cldrVersion =
+        let
+          matches = lib.filter (match: match != null) (
+            map (builtins.match ''^ *"ex_cldr": \{:hex, :ex_cldr, "([^"]+)".*'') (
+              lib.splitString "\n" (builtins.readFile "${src}/mix.lock")
+            )
+          );
+        in
+        if matches == [ ] then
+          throw "could not determine the ex_cldr version from mix.lock"
+        else
+          lib.head (lib.head matches);
 
       cldr = pkgs.fetchFromGitHub {
         owner = "elixir-cldr";
         repo = "cldr";
-        rev = "v2.47.4"; # this must match the version in the mix file
-        sha256 = "sha256-LIQK6pZRAW1T3Ej2XAjnuPo82hPJ2KiMPWYmHWgx008="; # if you change the cldr version in the mix file, you need to update this hash
+        rev = "v${cldrVersion}";
+        sha256 = "sha256-nGVuv8jyGCMZS63ga2iObjl+ldIZmM/xDfpQbB/ZRjE="; # if the ex_cldr version in mix.lock changes, you need to update this hash
         # sha256 = pkgs.lib.fakeHash;
       };
 
