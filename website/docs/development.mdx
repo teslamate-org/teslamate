@@ -244,8 +244,16 @@ nix run .#lint
 devenv up
 ```
 
-It is most likely you need to change the hash in `./nix/flake-modules/package.nix`. This could be `mixFodDeps`, `npmDepsHash`, or the `sha256` for `cldr`.
+After a dependency update, refresh the hashes pinned in the flake modules:
+
+```bash
+nix run .#update-nix-hashes
+```
+
+Do not rely on the build to tell you that a hash went stale. A fixed-output derivation is addressed by its hash alone, so a stale hash resolves to the store path that was fetched for it earlier: the build succeeds, the fetcher never runs and the old content is used. The command therefore invalidates each pinned hash on purpose, lets the fetcher run and writes back the hash it reports, then builds the package once more — so a green run also means the package still builds. Expect it to take a few minutes, since it re-fetches every time by design, and if it fails it restores the hashes it had replaced.
+
+The hashes it maintains are `mixFodDeps` and the `sha256` for `cldr`; npm dependencies need no hash, they are fetched from the integrity hashes in `assets/package-lock.json`.
 
 :::note
-A `cldr` version update is particularly critical. The old hashes will still appear to work if you previously built using the old hash. But will silently get the old file not the new file.
+The `cldr` revision is derived from the `ex_cldr` version in `mix.lock`, so a dependency bump moves it automatically and only its `sha256` needs refreshing. Never pin the revision by hand.
 :::
