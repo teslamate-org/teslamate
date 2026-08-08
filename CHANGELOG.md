@@ -39,6 +39,9 @@
 - feat: use Grafana 13.1.1 (#5559 - @swiffer)
 - fix(performance): use existing indexes for last-inserted / latest complete position lookups (#5438 - @swiffer)
 - fix(geocoder): resolve state for Australian territories (#3868 - mattew124)
+- fix(charging): fall back to charger_power when phase detection fails (#5592 - @JakobLichterfeld)
+- fix(charges): enforce positive charger phases at the database (#5592 - @JakobLichterfeld)
+- fix(charging): recalculate charge_energy_used for existing processes (#5592 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -91,6 +94,7 @@
 - fix(dashboards): filter latest-value position panels on complete rows so they use the partial index (#5438 - @swiffer)
 - fix(grafana): Battery Health latest SOC/kWh panels pick the newest UNION row and use `usable_battery_level` on charges (#5438 - @swiffer)
 - fix(grafana): use local calendar for Statistics period end boundaries (#5562 - @wjsall)
+- fix(charge-details): keep power panel in sync with the energy integration (#5592 - @JakobLichterfeld)
 
 #### Translations
 
@@ -107,7 +111,7 @@
 - docs: update star history links in README with to include the now needed sealed token (#5489 - @JakobLichterfeld)
 - docs: link directly to restore section in upgrading PostgreSQL guide (#5501 - @JakobLichterfeld)
 - docs: split the backup and restore guides into two separate guides and highlight that you should transfer your backup of the host (#5502 - @JakobLichterfeld)
-- - docs: point Tesla Auth users to fixed releases (#5509 - @magrathean-uk)
+- docs: point Tesla Auth users to fixed releases (#5509 - @magrathean-uk)
 
 ## [4.0.1] - 2026-06-14
 
