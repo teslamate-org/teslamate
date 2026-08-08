@@ -41,6 +41,7 @@
 - fix(geocoder): resolve state for Australian territories (#3868 - mattew124)
 - fix(charging): fall back to charger_power when phase detection fails (#5592 - @JakobLichterfeld)
 - fix(charges): enforce positive charger phases at the database (#5592 - @JakobLichterfeld)
+- fix(charging): recalculate charge_energy_used for existing processes (#5592 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -110,7 +111,7 @@
 - docs: update star history links in README with to include the now needed sealed token (#5489 - @JakobLichterfeld)
 - docs: link directly to restore section in upgrading PostgreSQL guide (#5501 - @JakobLichterfeld)
 - docs: split the backup and restore guides into two separate guides and highlight that you should transfer your backup of the host (#5502 - @JakobLichterfeld)
-- - docs: point Tesla Auth users to fixed releases (#5509 - @magrathean-uk)
+- docs: point Tesla Auth users to fixed releases (#5509 - @magrathean-uk)
 
 ## [4.0.1] - 2026-06-14
 
