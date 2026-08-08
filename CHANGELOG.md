@@ -84,6 +84,7 @@
 - build(deps): bump the actions-deps group across 4 directories with 11 updates (#5576)
 - test(grafana): guard latest-position dashboard queries against missing partial-index predicate (#5581 - @magrathean-uk)
 - build(nix): reduce the manually pinned hashes to one and automate it (#5593 - @JakobLichterfeld)
+- ci: let Dependabot pull requests refresh the Nix hashes
 
 #### Dashboards
 
@@ -108,7 +109,7 @@
 - docs: update star history links in README with to include the now needed sealed token (#5489 - @JakobLichterfeld)
 - docs: link directly to restore section in upgrading PostgreSQL guide (#5501 - @JakobLichterfeld)
 - docs: split the backup and restore guides into two separate guides and highlight that you should transfer your backup of the host (#5502 - @JakobLichterfeld)
-- - docs: point Tesla Auth users to fixed releases (#5509 - @magrathean-uk)
+- docs: point Tesla Auth users to fixed releases (#5509 - @magrathean-uk)
 
 ## [4.0.1] - 2026-06-14
 
