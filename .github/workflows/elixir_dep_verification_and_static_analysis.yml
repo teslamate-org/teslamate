@@ -4,9 +4,6 @@ on:
   workflow_call:
 
 env:
-  CACHE_NAME_DEPS: cache-elixir-deps
-  CACHE_NAME_COMPILED_DEV: cache-compiled-dev-build
-  CACHE_NAME_COMPILED_TEST: cache-compiled-test-build
   ELIXIR_ASSERT_TIMEOUT: 1000
 
 permissions:
@@ -27,8 +24,6 @@ jobs:
         id: setup-elixir-and-cache-deps
         uses: ./.github/actions/setup-elixir-and-cache-deps
         with:
-          cache-name-deps: ${{ env.CACHE_NAME_DEPS }}
-          cache-name-compiled: ${{ env.CACHE_NAME_COMPILED_DEV }}
           mix-env: dev
 
       - name: Compile without warnings

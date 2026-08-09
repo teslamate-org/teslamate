@@ -84,6 +84,7 @@
 - build(deps): bump the actions-deps group across 4 directories with 11 updates (#5576)
 - test(grafana): guard latest-position dashboard queries against missing partial-index predicate (#5581 - @magrathean-uk)
 - build: use Elixir 1.20.2 OTP 29 (#5579 - @swiffer)
+- ci: derive Elixir cache keys from the toolchain and MIX_ENV (#5595 - @JakobLichterfeld)
 
 #### Dashboards
 
