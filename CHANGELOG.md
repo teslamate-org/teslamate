@@ -43,6 +43,7 @@
 - feat: use Grafana 13.1.3 (#5587 - @swiffer)
 - fix(charging): fall back to charger_power when phase detection fails (#5592 - @JakobLichterfeld)
 - fix(charges): enforce positive charger phases at the database (#5592 - @JakobLichterfeld)
+- fix(charging): recalculate charge_energy_used for existing processes (#5592 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
