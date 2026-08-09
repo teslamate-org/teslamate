@@ -12,6 +12,7 @@
 - feat: link the software update icon to the notateslaapp release notes (#5490 - @NirKli)
 - feat: add fullscreen mode to vehicle summary map (#5495 - @hakong)
 - feat(web): expose VIN in car summary ( #5556 - @Helvio88, @magrathean-uk)
+- feat(vehicle): allow widening the Sentry Mode polling interval via POLLING_SENTRY_INTERVAL (#5594 - @onevcat)
 
 ### Improvements and bug fixes
 
