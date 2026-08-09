@@ -1127,7 +1127,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
             cproc
           end)
 
-        ["Charging", "SOC: #{lvl}%", with(%GeoFence{name: name} <- cproc.geofence, do: name)]
+        ["Charging", "SOC: #{lvl}%", geofence_name(cproc.geofence)]
         |> Enum.reject(&is_nil/1)
         |> Enum.join(" / ")
         |> Logger.info(car_id: data.car.id)
@@ -2058,6 +2058,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   defp fuse_name(:vehicle_not_found, car_id), do: :"#{__MODULE__}_#{car_id}_not_found"
   defp fuse_name(:api_error, car_id), do: :"#{__MODULE__}_#{car_id}_api_error"
+
+  defp geofence_name(%GeoFence{name: name}), do: name
+  defp geofence_name(_), do: nil
 
   defp broadcast_summary, do: {:next_event, :internal, :broadcast_summary}
   defp broadcast_fetch(status), do: {:next_event, :internal, {:broadcast_fetch, status}}
