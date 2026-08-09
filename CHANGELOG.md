@@ -85,6 +85,7 @@
 - test(grafana): guard latest-position dashboard queries against missing partial-index predicate (#5581 - @magrathean-uk)
 - build: use Elixir 1.20.2 OTP 29 (#5579 - @swiffer)
 - ci: derive Elixir cache keys from the toolchain and MIX_ENV (#5595 - @JakobLichterfeld)
+- fix(test): override meck to 1.2 for OTP 29 compatibility (#5598 - @swiffer)
 
 #### Dashboards
 
