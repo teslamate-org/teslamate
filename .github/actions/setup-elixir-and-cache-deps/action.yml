@@ -9,12 +9,6 @@ inputs:
     description: "OTP version"
     required: false
     default: "29"
-  cache-name-deps:
-    description: "Cache name for dependencies"
-    required: true
-  cache-name-compiled:
-    description: "Cache name for compiled build"
-    required: true
   mix-env:
     description: "Mix environment"
     required: false
@@ -45,9 +39,9 @@ runs:
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: deps
-        key: ${{ runner.os }}-mix-${{ inputs.cache-name-deps }}-${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-mix-deps-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix-${{ inputs.cache-name-deps }}-
+          ${{ runner.os }}-mix-deps-
 
     - name: Cache compiled build
       id: cache-build
@@ -56,10 +50,9 @@ runs:
         path: |
           _build
           priv/cldr/locales
-        key: ${{ runner.os }}-mix-${{ inputs.cache-name-compiled }}-${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-mix-build-${{ inputs.mix-env }}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix-${{ inputs.cache-name-compiled }}-
-          ${{ runner.os }}-mix-
+          ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-mix-build-${{ inputs.mix-env }}-
 
     - name: Clean to rule out incremental build as a source of flakiness
       if: github.run_attempt > 3
