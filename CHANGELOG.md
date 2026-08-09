@@ -39,6 +39,7 @@
 - feat: use Grafana 13.1.1 (#5559 - @swiffer)
 - fix(performance): use existing indexes for last-inserted / latest complete position lookups (#5438 - @swiffer)
 - fix(geocoder): resolve state for Australian territories (#3868 - mattew124)
+- refactor(vehicles): make the geofence name lookup in the charging log total (#5599 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
