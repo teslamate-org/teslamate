@@ -83,6 +83,7 @@
 - build(deps): bump postcss from 8.5.15 to 8.5.25 in /website (#5582)
 - build(deps): bump the actions-deps group across 4 directories with 11 updates (#5576)
 - test(grafana): guard latest-position dashboard queries against missing partial-index predicate (#5581 - @magrathean-uk)
+- build: use Elixir 1.20.2 OTP 29 (#5579 - @swiffer)
 
 #### Dashboards
 
