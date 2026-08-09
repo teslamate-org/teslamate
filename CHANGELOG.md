@@ -88,6 +88,8 @@
 - build: use Elixir 1.20.2 OTP 29 (#5579 - @swiffer)
 - ci: derive Elixir cache keys from the toolchain and MIX_ENV (#5595 - @JakobLichterfeld)
 - fix(test): override meck to 1.2 for OTP 29 compatibility (#5598 - @swiffer)
+- build(deps): bump leaflet-control-geocoder from 3.3.1 to 4.0.0 in /assets (#5602 - @swiffer)
+- build(deps-dev): bump sass from 1.101.0 to 1.102.0 in /assets (#5602 - @swiffer)
 
 #### Dashboards
 
