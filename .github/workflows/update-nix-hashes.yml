@@ -21,25 +21,15 @@ env:
   PATCH_NAME: nix-hashes.patch
 
 jobs:
-  # Refreshing the hashes means building the dependencies the pull request
-  # updates, which means running their code. That is why this is split in two:
-  # this job has no credentials and hands its result on as a patch, and the job
-  # below never runs repository code but is the only one that can push. Keeping
-  # both in one job would put the pushing step in a workspace that the build
-  # just had write access to, where a git hook or a core.fsmonitor entry planted
-  # during the build would run while the token is in the environment.
+  # Runs for every pull request that touches the dependencies, so a stale hash
+  # becomes visible wherever it appears, not just where it is repaired
+  # automatically. Refreshing the hashes means building those dependencies and
+  # therefore running their code, which is why this job receives no secrets or
+  # repository write credentials:
+  # it only reports what would have to change and publishes it as a patch.
+  # Pushing that change back is left to the commit job below.
   compute:
     name: Compute updated hashes
-    # Dependabot's own pull requests, from branches in this repository only.
-    # The actor check additionally keeps the updater from running on the commit
-    # it pushes itself: that push uses a token of its own, so the resulting
-    # synchronize event no longer has Dependabot as its actor. The regular CI
-    # workflows are not actor-gated and do verify that commit.
-    if: >-
-      github.actor == 'dependabot[bot]' &&
-      github.event.pull_request.user.login == 'dependabot[bot]' &&
-      github.event.pull_request.head.repo.full_name == github.repository
-
     runs-on: ubuntu-24.04
     timeout-minutes: 45
 
@@ -50,7 +40,7 @@ jobs:
       changed: ${{ steps.diff.outputs.changed }}
 
     steps:
-      - name: Checkout the Dependabot commit
+      - name: Checkout the pull request commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
@@ -99,6 +89,8 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
+      # Uploaded for every pull request, not only the ones repaired below: on a
+      # human pull request it is what the author has to apply.
       - name: Upload the patch
         if: steps.diff.outputs.changed == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -108,10 +100,50 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+  # Deliberately separate from the commit job: this one fails whenever the
+  # hashes are stale, on every pull request including Dependabot's, so the
+  # state is never reported as good while it is not. The commit job depends on
+  # `compute` alone, so it still runs and repairs them, and its push produces a
+  # new run in which there is nothing left to change and this job is green.
+  verify:
+    name: Verify the pinned hashes
+    needs: compute
+
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Report stale hashes
+        shell: bash
+        env:
+          CHANGED: ${{ needs.compute.outputs.changed }}
+        run: |
+          set -euo pipefail
+
+          if [ "$CHANGED" = "true" ]; then
+            echo "::error::the pinned Nix hashes are out of date. Run 'nix run .#update-nix-hashes' and commit the result, or download the nix-hashes-patch artifact of this run." >&2
+            exit 1
+          fi
+
+          echo "the pinned Nix hashes are up to date"
+
   commit:
     name: Commit updated hashes
     needs: compute
-    if: needs.compute.outputs.changed == 'true'
+    # Repairing automatically means pushing into the pull request's branch, so
+    # it stays limited to Dependabot's own pull requests from branches in this
+    # repository, where nobody else can steer that branch. The actor check also
+    # keeps the updater from running on the commit it pushes itself: that push
+    # uses a token of its own, so the resulting synchronize event no longer has
+    # Dependabot as its actor.
+    if: >-
+      needs.compute.outputs.changed == 'true' &&
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
 
     runs-on: ubuntu-24.04
     timeout-minutes: 10

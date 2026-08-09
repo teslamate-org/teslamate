@@ -89,7 +89,8 @@
 - ci: derive Elixir cache keys from the toolchain and MIX_ENV (#5595 - @JakobLichterfeld)
 - fix(test): override meck to 1.2 for OTP 29 compatibility (#5598 - @swiffer)
 - build(nix): reduce the manually pinned hashes to one and automate it (#5593 - @JakobLichterfeld)
-- ci: let Dependabot pull requests refresh the Nix hashes
+- ci: let Dependabot pull requests refresh the Nix hashes (#5593 - @JakobLichterfeld)
+- ci: verify Nix hashes on all dependency pull requests (#5593 - @JakobLichterfeld)
 
 #### Dashboards
 
