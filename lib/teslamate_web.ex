@@ -24,7 +24,10 @@ defmodule TeslaMateWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: TeslaMateWeb
+      use Phoenix.Controller,
+        formats: [html: "View", json: "View", xml: "View"]
+
+      plug :put_layout, html: {TeslaMateWeb.LayoutView, :app}
 
       import Plug.Conn
       use Gettext, backend: TeslaMateWeb.Gettext
