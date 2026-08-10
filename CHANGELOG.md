@@ -91,6 +91,7 @@
 - build(nix): reduce the manually pinned hashes to one and automate it (#5593 - @JakobLichterfeld)
 - ci: let Dependabot pull requests refresh the Nix hashes (#5593 - @JakobLichterfeld)
 - ci: verify Nix hashes on all dependency pull requests (#5593 - @JakobLichterfeld)
+- ci: let maintainers run CI on pull requests touching .github (#5593 - @JakobLichterfeld)
 
 #### Dashboards
 
