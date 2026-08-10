@@ -1,0 +1,283 @@
+name: Update Nix hashes
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - mix.exs
+      - mix.lock
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  # For pull requests that the gate holds back, so the hashes can still be
+  # verified deliberately, by someone who can trigger a workflow run.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-nix-hashes-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  PATCH_NAME: nix-hashes.patch
+
+jobs:
+  check_paths:
+    uses: ./.github/workflows/check_paths.yml
+
+  # Runs for every pull request that touches the dependencies, so a stale hash
+  # becomes visible wherever it appears, not just where it is repaired
+  # automatically. Refreshing the hashes means building those dependencies and
+  # therefore running their code, which is why this job receives no secrets or
+  # repository write credentials:
+  # it only reports what would have to change and publishes it as a patch.
+  # Pushing that change back is left to the commit job below.
+  compute:
+    name: Compute updated hashes
+    needs: check_paths
+    # Pull requests that touch .github are not run automatically anywhere in
+    # this repository. Those are what the manual trigger is for.
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    permissions:
+      contents: read
+
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+
+    steps:
+      - name: Checkout the pull request commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: nixbuild/nix-quick-install-action@9f63be77f412a248c9d9a65a4c82cf066cdf8f0c # v35
+
+      - name: Nix binary cache
+        uses: nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569 # v7.0.2
+        with:
+          # restore and save a cache using this key
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock', 'mix.lock') }}
+          # if there's no cache hit, restore a cache by this prefix
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          # collect garbage until Nix store size (in bytes) is at most this number
+          # before trying to save a new cache
+          # 1G = 1073741824, 2G = 2147483648
+          gc-max-store-size-linux: 2147483648
+          # do purge caches
+          purge: true
+          # purge all versions of the cache
+          purge-prefixes: nix-${{ runner.os }}-
+          # created more than this number of seconds ago
+          # relative to the start of the `Post Restore and save Nix store` phase
+          purge-created: 0
+          # except any version with the key that is the same as the `primary-key`
+          purge-primary-key: never
+
+      # The helper invalidates every pinned hash before building, so a stale
+      # fixed-output path restored from the cache cannot hide a change.
+      - name: Refresh and verify the Nix hashes
+        run: nix run .#update-nix-hashes
+
+      - name: Collect the hash changes
+        id: diff
+        shell: bash
+        run: |
+          git diff --output="$PATCH_NAME" -- nix
+
+          if [ -s "$PATCH_NAME" ]; then
+            cat "$PATCH_NAME"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "no hash needed an update"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Uploaded for every pull request, not only the ones repaired below: on a
+      # human pull request it is what the author has to apply.
+      - name: Upload the patch
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: nix-hashes-patch
+          path: ${{ env.PATCH_NAME }}
+          if-no-files-found: error
+          retention-days: 7
+
+  # Deliberately separate from the commit job: this one fails whenever the
+  # hashes are stale, on every pull request including Dependabot's, so the
+  # state is never reported as good while it is not. The commit job depends on
+  # `compute` alone, so it still runs and repairs them, and its push produces a
+  # new run in which there is nothing left to change and this job is green.
+  verify:
+    name: Verify the pinned hashes
+    needs: compute
+
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Report stale hashes
+        shell: bash
+        env:
+          CHANGED: ${{ needs.compute.outputs.changed }}
+        run: |
+          set -euo pipefail
+
+          if [ "$CHANGED" = "true" ]; then
+            echo "::error::the pinned Nix hashes are out of date. Run 'nix run .#update-nix-hashes' and commit the result, or download the nix-hashes-patch artifact of this run." >&2
+            exit 1
+          fi
+
+          echo "the pinned Nix hashes are up to date"
+
+  commit:
+    name: Commit updated hashes
+    needs: compute
+    # Repairing automatically means pushing into the pull request's branch, so
+    # it stays limited to Dependabot's own pull requests from branches in this
+    # repository, where nobody else can steer that branch. The actor check also
+    # keeps the updater from running on the commit it pushes itself: that push
+    # uses a token of its own, so the resulting synchronize event no longer has
+    # Dependabot as its actor.
+    if: >-
+      needs.compute.outputs.changed == 'true' &&
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    # The push uses its own token, so the workflow token stays read-only.
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout the Dependabot commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Download the patch
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: nix-hashes-patch
+
+      # The patch comes out of a job that ran third-party build code, so it is
+      # untrusted input. Rather than parsing its syntax, it is applied to the
+      # index without a token and the staged result is validated: that is what
+      # a commit would contain, and unlike a patch it cannot be misread. A
+      # binary hunk, or ---/+++ paths disagreeing with the diff --git line,
+      # change nothing about the check below.
+      - name: Apply the patch to the index
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ ! -s "$PATCH_NAME" ]; then
+            echo "::error::the patch is empty" >&2
+            exit 1
+          fi
+
+          git apply --cached -- "$PATCH_NAME"
+
+      - name: Validate the staged result
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          staged=0
+
+          # Each record is ":<src mode> <dst mode> <src sha> <dst sha> <status>"
+          # followed by the path, both NUL terminated.
+          while IFS= read -r -d '' entry && IFS= read -r -d '' path; do
+            read -r src_mode dst_mode _ _ status <<<"${entry#:}"
+
+            if [ "$status" != "M" ]; then
+              echo "::error::$path is staged as '$status', but only modifications are allowed" >&2
+              exit 1
+            fi
+
+            if [ "$src_mode" != "100644" ] || [ "$dst_mode" != "100644" ]; then
+              echo "::error::$path changes its mode from $src_mode to $dst_mode" >&2
+              exit 1
+            fi
+
+            case "$path" in
+              nix/*.nix) ;;
+              *)
+                echo "::error::$path is not a .nix file below nix/" >&2
+                exit 1
+                ;;
+            esac
+
+            before="$(mktemp)"
+            after="$(mktemp)"
+
+            # Masking only well formed SRI literals folds the format check into
+            # the comparison: a malformed replacement is left in place and the
+            # two versions stop matching.
+            git show "HEAD:$path" | sed -E 's|sha256-[A-Za-z0-9+/]{43}=|<hash>|g' > "$before"
+            git show ":$path" | sed -E 's|sha256-[A-Za-z0-9+/]{43}=|<hash>|g' > "$after"
+
+            if ! cmp -s "$before" "$after"; then
+              echo "::error::$path changes more than sha256 literals" >&2
+              diff -u "$before" "$after" >&2 || true
+              exit 1
+            fi
+
+            echo "$path: only sha256 literals changed"
+            staged=$((staged + 1))
+          done < <(git diff --cached --raw -z HEAD)
+
+          if [ "$staged" -eq 0 ]; then
+            echo "::error::the patch staged no change" >&2
+            exit 1
+          fi
+
+      - name: Commit the staged hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git \
+            -c user.name="teslamate-actions" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "build(deps): update Nix hashes"
+      # The only step that sees a write token, in a workspace that never ran
+      # repository code.
+      - name: Push to the Dependabot branch
+        shell: bash
+        env:
+          PUSH_TOKEN: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+
+          : "${PUSH_TOKEN:?is empty. Runs triggered by Dependabot cannot read Actions secrets, so this has to be stored as a Dependabot secret}"
+
+          # No force: if Dependabot rebased the branch in the meantime, the
+          # patch was computed against a commit that is no longer there and the
+          # push has to fail rather than overwrite it.
+          # The single quotes are load-bearing: git expands ${PUSH_TOKEN} from
+          # the environment only inside the helper subprocess, so the token
+          # never appears on a command line or on disk.
+          git \
+            -c credential.helper='!f() { echo "username=x-access-token"; echo "password=${PUSH_TOKEN}"; }; f' \
+            push \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
+            "HEAD:refs/heads/${HEAD_REF}"

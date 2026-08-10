@@ -1,7 +1,6 @@
 name: DevOps
 
 on:
-  workflow_dispatch:
   push:
     branches: ["main"]
     paths:
@@ -16,6 +15,11 @@ on:
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  # Pull requests touching .github are excluded from the automatic runs above,
+  # since the workflow definition that would run is the one from the pull
+  # request. This is the deliberate way to run the chain for them anyway, by
+  # someone with write access. The job conditions below allow for it.
+  workflow_dispatch:
 
 # Cancel any in-progress runs when a new commit is pushed
 concurrency:
@@ -32,26 +36,26 @@ jobs:
 
   spell_check:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/spell_check.yml
 
   ensure_linting:
     needs:
       - check_paths
       - spell_check
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/ensure_linting.yml
 
   elixir_dep_verification_and_static_analysis:
     needs:
       - check_paths
       - ensure_linting
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/elixir_dep_verification_and_static_analysis.yml
 
   elixir_test:
     needs:
       - check_paths
       - ensure_linting
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/elixir_test.yml

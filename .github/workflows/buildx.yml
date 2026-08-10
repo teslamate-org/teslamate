@@ -1,7 +1,6 @@
 name: Publish Docker images
 
 on:
-  workflow_dispatch:
   workflow_call:
   schedule:
     - cron: "0 3 * * *"
@@ -13,6 +12,12 @@ on:
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  # Pull requests touching .github are excluded from the automatic runs above,
+  # since the workflow definition that would run is the one from the pull
+  # request. This is the deliberate way to build them anyway, by someone with
+  # write access. The job conditions below allow for it. Note that this
+  # publishes: a run from a branch overwrites the edge tag.
+  workflow_dispatch:
 env:
   REGISTRY_IMAGE: teslamate/teslamate
 
@@ -29,7 +34,7 @@ jobs:
 
   teslamate_build:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:
@@ -62,7 +67,7 @@ jobs:
     needs:
       - check_paths
       - teslamate_build
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -83,7 +88,7 @@ jobs:
             type=edge
   grafana:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
