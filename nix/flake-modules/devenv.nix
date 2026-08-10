@@ -82,6 +82,9 @@
         };
         process.managers.process-compose = {
           port = process_compose_port;
+          # The TUI keeps `devenv up` in the foreground. To run the services
+          # non-interactively, start them detached
+          # with `devenv up -d` and stop them via `devenv processes stop`.
           tui.enable = true;
         };
         services.postgres = {

@@ -96,6 +96,7 @@
 - build(deps): bump js-yaml from 4.2.0 to 4.3.1 in /website (#5597)
 - build(deps): bump brace-expansion from 1.1.14 to 1.1.18 in /website (#5596)
 - build(deps): bump fast-uri from 3.1.4 to 3.1.5 in /website (#5589)
+- build(deps): bump phoenix from 1.7.24 to 1.8.9 and migrate accordingly (#5572 - @JakobLichterfeld)
 
 #### Dashboards
 
