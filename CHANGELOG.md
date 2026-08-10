@@ -99,6 +99,7 @@
 - build(deps): bump phoenix from 1.7.24 to 1.8.9 and migrate accordingly (#5572 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5560)
 - build(deps-dev): bump sass from 1.101.0 to 1.102.0 in /assets (#5566)
+- build(deps): bump leaflet-control-geocoder from 3.3.1 to 4.0.0 in /assets (#5565)
 
 #### Dashboards
 
