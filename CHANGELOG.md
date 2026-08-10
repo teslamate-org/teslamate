@@ -93,6 +93,7 @@
 - ci: verify Nix hashes on all dependency pull requests (#5593 - @JakobLichterfeld)
 - ci: let maintainers run CI on pull requests touching .github (#5593 - @JakobLichterfeld)
 - build(deps): bump postgrex from 0.22.2 to 0.22.3 (#5570)
+- build(deps): bump js-yaml from 4.2.0 to 4.3.1 in /website (#5597)
 
 #### Dashboards
 
