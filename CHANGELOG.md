@@ -92,6 +92,7 @@
 - ci: let Dependabot pull requests refresh the Nix hashes (#5593 - @JakobLichterfeld)
 - ci: verify Nix hashes on all dependency pull requests (#5593 - @JakobLichterfeld)
 - ci: let maintainers run CI on pull requests touching .github (#5593 - @JakobLichterfeld)
+- build(deps): bump postgrex from 0.22.2 to 0.22.3 (#5570)
 
 #### Dashboards
 
