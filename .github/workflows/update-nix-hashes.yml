@@ -111,7 +111,7 @@ jobs:
           name: nix-hashes-patch
           path: ${{ env.PATCH_NAME }}
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 7
 
   # Deliberately separate from the commit job: this one fails whenever the
   # hashes are stale, on every pull request including Dependabot's, so the
