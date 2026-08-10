@@ -273,6 +273,11 @@ jobs:
           # No force: if Dependabot rebased the branch in the meantime, the
           # patch was computed against a commit that is no longer there and the
           # push has to fail rather than overwrite it.
-          git push \
-            "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+          # The single quotes are load-bearing: git expands ${PUSH_TOKEN} from
+          # the environment only inside the helper subprocess, so the token
+          # never appears on a command line or on disk.
+          git \
+            -c credential.helper='!f() { echo "username=x-access-token"; echo "password=${PUSH_TOKEN}"; }; f' \
+            push \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
             "HEAD:refs/heads/${HEAD_REF}"
