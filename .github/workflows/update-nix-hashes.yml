@@ -9,18 +9,27 @@ on:
     paths:
       - mix.exs
       - mix.lock
+      - "!.github/**" # Important: Exclude PRs related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  # For pull requests that the gate holds back, so the hashes can still be
+  # verified deliberately, by someone who can trigger a workflow run.
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: update-nix-hashes-${{ github.event.pull_request.number }}
+  group: update-nix-hashes-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
   PATCH_NAME: nix-hashes.patch
 
 jobs:
+  check_paths:
+    uses: ./.github/workflows/check_paths.yml
+
   # Runs for every pull request that touches the dependencies, so a stale hash
   # becomes visible wherever it appears, not just where it is repaired
   # automatically. Refreshing the hashes means building those dependencies and
@@ -30,6 +39,10 @@ jobs:
   # Pushing that change back is left to the commit job below.
   compute:
     name: Compute updated hashes
+    needs: check_paths
+    # Pull requests that touch .github are not run automatically anywhere in
+    # this repository. Those are what the manual trigger is for.
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
 
