@@ -98,6 +98,7 @@
 - build(deps): bump fast-uri from 3.1.4 to 3.1.5 in /website (#5589)
 - build(deps): bump phoenix from 1.7.24 to 1.8.9 and migrate accordingly (#5572 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5560)
+- build(deps-dev): bump sass from 1.101.0 to 1.102.0 in /assets (#5566)
 
 #### Dashboards
 
