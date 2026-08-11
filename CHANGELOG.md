@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+Existing charging processes are recomputed once during the upgrade migration: previously empty or zero `charge_energy_used` values (short or mixed AC sessions) gain values, the first start after the upgrade can take a few minutes longer on databases with years of history and slow HW, and charge costs are deliberately not changed retroactively.
+
 ### New features
 
 - feat: add service mode to webview and reduce log when car is Unlocked at service mode (#5289 - @NirKli)
@@ -41,6 +43,9 @@
 - fix(geocoder): resolve state for Australian territories (#3868 - mattew124)
 - refactor(vehicles): make the geofence name lookup in the charging log total (#5599 - @JakobLichterfeld)
 - feat: use Grafana 13.1.3 (#5587 - @swiffer)
+- fix(charging): fall back to charger_power when phase detection fails (#5592 - @JakobLichterfeld)
+- fix(charges): enforce positive charger phases at the database (#5592 - @JakobLichterfeld)
+- fix(charging): recalculate charge_energy_used for existing processes (#5592 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -108,6 +113,7 @@
 - fix(dashboards): filter latest-value position panels on complete rows so they use the partial index (#5438 - @swiffer)
 - fix(grafana): Battery Health latest SOC/kWh panels pick the newest UNION row and use `usable_battery_level` on charges (#5438 - @swiffer)
 - fix(grafana): use local calendar for Statistics period end boundaries (#5562 - @wjsall)
+- fix(charge-details): keep power panel in sync with the energy integration (#5592 - @JakobLichterfeld)
 
 #### Translations
 
