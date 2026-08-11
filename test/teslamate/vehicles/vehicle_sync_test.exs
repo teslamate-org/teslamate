@@ -72,6 +72,8 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
       :ok = start_vehicle(name, events, car: car, log: false)
       {:ok, subscriber} = start_subscriber(name, car)
 
+      drain_discovery_configs()
+
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep} = summary}}
 
       assert summary == %Summary{
@@ -182,6 +184,15 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
       end
 
       refute_receive _
+    end
+  end
+
+  defp drain_discovery_configs do
+    receive do
+      {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}} ->
+        drain_discovery_configs()
+    after
+      200 -> :ok
     end
   end
 end

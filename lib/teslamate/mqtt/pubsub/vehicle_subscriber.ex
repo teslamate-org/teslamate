@@ -88,8 +88,21 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
         %State{car_id: car_id, namespace: namespace, deps: deps} = state
       ) do
     clear_retained(car_id, namespace, deps.publisher)
+    clear_discovery(state)
     {:noreply, state}
   end
+
+  defp clear_discovery(%State{discovery: false, deps: deps} = state) do
+    case HomeAssistant.clear(state.car_id, discovery_opts(state), deps.publisher) do
+      :ok ->
+        :ok
+
+      {:error, reason} ->
+        Logger.warning("MQTT HA discovery cleanup failed: #{inspect(reason)}")
+    end
+  end
+
+  defp clear_discovery(%State{}), do: :ok
 
   @publish_if_nil ~w(charge_energy_added charger_actual_current charger_phases
                        charger_power charger_voltage scheduled_charging_start_time

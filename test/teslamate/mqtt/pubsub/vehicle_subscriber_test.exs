@@ -106,6 +106,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
 
+    drain_discovery_configs()
+
     summary = %Summary{
       healthy: true,
       display_name: "Foo",
@@ -219,6 +221,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     {:ok, pid} = start_subscriber(name, 0)
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    drain_discovery_configs()
 
     summary = %Summary{
       plugged_in: false,
@@ -359,6 +363,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
 
+    drain_discovery_configs()
+
     summary = %Summary{
       display_name: "Foo",
       state: :online
@@ -455,13 +461,22 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
   end
 
-  test "does not publish discovery config when discovery is disabled", %{test: name} do
+  test "clears discovery configs when discovery is disabled", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
 
+    # Retained discovery configs are cleared on init so entities are removed
+    # from Home Assistant when discovery is disabled.
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/sensor/teslamate_0/display_name/config", "",
+                     [retain: true, qos: 1]}}
+
+    drain_discovery_configs()
+
     send(pid, %Summary{healthy: true, display_name: "Foo", state: :online})
 
+    # No discovery config should be published when discovery is disabled
     refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
   end
 
