@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+Existing charging processes are recomputed once during the upgrade migration: previously empty or zero `charge_energy_used` values (short or mixed AC sessions) gain values, the first start after the upgrade can take a few minutes longer on databases with years of history and slow HW, and charge costs are deliberately not changed retroactively.
+
 ### New features
 
 - feat: add service mode to webview and reduce log when car is Unlocked at service mode (#5289 - @NirKli)
