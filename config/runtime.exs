@@ -18,6 +18,16 @@ defmodule Util do
     end
   end
 
+  def validate_discovery_prefix!(nil), do: nil
+  def validate_discovery_prefix!(""), do: nil
+
+  def validate_discovery_prefix!(prefix) when is_binary(prefix) do
+    case String.contains?(prefix, ["+", "#"]) do
+      true -> raise "MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX must not contain MQTT wildcards"
+      false -> prefix
+    end
+  end
+
   def parse_check_origin!("true"), do: true
   def parse_check_origin!("false"), do: false
   def parse_check_origin!(hosts) when is_binary(hosts), do: String.split(hosts, ",")
@@ -184,7 +194,8 @@ if System.get_env("DISABLE_MQTT") != "true" or config_env() == :test do
     ipv6: System.get_env("MQTT_IPV6") == "true",
     discovery: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY") == "true",
     discovery_base_url: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_URL"),
-    discovery_prefix: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX")
+    discovery_prefix:
+      System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX") |> Util.validate_discovery_prefix!()
 end
 
 if config_env() != :test do
