@@ -97,6 +97,28 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert String.starts_with?(topic, "custom_prefix/")
   end
 
+  test "scopes node, unique_id and device by namespace", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok =
+      HomeAssistant.publish(
+        @summary,
+        [car_id: 0, namespace: "ns1"],
+        {MqttPublisherMock, publisher_name}
+      )
+
+    find_config("homeassistant/sensor/teslamate_ns1_0/speed/config", fn decoded ->
+      assert decoded["object_id"] == "tesla_speed"
+      assert decoded["unique_id"] == "teslamate_ns1_0_speed"
+      assert decoded["state_topic"] == "teslamate/ns1/cars/0/speed"
+      assert decoded["device"]["identifiers"] == ["teslamate_ns1_car_0"]
+    end)
+
+    find_config("homeassistant/sensor/teslamate_ns1_0/display_name/config", fn decoded ->
+      assert decoded["unique_id"] == "teslamate_ns1_0_display_name"
+    end)
+  end
+
   test "locked binary sensor is inverted", %{test: name} do
     publisher_name = start_publisher(name)
 

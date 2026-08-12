@@ -36,10 +36,13 @@ Enable it with the following environment variables (see [Environment variables](
 | `MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX` | Discovery topic prefix. Must match Home Assistant's `discovery_prefix` setting.                | `homeassistant` |
 
 When enabled, TeslaMate publishes a retained `config` payload per entity to
-`<discovery_prefix>/<component>/<node>_<car_id>/<object_id>/config` on the first
-vehicle summary, where `<node>` is `teslamate`. The device is grouped under the
-`teslamate_car_<car_id>` identifier, and the entity IDs match those produced by
-the manual `mqtt_sensors.yaml` below.
+`<discovery_prefix>/<component>/<node>/<object_id>/config` on the first
+vehicle summary, where `<node>` is `teslamate_<car_id>`. If
+`MQTT_NAMESPACE` is set, it is inserted after `teslamate_` (e.g.
+`teslamate_<namespace>_<car_id>`), so multiple TeslaMate instances sharing a
+broker do not collide on the same discovery topics. The device is grouped
+under the `teslamate_car_<car_id>` identifier (likewise namespace-scoped), and
+the entity IDs match those produced by the manual `mqtt_sensors.yaml` below.
 
 :::note
 

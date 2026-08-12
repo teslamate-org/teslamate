@@ -27,8 +27,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   the given vehicle summary.
 
   Each payload is published retained (QoS 1) to
-  `<discovery_prefix>/<component>/<node>_<car_id>/<object_id>/config` where
-  `node` is `#{@node}`. Returns `:ok` on success.
+  `<discovery_prefix>/<component>/<node>/<object_id>/config` where `node` is
+  `#{@node}_<car_id>` (with the `MQTT_NAMESPACE` inserted after `#{@node}`
+  when set). Returns `:ok` on success.
   """
   @spec publish(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def publish(%Summary{} = summary, opts, publisher) do
@@ -36,9 +37,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     namespace = Keyword.get(opts, :namespace)
     base_url = Keyword.get(opts, :base_url)
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
-    node = "#{@node}_#{car_id}"
+    node = node(car_id, namespace)
 
-    device = device(summary, car_id, base_url)
+    device = device(summary, car_id, base_url, namespace)
 
     Enum.reduce_while(entities(), :ok, fn {component, object_id, config}, _acc ->
       topic = discovery_topic(prefix, component, node, object_id)
@@ -46,7 +47,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       payload =
         config
         |> resolve_topics(car_id, namespace)
-        |> Map.put(:unique_id, "teslamate_#{car_id}_#{object_id}")
+        |> Map.put(:unique_id, "#{node}_#{object_id}")
         |> Map.put(:object_id, "tesla_#{object_id}")
         |> Map.put(:device, device)
         |> Jason.encode!()
@@ -65,8 +66,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   """
   @spec clear(pos_integer(), publish_opts(), term()) :: :ok | {:error, term()}
   def clear(car_id, opts, publisher) do
+    namespace = Keyword.get(opts, :namespace)
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
-    node = "#{@node}_#{car_id}"
+    node = node(car_id, namespace)
 
     Enum.reduce_while(entities(), :ok, fn {component, object_id, _config}, _acc ->
       topic = discovery_topic(prefix, component, node, object_id)
@@ -109,12 +111,27 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     |> Enum.join("/")
   end
 
-  defp device(%Summary{} = summary, car_id, base_url) do
+  defp node(car_id, namespace) do
+    [@node, namespace, car_id]
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join("_")
+  end
+
+  defp device(%Summary{} = summary, car_id, base_url, namespace) do
     name = summary.display_name || car_name(summary) || "Tesla ##{car_id}"
     model = summary.model || "Tesla"
 
-    %{identifiers: ["teslamate_car_#{car_id}"], manufacturer: "Tesla", name: name, model: model}
+    %{
+      identifiers: [device_identifier(car_id, namespace)],
+      manufacturer: "Tesla",
+      name: name,
+      model: model
+    }
     |> maybe_put(:configuration_url, base_url)
+  end
+
+  defp device_identifier(car_id, namespace) do
+    [@node, namespace, "car", car_id] |> Enum.reject(&is_nil/1) |> Enum.join("_")
   end
 
   defp car_name(%Summary{car: %Car{name: name}}) when is_binary(name) and name != "", do: name
