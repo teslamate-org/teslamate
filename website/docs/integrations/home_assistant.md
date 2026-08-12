@@ -59,9 +59,8 @@ tracked, e.g. because they were removed from the Tesla account or because
 logging was disabled, so their entities are removed from Home Assistant.
 
 The discovered entities cover the same set of `teslamate/cars/<id>/...` topics
-as the manual `mqtt_sensors.yaml` below, plus `charging_state`, which has no
-manual equivalent. The list is easy to extend in the future, as configs are
-published per entity.
+as the manual `mqtt_sensors.yaml` below. The list is easy to extend in the
+future, as configs are published per entity.
 
 :::note
 
