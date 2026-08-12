@@ -170,6 +170,24 @@ in
         example = 1883;
         description = "MQTT port.";
       };
+
+      discovery = {
+        enable = mkEnableOption "Home Assistant MQTT discovery";
+
+        url = mkOption {
+          type = types.str;
+          default = "";
+          example = "https://teslamate.example.com/";
+          description = "The TeslaMate URL surfaced in the discovered device panel.";
+        };
+
+        prefix = mkOption {
+          type = types.str;
+          default = "homeassistant";
+          example = "homeassistant";
+          description = "Discovery topic prefix. Must match Home Assistant's discovery_prefix setting.";
+        };
+      };
     };
   };
 
@@ -229,6 +247,11 @@ in
           (mkIf cfg.mqtt.enable {
             MQTT_HOST = cfg.mqtt.host;
             MQTT_PORT = mkIf (cfg.mqtt.port != null) (toString cfg.mqtt.port);
+            MQTT_HOME_ASSISTANT_DISCOVERY = mkIf cfg.mqtt.discovery.enable "true";
+            MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX = mkIf cfg.mqtt.discovery.enable cfg.mqtt.discovery.prefix;
+            MQTT_HOME_ASSISTANT_DISCOVERY_URL = mkIf (
+              cfg.mqtt.discovery.enable && cfg.mqtt.discovery.url != ""
+            ) cfg.mqtt.discovery.url;
           })
         ];
       };
