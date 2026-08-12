@@ -264,7 +264,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          state_topic_key: :charge_energy_added,
          name: "Charge Energy Added",
          device_class: "energy",
-         state_class: "total",
+         state_class: "total_increasing",
          unit_of_measurement: "kWh",
          icon: "mdi:battery-charging"
        }},
