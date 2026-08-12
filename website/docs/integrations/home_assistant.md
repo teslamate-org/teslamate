@@ -55,6 +55,11 @@ On startup, discovery configs are also cleared for cars that are no longer
 tracked, e.g. because they were removed from the Tesla account or because
 logging was disabled, so their entities are removed from Home Assistant.
 
+The discovered entities cover the same set of `teslamate/cars/<id>/...` topics
+as the manual `mqtt_sensors.yaml` below, plus `charging_state`, which has no
+manual equivalent. The list is easy to extend in the future, as configs are
+published per entity.
+
 :::note
 
 Configs are only cleared at startup. A car removed while TeslaMate is running
@@ -144,6 +149,14 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/state"
     icon: mdi:car-connected
+
+- sensor:
+    name: Charging State
+    default_entity_id: sensor.tesla_charging_state
+    unique_id: teslamate_1_charging_state
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/charging_state"
+    icon: mdi:ev-station
 
 - sensor:
     name: Since

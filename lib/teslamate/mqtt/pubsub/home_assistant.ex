@@ -131,6 +131,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"sensor", "display_name",
        %{state_topic_key: :display_name, name: "Display Name", icon: "mdi:car"}},
       {"sensor", "state", %{state_topic_key: :state, name: "State", icon: "mdi:car-connected"}},
+      {"sensor", "charging_state",
+       %{state_topic_key: :charging_state, name: "Charging State", icon: "mdi:ev-station"}},
       {"sensor", "since",
        %{
          state_topic_key: :since,
