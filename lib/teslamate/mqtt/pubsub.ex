@@ -1,8 +1,14 @@
 defmodule TeslaMate.Mqtt.PubSub do
   use Supervisor
 
+  require Logger
+
   alias __MODULE__.VehicleSubscriber
+  alias __MODULE__.HomeAssistant
+  alias TeslaMate.Log
+  alias TeslaMate.Mqtt.Publisher
   alias TeslaMate.Vehicles
+  alias TeslaMate.Vehicles.Vehicle.Summary
 
   # API
 
@@ -16,10 +22,39 @@ defmodule TeslaMate.Mqtt.PubSub do
       opts
       |> Keyword.take([:namespace, :discovery, :discovery_base_url, :discovery_prefix])
 
+    vehicles = Vehicles.list()
+
+    if Keyword.get(opts, :discovery, false) do
+      Task.start(fn -> clear_removed_vehicles(vehicles, opts) end)
+    end
+
     children =
-      Vehicles.list()
+      vehicles
       |> Enum.map(&{VehicleSubscriber, Keyword.merge(subscriber_opts, car_id: &1.car.id)})
 
     Supervisor.init(children, strategy: :one_for_one)
+  end
+
+  @doc """
+  Clears Home Assistant discovery configs for cars that are no longer
+  tracked by a vehicle process, e.g. because they were removed from the
+  Tesla account or because logging was disabled, so their entities are
+  removed from Home Assistant.
+  """
+  @spec clear_removed_vehicles([Summary.t()], keyword()) :: :ok
+  def clear_removed_vehicles(vehicles, opts) do
+    publisher = Keyword.get(opts, :deps_publisher, Publisher)
+    active_ids = Enum.map(vehicles, & &1.car.id)
+
+    Log.list_cars()
+    |> Enum.reject(&(&1.id in active_ids))
+    |> Enum.each(fn car ->
+      case HomeAssistant.clear(car.id, Keyword.take(opts, [:discovery_prefix]), publisher) do
+        :ok -> :ok
+        {:error, reason} -> Logger.warning("MQTT HA discovery cleanup failed: #{inspect(reason)}")
+      end
+    end)
+
+    :ok
   end
 end

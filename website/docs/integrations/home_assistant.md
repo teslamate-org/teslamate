@@ -41,6 +41,19 @@ vehicle summary, where `<node>` is `teslamate`. The device is grouped under the
 `teslamate_car_<car_id>` identifier, and the entity IDs match those produced by
 the manual `mqtt_sensors.yaml` below.
 
+On startup, discovery configs are also cleared for cars that are no longer
+tracked, e.g. because they were removed from the Tesla account or because
+logging was disabled, so their entities are removed from Home Assistant.
+
+:::note
+
+Configs are only cleared at startup. A car removed while TeslaMate is running
+keeps its entities until the next restart, and changing
+`MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX` does not clean up topics published under
+the previous prefix.
+
+:::
+
 ## Configuration
 
 The following configurations assume a car ID of 1 (`teslamate/cars/1`). It usually starts at 1, but it can be different if you have multiple cars in TeslaMate for example.
