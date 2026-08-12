@@ -47,7 +47,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
         config
         |> resolve_topics(car_id, namespace)
         |> Map.put(:unique_id, "teslamate_#{car_id}_#{object_id}")
-        |> Map.put(:object_id, object_id)
+        |> Map.put(:object_id, "tesla_#{object_id}")
         |> Map.put(:device, device)
         |> Jason.encode!()
 
@@ -219,7 +219,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "km",
          icon: "mdi:counter"
        }},
-      {"sensor", "est_battery_range_km",
+      {"sensor", "est_battery_range",
        %{
          state_topic_key: :est_battery_range_km,
          name: "Est Battery Range",
@@ -227,7 +227,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "km",
          icon: "mdi:gauge"
        }},
-      {"sensor", "rated_battery_range_km",
+      {"sensor", "rated_battery_range",
        %{
          state_topic_key: :rated_battery_range_km,
          name: "Rated Battery Range",
@@ -235,7 +235,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "km",
          icon: "mdi:gauge"
        }},
-      {"sensor", "ideal_battery_range_km",
+      {"sensor", "ideal_battery_range",
        %{
          state_topic_key: :ideal_battery_range_km,
          name: "Ideal Battery Range",

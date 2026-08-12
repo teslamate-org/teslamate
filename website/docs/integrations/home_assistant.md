@@ -41,6 +41,16 @@ vehicle summary, where `<node>` is `teslamate`. The device is grouped under the
 `teslamate_car_<car_id>` identifier, and the entity IDs match those produced by
 the manual `mqtt_sensors.yaml` below.
 
+:::note
+
+The `unique_id`s of the discovered entities match those of the manual
+`mqtt_sensors.yaml`, so enabling discovery while the manual configuration is
+still active will produce duplicate-ID errors in Home Assistant. Remove the
+manual `mqtt: !include mqtt_sensors.yaml` section from `configuration.yaml`
+(and the entities it created) before enabling discovery.
+
+:::
+
 On startup, discovery configs are also cleared for cars that are no longer
 tracked, e.g. because they were removed from the Tesla account or because
 logging was disabled, so their entities are removed from Home Assistant.

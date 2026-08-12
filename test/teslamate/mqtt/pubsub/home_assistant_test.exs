@@ -134,6 +134,27 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     end)
   end
 
+  test "entity ids match the manual mqtt_sensors.yaml naming", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    find_config("homeassistant/sensor/teslamate_0/speed/config", fn decoded ->
+      assert decoded["object_id"] == "tesla_speed"
+      assert decoded["unique_id"] == "teslamate_0_speed"
+    end)
+
+    find_config("homeassistant/sensor/teslamate_0/est_battery_range/config", fn decoded ->
+      assert decoded["object_id"] == "tesla_est_battery_range"
+      assert decoded["unique_id"] == "teslamate_0_est_battery_range"
+    end)
+
+    find_config("homeassistant/binary_sensor/teslamate_0/healthy/config", fn decoded ->
+      assert decoded["object_id"] == "tesla_healthy"
+      assert decoded["unique_id"] == "teslamate_0_healthy"
+    end)
+  end
+
   test "clear publishes empty payloads per entity", %{test: name} do
     publisher_name = start_publisher(name)
 
