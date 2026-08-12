@@ -1,5 +1,5 @@
 defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
-  use TeslaMate.DataCase, async: true
+  use ExUnit.Case, async: true
 
   alias TeslaMate.Mqtt.PubSub.HomeAssistant
   alias TeslaMate.Vehicles.Vehicle.Summary
