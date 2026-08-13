@@ -46,6 +46,7 @@ Existing charging processes are recomputed once during the upgrade migration: pr
 - fix(charging): fall back to charger_power when phase detection fails (#5592 - @JakobLichterfeld)
 - fix(charges): enforce positive charger phases at the database (#5592 - @JakobLichterfeld)
 - fix(charging): recalculate charge_energy_used for existing processes (#5592 - @JakobLichterfeld)
+- refactor(vehicle): simplify the state machine: plain atom states, DB records moved into the state data (#5259 - @brianmay, @JakobLichterfeld)
 
 #### Build, CI, internal
 
