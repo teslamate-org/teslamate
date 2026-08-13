@@ -757,6 +757,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
+  # driving_status is {:unavailable, _} or {:offline, _} here (the :available
+  # clause matched above): the stream shows life, so fetch immediately to recover.
+  def handle_event(:info, {:stream, %Stream.Data{}}, :driving, %Data{} = data) do
+    {:keep_state_and_data, schedule_fetch(0, data)}
+  end
+
   #### Suspended
 
   def handle_event(
