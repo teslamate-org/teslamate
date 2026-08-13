@@ -25,6 +25,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
               deps: %{},
               task: nil,
               import?: false,
+              # Interval in ms between periodic position inserts while :online / :charging.
+              # Set in init/1; overridable via the :store_position_interval start option (tests).
+              store_position_interval: nil,
               stream_pid: nil,
               # :start serves both the process start and the return from a
               # transient state (charging, driving, updating, suspended). On the
@@ -263,7 +266,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       last_state_change: last_state_change,
       state_row_started: last_state_change,
       deps: deps,
-      import?: Keyword.get(opts, :import?, false)
+      import?: Keyword.get(opts, :import?, false),
+      store_position_interval: Keyword.get(opts, :store_position_interval, :timer.minutes(5))
     }
 
     fuses = [
@@ -1010,13 +1014,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ### Store Position
 
   def handle_event({:timeout, :store_position}, :store_position, state, data)
-      when state == :online or (is_tuple(state) and elem(state, 0) == :charging) do
+      when state in [:online, :charging] do
     Logger.debug("Storing position ...", car_id: data.car.id)
 
     {:ok, _pos} =
       call(data.deps.log, :insert_position, [data.car, create_position(data.last_response, data)])
 
-    {:keep_state_and_data, schedule_position_storing()}
+    {:keep_state_and_data, schedule_position_storing(data)}
   end
 
   def handle_event({:timeout, :store_position}, :store_position, _state, _data) do
@@ -1119,7 +1123,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          geofence: geofence,
          stream_pid: stream_pid,
          initial_fetch?: false
-     }, [broadcast_summary(), {:next_event, :internal, evt}, schedule_position_storing()]}
+     }, [broadcast_summary(), {:next_event, :internal, evt}, schedule_position_storing(data)]}
   end
 
   #### :online
@@ -1210,7 +1214,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
              last_used: data.deps.clock.utc_now(),
              stream_pid: nil,
              current_charging_process: cproc
-         }, [broadcast_summary(), schedule_fetch(5, data), schedule_position_storing()]}
+         }, [broadcast_summary(), schedule_fetch(5, data), schedule_position_storing(data)]}
 
       _ ->
         try_to_suspend(vehicle, state, data)
@@ -2173,8 +2177,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp broadcast_summary, do: {:next_event, :internal, :broadcast_summary}
   defp broadcast_fetch(status), do: {:next_event, :internal, {:broadcast_fetch, status}}
 
-  defp schedule_position_storing do
-    {{:timeout, :store_position}, :timer.minutes(5), :store_position}
+  defp schedule_position_storing(%Data{store_position_interval: interval}) do
+    {{:timeout, :store_position}, interval, :store_position}
   end
 
   # A payload whose timestamp lies before the open states row began is
