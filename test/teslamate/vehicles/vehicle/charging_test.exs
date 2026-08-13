@@ -96,6 +96,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: ^s2}}}
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+    # the charging record must not outlive the :charging state
+    assert {:online, %{current_charging_process: nil}} = :sys.get_state(name)
+
     refute_receive _
   end
 
