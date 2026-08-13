@@ -131,6 +131,7 @@ Existing charging processes are recomputed once during the upgrade migration: pr
 - docs: link directly to restore section in upgrading PostgreSQL guide (#5501 - @JakobLichterfeld)
 - docs: split the backup and restore guides into two separate guides and highlight that you should transfer your backup of the host (#5502 - @JakobLichterfeld)
 - docs: point Tesla Auth users to fixed releases (#5509 - @magrathean-uk)
+- docs: add TeslaMate Dash to the projects page (#5494 - @gmaslowski)
 
 ## [4.0.1] - 2026-06-14
 
