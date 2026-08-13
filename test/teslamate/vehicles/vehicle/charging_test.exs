@@ -283,4 +283,37 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
 
     refute_receive _
   end
+
+  test "keeps storing positions periodically while charging", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    events = [
+      {:ok, online_event(now_ts)},
+      {:ok,
+       online_event(now_ts, drive_state: %{timestamp: now_ts, latitude: +0.0, longitude: +0.0})},
+      {:ok, charging_event(now_ts + 1, "Charging", 0.1, range: 1)},
+      fn -> Process.sleep(10_000) end
+    ]
+
+    :ok = start_vehicle(name, events, store_position_interval: 50)
+
+    assert_receive {:start_state, car, :online, date: _}, 400
+    assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0}, _opts}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
+
+    # discard positions stored before/while entering :charging
+    flush_positions()
+
+    # the periodic store_position timeout must keep firing in the :charging state
+    assert_receive {:insert_position, ^car, %{}}, 400
+    assert_receive {:insert_position, ^car, %{}}, 400
+  end
+
+  defp flush_positions do
+    receive do
+      {:insert_position, _car_or_drive, _attrs} -> flush_positions()
+    after
+      0 -> :ok
+    end
+  end
 end
