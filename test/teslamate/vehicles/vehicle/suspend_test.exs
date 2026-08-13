@@ -306,6 +306,45 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     refute_receive _
   end
 
+  test "widens the sentry mode fetch interval via POLLING_SENTRY_INTERVAL", %{test: name} do
+    :ok = System.put_env("POLLING_SENTRY_INTERVAL", "3600")
+    on_exit(fn -> System.delete_env("POLLING_SENTRY_INTERVAL") end)
+
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    not_suspendable =
+      online_event(now_ts,
+        drive_state: %{timestamp: now_ts, latitude: 0.0, longitude: 0.0},
+        vehicle_state: %{sentry_mode: true, car_version: ""}
+      )
+
+    events = [
+      {:ok, online_event(now_ts - 1)},
+      {:ok, not_suspendable}
+    ]
+
+    suspend_after_idle_ms = 10
+    suspend_ms = 100
+
+    :ok =
+      start_vehicle(name, events,
+        settings: %{
+          use_streaming_api: false,
+          suspend_after_idle_min: round(suspend_after_idle_ms / 60),
+          suspend_min: suspend_ms
+        }
+      )
+
+    assert_receive {:start_state, car, :online, date: _}
+    assert_receive {:insert_position, ^car, %{}}
+
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, sentry_mode: true}}}
+
+    refute_receive _, round(suspend_ms * 0.5)
+
+    refute_receive _
+  end
+
   @tag :capture_log
   test "does not suspend if any of the doors are open", %{test: name} do
     now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
