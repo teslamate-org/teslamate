@@ -1,6 +1,8 @@
 defmodule TeslaMate.Vehicles.VehicleSyncTest do
   use TeslaMate.VehicleCase, async: false
 
+  import TestHelper, only: [drain_discovery_configs: 0]
+
   describe "Summary" do
     alias TeslaMate.Vehicles.Vehicle.Summary
     alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
@@ -184,15 +186,6 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
       end
 
       refute_receive _
-    end
-  end
-
-  defp drain_discovery_configs do
-    receive do
-      {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}} ->
-        drain_discovery_configs()
-    after
-      200 -> :ok
     end
   end
 end

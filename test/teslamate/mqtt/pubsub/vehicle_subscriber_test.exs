@@ -1,6 +1,8 @@
 defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   use TeslaMate.DataCase, async: true
 
+  import TestHelper, only: [drain_discovery_configs: 0]
+
   alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Locations.GeoFence
@@ -478,14 +480,5 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     # No discovery config should be published when discovery is disabled
     refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
-  end
-
-  defp drain_discovery_configs do
-    receive do
-      {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}} ->
-        drain_discovery_configs()
-    after
-      200 -> :ok
-    end
   end
 end
