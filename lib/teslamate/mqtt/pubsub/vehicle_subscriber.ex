@@ -58,7 +58,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   @impl true
   def init(opts) do
     car_id = Keyword.fetch!(opts, :car_id)
-    namespace = Keyword.fetch!(opts, :namespace)
+    # :namespace is absent (not nil) when MQTT_NAMESPACE is unset, since
+    # Mqtt.init drops nil options before starting PubSub.
+    namespace = Keyword.get(opts, :namespace)
 
     deps = %{
       vehicles: Keyword.get(opts, :deps_vehicles, Vehicles),

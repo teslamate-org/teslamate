@@ -481,4 +481,30 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     # No discovery config should be published when discovery is disabled
     refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
   end
+
+  test "starts when the namespace option is absent (MQTT_NAMESPACE unset)", %{test: name} do
+    publisher_name = :"mqtt_publisher_#{name}"
+    vehicles_name = :"vehicles_#{name}"
+
+    {:ok, _pid} =
+      start_supervised({MqttPublisherMock, name: publisher_name, pid: self(), responses: %{}})
+
+    {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
+
+    # Mqtt.init drops nil options before starting PubSub, so subscribers must
+    # start without a :namespace key (regression: KeyError boot crash in 4.1.0)
+    {:ok, _pid} =
+      start_supervised(
+        {VehicleSubscriber,
+         [
+           name: name,
+           car_id: 0,
+           discovery: false,
+           deps_publisher: {MqttPublisherMock, publisher_name},
+           deps_vehicles: {VehiclesMock, vehicles_name}
+         ]}
+      )
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+  end
 end

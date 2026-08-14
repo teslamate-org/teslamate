@@ -2,9 +2,13 @@
 
 ## [unreleased]
 
+same as 4.1.0 with bug fix
+
 ### New features
 
 ### Improvements and bug fixes
+
+- fix(mqtt): don't require the namespace option in VehicleSubscriber (#5611 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
