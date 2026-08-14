@@ -12,9 +12,10 @@ defmodule Util do
   def validate_namespace!(""), do: nil
 
   def validate_namespace!(ns) when is_binary(ns) do
-    case String.contains?(ns, "/") do
-      true -> raise "MQTT_NAMESPACE must not contain '/'"
-      false -> ns
+    cond do
+      String.contains?(ns, "/") -> raise "MQTT_NAMESPACE must not contain '/'"
+      String.contains?(ns, ["+", "#"]) -> raise "MQTT_NAMESPACE must not contain MQTT wildcards"
+      true -> ns
     end
   end
 
