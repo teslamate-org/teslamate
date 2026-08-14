@@ -1,5 +1,19 @@
 # Changelog
 
+## [unreleased]
+
+### New features
+
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [4.1.1] - 2026-08-14
 
 Hotfix for 4.1.0, which crashes in a startup loop on installations with MQTT enabled and no `MQTT_NAMESPACE` set. Upgrading is recommended for all MQTT users.
@@ -3046,6 +3060,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.1.1...HEAD
 [4.1.1]: https://github.com/teslamate-org/teslamate/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/teslamate-org/teslamate/compare/v4.0.1...v4.1.0
 [4.0.1]: https://github.com/teslamate-org/teslamate/compare/v4.0.0...v4.0.1
