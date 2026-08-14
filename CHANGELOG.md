@@ -1,24 +1,14 @@
 # Changelog
 
-## [unreleased]
+## [4.1.1] - 2026-08-14
 
-same as 4.1.0 with bug fix
-
-### New features
+Hotfix for 4.1.0, which crashes in a startup loop on installations with MQTT enabled and no `MQTT_NAMESPACE` set. Upgrading is recommended for all MQTT users.
 
 ### Improvements and bug fixes
 
 - fix(mqtt): don't require the namespace option in VehicleSubscriber (#5611 - @JakobLichterfeld)
 
-#### Build, CI, internal
-
-#### Dashboards
-
-#### Translations
-
-#### Documentation
-
-## [4.1.0] - 2026-08-14
+## [4.1.0] - 2026-08-14 **YANKED**
 
 We've fixed small bugs that had been around for years, implemented several feature requests, integrated the latest version of Grafana, and completely overhauled numerous areas within TeslaMate. As we fixed the phase detection during AC charges, existing charging processes are recomputed once during the upgrade migration: previously empty or zero `charge_energy_used` values (short or mixed AC sessions) gain values.
 The first start after the upgrade can take a few minutes longer on databases with years of history and slow hardware; charge costs are deliberately not changed retroactively (#5592).
@@ -3056,7 +3046,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.1.0...HEAD
+[4.1.1]: https://github.com/teslamate-org/teslamate/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/teslamate-org/teslamate/compare/v4.0.1...v4.1.0
 [4.0.1]: https://github.com/teslamate-org/teslamate/compare/v4.0.0...v4.0.1
 [4.0.0]: https://github.com/teslamate-org/teslamate/compare/v3.1.0...v4.0.0
