@@ -1,5 +1,19 @@
 # Changelog
 
+## [unreleased]
+
+### New features
+
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [4.1.0] - 2026-08-14
 
 We've fixed small bugs that had been around for years, implemented several feature requests, integrated the latest version of Grafana, and completely overhauled numerous areas within TeslaMate. As we fixed the phase detection during AC charges, existing charging processes are recomputed once during the upgrade migration: previously empty or zero `charge_energy_used` values (short or mixed AC sessions) gain values.
@@ -3038,6 +3052,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.1.0...HEAD
 [4.1.0]: https://github.com/teslamate-org/teslamate/compare/v4.0.1...v4.1.0
 [4.0.1]: https://github.com/teslamate-org/teslamate/compare/v4.0.0...v4.0.1
 [4.0.0]: https://github.com/teslamate-org/teslamate/compare/v3.1.0...v4.0.0
