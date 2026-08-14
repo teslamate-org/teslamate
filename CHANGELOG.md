@@ -4,6 +4,10 @@
 
 Existing charging processes are recomputed once during the upgrade migration: previously empty or zero `charge_energy_used` values (short or mixed AC sessions) gain values, the first start after the upgrade can take a few minutes longer on databases with years of history and slow HW, and charge costs are deliberately not changed retroactively.
 
+### Note for manual Home Assistant configurations
+
+The documented manual [mqtt_sensors.yaml](https://docs.teslamate.org/docs/integrations/home_assistant#mqtt_sensorsyaml-mqtt-section-of-configurationyaml) now uses `state_class: total_increasing` for the `charge_energy_added` sensor (#5543). If you re-sync your manual YAML, Home Assistant will treat the per-charge resets as meter cycles, which changes the long-term statistics behavior (e.g. in the Energy dashboard).
+
 ### New features
 
 - feat: add service mode to webview and reduce log when car is Unlocked at service mode (#5289 - @NirKli)
@@ -14,6 +18,7 @@ Existing charging processes are recomputed once during the upgrade migration: pr
 - feat: link the software update icon to the notateslaapp release notes (#5490 - @NirKli)
 - feat: add fullscreen mode to vehicle summary map (#5495 - @hakong)
 - feat(web): expose VIN in car summary ( #5556 - @Helvio88, @magrathean-uk)
+- feat(mqtt): add opt-in Home Assistant MQTT discovery (#5543 - @brianmay, @JakobLichterfeld)
 
 ### Improvements and bug fixes
 
