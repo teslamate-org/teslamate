@@ -45,11 +45,12 @@ defmodule TeslaMate.Mqtt.PubSub do
   def clear_removed_vehicles(vehicles, opts) do
     publisher = Keyword.get(opts, :deps_publisher, Publisher)
     active_ids = Enum.map(vehicles, & &1.car.id)
+    clear_opts = Keyword.take(opts, [:namespace, :discovery_prefix])
 
     Log.list_cars()
     |> Enum.reject(&(&1.id in active_ids))
     |> Enum.each(fn car ->
-      case HomeAssistant.clear(car.id, Keyword.take(opts, [:discovery_prefix]), publisher) do
+      case HomeAssistant.clear(car.id, clear_opts, publisher) do
         :ok -> :ok
         {:error, reason} -> Logger.warning("MQTT HA discovery cleanup failed: #{inspect(reason)}")
       end
