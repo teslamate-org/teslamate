@@ -16,7 +16,14 @@ defmodule TeslaMate.Mqtt do
     children = [
       {Tortoise311.Connection, connection_config(opts) ++ [client_id: client_id]},
       {Publisher, client_id: client_id},
-      {PubSub, namespace: opts[:namespace]}
+      {PubSub,
+       [
+         namespace: opts[:namespace],
+         discovery: opts[:discovery],
+         discovery_base_url: opts[:discovery_base_url],
+         discovery_prefix: opts[:discovery_prefix]
+       ]
+       |> Enum.reject(fn {_key, value} -> is_nil(value) end)}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -23,6 +23,54 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 - Locks: Not implemented
 - Climate: Not implemented
 
+## MQTT Discovery (automatic configuration)
+
+TeslaMate can publish [Home Assistant MQTT discovery](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery) payloads, so the entities below are created automatically and you no longer need to maintain `mqtt_sensors.yaml`.
+
+Enable it with the following environment variables (see [Environment variables](../configuration/environment_variables.md)):
+
+| Variable                               | Description                                                                                    | Default         |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------- |
+| `MQTT_HOME_ASSISTANT_DISCOVERY`        | Set to `true` to enable discovery.                                                             | `false`         |
+| `MQTT_HOME_ASSISTANT_DISCOVERY_URL`    | TeslaMate URL surfaced in the discovered device panel (e.g. `https://teslamate.example.com/`). | _none_          |
+| `MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX` | Discovery topic prefix. Must match Home Assistant's `discovery_prefix` setting.                | `homeassistant` |
+
+When enabled, TeslaMate publishes a retained `config` payload per entity to
+`<discovery_prefix>/<component>/<node>/<object_id>/config` on the first
+vehicle summary, where `<node>` is `teslamate_<car_id>`. If
+`MQTT_NAMESPACE` is set, it is inserted after `teslamate_` (e.g.
+`teslamate_<namespace>_<car_id>`), so multiple TeslaMate instances sharing a
+broker do not collide on the same discovery topics. The device is grouped
+under the `teslamate_car_<car_id>` identifier (likewise namespace-scoped), and
+the entity IDs match those produced by the manual `mqtt_sensors.yaml` below.
+
+:::note
+
+The `unique_id`s of the discovered entities match those of the manual
+`mqtt_sensors.yaml`, so enabling discovery while the manual configuration is
+still active will produce duplicate-ID errors in Home Assistant. Remove the
+manual `mqtt: !include mqtt_sensors.yaml` section from `configuration.yaml`
+(and the entities it created) before enabling discovery.
+
+:::
+
+On startup, discovery configs are also cleared for cars that are no longer
+tracked, e.g. because they were removed from the Tesla account or because
+logging was disabled, so their entities are removed from Home Assistant.
+
+The discovered entities cover the same set of `teslamate/cars/<id>/...` topics
+as the manual `mqtt_sensors.yaml` below. The list is easy to extend in the
+future, as configs are published per entity.
+
+:::note
+
+Configs are only cleared at startup. A car removed while TeslaMate is running
+keeps its entities until the next restart, and changing
+`MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX` does not clean up topics published under
+the previous prefix.
+
+:::
+
 ## Configuration
 
 The following configurations assume a car ID of 1 (`teslamate/cars/1`). It usually starts at 1, but it can be different if you have multiple cars in TeslaMate for example.
@@ -103,6 +151,14 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/state"
     icon: mdi:car-connected
+
+- sensor:
+    name: Charging State
+    default_entity_id: sensor.tesla_charging_state
+    unique_id: teslamate_1_charging_state
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/charging_state"
+    icon: mdi:ev-station
 
 - sensor:
     name: Since
@@ -323,7 +379,7 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/charge_energy_added"
     device_class: energy
-    state_class: total
+    state_class: total_increasing
     unit_of_measurement: kWh
     icon: mdi:battery-charging
 

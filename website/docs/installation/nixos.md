@@ -79,6 +79,12 @@ config = services.teslamate = {
         enable = true;
         host = "127.0.0.1";
         port = 1883;
+
+        # Optional: Home Assistant MQTT discovery
+        discovery = {
+          enable = true;
+          url = "https://teslamate.example.com/";
+        };
       };
     };
 }

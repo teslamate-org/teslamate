@@ -1,6 +1,8 @@
 defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   use TeslaMate.DataCase, async: true
 
+  import TestHelper, only: [drain_discovery_configs: 0]
+
   alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Locations.GeoFence
@@ -19,7 +21,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     end
   end
 
-  defp start_subscriber(name, car_id, namespace \\ nil, publisher_responses \\ %{}) do
+  defp start_subscriber(
+         name,
+         car_id,
+         namespace \\ nil,
+         publisher_responses \\ %{},
+         extra_opts \\ []
+       ) do
     publisher_name = :"mqtt_publisher_#{name}"
     vehicles_name = :"vehicles_#{name}"
 
@@ -38,7 +46,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
          namespace: namespace,
          deps_publisher: {MqttPublisherMock, publisher_name},
          deps_vehicles: {VehiclesMock, vehicles_name}
-       ]}
+       ]
+       |> Keyword.merge(extra_opts)}
     )
   end
 
@@ -98,6 +107,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     {:ok, pid} = start_subscriber(name, 0)
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    drain_discovery_configs()
 
     summary = %Summary{
       healthy: true,
@@ -212,6 +223,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     {:ok, pid} = start_subscriber(name, 0)
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    drain_discovery_configs()
 
     summary = %Summary{
       plugged_in: false,
@@ -352,6 +365,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
 
+    drain_discovery_configs()
+
     summary = %Summary{
       display_name: "Foo",
       state: :online
@@ -414,5 +429,56 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                     {:publish, "teslamate/account_0/cars/0/healthy", "", [retain: false, qos: 1]}}
 
     refute_receive _
+  end
+
+  test "publishes Home Assistant discovery config on the first summary", %{test: name} do
+    {:ok, pid} =
+      start_subscriber(name, 0, nil, %{},
+        discovery: true,
+        discovery_base_url: "https://teslamate.example.com/"
+      )
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    summary = %Summary{healthy: true, display_name: "Foo", model: "3", state: :online}
+    send(pid, summary)
+
+    # The discovery config messages are emitted synchronously on the first
+    # summary. Wait for and drain them all so they don't carry over to the
+    # refute on the next summary.
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/" <> _ = _topic, payload, [retain: true, qos: 1]}},
+                   500
+
+    decoded = Jason.decode!(payload)
+    assert Map.has_key?(decoded, "unique_id")
+    assert Map.has_key?(decoded, "device")
+
+    drain_discovery_configs()
+
+    send(pid, %Summary{summary | version: "1"})
+
+    # No new discovery config should be published on subsequent summaries
+    refute_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
+  end
+
+  test "clears discovery configs when discovery is disabled", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    # Retained discovery configs are cleared on init so entities are removed
+    # from Home Assistant when discovery is disabled.
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/sensor/teslamate_0/display_name/config", "",
+                     [retain: true, qos: 1]}}
+
+    drain_discovery_configs()
+
+    send(pid, %Summary{healthy: true, display_name: "Foo", state: :online})
+
+    # No discovery config should be published when discovery is disabled
+    refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
   end
 end
