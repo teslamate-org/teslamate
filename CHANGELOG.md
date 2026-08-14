@@ -106,6 +106,7 @@ Existing charging processes are recomputed once during the upgrade migration: pr
 - build(deps): update flake.lock (#5560)
 - build(deps-dev): bump sass from 1.101.0 to 1.102.0 in /assets (#5566)
 - build(deps): bump leaflet-control-geocoder from 3.3.1 to 4.0.0 in /assets (#5565)
+- test(vehicle): make the store-position interval configurable and lock the state-machine field lifecycle with regression tests (#5259 - @JakobLichterfeld)
 
 #### Dashboards
 
