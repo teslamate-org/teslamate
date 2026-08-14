@@ -25,6 +25,10 @@ defmodule TeslaMate.Mqtt.PubSub do
     vehicles = Vehicles.list()
 
     if Keyword.get(opts, :discovery, false) do
+      # Runs concurrently with the supervised children starting up, so it may
+      # fire before the MQTT connection is established. Failures are only
+      # logged; since the cleanup is idempotent and repeated on every start,
+      # a missed run is corrected on the next restart.
       Task.start(fn -> clear_removed_vehicles(vehicles, opts) end)
     end
 
