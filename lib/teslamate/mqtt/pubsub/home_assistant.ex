@@ -119,7 +119,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   defp device(%Summary{} = summary, car_id, base_url, namespace) do
     name = summary.display_name || car_name(summary) || "Tesla ##{car_id}"
-    model = summary.model || "Tesla"
+    model = model_name(summary) || "Tesla"
 
     %{
       identifiers: [device_identifier(car_id, namespace)],
@@ -128,7 +128,66 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       model: model
     }
     |> maybe_put(:configuration_url, base_url)
+    |> maybe_put(:sw_version, non_empty(summary.version))
   end
+
+  defp model_name(%Summary{} = summary) do
+    model =
+      [summary.model, summary.trim_badging]
+      |> Enum.map(&non_empty/1)
+      |> Enum.reject(&is_nil/1)
+      |> case do
+        [] -> nil
+        parts -> "Model #{Enum.join(parts, " ")}"
+      end
+
+    details =
+      []
+      |> maybe_add_wheels(summary.wheel_type)
+      |> maybe_add_spoiler(summary.spoiler_type)
+
+    case {model, details} do
+      {nil, _details} -> nil
+      {model, []} -> model
+      {model, details} -> "#{model} (#{Enum.join(details, ", ")})"
+    end
+  end
+
+  defp maybe_add_wheels(details, wheel_type) do
+    case non_empty(wheel_type) do
+      nil -> details
+      wheel_type -> details ++ ["#{format_wheel_type(wheel_type)} Wheels"]
+    end
+  end
+
+  defp maybe_add_spoiler(details, spoiler_type) do
+    case format_spoiler_type(spoiler_type) do
+      nil -> details
+      spoiler_type -> details ++ ["#{spoiler_type} Spoiler"]
+    end
+  end
+
+  defp format_wheel_type(wheel_type) do
+    case Regex.named_captures(~r/^(?<name>[A-Za-z]+)(?<size>\d+)$/, wheel_type) do
+      %{"name" => name, "size" => size} -> "#{split_camel_case(name)} #{size}\""
+      nil -> split_camel_case(wheel_type)
+    end
+  end
+
+  defp format_spoiler_type(spoiler_type) do
+    case non_empty(spoiler_type) do
+      nil ->
+        nil
+
+      spoiler_type ->
+        if String.downcase(spoiler_type) == "none", do: nil, else: split_camel_case(spoiler_type)
+    end
+  end
+
+  defp split_camel_case(value), do: Regex.replace(~r/(?<=[a-z])(?=[A-Z])/, value, " ")
+
+  defp non_empty(value) when is_binary(value) and value != "", do: value
+  defp non_empty(_value), do: nil
 
   defp device_identifier(car_id, namespace) do
     [@node, namespace, "car", car_id] |> Enum.reject(&is_nil/1) |> Enum.join("_")

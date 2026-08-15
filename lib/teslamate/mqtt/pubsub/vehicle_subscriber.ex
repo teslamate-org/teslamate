@@ -17,7 +17,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     :discovery,
     :discovery_base_url,
     :discovery_prefix,
-    discovery_published: false
+    :discovery_metadata
   ]
 
   alias __MODULE__, as: State
@@ -121,16 +121,40 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
     last_values = publish_values(values, state)
 
-    state =
-      if state.discovery and not state.discovery_published do
-        publish_discovery(summary, state)
-        %{state | discovery_published: true}
-      else
-        state
-      end
+    state = maybe_publish_discovery(summary, state)
 
     {:noreply, %{state | last_values: last_values}}
   end
+
+  defp maybe_publish_discovery(%Summary{} = summary, %State{discovery: true} = state) do
+    metadata = discovery_metadata(summary)
+
+    if metadata == state.discovery_metadata do
+      state
+    else
+      case publish_discovery(summary, state) do
+        :ok -> %{state | discovery_metadata: metadata}
+        {:error, _reason} -> state
+      end
+    end
+  end
+
+  defp maybe_publish_discovery(%Summary{}, %State{} = state), do: state
+
+  defp discovery_metadata(%Summary{} = summary) do
+    {
+      summary.display_name,
+      car_name(summary.car),
+      summary.model,
+      summary.trim_badging,
+      summary.wheel_type,
+      summary.spoiler_type,
+      summary.version
+    }
+  end
+
+  defp car_name(%{name: name}), do: name
+  defp car_name(_car), do: nil
 
   defp publish_discovery(%Summary{} = summary, %State{deps: deps} = state) do
     opts = discovery_opts(state)
@@ -139,8 +163,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       :ok ->
         :ok
 
-      {:error, reason} ->
+      {:error, reason} = error ->
         Logger.warning("MQTT HA discovery publishing failed: #{inspect(reason)}")
+        error
     end
   end
 

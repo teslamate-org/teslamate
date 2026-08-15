@@ -431,7 +431,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive _
   end
 
-  test "publishes Home Assistant discovery config on the first summary", %{test: name} do
+  test "publishes Home Assistant discovery config when device metadata changes", %{test: name} do
     {:ok, pid} =
       start_subscriber(name, 0, nil, %{},
         discovery: true,
@@ -440,7 +440,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
 
-    summary = %Summary{healthy: true, display_name: "Foo", model: "3", state: :online}
+    summary = %Summary{
+      healthy: true,
+      display_name: "Foo",
+      model: "3",
+      wheel_type: "AeroTurbine19",
+      state: :online
+    }
+
     send(pid, summary)
 
     # The discovery config messages are emitted synchronously on the first
@@ -452,15 +459,23 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     decoded = Jason.decode!(payload)
     assert Map.has_key?(decoded, "unique_id")
-    assert Map.has_key?(decoded, "device")
+    assert decoded["device"]["model"] == ~s|Model 3 (Aero Turbine 19" Wheels)|
 
     drain_discovery_configs()
 
-    send(pid, %Summary{summary | version: "1"})
+    send(pid, %Summary{summary | speed: 42})
 
-    # No new discovery config should be published on subsequent summaries
+    # Changes unrelated to device metadata do not republish every discovery entity.
     refute_receive {MqttPublisherMock,
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
+
+    send(pid, %Summary{summary | version: "2026.26.1"})
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/" <> _, payload, [retain: true, qos: 1]}},
+                   500
+
+    assert Jason.decode!(payload)["device"]["sw_version"] == "2026.26.1"
   end
 
   test "clears discovery configs when discovery is disabled", %{test: name} do

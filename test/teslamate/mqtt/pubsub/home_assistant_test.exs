@@ -55,7 +55,47 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       assert device["identifiers"] == ["teslamate_car_0"]
       assert device["manufacturer"] == "Tesla"
       assert device["configuration_url"] == "https://teslamate.example.com/"
+      assert device["model"] == "Model 3"
+      refute Map.has_key?(device, "sw_version")
     end
+  end
+
+  test "publishes rich model and firmware metadata", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    summary = %{
+      @summary
+      | model: "S",
+        trim_badging: "P100D",
+        wheel_type: "AeroTurbine19",
+        spoiler_type: "CarbonFiber",
+        version: "2026.26.1"
+    }
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+
+    assert decoded["device"]["model"] ==
+             ~s|Model S P100D (Aero Turbine 19" Wheels, Carbon Fiber Spoiler)|
+
+    assert decoded["device"]["sw_version"] == "2026.26.1"
+  end
+
+  test "omits an absent spoiler from the rich model", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    summary = %{
+      @summary
+      | trim_badging: "Long Range",
+        wheel_type: "Induction",
+        spoiler_type: "None"
+    }
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+    assert decoded["device"]["model"] == "Model 3 Long Range (Induction Wheels)"
   end
 
   test "device name falls back to car.name when display_name is nil", %{test: name} do
