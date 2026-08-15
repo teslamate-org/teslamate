@@ -1,8 +1,8 @@
 defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   @moduledoc """
-  Publishes Home Assistant MQTT discovery configuration payloads, one per
-  vehicle entity, so users can opt out of manually configuring the MQTT
-  sensors in `configuration.yaml`.
+  Publishes Home Assistant MQTT device discovery configuration payloads, one
+  per vehicle, so users can opt out of manually configuring the MQTT sensors
+  in `configuration.yaml`.
 
   See: https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery
   """
@@ -15,6 +15,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   @discovery_prefix "homeassistant"
   @node "teslamate"
+  @version Mix.Project.config()[:version]
 
   @type publish_opts :: [
           car_id: pos_integer(),
@@ -24,13 +25,13 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
         ]
 
   @doc """
-  Publishes discovery configuration payloads for every entity derived from
-  the given vehicle summary.
+  Publishes a device discovery configuration payload containing every entity
+  derived from the given vehicle summary.
 
-  Each payload is published retained (QoS 1) to
-  `<discovery_prefix>/<component>/<node>/<object_id>/config` where `node` is
-  `#{@node}_<car_id>` (with the `MQTT_NAMESPACE` inserted after `#{@node}`
-  when set). Returns `:ok` on success.
+  The payload is published retained (QoS 1) to
+  `<discovery_prefix>/device/<node>/config` where `node` is
+  `#{@node}_<car_id>` (with the `MQTT_NAMESPACE` inserted after `#{@node}` when
+  set). Returns `:ok` on success.
   """
   @spec publish(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def publish(%Summary{} = summary, opts, publisher) do
@@ -39,28 +40,29 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
     node = node(car_id, namespace)
 
-    device = device(summary, opts)
-
-    Enum.reduce_while(entities(), :ok, fn {component, object_id, config}, _acc ->
-      topic = discovery_topic(prefix, component, node, object_id)
-
-      payload =
+    components =
+      Map.new(entities(), fn {component, object_id, config} ->
         config
         |> resolve_topics(car_id, namespace)
+        |> Map.put(:platform, component)
         |> Map.put(:unique_id, "#{node}_#{object_id}")
         |> Map.put(:object_id, "tesla_#{object_id}")
-        |> Map.put(:device, device)
-        |> Jason.encode!()
+        |> then(&{object_id, &1})
+      end)
 
-      case call(publisher, :publish, [topic, payload, [retain: true, qos: 1]]) do
-        :ok -> {:cont, :ok}
-        {:error, _} = error -> {:halt, error}
-      end
-    end)
+    payload =
+      %{
+        components: components,
+        device: device(summary, opts),
+        origin: origin()
+      }
+      |> Jason.encode!()
+
+    call(publisher, :publish, [discovery_topic(prefix, node), payload, [retain: true, qos: 1]])
   end
 
   @doc """
-  Builds the Home Assistant device metadata rendered into each discovery
+  Builds the Home Assistant device metadata rendered into the discovery
   configuration payload.
   """
   @spec device(Summary.t(), publish_opts()) :: map()
@@ -82,9 +84,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   end
 
   @doc """
-  Publishes an empty retained payload to clear a discovery topic, so entities
-  are removed from Home Assistant when discovery is disabled or a vehicle is
-  removed.
+  Publishes an empty retained payload to clear a vehicle's device discovery
+  topic, so its entities are removed from Home Assistant when discovery is
+  disabled or the vehicle is removed.
   """
   @spec clear(pos_integer(), publish_opts(), term()) :: :ok | {:error, term()}
   def clear(car_id, opts, publisher) do
@@ -92,18 +94,19 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
     node = node(car_id, namespace)
 
-    Enum.reduce_while(entities(), :ok, fn {component, object_id, _config}, _acc ->
-      topic = discovery_topic(prefix, component, node, object_id)
-
-      case call(publisher, :publish, [topic, "", [retain: true, qos: 1]]) do
-        :ok -> {:cont, :ok}
-        {:error, _} = error -> {:halt, error}
-      end
-    end)
+    call(publisher, :publish, [discovery_topic(prefix, node), "", [retain: true, qos: 1]])
   end
 
-  defp discovery_topic(prefix, component, node, object_id) do
-    Enum.join([prefix, component, node, object_id, "config"], "/")
+  defp discovery_topic(prefix, node) do
+    Enum.join([prefix, "device", node, "config"], "/")
+  end
+
+  defp origin do
+    %{
+      name: "TeslaMate",
+      sw_version: @version,
+      support_url: "https://docs.teslamate.org/"
+    }
   end
 
   defp resolve_topics(config, car_id, namespace) do

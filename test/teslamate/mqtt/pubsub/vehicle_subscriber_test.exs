@@ -474,18 +474,18 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     send(pid, summary)
 
-    # The discovery config messages are emitted synchronously on the first
-    # summary. Wait for and drain them all so they don't carry over to the
-    # refute on the next summary.
+    # The discovery config message is emitted synchronously on the first
+    # summary.
     assert_receive {MqttPublisherMock,
-                    {:publish, "homeassistant/" <> _ = _topic, payload, [retain: true, qos: 1]}},
+                    {:publish, "homeassistant/device/teslamate_0/config", payload,
+                     [retain: true, qos: 1]}},
                    500
 
     decoded = Jason.decode!(payload)
-    assert Map.has_key?(decoded, "unique_id")
+    assert Map.has_key?(decoded, "device")
+    assert Map.has_key?(decoded, "components")
+    assert Map.has_key?(decoded, "origin")
     assert decoded["device"]["model"] == ~s|Model 3 LR AWD (Aero Turbine 19" Wheels)|
-
-    drain_discovery_configs()
 
     send(pid, %Summary{summary | speed: 42})
 
@@ -534,7 +534,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
   @tag :capture_log
   test "backs off failed discovery publishes and retries the latest metadata", %{test: name} do
-    topic = "homeassistant/sensor/teslamate_0/display_name/config"
+    topic = "homeassistant/device/teslamate_0/config"
     error = {:error, :disconnected}
     responses = %{topic => List.duplicate(error, 7) ++ [:ok, error]}
 
@@ -605,10 +605,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     # Retained discovery configs are cleared on init so entities are removed
     # from Home Assistant when discovery is disabled.
     assert_receive {MqttPublisherMock,
-                    {:publish, "homeassistant/sensor/teslamate_0/display_name/config", "",
+                    {:publish, "homeassistant/device/teslamate_0/config", "",
                      [retain: true, qos: 1]}}
-
-    drain_discovery_configs()
 
     send(pid, %Summary{healthy: true, display_name: "Foo", state: :online})
 

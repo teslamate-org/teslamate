@@ -35,9 +35,10 @@ Enable it with the following environment variables (see [Environment variables](
 | `MQTT_HOME_ASSISTANT_DISCOVERY_URL`    | TeslaMate URL surfaced in the discovered device panel (e.g. `https://teslamate.example.com/`). | _none_          |
 | `MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX` | Discovery topic prefix. Must match Home Assistant's `discovery_prefix` setting.                | `homeassistant` |
 
-When enabled, TeslaMate publishes a retained `config` payload per entity to
-`<discovery_prefix>/<component>/<node>/<object_id>/config` on the first
-vehicle summary, where `<node>` is `teslamate_<car_id>`. If
+When enabled, TeslaMate publishes one retained device discovery payload per
+vehicle to `<discovery_prefix>/device/<node>/config` on the first vehicle
+summary. The payload contains all of the vehicle's entities, and `<node>` is
+`teslamate_<car_id>`. If
 `MQTT_NAMESPACE` is set, it is inserted after `teslamate_` (e.g.
 `teslamate_<namespace>_<car_id>`), so multiple TeslaMate instances sharing a
 broker do not collide on the same discovery topics. The device is grouped
@@ -59,8 +60,7 @@ tracked, e.g. because they were removed from the Tesla account or because
 logging was disabled, so their entities are removed from Home Assistant.
 
 The discovered entities cover the same set of `teslamate/cars/<id>/...` topics
-as the manual `mqtt_sensors.yaml` below. The list is easy to extend in the
-future, as configs are published per entity.
+as the manual `mqtt_sensors.yaml` below.
 
 :::note
 
