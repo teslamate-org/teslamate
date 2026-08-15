@@ -6,6 +6,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Locations.GeoFence
+  alias TeslaMate.Log.Car
 
   defmodule BlockingPublisher do
     def publish(test_pid, topic, message, opts) do
@@ -444,9 +445,11 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       healthy: true,
       display_name: "Foo",
       model: "3",
+      trim_badging: "74D",
       wheel_type: "AeroTurbine19",
       sun_roof_installed: false,
-      state: :online
+      state: :online,
+      car: %Car{name: "Foo", marketing_name: "LR AWD"}
     }
 
     send(pid, summary)
@@ -460,7 +463,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     decoded = Jason.decode!(payload)
     assert Map.has_key?(decoded, "unique_id")
-    assert decoded["device"]["model"] == ~s|Model 3 (Aero Turbine 19" Wheels)|
+    assert decoded["device"]["model"] == ~s|Model 3 LR AWD (Aero Turbine 19" Wheels)|
 
     drain_discovery_configs()
 
@@ -470,6 +473,18 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive {MqttPublisherMock,
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
 
+    car = %{summary.car | marketing_name: "Performance"}
+    send(pid, %Summary{summary | car: car})
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/" <> _, payload, [retain: true, qos: 1]}},
+                   500
+
+    assert Jason.decode!(payload)["device"]["model"] ==
+             ~s|Model 3 Performance (Aero Turbine 19" Wheels)|
+
+    drain_discovery_configs()
+
     send(pid, %Summary{summary | sun_roof_installed: true})
 
     assert_receive {MqttPublisherMock,
@@ -477,7 +492,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                    500
 
     assert Jason.decode!(payload)["device"]["model"] ==
-             ~s|Model 3 (Aero Turbine 19" Wheels, Sunroof)|
+             ~s|Model 3 LR AWD (Aero Turbine 19" Wheels, Sunroof)|
 
     drain_discovery_configs()
 

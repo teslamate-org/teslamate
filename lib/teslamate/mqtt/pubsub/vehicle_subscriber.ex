@@ -146,6 +146,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       summary.display_name,
       car_name(summary.car),
       summary.model,
+      car_marketing_name(summary.car),
       summary.trim_badging,
       summary.wheel_type,
       summary.spoiler_type,
@@ -156,6 +157,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   defp car_name(%{name: name}), do: name
   defp car_name(_car), do: nil
+
+  defp car_marketing_name(%{marketing_name: marketing_name}), do: marketing_name
+  defp car_marketing_name(_car), do: nil
 
   defp publish_discovery(%Summary{} = summary, %State{deps: deps} = state) do
     opts = discovery_opts(state)

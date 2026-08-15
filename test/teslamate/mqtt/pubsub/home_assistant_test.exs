@@ -62,15 +62,17 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
   test "publishes rich model and firmware metadata", %{test: name} do
     publisher_name = start_publisher(name)
+    car = %{@summary.car | marketing_name: "LR AWD"}
 
     summary = %{
       @summary
       | model: "S",
-        trim_badging: "P100D",
+        trim_badging: "74D",
         wheel_type: "AeroTurbine19",
         spoiler_type: "CarbonFiber",
         sun_roof_installed: true,
-        version: "2026.26.1"
+        version: "2026.26.1",
+        car: car
     }
 
     :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
@@ -78,9 +80,20 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     {_topic, decoded} = receive_one_config()
 
     assert decoded["device"]["model"] ==
-             ~s|Model S P100D (Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
+             ~s|Model S LR AWD (Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
 
     assert decoded["device"]["sw_version"] == "2026.26.1"
+  end
+
+  test "falls back to raw trim badging when the marketing name is unavailable", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    summary = %{@summary | trim_badging: "74D"}
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+    assert decoded["device"]["model"] == "Model 3 74D"
   end
 
   test "falls back to Tesla when the model is unknown", %{test: name} do

@@ -139,7 +139,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
           nil
 
         model ->
-          [format_model(model), non_empty(summary.trim_badging)]
+          [format_model(model), marketing_name(summary) || non_empty(summary.trim_badging)]
           |> Enum.reject(&is_nil/1)
           |> Enum.join(" ")
       end
@@ -205,6 +205,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   defp car_name(%Summary{car: %Car{name: name}}) when is_binary(name) and name != "", do: name
   defp car_name(_), do: nil
+
+  defp marketing_name(%Summary{car: %Car{marketing_name: name}}), do: non_empty(name)
+  defp marketing_name(_), do: nil
 
   defp maybe_put(map, _key, nil), do: map
   defp maybe_put(map, key, value), do: Map.put(map, key, value)
