@@ -145,6 +145,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       []
       |> maybe_add_wheels(summary.wheel_type)
       |> maybe_add_spoiler(summary.spoiler_type)
+      |> maybe_add_sunroof(summary.sun_roof_installed)
 
     case {model, details} do
       {nil, _details} -> nil
@@ -166,6 +167,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       spoiler_type -> details ++ ["#{spoiler_type} Spoiler"]
     end
   end
+
+  defp maybe_add_sunroof(details, true), do: details ++ ["Sunroof"]
+  defp maybe_add_sunroof(details, _sun_roof_installed), do: details
 
   defp format_wheel_type(wheel_type) do
     case Regex.named_captures(~r/^(?<name>[A-Za-z]+)(?<size>\d+)$/, wheel_type) do

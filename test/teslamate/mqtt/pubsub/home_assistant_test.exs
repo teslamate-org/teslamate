@@ -69,6 +69,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
         trim_badging: "P100D",
         wheel_type: "AeroTurbine19",
         spoiler_type: "CarbonFiber",
+        sun_roof_installed: true,
         version: "2026.26.1"
     }
 
@@ -77,7 +78,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     {_topic, decoded} = receive_one_config()
 
     assert decoded["device"]["model"] ==
-             ~s|Model S P100D (Aero Turbine 19" Wheels, Carbon Fiber Spoiler)|
+             ~s|Model S P100D (Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
 
     assert decoded["device"]["sw_version"] == "2026.26.1"
   end
@@ -89,7 +90,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       @summary
       | trim_badging: "Long Range",
         wheel_type: "Induction",
-        spoiler_type: "None"
+        spoiler_type: "None",
+        sun_roof_installed: false
     }
 
     :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})

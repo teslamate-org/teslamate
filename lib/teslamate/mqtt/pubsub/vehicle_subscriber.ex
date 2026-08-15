@@ -149,6 +149,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       summary.trim_badging,
       summary.wheel_type,
       summary.spoiler_type,
+      summary.sun_roof_installed,
       summary.version
     }
   end

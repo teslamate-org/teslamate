@@ -445,6 +445,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       display_name: "Foo",
       model: "3",
       wheel_type: "AeroTurbine19",
+      sun_roof_installed: false,
       state: :online
     }
 
@@ -469,7 +470,18 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive {MqttPublisherMock,
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
 
-    send(pid, %Summary{summary | version: "2026.26.1"})
+    send(pid, %Summary{summary | sun_roof_installed: true})
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/" <> _, payload, [retain: true, qos: 1]}},
+                   500
+
+    assert Jason.decode!(payload)["device"]["model"] ==
+             ~s|Model 3 (Aero Turbine 19" Wheels, Sunroof)|
+
+    drain_discovery_configs()
+
+    send(pid, %Summary{summary | sun_roof_installed: true, version: "2026.26.1"})
 
     assert_receive {MqttPublisherMock,
                     {:publish, "homeassistant/" <> _, payload, [retain: true, qos: 1]}},
