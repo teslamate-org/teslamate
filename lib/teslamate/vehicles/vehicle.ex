@@ -342,7 +342,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       suspend_min =
         case {data.car.settings, streaming?(data)} do
-          {%CarSettings{use_streaming_api: true}, true} -> 30
+          {%CarSettings{use_streaming_api: true}, true} -> 10
           {%CarSettings{suspend_min: s}, _} -> s
         end
 
@@ -1736,7 +1736,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
     {suspend_after_idle_min, suspend_min, i} =
       case {car.settings, streaming?(data)} do
-        {%CarSettings{use_streaming_api: true}, true} -> {3, 30, 2}
+        {%CarSettings{use_streaming_api: true}, true} -> {3, 10, 2}
         {%CarSettings{suspend_after_idle_min: i, suspend_min: s}, _} -> {i, s, 1}
       end
 
