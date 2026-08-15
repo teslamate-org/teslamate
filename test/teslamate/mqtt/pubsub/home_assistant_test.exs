@@ -83,6 +83,28 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert decoded["device"]["sw_version"] == "2026.26.1"
   end
 
+  test "falls back to Tesla when the model is unknown", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    summary = %{@summary | model: nil, trim_badging: "FOUNDATION"}
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+    assert decoded["device"]["model"] == "Tesla"
+  end
+
+  test "does not prefix Cybertruck with Model", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    summary = %{@summary | model: "Cybertruck", trim_badging: "FOUNDATION"}
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+    assert decoded["device"]["model"] == "Cybertruck FOUNDATION"
+  end
+
   test "omits an absent spoiler from the rich model", %{test: name} do
     publisher_name = start_publisher(name)
 

@@ -14,6 +14,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   @discovery_prefix "homeassistant"
   @node "teslamate"
+  @models_with_prefix ~w(S X 3 Y)
 
   @type publish_opts :: [
           car_id: pos_integer(),
@@ -133,12 +134,14 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   defp model_name(%Summary{} = summary) do
     model =
-      [summary.model, summary.trim_badging]
-      |> Enum.map(&non_empty/1)
-      |> Enum.reject(&is_nil/1)
-      |> case do
-        [] -> nil
-        parts -> "Model #{Enum.join(parts, " ")}"
+      case non_empty(summary.model) do
+        nil ->
+          nil
+
+        model ->
+          [format_model(model), non_empty(summary.trim_badging)]
+          |> Enum.reject(&is_nil/1)
+          |> Enum.join(" ")
       end
 
     details =
@@ -170,6 +173,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   defp maybe_add_sunroof(details, true), do: details ++ ["Sunroof"]
   defp maybe_add_sunroof(details, _sun_roof_installed), do: details
+
+  defp format_model(model) when model in @models_with_prefix, do: "Model #{model}"
+  defp format_model(model), do: model
 
   defp format_wheel_type(wheel_type) do
     case Regex.named_captures(~r/^(?<name>[A-Za-z]+)(?<size>\d+)$/, wheel_type) do
