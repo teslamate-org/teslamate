@@ -52,6 +52,27 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     )
   end
 
+  defp assert_discovery_retry(pid, expected_delay) do
+    state = :sys.get_state(pid)
+
+    assert state.discovery_retry_delay == expected_delay
+    assert is_reference(state.discovery_retry_timer)
+    assert is_reference(state.discovery_retry_token)
+    assert is_integer(Process.read_timer(state.discovery_retry_timer))
+
+    state
+  end
+
+  defp fire_discovery_retry(pid) do
+    state = :sys.get_state(pid)
+
+    assert is_reference(state.discovery_retry_timer)
+    assert is_reference(state.discovery_retry_token)
+    assert is_integer(Process.cancel_timer(state.discovery_retry_timer))
+
+    send(pid, {:retry_discovery, state.discovery_retry_token})
+  end
+
   test "starts before retained topic cleanup completes", %{test: name} do
     vehicles_name = :"vehicles_#{name}"
     {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
@@ -509,6 +530,71 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                    500
 
     assert Jason.decode!(payload)["device"]["sw_version"] == "2026.26.1"
+  end
+
+  @tag :capture_log
+  test "backs off failed discovery publishes and retries the latest metadata", %{test: name} do
+    topic = "homeassistant/sensor/teslamate_0/display_name/config"
+    error = {:error, :disconnected}
+    responses = %{topic => List.duplicate(error, 7) ++ [:ok, error]}
+
+    log =
+      ExUnit.CaptureLog.capture_log(fn ->
+        {:ok, pid} = start_subscriber(name, 0, nil, responses, discovery: true)
+
+        assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+        summary = %Summary{healthy: true, display_name: "Foo", model: "3", state: :online}
+        send(pid, summary)
+
+        assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+
+        state = assert_discovery_retry(pid, :timer.seconds(5))
+        assert state.discovery_pending_summary == summary
+        assert state.discovery_pending_device.model == "Model 3"
+
+        send(pid, %Summary{summary | version: "2026.1"})
+        latest = %Summary{summary | version: "2026.2"}
+        send(pid, latest)
+
+        state = :sys.get_state(pid)
+        assert state.discovery_pending_summary == latest
+        assert state.discovery_pending_device.sw_version == "2026.2"
+        assert state.discovery_retry_delay == :timer.seconds(5)
+
+        refute_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+
+        for expected_delay <- [10, 20, 40, 80, 160, 300] do
+          fire_discovery_retry(pid)
+          assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+          assert_discovery_retry(pid, :timer.seconds(expected_delay))
+        end
+
+        fire_discovery_retry(pid)
+        assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+
+        state = :sys.get_state(pid)
+        assert state.discovery_device.sw_version == "2026.2"
+        assert state.discovery_pending_summary == nil
+        assert state.discovery_pending_device == nil
+        assert state.discovery_retry_delay == nil
+        assert state.discovery_retry_timer == nil
+        assert state.discovery_retry_token == nil
+
+        drain_discovery_configs()
+
+        send(pid, %Summary{latest | speed: 42})
+        :sys.get_state(pid)
+        refute_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+
+        send(pid, %Summary{latest | version: "2026.3"})
+        assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+        assert_discovery_retry(pid, :timer.seconds(5))
+      end)
+
+    assert length(Regex.scan(~r/MQTT HA discovery publishing failed/, log)) == 8
+    assert log =~ "retrying in 5s"
+    assert log =~ "retrying in 300s"
   end
 
   test "clears discovery configs when discovery is disabled", %{test: name} do
