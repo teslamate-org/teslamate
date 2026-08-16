@@ -81,6 +81,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     {"binary_sensor", "charge_port_door_open"},
     {"binary_sensor", "locked"}
   ]
+  @removed_legacy_discovery_entities [{"binary_sensor", "update_available"}]
   @version Mix.Project.config()[:version]
 
   @type publish_opts :: [
@@ -232,11 +233,14 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   defp publish_legacy_configs(prefix, node, payload, publisher) do
     entities =
-      Enum.filter(entities(), fn {component, object_id, _config} ->
-        {component, object_id} in @legacy_discovery_entities
-      end)
+      for {component, object_id, _config} <- entities(),
+          {component, object_id} in @legacy_discovery_entities,
+          do: {component, object_id}
 
-    Enum.reduce_while(entities, :ok, fn {component, object_id, _config}, _acc ->
+    entities =
+      if payload == "", do: entities ++ @removed_legacy_discovery_entities, else: entities
+
+    Enum.reduce_while(entities, :ok, fn {component, object_id}, _acc ->
       topic = component_discovery_topic(prefix, component, node, object_id)
 
       case call(publisher, :publish, [topic, payload, [retain: true, qos: 1]]) do
@@ -455,8 +459,21 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          enabled_by_default: false,
          icon: "mdi:numeric"
        }},
+      {"sensor", "update_available",
+       %{
+         state_topic_key: :update_available,
+         name: "Update Available",
+         entity_category: "diagnostic",
+         enabled_by_default: false
+       }},
       {"sensor", "update_version",
-       %{state_topic_key: :update_version, name: "Update Version", icon: "mdi:alphabetical"}},
+       %{
+         state_topic_key: :update_version,
+         name: "Update Version",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:numeric"
+       }},
       {"sensor", "model",
        %{
          state_topic_key: :model,
@@ -705,6 +722,15 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          suggested_display_precision: 0,
          icon: "mdi:update"
        }},
+
+      # --- Software update ---
+      {"update", "update",
+       %{
+         state_topic_key: :software_update,
+         name: "Update",
+         device_class: "firmware",
+         entity_category: "diagnostic"
+       }},
       {"sensor", "sun_roof_state",
        %{
          state_topic_key: :sun_roof_state,
@@ -888,12 +914,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          state_topic_key: :healthy,
          name: "Healthy",
          icon: "mdi:heart-pulse"
-       })},
-      {"binary_sensor", "update_available",
-       Map.merge(true_false, %{
-         state_topic_key: :update_available,
-         name: "Update Available",
-         icon: "mdi:alarm"
        })},
       {"binary_sensor", "sun_roof_installed",
        Map.merge(true_false, %{

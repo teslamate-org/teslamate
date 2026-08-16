@@ -69,8 +69,18 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     migration_topics = Enum.map(migrations, &elem(&1, 0))
     cleanup_topics = Enum.map(cleanup, &elem(&1, 0))
 
-    assert migration_topics == cleanup_topics
+    assert MapSet.subset?(MapSet.new(migration_topics), MapSet.new(cleanup_topics))
     assert Enum.all?(cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
+
+    removed_update_available_topic =
+      "homeassistant/binary_sensor/teslamate_0/update_available/config"
+
+    refute removed_update_available_topic in migration_topics
+    assert removed_update_available_topic in cleanup_topics
+
+    update_available_topic = "homeassistant/sensor/teslamate_0/update_available/config"
+    refute update_available_topic in migration_topics
+    refute update_available_topic in cleanup_topics
 
     migration_decoded = Jason.decode!(migration_payload)
     decoded = Jason.decode!(final_payload)
@@ -616,6 +626,47 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert config["icon"] == "mdi:sine-wave"
   end
 
+  test "publishes software update entities", %{test: name} do
+    publisher_name = start_publisher(name)
+    summary = %{@summary | update_available: true}
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    components = decoded["components"]
+
+    update = components["update"]
+    assert update["platform"] == "update"
+    assert update["name"] == "Update"
+    assert update["device_class"] == "firmware"
+    assert update["entity_category"] == "diagnostic"
+    assert update["state_topic"] == "teslamate/cars/0/software_update"
+    refute Map.has_key?(update, "latest_version_topic")
+    refute Map.has_key?(update, "command_topic")
+
+    version = components["version"]
+    assert version["platform"] == "sensor"
+    assert version["name"] == "Version"
+    assert version["entity_category"] == "diagnostic"
+    assert version["enabled_by_default"] == false
+    assert version["icon"] == "mdi:numeric"
+
+    update_version = components["update_version"]
+    assert update_version["platform"] == "sensor"
+    assert update_version["entity_category"] == "diagnostic"
+    assert update_version["enabled_by_default"] == false
+    assert update_version["icon"] == "mdi:numeric"
+
+    update_available = components["update_available"]
+    assert update_available["platform"] == "sensor"
+    assert update_available["entity_category"] == "diagnostic"
+    assert update_available["enabled_by_default"] == false
+    refute Map.has_key?(update_available, "device_class")
+    refute Map.has_key?(update_available, "icon")
+    refute Map.has_key?(update_available, "payload_on")
+    refute Map.has_key?(update_available, "payload_off")
+  end
+
   test "publishes tire pressures in bar and psi", %{test: name} do
     publisher_name = start_publisher(name)
 
@@ -694,7 +745,15 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
            end)
 
     assert Enum.any?(legacy_cleanup, fn {topic, _, _} ->
+             topic == "homeassistant/binary_sensor/teslamate_0/update_available/config"
+           end)
+
+    assert Enum.any?(legacy_cleanup, fn {topic, _, _} ->
              topic == "homeassistant/sensor/teslamate_0/tpms_pressure_fl_psi/config"
+           end)
+
+    refute Enum.any?(legacy_cleanup, fn {topic, _, _} ->
+             topic == "homeassistant/update/teslamate_0/update/config"
            end)
   end
 
