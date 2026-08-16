@@ -586,6 +586,23 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     refute Map.has_key?(tracker, "enabled_by_default")
   end
 
+  test "health binary sensor reports problems", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    config = decoded["components"]["healthy"]
+    assert config["platform"] == "binary_sensor"
+    assert config["name"] == "Health"
+    assert config["device_class"] == "problem"
+    assert config["entity_category"] == "diagnostic"
+    assert config["payload_on"] == "false"
+    assert config["payload_off"] == "true"
+    assert config["icon"] == "mdi:heart-pulse"
+    assert config["state_topic"] == "teslamate/cars/0/healthy"
+  end
+
   test "active route sensors include availability and template", %{test: name} do
     publisher_name = start_publisher(name)
 

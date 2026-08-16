@@ -910,11 +910,15 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
       # --- Binary sensors (generic true/false on/off) ---
       {"binary_sensor", "healthy",
-       Map.merge(true_false, %{
+       %{
          state_topic_key: :healthy,
-         name: "Healthy",
+         name: "Health",
+         device_class: "problem",
+         entity_category: "diagnostic",
+         payload_on: "false",
+         payload_off: "true",
          icon: "mdi:heart-pulse"
-       })},
+       }},
       {"binary_sensor", "sun_roof_installed",
        Map.merge(true_false, %{
          state_topic_key: :sun_roof_installed,
