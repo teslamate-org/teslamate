@@ -8,6 +8,7 @@
 
 #### Build, CI, internal
 
+- ci: purge orphaned GHCR attestation referrers (#5622 - @swiffer)
 - build(deps): bump tzdata from 1.1.3 to 1.1.4 (#5614 - @mews-se)
 
 #### Dashboards
