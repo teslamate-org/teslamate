@@ -135,6 +135,19 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert decoded["device"]["model"] == "Model 3 Long Range (Induction Wheels)"
   end
 
+  test "formats wheel types with optional suffixes" do
+    wheel_types = [
+      {"AeroTurbine19", ~s|Aero Turbine 19" Wheels|},
+      {"Pinwheel18", ~s|Pinwheel 18" Wheels|},
+      {"Slipstream19Carbon", ~s|Slipstream 19" Carbon Wheels|}
+    ]
+
+    for {wheel_type, expected} <- wheel_types do
+      device = HomeAssistant.device(%{@summary | wheel_type: wheel_type}, car_id: 0)
+      assert device.model == "Model 3 (#{expected})"
+    end
+  end
+
   test "device name falls back to car.name when display_name is nil", %{test: name} do
     publisher_name = start_publisher(name)
 

@@ -185,9 +185,17 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   defp format_model(model), do: model
 
   defp format_wheel_type(wheel_type) do
-    case Regex.named_captures(~r/^(?<name>[A-Za-z]+)(?<size>\d+)$/, wheel_type) do
-      %{"name" => name, "size" => size} -> "#{split_camel_case(name)} #{size}\""
-      nil -> split_camel_case(wheel_type)
+    case Regex.named_captures(
+           ~r/^(?<name>[A-Za-z]+)(?<size>\d+)(?<suffix>[A-Za-z]*)$/,
+           wheel_type
+         ) do
+      %{"name" => name, "size" => size, "suffix" => suffix} ->
+        [split_camel_case(name), "#{size}\"", split_camel_case(suffix)]
+        |> Enum.reject(&(&1 == ""))
+        |> Enum.join(" ")
+
+      nil ->
+        split_camel_case(wheel_type)
     end
   end
 
