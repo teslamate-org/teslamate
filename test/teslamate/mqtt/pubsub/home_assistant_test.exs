@@ -588,6 +588,20 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert %{"topic" => "teslamate/cars/0/active_route"} = config["availability"]
   end
 
+  test "publishes battery as device entity", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    config = decoded["components"]["battery_level"]
+    assert config["name"] == "Battery"
+    assert config["device_class"] == "battery"
+    assert config["state_class"] == "measurement"
+    assert config["unit_of_measurement"] == "%"
+    refute Map.has_key?(config, "icon")
+  end
+
   test "publishes tire pressures in bar and psi", %{test: name} do
     publisher_name = start_publisher(name)
 

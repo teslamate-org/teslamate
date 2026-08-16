@@ -587,10 +587,10 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"sensor", "battery_level",
        %{
          state_topic_key: :battery_level,
-         name: "Battery Level",
+         name: "Battery",
          device_class: "battery",
-         unit_of_measurement: "%",
-         icon: "mdi:battery-80"
+         state_class: "measurement",
+         unit_of_measurement: "%"
        }},
       {"sensor", "usable_battery_level",
        %{
