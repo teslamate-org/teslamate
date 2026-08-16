@@ -602,6 +602,20 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     refute Map.has_key?(config, "icon")
   end
 
+  test "publishes charger phases as an integer measurement", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    config = decoded["components"]["charger_phases"]
+    assert config["name"] == "Charger Phases"
+    assert config["state_class"] == "measurement"
+    assert config["unit_of_measurement"] == "phases"
+    assert config["suggested_display_precision"] == 0
+    assert config["icon"] == "mdi:sine-wave"
+  end
+
   test "publishes tire pressures in bar and psi", %{test: name} do
     publisher_name = start_publisher(name)
 

@@ -644,7 +644,14 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          suggested_display_precision: 0
        }},
       {"sensor", "charger_phases",
-       %{state_topic_key: :charger_phases, name: "Charger Phases", icon: "mdi:sine-wave"}},
+       %{
+         state_topic_key: :charger_phases,
+         name: "Charger Phases",
+         state_class: "measurement",
+         unit_of_measurement: "phases",
+         suggested_display_precision: 0,
+         icon: "mdi:sine-wave"
+       }},
       {"sensor", "charger_power",
        %{
          state_topic_key: :charger_power,
