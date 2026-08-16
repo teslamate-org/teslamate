@@ -17,7 +17,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     :discovery,
     :discovery_base_url,
     :discovery_prefix,
-    :discovery_metadata
+    :discovery_device
   ]
 
   alias __MODULE__, as: State
@@ -127,13 +127,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   end
 
   defp maybe_publish_discovery(%Summary{} = summary, %State{discovery: true} = state) do
-    metadata = discovery_metadata(summary)
+    opts = discovery_opts(state)
+    device = HomeAssistant.device(summary, opts)
 
-    if metadata == state.discovery_metadata do
+    if device == state.discovery_device do
       state
     else
-      case publish_discovery(summary, state) do
-        :ok -> %{state | discovery_metadata: metadata}
+      case publish_discovery(summary, opts, state) do
+        :ok -> %{state | discovery_device: device}
         {:error, _reason} -> state
       end
     end
@@ -141,29 +142,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   defp maybe_publish_discovery(%Summary{}, %State{} = state), do: state
 
-  defp discovery_metadata(%Summary{} = summary) do
-    {
-      summary.display_name,
-      car_name(summary.car),
-      summary.model,
-      car_marketing_name(summary.car),
-      summary.trim_badging,
-      summary.wheel_type,
-      summary.spoiler_type,
-      summary.sun_roof_installed,
-      summary.version
-    }
-  end
-
-  defp car_name(%{name: name}), do: name
-  defp car_name(_car), do: nil
-
-  defp car_marketing_name(%{marketing_name: marketing_name}), do: marketing_name
-  defp car_marketing_name(_car), do: nil
-
-  defp publish_discovery(%Summary{} = summary, %State{deps: deps} = state) do
-    opts = discovery_opts(state)
-
+  defp publish_discovery(%Summary{} = summary, opts, %State{deps: deps}) do
     case HomeAssistant.publish(summary, opts, deps.publisher) do
       :ok ->
         :ok

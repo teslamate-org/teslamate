@@ -36,11 +36,10 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   def publish(%Summary{} = summary, opts, publisher) do
     car_id = Keyword.fetch!(opts, :car_id)
     namespace = Keyword.get(opts, :namespace)
-    base_url = Keyword.get(opts, :base_url)
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
     node = node(car_id, namespace)
 
-    device = device(summary, car_id, base_url, namespace)
+    device = device(summary, opts)
 
     Enum.reduce_while(entities(), :ok, fn {component, object_id, config}, _acc ->
       topic = discovery_topic(prefix, component, node, object_id)
@@ -58,6 +57,28 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
         {:error, _} = error -> {:halt, error}
       end
     end)
+  end
+
+  @doc """
+  Builds the Home Assistant device metadata rendered into each discovery
+  configuration payload.
+  """
+  @spec device(Summary.t(), publish_opts()) :: map()
+  def device(%Summary{} = summary, opts) do
+    car_id = Keyword.fetch!(opts, :car_id)
+    namespace = Keyword.get(opts, :namespace)
+    base_url = Keyword.get(opts, :base_url)
+    name = summary.display_name || car_name(summary) || "Tesla ##{car_id}"
+    model = model_name(summary) || "Tesla"
+
+    %{
+      identifiers: [device_identifier(car_id, namespace)],
+      manufacturer: "Tesla",
+      name: name,
+      model: model
+    }
+    |> maybe_put(:configuration_url, base_url)
+    |> maybe_put(:sw_version, non_empty(summary.version))
   end
 
   @doc """
@@ -116,20 +137,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     [@node, namespace, car_id]
     |> Enum.reject(&is_nil/1)
     |> Enum.join("_")
-  end
-
-  defp device(%Summary{} = summary, car_id, base_url, namespace) do
-    name = summary.display_name || car_name(summary) || "Tesla ##{car_id}"
-    model = model_name(summary) || "Tesla"
-
-    %{
-      identifiers: [device_identifier(car_id, namespace)],
-      manufacturer: "Tesla",
-      name: name,
-      model: model
-    }
-    |> maybe_put(:configuration_url, base_url)
-    |> maybe_put(:sw_version, non_empty(summary.version))
   end
 
   defp model_name(%Summary{} = summary) do

@@ -447,7 +447,6 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       model: "3",
       trim_badging: "74D",
       wheel_type: "AeroTurbine19",
-      sun_roof_installed: false,
       state: :online,
       car: %Car{name: "Foo", marketing_name: "LR AWD"}
     }
@@ -470,6 +469,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(pid, %Summary{summary | speed: 42})
 
     # Changes unrelated to device metadata do not republish every discovery entity.
+    refute_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
+
+    send(pid, %Summary{summary | sun_roof_installed: false})
+    :sys.get_state(pid)
+
+    # nil and false both omit the sunroof detail, so the rendered device is unchanged.
     refute_receive {MqttPublisherMock,
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
 
