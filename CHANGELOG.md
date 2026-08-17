@@ -7,6 +7,7 @@
 ### Improvements and bug fixes
 
 - fix(vehicle): shorten the streaming suspend probe interval from 30 to 10 minutes (#5600 - @onevcat)
+- feat(mqtt): enrich Home Assistant device metadata and republish on change (#5616 - @nebhale)
 
 #### Build, CI, internal
 
