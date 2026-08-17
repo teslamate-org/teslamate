@@ -34,6 +34,11 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   `<discovery_prefix>/device/<node>/config` where `node` is
   `#{@node}_<car_id>` (with the `MQTT_NAMESPACE` inserted after `#{@node}` when
   set). Returns `:ok` on success.
+
+  Publishing stops at the first error. Every legacy migration marker must be
+  published successfully before the device config is published, and legacy
+  cleanup starts only after the device config succeeds. Retrying safely
+  restarts the sequence.
   """
   @spec publish(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def publish(%Summary{} = summary, opts, publisher) do
