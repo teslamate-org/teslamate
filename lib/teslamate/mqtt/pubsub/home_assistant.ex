@@ -833,7 +833,35 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"binary_sensor", "windows_open",
        Map.merge(true_false, %{
          state_topic_key: :windows_open,
-         name: "Windows Open",
+         name: "Windows",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "driver_front_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_front_window_open,
+         name: "Window (Driver Front)",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "driver_rear_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_rear_window_open,
+         name: "Window (Driver Rear)",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_front_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_front_window_open,
+         name: "Window (Passenger Front)",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_rear_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_rear_window_open,
+         name: "Window (Passenger Rear)",
          device_class: "window",
          icon: "mdi:car-door"
        })},

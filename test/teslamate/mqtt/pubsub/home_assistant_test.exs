@@ -366,6 +366,34 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     end
   end
 
+  test "publishes aggregate and individual cabin window sensors", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+
+    for {object_id, entity_name} <- [
+          {"windows_open", "Windows"},
+          {"driver_front_window_open", "Window (Driver Front)"},
+          {"driver_rear_window_open", "Window (Driver Rear)"},
+          {"passenger_front_window_open", "Window (Passenger Front)"},
+          {"passenger_rear_window_open", "Window (Passenger Rear)"}
+        ] do
+      config = decoded["components"][object_id]
+
+      assert config["platform"] == "binary_sensor"
+      assert config["name"] == entity_name
+      assert config["device_class"] == "window"
+      assert config["payload_on"] == "true"
+      assert config["payload_off"] == "false"
+      assert config["icon"] == "mdi:car-door"
+      assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
+      refute Map.has_key?(config, "entity_category")
+      refute Map.has_key?(config, "enabled_by_default")
+    end
+  end
+
   test "publishes tire soft warnings as diagnostic problems", %{test: name} do
     publisher_name = start_publisher(name)
 
