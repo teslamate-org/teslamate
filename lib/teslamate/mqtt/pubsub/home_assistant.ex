@@ -325,6 +325,21 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"sensor", "state", %{state_topic_key: :state, name: "State", icon: "mdi:car-connected"}},
       {"sensor", "charging_state",
        %{state_topic_key: :charging_state, name: "Charging State", icon: "mdi:ev-station"}},
+      {"sensor", "climate_keeper_mode",
+       %{
+         state_topic_key: :climate_keeper_mode,
+         name: "Climate Keeper",
+         icon: "mdi:air-conditioner",
+         value_template: "{{ value | title }}"
+       }},
+      {"sensor", "center_display_state",
+       %{
+         state_topic_key: :center_display_state,
+         name: "Center Display",
+         icon: "mdi:television",
+         value_template:
+           "{% set states = {0: 'off', 2: 'standby', 3: 'charging', 4: 'on', 5: 'large_charging', 6: 'ready_to_unlock', 7: 'sentry_mode', 8: 'dog_mode', 9: 'media'} %}{% set state = states.get(value | int(-1)) %}{% if state %}{{ state }}{% endif %}"
+       }},
       {"sensor", "since",
        %{
          state_topic_key: :since,
@@ -510,6 +525,24 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "A",
          icon: "mdi:lightning-bolt"
        }},
+      {"sensor", "charge_current_request",
+       %{
+         state_topic_key: :charge_current_request,
+         name: "Charge Current Request",
+         device_class: "current",
+         state_class: "measurement",
+         unit_of_measurement: "A",
+         suggested_display_precision: 0
+       }},
+      {"sensor", "charge_current_request_max",
+       %{
+         state_topic_key: :charge_current_request_max,
+         name: "Charge Current Request (Max)",
+         device_class: "current",
+         state_class: "measurement",
+         unit_of_measurement: "A",
+         suggested_display_precision: 0
+       }},
       {"sensor", "charger_phases",
        %{state_topic_key: :charger_phases, name: "Charger Phases", icon: "mdi:sine-wave"}},
       {"sensor", "charger_power",
@@ -542,6 +575,44 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          device_class: "duration",
          unit_of_measurement: "h",
          icon: "mdi:clock-outline"
+       }},
+      {"sensor", "download_perc",
+       %{
+         state_topic_key: :download_perc,
+         name: "Software Update Download",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         state_class: "measurement",
+         unit_of_measurement: "%",
+         suggested_display_precision: 0,
+         icon: "mdi:download"
+       }},
+      {"sensor", "install_perc",
+       %{
+         state_topic_key: :install_perc,
+         name: "Software Update Installation",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         state_class: "measurement",
+         unit_of_measurement: "%",
+         suggested_display_precision: 0,
+         icon: "mdi:update"
+       }},
+      {"sensor", "sun_roof_state",
+       %{
+         state_topic_key: :sun_roof_state,
+         name: "Sunroof State",
+         icon: "mdi:car-convertible",
+         value_template: "{{ value | replace('_', ' ') | title }}"
+       }},
+      {"sensor", "sun_roof_percent_open",
+       %{
+         state_topic_key: :sun_roof_percent_open,
+         name: "Sunroof Open",
+         state_class: "measurement",
+         unit_of_measurement: "%",
+         suggested_display_precision: 0,
+         icon: "mdi:car-convertible"
        }},
 
       # TPMS pressure (bar)
@@ -708,6 +779,12 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          entity_category: "diagnostic",
          enabled_by_default: false,
          icon: "mdi:car-convertible"
+       })},
+      {"binary_sensor", "service_mode",
+       Map.merge(true_false, %{
+         state_topic_key: :service_mode,
+         name: "Service Mode",
+         icon: "mdi:wrench"
        })},
       {"binary_sensor", "tpms_soft_warning_fl",
        Map.merge(true_false, %{

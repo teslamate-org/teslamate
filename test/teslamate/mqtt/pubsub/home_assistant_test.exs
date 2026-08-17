@@ -354,6 +354,106 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     end
   end
 
+  test "publishes missing MQTT topics as Home Assistant entities", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+
+    enabled = %{
+      "charge_current_request" => %{
+        "platform" => "sensor",
+        "name" => "Charge Current Request",
+        "device_class" => "current",
+        "state_class" => "measurement",
+        "unit_of_measurement" => "A",
+        "suggested_display_precision" => 0
+      },
+      "charge_current_request_max" => %{
+        "platform" => "sensor",
+        "name" => "Charge Current Request (Max)",
+        "device_class" => "current",
+        "state_class" => "measurement",
+        "unit_of_measurement" => "A",
+        "suggested_display_precision" => 0
+      },
+      "climate_keeper_mode" => %{
+        "platform" => "sensor",
+        "name" => "Climate Keeper",
+        "icon" => "mdi:air-conditioner",
+        "value_template" => "{{ value | title }}"
+      },
+      "service_mode" => %{
+        "platform" => "binary_sensor",
+        "name" => "Service Mode",
+        "payload_on" => "true",
+        "payload_off" => "false",
+        "icon" => "mdi:wrench"
+      },
+      "sun_roof_percent_open" => %{
+        "platform" => "sensor",
+        "name" => "Sunroof Open",
+        "state_class" => "measurement",
+        "unit_of_measurement" => "%",
+        "suggested_display_precision" => 0,
+        "icon" => "mdi:car-convertible"
+      },
+      "sun_roof_state" => %{
+        "platform" => "sensor",
+        "name" => "Sunroof State",
+        "icon" => "mdi:car-convertible",
+        "value_template" => "{{ value | replace('_', ' ') | title }}"
+      }
+    }
+
+    for {object_id, expected} <- enabled do
+      config = decoded["components"][object_id]
+
+      for {key, value} <- expected, do: assert(config[key] == value)
+      assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
+      refute Map.has_key?(config, "enabled_by_default")
+    end
+
+    center_display = decoded["components"]["center_display_state"]
+    assert center_display["platform"] == "sensor"
+    assert center_display["name"] == "Center Display"
+    assert center_display["icon"] == "mdi:television"
+    assert center_display["state_topic"] == "teslamate/cars/0/center_display_state"
+    refute Map.has_key?(center_display, "enabled_by_default")
+
+    for {code, state} <- [
+          {0, "off"},
+          {2, "standby"},
+          {3, "charging"},
+          {4, "on"},
+          {5, "large_charging"},
+          {6, "ready_to_unlock"},
+          {7, "sentry_mode"},
+          {8, "dog_mode"},
+          {9, "media"}
+        ] do
+      assert String.contains?(center_display["value_template"], "#{code}: '#{state}'")
+    end
+
+    for {object_id, entity_name, icon} <- [
+          {"download_perc", "Software Update Download", "mdi:download"},
+          {"install_perc", "Software Update Installation", "mdi:update"}
+        ] do
+      config = decoded["components"][object_id]
+
+      assert config["platform"] == "sensor"
+      assert config["name"] == entity_name
+      assert config["entity_category"] == "diagnostic"
+      assert config["enabled_by_default"] == false
+      assert config["state_class"] == "measurement"
+      assert config["unit_of_measurement"] == "%"
+      assert config["suggested_display_precision"] == 0
+      assert config["icon"] == icon
+      assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
+    end
+  end
+
   test "active route sensors include availability and template", %{test: name} do
     publisher_name = start_publisher(name)
 
