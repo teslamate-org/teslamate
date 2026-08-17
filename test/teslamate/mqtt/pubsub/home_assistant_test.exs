@@ -325,6 +325,35 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert config["state_topic"] == "teslamate/cars/0/locked"
   end
 
+  test "publishes tire soft warnings as diagnostic problems", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+
+    tires = [
+      {"tpms_soft_warning_fl", "Tire Soft (Front Left)"},
+      {"tpms_soft_warning_fr", "Tire Soft (Front Right)"},
+      {"tpms_soft_warning_rl", "Tire Soft (Rear Left)"},
+      {"tpms_soft_warning_rr", "Tire Soft (Rear Right)"}
+    ]
+
+    for {object_id, entity_name} <- tires do
+      config = decoded["components"][object_id]
+
+      assert config["platform"] == "binary_sensor"
+      assert config["name"] == entity_name
+      assert config["device_class"] == "problem"
+      assert config["entity_category"] == "diagnostic"
+      assert config["payload_on"] == "true"
+      assert config["payload_off"] == "false"
+      assert config["icon"] == "mdi:car-tire-alert"
+      assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
+      refute Map.has_key?(config, "enabled_by_default")
+    end
+  end
+
   test "active route sensors include availability and template", %{test: name} do
     publisher_name = start_publisher(name)
 

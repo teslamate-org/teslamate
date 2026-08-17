@@ -709,6 +709,38 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          enabled_by_default: false,
          icon: "mdi:car-convertible"
        })},
+      {"binary_sensor", "tpms_soft_warning_fl",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_fl,
+         name: "Tire Soft (Front Left)",
+         device_class: "problem",
+         entity_category: "diagnostic",
+         icon: "mdi:car-tire-alert"
+       })},
+      {"binary_sensor", "tpms_soft_warning_fr",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_fr,
+         name: "Tire Soft (Front Right)",
+         device_class: "problem",
+         entity_category: "diagnostic",
+         icon: "mdi:car-tire-alert"
+       })},
+      {"binary_sensor", "tpms_soft_warning_rl",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_rl,
+         name: "Tire Soft (Rear Left)",
+         device_class: "problem",
+         entity_category: "diagnostic",
+         icon: "mdi:car-tire-alert"
+       })},
+      {"binary_sensor", "tpms_soft_warning_rr",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_rr,
+         name: "Tire Soft (Rear Right)",
+         device_class: "problem",
+         entity_category: "diagnostic",
+         icon: "mdi:car-tire-alert"
+       })},
       {"binary_sensor", "sentry_mode",
        Map.merge(true_false, %{
          state_topic_key: :sentry_mode,
