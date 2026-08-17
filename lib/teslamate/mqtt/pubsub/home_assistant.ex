@@ -316,6 +316,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
     details =
       []
+      |> maybe_add_exterior_color(summary.exterior_color)
       |> maybe_add_wheels(summary.wheel_type)
       |> maybe_add_spoiler(summary.spoiler_type)
       |> maybe_add_sunroof(summary.sun_roof_installed)
@@ -324,6 +325,13 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {nil, _details} -> nil
       {model, []} -> model
       {model, details} -> "#{model} (#{Enum.join(details, ", ")})"
+    end
+  end
+
+  defp maybe_add_exterior_color(details, exterior_color) do
+    case non_empty(exterior_color) do
+      nil -> details
+      exterior_color -> details ++ [split_camel_case(exterior_color)]
     end
   end
 
@@ -491,7 +499,14 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          icon: "mdi:shield-star-outline"
        }},
       {"sensor", "exterior_color",
-       %{state_topic_key: :exterior_color, name: "Exterior Color", icon: "mdi:palette"}},
+       %{
+         state_topic_key: :exterior_color,
+         name: "Exterior Color",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:palette",
+         value_template: "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+       }},
       {"sensor", "wheel_type",
        %{
          state_topic_key: :wheel_type,

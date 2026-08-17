@@ -152,6 +152,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       @summary
       | model: "S",
         trim_badging: "74D",
+        exterior_color: "DeepBlue",
         wheel_type: "AeroTurbine19",
         spoiler_type: "CarbonFiber",
         sun_roof_installed: true,
@@ -164,7 +165,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     {_topic, decoded} = receive_device_config()
 
     assert decoded["device"]["model"] ==
-             ~s|Model S LR AWD (Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
+             ~s|Model S LR AWD (Deep Blue, Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
 
     assert decoded["device"]["sw_version"] == "2026.26.1"
   end
@@ -178,6 +179,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
     expected = %{
       "display_name" => {"Display Name", "mdi:form-textbox"},
+      "exterior_color" => {"Exterior Color", "mdi:palette"},
       "model" => {"Model", "mdi:form-textbox"},
       "spoiler_type" => {"Spoiler Type", "mdi:car-sports"},
       "trim_badging" => {"Trim Badging", "mdi:shield-star-outline"},
@@ -195,6 +197,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       assert config["icon"] == icon
       assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
     end
+
+    assert decoded["components"]["exterior_color"]["value_template"] ==
+             "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
 
     sunroof = decoded["components"]["sun_roof_installed"]
     assert sunroof["platform"] == "binary_sensor"

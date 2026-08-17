@@ -500,6 +500,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       display_name: "Foo",
       model: "3",
       trim_badging: "74D",
+      exterior_color: "DeepBlue",
       wheel_type: "AeroTurbine19",
       state: :online,
       car: %Car{name: "Foo", marketing_name: "LR AWD"}
@@ -518,7 +519,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert Map.has_key?(decoded, "device")
     assert Map.has_key?(decoded, "components")
     assert Map.has_key?(decoded, "origin")
-    assert decoded["device"]["model"] == ~s|Model 3 LR AWD (Aero Turbine 19" Wheels)|
+
+    assert decoded["device"]["model"] ==
+             ~s|Model 3 LR AWD (Deep Blue, Aero Turbine 19" Wheels)|
 
     drain_discovery_configs()
 
@@ -527,6 +530,19 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     # Changes unrelated to device metadata do not republish discovery.
     refute_receive {MqttPublisherMock,
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
+
+    summary = %Summary{summary | exterior_color: "PearlWhiteMultiCoat"}
+    send(pid, summary)
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/device/teslamate_0/config", payload,
+                     [retain: true, qos: 1]}},
+                   500
+
+    assert Jason.decode!(payload)["device"]["model"] ==
+             ~s|Model 3 LR AWD (Pearl White Multi Coat, Aero Turbine 19" Wheels)|
+
+    refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
 
     send(pid, %Summary{summary | sun_roof_installed: false})
     :sys.get_state(pid)
@@ -551,7 +567,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                    500
 
     assert Jason.decode!(payload)["device"]["model"] ==
-             ~s|Model 3 Performance (Aero Turbine 19" Wheels)|
+             ~s|Model 3 Performance (Pearl White Multi Coat, Aero Turbine 19" Wheels)|
 
     refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
 
@@ -563,7 +579,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                    500
 
     assert Jason.decode!(payload)["device"]["model"] ==
-             ~s|Model 3 LR AWD (Aero Turbine 19" Wheels, Sunroof)|
+             ~s|Model 3 LR AWD (Pearl White Multi Coat, Aero Turbine 19" Wheels, Sunroof)|
 
     refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
 
