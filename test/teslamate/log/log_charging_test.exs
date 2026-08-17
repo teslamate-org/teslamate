@@ -961,6 +961,19 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.charge_energy_used == Decimal.new("2.22")
     end
 
+    test "handles rows with battery-side current readings" do
+      # some vehicles write battery-side DC readings into the AC input fields;
+      # 155 A x 230 V overflows the smallint product in Postgres
+      charges =
+        for i <- 0..5 do
+          date = DateTime.add(~U[2023-05-01 10:00:00Z], i * 60) |> DateTime.to_iso8601()
+          {date, i / 10, 35, 250.0, 2, 155, 230, nil}
+        end
+
+      assert {:ok, cproc} = log_charging_process(charges)
+      assert cproc.charge_energy_used == Decimal.new("2.92")
+    end
+
     defp charges_fixture(fixture, fast_charger_type \\ "<invalid>")
 
     defp charges_fixture(:phases_nil, fast_charger_type) do
