@@ -454,6 +454,49 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     end
   end
 
+  test "publishes raw location sensors disabled by default", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+
+    for {object_id, entity_name, icon} <- [
+          {"latitude", "Latitude", "mdi:latitude"},
+          {"longitude", "Longitude", "mdi:longitude"}
+        ] do
+      config = decoded["components"][object_id]
+
+      assert config["platform"] == "sensor"
+      assert config["name"] == entity_name
+      assert config["enabled_by_default"] == false
+      assert config["state_class"] == "measurement"
+      assert config["unit_of_measurement"] == "°"
+      assert config["icon"] == icon
+      assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
+      refute Map.has_key?(config, "entity_category")
+    end
+
+    raw_location = decoded["components"]["raw_location"]
+    assert raw_location["platform"] == "sensor"
+    assert raw_location["name"] == "Location"
+    assert raw_location["enabled_by_default"] == false
+    assert raw_location["icon"] == "mdi:car"
+    assert raw_location["state_topic"] == "teslamate/cars/0/location"
+    assert raw_location["unique_id"] == "teslamate_0_location"
+    assert raw_location["object_id"] == "tesla_location"
+    refute Map.has_key?(raw_location, "component_id")
+    refute Map.has_key?(raw_location, "entity_category")
+
+    tracker = decoded["components"]["location"]
+    assert tracker["platform"] == "device_tracker"
+    assert Map.has_key?(tracker, "name")
+    assert tracker["name"] == nil
+    assert tracker["json_attributes_topic"] == "teslamate/cars/0/location"
+    assert tracker["unique_id"] == "teslamate_0_location"
+    refute Map.has_key?(tracker, "enabled_by_default")
+  end
+
   test "active route sensors include availability and template", %{test: name} do
     publisher_name = start_publisher(name)
 

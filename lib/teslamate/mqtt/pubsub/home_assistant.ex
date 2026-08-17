@@ -91,12 +91,15 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
     components =
       Map.new(entity_configs, fn {component, object_id, config} ->
+        component_id = Map.get(config, :component_id, object_id)
+
         config
+        |> Map.delete(:component_id)
         |> resolve_topics(car_id, namespace)
         |> Map.put(:platform, component)
         |> Map.put(:unique_id, "#{node}_#{object_id}")
         |> Map.put(:object_id, "tesla_#{object_id}")
-        |> then(&{object_id, &1})
+        |> then(&{component_id, &1})
       end)
 
     device_payload =
@@ -321,6 +324,32 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          entity_category: "diagnostic",
          enabled_by_default: false,
          icon: "mdi:form-textbox"
+       }},
+      {"sensor", "latitude",
+       %{
+         state_topic_key: :latitude,
+         name: "Latitude",
+         enabled_by_default: false,
+         state_class: "measurement",
+         unit_of_measurement: "°",
+         icon: "mdi:latitude"
+       }},
+      {"sensor", "location",
+       %{
+         component_id: "raw_location",
+         state_topic_key: :location,
+         name: "Location",
+         enabled_by_default: false,
+         icon: "mdi:car"
+       }},
+      {"sensor", "longitude",
+       %{
+         state_topic_key: :longitude,
+         name: "Longitude",
+         enabled_by_default: false,
+         state_class: "measurement",
+         unit_of_measurement: "°",
+         icon: "mdi:longitude"
        }},
       {"sensor", "state", %{state_topic_key: :state, name: "State", icon: "mdi:car-connected"}},
       {"sensor", "charging_state",
@@ -748,7 +777,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
       # --- Device trackers (JSON attributes) ---
       {"device_tracker", "location",
-       %{json_attributes_topic_key: :location, name: "Location", icon: "mdi:crosshairs-gps"}},
+       %{json_attributes_topic_key: :location, name: nil, icon: "mdi:crosshairs-gps"}},
       {"device_tracker", "active_route_location",
        %{
          json_attributes_topic_key: :active_route,
