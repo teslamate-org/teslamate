@@ -527,7 +527,7 @@ defmodule TeslaMate.Log do
               c.charger_power
             else
               coalesce(
-                c.charger_actual_current * c.charger_voltage * type(^phases, :float) / 1000.0,
+                type(^phases, :float) * c.charger_actual_current * c.charger_voltage / 1000.0,
                 c.charger_power
               )
             end *
@@ -548,7 +548,10 @@ defmodule TeslaMate.Log do
   defp determine_phases(%ChargingProcess{id: id, car_id: car_id}) do
     from(c in Charge,
       select: {
-        avg(c.charger_power * 1000.0 / nullif(c.charger_actual_current * c.charger_voltage, 0))
+        avg(
+          c.charger_power * 1000.0 /
+            nullif(type(c.charger_actual_current, :integer) * c.charger_voltage, 0)
+        )
         |> type(:float),
         avg(c.charger_phases) |> type(:integer),
         avg(c.charger_voltage) |> type(:float),

@@ -11,7 +11,7 @@ defmodule TeslaMate.Repo.Migrations.RecalcChargeEnergyUsed do
     execute("""
     WITH detection AS (
       SELECT c.charging_process_id AS cp_id,
-             avg(c.charger_power * 1000.0 / nullif(c.charger_actual_current * c.charger_voltage, 0)) AS p,
+             avg(c.charger_power * 1000.0 / nullif(c.charger_actual_current::int * c.charger_voltage, 0)) AS p,
              avg(c.charger_phases)::int AS r,
              count(*) AS n
       FROM charges c
@@ -28,7 +28,7 @@ defmodule TeslaMate.Repo.Migrations.RecalcChargeEnergyUsed do
     ), integrated AS (
       SELECT c.charging_process_id AS cp_id,
              CASE WHEN c.charger_phases IS NULL THEN c.charger_power::float
-                  ELSE coalesce(c.charger_actual_current * c.charger_voltage * ph.ph / 1000.0, c.charger_power)
+                  ELSE coalesce(c.charger_actual_current::int * c.charger_voltage * ph.ph / 1000.0, c.charger_power)
              END *
              EXTRACT(epoch FROM (c.date - lag(c.date) OVER (PARTITION BY c.charging_process_id ORDER BY c.date))) / 3600 AS energy
       FROM charges c

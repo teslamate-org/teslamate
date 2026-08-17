@@ -14,6 +14,12 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   # replicate that integration and must carry the same fallback.
   @phases_power_without_fallback ~r/(?<!coalesce\()cast\(nullif\(\$\{determine_phases:sqlstring\}, ''\) as numeric\) \* charger_actual_current/
 
+  # charger_actual_current and charger_voltage are smallint columns and
+  # Postgres multiplies two smallints into a smallint — battery-side DC
+  # readings (e.g. 155 A x 230 V) overflow the product. A chain that already
+  # starts with a wider type is safe.
+  @uncast_smallint_product ~r/(?<!\* )(?:\w+\.)?charger_actual_current \* (?:\w+\.)?charger_voltage/
+
   test "latest position queries use complete position rows" do
     queries = dashboard_directory_queries()
 
@@ -106,6 +112,26 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
       |> Enum.map(fn {path, _query} -> path end)
 
     assert offenders == []
+  end
+
+  test "smallint products in queries are cast before multiplying" do
+    offenders =
+      dashboard_directory_queries()
+      |> Enum.filter(fn {_path, query} -> normalize(query) =~ @uncast_smallint_product end)
+      |> Enum.map(fn {path, _query} -> path end)
+
+    assert offenders == []
+  end
+
+  test "detector flags an uncast smallint product" do
+    uncast = "nullif(c.charger_actual_current * c.charger_voltage, 0)"
+    assert normalize(uncast) =~ @uncast_smallint_product
+
+    cast = "nullif(c.charger_actual_current::int * c.charger_voltage, 0)"
+    refute normalize(cast) =~ @uncast_smallint_product
+
+    numeric_chain = "cast(x as numeric) * charger_actual_current * charger_voltage / 1000.0"
+    refute normalize(numeric_chain) =~ @uncast_smallint_product
   end
 
   defp dashboard_directory_queries do
