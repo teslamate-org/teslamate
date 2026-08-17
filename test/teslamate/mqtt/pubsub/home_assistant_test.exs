@@ -31,7 +31,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     car: %Car{id: 0, name: "Tesla Model 3", model: "3"}
   }
 
-  test "migrates legacy configs around one device config containing every entity", %{test: name} do
+  test "migrates enabled components before cleanup and disabled components after cleanup", %{
+    test: name
+  } do
     publisher_name = start_publisher(name)
 
     opts =
@@ -43,10 +45,13 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
     messages = receive_configs()
 
-    {migrations, [{topic, payload, publish_opts} | cleanup]} =
+    {migrations, [{topic, migration_payload, publish_opts} | remaining]} =
       Enum.split_while(messages, fn {topic, _payload, _opts} ->
         topic != "homeassistant/device/teslamate_0/config"
       end)
+
+    {cleanup, [{final_topic, final_payload, final_publish_opts}]} =
+      Enum.split(remaining, length(migrations))
 
     assert migrations != []
 
@@ -57,14 +62,25 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
     assert topic == "homeassistant/device/teslamate_0/config"
     assert publish_opts == [retain: true, qos: 1]
+    assert final_topic == topic
+    assert final_publish_opts == publish_opts
 
     assert Enum.map(migrations, &elem(&1, 0)) == Enum.map(cleanup, &elem(&1, 0))
     assert Enum.all?(cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
 
-    decoded = Jason.decode!(payload)
+    migration_decoded = Jason.decode!(migration_payload)
+    decoded = Jason.decode!(final_payload)
 
     components = decoded["components"]
     assert map_size(components) == length(migrations)
+
+    disabled_component_ids =
+      for {object_id, %{"enabled_by_default" => false}} <- components, do: object_id
+
+    assert disabled_component_ids != []
+
+    assert Map.keys(migration_decoded["components"]) |> Enum.sort() ==
+             Map.keys(components) |> Kernel.--(disabled_component_ids) |> Enum.sort()
 
     for config <- Map.values(components) do
       assert Map.has_key?(config, "platform")
@@ -119,6 +135,44 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
              ~s|Model S LR AWD (Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
 
     assert decoded["device"]["sw_version"] == "2026.26.1"
+  end
+
+  test "publishes device metadata sources as disabled diagnostics", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+
+    expected = %{
+      "display_name" => {"Display Name", "mdi:form-textbox"},
+      "model" => {"Model", "mdi:form-textbox"},
+      "spoiler_type" => {"Spoiler Type", "mdi:car-sports"},
+      "trim_badging" => {"Trim Badging", "mdi:shield-star-outline"},
+      "version" => {"Version", "mdi:numeric"},
+      "wheel_type" => {"Wheel Type", "mdi:tire"}
+    }
+
+    for {object_id, {entity_name, icon}} <- expected do
+      config = decoded["components"][object_id]
+
+      assert config["platform"] == "sensor"
+      assert config["name"] == entity_name
+      assert config["entity_category"] == "diagnostic"
+      assert config["enabled_by_default"] == false
+      assert config["icon"] == icon
+      assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
+    end
+
+    sunroof = decoded["components"]["sun_roof_installed"]
+    assert sunroof["platform"] == "binary_sensor"
+    assert sunroof["name"] == "Sunroof Installed"
+    assert sunroof["entity_category"] == "diagnostic"
+    assert sunroof["enabled_by_default"] == false
+    assert sunroof["payload_on"] == "true"
+    assert sunroof["payload_off"] == "false"
+    assert sunroof["icon"] == "mdi:car-convertible"
+    assert sunroof["state_topic"] == "teslamate/cars/0/sun_roof_installed"
   end
 
   test "falls back to raw trim badging when the marketing name is unavailable", %{test: name} do
@@ -244,8 +298,12 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert speed["unique_id"] == "teslamate_ns1_0_speed"
     assert speed["state_topic"] == "teslamate/ns1/cars/0/speed"
     assert decoded["device"]["identifiers"] == ["teslamate_ns1_car_0"]
+    refute Map.has_key?(decoded["components"], "display_name")
 
-    assert decoded["components"]["display_name"]["unique_id"] ==
+    {final_topic, final_decoded} = receive_device_config()
+    assert final_topic == topic
+
+    assert final_decoded["components"]["display_name"]["unique_id"] ==
              "teslamate_ns1_0_display_name"
 
     assert_receive {MqttPublisherMock,
@@ -384,6 +442,28 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert Enum.count(messages, fn {topic, payload, _opts} ->
              topic == legacy_topic and payload == @migration_payload
            end) == 1
+
+    assert Enum.count(messages, fn {topic, _payload, _opts} ->
+             topic == "homeassistant/device/teslamate_0/config"
+           end) == 1
+  end
+
+  test "returns an error when the complete device config cannot be published", %{test: name} do
+    device_topic = "homeassistant/device/teslamate_0/config"
+
+    publisher_name =
+      start_publisher(name, %{device_topic => [:ok, {:error, :disconnected}]})
+
+    assert {:error, :disconnected} =
+             HomeAssistant.migrate(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    messages = receive_configs()
+    assert {^device_topic, final_payload, [retain: true, qos: 1]} = List.last(messages)
+
+    assert Jason.decode!(final_payload)["components"]["display_name"]["enabled_by_default"] ==
+             false
+
+    assert Enum.count(messages, fn {topic, _payload, _opts} -> topic == device_topic end) == 2
   end
 
   defp receive_device_config(timeout \\ 200) do

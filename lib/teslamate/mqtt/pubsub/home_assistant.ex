@@ -45,33 +45,52 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   @doc """
   Migrates any existing single-component discovery configs to a device
-  discovery config and then clears the old retained configs.
+  discovery config and then clears the old retained configs. Components that
+  are disabled by default are omitted from the first device config and added
+  in a final device config after legacy cleanup. This prevents Home Assistant
+  from treating cleanup on a legacy topic as removal of a disabled component
+  from the shared device topic.
 
   Publishing stops at the first error. Every legacy migration marker must be
-  published successfully before waiting one second for Home Assistant to
-  process the markers and publishing the device config. Legacy cleanup starts
-  only after the device config succeeds. Retrying safely restarts the sequence.
+  published successfully before waiting for Home Assistant to process the
+  markers and publishing the migration device config. Legacy cleanup starts
+  only after that config succeeds, and the complete device config is published
+  only after cleanup succeeds. Retrying safely restarts the sequence.
   """
   @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def migrate(%Summary{} = summary, opts, publisher) do
-    {prefix, node, device_payload} = discovery_config(summary, opts)
+    entity_configs = entities()
+    {prefix, node, device_payload} = discovery_config(summary, opts, entity_configs)
     migration_delay = Keyword.get(opts, :migration_delay, @migration_delay)
+
+    migration_entity_configs =
+      Enum.reject(entity_configs, fn {_component, _object_id, config} ->
+        Map.get(config, :enabled_by_default, true) == false
+      end)
+
+    {^prefix, ^node, migration_device_payload} =
+      discovery_config(summary, opts, migration_entity_configs)
 
     with :ok <- publish_legacy_configs(prefix, node, @migration_payload, publisher),
          :ok <- Process.sleep(migration_delay),
-         :ok <- publish_device_config(prefix, node, device_payload, publisher) do
-      publish_legacy_configs(prefix, node, "", publisher)
+         :ok <- publish_device_config(prefix, node, migration_device_payload, publisher),
+         :ok <- publish_legacy_configs(prefix, node, "", publisher) do
+      publish_device_config(prefix, node, device_payload, publisher)
     end
   end
 
   defp discovery_config(%Summary{} = summary, opts) do
+    discovery_config(summary, opts, entities())
+  end
+
+  defp discovery_config(%Summary{} = summary, opts, entity_configs) do
     car_id = Keyword.fetch!(opts, :car_id)
     namespace = Keyword.get(opts, :namespace)
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
     node = node(car_id, namespace)
 
     components =
-      Map.new(entities(), fn {component, object_id, config} ->
+      Map.new(entity_configs, fn {component, object_id, config} ->
         config
         |> resolve_topics(car_id, namespace)
         |> Map.put(:platform, component)
@@ -296,7 +315,13 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     [
       # --- Generic sensors (string/raw values) ---
       {"sensor", "display_name",
-       %{state_topic_key: :display_name, name: "Display Name", icon: "mdi:car"}},
+       %{
+         state_topic_key: :display_name,
+         name: "Display Name",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:form-textbox"
+       }},
       {"sensor", "state", %{state_topic_key: :state, name: "State", icon: "mdi:car-connected"}},
       {"sensor", "charging_state",
        %{state_topic_key: :charging_state, name: "Charging State", icon: "mdi:ev-station"}},
@@ -308,17 +333,49 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          icon: "mdi:clock-outline"
        }},
       {"sensor", "version",
-       %{state_topic_key: :version, name: "Version", icon: "mdi:alphabetical"}},
+       %{
+         state_topic_key: :version,
+         name: "Version",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:numeric"
+       }},
       {"sensor", "update_version",
        %{state_topic_key: :update_version, name: "Update Version", icon: "mdi:alphabetical"}},
-      {"sensor", "model", %{state_topic_key: :model, name: "Model"}},
+      {"sensor", "model",
+       %{
+         state_topic_key: :model,
+         name: "Model",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:form-textbox"
+       }},
       {"sensor", "trim_badging",
-       %{state_topic_key: :trim_badging, name: "Trim Badging", icon: "mdi:shield-star-outline"}},
+       %{
+         state_topic_key: :trim_badging,
+         name: "Trim Badging",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:shield-star-outline"
+       }},
       {"sensor", "exterior_color",
        %{state_topic_key: :exterior_color, name: "Exterior Color", icon: "mdi:palette"}},
-      {"sensor", "wheel_type", %{state_topic_key: :wheel_type, name: "Wheel Type"}},
+      {"sensor", "wheel_type",
+       %{
+         state_topic_key: :wheel_type,
+         name: "Wheel Type",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:tire"
+       }},
       {"sensor", "spoiler_type",
-       %{state_topic_key: :spoiler_type, name: "Spoiler Type", icon: "mdi:car-sports"}},
+       %{
+         state_topic_key: :spoiler_type,
+         name: "Spoiler Type",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:car-sports"
+       }},
       {"sensor", "geofence", %{state_topic_key: :geofence, name: "Geofence", icon: "mdi:earth"}},
       {"sensor", "shift_state",
        %{state_topic_key: :shift_state, name: "Shift State", icon: "mdi:car-shift-pattern"}},
@@ -643,6 +700,14 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          state_topic_key: :update_available,
          name: "Update Available",
          icon: "mdi:alarm"
+       })},
+      {"binary_sensor", "sun_roof_installed",
+       Map.merge(true_false, %{
+         state_topic_key: :sun_roof_installed,
+         name: "Sunroof Installed",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:car-convertible"
        })},
       {"binary_sensor", "sentry_mode",
        Map.merge(true_false, %{
