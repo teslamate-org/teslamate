@@ -27,6 +27,22 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationUnitTest do
     test "falls back to SR+ when the VIN is missing" do
       assert "SR+" == identify_model_3_base(nil)
     end
+
+    test "identifies a Cybertruck" do
+      vehicle = %TeslaApi.Vehicle{
+        vehicle_config: %TeslaApi.Vehicle.State.VehicleConfig{
+          car_type: "cybertruck",
+          trim_badging: "foundation"
+        }
+      }
+
+      assert {:ok,
+              %{
+                model: "Cybertruck",
+                trim_badging: "FOUNDATION",
+                marketing_name: nil
+              }} = Vehicle.identify(vehicle)
+    end
   end
 
   defp identify_model_3_base(year_code) when byte_size(year_code) == 1 do
