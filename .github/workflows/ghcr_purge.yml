@@ -58,6 +58,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           delete-tags: "buildcache-arm64-${{ steps.normalize_version.outputs.normalized_version }},buildcache-amd64-${{ steps.normalize_version.outputs.normalized_version }}"
 
+      # Untagged delete also cascades to attached sha256-* referrers (children).
+      # delete-orphaned-images only catches leftovers whose parent is already gone.
       - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         name: Delete untagged images from ghcr.io
         with:
@@ -65,4 +67,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           delete-untagged: "true"
           delete-ghost-images: "true"
+          delete-orphaned-images: "true"
           older-than: "1 day"
