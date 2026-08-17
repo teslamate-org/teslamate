@@ -51,7 +51,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       end)
 
     {cleanup, [{final_topic, final_payload, final_publish_opts}]} =
-      Enum.split(remaining, length(migrations))
+      Enum.split_while(remaining, fn {topic, _payload, _opts} ->
+        topic != "homeassistant/device/teslamate_0/config"
+      end)
 
     assert migrations != []
 
@@ -65,8 +67,19 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert final_topic == topic
     assert final_publish_opts == publish_opts
 
-    assert Enum.map(migrations, &elem(&1, 0)) == Enum.map(cleanup, &elem(&1, 0))
+    migration_topics = Enum.map(migrations, &elem(&1, 0))
+    cleanup_topics = Enum.map(cleanup, &elem(&1, 0))
+
+    assert MapSet.subset?(MapSet.new(migration_topics), MapSet.new(cleanup_topics))
     assert Enum.all?(cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
+
+    for position <- ["fl", "fr", "rl", "rr"] do
+      removed_topic =
+        "homeassistant/sensor/teslamate_0/tpms_pressure_#{position}_psi/config"
+
+      refute removed_topic in migration_topics
+      assert removed_topic in cleanup_topics
+    end
 
     migration_decoded = Jason.decode!(migration_payload)
     decoded = Jason.decode!(final_payload)
@@ -509,16 +522,31 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert %{"topic" => "teslamate/cars/0/active_route"} = config["availability"]
   end
 
-  test "psi sensor derives value from the bar topic", %{test: name} do
+  test "publishes tire pressures in bar without derived psi sensors", %{test: name} do
     publisher_name = start_publisher(name)
 
     :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
 
     {_topic, decoded} = receive_device_config()
-    config = decoded["components"]["tpms_pressure_fl_psi"]
-    assert config["state_topic"] == "teslamate/cars/0/tpms_pressure_fl"
-    assert config["unit_of_measurement"] == "psi"
-    assert String.contains?(config["value_template"], "14.50377")
+
+    for {position, entity_name} <- [
+          {"fl", "Tire Pressure (Front Left)"},
+          {"fr", "Tire Pressure (Front Right)"},
+          {"rl", "Tire Pressure (Rear Left)"},
+          {"rr", "Tire Pressure (Rear Right)"}
+        ] do
+      refute Map.has_key?(decoded["components"], "tpms_pressure_#{position}_psi")
+
+      config = decoded["components"]["tpms_pressure_#{position}"]
+      assert config["platform"] == "sensor"
+      assert config["name"] == entity_name
+      assert config["device_class"] == "pressure"
+      assert config["state_class"] == "measurement"
+      assert config["unit_of_measurement"] == "bar"
+      assert config["suggested_display_precision"] == 1
+      assert config["icon"] == "mdi:gauge"
+      assert config["state_topic"] == "teslamate/cars/0/tpms_pressure_#{position}"
+    end
   end
 
   test "entity ids match the manual mqtt_sensors.yaml naming", %{test: name} do
@@ -559,6 +587,10 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
     assert Enum.any?(legacy_cleanup, fn {topic, _, _} ->
              topic == "homeassistant/binary_sensor/teslamate_0/locked/config"
+           end)
+
+    assert Enum.any?(legacy_cleanup, fn {topic, _, _} ->
+             topic == "homeassistant/sensor/teslamate_0/tpms_pressure_fl_psi/config"
            end)
   end
 

@@ -17,6 +17,12 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   @migration_delay :timer.seconds(1)
   @migration_payload Jason.encode!(%{migrate_discovery: true})
   @node "teslamate"
+  @removed_entities [
+    {"sensor", "tpms_pressure_fl_psi"},
+    {"sensor", "tpms_pressure_fr_psi"},
+    {"sensor", "tpms_pressure_rl_psi"},
+    {"sensor", "tpms_pressure_rr_psi"}
+  ]
   @version Mix.Project.config()[:version]
 
   @type publish_opts :: [
@@ -165,7 +171,12 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   end
 
   defp publish_legacy_configs(prefix, node, payload, publisher) do
-    Enum.reduce_while(entities(), :ok, fn {component, object_id, _config}, _acc ->
+    entities =
+      Enum.map(entities(), fn {component, object_id, _config} -> {component, object_id} end)
+
+    entities = if payload == "", do: entities ++ @removed_entities, else: entities
+
+    Enum.reduce_while(entities, :ok, fn {component, object_id}, _acc ->
       topic = component_discovery_topic(prefix, component, node, object_id)
 
       case call(publisher, :publish, [topic, payload, [retain: true, qos: 1]]) do
@@ -648,76 +659,42 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"sensor", "tpms_pressure_fl",
        %{
          state_topic_key: :tpms_pressure_fl,
-         name: "TPMS Pressure Front Left",
+         name: "Tire Pressure (Front Left)",
          device_class: "pressure",
+         state_class: "measurement",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         suggested_display_precision: 1,
+         icon: "mdi:gauge"
        }},
       {"sensor", "tpms_pressure_fr",
        %{
          state_topic_key: :tpms_pressure_fr,
-         name: "TPMS Pressure Front Right",
+         name: "Tire Pressure (Front Right)",
          device_class: "pressure",
+         state_class: "measurement",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         suggested_display_precision: 1,
+         icon: "mdi:gauge"
        }},
       {"sensor", "tpms_pressure_rl",
        %{
          state_topic_key: :tpms_pressure_rl,
-         name: "TPMS Pressure Rear Left",
+         name: "Tire Pressure (Rear Left)",
          device_class: "pressure",
+         state_class: "measurement",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         suggested_display_precision: 1,
+         icon: "mdi:gauge"
        }},
       {"sensor", "tpms_pressure_rr",
        %{
          state_topic_key: :tpms_pressure_rr,
-         name: "TPMS Pressure Rear Right",
+         name: "Tire Pressure (Rear Right)",
          device_class: "pressure",
+         state_class: "measurement",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
-       }},
-
-      # TPMS pressure (psi) - derived via value_template from the bar topic
-      {"sensor", "tpms_pressure_fl_psi",
-       %{
-         state_topic_key: :tpms_pressure_fl,
-         name: "TPMS Pressure Front Left (psi)",
-         device_class: "pressure",
-         unit_of_measurement: "psi",
-         icon: "mdi:car-tire-alert",
-         value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
-       }},
-      {"sensor", "tpms_pressure_fr_psi",
-       %{
-         state_topic_key: :tpms_pressure_fr,
-         name: "TPMS Pressure Front Right (psi)",
-         device_class: "pressure",
-         unit_of_measurement: "psi",
-         icon: "mdi:car-tire-alert",
-         value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
-       }},
-      {"sensor", "tpms_pressure_rl_psi",
-       %{
-         state_topic_key: :tpms_pressure_rl,
-         name: "TPMS Pressure Rear Left (psi)",
-         device_class: "pressure",
-         unit_of_measurement: "psi",
-         icon: "mdi:car-tire-alert",
-         value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
-       }},
-      {"sensor", "tpms_pressure_rr_psi",
-       %{
-         state_topic_key: :tpms_pressure_rr,
-         name: "TPMS Pressure Rear Right (psi)",
-         device_class: "pressure",
-         unit_of_measurement: "psi",
-         icon: "mdi:car-tire-alert",
-         value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
+         suggested_display_precision: 1,
+         icon: "mdi:gauge"
        }},
 
       # --- Active route sensors (derived from the JSON active_route topic) ---
