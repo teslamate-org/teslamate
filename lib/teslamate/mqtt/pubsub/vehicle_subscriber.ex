@@ -9,6 +9,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles
 
+  @discovery_retry_initial_delay :timer.seconds(5)
+  @discovery_retry_max_delay :timer.minutes(5)
+
   defstruct [
     :car_id,
     :last_values,
@@ -17,7 +20,12 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     :discovery,
     :discovery_base_url,
     :discovery_prefix,
-    discovery_published: false
+    :discovery_device,
+    :discovery_pending_summary,
+    :discovery_pending_device,
+    :discovery_retry_delay,
+    :discovery_retry_timer,
+    :discovery_retry_token
   ]
 
   alias __MODULE__, as: State
@@ -121,27 +129,107 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
     last_values = publish_values(values, state)
 
-    state =
-      if state.discovery and not state.discovery_published do
-        publish_discovery(summary, state)
-        %{state | discovery_published: true}
-      else
-        state
-      end
+    state = maybe_publish_discovery(summary, state)
 
     {:noreply, %{state | last_values: last_values}}
   end
 
-  defp publish_discovery(%Summary{} = summary, %State{deps: deps} = state) do
-    opts = discovery_opts(state)
+  def handle_info(
+        {:retry_discovery, token},
+        %State{
+          discovery: true,
+          discovery_retry_token: token,
+          discovery_pending_summary: %Summary{} = summary,
+          discovery_pending_device: device
+        } = state
+      ) do
+    state = %{
+      state
+      | discovery_pending_summary: nil,
+        discovery_pending_device: nil,
+        discovery_retry_timer: nil,
+        discovery_retry_token: nil
+    }
 
-    case HomeAssistant.publish(summary, opts, deps.publisher) do
+    {:noreply, publish_or_schedule_discovery(summary, device, state)}
+  end
+
+  def handle_info({:retry_discovery, _stale_token}, %State{} = state), do: {:noreply, state}
+
+  defp maybe_publish_discovery(%Summary{} = summary, %State{discovery: true} = state) do
+    opts = discovery_opts(state)
+    device = HomeAssistant.device(summary, opts)
+
+    cond do
+      device == state.discovery_device ->
+        reset_discovery_retry(state)
+
+      is_reference(state.discovery_retry_timer) ->
+        %{
+          state
+          | discovery_pending_summary: summary,
+            discovery_pending_device: device
+        }
+
+      true ->
+        publish_or_schedule_discovery(summary, device, state)
+    end
+  end
+
+  defp maybe_publish_discovery(%Summary{}, %State{} = state), do: state
+
+  defp publish_or_schedule_discovery(%Summary{} = summary, device, %State{} = state) do
+    case publish_discovery(summary, discovery_opts(state), state) do
       :ok ->
-        :ok
+        state
+        |> reset_discovery_retry()
+        |> Map.put(:discovery_device, device)
 
       {:error, reason} ->
-        Logger.warning("MQTT HA discovery publishing failed: #{inspect(reason)}")
+        schedule_discovery_retry(summary, device, reason, state)
     end
+  end
+
+  defp publish_discovery(%Summary{} = summary, opts, %State{deps: deps}) do
+    HomeAssistant.publish(summary, opts, deps.publisher)
+  end
+
+  defp schedule_discovery_retry(%Summary{} = summary, device, reason, %State{} = state) do
+    delay = next_discovery_retry_delay(state.discovery_retry_delay)
+    token = make_ref()
+    timer = Process.send_after(self(), {:retry_discovery, token}, delay)
+
+    Logger.warning(
+      "MQTT HA discovery publishing failed: #{inspect(reason)}; retrying in #{div(delay, 1_000)}s"
+    )
+
+    %{
+      state
+      | discovery_pending_summary: summary,
+        discovery_pending_device: device,
+        discovery_retry_delay: delay,
+        discovery_retry_timer: timer,
+        discovery_retry_token: token
+    }
+  end
+
+  defp next_discovery_retry_delay(nil), do: @discovery_retry_initial_delay
+
+  defp next_discovery_retry_delay(delay) do
+    min(delay * 2, @discovery_retry_max_delay)
+  end
+
+  defp reset_discovery_retry(%State{discovery_retry_timer: timer} = state) do
+    if is_reference(timer), do: Process.cancel_timer(timer)
+
+    %{
+      state
+      | discovery_pending_summary: nil,
+        discovery_pending_device: nil,
+        discovery_retry_delay: nil,
+        discovery_retry_timer: nil,
+        discovery_retry_token: nil
+    }
   end
 
   defp discovery_opts(%State{} = state) do

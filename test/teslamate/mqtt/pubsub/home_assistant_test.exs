@@ -55,6 +55,96 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       assert device["identifiers"] == ["teslamate_car_0"]
       assert device["manufacturer"] == "Tesla"
       assert device["configuration_url"] == "https://teslamate.example.com/"
+      assert device["model"] == "Model 3"
+      refute Map.has_key?(device, "sw_version")
+    end
+  end
+
+  test "publishes rich model and firmware metadata", %{test: name} do
+    publisher_name = start_publisher(name)
+    car = %{@summary.car | marketing_name: "LR AWD"}
+
+    summary = %{
+      @summary
+      | model: "S",
+        trim_badging: "74D",
+        wheel_type: "AeroTurbine19",
+        spoiler_type: "CarbonFiber",
+        sun_roof_installed: true,
+        version: "2026.26.1",
+        car: car
+    }
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+
+    assert decoded["device"]["model"] ==
+             ~s|Model S LR AWD (Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
+
+    assert decoded["device"]["sw_version"] == "2026.26.1"
+  end
+
+  test "falls back to raw trim badging when the marketing name is unavailable", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    summary = %{@summary | trim_badging: "74D"}
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+    assert decoded["device"]["model"] == "Model 3 74D"
+  end
+
+  test "falls back to Tesla when the model is unknown", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    summary = %{@summary | model: nil, trim_badging: "FOUNDATION"}
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+    assert decoded["device"]["model"] == "Tesla"
+  end
+
+  test "does not prefix Cybertruck with Model", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    summary = %{@summary | model: "Cybertruck", trim_badging: "FOUNDATION"}
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+    assert decoded["device"]["model"] == "Cybertruck FOUNDATION"
+  end
+
+  test "omits an absent spoiler from the rich model", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    summary = %{
+      @summary
+      | trim_badging: "Long Range",
+        wheel_type: "Induction",
+        spoiler_type: "None",
+        sun_roof_installed: false
+    }
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_one_config()
+    assert decoded["device"]["model"] == "Model 3 Long Range (Induction Wheels)"
+  end
+
+  test "formats wheel types with optional suffixes" do
+    wheel_types = [
+      {"AeroTurbine19", ~s|Aero Turbine 19" Wheels|},
+      {"Pinwheel18", ~s|Pinwheel 18" Wheels|},
+      {"Slipstream19Carbon", ~s|Slipstream 19" Carbon Wheels|}
+    ]
+
+    for {wheel_type, expected} <- wheel_types do
+      device = HomeAssistant.device(%{@summary | wheel_type: wheel_type}, car_id: 0)
+      assert device.model == "Model 3 (#{expected})"
     end
   end
 

@@ -14,6 +14,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   @discovery_prefix "homeassistant"
   @node "teslamate"
+  @models_with_prefix ~w(S X 3 Y)
 
   @type publish_opts :: [
           car_id: pos_integer(),
@@ -35,11 +36,10 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   def publish(%Summary{} = summary, opts, publisher) do
     car_id = Keyword.fetch!(opts, :car_id)
     namespace = Keyword.get(opts, :namespace)
-    base_url = Keyword.get(opts, :base_url)
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
     node = node(car_id, namespace)
 
-    device = device(summary, car_id, base_url, namespace)
+    device = device(summary, opts)
 
     Enum.reduce_while(entities(), :ok, fn {component, object_id, config}, _acc ->
       topic = discovery_topic(prefix, component, node, object_id)
@@ -57,6 +57,28 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
         {:error, _} = error -> {:halt, error}
       end
     end)
+  end
+
+  @doc """
+  Builds the Home Assistant device metadata rendered into each discovery
+  configuration payload.
+  """
+  @spec device(Summary.t(), publish_opts()) :: map()
+  def device(%Summary{} = summary, opts) do
+    car_id = Keyword.fetch!(opts, :car_id)
+    namespace = Keyword.get(opts, :namespace)
+    base_url = Keyword.get(opts, :base_url)
+    name = summary.display_name || car_name(summary) || "Tesla ##{car_id}"
+    model = model_name(summary) || "Tesla"
+
+    %{
+      identifiers: [device_identifier(car_id, namespace)],
+      manufacturer: "Tesla",
+      name: name,
+      model: model
+    }
+    |> maybe_put(:configuration_url, base_url)
+    |> maybe_put(:sw_version, non_empty(summary.version))
   end
 
   @doc """
@@ -117,18 +139,80 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     |> Enum.join("_")
   end
 
-  defp device(%Summary{} = summary, car_id, base_url, namespace) do
-    name = summary.display_name || car_name(summary) || "Tesla ##{car_id}"
-    model = summary.model || "Tesla"
+  defp model_name(%Summary{} = summary) do
+    model =
+      case non_empty(summary.model) do
+        nil ->
+          nil
 
-    %{
-      identifiers: [device_identifier(car_id, namespace)],
-      manufacturer: "Tesla",
-      name: name,
-      model: model
-    }
-    |> maybe_put(:configuration_url, base_url)
+        model ->
+          [format_model(model), marketing_name(summary) || non_empty(summary.trim_badging)]
+          |> Enum.reject(&is_nil/1)
+          |> Enum.join(" ")
+      end
+
+    details =
+      []
+      |> maybe_add_wheels(summary.wheel_type)
+      |> maybe_add_spoiler(summary.spoiler_type)
+      |> maybe_add_sunroof(summary.sun_roof_installed)
+
+    case {model, details} do
+      {nil, _details} -> nil
+      {model, []} -> model
+      {model, details} -> "#{model} (#{Enum.join(details, ", ")})"
+    end
   end
+
+  defp maybe_add_wheels(details, wheel_type) do
+    case non_empty(wheel_type) do
+      nil -> details
+      wheel_type -> details ++ ["#{format_wheel_type(wheel_type)} Wheels"]
+    end
+  end
+
+  defp maybe_add_spoiler(details, spoiler_type) do
+    case format_spoiler_type(spoiler_type) do
+      nil -> details
+      spoiler_type -> details ++ ["#{spoiler_type} Spoiler"]
+    end
+  end
+
+  defp maybe_add_sunroof(details, true), do: details ++ ["Sunroof"]
+  defp maybe_add_sunroof(details, _sun_roof_installed), do: details
+
+  defp format_model(model) when model in @models_with_prefix, do: "Model #{model}"
+  defp format_model(model), do: model
+
+  defp format_wheel_type(wheel_type) do
+    case Regex.named_captures(
+           ~r/^(?<name>[A-Za-z]+)(?<size>\d+)(?<suffix>[A-Za-z]*)$/,
+           wheel_type
+         ) do
+      %{"name" => name, "size" => size, "suffix" => suffix} ->
+        [split_camel_case(name), "#{size}\"", split_camel_case(suffix)]
+        |> Enum.reject(&(&1 == ""))
+        |> Enum.join(" ")
+
+      nil ->
+        split_camel_case(wheel_type)
+    end
+  end
+
+  defp format_spoiler_type(spoiler_type) do
+    case non_empty(spoiler_type) do
+      nil ->
+        nil
+
+      spoiler_type ->
+        if String.downcase(spoiler_type) == "none", do: nil, else: split_camel_case(spoiler_type)
+    end
+  end
+
+  defp split_camel_case(value), do: Regex.replace(~r/(?<=[a-z])(?=[A-Z])/, value, " ")
+
+  defp non_empty(value) when is_binary(value) and value != "", do: value
+  defp non_empty(_value), do: nil
 
   defp device_identifier(car_id, namespace) do
     [@node, namespace, "car", car_id] |> Enum.reject(&is_nil/1) |> Enum.join("_")
@@ -136,6 +220,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   defp car_name(%Summary{car: %Car{name: name}}) when is_binary(name) and name != "", do: name
   defp car_name(_), do: nil
+
+  defp marketing_name(%Summary{car: %Car{marketing_name: name}}), do: non_empty(name)
+  defp marketing_name(_), do: nil
 
   defp maybe_put(map, _key, nil), do: map
   defp maybe_put(map, key, value), do: Map.put(map, key, value)
