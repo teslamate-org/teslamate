@@ -190,6 +190,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     end
   end
 
+  defp publish_discovery(
+         %Summary{} = summary,
+         opts,
+         %State{discovery_device: nil, deps: deps}
+       ) do
+    HomeAssistant.migrate(summary, opts, deps.publisher)
+  end
+
   defp publish_discovery(%Summary{} = summary, opts, %State{deps: deps}) do
     HomeAssistant.publish(summary, opts, deps.publisher)
   end

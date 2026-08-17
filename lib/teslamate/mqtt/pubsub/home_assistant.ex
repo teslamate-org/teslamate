@@ -26,22 +26,41 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
         ]
 
   @doc """
-  Migrates any existing single-component discovery configs, publishes a device
-  discovery configuration payload containing every entity derived from the
-  given vehicle summary, and then clears the old retained configs.
+  Publishes a device discovery configuration payload containing every entity
+  derived from the given vehicle summary.
 
   The payload is published retained (QoS 1) to
   `<discovery_prefix>/device/<node>/config` where `node` is
   `#{@node}_<car_id>` (with the `MQTT_NAMESPACE` inserted after `#{@node}` when
   set). Returns `:ok` on success.
+  """
+  @spec publish(term(), publish_opts(), term()) :: :ok | {:error, term()}
+  def publish(%Summary{} = summary, opts, publisher) do
+    {prefix, node, device_payload} = discovery_config(summary, opts)
+
+    publish_device_config(prefix, node, device_payload, publisher)
+  end
+
+  @doc """
+  Migrates any existing single-component discovery configs to a device
+  discovery config and then clears the old retained configs.
 
   Publishing stops at the first error. Every legacy migration marker must be
   published successfully before the device config is published, and legacy
   cleanup starts only after the device config succeeds. Retrying safely
   restarts the sequence.
   """
-  @spec publish(term(), publish_opts(), term()) :: :ok | {:error, term()}
-  def publish(%Summary{} = summary, opts, publisher) do
+  @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
+  def migrate(%Summary{} = summary, opts, publisher) do
+    {prefix, node, device_payload} = discovery_config(summary, opts)
+
+    with :ok <- publish_legacy_configs(prefix, node, @migration_payload, publisher),
+         :ok <- publish_device_config(prefix, node, device_payload, publisher) do
+      publish_legacy_configs(prefix, node, "", publisher)
+    end
+  end
+
+  defp discovery_config(%Summary{} = summary, opts) do
     car_id = Keyword.fetch!(opts, :car_id)
     namespace = Keyword.get(opts, :namespace)
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
@@ -65,15 +84,15 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       }
       |> Jason.encode!()
 
-    with :ok <- publish_legacy_configs(prefix, node, @migration_payload, publisher),
-         :ok <-
-           call(publisher, :publish, [
-             device_discovery_topic(prefix, node),
-             device_payload,
-             [retain: true, qos: 1]
-           ]) do
-      publish_legacy_configs(prefix, node, "", publisher)
-    end
+    {prefix, node, device_payload}
+  end
+
+  defp publish_device_config(prefix, node, payload, publisher) do
+    call(publisher, :publish, [
+      device_discovery_topic(prefix, node),
+      payload,
+      [retain: true, qos: 1]
+    ])
   end
 
   @doc """
