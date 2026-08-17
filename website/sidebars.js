@@ -10,6 +10,7 @@ module.exports = {
           items: [
             "installation/docker",
             "installation/nixos",
+            "installation/tokens",
             {
               type: "category",
               label: "unsupported Installation methods",
