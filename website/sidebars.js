@@ -2,60 +2,45 @@ module.exports = {
   docs: [
     {
       type: "category",
-      label: "Getting started",
+      label: "Installation",
       items: [
+        "installation/docker",
+        "installation/nixos",
+        "advanced_guides/verifying_images",
         {
           type: "category",
-          label: "Installation",
+          label: "Reverse Proxy",
           items: [
-            "installation/docker",
-            "installation/nixos",
-            "installation/tokens",
-            {
-              type: "category",
-              label: "unsupported Installation methods",
-              items: [
-                "installation/unsupported/debian",
-                "installation/unsupported/freebsd",
-                "installation/unsupported/unraid",
-              ],
-            },
+            "advanced_guides/traefik",
+            "advanced_guides/apache",
+            "advanced_guides/unix_domain_sockets",
           ],
         },
-
-        "faq",
-        "screenshots",
+        {
+          type: "category",
+          label: "Unsupported methods",
+          items: [
+            "installation/unsupported/debian",
+            "installation/unsupported/freebsd",
+            "installation/unsupported/unraid",
+          ],
+        },
       ],
     },
     {
       type: "category",
-      label: "Advanced Guides",
+      label: "Post Installation",
       items: [
-        "advanced_guides/traefik",
-        "advanced_guides/apache",
-        "advanced_guides/unix_domain_sockets",
-        "advanced_guides/verifying_images",
-      ],
-    },
-    {
-      type: "category",
-      label: "Import",
-      items: ["import/teslafi", "import/tesla_apiscraper"],
-    },
-    {
-      type: "category",
-      label: "Integrations",
-      items: [
+        "installation/tokens",
+        "import/teslafi",
+        "import/tesla_apiscraper",
         "integrations/home_assistant",
         "integrations/mqtt",
         "integrations/Node-RED",
       ],
     },
-    {
-      type: "category",
-      label: "Advanced Configuration",
-      items: ["configuration/environment_variables", "configuration/api"],
-    },
+    "configuration/environment_variables",
+    "configuration/api",
     {
       type: "category",
       label: "Maintenance",
@@ -67,6 +52,8 @@ module.exports = {
         "maintenance/upgrading_postgres",
       ],
     },
+    "faq",
+    "screenshots",
     {
       type: "doc",
       id: "projects",
