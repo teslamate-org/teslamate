@@ -234,6 +234,32 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
              "{{ value | replace('_', ' ') | title }}"
   end
 
+  test "derives charging status from the charging state", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    components = decoded["components"]
+
+    charging_state = components["charging_state"]
+    assert charging_state["platform"] == "sensor"
+    assert charging_state["state_topic"] == "teslamate/cars/0/charging_state"
+
+    charging = components["charging"]
+    assert charging["platform"] == "binary_sensor"
+    assert charging["name"] == "Charging"
+    assert charging["device_class"] == "battery_charging"
+    assert charging["payload_on"] == "true"
+    assert charging["payload_off"] == "false"
+    assert charging["value_template"] == "{{ 'true' if value == 'Charging' else 'false' }}"
+    assert charging["icon"] == "mdi:battery-charging"
+    assert charging["state_topic"] == "teslamate/cars/0/charging_state"
+    assert charging["unique_id"] == "teslamate_0_charging"
+    assert charging["object_id"] == "tesla_charging_state"
+    refute Map.has_key?(charging, "component_id")
+  end
+
   test "derives the parking brake from documented shift states", %{test: name} do
     publisher_name = start_publisher(name)
 

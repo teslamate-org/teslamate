@@ -468,6 +468,17 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          icon: "mdi:ev-station",
          value_template: humanize_value_template(:camel_case)
        }},
+      {"binary_sensor", "charging_state",
+       %{
+         component_id: "charging",
+         state_topic_key: :charging_state,
+         name: "Charging",
+         device_class: "battery_charging",
+         payload_on: "true",
+         payload_off: "false",
+         value_template: "{{ 'true' if value == 'Charging' else 'false' }}",
+         icon: "mdi:battery-charging"
+       }},
       {"sensor", "climate_keeper_mode",
        %{
          state_topic_key: :climate_keeper_mode,
