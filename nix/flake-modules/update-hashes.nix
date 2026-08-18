@@ -104,7 +104,7 @@
             # hash when another fixed-output derivation mismatches first. That
             # happens whenever a second pinned hash is stale as well and its
             # output is not in the store, which is the normal state on a fresh
-            # machine after an ex_cldr bump.
+            # machine after a mix dependency bump.
             if nix build .#default --no-link --keep-going > "$log" 2>&1; then
               echo "expected $file to report a hash mismatch, but the build succeeded" >&2
               exit 1

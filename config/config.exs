@@ -30,6 +30,35 @@ config :phoenix,
 
 config :gettext, :default_locale, "en"
 
+# Static list so compile-time Localize calls see the same set as runtime.
+# Use CLDR IDs (hyphens, :"zh-Hans") — expanding Gettext names like
+# "zh_Hans" collapses to :zh via likely subtags and loses zh-Hant.
+config :localize,
+  otp_app: :teslamate,
+  default_locale: :en,
+  allow_runtime_locale_download: false,
+  supported_locales: [
+    :ca,
+    :da,
+    :de,
+    :en,
+    :es,
+    :fi,
+    :fr,
+    :hu,
+    :it,
+    :ja,
+    :ko,
+    :nb,
+    :nl,
+    :sv,
+    :th,
+    :tr,
+    :uk,
+    :"zh-Hans",
+    :"zh-Hant"
+  ]
+
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
 import_config "#{config_env()}.exs"
