@@ -23,7 +23,7 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   # Grafana geofence variable: `geofence_id in ($geofence)` fails when $geofence is empty (All).
   # Postgres parses `in ()` as syntax error even though `OR '${geofence:pipe}' = '-1'` is true.
   # Safe form uses ANY(string_to_array('${geofence:pipe}', '|' )::int[]) and handles '' and '-1'.
-  @unsafe_geofence_in ~r/geofence_id\s+in\s*\(\$geofence\)/
+  @unsafe_geofence_in ~r/geofence[_.]id\s+in\s*\(\$geofence\)/
   @safe_geofence_any ~r/=\s*ANY\(string_to_array\('\$\{geofence:pipe\}'/
   @empty_geofence_handling ~r/'\$\{geofence:pipe\}' = ''/
 
@@ -177,21 +177,6 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
     refute safe =~ @unsafe_geofence_in
     assert safe =~ @safe_geofence_any
     assert safe =~ @empty_geofence_handling
-  end
-
-  test "geofence ANY logic handles empty, -1, single and multi pipe values" do
-    # Simulate Postgres string_to_array ANY logic without DB:
-    # '' -> '{}' -> no match unless handled by ''='' OR
-    # '-1' -> '{-1}' -> handled by '-1'='-1' OR
-    # '1' -> '{1}' -> matches 1
-    # '1|2' -> '{1,2}' -> matches 1 or 2
-    # Verify the safe pattern would logically cover these via string_to_array semantics
-    # We test the underlying Postgres behavior directly if DB available, otherwise just pattern presence
-    assert "'${geofence:pipe}' = ''" =~ @empty_geofence_handling
-    assert "'${geofence:pipe}' = '-1' OR" =~ ~r/'\$\{geofence:pipe\}' = '-1'/
-    # The ANY pattern must be present for single/multi
-    assert "'${geofence:pipe}' = '' OR '${geofence:pipe}' = '-1' OR geofence_id = ANY(string_to_array('${geofence:pipe}' , '|' )::int[])" =~
-             @safe_geofence_any
   end
 
   defp dashboard_directory_queries do

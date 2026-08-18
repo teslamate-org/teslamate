@@ -2,7 +2,6 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
   use TeslaMate.DataCase
 
   alias TeslaMate.Repo
-  alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Locations
   alias TeslaMate.Log
   alias TeslaMate.Log.ChargingProcess
@@ -46,7 +45,7 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
       %{car: car, g1: g1, g2: g2, cp_g1: cp_g1, cp_g2: cp_g2, cp_nil: cp_nil}
     end
 
-    test "empty string (All) returns all rows", %{g1: g1, g2: g2, cp_g1: cp_g1, cp_g2: cp_g2, cp_nil: cp_nil} do
+    test "empty string (All) returns all rows", %{cp_g1: cp_g1, cp_g2: cp_g2, cp_nil: cp_nil} do
       where = geofence_where_clause("")
       # Should be true for all because ''='' -> true
       for cp <- [cp_g1, cp_g2, cp_nil] do
@@ -65,7 +64,7 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
       assert count_where("-1") == 3
     end
 
-    test "single geofence '1' returns only matching", %{g1: g1, g2: g2, cp_g1: cp_g1, cp_g2: cp_g2, cp_nil: cp_nil} do
+    test "single geofence '1' returns only matching", %{g1: g1, cp_g1: cp_g1, cp_g2: cp_g2, cp_nil: cp_nil} do
       where = geofence_where_clause("#{g1.id}")
       assert query_matches?(where, cp_g1.id)
       refute query_matches?(where, cp_g2.id)
@@ -106,18 +105,28 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
     end
 
     test "drives two-column filter works for start/end geofence", %{g1: g1, g2: g2} do
-      car = car_fixture(%{model: "M3", eid: 999, vid: 999, vin: "TEST999"})
-      # Create drives with start/end geofences - use the same helper but for drives
-      # For simplicity test the SQL logic directly
       where_all = geofence_where_clause_two_col("")
       where_one = geofence_where_clause_two_col("#{g1.id}")
       where_multi = geofence_where_clause_two_col("#{g1.id}|#{g2.id}")
+      where_none = geofence_where_clause_two_col("99999")
 
-      # Empty should be true regardless of nulls
-      assert {:ok, _} = Repo.query("SELECT 1 WHERE #{where_all}", [])
-      # Single should not error
-      assert {:ok, _} = Repo.query("SELECT 1 WHERE #{where_one}", [])
-      assert {:ok, _} = Repo.query("SELECT 1 WHERE #{where_multi}", [])
+      base =
+        "FROM (VALUES (#{g1.id}, NULL), (NULL, #{g2.id}), (#{g1.id}, #{g2.id}), (NULL, NULL)) AS t(start_geofence_id, end_geofence_id) WHERE"
+
+      assert {:ok, %{rows: [[4]]}} =
+               Repo.query("SELECT count(*) #{base} #{where_all}", [])
+
+      assert {:ok, %{rows: [[4]]}} =
+               Repo.query("SELECT count(*) #{base} #{geofence_where_clause_two_col("-1")}", [])
+
+      assert {:ok, %{rows: [[2]]}} =
+               Repo.query("SELECT count(*) #{base} #{where_one}", [])
+
+      assert {:ok, %{rows: [[3]]}} =
+               Repo.query("SELECT count(*) #{base} #{where_multi}", [])
+
+      assert {:ok, %{rows: [[0]]}} =
+               Repo.query("SELECT count(*) #{base} #{where_none}", [])
     end
   end
 
