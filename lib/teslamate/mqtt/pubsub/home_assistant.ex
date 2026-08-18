@@ -486,9 +486,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"sensor", "since",
        %{
          state_topic_key: :since,
-         name: "Since",
+         name: "Last Seen",
          device_class: "timestamp",
-         icon: "mdi:clock-outline"
+         icon: "mdi:timer-sand"
        }},
       {"sensor", "version",
        %{
@@ -574,22 +574,27 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          state_topic_key: :power,
          name: "Power",
          device_class: "power",
+         state_class: "measurement",
          unit_of_measurement: "kW",
-         icon: "mdi:flash"
+         suggested_display_precision: 0
        }},
       {"sensor", "speed",
        %{
          state_topic_key: :speed,
          name: "Speed",
          device_class: "speed",
+         state_class: "measurement",
          unit_of_measurement: "km/h",
+         suggested_display_precision: 0,
          icon: "mdi:speedometer"
        }},
       {"sensor", "heading",
        %{
          state_topic_key: :heading,
          name: "Heading",
+         state_class: "measurement",
          unit_of_measurement: "°",
+         suggested_display_precision: 0,
          icon: "mdi:compass"
        }},
       {"sensor", "elevation",
@@ -597,23 +602,29 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          state_topic_key: :elevation,
          name: "Elevation",
          device_class: "distance",
+         state_class: "measurement",
          unit_of_measurement: "m",
+         suggested_display_precision: 0,
          icon: "mdi:image-filter-hdr"
        }},
       {"sensor", "inside_temp",
        %{
          state_topic_key: :inside_temp,
-         name: "Inside Temp",
+         name: "Temperature (Inside)",
          device_class: "temperature",
+         state_class: "measurement",
          unit_of_measurement: "°C",
+         suggested_display_precision: 1,
          icon: "mdi:thermometer-lines"
        }},
       {"sensor", "outside_temp",
        %{
          state_topic_key: :outside_temp,
-         name: "Outside Temp",
+         name: "Temperature (Outside)",
          device_class: "temperature",
+         state_class: "measurement",
          unit_of_measurement: "°C",
+         suggested_display_precision: 1,
          icon: "mdi:thermometer-lines"
        }},
       {"sensor", "odometer",
@@ -621,32 +632,40 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          state_topic_key: :odometer,
          name: "Odometer",
          device_class: "distance",
+         state_class: "total_increasing",
          unit_of_measurement: "km",
+         suggested_display_precision: 0,
          icon: "mdi:counter"
        }},
       {"sensor", "est_battery_range",
        %{
          state_topic_key: :est_battery_range_km,
-         name: "Est Battery Range",
+         name: "Range (Estimated)",
          device_class: "distance",
+         state_class: "measurement",
          unit_of_measurement: "km",
-         icon: "mdi:gauge"
+         suggested_display_precision: 0,
+         icon: "mdi:map-marker-distance"
        }},
       {"sensor", "rated_battery_range",
        %{
          state_topic_key: :rated_battery_range_km,
-         name: "Rated Battery Range",
+         name: "Range (Rated)",
          device_class: "distance",
+         state_class: "measurement",
          unit_of_measurement: "km",
-         icon: "mdi:gauge"
+         suggested_display_precision: 0,
+         icon: "mdi:map-marker-distance"
        }},
       {"sensor", "ideal_battery_range",
        %{
          state_topic_key: :ideal_battery_range_km,
-         name: "Ideal Battery Range",
+         name: "Range (Ideal)",
          device_class: "distance",
+         state_class: "measurement",
          unit_of_measurement: "km",
-         icon: "mdi:gauge"
+         suggested_display_precision: 0,
+         icon: "mdi:map-marker-distance"
        }},
       {"sensor", "battery_level",
        %{
@@ -659,35 +678,38 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"sensor", "usable_battery_level",
        %{
          state_topic_key: :usable_battery_level,
-         name: "Usable Battery Level",
+         name: "Usable Battery",
          device_class: "battery",
-         unit_of_measurement: "%",
-         icon: "mdi:battery-80"
+         state_class: "measurement",
+         unit_of_measurement: "%"
        }},
       {"sensor", "charge_energy_added",
        %{
          state_topic_key: :charge_energy_added,
-         name: "Charge Energy Added",
+         name: "Energy Added",
          device_class: "energy",
          state_class: "total_increasing",
          unit_of_measurement: "kWh",
+         suggested_display_precision: 1,
          icon: "mdi:battery-charging"
        }},
       {"sensor", "charge_limit_soc",
        %{
          state_topic_key: :charge_limit_soc,
-         name: "Charge Limit Soc",
-         device_class: "battery",
+         name: "Charge Limit",
+         state_class: "measurement",
          unit_of_measurement: "%",
-         icon: "mdi:battery-charging-100"
+         suggested_display_precision: 0,
+         icon: "mdi:battery-charging-90"
        }},
       {"sensor", "charger_actual_current",
        %{
          state_topic_key: :charger_actual_current,
-         name: "Charger Actual Current",
+         name: "Charger Current",
          device_class: "current",
+         state_class: "measurement",
          unit_of_measurement: "A",
-         icon: "mdi:lightning-bolt"
+         suggested_display_precision: 0
        }},
       {"sensor", "charge_current_request",
        %{
@@ -721,31 +743,33 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          state_topic_key: :charger_power,
          name: "Charger Power",
          device_class: "power",
+         state_class: "measurement",
          unit_of_measurement: "kW",
-         icon: "mdi:lightning-bolt"
+         suggested_display_precision: 0
        }},
       {"sensor", "charger_voltage",
        %{
          state_topic_key: :charger_voltage,
          name: "Charger Voltage",
          device_class: "voltage",
+         state_class: "measurement",
          unit_of_measurement: "V",
-         icon: "mdi:lightning-bolt"
+         suggested_display_precision: 0
        }},
       {"sensor", "scheduled_charging_start_time",
        %{
          state_topic_key: :scheduled_charging_start_time,
-         name: "Scheduled Charging Start Time",
-         device_class: "timestamp",
-         icon: "mdi:clock-outline"
+         name: "Charging Start Time",
+         device_class: "timestamp"
        }},
       {"sensor", "time_to_full_charge",
        %{
          state_topic_key: :time_to_full_charge,
-         name: "Time To Full Charge",
+         name: "Charging Time Remaining",
          device_class: "duration",
+         state_class: "measurement",
          unit_of_measurement: "h",
-         icon: "mdi:clock-outline"
+         icon: "mdi:timer"
        }},
       {"sensor", "download_perc",
        %{

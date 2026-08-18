@@ -384,6 +384,157 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
                      [retain: true, qos: 1]}}
   end
 
+  test "aligns measurement sensors with the custom integration", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+
+    sensor = %{"platform" => "sensor"}
+    measurement = Map.put(sensor, "state_class", "measurement")
+    integer_measurement = Map.put(measurement, "suggested_display_precision", 0)
+
+    distance =
+      Map.merge(integer_measurement, %{
+        "device_class" => "distance",
+        "unit_of_measurement" => "km",
+        "icon" => "mdi:map-marker-distance"
+      })
+
+    temperature =
+      Map.merge(measurement, %{
+        "device_class" => "temperature",
+        "unit_of_measurement" => "°C",
+        "suggested_display_precision" => 1,
+        "icon" => "mdi:thermometer-lines"
+      })
+
+    expected = %{
+      "charge_energy_added" =>
+        {"charge_energy_added",
+         Map.merge(sensor, %{
+           "name" => "Energy Added",
+           "device_class" => "energy",
+           "state_class" => "total_increasing",
+           "unit_of_measurement" => "kWh",
+           "suggested_display_precision" => 1,
+           "icon" => "mdi:battery-charging"
+         })},
+      "charge_limit_soc" =>
+        {"charge_limit_soc",
+         Map.merge(integer_measurement, %{
+           "name" => "Charge Limit",
+           "unit_of_measurement" => "%",
+           "icon" => "mdi:battery-charging-90"
+         })},
+      "charger_actual_current" =>
+        {"charger_actual_current",
+         Map.merge(integer_measurement, %{
+           "name" => "Charger Current",
+           "device_class" => "current",
+           "unit_of_measurement" => "A"
+         })},
+      "charger_power" =>
+        {"charger_power",
+         Map.merge(integer_measurement, %{
+           "name" => "Charger Power",
+           "device_class" => "power",
+           "unit_of_measurement" => "kW"
+         })},
+      "charger_voltage" =>
+        {"charger_voltage",
+         Map.merge(integer_measurement, %{
+           "name" => "Charger Voltage",
+           "device_class" => "voltage",
+           "unit_of_measurement" => "V"
+         })},
+      "elevation" =>
+        {"elevation",
+         Map.merge(integer_measurement, %{
+           "name" => "Elevation",
+           "device_class" => "distance",
+           "unit_of_measurement" => "m",
+           "icon" => "mdi:image-filter-hdr"
+         })},
+      "heading" =>
+        {"heading",
+         Map.merge(integer_measurement, %{
+           "name" => "Heading",
+           "unit_of_measurement" => "°",
+           "icon" => "mdi:compass"
+         })},
+      "speed" =>
+        {"speed",
+         Map.merge(integer_measurement, %{
+           "name" => "Speed",
+           "device_class" => "speed",
+           "unit_of_measurement" => "km/h",
+           "icon" => "mdi:speedometer"
+         })},
+      "est_battery_range" =>
+        {"est_battery_range_km", Map.put(distance, "name", "Range (Estimated)")},
+      "ideal_battery_range" =>
+        {"ideal_battery_range_km", Map.put(distance, "name", "Range (Ideal)")},
+      "rated_battery_range" =>
+        {"rated_battery_range_km", Map.put(distance, "name", "Range (Rated)")},
+      "inside_temp" => {"inside_temp", Map.put(temperature, "name", "Temperature (Inside)")},
+      "outside_temp" => {"outside_temp", Map.put(temperature, "name", "Temperature (Outside)")},
+      "odometer" =>
+        {"odometer",
+         Map.merge(sensor, %{
+           "name" => "Odometer",
+           "device_class" => "distance",
+           "state_class" => "total_increasing",
+           "unit_of_measurement" => "km",
+           "suggested_display_precision" => 0,
+           "icon" => "mdi:counter"
+         })},
+      "power" =>
+        {"power",
+         Map.merge(integer_measurement, %{
+           "name" => "Power",
+           "device_class" => "power",
+           "unit_of_measurement" => "kW"
+         })},
+      "scheduled_charging_start_time" =>
+        {"scheduled_charging_start_time",
+         Map.merge(sensor, %{
+           "name" => "Charging Start Time",
+           "device_class" => "timestamp"
+         })},
+      "since" =>
+        {"since",
+         Map.merge(sensor, %{
+           "name" => "Last Seen",
+           "device_class" => "timestamp",
+           "icon" => "mdi:timer-sand"
+         })},
+      "time_to_full_charge" =>
+        {"time_to_full_charge",
+         Map.merge(measurement, %{
+           "name" => "Charging Time Remaining",
+           "device_class" => "duration",
+           "unit_of_measurement" => "h",
+           "icon" => "mdi:timer"
+         })},
+      "usable_battery_level" =>
+        {"usable_battery_level",
+         Map.merge(measurement, %{
+           "name" => "Usable Battery",
+           "device_class" => "battery",
+           "unit_of_measurement" => "%"
+         })}
+    }
+
+    for {object_id, {topic_key, expected_config}} <- expected do
+      config = decoded["components"][object_id]
+
+      assert Map.drop(config, ["object_id", "unique_id"]) ==
+               Map.put(expected_config, "state_topic", "teslamate/cars/0/#{topic_key}")
+    end
+  end
+
   test "locked binary sensor is inverted", %{test: name} do
     publisher_name = start_publisher(name)
 
