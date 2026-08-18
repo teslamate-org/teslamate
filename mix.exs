@@ -44,8 +44,6 @@ defmodule TeslaMate.MixProject do
     [
       {:castore, "~> 1.0"},
       {:ecto_sql, "~> 3.0"},
-      {:ex_cldr, "~> 2.47.2"},
-      {:ex_cldr_plugs, "~> 1.0"},
       {:excoveralls, "~> 0.18.5", only: :test},
       {:finch, "~> 0.20"},
       {:floki, "~> 0.38"},
@@ -55,6 +53,8 @@ defmodule TeslaMate.MixProject do
       {:gettext, "~> 1.0", override: true},
       {:jason, "~> 1.4"},
       {:lazy_html, ">= 0.1.0", only: :test},
+      {:localize, "~> 1.0"},
+      {:localize_web, "~> 1.0"},
       {:meck, "~> 1.2", only: :test, override: true},
       {:mock, "~> 0.3", only: :test},
       {:nimble_csv, "~> 1.3"},

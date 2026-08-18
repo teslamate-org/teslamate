@@ -8,17 +8,14 @@ defmodule TeslaMateWeb.Router do
     plug :fetch_session
     plug :fetch_live_flash
 
-    plug Cldr.Plug.AcceptLanguage,
-      cldr_backend: TeslaMateWeb.Cldr,
-      no_match_log_level: :debug
-
-    plug Cldr.Plug.PutLocale,
-      apps: [:cldr, :gettext],
+    # Query first so the settings UI language switcher (?locale=) beats session.
+    plug Localize.Plug.PutLocale,
       from: [:query, :session, :accept_language],
+      param: "locale",
       gettext: TeslaMateWeb.Gettext,
-      cldr: TeslaMateWeb.Cldr
+      default: :en
 
-    plug TeslaMateWeb.Plugs.PutSession
+    plug Localize.Plug.PutSession, as: :string
 
     plug :put_root_layout, {TeslaMateWeb.LayoutView, :root}
     plug :protect_from_forgery
