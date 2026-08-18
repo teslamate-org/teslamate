@@ -43,6 +43,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   @drive_timeout_min 15
 
+  @models_with_prefix ~w(S X 3 Y)
+
   @vin_model_years %{
     "A" => 2010,
     "B" => 2011,
@@ -91,6 +93,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def online_interval, do: interval("POLLING_ONLINE_INTERVAL", 60)
   def charging_interval, do: interval("POLLING_CHARGING_INTERVAL", 5)
   def minimum_interval, do: interval("POLLING_MINIMUM_INTERVAL", 0)
+
+  @spec format_model(String.t()) :: String.t()
+  def format_model(model) when model in @models_with_prefix, do: "Model #{model}"
+  def format_model(model), do: model
 
   def identify(%Vehicle{display_name: name, vin: vin, vehicle_config: config}) do
     case config do

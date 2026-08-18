@@ -9,12 +9,12 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   import Core.Dependency, only: [call: 3]
 
+  alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Log.Car
 
   @discovery_prefix "homeassistant"
   @node "teslamate"
-  @models_with_prefix ~w(S X 3 Y)
 
   @type publish_opts :: [
           car_id: pos_integer(),
@@ -146,7 +146,10 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
           nil
 
         model ->
-          [format_model(model), marketing_name(summary) || non_empty(summary.trim_badging)]
+          [
+            Vehicle.format_model(model),
+            marketing_name(summary) || non_empty(summary.trim_badging)
+          ]
           |> Enum.reject(&is_nil/1)
           |> Enum.join(" ")
       end
@@ -180,9 +183,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   defp maybe_add_sunroof(details, true), do: details ++ ["Sunroof"]
   defp maybe_add_sunroof(details, _sun_roof_installed), do: details
-
-  defp format_model(model) when model in @models_with_prefix, do: "Model #{model}"
-  defp format_model(model), do: model
 
   defp format_wheel_type(wheel_type) do
     case Regex.named_captures(

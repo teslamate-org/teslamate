@@ -3,6 +3,16 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationUnitTest do
 
   alias TeslaMate.Vehicles.Vehicle
 
+  describe "format_model/1" do
+    test "prefixes Model S/3/X/Y but not Cybertruck" do
+      for model <- ~w(S 3 X Y) do
+        assert "Model #{model}" == Vehicle.format_model(model)
+      end
+
+      assert "Cybertruck" == Vehicle.format_model("Cybertruck")
+    end
+  end
+
   describe "identify/1" do
     for {year, year_code} <- [{2019, "K"}, {2020, "L"}, {2021, "M"}] do
       test "identifies a #{year} base Model 3 as SR+" do

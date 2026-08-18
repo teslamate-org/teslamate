@@ -3,8 +3,6 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   use Gettext, backend: TeslaMateWeb.Gettext
 
-  @models_with_prefix ~w(S X 3 Y)
-
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.{Vehicles, Convert}
@@ -132,9 +130,6 @@ defmodule TeslaMateWeb.CarLive.Summary do
   end
 
   def format_tpms(_, _), do: "—"
-
-  def format_model(model) when model in @models_with_prefix, do: "Model #{model}"
-  def format_model(model), do: model
 
   def format_car_title(display_name, vin) when display_name in [nil, ""] do
     label = gettext("VIN %{vin}", vin: vin)

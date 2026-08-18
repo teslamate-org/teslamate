@@ -44,14 +44,6 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
   defp now, do: (DateTime.utc_now() |> DateTime.to_unix()) * 1000
 
-  test "prefixes Model S/3/X/Y but not Cybertruck" do
-    for model <- ~w(S 3 X Y) do
-      assert "Model #{model}" == TeslaMateWeb.CarLive.Summary.format_model(model)
-    end
-
-    assert "Cybertruck" == TeslaMateWeb.CarLive.Summary.format_model("Cybertruck")
-  end
-
   describe "suspend" do
     @tag :signed_in
     test "suspends logging", %{conn: conn} do
