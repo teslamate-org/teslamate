@@ -66,7 +66,19 @@ defmodule TeslaApi.ChargingHistoryTest do
       assert_receive {:request, %Tesla.Env{} = env}
       assert Tesla.get_header(env, "Authorization") == "Bearer secret-access-token"
       assert env.url == "https://akamai-apigateway-charging-ownership.tesla.com/graphql"
-      assert env.query == [vin: "VIN", operationName: "getChargingHistoryV2"]
+
+      assert env.query == [
+               deviceLanguage: "en",
+               deviceCountry: "US",
+               ttpLocale: "en_US",
+               vin: "VIN",
+               operationName: "getChargingHistoryV2"
+             ]
+
+      assert Tesla.get_header(env, "user-agent") == "okhttp/4.11.0"
+      assert Tesla.get_header(env, "accept-language") == "en"
+      assert Tesla.get_header(env, "charset") == "utf-8"
+      assert Tesla.get_header(env, "cache-control") == "no-cache"
     end
   end
 

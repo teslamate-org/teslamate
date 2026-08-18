@@ -19,8 +19,10 @@ defmodule TeslaApi.ChargingHistory do
 
   @endpoint "https://akamai-apigateway-charging-ownership.tesla.com"
   @mobile_user_agent "com.teslamotors.tesla/4.41.0/723d1365/android/14"
+  @device_language "en"
+  @device_country "US"
+  @ttp_locale "en_US"
   @sensitive_headers ~w(Authorization authorization)
-  @version Mix.Project.config()[:version]
 
   @query """
   query getChargingHistoryV2($pageNumber: Int!, $sortBy: String, $sortOrder: SortByEnum, $latestSession: Boolean) {
@@ -98,7 +100,13 @@ defmodule TeslaApi.ChargingHistory do
     }
 
     Tesla.post(client(), "/graphql", body,
-      query: [vin: vin, operationName: "getChargingHistoryV2"],
+      query: [
+        deviceLanguage: @device_language,
+        deviceCountry: @device_country,
+        ttpLocale: @ttp_locale,
+        vin: vin,
+        operationName: "getChargingHistoryV2"
+      ],
       opts: [access_token: auth.token]
     )
     |> handle_response()
@@ -114,10 +122,13 @@ defmodule TeslaApi.ChargingHistory do
          [
            {"accept", "*/*"},
            {"content-type", "application/json"},
-           {"user-agent", "TeslaMate/#{@version}"},
+           {"user-agent", "okhttp/4.11.0"},
            {"x-tesla-user-agent", @mobile_user_agent},
            {"x-request-id", request_id},
-           {"x-txid", request_id}
+           {"x-txid", request_id},
+           {"accept-language", @device_language},
+           {"charset", "utf-8"},
+           {"cache-control", "no-cache"}
          ]},
         Tesla.Middleware.JSON,
         TeslaApi.Middleware.TokenAuth,
