@@ -212,6 +212,28 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert sunroof["state_topic"] == "teslamate/cars/0/sun_roof_installed"
   end
 
+  test "humanizes enum-like sensor values with Home Assistant templates", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    components = decoded["components"]
+
+    assert components["state"]["value_template"] == "{{ value | title }}"
+
+    assert components["charging_state"]["value_template"] ==
+             "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+
+    assert components["climate_keeper_mode"]["value_template"] == "{{ value | title }}"
+
+    assert components["exterior_color"]["value_template"] ==
+             "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+
+    assert components["sun_roof_state"]["value_template"] ==
+             "{{ value | replace('_', ' ') | title }}"
+  end
+
   test "falls back to raw trim badging when the marketing name is unavailable", %{test: name} do
     publisher_name = start_publisher(name)
 

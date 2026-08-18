@@ -379,6 +379,14 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   defp split_camel_case(value), do: Regex.replace(~r/(?<=[a-z])(?=[A-Z])/, value, " ")
 
+  defp humanize_value_template(:title_case), do: "{{ value | title }}"
+
+  defp humanize_value_template(:camel_case),
+    do: "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+
+  defp humanize_value_template(:snake_case),
+    do: "{{ value | replace('_', ' ') | title }}"
+
   defp non_empty(value) when is_binary(value) and value != "", do: value
   defp non_empty(_value), do: nil
 
@@ -434,15 +442,26 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "°",
          icon: "mdi:longitude"
        }},
-      {"sensor", "state", %{state_topic_key: :state, name: "State", icon: "mdi:car-connected"}},
+      {"sensor", "state",
+       %{
+         state_topic_key: :state,
+         name: "State",
+         icon: "mdi:car-connected",
+         value_template: humanize_value_template(:title_case)
+       }},
       {"sensor", "charging_state",
-       %{state_topic_key: :charging_state, name: "Charging State", icon: "mdi:ev-station"}},
+       %{
+         state_topic_key: :charging_state,
+         name: "Charging State",
+         icon: "mdi:ev-station",
+         value_template: humanize_value_template(:camel_case)
+       }},
       {"sensor", "climate_keeper_mode",
        %{
          state_topic_key: :climate_keeper_mode,
          name: "Climate Keeper",
          icon: "mdi:air-conditioner",
-         value_template: "{{ value | title }}"
+         value_template: humanize_value_template(:title_case)
        }},
       {"sensor", "center_display_state",
        %{
@@ -505,7 +524,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          entity_category: "diagnostic",
          enabled_by_default: false,
          icon: "mdi:palette",
-         value_template: "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+         value_template: humanize_value_template(:camel_case)
        }},
       {"sensor", "wheel_type",
        %{
@@ -751,7 +770,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          state_topic_key: :sun_roof_state,
          name: "Sunroof State",
          icon: "mdi:car-convertible",
-         value_template: "{{ value | replace('_', ' ') | title }}"
+         value_template: humanize_value_template(:snake_case)
        }},
       {"sensor", "sun_roof_percent_open",
        %{
