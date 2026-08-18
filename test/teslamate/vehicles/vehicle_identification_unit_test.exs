@@ -28,20 +28,22 @@ defmodule TeslaMate.Vehicles.Vehicle.IdentificationUnitTest do
       assert "SR+" == identify_model_3_base(nil)
     end
 
-    test "identifies a Cybertruck" do
-      vehicle = %TeslaApi.Vehicle{
-        vehicle_config: %TeslaApi.Vehicle.State.VehicleConfig{
-          car_type: "cybertruck",
-          trim_badging: "foundation"
+    test "identifies Cybertruck car type variants" do
+      for car_type <- ~w(cybertruck cybertruck2) do
+        vehicle = %TeslaApi.Vehicle{
+          vehicle_config: %TeslaApi.Vehicle.State.VehicleConfig{
+            car_type: car_type,
+            trim_badging: "foundation"
+          }
         }
-      }
 
-      assert {:ok,
-              %{
-                model: "Cybertruck",
-                trim_badging: "FOUNDATION",
-                marketing_name: nil
-              }} = Vehicle.identify(vehicle)
+        assert {:ok,
+                %{
+                  model: "Cybertruck",
+                  trim_badging: "FOUNDATION",
+                  marketing_name: nil
+                }} = Vehicle.identify(vehicle)
+      end
     end
   end
 
