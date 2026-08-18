@@ -14,6 +14,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   alias TeslaMate.Log.Car
 
   @discovery_prefix "homeassistant"
+  @migration_delay :timer.seconds(1)
   @migration_payload Jason.encode!(%{migrate_discovery: true})
   @node "teslamate"
   @version Mix.Project.config()[:version]
@@ -46,15 +47,16 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   discovery config and then clears the old retained configs.
 
   Publishing stops at the first error. Every legacy migration marker must be
-  published successfully before the device config is published, and legacy
-  cleanup starts only after the device config succeeds. Retrying safely
-  restarts the sequence.
+  published successfully before waiting one second for Home Assistant to
+  process the markers and publishing the device config. Legacy cleanup starts
+  only after the device config succeeds. Retrying safely restarts the sequence.
   """
   @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def migrate(%Summary{} = summary, opts, publisher) do
     {prefix, node, device_payload} = discovery_config(summary, opts)
 
     with :ok <- publish_legacy_configs(prefix, node, @migration_payload, publisher),
+         :ok <- Process.sleep(@migration_delay),
          :ok <- publish_device_config(prefix, node, device_payload, publisher) do
       publish_legacy_configs(prefix, node, "", publisher)
     end

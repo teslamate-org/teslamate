@@ -5,6 +5,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Log.Car
 
+  @migration_delay :timer.seconds(1)
   @migration_payload Jason.encode!(%{migrate_discovery: true})
 
   defp start_publisher(name, responses \\ %{}) do
@@ -32,7 +33,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     publisher_name = start_publisher(name)
 
     opts = [car_id: 0, namespace: nil, base_url: "https://teslamate.example.com/"]
+    started_at = System.monotonic_time(:millisecond)
     :ok = HomeAssistant.migrate(@summary, opts, {MqttPublisherMock, publisher_name})
+    assert System.monotonic_time(:millisecond) - started_at >= @migration_delay
 
     messages = receive_configs()
 

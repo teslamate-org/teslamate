@@ -8,6 +8,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Log.Car
 
+  @migration_publish_timeout :timer.seconds(2)
+
   defmodule BlockingPublisher do
     def publish(test_pid, topic, message, opts) do
       send(test_pid, {__MODULE__, {:publish, topic, message, opts}, self()})
@@ -479,7 +481,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert_receive {MqttPublisherMock,
                     {:publish, "homeassistant/device/teslamate_0/config", payload,
                      [retain: true, qos: 1]}},
-                   500
+                   @migration_publish_timeout
 
     decoded = Jason.decode!(payload)
     assert Map.has_key?(decoded, "device")
@@ -553,7 +555,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
         summary = %Summary{healthy: true, display_name: "Foo", model: "3", state: :online}
         send(pid, summary)
 
-        assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+        assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}},
+                       @migration_publish_timeout
 
         state = assert_discovery_retry(pid, :timer.seconds(5))
         assert state.discovery_pending_summary == summary
@@ -572,12 +575,17 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
         for expected_delay <- [10, 20, 40, 80, 160, 300] do
           fire_discovery_retry(pid)
-          assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+
+          assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}},
+                         @migration_publish_timeout
+
           assert_discovery_retry(pid, :timer.seconds(expected_delay))
         end
 
         fire_discovery_retry(pid)
-        assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+
+        assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}},
+                       @migration_publish_timeout
 
         state = :sys.get_state(pid)
         assert state.discovery_device.sw_version == "2026.2"
@@ -638,7 +646,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert_receive {MqttPublisherMock,
                     {:publish, "homeassistant/device/teslamate_0/config", _payload,
                      [retain: true, qos: 1]}},
-                   500
+                   @migration_publish_timeout
 
     drain_discovery_configs()
   end
