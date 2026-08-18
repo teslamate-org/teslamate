@@ -392,10 +392,45 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     {_topic, decoded} = receive_device_config()
     config = decoded["components"]["locked"]
     assert config["platform"] == "binary_sensor"
+    assert config["name"] == "Lock"
     assert config["payload_on"] == "false"
     assert config["payload_off"] == "true"
     assert config["device_class"] == "lock"
     assert config["state_topic"] == "teslamate/cars/0/locked"
+  end
+
+  test "aligns vehicle status binary sensors with the custom integration", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+
+    expected = [
+      {"charge_port_door_open", "Charge Port", "opening", "mdi:ev-plug-tesla"},
+      {"frunk_open", "Frunk", "door", "mdi:car"},
+      {"trunk_open", "Trunk", "door", "mdi:car"},
+      {"is_climate_on", "Climate", "running", "mdi:air-conditioner"},
+      {"is_preconditioning", "Preconditioning", "running", "mdi:air-conditioner"},
+      {"is_user_present", "User", "presence", "mdi:human-greeting"},
+      {"plugged_in", "Plug", "plug", "mdi:ev-station"},
+      {"service_mode", "Service Mode", "running", "mdi:wrench"},
+      {"sentry_mode", "Sentry Mode", "running", "mdi:cctv"}
+    ]
+
+    for {object_id, entity_name, device_class, icon} <- expected do
+      config = decoded["components"][object_id]
+
+      assert config["platform"] == "binary_sensor"
+      assert config["name"] == entity_name
+      assert config["device_class"] == device_class
+      assert config["payload_on"] == "true"
+      assert config["payload_off"] == "false"
+      assert config["icon"] == icon
+      assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
+      refute Map.has_key?(config, "entity_category")
+      refute Map.has_key?(config, "enabled_by_default")
+    end
   end
 
   test "publishes aggregate and individual cabin door sensors", %{test: name} do
@@ -516,6 +551,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       "service_mode" => %{
         "platform" => "binary_sensor",
         "name" => "Service Mode",
+        "device_class" => "running",
         "payload_on" => "true",
         "payload_off" => "false",
         "icon" => "mdi:wrench"

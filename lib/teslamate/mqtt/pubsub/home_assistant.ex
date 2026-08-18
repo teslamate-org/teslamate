@@ -972,6 +972,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
        Map.merge(true_false, %{
          state_topic_key: :service_mode,
          name: "Service Mode",
+         device_class: "running",
          icon: "mdi:wrench"
        })},
       {"binary_sensor", "tpms_soft_warning_fl",
@@ -1010,6 +1011,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
        Map.merge(true_false, %{
          state_topic_key: :sentry_mode,
          name: "Sentry Mode",
+         device_class: "running",
          icon: "mdi:cctv"
        })},
       {"binary_sensor", "windows_open",
@@ -1085,47 +1087,49 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"binary_sensor", "trunk_open",
        Map.merge(true_false, %{
          state_topic_key: :trunk_open,
-         name: "Trunk Open",
-         device_class: "opening",
-         icon: "mdi:car-side"
+         name: "Trunk",
+         device_class: "door",
+         icon: "mdi:car"
        })},
       {"binary_sensor", "frunk_open",
        Map.merge(true_false, %{
          state_topic_key: :frunk_open,
-         name: "Frunk Open",
-         device_class: "opening",
-         icon: "mdi:car-side"
+         name: "Frunk",
+         device_class: "door",
+         icon: "mdi:car"
        })},
       {"binary_sensor", "is_user_present",
        Map.merge(true_false, %{
          state_topic_key: :is_user_present,
-         name: "Is User Present",
+         name: "User",
          device_class: "presence",
          icon: "mdi:human-greeting"
        })},
       {"binary_sensor", "is_climate_on",
        Map.merge(true_false, %{
          state_topic_key: :is_climate_on,
-         name: "Is Climate On",
-         icon: "mdi:fan"
+         name: "Climate",
+         device_class: "running",
+         icon: "mdi:air-conditioner"
        })},
       {"binary_sensor", "is_preconditioning",
        Map.merge(true_false, %{
          state_topic_key: :is_preconditioning,
-         name: "Is Preconditioning",
-         icon: "mdi:fan"
+         name: "Preconditioning",
+         device_class: "running",
+         icon: "mdi:air-conditioner"
        })},
       {"binary_sensor", "plugged_in",
        Map.merge(true_false, %{
          state_topic_key: :plugged_in,
-         name: "Plugged In",
+         name: "Plug",
          device_class: "plug",
          icon: "mdi:ev-station"
        })},
       {"binary_sensor", "charge_port_door_open",
        Map.merge(true_false, %{
          state_topic_key: :charge_port_door_open,
-         name: "Charge Port Door OPEN",
+         name: "Charge Port",
          device_class: "opening",
          icon: "mdi:ev-plug-tesla"
        })},
@@ -1134,7 +1138,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"binary_sensor", "locked",
        %{
          state_topic_key: :locked,
-         name: "Locked",
+         name: "Lock",
          device_class: "lock",
          payload_on: "false",
          payload_off: "true"
