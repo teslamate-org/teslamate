@@ -234,6 +234,20 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
              "{{ value | replace('_', ' ') | title }}"
   end
 
+  test "derives the parking brake from documented shift states", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    parking_brake = decoded["components"]["park_brake"]
+
+    assert parking_brake["name"] == "Parking Brake"
+
+    assert parking_brake["value_template"] ==
+             "{% if value in ['', 'P'] %}ON{% elif value in ['D', 'N', 'R'] %}OFF{% else %}None{% endif %}"
+  end
+
   test "falls back to raw trim badging when the marketing name is unavailable", %{test: name} do
     publisher_name = start_publisher(name)
 

@@ -551,7 +551,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
        %{
          state_topic_key: :shift_state,
          name: "Parking Brake",
-         value_template: "{% if value == 'P' %}ON{% else %}OFF{% endif %}",
+         value_template:
+           "{% if value in ['', 'P'] %}ON{% elif value in ['D', 'N', 'R'] %}OFF{% else %}None{% endif %}",
          icon: "mdi:car-brake-parking"
        }},
 
