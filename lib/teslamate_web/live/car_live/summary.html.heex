@@ -50,7 +50,7 @@
         </p>
         <%= unless is_nil(@car.model) do %>
           <p class="subtitle is-6 has-text-weight-light">
-            Model {@car.model}
+            {format_model(@car.model)}
             <%= if @car.marketing_name != nil do %>
               <span
                 class="has-tooltip-right has-tooltip-left-mobile"
