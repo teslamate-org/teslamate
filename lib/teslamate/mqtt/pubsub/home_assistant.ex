@@ -277,7 +277,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {:availability_topic_key, key}, acc ->
         availability = %{
           topic: topic(key, car_id, namespace),
-          value_template: "{{ 'offline' if value_json.error else 'online' }}"
+          value_template: active_route_availability_template()
         }
 
         Map.put(acc, :availability, availability)
@@ -386,6 +386,18 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   defp humanize_value_template(:snake_case),
     do: "{{ value | replace('_', ' ') | title }}"
+
+  defp active_route_availability_template do
+    "{{ 'online' if value_json is mapping and not value_json.get('error') else 'offline' }}"
+  end
+
+  defp active_route_value_template(key) do
+    "{% if value_json is mapping and not value_json.get('error') and value_json.get('#{key}') is not none %}{{ value_json.get('#{key}') }}{% endif %}"
+  end
+
+  defp active_route_location_template do
+    "{% if value_json is mapping and not value_json.get('error') and value_json.get('location') is mapping %}{{ value_json.get('location') | tojson }}{% else %}{}{% endif %}"
+  end
 
   defp non_empty(value) when is_binary(value) and value != "", do: value
   defp non_empty(_value), do: nil
@@ -879,54 +891,49 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"sensor", "active_route_destination",
        %{
          state_topic_key: :active_route,
-         name: "Active route destination",
+         name: "Active Route Destination",
          icon: "mdi:map-marker",
-         value_template:
-           "{% if not value_json.error and value_json.destination %}{{ value_json.destination }}{% endif %}",
+         value_template: active_route_value_template("destination"),
          availability_topic_key: :active_route
        }},
       {"sensor", "active_route_energy_at_arrival",
        %{
          state_topic_key: :active_route,
-         name: "Active route energy at arrival",
+         name: "Active Route Energy At Arrival",
          device_class: "battery",
          unit_of_measurement: "%",
          icon: "mdi:battery-80",
-         value_template:
-           "{% if not value_json.error and value_json.energy_at_arrival %}{{ value_json.energy_at_arrival }}{% endif %}",
+         value_template: active_route_value_template("energy_at_arrival"),
          availability_topic_key: :active_route
        }},
       {"sensor", "active_route_distance_to_arrival",
        %{
          state_topic_key: :active_route,
-         name: "Active route distance to arrival",
+         name: "Active Route Distance To Arrival",
          device_class: "distance",
-         unit_of_measurement: "km",
+         unit_of_measurement: "mi",
          icon: "mdi:map-marker-distance",
-         value_template:
-           "{% if not value_json.error and value_json.miles_to_arrival %}{{ (value_json.miles_to_arrival | float * 1.60934) | round(2) }}{% endif %}",
+         value_template: active_route_value_template("miles_to_arrival"),
          availability_topic_key: :active_route
        }},
       {"sensor", "active_route_minutes_to_arrival",
        %{
          state_topic_key: :active_route,
-         name: "Active route minutes to arrival",
+         name: "Active Route Minutes To Arrival",
          device_class: "duration",
          unit_of_measurement: "min",
          icon: "mdi:clock-outline",
-         value_template:
-           "{% if not value_json.error and value_json.minutes_to_arrival %}{{ value_json.minutes_to_arrival }}{% endif %}",
+         value_template: active_route_value_template("minutes_to_arrival"),
          availability_topic_key: :active_route
        }},
       {"sensor", "active_route_traffic_minutes_delay",
        %{
          state_topic_key: :active_route,
-         name: "Active route traffic minutes delay",
+         name: "Active Route Traffic Minutes Delay",
          device_class: "duration",
          unit_of_measurement: "min",
          icon: "mdi:clock-alert-outline",
-         value_template:
-           "{% if not value_json.error and value_json.traffic_minutes_delay %}{{ value_json.traffic_minutes_delay }}{% endif %}",
+         value_template: active_route_value_template("traffic_minutes_delay"),
          availability_topic_key: :active_route
        }},
 
@@ -936,10 +943,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"device_tracker", "active_route_location",
        %{
          json_attributes_topic_key: :active_route,
-         name: "Active route location",
+         name: "Active Route Location",
          icon: "mdi:crosshairs-gps",
-         json_attributes_template:
-           "{% if not value_json.error and value_json.location %}{{ value_json.location | tojson }}{% else %}{}{% endif %}",
+         json_attributes_template: active_route_location_template(),
          availability_topic_key: :active_route
        }},
 

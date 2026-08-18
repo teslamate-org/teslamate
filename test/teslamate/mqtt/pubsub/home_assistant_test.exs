@@ -644,16 +644,55 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert config["state_topic"] == "teslamate/cars/0/healthy"
   end
 
-  test "active route sensors include availability and template", %{test: name} do
+  test "publishes active route entities with canonical values and robust availability", %{
+    test: name
+  } do
     publisher_name = start_publisher(name)
 
     :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
 
     {_topic, decoded} = receive_device_config()
-    config = decoded["components"]["active_route_destination"]
-    assert config["state_topic"] == "teslamate/cars/0/active_route"
-    assert String.contains?(config["value_template"], "value_json.destination")
-    assert %{"topic" => "teslamate/cars/0/active_route"} = config["availability"]
+    components = decoded["components"]
+
+    availability = %{
+      "topic" => "teslamate/cars/0/active_route",
+      "value_template" =>
+        "{{ 'online' if value_json is mapping and not value_json.get('error') else 'offline' }}"
+    }
+
+    for {object_id, entity_name, field} <- [
+          {"active_route_destination", "Active Route Destination", "destination"},
+          {"active_route_energy_at_arrival", "Active Route Energy At Arrival",
+           "energy_at_arrival"},
+          {"active_route_distance_to_arrival", "Active Route Distance To Arrival",
+           "miles_to_arrival"},
+          {"active_route_minutes_to_arrival", "Active Route Minutes To Arrival",
+           "minutes_to_arrival"},
+          {"active_route_traffic_minutes_delay", "Active Route Traffic Minutes Delay",
+           "traffic_minutes_delay"}
+        ] do
+      config = components[object_id]
+
+      assert config["name"] == entity_name
+      assert config["state_topic"] == "teslamate/cars/0/active_route"
+      assert config["availability"] == availability
+
+      assert config["value_template"] ==
+               "{% if value_json is mapping and not value_json.get('error') and value_json.get('#{field}') is not none %}{{ value_json.get('#{field}') }}{% endif %}"
+    end
+
+    distance = components["active_route_distance_to_arrival"]
+    assert distance["device_class"] == "distance"
+    assert distance["unit_of_measurement"] == "mi"
+    refute String.contains?(distance["value_template"], "1.609")
+
+    tracker = components["active_route_location"]
+    assert tracker["name"] == "Active Route Location"
+    assert tracker["availability"] == availability
+    assert tracker["json_attributes_topic"] == "teslamate/cars/0/active_route"
+
+    assert tracker["json_attributes_template"] ==
+             "{% if value_json is mapping and not value_json.get('error') and value_json.get('location') is mapping %}{{ value_json.get('location') | tojson }}{% else %}{}{% endif %}"
   end
 
   test "publishes battery as device entity", %{test: name} do
