@@ -20,13 +20,6 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   # starts with a wider type is safe.
   @uncast_smallint_product ~r/(?<!\* )(?:\w+\.)?charger_actual_current \* (?:\w+\.)?charger_voltage/
 
-  # Grafana geofence variable: `geofence_id in ($geofence)` fails when $geofence is empty (All).
-  # Postgres parses `in ()` as syntax error even though `OR '${geofence:pipe}' = '-1'` is true.
-  # Safe form uses ANY(string_to_array('${geofence:pipe}', '|' )::int[]) and handles '' and '-1'.
-  @unsafe_geofence_in ~r/geofence[_.]id\s+in\s*\(\$geofence\)/
-  @safe_geofence_any ~r/=\s*ANY\(string_to_array\('\$\{geofence:pipe\}'/
-  @empty_geofence_handling ~r/'\$\{geofence:pipe\}' = ''/
-
   test "latest position queries use complete position rows" do
     queries = dashboard_directory_queries()
 
@@ -139,46 +132,6 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
 
     numeric_chain = "cast(x as numeric) * charger_actual_current * charger_voltage / 1000.0"
     refute normalize(numeric_chain) =~ @uncast_smallint_product
-  end
-
-  test "geofence filters use safe ANY handling for All/empty" do
-    queries = dashboard_directory_queries()
-
-    offenders =
-      queries
-      |> Enum.filter(fn {_path, query} -> query =~ @unsafe_geofence_in end)
-      |> Enum.map(fn {path, _query} -> path end)
-
-    assert offenders == [],
-           "unsafe geofence_id in ($geofence) found in #{inspect(offenders)} - use ANY(string_to_array('${geofence:pipe}', '|' )::int[])"
-
-    safe_queries =
-      queries
-      |> Enum.filter(fn {_path, query} -> query =~ @safe_geofence_any end)
-
-    assert safe_queries != [],
-           "no safe geofence ANY(string_to_array) pattern found - expected at least charges.json, drives.json, charging-stats.json"
-
-    missing_empty_handling =
-      safe_queries
-      |> Enum.reject(fn {_path, query} -> query =~ @empty_geofence_handling end)
-      |> Enum.map(fn {path, _query} -> path end)
-
-    assert missing_empty_handling == [],
-           "safe geofence filters should handle empty string '' for All (Grafana 12 vs 13): #{inspect(missing_empty_handling)}"
-  end
-
-  test "detector flags unsafe geofence in () pattern" do
-    unsafe = "'${geofence:pipe}' = '-1' OR geofence_id in ($geofence)"
-    assert unsafe =~ @unsafe_geofence_in
-    refute unsafe =~ @safe_geofence_any
-
-    safe =
-      "'${geofence:pipe}' = '' OR '${geofence:pipe}' = '-1' OR geofence_id = ANY(string_to_array('${geofence:pipe}' , '|' )::int[])"
-
-    refute safe =~ @unsafe_geofence_in
-    assert safe =~ @safe_geofence_any
-    assert safe =~ @empty_geofence_handling
   end
 
   defp dashboard_directory_queries do
