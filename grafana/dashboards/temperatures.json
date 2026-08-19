@@ -18,7 +18,23 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "links": [],
+  "links": [
+    {
+      "icon": "dashboard",
+      "tags": [],
+      "title": "TeslaMate",
+      "tooltip": "",
+      "type": "link",
+      "url": "${base_url:raw}"
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "tags": ["tesla"],
+      "title": "Dashboards",
+      "type": "dashboards"
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -33,17 +49,13 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              { "color": "blue", "value": null },
-              { "color": "green", "value": 10 },
-              { "color": "orange", "value": 30 },
-              { "color": "red", "value": 40 }
-            ]
+            "steps": [{ "color": "text", "value": null }]
           },
-          "unit": "celsius"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -55,7 +67,7 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "textMode": "auto"
+        "textMode": "value_and_name"
       },
       "pluginVersion": "13.0.1+security-01",
       "targets": [
@@ -64,7 +76,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT date AS time, inside_temp AS \"Inside\"\nFROM positions\nWHERE car_id = $car_id AND inside_temp IS NOT NULL AND $__timeFilter(date)\nORDER BY date",
+          "rawSql": "SELECT date AS time, convert_celsius(inside_temp, '$temp_unit') AS \"Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND inside_temp IS NOT NULL AND $__timeFilter(date)\nORDER BY date",
           "refId": "A"
         }
       ],
@@ -76,17 +88,13 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              { "color": "blue", "value": null },
-              { "color": "green", "value": 10 },
-              { "color": "orange", "value": 25 },
-              { "color": "red", "value": 35 }
-            ]
+            "steps": [{ "color": "text", "value": null }]
           },
-          "unit": "celsius"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -98,7 +106,7 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "textMode": "auto"
+        "textMode": "value_and_name"
       },
       "pluginVersion": "13.0.1+security-01",
       "targets": [
@@ -107,7 +115,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT date AS time, outside_temp AS \"Outside\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\nORDER BY date",
+          "rawSql": "SELECT date AS time, convert_celsius(outside_temp, '$temp_unit') AS \"Outside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\nORDER BY date",
           "refId": "A"
         }
       ],
@@ -119,12 +127,13 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [{ "color": "blue", "value": null }]
           },
-          "unit": "celsius"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -145,7 +154,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  min(outside_temp) AS \"Min Outside\",\n  max(outside_temp) AS \"Max Outside\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)",
+          "rawSql": "SELECT\n  convert_celsius(min(outside_temp), '$temp_unit') AS \"Min Outside [°$temp_unit]\",\n  convert_celsius(max(outside_temp), '$temp_unit') AS \"Max Outside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)",
           "refId": "A"
         }
       ],
@@ -157,12 +166,13 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [{ "color": "orange", "value": null }]
           },
-          "unit": "celsius"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -183,7 +193,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  min(inside_temp) AS \"Min Inside\",\n  max(inside_temp) AS \"Max Inside\"\nFROM positions\nWHERE car_id = $car_id AND inside_temp IS NOT NULL AND $__timeFilter(date)",
+          "rawSql": "SELECT\n  convert_celsius(min(inside_temp), '$temp_unit') AS \"Min Inside [°$temp_unit]\",\n  convert_celsius(max(inside_temp), '$temp_unit') AS \"Max Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND inside_temp IS NOT NULL AND $__timeFilter(date)",
           "refId": "A"
         }
       ],
@@ -206,7 +216,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "°C",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -222,20 +232,21 @@
             "stacking": { "group": "A", "mode": "none" },
             "thresholdsStyle": { "mode": "off" }
           },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [{ "color": "green", "value": null }]
           },
-          "unit": "celsius"
+          "unit": "degree"
         },
         "overrides": [
           {
-            "matcher": { "id": "byName", "options": "Inside" },
+            "matcher": { "id": "byRegexp", "options": "/^Inside/" },
             "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }]
           },
           {
-            "matcher": { "id": "byName", "options": "Outside" },
+            "matcher": { "id": "byRegexp", "options": "/^Outside/" },
             "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
           }
         ]
@@ -253,7 +264,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  avg(inside_temp) AS \"Inside\",\n  avg(outside_temp) AS \"Outside\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  convert_celsius(avg(inside_temp), '$temp_unit') AS \"Inside [°$temp_unit]\",\n  convert_celsius(avg(outside_temp), '$temp_unit') AS \"Outside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
@@ -268,7 +279,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "°C",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -284,12 +295,13 @@
             "stacking": { "group": "A", "mode": "none" },
             "thresholdsStyle": { "mode": "off" }
           },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [{ "color": "green", "value": null }]
           },
-          "unit": "celsius"
+          "unit": "degree"
         },
         "overrides": []
       },
@@ -306,7 +318,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  avg(driver_temp_setting) AS \"Driver setpoint\",\n  avg(passenger_temp_setting) AS \"Passenger setpoint\"\nFROM positions\nWHERE car_id = $car_id AND is_climate_on AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  convert_celsius(avg(driver_temp_setting), '$temp_unit') AS \"Driver setpoint [°$temp_unit]\",\n  convert_celsius(avg(passenger_temp_setting), '$temp_unit') AS \"Passenger setpoint [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND is_climate_on AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
@@ -321,7 +333,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "°C",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "points",
@@ -337,12 +349,13 @@
             "stacking": { "group": "A", "mode": "none" },
             "thresholdsStyle": { "mode": "off" }
           },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [{ "color": "green", "value": null }]
           },
-          "unit": "celsius"
+          "unit": "degree"
         },
         "overrides": []
       },
@@ -359,7 +372,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  avg(outside_temp) AS \"Outside (charging)\"\nFROM charges c\nJOIN charging_processes cp ON cp.id = c.charging_process_id\nWHERE cp.car_id = $car_id AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  convert_celsius(avg(outside_temp), '$temp_unit') AS \"Outside (charging) [°$temp_unit]\"\nFROM charges c\nJOIN charging_processes cp ON cp.id = c.charging_process_id\nWHERE cp.car_id = $car_id AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
@@ -413,7 +426,7 @@
           "axisLabel": "Outside temperature",
           "axisPlacement": "left",
           "reverse": false,
-          "unit": "celsius"
+          "unit": "degree"
         }
       },
       "pluginVersion": "13.0.1+security-01",
@@ -423,7 +436,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  date AS time,\n  outside_temp AS \"Outside temperature\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\nORDER BY date",
+          "rawSql": "SELECT\n  date AS time,\n  convert_celsius(outside_temp, '$temp_unit') AS \"Outside temperature [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\nORDER BY date",
           "refId": "A"
         }
       ],
@@ -449,6 +462,41 @@
         "name": "car_id",
         "options": [],
         "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
+        },
+        "definition": "select unit_of_temperature from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "temperature unit",
+        "name": "temp_unit",
+        "options": [],
+        "query": "select unit_of_temperature from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
+        },
+        "definition": "select base_url from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "name": "base_url",
+        "options": [],
+        "query": "select base_url from settings limit 1;",
         "refresh": 1,
         "regex": "",
         "regexApplyTo": "value",
