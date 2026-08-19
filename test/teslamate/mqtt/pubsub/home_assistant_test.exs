@@ -5,8 +5,10 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Log.Car
 
-  @migration_delay :timer.seconds(1)
+  @migration_delay 10
   @migration_payload Jason.encode!(%{migrate_discovery: true})
+
+  defp migration_opts(opts), do: Keyword.put(opts, :migration_delay, @migration_delay)
 
   defp start_publisher(name, responses \\ %{}) do
     publisher_name = :"mqtt_publisher_#{name}"
@@ -32,7 +34,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
   test "migrates legacy configs around one device config containing every entity", %{test: name} do
     publisher_name = start_publisher(name)
 
-    opts = [car_id: 0, namespace: nil, base_url: "https://teslamate.example.com/"]
+    opts =
+      migration_opts(car_id: 0, namespace: nil, base_url: "https://teslamate.example.com/")
+
     started_at = System.monotonic_time(:millisecond)
     :ok = HomeAssistant.migrate(@summary, opts, {MqttPublisherMock, publisher_name})
     assert System.monotonic_time(:millisecond) - started_at >= @migration_delay
@@ -224,7 +228,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     :ok =
       HomeAssistant.migrate(
         @summary,
-        [car_id: 0, namespace: "ns1"],
+        migration_opts(car_id: 0, namespace: "ns1"),
         {MqttPublisherMock, publisher_name}
       )
 
@@ -333,7 +337,11 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     publisher_name = start_publisher(name, %{legacy_topic => [{:error, :disconnected}]})
 
     assert {:error, :disconnected} =
-             HomeAssistant.migrate(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+             HomeAssistant.migrate(
+               @summary,
+               migration_opts(car_id: 0),
+               {MqttPublisherMock, publisher_name}
+             )
 
     assert [{^legacy_topic, @migration_payload, [retain: true, qos: 1]}] = receive_configs()
   end
@@ -343,7 +351,11 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     publisher_name = start_publisher(name, %{device_topic => [{:error, :disconnected}]})
 
     assert {:error, :disconnected} =
-             HomeAssistant.migrate(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+             HomeAssistant.migrate(
+               @summary,
+               migration_opts(car_id: 0),
+               {MqttPublisherMock, publisher_name}
+             )
 
     messages = receive_configs()
     assert {^device_topic, _payload, [retain: true, qos: 1]} = List.last(messages)
@@ -360,7 +372,11 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       start_publisher(name, %{legacy_topic => [:ok, {:error, :disconnected}]})
 
     assert {:error, :disconnected} =
-             HomeAssistant.migrate(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+             HomeAssistant.migrate(
+               @summary,
+               migration_opts(car_id: 0),
+               {MqttPublisherMock, publisher_name}
+             )
 
     messages = receive_configs()
     assert {^legacy_topic, "", [retain: true, qos: 1]} = List.last(messages)

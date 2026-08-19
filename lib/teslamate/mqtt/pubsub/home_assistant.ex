@@ -23,7 +23,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
           car_id: pos_integer(),
           namespace: String.t() | nil,
           base_url: String.t() | nil,
-          discovery_prefix: String.t()
+          discovery_prefix: String.t(),
+          migration_delay: non_neg_integer()
         ]
 
   @doc """
@@ -54,9 +55,10 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def migrate(%Summary{} = summary, opts, publisher) do
     {prefix, node, device_payload} = discovery_config(summary, opts)
+    migration_delay = Keyword.get(opts, :migration_delay, @migration_delay)
 
     with :ok <- publish_legacy_configs(prefix, node, @migration_payload, publisher),
-         :ok <- Process.sleep(@migration_delay),
+         :ok <- Process.sleep(migration_delay),
          :ok <- publish_device_config(prefix, node, device_payload, publisher) do
       publish_legacy_configs(prefix, node, "", publisher)
     end
