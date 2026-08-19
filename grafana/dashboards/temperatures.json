@@ -63,7 +63,7 @@
       "id": 1,
       "options": {
         "colorMode": "value",
-        "graphMode": "area",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
@@ -74,9 +74,9 @@
         {
           "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
           "editorMode": "code",
-          "format": "time_series",
+          "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT date AS time, convert_celsius(inside_temp, '$temp_unit') AS \"Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND inside_temp IS NOT NULL AND $__timeFilter(date)\nORDER BY date",
+          "rawSql": "SELECT convert_celsius(inside_temp, '$temp_unit') AS \"Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND inside_temp IS NOT NULL\nORDER BY date DESC\nLIMIT 1",
           "refId": "A"
         }
       ],
@@ -102,7 +102,7 @@
       "id": 2,
       "options": {
         "colorMode": "value",
-        "graphMode": "area",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
@@ -113,9 +113,9 @@
         {
           "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
           "editorMode": "code",
-          "format": "time_series",
+          "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT date AS time, convert_celsius(outside_temp, '$temp_unit') AS \"Outside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\nORDER BY date",
+          "rawSql": "SELECT convert_celsius(outside_temp, '$temp_unit') AS \"Outside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL\nORDER BY date DESC\nLIMIT 1",
           "refId": "A"
         }
       ],
@@ -223,12 +223,13 @@
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": 3600000,
             "lineInterpolation": "smooth",
             "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": { "type": "linear" },
             "showPoints": "never",
-            "spanNulls": true,
+            "spanNulls": 3600000,
             "stacking": { "group": "A", "mode": "none" },
             "thresholdsStyle": { "mode": "off" }
           },
@@ -248,6 +249,19 @@
           {
             "matcher": { "id": "byRegexp", "options": "/^Outside/" },
             "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": "/setpoint/" },
+            "properties": [
+              { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } },
+              { "id": "custom.lineWidth", "value": 1 },
+              { "id": "custom.fillOpacity", "value": 0 },
+              { "id": "custom.lineInterpolation", "value": "stepAfter" }
+            ]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": "/^Driver setpoint/" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "purple", "mode": "fixed" } }]
           }
         ]
       },
@@ -264,65 +278,11 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  convert_celsius(avg(inside_temp), '$temp_unit') AS \"Inside [°$temp_unit]\",\n  convert_celsius(avg(outside_temp), '$temp_unit') AS \"Outside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  convert_celsius(avg(inside_temp), '$temp_unit') AS \"Inside [°$temp_unit]\",\n  convert_celsius(avg(outside_temp), '$temp_unit') AS \"Outside [°$temp_unit]\",\n  convert_celsius(avg(driver_temp_setting), '$temp_unit') AS \"Driver setpoint [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id\n  AND (inside_temp IS NOT NULL OR outside_temp IS NOT NULL)\n  AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
       "title": "Inside & Outside Temperature",
-      "type": "timeseries"
-    },
-    {
-      "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 5,
-            "gradientMode": "none",
-            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
-            "lineInterpolation": "stepAfter",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": { "type": "linear" },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [{ "color": "green", "value": null }]
-          },
-          "unit": "degree"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 17 },
-      "id": 6,
-      "options": {
-        "legend": { "calcs": ["mean", "lastNotNull"], "displayMode": "list", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "multi", "sort": "none" }
-      },
-      "pluginVersion": "13.0.1+security-01",
-      "targets": [
-        {
-          "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  convert_celsius(avg(driver_temp_setting), '$temp_unit') AS \"Driver setpoint [°$temp_unit]\",\n  convert_celsius(avg(passenger_temp_setting), '$temp_unit') AS \"Passenger setpoint [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND is_climate_on AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
-          "refId": "A"
-        }
-      ],
-      "title": "Climate Setpoints (while climate on)",
       "type": "timeseries"
     },
     {
@@ -359,7 +319,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 17 },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 17 },
       "id": 7,
       "options": {
         "legend": { "calcs": ["min", "max", "mean"], "displayMode": "list", "placement": "bottom", "showLegend": true },
