@@ -384,64 +384,53 @@
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
       "id": 102,
       "panels": [],
-      "title": "Distribution",
+      "title": "Daily Ambient Envelope",
       "type": "row"
     },
     {
       "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
-      "description": "Heatmap: how often each outside temperature occurred over the selected range. X = time, Y = temperature, color = frequency.",
+      "description": "Daily outside temperature envelope, computed on time-debiased inputs: readings are first averaged into fixed 15-minute bins, then aggregated per day. Wick = min/max, body = 15th–85th percentile. Days without samples have no candle.",
       "fieldConfig": {
         "defaults": {
+          "color": { "mode": "palette-classic" },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
             "hideFrom": { "legend": false, "tooltip": false, "viz": false },
             "scaleDistribution": { "type": "linear" }
-          }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "unit": "degree"
         },
         "overrides": []
       },
       "gridPos": { "h": 10, "w": 24, "x": 0, "y": 27 },
       "id": 8,
       "options": {
-        "calculate": true,
-        "calculation": {
-          "yBuckets": { "mode": "size", "value": "2" }
-        },
-        "cellGap": 1,
-        "cellValues": { "unit": "short" },
-        "color": {
-          "exponent": 0.5,
-          "fill": "dark-orange",
-          "mode": "scheme",
-          "reverse": false,
-          "scale": "exponential",
-          "scheme": "Spectral",
-          "steps": 128
-        },
-        "exemplars": { "color": "rgba(255,0,255,0.7)" },
-        "filterValues": { "le": 1e-9 },
-        "legend": { "show": true },
-        "rowsFrame": { "layout": "auto" },
-        "tooltip": { "mode": "single", "show": true, "yHistogram": false },
-        "yAxis": {
-          "axisLabel": "Outside temperature",
-          "axisPlacement": "left",
-          "reverse": false,
-          "unit": "degree"
-        }
+        "candleStyle": "candles",
+        "colorStrategy": "open-close",
+        "colors": { "down": "blue", "flat": "gray", "up": "red" },
+        "fields": { "close": "close", "high": "high", "low": "low", "open": "open" },
+        "includeAllFields": false,
+        "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": false },
+        "mode": "candles"
       },
       "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
           "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
           "editorMode": "code",
-          "format": "time_series",
+          "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  date AS time,\n  convert_celsius(outside_temp, '$temp_unit') AS \"Outside temperature [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\nORDER BY date",
+          "rawSql": "WITH binned AS (\n  SELECT\n    to_timestamp(floor(extract(epoch FROM date) / 900) * 900) AS bin,\n    avg(outside_temp) AS outside_temp\n  FROM positions\n  WHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\n  GROUP BY 1\n)\nSELECT\n  date_trunc('day', bin) AS time,\n  convert_celsius(max(outside_temp), '$temp_unit') AS high,\n  convert_celsius(min(outside_temp), '$temp_unit') AS low,\n  convert_celsius(percentile_cont(0.15) WITHIN GROUP (ORDER BY outside_temp::double precision)::numeric, '$temp_unit') AS open,\n  convert_celsius(percentile_cont(0.85) WITHIN GROUP (ORDER BY outside_temp::double precision)::numeric, '$temp_unit') AS close\nFROM binned\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
-      "title": "Outside Temperature – Frequency Distribution (Heatmap)",
-      "type": "heatmap"
+      "title": "Daily Outside Temperature (min/max, p15–p85)",
+      "type": "candlestick"
     }
   ],
   "preload": false,
