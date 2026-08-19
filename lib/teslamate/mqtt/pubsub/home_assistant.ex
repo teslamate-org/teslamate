@@ -276,7 +276,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Power",
          device_class: "power",
          unit_of_measurement: "kW",
-         icon: "mdi:flash"
+         icon: "mdi:flash",
+         state_class: "measurement"
        }},
       {"sensor", "speed",
        %{
@@ -284,14 +285,16 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Speed",
          device_class: "speed",
          unit_of_measurement: "km/h",
-         icon: "mdi:speedometer"
+         icon: "mdi:speedometer",
+         state_class: "measurement"
        }},
       {"sensor", "heading",
        %{
          state_topic_key: :heading,
          name: "Heading",
          unit_of_measurement: "°",
-         icon: "mdi:compass"
+         icon: "mdi:compass",
+         state_class: "measurement_angle"
        }},
       {"sensor", "elevation",
        %{
@@ -299,7 +302,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Elevation",
          device_class: "distance",
          unit_of_measurement: "m",
-         icon: "mdi:image-filter-hdr"
+         icon: "mdi:image-filter-hdr",
+         state_class: "measurement"
        }},
       {"sensor", "inside_temp",
        %{
@@ -307,7 +311,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Inside Temp",
          device_class: "temperature",
          unit_of_measurement: "°C",
-         icon: "mdi:thermometer-lines"
+         icon: "mdi:thermometer-lines",
+         state_class: "measurement"
        }},
       {"sensor", "outside_temp",
        %{
@@ -315,7 +320,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Outside Temp",
          device_class: "temperature",
          unit_of_measurement: "°C",
-         icon: "mdi:thermometer-lines"
+         icon: "mdi:thermometer-lines",
+         state_class: "measurement"
        }},
       {"sensor", "odometer",
        %{
@@ -323,7 +329,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Odometer",
          device_class: "distance",
          unit_of_measurement: "km",
-         icon: "mdi:counter"
+         icon: "mdi:counter",
+         state_class: "total_increasing"
        }},
       {"sensor", "est_battery_range",
        %{
@@ -355,7 +362,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Battery Level",
          device_class: "battery",
          unit_of_measurement: "%",
-         icon: "mdi:battery-80"
+         icon: "mdi:battery-80",
+         state_class: "measurement"
        }},
       {"sensor", "usable_battery_level",
        %{
@@ -363,7 +371,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Usable Battery Level",
          device_class: "battery",
          unit_of_measurement: "%",
-         icon: "mdi:battery-80"
+         icon: "mdi:battery-80",
+         state_class: "measurement"
        }},
       {"sensor", "charge_energy_added",
        %{
@@ -380,7 +389,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Charge Limit Soc",
          device_class: "battery",
          unit_of_measurement: "%",
-         icon: "mdi:battery-charging-100"
+         icon: "mdi:battery-charging-100",
+         state_class: "measurement"
        }},
       {"sensor", "charger_actual_current",
        %{
@@ -388,7 +398,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Charger Actual Current",
          device_class: "current",
          unit_of_measurement: "A",
-         icon: "mdi:lightning-bolt"
+         icon: "mdi:lightning-bolt",
+         state_class: "measurement"
        }},
       {"sensor", "charger_phases",
        %{state_topic_key: :charger_phases, name: "Charger Phases", icon: "mdi:sine-wave"}},
@@ -398,7 +409,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Charger Power",
          device_class: "power",
          unit_of_measurement: "kW",
-         icon: "mdi:lightning-bolt"
+         icon: "mdi:lightning-bolt",
+         state_class: "measurement"
        }},
       {"sensor", "charger_voltage",
        %{
@@ -406,14 +418,15 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Charger Voltage",
          device_class: "voltage",
          unit_of_measurement: "V",
-         icon: "mdi:lightning-bolt"
+         icon: "mdi:lightning-bolt",
+         state_class: "measurement"
        }},
       {"sensor", "scheduled_charging_start_time",
        %{
          state_topic_key: :scheduled_charging_start_time,
          name: "Scheduled Charging Start Time",
          device_class: "timestamp",
-         icon: "mdi:clock-outline"
+         icon: "mdi:clock-outline",
        }},
       {"sensor", "time_to_full_charge",
        %{
@@ -431,7 +444,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "TPMS Pressure Front Left",
          device_class: "pressure",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         icon: "mdi:car-tire-alert",
+         state_class: "measurement"
        }},
       {"sensor", "tpms_pressure_fr",
        %{
@@ -439,7 +453,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "TPMS Pressure Front Right",
          device_class: "pressure",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         icon: "mdi:car-tire-alert",
+         state_class: "measurement"
        }},
       {"sensor", "tpms_pressure_rl",
        %{
@@ -447,7 +462,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "TPMS Pressure Rear Left",
          device_class: "pressure",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         icon: "mdi:car-tire-alert",
+         state_class: "measurement"
        }},
       {"sensor", "tpms_pressure_rr",
        %{
@@ -455,7 +471,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "TPMS Pressure Rear Right",
          device_class: "pressure",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         icon: "mdi:car-tire-alert",
+         state_class: "measurement"
        }},
 
       # TPMS pressure (psi) - derived via value_template from the bar topic
@@ -467,7 +484,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "psi",
          icon: "mdi:car-tire-alert",
          value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
+         suggested_display_precision: 2,
+         state_class: "measurement"
        }},
       {"sensor", "tpms_pressure_fr_psi",
        %{
@@ -477,7 +495,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "psi",
          icon: "mdi:car-tire-alert",
          value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
+         suggested_display_precision: 2,
+         state_class: "measurement"
        }},
       {"sensor", "tpms_pressure_rl_psi",
        %{
@@ -487,7 +506,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "psi",
          icon: "mdi:car-tire-alert",
          value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
+         suggested_display_precision: 2,
+         state_class: "measurement"
        }},
       {"sensor", "tpms_pressure_rr_psi",
        %{
@@ -497,7 +517,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "psi",
          icon: "mdi:car-tire-alert",
          value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
+         suggested_display_precision: 2,
+         state_class: "measurement"
        }},
 
       # --- Active route sensors (derived from the JSON active_route topic) ---
