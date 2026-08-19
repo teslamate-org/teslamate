@@ -8,6 +8,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Log.Car
 
+  @migration_delay 10
+
   defmodule BlockingPublisher do
     def publish(test_pid, topic, message, opts) do
       send(test_pid, {__MODULE__, {:publish, topic, message, opts}, self()})
@@ -45,6 +47,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
          name: name,
          car_id: car_id,
          namespace: namespace,
+         migration_delay: @migration_delay,
          deps_publisher: {MqttPublisherMock, publisher_name},
          deps_vehicles: {VehiclesMock, vehicles_name}
        ]
@@ -474,22 +477,24 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     send(pid, summary)
 
-    # The discovery config messages are emitted synchronously on the first
-    # summary. Wait for and drain them all so they don't carry over to the
-    # refute on the next summary.
+    # The discovery config message is emitted synchronously on the first
+    # summary.
     assert_receive {MqttPublisherMock,
-                    {:publish, "homeassistant/" <> _ = _topic, payload, [retain: true, qos: 1]}},
+                    {:publish, "homeassistant/device/teslamate_0/config", payload,
+                     [retain: true, qos: 1]}},
                    500
 
     decoded = Jason.decode!(payload)
-    assert Map.has_key?(decoded, "unique_id")
+    assert Map.has_key?(decoded, "device")
+    assert Map.has_key?(decoded, "components")
+    assert Map.has_key?(decoded, "origin")
     assert decoded["device"]["model"] == ~s|Model 3 LR AWD (Aero Turbine 19" Wheels)|
 
     drain_discovery_configs()
 
     send(pid, %Summary{summary | speed: 42})
 
-    # Changes unrelated to device metadata do not republish every discovery entity.
+    # Changes unrelated to device metadata do not republish discovery.
     refute_receive {MqttPublisherMock,
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
 
@@ -504,37 +509,41 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(pid, %Summary{summary | car: car})
 
     assert_receive {MqttPublisherMock,
-                    {:publish, "homeassistant/" <> _, payload, [retain: true, qos: 1]}},
+                    {:publish, "homeassistant/device/teslamate_0/config", payload,
+                     [retain: true, qos: 1]}},
                    500
 
     assert Jason.decode!(payload)["device"]["model"] ==
              ~s|Model 3 Performance (Aero Turbine 19" Wheels)|
 
-    drain_discovery_configs()
+    refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
 
     send(pid, %Summary{summary | sun_roof_installed: true})
 
     assert_receive {MqttPublisherMock,
-                    {:publish, "homeassistant/" <> _, payload, [retain: true, qos: 1]}},
+                    {:publish, "homeassistant/device/teslamate_0/config", payload,
+                     [retain: true, qos: 1]}},
                    500
 
     assert Jason.decode!(payload)["device"]["model"] ==
              ~s|Model 3 LR AWD (Aero Turbine 19" Wheels, Sunroof)|
 
-    drain_discovery_configs()
+    refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
 
     send(pid, %Summary{summary | sun_roof_installed: true, version: "2026.26.1"})
 
     assert_receive {MqttPublisherMock,
-                    {:publish, "homeassistant/" <> _, payload, [retain: true, qos: 1]}},
+                    {:publish, "homeassistant/device/teslamate_0/config", payload,
+                     [retain: true, qos: 1]}},
                    500
 
     assert Jason.decode!(payload)["device"]["sw_version"] == "2026.26.1"
+    refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
   end
 
   @tag :capture_log
   test "backs off failed discovery publishes and retries the latest metadata", %{test: name} do
-    topic = "homeassistant/sensor/teslamate_0/display_name/config"
+    topic = "homeassistant/device/teslamate_0/config"
     error = {:error, :disconnected}
     responses = %{topic => List.duplicate(error, 7) ++ [:ok, error]}
 
@@ -566,11 +575,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
         for expected_delay <- [10, 20, 40, 80, 160, 300] do
           fire_discovery_retry(pid)
+
           assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+
           assert_discovery_retry(pid, :timer.seconds(expected_delay))
         end
 
         fire_discovery_retry(pid)
+
         assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
 
         state = :sys.get_state(pid)
@@ -590,11 +602,51 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
         send(pid, %Summary{latest | version: "2026.3"})
         assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
         assert_discovery_retry(pid, :timer.seconds(5))
+        refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
+
+        fire_discovery_retry(pid)
+        assert_receive {MqttPublisherMock, {:publish, ^topic, _payload, _opts}}
+        refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
+
+        state = :sys.get_state(pid)
+        assert state.discovery_device.sw_version == "2026.3"
+        assert state.discovery_retry_delay == nil
+        assert state.discovery_retry_timer == nil
       end)
 
     assert length(Regex.scan(~r/MQTT HA discovery publishing failed/, log)) == 8
     assert log =~ "retrying in 5s"
     assert log =~ "retrying in 300s"
+  end
+
+  test "retries Home Assistant discovery after a publishing failure", %{test: name} do
+    legacy_topic = "homeassistant/sensor/teslamate_0/display_name/config"
+
+    {:ok, pid} =
+      start_subscriber(name, 0, nil, %{legacy_topic => [{:error, :disconnected}]},
+        discovery: true
+      )
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    summary = %Summary{healthy: true, display_name: "Foo", model: "3", state: :online}
+    send(pid, summary)
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, ^legacy_topic, _migration_payload, [retain: true, qos: 1]}}
+
+    refute_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/device/teslamate_0/config", _, _}}
+
+    assert_discovery_retry(pid, :timer.seconds(5))
+    fire_discovery_retry(pid)
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/device/teslamate_0/config", _payload,
+                     [retain: true, qos: 1]}},
+                   500
+
+    drain_discovery_configs()
   end
 
   test "clears discovery configs when discovery is disabled", %{test: name} do
@@ -605,7 +657,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     # Retained discovery configs are cleared on init so entities are removed
     # from Home Assistant when discovery is disabled.
     assert_receive {MqttPublisherMock,
-                    {:publish, "homeassistant/sensor/teslamate_0/display_name/config", "",
+                    {:publish, "homeassistant/device/teslamate_0/config", "",
                      [retain: true, qos: 1]}}
 
     drain_discovery_configs()

@@ -1,8 +1,8 @@
 defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   @moduledoc """
-  Publishes Home Assistant MQTT discovery configuration payloads, one per
-  vehicle entity, so users can opt out of manually configuring the MQTT
-  sensors in `configuration.yaml`.
+  Publishes Home Assistant MQTT device discovery configuration payloads, one
+  per vehicle, so users can opt out of manually configuring the MQTT sensors
+  in `configuration.yaml`.
 
   See: https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery
   """
@@ -14,53 +14,93 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   alias TeslaMate.Log.Car
 
   @discovery_prefix "homeassistant"
+  @migration_delay :timer.seconds(1)
+  @migration_payload Jason.encode!(%{migrate_discovery: true})
   @node "teslamate"
+  @version Mix.Project.config()[:version]
 
   @type publish_opts :: [
           car_id: pos_integer(),
           namespace: String.t() | nil,
           base_url: String.t() | nil,
-          discovery_prefix: String.t()
+          discovery_prefix: String.t(),
+          migration_delay: non_neg_integer()
         ]
 
   @doc """
-  Publishes discovery configuration payloads for every entity derived from
-  the given vehicle summary.
+  Publishes a device discovery configuration payload containing every entity
+  derived from the given vehicle summary.
 
-  Each payload is published retained (QoS 1) to
-  `<discovery_prefix>/<component>/<node>/<object_id>/config` where `node` is
-  `#{@node}_<car_id>` (with the `MQTT_NAMESPACE` inserted after `#{@node}`
-  when set). Returns `:ok` on success.
+  The payload is published retained (QoS 1) to
+  `<discovery_prefix>/device/<node>/config` where `node` is
+  `#{@node}_<car_id>` (with the `MQTT_NAMESPACE` inserted after `#{@node}` when
+  set). Returns `:ok` on success.
   """
   @spec publish(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def publish(%Summary{} = summary, opts, publisher) do
+    {prefix, node, device_payload} = discovery_config(summary, opts)
+
+    publish_device_config(prefix, node, device_payload, publisher)
+  end
+
+  @doc """
+  Migrates any existing single-component discovery configs to a device
+  discovery config and then clears the old retained configs.
+
+  Publishing stops at the first error. Every legacy migration marker must be
+  published successfully before waiting one second for Home Assistant to
+  process the markers and publishing the device config. Legacy cleanup starts
+  only after the device config succeeds. Retrying safely restarts the sequence.
+  """
+  @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
+  def migrate(%Summary{} = summary, opts, publisher) do
+    {prefix, node, device_payload} = discovery_config(summary, opts)
+    migration_delay = Keyword.get(opts, :migration_delay, @migration_delay)
+
+    with :ok <- publish_legacy_configs(prefix, node, @migration_payload, publisher),
+         :ok <- Process.sleep(migration_delay),
+         :ok <- publish_device_config(prefix, node, device_payload, publisher) do
+      publish_legacy_configs(prefix, node, "", publisher)
+    end
+  end
+
+  defp discovery_config(%Summary{} = summary, opts) do
     car_id = Keyword.fetch!(opts, :car_id)
     namespace = Keyword.get(opts, :namespace)
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
     node = node(car_id, namespace)
 
-    device = device(summary, opts)
-
-    Enum.reduce_while(entities(), :ok, fn {component, object_id, config}, _acc ->
-      topic = discovery_topic(prefix, component, node, object_id)
-
-      payload =
+    components =
+      Map.new(entities(), fn {component, object_id, config} ->
         config
         |> resolve_topics(car_id, namespace)
+        |> Map.put(:platform, component)
         |> Map.put(:unique_id, "#{node}_#{object_id}")
         |> Map.put(:object_id, "tesla_#{object_id}")
-        |> Map.put(:device, device)
-        |> Jason.encode!()
+        |> then(&{object_id, &1})
+      end)
 
-      case call(publisher, :publish, [topic, payload, [retain: true, qos: 1]]) do
-        :ok -> {:cont, :ok}
-        {:error, _} = error -> {:halt, error}
-      end
-    end)
+    device_payload =
+      %{
+        components: components,
+        device: device(summary, opts),
+        origin: origin()
+      }
+      |> Jason.encode!()
+
+    {prefix, node, device_payload}
+  end
+
+  defp publish_device_config(prefix, node, payload, publisher) do
+    call(publisher, :publish, [
+      device_discovery_topic(prefix, node),
+      payload,
+      [retain: true, qos: 1]
+    ])
   end
 
   @doc """
-  Builds the Home Assistant device metadata rendered into each discovery
+  Builds the Home Assistant device metadata rendered into the discovery
   configuration payload.
   """
   @spec device(Summary.t(), publish_opts()) :: map()
@@ -82,9 +122,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   end
 
   @doc """
-  Publishes an empty retained payload to clear a discovery topic, so entities
-  are removed from Home Assistant when discovery is disabled or a vehicle is
-  removed.
+  Publishes empty retained payloads to clear a vehicle's device discovery topic
+  and any legacy single-component topics, so its entities are removed from Home
+  Assistant when discovery is disabled or the vehicle is removed.
   """
   @spec clear(pos_integer(), publish_opts(), term()) :: :ok | {:error, term()}
   def clear(car_id, opts, publisher) do
@@ -92,18 +132,41 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
     node = node(car_id, namespace)
 
-    Enum.reduce_while(entities(), :ok, fn {component, object_id, _config}, _acc ->
-      topic = discovery_topic(prefix, component, node, object_id)
+    with :ok <-
+           call(publisher, :publish, [
+             device_discovery_topic(prefix, node),
+             "",
+             [retain: true, qos: 1]
+           ]) do
+      publish_legacy_configs(prefix, node, "", publisher)
+    end
+  end
 
-      case call(publisher, :publish, [topic, "", [retain: true, qos: 1]]) do
+  defp publish_legacy_configs(prefix, node, payload, publisher) do
+    Enum.reduce_while(entities(), :ok, fn {component, object_id, _config}, _acc ->
+      topic = component_discovery_topic(prefix, component, node, object_id)
+
+      case call(publisher, :publish, [topic, payload, [retain: true, qos: 1]]) do
         :ok -> {:cont, :ok}
         {:error, _} = error -> {:halt, error}
       end
     end)
   end
 
-  defp discovery_topic(prefix, component, node, object_id) do
+  defp device_discovery_topic(prefix, node) do
+    Enum.join([prefix, "device", node, "config"], "/")
+  end
+
+  defp component_discovery_topic(prefix, component, node, object_id) do
     Enum.join([prefix, component, node, object_id, "config"], "/")
+  end
+
+  defp origin do
+    %{
+      name: "TeslaMate",
+      sw_version: @version,
+      support_url: "https://docs.teslamate.org/"
+    }
   end
 
   defp resolve_topics(config, car_id, namespace) do

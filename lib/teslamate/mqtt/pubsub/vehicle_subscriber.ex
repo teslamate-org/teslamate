@@ -20,6 +20,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     :discovery,
     :discovery_base_url,
     :discovery_prefix,
+    :migration_delay,
     :discovery_device,
     :discovery_pending_summary,
     :discovery_pending_device,
@@ -78,6 +79,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     discovery = Keyword.get(opts, :discovery, false)
     discovery_base_url = Keyword.get(opts, :discovery_base_url)
     discovery_prefix = Keyword.get(opts, :discovery_prefix)
+    migration_delay = Keyword.get(opts, :migration_delay)
 
     :ok = call(deps.vehicles, :subscribe_to_summary, [car_id])
 
@@ -88,7 +90,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
        deps: deps,
        discovery: discovery,
        discovery_base_url: discovery_base_url,
-       discovery_prefix: discovery_prefix
+       discovery_prefix: discovery_prefix,
+       migration_delay: migration_delay
      }, {:continue, :clear_retained}}
   end
 
@@ -190,6 +193,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     end
   end
 
+  defp publish_discovery(
+         %Summary{} = summary,
+         opts,
+         %State{discovery_device: nil, deps: deps}
+       ) do
+    HomeAssistant.migrate(summary, opts, deps.publisher)
+  end
+
   defp publish_discovery(%Summary{} = summary, opts, %State{deps: deps}) do
     HomeAssistant.publish(summary, opts, deps.publisher)
   end
@@ -237,7 +248,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       car_id: state.car_id,
       namespace: state.namespace,
       base_url: state.discovery_base_url,
-      discovery_prefix: state.discovery_prefix
+      discovery_prefix: state.discovery_prefix,
+      migration_delay: state.migration_delay
     ]
     |> Enum.reject(fn {_k, v} -> is_nil(v) end)
   end
