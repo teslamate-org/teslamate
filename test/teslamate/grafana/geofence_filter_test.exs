@@ -26,8 +26,21 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
     setup do
       car = car_fixture()
       # Create two geofences with distinct locations
-      {:ok, g1} = Locations.create_geofence(%{name: "Home", latitude: 52.514521, longitude: 13.350144, radius: 100})
-      {:ok, g2} = Locations.create_geofence(%{name: "Work", latitude: 53.514521, longitude: 14.350144, radius: 100})
+      {:ok, g1} =
+        Locations.create_geofence(%{
+          name: "Home",
+          latitude: 52.514521,
+          longitude: 13.350144,
+          radius: 100
+        })
+
+      {:ok, g2} =
+        Locations.create_geofence(%{
+          name: "Work",
+          latitude: 53.514521,
+          longitude: 14.350144,
+          radius: 100
+        })
 
       # Charging process at g1
       cp_g1 = create_charging_process(car, %{latitude: 52.514521, longitude: 13.350144})
@@ -49,8 +62,10 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
       where = geofence_where_clause("")
       # Should be true for all because ''='' -> true
       for cp <- [cp_g1, cp_g2, cp_nil] do
-        assert query_matches?(where, cp.id), "empty should match #{cp.id} geofence_id=#{inspect(cp.geofence_id)}"
+        assert query_matches?(where, cp.id),
+               "empty should match #{cp.id} geofence_id=#{inspect(cp.geofence_id)}"
       end
+
       # Also test that count via SQL matches 3
       assert count_where("") == 3
       assert count_where("-1") == 3
@@ -58,13 +73,20 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
 
     test "'-1' (All) returns all rows", %{cp_g1: cp_g1, cp_g2: cp_g2, cp_nil: cp_nil} do
       where = geofence_where_clause("-1")
+
       for cp <- [cp_g1, cp_g2, cp_nil] do
         assert query_matches?(where, cp.id)
       end
+
       assert count_where("-1") == 3
     end
 
-    test "single geofence '1' returns only matching", %{g1: g1, cp_g1: cp_g1, cp_g2: cp_g2, cp_nil: cp_nil} do
+    test "single geofence '1' returns only matching", %{
+      g1: g1,
+      cp_g1: cp_g1,
+      cp_g2: cp_g2,
+      cp_nil: cp_nil
+    } do
       where = geofence_where_clause("#{g1.id}")
       assert query_matches?(where, cp_g1.id)
       refute query_matches?(where, cp_g2.id)
@@ -72,7 +94,13 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
       assert count_where("#{g1.id}") == 1
     end
 
-    test "multi geofence '1|2' returns matching", %{g1: g1, g2: g2, cp_g1: cp_g1, cp_g2: cp_g2, cp_nil: cp_nil} do
+    test "multi geofence '1|2' returns matching", %{
+      g1: g1,
+      g2: g2,
+      cp_g1: cp_g1,
+      cp_g2: cp_g2,
+      cp_nil: cp_nil
+    } do
       where = geofence_where_clause("#{g1.id}|#{g2.id}")
       assert query_matches?(where, cp_g1.id)
       assert query_matches?(where, cp_g2.id)
@@ -99,9 +127,15 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
     test "unsafe in () would syntax error, safe does not" do
       # The old buggy pattern would be: geofence_id in ()
       # This should error
-      assert {:error, _} = Repo.query("SELECT * FROM charging_processes WHERE geofence_id in ()", [])
+      assert {:error, _} =
+               Repo.query("SELECT * FROM charging_processes WHERE geofence_id in ()", [])
+
       # Safe pattern with empty should not error and return all when using OR
-      assert {:ok, _} = Repo.query("SELECT * FROM charging_processes WHERE '' = '' OR geofence_id = ANY(string_to_array('', '|' )::int[])", [])
+      assert {:ok, _} =
+               Repo.query(
+                 "SELECT * FROM charging_processes WHERE '' = '' OR geofence_id = ANY(string_to_array('', '|' )::int[])",
+                 []
+               )
     end
 
     test "drives two-column filter works for start/end geofence", %{g1: g1, g2: g2} do
@@ -134,7 +168,10 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
 
   defp count_where(pipe_value) do
     where = geofence_where_clause(pipe_value)
-    {:ok, %{rows: [[count]]}} = Repo.query("SELECT count(*) FROM charging_processes WHERE #{where}")
+
+    {:ok, %{rows: [[count]]}} =
+      Repo.query("SELECT count(*) FROM charging_processes WHERE #{where}")
+
     count
   end
 
@@ -151,7 +188,13 @@ defmodule TeslaMate.Grafana.GeofenceFilterTest do
   defp car_fixture(attrs \\ %{}) do
     {:ok, car} =
       attrs
-      |> Enum.into(%{efficiency: 0.153, eid: System.unique_integer([:positive]), model: "M3", vid: System.unique_integer([:positive]), vin: "VIN#{System.unique_integer([:positive])}"})
+      |> Enum.into(%{
+        efficiency: 0.153,
+        eid: System.unique_integer([:positive]),
+        model: "M3",
+        vid: System.unique_integer([:positive]),
+        vin: "VIN#{System.unique_integer([:positive])}"
+      })
       |> Log.create_car()
 
     car

@@ -173,7 +173,9 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
     assert unsafe =~ @unsafe_geofence_in
     refute unsafe =~ @safe_geofence_any
 
-    safe = "'${geofence:pipe}' = '' OR '${geofence:pipe}' = '-1' OR geofence_id = ANY(string_to_array('${geofence:pipe}' , '|' )::int[])"
+    safe =
+      "'${geofence:pipe}' = '' OR '${geofence:pipe}' = '-1' OR geofence_id = ANY(string_to_array('${geofence:pipe}' , '|' )::int[])"
+
     refute safe =~ @unsafe_geofence_in
     assert safe =~ @safe_geofence_any
     assert safe =~ @empty_geofence_handling
