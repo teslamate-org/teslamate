@@ -144,7 +144,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "/Outside/", "values": false },
         "textMode": "value_and_name"
       },
       "pluginVersion": "13.0.1+security-01",
@@ -154,7 +154,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  convert_celsius(min(outside_temp), '$temp_unit') AS \"Min Outside [°$temp_unit]\",\n  convert_celsius(max(outside_temp), '$temp_unit') AS \"Max Outside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)",
+          "rawSql": "SELECT\n  convert_celsius(min(outside_temp), '$temp_unit') AS \"Min Outside [°$temp_unit]\",\n  convert_celsius(max(outside_temp), '$temp_unit') AS \"Max Outside [°$temp_unit]\",\n  convert_celsius(min(inside_temp), '$temp_unit') AS \"Min Inside [°$temp_unit]\",\n  convert_celsius(max(inside_temp), '$temp_unit') AS \"Max Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)",
           "refId": "A"
         }
       ],
@@ -162,7 +162,8 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+      "datasource": { "type": "datasource", "uid": "-- Dashboard --" },
+      "description": "Shares the query result of the Outside Min / Max panel (single positions scan for all four values).",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -183,17 +184,14 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "/Inside/", "values": false },
         "textMode": "value_and_name"
       },
       "pluginVersion": "13.0.1+security-01",
       "targets": [
         {
-          "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  convert_celsius(min(inside_temp), '$temp_unit') AS \"Min Inside [°$temp_unit]\",\n  convert_celsius(max(inside_temp), '$temp_unit') AS \"Max Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND inside_temp IS NOT NULL AND $__timeFilter(date)",
+          "datasource": { "type": "datasource", "uid": "-- Dashboard --" },
+          "panelId": 3,
           "refId": "A"
         }
       ],
@@ -296,13 +294,14 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "points",
-            "fillOpacity": 10,
+            "drawStyle": "line",
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": { "legend": false, "tooltip": false, "viz": false },
             "lineInterpolation": "linear",
+            "lineStyle": { "dash": [0, 10], "fill": "dot" },
             "lineWidth": 1,
-            "pointSize": 4,
+            "pointSize": 7,
             "scaleDistribution": { "type": "linear" },
             "showPoints": "always",
             "spanNulls": true,
@@ -332,7 +331,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  convert_celsius(avg(outside_temp), '$temp_unit') AS \"Outside (charging) [°$temp_unit]\"\nFROM charges c\nJOIN charging_processes cp ON cp.id = c.charging_process_id\nWHERE cp.car_id = $car_id AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  start_date AS time,\n  convert_celsius(outside_temp_avg, '$temp_unit') AS \"Outside (charging) [°$temp_unit]\"\nFROM charging_processes\nWHERE car_id = $car_id AND outside_temp_avg IS NOT NULL AND $__timeFilter(start_date)\nORDER BY 1",
           "refId": "A"
         }
       ],
