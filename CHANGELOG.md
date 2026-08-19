@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat(vehicle): identify Cybertruck and show it correctly across UI and MQTT (#5627 - @nebhale)
+
 ### Improvements and bug fixes
 
 - fix(vehicle): shorten the streaming suspend probe interval from 30 to 10 minutes (#5600 - @onevcat)
