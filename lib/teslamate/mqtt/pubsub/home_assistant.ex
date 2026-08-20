@@ -54,8 +54,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   Publishing stops at the first error. Every legacy migration marker must be
   published successfully before waiting for Home Assistant to process the
   markers and publishing the migration device config. Legacy cleanup starts
-  only after that config succeeds, and the complete device config is published
-  only after cleanup succeeds. Retrying safely restarts the sequence.
+  only after that config succeeds. After cleanup, Home Assistant is given the
+  same processing delay before the complete device config is published.
+  Retrying safely restarts the sequence.
   """
   @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def migrate(%Summary{} = summary, opts, publisher) do
@@ -74,7 +75,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     with :ok <- publish_legacy_configs(prefix, node, @migration_payload, publisher),
          :ok <- Process.sleep(migration_delay),
          :ok <- publish_device_config(prefix, node, migration_device_payload, publisher),
-         :ok <- publish_legacy_configs(prefix, node, "", publisher) do
+         :ok <- publish_legacy_configs(prefix, node, "", publisher),
+         :ok <- Process.sleep(migration_delay) do
       publish_device_config(prefix, node, device_payload, publisher)
     end
   end

@@ -41,7 +41,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
     started_at = System.monotonic_time(:millisecond)
     :ok = HomeAssistant.migrate(@summary, opts, {MqttPublisherMock, publisher_name})
-    assert System.monotonic_time(:millisecond) - started_at >= @migration_delay
+    assert System.monotonic_time(:millisecond) - started_at >= 2 * @migration_delay
 
     messages = receive_configs()
 
@@ -717,7 +717,11 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       start_publisher(name, %{device_topic => [:ok, {:error, :disconnected}]})
 
     assert {:error, :disconnected} =
-             HomeAssistant.migrate(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+             HomeAssistant.migrate(
+               @summary,
+               migration_opts(car_id: 0),
+               {MqttPublisherMock, publisher_name}
+             )
 
     messages = receive_configs()
     assert {^device_topic, final_payload, [retain: true, qos: 1]} = List.last(messages)
