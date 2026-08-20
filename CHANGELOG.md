@@ -12,6 +12,7 @@
 - feat(mqtt): enrich Home Assistant device metadata and republish on change (#5616 - @nebhale)
 - fix(charging): prevent smallint overflow in energy calculation and recalc migration on battery-side DC readings (5617 - @JakobLichterfeld)
 - feat(mqtt): migrate Home Assistant discovery to device-based configuration (#5618 - @nebhale)
+- feat(mqtt): add missing Home Assistant discovery entities (#5629 - @nebhale)
 
 #### Build, CI, internal
 
