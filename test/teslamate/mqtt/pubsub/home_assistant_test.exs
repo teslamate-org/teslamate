@@ -31,9 +31,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     car: %Car{id: 0, name: "Tesla Model 3", model: "3"}
   }
 
-  test "migrates enabled components before cleanup and disabled components after cleanup", %{
-    test: name
-  } do
+  test "migrates legacy enabled components before cleanup and disabled components after cleanup",
+       %{test: name} do
     publisher_name = start_publisher(name)
 
     opts =
@@ -77,7 +76,25 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     decoded = Jason.decode!(final_payload)
 
     components = decoded["components"]
-    assert map_size(components) == length(migrations)
+    assert map_size(components) > length(migrations)
+
+    assert "homeassistant/device_tracker/teslamate_0/location/config" in migration_topics
+
+    for {component_id, legacy_topic} <- [
+          {"latitude", "homeassistant/sensor/teslamate_0/latitude/config"},
+          {"raw_location", "homeassistant/sensor/teslamate_0/location/config"},
+          {"charge_current_request",
+           "homeassistant/sensor/teslamate_0/charge_current_request/config"},
+          {"service_mode", "homeassistant/binary_sensor/teslamate_0/service_mode/config"},
+          {"driver_front_window_open",
+           "homeassistant/binary_sensor/teslamate_0/driver_front_window_open/config"},
+          {"driver_front_door_open",
+           "homeassistant/binary_sensor/teslamate_0/driver_front_door_open/config"}
+        ] do
+      assert Map.has_key?(components, component_id)
+      refute legacy_topic in migration_topics
+      refute legacy_topic in cleanup_topics
+    end
 
     disabled_component_ids =
       for {object_id, %{"enabled_by_default" => false}} <- components, do: object_id

@@ -17,6 +17,70 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   @migration_delay :timer.seconds(1)
   @migration_payload Jason.encode!(%{migrate_discovery: true})
   @node "teslamate"
+  @legacy_discovery_entities [
+    {"sensor", "display_name"},
+    {"sensor", "state"},
+    {"sensor", "charging_state"},
+    {"sensor", "since"},
+    {"sensor", "version"},
+    {"sensor", "update_version"},
+    {"sensor", "model"},
+    {"sensor", "trim_badging"},
+    {"sensor", "exterior_color"},
+    {"sensor", "wheel_type"},
+    {"sensor", "spoiler_type"},
+    {"sensor", "geofence"},
+    {"sensor", "shift_state"},
+    {"binary_sensor", "park_brake"},
+    {"sensor", "power"},
+    {"sensor", "speed"},
+    {"sensor", "heading"},
+    {"sensor", "elevation"},
+    {"sensor", "inside_temp"},
+    {"sensor", "outside_temp"},
+    {"sensor", "odometer"},
+    {"sensor", "est_battery_range"},
+    {"sensor", "rated_battery_range"},
+    {"sensor", "ideal_battery_range"},
+    {"sensor", "battery_level"},
+    {"sensor", "usable_battery_level"},
+    {"sensor", "charge_energy_added"},
+    {"sensor", "charge_limit_soc"},
+    {"sensor", "charger_actual_current"},
+    {"sensor", "charger_phases"},
+    {"sensor", "charger_power"},
+    {"sensor", "charger_voltage"},
+    {"sensor", "scheduled_charging_start_time"},
+    {"sensor", "time_to_full_charge"},
+    {"sensor", "tpms_pressure_fl"},
+    {"sensor", "tpms_pressure_fr"},
+    {"sensor", "tpms_pressure_rl"},
+    {"sensor", "tpms_pressure_rr"},
+    {"sensor", "tpms_pressure_fl_psi"},
+    {"sensor", "tpms_pressure_fr_psi"},
+    {"sensor", "tpms_pressure_rl_psi"},
+    {"sensor", "tpms_pressure_rr_psi"},
+    {"sensor", "active_route_destination"},
+    {"sensor", "active_route_energy_at_arrival"},
+    {"sensor", "active_route_distance_to_arrival"},
+    {"sensor", "active_route_minutes_to_arrival"},
+    {"sensor", "active_route_traffic_minutes_delay"},
+    {"device_tracker", "location"},
+    {"device_tracker", "active_route_location"},
+    {"binary_sensor", "healthy"},
+    {"binary_sensor", "update_available"},
+    {"binary_sensor", "sentry_mode"},
+    {"binary_sensor", "windows_open"},
+    {"binary_sensor", "doors_open"},
+    {"binary_sensor", "trunk_open"},
+    {"binary_sensor", "frunk_open"},
+    {"binary_sensor", "is_user_present"},
+    {"binary_sensor", "is_climate_on"},
+    {"binary_sensor", "is_preconditioning"},
+    {"binary_sensor", "plugged_in"},
+    {"binary_sensor", "charge_port_door_open"},
+    {"binary_sensor", "locked"}
+  ]
   @version Mix.Project.config()[:version]
 
   @type publish_opts :: [
@@ -167,7 +231,12 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   end
 
   defp publish_legacy_configs(prefix, node, payload, publisher) do
-    Enum.reduce_while(entities(), :ok, fn {component, object_id, _config}, _acc ->
+    entities =
+      Enum.filter(entities(), fn {component, object_id, _config} ->
+        {component, object_id} in @legacy_discovery_entities
+      end)
+
+    Enum.reduce_while(entities, :ok, fn {component, object_id, _config}, _acc ->
       topic = component_discovery_topic(prefix, component, node, object_id)
 
       case call(publisher, :publish, [topic, payload, [retain: true, qos: 1]]) do
