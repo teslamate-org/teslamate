@@ -17,6 +17,70 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   @migration_delay :timer.seconds(1)
   @migration_payload Jason.encode!(%{migrate_discovery: true})
   @node "teslamate"
+  @legacy_discovery_entities [
+    {"sensor", "display_name"},
+    {"sensor", "state"},
+    {"sensor", "charging_state"},
+    {"sensor", "since"},
+    {"sensor", "version"},
+    {"sensor", "update_version"},
+    {"sensor", "model"},
+    {"sensor", "trim_badging"},
+    {"sensor", "exterior_color"},
+    {"sensor", "wheel_type"},
+    {"sensor", "spoiler_type"},
+    {"sensor", "geofence"},
+    {"sensor", "shift_state"},
+    {"binary_sensor", "park_brake"},
+    {"sensor", "power"},
+    {"sensor", "speed"},
+    {"sensor", "heading"},
+    {"sensor", "elevation"},
+    {"sensor", "inside_temp"},
+    {"sensor", "outside_temp"},
+    {"sensor", "odometer"},
+    {"sensor", "est_battery_range"},
+    {"sensor", "rated_battery_range"},
+    {"sensor", "ideal_battery_range"},
+    {"sensor", "battery_level"},
+    {"sensor", "usable_battery_level"},
+    {"sensor", "charge_energy_added"},
+    {"sensor", "charge_limit_soc"},
+    {"sensor", "charger_actual_current"},
+    {"sensor", "charger_phases"},
+    {"sensor", "charger_power"},
+    {"sensor", "charger_voltage"},
+    {"sensor", "scheduled_charging_start_time"},
+    {"sensor", "time_to_full_charge"},
+    {"sensor", "tpms_pressure_fl"},
+    {"sensor", "tpms_pressure_fr"},
+    {"sensor", "tpms_pressure_rl"},
+    {"sensor", "tpms_pressure_rr"},
+    {"sensor", "tpms_pressure_fl_psi"},
+    {"sensor", "tpms_pressure_fr_psi"},
+    {"sensor", "tpms_pressure_rl_psi"},
+    {"sensor", "tpms_pressure_rr_psi"},
+    {"sensor", "active_route_destination"},
+    {"sensor", "active_route_energy_at_arrival"},
+    {"sensor", "active_route_distance_to_arrival"},
+    {"sensor", "active_route_minutes_to_arrival"},
+    {"sensor", "active_route_traffic_minutes_delay"},
+    {"device_tracker", "location"},
+    {"device_tracker", "active_route_location"},
+    {"binary_sensor", "healthy"},
+    {"binary_sensor", "update_available"},
+    {"binary_sensor", "sentry_mode"},
+    {"binary_sensor", "windows_open"},
+    {"binary_sensor", "doors_open"},
+    {"binary_sensor", "trunk_open"},
+    {"binary_sensor", "frunk_open"},
+    {"binary_sensor", "is_user_present"},
+    {"binary_sensor", "is_climate_on"},
+    {"binary_sensor", "is_preconditioning"},
+    {"binary_sensor", "plugged_in"},
+    {"binary_sensor", "charge_port_door_open"},
+    {"binary_sensor", "locked"}
+  ]
   @version Mix.Project.config()[:version]
 
   @type publish_opts :: [
@@ -45,39 +109,63 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   @doc """
   Migrates any existing single-component discovery configs to a device
-  discovery config and then clears the old retained configs.
+  discovery config and then clears the old retained configs. Components that
+  are disabled by default are omitted from the first device config and added
+  in a final device config after legacy cleanup. This prevents Home Assistant
+  from treating cleanup on a legacy topic as removal of a disabled component
+  from the shared device topic.
 
   Publishing stops at the first error. Every legacy migration marker must be
-  published successfully before waiting one second for Home Assistant to
-  process the markers and publishing the device config. Legacy cleanup starts
-  only after the device config succeeds. Retrying safely restarts the sequence.
+  published successfully before waiting for Home Assistant to process the
+  markers and publishing the migration device config. Legacy cleanup starts
+  only after that config succeeds. After cleanup, Home Assistant is given the
+  same processing delay before the complete device config is published.
+  Retrying safely restarts the sequence.
   """
   @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def migrate(%Summary{} = summary, opts, publisher) do
-    {prefix, node, device_payload} = discovery_config(summary, opts)
+    entity_configs = entities()
+    {prefix, node, device_payload} = discovery_config(summary, opts, entity_configs)
     migration_delay = Keyword.get(opts, :migration_delay, @migration_delay)
+
+    migration_entity_configs =
+      Enum.reject(entity_configs, fn {_component, _object_id, config} ->
+        Map.get(config, :enabled_by_default, true) == false
+      end)
+
+    {^prefix, ^node, migration_device_payload} =
+      discovery_config(summary, opts, migration_entity_configs)
 
     with :ok <- publish_legacy_configs(prefix, node, @migration_payload, publisher),
          :ok <- Process.sleep(migration_delay),
-         :ok <- publish_device_config(prefix, node, device_payload, publisher) do
-      publish_legacy_configs(prefix, node, "", publisher)
+         :ok <- publish_device_config(prefix, node, migration_device_payload, publisher),
+         :ok <- publish_legacy_configs(prefix, node, "", publisher),
+         :ok <- Process.sleep(migration_delay) do
+      publish_device_config(prefix, node, device_payload, publisher)
     end
   end
 
   defp discovery_config(%Summary{} = summary, opts) do
+    discovery_config(summary, opts, entities())
+  end
+
+  defp discovery_config(%Summary{} = summary, opts, entity_configs) do
     car_id = Keyword.fetch!(opts, :car_id)
     namespace = Keyword.get(opts, :namespace)
     prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
     node = node(car_id, namespace)
 
     components =
-      Map.new(entities(), fn {component, object_id, config} ->
+      Map.new(entity_configs, fn {component, object_id, config} ->
+        component_id = Map.get(config, :component_id, object_id)
+
         config
+        |> Map.delete(:component_id)
         |> resolve_topics(car_id, namespace)
         |> Map.put(:platform, component)
-        |> Map.put(:unique_id, "#{node}_#{object_id}")
+        |> Map.put(:unique_id, "#{node}_#{component_id}")
         |> Map.put(:object_id, "tesla_#{object_id}")
-        |> then(&{object_id, &1})
+        |> then(&{component_id, &1})
       end)
 
     device_payload =
@@ -143,7 +231,12 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   end
 
   defp publish_legacy_configs(prefix, node, payload, publisher) do
-    Enum.reduce_while(entities(), :ok, fn {component, object_id, _config}, _acc ->
+    entities =
+      Enum.filter(entities(), fn {component, object_id, _config} ->
+        {component, object_id} in @legacy_discovery_entities
+      end)
+
+    Enum.reduce_while(entities, :ok, fn {component, object_id, _config}, _acc ->
       topic = component_discovery_topic(prefix, component, node, object_id)
 
       case call(publisher, :publish, [topic, payload, [retain: true, qos: 1]]) do
@@ -296,10 +389,57 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     [
       # --- Generic sensors (string/raw values) ---
       {"sensor", "display_name",
-       %{state_topic_key: :display_name, name: "Display Name", icon: "mdi:car"}},
+       %{
+         state_topic_key: :display_name,
+         name: "Display Name",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:form-textbox"
+       }},
+      {"sensor", "latitude",
+       %{
+         state_topic_key: :latitude,
+         name: "Latitude",
+         enabled_by_default: false,
+         state_class: "measurement",
+         unit_of_measurement: "°",
+         icon: "mdi:latitude"
+       }},
+      {"sensor", "location",
+       %{
+         component_id: "raw_location",
+         state_topic_key: :location,
+         name: "Location",
+         enabled_by_default: false,
+         icon: "mdi:car"
+       }},
+      {"sensor", "longitude",
+       %{
+         state_topic_key: :longitude,
+         name: "Longitude",
+         enabled_by_default: false,
+         state_class: "measurement",
+         unit_of_measurement: "°",
+         icon: "mdi:longitude"
+       }},
       {"sensor", "state", %{state_topic_key: :state, name: "State", icon: "mdi:car-connected"}},
       {"sensor", "charging_state",
        %{state_topic_key: :charging_state, name: "Charging State", icon: "mdi:ev-station"}},
+      {"sensor", "climate_keeper_mode",
+       %{
+         state_topic_key: :climate_keeper_mode,
+         name: "Climate Keeper",
+         icon: "mdi:air-conditioner",
+         value_template: "{{ value | title }}"
+       }},
+      {"sensor", "center_display_state",
+       %{
+         state_topic_key: :center_display_state,
+         name: "Center Display",
+         icon: "mdi:television",
+         value_template:
+           "{% set states = {0: 'off', 2: 'standby', 3: 'charging', 4: 'on', 5: 'large_charging', 6: 'ready_to_unlock', 7: 'sentry_mode', 8: 'dog_mode', 9: 'media'} %}{% set state = states.get(value | int(-1)) %}{% if state %}{{ state }}{% endif %}"
+       }},
       {"sensor", "since",
        %{
          state_topic_key: :since,
@@ -308,17 +448,49 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          icon: "mdi:clock-outline"
        }},
       {"sensor", "version",
-       %{state_topic_key: :version, name: "Version", icon: "mdi:alphabetical"}},
+       %{
+         state_topic_key: :version,
+         name: "Version",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:numeric"
+       }},
       {"sensor", "update_version",
        %{state_topic_key: :update_version, name: "Update Version", icon: "mdi:alphabetical"}},
-      {"sensor", "model", %{state_topic_key: :model, name: "Model"}},
+      {"sensor", "model",
+       %{
+         state_topic_key: :model,
+         name: "Model",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:form-textbox"
+       }},
       {"sensor", "trim_badging",
-       %{state_topic_key: :trim_badging, name: "Trim Badging", icon: "mdi:shield-star-outline"}},
+       %{
+         state_topic_key: :trim_badging,
+         name: "Trim Badging",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:shield-star-outline"
+       }},
       {"sensor", "exterior_color",
        %{state_topic_key: :exterior_color, name: "Exterior Color", icon: "mdi:palette"}},
-      {"sensor", "wheel_type", %{state_topic_key: :wheel_type, name: "Wheel Type"}},
+      {"sensor", "wheel_type",
+       %{
+         state_topic_key: :wheel_type,
+         name: "Wheel Type",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:tire"
+       }},
       {"sensor", "spoiler_type",
-       %{state_topic_key: :spoiler_type, name: "Spoiler Type", icon: "mdi:car-sports"}},
+       %{
+         state_topic_key: :spoiler_type,
+         name: "Spoiler Type",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:car-sports"
+       }},
       {"sensor", "geofence", %{state_topic_key: :geofence, name: "Geofence", icon: "mdi:earth"}},
       {"sensor", "shift_state",
        %{state_topic_key: :shift_state, name: "Shift State", icon: "mdi:car-shift-pattern"}},
@@ -453,6 +625,24 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "A",
          icon: "mdi:lightning-bolt"
        }},
+      {"sensor", "charge_current_request",
+       %{
+         state_topic_key: :charge_current_request,
+         name: "Charge Current Request",
+         device_class: "current",
+         state_class: "measurement",
+         unit_of_measurement: "A",
+         suggested_display_precision: 0
+       }},
+      {"sensor", "charge_current_request_max",
+       %{
+         state_topic_key: :charge_current_request_max,
+         name: "Charge Current Request (Max)",
+         device_class: "current",
+         state_class: "measurement",
+         unit_of_measurement: "A",
+         suggested_display_precision: 0
+       }},
       {"sensor", "charger_phases",
        %{state_topic_key: :charger_phases, name: "Charger Phases", icon: "mdi:sine-wave"}},
       {"sensor", "charger_power",
@@ -486,81 +676,135 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "h",
          icon: "mdi:clock-outline"
        }},
+      {"sensor", "download_perc",
+       %{
+         state_topic_key: :download_perc,
+         name: "Software Update Download",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         state_class: "measurement",
+         unit_of_measurement: "%",
+         suggested_display_precision: 0,
+         icon: "mdi:download"
+       }},
+      {"sensor", "install_perc",
+       %{
+         state_topic_key: :install_perc,
+         name: "Software Update Installation",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         state_class: "measurement",
+         unit_of_measurement: "%",
+         suggested_display_precision: 0,
+         icon: "mdi:update"
+       }},
+      {"sensor", "sun_roof_state",
+       %{
+         state_topic_key: :sun_roof_state,
+         name: "Sunroof State",
+         icon: "mdi:car-convertible",
+         value_template: "{{ value | replace('_', ' ') | title }}"
+       }},
+      {"sensor", "sun_roof_percent_open",
+       %{
+         state_topic_key: :sun_roof_percent_open,
+         name: "Sunroof Open",
+         state_class: "measurement",
+         unit_of_measurement: "%",
+         suggested_display_precision: 0,
+         icon: "mdi:car-convertible"
+       }},
 
       # TPMS pressure (bar)
       {"sensor", "tpms_pressure_fl",
        %{
          state_topic_key: :tpms_pressure_fl,
-         name: "TPMS Pressure Front Left",
+         name: "Tire Pressure (Front Left)",
          device_class: "pressure",
+         state_class: "measurement",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         suggested_display_precision: 1,
+         icon: "mdi:gauge"
        }},
       {"sensor", "tpms_pressure_fr",
        %{
          state_topic_key: :tpms_pressure_fr,
-         name: "TPMS Pressure Front Right",
+         name: "Tire Pressure (Front Right)",
          device_class: "pressure",
+         state_class: "measurement",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         suggested_display_precision: 1,
+         icon: "mdi:gauge"
        }},
       {"sensor", "tpms_pressure_rl",
        %{
          state_topic_key: :tpms_pressure_rl,
-         name: "TPMS Pressure Rear Left",
+         name: "Tire Pressure (Rear Left)",
          device_class: "pressure",
+         state_class: "measurement",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         suggested_display_precision: 1,
+         icon: "mdi:gauge"
        }},
       {"sensor", "tpms_pressure_rr",
        %{
          state_topic_key: :tpms_pressure_rr,
-         name: "TPMS Pressure Rear Right",
+         name: "Tire Pressure (Rear Right)",
          device_class: "pressure",
+         state_class: "measurement",
          unit_of_measurement: "bar",
-         icon: "mdi:car-tire-alert"
+         suggested_display_precision: 1,
+         icon: "mdi:gauge"
        }},
 
-      # TPMS pressure (psi) - derived via value_template from the bar topic
+      # TPMS pressure compatibility sensors (psi), derived from the bar topics
       {"sensor", "tpms_pressure_fl_psi",
        %{
          state_topic_key: :tpms_pressure_fl,
-         name: "TPMS Pressure Front Left (psi)",
+         name: "Tire Pressure (Front Left, PSI)",
          device_class: "pressure",
+         state_class: "measurement",
+         enabled_by_default: false,
          unit_of_measurement: "psi",
-         icon: "mdi:car-tire-alert",
+         icon: "mdi:gauge",
          value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
+         suggested_display_precision: 1
        }},
       {"sensor", "tpms_pressure_fr_psi",
        %{
          state_topic_key: :tpms_pressure_fr,
-         name: "TPMS Pressure Front Right (psi)",
+         name: "Tire Pressure (Front Right, PSI)",
          device_class: "pressure",
+         state_class: "measurement",
+         enabled_by_default: false,
          unit_of_measurement: "psi",
-         icon: "mdi:car-tire-alert",
+         icon: "mdi:gauge",
          value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
+         suggested_display_precision: 1
        }},
       {"sensor", "tpms_pressure_rl_psi",
        %{
          state_topic_key: :tpms_pressure_rl,
-         name: "TPMS Pressure Rear Left (psi)",
+         name: "Tire Pressure (Rear Left, PSI)",
          device_class: "pressure",
+         state_class: "measurement",
+         enabled_by_default: false,
          unit_of_measurement: "psi",
-         icon: "mdi:car-tire-alert",
+         icon: "mdi:gauge",
          value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
+         suggested_display_precision: 1
        }},
       {"sensor", "tpms_pressure_rr_psi",
        %{
          state_topic_key: :tpms_pressure_rr,
-         name: "TPMS Pressure Rear Right (psi)",
+         name: "Tire Pressure (Rear Right, PSI)",
          device_class: "pressure",
+         state_class: "measurement",
+         enabled_by_default: false,
          unit_of_measurement: "psi",
-         icon: "mdi:car-tire-alert",
+         icon: "mdi:gauge",
          value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 2
+         suggested_display_precision: 1
        }},
 
       # --- Active route sensors (derived from the JSON active_route topic) ---
@@ -620,7 +864,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
       # --- Device trackers (JSON attributes) ---
       {"device_tracker", "location",
-       %{json_attributes_topic_key: :location, name: "Location", icon: "mdi:crosshairs-gps"}},
+       %{json_attributes_topic_key: :location, name: nil, icon: "mdi:crosshairs-gps"}},
       {"device_tracker", "active_route_location",
        %{
          json_attributes_topic_key: :active_route,
@@ -644,6 +888,52 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Update Available",
          icon: "mdi:alarm"
        })},
+      {"binary_sensor", "sun_roof_installed",
+       Map.merge(true_false, %{
+         state_topic_key: :sun_roof_installed,
+         name: "Sunroof Installed",
+         entity_category: "diagnostic",
+         enabled_by_default: false,
+         icon: "mdi:car-convertible"
+       })},
+      {"binary_sensor", "service_mode",
+       Map.merge(true_false, %{
+         state_topic_key: :service_mode,
+         name: "Service Mode",
+         icon: "mdi:wrench"
+       })},
+      {"binary_sensor", "tpms_soft_warning_fl",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_fl,
+         name: "Tire Soft (Front Left)",
+         device_class: "problem",
+         entity_category: "diagnostic",
+         icon: "mdi:car-tire-alert"
+       })},
+      {"binary_sensor", "tpms_soft_warning_fr",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_fr,
+         name: "Tire Soft (Front Right)",
+         device_class: "problem",
+         entity_category: "diagnostic",
+         icon: "mdi:car-tire-alert"
+       })},
+      {"binary_sensor", "tpms_soft_warning_rl",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_rl,
+         name: "Tire Soft (Rear Left)",
+         device_class: "problem",
+         entity_category: "diagnostic",
+         icon: "mdi:car-tire-alert"
+       })},
+      {"binary_sensor", "tpms_soft_warning_rr",
+       Map.merge(true_false, %{
+         state_topic_key: :tpms_soft_warning_rr,
+         name: "Tire Soft (Rear Right)",
+         device_class: "problem",
+         entity_category: "diagnostic",
+         icon: "mdi:car-tire-alert"
+       })},
       {"binary_sensor", "sentry_mode",
        Map.merge(true_false, %{
          state_topic_key: :sentry_mode,
@@ -653,14 +943,70 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
       {"binary_sensor", "windows_open",
        Map.merge(true_false, %{
          state_topic_key: :windows_open,
-         name: "Windows Open",
+         name: "Windows",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "driver_front_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_front_window_open,
+         name: "Window (Driver Front)",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "driver_rear_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_rear_window_open,
+         name: "Window (Driver Rear)",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_front_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_front_window_open,
+         name: "Window (Passenger Front)",
+         device_class: "window",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_rear_window_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_rear_window_open,
+         name: "Window (Passenger Rear)",
          device_class: "window",
          icon: "mdi:car-door"
        })},
       {"binary_sensor", "doors_open",
        Map.merge(true_false, %{
          state_topic_key: :doors_open,
-         name: "Doors Open",
+         name: "Doors",
+         device_class: "door",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "driver_front_door_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_front_door_open,
+         name: "Door (Driver Front)",
+         device_class: "door",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "driver_rear_door_open",
+       Map.merge(true_false, %{
+         state_topic_key: :driver_rear_door_open,
+         name: "Door (Driver Rear)",
+         device_class: "door",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_front_door_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_front_door_open,
+         name: "Door (Passenger Front)",
+         device_class: "door",
+         icon: "mdi:car-door"
+       })},
+      {"binary_sensor", "passenger_rear_door_open",
+       Map.merge(true_false, %{
+         state_topic_key: :passenger_rear_door_open,
+         name: "Door (Passenger Rear)",
          device_class: "door",
          icon: "mdi:car-door"
        })},
