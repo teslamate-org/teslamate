@@ -17,12 +17,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   @migration_delay :timer.seconds(1)
   @migration_payload Jason.encode!(%{migrate_discovery: true})
   @node "teslamate"
-  @removed_entities [
-    {"sensor", "tpms_pressure_fl_psi"},
-    {"sensor", "tpms_pressure_fr_psi"},
-    {"sensor", "tpms_pressure_rl_psi"},
-    {"sensor", "tpms_pressure_rr_psi"}
-  ]
   @version Mix.Project.config()[:version]
 
   @type publish_opts :: [
@@ -171,12 +165,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   end
 
   defp publish_legacy_configs(prefix, node, payload, publisher) do
-    entities =
-      Enum.map(entities(), fn {component, object_id, _config} -> {component, object_id} end)
-
-    entities = if payload == "", do: entities ++ @removed_entities, else: entities
-
-    Enum.reduce_while(entities, :ok, fn {component, object_id}, _acc ->
+    Enum.reduce_while(entities(), :ok, fn {component, object_id, _config}, _acc ->
       topic = component_discovery_topic(prefix, component, node, object_id)
 
       case call(publisher, :publish, [topic, payload, [retain: true, qos: 1]]) do
@@ -695,6 +684,56 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "bar",
          suggested_display_precision: 1,
          icon: "mdi:gauge"
+       }},
+
+      # TPMS pressure compatibility sensors (psi), derived from the bar topics
+      {"sensor", "tpms_pressure_fl_psi",
+       %{
+         state_topic_key: :tpms_pressure_fl,
+         name: "Tire Pressure (Front Left, PSI)",
+         device_class: "pressure",
+         state_class: "measurement",
+         enabled_by_default: false,
+         unit_of_measurement: "psi",
+         icon: "mdi:gauge",
+         value_template: "{{ (value | float * 14.50377) | round(2) }}",
+         suggested_display_precision: 1
+       }},
+      {"sensor", "tpms_pressure_fr_psi",
+       %{
+         state_topic_key: :tpms_pressure_fr,
+         name: "Tire Pressure (Front Right, PSI)",
+         device_class: "pressure",
+         state_class: "measurement",
+         enabled_by_default: false,
+         unit_of_measurement: "psi",
+         icon: "mdi:gauge",
+         value_template: "{{ (value | float * 14.50377) | round(2) }}",
+         suggested_display_precision: 1
+       }},
+      {"sensor", "tpms_pressure_rl_psi",
+       %{
+         state_topic_key: :tpms_pressure_rl,
+         name: "Tire Pressure (Rear Left, PSI)",
+         device_class: "pressure",
+         state_class: "measurement",
+         enabled_by_default: false,
+         unit_of_measurement: "psi",
+         icon: "mdi:gauge",
+         value_template: "{{ (value | float * 14.50377) | round(2) }}",
+         suggested_display_precision: 1
+       }},
+      {"sensor", "tpms_pressure_rr_psi",
+       %{
+         state_topic_key: :tpms_pressure_rr,
+         name: "Tire Pressure (Rear Right, PSI)",
+         device_class: "pressure",
+         state_class: "measurement",
+         enabled_by_default: false,
+         unit_of_measurement: "psi",
+         icon: "mdi:gauge",
+         value_template: "{{ (value | float * 14.50377) | round(2) }}",
+         suggested_display_precision: 1
        }},
 
       # --- Active route sensors (derived from the JSON active_route topic) ---

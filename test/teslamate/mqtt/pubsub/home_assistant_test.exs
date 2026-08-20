@@ -70,16 +70,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     migration_topics = Enum.map(migrations, &elem(&1, 0))
     cleanup_topics = Enum.map(cleanup, &elem(&1, 0))
 
-    assert MapSet.subset?(MapSet.new(migration_topics), MapSet.new(cleanup_topics))
+    assert migration_topics == cleanup_topics
     assert Enum.all?(cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
-
-    for position <- ["fl", "fr", "rl", "rr"] do
-      removed_topic =
-        "homeassistant/sensor/teslamate_0/tpms_pressure_#{position}_psi/config"
-
-      refute removed_topic in migration_topics
-      assert removed_topic in cleanup_topics
-    end
 
     migration_decoded = Jason.decode!(migration_payload)
     decoded = Jason.decode!(final_payload)
@@ -578,7 +570,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert %{"topic" => "teslamate/cars/0/active_route"} = config["availability"]
   end
 
-  test "publishes tire pressures in bar without derived psi sensors", %{test: name} do
+  test "publishes tire pressures in bar and psi", %{test: name} do
     publisher_name = start_publisher(name)
 
     :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
@@ -591,8 +583,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
           {"rl", "Tire Pressure (Rear Left)"},
           {"rr", "Tire Pressure (Rear Right)"}
         ] do
-      refute Map.has_key?(decoded["components"], "tpms_pressure_#{position}_psi")
-
       config = decoded["components"]["tpms_pressure_#{position}"]
       assert config["platform"] == "sensor"
       assert config["name"] == entity_name
@@ -602,6 +592,18 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       assert config["suggested_display_precision"] == 1
       assert config["icon"] == "mdi:gauge"
       assert config["state_topic"] == "teslamate/cars/0/tpms_pressure_#{position}"
+
+      psi_config = decoded["components"]["tpms_pressure_#{position}_psi"]
+      assert psi_config["platform"] == "sensor"
+      assert psi_config["name"] == String.replace(entity_name, ")", ", PSI)")
+      assert psi_config["device_class"] == "pressure"
+      assert psi_config["state_class"] == "measurement"
+      assert psi_config["enabled_by_default"] == false
+      assert psi_config["unit_of_measurement"] == "psi"
+      assert psi_config["suggested_display_precision"] == 1
+      assert psi_config["icon"] == "mdi:gauge"
+      assert psi_config["state_topic"] == "teslamate/cars/0/tpms_pressure_#{position}"
+      assert String.contains?(psi_config["value_template"], "14.50377")
     end
   end
 
