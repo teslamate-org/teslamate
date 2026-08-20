@@ -544,7 +544,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert raw_location["enabled_by_default"] == false
     assert raw_location["icon"] == "mdi:car"
     assert raw_location["state_topic"] == "teslamate/cars/0/location"
-    assert raw_location["unique_id"] == "teslamate_0_location"
+    assert raw_location["unique_id"] == "teslamate_0_raw_location"
     assert raw_location["object_id"] == "tesla_location"
     refute Map.has_key?(raw_location, "component_id")
     refute Map.has_key?(raw_location, "entity_category")
@@ -555,6 +555,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert tracker["name"] == nil
     assert tracker["json_attributes_topic"] == "teslamate/cars/0/location"
     assert tracker["unique_id"] == "teslamate_0_location"
+    refute tracker["unique_id"] == raw_location["unique_id"]
     refute Map.has_key?(tracker, "enabled_by_default")
   end
 

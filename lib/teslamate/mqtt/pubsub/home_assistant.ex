@@ -99,7 +99,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
         |> Map.delete(:component_id)
         |> resolve_topics(car_id, namespace)
         |> Map.put(:platform, component)
-        |> Map.put(:unique_id, "#{node}_#{object_id}")
+        |> Map.put(:unique_id, "#{node}_#{component_id}")
         |> Map.put(:object_id, "tesla_#{object_id}")
         |> then(&{component_id, &1})
       end)
