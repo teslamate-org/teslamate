@@ -24,6 +24,8 @@
 
 #### Dashboards
 
+- feat(grafana): show start SOC on incomplete charges from the first charge sample (#5644 - @swiffer)
+
 #### Translations
 
 #### Documentation
