@@ -3,6 +3,10 @@ title: Frequently Asked Questions
 sidebar_label: FAQ
 ---
 
+## How to generate your own tokens
+
+See [Generating Tokens](installation/tokens.md).
+
 ## TeslaMate stopped recording data. How can I fix it?
 
 Check the TeslaMate logs first. They usually show whether TeslaMate cannot reach Tesla, cannot connect to the database, or needs new credentials.
