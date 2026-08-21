@@ -64,7 +64,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     {"device_tracker", "location"},
     {"device_tracker", "active_route_location"},
     {"binary_sensor", "healthy"},
-    {"binary_sensor", "update_available"},
     {"binary_sensor", "sentry_mode"},
     {"binary_sensor", "windows_open"},
     {"binary_sensor", "doors_open"},
