@@ -56,9 +56,11 @@ Unlike the Compose installation which sets up the following containers in one go
 
 ## Usage
 
-1. Open the web interface [http://your-ip-address:4000](http://localhost:4000) or click on the TeslaMate icon and select WebUI.
-2. Sign in with your Tesla Account
-3. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000). Log in with the default user `admin` (initial password `admin`) and enter a secure password.
+1. [Generate an access and refresh token](../tokens.md)
+2. Open the web interface [http://your-ip-address:4000](http://localhost:4000) or click on the TeslaMate icon and select WebUI.
+3. Enter the access and refresh token on the sign-in page
+4. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000). Log in with the default user `admin` (initial password `admin`) and enter a secure password.
+5. In the TeslaMate web interface, go to _Settings → URLs_ and set the _Web App_ and _Dashboards_ URLs, so the links between TeslaMate and Grafana work in both directions.
 
 ## Update
 

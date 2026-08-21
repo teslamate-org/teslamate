@@ -27,6 +27,9 @@
 
 #### Documentation
 
+- doc: improve token and upgrade documentation, restructure sidebar (#5628 - @brianmay)
+- doc: promote token security note to warning admonition in docker/nixos install (#5628 - @JakobLichterfeld)
+
 ## [4.1.1] - 2026-08-14
 
 Hotfix for 4.1.0, which crashes in a startup loop on installations with MQTT enabled and no `MQTT_NAMESPACE` set. Upgrading is recommended for all MQTT users.
