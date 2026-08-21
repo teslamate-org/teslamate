@@ -420,6 +420,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     sensor = %{"platform" => "sensor"}
     measurement = Map.put(sensor, "state_class", "measurement")
     integer_measurement = Map.put(measurement, "suggested_display_precision", 0)
+    integer_angle_measurement = Map.put(integer_measurement, "state_class", "measurement_angle")
 
     distance =
       Map.merge(integer_measurement, %{
@@ -485,7 +486,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
          })},
       "heading" =>
         {"heading",
-         Map.merge(integer_measurement, %{
+         Map.merge(integer_angle_measurement, %{
            "name" => "Heading",
            "unit_of_measurement" => "°",
            "icon" => "mdi:compass"

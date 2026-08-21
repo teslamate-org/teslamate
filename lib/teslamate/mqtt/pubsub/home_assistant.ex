@@ -603,7 +603,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
        %{
          state_topic_key: :heading,
          name: "Heading",
-         state_class: "measurement",
+         state_class: "measurement_angle",
          unit_of_measurement: "°",
          suggested_display_precision: 0,
          icon: "mdi:compass"
