@@ -29,7 +29,7 @@
 #### Documentation
 
 - doc: improve token and upgrade documentation, restructure sidebar (#5628 - @brianmay)
-- doc: promote token security note to warning admonition in docker/nixos install (#5628 - @JakobLichterfeld)
+- doc: promote token security note to info admonition in docker/nixos install (#5628, #5642 - @JakobLichterfeld)
 - doc: restructure sidebar by user journey (#5642 - @JakobLichterfeld)
 
 ## [4.1.1] - 2026-08-14
