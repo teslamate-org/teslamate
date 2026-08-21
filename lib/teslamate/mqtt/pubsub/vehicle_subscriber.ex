@@ -126,6 +126,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     values =
       %{}
       |> add_simple_values(summary)
+      |> add_software_update(state.last_values)
       |> add_car_latitude_longitude(summary)
       |> add_geofence(summary)
       |> add_active_route(summary)
@@ -300,6 +301,27 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   defp add_simple_values(map, %Summary{} = summary) do
     Map.merge(map, Map.take(summary, @simple_values))
+  end
+
+  defp add_software_update(map, last_values) do
+    values =
+      (last_values || %{})
+      |> Map.merge(Map.reject(map, fn {_key, value} -> value in [nil, :unknown] end))
+
+    with version when is_binary(version) <- values[:version],
+         update_available when is_boolean(update_available) <- values[:update_available],
+         latest_version when is_binary(latest_version) <-
+           if(update_available, do: values[:update_version], else: version) do
+      software_update =
+        Jason.encode!(%{
+          installed_version: version,
+          latest_version: latest_version
+        })
+
+      Map.put(map, :software_update, software_update)
+    else
+      _value -> map
+    end
   end
 
   defp add_car_latitude_longitude(map, %Summary{} = summary) do

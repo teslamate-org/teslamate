@@ -217,6 +217,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
              "longitude" => 41.129182
            }
 
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/software_update", data, [retain: true, qos: 1]}}
+
+    assert Jason.decode!(data) == %{
+             "installed_version" => "2019.42",
+             "latest_version" => "2019.42"
+           }
+
     # Published as nil
     for key <- [
           :active_route_destination,
@@ -242,6 +250,28 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                     {:publish, "teslamate/cars/0/healthy", "", [retain: true, qos: 1]}}
 
     refute_receive _
+  end
+
+  test "publishes available software update state", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    drain_discovery_configs()
+
+    send(pid, %Summary{
+      version: "2026.14.1",
+      update_available: true,
+      update_version: "2026.20.1"
+    })
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/software_update", data, [retain: true, qos: 1]}}
+
+    assert Jason.decode!(data) == %{
+             "installed_version" => "2026.14.1",
+             "latest_version" => "2026.20.1"
+           }
   end
 
   test "publishes charging data", %{test: name} do
@@ -470,6 +500,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       display_name: "Foo",
       model: "3",
       trim_badging: "74D",
+      exterior_color: "DeepBlue",
       wheel_type: "AeroTurbine19",
       state: :online,
       car: %Car{name: "Foo", marketing_name: "LR AWD"}
@@ -488,7 +519,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert Map.has_key?(decoded, "device")
     assert Map.has_key?(decoded, "components")
     assert Map.has_key?(decoded, "origin")
-    assert decoded["device"]["model"] == ~s|Model 3 LR AWD (Aero Turbine 19" Wheels)|
+
+    assert decoded["device"]["model"] ==
+             ~s|Model 3 LR AWD (Deep Blue, Aero Turbine 19" Wheels)|
 
     drain_discovery_configs()
 
@@ -498,10 +531,30 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive {MqttPublisherMock,
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
 
+    summary = %Summary{summary | exterior_color: "PearlWhiteMultiCoat"}
+    send(pid, summary)
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/device/teslamate_0/config", payload,
+                     [retain: true, qos: 1]}},
+                   500
+
+    assert Jason.decode!(payload)["device"]["model"] ==
+             ~s|Model 3 LR AWD (Pearl White Multi Coat, Aero Turbine 19" Wheels)|
+
+    refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
+
     send(pid, %Summary{summary | sun_roof_installed: false})
     :sys.get_state(pid)
 
     # nil and false both omit the sunroof detail, so the rendered device is unchanged.
+    refute_receive {MqttPublisherMock,
+                    {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
+
+    send(pid, %Summary{summary | update_available: true, update_version: "2026.20.1"})
+    :sys.get_state(pid)
+
+    # Software update state changes do not require discovery to be republished.
     refute_receive {MqttPublisherMock,
                     {:publish, "homeassistant/" <> _, _, [retain: true, qos: 1]}}
 
@@ -514,7 +567,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                    500
 
     assert Jason.decode!(payload)["device"]["model"] ==
-             ~s|Model 3 Performance (Aero Turbine 19" Wheels)|
+             ~s|Model 3 Performance (Pearl White Multi Coat, Aero Turbine 19" Wheels)|
 
     refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
 
@@ -526,7 +579,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                    500
 
     assert Jason.decode!(payload)["device"]["model"] ==
-             ~s|Model 3 LR AWD (Aero Turbine 19" Wheels, Sunroof)|
+             ~s|Model 3 LR AWD (Pearl White Multi Coat, Aero Turbine 19" Wheels, Sunroof)|
 
     refute_receive {MqttPublisherMock, {:publish, "homeassistant/" <> _, _, _}}
 

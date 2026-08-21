@@ -69,8 +69,18 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     migration_topics = Enum.map(migrations, &elem(&1, 0))
     cleanup_topics = Enum.map(cleanup, &elem(&1, 0))
 
-    assert migration_topics == cleanup_topics
+    assert MapSet.subset?(MapSet.new(migration_topics), MapSet.new(cleanup_topics))
     assert Enum.all?(cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
+
+    removed_update_available_topic =
+      "homeassistant/binary_sensor/teslamate_0/update_available/config"
+
+    refute removed_update_available_topic in migration_topics
+    assert removed_update_available_topic in cleanup_topics
+
+    update_available_topic = "homeassistant/sensor/teslamate_0/update_available/config"
+    refute update_available_topic in migration_topics
+    refute update_available_topic in cleanup_topics
 
     migration_decoded = Jason.decode!(migration_payload)
     decoded = Jason.decode!(final_payload)
@@ -142,6 +152,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       @summary
       | model: "S",
         trim_badging: "74D",
+        exterior_color: "DeepBlue",
         wheel_type: "AeroTurbine19",
         spoiler_type: "CarbonFiber",
         sun_roof_installed: true,
@@ -154,7 +165,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     {_topic, decoded} = receive_device_config()
 
     assert decoded["device"]["model"] ==
-             ~s|Model S LR AWD (Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
+             ~s|Model S LR AWD (Deep Blue, Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
 
     assert decoded["device"]["sw_version"] == "2026.26.1"
   end
@@ -168,6 +179,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
     expected = %{
       "display_name" => {"Display Name", "mdi:form-textbox"},
+      "exterior_color" => {"Exterior Color", "mdi:palette"},
       "model" => {"Model", "mdi:form-textbox"},
       "spoiler_type" => {"Spoiler Type", "mdi:car-sports"},
       "trim_badging" => {"Trim Badging", "mdi:shield-star-outline"},
@@ -186,6 +198,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
     end
 
+    assert decoded["components"]["exterior_color"]["value_template"] ==
+             "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+
     sunroof = decoded["components"]["sun_roof_installed"]
     assert sunroof["platform"] == "binary_sensor"
     assert sunroof["name"] == "Sunroof Installed"
@@ -195,6 +210,68 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert sunroof["payload_off"] == "false"
     assert sunroof["icon"] == "mdi:car-convertible"
     assert sunroof["state_topic"] == "teslamate/cars/0/sun_roof_installed"
+  end
+
+  test "humanizes enum-like sensor values with Home Assistant templates", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    components = decoded["components"]
+
+    assert components["state"]["value_template"] == "{{ value | title }}"
+
+    assert components["charging_state"]["value_template"] ==
+             "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+
+    assert components["climate_keeper_mode"]["value_template"] == "{{ value | title }}"
+
+    assert components["exterior_color"]["value_template"] ==
+             "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+
+    assert components["sun_roof_state"]["value_template"] ==
+             "{{ value | replace('_', ' ') | title }}"
+  end
+
+  test "derives charging status from the charging state", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    components = decoded["components"]
+
+    charging_state = components["charging_state"]
+    assert charging_state["platform"] == "sensor"
+    assert charging_state["state_topic"] == "teslamate/cars/0/charging_state"
+
+    charging = components["charging"]
+    assert charging["platform"] == "binary_sensor"
+    assert charging["name"] == "Charging"
+    assert charging["device_class"] == "battery_charging"
+    assert charging["payload_on"] == "true"
+    assert charging["payload_off"] == "false"
+    assert charging["value_template"] == "{{ 'true' if value == 'Charging' else 'false' }}"
+    assert charging["icon"] == "mdi:battery-charging"
+    assert charging["state_topic"] == "teslamate/cars/0/charging_state"
+    assert charging["unique_id"] == "teslamate_0_charging"
+    assert charging["object_id"] == "tesla_charging_state"
+    refute Map.has_key?(charging, "component_id")
+  end
+
+  test "derives the parking brake from documented shift states", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    parking_brake = decoded["components"]["park_brake"]
+
+    assert parking_brake["name"] == "Parking Brake"
+
+    assert parking_brake["value_template"] ==
+             "{% if value in ['', 'P'] %}ON{% elif value in ['D', 'N', 'R'] %}OFF{% else %}None{% endif %}"
   end
 
   test "falls back to raw trim badging when the marketing name is unavailable", %{test: name} do
@@ -333,6 +410,158 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
                      [retain: true, qos: 1]}}
   end
 
+  test "aligns measurement sensors with the custom integration", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+
+    sensor = %{"platform" => "sensor"}
+    measurement = Map.put(sensor, "state_class", "measurement")
+    integer_measurement = Map.put(measurement, "suggested_display_precision", 0)
+    integer_angle_measurement = Map.put(integer_measurement, "state_class", "measurement_angle")
+
+    distance =
+      Map.merge(integer_measurement, %{
+        "device_class" => "distance",
+        "unit_of_measurement" => "km",
+        "icon" => "mdi:map-marker-distance"
+      })
+
+    temperature =
+      Map.merge(measurement, %{
+        "device_class" => "temperature",
+        "unit_of_measurement" => "°C",
+        "suggested_display_precision" => 1,
+        "icon" => "mdi:thermometer-lines"
+      })
+
+    expected = %{
+      "charge_energy_added" =>
+        {"charge_energy_added",
+         Map.merge(sensor, %{
+           "name" => "Energy Added",
+           "device_class" => "energy",
+           "state_class" => "total_increasing",
+           "unit_of_measurement" => "kWh",
+           "suggested_display_precision" => 1,
+           "icon" => "mdi:battery-charging"
+         })},
+      "charge_limit_soc" =>
+        {"charge_limit_soc",
+         Map.merge(integer_measurement, %{
+           "name" => "Charge Limit",
+           "unit_of_measurement" => "%",
+           "icon" => "mdi:battery-charging-90"
+         })},
+      "charger_actual_current" =>
+        {"charger_actual_current",
+         Map.merge(integer_measurement, %{
+           "name" => "Charger Current",
+           "device_class" => "current",
+           "unit_of_measurement" => "A"
+         })},
+      "charger_power" =>
+        {"charger_power",
+         Map.merge(integer_measurement, %{
+           "name" => "Charger Power",
+           "device_class" => "power",
+           "unit_of_measurement" => "kW"
+         })},
+      "charger_voltage" =>
+        {"charger_voltage",
+         Map.merge(integer_measurement, %{
+           "name" => "Charger Voltage",
+           "device_class" => "voltage",
+           "unit_of_measurement" => "V"
+         })},
+      "elevation" =>
+        {"elevation",
+         Map.merge(integer_measurement, %{
+           "name" => "Elevation",
+           "device_class" => "distance",
+           "unit_of_measurement" => "m",
+           "icon" => "mdi:image-filter-hdr"
+         })},
+      "heading" =>
+        {"heading",
+         Map.merge(integer_angle_measurement, %{
+           "name" => "Heading",
+           "unit_of_measurement" => "°",
+           "icon" => "mdi:compass"
+         })},
+      "speed" =>
+        {"speed",
+         Map.merge(integer_measurement, %{
+           "name" => "Speed",
+           "device_class" => "speed",
+           "unit_of_measurement" => "km/h",
+           "icon" => "mdi:speedometer"
+         })},
+      "est_battery_range" =>
+        {"est_battery_range_km", Map.put(distance, "name", "Range (Estimated)")},
+      "ideal_battery_range" =>
+        {"ideal_battery_range_km", Map.put(distance, "name", "Range (Ideal)")},
+      "rated_battery_range" =>
+        {"rated_battery_range_km", Map.put(distance, "name", "Range (Rated)")},
+      "inside_temp" => {"inside_temp", Map.put(temperature, "name", "Temperature (Inside)")},
+      "outside_temp" => {"outside_temp", Map.put(temperature, "name", "Temperature (Outside)")},
+      "odometer" =>
+        {"odometer",
+         Map.merge(sensor, %{
+           "name" => "Odometer",
+           "device_class" => "distance",
+           "state_class" => "total_increasing",
+           "unit_of_measurement" => "km",
+           "suggested_display_precision" => 0,
+           "icon" => "mdi:counter"
+         })},
+      "power" =>
+        {"power",
+         Map.merge(integer_measurement, %{
+           "name" => "Power",
+           "device_class" => "power",
+           "unit_of_measurement" => "kW"
+         })},
+      "scheduled_charging_start_time" =>
+        {"scheduled_charging_start_time",
+         Map.merge(sensor, %{
+           "name" => "Charging Start Time",
+           "device_class" => "timestamp"
+         })},
+      "since" =>
+        {"since",
+         Map.merge(sensor, %{
+           "name" => "Last Seen",
+           "device_class" => "timestamp",
+           "icon" => "mdi:timer-sand"
+         })},
+      "time_to_full_charge" =>
+        {"time_to_full_charge",
+         Map.merge(measurement, %{
+           "name" => "Charging Time Remaining",
+           "device_class" => "duration",
+           "unit_of_measurement" => "h",
+           "icon" => "mdi:timer"
+         })},
+      "usable_battery_level" =>
+        {"usable_battery_level",
+         Map.merge(measurement, %{
+           "name" => "Usable Battery",
+           "device_class" => "battery",
+           "unit_of_measurement" => "%"
+         })}
+    }
+
+    for {object_id, {topic_key, expected_config}} <- expected do
+      config = decoded["components"][object_id]
+
+      assert Map.drop(config, ["object_id", "unique_id"]) ==
+               Map.put(expected_config, "state_topic", "teslamate/cars/0/#{topic_key}")
+    end
+  end
+
   test "locked binary sensor is inverted", %{test: name} do
     publisher_name = start_publisher(name)
 
@@ -341,10 +570,45 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     {_topic, decoded} = receive_device_config()
     config = decoded["components"]["locked"]
     assert config["platform"] == "binary_sensor"
+    assert config["name"] == "Lock"
     assert config["payload_on"] == "false"
     assert config["payload_off"] == "true"
     assert config["device_class"] == "lock"
     assert config["state_topic"] == "teslamate/cars/0/locked"
+  end
+
+  test "aligns vehicle status binary sensors with the custom integration", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+
+    expected = [
+      {"charge_port_door_open", "Charge Port", "opening", "mdi:ev-plug-tesla"},
+      {"frunk_open", "Frunk", "door", "mdi:car"},
+      {"trunk_open", "Trunk", "door", "mdi:car"},
+      {"is_climate_on", "Climate", "running", "mdi:air-conditioner"},
+      {"is_preconditioning", "Preconditioning", "running", "mdi:air-conditioner"},
+      {"is_user_present", "User", "presence", "mdi:human-greeting"},
+      {"plugged_in", "Plug", "plug", "mdi:ev-station"},
+      {"service_mode", "Service Mode", "running", "mdi:wrench"},
+      {"sentry_mode", "Sentry Mode", "running", "mdi:cctv"}
+    ]
+
+    for {object_id, entity_name, device_class, icon} <- expected do
+      config = decoded["components"][object_id]
+
+      assert config["platform"] == "binary_sensor"
+      assert config["name"] == entity_name
+      assert config["device_class"] == device_class
+      assert config["payload_on"] == "true"
+      assert config["payload_off"] == "false"
+      assert config["icon"] == icon
+      assert config["state_topic"] == "teslamate/cars/0/#{object_id}"
+      refute Map.has_key?(config, "entity_category")
+      refute Map.has_key?(config, "enabled_by_default")
+    end
   end
 
   test "publishes aggregate and individual cabin door sensors", %{test: name} do
@@ -465,6 +729,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       "service_mode" => %{
         "platform" => "binary_sensor",
         "name" => "Service Mode",
+        "device_class" => "running",
         "payload_on" => "true",
         "payload_off" => "false",
         "icon" => "mdi:wrench"
@@ -576,16 +841,141 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     refute Map.has_key?(tracker, "enabled_by_default")
   end
 
-  test "active route sensors include availability and template", %{test: name} do
+  test "health binary sensor reports problems", %{test: name} do
     publisher_name = start_publisher(name)
 
     :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
 
     {_topic, decoded} = receive_device_config()
-    config = decoded["components"]["active_route_destination"]
-    assert config["state_topic"] == "teslamate/cars/0/active_route"
-    assert String.contains?(config["value_template"], "value_json.destination")
-    assert %{"topic" => "teslamate/cars/0/active_route"} = config["availability"]
+    config = decoded["components"]["healthy"]
+    assert config["platform"] == "binary_sensor"
+    assert config["name"] == "Health"
+    assert config["device_class"] == "problem"
+    assert config["entity_category"] == "diagnostic"
+    assert config["payload_on"] == "false"
+    assert config["payload_off"] == "true"
+    assert config["icon"] == "mdi:heart-pulse"
+    assert config["state_topic"] == "teslamate/cars/0/healthy"
+  end
+
+  test "publishes active route entities with canonical values and robust availability", %{
+    test: name
+  } do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    components = decoded["components"]
+
+    availability = %{
+      "topic" => "teslamate/cars/0/active_route",
+      "value_template" =>
+        "{{ 'online' if value_json is mapping and not value_json.get('error') else 'offline' }}"
+    }
+
+    for {object_id, entity_name, field} <- [
+          {"active_route_destination", "Active Route Destination", "destination"},
+          {"active_route_energy_at_arrival", "Active Route Energy At Arrival",
+           "energy_at_arrival"},
+          {"active_route_distance_to_arrival", "Active Route Distance To Arrival",
+           "miles_to_arrival"},
+          {"active_route_minutes_to_arrival", "Active Route Minutes To Arrival",
+           "minutes_to_arrival"},
+          {"active_route_traffic_minutes_delay", "Active Route Traffic Minutes Delay",
+           "traffic_minutes_delay"}
+        ] do
+      config = components[object_id]
+
+      assert config["name"] == entity_name
+      assert config["state_topic"] == "teslamate/cars/0/active_route"
+      assert config["availability"] == availability
+
+      assert config["value_template"] ==
+               "{% if value_json is mapping and not value_json.get('error') and value_json.get('#{field}') is not none %}{{ value_json.get('#{field}') }}{% endif %}"
+    end
+
+    distance = components["active_route_distance_to_arrival"]
+    assert distance["device_class"] == "distance"
+    assert distance["unit_of_measurement"] == "mi"
+    refute String.contains?(distance["value_template"], "1.609")
+
+    tracker = components["active_route_location"]
+    assert tracker["name"] == "Active Route Location"
+    assert tracker["availability"] == availability
+    assert tracker["json_attributes_topic"] == "teslamate/cars/0/active_route"
+
+    assert tracker["json_attributes_template"] ==
+             "{% if value_json is mapping and not value_json.get('error') and value_json.get('location') is mapping %}{{ value_json.get('location') | tojson }}{% else %}{}{% endif %}"
+  end
+
+  test "publishes battery as device entity", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    config = decoded["components"]["battery_level"]
+    assert config["name"] == "Battery"
+    assert config["device_class"] == "battery"
+    assert config["state_class"] == "measurement"
+    assert config["unit_of_measurement"] == "%"
+    refute Map.has_key?(config, "icon")
+  end
+
+  test "publishes charger phases as an integer measurement", %{test: name} do
+    publisher_name = start_publisher(name)
+
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    config = decoded["components"]["charger_phases"]
+    assert config["name"] == "Charger Phases"
+    assert config["state_class"] == "measurement"
+    assert config["unit_of_measurement"] == "phases"
+    assert config["suggested_display_precision"] == 0
+    assert config["icon"] == "mdi:sine-wave"
+  end
+
+  test "publishes software update entities", %{test: name} do
+    publisher_name = start_publisher(name)
+    summary = %{@summary | update_available: true}
+
+    :ok = HomeAssistant.publish(summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+
+    {_topic, decoded} = receive_device_config()
+    components = decoded["components"]
+
+    update = components["update"]
+    assert update["platform"] == "update"
+    assert update["name"] == "Update"
+    assert update["device_class"] == "firmware"
+    assert update["entity_category"] == "diagnostic"
+    assert update["state_topic"] == "teslamate/cars/0/software_update"
+    refute Map.has_key?(update, "latest_version_topic")
+    refute Map.has_key?(update, "command_topic")
+
+    version = components["version"]
+    assert version["platform"] == "sensor"
+    assert version["name"] == "Version"
+    assert version["entity_category"] == "diagnostic"
+    assert version["enabled_by_default"] == false
+    assert version["icon"] == "mdi:numeric"
+
+    update_version = components["update_version"]
+    assert update_version["platform"] == "sensor"
+    assert update_version["entity_category"] == "diagnostic"
+    assert update_version["enabled_by_default"] == false
+    assert update_version["icon"] == "mdi:numeric"
+
+    update_available = components["update_available"]
+    assert update_available["platform"] == "sensor"
+    assert update_available["entity_category"] == "diagnostic"
+    assert update_available["enabled_by_default"] == false
+    refute Map.has_key?(update_available, "device_class")
+    refute Map.has_key?(update_available, "icon")
+    refute Map.has_key?(update_available, "payload_on")
+    refute Map.has_key?(update_available, "payload_off")
   end
 
   test "publishes tire pressures in bar and psi", %{test: name} do
@@ -666,7 +1056,15 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
            end)
 
     assert Enum.any?(legacy_cleanup, fn {topic, _, _} ->
+             topic == "homeassistant/binary_sensor/teslamate_0/update_available/config"
+           end)
+
+    assert Enum.any?(legacy_cleanup, fn {topic, _, _} ->
              topic == "homeassistant/sensor/teslamate_0/tpms_pressure_fl_psi/config"
+           end)
+
+    refute Enum.any?(legacy_cleanup, fn {topic, _, _} ->
+             topic == "homeassistant/update/teslamate_0/update/config"
            end)
   end
 
