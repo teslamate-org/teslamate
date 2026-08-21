@@ -45,6 +45,9 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
     assert DateTime.diff(s1, s2, :nanosecond) < 0
 
+    # the drive record and sub-state must not outlive the :driving state
+    assert {:online, %{current_drive: nil, driving_status: nil}} = :sys.get_state(name)
+
     refute_receive _
   end
 

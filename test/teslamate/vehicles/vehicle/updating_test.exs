@@ -59,6 +59,9 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
 
     assert DateTime.diff(s1, s2, :nanosecond) < 0
 
+    # the update record must not outlive the :updating state
+    assert {:online, %{current_update: nil}} = :sys.get_state(name)
+
     refute_receive _
   end
 
