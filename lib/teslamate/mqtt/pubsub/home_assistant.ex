@@ -56,10 +56,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     {"sensor", "tpms_pressure_fr"},
     {"sensor", "tpms_pressure_rl"},
     {"sensor", "tpms_pressure_rr"},
-    {"sensor", "tpms_pressure_fl_psi"},
-    {"sensor", "tpms_pressure_fr_psi"},
-    {"sensor", "tpms_pressure_rl_psi"},
-    {"sensor", "tpms_pressure_rr_psi"},
     {"sensor", "active_route_destination"},
     {"sensor", "active_route_energy_at_arrival"},
     {"sensor", "active_route_distance_to_arrival"},
@@ -81,7 +77,13 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     {"binary_sensor", "charge_port_door_open"},
     {"binary_sensor", "locked"}
   ]
-  @removed_legacy_discovery_entities [{"binary_sensor", "update_available"}]
+  @removed_legacy_discovery_entities [
+    {"binary_sensor", "update_available"},
+    {"sensor", "tpms_pressure_fl_psi"},
+    {"sensor", "tpms_pressure_fr_psi"},
+    {"sensor", "tpms_pressure_rl_psi"},
+    {"sensor", "tpms_pressure_rr_psi"}
+  ]
   @version Mix.Project.config()[:version]
 
   @type publish_opts :: [
@@ -870,56 +872,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          unit_of_measurement: "bar",
          suggested_display_precision: 1,
          icon: "mdi:gauge"
-       }},
-
-      # TPMS pressure compatibility sensors (psi), derived from the bar topics
-      {"sensor", "tpms_pressure_fl_psi",
-       %{
-         state_topic_key: :tpms_pressure_fl,
-         name: "Tire Pressure (Front Left, PSI)",
-         device_class: "pressure",
-         state_class: "measurement",
-         enabled_by_default: false,
-         unit_of_measurement: "psi",
-         icon: "mdi:gauge",
-         value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 1
-       }},
-      {"sensor", "tpms_pressure_fr_psi",
-       %{
-         state_topic_key: :tpms_pressure_fr,
-         name: "Tire Pressure (Front Right, PSI)",
-         device_class: "pressure",
-         state_class: "measurement",
-         enabled_by_default: false,
-         unit_of_measurement: "psi",
-         icon: "mdi:gauge",
-         value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 1
-       }},
-      {"sensor", "tpms_pressure_rl_psi",
-       %{
-         state_topic_key: :tpms_pressure_rl,
-         name: "Tire Pressure (Rear Left, PSI)",
-         device_class: "pressure",
-         state_class: "measurement",
-         enabled_by_default: false,
-         unit_of_measurement: "psi",
-         icon: "mdi:gauge",
-         value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 1
-       }},
-      {"sensor", "tpms_pressure_rr_psi",
-       %{
-         state_topic_key: :tpms_pressure_rr,
-         name: "Tire Pressure (Rear Right, PSI)",
-         device_class: "pressure",
-         state_class: "measurement",
-         enabled_by_default: false,
-         unit_of_measurement: "psi",
-         icon: "mdi:gauge",
-         value_template: "{{ (value | float * 14.50377) | round(2) }}",
-         suggested_display_precision: 1
        }},
 
       # --- Active route sensors (derived from the JSON active_route topic) ---
