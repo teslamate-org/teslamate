@@ -1,6 +1,6 @@
 ---
 title: Generating Tokens
-sidebar_label: Tokens
+sidebar_label: Generating Tokens
 ---
 
 ## Types of tokens
