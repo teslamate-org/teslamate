@@ -1287,7 +1287,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT id as \"Charging Process ID\", start_date, end_date, charge_energy_added, charge_energy_used, start_battery_level, end_battery_level, duration_min\nFROM charging_processes \nWHERE car_id = $car_id AND end_date is null\nORDER BY start_date DESC\n",
+          "rawSql": "SELECT\n  cp.id AS \"Charging Process ID\",\n  cp.start_date,\n  cp.end_date,\n  cp.charge_energy_added,\n  cp.charge_energy_used,\n  (\n    SELECT c.battery_level\n    FROM charges c\n    WHERE c.charging_process_id = cp.id\n    ORDER BY c.date ASC\n    LIMIT 1\n  ) AS start_battery_level,\n  cp.end_battery_level,\n  cp.duration_min\nFROM charging_processes cp\nWHERE cp.car_id = $car_id AND cp.end_date IS NULL\nORDER BY cp.start_date DESC\n",
           "refId": "A",
           "sql": {
             "columns": [

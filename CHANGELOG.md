@@ -28,6 +28,8 @@ Breaking for automations on discovered entities: the Health sensor is inverted (
 
 #### Dashboards
 
+- feat(grafana): show start SOC on incomplete charges from the first charge sample (#5644 - @swiffer)
+
 #### Translations
 
 #### Documentation
