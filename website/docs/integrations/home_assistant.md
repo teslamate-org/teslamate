@@ -79,6 +79,12 @@ the previous prefix.
 
 ## Configuration
 
+:::warning[Legacy configuration]
+
+Prefer [MQTT discovery](#mqtt-discovery-automatic-configuration) for new installations. The manual YAML remains available for older Home Assistant versions and custom setups, but it is frozen and will not receive new sensors.
+
+:::
+
 The following configurations assume a car ID of 1 (`teslamate/cars/1`). It usually starts at 1, but it can be different if you have multiple cars in TeslaMate for example.
 
 ### configuration.yaml
