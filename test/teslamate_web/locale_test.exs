@@ -47,13 +47,45 @@ defmodule TeslaMateWeb.LocaleTest do
     assert html =~ "Settings"
   end
 
-  test "preserves Chinese script variants", %{conn: conn} do
+  test "valid but unsupported query locale falls back to the default", %{conn: conn} do
+    conn = get(conn, "/settings?locale=pt")
+    html = html_response(conn, 200)
+
+    assert html_lang(html) == ["en"]
+    assert html =~ "Settings"
+  end
+
+  test "unsupported Accept-Language falls back to the default", %{conn: conn} do
+    conn =
+      conn
+      |> put_req_header("accept-language", "ru-RU,ru;q=0.9")
+      |> get("/settings")
+
+    html = html_response(conn, 200)
+
+    assert html_lang(html) == ["en"]
+    assert html =~ "Settings"
+  end
+
+  test "unsupported primary language falls through to a supported secondary", %{conn: conn} do
+    conn =
+      conn
+      |> put_req_header("accept-language", "ru,de;q=0.9")
+      |> get("/settings")
+
+    html = html_response(conn, 200)
+
+    assert html_lang(html) == ["de"]
+    assert html =~ "Einstellungen"
+  end
+
+  test "preserves Chinese script variants with BCP 47 lang tags", %{conn: conn} do
     html = conn |> get("/settings?locale=zh_Hans") |> html_response(200)
-    assert html_lang(html) == ["zh_Hans"]
+    assert html_lang(html) == ["zh-Hans"]
     assert html =~ "设置"
 
     html = build_conn() |> get("/settings?locale=zh_Hant") |> html_response(200)
-    assert html_lang(html) == ["zh_Hant"]
+    assert html_lang(html) == ["zh-Hant"]
     assert html =~ "設定"
   end
 
@@ -66,5 +98,29 @@ defmodule TeslaMateWeb.LocaleTest do
 
     assert html_lang(html) == ["de"]
     assert html =~ "Einstellungen"
+  end
+
+  test "sessions from before the localize migration keep their locale", %{conn: conn} do
+    conn =
+      conn
+      |> Plug.Test.init_test_session(%{"gettext_locale" => "de"})
+      |> get("/settings")
+
+    html = html_response(conn, 200)
+
+    assert html_lang(html) == ["de"]
+    assert html =~ "Einstellungen"
+  end
+
+  test "supported_locales config stays in sync with the Gettext locales" do
+    configured =
+      :localize
+      |> Application.fetch_env!(:supported_locales)
+      |> Enum.map(&(&1 |> Atom.to_string() |> String.replace("-", "_")))
+      |> Enum.sort()
+
+    gettext = TeslaMateWeb.Gettext |> Gettext.known_locales() |> Enum.sort()
+
+    assert configured == gettext
   end
 end
