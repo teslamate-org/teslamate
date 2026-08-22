@@ -79,6 +79,12 @@ the previous prefix.
 
 ## Configuration
 
+:::warning[Legacy configuration]
+
+Prefer [MQTT discovery](#mqtt-discovery-automatic-configuration) for new installations. The manual YAML remains available for older Home Assistant versions and custom setups, but it is frozen and will not receive new sensors.
+
+:::
+
 The following configurations assume a car ID of 1 (`teslamate/cars/1`). It usually starts at 1, but it can be different if you have multiple cars in TeslaMate for example.
 
 ### configuration.yaml
@@ -467,18 +473,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     icon: mdi:car-tire-alert
 
 - sensor:
-    name: TPMS Pressure Front Left (psi)
-    default_entity_id: sensor.tesla_tpms_pressure_fl_psi
-    unique_id: teslamate_1_tpms_pressure_fl_psi
-    device: *teslamate_device_info
-    state_topic: "teslamate/cars/1/tpms_pressure_fl"
-    device_class: pressure
-    unit_of_measurement: psi
-    icon: mdi:car-tire-alert
-    value_template: "{{ value | float * 14.50377 }}"
-    suggested_display_precision: 2
-
-- sensor:
     name: TPMS Pressure Front Right
     default_entity_id: sensor.tesla_tpms_pressure_fr
     unique_id: teslamate_1_tpms_pressure_fr
@@ -487,18 +481,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     device_class: pressure
     unit_of_measurement: bar
     icon: mdi:car-tire-alert
-
-- sensor:
-    name: TPMS Pressure Front Right (psi)
-    default_entity_id: sensor.tesla_tpms_pressure_fr_psi
-    unique_id: teslamate_1_tpms_pressure_fr_psi
-    device: *teslamate_device_info
-    state_topic: "teslamate/cars/1/tpms_pressure_fr"
-    device_class: pressure
-    unit_of_measurement: psi
-    icon: mdi:car-tire-alert
-    value_template: "{{ value | float * 14.50377 }}"
-    suggested_display_precision: 2
 
 - sensor:
     name: TPMS Pressure Rear Left
@@ -511,18 +493,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     icon: mdi:car-tire-alert
 
 - sensor:
-    name: TPMS Pressure Rear Left (psi)
-    default_entity_id: sensor.tesla_tpms_pressure_rl_psi
-    unique_id: teslamate_1_tpms_pressure_rl_psi
-    device: *teslamate_device_info
-    state_topic: "teslamate/cars/1/tpms_pressure_rl"
-    device_class: pressure
-    unit_of_measurement: psi
-    icon: mdi:car-tire-alert
-    value_template: "{{ value | float * 14.50377 }}"
-    suggested_display_precision: 2
-
-- sensor:
     name: TPMS Pressure Rear Right
     default_entity_id: sensor.tesla_tpms_pressure_rr
     unique_id: teslamate_1_tpms_pressure_rr
@@ -531,18 +501,6 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     device_class: pressure
     unit_of_measurement: bar
     icon: mdi:car-tire-alert
-
-- sensor:
-    name: TPMS Pressure Rear Right (psi)
-    default_entity_id: sensor.tesla_tpms_pressure_rr_psi
-    unique_id: teslamate_1_tpms_pressure_rr_psi
-    device: *teslamate_device_info
-    state_topic: "teslamate/cars/1/tpms_pressure_rr"
-    device_class: pressure
-    unit_of_measurement: psi
-    icon: mdi:car-tire-alert
-    value_template: "{{ value | float * 14.50377 }}"
-    suggested_display_precision: 2
 
 - sensor:
     name: Active route destination
@@ -937,20 +895,12 @@ views:
             name: Time To Full Charge
           - entity: sensor.tesla_tpms_pressure_fl
             name: Front Left Tire Pressure (bar)
-          - entity: sensor.tesla_tpms_pressure_fl_psi
-            name: Front Left Tire Pressure (psi)
           - entity: sensor.tesla_tpms_pressure_fr
             name: Front Right Tire Pressure (bar)
-          - entity: sensor.tesla_tpms_pressure_fr_psi
-            name: Front Right Tire Pressure (psi)
           - entity: sensor.tesla_tpms_pressure_rl
             name: Rear Left Tire Pressure (bar)
-          - entity: sensor.tesla_tpms_pressure_rl_psi
-            name: Rear Left Tire Pressure (psi)
           - entity: sensor.tesla_tpms_pressure_rr
             name: Rear Right Tire Pressure (bar)
-          - entity: sensor.tesla_tpms_pressure_rr_psi
-            name: Rear Right Tire Pressure (psi)
           - entity: sensor.tesla_active_route_destination
             name: Active Route Destination
           - entity: sensor.tesla_active_route_energy_at_arrival

@@ -672,6 +672,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert log =~ "retrying in 300s"
   end
 
+  @tag :capture_log
   test "retries Home Assistant discovery after a publishing failure", %{test: name} do
     legacy_topic = "homeassistant/sensor/teslamate_0/display_name/config"
 
