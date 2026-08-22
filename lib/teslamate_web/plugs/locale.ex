@@ -77,8 +77,6 @@ defmodule TeslaMateWeb.Plugs.Locale do
   # settings UI) resolve through the compile-time map without any tag
   # matching; everything else pays one strict `best_match` against the
   # supported list.
-  defp strict_match(nil), do: nil
-
   defp strict_match(locale) when is_binary(locale) do
     case Map.fetch(@cldr_locales, locale) do
       {:ok, cldr_id} ->
@@ -95,6 +93,10 @@ defmodule TeslaMateWeb.Plugs.Locale do
         end
     end
   end
+
+  # nil (no value) or anything non-binary — `?locale[]=de` decodes to a
+  # list — is never a locale; fall through to the next source.
+  defp strict_match(_other), do: nil
 
   defp validated(cldr_id) do
     case Localize.validate_locale(cldr_id) do
