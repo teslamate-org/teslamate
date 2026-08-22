@@ -26,6 +26,7 @@ Breaking for automations on discovered entities: the Health sensor is inverted (
 - ci: purge orphaned GHCR attestation referrers (#5622 - @swiffer)
 - test: stop the app in test_helper instead of relying on --no-start (#5615 - @swiffer)
 - build(deps): update flake.lock (#5613)
+- build(deps): update flake.lock (#5645)
 
 #### Dashboards
 
