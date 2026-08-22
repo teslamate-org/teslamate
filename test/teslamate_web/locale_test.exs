@@ -128,6 +128,18 @@ defmodule TeslaMateWeb.LocaleTest do
     assert html =~ "Einstellungen"
   end
 
+  test "LiveView mounts ignore legacy nil session locales" do
+    assert {:cont, socket} =
+             TeslaMateWeb.InitAssigns.on_mount(
+               :locale,
+               %{},
+               %{"gettext_locale" => nil},
+               %Phoenix.LiveView.Socket{}
+             )
+
+    assert socket.assigns.locale == "en"
+  end
+
   test "supported_locales config stays in sync with the Gettext locales" do
     configured =
       :localize
