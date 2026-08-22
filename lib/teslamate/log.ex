@@ -12,6 +12,7 @@ defmodule TeslaMate.Log do
   alias TeslaMate.{Repo, Locations, Settings}
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Settings.{CarSettings, GlobalSettings}
+  alias TeslaApi.ChargingHistory.Session
 
   ## Car
 
@@ -409,6 +410,34 @@ defmodule TeslaMate.Log do
     |> Repo.update()
   end
 
+  def sync_charging_cost(
+        %Car{id: car_id},
+        %Session{start_date: %DateTime{} = start_date, cost: %Decimal{} = cost} = session
+      ) do
+    candidates = charging_cost_candidates(car_id, start_date, 10)
+
+    candidates =
+      case candidates do
+        [] -> charging_cost_candidates(car_id, start_date, 30)
+        candidates -> candidates
+      end
+
+    case Enum.min_by(candidates, &charging_cost_score(&1, session), fn -> nil end) do
+      nil ->
+        :no_match
+
+      %ChargingProcess{id: id} ->
+        query = from(cp in ChargingProcess, where: cp.id == ^id and is_nil(cp.cost))
+
+        case Repo.update_all(query, set: [cost: cost]) do
+          {1, _rows} -> {:ok, id}
+          {0, _rows} -> :already_set
+        end
+    end
+  end
+
+  def sync_charging_cost(%Car{}, %Session{}), do: :ignored
+
   def start_charging_process(%Car{id: id}, %{latitude: _, longitude: _} = attrs, opts \\ []) do
     lookup_address = Keyword.get(opts, :lookup_address, true)
     position = Map.put(attrs, :car_id, id)
@@ -435,6 +464,36 @@ defmodule TeslaMate.Log do
            |> ChargingProcess.changeset(%{start_date: DateTime.utc_now(), position: position})
            |> Repo.insert() do
       {:ok, Repo.preload(cproc, [:address, :geofence])}
+    end
+  end
+
+  defp charging_cost_candidates(car_id, start_date, window_min) do
+    from(cp in ChargingProcess,
+      where:
+        cp.car_id == ^car_id and is_nil(cp.cost) and
+          cp.start_date >= ^DateTime.add(start_date, -window_min * 60, :second) and
+          cp.start_date <= ^DateTime.add(start_date, window_min * 60, :second)
+    )
+    |> Repo.all()
+  end
+
+  defp charging_cost_score(%ChargingProcess{} = charging_process, %Session{} = session) do
+    time_score = abs(DateTime.diff(charging_process.start_date, session.start_date, :second))
+
+    case {session.energy,
+          charging_process.charge_energy_added || charging_process.charge_energy_used} do
+      {%Decimal{} = api_energy, %Decimal{} = db_energy} ->
+        relative_error =
+          api_energy
+          |> Decimal.sub(db_energy)
+          |> Decimal.abs()
+          |> Decimal.div(Decimal.max(api_energy, Decimal.new("0.1")))
+          |> Decimal.to_float()
+
+        time_score + relative_error * 36_000
+
+      _other ->
+        time_score
     end
   end
 

@@ -5,7 +5,7 @@ defmodule TeslaMate.Api do
 
   alias TeslaMate.Auth.Tokens
   alias TeslaMate.{Vehicles, Convert}
-  alias TeslaApi.Auth
+  alias TeslaApi.{Auth, ChargingHistory}
 
   alias Finch.Response
 
@@ -52,6 +52,17 @@ defmodule TeslaMate.Api do
   def stream(name \\ @name, vid, receiver) do
     with {:ok, %Auth{} = auth} <- fetch_auth(name) do
       TeslaApi.Stream.start_link(auth: auth, vehicle_id: vid, receiver: receiver)
+    end
+  end
+
+  def get_charging_history(vin, opts \\ []) do
+    get_charging_history(@name, vin, opts)
+  end
+
+  def get_charging_history(name, vin, opts) do
+    with {:ok, auth} <- fetch_auth(name) do
+      ChargingHistory.get(auth, vin, opts)
+      |> handle_result(auth, name)
     end
   end
 
@@ -304,6 +315,9 @@ defmodule TeslaMate.Api do
 
       {:ok, %TeslaApi.Vehicle{} = vehicle} ->
         {:ok, vehicle}
+
+      {:ok, %ChargingHistory.Result{} = result} ->
+        {:ok, result}
     end
   end
 

@@ -110,7 +110,8 @@ defmodule Util do
 end
 
 config :teslamate,
-  default_geofence: System.get_env("DEFAULT_GEOFENCE")
+  default_geofence: System.get_env("DEFAULT_GEOFENCE"),
+  charging_cost_sync: System.get_env("ENABLE_TESLA_CHARGING_COST_SYNC") == "true"
 
 case System.get_env("DATABASE_SOCKET_DIR") do
   nil ->

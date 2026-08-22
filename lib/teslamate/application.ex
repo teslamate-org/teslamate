@@ -18,6 +18,7 @@ defmodule TeslaMate.Application do
 
   defp children do
     mqtt_config = Application.get_env(:teslamate, :mqtt)
+    charging_cost_sync? = Application.get_env(:teslamate, :charging_cost_sync, false)
 
     case Application.get_env(:teslamate, :import_directory) do
       nil ->
@@ -26,6 +27,7 @@ defmodule TeslaMate.Application do
           TeslaMate.Vault,
           TeslaMate.HTTP,
           TeslaMate.Api,
+          if(charging_cost_sync?, do: TeslaMate.ChargingCostSync),
           TeslaMate.Updater,
           {Phoenix.PubSub, name: TeslaMate.PubSub},
           TeslaMateWeb.Endpoint,
