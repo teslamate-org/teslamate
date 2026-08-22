@@ -49,7 +49,6 @@ runs:
       with:
         path: |
           _build
-          priv/cldr/locales
         key: ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-mix-build-${{ inputs.mix-env }}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
           ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-mix-build-${{ inputs.mix-env }}-

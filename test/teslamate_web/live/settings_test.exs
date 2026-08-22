@@ -251,6 +251,8 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                html
                |> Floki.parse_document!()
                |> Floki.find("#global_settings_ui option[selected]")
+
+      assert html =~ "Einstellungen"
     end
   end
 

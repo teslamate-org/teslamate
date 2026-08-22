@@ -20,7 +20,7 @@
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-5GJb6r1kSocH9wIdgSON6EtYueFSj9OJ/bXkWwQeghg="; # if you change the mix deps, you need to update this hash
+        hash = "sha256-/AVC3lmmkqptB4c523zkgDWrwJ9luXZitKK54fOLI5Q="; # if you change the mix deps, you need to update this hash
         # hash = pkgs.lib.fakeHash;
       };
 
@@ -57,31 +57,6 @@
         };
       };
 
-      # The locale data must come from the same release as the ex_cldr version
-      # resolved in mix.lock. Reading the version from the lockfile keeps the
-      # two from drifting apart; a stale rev otherwise builds green and just
-      # ships the wrong locales.
-      cldrVersion =
-        let
-          matches = lib.filter (match: match != null) (
-            map (builtins.match ''^ *"ex_cldr": \{:hex, :ex_cldr, "([^"]+)".*'') (
-              lib.splitString "\n" (builtins.readFile "${src}/mix.lock")
-            )
-          );
-        in
-        if matches == [ ] then
-          throw "could not determine the ex_cldr version from mix.lock"
-        else
-          lib.head (lib.head matches);
-
-      cldr = pkgs.fetchFromGitHub {
-        owner = "elixir-cldr";
-        repo = "cldr";
-        rev = "v${cldrVersion}";
-        sha256 = "sha256-nGVuv8jyGCMZS63ga2iObjl+ldIZmM/xDfpQbB/ZRjE="; # if the ex_cldr version in mix.lock changes, you need to update this hash
-        # sha256 = pkgs.lib.fakeHash;
-      };
-
       teslamate = beamPackages.mixRelease {
         TOP_SRC = src;
         inherit
@@ -91,10 +66,6 @@
           src
           mixFodDeps
           ;
-
-        # set the environment variables for the build
-        SKIP_LOCALE_DOWNLOAD = "true"; # do not download locales during build as they are already included in the cldr package from github
-        LOCALES = "${cldr}/priv/cldr";
 
         postBuild = ''
           ln -sf ${mixFodDeps}/deps deps
@@ -115,10 +86,6 @@
     in
     {
       options = {
-        teslamate.cldr = lib.mkOption {
-          type = lib.types.package;
-          readOnly = true;
-        };
         teslamate.elixir = lib.mkOption {
           type = lib.types.package;
           readOnly = true;
@@ -131,7 +98,7 @@
 
       config = {
         teslamate = {
-          inherit cldr elixir rebar3;
+          inherit elixir rebar3;
         };
 
         packages = {

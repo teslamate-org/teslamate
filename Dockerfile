@@ -43,7 +43,7 @@ COPY VERSION VERSION
 RUN mix compile
 
 COPY config/runtime.exs config/runtime.exs
-RUN SKIP_LOCALE_DOWNLOAD=true mix release --path /opt/built
+RUN mix release --path /opt/built
 
 ########################################################################
 

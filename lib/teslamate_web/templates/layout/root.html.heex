@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html
-  lang={Plug.Conn.get_session(@conn, :locale)}
+  lang={@conn.assigns[:html_lang]}
   data-theme-mode={@conn.assigns.settings.theme_mode}
 >
   <head>
