@@ -6,12 +6,9 @@ defmodule TeslaMateWeb.InitAssigns do
   import Phoenix.Component
 
   def on_mount(:locale, _params, session, socket) do
-    case Localize.Plug.put_locale_from_session(session, gettext: TeslaMateWeb.Gettext) do
-      {:ok, _locale} ->
-        :ok
-
-      {:error, _reason} ->
-        Gettext.put_locale(TeslaMateWeb.Gettext, "en")
+    case session do
+      %{"gettext_locale" => locale} -> Gettext.put_locale(TeslaMateWeb.Gettext, locale)
+      _other -> :ok
     end
 
     {:cont, assign(socket, :locale, Gettext.get_locale(TeslaMateWeb.Gettext))}

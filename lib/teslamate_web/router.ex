@@ -8,14 +8,18 @@ defmodule TeslaMateWeb.Router do
     plug :fetch_session
     plug :fetch_live_flash
 
-    # Query first so the settings UI language switcher (?locale=) beats session.
+    # Query first so the settings UI language switcher (?locale=) beats the
+    # stored session. The strict sources reject locales that are not close
+    # to a supported one, so the chain falls through to the configured
+    # default instead of best-matching an unrelated language.
     plug Localize.Plug.PutLocale,
-      from: [:query, :session, :accept_language],
-      param: "locale",
-      gettext: TeslaMateWeb.Gettext,
-      default: :en
+      from: [
+        {TeslaMateWeb.Plugs.Locale, :from_query},
+        {TeslaMateWeb.Plugs.Locale, :from_session},
+        {TeslaMateWeb.Plugs.Locale, :from_accept_language}
+      ]
 
-    plug Localize.Plug.PutSession, as: :string
+    plug TeslaMateWeb.Plugs.Locale
 
     plug :put_root_layout, {TeslaMateWeb.LayoutView, :root}
     plug :protect_from_forgery
