@@ -154,6 +154,56 @@ defmodule TeslaMate.LogDriveTest do
       assert ^addr_id = drive.end_address_id
     end
 
+    test "aggregates drive data if positions are missing the odometer" do
+      car = car_fixture()
+
+      positions = [
+        %{
+          date: "2019-04-06 10:19:02",
+          latitude: 50.112198,
+          longitude: 11.597669,
+          ideal_battery_range_km: 338.8,
+          rated_battery_range_km: 308.8
+        },
+        %{
+          date: "2019-04-06 10:20:08",
+          latitude: 50.112214,
+          longitude: 11.598471,
+          odometer: 285.90556,
+          ideal_battery_range_km: 337.8,
+          rated_battery_range_km: 307.8
+        },
+        %{
+          date: "2019-04-06 10:21:14",
+          latitude: 50.112167,
+          longitude: 11.599395,
+          odometer: 288.045561,
+          ideal_battery_range_km: 336.8,
+          rated_battery_range_km: 306.8
+        },
+        %{
+          date: "2019-04-06 10:22:20",
+          latitude: 50.112118,
+          longitude: 11.599919,
+          ideal_battery_range_km: 335.8,
+          rated_battery_range_km: 305.8
+        }
+      ]
+
+      assert {:ok, drive} = Log.start_drive(car)
+
+      for p <- positions do
+        assert {:ok, _} = Log.insert_position(drive, p)
+      end
+
+      assert {:ok, drive} = Log.close_drive(drive)
+
+      assert drive.start_km == 285.90556
+      assert drive.end_km == 288.045561
+      assert drive.distance == 288.045561 - 285.90556
+      assert drive.duration_min == 3
+    end
+
     test "deletes a drive and if it has no positions" do
       car = car_fixture()
 
