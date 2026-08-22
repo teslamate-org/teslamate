@@ -83,13 +83,16 @@ defmodule TeslaMateWeb.Plugs.Locale do
         validated(cldr_id)
 
       :error ->
+        # The score guard is not redundant: for the desired locale "und",
+        # best_match/3 bypasses the threshold and returns the first
+        # supported locale at exactly the default distance.
         case Localize.LanguageTag.best_match(
                locale,
                Localize.supported_locales(),
                @strict_distance
              ) do
-          {:ok, cldr_id, _score} -> validated(cldr_id)
-          {:error, _reason} -> nil
+          {:ok, cldr_id, score} when score <= @strict_distance -> validated(cldr_id)
+          _no_close_match -> nil
         end
     end
   end
