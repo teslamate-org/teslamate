@@ -55,6 +55,14 @@ defmodule TeslaMateWeb.LocaleTest do
     assert html =~ "Settings"
   end
 
+  test "the und locale falls back to the default", %{conn: conn} do
+    conn = get(conn, "/settings?locale=und")
+    html = html_response(conn, 200)
+
+    assert html_lang(html) == ["en"]
+    assert html =~ "Settings"
+  end
+
   test "valid but unsupported query locale falls back to the default", %{conn: conn} do
     conn = get(conn, "/settings?locale=pt")
     html = html_response(conn, 200)
