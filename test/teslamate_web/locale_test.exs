@@ -83,6 +83,18 @@ defmodule TeslaMateWeb.LocaleTest do
     assert html =~ "Settings"
   end
 
+  test "related languages fall back within the strict distance", %{conn: conn} do
+    conn =
+      conn
+      |> put_req_header("accept-language", "nn")
+      |> get("/settings")
+
+    html = html_response(conn, 200)
+
+    assert html_lang(html) == ["nb"]
+    assert html =~ "Innstillinger"
+  end
+
   test "unsupported primary language falls through to a supported secondary", %{conn: conn} do
     conn =
       conn
