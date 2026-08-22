@@ -5,12 +5,14 @@ defmodule TeslaMateWeb.InitAssigns do
 
   import Phoenix.Component
 
+  @session_key TeslaMateWeb.Plugs.Locale.session_key()
+
   def on_mount(:locale, _params, session, socket) do
     # is_binary: the pre-localize PutSession plug wrote the CLDR tag's
     # gettext_locale_name verbatim, which could be nil — and
     # Gettext.put_locale/2 raises on nil.
     case session do
-      %{"gettext_locale" => locale} when is_binary(locale) ->
+      %{@session_key => locale} when is_binary(locale) ->
         Gettext.put_locale(TeslaMateWeb.Gettext, locale)
 
       _other ->

@@ -130,11 +130,21 @@ defmodule TeslaMateWeb.Plugs.Locale do
         # :locale is the Gettext name, e.g. "zh_Hans") into the conn
         # assigns on the dead render and would shadow this one.
         conn
-        |> put_session(@session_key, locale)
+        |> persist_locale(locale)
         |> assign(:html_lang, Atom.to_string(cldr_id))
 
       _other ->
         conn
+    end
+  end
+
+  # An unconditional put_session would re-sign and re-send the session
+  # cookie on every response; only write when the locale changed.
+  defp persist_locale(conn, locale) do
+    if get_session(conn, @session_key) == locale do
+      conn
+    else
+      put_session(conn, @session_key, locale)
     end
   end
 end

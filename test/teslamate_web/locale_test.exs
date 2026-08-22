@@ -153,11 +153,7 @@ defmodule TeslaMateWeb.LocaleTest do
   end
 
   test "supported_locales config stays in sync with the Gettext locales" do
-    configured =
-      :localize
-      |> Application.fetch_env!(:supported_locales)
-      |> Enum.map(&(&1 |> Atom.to_string() |> String.replace("-", "_")))
-      |> Enum.sort()
+    configured = TeslaMateWeb.Plugs.Locale.gettext_locales() |> Enum.sort()
 
     gettext = TeslaMateWeb.Gettext |> Gettext.known_locales() |> Enum.sort()
 
