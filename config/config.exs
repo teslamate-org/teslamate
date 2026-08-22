@@ -30,6 +30,13 @@ config :phoenix,
 
 config :gettext, :default_locale, "en"
 
+# Localize is used for UI-language negotiation only (translations come
+# from Gettext, dates from Timex). The release deliberately ships no
+# per-locale CLDR data — negotiation needs none — so Localize formatting
+# APIs (Number/DateTime/Unit) would raise LocaleNotFoundInCacheError for
+# any locale but "en". Keep formatting a non-goal, or wire
+# `mix localize.download_locales` into the build first.
+#
 # Static list so compile-time Localize calls see the same set as runtime.
 # Use CLDR IDs (hyphens, :"zh-Hans") — expanding Gettext names like
 # "zh_Hans" collapses to :zh via likely subtags and loses zh-Hant.
