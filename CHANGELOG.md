@@ -28,7 +28,7 @@ Breaking for automations on discovered entities: the Health sensor is inverted (
 - build(deps): update flake.lock (#5613)
 - build(deps): update flake.lock (#5645)
 - ci(ghcr): allow manual dispatch to build images for .github PRs (#5646 - @JakobLichterfeld)
-- build(deps): replace `ex_cldr` / `ex_cldr_plugs` with `localize` and `localize_web` (ex_cldr support ends 2027-12-31). Drops compile-time locale download and the Nix `cldr` pin. (#5630)
+- build(deps): replace `ex_cldr` / `ex_cldr_plugs` with `localize` and `localize_web` (ex_cldr support ends 2027-12-31). Drops compile-time locale download and the Nix `cldr` pin. (#5630 - @swiffer)
 
 #### Dashboards
 
