@@ -371,6 +371,7 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
       attrs = Map.new(attrs)
       assert attrs["type"] == "button"
+      assert "has-tooltip-hidden-touch" in String.split(attrs["class"])
       assert attrs["data-tooltip"] == "Maximize map"
       assert attrs["data-exit-label"] == "Minimize map"
       assert attrs["aria-label"] == "Maximize map"
