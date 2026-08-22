@@ -2,8 +2,8 @@
 
 ## [unreleased]
 
-**Note for Home Assistant MQTT discovery users:** The opt-in [MQTT discovery](https://docs.teslamate.org/docs/integrations/home_assistant#mqtt-discovery-automatic-configuration) now uses Home Assistant's device-based format; existing entities migrate automatically (#5618, #5629, #5638).
-Breaking for automations on discovered entities: the Health sensor is inverted (ON = problem), enum states are humanized (`NoPower` → `No Power`), the update-available sensor became an `update` entity, and the active route distance reports miles instead of km. MQTT topics are unchanged.
+**Note for Home Assistant MQTT discovery users:** The opt-in [MQTT discovery](https://docs.teslamate.org/docs/integrations/home_assistant#mqtt-discovery-automatic-configuration) now uses Home Assistant's device-based format; existing entities migrate automatically (#5618, #5629, #5638, #5643).
+Breaking for automations on discovered entities: the Health sensor is inverted (ON = problem), enum states are humanized (`NoPower` → `No Power`), the update-available sensor became an `update` entity, the active route distance reports miles instead of km, and the derived psi tire pressure sensors were removed (set the unit on the bar entities in Home Assistant instead). MQTT topics are unchanged.
 
 ### New features
 
@@ -18,6 +18,7 @@ Breaking for automations on discovered entities: the Health sensor is inverted (
 - feat(mqtt): add missing Home Assistant discovery entities (#5629 - @nebhale)
 - feat: point sign-in token help link to the new tokens docs page (#5642 - @JakobLichterfeld)
 - feat(mqtt): refine Home Assistant discovery entity metadata and semantic (#5638 - @nebhale)
+- feat(mqtt): remove derived Home Assistant psi tire pressure sensors, mark manual YAML as legacy (#5643 - @nebhale)
 
 #### Build, CI, internal
 
