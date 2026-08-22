@@ -57,9 +57,16 @@ defmodule TeslaMateWeb.Router do
 
   def fetch_settings(conn, _opts) do
     settings = Settings.get_global_settings!()
+    conn = assign(conn, :settings, settings)
 
-    conn
-    |> assign(:settings, settings)
-    |> put_session(:settings, settings)
+    # An unconditional write would re-serialize the settings struct and
+    # re-sign the session cookie on every response — and keep the session
+    # permanently dirty, defeating the compare-then-write in
+    # TeslaMateWeb.Plugs.Locale.
+    if get_session(conn, :settings) == settings do
+      conn
+    else
+      put_session(conn, :settings, settings)
+    end
   end
 end

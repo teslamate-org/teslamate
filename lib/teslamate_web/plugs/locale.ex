@@ -28,12 +28,20 @@ defmodule TeslaMateWeb.Plugs.Locale do
 
   @session_key "gettext_locale"
 
-  # One below CLDR's default matching distance (80): keeps the genuine
-  # related-language fallbacks (nn -> nb) but rejects the
-  # unrelated-language bucket, which scores exactly 80. Pinned as a
-  # literal so a localize upgrade cannot silently move the matching
+  # One below CLDR's default matching distance (80): keeps most genuine
+  # related-language fallbacks (nn -> nb) while rejecting the bucket that
+  # scores exactly 80 — unrelated languages, but also a few true
+  # relatives (e.g. sgs -> lt); that trade-off is deliberate. Pinned as
+  # a literal so a localize upgrade cannot silently move the matching
   # window; locale_test.exs asserts both sides of the boundary.
   @strict_distance 79
+
+  # Strictness inverts if the dep's default ever drops to the pin or
+  # below: best_match/3 only takes the strict error path while
+  # distance < default_distance.
+  if @strict_distance >= Localize.LanguageTag.default_distance() do
+    raise "@strict_distance must stay below Localize's default matching distance"
+  end
 
   # The supported CLDR ids map 1:1 onto the Gettext locale names
   # (`priv/gettext/*`); `locale_test.exs` asserts the two sets stay
