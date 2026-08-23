@@ -82,10 +82,11 @@ runs:
         cache-to: type=registry,ref=ghcr.io/${{ inputs.repository }}:buildcache-${{ matrix.cache_id }}-${{ steps.normalize_version.outputs.normalized_version }},mode=max
         outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
     - name: Generate SBOM for pushed image
-      # Skip on pull_request: PR builds are unreviewed code. Attesting them
-      # would yield signed attestations that pass `gh attestation verify
-      # --repo teslamate-org/teslamate`, which consumers read as "official".
-      if: github.event_name != 'pull_request'
+      # Skip on pull_request and workflow_dispatch: both build unreviewed
+      # code. Attesting them would yield signed attestations that pass
+      # `gh attestation verify --repo teslamate-org/teslamate`, which
+      # consumers read as "official".
+      if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
       uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
       with:
         image: ${{ env.REGISTRY_IMAGE }}@${{ steps.build.outputs.digest }}
@@ -94,7 +95,7 @@ runs:
         upload-artifact: false
         upload-release-assets: false
     - name: Attest build provenance
-      if: github.event_name != 'pull_request'
+      if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
       uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
       with:
         # attest-* reads the registry from the first path segment of subject-name,
@@ -106,7 +107,7 @@ runs:
         subject-digest: ${{ steps.build.outputs.digest }}
         push-to-registry: true
     - name: Attest SBOM
-      if: github.event_name != 'pull_request'
+      if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
       uses: actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d # v4.2.1
       with:
         subject-name: >-

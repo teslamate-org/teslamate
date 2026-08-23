@@ -27,6 +27,7 @@ Breaking for automations on discovered entities: the Health sensor is inverted (
 - test: stop the app in test_helper instead of relying on --no-start (#5615 - @swiffer)
 - build(deps): update flake.lock (#5613)
 - build(deps): update flake.lock (#5645)
+- ci(ghcr): allow manual dispatch to build images for .github PRs (#5646 - @JakobLichterfeld)
 
 #### Dashboards
 
