@@ -50,8 +50,8 @@ runs:
         echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
         echo "manifest list digest: ${DIGEST}"
     - name: Attest manifest provenance
-      # Skip on pull_request: see build action for the rationale.
-      if: github.event_name != 'pull_request'
+      # Skip on unreviewed builds: see build action for the rationale.
+      if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
       uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
       with:
         # See build action: qualify Docker Hub short names with docker.io.

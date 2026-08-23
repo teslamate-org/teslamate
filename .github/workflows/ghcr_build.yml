@@ -15,6 +15,11 @@ on:
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  # Pull requests touching .github are excluded from the automatic runs above,
+  # since the workflow definition that would run is the one from the pull
+  # request. This is the deliberate way to run the ghcr build for them anyway, by
+  # someone with write access. The job conditions below allow for it.
+  workflow_dispatch:
 
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
@@ -32,7 +37,7 @@ jobs:
 
   check_if_pr_from_outside_repo:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/check_if_pr_from_outside_repo.yml
 
   teslamate_build:
@@ -40,7 +45,7 @@ jobs:
     needs:
       - check_paths
       - check_if_pr_from_outside_repo
-    if: needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
+    if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false') || (github.event_name == 'workflow_dispatch' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false')
     strategy:
       fail-fast: false
       matrix:
@@ -73,7 +78,7 @@ jobs:
     needs:
       - check_paths
       - teslamate_build
-    if: needs.check_paths.outputs.githubfolder == 'false'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -95,7 +100,7 @@ jobs:
     needs:
       - check_paths
       - check_if_pr_from_outside_repo
-    if: needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
+    if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false') || (github.event_name == 'workflow_dispatch' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false')
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
