@@ -1,9 +1,15 @@
 # Changelog
 
-## [unreleased]
+## [4.2.0] - 2026-08-23
+
+With Fleet Telemetry streaming enabled, TeslaMate now checks every 10 minutes instead of every 30 whether the vehicle has fallen asleep, so sleep transitions show up in dashboards up to 20 minutes sooner — at no extra API cost and with no impact on the vehicle's ability to sleep. We also refined the Home Assistant MQTT discovery, fixed a startup failure that occurred on malformed datasets (two reports) and enhanced the documentation.
 
 **Note for Home Assistant MQTT discovery users:** The opt-in [MQTT discovery](https://docs.teslamate.org/docs/integrations/home_assistant#mqtt-discovery-automatic-configuration) now uses Home Assistant's device-based format; existing entities migrate automatically (#5618, #5629, #5638, #5643).
 Breaking for automations on discovered entities: the Health sensor is inverted (ON = problem), enum states are humanized (`NoPower` → `No Power`), the update-available sensor became an `update` entity, the active route distance reports miles instead of km, and the derived psi tire pressure sensors were removed (set the unit on the bar entities in Home Assistant instead). MQTT topics are unchanged.
+
+To make your TeslaMate experience even better, we have made 20 improvements.
+
+Enjoy!
 
 ### New features
 
@@ -3088,7 +3094,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.1.1...HEAD
+[4.2.0]: https://github.com/teslamate-org/teslamate/compare/v4.1.1...v4.2.0
 [4.1.1]: https://github.com/teslamate-org/teslamate/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/teslamate-org/teslamate/compare/v4.0.1...v4.1.0
 [4.0.1]: https://github.com/teslamate-org/teslamate/compare/v4.0.0...v4.0.1
