@@ -482,10 +482,24 @@ defmodule TeslaMate.Vehicles.Vehicle do
             end
         end
 
-      {:ok, %Vehicle{state: state} = vehicle} when state in ["offline", "asleep"] ->
+      {:ok, %Vehicle{state: vehicle_state} = vehicle}
+      when vehicle_state in ["offline", "asleep"] ->
         # disconnect stream in case we started it to detect real online
         # (in that case we won't go through Start / :offline or Start / :asleep)
-        :ok = disconnect_stream(data)
+        #
+        # Not while driving: there the vehicle is usually only unreachable for
+        # the API for a while, and the stream keeps delivering positions that
+        # belong to the running drive. The driving handlers keep polling and
+        # decide when the drive is over.
+        data =
+          case state do
+            {:driving, _status, _drive} ->
+              data
+
+            _ ->
+              :ok = disconnect_stream(data)
+              %Data{data | stream_pid: nil}
+          end
 
         %Data{} =
           data =
@@ -494,10 +508,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
             %Data{data | last_response: last_response, geofence: geofence}
           end
 
-        {:keep_state, %Data{data | pre_online_check: :idle, stream_pid: nil},
+        {:keep_state, %Data{data | pre_online_check: :idle},
          [
            broadcast_fetch(false),
-           {:next_event, :internal, {:update, {String.to_existing_atom(state), vehicle}}}
+           {:next_event, :internal, {:update, {String.to_existing_atom(vehicle_state), vehicle}}}
          ]}
 
       {:ok, %Vehicle{state: state} = vehicle} ->
@@ -718,7 +732,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
         %Data{} = data
       ) do
     case {status, stream_data} do
-      {:available, %Stream.Data{shift_state: shift_state}} when shift_state in ~w(D N R) ->
+      # Also while the API reports the vehicle unavailable or offline: the
+      # stream stays connected then, and only a successful fetch brings the
+      # status back to :available.
+      {_status, %Stream.Data{shift_state: shift_state}}
+      when shift_state in ~w(D N R) and not is_nil(drv) ->
         {elevation, geofence} =
           Repo.checkout(fn ->
             {:ok, %{elevation: elevation} = position} =
@@ -740,8 +758,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
              geofence: geofence
          }, broadcast_summary()}
 
-      {_status, %Stream.Data{}} ->
+      {:available, %Stream.Data{}} ->
         {:keep_state_and_data, schedule_fetch(0, data)}
+
+      {_status, %Stream.Data{}} ->
+        # The offline handlers have a fetch scheduled already; one per frame
+        # would only add vehicle_data requests that are known to fail.
+        :keep_state_and_data
     end
   end
 
