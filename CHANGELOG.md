@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- fix(vehicle): keep the stream connected while a drive is interrupted by an API outage (#5647 - @onevcat)
+
 #### Build, CI, internal
 
 #### Dashboards
