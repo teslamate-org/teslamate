@@ -485,18 +485,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:ok, %Vehicle{state: vehicle_state} = vehicle}
       when vehicle_state in ["offline", "asleep"] ->
         # disconnect stream in case we started it to detect real online
-        # (in that case we won't go through Start / :offline or Start / :asleep)
-        #
-        # Not while driving: there the vehicle is usually only unreachable for
-        # the API for a while, and the stream keeps delivering positions that
-        # belong to the running drive. The driving handlers keep polling and
-        # decide when the drive is over.
+        # (in that case we won't go through Start / :offline or Start / :asleep),
+        # except when a drive is running and only the API lost the vehicle: the
+        # stream keeps delivering positions for that drive.
         data =
-          case state do
-            {:driving, _status, _drive} ->
+          case {vehicle_state, state} do
+            {"offline", {:driving, _status, _drive}} ->
               data
 
-            _ ->
+            {_, _} ->
               :ok = disconnect_stream(data)
               %Data{data | stream_pid: nil}
           end
@@ -732,9 +729,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         %Data{} = data
       ) do
     case {status, stream_data} do
-      # Also while the API reports the vehicle unavailable or offline: the
-      # stream stays connected then, and only a successful fetch brings the
-      # status back to :available.
+      # Any status: while the API reports the vehicle offline the stream stays
+      # connected, and only a successful fetch restores :available.
       {_status, %Stream.Data{shift_state: shift_state}}
       when shift_state in ~w(D N R) and not is_nil(drv) ->
         {elevation, geofence} =
@@ -762,8 +758,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state_and_data, schedule_fetch(0, data)}
 
       {_status, %Stream.Data{}} ->
-        # The offline handlers have a fetch scheduled already; one per frame
-        # would only add vehicle_data requests that are known to fail.
+        # The offline handlers already scheduled a fetch; one per frame would
+        # only repeat a request that is currently failing.
         :keep_state_and_data
     end
   end

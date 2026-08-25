@@ -648,6 +648,79 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       refute_receive _
     end
+
+    @tag :capture_log
+    test "reconnects the stream if the stream process died while unavailable",
+         %{test: name} do
+      me = self()
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events =
+        [
+          {:ok, online_event(now_ts)},
+          drive_event(now_ts, 0.1, 30, 20, 200, nil),
+          drive_event(now_ts + 1, 0.1, 30, 20, 200, nil),
+          fn ->
+            send(me, :continue?)
+
+            receive do
+              :continue -> {:ok, %TeslaApi.Vehicle{state: "offline"}}
+            after
+              5_000 -> raise "No :continue after 5s"
+            end
+          end
+        ] ++
+          List.duplicate({:ok, %TeslaApi.Vehicle{state: "offline"}}, 16) ++
+          [
+            drive_event(now_ts + :timer.minutes(4), 0.2, 20, 19, 190, nil),
+            {:ok,
+             online_event(now_ts + :timer.minutes(4) + 1,
+               drive_state: %{
+                 timestamp: now_ts + :timer.minutes(4) + 1,
+                 latitude: 0.3,
+                 longitude: 0.3
+               }
+             )}
+          ]
+
+      :ok = start_vehicle(name, events)
+
+      d0 = DateTime.from_unix!(now_ts, :millisecond)
+      assert_receive {:start_state, car, :online, date: ^d0}
+      assert_receive {ApiMock, {:stream, 1000, _}}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 48}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
+
+      # The stream process dies unnoticed: it is not monitored, so this is only
+      # discovered when the drive resumes.
+      assert_receive :continue?
+      {_state, %{stream_pid: stream_pid}} = :sys.get_state(name)
+      assert is_pid(stream_pid)
+      Process.exit(stream_pid, :kill)
+      send(:"api_#{name}", :continue)
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}, 500
+
+      # Vehicle comes back online mid-drive: the dead stream is replaced
+      assert_receive {ApiMock, {:stream, 1000, _}}, 500
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+      assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.3}}
+      assert_receive {:close_drive, ^drive, lookup_address: true}
+
+      d1 = DateTime.from_unix!(now_ts + :timer.minutes(4) + 1, :millisecond)
+      assert_receive {:start_state, ^car, :online, date: ^d1}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
   end
 
   describe "geofencing" do
