@@ -24,7 +24,7 @@ A powerful, self-hosted data logger for your Tesla.
  - 自定义地址反向查询URL（Docker env: NOMINATIM_API_HOST）  
    **服务可以通过nominatim容器自建，仅使用反向查询接口消耗的资源很少**
  - 自定义grafana地图组件使用的默认地图源  
-   **服务当然也可以自建，但是比较耗费系统资源，我更推荐免费的API[Thunderforest，一个月15万次免费调用，非常充足](https://www.thunderforest.com/)**
+   **服务当然也可以自建，但是比较耗费系统资源，我更推荐免费的API [天地图API](http://lbs.tianditu.gov.cn/server/MapService.html) [~~Thunderforest~~](https://www.thunderforest.com/)**
  - 最新版本增加了行程中的速度颜色区分，清晰地展示了一段行程中在哪个位置堵车、在哪个位置放飞自我~
 
 ## 供参考的配置文件
@@ -118,8 +118,8 @@ volumes:
 default_baselayer_config = `{
   "type": "xyz",
   "config": {
-    "attribution": "Thunderforest",
-    "url": "https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=your_api_key"
+    "attribution": "Tianditu",
+    "url": "http://t0.tianditu.gov.cn/cia_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cia&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=YOUR_API_KEY"
   }
 }`
 ```
