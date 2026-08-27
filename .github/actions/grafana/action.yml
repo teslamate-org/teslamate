@@ -17,21 +17,42 @@ runs:
   steps:
     - name: Docker meta
       id: docker_meta
-      uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
+      uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
       with:
         images: ${{ inputs.image }}
         tags: ${{ inputs.tags }}
         labels: ${{ inputs.labels }}
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@06116385d9baf250c9f4dcb4858b16962ea869c3 # v4.1.0
+      uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
+      uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
     - name: Build and push
-      uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
+      id: build
+      uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
       with:
         context: grafana
         push: true
         platforms: linux/amd64,linux/arm/v7,linux/arm64
         tags: ${{ steps.docker_meta.outputs.tags }}
+        # See build action for why BuildKit-side attestations are disabled:
+        # we want outputs.digest to be the multi-arch manifest list digest so
+        # that signed attestations land where `gh attestation verify` looks.
+        provenance: false
+        sbom: false
         cache-from: type=gha
         cache-to: type=gha,mode=max
+    - name: Attest grafana provenance
+      # grafana is a single multi-arch build, so steps.build.outputs.digest is
+      # the manifest-list digest that `gh attestation verify oci://...:tag`
+      # resolves to. Skip on unreviewed builds: see build action for the
+      # rationale.
+      if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
+      uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
+      with:
+        # See build action: qualify Docker Hub short names with docker.io.
+        subject-name: >-
+          ${{ startsWith(inputs.image, 'ghcr.io/')
+              && inputs.image
+              || format('docker.io/{0}', inputs.image) }}
+        subject-digest: ${{ steps.build.outputs.digest }}
+        push-to-registry: true

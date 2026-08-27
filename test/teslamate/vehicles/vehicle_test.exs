@@ -6,6 +6,22 @@ defmodule TeslaMate.Vehicles.VehicleTest do
   alias TeslaMate.Log.{Car, Update}
 
   describe "starting" do
+    test "does not fetch again after an import completes", %{test: name} do
+      parent = self()
+
+      events = [
+        fn ->
+          send(parent, :import_fetch)
+          {:error, :import_complete}
+        end
+      ]
+
+      :ok = start_vehicle(name, events, import?: true)
+
+      assert_receive :import_fetch
+      refute_receive :import_fetch, 100
+    end
+
     @tag :capture_log
     test "handles unknown and faulty states", %{test: name} do
       events = [
@@ -77,7 +93,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       :ok = start_vehicle(name, events)
 
-      assert_receive {:start_state, car, :online, date: _}, 100
+      assert_receive {:start_state, car, :online, date: _}
       assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -108,7 +124,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       assert :ok = Vehicle.resume_logging(name)
 
-      assert_receive {:start_state, ^car, :online, date: _}, 100
+      assert_receive {:start_state, ^car, :online, date: _}
       assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -137,7 +153,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
       assert :ok = Vehicle.resume_logging(name)
 
-      assert_receive {:start_state, ^car, :online, date: _}, 100
+      assert_receive {:start_state, ^car, :online, date: _}
       assert_receive {ApiMock, {:stream, 1000, _}}
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
@@ -551,7 +567,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:insert_position, ^car, %{}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
-      refute_receive _
+      refute_receive _, 100
     end
   end
 end

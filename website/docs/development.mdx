@@ -6,12 +6,12 @@ sidebar_label: Development and Contributing
 
 ## Requirements
 
-TeslaMate officially supports the versions listed below. In general, TeslaMate aims to stay compatible with the last three major Erlang and Postgres releases and the last three minor Elixir releases. At the moment, OTP 28+ is a hard requirement, so Elixir support is currently limited to versions that support OTP 28 (Elixir 1.18.4+ and 1.19.x).
+TeslaMate officially supports the versions listed below. In general, TeslaMate aims to stay compatible with the last three major Erlang and Postgres releases and the last three minor Elixir releases. At the moment, OTP 28+ is a hard requirement, so Elixir support is currently limited to versions that support OTP 28+ (Elixir v1.19 and v1.20).
 When contributing, please use the versions listed below, which match those used in official TeslaMate distributions.
 
-- **Elixir** >= 1.19.5-otp-28
+- **Elixir** >= 1.20.2-otp-29
 - **Postgres** >= 18.0
-- **Grafana** = 13.0.1
+- **Grafana** = 13.1.3
 - An **MQTT broker** e.g. mosquitto (_optional_)
 - **NodeJS** >= 22.22.0
 
@@ -244,8 +244,12 @@ nix run .#lint
 devenv up
 ```
 
-It is most likely you need to change the hash in `./nix/flake-modules/package.nix`. This could be `mixFodDeps`, `npmDepsHash`, or the `sha256` for `cldr`.
+After a dependency update, refresh the hashes pinned in the flake modules:
 
-:::note
-A `cldr` version update is particularly critical. The old hashes will still appear to work if you previously built using the old hash. But will silently get the old file not the new file.
-:::
+```bash
+nix run .#update-nix-hashes
+```
+
+Do not rely on the build to tell you that a hash went stale. A fixed-output derivation is addressed by its hash alone, so a stale hash resolves to the store path that was fetched for it earlier: the build succeeds, the fetcher never runs and the old content is used. The command therefore invalidates each pinned hash on purpose, lets the fetcher run and writes back the hash it reports, then builds the package once more — so a green run also means the package still builds. Expect it to take a few minutes, since it re-fetches every time by design, and if it fails it restores the hashes it had replaced.
+
+The hash it maintains is `mixFodDeps`; npm dependencies need no hash, they are fetched from the integrity hashes in `assets/package-lock.json`.

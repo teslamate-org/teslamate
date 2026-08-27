@@ -96,7 +96,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -239,7 +239,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -328,7 +328,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -454,6 +454,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "fixedColor": "#73BF69",
             "mode": "palette-classic"
           },
           "custom": {
@@ -516,6 +517,7 @@
         ],
         "legend": {
           "displayMode": "list",
+          "overflow": "ellipsis",
           "placement": "right",
           "showLegend": false,
           "values": [
@@ -538,7 +540,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -645,7 +647,7 @@
         "sparkline": false,
         "textMode": "auto"
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -726,6 +728,7 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": false
         },
@@ -745,7 +748,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -874,7 +877,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1059,11 +1062,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": false
         },
         "maxVizHeight": 300,
-        "minVizHeight": 10,
+        "minVizHeight": 5,
         "minVizWidth": 0,
         "namePlacement": "auto",
         "orientation": "horizontal",
@@ -1075,11 +1079,11 @@
           "values": false
         },
         "showUnfilled": true,
-        "sizing": "auto",
+        "sizing": "manual",
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1089,7 +1093,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT * FROM ((SELECT usable_battery_level, date\r\nFROM positions\r\nWHERE car_id = $car_id AND usable_battery_level IS NOT NULL\r\nORDER BY date DESC\r\nLIMIT 1)\r\nUNION\r\n(SELECT usable_battery_level, date\r\nFROM charges c\r\nJOIN charging_processes p ON p.id = c.charging_process_id\r\nWHERE p.car_id = $car_id AND usable_battery_level IS NOT NULL\r\nORDER BY date DESC\r\nLIMIT 1)) AS last_usable_battery_level LIMIT 1",
+          "rawSql": "SELECT * FROM ((SELECT usable_battery_level, date\r\nFROM positions\r\nWHERE car_id = $car_id AND ideal_battery_range_km IS NOT NULL AND usable_battery_level IS NOT NULL\r\nORDER BY date DESC\r\nLIMIT 1)\r\nUNION ALL\r\n(SELECT c.usable_battery_level, date\r\nFROM charges c\r\nJOIN charging_processes p ON p.id = c.charging_process_id\r\nWHERE p.car_id = $car_id AND c.usable_battery_level IS NOT NULL\r\nORDER BY date DESC\r\nLIMIT 1)) AS last_usable_battery_level ORDER BY date DESC LIMIT 1",
           "refId": "SOC",
           "sql": {
             "columns": [
@@ -1251,7 +1255,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1335,11 +1339,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": false
         },
         "maxVizHeight": 300,
-        "minVizHeight": 10,
+        "minVizHeight": 5,
         "minVizWidth": 0,
         "namePlacement": "auto",
         "orientation": "horizontal",
@@ -1351,11 +1356,11 @@
           "values": false
         },
         "showUnfilled": true,
-        "sizing": "auto",
+        "sizing": "manual",
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1365,7 +1370,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT * FROM ((SELECT usable_battery_level * ('$aux'::json ->> 'CurrentCapacity')::float / 100 as kWh, date, ('$aux'::json ->> 'CurrentCapacity')::float as Total\nFROM positions\nWHERE car_id = $car_id  AND usable_battery_level IS NOT NULL\nORDER BY date DESC\nLIMIT 1)\nUNION\n(SELECT battery_level * ('$aux'::json ->> 'CurrentCapacity')::float / 100 as kWh, date, ('$aux'::json ->> 'CurrentCapacity')::float as Total\nFROM charges c\nJOIN charging_processes p ON p.id = c.charging_process_id\nWHERE p.car_id = $car_id  AND usable_battery_level IS NOT NULL\nORDER BY date DESC\nLIMIT 1)) AS last_usable_battery_level LIMIT 1",
+          "rawSql": "SELECT * FROM ((SELECT usable_battery_level * ('$aux'::json ->> 'CurrentCapacity')::float / 100 as kWh, date, ('$aux'::json ->> 'CurrentCapacity')::float as Total\nFROM positions\nWHERE car_id = $car_id AND ideal_battery_range_km IS NOT NULL AND usable_battery_level IS NOT NULL\nORDER BY date DESC\nLIMIT 1)\nUNION ALL\n(SELECT c.usable_battery_level * ('$aux'::json ->> 'CurrentCapacity')::float / 100 as kWh, date, ('$aux'::json ->> 'CurrentCapacity')::float as Total\nFROM charges c\nJOIN charging_processes p ON p.id = c.charging_process_id\nWHERE p.car_id = $car_id  AND c.usable_battery_level IS NOT NULL\nORDER BY date DESC\nLIMIT 1)) AS last_usable_battery_level ORDER BY date DESC LIMIT 1",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1499,6 +1504,7 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
+          "overflow": "ellipsis",
           "placement": "bottom",
           "showLegend": false
         },
@@ -1558,7 +1564,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -1761,7 +1767,7 @@
   },
   "timezone": "browser",
   "title": "Battery Health",
-  "uid": "jchmRiqUfXgTM",
+  "weekStart": "",
   "version": 1,
-  "weekStart": ""
+  "uid": "jchmRiqUfXgTM"
 }

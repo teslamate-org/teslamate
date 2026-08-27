@@ -1,7 +1,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><.link navigate={~p"/"}><%= gettext("Home") %></.link></li>
-    <li class="is-active"><.link navigate=""><%= gettext("Charge Cost") %></.link></li>
+    <li><.link navigate={~p"/"}>{gettext("Home")}</.link></li>
+    <li class="is-active"><.link navigate="">{gettext("Charge Cost")}</.link></li>
   </ul>
 </nav>
 
@@ -24,14 +24,14 @@
               style="height: 250px; position: relative;"
             />
           </figure>
-          <%= text_input(:position, "#{@charging_process.id}",
+          {text_input(:position, "#{@charging_process.id}",
             value:
               "#{@charging_process.position.latitude},#{@charging_process.position.longitude}",
             phx_hook: "TriggerChange",
             id: "position_#{@charging_process.id}",
             class: "is-hidden",
             disabled: true
-          ) %>
+          )}
         </div>
       </div>
     </div>
@@ -47,7 +47,7 @@
               <span class="tag is-primary is-light">
                 <span class="icon"><span class="mdi mdi-calendar-range"></span></span>
               </span>
-              <%= content_tag(:span, "–",
+              {content_tag(:span, "–",
                 data: [
                   start_date: DateTime.to_iso8601(@charging_process.start_date),
                   end_date: DateTime.to_iso8601(@charging_process.end_date)
@@ -55,7 +55,7 @@
                 phx_hook: "LocalTimeRange",
                 id: "date_range_#{@charging_process.id}",
                 class: "tag"
-              ) %>
+              )}
             </div>
           </div>
         <% end %>
@@ -65,7 +65,7 @@
             <span class="tag is-info is-light">
               <span class="icon"><span class="mdi mdi-car"></span></span>
             </span>
-            <span class="tag"><%= @charging_process.car.name %></span>
+            <span class="tag">{@charging_process.car.name}</span>
           </div>
         </div>
 
@@ -76,13 +76,13 @@
                 <span class="icon"><span class="mdi mdi-flash"></span></span>
               </span>
               <span class="tag">
-                <%= Decimal.round(
+                {Decimal.round(
                   Decimal.max(
                     @charging_process.charge_energy_used || 0,
                     @charging_process.charge_energy_added
                   ),
                   2
-                ) %> kWh
+                )} kWh
               </span>
             </div>
           </div>
@@ -94,7 +94,7 @@
               <span class="tag is-light">
                 <span class="icon"><span class="mdi mdi-clock"></span></span>
               </span>
-              <span class="tag"><%= @charging_process.duration_min %> min</span>
+              <span class="tag">{@charging_process.duration_min} min</span>
             </div>
           </div>
         <% end %>
@@ -105,7 +105,7 @@
               <span class="icon"><span class="mdi mdi-map-marker"></span></span>
             </span>
             <span class="tag">
-              <%= case @charging_process do
+              {case @charging_process do
                 %ChargingProcess{geofence: %GeoFence{name: name}} ->
                   name
 
@@ -119,7 +119,7 @@
 
                 _ ->
                   "???"
-              end %>
+              end}
             </span>
           </div>
         </div>
@@ -129,30 +129,30 @@
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <%= label(f, :cost, gettext("Cost"), class: "label") %>
+      {label(f, :cost, gettext("Cost"), class: "label")}
     </div>
     <div class="field-body">
       <div class="field has-addons">
         <p class="control">
           <span class="select">
-            <%= select(f, :mode, [
+            {select(f, :mode, [
               {gettext("Total"), :total},
               {gettext("Per kWh"), :per_kwh},
               {gettext("Per Minute"), :per_minute}
-            ]) %>
+            ])}
           </span>
         </p>
         <p class="control is-expanded">
-          <%= text_input(f, :cost,
+          {text_input(f, :cost,
             class: "input",
             type: :number,
             inputmode: :decimal,
             step: 0.01,
             placeholder: gettext("Enter charge cost"),
             autofocus: true
-          ) %>
+          )}
         </p>
-        <p class="help is-danger"><%= error_tag(f, :cost) %></p>
+        <p class="help is-danger">{error_tag(f, :cost)}</p>
       </div>
     </div>
   </div>
@@ -162,16 +162,16 @@
     <div class="field-body">
       <div class="field is-grouped">
         <div class="control">
-          <%= link(gettext("Back"), to: @redirect_to, class: "button") %>
+          {link(gettext("Back"), to: @redirect_to, class: "button")}
         </div>
         <div class="control" style="min-width: 300px;">
-          <%= submit(if(is_nil(@notification), do: gettext("Save"), else: @notification.message),
+          {submit(if(is_nil(@notification), do: gettext("Save"), else: @notification.message),
             phx_disable_with: gettext("Saving..."),
             class: [
               "button",
               if(is_nil(@notification), do: "is-info", else: "is-#{@notification.key}")
             ]
-          ) %>
+          )}
         </div>
       </div>
     </div>

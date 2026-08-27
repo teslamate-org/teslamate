@@ -1,4 +1,4 @@
-FROM elixir:1.19.5-otp-28 AS builder
+FROM elixir:1.20.2-otp-29 AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -43,7 +43,7 @@ COPY VERSION VERSION
 RUN mix compile
 
 COPY config/runtime.exs config/runtime.exs
-RUN SKIP_LOCALE_DOWNLOAD=true mix release --path /opt/built
+RUN mix release --path /opt/built
 
 ########################################################################
 

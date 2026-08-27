@@ -24,6 +24,11 @@ defmodule LocationsMock do
   end
 
   @impl true
+  def handle_call({:find_geofence, %{latitude: 90, longitude: 45.01}}, _from, state) do
+    geofence = %GeoFence{id: 1, name: "Garage", latitude: 90, longitude: 45.01, radius: 20}
+    {:reply, geofence, state}
+  end
+
   def handle_call({:find_geofence, %{latitude: 90, longitude: 45}}, _from, state) do
     geofence = %GeoFence{id: 0, name: "South Pole", latitude: 90, longitude: 45, radius: 100}
     {:reply, geofence, state}

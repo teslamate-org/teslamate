@@ -83,6 +83,10 @@ defmodule TeslaMate.Vehicles do
       {:error, :not_signed_in} ->
         fallback_vehicles()
 
+      {:error, :too_many_request, retry_after} ->
+        Logger.warning("Could not get vehicles: rate limited, retry after #{retry_after}s")
+        fallback_vehicles()
+
       {:error, reason} ->
         Logger.warning("Could not get vehicles: #{inspect(reason)}")
         fallback_vehicles()
@@ -122,7 +126,7 @@ defmodule TeslaMate.Vehicles do
             when m in ["S", "X"] and (trim_badging == nil or is_binary(marketing_name)) ->
               %CarSettings{suspend_min: 12}
 
-            {:ok, %{model: m}} when m in ["3", "Y"] ->
+            {:ok, %{model: m}} when m in ["3", "Y", "Cybertruck"] ->
               %CarSettings{suspend_min: 12}
 
             _ ->

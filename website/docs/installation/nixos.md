@@ -5,10 +5,12 @@ sidebar_label: NixOS
 
 This document provides the necessary steps for installation of TeslaMate on [NixOS](https://nixos.org/).
 
+:::info
 This setup is recommended only if you are running TeslaMate **on your home network**, as otherwise your Tesla API tokens might be at risk.
 
 If you intend to access TeslaMate from the Internet, the recommended way is to use a secure connection (such as a VPN, Cloudflare Tunnel, Tailscale, Zero Tier and a reverse proxy for portless access like [Caddy](https://nixos.wiki/wiki/Caddy)) for secured access to your TeslaMate instance outside your home network.
-Alternatively, you can use a reverse proxy (such as Traefik or [Caddy](https://nixos.wiki/wiki/Caddy)) with appropriate hardening to secure your TeslaMate instance before expose it to the internet.
+Alternatively, you can use a reverse proxy (such as Traefik or [Caddy](https://nixos.wiki/wiki/Caddy)) with appropriate hardening to secure your TeslaMate instance before exposing it to the internet.
+:::
 
 ## Requirements
 
@@ -79,6 +81,12 @@ config = services.teslamate = {
         enable = true;
         host = "127.0.0.1";
         port = 1883;
+
+        # Optional: Home Assistant MQTT discovery
+        discovery = {
+          enable = true;
+          url = "https://teslamate.example.com/";
+        };
       };
     };
 }
@@ -103,3 +111,15 @@ If you want to use the TeslaMate web interface via a reverse proxy, you can use 
     };
 }
 ```
+
+## Usage
+
+1. [Generate an access and refresh token](tokens.md)
+2. Open the web interface [http://your-ip-address:4000](http://localhost:4000)
+3. Enter the access and refresh token on the sign-in page
+4. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000). Log in with the default user `admin` (initial password `admin`) and enter a secure password.
+5. In the TeslaMate web interface, go to _Settings → URLs_ and set the _Web App_ and _Dashboards_ URLs, so the links between TeslaMate and Grafana work in both directions.
+
+## Update
+
+To update the running TeslaMate configuration to the latest version, follow: [Upgrading to a new version](../upgrading.mdx)

@@ -5,10 +5,15 @@ sidebar_label: FAQ
 
 ## How to generate your own tokens
 
-There are multiple apps available to securely generate access tokens yourself, for example:
+See [Generating Tokens](installation/tokens.md).
 
-- [Tesla Auth (macOS, Linux, Windows)](https://github.com/adriankumpf/tesla_auth)
-- [Auth app for Tesla (iOS, macOS)](https://apps.apple.com/us/app/auth-app-for-tesla/id1552058613)
+## TeslaMate stopped recording data. How can I fix it?
+
+Check the TeslaMate logs first. They usually show whether TeslaMate cannot reach Tesla, cannot connect to the database, or needs new credentials.
+
+If the logs show an authentication error, use the [token generation tools](installation/tokens.md) to generate a new access token and refresh token, then enter both on the TeslaMate sign-in page. Signing in again does not remove data that TeslaMate has already recorded.
+
+Tesla's API does not provide historical drives or charges, so TeslaMate cannot recover data that was missed while logging was stopped. If another supported logger recorded the missing period, you may be able to add it with the [TeslaFi import](import/teslafi.md).
 
 ## Why are no consumption values displayed in Grafana?
 

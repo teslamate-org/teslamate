@@ -55,12 +55,12 @@ sudo apt install erlang erlang-dev erlang-syntax-tools elixir
 </details>
 
 <details>
-  <summary>Grafana (v13.0.1+)</summary>
+  <summary>Grafana (v13.1.3+)</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
-sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
-wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+sudo add-apt-repository "deb https://apt.grafana.com stable main"
+wget -q -O - https://apt.grafana.com/gpg-full.key | sudo apt-key add -
 sudo apt-get update
 sudo apt-get install -y grafana
 sudo systemctl start grafana-server
@@ -154,8 +154,8 @@ sudo localectl set-locale LANG=en_US.UTF-8
 
 ## Starting TeslaMate at boot time
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 <Tabs
 defaultValue="systemd"
@@ -325,3 +325,15 @@ screen -S teslamate -L -dm bash -c "cd /usr/src/teslamate; ./start.sh; exec sh"
    ```
 
    :::
+
+## Usage
+
+1. [Generate an access and refresh token](../tokens.md)
+2. Open the web interface [http://your-ip-address:4000](http://localhost:4000)
+3. Enter the access and refresh token on the sign-in page
+4. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000). Log in with the default user `admin` (initial password `admin`) and enter a secure password.
+5. In the TeslaMate web interface, go to _Settings → URLs_ and set the _Web App_ and _Dashboards_ URLs, so the links between TeslaMate and Grafana work in both directions.
+
+## Update
+
+To update the running TeslaMate configuration to the latest version, follow: [Upgrading to a new version](../../upgrading.mdx)

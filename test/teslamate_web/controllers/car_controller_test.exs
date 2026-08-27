@@ -37,6 +37,38 @@ defmodule TeslaMateWeb.CarControllerTest do
              |> Enum.find(&match?({"span", [_, {"data-tooltip", ^tooltip}], _}, &1))
   end
 
+  defp assert_car_title(html, name) do
+    assert name ==
+             html
+             |> Floki.parse_document!()
+             |> Floki.find(".car .title")
+             |> Floki.filter_out(".is-sr-only")
+             |> Floki.text()
+             |> String.trim()
+  end
+
+  defp assert_car_title_vin(html, name, vin_label) do
+    assert [{"span", attrs, content}] =
+             html
+             |> Floki.parse_document!()
+             |> Floki.find(".car .title [data-tooltip]")
+
+    attrs = Map.new(attrs)
+
+    assert content |> Floki.filter_out(".is-sr-only") |> Floki.text() |> String.trim() == name
+    assert attrs["data-tooltip"] == vin_label
+    refute Map.has_key?(attrs, "title")
+
+    case name do
+      ^vin_label ->
+        assert [] == Floki.find(content, ".is-sr-only")
+
+      _name ->
+        assert content |> Floki.find(".is-sr-only") |> Floki.text() |> String.trim() ==
+                 ", #{vin_label}"
+    end
+  end
+
   defp car_fixture(settings) do
     {:ok, car} =
       Log.create_car(%{
@@ -123,13 +155,38 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
       assert table_row(html, "Status", "asleep")
       assert table_row(html, "Range (rated)", "380.26 km")
       assert table_row(html, "Range (est.)", "401.52 km")
       assert table_row(html, "State of Charge", "80%", tooltip: "≈ 475 km at 100%")
       assert table_row(html, "Outside Temperature", "20.1 °C")
       assert table_row(html, "Inside Temperature", "21.0 °C")
+    end
+
+    @tag :signed_in
+    test "shows the VIN suffix in an accessible car title tooltip", %{conn: conn} do
+      events = [
+        {:ok, %TeslaApi.Vehicle{state: "asleep", display_name: "FooCar"}}
+      ]
+
+      :ok = start_vehicles(events, vin: "5YJ3E1EA7KF317000")
+
+      conn = get(conn, Routes.car_path(conn, :index))
+
+      assert html = response(conn, 200)
+      assert_car_title_vin(html, "FooCar", "VIN 317000")
+    end
+
+    @tag :capture_log
+    @tag :signed_in
+    test "shows the full VIN when the car has no display name", %{conn: conn} do
+      :ok = start_vehicles([{:error, :unknown}], vin: "5YJ3E1EA7KF317000")
+
+      conn = get(conn, Routes.car_path(conn, :index))
+
+      assert html = response(conn, 200)
+      assert_car_title_vin(html, "VIN 5YJ3E1EA7KF317000", "VIN 5YJ3E1EA7KF317000")
     end
 
     @tag :signed_in
@@ -212,7 +269,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
 
       assert "Model S P90D" ==
                html
@@ -233,7 +290,20 @@ defmodule TeslaMateWeb.CarControllerTest do
       assert icon(html, "Sentry Mode", "shield-check")
       assert icon(html, "Windows open", "window-open")
       assert icon(html, "Doors open", "car-door")
-      assert icon(html, "Software Update available (2020.4.1)", "gift-outline")
+
+      software_update_icon =
+        html
+        |> Floki.parse_document!()
+        |> Floki.find(".icons .icon")
+        |> Enum.find(&match?({"a", _, [{"span", [{"class", "mdi mdi-gift-outline"}], _}]}, &1))
+
+      assert {"a", update_attrs, _} = software_update_icon
+      update_attrs_map = Map.new(update_attrs)
+      assert update_attrs_map["data-tooltip"] == "Software Update available (2020.4.1)"
+
+      assert update_attrs_map["href"] ==
+               "https://www.notateslaapp.com/software-updates/version/2020.4.1/release-notes"
+
       assert table_row(html, "Outside Temperature", "24 °C")
       assert table_row(html, "Inside Temperature", "23.2 °C")
       assert table_row(html, "Mileage", "42000 km")
@@ -288,7 +358,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
       assert table_row(html, "Status", "charging")
       assert table_row(html, "Remaining Time", "1 h, 49 min")
       assert icon(html, "Plugged In", "power-plug")
@@ -362,7 +432,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
       assert table_row(html, "Status", "driving")
       assert table_row(html, "Speed", "48 km/h")
     end
@@ -390,7 +460,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
       assert table_row(html, "Status", "updating")
     end
 
@@ -405,7 +475,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
       assert table_row(html, "Status", "asleep")
     end
 
@@ -420,7 +490,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
       assert table_row(html, "Status", "offline")
     end
 
@@ -446,7 +516,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
       assert table_row(html, "Status", "falling asleep")
     end
 
@@ -462,7 +532,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5"><\/p>/
+      assert_car_title(html, "VIN xxxxx")
       assert table_row(html, "Status", "unavailable")
     end
 
@@ -499,7 +569,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
       assert table_row(html, "Range (rated)", "281.64 km")
       assert table_row(html, "Range (est.)", "289.68 km")
     end
@@ -548,7 +618,7 @@ defmodule TeslaMateWeb.CarControllerTest do
       conn = get(conn, Routes.car_path(conn, :index))
 
       assert html = response(conn, 200)
-      assert html =~ ~r/<p class="title is-5">FooCar<\/p>/
+      assert_car_title(html, "FooCar")
       assert table_row(html, "Status", "driving")
       assert table_row(html, "Range (rated)", "200.0 mi")
       assert table_row(html, "Range (est.)", "180.0 mi")
@@ -639,7 +709,7 @@ defmodule TeslaMateWeb.CarControllerTest do
     end
   end
 
-  def start_vehicles(events \\ []) do
+  def start_vehicles(events \\ [], opts \\ []) do
     {:ok, _pid} = start_supervised({ApiMock, name: :api_vehicle, events: events, pid: self()})
 
     {:ok, _pid} =
@@ -651,7 +721,7 @@ defmodule TeslaMateWeb.CarControllerTest do
              display_name: "foo",
              id: 4242,
              vehicle_id: 404,
-             vin: "xxxxx"
+             vin: Keyword.get(opts, :vin, "xxxxx")
            }
          ]}
       )

@@ -4,12 +4,15 @@ title: Upgrading to a new version
 sidebar_label: Upgrading to a new version
 ---
 
+:::warning
+**Create a [backup](maintenance/backup.mdx) before updating!**
+:::
+
 :::info
-Check out the [release notes](https://github.com/teslamate-org/teslamate/releases) before upgrading!
+**Check the [Release Notes](https://github.com/teslamate-org/teslamate/releases) for major version jumps** - some versions may require intermediate upgrades or database migrations in a specific order
 :::
 
 :::note
-Create a [backup](maintenance/backup_restore.mdx) before updating.
 If you are using `docker-compose`, you are using Docker Compose v1, which has been deprecated. Docker Compose commands refer to Docker Compose v2. Consider upgrading your docker setup, see [Migrate to Compose V2](https://docs.docker.com/compose/migrate/)
 :::
 
@@ -20,6 +23,7 @@ import TabItem from "@theme/TabItem";
 defaultValue="docker"
 values={[
 { label: 'Docker', value: 'docker', },
+{ label: 'NixOS', value: 'nixos', },
 { label: 'Manual install (Debian)', value: 'manual_debian', },
 { label: 'Manual install (FreeBSD)', value: 'manual_freebsd', },
 ]}>
@@ -38,6 +42,35 @@ docker compose up -d
 ```
 
 </TabItem>
+
+<TabItem value="nixos">
+
+These instructions assume you have installed the server using a NixOS
+flake. Other methods will work, but are not documented here.
+
+In the `inputs` section of your flake change the teslamate.url as appropriate:
+
+```nix
+teslamate.url = "github:teslamate-org/teslamate/main";
+```
+
+If you would like to pin to a specific version, you can do so for example like this:
+
+```nix
+teslamate.url = "github:teslamate-org/teslamate?rev=c37638b320e0beea97c5d51fea51cd9fdbd07ce0"; # v2.0.0
+```
+
+And update the nix flake input:
+
+```bash
+nix flake update teslamate
+```
+
+Then commit the changes to git (strongly recommended), and use your
+favorite NixOS deploy tool to deploy the result.
+
+</TabItem>
+
 <TabItem value="manual_debian">
 
 1. Pull the new changes from the git repository, checkout the new version and then build the new release:

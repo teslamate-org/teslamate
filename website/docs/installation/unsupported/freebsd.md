@@ -70,7 +70,7 @@ service postgresql initdb
 </details>
 
 <details>
-  <summary>Grafana (v13.0.1+)</summary>
+  <summary>Grafana (v13.1.1+)</summary>
 
 ```bash
 pkg install grafana
@@ -261,3 +261,15 @@ service teslamate start
    ```
 
    :::
+
+## Usage
+
+1. [Generate an access and refresh token](../tokens.md)
+2. Open the web interface [http://your-ip-address:4000](http://localhost:4000)
+3. Enter the access and refresh token on the sign-in page
+4. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000). Log in with the default user `admin` (initial password `admin`) and enter a secure password.
+5. In the TeslaMate web interface, go to _Settings → URLs_ and set the _Web App_ and _Dashboards_ URLs, so the links between TeslaMate and Grafana work in both directions.
+
+## Update
+
+To update the running TeslaMate configuration to the latest version, follow: [Upgrading to a new version](../../upgrading.mdx)

@@ -143,6 +143,17 @@ defmodule TeslaMate.LogChargingTest do
       assert charge.ideal_battery_range_km == Decimal.new("250.00")
     end
 
+    test "does not invent a phase count when charger_phases is missing" do
+      car = car_fixture()
+
+      assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
+
+      assert {:ok, %Charge{} = charge} =
+               Log.insert_charge(cproc, Map.delete(@valid_attrs, :charger_phases))
+
+      assert charge.charger_phases == nil
+    end
+
     test "with invalid data returns error changeset" do
       car = car_fixture()
 
@@ -892,6 +903,75 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.charge_energy_added == Decimal.from_float(13.77)
       assert cproc.charge_energy_used == Decimal.from_float(13.82)
       assert cproc.duration_min == 21
+    end
+
+    test "calculates the energy used for short charging sessions" do
+      # with n <= 15 charges determine_phases returns nil; rows carrying
+      # charger_phases must fall back to charger_power instead of being dropped
+      charges =
+        for i <- 0..11 do
+          date = DateTime.add(~U[2023-05-01 10:00:00Z], i * 60) |> DateTime.to_iso8601()
+          {date, i / 10, 7, 250.0, 2, 16, 229, nil}
+        end
+
+      assert {:ok, cproc} = log_charging_process(charges)
+      assert cproc.charge_energy_used == Decimal.new("1.28")
+    end
+
+    test "calculates the energy used when rows are mixed and phase detection fails" do
+      # rows alternate between charger_phases present and absent; every row must
+      # contribute to the integral even though determine_phases returns nil
+      charges =
+        for i <- 0..11 do
+          date = DateTime.add(~U[2023-05-01 10:00:00Z], i * 60) |> DateTime.to_iso8601()
+          phases = if rem(i, 2) == 0, do: nil, else: 2
+          {date, i / 10, 7, 250.0, phases, 16, 229, nil}
+        end
+
+      assert {:ok, cproc} = log_charging_process(charges)
+      assert cproc.charge_energy_used == Decimal.new("1.28")
+    end
+
+    test "does not use a phase count of zero" do
+      # charger_power (1 kW) is tiny compared to charger_actual_current *
+      # charger_voltage, so the average power ratio rounds to zero phases;
+      # integrating with 0 would report 0.00 kWh instead of the power-based value
+      charges =
+        for i <- 0..19 do
+          date = DateTime.add(~U[2023-05-01 10:00:00Z], i * 60) |> DateTime.to_iso8601()
+          {date, i / 10, 1, 250.0, 3, 16, 229, nil}
+        end
+
+      assert {:ok, cproc} = log_charging_process(charges)
+      assert cproc.charge_energy_used == Decimal.new("0.32")
+    end
+
+    test "does not null the energy used when a single outlier prevents phase detection" do
+      # one terminal row with collapsed current pushes the unweighted mean of the
+      # power ratio between phase counts; the process must fall back to
+      # charger_power instead of returning NULL
+      charges =
+        for i <- 0..19 do
+          date = DateTime.add(~U[2023-05-01 10:00:00Z], i * 60) |> DateTime.to_iso8601()
+          current = if i == 19, do: 1, else: 32
+          {date, i / 10, 7, 250.0, 1, current, 229, nil}
+        end
+
+      assert {:ok, cproc} = log_charging_process(charges)
+      assert cproc.charge_energy_used == Decimal.new("2.22")
+    end
+
+    test "handles rows with battery-side current readings" do
+      # some vehicles write battery-side DC readings into the AC input fields;
+      # 155 A x 230 V overflows the smallint product in Postgres
+      charges =
+        for i <- 0..5 do
+          date = DateTime.add(~U[2023-05-01 10:00:00Z], i * 60) |> DateTime.to_iso8601()
+          {date, i / 10, 35, 250.0, 2, 155, 230, nil}
+        end
+
+      assert {:ok, cproc} = log_charging_process(charges)
+      assert cproc.charge_energy_used == Decimal.new("2.92")
     end
 
     defp charges_fixture(fixture, fast_charger_type \\ "<invalid>")

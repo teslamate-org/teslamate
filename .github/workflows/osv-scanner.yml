@@ -19,6 +19,11 @@ on:
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
   merge_group:
     branches: ["main"]
+  # Pull requests touching .github are excluded from the automatic runs above,
+  # since the workflow definition that would run is the one from the pull
+  # request. This is the deliberate way to scan them anyway, by someone with
+  # write access. The job conditions below allow for it.
+  workflow_dispatch:
 
 permissions:
   actions: read
@@ -31,12 +36,12 @@ jobs:
 
   scan-scheduled:
     needs: check_paths
-    if: ( github.event_name == 'push' && needs.check_paths.outputs.githubfolder == 'false' ) || github.event_name == 'schedule'
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@fa4ff678dd5d0a4fa3d628e57af8162873e93cd6" # v2.3.8
+    if: ( github.event_name == 'push' && needs.check_paths.outputs.githubfolder == 'false' ) || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9fd1bcce27f67e3bd819a0a7620e332803dc43bc" # v2.3.8
     with:
-      # Don't fail on push to main / scheduled runs: vulnerabilities are still
-      # reported via the SARIF upload, but the CI run stays green so it doesn't
-      # look like a build failure on main.
+      # Don't fail on push to main, scheduled or manual runs: vulnerabilities
+      # are still reported via the SARIF upload, but the CI run stays green so
+      # it doesn't look like a build failure on main.
       fail-on-vuln: false
       scan-args: |-
         -r
@@ -45,7 +50,7 @@ jobs:
   scan-pr:
     needs: check_paths
     if: ( github.event_name == 'pull_request' && needs.check_paths.outputs.githubfolder == 'false' ) || ( github.event_name == 'merge_group' && needs.check_paths.outputs.githubfolder == 'false' )
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@fa4ff678dd5d0a4fa3d628e57af8162873e93cd6" # v2.3.8
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@9fd1bcce27f67e3bd819a0a7620e332803dc43bc" # v2.3.8
     with:
       # Fail on real pull_request runs (catch vulns before merge), but don't fail
       # merge_group runs so a merge to main isn't blocked / shown as failed.

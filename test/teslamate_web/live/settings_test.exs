@@ -12,7 +12,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert [
                {"select", _,
                 [
-                  {"option", [{"selected", "selected"}, {"value", "km"}], ["km"]},
+                  {"option", [{"selected", ""}, {"value", "km"}], ["km"]},
                   {"option", [{"value", "mi"}], ["mi"]}
                 ]}
              ] =
@@ -24,7 +24,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                {"select", _,
                 [
                   {"option", [{"value", "km"}], ["km"]},
-                  {"option", [{"selected", "selected"}, {"value", "mi"}], ["mi"]}
+                  {"option", [{"selected", ""}, {"value", "mi"}], ["mi"]}
                 ]}
              ] =
                render_change(view, :change, %{global_settings: %{unit_of_length: :mi}})
@@ -41,7 +41,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert [
                {"select", _,
                 [
-                  {"option", [{"selected", "selected"}, {"value", "C"}], ["°C"]},
+                  {"option", [{"selected", ""}, {"value", "C"}], ["°C"]},
                   {"option", [{"value", "F"}], ["°F"]}
                 ]}
              ] =
@@ -53,7 +53,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                {"select", _,
                 [
                   {"option", [{"value", "C"}], ["°C"]},
-                  {"option", [{"selected", "selected"}, {"value", "F"}], ["°F"]}
+                  {"option", [{"selected", ""}, {"value", "F"}], ["°F"]}
                 ]}
              ] =
                render_change(view, :change, %{global_settings: %{unit_of_temperature: :F}})
@@ -70,7 +70,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert [
                {"select", _,
                 [
-                  {"option", [{"selected", "selected"}, {"value", "bar"}], ["bar"]},
+                  {"option", [{"selected", ""}, {"value", "bar"}], ["bar"]},
                   {"option", [{"value", "psi"}], ["psi"]}
                 ]}
              ] =
@@ -82,7 +82,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                {"select", _,
                 [
                   {"option", [{"value", "bar"}], ["bar"]},
-                  {"option", [{"selected", "selected"}, {"value", "psi"}], ["psi"]}
+                  {"option", [{"selected", ""}, {"value", "psi"}], ["psi"]}
                 ]}
              ] =
                render_change(view, :change, %{global_settings: %{unit_of_pressure: :psi}})
@@ -102,7 +102,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                {"select", _,
                 [
                   {"option", [{"value", "ideal"}], ["ideal"]},
-                  {"option", [{"selected", "selected"}, {"value", "rated"}], ["rated"]}
+                  {"option", [{"selected", ""}, {"value", "rated"}], ["rated"]}
                 ]}
              ] =
                html
@@ -168,7 +168,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert {:ok, view, html} = live(conn, "/settings")
 
-      assert [{"option", [{"selected", "selected"}, {"value", "en"}], ["English"]}] =
+      assert [{"option", [{"selected", ""}, {"value", "en"}], ["English"]}] =
                html
                |> Floki.parse_document!()
                |> Floki.find("#global_settings_language option[selected]")
@@ -176,7 +176,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       render_change(view, :change, %{global_settings: %{language: "de"}})
 
       TestHelper.eventually(fn ->
-        assert [{"option", [{"selected", "selected"}, {"value", "de"}], ["German"]}] =
+        assert [{"option", [{"selected", ""}, {"value", "de"}], ["German"]}] =
                  render(view)
                  |> Floki.parse_document!()
                  |> Floki.find("#global_settings_language option[selected]")
@@ -200,7 +200,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert {:ok, view, html} = live(conn, "/settings")
 
-      assert [{"option", [{"selected", "selected"}, {"value", "en"}], ["English"]}] =
+      assert [{"option", [{"selected", ""}, {"value", "en"}], ["English"]}] =
                html
                |> Floki.parse_document!()
                |> Floki.find("#global_settings_language option[selected]")
@@ -217,7 +217,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                  |> Floki.find("p.help")
                  |> Floki.text()
 
-        assert [{"option", [{"selected", "selected"}, {"value", "en"}], ["English"]}] =
+        assert [{"option", [{"selected", ""}, {"value", "en"}], ["English"]}] =
                  html
                  |> Floki.parse_document!()
                  |> Floki.find("#global_settings_language option[selected]")
@@ -237,7 +237,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
     test "adds a query param when changing the UI language", %{conn: conn} do
       assert {:ok, view, html} = live(conn, "/settings")
 
-      assert [{"option", [{"selected", "selected"}, {"value", "en"}], ["English"]}] =
+      assert [{"option", [{"selected", ""}, {"value", "en"}], ["English"]}] =
                html
                |> Floki.parse_document!()
                |> Floki.find("#global_settings_ui option[selected]")
@@ -247,10 +247,12 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert {:ok, _view, html} = live(conn, path)
 
-      assert [{"option", [{"selected", "selected"}, {"value", "de"}], ["German"]}] =
+      assert [{"option", [{"selected", ""}, {"value", "de"}], ["German"]}] =
                html
                |> Floki.parse_document!()
                |> Floki.find("#global_settings_ui option[selected]")
+
+      assert html =~ "Einstellungen"
     end
   end
 
@@ -305,7 +307,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                {"option", [{"value", "12"}], ["12 min"]},
                {"option", [{"value", "15"}], ["15 min"]},
                {"option", [{"value", "18"}], ["18 min"]},
-               {"option", [{"selected", "selected"}, {"value", "21"}], ["21 min"]},
+               {"option", [{"selected", ""}, {"value", "21"}], ["21 min"]},
                {"option", [{"value", "24"}], ["24 min"]},
                {"option", [{"value", "27"}], ["27 min"]},
                {"option", [{"value", "30"}], ["30 min"]},
@@ -327,7 +329,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                {"option", [{"value", "3"}], ["3 min"]},
                {"option", [{"value", "5"}], ["5 min"]},
                {"option", [{"value", "10"}], ["10 min"]},
-               {"option", [{"selected", "selected"}, {"value", "15"}], ["15 min"]},
+               {"option", [{"selected", ""}, {"value", "15"}], ["15 min"]},
                {"option", [{"value", "20"}], ["20 min"]},
                {"option", [{"value", "25"}], ["25 min"]},
                {"option", [{"value", "30"}], ["30 min"]},
@@ -346,7 +348,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert {:ok, _view, html} = live(conn, "/settings")
       html = Floki.parse_document!(html)
 
-      assert ["checked"] =
+      assert [""] =
                html
                |> Floki.find("#car_settings_#{car.id}_req_not_unlocked")
                |> Floki.attribute("checked")
@@ -366,7 +368,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       assert {:ok, view, _html} = live(conn, "/settings")
 
-      assert [{"option", [{"selected", "selected"}, {"value", "90"}], ["90 min"]}] =
+      assert [{"option", [{"selected", ""}, {"value", "90"}], ["90 min"]}] =
                render_change(view, :change, %{
                  "car_settings_#{car.id}" => %{suspend_min: 90, use_streaming_api: false}
                })
@@ -376,7 +378,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       assert [settings] = Settings.get_car_settings()
       assert settings.suspend_min == 90
 
-      assert [{"option", [{"selected", "selected"}, {"value", "30"}], ["30 min"]}] =
+      assert [{"option", [{"selected", ""}, {"value", "30"}], ["30 min"]}] =
                render_change(view, :change, %{
                  "car_settings_#{car.id}" => %{
                    suspend_after_idle_min: 30,
@@ -412,7 +414,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
         render_change(view, :change, %{"car_settings_#{car.id}" => %{free_supercharging: true}})
         |> Floki.parse_document!()
 
-      assert ["checked"] ==
+      assert [""] ==
                html
                |> Floki.find("#car_settings_#{car.id}_free_supercharging")
                |> Floki.attribute("checked")
@@ -427,7 +429,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                |> Floki.find("#car_settings_#{car.id}_use_streaming_api")
                |> Floki.attribute("checked")
 
-      assert ["checked"] ==
+      assert [""] ==
                render_change(view, :change, %{
                  "car_settings_#{car.id}" => %{use_streaming_api: true}
                })
@@ -453,7 +455,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       # change settings of car "one"
 
-      assert [{"option", [{"selected", "selected"}, {"value", "90"}], ["90 min"]}] =
+      assert [{"option", [{"selected", ""}, {"value", "90"}], ["90 min"]}] =
                render_change(view, :change, %{
                  "car_settings_#{one.id}" => %{suspend_min: 90, use_streaming_api: false}
                })
@@ -484,7 +486,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       # change settings of car "two"
 
-      assert [{"option", [{"selected", "selected"}, {"value", "60"}], ["60 min"]}] =
+      assert [{"option", [{"selected", ""}, {"value", "60"}], ["60 min"]}] =
                render_change(view, :change, %{
                  "car_settings_#{two.id}" => %{suspend_min: 60, use_streaming_api: false}
                })
@@ -506,7 +508,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                |> Floki.find(".tabs .is-active")
                |> Floki.text()
 
-      assert [{"option", [{"selected", "selected"}, {"value", "90"}], ["90 min"]}] =
+      assert [{"option", [{"selected", ""}, {"value", "90"}], ["90 min"]}] =
                html
                |> Floki.parse_document!()
                |> Floki.find("#car_settings_#{one.id}_suspend_min option[selected]")

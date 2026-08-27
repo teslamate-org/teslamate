@@ -62,6 +62,17 @@ defmodule TeslaMate.LogCarTest do
     assert Log.get_car!(car.id) |> Repo.preload(:settings) == car
   end
 
+  test "vin is non-nullable in the database" do
+    assert %{rows: [["NO"]]} =
+             Repo.query!("""
+             SELECT is_nullable
+             FROM information_schema.columns
+             WHERE table_schema = current_schema()
+               AND table_name = 'cars'
+               AND column_name = 'vin'
+             """)
+  end
+
   test "create_or_update_car/1 with valid data creates a car" do
     alias TeslaMate.Settings.CarSettings
 

@@ -1,7 +1,7 @@
 defmodule MqttPublisherMock do
   use GenServer
 
-  defstruct [:pid]
+  defstruct [:pid, responses: %{}]
   alias __MODULE__, as: State
 
   # API
@@ -16,12 +16,27 @@ defmodule MqttPublisherMock do
 
   @impl true
   def init(opts) do
-    {:ok, %State{pid: Keyword.fetch!(opts, :pid)}}
+    {:ok,
+     %State{
+       pid: Keyword.fetch!(opts, :pid),
+       responses: Keyword.get(opts, :responses, %{})
+     }}
   end
 
   @impl true
-  def handle_call({:publish, _topic, _msg, _opts} = action, _from, %State{pid: pid} = state) do
+  def handle_call(
+        {:publish, topic, _msg, _opts} = action,
+        _from,
+        %State{pid: pid, responses: responses} = state
+      ) do
     send(pid, {MqttPublisherMock, action})
-    {:reply, :ok, state}
+
+    {response, responses} =
+      case Map.get(responses, topic, []) do
+        [response | rest] -> {response, Map.put(responses, topic, rest)}
+        [] -> {:ok, responses}
+      end
+
+    {:reply, response, %{state | responses: responses}}
   end
 end

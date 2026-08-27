@@ -535,6 +535,121 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       refute_receive _
     end
+
+    @tag :capture_log
+    test "reconnects the stream when a drive resumes after an offline period",
+         %{test: name} do
+      now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
+
+      events =
+        [
+          {:ok, online_event(now_ts)},
+          drive_event(now_ts, 0.1, 30, 20, 200, nil),
+          drive_event(now_ts + 1, 0.1, 30, 20, 200, nil)
+        ] ++
+          List.duplicate({:ok, %TeslaApi.Vehicle{state: "offline"}}, 20) ++
+          [
+            drive_event(now_ts + 1 + :timer.minutes(4), 0.2, 20, 19, 190, nil),
+            {:ok,
+             online_event(now_ts + 1 + :timer.minutes(4) + 1,
+               drive_state: %{
+                 timestamp: now_ts + 1 + :timer.minutes(4) + 1,
+                 latitude: 0.3,
+                 longitude: 0.3
+               }
+             )}
+          ]
+
+      :ok = start_vehicle(name, events)
+
+      d0 = DateTime.from_unix!(now_ts, :millisecond)
+      assert_receive {:start_state, car, :online, date: ^d0}
+      assert_receive {ApiMock, {:stream, 1000, _}}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 48}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
+
+      # Vehicle goes offline: the stream is disconnected
+      assert_receive {:"$websockex_cast", :disconnect}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}, 500
+
+      # Vehicle comes back online mid-drive: the stream is reconnected
+      assert_receive {ApiMock, {:stream, 1000, _}}, 500
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+      assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.3}}
+      assert_receive {:close_drive, ^drive, lookup_address: true}
+
+      d1 = DateTime.from_unix!(now_ts + 1 + :timer.minutes(4) + 1, :millisecond)
+      assert_receive {:start_state, ^car, :online, date: ^d1}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
+
+    @tag :capture_log
+    test "reconnects the stream when a drive resumes after a short unavailability",
+         %{test: name} do
+      now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
+
+      events =
+        [
+          {:ok, online_event(now_ts)},
+          drive_event(now_ts, 0.1, 30, 20, 200, nil),
+          drive_event(now_ts + 1, 0.1, 30, 20, 200, nil)
+        ] ++
+          List.duplicate({:ok, %TeslaApi.Vehicle{state: "offline"}}, 16) ++
+          [
+            drive_event(now_ts + :timer.minutes(4), 0.2, 20, 19, 190, nil),
+            {:ok,
+             online_event(now_ts + :timer.minutes(4) + 1,
+               drive_state: %{
+                 timestamp: now_ts + :timer.minutes(4) + 1,
+                 latitude: 0.3,
+                 longitude: 0.3
+               }
+             )}
+          ]
+
+      :ok = start_vehicle(name, events)
+
+      d0 = DateTime.from_unix!(now_ts, :millisecond)
+      assert_receive {:start_state, car, :online, date: ^d0}
+      assert_receive {ApiMock, {:stream, 1000, _}}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 48}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
+
+      # Vehicle becomes unavailable: the stream is disconnected
+      assert_receive {:"$websockex_cast", :disconnect}
+
+      # Vehicle comes back online mid-drive: the stream is reconnected
+      assert_receive {ApiMock, {:stream, 1000, _}}, 500
+
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+      assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
+      assert_receive {:insert_position, ^drive, %{longitude: 0.3}}
+      assert_receive {:close_drive, ^drive, lookup_address: true}
+
+      d1 = DateTime.from_unix!(now_ts + :timer.minutes(4) + 1, :millisecond)
+      assert_receive {:start_state, ^car, :online, date: ^d1}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      refute_receive _
+    end
   end
 
   describe "geofencing" do

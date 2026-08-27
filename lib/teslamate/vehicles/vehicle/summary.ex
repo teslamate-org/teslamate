@@ -1,24 +1,103 @@
 defmodule TeslaMate.Vehicles.Vehicle.Summary do
   import TeslaMate.Convert, only: [miles_to_km: 2, mph_to_kmh: 1]
 
-  alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleState}
+  alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleConfig, VehicleState}
   alias TeslaApi.Vehicle
   alias TeslaMate.Log.Car
+
+  @type t :: %__MODULE__{
+          car: %Car{} | nil,
+          display_name: String.t() | nil,
+          state: atom() | nil,
+          since: DateTime.t() | nil,
+          healthy: boolean() | nil,
+          latitude: float() | nil,
+          longitude: float() | nil,
+          heading: float() | nil,
+          battery_level: integer() | nil,
+          charging_state: String.t() | nil,
+          usable_battery_level: integer() | nil,
+          ideal_battery_range_km: float() | nil,
+          est_battery_range_km: float() | nil,
+          rated_battery_range_km: float() | nil,
+          charge_energy_added: float() | nil,
+          speed: float() | nil,
+          outside_temp: float() | nil,
+          inside_temp: float() | nil,
+          is_climate_on: boolean() | nil,
+          is_preconditioning: boolean() | nil,
+          locked: boolean() | nil,
+          sentry_mode: boolean() | nil,
+          plugged_in: boolean() | nil,
+          scheduled_charging_start_time: DateTime.t() | nil,
+          charge_limit_soc: integer() | nil,
+          charger_power: float() | nil,
+          windows_open: boolean() | nil,
+          doors_open: boolean() | nil,
+          odometer: float() | nil,
+          shift_state: String.t() | nil,
+          charge_port_door_open: boolean() | nil,
+          time_to_full_charge: float() | nil,
+          charger_phases: integer() | nil,
+          charger_actual_current: float() | nil,
+          charger_voltage: float() | nil,
+          version: String.t() | nil,
+          update_available: boolean() | nil,
+          update_version: String.t() | nil,
+          update_status: String.t() | nil,
+          is_user_present: boolean() | nil,
+          geofence: String.t() | nil,
+          model: String.t() | nil,
+          trim_badging: String.t() | nil,
+          exterior_color: String.t() | nil,
+          wheel_type: String.t() | nil,
+          spoiler_type: String.t() | nil,
+          trunk_open: boolean() | nil,
+          frunk_open: boolean() | nil,
+          elevation: float() | nil,
+          power: float() | nil,
+          charge_current_request: integer() | nil,
+          charge_current_request_max: integer() | nil,
+          tpms_pressure_fl: float() | nil,
+          tpms_pressure_fr: float() | nil,
+          tpms_pressure_rl: float() | nil,
+          tpms_pressure_rr: float() | nil,
+          tpms_soft_warning_fl: boolean() | nil,
+          tpms_soft_warning_fr: boolean() | nil,
+          tpms_soft_warning_rl: boolean() | nil,
+          tpms_soft_warning_rr: boolean() | nil,
+          climate_keeper_mode: String.t() | nil,
+          active_route_destination: String.t() | nil,
+          active_route_latitude: float() | nil,
+          active_route_longitude: float() | nil,
+          active_route_energy_at_arrival: float() | nil,
+          active_route_miles_to_arrival: float() | nil,
+          active_route_minutes_to_arrival: float() | nil,
+          active_route_traffic_minutes_delay: float() | nil,
+          center_display_state: integer() | nil,
+          service_mode: boolean() | nil,
+          sun_roof_state: String.t() | nil,
+          sun_roof_installed: boolean() | nil,
+          sun_roof_percent_open: integer() | nil,
+          download_perc: integer() | nil,
+          install_perc: integer() | nil
+        }
 
   defstruct ~w(
     car display_name state since healthy latitude longitude heading battery_level charging_state usable_battery_level
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
     speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
+    driver_front_window_open driver_rear_window_open passenger_front_window_open passenger_rear_window_open
     doors_open driver_front_door_open driver_rear_door_open passenger_front_door_open passenger_rear_door_open
     odometer shift_state charge_port_door_open time_to_full_charge charger_phases
-    charger_actual_current charger_voltage version update_available update_version is_user_present geofence
+    charger_actual_current charger_voltage version update_available update_version update_status is_user_present geofence
     model trim_badging exterior_color wheel_type spoiler_type trunk_open frunk_open elevation power
     charge_current_request charge_current_request_max tpms_pressure_fl tpms_pressure_fr tpms_pressure_rl tpms_pressure_rr
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode
     active_route_destination active_route_latitude active_route_longitude active_route_energy_at_arrival
     active_route_miles_to_arrival active_route_minutes_to_arrival active_route_traffic_minutes_delay
-    center_display_state
+    center_display_state service_mode sun_roof_state sun_roof_installed sun_roof_percent_open download_perc install_perc
   )a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
@@ -129,7 +208,12 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       odometer: get_in_struct(vehicle, [:vehicle_state, :odometer]) |> miles_to_km(2),
       locked: get_in_struct(vehicle, [:vehicle_state, :locked]),
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
+      service_mode: get_in_struct(vehicle, [:vehicle_state, :service_mode]),
       windows_open: window_open(vehicle),
+      driver_front_window_open: driver_front_window_open(vehicle),
+      driver_rear_window_open: driver_rear_window_open(vehicle),
+      passenger_front_window_open: passenger_front_window_open(vehicle),
+      passenger_rear_window_open: passenger_rear_window_open(vehicle),
       doors_open: doors_open(vehicle),
       driver_front_door_open: driver_front_door_open(vehicle),
       driver_rear_door_open: driver_rear_door_open(vehicle),
@@ -141,6 +225,9 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       version: version(vehicle),
       update_available: update_available(vehicle),
       update_version: update_version(vehicle),
+      update_status: get_in_struct(vehicle, [:vehicle_state, :software_update, :status]),
+      download_perc: get_in_struct(vehicle, [:vehicle_state, :software_update, :download_perc]),
+      install_perc: get_in_struct(vehicle, [:vehicle_state, :software_update, :install_perc]),
       tpms_pressure_fl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fl]),
       tpms_pressure_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_fr]),
       tpms_pressure_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_pressure_rl]),
@@ -149,7 +236,10 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       tpms_soft_warning_fr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_fr]),
       tpms_soft_warning_rl: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rl]),
       tpms_soft_warning_rr: get_in_struct(vehicle, [:vehicle_state, :tpms_soft_warning_rr]),
-      center_display_state: get_in_struct(vehicle, [:vehicle_state, :center_display_state])
+      center_display_state: get_in_struct(vehicle, [:vehicle_state, :center_display_state]),
+      sun_roof_state: get_in_struct(vehicle, [:vehicle_state, :sun_roof_state]),
+      sun_roof_installed: sun_roof_installed(vehicle),
+      sun_roof_percent_open: get_in_struct(vehicle, [:vehicle_state, :sun_roof_percent_open])
     }
   end
 
@@ -177,6 +267,36 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         nil
     end
   end
+
+  defp driver_front_window_open(%Vehicle{vehicle_state: %VehicleState{fd_window: fd}})
+       when is_number(fd),
+       do: fd > 0
+
+  defp driver_front_window_open(_vehicle), do: nil
+
+  defp driver_rear_window_open(%Vehicle{vehicle_state: %VehicleState{rd_window: rd}})
+       when is_number(rd),
+       do: rd > 0
+
+  defp driver_rear_window_open(_vehicle), do: nil
+
+  defp passenger_front_window_open(%Vehicle{vehicle_state: %VehicleState{fp_window: fp}})
+       when is_number(fp),
+       do: fp > 0
+
+  defp passenger_front_window_open(_vehicle), do: nil
+
+  defp passenger_rear_window_open(%Vehicle{vehicle_state: %VehicleState{rp_window: rp}})
+       when is_number(rp),
+       do: rp > 0
+
+  defp passenger_rear_window_open(_vehicle), do: nil
+
+  defp sun_roof_installed(%Vehicle{vehicle_config: %VehicleConfig{sun_roof_installed: installed}})
+       when is_number(installed),
+       do: installed > 0
+
+  defp sun_roof_installed(_vehicle), do: nil
 
   defp doors_open(%Vehicle{vehicle_state: vehicle_state}) do
     case vehicle_state do
@@ -228,9 +348,21 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
   defp update_available(vehicle) do
     case get_in_struct(vehicle, [:vehicle_state, :software_update, :status]) do
-      status when status in ["available", "downloading", "downloading_wifi_wait"] -> true
-      status when is_binary(status) -> false
-      nil -> nil
+      status
+      when status in [
+             "available",
+             "downloading",
+             "downloading_wifi_wait",
+             "scheduled",
+             "installing"
+           ] ->
+        true
+
+      status when is_binary(status) ->
+        false
+
+      nil ->
+        nil
     end
   end
 

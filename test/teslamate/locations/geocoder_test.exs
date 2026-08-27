@@ -126,6 +126,109 @@ defmodule TeslaMate.Locations.GeocoderTest do
     end
   end
 
+  test "resolves the state for an Australian territory" do
+    with_mocks [
+      geocoder_mock(-35.1604, 149.1049, %{
+        "address" => %{
+          "road" => "Burrumarra Avenue",
+          "suburb" => "Ngunnawal",
+          "town" => "District of Gungahlin",
+          "territory" => "Australian Capital Territory",
+          "ISO3166-2-lvl4" => "AU-ACT",
+          "postcode" => "2913",
+          "country" => "Australia",
+          "country_code" => "au"
+        },
+        "addresstype" => "road",
+        "boundingbox" => ["-35.1605549", "-35.1598870", "149.1032096", "149.1053282"],
+        "category" => "highway",
+        "display_name" =>
+          "Burrumarra Avenue, Ngunnawal, District of Gungahlin, Australian Capital Territory, 2913, Australia",
+        "extratags" => %{
+          "lit" => "yes",
+          "lanes" => "2",
+          "surface" => "paved",
+          "cycleway" => "lane",
+          "maxspeed" => "50",
+          "lanes:forward" => "1",
+          "maxspeed:type" => "sign",
+          "lanes:backward" => "1"
+        },
+        "importance" => 0.05340591515983822,
+        "lat" => "-35.1603719",
+        "licence" => "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+        "lon" => "149.1049118",
+        "name" => "Burrumarra Avenue",
+        "namedetails" => %{"name" => "Burrumarra Avenue"},
+        "osm_id" => 263_936_866,
+        "osm_type" => "way",
+        "place_id" => 24_024_293,
+        "place_rank" => 26,
+        "type" => "tertiary"
+      })
+    ] do
+      assert Geocoder.reverse_lookup(-35.1604, 149.1049) ==
+               {:ok,
+                %{
+                  city: "District of Gungahlin",
+                  country: "Australia",
+                  county: nil,
+                  display_name:
+                    "Burrumarra Avenue, Ngunnawal, District of Gungahlin, Australian Capital Territory, 2913, Australia",
+                  house_number: nil,
+                  latitude: "-35.1603719",
+                  longitude: "149.1049118",
+                  name: "Burrumarra Avenue",
+                  neighbourhood: "Ngunnawal",
+                  osm_id: 263_936_866,
+                  osm_type: "way",
+                  postcode: "2913",
+                  road: "Burrumarra Avenue",
+                  state: "Australian Capital Territory",
+                  state_district: nil,
+                  raw: %{
+                    "address" => %{
+                      "road" => "Burrumarra Avenue",
+                      "suburb" => "Ngunnawal",
+                      "town" => "District of Gungahlin",
+                      "territory" => "Australian Capital Territory",
+                      "ISO3166-2-lvl4" => "AU-ACT",
+                      "postcode" => "2913",
+                      "country" => "Australia",
+                      "country_code" => "au"
+                    },
+                    "addresstype" => "road",
+                    "boundingbox" => ["-35.1605549", "-35.1598870", "149.1032096", "149.1053282"],
+                    "category" => "highway",
+                    "display_name" =>
+                      "Burrumarra Avenue, Ngunnawal, District of Gungahlin, Australian Capital Territory, 2913, Australia",
+                    "extratags" => %{
+                      "lit" => "yes",
+                      "lanes" => "2",
+                      "surface" => "paved",
+                      "cycleway" => "lane",
+                      "maxspeed" => "50",
+                      "lanes:forward" => "1",
+                      "maxspeed:type" => "sign",
+                      "lanes:backward" => "1"
+                    },
+                    "importance" => 0.05340591515983822,
+                    "lat" => "-35.1603719",
+                    "licence" =>
+                      "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+                    "lon" => "149.1049118",
+                    "name" => "Burrumarra Avenue",
+                    "namedetails" => %{"name" => "Burrumarra Avenue"},
+                    "osm_id" => 263_936_866,
+                    "osm_type" => "way",
+                    "place_id" => 24_024_293,
+                    "place_rank" => 26,
+                    "type" => "tertiary"
+                  }
+                }}
+    end
+  end
+
   test "returns a dummy address if the location cannot be geocoded" do
     with_mock Tesla.Adapter.Finch,
       call: fn %Tesla.Env{} = env, _opts ->

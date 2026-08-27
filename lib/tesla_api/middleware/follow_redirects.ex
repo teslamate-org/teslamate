@@ -101,9 +101,14 @@ defmodule TeslaApi.Middleware.FollowRedirects do
   @filter_headers ["authorization", "host"]
   defp filter_headers(env, prev, next) do
     if next.host != prev.host || next.port != prev.port || next.scheme != prev.scheme do
-      %{env | headers: Enum.filter(env.headers, fn {k, _} -> k not in @filter_headers end)}
+      %{env | headers: Enum.reject(env.headers, &filtered_header?/1)}
     else
       env
     end
   end
+
+  defp filtered_header?({key, _value}) when is_binary(key),
+    do: key |> String.downcase() |> then(&(&1 in @filter_headers))
+
+  defp filtered_header?(_header), do: false
 end

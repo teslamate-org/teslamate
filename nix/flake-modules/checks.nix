@@ -1,10 +1,11 @@
 { self, inputs, ... }:
 {
   perSystem =
-    { self'
-    , pkgs
-    , lib
-    , ...
+    {
+      self',
+      pkgs,
+      lib,
+      ...
     }:
     let
       inherit (inputs) nixpkgs;
@@ -41,8 +42,11 @@
     in
     {
       checks =
-        if pkgs.stdenv.isLinux then {
-          default = moduleTest;
-        } else { };
+        if pkgs.stdenv.isLinux then
+          {
+            default = moduleTest;
+          }
+        else
+          { };
     };
 }

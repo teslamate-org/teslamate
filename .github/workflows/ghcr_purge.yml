@@ -44,25 +44,28 @@ jobs:
           NORMALIZED_VERSION="${VERSION//\//-}"
           echo "normalized_version=${NORMALIZED_VERSION}" >> $GITHUB_OUTPUT
 
-      - uses: dataaxiom/ghcr-cleanup-action@f092b48ba3b604b2a83690dc4b2bbb3392e1045f # v1.2.1
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         name: Delete images for teslamate and teslamate/grafana from ghcr.io
         with:
           packages: "teslamate,teslamate/grafana"
           token: ${{ secrets.GITHUB_TOKEN }}
           delete-tags: "pr-${{ github.event.pull_request.number }}"
 
-      - uses: dataaxiom/ghcr-cleanup-action@f092b48ba3b604b2a83690dc4b2bbb3392e1045f # v1.2.1
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         name: Delete build cache images for teslamate from ghcr.io
         with:
           packages: "teslamate"
           token: ${{ secrets.GITHUB_TOKEN }}
           delete-tags: "buildcache-arm64-${{ steps.normalize_version.outputs.normalized_version }},buildcache-amd64-${{ steps.normalize_version.outputs.normalized_version }}"
 
-      - uses: dataaxiom/ghcr-cleanup-action@f092b48ba3b604b2a83690dc4b2bbb3392e1045f # v1.2.1
+      # Untagged delete also cascades to attached sha256-* referrers (children).
+      # delete-orphaned-images only catches leftovers whose parent is already gone.
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         name: Delete untagged images from ghcr.io
         with:
           packages: "teslamate,teslamate/grafana"
           token: ${{ secrets.GITHUB_TOKEN }}
           delete-untagged: "true"
           delete-ghost-images: "true"
+          delete-orphaned-images: "true"
           older-than: "1 day"

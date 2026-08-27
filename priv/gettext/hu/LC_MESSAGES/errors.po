@@ -1,0 +1,86 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: hu\n"
+
+msgid "can't be blank"
+msgstr "nem lehet üres"
+
+msgid "has already been taken"
+msgstr "már foglalt"
+
+msgid "is invalid"
+msgstr "érvénytelen"
+
+msgid "must be accepted"
+msgstr "el kell fogadni"
+
+msgid "has invalid format"
+msgstr "érvénytelen formátumú"
+
+msgid "has an invalid entry"
+msgstr "érvénytelen elemet tartalmaz"
+
+msgid "is reserved"
+msgstr "foglalt"
+
+msgid "does not match confirmation"
+msgstr "nem egyezik a megerősítéssel"
+
+msgid "is still associated with this entry"
+msgstr "még mindig társítva van ezzel a bejegyzéssel"
+
+msgid "are still associated with this entry"
+msgstr "még mindig társítva vannak ezzel a bejegyzéssel"
+
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "%{count} karakternek kell lennie"
+msgstr[1] "%{count} karakternek kell lennie"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "%{count} elemnek kell lennie"
+msgstr[1] "%{count} elemnek kell lennie"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "legalább %{count} karakternek kell lennie"
+msgstr[1] "legalább %{count} karakternek kell lennie"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "legalább %{count} elemet kell tartalmaznia"
+msgstr[1] "legalább %{count} elemet kell tartalmaznia"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "legfeljebb %{count} karakter lehet"
+msgstr[1] "legfeljebb %{count} karakter lehet"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "legfeljebb %{count} elemet tartalmazhat"
+msgstr[1] "legfeljebb %{count} elemet tartalmazhat"
+
+msgid "must be less than %{number}"
+msgstr "kisebbnek kell lennie, mint %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "nagyobbnak kell lennie, mint %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "kisebbnek vagy egyenlőnek kell lennie, mint %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "nagyobbnak vagy egyenlőnek kell lennie, mint %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "egyenlőnek kell lennie ezzel: %{number}"

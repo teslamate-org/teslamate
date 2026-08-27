@@ -5,10 +5,11 @@
   ];
 
   perSystem =
-    { config
-    , pkgs
-    , lib
-    , ...
+    {
+      config,
+      pkgs,
+      lib,
+      ...
     }:
     # legacy
     let
@@ -58,7 +59,6 @@
           ]
           ++ optional stdenv.isDarwin terminal-notifier;
         enterShell = ''
-          export LOCALES="${config.teslamate.cldr}/priv/cldr";
           export PORT="4000"
           export ENCRYPTION_KEY="your_secure_encryption_key_here"
           export DATABASE_USER="teslamate"
@@ -81,6 +81,9 @@
         };
         process.managers.process-compose = {
           port = process_compose_port;
+          # The TUI keeps `devenv up` in the foreground. To run the services
+          # non-interactively, start them detached
+          # with `devenv up --detached` and stop them via `devenv processes stop`.
           tui.enable = true;
         };
         services.postgres = {
@@ -88,7 +91,7 @@
           package = pkgs.postgresql;
           listen_addresses = "127.0.0.1";
           port = postgres_port;
-          initialDatabases = [{ name = "teslamate"; }];
+          initialDatabases = [ { name = "teslamate"; } ];
           initialScript = ''
             CREATE USER teslamate with encrypted password 'your_secure_password_here';
             GRANT ALL PRIVILEGES ON DATABASE teslamate TO teslamate;

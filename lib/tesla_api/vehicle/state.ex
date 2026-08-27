@@ -298,6 +298,7 @@ defmodule TeslaApi.Vehicle.State do
       :remote_start_enabled,
       :remote_start_supported,
       :rt,
+      :service_mode,
       :fd_window,
       :fp_window,
       :rd_window,
@@ -359,6 +360,7 @@ defmodule TeslaApi.Vehicle.State do
         remote_start_enabled: vehicle_state["remote_start_enabled"],
         remote_start_supported: vehicle_state["remote_start_supported"],
         rt: vehicle_state["rt"],
+        service_mode: vehicle_state["service_mode"],
         software_update: %SoftwareUpdate{
           download_perc: vehicle_state["software_update"]["download_perc"],
           expected_duration_sec: vehicle_state["software_update"]["expected_duration_sec"],

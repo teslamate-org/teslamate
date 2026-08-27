@@ -160,7 +160,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
           |> Enum.join()
 
         assert error_html ==
-                 "<span class=\"help is-danger pl-15\" phx-feedback-for=\"geo_fence[#{kind}]\">can't be blank</span>"
+                 "<span class=\"help is-danger pl-15\">can't be blank</span>"
       end
     end
 
@@ -201,7 +201,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   end
 
   describe "New" do
-    test "pre-fills the coordinates with the most recent position", %{conn: conn} do
+    test "pre-fills the coordinates with the last inserted position", %{conn: conn} do
       car = car_fixture()
 
       assert {:ok, _} =

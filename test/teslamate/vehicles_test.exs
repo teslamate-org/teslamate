@@ -148,6 +148,13 @@ defmodule TeslaMate.VehiclesTest do
              vin: "999004",
              vehicle_config: %VehicleConfig{car_type: "modely", trim_badging: nil}
            },
+           %TeslaApi.Vehicle{
+             display_name: "Cybertruck",
+             id: 999_008,
+             vehicle_id: 999_008,
+             vin: "999008",
+             vehicle_config: %VehicleConfig{car_type: "cybertruck", trim_badging: "foundation"}
+           },
            # ---------------------------------------------------------------------
            %TeslaApi.Vehicle{
              display_name: "S",
@@ -173,7 +180,7 @@ defmodule TeslaMate.VehiclesTest do
            }
          ]})
 
-      assert [s, e, x, y | rest] =
+      assert [s, e, x, y, cybertruck | rest] =
                from(c in Log.Car, preload: :settings, order_by: :id)
                |> Repo.all()
 
@@ -181,6 +188,7 @@ defmodule TeslaMate.VehiclesTest do
       assert_suspend_min(e, 12)
       assert_suspend_min(x, 12)
       assert_suspend_min(y, 12)
+      assert_suspend_min(cybertruck, 12)
       # ---------------------------------
       assert [s, x | rest] = rest
       assert_suspend_min(s, 21)

@@ -12,9 +12,20 @@ defmodule Util do
   def validate_namespace!(""), do: nil
 
   def validate_namespace!(ns) when is_binary(ns) do
-    case String.contains?(ns, "/") do
-      true -> raise "MQTT_NAMESPACE must not contain '/'"
-      false -> ns
+    cond do
+      String.contains?(ns, "/") -> raise "MQTT_NAMESPACE must not contain '/'"
+      String.contains?(ns, ["+", "#"]) -> raise "MQTT_NAMESPACE must not contain MQTT wildcards"
+      true -> ns
+    end
+  end
+
+  def validate_discovery_prefix!(nil), do: nil
+  def validate_discovery_prefix!(""), do: nil
+
+  def validate_discovery_prefix!(prefix) when is_binary(prefix) do
+    case String.contains?(prefix, ["+", "#"]) do
+      true -> raise "MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX must not contain MQTT wildcards"
+      false -> prefix
     end
   end
 
@@ -110,9 +121,16 @@ case System.get_env("DATABASE_SOCKET_DIR") do
       port: System.get_env("DATABASE_PORT", "5432")
 
   socket_dir ->
-    config :teslamate, TeslaMate.Repo,
-      socket_dir: socket_dir,
-      port: System.get_env("DATABASE_PORT", "5432")
+    repo_config =
+      [
+        socket_dir: socket_dir,
+        port: System.get_env("DATABASE_PORT", "5432"),
+        username: System.get_env("DATABASE_USER"),
+        password: System.get_env("DATABASE_PASS")
+      ]
+      |> Enum.reject(fn {_key, value} -> is_nil(value) end)
+
+    config :teslamate, TeslaMate.Repo, repo_config
 end
 
 config :teslamate, TeslaMate.Repo,
@@ -174,7 +192,11 @@ if System.get_env("DISABLE_MQTT") != "true" or config_env() == :test do
     tls: System.get_env("MQTT_TLS") == "true",
     accept_invalid_certs: System.get_env("MQTT_TLS_ACCEPT_INVALID_CERTS") == "true",
     namespace: System.get_env("MQTT_NAMESPACE") |> Util.validate_namespace!(),
-    ipv6: System.get_env("MQTT_IPV6") == "true"
+    ipv6: System.get_env("MQTT_IPV6") == "true",
+    discovery: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY") == "true",
+    discovery_base_url: System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_URL"),
+    discovery_prefix:
+      System.get_env("MQTT_HOME_ASSISTANT_DISCOVERY_PREFIX") |> Util.validate_discovery_prefix!()
 end
 
 if config_env() != :test do

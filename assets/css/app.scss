@@ -126,6 +126,70 @@ nav.navbar {
     }
   }
 
+  .card-image {
+    position: relative;
+
+    .map-fullscreen-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 1000;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      border-color: var(
+        --map-fullscreen-button-border-color,
+        rgba(36, 41, 46, 0.14)
+      );
+      background-color: var(
+        --map-fullscreen-button-background-color,
+        rgba(255, 255, 255, 0.86)
+      );
+      color: var(--map-fullscreen-button-color, rgba(36, 41, 46, 0.82));
+      box-shadow: var(
+        --map-fullscreen-button-shadow,
+        0 1px 4px rgba(36, 41, 46, 0.14)
+      );
+
+      &:hover,
+      &:focus {
+        border-color: var(
+          --map-fullscreen-button-hover-border-color,
+          rgba(36, 41, 46, 0.22)
+        );
+        background-color: var(
+          --map-fullscreen-button-hover-background-color,
+          rgba(255, 255, 255, 0.96)
+        );
+        color: var(--map-fullscreen-button-hover-color, rgb(36, 41, 46));
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--bulma-link);
+        outline-offset: 2px;
+      }
+    }
+
+    .is-map-fullscreen {
+      position: fixed !important;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bulma-body-background-color);
+
+      .map {
+        position: absolute !important;
+        inset: 0;
+        width: 100%;
+        height: calc(var(--vh, 1vh) * 100) !important;
+        border-radius: 0;
+      }
+
+      .leaflet-control-attribution.leaflet-control {
+        display: block;
+      }
+    }
+  }
+
   .card-content {
     .icons {
       span[data-tooltip] {

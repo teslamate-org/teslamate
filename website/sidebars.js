@@ -2,38 +2,44 @@ module.exports = {
   docs: [
     {
       type: "category",
-      label: "Getting started",
+      label: "Installation",
       items: [
         {
           type: "category",
-          label: "Installation",
+          label: "Docker",
+          link: { type: "doc", id: "installation/docker" },
           items: [
-            "installation/docker",
-            "installation/nixos",
             {
               type: "category",
-              label: "unsupported Installation methods",
+              label: "Reverse Proxy",
               items: [
-                "installation/unsupported/debian",
-                "installation/unsupported/freebsd",
-                "installation/unsupported/unraid",
+                "advanced_guides/traefik",
+                "advanced_guides/apache",
+                "advanced_guides/unix_domain_sockets",
               ],
             },
+            "advanced_guides/verifying_images",
           ],
         },
-
-        "faq",
-        "screenshots",
+        "installation/nixos",
+        "installation/tokens",
+        {
+          type: "category",
+          label: "Unsupported methods",
+          items: [
+            "installation/unsupported/debian",
+            "installation/unsupported/freebsd",
+            "installation/unsupported/unraid",
+          ],
+        },
       ],
     },
+    "faq",
+    "screenshots",
     {
       type: "category",
-      label: "Advanced Guides",
-      items: [
-        "advanced_guides/traefik",
-        "advanced_guides/apache",
-        "advanced_guides/unix_domain_sockets",
-      ],
+      label: "Configuration",
+      items: ["configuration/environment_variables", "configuration/api"],
     },
     {
       type: "category",
@@ -51,17 +57,13 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Advanced Configuration",
-      items: ["configuration/environment_variables", "configuration/api"],
-    },
-    {
-      type: "category",
       label: "Maintenance",
       items: [
         "upgrading",
-        "maintenance/backup_restore",
-        "maintenance/manually_fixing_data",
+        "maintenance/backup",
+        "maintenance/restore",
         "maintenance/upgrading_postgres",
+        "maintenance/manually_fixing_data",
       ],
     },
     {

@@ -472,7 +472,7 @@
         "cellHeight": "sm",
         "showHeader": true
       },
-      "pluginVersion": "13.0.1+security-01",
+      "pluginVersion": "13.1.1",
       "targets": [
         {
           "datasource": {
@@ -614,7 +614,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Vampire Drain",
-  "uid": "zhHx2Fggk",
+  "weekStart": "",
   "version": 1,
-  "weekStart": ""
+  "uid": "zhHx2Fggk"
 }

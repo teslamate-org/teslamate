@@ -1,6 +1,8 @@
 defmodule TeslaMate.Vehicles.VehicleSyncTest do
   use TeslaMate.VehicleCase, async: false
 
+  import TestHelper, only: [drain_discovery_configs: 0]
+
   describe "Summary" do
     alias TeslaMate.Vehicles.Vehicle.Summary
     alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
@@ -71,6 +73,8 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
 
       :ok = start_vehicle(name, events, car: car, log: false)
       {:ok, subscriber} = start_subscriber(name, car)
+
+      drain_discovery_configs()
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep} = summary}}
 

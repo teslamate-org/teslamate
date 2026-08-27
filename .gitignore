@@ -34,8 +34,9 @@ npm-debug.log
 # Ignore digested assets cache.
 /priv/static/cache_manifest.json
 
-# CDLR data repository
-/priv/cldr/
+# CLDR locale data cache (mix localize.download_locales); the release
+# deliberately ships none — Localize is used for negotiation only.
+/priv/localize/
 
 # Files matching config/*.secret.exs pattern contain sensitive
 # data and you should not commit them into version control.

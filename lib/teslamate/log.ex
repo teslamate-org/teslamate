@@ -155,16 +155,18 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
-  def get_latest_position do
+  # Order by id for PK scan; geofence map center only.
+  def get_last_inserted_position do
     Position
-    |> order_by(desc: :date)
+    |> order_by(desc: :id)
     |> limit(1)
     |> Repo.one()
   end
 
+  # Filter ideal_battery_range_km so restore uses partial index, not seq scan.
   def get_latest_position(%Car{id: id}) do
     Position
-    |> where(car_id: ^id)
+    |> where([p], p.car_id == ^id and not is_nil(p.ideal_battery_range_km))
     |> order_by(desc: :date)
     |> limit(1)
     |> Repo.one()
@@ -524,7 +526,10 @@ defmodule TeslaMate.Log do
             c_if is_nil(c.charger_phases) do
               c.charger_power
             else
-              c.charger_actual_current * c.charger_voltage * type(^phases, :float) / 1000.0
+              coalesce(
+                type(^phases, :float) * c.charger_actual_current * c.charger_voltage / 1000.0,
+                c.charger_power
+              )
             end *
               fragment(
                 "EXTRACT(epoch FROM (?))",
@@ -543,7 +548,10 @@ defmodule TeslaMate.Log do
   defp determine_phases(%ChargingProcess{id: id, car_id: car_id}) do
     from(c in Charge,
       select: {
-        avg(c.charger_power * 1000.0 / nullif(c.charger_actual_current * c.charger_voltage, 0))
+        avg(
+          c.charger_power * 1000.0 /
+            nullif(type(c.charger_actual_current, :integer) * c.charger_voltage, 0)
+        )
         |> type(:float),
         avg(c.charger_phases) |> type(:integer),
         avg(c.charger_voltage) |> type(:float),
@@ -566,7 +574,7 @@ defmodule TeslaMate.Log do
 
             :math.sqrt(r)
 
-          abs(round(p) - p) <= 0.3 ->
+          round(p) > 0 and abs(round(p) - p) <= 0.3 ->
             Logger.info("Phase correction: #{r} -> #{round(p)}", car_id: car_id)
             round(p)
 
