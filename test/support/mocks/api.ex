@@ -58,7 +58,31 @@ defmodule ApiMock do
 
   def handle_call({:stream, _vid, _receiver} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
-    {:reply, {:ok, pid}, state}
+    {:reply, {:ok, spawn_stream(pid)}, state}
+  end
+
+  # Stand-in for the stream process: forwards everything to the test and, like
+  # WebSockex, terminates once it is told to disconnect. Being a process of its
+  # own lets tests kill it to simulate a stream that died unnoticed.
+  defp spawn_stream(pid) do
+    spawn(fn ->
+      ref = Process.monitor(pid)
+      forward_to_test(pid, ref)
+    end)
+  end
+
+  defp forward_to_test(pid, ref) do
+    receive do
+      {:DOWN, ^ref, :process, ^pid, _reason} ->
+        :ok
+
+      {:"$websockex_cast", :disconnect} = msg ->
+        send(pid, msg)
+
+      msg ->
+        send(pid, msg)
+        forward_to_test(pid, ref)
+    end
   end
 
   # Events tagged with :get_vehicle or :get_vehicle_with_state may only be

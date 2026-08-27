@@ -157,6 +157,82 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       refute_receive _
     end
 
+    @tag :capture_log
+    test "keeps recording streamed positions while the vehicle is unavailable for the API",
+         %{test: name} do
+      me = self()
+      now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
+
+      wait_for_continue = fn result ->
+        fn ->
+          send(me, :continue?)
+
+          receive do
+            :continue -> result
+          after
+            5_000 -> raise "No :continue after 5s"
+          end
+        end
+      end
+
+      events = [
+        {:ok, online_event(now_ts)},
+        {:ok, online_event(now_ts, drive_state: %{timestamp: now_ts})},
+        wait_for_continue.({:ok, %TeslaApi.Vehicle{state: "offline"}}),
+        wait_for_continue.(
+          {:ok,
+           online_event(now_ts + 10,
+             drive_state: %{
+               timestamp: now_ts + 10,
+               latitude: 42.5,
+               longitude: 42.0,
+               shift_state: "D",
+               speed: 20,
+               power: 8
+             }
+           )}
+        ),
+        fn -> Process.sleep(10_000) end
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+      assert_receive {ApiMock, {:stream, _eid, func}} when is_function(func)
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
+
+      assert_receive :continue?
+      stream(name, %{shift_state: "D", speed: 10, power: 5, time: now})
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, drive, %{speed: 16}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, speed: 16}}}
+
+      # The API loses the vehicle mid-drive: the stream stays connected
+      send(:"api_#{name}", :continue)
+      assert_receive :continue?
+      refute_received {:"$websockex_cast", :disconnect}
+
+      # Streamed positions still belong to the drive
+      stream(name, %{shift_state: "D", speed: 15, power: 10, est_lat: 42.31, time: now})
+      assert_receive {:insert_position, ^drive, %{speed: 24, latitude: 42.31}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, speed: 24}}}
+
+      # Everything else is left to the fetch that is already scheduled
+      stream(name, %{shift_state: "P", speed: nil, power: nil, time: now})
+      refute_receive _
+
+      # The API sees the vehicle again: the drive continues on the same stream
+      send(:"api_#{name}", :continue)
+      assert_receive {:insert_position, ^drive, %{latitude: 42.5, speed: 32}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
+      refute_received {ApiMock, {:stream, _, _}}
+
+      refute_receive _
+    end
+
     test "updates the geofence from streaming positions", %{test: name} do
       now = DateTime.utc_now()
       now_ts = DateTime.to_unix(now, :millisecond)
