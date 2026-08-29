@@ -5,7 +5,21 @@ defmodule TeslaMate.Characterization do
   system — persisted rows and published MQTT messages. No mock call assertions;
   the golden file is the observed outer behaviour.
 
-  ## Fixture format (`test/fixtures/characterization/<name>.json`)
+  ## Layout
+
+      test/fixtures/characterization/
+      ├── scenarios/<name>.json   # behaviour scenarios (content)
+      ├── goldens/<name>.json     # their approved expectations
+      └── selftest/
+          ├── scenarios/<name>.json   # harness self-tests (machinery evidence)
+          └── goldens/<name>.json
+
+  Place is class: a file's directory decides whether it is a scenario or a
+  golden; pairing is the shared basename across the two directories of a tree.
+  Self-test goldens are machinery evidence, not behaviour contracts — they
+  exist so the harness is verified inside the PR that ships it.
+
+  ## Scenario format
 
       {
         "description": "...",
@@ -18,32 +32,72 @@ defmodule TeslaMate.Characterization do
       }
 
   Events are served in order by `ApiMock`; the last event repeats for any
-  further fetch, so every fixture must end in a repeat-neutral terminal state
-  (parked online, asleep or offline — never mid-drive, never charging).
+  further fetch. The replay end is event-driven, never a wait: after the last
+  event has been served, the harness waits for exactly one more serve of the
+  repeating terminal event — the state machine starting that next cycle proves
+  the previous cycle, including all of its persistence and publishing effects,
+  has completed. Timer-driven outcomes are not expressible yet; the mechanism
+  for awaiting a declared outcome is decided in the conversion PRs, where such
+  scenarios first appear.
 
-  The replay end is event-driven, never a wait: after the last event has been
-  served, the harness waits for exactly one more serve of the repeating
-  terminal event. The state machine starting that next cycle proves the
-  previous cycle — including all of its persistence and publishing effects —
-  has completed. Scenarios whose outcome depends on timers that fire after
-  the last event are not expressible yet; the mechanism for awaiting a
-  declared outcome is decided in the conversion PRs, where such scenarios
-  first appear.
+  ## Recording
 
-  The expected outer behaviour lives next to the fixture as
-  `<name>.expected.json` and is written by running with
-  `CHARACTERIZATION_RECORD=1`. Recording replays the fixture twice and masks
-  every value that differs between the two runs as `"<volatile>"` (wall-clock
-  driven values); comparison accepts any value where the golden says
-  `"<volatile>"`. MQTT payloads are compared per topic with consecutive
-  duplicates collapsed, because cross-topic publish order is concurrent by
-  design (`Task.async_stream(ordered: false)`).
+  `CHARACTERIZATION_RECORD` accepts these forms — bare values are the closed
+  set of modes; identifiers always carry the `only:` prefix and are
+  tree-scoped (`only:<name>` for content, `only:selftest/<name>` for
+  machinery evidence), so neither a scenario named `all.json` nor a basename
+  shared across the trees can collide:
 
-  Goldens contain only canonical representations: payloads that are JSON
-  objects or arrays are stored decoded and compared structurally (the key
-  order of an encoded map is not portable across runtimes), and golden files
-  are written with sorted keys — a recorded file is byte-identical no matter
-  which machine recorded it.
+    * `1` / `true` — record scenarios that have no golden yet; existing
+      goldens are compared — a record run never reports green for something
+      it did not check
+    * `all` — re-record every golden (declared replacement of approved files)
+    * `only:<name>` / `only:selftest/<name>` — re-record exactly that golden
+
+  A checked-in golden is an approved artifact: no tool step replaces it
+  outside the operator's declared intent.
+
+  State × mode, complete:
+
+  | pairing state           | compare (off)             | `1`/`true`             | `all`     | `only:` match / others  |
+  |-------------------------|---------------------------|------------------------|-----------|-------------------------|
+  | scenario + golden       | compare                   | compare                | re-record | re-record / compare     |
+  | scenario without golden | fail with the record hint | record                 | record    | record / fail with hint |
+  | golden without scenario | orphan suite test fails in every mode                                                    |
+  | `only:` without a match | suite test fails: the declared target must exist, or nothing would be recorded silently |
+  | both directories empty  | never empty-green: the self-test scenarios always run                                    |
+
+  ## Invariants — each names its check
+
+    * Scenario without golden: comparison fails with the record instruction;
+      never green (`run/1`).
+    * Golden without scenario: the orphan suite test fails and lists it — a
+      dead expectation must not rest silently (`orphans/0`).
+    * The suite is never empty-green: the self-test scenarios always run.
+    * Unknown `CHARACTERIZATION_RECORD` values raise instead of silently
+      selecting a mode (`record_mode/1`).
+    * Effect-neutrality under terminal repetition — enforced at record time by
+      the double-run diff: recording replays twice and refuses any golden in
+      which a whole table or topic collapses to ``"<volatile>"``.
+    * Values that differ between the two record runs (wall-clock derived) are
+      masked as ``"<volatile>"``; comparison accepts masked positions only.
+    * Goldens contain only canonical representations: JSON object/array
+      payloads are stored decoded and compared structurally (encoded map key
+      order is not portable across runtimes); golden files are written with
+      sorted keys, byte-identical no matter which machine records them.
+    * The vehicle runs `restart: :temporary`: an unexpected crash fails the
+      replay instead of being retried invisibly by the supervisor.
+
+  ## Limits — explicitly unenforced
+
+    * Effect-neutrality is checked at record time and probabilistically (two
+      coinciding runs); compare time relies on the recorded window.
+    * Cross-topic MQTT publish order is concurrent by design
+      (`Task.async_stream(ordered: false)`); goldens hold per-topic ordered
+      sequences with consecutive duplicates collapsed.
+    * The end-of-replay barrier counts API serves, not fetch cycles; states
+      whose handling makes two API calls per cycle are not expressible as
+      terminals yet.
   """
 
   import ExUnit.Assertions
@@ -79,50 +133,167 @@ defmodule TeslaMate.Characterization do
   # MQTT topics whose payload is wall-clock derived (state change timestamps).
   @always_volatile_topics ~w(since)
 
-  def fixtures_dir, do: @fixtures_dir
+  ## Discovery: place is class, pairing is the shared basename
 
-  # Presence alone is not consent: CHARACTERIZATION_RECORD=0 must compare,
-  # not silently record and report green.
-  defp record?, do: System.get_env("CHARACTERIZATION_RECORD") in ~w(1 true)
-
-  def fixture_files do
-    @fixtures_dir
-    |> Path.join("*.json")
-    |> Path.wildcard()
-    |> Enum.reject(&String.ends_with?(&1, ".expected.json"))
-    |> Enum.sort()
+  defmodule Pair do
+    @moduledoc false
+    defstruct [:name, :scenario_path, :golden_path, :golden_exists?, :selftest?]
   end
 
-  def run(fixture_path) do
-    input = fixture_path |> File.read!() |> Jason.decode!()
-    expected_path = String.replace_suffix(fixture_path, ".json", ".expected.json")
+  def pairs do
+    content_pairs() ++ selftest_pairs()
+  end
 
-    if record?() do
-      first = replay(input, :record_1)
-      reset_db()
-      second = replay(input, :record_2)
-      golden = mask_volatile(first, second)
+  def orphans do
+    orphaned_goldens(scenarios_dir(), goldens_dir()) ++
+      orphaned_goldens(selftest_scenarios_dir(), selftest_goldens_dir())
+  end
 
-      for {section, name} <- [{"database", "table"}, {"mqtt", "topic"}],
-          {key, value} <- golden[section],
-          value == @volatile do
-        raise "#{name} #{key} differs structurally between the two record runs — " <>
-                "the fixture is not repeat-neutral (see moduledoc); refusing to record " <>
-                "a fully masked golden for #{Path.basename(fixture_path)}"
-      end
+  defp content_pairs, do: tree_pairs(scenarios_dir(), goldens_dir(), false)
+  defp selftest_pairs, do: tree_pairs(selftest_scenarios_dir(), selftest_goldens_dir(), true)
 
-      File.write!(expected_path, Jason.encode!(canonical_order(golden), pretty: true) <> "\n")
-      IO.puts("recorded #{Path.basename(expected_path)}")
-    else
-      assert File.exists?(expected_path),
-             "missing golden #{Path.basename(expected_path)} — " <>
-               "record it with CHARACTERIZATION_RECORD=1 mix test"
+  defp tree_pairs(scenarios_dir, goldens_dir, selftest?) do
+    scenarios_dir
+    |> list_json()
+    |> Enum.map(fn name ->
+      golden = Path.join(goldens_dir, name)
 
-      expected = expected_path |> File.read!() |> Jason.decode!()
-      actual = replay(input, :compare)
-      assert_equivalent(expected, actual, Path.basename(fixture_path))
+      %Pair{
+        name: Path.basename(name, ".json"),
+        scenario_path: Path.join(scenarios_dir, name),
+        golden_path: golden,
+        golden_exists?: File.exists?(golden),
+        selftest?: selftest?
+      }
+    end)
+  end
+
+  defp orphaned_goldens(scenarios_dir, goldens_dir) do
+    scenarios = list_json(scenarios_dir)
+
+    goldens_dir
+    |> list_json()
+    |> Enum.reject(&(&1 in scenarios))
+    |> Enum.map(&Path.join(goldens_dir, &1))
+  end
+
+  defp list_json(dir),
+    do: dir |> Path.join("*.json") |> Path.wildcard() |> Enum.map(&Path.basename/1) |> Enum.sort()
+
+  defp scenarios_dir, do: Path.join(@fixtures_dir, "scenarios")
+  defp goldens_dir, do: Path.join(@fixtures_dir, "goldens")
+  defp selftest_scenarios_dir, do: Path.join([@fixtures_dir, "selftest", "scenarios"])
+  defp selftest_goldens_dir, do: Path.join([@fixtures_dir, "selftest", "goldens"])
+
+  ## Record mode: bare values are modes, identifiers carry the only: prefix
+
+  def record_mode(nil), do: :off
+  def record_mode(""), do: :off
+  def record_mode("0"), do: :off
+  def record_mode("false"), do: :off
+  def record_mode(value) when value in ~w(1 true), do: :missing
+  def record_mode("all"), do: :all
+
+  # only: is tree-scoped: the same basename may exist as content scenario and
+  # as self-test, so the identifier carries the tree — bare for content,
+  # selftest/ prefixed for machinery evidence.
+  def record_mode("only:selftest/" <> name) when name != "", do: {:only, {:selftest, name}}
+  def record_mode("only:selftest/"), do: raise_record_mode("only:selftest/")
+  def record_mode("only:" <> name) when name != "", do: {:only, {:content, name}}
+
+  def record_mode(other), do: raise_record_mode(other)
+
+  defp raise_record_mode(other) do
+    raise ArgumentError,
+          "unknown CHARACTERIZATION_RECORD value #{inspect(other)} — use 1/true " <>
+            "(record missing), all (re-record everything), only:<name> or only:selftest/<name>"
+  end
+
+  def run(%Pair{} = pair) do
+    # Existence is re-derived at run time: pairs are enumerated at test
+    # definition, but a record run may have created the golden since.
+    pair = %Pair{pair | golden_exists?: File.exists?(pair.golden_path)}
+    mode = record_mode(System.get_env("CHARACTERIZATION_RECORD"))
+
+    case mode do
+      :off ->
+        compare(pair)
+
+      :missing ->
+        if pair.golden_exists?,
+          do: compare(pair),
+          else: record(pair)
+
+      :all ->
+        record(pair)
+
+      {:only, {:selftest, name}} ->
+        if pair.selftest? and name == pair.name, do: record(pair), else: compare(pair)
+
+      {:only, {:content, name}} ->
+        if not pair.selftest? and name == pair.name, do: record(pair), else: compare(pair)
     end
   end
+
+  defp record(%Pair{} = pair) do
+    input = read_scenario(pair)
+
+    first = replay(input, :record_1)
+    reset_db()
+    second = replay(input, :record_2)
+    golden = mask_volatile(first, second)
+
+    for {section, kind} <- [{"database", "table"}, {"mqtt", "topic"}],
+        {key, value} <- golden[section],
+        value == @volatile do
+      raise "#{kind} #{key} differs structurally between the two record runs — " <>
+              "the scenario is not repeat-neutral (see moduledoc); refusing to record " <>
+              "a fully masked golden for #{pair.name}"
+    end
+
+    File.mkdir_p!(Path.dirname(pair.golden_path))
+    File.write!(pair.golden_path, Jason.encode!(canonical_order(golden), pretty: true) <> "\n")
+    IO.puts("recorded #{pair.name}")
+  end
+
+  defp compare(%Pair{} = pair) do
+    assert pair.golden_exists?,
+           "missing golden for #{pair.name} — " <>
+             "record it with CHARACTERIZATION_RECORD=#{only_target(pair)} mix test"
+
+    expected = pair.golden_path |> File.read!() |> Jason.decode!()
+    actual = replay(read_scenario(pair), :compare)
+    assert_equivalent(expected, actual, pair.name)
+  end
+
+  def only_target(%Pair{selftest?: true, name: name}), do: "only:selftest/#{name}"
+  def only_target(%Pair{name: name}), do: "only:#{name}"
+
+  # Suite-level check for the declared-intent invariant: a well-formed
+  # only: value whose target does not exist would compare everything, record
+  # nothing and report nothing — the declared intent would fizzle silently.
+  def only_target_error do
+    case record_mode(System.get_env("CHARACTERIZATION_RECORD")) do
+      {:only, {tree, name}} ->
+        exists? =
+          Enum.any?(pairs(), fn pair ->
+            pair.name == name and pair.selftest? == (tree == :selftest)
+          end)
+
+        unless exists? do
+          "CHARACTERIZATION_RECORD targets #{tree_label(tree)}#{name}, " <>
+            "but no such scenario exists — nothing would be recorded"
+        end
+
+      _ ->
+        nil
+    end
+  end
+
+  defp tree_label(:selftest), do: "selftest/"
+  defp tree_label(:content), do: ""
+
+  defp read_scenario(%Pair{scenario_path: path}), do: path |> File.read!() |> Jason.decode!()
 
   ## Replay
 
@@ -168,16 +339,14 @@ defmodule TeslaMate.Characterization do
       )
 
     vehicle_spec =
-      with_run_id(
-        {Vehicle,
-         name: vehicle,
-         car: car,
-         deps_api: {ApiMock, api},
-         deps_settings: {SettingsMock, settings},
-         deps_vehicles: {VehiclesMock, vehicles},
-         deps_locations: {LocationsMock, locations}},
-        run_id
-      )
+      {Vehicle,
+       name: vehicle,
+       car: car,
+       deps_api: {ApiMock, api},
+       deps_settings: {SettingsMock, settings},
+       deps_vehicles: {VehiclesMock, vehicles},
+       deps_locations: {LocationsMock, locations}}
+      |> Supervisor.child_spec(id: {Vehicle, run_id}, restart: :temporary)
 
     {:ok, _} = start_supervised(vehicle_spec)
 
@@ -263,9 +432,9 @@ defmodule TeslaMate.Characterization do
   # of an encoded map is not a portable representation (it differs between
   # runtimes), so goldens hold the structure, never the byte sequence. Scalar
   # payloads ("80", "true", plain strings) stay untouched.
-  defp canonical_payload("{" <> _ = payload), do: decode_or_keep(payload)
-  defp canonical_payload("[" <> _ = payload), do: decode_or_keep(payload)
-  defp canonical_payload(payload), do: payload
+  def canonical_payload("{" <> _ = payload), do: decode_or_keep(payload)
+  def canonical_payload("[" <> _ = payload), do: decode_or_keep(payload)
+  def canonical_payload(payload), do: payload
 
   defp decode_or_keep(payload) do
     case Jason.decode(payload) do
@@ -360,19 +529,19 @@ defmodule TeslaMate.Characterization do
 
   # Golden files are written with sorted keys throughout, so a recorded file
   # is byte-identical regardless of the machine that recorded it.
-  defp canonical_order(%{} = map) do
+  def canonical_order(%{} = map) do
     map
     |> Enum.map(fn {key, value} -> {key, canonical_order(value)} end)
     |> Enum.sort_by(fn {key, _} -> key end)
     |> Jason.OrderedObject.new()
   end
 
-  defp canonical_order(list) when is_list(list), do: Enum.map(list, &canonical_order/1)
-  defp canonical_order(value), do: value
+  def canonical_order(list) when is_list(list), do: Enum.map(list, &canonical_order/1)
+  def canonical_order(value), do: value
 
-  ## Golden: record & compare
+  ## Golden: masking & comparison
 
-  defp mask_volatile(first, second) when is_map(first) and is_map(second) do
+  def mask_volatile(first, second) when is_map(first) and is_map(second) do
     keys = Enum.uniq(Map.keys(first) ++ Map.keys(second))
 
     Map.new(keys, fn key ->
@@ -380,7 +549,7 @@ defmodule TeslaMate.Characterization do
     end)
   end
 
-  defp mask_volatile(first, second) when is_list(first) and is_list(second) do
+  def mask_volatile(first, second) when is_list(first) and is_list(second) do
     if length(first) == length(second) do
       Enum.zip_with(first, second, &mask_volatile/2)
     else
@@ -388,21 +557,28 @@ defmodule TeslaMate.Characterization do
     end
   end
 
-  defp mask_volatile(value, value), do: value
-  defp mask_volatile(_first, _second), do: @volatile
+  def mask_volatile(value, value), do: value
+  def mask_volatile(_first, _second), do: @volatile
 
   defp assert_equivalent(expected, actual, name) do
-    case diff(expected, actual, []) do
+    case diff(expected, actual) do
       nil ->
         :ok
 
       {path, exp, act} ->
         flunk("""
         characterization mismatch in #{name}
-        first divergence at #{Enum.join(Enum.reverse(path), ".")}
+        first divergence at #{Enum.join(path, ".")}
         expected: #{inspect(exp)}
         actual:   #{inspect(act)}
         """)
+    end
+  end
+
+  def diff(expected, actual) do
+    case diff(expected, actual, []) do
+      nil -> nil
+      {path, exp, act} -> {Enum.reverse(path), exp, act}
     end
   end
 

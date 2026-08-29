@@ -3,13 +3,19 @@ defmodule TeslaMate.CharacterizationTest do
 
   alias TeslaMate.Characterization
 
-  test "at least one fixture exists" do
-    assert Characterization.fixture_files() != []
+  test "no orphaned goldens" do
+    assert Characterization.orphans() == []
   end
 
-  for path <- Characterization.fixture_files() do
-    test "replays #{Path.basename(path, ".json")}" do
-      Characterization.run(unquote(path))
+  test "a declared only: target exists" do
+    assert Characterization.only_target_error() == nil
+  end
+
+  for pair <- Characterization.pairs() do
+    prefix = if pair.selftest?, do: "selftest ", else: ""
+
+    test "replays #{prefix}#{pair.name}" do
+      Characterization.run(unquote(Macro.escape(pair)))
     end
   end
 end
