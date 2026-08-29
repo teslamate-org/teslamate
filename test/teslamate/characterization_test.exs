@@ -1,13 +1,7 @@
 defmodule TeslaMate.CharacterizationTest do
-  use ExUnit.Case, async: false
+  use TeslaMate.DataCase, async: false
 
   alias TeslaMate.Characterization
-
-  setup do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(TeslaMate.Repo, shared: true)
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
-    :ok
-  end
 
   test "at least one fixture exists" do
     assert Characterization.fixture_files() != []

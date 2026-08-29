@@ -56,9 +56,12 @@ defmodule TeslaMate.Characterization do
   @fixtures_dir Path.expand("../fixtures/characterization", __DIR__)
   @volatile "<volatile>"
 
-  @db_tables ~w(states positions drives charging_processes charges updates addresses geofences)
+  @db_tables ~w(cars car_settings states positions drives charging_processes charges updates
+                addresses geofences)
 
   @singular %{
+    "cars" => "car",
+    "car_settings" => "car_setting",
     "states" => "state",
     "positions" => "position",
     "drives" => "drive",
@@ -78,6 +81,10 @@ defmodule TeslaMate.Characterization do
 
   def fixtures_dir, do: @fixtures_dir
 
+  # Presence alone is not consent: CHARACTERIZATION_RECORD=0 must compare,
+  # not silently record and report green.
+  defp record?, do: System.get_env("CHARACTERIZATION_RECORD") in ~w(1 true)
+
   def fixture_files do
     @fixtures_dir
     |> Path.join("*.json")
@@ -90,14 +97,16 @@ defmodule TeslaMate.Characterization do
     input = fixture_path |> File.read!() |> Jason.decode!()
     expected_path = String.replace_suffix(fixture_path, ".json", ".expected.json")
 
-    if System.get_env("CHARACTERIZATION_RECORD") do
+    if record?() do
       first = replay(input, :record_1)
       reset_db()
       second = replay(input, :record_2)
       golden = mask_volatile(first, second)
 
-      for {table, rows} <- golden["database"], rows == @volatile do
-        raise "table #{table} differs structurally between the two record runs — " <>
+      for {section, name} <- [{"database", "table"}, {"mqtt", "topic"}],
+          {key, value} <- golden[section],
+          value == @volatile do
+        raise "#{name} #{key} differs structurally between the two record runs — " <>
                 "the fixture is not repeat-neutral (see moduledoc); refusing to record " <>
                 "a fully masked golden for #{Path.basename(fixture_path)}"
       end
@@ -234,15 +243,17 @@ defmodule TeslaMate.Characterization do
           |> String.replace("teslamate_#{car.id}", "teslamate_$car")
 
         payload = canonical_payload(to_string(payload))
-        acc = Map.update(acc, topic, [payload], &(&1 ++ [payload]))
+        acc = Map.update(acc, topic, [payload], &[payload | &1])
         drain_mqtt(acc, car)
     after
       0 ->
         Map.new(acc, fn {topic, values} ->
+          values = Enum.reverse(values)
+
           if Path.basename(topic) in @always_volatile_topics do
             {topic, Enum.map(values, fn _ -> @volatile end)}
           else
-            {topic, dedup_consecutive(values)}
+            {topic, Enum.dedup(values)}
           end
         end)
     end
@@ -261,15 +272,6 @@ defmodule TeslaMate.Characterization do
       {:ok, decoded} -> decoded
       {:error, _} -> payload
     end
-  end
-
-  defp dedup_consecutive(values) do
-    values
-    |> Enum.reduce([], fn
-      value, [value | _] = acc -> acc
-      value, acc -> [value | acc]
-    end)
-    |> Enum.reverse()
   end
 
   defp flush_notifications do
@@ -308,6 +310,7 @@ defmodule TeslaMate.Characterization do
   end
 
   @fk_tables %{
+    "settings_id" => "car_settings",
     "drive_id" => "drives",
     "charging_process_id" => "charging_processes",
     "position_id" => "positions",
@@ -323,6 +326,9 @@ defmodule TeslaMate.Characterization do
 
   defp canonicalize_row(row, table, id_map, car_id) do
     Map.new(row, fn
+      {"id", id} when table == "cars" ->
+        {"id", if(id == car_id, do: "$car", else: Map.fetch!(id_map, {table, id}))}
+
       {"id", id} ->
         {"id", Map.fetch!(id_map, {table, id})}
 
@@ -346,15 +352,10 @@ defmodule TeslaMate.Characterization do
   defp to_jsonable(%Decimal{} = d), do: Decimal.to_string(d)
   defp to_jsonable(%DateTime{} = dt), do: DateTime.to_iso8601(dt)
   defp to_jsonable(%NaiveDateTime{} = dt), do: NaiveDateTime.to_iso8601(dt)
-  defp to_jsonable(%Date{} = d), do: Date.to_iso8601(d)
-
-  defp to_jsonable(value) when is_tuple(value),
-    do: value |> Tuple.to_list() |> Enum.map(&to_jsonable/1)
-
   defp to_jsonable(value), do: value
 
   defp reset_db do
-    Repo.query!("TRUNCATE cars, addresses, geofences CASCADE")
+    Repo.query!("TRUNCATE cars, car_settings, addresses, geofences CASCADE")
   end
 
   # Golden files are written with sorted keys throughout, so a recorded file
@@ -372,7 +373,11 @@ defmodule TeslaMate.Characterization do
   ## Golden: record & compare
 
   defp mask_volatile(first, second) when is_map(first) and is_map(second) do
-    Map.new(first, fn {key, value} -> {key, mask_volatile(value, Map.get(second, key))} end)
+    keys = Enum.uniq(Map.keys(first) ++ Map.keys(second))
+
+    Map.new(keys, fn key ->
+      {key, mask_volatile(Map.get(first, key, :__missing__), Map.get(second, key, :__missing__))}
+    end)
   end
 
   defp mask_volatile(first, second) when is_list(first) and is_list(second) do

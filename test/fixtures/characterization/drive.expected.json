@@ -32,6 +32,38 @@
         "updated_at": "<volatile>"
       }
     ],
+    "car_settings": [
+      {
+        "enabled": true,
+        "free_supercharging": false,
+        "id": "car_setting_1",
+        "lfp_battery": false,
+        "req_not_unlocked": false,
+        "suspend_after_idle_min": 100000,
+        "suspend_min": 100000,
+        "use_streaming_api": false
+      }
+    ],
+    "cars": [
+      {
+        "display_priority": 1,
+        "efficiency": 0.153,
+        "eid": 42,
+        "exterior_color": "DeepBlue",
+        "id": "$car",
+        "inserted_at": "<volatile>",
+        "marketing_name": "LR AWD",
+        "model": "3",
+        "name": "blue",
+        "settings_id": "car_setting_1",
+        "spoiler_type": "None",
+        "trim_badging": "74D",
+        "updated_at": "<volatile>",
+        "vid": 1000,
+        "vin": "5YJ3E1EA1KF000001",
+        "wheel_type": "Pinwheel18"
+      }
+    ],
     "charges": [],
     "charging_processes": [],
     "drives": [
