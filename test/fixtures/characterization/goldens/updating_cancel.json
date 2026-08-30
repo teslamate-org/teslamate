@@ -119,13 +119,6 @@
         "id": "update_1",
         "start_date": "2024-01-01T00:00:10.000000",
         "version": "2019.8.4 530d1d3"
-      },
-      {
-        "car_id": "$car",
-        "end_date": null,
-        "id": "update_2",
-        "start_date": "2024-01-01T00:00:10.000000",
-        "version": null
       }
     ]
   },

@@ -7,11 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'cancels an update': installing, then the status falls back to 'available'. PINNED BUG #5656: the cancel branch passes the API software_update struct to Log.cancel_update, which crashes the vehicle process (FunctionClauseError) and leaves the started update row open forever. This golden pins the crash behaviour; it gets re-recorded in the fix commit.",
-  "await": {
-    "positions": 2
-  },
-  "expect_restart": true,
+  "description": "Conversion of 'cancels an update': installing, then the status falls back to 'available'. The started update row is canceled (fix for #5656 — the cancel branch previously passed the API software_update struct instead of the Log.Update row and crashed the vehicle) and the vehicle returns to online.",
   "events": [
     {
       "vehicle": {
