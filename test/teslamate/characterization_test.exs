@@ -50,6 +50,50 @@ defmodule TeslaMate.CharacterizationTest do
     end
   end
 
+  @tag :tmp_dir
+  test "a declared restart that never happens fails the replay", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario = %{
+      "description" => "expect_restart machinery probe",
+      "car" => %{
+        "eid" => 42,
+        "vid" => 1000,
+        "vin" => "5YJ3E1EA1KF000001",
+        "model" => "3",
+        "name" => "blue",
+        "efficiency" => 0.153
+      },
+      "settings" => %{
+        "use_streaming_api" => false,
+        "suspend_after_idle_min" => 100_000,
+        "suspend_min" => 100_000
+      },
+      "await" => %{"state" => "asleep"},
+      "expect_restart" => true,
+      "events" => [
+        park_event(t0),
+        park_event(t0 + 10_000),
+        %{"vehicle" => %{"state" => "asleep"}}
+      ]
+    }
+
+    scenario_path = Path.join(tmp, "no_crash.json")
+    File.write!(scenario_path, Jason.encode!(scenario))
+
+    pair = %Characterization.Pair{
+      name: "no_crash",
+      scenario_path: scenario_path,
+      golden_path: Path.join(tmp, "no_crash_golden.json"),
+      golden_exists?: false,
+      selftest?: false
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/the vehicle never went down/, fn ->
+      Characterization.record_pair(pair)
+    end
+  end
+
   defp park_event(ts) do
     %{
       "vehicle" => %{

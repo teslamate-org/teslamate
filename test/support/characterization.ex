@@ -29,11 +29,24 @@ defmodule TeslaMate.Characterization do
         "await": {"state": "offline", "drives_closed": 1},
         "timebase": "now",
         "t0": 1704067200000,
+        "expect_restart": true,
         "events": [
           {"vehicle": {<raw Tesla API JSON, decoded by TeslaApi.Vehicle.result/1>}},
+          {"snapshot": true, "vehicle": {...}},
           {"error": "vehicle_unavailable"}
         ]
       }
+
+  A `snapshot` event serves both the state probe (`get_vehicle`) and the
+  subsequent data fetch (`get_vehicle_with_state`) with the same payload,
+  mirroring how one observed API response covers both endpoints; the pair
+  counts as one serve toward the causal barrier.
+
+  `expect_restart: true` declares a scenario that pins a crash-and-restart:
+  the vehicle runs `restart: :permanent` for this replay and the harness
+  asserts, before teardown, that the vehicle actually went down. It requires
+  a convergence outcome in `await`. Without the declaration an unexpected
+  crash stays a red test (`restart: :temporary`).
 
   Events are served in order by `ApiMock`; the last event repeats for any
   further fetch. The replay end is event-driven, never a wait: after the last
@@ -46,9 +59,11 @@ defmodule TeslaMate.Characterization do
   (drive timeout, offline charge inference), but also state transitions that
   route through `:start` and complete one fetch cycle later — declare that
   outcome in `await`, a conjunction of facts: `"state"` (the current state —
-  the open states row — has this state) and `"drives_closed"` (exactly n
-  closed drives). Further fact kinds are added by the conversion PRs whose
-  scenarios first need them. The facts are re-checked on every further cycle
+  the open states row — has this state), `"drives_closed"` (exactly n closed
+  drives) and `"positions"` (exactly n position rows — names the convergence
+  point of a crash-and-restart scenario, whose restart effects finish after
+  the causal barrier). Further fact kinds are added by the conversion PRs
+  whose scenarios first need them. The facts are re-checked on every further cycle
   of the state machine; when all of them hold, one more serve of the terminal
   event proves the outcome cycle itself completed before capture.
 
@@ -107,6 +122,10 @@ defmodule TeslaMate.Characterization do
       sorted keys, byte-identical no matter which machine records them.
     * The vehicle runs `restart: :temporary`: an unexpected crash fails the
       replay instead of being retried invisibly by the supervisor.
+    * A declared crash names its check: with `expect_restart` the initial
+      vehicle process is monitored and the replay fails before teardown
+      unless it actually went down; a declaration without an `await`
+      convergence outcome raises (`replay/2`, `expect_restart?/1`).
     * An awaited outcome that never materialises fails within a real deadline,
       reporting every declared fact with its actual value — it can never
       silently shorten the golden (`wait_outcomes/4`).
@@ -348,6 +367,7 @@ defmodule TeslaMate.Characterization do
     create_geofences(input)
     events = input |> shift_timebase() |> build_events()
     await = Map.get(input, "await", %{})
+    expect_restart? = expect_restart?(input)
     collector = self()
     total = length(events)
     vacuity = :counters.new(1, [])
@@ -359,23 +379,30 @@ defmodule TeslaMate.Characterization do
     # yet. The facts are sampled there; the verdict is raised later at the
     # collector — never in the closure, a raise in handle_call would tear
     # down the vehicle's fetch task.
+    wrap = fn result, index ->
+      fn ->
+        send(collector, {:api_event_served, index})
+
+        if index == total do
+          :counters.add(vacuity, 1, 1)
+
+          if :counters.get(vacuity, 1) == 2 and await != %{} do
+            send(collector, {:awaits_vacuous?, Enum.all?(await, &outcome_met?(&1, car))})
+          end
+        end
+
+        result
+      end
+    end
+
+    # The :snapshot tag stays outside the closure: ApiMock recognises it on
+    # the event itself and serves probe and data fetch from one execution.
     wrapped =
       events
       |> Enum.with_index(1)
-      |> Enum.map(fn {result, index} ->
-        fn ->
-          send(collector, {:api_event_served, index})
-
-          if index == total do
-            :counters.add(vacuity, 1, 1)
-
-            if :counters.get(vacuity, 1) == 2 and await != %{} do
-              send(collector, {:awaits_vacuous?, Enum.all?(await, &outcome_met?(&1, car))})
-            end
-          end
-
-          result
-        end
+      |> Enum.map(fn
+        {{:snapshot, result}, index} -> {:snapshot, wrap.(result, index)}
+        {result, index} -> wrap.(result, index)
       end)
 
     api = :"characterization_api_#{run_id}"
@@ -409,9 +436,13 @@ defmodule TeslaMate.Characterization do
        deps_settings: {SettingsMock, settings},
        deps_vehicles: {VehiclesMock, vehicles},
        deps_locations: Locations}
-      |> Supervisor.child_spec(id: {Vehicle, run_id}, restart: :temporary)
+      |> Supervisor.child_spec(
+        id: {Vehicle, run_id},
+        restart: if(expect_restart?, do: :permanent, else: :temporary)
+      )
 
-    {:ok, _} = start_supervised(vehicle_spec)
+    {:ok, vehicle_pid} = start_supervised(vehicle_spec)
+    crash_monitor = if expect_restart?, do: Process.monitor(vehicle_pid)
 
     assert_receive {:api_event_served, ^total}, 5_000
 
@@ -430,6 +461,14 @@ defmodule TeslaMate.Characterization do
     end
 
     await_outcomes(await, car, input["description"])
+
+    if expect_restart? do
+      # Asserted before teardown, so a shutdown DOWN cannot satisfy it.
+      assert_receive {:DOWN, ^crash_monitor, :process, _pid, _reason},
+                     5_000,
+                     "expect_restart is declared but the vehicle never went down — " <>
+                       "drop the declaration (#{input["description"]})"
+    end
 
     :ok = stop_supervised(vehicle_spec.id)
     :sys.get_state(subscriber)
@@ -481,9 +520,33 @@ defmodule TeslaMate.Characterization do
 
   defp build_events(%{"events" => [_ | _] = events}) do
     Enum.map(events, fn
+      %{"snapshot" => true, "vehicle" => raw} -> {:snapshot, {:ok, TeslaApi.Vehicle.result(raw)}}
       %{"vehicle" => raw} -> {:ok, TeslaApi.Vehicle.result(raw)}
       %{"error" => reason} -> {:error, String.to_existing_atom(reason)}
     end)
+  end
+
+  # A scenario that pins a crash-and-restart declares it; the declaration
+  # inverts the crash contract and must name its convergence point.
+  @doc false
+  def expect_restart?(input) do
+    case Map.get(input, "expect_restart", false) do
+      false ->
+        false
+
+      true ->
+        if Map.get(input, "await", %{}) == %{} do
+          raise "expect_restart requires a declared convergence outcome in await " <>
+                  "(#{input["description"]})"
+        end
+
+        true
+
+      other ->
+        raise ArgumentError,
+              "expect_restart must be true or absent, got #{inspect(other)} " <>
+                "(#{input["description"]})"
+    end
   end
 
   defp create_geofences(input) do
@@ -592,6 +655,9 @@ defmodule TeslaMate.Characterization do
   defp outcome_met?({"drives_closed", n}, car),
     do: count_rows("drives", "end_date IS NOT NULL", [car.id]) == n
 
+  defp outcome_met?({"positions", n}, car),
+    do: count_rows("positions", "TRUE", [car.id]) == n
+
   defp count_rows(table, condition, params) do
     %{rows: [[count]]} =
       Repo.query!("SELECT count(*) FROM #{table} WHERE car_id = $1 AND #{condition}", params)
@@ -626,6 +692,8 @@ defmodule TeslaMate.Characterization do
 
     count
   end
+
+  defp actual_value("positions", car), do: count_rows("positions", "TRUE", [car.id])
 
   ## Capture
 

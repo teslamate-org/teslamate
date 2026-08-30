@@ -2,11 +2,18 @@
 
 ## [unreleased]
 
+Under the hood, this release adds a self-verifying black-box characterization suite that replays recorded API sequences through the real vehicle state machine and pins what leaves the system — database rows and MQTT messages. Converting the existing scenarios already paid off: it exposed a crash in the update-cancel path (#5656) that mock-based tests could not see.
+
 ### New features
 
 ### Improvements and bug fixes
 
 #### Build, CI, internal
+
+- test: add characterization harness replaying API fixtures against persisted rows and MQTT (#5653 - @JakobLichterfeld)
+- test(characterization): convert driving scenarios to characterization fixtures (#5654 - @JakobLichterfeld)
+- test(characterization): convert charging scenarios to characterization fixtures (#5655 - @JakobLichterfeld)
+- test(characterization): convert updating scenarios to characterization fixtures. Pins the update-cancel crash (#5656) that mock-based tests could not see (#5658 - @JakobLichterfeld)
 
 #### Dashboards
 
