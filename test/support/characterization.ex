@@ -372,26 +372,37 @@ defmodule TeslaMate.Characterization do
   end
 
   defp create_car(input) do
-    car_attrs =
-      input
-      |> Map.fetch!("car")
-      |> Map.new(fn {k, v} -> {String.to_existing_atom(k), v} end)
+    car_attrs = atomize_keys!(Map.fetch!(input, "car"), ~s(fixture section "car"))
 
-    {:ok, car} = Log.create_car(car_attrs)
+    car =
+      case Log.create_car(car_attrs) do
+        {:ok, car} -> car
+        {:error, changeset} -> raise "fixture car rejected: #{inspect(changeset.errors)}"
+      end
 
     settings_attrs =
-      input
-      |> Map.get("settings", %{})
-      |> Map.new(fn {k, v} -> {String.to_existing_atom(k), v} end)
+      atomize_keys!(Map.get(input, "settings", %{}), ~s(fixture section "settings"))
 
     car = Repo.preload(car, :settings)
 
-    {:ok, settings} =
-      car.settings
-      |> Ecto.Changeset.change(settings_attrs)
-      |> Repo.update()
+    settings =
+      case car.settings |> Ecto.Changeset.change(settings_attrs) |> Repo.update() do
+        {:ok, settings} -> settings
+        {:error, changeset} -> raise "fixture settings rejected: #{inspect(changeset.errors)}"
+      end
 
     %{car | settings: settings}
+  end
+
+  defp atomize_keys!(map, context) do
+    Map.new(map, fn {key, value} -> {atom!(key, context), value} end)
+  end
+
+  defp atom!(key, context) do
+    String.to_existing_atom(key)
+  rescue
+    ArgumentError ->
+      raise ArgumentError, "unknown key #{inspect(key)} in #{context}"
   end
 
   defp build_events(%{"events" => [_ | _] = events}) do
