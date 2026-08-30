@@ -25,6 +25,10 @@ defmodule TeslaMate.Characterization do
         "description": "...",
         "car": {"eid": 42, "vid": 1000, "vin": "...", "model": "3", "efficiency": 0.153},
         "settings": {"use_streaming_api": false, "suspend_after_idle_min": 999999},
+        "geofences": [{"name": "Home", "latitude": 52.5, "longitude": 13.35, "radius": 100}],
+        "await": {"state": "offline", "drives_closed": 1},
+        "timebase": "now",
+        "t0": 1704067200000,
         "events": [
           {"vehicle": {<raw Tesla API JSON, decoded by TeslaApi.Vehicle.result/1>}},
           {"error": "vehicle_unavailable"}
@@ -36,9 +40,25 @@ defmodule TeslaMate.Characterization do
   event has been served, the harness waits for exactly one more serve of the
   repeating terminal event — the state machine starting that next cycle proves
   the previous cycle, including all of its persistence and publishing effects,
-  has completed. Timer-driven outcomes are not expressible yet; the mechanism
-  for awaiting a declared outcome is decided in the conversion PRs, where such
-  scenarios first appear.
+  has completed.
+
+  Scenarios whose outcome fires after the last event — timer-driven results
+  (drive timeout, offline charge inference), but also state transitions that
+  route through `:start` and complete one fetch cycle later — declare that
+  outcome in `await`, a conjunction of facts: `"state"` (the current state —
+  the open states row — has this state) and `"drives_closed"` (exactly n
+  closed drives). Further fact kinds are added by the conversion PRs whose
+  scenarios first need them. The facts are re-checked on every further cycle
+  of the state machine; when all of them hold, one more serve of the terminal
+  event proves the outcome cycle itself completed before capture.
+
+  `geofences` (optional) are created in the database before the replay;
+  geofence detection runs against the real `TeslaMate.Locations`.
+
+  `timebase: "now"` with `t0` shifts every payload timestamp so that `t0`
+  lands at replay time — needed by scenarios that resume online after a
+  wall-clock-dated offline/asleep state, which a fixed past timebase would
+  crash into the positive_duration check constraint.
 
   ## Recording
 
@@ -87,6 +107,22 @@ defmodule TeslaMate.Characterization do
       sorted keys, byte-identical no matter which machine records them.
     * The vehicle runs `restart: :temporary`: an unexpected crash fails the
       replay instead of being retried invisibly by the supervisor.
+    * An awaited outcome that never materialises fails within a real deadline,
+      reporting every declared fact with its actual value — it can never
+      silently shorten the golden (`wait_outcomes/4`).
+    * An await must guard something: recording refuses an await already fully
+      satisfied at the barrier — evaluated race-free at the second serve of
+      the terminal event, where the blocked fetch task freezes the state
+      machine (`replay/2`).
+    * After the awaited facts hold, one further serve of the terminal event
+      proves the outcome cycle completed — the termination itself is the
+      check (`wait_outcomes/4`).
+    * `"state"` uses current-state semantics: the open states row must carry
+      the declared state, not any historical row (`outcome_met?/2`).
+    * A half-declared timebase (`timebase` without integer `t0`, or `t0`
+      alone) raises, and `t0` must equal the smallest payload timestamp —
+      a typo cannot silently replay against a fixed past timebase
+      (`shift_timebase/1`).
 
   ## Limits — explicitly unenforced
 
@@ -98,6 +134,10 @@ defmodule TeslaMate.Characterization do
     * The end-of-replay barrier counts API serves, not fetch cycles; states
       whose handling makes two API calls per cycle are not expressible as
       terminals yet.
+    * With an active stream the vehicle's suspend settings are hardcoded to
+      {3, 10} minutes and scenario suspend guards are dead: streaming
+      scenarios must end asleep, and a loaded runner can still turn the two
+      one-shot suspend windows per replay into a repeat-neutrality raise.
   """
 
   import ExUnit.Assertions
@@ -105,7 +145,7 @@ defmodule TeslaMate.Characterization do
 
   alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
   alias TeslaMate.Vehicles.Vehicle
-  alias TeslaMate.{Log, Repo}
+  alias TeslaMate.{Locations, Log, Repo}
 
   @fixtures_dir Path.expand("../fixtures/characterization", __DIR__)
   @volatile "<volatile>"
@@ -256,6 +296,12 @@ defmodule TeslaMate.Characterization do
     IO.puts("recorded #{pair.name}")
   end
 
+  # Machinery-test seam: the vacuity refusal is exercised against a synthetic
+  # pair outside the fixture trees, so the record path must be reachable
+  # without the mode environment.
+  @doc false
+  def record_pair(%Pair{} = pair), do: record(pair)
+
   defp compare(%Pair{} = pair) do
     assert pair.golden_exists?,
            "missing golden for #{pair.name} — " <>
@@ -299,16 +345,35 @@ defmodule TeslaMate.Characterization do
 
   defp replay(input, run_id) do
     car = create_car(input)
-    events = build_events(input)
+    create_geofences(input)
+    events = input |> shift_timebase() |> build_events()
+    await = Map.get(input, "await", %{})
     collector = self()
     total = length(events)
+    vacuity = :counters.new(1, [])
 
+    # The serve boundary is the race-free probe point for vacuity: the vehicle
+    # runs exactly one fetch task at a time, so while the terminal closure's
+    # second execution (the causal barrier) runs inside ApiMock, the database
+    # is causally frozen — all declared events processed, no repeat effects
+    # yet. The facts are sampled there; the verdict is raised later at the
+    # collector — never in the closure, a raise in handle_call would tear
+    # down the vehicle's fetch task.
     wrapped =
       events
       |> Enum.with_index(1)
       |> Enum.map(fn {result, index} ->
         fn ->
           send(collector, {:api_event_served, index})
+
+          if index == total do
+            :counters.add(vacuity, 1, 1)
+
+            if :counters.get(vacuity, 1) == 2 and await != %{} do
+              send(collector, {:awaits_vacuous?, Enum.all?(await, &outcome_met?(&1, car))})
+            end
+          end
+
           result
         end
       end)
@@ -316,7 +381,6 @@ defmodule TeslaMate.Characterization do
     api = :"characterization_api_#{run_id}"
     settings = :"characterization_settings_#{run_id}"
     vehicles = :"characterization_vehicles_#{run_id}"
-    locations = :"characterization_locations_#{run_id}"
     publisher = :"characterization_publisher_#{run_id}"
     vehicle = :"characterization_vehicle_#{run_id}"
 
@@ -324,7 +388,6 @@ defmodule TeslaMate.Characterization do
       {ApiMock, name: api, events: wrapped, pid: collector},
       {SettingsMock, name: settings, pid: collector},
       {VehiclesMock, name: vehicles, pid: collector},
-      {LocationsMock, name: locations, pid: collector},
       {MqttPublisherMock, name: publisher, pid: collector}
     ]
 
@@ -345,7 +408,7 @@ defmodule TeslaMate.Characterization do
        deps_api: {ApiMock, api},
        deps_settings: {SettingsMock, settings},
        deps_vehicles: {VehiclesMock, vehicles},
-       deps_locations: {LocationsMock, locations}}
+       deps_locations: Locations}
       |> Supervisor.child_spec(id: {Vehicle, run_id}, restart: :temporary)
 
     {:ok, _} = start_supervised(vehicle_spec)
@@ -356,6 +419,17 @@ defmodule TeslaMate.Characterization do
     # serve proves the state machine finished the previous cycle — including
     # every persistence and publishing effect — and started the next one.
     assert_receive {:api_event_served, ^total}, 5_000
+
+    if run_id != :compare and await != %{} do
+      assert_receive {:awaits_vacuous?, vacuous?}, 5_000
+
+      if vacuous? do
+        raise "await #{inspect(await)} is already fully satisfied at the barrier — " <>
+                "it guards nothing; drop it or extend the scenario (#{input["description"]})"
+      end
+    end
+
+    await_outcomes(await, car, input["description"])
 
     :ok = stop_supervised(vehicle_spec.id)
     :sys.get_state(subscriber)
@@ -412,6 +486,147 @@ defmodule TeslaMate.Characterization do
     end)
   end
 
+  defp create_geofences(input) do
+    for geofence <- Map.get(input, "geofences", []) do
+      attrs = atomize_keys!(geofence, ~s(geofence #{inspect(geofence["name"])}))
+
+      case Locations.create_geofence(attrs) do
+        {:ok, _} ->
+          :ok
+
+        {:error, changeset} ->
+          raise "fixture geofence #{inspect(geofence["name"])} rejected: #{inspect(changeset.errors)}"
+      end
+    end
+  end
+
+  # With "timebase": "now" every payload timestamp is shifted so that "t0"
+  # lands at replay time. A half declaration or a t0 that is not the smallest
+  # timestamp raises: a silent no-op would reproduce the exact constraint
+  # crash-loop this mechanism exists to avoid, surfaced as an opaque timeout.
+  defp shift_timebase(%{"timebase" => "now", "t0" => t0} = input) when is_integer(t0) do
+    min_ts = input["events"] |> collect_timestamps() |> Enum.min()
+
+    unless t0 == min_ts do
+      raise "timebase t0 #{t0} must equal the smallest payload timestamp #{min_ts}"
+    end
+
+    shift = System.os_time(:millisecond) - t0
+    Map.update!(input, "events", &shift_timestamps(&1, shift))
+  end
+
+  defp shift_timebase(%{"timebase" => timebase}) do
+    raise "half-declared timebase: timebase #{inspect(timebase)} requires an integer t0 " <>
+            "equal to the smallest payload timestamp"
+  end
+
+  defp shift_timebase(%{"t0" => _}) do
+    raise "half-declared timebase: t0 without \"timebase\": \"now\""
+  end
+
+  defp shift_timebase(input), do: input
+
+  defp collect_timestamps(%{} = map) do
+    Enum.flat_map(map, fn
+      {"timestamp", ts} when is_integer(ts) -> [ts]
+      {_key, value} -> collect_timestamps(value)
+    end)
+  end
+
+  defp collect_timestamps(list) when is_list(list),
+    do: Enum.flat_map(list, &collect_timestamps/1)
+
+  defp collect_timestamps(_value), do: []
+
+  defp shift_timestamps(%{} = map, shift) do
+    Map.new(map, fn
+      {"timestamp", ts} when is_integer(ts) -> {"timestamp", ts + shift}
+      {key, value} -> {key, shift_timestamps(value, shift)}
+    end)
+  end
+
+  defp shift_timestamps(list, shift) when is_list(list),
+    do: Enum.map(list, &shift_timestamps(&1, shift))
+
+  defp shift_timestamps(value, _shift), do: value
+
+  ## Awaited outcomes
+
+  @await_deadline_ms 10_000
+
+  defp await_outcomes(await, _car, _name) when await == %{}, do: :ok
+
+  defp await_outcomes(await, car, name) do
+    deadline = System.monotonic_time(:millisecond) + @await_deadline_ms
+    wait_outcomes(await, car, name, deadline)
+  end
+
+  defp wait_outcomes(await, car, name, deadline) do
+    cond do
+      outcomes_met?(await, car) ->
+        # Termination barrier: the outcome cycle's own effects (its commit
+        # precedes its broadcast) are proven complete by one further serve.
+        assert_receive {:api_event_served, _}, 5_000
+        :ok
+
+      System.monotonic_time(:millisecond) >= deadline ->
+        flunk("""
+        awaited outcome never happened — #{name}
+        #{actuals_report(await, car)}
+        """)
+
+      true ->
+        receive do
+          {:api_event_served, _} -> wait_outcomes(await, car, name, deadline)
+        after
+          1_000 -> wait_outcomes(await, car, name, deadline)
+        end
+    end
+  end
+
+  defp outcomes_met?(await, car), do: Enum.all?(await, &outcome_met?(&1, car))
+
+  defp outcome_met?({"state", state}, car),
+    do: count_rows("states", "end_date IS NULL AND state::text = $2", [car.id, state]) > 0
+
+  defp outcome_met?({"drives_closed", n}, car),
+    do: count_rows("drives", "end_date IS NOT NULL", [car.id]) == n
+
+  defp count_rows(table, condition, params) do
+    %{rows: [[count]]} =
+      Repo.query!("SELECT count(*) FROM #{table} WHERE car_id = $1 AND #{condition}", params)
+
+    count
+  end
+
+  defp actuals_report(await, car) do
+    Enum.map_join(await, "\n", fn {fact, expected} ->
+      "  #{fact}: expected #{inspect(expected)}, actual #{inspect(actual_value(fact, car))}"
+    end)
+  end
+
+  defp actual_value("state", car) do
+    %{rows: rows} =
+      Repo.query!(
+        "SELECT state::text FROM states WHERE car_id = $1 AND end_date IS NULL",
+        [car.id]
+      )
+
+    case rows do
+      [[state]] -> state
+      [] -> nil
+    end
+  end
+
+  defp actual_value("drives_closed", car) do
+    %{rows: [[count]]} =
+      Repo.query!("SELECT count(*) FROM drives WHERE car_id = $1 AND end_date IS NOT NULL", [
+        car.id
+      ])
+
+    count
+  end
+
   ## Capture
 
   defp drain_mqtt(acc, car) do
@@ -456,10 +671,13 @@ defmodule TeslaMate.Characterization do
 
   defp flush_notifications do
     receive do
-      {mock, _} when mock in [ApiMock, SettingsMock, VehiclesMock, LocationsMock] ->
+      {mock, _} when mock in [ApiMock, SettingsMock, VehiclesMock] ->
         flush_notifications()
 
       {:api_event_served, _} ->
+        flush_notifications()
+
+      {:awaits_vacuous?, _} ->
         flush_notifications()
 
       {:"$websockex_cast", _} ->

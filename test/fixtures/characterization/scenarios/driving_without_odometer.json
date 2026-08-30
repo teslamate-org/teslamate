@@ -1,0 +1,144 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Literal port of the original sparse test payloads (no odometer, zero-island coordinates, millisecond spacing). Pins current behaviour for odometer-less drives: distance is NULL at close, so close_drive deletes the drive rows (see #5583 for the adjacent live bug).",
+  "events": [
+    {
+      "vehicle": {
+        "charge_state": {
+          "timestamp": 0
+        },
+        "climate_state": {
+          "timestamp": 0
+        },
+        "drive_state": {
+          "latitude": 0.0,
+          "longitude": 0.0,
+          "timestamp": 1704067200000
+        },
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "timestamp": 0
+        },
+        "vehicle_state": {
+          "car_version": "",
+          "timestamp": 0
+        }
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "timestamp": 0
+        },
+        "climate_state": {
+          "timestamp": 0
+        },
+        "drive_state": {
+          "latitude": 0.1,
+          "longitude": 0.1,
+          "shift_state": "D",
+          "speed": 60,
+          "timestamp": 1704067200001
+        },
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "timestamp": 0
+        },
+        "vehicle_state": {
+          "car_version": "",
+          "timestamp": 0
+        }
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "timestamp": 0
+        },
+        "climate_state": {
+          "timestamp": 0
+        },
+        "drive_state": {
+          "latitude": 0.1,
+          "longitude": 0.1,
+          "shift_state": "N",
+          "speed": 30,
+          "timestamp": 1704067200002
+        },
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "timestamp": 0
+        },
+        "vehicle_state": {
+          "car_version": "",
+          "timestamp": 0
+        }
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "timestamp": 0
+        },
+        "climate_state": {
+          "timestamp": 0
+        },
+        "drive_state": {
+          "latitude": 0.1,
+          "longitude": 0.1,
+          "shift_state": "R",
+          "speed": -5,
+          "timestamp": 1704067200003
+        },
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "timestamp": 0
+        },
+        "vehicle_state": {
+          "car_version": "",
+          "timestamp": 0
+        }
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "timestamp": 0
+        },
+        "climate_state": {
+          "timestamp": 0
+        },
+        "drive_state": {
+          "latitude": 0.2,
+          "longitude": 0.2,
+          "timestamp": 1704067200004
+        },
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "timestamp": 0
+        },
+        "vehicle_state": {
+          "car_version": "",
+          "timestamp": 0
+        }
+      }
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": false
+  }
+}
