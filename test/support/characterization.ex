@@ -488,14 +488,14 @@ defmodule TeslaMate.Characterization do
 
   defp create_geofences(input) do
     for geofence <- Map.get(input, "geofences", []) do
-      attrs = Map.new(geofence, fn {k, v} -> {String.to_existing_atom(k), v} end)
+      attrs = atomize_keys!(geofence, ~s(geofence #{inspect(geofence["name"])}))
 
       case Locations.create_geofence(attrs) do
         {:ok, _} ->
           :ok
 
         {:error, changeset} ->
-          raise "creating geofence #{inspect(geofence["name"])} failed: #{inspect(changeset.errors)}"
+          raise "fixture geofence #{inspect(geofence["name"])} rejected: #{inspect(changeset.errors)}"
       end
     end
   end
@@ -586,23 +586,17 @@ defmodule TeslaMate.Characterization do
 
   defp outcomes_met?(await, car), do: Enum.all?(await, &outcome_met?(&1, car))
 
-  defp outcome_met?({"state", state}, car) do
+  defp outcome_met?({"state", state}, car),
+    do: count_rows("states", "end_date IS NULL AND state::text = $2", [car.id, state]) > 0
+
+  defp outcome_met?({"drives_closed", n}, car),
+    do: count_rows("drives", "end_date IS NOT NULL", [car.id]) == n
+
+  defp count_rows(table, condition, params) do
     %{rows: [[count]]} =
-      Repo.query!(
-        "SELECT count(*) FROM states WHERE car_id = $1 AND end_date IS NULL AND state::text = $2",
-        [car.id, state]
-      )
+      Repo.query!("SELECT count(*) FROM #{table} WHERE car_id = $1 AND #{condition}", params)
 
-    count > 0
-  end
-
-  defp outcome_met?({"drives_closed", n}, car) do
-    %{rows: [[count]]} =
-      Repo.query!("SELECT count(*) FROM drives WHERE car_id = $1 AND end_date IS NOT NULL", [
-        car.id
-      ])
-
-    count == n
+    count
   end
 
   defp actuals_report(await, car) do
