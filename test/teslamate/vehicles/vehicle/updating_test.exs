@@ -137,7 +137,7 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
                     {:broadcast, _server, _topic,
                      %Summary{state: :updating, version: "2019.8.4", update_version: "2019.8.5"}}}
 
-    assert_receive {:cancel_update, _update_id}, 200
+    assert_receive {:cancel_update, %TeslaMate.Log.Update{}}, 200
 
     d1 = DateTime.from_unix!(now_ts + 10, :millisecond)
     assert_receive {:start_state, ^car_id, :online, date: ^d1}, 600

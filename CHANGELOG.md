@@ -8,6 +8,8 @@ Under the hood, this release adds a self-verifying black-box characterization su
 
 ### Improvements and bug fixes
 
+- fix(vehicle): cancel an update with the logged update row instead of the API payload, which crashed the vehicle process and left the update open forever (#5664 - @JakobLichterfeld)
+
 #### Build, CI, internal
 
 - test: add characterization harness replaying API fixtures against persisted rows and MQTT (#5653 - @JakobLichterfeld)
