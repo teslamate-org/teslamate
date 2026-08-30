@@ -153,7 +153,7 @@ const DirectionArrow = CircleMarker.extend({
       `translate(${x},${y}) rotate(${this._heading})`,
     );
 
-    const path = this._empty() ? "" : `M0,${3} L-4,${5} L0,${-5} L4,${5} z}`;
+    const path = this._empty() ? "" : "M0,3 L-4,5 L0,-5 L4,5 z";
 
     this._renderer._setPath(this, path);
   },

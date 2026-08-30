@@ -9,6 +9,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 ### Improvements and bug fixes
 
 - fix(vehicle): cancel an update with the logged update row instead of the API payload, which crashed the vehicle process and left the update open forever (#5664 - @JakobLichterfeld)
+- fix(web): remove stray brace from the direction arrow SVG path, which made Safari log a parse error on every position update (#5665 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
