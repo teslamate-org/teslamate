@@ -34,6 +34,29 @@ defmodule TeslaMate.CharacterizationHarnessTest do
     end
   end
 
+  describe "expect_restart?/1" do
+    test "true declares it, absence does not" do
+      assert Characterization.expect_restart?(%{
+               "expect_restart" => true,
+               "await" => %{"positions" => 2}
+             })
+
+      refute Characterization.expect_restart?(%{})
+    end
+
+    test "a declaration without an await convergence outcome raises" do
+      assert_raise RuntimeError, ~r/requires a declared convergence outcome/, fn ->
+        Characterization.expect_restart?(%{"expect_restart" => true, "description" => "probe"})
+      end
+    end
+
+    test "non-boolean values raise instead of silently declaring" do
+      assert_raise ArgumentError, ~r/must be true or absent/, fn ->
+        Characterization.expect_restart?(%{"expect_restart" => "yes", "description" => "probe"})
+      end
+    end
+  end
+
   describe "canonical_payload/1" do
     test "scalar payloads stay untouched strings" do
       assert Characterization.canonical_payload("80") == "80"

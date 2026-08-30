@@ -11,6 +11,7 @@
   "await": {
     "positions": 2
   },
+  "expect_restart": true,
   "events": [
     {
       "vehicle": {
