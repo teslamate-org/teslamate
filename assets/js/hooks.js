@@ -114,6 +114,7 @@ import {
   Icon,
   Circle,
   CircleMarker,
+  SVG,
 } from "leaflet";
 
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -159,8 +160,33 @@ const DirectionArrow = CircleMarker.extend({
   },
 });
 
+// Safari resolves an SVG's intrinsic size as attribute / page zoom, so Leaflet's
+// overlay pane renders displaced at any page zoom other than 100 % as soon as an
+// author rule takes sizing away from the width/height attributes - Bulma's global
+// `svg { width: auto; height: auto }` does exactly that. Mirroring the attributes
+// into inline styles pins the used size; it is a no-op in every other browser.
+// Layers on a custom pane get their own renderer and are not covered; the
+// direction arrow and the geofence circle both live in the default overlay pane.
+// Remove once Leaflet sets the size via style: Leaflet/Leaflet#10356
+function createSvgRenderer() {
+  const renderer = new SVG();
+
+  renderer.on("update", () => {
+    const el = renderer.getPane().querySelector("svg");
+    if (!el) return;
+
+    el.style.width = `${el.getAttribute("width")}px`;
+    el.style.height = `${el.getAttribute("height")}px`;
+  });
+
+  return renderer;
+}
+
 function createMap(opts) {
-  const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", opts);
+  const map = new M(opts.elId != null ? `map_${opts.elId}` : "map", {
+    ...opts,
+    renderer: createSvgRenderer(),
+  });
 
   const osm = new TileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,

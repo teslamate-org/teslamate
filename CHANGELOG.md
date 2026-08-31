@@ -10,6 +10,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 
 - fix(vehicle): cancel an update with the logged update row instead of the API payload, which crashed the vehicle process and left the update open forever (#5664 - @JakobLichterfeld)
 - fix(web): remove stray brace from the direction arrow SVG path, which made Safari log a parse error on every position update (#5665 - @JakobLichterfeld)
+- fix(web): pin the size of Leaflet's SVG overlay so the vehicle arrow and geofence circle stay on the map at any Safari page zoom (#5666 - @Corrugator, @JakobLichterfeld)
 
 #### Build, CI, internal
 
