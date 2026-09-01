@@ -70,7 +70,7 @@ defmodule TeslaMate.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
       {:ranch, "~> 2.2"},
-      {:srtm, "~> 0.8.0"},
+      {:srtm, "~> 0.9.0"},
       {:tesla, "~> 1.14"},
       {:timex, "~> 3.7"},
       {:tortoise311, "~> 0.12"},
