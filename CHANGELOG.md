@@ -18,6 +18,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 - test(characterization): convert charging scenarios to characterization fixtures (#5655 - @JakobLichterfeld)
 - test(characterization): convert updating scenarios to characterization fixtures. Pins the update-cancel crash (#5656) that mock-based tests could not see (#5658 - @JakobLichterfeld)
 - test(characterization): convert streaming scenarios to characterization fixtures (#5668 - @JakobLichterfeld)
+- fix(test): give the error_event selftest a settled terminal cycle (#5670 - @JakobLichterfeld)
 
 #### Dashboards
 
