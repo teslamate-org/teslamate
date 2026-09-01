@@ -50,6 +50,16 @@ defmodule TeslaApi.Stream do
     )
   end
 
+  @doc """
+  Decodes the comma-separated `value` of a `data:update` frame into `Data`.
+  The column order is the one this client subscribes with.
+  """
+  def decode_frame!(value) when is_binary(value) do
+    Enum.zip([:time | @columns], String.split(value, ","))
+    |> Enum.into(%{})
+    |> Data.into!()
+  end
+
   def disconnect(pid) do
     WebSockex.cast(pid, :disconnect)
   end
@@ -119,10 +129,7 @@ defmodule TeslaApi.Stream do
 
       {:ok, %{"msg_type" => "data:update", "tag" => ^tag, "value" => data}}
       when is_binary(data) ->
-        data =
-          Enum.zip([:time | @columns], String.split(data, ","))
-          |> Enum.into(%{})
-          |> Data.into!()
+        data = decode_frame!(data)
 
         state.receiver.(data)
 
