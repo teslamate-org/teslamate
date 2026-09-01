@@ -34,6 +34,28 @@ defmodule TeslaMate.CharacterizationHarnessTest do
     end
   end
 
+  describe "index_events/1" do
+    test "serve indices go to API events only — stream deliveries stay uncounted" do
+      events = [
+        {:ok, :a},
+        {:stream_delivery, :frame1},
+        {:call_delivery, :suspend_logging},
+        {:snapshot, {:ok, :b}},
+        {:ok, :c}
+      ]
+
+      assert {indexed, 3} = Characterization.index_events(events)
+
+      assert indexed == [
+               {:api, 1, {:ok, :a}},
+               {:stream_delivery, :frame1},
+               {:call_delivery, :suspend_logging},
+               {:api, 2, {:snapshot, {:ok, :b}}},
+               {:api, 3, {:ok, :c}}
+             ]
+    end
+  end
+
   describe "expect_restart?/1" do
     test "true declares it, absence does not" do
       assert Characterization.expect_restart?(%{

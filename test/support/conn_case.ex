@@ -33,16 +33,7 @@ defmodule TeslaMateWeb.ConnCase do
   end
 
   setup tags do
-    try do
-      pid = Ecto.Adapters.SQL.Sandbox.start_owner!(TeslaMate.Repo, shared: not tags[:async])
-      on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
-    rescue
-      e in [MatchError] ->
-        case e.term do
-          {:error, {{:badmatch, :already_shared}, _}} -> :ok
-          _ -> reraise e, __STACKTRACE__
-        end
-    end
+    :ok = TeslaMate.SandboxOwner.start!(tags)
 
     # Start the Endpoint manually since tests run with '--no-start'
     {:ok, _pid} = start_supervised(TeslaMateWeb.Endpoint)

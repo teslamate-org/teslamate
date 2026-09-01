@@ -94,6 +94,122 @@ defmodule TeslaMate.CharacterizationTest do
     end
   end
 
+  @tag :tmp_dir
+  test "a scenario ending in a stream event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("stream terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"stream" => "1704067210000,0,621.4,60,10,120,52.5,13.4,0,,180,200,300"}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in a stream or call event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "stream_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "an unsupported stream_control raises with the deadlock rationale", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("stream control probe", [
+        %{"stream_control" => "too_many_disconnects"},
+        park_event(1_704_067_200_000)
+      ])
+
+    assert_raise ArgumentError, ~r/would deadlock against the serve boundary/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "stream_control", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a scenario ending in a call event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("call terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"call" => "suspend_logging"}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in a stream or call event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "call_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "an unsupported call raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("call whitelist probe", [
+        %{"call" => "resume_logging"},
+        park_event(1_704_067_200_000)
+      ])
+
+    assert_raise ArgumentError, ~r/unsupported call/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "call_whitelist", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a replay ending in :suspended raises", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("suspended terminal probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        %{"call" => "suspend_logging"},
+        park_event(t0 + 10_000)
+      ])
+
+    assert_raise RuntimeError, ~r/ends in :suspended/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "suspended_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "timebase with stream events raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("stream timebase probe", [
+        park_event(1_704_067_200_000),
+        %{"stream" => "1704067210000,0,621.4,60,10,120,52.5,13.4,0,,180,200,300"},
+        park_event(1_704_067_220_000)
+      ])
+      |> Map.merge(%{"timebase" => "now", "t0" => 1_704_067_200_000})
+
+    assert_raise RuntimeError, ~r/timebase with stream events is not supported/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "stream_timebase", scenario))
+    end
+  end
+
+  defp base_scenario(description, events) do
+    %{
+      "description" => description,
+      "car" => %{
+        "eid" => 42,
+        "vid" => 1000,
+        "vin" => "5YJ3E1EA1KF000001",
+        "model" => "3",
+        "name" => "blue",
+        "efficiency" => 0.153
+      },
+      "settings" => %{
+        "use_streaming_api" => true,
+        "suspend_after_idle_min" => 100_000,
+        "suspend_min" => 100_000
+      },
+      "events" => events
+    }
+  end
+
+  defp tmp_pair(tmp, name, scenario) do
+    scenario_path = Path.join(tmp, "#{name}.json")
+    File.write!(scenario_path, Jason.encode!(scenario))
+
+    %Characterization.Pair{
+      name: name,
+      scenario_path: scenario_path,
+      golden_path: Path.join(tmp, "#{name}_golden.json"),
+      golden_exists?: false,
+      selftest?: false
+    }
+  end
+
   defp park_event(ts) do
     %{
       "vehicle" => %{
