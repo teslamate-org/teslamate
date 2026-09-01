@@ -2,7 +2,7 @@ defmodule ApiMock do
   use GenServer
 
   defmodule State do
-    defstruct [:pid, :events, :pending_vehicle_data]
+    defstruct [:pid, :events, :pending_vehicle_data, :receiver, :vehicle]
   end
 
   # API
@@ -23,7 +23,8 @@ defmodule ApiMock do
   def init(opts) do
     state = %State{
       pid: Keyword.fetch!(opts, :pid),
-      events: Keyword.get(opts, :events, [])
+      events: Keyword.get(opts, :events, []),
+      vehicle: Keyword.get(opts, :vehicle)
     }
 
     {:ok, state}
@@ -36,6 +37,20 @@ defmodule ApiMock do
         %State{pending_vehicle_data: {id, result}} = state
       ) do
     {:reply, result, advance_event(state)}
+  end
+
+  # A stream event at the queue head is delivered at the serve boundary:
+  # the fetch task is parked in this call while the vehicle is free, so the
+  # get_state round trip proves the frame is processed before the API event
+  # is served — deterministic interleaving without a wall-clock wait.
+  def handle_call(
+        {action, id},
+        from,
+        %State{events: [{:stream_delivery, payload} | events]} = state
+      )
+      when action in [:get_vehicle, :get_vehicle_with_state] do
+    :ok = deliver_stream(payload, state)
+    handle_call({action, id}, from, %State{state | events: events})
   end
 
   def handle_call({action, id}, _from, %State{events: [event | _events]} = state)
@@ -56,9 +71,25 @@ defmodule ApiMock do
     {:reply, :ok, state}
   end
 
-  def handle_call({:stream, _vid, _receiver} = event, _from, %State{pid: pid} = state) do
+  def handle_call({:stream, _vid, receiver} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
-    {:reply, {:ok, pid}, state}
+    {:reply, {:ok, pid}, %State{state | receiver: receiver}}
+  end
+
+  defp deliver_stream(_payload, %State{vehicle: nil}) do
+    raise "stream deliveries require the :vehicle option on ApiMock — " <>
+            "the serve boundary needs the vehicle process for its get_state sync"
+  end
+
+  defp deliver_stream(_payload, %State{receiver: nil}) do
+    raise "stream event declared but the vehicle never connected the stream — " <>
+            "place stream events after the API event that establishes the stream"
+  end
+
+  defp deliver_stream(payload, %State{receiver: receiver, vehicle: vehicle}) do
+    receiver.(payload)
+    :sys.get_state(vehicle)
+    :ok
   end
 
   # Events tagged with :get_vehicle or :get_vehicle_with_state may only be

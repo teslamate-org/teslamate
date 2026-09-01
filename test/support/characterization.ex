@@ -33,7 +33,9 @@ defmodule TeslaMate.Characterization do
         "events": [
           {"vehicle": {<raw Tesla API JSON, decoded by TeslaApi.Vehicle.result/1>}},
           {"snapshot": true, "vehicle": {...}},
-          {"error": "vehicle_unavailable"}
+          {"error": "vehicle_unavailable"},
+          {"stream": "<data:update wire CSV value, decoded by TeslaApi.Stream.decode_frame!/1>"},
+          {"stream_control": "inactive"}
         ]
       }
 
@@ -41,6 +43,25 @@ defmodule TeslaMate.Characterization do
   subsequent data fetch (`get_vehicle_with_state`) with the same payload,
   mirroring how one observed API response covers both endpoints; the pair
   counts as one serve toward the causal barrier.
+
+  A `stream` event is a `data:update` frame in its wire form — the
+  comma-separated value string — decoded by the production decoder
+  (`TeslaApi.Stream.decode_frame!/1`). `stream_control` injects a stream
+  status event; allowed are `"inactive"` and `"vehicle_offline"` — the
+  reconnecting controls (`too_many_disconnects`, `tokens_expired`) are
+  rejected because their vehicle handler calls back into the API
+  synchronously, which would deadlock against the delivery sync below.
+
+  Stream events are delivered at the serve boundary: when the next API
+  fetch arrives, `ApiMock` pushes the pending events through the receiver
+  the vehicle registered when connecting the stream, syncs on the vehicle
+  (`:sys.get_state/1` — the fetch task is parked inside the mock call while
+  the vehicle is free), and only then serves the API event. The
+  interleaving of the events list is deterministic, without a wall-clock
+  wait. A scenario cannot end in a stream event: the terminal must be an
+  API event, because the causal barrier repeats it. `timebase` combined
+  with stream events raises — the time field inside the wire CSV value
+  would stay unshifted (mixed epochs).
 
   `expect_restart: true` declares a scenario that pins a crash-and-restart:
   the vehicle runs `restart: :permanent` for this replay and the harness
@@ -126,6 +147,15 @@ defmodule TeslaMate.Characterization do
       vehicle process is monitored and the replay fails before teardown
       unless it actually went down; a declaration without an `await`
       convergence outcome raises (`replay/2`, `expect_restart?/1`).
+    * Stream deliveries never touch the terminal execution counter: serve
+      indices are assigned to API events only (`index_events/1`), so the
+      causal barrier and the vacuity probe stay anchored to the terminal
+      API event.
+    * Stream misuse raises with named errors: an event before the stream is
+      connected (`ApiMock.deliver_stream/2`), an unsupported control
+      (`stream_control!/1`), a scenario ending in a stream event
+      (`build_events/1`), `timebase` with stream events
+      (`shift_timebase/1`).
     * An awaited outcome that never materialises fails within a real deadline,
       reporting every declared fact with its actual value — it can never
       silently shorten the golden (`wait_outcomes/4`).
@@ -366,10 +396,10 @@ defmodule TeslaMate.Characterization do
     car = create_car(input)
     create_geofences(input)
     events = input |> shift_timebase() |> build_events()
+    {indexed, total} = index_events(events)
     await = Map.get(input, "await", %{})
     expect_restart? = expect_restart?(input)
     collector = self()
-    total = length(events)
     vacuity = :counters.new(1, [])
 
     # The serve boundary is the race-free probe point for vacuity: the vehicle
@@ -397,12 +427,12 @@ defmodule TeslaMate.Characterization do
 
     # The :snapshot tag stays outside the closure: ApiMock recognises it on
     # the event itself and serves probe and data fetch from one execution.
+    # Stream deliveries pass through unwrapped — they carry no serve index.
     wrapped =
-      events
-      |> Enum.with_index(1)
-      |> Enum.map(fn
-        {{:snapshot, result}, index} -> {:snapshot, wrap.(result, index)}
-        {result, index} -> wrap.(result, index)
+      Enum.map(indexed, fn
+        {:stream_delivery, _} = delivery -> delivery
+        {:api, index, {:snapshot, result}} -> {:snapshot, wrap.(result, index)}
+        {:api, index, result} -> wrap.(result, index)
       end)
 
     api = :"characterization_api_#{run_id}"
@@ -412,7 +442,7 @@ defmodule TeslaMate.Characterization do
     vehicle = :"characterization_vehicle_#{run_id}"
 
     children = [
-      {ApiMock, name: api, events: wrapped, pid: collector},
+      {ApiMock, name: api, events: wrapped, pid: collector, vehicle: vehicle},
       {SettingsMock, name: settings, pid: collector},
       {VehiclesMock, name: vehicles, pid: collector},
       {MqttPublisherMock, name: publisher, pid: collector}
@@ -518,11 +548,59 @@ defmodule TeslaMate.Characterization do
       raise ArgumentError, "unknown key #{inspect(key)} in #{context}"
   end
 
-  defp build_events(%{"events" => [_ | _] = events}) do
-    Enum.map(events, fn
-      %{"snapshot" => true, "vehicle" => raw} -> {:snapshot, {:ok, TeslaApi.Vehicle.result(raw)}}
-      %{"vehicle" => raw} -> {:ok, TeslaApi.Vehicle.result(raw)}
-      %{"error" => reason} -> {:error, String.to_existing_atom(reason)}
+  defp build_events(%{"events" => [_ | _] = raw_events}) do
+    events =
+      Enum.map(raw_events, fn
+        %{"snapshot" => true, "vehicle" => raw} ->
+          {:snapshot, {:ok, TeslaApi.Vehicle.result(raw)}}
+
+        %{"vehicle" => raw} ->
+          {:ok, TeslaApi.Vehicle.result(raw)}
+
+        %{"error" => reason} ->
+          {:error, String.to_existing_atom(reason)}
+
+        %{"stream" => value} when is_binary(value) ->
+          {:stream_delivery, TeslaApi.Stream.decode_frame!(value)}
+
+        %{"stream" => other} ->
+          raise ArgumentError,
+                ~s("stream" takes the data:update wire CSV value string, got #{inspect(other)})
+
+        %{"stream_control" => control} ->
+          {:stream_delivery, stream_control!(control)}
+      end)
+
+    if match?({:stream_delivery, _}, List.last(events)) do
+      raise "a scenario cannot end in a stream event — the terminal must be an API event, " <>
+              "because the causal barrier repeats it"
+    end
+
+    events
+  end
+
+  # Only control events whose vehicle handler never calls back into the API
+  # synchronously are allowed: too_many_disconnects and tokens_expired
+  # trigger an immediate synchronous reconnect (a call into deps.api), which
+  # would deadlock against the serve boundary's get_state sync.
+  defp stream_control!("inactive"), do: :inactive
+  defp stream_control!("vehicle_offline"), do: :vehicle_offline
+
+  defp stream_control!(other) do
+    raise ArgumentError,
+          "unsupported stream_control #{inspect(other)} — allowed: \"inactive\", " <>
+            "\"vehicle_offline\"; the reconnecting controls (too_many_disconnects, " <>
+            "tokens_expired) would deadlock against the serve boundary's get_state sync"
+  end
+
+  # Serve indices are assigned to API events only: stream deliveries never
+  # execute a serve closure, so they cannot touch the terminal execution
+  # counter that anchors the causal barrier and the vacuity probe.
+  @doc false
+  def index_events(events) do
+    Enum.map_reduce(events, 0, fn
+      {:stream_delivery, _} = delivery, count -> {delivery, count}
+      result, count -> {{:api, count + 1, result}, count + 1}
     end)
   end
 
@@ -568,6 +646,14 @@ defmodule TeslaMate.Characterization do
   # timestamp raises: a silent no-op would reproduce the exact constraint
   # crash-loop this mechanism exists to avoid, surfaced as an opaque timeout.
   defp shift_timebase(%{"timebase" => "now", "t0" => t0} = input) when is_integer(t0) do
+    if Enum.any?(
+         input["events"],
+         &(Map.has_key?(&1, "stream") or Map.has_key?(&1, "stream_control"))
+       ) do
+      raise "timebase with stream events is not supported yet — the time field inside " <>
+              "the wire CSV value would stay unshifted (mixed epochs)"
+    end
+
     min_ts = input["events"] |> collect_timestamps() |> Enum.min()
 
     unless t0 == min_ts do
