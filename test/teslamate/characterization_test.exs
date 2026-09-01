@@ -102,7 +102,7 @@ defmodule TeslaMate.CharacterizationTest do
         %{"stream" => "1704067210000,0,621.4,60,10,120,52.5,13.4,0,,180,200,300"}
       ])
 
-    assert_raise RuntimeError, ~r/cannot end in a stream event/, fn ->
+    assert_raise RuntimeError, ~r/cannot end in a stream or call event/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "stream_terminal", scenario))
     end
   end
@@ -117,6 +117,48 @@ defmodule TeslaMate.CharacterizationTest do
 
     assert_raise ArgumentError, ~r/would deadlock against the serve boundary/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "stream_control", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a scenario ending in a call event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("call terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"call" => "suspend_logging"}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in a stream or call event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "call_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "an unsupported call raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("call whitelist probe", [
+        %{"call" => "resume_logging"},
+        park_event(1_704_067_200_000)
+      ])
+
+    assert_raise ArgumentError, ~r/unsupported call/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "call_whitelist", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a replay ending in :suspended raises", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("suspended terminal probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        %{"call" => "suspend_logging"},
+        park_event(t0 + 10_000)
+      ])
+
+    assert_raise RuntimeError, ~r/ends in :suspended/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "suspended_terminal", scenario))
     end
   end
 

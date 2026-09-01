@@ -39,7 +39,7 @@ defmodule TeslaMate.CharacterizationHarnessTest do
       events = [
         {:ok, :a},
         {:stream_delivery, :frame1},
-        {:stream_delivery, :frame2},
+        {:call_delivery, :suspend_logging},
         {:snapshot, {:ok, :b}},
         {:ok, :c}
       ]
@@ -49,7 +49,7 @@ defmodule TeslaMate.CharacterizationHarnessTest do
       assert indexed == [
                {:api, 1, {:ok, :a}},
                {:stream_delivery, :frame1},
-               {:stream_delivery, :frame2},
+               {:call_delivery, :suspend_logging},
                {:api, 2, {:snapshot, {:ok, :b}}},
                {:api, 3, {:ok, :c}}
              ]

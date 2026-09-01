@@ -35,7 +35,8 @@ defmodule TeslaMate.Characterization do
           {"snapshot": true, "vehicle": {...}},
           {"error": "vehicle_unavailable"},
           {"stream": "<data:update wire CSV value, decoded by TeslaApi.Stream.decode_frame!/1>"},
-          {"stream_control": "inactive"}
+          {"stream_control": "inactive"},
+          {"call": "suspend_logging"}
         ]
       }
 
@@ -58,10 +59,23 @@ defmodule TeslaMate.Characterization do
   (`:sys.get_state/1` — the fetch task is parked inside the mock call while
   the vehicle is free), and only then serves the API event. The
   interleaving of the events list is deterministic, without a wall-clock
-  wait. A scenario cannot end in a stream event: the terminal must be an
-  API event, because the causal barrier repeats it. `timebase` combined
-  with stream events raises — the time field inside the wire CSV value
-  would stay unshifted (mixed epochs).
+  wait. A scenario cannot end in a stream or call event: the terminal must
+  be an API event, because the causal barrier repeats it. `timebase`
+  combined with stream events raises — the time field inside the wire CSV
+  value would stay unshifted (mixed epochs).
+
+  A `call` event performs a user action on the vehicle; allowed is
+  `"suspend_logging"` — the whitelist grows with the conversion PRs whose
+  scenarios first need an action. The suspend handler fetches vehicle data
+  synchronously while handling the call, so `ApiMock` delivers the call
+  through a proxy task and answers that strict fetch from the event queue:
+  the scenario declares the strict-fetch response as the API event directly
+  after the call, and its serve counts like any other (index, barrier,
+  vacuity). A rejected call, a dying proxy and a call that never completes
+  raise with named errors. A replay must not end in `:suspended` — the
+  state only survives at test speed because the suspend poll interval
+  shrinks to milliseconds, so a golden would freeze a transitional state
+  whose real duration is minutes — and raises after the awaited outcomes.
 
   `expect_restart: true` declares a scenario that pins a crash-and-restart:
   the vehicle runs `restart: :permanent` for this replay and the harness
@@ -153,9 +167,17 @@ defmodule TeslaMate.Characterization do
       API event.
     * Stream misuse raises with named errors: an event before the stream is
       connected (`ApiMock.deliver_stream/2`), an unsupported control
-      (`stream_control!/1`), a scenario ending in a stream event
+      (`stream_control!/1`), a scenario ending in a stream or call event
       (`build_events/1`), `timebase` with stream events
       (`shift_timebase/1`).
+    * Call events count nothing twice: the strict fetch inside the call
+      handler is served through the regular exec path
+      (`ApiMock.await_call_outcome/2`); an unsupported call raises
+      (`call_event!/1`), and a rejected, dying or never-completing call
+      raises instead of hanging (`ApiMock.await_call_outcome/2`).
+    * A replay that ends in `:suspended` raises after the awaited outcomes,
+      and a barrier starved by the suspend poll interval names the state
+      instead of timing out opaquely (`replay/2`, `await_serve/4`).
     * An awaited outcome that never materialises fails within a real deadline,
       reporting every declared fact with its actual value — it can never
       silently shorten the golden (`wait_outcomes/4`).
@@ -430,16 +452,21 @@ defmodule TeslaMate.Characterization do
     # Stream deliveries pass through unwrapped — they carry no serve index.
     wrapped =
       Enum.map(indexed, fn
-        {:stream_delivery, _} = delivery -> delivery
+        {tag, _} = delivery when tag in [:stream_delivery, :call_delivery] -> delivery
         {:api, index, {:snapshot, result}} -> {:snapshot, wrap.(result, index)}
         {:api, index, result} -> wrap.(result, index)
       end)
 
-    api = :"characterization_api_#{run_id}"
-    settings = :"characterization_settings_#{run_id}"
-    vehicles = :"characterization_vehicles_#{run_id}"
-    publisher = :"characterization_publisher_#{run_id}"
-    vehicle = :"characterization_vehicle_#{run_id}"
+    # Registered names are unique per replay, never reused across tests:
+    # identity is structural, so a terminating straggler of a previous test
+    # can never overlap the next one under a valid name.
+    instance = :"#{run_id}_#{System.unique_integer([:positive])}"
+
+    api = :"characterization_api_#{instance}"
+    settings = :"characterization_settings_#{instance}"
+    vehicles = :"characterization_vehicles_#{instance}"
+    publisher = :"characterization_publisher_#{instance}"
+    vehicle = :"characterization_vehicle_#{instance}"
 
     children = [
       {ApiMock, name: api, events: wrapped, pid: collector, vehicle: vehicle},
@@ -449,7 +476,7 @@ defmodule TeslaMate.Characterization do
     ]
 
     for child <- children do
-      {:ok, _} = start_supervised(with_run_id(child, run_id))
+      {:ok, _} = start_supervised(with_run_id(child, instance))
     end
 
     {:ok, subscriber} =
@@ -467,19 +494,19 @@ defmodule TeslaMate.Characterization do
        deps_vehicles: {VehiclesMock, vehicles},
        deps_locations: Locations}
       |> Supervisor.child_spec(
-        id: {Vehicle, run_id},
+        id: {Vehicle, instance},
         restart: if(expect_restart?, do: :permanent, else: :temporary)
       )
 
     {:ok, vehicle_pid} = start_supervised(vehicle_spec)
     crash_monitor = if expect_restart?, do: Process.monitor(vehicle_pid)
 
-    assert_receive {:api_event_served, ^total}, 5_000
+    await_serve(total, vehicle, "initial serve", input["description"])
 
     # Causal barrier, not a wait: the terminal event repeats, so its next
     # serve proves the state machine finished the previous cycle — including
     # every persistence and publishing effect — and started the next one.
-    assert_receive {:api_event_served, ^total}, 5_000
+    await_serve(total, vehicle, "causal barrier", input["description"])
 
     if run_id != :compare and await != %{} do
       assert_receive {:awaits_vacuous?, vacuous?}, 5_000
@@ -491,6 +518,19 @@ defmodule TeslaMate.Characterization do
     end
 
     await_outcomes(await, car, input["description"])
+
+    # A replay must not end in :suspended: the state only exists because the
+    # test env shrinks the suspend poll interval to milliseconds — a golden
+    # captured there would freeze a transitional state whose real duration
+    # is minutes. Resume or sleep the scenario instead.
+    case vehicle_state(vehicle) do
+      {:suspended, _} ->
+        raise "the replay ends in :suspended — resume or sleep the scenario instead " <>
+                "(#{input["description"]})"
+
+      _ ->
+        :ok
+    end
 
     if expect_restart? do
       # Asserted before teardown, so a shutdown DOWN cannot satisfy it.
@@ -569,14 +609,26 @@ defmodule TeslaMate.Characterization do
 
         %{"stream_control" => control} ->
           {:stream_delivery, stream_control!(control)}
+
+        %{"call" => call} ->
+          {:call_delivery, call_event!(call)}
       end)
 
-    if match?({:stream_delivery, _}, List.last(events)) do
-      raise "a scenario cannot end in a stream event — the terminal must be an API event, " <>
-              "because the causal barrier repeats it"
+    if match?({tag, _} when tag in [:stream_delivery, :call_delivery], List.last(events)) do
+      raise "a scenario cannot end in a stream or call event — the terminal must be an API " <>
+              "event, because the causal barrier repeats it"
     end
 
     events
+  end
+
+  # User-action calls are staged like await facts: the whitelist grows with
+  # the conversion PRs whose scenarios first need an action.
+  defp call_event!("suspend_logging"), do: :suspend_logging
+
+  defp call_event!(other) do
+    raise ArgumentError,
+          ~s(unsupported call #{inspect(other)} — allowed: "suspend_logging")
   end
 
   # Only control events whose vehicle handler never calls back into the API
@@ -599,8 +651,11 @@ defmodule TeslaMate.Characterization do
   @doc false
   def index_events(events) do
     Enum.map_reduce(events, 0, fn
-      {:stream_delivery, _} = delivery, count -> {delivery, count}
-      result, count -> {{:api, count + 1, result}, count + 1}
+      {tag, _} = delivery, count when tag in [:stream_delivery, :call_delivery] ->
+        {delivery, count}
+
+      result, count ->
+        {{:api, count + 1, result}, count + 1}
     end)
   end
 
@@ -702,6 +757,33 @@ defmodule TeslaMate.Characterization do
   ## Awaited outcomes
 
   @await_deadline_ms 10_000
+
+  defp await_serve(total, vehicle, phase, description) do
+    receive do
+      {:api_event_served, ^total} -> :ok
+    after
+      5_000 ->
+        case vehicle_state(vehicle) do
+          {:suspended, _} ->
+            raise "the replay is stuck in :suspended (#{phase}) — the suspend poll " <>
+                    "interval starves the terminal; resume or sleep the scenario " <>
+                    "(#{description})"
+
+          other ->
+            flunk(
+              "the terminal event was not served (#{phase}; vehicle state: " <>
+                "#{inspect(other)}) — #{description}"
+            )
+        end
+    end
+  end
+
+  defp vehicle_state(vehicle) do
+    {state, _data} = :sys.get_state(vehicle)
+    state
+  catch
+    :exit, _ -> :no_longer_running
+  end
 
   defp await_outcomes(await, _car, _name) when await == %{}, do: :ok
 
