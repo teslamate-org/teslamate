@@ -1187,7 +1187,7 @@
         "label": "Period",
         "name": "period",
         "options": [],
-        "query": "day,week,month,year",
+        "query": "day,week,month,year,decade",
         "type": "custom",
         "valuesFormat": "csv"
       },
