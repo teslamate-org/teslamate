@@ -121,6 +121,36 @@ defmodule TeslaMate.CharacterizationTest do
   end
 
   @tag :tmp_dir
+  test "a scenario ending in an error event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("error terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"error" => "vehicle_unavailable"}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in an error event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "error_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a terminal reached through a two-call cycle raises", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("two-call terminal probe", [
+        park_event(t0),
+        %{"error" => "vehicle_unavailable"},
+        park_event(t0 + 10_000)
+      ])
+      |> put_in(["settings", "use_streaming_api"], false)
+
+    assert_raise RuntimeError, ~r/reached through a two-call cycle/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "two_call_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
   test "a scenario ending in a call event raises", %{tmp_dir: tmp} do
     scenario =
       base_scenario("call terminal probe", [

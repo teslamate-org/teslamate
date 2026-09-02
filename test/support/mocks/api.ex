@@ -175,7 +175,10 @@ defmodule ApiMock do
     exec(event, action)
   end
 
-  defp exec(event, _action) when is_function(event), do: event.()
+  # Characterization serve closures take the API action so the harness can
+  # tell one fetch cycle (probe + strict fetch) from two.
+  defp exec(event, action) when is_function(event, 1), do: event.(action)
+  defp exec(event, _action) when is_function(event, 0), do: event.()
   defp exec(event, _action), do: event
 
   defp snapshot?({:snapshot, _event}), do: true

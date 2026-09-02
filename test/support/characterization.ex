@@ -60,7 +60,11 @@ defmodule TeslaMate.Characterization do
   the vehicle is free), and only then serves the API event. The
   interleaving of the events list is deterministic, without a wall-clock
   wait. A scenario cannot end in a stream or call event: the terminal must
-  be an API event, because the causal barrier repeats it. `timebase`
+  be an API event, because the causal barrier repeats it — and not in an
+  error event either, whose unavailable counter keeps running under
+  repeats. The barrier also refuses a terminal reached through the probe
+  and strict fetch of a single cycle: both serves would come from one
+  fetch and prove nothing. `timebase`
   combined with stream events raises — the time field inside the wire CSV
   value would stay unshifted (mixed epochs).
 
@@ -175,6 +179,14 @@ defmodule TeslaMate.Characterization do
       (`ApiMock.await_call_outcome/2`); an unsupported call raises
       (`call_event!/1`), and a rejected, dying or never-completing call
       raises instead of hanging (`ApiMock.await_call_outcome/2`).
+    * The barrier proves two processed fetch cycles: a terminal whose two
+      serves are a probe followed by a strict fetch raises
+      (`two_call_cycle?/2`, `replay/2`). The pair is treated as one cycle;
+      the reachable error-fallback probe is the one two-fetch shape this
+      over-approximates — its result is discarded as incomplete, so the
+      terminal is equally unprocessed at capture, it fails loudly, and the
+      remedy is the same settling event. A scenario cannot end in an error
+      event, which is never repeat-neutral (`build_events/1`).
     * A replay that ends in `:suspended` raises after the awaited outcomes,
       and a barrier starved by the suspend poll interval names the state
       instead of timing out opaquely (`replay/2`, `await_serve/4`).
@@ -202,9 +214,6 @@ defmodule TeslaMate.Characterization do
     * Cross-topic MQTT publish order is concurrent by design
       (`Task.async_stream(ordered: false)`); goldens hold per-topic ordered
       sequences with consecutive duplicates collapsed.
-    * The end-of-replay barrier counts API serves, not fetch cycles; states
-      whose handling makes two API calls per cycle are not expressible as
-      terminals yet.
     * With an active stream the vehicle's suspend settings are hardcoded to
       {3, 10} minutes and scenario suspend guards are dead: streaming
       scenarios must end asleep, and a loaded runner can still turn the two
@@ -432,8 +441,8 @@ defmodule TeslaMate.Characterization do
     # collector — never in the closure, a raise in handle_call would tear
     # down the vehicle's fetch task.
     wrap = fn result, index ->
-      fn ->
-        send(collector, {:api_event_served, index})
+      fn action ->
+        send(collector, {:api_event_served, index, action})
 
         if index == total do
           :counters.add(vacuity, 1, 1)
@@ -501,12 +510,18 @@ defmodule TeslaMate.Characterization do
     {:ok, vehicle_pid} = start_supervised(vehicle_spec)
     crash_monitor = if expect_restart?, do: Process.monitor(vehicle_pid)
 
-    await_serve(total, vehicle, "initial serve", input["description"])
+    first = await_serve(total, vehicle, "initial serve", input["description"])
 
     # Causal barrier, not a wait: the terminal event repeats, so its next
     # serve proves the state machine finished the previous cycle — including
     # every persistence and publishing effect — and started the next one.
-    await_serve(total, vehicle, "causal barrier", input["description"])
+    second = await_serve(total, vehicle, "causal barrier", input["description"])
+
+    if two_call_cycle?(first, second) do
+      raise "the terminal event was reached through a two-call cycle — both barrier " <>
+              "serves came from the probe and strict fetch of one fetch, which proves " <>
+              "nothing; add a settling API event (#{input["description"]})"
+    end
 
     if run_id != :compare and await != %{} do
       assert_receive {:awaits_vacuous?, vacuous?}, 5_000
@@ -614,13 +629,32 @@ defmodule TeslaMate.Characterization do
           {:call_delivery, call_event!(call)}
       end)
 
-    if match?({tag, _} when tag in [:stream_delivery, :call_delivery], List.last(events)) do
-      raise "a scenario cannot end in a stream or call event — the terminal must be an API " <>
-              "event, because the causal barrier repeats it"
-    end
+    case List.last(events) do
+      {tag, _} when tag in [:stream_delivery, :call_delivery] ->
+        raise "a scenario cannot end in a stream or call event — the terminal must be an " <>
+                "API event, because the causal barrier repeats it"
 
-    events
+      {:error, _} ->
+        raise "a scenario cannot end in an error event — the unavailable counter keeps " <>
+                "running under repeats, so an error terminal is never repeat-neutral"
+
+      _ ->
+        events
+    end
   end
+
+  # A probe followed by a strict fetch is treated as one fetch cycle. In the
+  # unreachable-assumption fetch it is one; in the reachable path the probe
+  # can be the vehicle_unavailable fallback ending cycle N and the strict
+  # fetch cycle N+1 — two fetches, but the fallback's result is discarded as
+  # incomplete, so the terminal is equally unprocessed at capture and the
+  # remedy is the same settling event. Every other pair spans two processed
+  # cycles (a snapshot executes once per cycle, a strict fetch that got
+  # asleep or offline is followed by the next cycle's probe, a call's strict
+  # fetch by the next poll).
+  @doc false
+  def two_call_cycle?(:get_vehicle, :get_vehicle_with_state), do: true
+  def two_call_cycle?(_first, _second), do: false
 
   # User-action calls are staged like await facts: the whitelist grows with
   # the conversion PRs whose scenarios first need an action.
@@ -760,7 +794,7 @@ defmodule TeslaMate.Characterization do
 
   defp await_serve(total, vehicle, phase, description) do
     receive do
-      {:api_event_served, ^total} -> :ok
+      {:api_event_served, ^total, action} -> action
     after
       5_000 ->
         case vehicle_state(vehicle) do
@@ -797,7 +831,7 @@ defmodule TeslaMate.Characterization do
       outcomes_met?(await, car) ->
         # Termination barrier: the outcome cycle's own effects (its commit
         # precedes its broadcast) are proven complete by one further serve.
-        assert_receive {:api_event_served, _}, 5_000
+        assert_receive {:api_event_served, _, _}, 5_000
         :ok
 
       System.monotonic_time(:millisecond) >= deadline ->
@@ -808,7 +842,7 @@ defmodule TeslaMate.Characterization do
 
       true ->
         receive do
-          {:api_event_served, _} -> wait_outcomes(await, car, name, deadline)
+          {:api_event_served, _, _} -> wait_outcomes(await, car, name, deadline)
         after
           1_000 -> wait_outcomes(await, car, name, deadline)
         end
@@ -910,7 +944,7 @@ defmodule TeslaMate.Characterization do
       {mock, _} when mock in [ApiMock, SettingsMock, VehiclesMock] ->
         flush_notifications()
 
-      {:api_event_served, _} ->
+      {:api_event_served, _, _} ->
         flush_notifications()
 
       {:awaits_vacuous?, _} ->

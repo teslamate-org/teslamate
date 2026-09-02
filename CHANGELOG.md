@@ -10,7 +10,6 @@ Under the hood, this release adds a self-verifying black-box characterization su
 
 - fix(vehicle): cancel an update with the logged update row instead of the API payload, which crashed the vehicle process and left the update open forever (#5664 - @JakobLichterfeld)
 - fix(web): remove stray brace from the direction arrow SVG path, which made Safari log a parse error on every position update (#5665 - @JakobLichterfeld)
-- fix(test): move the offline-resume scenario off the 15-minute boundary (#5681 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -20,6 +19,8 @@ Under the hood, this release adds a self-verifying black-box characterization su
 - test(characterization): convert updating scenarios to characterization fixtures. Pins the update-cancel crash (#5656) that mock-based tests could not see (#5658 - @JakobLichterfeld)
 - test(characterization): convert streaming scenarios to characterization fixtures (#5668 - @JakobLichterfeld)
 - fix(test): give the error_event selftest a settled terminal cycle (#5670 - @JakobLichterfeld)
+- fix(test): move the offline-resume scenario off the 15-minute boundary (#5681 - @JakobLichterfeld)
+- test(characterization): enforce the two-call-terminal limit (#5683 - @JakobLichterfeld)
 
 #### Dashboards
 

@@ -56,6 +56,15 @@ defmodule TeslaMate.CharacterizationHarnessTest do
     end
   end
 
+  describe "two_call_cycle?/2" do
+    test "only probe followed by strict fetch is one cycle" do
+      assert Characterization.two_call_cycle?(:get_vehicle, :get_vehicle_with_state)
+      refute Characterization.two_call_cycle?(:get_vehicle_with_state, :get_vehicle)
+      refute Characterization.two_call_cycle?(:get_vehicle_with_state, :get_vehicle_with_state)
+      refute Characterization.two_call_cycle?(:get_vehicle, :get_vehicle)
+    end
+  end
+
   describe "expect_restart?/1" do
     test "true declares it, absence does not" do
       assert Characterization.expect_restart?(%{
