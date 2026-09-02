@@ -686,8 +686,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     summary = %Summary{healthy: true, display_name: "Foo", model: "3", state: :online}
     send(pid, summary)
 
-    assert_receive {MqttPublisherMock,
-                    {:publish, ^legacy_topic, _migration_payload, [retain: true, qos: 1]}}
+    assert_receive {MqttPublisherMock, {:publish, ^legacy_topic, "", [retain: true, qos: 1]}}
 
     refute_receive {MqttPublisherMock,
                     {:publish, "homeassistant/device/teslamate_0/config", _, _}}

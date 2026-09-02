@@ -45,11 +45,16 @@ broker do not collide on the same discovery topics. The device is grouped
 under the `teslamate_car_<car_id>` identifier (likewise namespace-scoped), and
 the entity IDs match those produced by the manual `mqtt_sensors.yaml` below.
 
-When upgrading from TeslaMate's former per-entity discovery format, TeslaMate
-uses Home Assistant's discovery migration protocol to preserve entity registry
-settings and customizations. It marks the former single-component topics for
-migration, publishes the device discovery payload, and then clears the old
-retained topics.
+On the first vehicle summary after each startup, TeslaMate clears every retained
+topic from its former per-entity discovery format, waits for Home Assistant to
+process the removals, and then publishes one complete device discovery payload.
+Repeating this sequence is safe for installations already using device
+discovery: the legacy topics are absent and the retained device payload is
+unchanged.
+
+This cleanup does not use Home Assistant's discovery migration protocol. As a
+result, entity registry settings and customizations from the former per-entity
+format are not preserved when upgrading directly from TeslaMate 4.1.x.
 
 :::note
 

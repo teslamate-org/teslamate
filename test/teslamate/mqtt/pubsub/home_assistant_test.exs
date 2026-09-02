@@ -6,7 +6,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
   alias TeslaMate.Log.Car
 
   @migration_delay 10
-  @migration_payload Jason.encode!(%{migrate_discovery: true})
 
   defp migration_opts(opts), do: Keyword.put(opts, :migration_delay, @migration_delay)
 
@@ -31,8 +30,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     car: %Car{id: 0, name: "Tesla Model 3", model: "3"}
   }
 
-  test "migrates legacy enabled components before cleanup and disabled components after cleanup",
-       %{test: name} do
+  test "clears every legacy config before publishing one complete device config", %{test: name} do
     publisher_name = start_publisher(name)
 
     opts =
@@ -40,63 +38,40 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
     started_at = System.monotonic_time(:millisecond)
     :ok = HomeAssistant.migrate(@summary, opts, {MqttPublisherMock, publisher_name})
-    assert System.monotonic_time(:millisecond) - started_at >= 2 * @migration_delay
+    assert System.monotonic_time(:millisecond) - started_at >= @migration_delay
 
     messages = receive_configs()
 
-    {migrations, [{topic, migration_payload, publish_opts} | remaining]} =
-      Enum.split_while(messages, fn {topic, _payload, _opts} ->
-        topic != "homeassistant/device/teslamate_0/config"
-      end)
-
-    {cleanup, [{final_topic, final_payload, final_publish_opts}]} =
-      Enum.split_while(remaining, fn {topic, _payload, _opts} ->
-        topic != "homeassistant/device/teslamate_0/config"
-      end)
-
-    assert migrations != []
-
-    assert Enum.all?(
-             migrations,
-             &match?({_topic, @migration_payload, [retain: true, qos: 1]}, &1)
-           )
+    {cleanup, [{topic, payload, publish_opts}]} = Enum.split(messages, -1)
 
     assert topic == "homeassistant/device/teslamate_0/config"
     assert publish_opts == [retain: true, qos: 1]
-    assert final_topic == topic
-    assert final_publish_opts == publish_opts
-
-    migration_topics = Enum.map(migrations, &elem(&1, 0))
     cleanup_topics = Enum.map(cleanup, &elem(&1, 0))
 
-    assert MapSet.subset?(MapSet.new(migration_topics), MapSet.new(cleanup_topics))
+    assert length(cleanup_topics) == 62
+    assert MapSet.size(MapSet.new(cleanup_topics)) == 62
     assert Enum.all?(cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
 
     removed_update_available_topic =
       "homeassistant/binary_sensor/teslamate_0/update_available/config"
 
-    refute removed_update_available_topic in migration_topics
     assert removed_update_available_topic in cleanup_topics
 
     update_available_topic = "homeassistant/sensor/teslamate_0/update_available/config"
-    refute update_available_topic in migration_topics
     refute update_available_topic in cleanup_topics
 
     for position <- ["fl", "fr", "rl", "rr"] do
       removed_topic =
         "homeassistant/sensor/teslamate_0/tpms_pressure_#{position}_psi/config"
 
-      refute removed_topic in migration_topics
       assert removed_topic in cleanup_topics
     end
 
-    migration_decoded = Jason.decode!(migration_payload)
-    decoded = Jason.decode!(final_payload)
+    decoded = Jason.decode!(payload)
 
     components = decoded["components"]
-    assert map_size(components) > length(migrations)
 
-    assert "homeassistant/device_tracker/teslamate_0/location/config" in migration_topics
+    assert "homeassistant/device_tracker/teslamate_0/location/config" in cleanup_topics
 
     for {component_id, legacy_topic} <- [
           {"latitude", "homeassistant/sensor/teslamate_0/latitude/config"},
@@ -110,7 +85,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
            "homeassistant/binary_sensor/teslamate_0/driver_front_door_open/config"}
         ] do
       assert Map.has_key?(components, component_id)
-      refute legacy_topic in migration_topics
       refute legacy_topic in cleanup_topics
     end
 
@@ -118,9 +92,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       for {object_id, %{"enabled_by_default" => false}} <- components, do: object_id
 
     assert disabled_component_ids != []
-
-    assert Map.keys(migration_decoded["components"]) |> Enum.sort() ==
-             Map.keys(components) |> Kernel.--(disabled_component_ids) |> Enum.sort()
+    assert components["display_name"]["enabled_by_default"] == false
 
     for config <- Map.values(components) do
       assert Map.has_key?(config, "platform")
@@ -138,6 +110,25 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert decoded["origin"]["name"] == "TeslaMate"
     assert is_binary(decoded["origin"]["sw_version"])
     assert decoded["origin"]["support_url"] == "https://docs.teslamate.org/"
+  end
+
+  test "repeated migrations publish byte-identical complete device configs", %{test: name} do
+    publisher_name = start_publisher(name)
+    opts = migration_opts(car_id: 0)
+    publisher = {MqttPublisherMock, publisher_name}
+
+    :ok = HomeAssistant.migrate(@summary, opts, publisher)
+    :ok = HomeAssistant.migrate(@summary, opts, publisher)
+
+    [first, second] = receive_configs() |> Enum.chunk_every(63)
+
+    assert {"homeassistant/device/teslamate_0/config", first_payload, [retain: true, qos: 1]} =
+             List.last(first)
+
+    assert {"homeassistant/device/teslamate_0/config", second_payload, [retain: true, qos: 1]} =
+             List.last(second)
+
+    assert first_payload == second_payload
   end
 
   test "publishes a device config without touching legacy topics", %{test: name} do
@@ -372,15 +363,20 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     publisher_name = start_publisher(name)
 
     :ok =
-      HomeAssistant.publish(
+      HomeAssistant.migrate(
         @summary,
-        [car_id: 0, discovery_prefix: "custom_prefix"],
+        migration_opts(car_id: 0, discovery_prefix: "custom_prefix"),
         {MqttPublisherMock, publisher_name}
       )
 
-    assert_receive {MqttPublisherMock,
-                    {:publish, "custom_prefix/device/teslamate_0/config", _payload,
-                     [retain: true, qos: 1]}}
+    messages = receive_configs()
+
+    assert Enum.all?(messages, fn {topic, _payload, _opts} ->
+             String.starts_with?(topic, "custom_prefix/")
+           end)
+
+    assert {"custom_prefix/device/teslamate_0/config", _payload, [retain: true, qos: 1]} =
+             List.last(messages)
   end
 
   test "scopes device topic, unique_id and device by namespace", %{test: name} do
@@ -393,29 +389,23 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
         {MqttPublisherMock, publisher_name}
       )
 
-    assert_receive {MqttPublisherMock,
-                    {:publish, "homeassistant/sensor/teslamate_ns1_0/speed/config",
-                     @migration_payload, [retain: true, qos: 1]}}
+    messages = receive_configs()
+    {cleanup, [{topic, payload, publish_opts}]} = Enum.split(messages, -1)
 
-    {topic, decoded} = receive_device_config()
+    assert {"homeassistant/sensor/teslamate_ns1_0/speed/config", "", publish_opts} in cleanup
     assert topic == "homeassistant/device/teslamate_ns1_0/config"
+    assert publish_opts == [retain: true, qos: 1]
+
+    decoded = Jason.decode!(payload)
 
     speed = decoded["components"]["speed"]
     assert speed["object_id"] == "tesla_speed"
     assert speed["unique_id"] == "teslamate_ns1_0_speed"
     assert speed["state_topic"] == "teslamate/ns1/cars/0/speed"
     assert decoded["device"]["identifiers"] == ["teslamate_ns1_car_0"]
-    refute Map.has_key?(decoded["components"], "display_name")
 
-    {final_topic, final_decoded} = receive_device_config()
-    assert final_topic == topic
-
-    assert final_decoded["components"]["display_name"]["unique_id"] ==
+    assert decoded["components"]["display_name"]["unique_id"] ==
              "teslamate_ns1_0_display_name"
-
-    assert_receive {MqttPublisherMock,
-                    {:publish, "homeassistant/sensor/teslamate_ns1_0/speed/config", "",
-                     [retain: true, qos: 1]}}
   end
 
   test "aligns measurement sensors with the custom integration", %{test: name} do
@@ -1042,7 +1032,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
     assert device_topic == "homeassistant/device/teslamate_0/config"
     assert publish_opts == [retain: true, qos: 1]
-    assert legacy_cleanup != []
+    assert length(legacy_cleanup) == 62
+    assert legacy_cleanup |> Enum.map(&elem(&1, 0)) |> MapSet.new() |> MapSet.size() == 62
     assert Enum.all?(legacy_cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
 
     assert Enum.any?(legacy_cleanup, fn {topic, _, _} ->
@@ -1066,7 +1057,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
            end)
   end
 
-  test "stops before device discovery when a migration marker fails", %{test: name} do
+  test "stops before device discovery when legacy cleanup fails", %{test: name} do
     legacy_topic = "homeassistant/sensor/teslamate_0/display_name/config"
     publisher_name = start_publisher(name, %{legacy_topic => [{:error, :disconnected}]})
 
@@ -1077,10 +1068,11 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
                {MqttPublisherMock, publisher_name}
              )
 
-    assert [{^legacy_topic, @migration_payload, [retain: true, qos: 1]}] = receive_configs()
+    assert [{^legacy_topic, "", [retain: true, qos: 1]}] = receive_configs()
   end
 
-  test "does not clear legacy topics when device discovery publishing fails", %{test: name} do
+  test "clears all legacy topics before returning a device discovery publishing error",
+       %{test: name} do
     device_topic = "homeassistant/device/teslamate_0/config"
     publisher_name = start_publisher(name, %{device_topic => [{:error, :disconnected}]})
 
@@ -1092,58 +1084,13 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
              )
 
     messages = receive_configs()
-    assert {^device_topic, _payload, [retain: true, qos: 1]} = List.last(messages)
+    {cleanup, [{^device_topic, payload, [retain: true, qos: 1]}]} = Enum.split(messages, -1)
 
-    assert messages
-           |> Enum.drop(-1)
-           |> Enum.all?(&match?({_topic, @migration_payload, [retain: true, qos: 1]}, &1))
-  end
+    assert length(cleanup) == 62
+    assert Enum.all?(cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
 
-  test "stops legacy cleanup on the first failure", %{test: name} do
-    legacy_topic = "homeassistant/sensor/teslamate_0/display_name/config"
-
-    publisher_name =
-      start_publisher(name, %{legacy_topic => [:ok, {:error, :disconnected}]})
-
-    assert {:error, :disconnected} =
-             HomeAssistant.migrate(
-               @summary,
-               migration_opts(car_id: 0),
-               {MqttPublisherMock, publisher_name}
-             )
-
-    messages = receive_configs()
-    assert {^legacy_topic, "", [retain: true, qos: 1]} = List.last(messages)
-
-    assert Enum.count(messages, fn {topic, payload, _opts} ->
-             topic == legacy_topic and payload == @migration_payload
-           end) == 1
-
-    assert Enum.count(messages, fn {topic, _payload, _opts} ->
-             topic == "homeassistant/device/teslamate_0/config"
-           end) == 1
-  end
-
-  test "returns an error when the complete device config cannot be published", %{test: name} do
-    device_topic = "homeassistant/device/teslamate_0/config"
-
-    publisher_name =
-      start_publisher(name, %{device_topic => [:ok, {:error, :disconnected}]})
-
-    assert {:error, :disconnected} =
-             HomeAssistant.migrate(
-               @summary,
-               migration_opts(car_id: 0),
-               {MqttPublisherMock, publisher_name}
-             )
-
-    messages = receive_configs()
-    assert {^device_topic, final_payload, [retain: true, qos: 1]} = List.last(messages)
-
-    assert Jason.decode!(final_payload)["components"]["display_name"]["enabled_by_default"] ==
+    assert Jason.decode!(payload)["components"]["display_name"]["enabled_by_default"] ==
              false
-
-    assert Enum.count(messages, fn {topic, _payload, _opts} -> topic == device_topic end) == 2
   end
 
   defp receive_device_config(timeout \\ 200) do
