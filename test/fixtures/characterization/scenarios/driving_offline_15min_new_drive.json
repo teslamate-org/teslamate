@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'logs a drive after a significant offline period while driving' (streaming enabled): 15 minutes offline mid-drive without SOC gain. The first drive is closed by timeout; the frames after the gap start a second drive. Streaming is declared explicitly: with an active stream the vehicle's suspend settings are hardcoded to {3, 10} and this scenario's suspend guards are dead \u2014 the asleep terminal exists because a parked streaming terminal grows positions without bound under repeats.",
+  "description": "Conversion of 'logs a drive after a significant offline period while driving' (streaming enabled): 16 minutes offline mid-drive without SOC gain — one minute past the 15-minute drive timeout rather than exactly on it, so the resume decision does not sit on the >= boundary (#5669). The first drive is closed by timeout; the frames after the gap start a second drive. Streaming is declared explicitly: with an active stream the vehicle's suspend settings are hardcoded to {3, 10} and this scenario's suspend guards are dead — the asleep terminal exists because a parked streaming terminal grows positions without bound under repeats.",
   "await": {
     "state": "asleep",
     "drives_closed": 2
@@ -277,14 +277,14 @@
           "charging_state": "Disconnected",
           "est_battery_range": 170.0,
           "ideal_battery_range": 190.0,
-          "timestamp": 1704068110001,
+          "timestamp": 1704068170001,
           "usable_battery_level": 18
         },
         "climate_state": {
           "inside_temp": 18.0,
           "is_climate_on": true,
           "outside_temp": 12.5,
-          "timestamp": 1704068110001
+          "timestamp": 1704068170001
         },
         "display_name": "blue",
         "drive_state": {
@@ -294,7 +294,7 @@
           "power": 15,
           "shift_state": "D",
           "speed": 20,
-          "timestamp": 1704068110001
+          "timestamp": 1704068170001
         },
         "id": 42,
         "state": "online",
@@ -302,7 +302,7 @@
           "car_type": "model3",
           "exterior_color": "DeepBlue",
           "spoiler_type": "None",
-          "timestamp": 1704068110001,
+          "timestamp": 1704068170001,
           "trim_badging": "74d",
           "wheel_type": "Pinwheel18"
         },
@@ -313,7 +313,7 @@
           "locked": false,
           "odometer": 10000.09,
           "sentry_mode": false,
-          "timestamp": 1704068110001
+          "timestamp": 1704068170001
         },
         "vin": "5YJ3E1EA1KF000001"
       }
@@ -327,14 +327,14 @@
           "charging_state": "Disconnected",
           "est_battery_range": 170.0,
           "ideal_battery_range": 190.0,
-          "timestamp": 1704068111001,
+          "timestamp": 1704068171001,
           "usable_battery_level": 18
         },
         "climate_state": {
           "inside_temp": 18.0,
           "is_climate_on": false,
           "outside_temp": 12.5,
-          "timestamp": 1704068111001
+          "timestamp": 1704068171001
         },
         "display_name": "blue",
         "drive_state": {
@@ -344,7 +344,7 @@
           "power": 0,
           "shift_state": null,
           "speed": null,
-          "timestamp": 1704068111001
+          "timestamp": 1704068171001
         },
         "id": 42,
         "state": "online",
@@ -352,7 +352,7 @@
           "car_type": "model3",
           "exterior_color": "DeepBlue",
           "spoiler_type": "None",
-          "timestamp": 1704068111001,
+          "timestamp": 1704068171001,
           "trim_badging": "74d",
           "wheel_type": "Pinwheel18"
         },
@@ -363,7 +363,7 @@
           "locked": true,
           "odometer": 10000.1,
           "sentry_mode": false,
-          "timestamp": 1704068111001
+          "timestamp": 1704068171001
         },
         "vin": "5YJ3E1EA1KF000001"
       }
