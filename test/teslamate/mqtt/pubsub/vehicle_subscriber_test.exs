@@ -598,7 +598,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
   test "backs off failed discovery publishes and retries the latest metadata", %{test: name} do
     topic = "homeassistant/device/teslamate_0/config"
     error = {:error, :disconnected}
-    responses = %{topic => List.duplicate(error, 7) ++ [:ok, :ok, error]}
+    responses = %{topic => List.duplicate(error, 7) ++ [:ok, error]}
 
     log =
       ExUnit.CaptureLog.capture_log(fn ->
