@@ -2,7 +2,7 @@ defmodule ApiMock do
   use GenServer
 
   defmodule State do
-    defstruct [:pid, :events, :pending_vehicle_data, :receiver, :vehicle]
+    defstruct [:pid, :events, :pending_vehicle_data, :receiver, :vehicle, calls: []]
   end
 
   # API
@@ -16,6 +16,11 @@ defmodule ApiMock do
   def stream(name, vid, receiver), do: GenServer.call(name, {:stream, vid, receiver})
 
   def sign_in(name, tokens), do: GenServer.call(name, {:sign_in, tokens})
+
+  # Replies of delivered user-action calls, in delivery order — the outer
+  # behaviour of the action (what the UI would get back), captured by the
+  # characterization harness.
+  def calls(name), do: GenServer.call(name, :calls)
 
   # Callbacks
 
@@ -87,6 +92,10 @@ defmodule ApiMock do
     end
   end
 
+  def handle_call(:calls, _from, %State{calls: calls} = state) do
+    {:reply, Enum.reverse(calls), state}
+  end
+
   def handle_call({:sign_in, _tokens} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
     {:reply, :ok, state}
@@ -136,23 +145,21 @@ defmodule ApiMock do
 
       {^ref, :ok} ->
         Process.demonitor(ref, [:flush])
+        state = record_call(state, :suspend_logging, :ok)
 
+        # Only a suspend that went through its strict fetch dooms the parked
+        # poll; :ok on an already suspended, asleep or offline vehicle is a
+        # no-op whose caller keeps its task.
         case :sys.get_state(state.vehicle) do
-          {{:suspended, _}, _data} ->
-            unless last do
-              raise "suspend_logging completed without a strict fetch — " <>
-                      "the mock cannot re-serve a payload to the doomed caller"
-            end
-
-            {:suspended, last, state}
-
-          _ ->
-            {:continue, state}
+          {{:suspended, _}, _data} when last != nil -> {:suspended, last, state}
+          _ -> {:continue, state}
         end
 
-      {^ref, {:error, reason}} ->
-        raise "the declared suspend_logging call was rejected: #{inspect(reason)} — " <>
-                "the scenario must be in a state that allows suspending"
+      {^ref, {:error, _reason} = rejection} ->
+        # A rejection is outer behaviour — recorded into the golden's calls
+        # section, not a harness error.
+        Process.demonitor(ref, [:flush])
+        {:continue, record_call(state, :suspend_logging, rejection)}
 
       {:DOWN, ^ref, :process, _pid, reason} ->
         raise "the suspend_logging call proxy died: #{inspect(reason)}"
@@ -161,6 +168,9 @@ defmodule ApiMock do
         raise "the declared suspend_logging call did not complete within 5s"
     end
   end
+
+  defp record_call(%State{calls: calls} = state, call, reply),
+    do: %State{state | calls: [{call, reply} | calls]}
 
   # Events tagged with :get_vehicle or :get_vehicle_with_state may only be
   # consumed by that API call, allowing tests to pin which endpoint was used.

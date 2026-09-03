@@ -1,7 +1,9 @@
 {
   "calls": [
     {
-      "suspend_logging": "ok"
+      "suspend_logging": {
+        "error": "doors_open"
+      }
     }
   ],
   "database": {
@@ -56,38 +58,6 @@
         "est_battery_range_km": "370.95",
         "fan_status": null,
         "id": "position_1",
-        "ideal_battery_range_km": "402.34",
-        "inside_temp": "18.0",
-        "is_climate_on": false,
-        "is_front_defroster_on": null,
-        "is_rear_defroster_on": null,
-        "latitude": "52.514521",
-        "longitude": "13.350144",
-        "odometer": 16093.44,
-        "outside_temp": "12.5",
-        "passenger_temp_setting": null,
-        "power": 0,
-        "rated_battery_range_km": "386.24",
-        "speed": null,
-        "tpms_pressure_fl": null,
-        "tpms_pressure_fr": null,
-        "tpms_pressure_rl": null,
-        "tpms_pressure_rr": null,
-        "usable_battery_level": 59
-      },
-      {
-        "battery_heater": null,
-        "battery_heater_no_power": null,
-        "battery_heater_on": null,
-        "battery_level": 60,
-        "car_id": "$car",
-        "date": "2024-01-01T00:00:10.000000",
-        "drive_id": null,
-        "driver_temp_setting": null,
-        "elevation": null,
-        "est_battery_range_km": "370.95",
-        "fan_status": null,
-        "id": "position_2",
         "ideal_battery_range_km": "402.34",
         "inside_temp": "18.0",
         "is_climate_on": false,
@@ -257,9 +227,9 @@
     "teslamate/cars/$car/scheduled_charging_start_time": [""],
     "teslamate/cars/$car/sentry_mode": ["false"],
     "teslamate/cars/$car/shift_state": [""],
-    "teslamate/cars/$car/since": ["<volatile>", "<volatile>", "<volatile>"],
+    "teslamate/cars/$car/since": ["<volatile>", "<volatile>"],
     "teslamate/cars/$car/spoiler_type": ["None"],
-    "teslamate/cars/$car/state": ["online", "suspended", "asleep"],
+    "teslamate/cars/$car/state": ["online", "asleep"],
     "teslamate/cars/$car/time_to_full_charge": [""],
     "teslamate/cars/$car/trim_badging": ["74D"],
     "teslamate/cars/$car/usable_battery_level": ["59"],

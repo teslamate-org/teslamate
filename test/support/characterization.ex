@@ -75,8 +75,13 @@ defmodule TeslaMate.Characterization do
   through a proxy task and answers that strict fetch from the event queue:
   the scenario declares the strict-fetch response as the API event directly
   after the call, and its serve counts like any other (index, barrier,
-  vacuity). A rejected call, a dying proxy and a call that never completes
-  raise with named errors. A replay must not end in `:suspended` — the
+  vacuity). The reply of every delivered call is outer behaviour — what the
+  UI would get back — and is captured in the golden's `calls` section in
+  delivery order (`{"suspend_logging": "ok"}` or
+  `{"suspend_logging": {"error": "user_present"}}`); a rejection is pinned,
+  never a harness error. The section exists only when the scenario declares
+  call events. A dying proxy and a call that never completes raise with
+  named errors. A replay must not end in `:suspended` — the
   state only survives at test speed because the suspend poll interval
   shrinks to milliseconds, so a golden would freeze a transitional state
   whose real duration is minutes — and raises after the awaited outcomes.
@@ -177,8 +182,10 @@ defmodule TeslaMate.Characterization do
     * Call events count nothing twice: the strict fetch inside the call
       handler is served through the regular exec path
       (`ApiMock.await_call_outcome/2`); an unsupported call raises
-      (`call_event!/1`), and a rejected, dying or never-completing call
-      raises instead of hanging (`ApiMock.await_call_outcome/2`).
+      (`call_event!/1`); every reply — acceptance or rejection — is
+      captured in the golden's `calls` section (`ApiMock.calls/1`,
+      `replay/2`), while a dying or never-completing call raises instead
+      of hanging (`ApiMock.await_call_outcome/3`).
     * The barrier proves two processed fetch cycles: a terminal whose two
       serves are a probe followed by a strict fetch raises
       (`two_call_cycle?/2`, `replay/2`). The pair is treated as one cycle;
@@ -562,8 +569,22 @@ defmodule TeslaMate.Characterization do
     mqtt = drain_mqtt(%{}, car)
     flush_notifications()
 
-    %{"database" => dump_db(car), "mqtt" => mqtt}
+    capture = %{"database" => dump_db(car), "mqtt" => mqtt}
+
+    # The calls section exists only for scenarios that declare call events:
+    # the diff unions the keys of both sides, so an always-present section
+    # would break every golden recorded without one.
+    if Enum.any?(events, &match?({:call_delivery, _}, &1)) do
+      Map.put(capture, "calls", Enum.map(ApiMock.calls(api), &canonical_call/1))
+    else
+      capture
+    end
   end
+
+  defp canonical_call({call, :ok}), do: %{Atom.to_string(call) => "ok"}
+
+  defp canonical_call({call, {:error, reason}}),
+    do: %{Atom.to_string(call) => %{"error" => Atom.to_string(reason)}}
 
   defp with_run_id({module, _opts} = child, run_id) do
     Supervisor.child_spec(child, id: {module, run_id})

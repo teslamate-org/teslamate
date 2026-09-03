@@ -151,6 +151,31 @@ defmodule TeslaMate.CharacterizationTest do
   end
 
   @tag :tmp_dir
+  test "a rejected call is recorded into the golden, not raised", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    strict =
+      update_in(park_event(t0 + 10_000), ["vehicle", "vehicle_state"], fn vs ->
+        Map.put(vs, "is_user_present", true)
+      end)
+
+    scenario =
+      base_scenario("rejected call probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        %{"call" => "suspend_logging"},
+        strict,
+        %{"vehicle" => %{"state" => "asleep"}}
+      ])
+      |> Map.put("await", %{"state" => "asleep"})
+
+    pair = tmp_pair(tmp, "rejected_call", scenario)
+    Characterization.record_pair(pair)
+
+    golden = pair.golden_path |> File.read!() |> Jason.decode!()
+    assert golden["calls"] == [%{"suspend_logging" => %{"error" => "user_present"}}]
+  end
+
+  @tag :tmp_dir
   test "a scenario ending in a call event raises", %{tmp_dir: tmp} do
     scenario =
       base_scenario("call terminal probe", [
