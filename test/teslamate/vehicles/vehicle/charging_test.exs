@@ -278,7 +278,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 0.2}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
     assert_receive {:complete_charging_process, ^cproc}
-    assert_receive {:start_state, ^car, :asleep, []}
+    assert_receive {:start_state, ^car, :asleep, [date: _]}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
     refute_receive _

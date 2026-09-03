@@ -10,7 +10,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :asleep, []}
+    assert_receive {:start_state, _, :asleep, [date: _]}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
     assert :ok = Vehicle.suspend_logging(name)
@@ -23,7 +23,7 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     ]
 
     :ok = start_vehicle(name, events)
-    assert_receive {:start_state, _, :offline, []}
+    assert_receive {:start_state, _, :offline, [date: _]}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
 
     assert :ok = Vehicle.suspend_logging(name)

@@ -470,7 +470,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive :continue?
       send(:"api_#{name}", :continue)
 
-      assert_receive {:start_state, ^car, :asleep, []}
+      assert_receive {:start_state, ^car, :asleep, [date: _]}
       assert_receive {:"$websockex_cast", :disconnect}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
