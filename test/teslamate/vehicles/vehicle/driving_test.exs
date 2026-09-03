@@ -339,7 +339,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
 
       # After drive timeout, vehicle stays offline → state machine must transition to :offline
-      assert_receive {:start_state, ^car, :offline, []}
+      assert_receive {:start_state, ^car, :offline, [date: _]}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
     end
 
@@ -373,7 +373,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
 
       # Regression: state must transition to :offline, not stay stuck in :driving state
-      assert_receive {:start_state, ^car, :offline, []}
+      assert_receive {:start_state, ^car, :offline, [date: _]}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
     end
 
@@ -401,7 +401,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       # Timeout
       assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
-      assert_receive {:start_state, _car, :asleep, []}
+      assert_receive {:start_state, _car, :asleep, [date: _]}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
       refute_receive _

@@ -998,7 +998,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Logger.info("Start / :asleep", car_id: data.car.id)
 
     {:ok, %Log.State{start_date: last_state_change}} =
-      call(data.deps.log, :start_state, [data.car, :asleep, date_opts(vehicle)])
+      call(data.deps.log, :start_state, [data.car, :asleep, date_opts(vehicle, data)])
 
     :ok = disconnect_stream(data)
 
@@ -1011,7 +1011,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     Logger.info("Start / :offline", car_id: data.car.id)
 
     {:ok, %Log.State{start_date: last_state_change}} =
-      call(data.deps.log, :start_state, [data.car, :offline, date_opts(vehicle)])
+      call(data.deps.log, :start_state, [data.car, :offline, date_opts(vehicle, data)])
 
     :ok = disconnect_stream(data)
 
@@ -1038,7 +1038,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         synchronize_updates(vehicle, data)
 
         {:ok, %Log.State{start_date: last_state_change}} =
-          call(data.deps.log, :start_state, [car, :online, date_opts(vehicle)])
+          call(data.deps.log, :start_state, [car, :online, date_opts(vehicle, data)])
 
         {:ok, pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
         geofence = call(data.deps.locations, :find_geofence, [pos])
@@ -2087,9 +2087,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {{:timeout, :store_position}, :timer.minutes(5), :store_position}
   end
 
-  defp date_opts(%Vehicle{drive_state: %Drive{timestamp: nil}}), do: []
-  defp date_opts(%Vehicle{drive_state: %Drive{timestamp: ts}}), do: [date: parse_timestamp(ts)]
-  defp date_opts(%Vehicle{}), do: []
+  # A payload without a timestamp is dated by the vehicle's clock, so every
+  # state row carries the vehicle's view of time rather than Log's fallback.
+  defp date_opts(%Vehicle{drive_state: %Drive{timestamp: ts}}, _data) when is_integer(ts),
+    do: [date: parse_timestamp(ts)]
+
+  defp date_opts(%Vehicle{}, %Data{deps: deps}), do: [date: deps.clock.utc_now()]
 
   defp parse_timestamp(ts), do: DateTime.from_unix!(ts, :millisecond)
 
