@@ -25,6 +25,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 - test(characterization): enforce the two-call-terminal limit (#5683 - @JakobLichterfeld)
 - test(characterization): convert suspend_logging scenarios to characterization fixtures (#5687 - @JakobLichterfeld)
 - test(characterization): run replays on a scenario clock, retire timebase (#5690 - @JakobLichterfeld)
+- test(characterization): pin the stale-timestamp resume crash (#5691 - @JakobLichterfeld)
 
 #### Dashboards
 
