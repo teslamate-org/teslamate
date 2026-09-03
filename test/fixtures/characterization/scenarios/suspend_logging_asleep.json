@@ -1,0 +1,31 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Conversion of 'immediately returns :ok if asleep': the declared suspend_logging call on an asleep vehicle is answered :ok without a strict fetch (pinned in the calls section) and changes nothing; the asleep terminal repeats.",
+  "events": [
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    },
+    {
+      "call": "suspend_logging"
+    },
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}

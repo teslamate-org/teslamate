@@ -2,6 +2,9 @@
   "calls": [
     {
       "suspend_logging": "ok"
+    },
+    {
+      "suspend_logging": "ok"
     }
   ],
   "database": {

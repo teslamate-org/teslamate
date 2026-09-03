@@ -1,7 +1,9 @@
 {
   "calls": [
     {
-      "suspend_logging": "ok"
+      "suspend_logging": {
+        "error": "update_in_progress"
+      }
     }
   ],
   "database": {
@@ -81,7 +83,7 @@
         "battery_heater_on": null,
         "battery_level": 60,
         "car_id": "$car",
-        "date": "2024-01-01T00:00:10.000000",
+        "date": "2024-01-01T00:00:20.000000",
         "drive_id": null,
         "driver_temp_setting": null,
         "elevation": null,
@@ -131,6 +133,13 @@
         "id": "update_1",
         "start_date": "2024-01-01T00:00:00.000000",
         "version": "2026.20.1 abc123"
+      },
+      {
+        "car_id": "$car",
+        "end_date": "2024-01-01T00:00:20.000000",
+        "id": "update_2",
+        "start_date": "2024-01-01T00:00:10.000000",
+        "version": "2019.8.5 3aaa23d"
       }
     ]
   },
@@ -257,13 +266,25 @@
     "teslamate/cars/$car/scheduled_charging_start_time": [""],
     "teslamate/cars/$car/sentry_mode": ["false"],
     "teslamate/cars/$car/shift_state": [""],
-    "teslamate/cars/$car/since": ["<volatile>", "<volatile>", "<volatile>"],
+    "teslamate/cars/$car/since": [
+      "<volatile>",
+      "<volatile>",
+      "<volatile>",
+      "<volatile>"
+    ],
+    "teslamate/cars/$car/software_update": [
+      {
+        "installed_version": "2019.8.5",
+        "latest_version": "2019.8.5"
+      }
+    ],
     "teslamate/cars/$car/spoiler_type": ["None"],
-    "teslamate/cars/$car/state": ["online", "suspended", "asleep"],
+    "teslamate/cars/$car/state": ["online", "updating", "online", "asleep"],
     "teslamate/cars/$car/time_to_full_charge": [""],
     "teslamate/cars/$car/trim_badging": ["74D"],
+    "teslamate/cars/$car/update_available": ["true", "false"],
     "teslamate/cars/$car/usable_battery_level": ["59"],
-    "teslamate/cars/$car/version": ["2026.20.1"],
+    "teslamate/cars/$car/version": ["2026.20.1", "2019.8.4", "2019.8.5"],
     "teslamate/cars/$car/wheel_type": ["Pinwheel18"]
   }
 }

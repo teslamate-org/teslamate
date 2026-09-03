@@ -1,4 +1,9 @@
 {
+  "calls": [
+    {
+      "suspend_logging": "ok"
+    }
+  ],
   "database": {
     "addresses": [
       {

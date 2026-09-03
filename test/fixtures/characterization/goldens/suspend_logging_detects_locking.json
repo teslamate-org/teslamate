@@ -1,6 +1,11 @@
 {
   "calls": [
     {
+      "suspend_logging": {
+        "error": "unlocked"
+      }
+    },
+    {
       "suspend_logging": "ok"
     }
   ],
@@ -12,10 +17,10 @@
         "free_supercharging": false,
         "id": "car_setting_1",
         "lfp_battery": false,
-        "req_not_unlocked": false,
+        "req_not_unlocked": true,
         "suspend_after_idle_min": 100000,
-        "suspend_min": 100000,
-        "use_streaming_api": true
+        "suspend_min": 10,
+        "use_streaming_api": false
       }
     ],
     "cars": [
@@ -81,7 +86,7 @@
         "battery_heater_on": null,
         "battery_level": 60,
         "car_id": "$car",
-        "date": "2024-01-01T00:00:10.000000",
+        "date": "2024-01-01T00:00:20.000000",
         "drive_id": null,
         "driver_temp_setting": null,
         "elevation": null,
