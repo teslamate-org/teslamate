@@ -24,6 +24,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 - fix(test): move the offline-resume scenario off the 15-minute boundary (#5681 - @JakobLichterfeld)
 - test(characterization): enforce the two-call-terminal limit (#5683 - @JakobLichterfeld)
 - test(characterization): convert suspend_logging scenarios to characterization fixtures (#5687 - @JakobLichterfeld)
+- test(characterization): run replays on a scenario clock, retire timebase (#5690 - @JakobLichterfeld)
 
 #### Dashboards
 

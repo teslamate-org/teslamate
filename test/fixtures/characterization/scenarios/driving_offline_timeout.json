@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'times out a drive when being offline for too long' and its underground-parking twin: the vehicle goes offline mid-drive and never returns. The drive is closed by timeout and the state machine transitions to offline.",
+  "description": "Conversion of 'times out a drive when being offline for too long' and its underground-parking twin: the vehicle goes offline mid-drive and never returns. The drive is closed by timeout and the state machine transitions to offline. A clock event moves the replay 16 minutes past the last drive position while the vehicle stays offline, so the drive timeout falls deterministically in the cycle after it and the awaited offline state gates the row.",
   "await": {
     "state": "offline",
     "drives_closed": 1
@@ -162,6 +162,14 @@
         },
         "vin": "5YJ3E1EA1KF000001"
       }
+    },
+    {
+      "vehicle": {
+        "state": "offline"
+      }
+    },
+    {
+      "clock": 1704068170001
     },
     {
       "vehicle": {

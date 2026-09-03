@@ -197,7 +197,7 @@
     "states": [
       {
         "car_id": "$car",
-        "end_date": "<volatile>",
+        "end_date": "2024-01-01T00:16:10.020000",
         "id": "state_1",
         "start_date": "2024-01-01T00:00:10.000000",
         "state": "online"
@@ -206,7 +206,7 @@
         "car_id": "$car",
         "end_date": null,
         "id": "state_2",
-        "start_date": "<volatile>",
+        "start_date": "2024-01-01T00:16:10.020000",
         "state": "offline"
       }
     ],
