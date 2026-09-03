@@ -1,0 +1,181 @@
+{
+  "description": "PINNED BUG #5684: after an offline period, an online payload whose drive_state.timestamp lies before the offline row's date (here five minutes before the last position) cannot close that row — the states.positive_duration check rejects the update, the {:ok, _} match in the vehicle raises and the vehicle process crashes; expect_restart pins the crash. Both resume payloads are snapshot events: in :offline the vehicle probes first, and a plain event would be consumed by that probe without effect — the snapshot serves probe and data fetch from one payload. The stale snapshot is served exactly once and crashes; after the restart the fresh snapshot closes the offline row with t0 + 20 s, opens the online row and inserts one position. The asleep tail is the convergence gate: reached from :online through :start one cycle after the barrier, so the await is not vacuous. The golden pins the offline row closed by the fresh payload (not the stale one), no row from the stale payload, and the single restart position. Whether the API delivers such payloads is open (#5558 clock measurements); the fix follows against this pin in its own commit.",
+  "car": {
+    "eid": 42,
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001",
+    "model": "3",
+    "name": "blue",
+    "efficiency": 0.153
+  },
+  "settings": {
+    "use_streaming_api": false,
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000
+  },
+  "expect_restart": true,
+  "events": [
+    {
+      "vehicle": {
+        "id": 42,
+        "vehicle_id": 1000,
+        "vin": "5YJ3E1EA1KF000001",
+        "state": "online",
+        "display_name": "blue",
+        "charge_state": {
+          "timestamp": 1704067200000,
+          "battery_level": 60,
+          "usable_battery_level": 59,
+          "ideal_battery_range": 250.0,
+          "battery_range": 240.0,
+          "est_battery_range": 230.5,
+          "charging_state": "Disconnected"
+        },
+        "drive_state": {
+          "timestamp": 1704067200000,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "heading": 120,
+          "power": 0,
+          "shift_state": null,
+          "speed": null
+        },
+        "climate_state": {
+          "timestamp": 1704067200000,
+          "outside_temp": 12.5,
+          "inside_temp": 18.0,
+          "is_climate_on": false
+        },
+        "vehicle_state": {
+          "timestamp": 1704067200000,
+          "car_version": "2026.20.1 abc123",
+          "odometer": 10000.0,
+          "locked": true,
+          "sentry_mode": false,
+          "is_user_present": false
+        },
+        "vehicle_config": {
+          "timestamp": 1704067200000,
+          "car_type": "model3",
+          "trim_badging": "74d",
+          "exterior_color": "DeepBlue",
+          "wheel_type": "Pinwheel18",
+          "spoiler_type": "None"
+        }
+      }
+    },
+    {
+      "vehicle": {
+        "state": "offline"
+      }
+    },
+    {
+      "vehicle": {
+        "id": 42,
+        "vehicle_id": 1000,
+        "vin": "5YJ3E1EA1KF000001",
+        "state": "online",
+        "display_name": "blue",
+        "charge_state": {
+          "timestamp": 1704066900000,
+          "battery_level": 60,
+          "usable_battery_level": 59,
+          "ideal_battery_range": 250.0,
+          "battery_range": 240.0,
+          "est_battery_range": 230.5,
+          "charging_state": "Disconnected"
+        },
+        "drive_state": {
+          "timestamp": 1704066900000,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "heading": 120,
+          "power": 0,
+          "shift_state": null,
+          "speed": null
+        },
+        "climate_state": {
+          "timestamp": 1704066900000,
+          "outside_temp": 12.5,
+          "inside_temp": 18.0,
+          "is_climate_on": false
+        },
+        "vehicle_state": {
+          "timestamp": 1704066900000,
+          "car_version": "2026.20.1 abc123",
+          "odometer": 10000.0,
+          "locked": true,
+          "sentry_mode": false,
+          "is_user_present": false
+        },
+        "vehicle_config": {
+          "timestamp": 1704066900000,
+          "car_type": "model3",
+          "trim_badging": "74d",
+          "exterior_color": "DeepBlue",
+          "wheel_type": "Pinwheel18",
+          "spoiler_type": "None"
+        }
+      },
+      "snapshot": true
+    },
+    {
+      "vehicle": {
+        "id": 42,
+        "vehicle_id": 1000,
+        "vin": "5YJ3E1EA1KF000001",
+        "state": "online",
+        "display_name": "blue",
+        "charge_state": {
+          "timestamp": 1704067220000,
+          "battery_level": 60,
+          "usable_battery_level": 59,
+          "ideal_battery_range": 250.0,
+          "battery_range": 240.0,
+          "est_battery_range": 230.5,
+          "charging_state": "Disconnected"
+        },
+        "drive_state": {
+          "timestamp": 1704067220000,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "heading": 120,
+          "power": 0,
+          "shift_state": null,
+          "speed": null
+        },
+        "climate_state": {
+          "timestamp": 1704067220000,
+          "outside_temp": 12.5,
+          "inside_temp": 18.0,
+          "is_climate_on": false
+        },
+        "vehicle_state": {
+          "timestamp": 1704067220000,
+          "car_version": "2026.20.1 abc123",
+          "odometer": 10000.0,
+          "locked": true,
+          "sentry_mode": false,
+          "is_user_present": false
+        },
+        "vehicle_config": {
+          "timestamp": 1704067220000,
+          "car_type": "model3",
+          "trim_badging": "74d",
+          "exterior_color": "DeepBlue",
+          "wheel_type": "Pinwheel18",
+          "spoiler_type": "None"
+        }
+      },
+      "snapshot": true
+    },
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    }
+  ],
+  "await": {
+    "state": "asleep"
+  }
+}
