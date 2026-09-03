@@ -364,7 +364,5 @@
     "suspend_after_idle_min": 100000,
     "suspend_min": 100000,
     "use_streaming_api": false
-  },
-  "t0": 1704067200000,
-  "timebase": "now"
+  }
 }

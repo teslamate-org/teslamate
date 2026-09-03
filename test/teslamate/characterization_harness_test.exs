@@ -40,6 +40,7 @@ defmodule TeslaMate.CharacterizationHarnessTest do
         {:ok, :a},
         {:stream_delivery, :frame1},
         {:call_delivery, :suspend_logging},
+        {:clock_delivery, 1_704_067_500_000},
         {:snapshot, {:ok, :b}},
         {:ok, :c}
       ]
@@ -50,6 +51,7 @@ defmodule TeslaMate.CharacterizationHarnessTest do
                {:api, 1, {:ok, :a}},
                {:stream_delivery, :frame1},
                {:call_delivery, :suspend_logging},
+               {:clock_delivery, 1_704_067_500_000},
                {:api, 2, {:snapshot, {:ok, :b}}},
                {:api, 3, {:ok, :c}}
              ]

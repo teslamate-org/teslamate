@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'logs a drive after a significant offline period while driving' (streaming enabled): 16 minutes offline mid-drive without SOC gain — one minute past the 15-minute drive timeout rather than exactly on it, so the resume decision does not sit on the >= boundary (#5669). The first drive is closed by timeout; the frames after the gap start a second drive. Streaming is declared explicitly: with an active stream the vehicle's suspend settings are hardcoded to {3, 10} and this scenario's suspend guards are dead — the asleep terminal exists because a parked streaming terminal grows positions without bound under repeats.",
+  "description": "Conversion of 'logs a drive after a significant offline period while driving' (streaming enabled): 16 minutes offline mid-drive without SOC gain — one minute past the 15-minute drive timeout rather than exactly on it, so the resume decision does not sit on the >= boundary (#5669). The first drive is closed by timeout; the frames after the gap start a second drive. Streaming is declared explicitly: with an active stream the vehicle's suspend settings are hardcoded to {3, 10} minutes of payload time and this scenario's suspend guards are dead — the asleep terminal keeps the replay repeat-neutral.",
   "await": {
     "state": "asleep",
     "drives_closed": 2
@@ -378,7 +378,5 @@
     "suspend_after_idle_min": 100000,
     "suspend_min": 100000,
     "use_streaming_api": true
-  },
-  "t0": 1704067200000,
-  "timebase": "now"
+  }
 }

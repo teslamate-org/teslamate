@@ -1,5 +1,5 @@
 {
-  "description": "Harness self-test \u2014 machinery evidence, not a behaviour contract. Exercises the relative timebase: every payload timestamp is shifted so t0 lands at replay time; the shifted dates are volatile-masked by the double-run diff.",
+  "description": "Harness self-test — machinery evidence, not a behaviour contract. Exercises the replay clock: a clock event moves scenario time 190 seconds past the last payload and the next parked poll, dated at that time, makes the streaming vehicle's hardcoded three-minute idle window elapse purely in payload time — it suspends, then the asleep terminal resumes the machine. The dates in this golden are values, not masks.",
   "car": {
     "eid": 42,
     "vid": 1000,
@@ -9,12 +9,10 @@
     "efficiency": 0.153
   },
   "settings": {
-    "use_streaming_api": false,
+    "use_streaming_api": true,
     "suspend_after_idle_min": 100000,
     "suspend_min": 100000
   },
-  "timebase": "now",
-  "t0": 1704067200000,
   "events": [
     {
       "vehicle": {
@@ -63,7 +61,8 @@
           "wheel_type": "Pinwheel18",
           "spoiler_type": "None"
         }
-      }
+      },
+      "snapshot": true
     },
     {
       "vehicle": {
@@ -112,6 +111,63 @@
           "wheel_type": "Pinwheel18",
           "spoiler_type": "None"
         }
+      }
+    },
+    {
+      "clock": 1704067400000
+    },
+    {
+      "vehicle": {
+        "id": 42,
+        "vehicle_id": 1000,
+        "vin": "5YJ3E1EA1KF000001",
+        "state": "online",
+        "display_name": "blue",
+        "charge_state": {
+          "timestamp": 1704067400000,
+          "battery_level": 80,
+          "usable_battery_level": 79,
+          "ideal_battery_range": 250.0,
+          "battery_range": 240.0,
+          "est_battery_range": 230.5,
+          "charging_state": "Disconnected"
+        },
+        "drive_state": {
+          "timestamp": 1704067400000,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "heading": 120,
+          "power": 0,
+          "shift_state": null,
+          "speed": null
+        },
+        "climate_state": {
+          "timestamp": 1704067400000,
+          "outside_temp": 12.5,
+          "inside_temp": 18.0,
+          "is_climate_on": false
+        },
+        "vehicle_state": {
+          "timestamp": 1704067400000,
+          "car_version": "2026.20.1 abc123",
+          "odometer": 10000.0,
+          "locked": true,
+          "sentry_mode": false,
+          "is_user_present": false
+        },
+        "vehicle_config": {
+          "timestamp": 1704067400000,
+          "car_type": "model3",
+          "trim_badging": "74d",
+          "exterior_color": "DeepBlue",
+          "wheel_type": "Pinwheel18",
+          "spoiler_type": "None"
+        }
+      }
+    },
+    {
+      "vehicle": {
+        "state": "asleep"
       }
     }
   ]

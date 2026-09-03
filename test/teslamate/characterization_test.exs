@@ -102,7 +102,7 @@ defmodule TeslaMate.CharacterizationTest do
         %{"stream" => "1704067210000,0,621.4,60,10,120,52.5,13.4,0,,180,200,300"}
       ])
 
-    assert_raise RuntimeError, ~r/cannot end in a stream or call event/, fn ->
+    assert_raise RuntimeError, ~r/cannot end in a stream, call or clock event/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "stream_terminal", scenario))
     end
   end
@@ -183,7 +183,7 @@ defmodule TeslaMate.CharacterizationTest do
         %{"call" => "suspend_logging"}
       ])
 
-    assert_raise RuntimeError, ~r/cannot end in a stream or call event/, fn ->
+    assert_raise RuntimeError, ~r/cannot end in a stream, call or clock event/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "call_terminal", scenario))
     end
   end
@@ -218,17 +218,52 @@ defmodule TeslaMate.CharacterizationTest do
   end
 
   @tag :tmp_dir
-  test "timebase with stream events raises", %{tmp_dir: tmp} do
-    scenario =
-      base_scenario("stream timebase probe", [
-        park_event(1_704_067_200_000),
-        %{"stream" => "1704067210000,0,621.4,60,10,120,52.5,13.4,0,,180,200,300"},
-        park_event(1_704_067_220_000)
-      ])
-      |> Map.merge(%{"timebase" => "now", "t0" => 1_704_067_200_000})
+  test "a clock event stepping backwards raises", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
 
-    assert_raise RuntimeError, ~r/timebase with stream events is not supported/, fn ->
-      Characterization.record_pair(tmp_pair(tmp, "stream_timebase", scenario))
+    scenario =
+      base_scenario("backward clock probe", [
+        park_event(t0),
+        %{"clock" => t0 - 1_000},
+        park_event(t0 + 10_000)
+      ])
+
+    assert_raise RuntimeError, ~r/the clock only moves forward/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "backward_clock", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "the clock ticks on a timestamp-less serve, so a state row never collapses",
+       %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("clock tick probe", [
+        park_event(1_704_067_200_000),
+        park_event(1_704_067_210_000),
+        %{"vehicle" => %{"state" => "asleep"}}
+      ])
+      |> put_in(["settings", "use_streaming_api"], false)
+      |> Map.put("await", %{"state" => "asleep"})
+
+    pair = tmp_pair(tmp, "clock_tick", scenario)
+    Characterization.record_pair(pair)
+
+    golden = pair.golden_path |> File.read!() |> Jason.decode!()
+    [online, _asleep] = golden["database"]["states"]
+    assert online["start_date"] != online["end_date"]
+    assert length(golden["mqtt"]["teslamate/cars/$car/since"]) == 2
+  end
+
+  @tag :tmp_dir
+  test "a scenario ending in a clock event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("clock terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"clock" => 1_704_067_500_000}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in a stream, call or clock event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "clock_terminal", scenario))
     end
   end
 

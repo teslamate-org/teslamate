@@ -58,6 +58,15 @@ defmodule ApiMock do
     handle_call({action, id}, from, %State{state | events: events})
   end
 
+  # A clock event advances the replay's clock at the serve boundary, before
+  # the next API event is served — the vehicle reads the new time when it
+  # processes that event.
+  def handle_call({action, id}, from, %State{events: [{:clock_delivery, set} | events]} = state)
+      when action in [:get_vehicle, :get_vehicle_with_state] do
+    :ok = set.()
+    handle_call({action, id}, from, %State{state | events: events})
+  end
+
   # A declared user-action call (e.g. suspend_logging) is delivered at the
   # serve boundary through a proxy task: the vehicle's suspend handler calls
   # back into this mock synchronously (fetch_strict), so a blocking call from

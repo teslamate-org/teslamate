@@ -74,7 +74,7 @@
         "distance": 0.08046699999977136,
         "duration_min": 4,
         "end_address_id": "address_1",
-        "end_date": "<volatile>",
+        "end_date": "2024-01-01T00:04:11.001000",
         "end_geofence_id": null,
         "end_ideal_range_km": "305.78",
         "end_km": 16093.600934,
@@ -87,7 +87,7 @@
         "power_min": 0,
         "speed_max": 48,
         "start_address_id": "address_1",
-        "start_date": "<volatile>",
+        "start_date": "2024-01-01T00:00:10.000000",
         "start_geofence_id": null,
         "start_ideal_range_km": "321.87",
         "start_km": 16093.520467,
@@ -103,7 +103,7 @@
         "battery_heater_on": null,
         "battery_level": 20,
         "car_id": "$car",
-        "date": "<volatile>",
+        "date": "2024-01-01T00:00:00.000000",
         "drive_id": null,
         "driver_temp_setting": null,
         "elevation": null,
@@ -135,7 +135,7 @@
         "battery_heater_on": null,
         "battery_level": 20,
         "car_id": "$car",
-        "date": "<volatile>",
+        "date": "2024-01-01T00:00:10.000000",
         "drive_id": "drive_1",
         "driver_temp_setting": null,
         "elevation": null,
@@ -167,7 +167,7 @@
         "battery_heater_on": null,
         "battery_level": 20,
         "car_id": "$car",
-        "date": "<volatile>",
+        "date": "2024-01-01T00:00:10.001000",
         "drive_id": "drive_1",
         "driver_temp_setting": null,
         "elevation": null,
@@ -199,7 +199,7 @@
         "battery_heater_on": null,
         "battery_level": 19,
         "car_id": "$car",
-        "date": "<volatile>",
+        "date": "2024-01-01T00:04:10.001000",
         "drive_id": "drive_1",
         "driver_temp_setting": null,
         "elevation": null,
@@ -231,7 +231,7 @@
         "battery_heater_on": null,
         "battery_level": 19,
         "car_id": "$car",
-        "date": "<volatile>",
+        "date": "2024-01-01T00:04:11.001000",
         "drive_id": "drive_1",
         "driver_temp_setting": null,
         "elevation": null,
@@ -263,7 +263,7 @@
         "battery_heater_on": null,
         "battery_level": 19,
         "car_id": "$car",
-        "date": "<volatile>",
+        "date": "2024-01-01T00:04:11.001000",
         "drive_id": null,
         "driver_temp_setting": null,
         "elevation": null,
@@ -293,25 +293,25 @@
     "states": [
       {
         "car_id": "$car",
-        "end_date": "<volatile>",
+        "end_date": "2024-01-01T00:04:11.003000",
         "id": "state_1",
-        "start_date": "<volatile>",
+        "start_date": "2024-01-01T00:00:00.000000",
         "state": "online"
       },
       {
         "car_id": "$car",
         "end_date": null,
         "id": "state_2",
-        "start_date": "<volatile>",
+        "start_date": "2024-01-01T00:04:11.003000",
         "state": "asleep"
       }
     ],
     "updates": [
       {
         "car_id": "$car",
-        "end_date": "<volatile>",
+        "end_date": "2024-01-01T00:00:00.000000",
         "id": "update_1",
-        "start_date": "<volatile>",
+        "start_date": "2024-01-01T00:00:00.000000",
         "version": "2026.20.1 abc123"
       }
     ]

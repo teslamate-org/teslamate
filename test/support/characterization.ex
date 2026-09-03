@@ -27,8 +27,6 @@ defmodule TeslaMate.Characterization do
         "settings": {"use_streaming_api": false, "suspend_after_idle_min": 999999},
         "geofences": [{"name": "Home", "latitude": 52.5, "longitude": 13.35, "radius": 100}],
         "await": {"state": "offline", "drives_closed": 1},
-        "timebase": "now",
-        "t0": 1704067200000,
         "expect_restart": true,
         "events": [
           {"vehicle": {<raw Tesla API JSON, decoded by TeslaApi.Vehicle.result/1>}},
@@ -36,7 +34,8 @@ defmodule TeslaMate.Characterization do
           {"error": "vehicle_unavailable"},
           {"stream": "<data:update wire CSV value, decoded by TeslaApi.Stream.decode_frame!/1>"},
           {"stream_control": "inactive"},
-          {"call": "suspend_logging"}
+          {"call": "suspend_logging"},
+          {"clock": 1704067500000}
         ]
       }
 
@@ -64,9 +63,7 @@ defmodule TeslaMate.Characterization do
   error event either, whose unavailable counter keeps running under
   repeats. The barrier also refuses a terminal reached through the probe
   and strict fetch of a single cycle: both serves would come from one
-  fetch and prove nothing. `timebase`
-  combined with stream events raises — the time field inside the wire CSV
-  value would stay unshifted (mixed epochs).
+  fetch and prove nothing.
 
   A `call` event performs a user action on the vehicle; allowed is
   `"suspend_logging"` — the whitelist grows with the conversion PRs whose
@@ -114,10 +111,31 @@ defmodule TeslaMate.Characterization do
   `geofences` (optional) are created in the database before the replay;
   geofence detection runs against the real `TeslaMate.Locations`.
 
-  `timebase: "now"` with `t0` shifts every payload timestamp so that `t0`
-  lands at replay time — needed by scenarios that resume online after a
-  wall-clock-dated offline/asleep state, which a fixed past timebase would
-  crash into the positive_duration check constraint.
+  ## Clock
+
+  The vehicle runs on the replay's clock (`TeslaMate.Characterization.Clock`
+  through `deps_clock`), never on wall-clock time: `utc_now/0` strictly
+  increases with every API serve — by at least one millisecond, or to the
+  payload's `drive_state.timestamp` (the field the vehicle dates rows with)
+  when that lies further ahead — advanced at the serve boundary before the
+  vehicle processes the payload, so the vehicle's view and the clock agree
+  causally. A serve without a payload time (asleep, offline, errors) still
+  ticks: in production time always passes between two fetches, and a state
+  row starting and ending at the same instant would swallow a `since`
+  transition. Stream frames advance the clock to their `time` by `max`, so
+  older payloads and backdated stale frames never move it back. The replay
+  starts at the scenario's smallest payload time.
+  Distance is real (`diff_seconds/2` in seconds: three idle minutes are
+  three minutes of payload time), intervals stay collapsed to milliseconds
+  like the test clock, so polls stay fast.
+
+  A `{"clock": <epoch ms>}` event lets time pass without a payload — a
+  drive timeout during radio silence, an idle suspend. It is delivered at
+  the serve boundary in list order like stream and call events, carries no
+  serve index, may not step backwards and cannot be the terminal. Every
+  time the vehicle derives from its clock is therefore deterministic and
+  pinned as a value; only Log's own timestamps (`inserted_at`,
+  `updated_at`) and the `since` topic stay masked.
 
   ## Recording
 
@@ -177,8 +195,7 @@ defmodule TeslaMate.Characterization do
     * Stream misuse raises with named errors: an event before the stream is
       connected (`ApiMock.deliver_stream/2`), an unsupported control
       (`stream_control!/1`), a scenario ending in a stream or call event
-      (`build_events/1`), `timebase` with stream events
-      (`shift_timebase/1`).
+      (`build_events/1`).
     * Call events count nothing twice: the strict fetch inside the call
       handler is served through the regular exec path
       (`ApiMock.await_call_outcome/2`); an unsupported call raises
@@ -209,10 +226,12 @@ defmodule TeslaMate.Characterization do
       check (`wait_outcomes/4`).
     * `"state"` uses current-state semantics: the open states row must carry
       the declared state, not any historical row (`outcome_met?/2`).
-    * A half-declared timebase (`timebase` without integer `t0`, or `t0`
-      alone) raises, and `t0` must equal the smallest payload timestamp —
-      a typo cannot silently replay against a fixed past timebase
-      (`shift_timebase/1`).
+    * The clock strictly increases with every serve: each API serve moves
+      it by at least one millisecond or to the payload's time
+      (`Clock.serve/1`), a clock event before any time the scenario has
+      already reached raises statically (`check_clock_monotonic!/1`), a
+      scenario cannot end in a clock event (`build_events/1`); the
+      double-run diff proves the clock value at capture is deterministic.
 
   ## Limits — explicitly unenforced
 
@@ -222,9 +241,10 @@ defmodule TeslaMate.Characterization do
       (`Task.async_stream(ordered: false)`); goldens hold per-topic ordered
       sequences with consecutive duplicates collapsed.
     * With an active stream the vehicle's suspend settings are hardcoded to
-      {3, 10} minutes and scenario suspend guards are dead: streaming
-      scenarios must end asleep, and a loaded runner can still turn the two
-      one-shot suspend windows per replay into a repeat-neutrality raise.
+      {3, 10} minutes and scenario suspend guards are dead. On the replay
+      clock that window is payload time, not a wall-clock race: a parked
+      streaming vehicle suspends exactly when its payloads are three minutes
+      apart, and stays online otherwise.
   """
 
   import ExUnit.Assertions
@@ -232,6 +252,7 @@ defmodule TeslaMate.Characterization do
 
   alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
   alias TeslaMate.Vehicles.Vehicle
+  alias TeslaMate.Characterization.Clock
   alias TeslaMate.{Locations, Log, Repo}
 
   @fixtures_dir Path.expand("../fixtures/characterization", __DIR__)
@@ -433,8 +454,9 @@ defmodule TeslaMate.Characterization do
   defp replay(input, run_id) do
     car = create_car(input)
     create_geofences(input)
-    events = input |> shift_timebase() |> build_events()
+    events = build_events(input)
     {indexed, total} = index_events(events)
+    Clock.reset(initial_clock(input))
     await = Map.get(input, "await", %{})
     expect_restart? = expect_restart?(input)
     collector = self()
@@ -449,6 +471,7 @@ defmodule TeslaMate.Characterization do
     # down the vehicle's fetch task.
     wrap = fn result, index ->
       fn action ->
+        Clock.serve(payload_time(result))
         send(collector, {:api_event_served, index, action})
 
         if index == total do
@@ -467,10 +490,22 @@ defmodule TeslaMate.Characterization do
     # the event itself and serves probe and data fetch from one execution.
     # Stream deliveries pass through unwrapped — they carry no serve index.
     wrapped =
-      Enum.map(indexed, fn
-        {tag, _} = delivery when tag in [:stream_delivery, :call_delivery] -> delivery
-        {:api, index, {:snapshot, result}} -> {:snapshot, wrap.(result, index)}
-        {:api, index, result} -> wrap.(result, index)
+      Enum.flat_map(indexed, fn
+        {:clock_delivery, ms} ->
+          [{:clock_delivery, fn -> Clock.set!(ms) end}]
+
+        {:stream_delivery, %TeslaApi.Stream.Data{time: %DateTime{} = time} = frame} ->
+          ms = DateTime.to_unix(time, :millisecond)
+          [{:clock_delivery, fn -> Clock.advance(ms) end}, {:stream_delivery, frame}]
+
+        {tag, _} = delivery when tag in [:stream_delivery, :call_delivery] ->
+          [delivery]
+
+        {:api, index, {:snapshot, result}} ->
+          [{:snapshot, wrap.(result, index)}]
+
+        {:api, index, result} ->
+          [wrap.(result, index)]
       end)
 
     # Registered names are unique per replay, never reused across tests:
@@ -508,7 +543,8 @@ defmodule TeslaMate.Characterization do
        deps_api: {ApiMock, api},
        deps_settings: {SettingsMock, settings},
        deps_vehicles: {VehiclesMock, vehicles},
-       deps_locations: Locations}
+       deps_locations: Locations,
+       deps_clock: Clock}
       |> Supervisor.child_spec(
         id: {Vehicle, instance},
         restart: if(expect_restart?, do: :permanent, else: :temporary)
@@ -648,12 +684,20 @@ defmodule TeslaMate.Characterization do
 
         %{"call" => call} ->
           {:call_delivery, call_event!(call)}
+
+        %{"clock" => ms} when is_integer(ms) ->
+          {:clock_delivery, ms}
+
+        %{"clock" => other} ->
+          raise ArgumentError, ~s("clock" takes an epoch in milliseconds, got #{inspect(other)})
       end)
 
+    check_clock_monotonic!(events)
+
     case List.last(events) do
-      {tag, _} when tag in [:stream_delivery, :call_delivery] ->
-        raise "a scenario cannot end in a stream or call event — the terminal must be an " <>
-                "API event, because the causal barrier repeats it"
+      {tag, _} when tag in [:stream_delivery, :call_delivery, :clock_delivery] ->
+        raise "a scenario cannot end in a stream, call or clock event — the terminal must " <>
+                "be an API event, because the causal barrier repeats it"
 
       {:error, _} ->
         raise "a scenario cannot end in an error event — the unavailable counter keeps " <>
@@ -676,6 +720,39 @@ defmodule TeslaMate.Characterization do
   @doc false
   def two_call_cycle?(:get_vehicle, :get_vehicle_with_state), do: true
   def two_call_cycle?(_first, _second), do: false
+
+  # A clock event may not lie before any time the replay has already seen
+  # in list order — payload times or earlier clock events. Checked here,
+  # statically, because a raise inside the mock's serve would tear down the
+  # vehicle's fetch task and surface as an opaque barrier timeout.
+  defp check_clock_monotonic!(events) do
+    Enum.reduce(events, nil, fn
+      {:clock_delivery, ms}, latest when is_integer(latest) and ms < latest ->
+        raise "clock event #{ms} lies before the replay's time #{latest} at that point of " <>
+                "the scenario — the clock only moves forward"
+
+      {:clock_delivery, ms}, _latest ->
+        ms
+
+      {:stream_delivery, %TeslaApi.Stream.Data{time: %DateTime{} = time}}, latest ->
+        max_time(latest, DateTime.to_unix(time, :millisecond))
+
+      {:ok, %TeslaApi.Vehicle{drive_state: %{timestamp: ts}}}, latest when is_integer(ts) ->
+        max_time(latest, ts)
+
+      {:snapshot, {:ok, %TeslaApi.Vehicle{drive_state: %{timestamp: ts}}}}, latest
+      when is_integer(ts) ->
+        max_time(latest, ts)
+
+      _event, latest ->
+        latest
+    end)
+
+    :ok
+  end
+
+  defp max_time(nil, ms), do: ms
+  defp max_time(latest, ms), do: max(latest, ms)
 
   # User-action calls are staged like await facts: the whitelist grows with
   # the conversion PRs whose scenarios first need an action.
@@ -706,7 +783,8 @@ defmodule TeslaMate.Characterization do
   @doc false
   def index_events(events) do
     Enum.map_reduce(events, 0, fn
-      {tag, _} = delivery, count when tag in [:stream_delivery, :call_delivery] ->
+      {tag, _} = delivery, count
+      when tag in [:stream_delivery, :call_delivery, :clock_delivery] ->
         {delivery, count}
 
       result, count ->
@@ -751,39 +829,20 @@ defmodule TeslaMate.Characterization do
     end
   end
 
-  # With "timebase": "now" every payload timestamp is shifted so that "t0"
-  # lands at replay time. A half declaration or a t0 that is not the smallest
-  # timestamp raises: a silent no-op would reproduce the exact constraint
-  # crash-loop this mechanism exists to avoid, surfaced as an opaque timeout.
-  defp shift_timebase(%{"timebase" => "now", "t0" => t0} = input) when is_integer(t0) do
-    if Enum.any?(
-         input["events"],
-         &(Map.has_key?(&1, "stream") or Map.has_key?(&1, "stream_control"))
-       ) do
-      raise "timebase with stream events is not supported yet — the time field inside " <>
-              "the wire CSV value would stay unshifted (mixed epochs)"
+  # The replay starts at the scenario's smallest payload time; a scenario
+  # without any payload timestamp (asleep/offline only) starts at the epoch.
+  defp initial_clock(input) do
+    case collect_timestamps(input["events"]) do
+      [] -> Clock.epoch()
+      timestamps -> Enum.min(timestamps)
     end
-
-    min_ts = input["events"] |> collect_timestamps() |> Enum.min()
-
-    unless t0 == min_ts do
-      raise "timebase t0 #{t0} must equal the smallest payload timestamp #{min_ts}"
-    end
-
-    shift = System.os_time(:millisecond) - t0
-    Map.update!(input, "events", &shift_timestamps(&1, shift))
   end
 
-  defp shift_timebase(%{"timebase" => timebase}) do
-    raise "half-declared timebase: timebase #{inspect(timebase)} requires an integer t0 " <>
-            "equal to the smallest payload timestamp"
-  end
+  # The field the vehicle dates rows with; nil for payloads without one.
+  defp payload_time({:ok, %TeslaApi.Vehicle{drive_state: %{timestamp: ts}}}) when is_integer(ts),
+    do: ts
 
-  defp shift_timebase(%{"t0" => _}) do
-    raise "half-declared timebase: t0 without \"timebase\": \"now\""
-  end
-
-  defp shift_timebase(input), do: input
+  defp payload_time(_result), do: nil
 
   defp collect_timestamps(%{} = map) do
     Enum.flat_map(map, fn
@@ -796,18 +855,6 @@ defmodule TeslaMate.Characterization do
     do: Enum.flat_map(list, &collect_timestamps/1)
 
   defp collect_timestamps(_value), do: []
-
-  defp shift_timestamps(%{} = map, shift) do
-    Map.new(map, fn
-      {"timestamp", ts} when is_integer(ts) -> {"timestamp", ts + shift}
-      {key, value} -> {key, shift_timestamps(value, shift)}
-    end)
-  end
-
-  defp shift_timestamps(list, shift) when is_list(list),
-    do: Enum.map(list, &shift_timestamps(&1, shift))
-
-  defp shift_timestamps(value, _shift), do: value
 
   ## Awaited outcomes
 
