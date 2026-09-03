@@ -21,6 +21,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 - fix(test): give the error_event selftest a settled terminal cycle (#5670 - @JakobLichterfeld)
 - fix(test): move the offline-resume scenario off the 15-minute boundary (#5681 - @JakobLichterfeld)
 - test(characterization): enforce the two-call-terminal limit (#5683 - @JakobLichterfeld)
+- test(characterization): convert suspend_logging scenarios to characterization fixtures (#5687 - @JakobLichterfeld)
 
 #### Dashboards
 
