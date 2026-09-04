@@ -44,7 +44,7 @@
         "battery_heater_on": null,
         "battery_level": 60,
         "car_id": "$car",
-        "date": "2024-01-01T00:00:20.000000",
+        "date": "2023-12-31T23:55:00.000000",
         "drive_id": null,
         "driver_temp_setting": null,
         "elevation": null,
@@ -74,7 +74,7 @@
     "states": [
       {
         "car_id": "$car",
-        "end_date": "2024-01-01T00:00:20.000000",
+        "end_date": "2024-01-01T00:00:00.002000",
         "id": "state_1",
         "start_date": "2024-01-01T00:00:00.001000",
         "state": "offline"
@@ -83,7 +83,7 @@
         "car_id": "$car",
         "end_date": "2024-01-01T00:00:20.002000",
         "id": "state_2",
-        "start_date": "2024-01-01T00:00:20.000000",
+        "start_date": "2024-01-01T00:00:00.002000",
         "state": "online"
       },
       {
@@ -97,9 +97,9 @@
     "updates": [
       {
         "car_id": "$car",
-        "end_date": "2024-01-01T00:00:20.000000",
+        "end_date": "2023-12-31T23:55:00.000000",
         "id": "update_1",
-        "start_date": "2024-01-01T00:00:20.000000",
+        "start_date": "2023-12-31T23:55:00.000000",
         "version": "2026.20.1 abc123"
       }
     ]

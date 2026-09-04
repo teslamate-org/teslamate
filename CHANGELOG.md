@@ -12,6 +12,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 - fix(web): remove stray brace from the direction arrow SVG path, which made Safari log a parse error on every position update (#5665 - @JakobLichterfeld)
 - refactor(vehicle): route the vehicle's view of time through a clock seam (#5688 - @JakobLichterfeld)
 - refactor(vehicle): date timestamp-less state rows through the clock seam (#5689 - @JakobLichterfeld)
+- fix(vehicle): keep logging when the car reports an outdated timestamp after being offline or asleep — previously the vehicle process crashed on every poll and the state stayed stuck (#5692 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

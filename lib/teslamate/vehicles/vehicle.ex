@@ -19,6 +19,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
               last_used: nil,
               last_response: nil,
               last_state_change: nil,
+              state_row_started: nil,
               elevation: nil,
               geofence: nil,
               deps: %{},
@@ -248,6 +249,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       car: car,
       last_used: deps.clock.utc_now(),
       last_state_change: last_state_change,
+      state_row_started: last_state_change,
       deps: deps,
       import?: Keyword.get(opts, :import?, false)
     }
@@ -1003,8 +1005,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :ok = disconnect_stream(data)
 
     {:next_state, {:asleep, asleep_interval()},
-     %{data | last_state_change: last_state_change, stream_pid: nil, pre_online_check: :idle},
-     [broadcast_summary(), schedule_fetch(data)]}
+     %{
+       data
+       | last_state_change: last_state_change,
+         state_row_started: last_state_change,
+         stream_pid: nil,
+         pre_online_check: :idle
+     }, [broadcast_summary(), schedule_fetch(data)]}
   end
 
   def handle_event(:internal, {:update, {:offline, vehicle}}, :start, %Data{} = data) do
@@ -1016,8 +1023,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :ok = disconnect_stream(data)
 
     {:next_state, {:offline, asleep_interval()},
-     %{data | last_state_change: last_state_change, stream_pid: nil, pre_online_check: :idle},
-     [broadcast_summary(), schedule_fetch(data)]}
+     %{
+       data
+       | last_state_change: last_state_change,
+         state_row_started: last_state_change,
+         stream_pid: nil,
+         pre_online_check: :idle
+     }, [broadcast_summary(), schedule_fetch(data)]}
   end
 
   def handle_event(:internal, {:update, {:online, vehicle}} = evt, :start, %Data{} = data) do
@@ -1064,6 +1076,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
        data
        | car: car,
          last_state_change: last_state_change,
+         state_row_started: last_state_change,
          geofence: geofence,
          stream_pid: stream_pid
      }, [broadcast_summary(), {:next_event, :internal, evt}, schedule_position_storing()]}
@@ -2087,11 +2100,38 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {{:timeout, :store_position}, :timer.minutes(5), :store_position}
   end
 
-  # A payload without a timestamp is dated by the vehicle's clock, so every
-  # state row carries the vehicle's view of time rather than Log's fallback.
+  # A payload whose timestamp lies before the open states row began is
+  # stale: the state change is real and observed now, only its timestamp is
+  # not trustworthy — dating the row with the payload would fail the
+  # positive_duration constraint (end_date >= start_date of that row) and
+  # crash the process (#5684). The comparison uses exactly the value the
+  # constraint compares: state_row_started, set only where start_state or
+  # get_current_state returns a row.
+  defp date_opts(
+         %Vehicle{drive_state: %Drive{timestamp: ts}},
+         %Data{state_row_started: %DateTime{} = started, deps: deps, car: car}
+       )
+       when is_integer(ts) do
+    date = parse_timestamp(ts)
+
+    if DateTime.compare(date, started) == :lt do
+      Logger.warning(
+        "Stale payload timestamp #{date} lies before the open state's start #{started} — " <>
+          "dating the state change now",
+        car_id: car.id
+      )
+
+      [date: deps.clock.utc_now()]
+    else
+      [date: date]
+    end
+  end
+
   defp date_opts(%Vehicle{drive_state: %Drive{timestamp: ts}}, _data) when is_integer(ts),
     do: [date: parse_timestamp(ts)]
 
+  # A payload without a timestamp is dated by the vehicle's clock, so every
+  # state row carries the vehicle's view of time rather than Log's fallback.
   defp date_opts(%Vehicle{}, %Data{deps: deps}), do: [date: deps.clock.utc_now()]
 
   defp parse_timestamp(ts), do: DateTime.from_unix!(ts, :millisecond)

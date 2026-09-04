@@ -1,5 +1,5 @@
 {
-  "description": "PINNED BUG #5684: after an offline period, an online payload whose drive_state.timestamp lies before the offline row's date (here five minutes before the last position) cannot close that row — the states.positive_duration check rejects the update, the {:ok, _} match in the vehicle raises and the vehicle process crashes; expect_restart pins the crash. Both resume payloads are snapshot events: in :offline the vehicle probes first, and a plain event would be consumed by that probe without effect — the snapshot serves probe and data fetch from one payload. The stale snapshot is served exactly once and crashes; after the restart the fresh snapshot closes the offline row with t0 + 20 s, opens the online row and inserts one position. The asleep tail is the convergence gate: reached from :online through :start one cycle after the barrier, so the await is not vacuous. The golden pins the offline row closed by the fresh payload (not the stale one), no row from the stale payload, and the single restart position. Whether the API delivers such payloads is open (#5558 clock measurements); the fix follows against this pin in its own commit.",
+  "description": "Fix for #5684: after an offline period, an online payload whose drive_state.timestamp lies before the offline row's date (here five minutes before the last position) used to crash the vehicle — states.positive_duration rejected the update and the {:ok, _} match raised. The vehicle now recognises the stale timestamp (older than the open states row's start), dates the state change with its clock and logs a warning; no crash, no restart. Both resume payloads are snapshot events: in :offline the vehicle probes first, and a plain event would be consumed by that probe without effect. The asleep tail is the convergence gate (reached from :online through :start one cycle after the barrier). The golden pins the offline row closed at the clock time of the stale payload — not at its timestamp — the online row from there, and the positions. Whether the API delivers such payloads is still open (#5558 clock measurements).",
   "car": {
     "eid": 42,
     "vid": 1000,
@@ -13,7 +13,6 @@
     "suspend_after_idle_min": 100000,
     "suspend_min": 100000
   },
-  "expect_restart": true,
   "events": [
     {
       "vehicle": {
