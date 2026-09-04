@@ -1,0 +1,23 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Conversion of 'starting: does not fetch again after an import completes': in import mode (import: true) the first fetch answers import_complete and the vehicle schedules no further fetch \u2014 the declared halt (expect_halt) is read from the state machine: no fetch timeout pending, the terminal served once. No states row, no position, no state topic beyond the discovery configs.",
+  "events": [
+    {
+      "error": "import_complete"
+    }
+  ],
+  "expect_halt": true,
+  "import": true,
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}
