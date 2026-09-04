@@ -267,6 +267,50 @@ defmodule TeslaMate.CharacterizationTest do
     end
   end
 
+  @tag :tmp_dir
+  test "update_car_settings refuses the enabled toggle with the restart rationale", %{
+    tmp_dir: tmp
+  } do
+    scenario =
+      base_scenario("settings enabled probe", [
+        park_event(1_704_067_200_000),
+        %{"call" => %{"update_car_settings" => %{"enabled" => false}}},
+        park_event(1_704_067_210_000)
+      ])
+
+    assert_raise ArgumentError, ~r/refuses "enabled".*Vehicles.restart/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "settings_enabled", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "update_car_settings with an unknown field raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("settings unknown field probe", [
+        park_event(1_704_067_200_000),
+        %{"call" => %{"update_car_settings" => %{"suspend_after_idle_mins" => 1}}},
+        park_event(1_704_067_210_000)
+      ])
+
+    assert_raise ArgumentError, ~r/unknown settings field "suspend_after_idle_mins"/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "settings_unknown", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "update_car_settings with no fields raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("settings empty probe", [
+        park_event(1_704_067_200_000),
+        %{"call" => %{"update_car_settings" => %{}}},
+        park_event(1_704_067_210_000)
+      ])
+
+    assert_raise ArgumentError, ~r/needs at least one settings field/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "settings_empty", scenario))
+    end
+  end
+
   defp base_scenario(description, events) do
     %{
       "description" => description,

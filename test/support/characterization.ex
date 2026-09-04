@@ -35,6 +35,7 @@ defmodule TeslaMate.Characterization do
           {"stream": "<data:update wire CSV value, decoded by TeslaApi.Stream.decode_frame!/1>"},
           {"stream_control": "inactive"},
           {"call": "suspend_logging"},
+          {"call": {"update_car_settings": {"suspend_after_idle_min": 1, "suspend_min": 10}}},
           {"clock": 1704067500000}
         ]
       }
@@ -65,9 +66,16 @@ defmodule TeslaMate.Characterization do
   and strict fetch of a single cycle: both serves would come from one
   fetch and prove nothing.
 
-  A `call` event performs a user action on the vehicle; allowed is
-  `"suspend_logging"` — the whitelist grows with the conversion PRs whose
-  scenarios first need an action. The suspend handler fetches vehicle data
+  A `call` event performs a user action on the vehicle; allowed are
+  `"suspend_logging"` and `{"update_car_settings": {<attrs>}}` — the
+  whitelist grows with the conversion PRs whose scenarios first need an
+  action. `update_car_settings` runs the production
+  `Settings.update_car_settings/2` (changeset, `car_settings` row) and sends
+  the persisted struct to the vehicle exactly as the PubSub broadcast would;
+  its reply is `"ok"` or the changeset errors, pinned in `calls`. The attrs
+  are checked statically: only the six settings fields, a non-empty map,
+  and never `enabled` — that toggle restarts the vehicle supervisor
+  (`Vehicles.restart/0`), which is outside the replay. The suspend handler fetches vehicle data
   synchronously while handling the call, so `ApiMock` delivers the call
   through a proxy task and answers that strict fetch from the event queue:
   the scenario declares the strict-fetch response as the API event directly
@@ -198,11 +206,12 @@ defmodule TeslaMate.Characterization do
       (`build_events/1`).
     * Call events count nothing twice: the strict fetch inside the call
       handler is served through the regular exec path
-      (`ApiMock.await_call_outcome/2`); an unsupported call raises
-      (`call_event!/1`); every reply — acceptance or rejection — is
-      captured in the golden's `calls` section (`ApiMock.calls/1`,
+      (`ApiMock.await_call_outcome/4`); an unsupported call raises
+      (`call_event!/1`), as do settings attrs naming `enabled`, an unknown
+      field or nothing at all (`settings_call!/1`); every reply — acceptance
+      or rejection — is captured in the golden's `calls` section (`ApiMock.calls/1`,
       `replay/2`), while a dying or never-completing call raises instead
-      of hanging (`ApiMock.await_call_outcome/3`).
+      of hanging (`ApiMock.await_call_outcome/4`).
     * The barrier proves two processed fetch cycles: a terminal whose two
       serves are a probe followed by a strict fetch raises
       (`two_call_cycle?/2`, `replay/2`). The pair is treated as one cycle;
@@ -619,8 +628,18 @@ defmodule TeslaMate.Characterization do
 
   defp canonical_call({call, :ok}), do: %{Atom.to_string(call) => "ok"}
 
-  defp canonical_call({call, {:error, reason}}),
+  defp canonical_call({call, {:error, reason}}) when is_atom(reason),
     do: %{Atom.to_string(call) => %{"error" => Atom.to_string(reason)}}
+
+  defp canonical_call({call, {:error, %Ecto.Changeset{} = changeset}}) do
+    errors = Ecto.Changeset.traverse_errors(changeset, fn {msg, _opts} -> msg end)
+
+    %{
+      Atom.to_string(call) => %{
+        "error" => Map.new(errors, fn {k, v} -> {Atom.to_string(k), v} end)
+      }
+    }
+  end
 
   defp with_run_id({module, _opts} = child, run_id) do
     Supervisor.child_spec(child, id: {module, run_id})
@@ -758,9 +777,46 @@ defmodule TeslaMate.Characterization do
   # the conversion PRs whose scenarios first need an action.
   defp call_event!("suspend_logging"), do: :suspend_logging
 
+  defp call_event!(%{"update_car_settings" => attrs}),
+    do: {:update_car_settings, settings_call!(attrs)}
+
   defp call_event!(other) do
     raise ArgumentError,
-          ~s(unsupported call #{inspect(other)} — allowed: "suspend_logging")
+          ~s(unsupported call #{inspect(other)} — allowed: "suspend_logging", ) <>
+            ~s({"update_car_settings": {...}})
+  end
+
+  # Only the six settings the vehicle applies in place: toggling `enabled`
+  # restarts the vehicle supervisor (Settings.on_enabled_change/2 calls
+  # Vehicles.restart/0), which is outside the replay.
+  @settings_fields TeslaMate.Settings.CarSettings.__schema__(:fields) -- [:id, :enabled]
+
+  defp settings_call!(attrs) when attrs == %{} do
+    raise ArgumentError, "update_car_settings needs at least one settings field"
+  end
+
+  defp settings_call!(attrs) when is_map(attrs) do
+    Map.new(attrs, fn {key, value} ->
+      cond do
+        key == "enabled" ->
+          raise ArgumentError,
+                "update_car_settings refuses \"enabled\": toggling it restarts the " <>
+                  "vehicle supervisor (Vehicles.restart/0), which is outside the replay"
+
+        String.to_atom(key) in @settings_fields ->
+          {String.to_atom(key), value}
+
+        true ->
+          raise ArgumentError,
+                "unknown settings field #{inspect(key)} in update_car_settings — " <>
+                  "allowed: #{inspect(@settings_fields)}"
+      end
+    end)
+  end
+
+  defp settings_call!(other) do
+    raise ArgumentError,
+          "update_car_settings takes a map of settings fields, got #{inspect(other)}"
   end
 
   # Only control events whose vehicle handler never calls back into the API
