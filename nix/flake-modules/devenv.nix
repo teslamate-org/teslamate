@@ -52,6 +52,8 @@
             config.treefmt.build.wrapper
             pkgs.osv-scanner
             pkgs.cargo
+            pkgs.clippy
+            pkgs.rust-analyzer
           ]
           ++ builtins.attrValues config.treefmt.build.programs
           ++ optionals stdenv.isLinux [
