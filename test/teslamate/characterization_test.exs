@@ -192,7 +192,7 @@ defmodule TeslaMate.CharacterizationTest do
   test "an unsupported call raises", %{tmp_dir: tmp} do
     scenario =
       base_scenario("call whitelist probe", [
-        %{"call" => "resume_logging"},
+        %{"call" => "busy?"},
         park_event(1_704_067_200_000)
       ])
 
@@ -308,6 +308,104 @@ defmodule TeslaMate.CharacterizationTest do
 
     assert_raise ArgumentError, ~r/needs at least one settings field/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "settings_empty", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a summary call is pinned canonically — car masked, since volatile", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("summary call probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        %{"call" => "summary"},
+        park_event(t0 + 10_000)
+      ])
+
+    pair = tmp_pair(tmp, "summary_call", scenario)
+    Characterization.record_pair(pair)
+
+    golden = pair.golden_path |> File.read!() |> Jason.decode!()
+    assert [%{"summary" => summary}] = golden["calls"]
+    assert summary["car"] == "$car"
+    assert summary["since"] == "<volatile>"
+    assert summary["state"] == "online"
+    assert summary["battery_level"] == 80
+  end
+
+  @tag :tmp_dir
+  test "expect_halt with a terminal the vehicle keeps polling after fails with the reason",
+       %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("halt polling probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        park_event(t0 + 10_000),
+        %{"error" => "vehicle_unavailable"}
+      ])
+      |> Map.put("expect_halt", true)
+
+    assert_raise ExUnit.AssertionError,
+                 ~r/expect_halt is declared but the vehicle (kept polling: pending timeouts|served the terminal again)/,
+                 fn ->
+                   Characterization.record_pair(tmp_pair(tmp, "halt_polling", scenario))
+                 end
+  end
+
+  @tag :tmp_dir
+  test "expect_halt and expect_restart exclude each other", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("halt restart probe", [
+        park_event(1_704_067_200_000),
+        %{"error" => "not_signed_in"}
+      ])
+      |> Map.merge(%{
+        "expect_halt" => true,
+        "expect_restart" => true,
+        "await" => %{"positions" => 1}
+      })
+
+    assert_raise RuntimeError, ~r/expect_halt and expect_restart exclude each other/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "halt_restart", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "expect_halt requires an error terminal", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("halt api terminal probe", [
+        park_event(1_704_067_200_000),
+        park_event(1_704_067_210_000)
+      ])
+      |> Map.put("expect_halt", true)
+
+    assert_raise RuntimeError, ~r/expect_halt requires an error terminal/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "halt_api_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "an empty seed raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("seed empty probe", [%{"vehicle" => %{"state" => "asleep"}}])
+      |> Map.put("seed", %{"positions" => []})
+
+    assert_raise ArgumentError, ~r/seed.positions must not be empty/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "seed_empty", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a seed row with an unknown field raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("seed unknown field probe", [%{"vehicle" => %{"state" => "asleep"}}])
+      |> Map.put("seed", %{
+        "positions" => [%{"date" => "2024-01-01T00:00:00Z", "unknown_field" => 1.0}]
+      })
+
+    assert_raise ArgumentError, ~r/unknown position field "unknown_field"/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "seed_unknown", scenario))
     end
   end
 
