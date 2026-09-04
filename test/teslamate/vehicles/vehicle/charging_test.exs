@@ -91,7 +91,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {ApiMock, {:stream, 1000, _}}
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s2}}}
-    assert DateTime.diff(s1, s2, :nanosecond) < 0
+    assert s2 == start_date
 
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: ^s2}}}
 

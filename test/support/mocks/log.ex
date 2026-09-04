@@ -78,9 +78,11 @@ defmodule LogMock do
   end
 
   @impl true
-  def handle_call({:start_state, _car, s, _} = action, _from, %State{pid: pid} = state) do
+  def handle_call({:start_state, _car, s, opts} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %Log.State{state: s, start_date: DateTime.utc_now()}}, state}
+    # Mirrors the production contract: the row is dated with the given date.
+    start_date = Keyword.get(opts, :date) || DateTime.utc_now()
+    {:reply, {:ok, %Log.State{state: s, start_date: start_date}}, state}
   end
 
   def handle_call({:get_current_state, _}, _from, state) do
