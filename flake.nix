@@ -30,6 +30,7 @@
         ./nix/flake-modules/devenv.nix
         ./nix/flake-modules/formatter.nix
         ./nix/flake-modules/package.nix
+        ./nix/flake-modules/teslamate-rust.nix
         ./nix/flake-modules/update-hashes.nix
       ];
     };
