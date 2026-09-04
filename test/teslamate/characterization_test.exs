@@ -401,10 +401,10 @@ defmodule TeslaMate.CharacterizationTest do
     scenario =
       base_scenario("seed unknown field probe", [%{"vehicle" => %{"state" => "asleep"}}])
       |> Map.put("seed", %{
-        "positions" => [%{"date" => "2024-01-01T00:00:00Z", "lattitude" => 1.0}]
+        "positions" => [%{"date" => "2024-01-01T00:00:00Z", "unknown_field" => 1.0}]
       })
 
-    assert_raise ArgumentError, ~r/unknown position field "lattitude"/, fn ->
+    assert_raise ArgumentError, ~r/unknown position field "unknown_field"/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "seed_unknown", scenario))
     end
   end
