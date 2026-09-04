@@ -1,0 +1,23 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Conversion of 'starting: handles offline state': the first fetch finds the vehicle offline \u2014 one open offline states row and the state topic offline. The offline terminal repeats through the probe without writing.",
+  "events": [
+    {
+      "vehicle": {
+        "state": "offline"
+      }
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}

@@ -29,6 +29,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 - test(characterization): pin the stale-timestamp resume crash (#5691 - @JakobLichterfeld)
 - test(characterization): convert suspend scenarios to characterization fixtures (#5695 - @JakobLichterfeld)
 - test(characterization): convert summary scenarios to characterization fixtures (#5696 - @JakobLichterfeld)
+- test(characterization): convert vehicle scenarios to characterization fixtures, add the update_car_settings call (#5697 - @JakobLichterfeld)
 
 #### Dashboards
 

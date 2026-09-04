@@ -138,10 +138,40 @@ defmodule ApiMock do
 
   defp deliver_call(:suspend_logging, %State{vehicle: vehicle} = state) do
     proxy = Task.async(fn -> TeslaMate.Vehicles.Vehicle.suspend_logging(vehicle) end)
-    await_call_outcome(proxy, state, nil)
+    await_call_outcome(proxy, :suspend_logging, state, nil)
   end
 
-  defp await_call_outcome(%Task{ref: ref} = proxy, %State{events: [event | _]} = state, last) do
+  # The production path minus the PubSub hop: Settings.update_car_settings/2
+  # validates and writes the car_settings row; the persisted struct is then
+  # sent to the vehicle exactly as its subscription would deliver it (the
+  # SettingsMock replaces that subscription), and get_state proves the
+  # vehicle applied it before the next API event is served.
+  defp deliver_call({:update_car_settings, attrs}, %State{vehicle: vehicle} = state) do
+    proxy =
+      Task.async(fn ->
+        {_state, %{car: car}} = :sys.get_state(vehicle)
+        pre = %{car.settings | car: car}
+
+        case TeslaMate.Settings.update_car_settings(pre, attrs) do
+          {:ok, post} ->
+            send(vehicle, post)
+            :sys.get_state(vehicle)
+            :ok
+
+          {:error, %Ecto.Changeset{}} = rejection ->
+            rejection
+        end
+      end)
+
+    await_call_outcome(proxy, :update_car_settings, state, nil)
+  end
+
+  defp await_call_outcome(
+         %Task{ref: ref} = proxy,
+         call,
+         %State{events: [event | _]} = state,
+         last
+       ) do
     receive do
       {:"$gen_call", from, {action, _id}}
       when action in [:get_vehicle, :get_vehicle_with_state] ->
@@ -150,11 +180,11 @@ defmodule ApiMock do
         # counts like any other (index, barrier, vacuity).
         result = exec(event, action)
         GenServer.reply(from, result)
-        await_call_outcome(proxy, advance_event(state), result)
+        await_call_outcome(proxy, call, advance_event(state), result)
 
       {^ref, :ok} ->
         Process.demonitor(ref, [:flush])
-        state = record_call(state, :suspend_logging, :ok)
+        state = record_call(state, call, :ok)
 
         # Only a suspend that went through its strict fetch dooms the parked
         # poll; :ok on an already suspended, asleep or offline vehicle is a
@@ -168,13 +198,13 @@ defmodule ApiMock do
         # A rejection is outer behaviour — recorded into the golden's calls
         # section, not a harness error.
         Process.demonitor(ref, [:flush])
-        {:continue, record_call(state, :suspend_logging, rejection)}
+        {:continue, record_call(state, call, rejection)}
 
       {:DOWN, ^ref, :process, _pid, reason} ->
-        raise "the suspend_logging call proxy died: #{inspect(reason)}"
+        raise "the #{call} call proxy died: #{inspect(reason)}"
     after
       5_000 ->
-        raise "the declared suspend_logging call did not complete within 5s"
+        raise "the declared #{call} call did not complete within 5s"
     end
   end
 

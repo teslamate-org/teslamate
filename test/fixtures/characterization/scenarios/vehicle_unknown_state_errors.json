@@ -1,0 +1,40 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Conversion of 'starting: handles unknown and faulty states': an unknown vehicle state is logged and refetched without any states row, then four generic API errors (error: unknown, standing in for the original's TeslaApi.Error boom \u2014 both take the generic error branch) melt the api_error fuse past its tolerance of three, so healthy flips to false. Four errors are needed because ApiMock serves each queued event once and the fuse is fresh for this car. The unknown terminal repeats through the probe without writing.",
+  "events": [
+    {
+      "vehicle": {
+        "state": "unknown"
+      }
+    },
+    {
+      "error": "unknown"
+    },
+    {
+      "error": "unknown"
+    },
+    {
+      "error": "unknown"
+    },
+    {
+      "error": "unknown"
+    },
+    {
+      "vehicle": {
+        "state": "unknown"
+      }
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}
