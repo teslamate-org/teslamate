@@ -1,0 +1,197 @@
+{
+  "database": {
+    "addresses": [],
+    "car_settings": [
+      {
+        "enabled": true,
+        "free_supercharging": false,
+        "id": "car_setting_1",
+        "lfp_battery": false,
+        "req_not_unlocked": false,
+        "suspend_after_idle_min": 100000,
+        "suspend_min": 100000,
+        "use_streaming_api": true
+      }
+    ],
+    "cars": [
+      {
+        "display_priority": 1,
+        "efficiency": 0.153,
+        "eid": 42,
+        "exterior_color": null,
+        "id": "$car",
+        "inserted_at": "<volatile>",
+        "marketing_name": null,
+        "model": "S",
+        "name": "foo",
+        "settings_id": "car_setting_1",
+        "spoiler_type": null,
+        "trim_badging": "P100D",
+        "updated_at": "<volatile>",
+        "vid": 1000,
+        "vin": "5YJ3E1EA1KF000001",
+        "wheel_type": null
+      }
+    ],
+    "charges": [],
+    "charging_processes": [],
+    "drives": [],
+    "geofences": [],
+    "positions": [
+      {
+        "battery_heater": false,
+        "battery_heater_no_power": null,
+        "battery_heater_on": false,
+        "battery_level": 64,
+        "car_id": "$car",
+        "date": "2024-01-01T00:00:00.000000",
+        "drive_id": null,
+        "driver_temp_setting": "15.0",
+        "elevation": null,
+        "est_battery_range_km": "268.07",
+        "fan_status": 0,
+        "id": "position_1",
+        "ideal_battery_range_km": "315.06",
+        "inside_temp": "20.1",
+        "is_climate_on": false,
+        "is_front_defroster_on": false,
+        "is_rear_defroster_on": false,
+        "latitude": "37.889544",
+        "longitude": "41.128817",
+        "odometer": 91887.725564,
+        "outside_temp": "16.5",
+        "passenger_temp_setting": "15.0",
+        "power": 0,
+        "rated_battery_range_km": "315.06",
+        "speed": null,
+        "tpms_pressure_fl": null,
+        "tpms_pressure_fr": null,
+        "tpms_pressure_rl": null,
+        "tpms_pressure_rr": null,
+        "usable_battery_level": 64
+      }
+    ],
+    "states": [
+      {
+        "car_id": "$car",
+        "end_date": null,
+        "id": "state_1",
+        "start_date": "2024-01-01T00:00:00.001000",
+        "state": "asleep"
+      }
+    ],
+    "updates": []
+  },
+  "mqtt": {
+    "homeassistant/binary_sensor/teslamate_$car/charge_port_door_open/config": [
+      ""
+    ],
+    "homeassistant/binary_sensor/teslamate_$car/doors_open/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/frunk_open/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/healthy/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/is_climate_on/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/is_preconditioning/config": [
+      ""
+    ],
+    "homeassistant/binary_sensor/teslamate_$car/is_user_present/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/locked/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/park_brake/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/plugged_in/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/sentry_mode/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/trunk_open/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/update_available/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/windows_open/config": [""],
+    "homeassistant/device/teslamate_$car/config": [""],
+    "homeassistant/device_tracker/teslamate_$car/active_route_location/config": [
+      ""
+    ],
+    "homeassistant/device_tracker/teslamate_$car/location/config": [""],
+    "homeassistant/sensor/teslamate_$car/active_route_destination/config": [""],
+    "homeassistant/sensor/teslamate_$car/active_route_distance_to_arrival/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/active_route_energy_at_arrival/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/active_route_minutes_to_arrival/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/active_route_traffic_minutes_delay/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/battery_level/config": [""],
+    "homeassistant/sensor/teslamate_$car/charge_energy_added/config": [""],
+    "homeassistant/sensor/teslamate_$car/charge_limit_soc/config": [""],
+    "homeassistant/sensor/teslamate_$car/charger_actual_current/config": [""],
+    "homeassistant/sensor/teslamate_$car/charger_phases/config": [""],
+    "homeassistant/sensor/teslamate_$car/charger_power/config": [""],
+    "homeassistant/sensor/teslamate_$car/charger_voltage/config": [""],
+    "homeassistant/sensor/teslamate_$car/charging_state/config": [""],
+    "homeassistant/sensor/teslamate_$car/display_name/config": [""],
+    "homeassistant/sensor/teslamate_$car/elevation/config": [""],
+    "homeassistant/sensor/teslamate_$car/est_battery_range/config": [""],
+    "homeassistant/sensor/teslamate_$car/exterior_color/config": [""],
+    "homeassistant/sensor/teslamate_$car/geofence/config": [""],
+    "homeassistant/sensor/teslamate_$car/heading/config": [""],
+    "homeassistant/sensor/teslamate_$car/ideal_battery_range/config": [""],
+    "homeassistant/sensor/teslamate_$car/inside_temp/config": [""],
+    "homeassistant/sensor/teslamate_$car/model/config": [""],
+    "homeassistant/sensor/teslamate_$car/odometer/config": [""],
+    "homeassistant/sensor/teslamate_$car/outside_temp/config": [""],
+    "homeassistant/sensor/teslamate_$car/power/config": [""],
+    "homeassistant/sensor/teslamate_$car/rated_battery_range/config": [""],
+    "homeassistant/sensor/teslamate_$car/scheduled_charging_start_time/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/shift_state/config": [""],
+    "homeassistant/sensor/teslamate_$car/since/config": [""],
+    "homeassistant/sensor/teslamate_$car/speed/config": [""],
+    "homeassistant/sensor/teslamate_$car/spoiler_type/config": [""],
+    "homeassistant/sensor/teslamate_$car/state/config": [""],
+    "homeassistant/sensor/teslamate_$car/time_to_full_charge/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_fl/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_fl_psi/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_fr/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_fr_psi/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_rl/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_rl_psi/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_rr/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_rr_psi/config": [""],
+    "homeassistant/sensor/teslamate_$car/trim_badging/config": [""],
+    "homeassistant/sensor/teslamate_$car/update_version/config": [""],
+    "homeassistant/sensor/teslamate_$car/usable_battery_level/config": [""],
+    "homeassistant/sensor/teslamate_$car/version/config": [""],
+    "homeassistant/sensor/teslamate_$car/wheel_type/config": [""],
+    "teslamate/cars/$car/active_route": [
+      {
+        "error": "No active route available"
+      }
+    ],
+    "teslamate/cars/$car/active_route_destination": ["nil"],
+    "teslamate/cars/$car/active_route_latitude": ["nil"],
+    "teslamate/cars/$car/active_route_longitude": ["nil"],
+    "teslamate/cars/$car/battery_level": ["64"],
+    "teslamate/cars/$car/display_name": ["bar"],
+    "teslamate/cars/$car/est_battery_range_km": ["268.07"],
+    "teslamate/cars/$car/geofence": [""],
+    "teslamate/cars/$car/healthy": ["", "true"],
+    "teslamate/cars/$car/ideal_battery_range_km": ["315.06"],
+    "teslamate/cars/$car/inside_temp": ["20.1"],
+    "teslamate/cars/$car/latitude": ["37.889544"],
+    "teslamate/cars/$car/location": [
+      {
+        "latitude": 37.889544,
+        "longitude": 41.128817
+      }
+    ],
+    "teslamate/cars/$car/longitude": ["41.128817"],
+    "teslamate/cars/$car/model": ["S"],
+    "teslamate/cars/$car/odometer": ["91887.73"],
+    "teslamate/cars/$car/outside_temp": ["16.5"],
+    "teslamate/cars/$car/rated_battery_range_km": ["315.06"],
+    "teslamate/cars/$car/since": ["<volatile>"],
+    "teslamate/cars/$car/state": ["asleep"],
+    "teslamate/cars/$car/trim_badging": ["P100D"],
+    "teslamate/cars/$car/usable_battery_level": ["64"]
+  }
+}

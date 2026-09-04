@@ -28,6 +28,9 @@ defmodule TeslaMate.Characterization do
         "geofences": [{"name": "Home", "latitude": 52.5, "longitude": 13.35, "radius": 100}],
         "await": {"state": "offline", "drives_closed": 1},
         "expect_restart": true,
+        "expect_halt": true,
+        "import": true,
+        "seed": {"positions": [{"date": "2024-01-01T00:00:00Z", "latitude": 52.5, ...}]},
         "events": [
           {"vehicle": {<raw Tesla API JSON, decoded by TeslaApi.Vehicle.result/1>}},
           {"snapshot": true, "vehicle": {...}},
@@ -35,6 +38,8 @@ defmodule TeslaMate.Characterization do
           {"stream": "<data:update wire CSV value, decoded by TeslaApi.Stream.decode_frame!/1>"},
           {"stream_control": "inactive"},
           {"call": "suspend_logging"},
+          {"call": "resume_logging"},
+          {"call": "summary"},
           {"call": {"update_car_settings": {"suspend_after_idle_min": 1, "suspend_min": 10}}},
           {"clock": 1704067500000}
         ]
@@ -67,9 +72,17 @@ defmodule TeslaMate.Characterization do
   fetch and prove nothing.
 
   A `call` event performs a user action on the vehicle; allowed are
-  `"suspend_logging"` and `{"update_car_settings": {<attrs>}}` — the
-  whitelist grows with the conversion PRs whose scenarios first need an
-  action. `update_car_settings` runs the production
+  `"suspend_logging"`, `"resume_logging"`, `"summary"` and
+  `{"update_car_settings": {<attrs>}}` — the whitelist grows with the
+  conversion PRs whose scenarios first need an action. `resume_logging`
+  replies `"ok"`; from asleep or offline the vehicle also raises its polling
+  rate and queues an immediate fetch, which production drops while a fetch
+  task is running (`Vehicle.handle_event/4` matches `task: nil`) — and at
+  the serve boundary a fetch is always parked, so the declared payload is
+  served by that parked poll, not by a resume fetch. `summary` replies the
+  `Summary` the UI would get, pinned as canonical JSON: keys sorted, `car`
+  replaced by `"$car"`, `since` masked like the topic, values as Jason
+  encodes them. `update_car_settings` runs the production
   `Settings.update_car_settings/2` (changeset, `car_settings` row) and sends
   the persisted struct to the vehicle exactly as the PubSub broadcast would;
   its reply is `"ok"` or the changeset errors, pinned in `calls`. The attrs
@@ -97,6 +110,21 @@ defmodule TeslaMate.Characterization do
   a convergence outcome in `await`. Without the declaration an unexpected
   crash stays a red test (`restart: :temporary`).
 
+  `expect_halt: true` declares a scenario that pins the vehicle stopping to
+  poll: the terminal is an error event (`not_signed_in`, `import_complete`)
+  and is served exactly once. The replay end is then not the causal barrier
+  — nothing repeats — but a deterministic read of the state machine: the
+  harness polls one `:sys.get_status/1` snapshot until the vehicle's fetch
+  task has cleared (the `"State"` entry) and reads the pending timeouts from
+  that same snapshot (gen_statem's `"Time-outs"` entry); no
+  `{:state_timeout, :fetch}` among them is the halt — other timers, such as
+  the position-storing timeout of an online phase, are not polls — while a
+  scheduled fetch or a second serve of the terminal fails with a named error
+  listing every pending timeout. `expect_halt` excludes `expect_restart` and `await`, and an
+  error terminal without it stays refused. `import: true` starts the vehicle
+  in import mode (`import?: true`), where `import_complete` is the declared
+  end of the import and no further fetch is scheduled.
+
   Events are served in order by `ApiMock`; the last event repeats for any
   further fetch. The replay end is event-driven, never a wait: after the last
   event has been served, the harness waits for exactly one more serve of the
@@ -118,6 +146,18 @@ defmodule TeslaMate.Characterization do
 
   `geofences` (optional) are created in the database before the replay;
   geofence detection runs against the real `TeslaMate.Locations`.
+
+  `seed.positions` (optional) inserts position rows for the car before the
+  vehicle starts, through the production `Log.insert_position/2` — the
+  state a car carries from earlier runs, which the vehicle restores into its
+  first summary when it starts asleep or offline. The keys are checked
+  statically against the position schema (`seed_positions!/1`); an empty
+  list and a rejected row raise with names.
+
+  `deps_vehicles` is `TeslaMate.Characterization.Vehicles`: production
+  `Vehicles.kill/0` terminates the vehicles supervisor and with it every
+  vehicle, the replay has one and the stand-in terminates that process. A
+  scenario reaching the kill declares `expect_restart`.
 
   ## Clock
 
@@ -196,6 +236,15 @@ defmodule TeslaMate.Characterization do
       vehicle process is monitored and the replay fails before teardown
       unless it actually went down; a declaration without an `await`
       convergence outcome raises (`replay/2`, `expect_restart?/1`).
+    * Seed misuse raises with names: an empty list, an unknown position
+      field or a row the changeset rejects (`seed_positions!/1`,
+      `create_seed/2`).
+    * A declared halt names its check: with `expect_halt` the terminal error
+      event is served once, the fetch task must clear and the state machine
+      must hold no fetch timeout (`assert_halt!/3`); a second serve or a
+      scheduled fetch fails with the full timeout list, and the declaration
+      refuses `expect_restart`, `await` and a non-error terminal
+      (`expect_halt?/1`, `build_events/1`).
     * Stream deliveries never touch the terminal execution counter: serve
       indices are assigned to API events only (`index_events/1`), so the
       causal barrier and the vacuity probe stay anchored to the terminal
@@ -463,11 +512,13 @@ defmodule TeslaMate.Characterization do
   defp replay(input, run_id) do
     car = create_car(input)
     create_geofences(input)
+    create_seed(input, car)
     events = build_events(input)
     {indexed, total} = index_events(events)
     Clock.reset(initial_clock(input))
     await = Map.get(input, "await", %{})
     expect_restart? = expect_restart?(input)
+    expect_halt? = expect_halt?(input)
     collector = self()
     vacuity = :counters.new(1, [])
 
@@ -531,7 +582,7 @@ defmodule TeslaMate.Characterization do
     children = [
       {ApiMock, name: api, events: wrapped, pid: collector, vehicle: vehicle},
       {SettingsMock, name: settings, pid: collector},
-      {VehiclesMock, name: vehicles, pid: collector},
+      {__MODULE__.Vehicles, name: vehicles, pid: collector, vehicle: vehicle},
       {MqttPublisherMock, name: publisher, pid: collector}
     ]
 
@@ -551,9 +602,10 @@ defmodule TeslaMate.Characterization do
        car: car,
        deps_api: {ApiMock, api},
        deps_settings: {SettingsMock, settings},
-       deps_vehicles: {VehiclesMock, vehicles},
+       deps_vehicles: {__MODULE__.Vehicles, vehicles},
        deps_locations: Locations,
-       deps_clock: Clock}
+       deps_clock: Clock,
+       import?: import?(input)}
       |> Supervisor.child_spec(
         id: {Vehicle, instance},
         restart: if(expect_restart?, do: :permanent, else: :temporary)
@@ -564,27 +616,31 @@ defmodule TeslaMate.Characterization do
 
     first = await_serve(total, vehicle, "initial serve", input["description"])
 
-    # Causal barrier, not a wait: the terminal event repeats, so its next
-    # serve proves the state machine finished the previous cycle — including
-    # every persistence and publishing effect — and started the next one.
-    second = await_serve(total, vehicle, "causal barrier", input["description"])
+    if expect_halt? do
+      assert_halt!(vehicle, total, input["description"])
+    else
+      # Causal barrier, not a wait: the terminal event repeats, so its next
+      # serve proves the state machine finished the previous cycle — including
+      # every persistence and publishing effect — and started the next one.
+      second = await_serve(total, vehicle, "causal barrier", input["description"])
 
-    if two_call_cycle?(first, second) do
-      raise "the terminal event was reached through a two-call cycle — both barrier " <>
-              "serves came from the probe and strict fetch of one fetch, which proves " <>
-              "nothing; add a settling API event (#{input["description"]})"
-    end
-
-    if run_id != :compare and await != %{} do
-      assert_receive {:awaits_vacuous?, vacuous?}, 5_000
-
-      if vacuous? do
-        raise "await #{inspect(await)} is already fully satisfied at the barrier — " <>
-                "it guards nothing; drop it or extend the scenario (#{input["description"]})"
+      if two_call_cycle?(first, second) do
+        raise "the terminal event was reached through a two-call cycle — both barrier " <>
+                "serves came from the probe and strict fetch of one fetch, which proves " <>
+                "nothing; add a settling API event (#{input["description"]})"
       end
-    end
 
-    await_outcomes(await, car, input["description"])
+      if run_id != :compare and await != %{} do
+        assert_receive {:awaits_vacuous?, vacuous?}, 5_000
+
+        if vacuous? do
+          raise "await #{inspect(await)} is already fully satisfied at the barrier — " <>
+                  "it guards nothing; drop it or extend the scenario (#{input["description"]})"
+        end
+      end
+
+      await_outcomes(await, car, input["description"])
+    end
 
     # A replay must not end in :suspended: the state only exists because the
     # test env shrinks the suspend poll interval to milliseconds — a golden
@@ -627,6 +683,18 @@ defmodule TeslaMate.Characterization do
   end
 
   defp canonical_call({call, :ok}), do: %{Atom.to_string(call) => "ok"}
+
+  defp canonical_call({:summary, %Vehicle.Summary{} = summary}) do
+    canonical =
+      summary
+      |> Map.from_struct()
+      |> Map.put(:car, "$car")
+      |> Map.put(:since, @volatile)
+      |> Jason.encode!()
+      |> Jason.decode!()
+
+    %{"summary" => canonical}
+  end
 
   defp canonical_call({call, {:error, reason}}) when is_atom(reason),
     do: %{Atom.to_string(call) => %{"error" => Atom.to_string(reason)}}
@@ -679,7 +747,13 @@ defmodule TeslaMate.Characterization do
       raise ArgumentError, "unknown key #{inspect(key)} in #{context}"
   end
 
-  defp build_events(%{"events" => [_ | _] = raw_events}) do
+  defp build_events(%{"events" => [_ | _] = raw_events} = input) do
+    halt? = Map.get(input, "expect_halt", false) == true
+
+    # Error reasons are decoded to existing atoms only; the vehicle module
+    # defines them, so it must be loaded before the first scenario decodes.
+    Code.ensure_loaded!(Vehicle)
+
     events =
       Enum.map(raw_events, fn
         %{"snapshot" => true, "vehicle" => raw} ->
@@ -718,9 +792,17 @@ defmodule TeslaMate.Characterization do
         raise "a scenario cannot end in a stream, call or clock event — the terminal must " <>
                 "be an API event, because the causal barrier repeats it"
 
-      {:error, _} ->
+      {:error, _} when not halt? ->
         raise "a scenario cannot end in an error event — the unavailable counter keeps " <>
-                "running under repeats, so an error terminal is never repeat-neutral"
+                "running under repeats, so an error terminal is never repeat-neutral " <>
+                "(declare expect_halt if the vehicle is meant to stop polling)"
+
+      {:error, _} ->
+        events
+
+      _ when halt? ->
+        raise "expect_halt requires an error terminal — an API terminal repeats, " <>
+                "so there is no halt to pin"
 
       _ ->
         events
@@ -776,6 +858,8 @@ defmodule TeslaMate.Characterization do
   # User-action calls are staged like await facts: the whitelist grows with
   # the conversion PRs whose scenarios first need an action.
   defp call_event!("suspend_logging"), do: :suspend_logging
+  defp call_event!("resume_logging"), do: :resume_logging
+  defp call_event!("summary"), do: :summary
 
   defp call_event!(%{"update_car_settings" => attrs}),
     do: {:update_car_settings, settings_call!(attrs)}
@@ -783,7 +867,7 @@ defmodule TeslaMate.Characterization do
   defp call_event!(other) do
     raise ArgumentError,
           ~s(unsupported call #{inspect(other)} — allowed: "suspend_logging", ) <>
-            ~s({"update_car_settings": {...}})
+            ~s("resume_logging", "summary", {"update_car_settings": {...}})
   end
 
   # Only the six settings the vehicle applies in place: toggling `enabled`
@@ -870,6 +954,153 @@ defmodule TeslaMate.Characterization do
                 "(#{input["description"]})"
     end
   end
+
+  # A scenario that pins the vehicle stopping to poll declares it; the
+  # declaration replaces the causal barrier with the timeout read and
+  # therefore excludes the barrier-based facts.
+  @doc false
+  def expect_halt?(input) do
+    case Map.get(input, "expect_halt", false) do
+      false ->
+        false
+
+      true ->
+        if Map.get(input, "expect_restart", false) == true do
+          raise "expect_halt and expect_restart exclude each other " <>
+                  "(#{input["description"]})"
+        end
+
+        if Map.get(input, "await", %{}) != %{} do
+          raise "expect_halt takes no await — nothing repeats after the halt, so the " <>
+                  "facts have no convergence point (#{input["description"]})"
+        end
+
+        true
+
+      other ->
+        raise ArgumentError,
+              "expect_halt must be true or absent, got #{inspect(other)} " <>
+                "(#{input["description"]})"
+    end
+  end
+
+  defp import?(input) do
+    case Map.get(input, "import", false) do
+      value when is_boolean(value) -> value
+      other -> raise ArgumentError, "import must be true or absent, got #{inspect(other)}"
+    end
+  end
+
+  # The halt is read, not waited for: once the fetch task that received the
+  # terminal has cleared, the state machine either holds a scheduled fetch
+  # (a state_timeout) or nothing — gen_statem exposes its pending timeouts
+  # through :sys.get_status/1.
+  defp assert_halt!(vehicle, total, description) do
+    # One snapshot answers both questions: the "State" entry carries the
+    # vehicle data (its fetch task), the "Time-outs" entry the pending
+    # timers — read together, so the timers belong to the state in which
+    # the task had cleared.
+    {_state, timeouts} = await_halt_snapshot(vehicle, 200, description)
+
+    receive do
+      {:api_event_served, ^total, _action} ->
+        flunk(
+          "expect_halt is declared but the vehicle served the terminal again — #{description}"
+        )
+    after
+      0 -> :ok
+    end
+
+    # The halt is the absence of a fetch timer — schedule_fetch/3 only ever
+    # sets {:state_timeout, :fetch}; other timers (the position-storing
+    # timeout of an online phase) are not polls and may remain.
+    if Enum.any?(timeouts, &match?({:state_timeout, :fetch}, &1)) do
+      flunk(
+        "expect_halt is declared but the vehicle kept polling: pending timeouts " <>
+          "#{inspect(timeouts)} — #{description}"
+      )
+    end
+  end
+
+  defp await_halt_snapshot(_vehicle, 0, description),
+    do: flunk("the vehicle's fetch task never cleared after the halt terminal — #{description}")
+
+  defp await_halt_snapshot(vehicle, attempts, description) do
+    case status_snapshot(vehicle) do
+      {{_state, %{task: nil}}, {_count, timeouts}} = snapshot ->
+        {elem(snapshot, 0), timeouts}
+
+      _ ->
+        Process.sleep(5)
+        await_halt_snapshot(vehicle, attempts - 1, description)
+    end
+  end
+
+  # gen_statem's sys status: the "State" entry holds {state, data}, the
+  # "Time-outs" entry {count, [{type, message}]}.
+  defp status_snapshot(vehicle) do
+    {:status, _pid, _module, [_pdict, _sys, _parent, _dbg, misc]} = :sys.get_status(vehicle)
+
+    entries = misc |> Keyword.get_values(:data) |> List.flatten()
+
+    state =
+      Enum.find_value(entries, fn
+        {~c"State", state} -> state
+        _ -> nil
+      end) || raise "sys.get_status did not report the state machine's state"
+
+    timeouts =
+      Enum.find_value(entries, fn
+        {~c"Time-outs", timeouts} -> timeouts
+        _ -> nil
+      end) || raise "sys.get_status did not report the state machine's timeouts"
+
+    {state, timeouts}
+  end
+
+  @position_fields TeslaMate.Log.Position.__schema__(:fields) --
+                     [:id, :car_id, :drive_id, :inserted_at, :updated_at]
+
+  defp create_seed(input, car) do
+    case Map.get(input, "seed") do
+      nil ->
+        :ok
+
+      %{"positions" => positions} ->
+        for attrs <- seed_positions!(positions) do
+          case Log.insert_position(car, attrs) do
+            {:ok, _} -> :ok
+            {:error, changeset} -> raise "seed position rejected: #{inspect(changeset.errors)}"
+          end
+        end
+
+        :ok
+
+      other ->
+        raise ArgumentError, ~s(seed takes {"positions": [...]}, got #{inspect(other)})
+    end
+  end
+
+  defp seed_positions!([]), do: raise(ArgumentError, "seed.positions must not be empty")
+
+  defp seed_positions!(positions) when is_list(positions) do
+    Enum.map(positions, fn attrs ->
+      Map.new(attrs, fn {key, value} ->
+        atom = String.to_atom(key)
+
+        if atom in @position_fields do
+          {atom, value}
+        else
+          raise ArgumentError,
+                "unknown position field #{inspect(key)} in seed.positions — " <>
+                  "allowed: #{inspect(@position_fields)}"
+        end
+      end)
+    end)
+  end
+
+  defp seed_positions!(other),
+    do: raise(ArgumentError, "seed.positions takes a list of rows, got #{inspect(other)}")
 
   defp create_geofences(input) do
     for geofence <- Map.get(input, "geofences", []) do
@@ -1065,7 +1296,7 @@ defmodule TeslaMate.Characterization do
 
   defp flush_notifications do
     receive do
-      {mock, _} when mock in [ApiMock, SettingsMock, VehiclesMock] ->
+      {mock, _} when mock in [ApiMock, SettingsMock, VehiclesMock, __MODULE__.Vehicles] ->
         flush_notifications()
 
       {:api_event_served, _, _} ->

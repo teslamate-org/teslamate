@@ -141,6 +141,18 @@ defmodule ApiMock do
     await_call_outcome(proxy, :suspend_logging, state, nil)
   end
 
+  defp deliver_call(:resume_logging, %State{vehicle: vehicle} = state) do
+    proxy = Task.async(fn -> TeslaMate.Vehicles.Vehicle.resume_logging(vehicle) end)
+    await_call_outcome(proxy, :resume_logging, state, nil)
+  end
+
+  # The summary is a value, not an effect: the proxy returns it and the
+  # struct is recorded as the call's reply.
+  defp deliver_call(:summary, %State{vehicle: vehicle} = state) do
+    proxy = Task.async(fn -> TeslaMate.Vehicles.Vehicle.summary(vehicle) end)
+    await_call_outcome(proxy, :summary, state, nil)
+  end
+
   # The production path minus the PubSub hop: Settings.update_car_settings/2
   # validates and writes the car_settings row; the persisted struct is then
   # sent to the vehicle exactly as its subscription would deliver it (the
@@ -193,6 +205,10 @@ defmodule ApiMock do
           {{:suspended, _}, _data} when last != nil -> {:suspended, last, state}
           _ -> {:continue, state}
         end
+
+      {^ref, %TeslaMate.Vehicles.Vehicle.Summary{} = summary} ->
+        Process.demonitor(ref, [:flush])
+        {:continue, record_call(state, call, summary)}
 
       {^ref, {:error, _reason} = rejection} ->
         # A rejection is outer behaviour — recorded into the golden's calls
