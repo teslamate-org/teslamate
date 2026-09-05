@@ -2,7 +2,11 @@
 
 ## [unreleased]
 
-Under the hood, this release adds a self-verifying black-box characterization suite that replays recorded API sequences through the real vehicle state machine and pins what leaves the system — database rows and MQTT messages. Converting the existing scenarios already paid off: it exposed a crash in the update-cancel path (#5656) that mock-based tests could not see.
+Under the hood, this release adds a self-verifying black-box characterization suite: recorded API sequences replay through the real vehicle state machine, and everything that leaves the system — database rows, MQTT messages, and the vehicle's interactions with the streaming API and its supervisor — is pinned against goldens. All existing vehicle scenarios are converted (120 fixtures).
+Converting them already paid off twice: it exposed a crash in the update-cancel path (#5656) and a crash loop after an offline period when the car reports an outdated timestamp (#5684), both fixed in this release, and it pinned a data-quality quirk for a later fix (#5699: a charge sample without charger power is stored as 0 kW).
+
+**Note for Home Assistant MQTT discovery users:** TeslaMate no longer re-runs the discovery migration on every restart, which briefly removed and recreated entities (#5667). Instead it clears the former per-entity topics and republishes the device config; Home Assistant logs one harmless "conflicting MQTT discovery message" warning per legacy topic after each restart, entities are untouched.
+Upgrading directly from 4.1.x no longer preserves entity registry customizations — see the [docs](https://docs.teslamate.org/docs/integrations/home_assistant#mqtt-discovery-automatic-configuration) (#5685).
 
 ### New features
 
