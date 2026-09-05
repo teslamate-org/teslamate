@@ -16,6 +16,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   @discovery_prefix "homeassistant"
   @migration_delay :timer.seconds(1)
   @node "teslamate"
+  # Frozen snapshot of every single-component topic TeslaMate has ever published.
+  # Only append when an entity is removed or renamed; never add new entities.
   @legacy_discovery_entities [
     {"sensor", "display_name"},
     {"sensor", "state"},
