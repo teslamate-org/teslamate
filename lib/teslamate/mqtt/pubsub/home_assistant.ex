@@ -15,8 +15,9 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   @discovery_prefix "homeassistant"
   @migration_delay :timer.seconds(1)
-  @migration_payload Jason.encode!(%{migrate_discovery: true})
   @node "teslamate"
+  # Frozen snapshot of every single-component topic TeslaMate has ever published.
+  # Only append when an entity is removed or renamed; never add new entities.
   @legacy_discovery_entities [
     {"sensor", "display_name"},
     {"sensor", "state"},
@@ -74,9 +75,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     {"binary_sensor", "is_preconditioning"},
     {"binary_sensor", "plugged_in"},
     {"binary_sensor", "charge_port_door_open"},
-    {"binary_sensor", "locked"}
-  ]
-  @removed_legacy_discovery_entities [
+    {"binary_sensor", "locked"},
     {"binary_sensor", "update_available"},
     {"sensor", "tpms_pressure_fl_psi"},
     {"sensor", "tpms_pressure_fr_psi"},
@@ -111,54 +110,36 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   @doc """
   Migrates any existing single-component discovery configs to a device
-  discovery config and then clears the old retained configs. Components that
-  are disabled by default are omitted from the first device config and added
-  in a final device config after legacy cleanup. This prevents Home Assistant
-  from treating cleanup on a legacy topic as removal of a disabled component
-  from the shared device topic.
+  discovery config by clearing all historical legacy topics, waiting for Home
+  Assistant to process the removals, and publishing one complete device
+  config.
 
-  Publishing stops at the first error. Every legacy migration marker must be
-  published successfully before waiting for Home Assistant to process the
-  markers and publishing the migration device config. Legacy cleanup starts
-  only after that config succeeds. After cleanup, Home Assistant is given the
-  same processing delay before the complete device config is published.
-  Retrying safely restarts the sequence.
+  Publishing stops at the first error. Every legacy config must be cleared
+  successfully before waiting and publishing the device config. Retrying
+  safely restarts the sequence. On installations already using device
+  discovery, each retry or TeslaMate restart causes Home Assistant to log one
+  harmless "conflicting MQTT discovery message" warning for each of the 62
+  legacy topics for that vehicle. Existing entities remain unchanged.
   """
   @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def migrate(%Summary{} = summary, opts, publisher) do
-    entity_configs = entities()
-    {prefix, node, device_payload} = discovery_config(summary, opts, entity_configs)
+    car_id = Keyword.fetch!(opts, :car_id)
+    {prefix, node} = discovery_topic_context(car_id, opts)
     migration_delay = Keyword.get(opts, :migration_delay, @migration_delay)
 
-    migration_entity_configs =
-      Enum.reject(entity_configs, fn {_component, _object_id, config} ->
-        Map.get(config, :enabled_by_default, true) == false
-      end)
-
-    {^prefix, ^node, migration_device_payload} =
-      discovery_config(summary, opts, migration_entity_configs)
-
-    with :ok <- publish_legacy_configs(prefix, node, @migration_payload, publisher),
-         :ok <- Process.sleep(migration_delay),
-         :ok <- publish_device_config(prefix, node, migration_device_payload, publisher),
-         :ok <- publish_legacy_configs(prefix, node, "", publisher),
+    with :ok <- clear_legacy_configs(prefix, node, publisher),
          :ok <- Process.sleep(migration_delay) do
-      publish_device_config(prefix, node, device_payload, publisher)
+      publish(summary, opts, publisher)
     end
   end
 
   defp discovery_config(%Summary{} = summary, opts) do
-    discovery_config(summary, opts, entities())
-  end
-
-  defp discovery_config(%Summary{} = summary, opts, entity_configs) do
     car_id = Keyword.fetch!(opts, :car_id)
     namespace = Keyword.get(opts, :namespace)
-    prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
-    node = node(car_id, namespace)
+    {prefix, node} = discovery_topic_context(car_id, opts)
 
     components =
-      Map.new(entity_configs, fn {component, object_id, config} ->
+      Map.new(entities(), fn {component, object_id, config} ->
         component_id = Map.get(config, :component_id, object_id)
 
         config
@@ -218,9 +199,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   """
   @spec clear(pos_integer(), publish_opts(), term()) :: :ok | {:error, term()}
   def clear(car_id, opts, publisher) do
-    namespace = Keyword.get(opts, :namespace)
-    prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
-    node = node(car_id, namespace)
+    {prefix, node} = discovery_topic_context(car_id, opts)
 
     with :ok <-
            call(publisher, :publish, [
@@ -228,23 +207,22 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
              "",
              [retain: true, qos: 1]
            ]) do
-      publish_legacy_configs(prefix, node, "", publisher)
+      clear_legacy_configs(prefix, node, publisher)
     end
   end
 
-  defp publish_legacy_configs(prefix, node, payload, publisher) do
-    entities =
-      for {component, object_id, _config} <- entities(),
-          {component, object_id} in @legacy_discovery_entities,
-          do: {component, object_id}
+  defp discovery_topic_context(car_id, opts) do
+    namespace = Keyword.get(opts, :namespace)
+    prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
 
-    entities =
-      if payload == "", do: entities ++ @removed_legacy_discovery_entities, else: entities
+    {prefix, node(car_id, namespace)}
+  end
 
-    Enum.reduce_while(entities, :ok, fn {component, object_id}, _acc ->
+  defp clear_legacy_configs(prefix, node, publisher) do
+    Enum.reduce_while(@legacy_discovery_entities, :ok, fn {component, object_id}, _acc ->
       topic = component_discovery_topic(prefix, component, node, object_id)
 
-      case call(publisher, :publish, [topic, payload, [retain: true, qos: 1]]) do
+      case call(publisher, :publish, [topic, "", [retain: true, qos: 1]]) do
         :ok -> {:cont, :ok}
         {:error, _} = error -> {:halt, error}
       end
