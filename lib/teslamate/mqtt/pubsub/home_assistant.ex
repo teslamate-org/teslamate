@@ -124,9 +124,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def migrate(%Summary{} = summary, opts, publisher) do
     car_id = Keyword.fetch!(opts, :car_id)
-    namespace = Keyword.get(opts, :namespace)
-    prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
-    node = node(car_id, namespace)
+    {prefix, node} = discovery_topic_context(car_id, opts)
     migration_delay = Keyword.get(opts, :migration_delay, @migration_delay)
 
     with :ok <- clear_legacy_configs(prefix, node, publisher),
@@ -138,8 +136,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   defp discovery_config(%Summary{} = summary, opts) do
     car_id = Keyword.fetch!(opts, :car_id)
     namespace = Keyword.get(opts, :namespace)
-    prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
-    node = node(car_id, namespace)
+    {prefix, node} = discovery_topic_context(car_id, opts)
 
     components =
       Map.new(entities(), fn {component, object_id, config} ->
@@ -202,9 +199,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   """
   @spec clear(pos_integer(), publish_opts(), term()) :: :ok | {:error, term()}
   def clear(car_id, opts, publisher) do
-    namespace = Keyword.get(opts, :namespace)
-    prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
-    node = node(car_id, namespace)
+    {prefix, node} = discovery_topic_context(car_id, opts)
 
     with :ok <-
            call(publisher, :publish, [
@@ -214,6 +209,13 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
            ]) do
       clear_legacy_configs(prefix, node, publisher)
     end
+  end
+
+  defp discovery_topic_context(car_id, opts) do
+    namespace = Keyword.get(opts, :namespace)
+    prefix = Keyword.get(opts, :discovery_prefix, @discovery_prefix)
+
+    {prefix, node(car_id, namespace)}
   end
 
   defp clear_legacy_configs(prefix, node, publisher) do
