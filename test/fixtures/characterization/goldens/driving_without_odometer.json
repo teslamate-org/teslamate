@@ -364,7 +364,7 @@
     "teslamate/cars/$car/since": [
       "2024-01-01T00:00:00.001000Z",
       "2024-01-01T00:00:00.001Z",
-      "2024-01-01T00:00:00.001000Z"
+      "2024-01-01T00:00:00.004Z"
     ],
     "teslamate/cars/$car/speed": ["97", "48", "-8"],
     "teslamate/cars/$car/state": ["online", "driving", "online"],

@@ -26,7 +26,9 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, since: s1}}}
-    assert DateTime.diff(s0, s1, :nanosecond) < 0
+    # The D payload opens the online row and starts the drive: both are dated with it.
+    assert s0 == start_date
+    assert s1 == start_date
 
     assert_receive {:start_drive, ^car}
     assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 97}}

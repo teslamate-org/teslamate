@@ -362,7 +362,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert_receive {:"$websockex_cast", :disconnect}
     assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: 1.5}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging, since: s1}}}
-    assert DateTime.diff(s0, s1, :nanosecond) < 0
+    # The Charging payload carries the online payload's timestamp: same state start time.
+    assert s1 == s0
 
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:insert_charge, ^cproc, %{date: _, charge_energy_added: 1.5}}
@@ -400,7 +401,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendLoggingTest do
     assert :ok = Vehicle.suspend_logging(name)
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, since: s1}}}
     assert_receive {:insert_position, ^car, %{}}
-    assert DateTime.diff(s0, s1, :nanosecond) < 0
+    # The suspend's strict fetch is served the online payload again: same state start time.
+    assert s1 == s0
 
     refute_receive _
   end

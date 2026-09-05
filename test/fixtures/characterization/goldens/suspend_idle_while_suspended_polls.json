@@ -367,7 +367,7 @@
     "teslamate/cars/$car/shift_state": [""],
     "teslamate/cars/$car/since": [
       "2024-01-01T00:00:00.000000Z",
-      "2024-01-01T00:03:20.001Z",
+      "2024-01-01T00:03:20.000Z",
       "2024-01-01T00:03:50.001000Z"
     ],
     "teslamate/cars/$car/spoiler_type": ["None"],

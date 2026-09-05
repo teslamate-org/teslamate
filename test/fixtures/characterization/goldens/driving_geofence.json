@@ -475,7 +475,7 @@
     "teslamate/cars/$car/since": [
       "2024-01-01T00:00:10.000000Z",
       "2024-01-01T00:00:10.000Z",
-      "2024-01-01T00:00:10.000000Z"
+      "2024-01-01T00:00:40.000Z"
     ],
     "teslamate/cars/$car/speed": ["48", "72", "48", "0"],
     "teslamate/cars/$car/spoiler_type": ["None"],
