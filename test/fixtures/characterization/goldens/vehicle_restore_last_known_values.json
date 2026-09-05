@@ -189,7 +189,7 @@
     "teslamate/cars/$car/odometer": ["91887.73"],
     "teslamate/cars/$car/outside_temp": ["16.5"],
     "teslamate/cars/$car/rated_battery_range_km": ["315.06"],
-    "teslamate/cars/$car/since": ["<volatile>"],
+    "teslamate/cars/$car/since": ["2024-01-01T00:00:00.001000Z"],
     "teslamate/cars/$car/state": ["asleep"],
     "teslamate/cars/$car/trim_badging": ["P100D"],
     "teslamate/cars/$car/usable_battery_level": ["64"]

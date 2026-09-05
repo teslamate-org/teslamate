@@ -230,7 +230,10 @@
     "teslamate/cars/$car/scheduled_charging_start_time": [""],
     "teslamate/cars/$car/sentry_mode": ["false"],
     "teslamate/cars/$car/shift_state": [""],
-    "teslamate/cars/$car/since": ["<volatile>", "<volatile>"],
+    "teslamate/cars/$car/since": [
+      "2024-01-01T00:00:00.000000Z",
+      "2024-01-01T00:00:00.003000Z"
+    ],
     "teslamate/cars/$car/spoiler_type": ["None"],
     "teslamate/cars/$car/state": ["online", "offline"],
     "teslamate/cars/$car/time_to_full_charge": [""],

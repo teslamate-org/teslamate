@@ -361,7 +361,11 @@
     "teslamate/cars/$car/plugged_in": ["true"],
     "teslamate/cars/$car/scheduled_charging_start_time": [""],
     "teslamate/cars/$car/shift_state": ["D", "N", "R", ""],
-    "teslamate/cars/$car/since": ["<volatile>", "<volatile>", "<volatile>"],
+    "teslamate/cars/$car/since": [
+      "2024-01-01T00:00:00.001000Z",
+      "2024-01-01T00:00:00.001Z",
+      "2024-01-01T00:00:00.001000Z"
+    ],
     "teslamate/cars/$car/speed": ["97", "48", "-8"],
     "teslamate/cars/$car/state": ["online", "driving", "online"],
     "teslamate/cars/$car/time_to_full_charge": [""],

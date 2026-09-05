@@ -152,7 +152,7 @@
     "teslamate/cars/$car/model": ["3"],
     "teslamate/cars/$car/scheduled_charging_start_time": [""],
     "teslamate/cars/$car/shift_state": [""],
-    "teslamate/cars/$car/since": ["<volatile>"],
+    "teslamate/cars/$car/since": ["2024-01-01T00:00:00.001000Z"],
     "teslamate/cars/$car/state": ["asleep"],
     "teslamate/cars/$car/time_to_full_charge": [""],
     "teslamate/cars/$car/trim_badging": [""]
