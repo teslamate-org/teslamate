@@ -1,14 +1,18 @@
 fn main() {
-    println!("Hello, world!");
+    let result = add(1, 2);
+    println!("add(1, 2) = {result}");
+}
+
+const fn add(a: i32, b: i32) -> i32 {
+    a + b
 }
 
 #[cfg(test)]
 mod test {
-use super::*;
+    use super::add;
 
     #[test]
-    fn test_main() {
-        main();
-        assert_eq!(1, 1);
+    fn test_add() {
+        assert_eq!(add(1, 2), 3);
     }
 }

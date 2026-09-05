@@ -50,12 +50,17 @@ jobs:
     needs:
       - check_paths
       - ensure_linting
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
+    if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.elixir == 'true') || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/elixir_dep_verification_and_static_analysis.yml
 
   elixir_test:
     needs:
       - check_paths
       - ensure_linting
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
+    if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.elixir == 'true') || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/elixir_test.yml
+
+  rust_ci:
+    needs: check_paths
+    if: needs.check_paths.outputs.rust == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/rust_ci.yml
