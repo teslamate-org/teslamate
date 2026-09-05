@@ -8,12 +8,14 @@ defmodule TeslaMate.Characterization.Vehicles do
   that vehicle process — the effect on the vehicle under replay is the same
   (`Process.exit(pid, :kill)`, restarted by its `:permanent` child spec when
   the scenario declares `expect_restart`). `restart` and
-  `subscribe_to_summary` only notify the collector, like `VehiclesMock`.
+  `subscribe_to_summary` only notify the collector, like `VehiclesMock`. The
+  kill is recorded as an interaction in `ApiMock` before the process is
+  terminated.
   """
 
   use GenServer
 
-  defstruct [:pid, :vehicle]
+  defstruct [:pid, :vehicle, :api]
   alias __MODULE__, as: State
 
   def start_link(opts) do
@@ -29,12 +31,20 @@ defmodule TeslaMate.Characterization.Vehicles do
 
   @impl true
   def init(opts) do
-    {:ok, %State{pid: Keyword.fetch!(opts, :pid), vehicle: Keyword.fetch!(opts, :vehicle)}}
+    {:ok,
+     %State{
+       pid: Keyword.fetch!(opts, :pid),
+       vehicle: Keyword.fetch!(opts, :vehicle),
+       api: Keyword.fetch!(opts, :api)
+     }}
   end
 
   @impl true
-  def handle_call(:kill, _from, %State{pid: pid, vehicle: vehicle} = state) do
+  def handle_call(:kill, _from, %State{pid: pid, vehicle: vehicle, api: api} = state) do
     send(pid, {__MODULE__, :kill})
+    # Recorded before the process goes down, so the interaction carries the
+    # serve that triggered it.
+    :ok = ApiMock.record_interaction(api, {:vehicles, :kill})
 
     case Process.whereis(vehicle) do
       nil -> :ok

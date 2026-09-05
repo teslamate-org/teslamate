@@ -2,7 +2,16 @@ defmodule ApiMock do
   use GenServer
 
   defmodule State do
-    defstruct [:pid, :events, :pending_vehicle_data, :receiver, :vehicle, calls: []]
+    defstruct [
+      :pid,
+      :events,
+      :pending_vehicle_data,
+      :receiver,
+      :vehicle,
+      :last_served,
+      calls: [],
+      interactions: []
+    ]
   end
 
   # API
@@ -21,6 +30,12 @@ defmodule ApiMock do
   # behaviour of the action (what the UI would get back), captured by the
   # characterization harness.
   def calls(name), do: GenServer.call(name, :calls)
+
+  # Interactions with neighbouring systems that leave neither a row nor a
+  # topic — stream connect/disconnect, the supervisor kill — each tagged
+  # with the index of the API event served last (see :indexed events).
+  def interactions(name), do: GenServer.call(name, :interactions)
+  def record_interaction(name, interaction), do: GenServer.call(name, {:record, interaction})
 
   # Callbacks
 
@@ -91,6 +106,7 @@ defmodule ApiMock do
   def handle_call({action, id}, _from, %State{events: [event | _events]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
     result = exec(event, action)
+    state = mark_served(state, event)
 
     case {action, snapshot?(event), result} do
       {:get_vehicle, true, {:ok, %TeslaApi.Vehicle{state: "online"}}} ->
@@ -105,15 +121,45 @@ defmodule ApiMock do
     {:reply, Enum.reverse(calls), state}
   end
 
+  def handle_call(:interactions, _from, %State{interactions: interactions} = state) do
+    {:reply, Enum.reverse(interactions), state}
+  end
+
+  def handle_call({:record, interaction}, _from, state) do
+    {:reply, :ok, note_interaction(state, interaction)}
+  end
+
   def handle_call({:sign_in, _tokens} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
     {:reply, :ok, state}
   end
 
+  # In a characterization replay (the :vehicle option is set) the mock is
+  # the stream: the vehicle's Stream.disconnect/1 cast then lands here
+  # (handle_info below) and is recorded like the connect. Mock-based tests
+  # keep the test process as the stream pid and see the cast themselves.
   def handle_call({:stream, _vid, receiver} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
-    {:reply, {:ok, pid}, %State{state | receiver: receiver}}
+    stream_pid = if state.vehicle, do: self(), else: pid
+
+    {:reply, {:ok, stream_pid},
+     %State{state | receiver: receiver} |> note_interaction({:stream, :connect})}
   end
+
+  @impl true
+  def handle_info({:"$websockex_cast", :disconnect}, state) do
+    {:noreply, note_interaction(state, {:stream, :disconnect})}
+  end
+
+  defp note_interaction(%State{interactions: acc, last_served: served} = state, interaction),
+    do: %State{state | interactions: [{served, interaction} | acc]}
+
+  # Characterization events arrive as {:indexed, index, closure}: the index
+  # is the collector's serve index, so a snapshot's probe and strict serve
+  # carry the same one.
+  defp mark_served(state, {:snapshot, event}), do: mark_served(state, event)
+  defp mark_served(state, {:indexed, index, _fun}), do: %State{state | last_served: index}
+  defp mark_served(state, _event), do: state
 
   defp deliver_stream(_payload, %State{vehicle: nil}) do
     raise "stream deliveries require the :vehicle option on ApiMock — " <>
@@ -192,6 +238,7 @@ defmodule ApiMock do
         # counts like any other (index, barrier, vacuity).
         result = exec(event, action)
         GenServer.reply(from, result)
+        state = mark_served(state, event)
         await_call_outcome(proxy, call, advance_event(state), result)
 
       {^ref, :ok} ->
@@ -230,6 +277,7 @@ defmodule ApiMock do
   # Events tagged with :get_vehicle or :get_vehicle_with_state may only be
   # consumed by that API call, allowing tests to pin which endpoint was used.
   defp exec({:snapshot, event}, action), do: exec(event, action)
+  defp exec({:indexed, _index, fun}, action), do: exec(fun, action)
 
   defp exec({expected_action, event}, action)
        when expected_action in [:get_vehicle, :get_vehicle_with_state] do
