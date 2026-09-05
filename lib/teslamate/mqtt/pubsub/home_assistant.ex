@@ -114,7 +114,10 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
 
   Publishing stops at the first error. Every legacy config must be cleared
   successfully before waiting and publishing the device config. Retrying
-  safely restarts the sequence.
+  safely restarts the sequence. On installations already using device
+  discovery, each retry or TeslaMate restart causes Home Assistant to log one
+  harmless "conflicting MQTT discovery message" warning for each of the 62
+  legacy topics for that vehicle. Existing entities remain unchanged.
   """
   @spec migrate(term(), publish_opts(), term()) :: :ok | {:error, term()}
   def migrate(%Summary{} = summary, opts, publisher) do

@@ -48,9 +48,13 @@ the entity IDs match those produced by the manual `mqtt_sensors.yaml` below.
 On the first vehicle summary after each startup, TeslaMate clears every retained
 topic from its former per-entity discovery format, waits for Home Assistant to
 process the removals, and then publishes one complete device discovery payload.
-Repeating this sequence is safe for installations already using device
-discovery: the legacy topics are absent and the retained device payload is
-unchanged.
+For installations already using device discovery, repeating this sequence is
+state-idempotent but not silent. MQTT forwards each zero-byte retained publish
+to Home Assistant even when the legacy retained topic is already absent, so
+Home Assistant logs one harmless "conflicting MQTT discovery message" warning
+for each of the 62 legacy topics per vehicle after every TeslaMate restart.
+These warnings do not change or remove any existing entity, and the retained
+device payload is unchanged.
 
 This cleanup does not use Home Assistant's discovery migration protocol. As a
 result, entity registry settings and customizations from the former per-entity
