@@ -245,7 +245,11 @@
     "teslamate/cars/$car/scheduled_charging_start_time": [""],
     "teslamate/cars/$car/sentry_mode": ["false"],
     "teslamate/cars/$car/shift_state": [""],
-    "teslamate/cars/$car/since": ["<volatile>", "<volatile>", "<volatile>"],
+    "teslamate/cars/$car/since": [
+      "2024-01-01T00:00:10.000000Z",
+      "2024-01-01T00:00:20.000Z",
+      "2024-01-01T00:00:30.000Z"
+    ],
     "teslamate/cars/$car/software_update": [
       {
         "installed_version": "2019.8.4",

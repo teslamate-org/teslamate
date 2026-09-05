@@ -81,8 +81,8 @@ defmodule TeslaMate.Characterization do
   the serve boundary a fetch is always parked, so the declared payload is
   served by that parked poll, not by a resume fetch. `summary` replies the
   `Summary` the UI would get, pinned as canonical JSON: keys sorted, `car`
-  replaced by `"$car"`, `since` masked like the topic, values as Jason
-  encodes them. `update_car_settings` runs the production
+  replaced by `"$car"`, `since` as the value the replay clock produced,
+  values as Jason encodes them. `update_car_settings` runs the production
   `Settings.update_car_settings/2` (changeset, `car_settings` row) and sends
   the persisted struct to the vehicle exactly as the PubSub broadcast would;
   its reply is `"ok"` or the changeset errors, pinned in `calls`. The attrs
@@ -202,8 +202,8 @@ defmodule TeslaMate.Characterization do
   the serve boundary in list order like stream and call events, carries no
   serve index, may not step backwards and cannot be the terminal. Every
   time the vehicle derives from its clock is therefore deterministic and
-  pinned as a value; only Log's own timestamps (`inserted_at`,
-  `updated_at`) and the `since` topic stay masked.
+  pinned as a value — the `since` topic included; only Log's own
+  timestamps (`inserted_at`, `updated_at`) stay masked.
 
   ## Recording
 
@@ -366,9 +366,6 @@ defmodule TeslaMate.Characterization do
   # Wall-clock columns with second granularity: a double-run diff can miss
   # them when both runs fall into the same second, so they are always masked.
   @always_volatile_columns ~w(inserted_at updated_at)
-
-  # MQTT topics whose payload is wall-clock derived (state change timestamps).
-  @always_volatile_topics ~w(since)
 
   ## Discovery: place is class, pairing is the shared basename
 
@@ -738,7 +735,6 @@ defmodule TeslaMate.Characterization do
       summary
       |> Map.from_struct()
       |> Map.put(:car, "$car")
-      |> Map.put(:since, @volatile)
       |> Jason.encode!()
       |> Jason.decode!()
 
@@ -1316,15 +1312,7 @@ defmodule TeslaMate.Characterization do
         drain_mqtt(acc, car)
     after
       0 ->
-        Map.new(acc, fn {topic, values} ->
-          values = Enum.reverse(values)
-
-          if Path.basename(topic) in @always_volatile_topics do
-            {topic, Enum.map(values, fn _ -> @volatile end)}
-          else
-            {topic, Enum.dedup(values)}
-          end
-        end)
+        Map.new(acc, fn {topic, values} -> {topic, values |> Enum.reverse() |> Enum.dedup()} end)
     end
   end
 

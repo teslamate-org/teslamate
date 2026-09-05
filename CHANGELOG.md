@@ -3,7 +3,7 @@
 ## [unreleased]
 
 Under the hood, this release adds a self-verifying black-box characterization suite: recorded API sequences replay through the real vehicle state machine, and everything that leaves the system — database rows, MQTT messages, and the vehicle's interactions with the streaming API and its supervisor — is pinned against goldens. All existing vehicle scenarios are converted (120 fixtures).
-The work already paid off: it exposed a crash in the update-cancel path (#5656) and a crash loop after an offline period when the car reports an outdated timestamp (#5684), both fixed in this release, and it surfaced two quirks for a later fix — a charge sample without charger power is stored as 0 kW (#5699), and the published state start time can jump backwards after charging, updating or driving (#5693).
+The work already paid off three times: it exposed a crash in the update-cancel path (#5656), a crash loop after an offline period when the car reports an outdated timestamp (#5684), and the published state start time jumping backwards after charging, updating or driving (#5693) — all fixed in this release — and it pinned a data-quality quirk for a later fix (#5699: a charge sample without charger power is stored as 0 kW).
 
 **Note for Home Assistant MQTT discovery users:** TeslaMate no longer re-runs the discovery migration on every restart, which briefly removed and recreated entities (#5667). Instead it clears the former per-entity topics and republishes the device config; Home Assistant logs one harmless "conflicting MQTT discovery message" warning per legacy topic after each restart, entities are untouched.
 Upgrading directly from 4.1.x no longer preserves entity registry customizations — see the [docs](https://docs.teslamate.org/docs/integrations/home_assistant#mqtt-discovery-automatic-configuration) (#5685).
@@ -19,6 +19,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(vehicle): keep logging when the car reports an outdated timestamp after being offline or asleep — previously the vehicle process crashed on every poll and the state stayed stuck (#5692 - @JakobLichterfeld)
 - feat: use Grafana 13.2.1 (#5694 - @swiffer)
 - fix(mqtt): stop re-running the Home Assistant discovery migration on every restart (#5685 - @nebhale)
+- fix(vehicle): keep the published state start time from jumping backwards after charging, updating or driving (#5706 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

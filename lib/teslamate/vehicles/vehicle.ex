@@ -26,6 +26,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
               task: nil,
               import?: false,
               stream_pid: nil,
+              # :start serves both the process start and the return from a
+              # transient state (charging, driving, updating, suspended). On the
+              # return the published state start time is the payload date of the
+              # returning poll; at the process start no state changes and the open
+              # row's start is kept. Separating the two roles of :start is phase 2.
+              initial_fetch?: true,
               # pre_online_check tracks whether an apparent online event is a real wakeup or a brief
               # subsystem check. Some vehicles (especially MCU2-upgraded cars) wake briefly (~2-3 min)
               # each hour for subsystem checks and report online, but requesting vehicle_data causes a
@@ -296,6 +302,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ### resume_logging
 
+  # A user command carries no payload, so the state start time is the clock.
   def handle_event({:call, from}, :resume_logging, {:suspended, prev_state}, %Data{} = data) do
     Logger.info("Resuming logging", car_id: data.car.id)
 
@@ -359,7 +366,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:next_state, {:suspended, :online},
        %Data{
          data
-         | last_state_change: data.deps.clock.utc_now(),
+         | last_state_change: state_change_date(vehicle, data),
            last_response: vehicle,
            task: nil
        },
@@ -686,9 +693,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("Online / Start of drive initiated by: #{inspect(stream_data)}")
 
         %{elevation: elevation} = position = create_position(stream_data, data)
-        {drive, data} = start_drive(position, data)
-
         vehicle = merge(data.last_response, stream_data, time: true)
+        {drive, data} = start_drive(position, state_change_date(vehicle, data), data)
 
         {:next_state, {:driving, :available, drive},
          %Data{data | last_response: vehicle, elevation: elevation},
@@ -775,9 +781,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         Logger.info("Suspended / Start of drive initiated by: #{inspect(stream_data)}")
 
         %{elevation: elevation} = position = create_position(stream_data, data)
-        {drive, data} = start_drive(position, data)
-
         vehicle = merge(data.last_response, stream_data, time: true)
+        {drive, data} = start_drive(position, state_change_date(vehicle, data), data)
 
         {:next_state, {:driving, :available, drive},
          %Data{data | last_response: vehicle, elevation: elevation},
@@ -1010,7 +1015,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
        | last_state_change: last_state_change,
          state_row_started: last_state_change,
          stream_pid: nil,
-         pre_online_check: :idle
+         pre_online_check: :idle,
+         initial_fetch?: false
      }, [broadcast_summary(), schedule_fetch(data)]}
   end
 
@@ -1028,7 +1034,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
        | last_state_change: last_state_change,
          state_row_started: last_state_change,
          stream_pid: nil,
-         pre_online_check: :idle
+         pre_online_check: :idle,
+         initial_fetch?: false
      }, [broadcast_summary(), schedule_fetch(data)]}
   end
 
@@ -1071,14 +1078,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
           nil
       end
 
+    # The open online row survives a transient state, so on the return its
+    # start would send the published state start time backwards: the return
+    # is dated with the returning poll, the process start keeps the row.
+    since =
+      if data.initial_fetch?, do: last_state_change, else: state_change_date(vehicle, data)
+
     {:next_state, :online,
      %{
        data
        | car: car,
-         last_state_change: last_state_change,
+         last_state_change: since,
          state_row_started: last_state_change,
          geofence: geofence,
-         stream_pid: stream_pid
+         stream_pid: stream_pid,
+         initial_fetch?: false
      }, [broadcast_summary(), {:next_event, :internal, evt}, schedule_position_storing()]}
   end
 
@@ -1118,7 +1132,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, {:updating, update},
          %{
            data
-           | last_state_change: data.deps.clock.utc_now(),
+           | last_state_change: state_change_date(vehicle, data),
              last_used: data.deps.clock.utc_now(),
              stream_pid: nil
          }, [broadcast_summary(), schedule_fetch(15, data)]}
@@ -1126,7 +1140,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %V{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
         Logger.info("Start of drive initiated by: #{inspect(vehicle.drive_state)}")
 
-        {drive, data} = start_drive(create_position(vehicle, data), data)
+        {drive, data} =
+          start_drive(create_position(vehicle, data), state_change_date(vehicle, data), data)
+
         interval = if streaming?(data), do: default_interval(), else: driving_interval()
 
         {:next_state, {:driving, :available, drive}, data,
@@ -1163,7 +1179,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, {:charging, cproc},
          %Data{
            data
-           | last_state_change: data.deps.clock.utc_now(),
+           | last_state_change: state_change_date(vehicle, data),
              last_used: data.deps.clock.utc_now(),
              stream_pid: nil
          }, [broadcast_summary(), schedule_fetch(5, data), schedule_position_storing()]}
@@ -1847,7 +1863,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
               Logger.info("Suspending logging", car_id: car.id)
 
               {:next_state, {:suspended, current_state},
-               %Data{data | last_state_change: data.deps.clock.utc_now()}, events}
+               %Data{data | last_state_change: state_change_date(vehicle, data)}, events}
           end
         else
           {:keep_state_and_data,
@@ -1922,7 +1938,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp start_drive(position, %Data{car: car, deps: deps} = data) do
+  defp start_drive(position, %DateTime{} = date, %Data{car: car, deps: deps} = data) do
     Logger.info("Driving / Start", car_id: car.id)
 
     {:ok, {drive, geofence}} =
@@ -1933,8 +1949,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {drive, geofence}
       end)
 
-    now = data.deps.clock.utc_now()
-    data = %Data{data | last_state_change: now, last_used: now, geofence: geofence}
+    data = %Data{
+      data
+      | last_state_change: date,
+        last_used: data.deps.clock.utc_now(),
+        geofence: geofence
+    }
 
     {drive, data}
   end
@@ -2133,6 +2153,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # A payload without a timestamp is dated by the vehicle's clock, so every
   # state row carries the vehicle's view of time rather than Log's fallback.
   defp date_opts(%Vehicle{}, %Data{deps: deps}), do: [date: deps.clock.utc_now()]
+
+  # The published state start time (`since`) is the payload date of the poll
+  # that changes the summary state — the same date a states row would get,
+  # stale protection included — not the server clock.
+  defp state_change_date(%Vehicle{} = vehicle, %Data{} = data),
+    do: Keyword.fetch!(date_opts(vehicle, data), :date)
 
   defp parse_timestamp(ts), do: DateTime.from_unix!(ts, :millisecond)
 

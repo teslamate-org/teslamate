@@ -551,12 +551,11 @@
     "teslamate/cars/$car/sentry_mode": ["false"],
     "teslamate/cars/$car/shift_state": ["", "D", ""],
     "teslamate/cars/$car/since": [
-      "<volatile>",
-      "<volatile>",
-      "<volatile>",
-      "<volatile>",
-      "<volatile>",
-      "<volatile>"
+      "2024-01-01T00:00:00.000000Z",
+      "2024-01-01T00:00:10.000Z",
+      "2024-01-01T00:16:10.001Z",
+      "2024-01-01T00:16:11.001Z",
+      "2024-01-01T00:16:11.003000Z"
     ],
     "teslamate/cars/$car/speed": ["48", "32"],
     "teslamate/cars/$car/spoiler_type": ["None"],

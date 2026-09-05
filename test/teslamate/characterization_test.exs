@@ -312,7 +312,7 @@ defmodule TeslaMate.CharacterizationTest do
   end
 
   @tag :tmp_dir
-  test "a summary call is pinned canonically — car masked, since volatile", %{tmp_dir: tmp} do
+  test "a summary call is pinned canonically — car masked, since a clock value", %{tmp_dir: tmp} do
     t0 = 1_704_067_200_000
 
     scenario =
@@ -328,7 +328,8 @@ defmodule TeslaMate.CharacterizationTest do
     golden = pair.golden_path |> File.read!() |> Jason.decode!()
     assert [%{"summary" => summary}] = golden["calls"]
     assert summary["car"] == "$car"
-    assert summary["since"] == "<volatile>"
+    # since is the replay clock's value for the online row's start: the first payload's time.
+    assert summary["since"] == "2024-01-01T00:00:00.000000Z"
     assert summary["state"] == "online"
     assert summary["battery_level"] == 80
   end
