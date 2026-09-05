@@ -7,6 +7,12 @@ on:
       githubfolder:
         description: "changes to .github folder"
         value: ${{ jobs.check_paths.outputs.githubfolder }}
+      elixir:
+        description: "changes to Elixir code"
+        value: ${{ jobs.check_paths.outputs.elixir }}
+      rust:
+        description: "changes to Rust code"
+        value: ${{ jobs.check_paths.outputs.rust }}
 
 permissions:
   contents: read
@@ -16,6 +22,8 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       githubfolder: ${{ steps.filter.outputs.githubfolder }}
+      elixir: ${{ steps.filter.outputs.elixir }}
+      rust: ${{ steps.filter.outputs.rust }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -26,3 +34,15 @@ jobs:
           filters: |
             githubfolder:
               - '.github/**'
+            elixir:
+              - '**.ex'
+              - '**.exs'
+              - '**.heex'
+              - '**.eex'
+              - 'mix.lock'
+              - 'priv/gettext/**'
+              - '.formatter.exs'
+              - '.credo.exs'
+              - '.dialyzer_ignore.exs'
+            rust:
+              - 'teslamate-rust/**'
