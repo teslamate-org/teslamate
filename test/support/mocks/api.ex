@@ -106,7 +106,7 @@ defmodule ApiMock do
   def handle_call({action, id}, _from, %State{events: [event | _events]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
     result = exec(event, action)
-    state = mark_served(state, event)
+    %State{} = state = mark_served(state, event)
 
     case {action, snapshot?(event), result} do
       {:get_vehicle, true, {:ok, %TeslaApi.Vehicle{state: "online"}}} ->
@@ -157,9 +157,12 @@ defmodule ApiMock do
   # Characterization events arrive as {:indexed, index, closure}: the index
   # is the collector's serve index, so a snapshot's probe and strict serve
   # carry the same one.
-  defp mark_served(state, {:snapshot, event}), do: mark_served(state, event)
-  defp mark_served(state, {:indexed, index, _fun}), do: %State{state | last_served: index}
-  defp mark_served(state, _event), do: state
+  defp mark_served(%State{} = state, {:snapshot, event}), do: mark_served(state, event)
+
+  defp mark_served(%State{} = state, {:indexed, index, _fun}),
+    do: %State{state | last_served: index}
+
+  defp mark_served(%State{} = state, _event), do: state
 
   defp deliver_stream(_payload, %State{vehicle: nil}) do
     raise "stream deliveries require the :vehicle option on ApiMock — " <>
@@ -238,7 +241,7 @@ defmodule ApiMock do
         # counts like any other (index, barrier, vacuity).
         result = exec(event, action)
         GenServer.reply(from, result)
-        state = mark_served(state, event)
+        %State{} = state = mark_served(state, event)
         await_call_outcome(proxy, call, advance_event(state), result)
 
       {^ref, :ok} ->
