@@ -256,6 +256,12 @@ defmodule TeslaMate.Characterization do
       vehicle process is monitored and the replay fails before teardown
       unless it actually went down; a declaration without an `await`
       convergence outcome raises (`replay/2`, `expect_restart?/1`).
+    * A mismatch on a dated row names the scenario event whose cycle created
+      it — the last timed event (payload timestamp, clock value or stream
+      time) at or before the row's date, with the distance in milliseconds
+      when the date lies between events; an `end_date` divergence names the
+      closing event as well, rows dated before the first event are called
+      out as seed or clock-dated (`mismatch_message/4`, `attribute_date/2`).
     * Interactions are captured, not flushed: stream connect and disconnect
       and the supervisor kill land in the golden with their serve index
       (`ApiMock.record_interaction/2`, `ApiMock.interactions/1`,
@@ -498,9 +504,10 @@ defmodule TeslaMate.Characterization do
            "missing golden for #{pair.name} — " <>
              "record it with CHARACTERIZATION_RECORD=#{only_target(pair)} mix test"
 
+    input = read_scenario(pair)
     expected = pair.golden_path |> File.read!() |> Jason.decode!()
-    actual = replay(read_scenario(pair), :compare)
-    assert_equivalent(expected, actual, pair.name)
+    actual = replay(input, :compare)
+    assert_equivalent(expected, actual, pair.name, input)
   end
 
   def only_target(%Pair{selftest?: true, name: name}), do: "only:selftest/#{name}"
@@ -1456,19 +1463,155 @@ defmodule TeslaMate.Characterization do
   def mask_volatile(value, value), do: value
   def mask_volatile(_first, _second), do: @volatile
 
-  defp assert_equivalent(expected, actual, name) do
+  defp assert_equivalent(expected, actual, name, input) do
+    case mismatch_message(name, expected, actual, input) do
+      nil -> :ok
+      message -> flunk(message)
+    end
+  end
+
+  # The comparison message: the first divergence, and — when it lies in a
+  # dated row — the scenario event whose cycle created that row, so the
+  # reader lands on the event instead of hunting the row's date.
+  @doc false
+  def mismatch_message(name, expected, actual, input) do
     case diff(expected, actual) do
       nil ->
-        :ok
+        nil
 
       {path, exp, act} ->
-        flunk("""
+        """
         characterization mismatch in #{name}
         first divergence at #{Enum.join(path, ".")}
         expected: #{inspect(exp)}
         actual:   #{inspect(act)}
-        """)
+        """ <> attribution_lines(path, expected, actual, input)
     end
+  end
+
+  defp attribution_lines(
+         ["database", table, "[" <> _ = position, column],
+         expected,
+         actual,
+         input
+       ) do
+    index =
+      position |> String.trim_leading("[") |> String.trim_trailing("]") |> String.to_integer()
+
+    expected_row = row_at(expected, table, index)
+    actual_row = row_at(actual, table, index)
+
+    created =
+      case row_date(expected_row, actual_row, ["date", "start_date"]) do
+        nil -> ""
+        date -> "row dated #{date} — created #{attribute_date(date, input)}\n"
+      end
+
+    closed =
+      case column == "end_date" && row_date(expected_row, actual_row, ["end_date"]) do
+        date when is_binary(date) ->
+          "row closed #{date} — closed #{attribute_date(date, input)}\n"
+
+        _ ->
+          ""
+      end
+
+    created <> closed
+  end
+
+  defp attribution_lines(_path, _expected, _actual, _input), do: ""
+
+  defp row_at(capture, table, index) do
+    case get_in(capture, ["database", table]) do
+      rows when is_list(rows) -> Enum.at(rows, index, :__missing__)
+      _ -> :__missing__
+    end
+  end
+
+  # The row's date: from the golden, from the capture when the golden's is
+  # masked or the row exists only there.
+  defp row_date(expected_row, actual_row, columns) do
+    Enum.find_value(columns, fn column ->
+      Enum.find_value([expected_row, actual_row], fn
+        %{} = row ->
+          case Map.get(row, column) do
+            value when is_binary(value) and value != @volatile -> value
+            _ -> nil
+          end
+
+        _ ->
+          nil
+      end)
+    end)
+  end
+
+  # Attribution rule, derived from the replay clock: every serve raises the
+  # clock to at least its payload time and clock events set it explicitly,
+  # so a row dated d was created in the cycle of the last event whose time
+  # is <= d. Ticks between timed events do not identify an event
+  # (Clock.serve/1 runs per closure execution — snapshot twice, terminal
+  # repeats, error fallback), so the distance is reported instead.
+  @doc false
+  def attribute_date(date, input) do
+    with {:ok, naive} <- NaiveDateTime.from_iso8601(date),
+         ms = naive |> DateTime.from_naive!("Etc/UTC") |> DateTime.to_unix(:millisecond),
+         {position, kind, time, serve} <- last_event_at_or_before(timeline(input), ms) do
+      label =
+        "event #{position} (#{kind}#{if serve, do: ", serve #{serve}", else: ""}, #{time_label(kind)} #{time})"
+
+      case ms - time do
+        0 -> "in the cycle of #{label}"
+        gap -> "#{gap} ms after #{label}"
+      end
+    else
+      :before_first_event -> "before the first event (seed or clock-dated)"
+      _ -> "at a date that is not attributable"
+    end
+  end
+
+  defp time_label("clock"), do: "value"
+  defp time_label("stream"), do: "time"
+  defp time_label(_kind), do: "timestamp"
+
+  defp last_event_at_or_before(timeline, ms) do
+    timeline
+    |> Enum.filter(fn {_position, _kind, time, _serve} -> time <= ms end)
+    |> List.last() || :before_first_event
+  end
+
+  # Timed events of the scenario in list order: {position, kind, time,
+  # serve index}. API events carry their index from index_events/1;
+  # asleep, offline, error, call and control events have no time.
+  defp timeline(%{"events" => raw_events}) do
+    {_serve, entries} =
+      raw_events
+      |> Enum.with_index(1)
+      |> Enum.reduce({0, []}, fn {event, position}, {serve, acc} ->
+        case event do
+          %{"vehicle" => raw} ->
+            serve = serve + 1
+
+            case get_in(raw, ["drive_state", "timestamp"]) do
+              ts when is_integer(ts) -> {serve, [{position, "vehicle", ts, serve} | acc]}
+              _ -> {serve, acc}
+            end
+
+          %{"error" => _} ->
+            {serve + 1, acc}
+
+          %{"clock" => ms} when is_integer(ms) ->
+            {serve, [{position, "clock", ms, nil} | acc]}
+
+          %{"stream" => value} when is_binary(value) ->
+            %TeslaApi.Stream.Data{time: %DateTime{} = time} = TeslaApi.Stream.decode_frame!(value)
+            {serve, [{position, "stream", DateTime.to_unix(time, :millisecond), nil} | acc]}
+
+          _ ->
+            {serve, acc}
+        end
+      end)
+
+    Enum.reverse(entries)
   end
 
   def diff(expected, actual) do
