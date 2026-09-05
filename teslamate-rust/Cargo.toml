@@ -3,4 +3,13 @@ name = "teslamate-rust"
 version = "0.1.0"
 edition = "2024"
 
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+panic = "deny"
+expect_used = "deny"
+unwrap_used = "deny"
+todo = "deny"
+unimplemented = "deny"
+
 [dependencies]
