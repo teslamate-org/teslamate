@@ -1,7 +1,7 @@
 defmodule LogMock do
   use GenServer
 
-  defstruct [:pid, :last_update]
+  defstruct [:pid, :last_update, :current_state]
   alias __MODULE__, as: State
 
   alias TeslaMate.Log.{Drive, ChargingProcess, Update, Car, Position}
@@ -77,12 +77,20 @@ defmodule LogMock do
     {:ok, state}
   end
 
+  # Mirrors the production contract (Log.start_state/3): a state that does
+  # not change keeps its open row — the date of the first call — and a
+  # changed state opens a row dated with the given date.
   @impl true
   def handle_call({:start_state, _car, s, opts} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    # Mirrors the production contract: the row is dated with the given date.
-    start_date = Keyword.get(opts, :date) || DateTime.utc_now()
-    {:reply, {:ok, %Log.State{state: s, start_date: start_date}}, state}
+
+    row =
+      case state.current_state do
+        %Log.State{state: ^s} = row -> row
+        _ -> %Log.State{state: s, start_date: Keyword.get(opts, :date) || DateTime.utc_now()}
+      end
+
+    {:reply, {:ok, row}, %State{state | current_state: row}}
   end
 
   def handle_call({:get_current_state, _}, _from, state) do
