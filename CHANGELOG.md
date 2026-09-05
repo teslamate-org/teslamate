@@ -14,6 +14,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 - refactor(vehicle): date timestamp-less state rows through the clock seam (#5689 - @JakobLichterfeld)
 - fix(vehicle): keep logging when the car reports an outdated timestamp after being offline or asleep — previously the vehicle process crashed on every poll and the state stayed stuck (#5692 - @JakobLichterfeld)
 - feat: use Grafana 13.2.1 (#5694 - @swiffer)
+- fix(mqtt): stop re-running the Home Assistant discovery migration on every restart (#5685 - @nebhale)
 
 #### Build, CI, internal
 
