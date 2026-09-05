@@ -32,6 +32,7 @@ Under the hood, this release adds a self-verifying black-box characterization su
 - test(characterization): convert vehicle scenarios to characterization fixtures, add the update_car_settings call (#5697 - @JakobLichterfeld)
 - test(characterization): convert the remaining vehicle scenarios — resume_logging and summary calls, expect_halt, seed positions, Vehicles stand-in (#5698 - @JakobLichterfeld)
 - test(characterization): pin charge samples without charger_power (#5700 - @JakobLichterfeld)
+- test(characterization): pin stream connect/disconnect and the supervisor kill as golden interactions (#5704 - @JakobLichterfeld)
 
 #### Dashboards
 
