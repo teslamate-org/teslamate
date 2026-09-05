@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'reconnects the stream when a drive resumes after a short unavailability' (streaming enabled): a shorter offline stretch mid-drive; the drive continues after the gap. Streaming is declared explicitly: with an active stream the vehicle's suspend settings are hardcoded to {3, 10} minutes of payload time and this scenario's suspend guards are dead \u2014 the asleep terminal keeps the replay repeat-neutral. The interactions section pins the stream itself: connected after the first serve, disconnected on the first offline result, reconnected when the drive resumes online, disconnected again by the asleep terminal.",
+  "description": "Harness self-test \u2014 machinery evidence, not a behaviour contract. Exercises the interactions section: the vehicle connects the stream when it goes online, an offline period mid-drive ends in an offline row that disconnects it, the drive resumes online and the stream is reconnected, and the asleep terminal disconnects it again. Each interaction carries the index of the API event served last; the events are those of driving_stream_reconnect_offline.",
   "events": [
     {
       "vehicle": {
@@ -245,6 +245,26 @@
     },
     {
       "vehicle": {
+        "state": "offline"
+      }
+    },
+    {
+      "vehicle": {
+        "state": "offline"
+      }
+    },
+    {
+      "vehicle": {
+        "state": "offline"
+      }
+    },
+    {
+      "vehicle": {
+        "state": "offline"
+      }
+    },
+    {
+      "vehicle": {
         "charge_state": {
           "battery_level": 19,
           "battery_range": 180.0,
@@ -252,14 +272,14 @@
           "charging_state": "Disconnected",
           "est_battery_range": 170.0,
           "ideal_battery_range": 190.0,
-          "timestamp": 1704067450000,
+          "timestamp": 1704067450001,
           "usable_battery_level": 18
         },
         "climate_state": {
           "inside_temp": 18.0,
           "is_climate_on": true,
           "outside_temp": 12.5,
-          "timestamp": 1704067450000
+          "timestamp": 1704067450001
         },
         "display_name": "blue",
         "drive_state": {
@@ -269,7 +289,7 @@
           "power": 15,
           "shift_state": "D",
           "speed": 20,
-          "timestamp": 1704067450000
+          "timestamp": 1704067450001
         },
         "id": 42,
         "state": "online",
@@ -277,7 +297,7 @@
           "car_type": "model3",
           "exterior_color": "DeepBlue",
           "spoiler_type": "None",
-          "timestamp": 1704067450000,
+          "timestamp": 1704067450001,
           "trim_badging": "74d",
           "wheel_type": "Pinwheel18"
         },
@@ -288,7 +308,7 @@
           "locked": false,
           "odometer": 10000.09,
           "sentry_mode": false,
-          "timestamp": 1704067450000
+          "timestamp": 1704067450001
         },
         "vin": "5YJ3E1EA1KF000001"
       }
@@ -302,14 +322,14 @@
           "charging_state": "Disconnected",
           "est_battery_range": 170.0,
           "ideal_battery_range": 190.0,
-          "timestamp": 1704067451000,
+          "timestamp": 1704067451001,
           "usable_battery_level": 18
         },
         "climate_state": {
           "inside_temp": 18.0,
           "is_climate_on": false,
           "outside_temp": 12.5,
-          "timestamp": 1704067451000
+          "timestamp": 1704067451001
         },
         "display_name": "blue",
         "drive_state": {
@@ -319,7 +339,7 @@
           "power": 0,
           "shift_state": null,
           "speed": null,
-          "timestamp": 1704067451000
+          "timestamp": 1704067451001
         },
         "id": 42,
         "state": "online",
@@ -327,7 +347,7 @@
           "car_type": "model3",
           "exterior_color": "DeepBlue",
           "spoiler_type": "None",
-          "timestamp": 1704067451000,
+          "timestamp": 1704067451001,
           "trim_badging": "74d",
           "wheel_type": "Pinwheel18"
         },
@@ -338,7 +358,7 @@
           "locked": true,
           "odometer": 10000.1,
           "sentry_mode": false,
-          "timestamp": 1704067451000
+          "timestamp": 1704067451001
         },
         "vin": "5YJ3E1EA1KF000001"
       }

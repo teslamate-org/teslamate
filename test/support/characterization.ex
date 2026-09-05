@@ -159,6 +159,26 @@ defmodule TeslaMate.Characterization do
   vehicle, the replay has one and the stand-in terminates that process. A
   scenario reaching the kill declares `expect_restart`.
 
+  ## Interactions
+
+  What the vehicle does to its neighbours without leaving a row or a topic
+  is pinned in the golden's `interactions` section: the stream it connects
+  (`Api.stream/3`) and disconnects (`Stream.disconnect/1`), and the kill it
+  asks of the vehicles supervisor. `ApiMock` records them — it is the
+  stream's process, so the disconnect cast lands there, and the vehicles
+  stand-in reports the kill to it — each tagged with `after_serve`, the
+  collector's index of the API event served last (a snapshot's probe and
+  strict serve share one index):
+
+      "interactions": [
+        {"after_serve": 1, "stream": "connect"},
+        {"after_serve": 3, "stream": "disconnect"},
+        {"after_serve": 11, "vehicles": "kill"}
+      ]
+
+  The section exists only when the replay recorded an interaction; a golden
+  without it diverges from a replay with one, like any missing key.
+
   ## Clock
 
   The vehicle runs on the replay's clock (`TeslaMate.Characterization.Clock`
@@ -236,6 +256,11 @@ defmodule TeslaMate.Characterization do
       vehicle process is monitored and the replay fails before teardown
       unless it actually went down; a declaration without an `await`
       convergence outcome raises (`replay/2`, `expect_restart?/1`).
+    * Interactions are captured, not flushed: stream connect and disconnect
+      and the supervisor kill land in the golden with their serve index
+      (`ApiMock.record_interaction/2`, `ApiMock.interactions/1`,
+      `canonical_interaction/1`); a golden recorded without the section
+      diverges from a replay that records one (`diff/2`).
     * Seed misuse raises with names: an empty list, an unknown position
       field or a row the changeset rejects (`seed_positions!/1`,
       `create_seed/2`).
@@ -562,10 +587,10 @@ defmodule TeslaMate.Characterization do
           [delivery]
 
         {:api, index, {:snapshot, result}} ->
-          [{:snapshot, wrap.(result, index)}]
+          [{:snapshot, {:indexed, index, wrap.(result, index)}}]
 
         {:api, index, result} ->
-          [wrap.(result, index)]
+          [{:indexed, index, wrap.(result, index)}]
       end)
 
     # Registered names are unique per replay, never reused across tests:
@@ -582,7 +607,7 @@ defmodule TeslaMate.Characterization do
     children = [
       {ApiMock, name: api, events: wrapped, pid: collector, vehicle: vehicle},
       {SettingsMock, name: settings, pid: collector},
-      {__MODULE__.Vehicles, name: vehicles, pid: collector, vehicle: vehicle},
+      {__MODULE__.Vehicles, name: vehicles, pid: collector, vehicle: vehicle, api: api},
       {MqttPublisherMock, name: publisher, pid: collector}
     ]
 
@@ -675,12 +700,29 @@ defmodule TeslaMate.Characterization do
     # The calls section exists only for scenarios that declare call events:
     # the diff unions the keys of both sides, so an always-present section
     # would break every golden recorded without one.
-    if Enum.any?(events, &match?({:call_delivery, _}, &1)) do
-      Map.put(capture, "calls", Enum.map(ApiMock.calls(api), &canonical_call/1))
-    else
-      capture
+    capture =
+      if Enum.any?(events, &match?({:call_delivery, _}, &1)) do
+        Map.put(capture, "calls", Enum.map(ApiMock.calls(api), &canonical_call/1))
+      else
+        capture
+      end
+
+    # The interactions section exists only when the replay recorded one:
+    # same key-union rule as calls.
+    case ApiMock.interactions(api) do
+      [] ->
+        capture
+
+      interactions ->
+        Map.put(capture, "interactions", Enum.map(interactions, &canonical_interaction/1))
     end
   end
+
+  defp canonical_interaction({after_serve, {:stream, action}}),
+    do: %{"after_serve" => after_serve, "stream" => Atom.to_string(action)}
+
+  defp canonical_interaction({after_serve, {:vehicles, :kill}}),
+    do: %{"after_serve" => after_serve, "vehicles" => "kill"}
 
   defp canonical_call({call, :ok}), do: %{Atom.to_string(call) => "ok"}
 

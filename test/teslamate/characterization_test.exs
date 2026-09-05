@@ -409,6 +409,29 @@ defmodule TeslaMate.CharacterizationTest do
     end
   end
 
+  @tag :tmp_dir
+  test "a golden without the interactions section diverges from a replay that records one",
+       %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("interactions probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        park_event(t0 + 10_000)
+      ])
+
+    pair = tmp_pair(tmp, "interactions", scenario)
+    Characterization.record_pair(pair)
+
+    golden = pair.golden_path |> File.read!() |> Jason.decode!()
+    assert golden["interactions"] == [%{"after_serve" => 1, "stream" => "connect"}]
+
+    # The comparison is the harness's structural diff: a golden that lacks
+    # the section diverges from the capture that carries it.
+    assert {["interactions"], :__missing__, _} =
+             Characterization.diff(Map.delete(golden, "interactions"), golden)
+  end
+
   defp base_scenario(description, events) do
     %{
       "description" => description,

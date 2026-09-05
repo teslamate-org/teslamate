@@ -1,8 +1,4 @@
 {
-  "await": {
-    "drives_closed": 1,
-    "state": "asleep"
-  },
   "car": {
     "efficiency": 0.153,
     "eid": 42,
@@ -11,19 +7,19 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'reconnects the stream when a drive resumes after a short unavailability' (streaming enabled): a shorter offline stretch mid-drive; the drive continues after the gap. Streaming is declared explicitly: with an active stream the vehicle's suspend settings are hardcoded to {3, 10} minutes of payload time and this scenario's suspend guards are dead \u2014 the asleep terminal keeps the replay repeat-neutral. The interactions section pins the stream itself: connected after the first serve, disconnected on the first offline result, reconnected when the drive resumes online, disconnected again by the asleep terminal.",
+  "description": "Three identical N polls in a row (polling): the vehicle parks, the next poll is already in N and starts the drive, and the same N payload \u2014 same timestamp, position and odometer \u2014 is served twice more. Each serve inserts a position: the drive holds three positions from three identical polls, no repeat is deduplicated. A parked terminal ends the drive and the replay stays repeat-neutral; this is the repeat coverage the original 'transitions directly into driving state' pinned by serving the N frame forever, expressed with a bounded repeat.",
   "events": [
     {
       "vehicle": {
         "charge_state": {
-          "battery_level": 20,
-          "battery_range": 190.0,
+          "battery_level": 80,
+          "battery_range": 240.0,
           "charge_energy_added": 0.0,
           "charging_state": "Disconnected",
-          "est_battery_range": 180.0,
-          "ideal_battery_range": 200.0,
+          "est_battery_range": 230.0,
+          "ideal_battery_range": 250.0,
           "timestamp": 1704067200000,
-          "usable_battery_level": 19
+          "usable_battery_level": 79
         },
         "climate_state": {
           "inside_temp": 18.0,
@@ -66,14 +62,14 @@
     {
       "vehicle": {
         "charge_state": {
-          "battery_level": 20,
-          "battery_range": 190.0,
+          "battery_level": 80,
+          "battery_range": 240.0,
           "charge_energy_added": 0.0,
           "charging_state": "Disconnected",
-          "est_battery_range": 180.0,
-          "ideal_battery_range": 200.0,
+          "est_battery_range": 230.0,
+          "ideal_battery_range": 250.0,
           "timestamp": 1704067210000,
-          "usable_battery_level": 19
+          "usable_battery_level": 79
         },
         "climate_state": {
           "inside_temp": 18.0,
@@ -87,8 +83,8 @@
           "latitude": 52.516,
           "longitude": 13.3525,
           "power": 15,
-          "shift_state": "D",
-          "speed": 30,
+          "shift_state": "N",
+          "speed": 0,
           "timestamp": 1704067210000
         },
         "id": 42,
@@ -106,7 +102,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": true,
           "locked": false,
-          "odometer": 10000.05,
+          "odometer": 10000.02,
           "sentry_mode": false,
           "timestamp": 1704067210000
         },
@@ -116,30 +112,30 @@
     {
       "vehicle": {
         "charge_state": {
-          "battery_level": 20,
-          "battery_range": 190.0,
+          "battery_level": 80,
+          "battery_range": 240.0,
           "charge_energy_added": 0.0,
           "charging_state": "Disconnected",
-          "est_battery_range": 180.0,
-          "ideal_battery_range": 200.0,
-          "timestamp": 1704067210001,
-          "usable_battery_level": 19
+          "est_battery_range": 230.0,
+          "ideal_battery_range": 250.0,
+          "timestamp": 1704067210000,
+          "usable_battery_level": 79
         },
         "climate_state": {
           "inside_temp": 18.0,
           "is_climate_on": true,
           "outside_temp": 12.5,
-          "timestamp": 1704067210001
+          "timestamp": 1704067210000
         },
         "display_name": "blue",
         "drive_state": {
           "heading": 42,
-          "latitude": 52.5162,
-          "longitude": 13.3527,
+          "latitude": 52.516,
+          "longitude": 13.3525,
           "power": 15,
-          "shift_state": "D",
-          "speed": 30,
-          "timestamp": 1704067210001
+          "shift_state": "N",
+          "speed": 0,
+          "timestamp": 1704067210000
         },
         "id": 42,
         "state": "online",
@@ -147,7 +143,7 @@
           "car_type": "model3",
           "exterior_color": "DeepBlue",
           "spoiler_type": "None",
-          "timestamp": 1704067210001,
+          "timestamp": 1704067210000,
           "trim_badging": "74d",
           "wheel_type": "Pinwheel18"
         },
@@ -156,120 +152,40 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": true,
           "locked": false,
-          "odometer": 10000.07,
+          "odometer": 10000.02,
           "sentry_mode": false,
-          "timestamp": 1704067210001
+          "timestamp": 1704067210000
         },
         "vin": "5YJ3E1EA1KF000001"
       }
     },
     {
       "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "offline"
-      }
-    },
-    {
-      "vehicle": {
         "charge_state": {
-          "battery_level": 19,
-          "battery_range": 180.0,
+          "battery_level": 80,
+          "battery_range": 240.0,
           "charge_energy_added": 0.0,
           "charging_state": "Disconnected",
-          "est_battery_range": 170.0,
-          "ideal_battery_range": 190.0,
-          "timestamp": 1704067450000,
-          "usable_battery_level": 18
+          "est_battery_range": 230.0,
+          "ideal_battery_range": 250.0,
+          "timestamp": 1704067210000,
+          "usable_battery_level": 79
         },
         "climate_state": {
           "inside_temp": 18.0,
           "is_climate_on": true,
           "outside_temp": 12.5,
-          "timestamp": 1704067450000
+          "timestamp": 1704067210000
         },
         "display_name": "blue",
         "drive_state": {
           "heading": 42,
-          "latitude": 52.53,
-          "longitude": 13.37,
+          "latitude": 52.516,
+          "longitude": 13.3525,
           "power": 15,
-          "shift_state": "D",
-          "speed": 20,
-          "timestamp": 1704067450000
+          "shift_state": "N",
+          "speed": 0,
+          "timestamp": 1704067210000
         },
         "id": 42,
         "state": "online",
@@ -277,7 +193,7 @@
           "car_type": "model3",
           "exterior_color": "DeepBlue",
           "spoiler_type": "None",
-          "timestamp": 1704067450000,
+          "timestamp": 1704067210000,
           "trim_badging": "74d",
           "wheel_type": "Pinwheel18"
         },
@@ -286,9 +202,9 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": true,
           "locked": false,
-          "odometer": 10000.09,
+          "odometer": 10000.02,
           "sentry_mode": false,
-          "timestamp": 1704067450000
+          "timestamp": 1704067210000
         },
         "vin": "5YJ3E1EA1KF000001"
       }
@@ -296,30 +212,30 @@
     {
       "vehicle": {
         "charge_state": {
-          "battery_level": 19,
-          "battery_range": 180.0,
+          "battery_level": 80,
+          "battery_range": 240.0,
           "charge_energy_added": 0.0,
           "charging_state": "Disconnected",
-          "est_battery_range": 170.0,
-          "ideal_battery_range": 190.0,
-          "timestamp": 1704067451000,
-          "usable_battery_level": 18
+          "est_battery_range": 230.0,
+          "ideal_battery_range": 250.0,
+          "timestamp": 1704067220000,
+          "usable_battery_level": 79
         },
         "climate_state": {
           "inside_temp": 18.0,
           "is_climate_on": false,
           "outside_temp": 12.5,
-          "timestamp": 1704067451000
+          "timestamp": 1704067220000
         },
         "display_name": "blue",
         "drive_state": {
           "heading": 42,
-          "latitude": 52.531,
-          "longitude": 13.371,
+          "latitude": 52.5161,
+          "longitude": 13.3526,
           "power": 0,
           "shift_state": null,
           "speed": null,
-          "timestamp": 1704067451000
+          "timestamp": 1704067220000
         },
         "id": 42,
         "state": "online",
@@ -327,7 +243,7 @@
           "car_type": "model3",
           "exterior_color": "DeepBlue",
           "spoiler_type": "None",
-          "timestamp": 1704067451000,
+          "timestamp": 1704067220000,
           "trim_badging": "74d",
           "wheel_type": "Pinwheel18"
         },
@@ -336,22 +252,17 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.1,
+          "odometer": 10000.03,
           "sentry_mode": false,
-          "timestamp": 1704067451000
+          "timestamp": 1704067220000
         },
         "vin": "5YJ3E1EA1KF000001"
-      }
-    },
-    {
-      "vehicle": {
-        "state": "asleep"
       }
     }
   ],
   "settings": {
     "suspend_after_idle_min": 100000,
     "suspend_min": 100000,
-    "use_streaming_api": true
+    "use_streaming_api": false
   }
 }
