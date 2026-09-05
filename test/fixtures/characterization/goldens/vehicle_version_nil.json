@@ -82,6 +82,12 @@
     ],
     "updates": []
   },
+  "interactions": [
+    {
+      "after_serve": 1,
+      "stream": "connect"
+    }
+  ],
   "mqtt": {
     "homeassistant/binary_sensor/teslamate_$car/charge_port_door_open/config": [
       ""

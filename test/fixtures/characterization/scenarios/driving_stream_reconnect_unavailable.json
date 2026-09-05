@@ -1,4 +1,8 @@
 {
+  "await": {
+    "drives_closed": 1,
+    "state": "asleep"
+  },
   "car": {
     "efficiency": 0.153,
     "eid": 42,
@@ -7,11 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'reconnects the stream when a drive resumes after a short unavailability' (streaming enabled): a shorter offline stretch mid-drive; the drive continues after the gap. Streaming is declared explicitly: with an active stream the vehicle's suspend settings are hardcoded to {3, 10} minutes of payload time and this scenario's suspend guards are dead — the asleep terminal keeps the replay repeat-neutral.",
-  "await": {
-    "state": "asleep",
-    "drives_closed": 1
-  },
+  "description": "Conversion of 'reconnects the stream when a drive resumes after a short unavailability' (streaming enabled): a shorter offline stretch mid-drive; the drive continues after the gap. Streaming is declared explicitly: with an active stream the vehicle's suspend settings are hardcoded to {3, 10} minutes of payload time and this scenario's suspend guards are dead \u2014 the asleep terminal keeps the replay repeat-neutral. The interactions section pins the stream itself: connected after the first serve, disconnected on the first offline result, reconnected when the drive resumes online, disconnected again by the asleep terminal.",
   "events": [
     {
       "vehicle": {
