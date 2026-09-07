@@ -33,6 +33,20 @@ export const Dropdown = {
   },
 };
 
+// Navigates back in the browser history (e.g. to the Grafana dashboard the
+// page was opened from) and falls back to the link's href if there is no
+// history, e.g. when the page was opened in a new tab.
+export const HistoryBack = {
+  mounted() {
+    this.el.addEventListener("click", (e) => {
+      if (window.history.length > 1) {
+        e.preventDefault();
+        window.history.back();
+      }
+    });
+  },
+};
+
 export const LocalTime = {
   mounted() {
     this.el.innerText = toLocalTime(this.el.dataset.date);

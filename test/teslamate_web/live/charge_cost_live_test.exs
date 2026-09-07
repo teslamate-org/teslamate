@@ -319,7 +319,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
   end
 
   describe "back button" do
-    test "redirects to the original referrer", %{conn: conn} do
+    test "falls back to the original referrer", %{conn: conn} do
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture())
 
       assert {:ok, _view, html} =
@@ -327,14 +327,12 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                |> put_connect_params(%{"referrer" => "http://grafana.example.com/d/xyz/12"})
                |> live("/charge-cost/#{id}")
 
-      assert ["http://grafana.example.com/d/xyz/12"] =
-               html
-               |> Floki.parse_document!()
-               |> Floki.find(".control a")
-               |> Floki.attribute("href")
+      assert [back] = html |> Floki.parse_document!() |> Floki.find("#back-button")
+      assert Floki.attribute(back, "href") == ["http://grafana.example.com/d/xyz/12"]
+      assert Floki.attribute(back, "phx-hook") == ["HistoryBack"]
     end
 
-    test "redirects to home page if there is no referrer", %{conn: conn} do
+    test "falls back to the home page if there is no referrer", %{conn: conn} do
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture())
 
       assert {:ok, _view, html} =
@@ -345,7 +343,7 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
       assert ["/"] =
                html
                |> Floki.parse_document!()
-               |> Floki.find(".control a")
+               |> Floki.find("#back-button")
                |> Floki.attribute("href")
     end
   end

@@ -396,6 +396,19 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     end
   end
 
+  describe "back button" do
+    test "navigates back in the browser history with the index as fallback", %{conn: conn} do
+      assert {:ok, _parent_view, html} =
+               conn
+               |> put_connect_params(%{"referrer" => "http://grafana.example.com/"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
+
+      assert [back] = html |> Floki.parse_document!() |> Floki.find("#back-button")
+      assert Floki.attribute(back, "href") == ["/geo-fences"]
+      assert Floki.attribute(back, "phx-hook") == ["HistoryBack"]
+    end
+  end
+
   describe "grafana URL" do
     alias TeslaMate.Settings.GlobalSettings
 

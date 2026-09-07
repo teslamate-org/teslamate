@@ -162,7 +162,9 @@
     <div class="field-body">
       <div class="field is-grouped">
         <div class="control">
-          {link(gettext("Back"), to: @redirect_to, class: "button")}
+          <a id="back-button" href={@redirect_to} class="button" phx-hook="HistoryBack">
+            {gettext("Back")}
+          </a>
         </div>
         <div class="control" style="min-width: 300px;">
           {submit(if(is_nil(@notification), do: gettext("Save"), else: @notification.message),
