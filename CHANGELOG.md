@@ -43,6 +43,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - test(characterization): name the scenario event behind a mismatch on a dated row (#5705 - @JakobLichterfeld)
 - build(deps): bump browserslist from 4.28.2 to 4.28.9 in /website (#5707)
 - build(deps): bump fast-uri from 3.1.5 to 3.1.7 in /website (#5686)
+- build(deps): bump http-proxy-middleware from 2.0.9 to 2.0.10 in /website (#5708)
+
 #### Dashboards
 
 #### Translations
