@@ -50,6 +50,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump phoenix from 1.8.9 to 1.8.13 (#5672)
 - build(deps): bump postgrex from 0.22.3 to 0.22.4 (#5673)
 - build(deps-dev): bump sass from 1.102.0 to 1.103.1 in /assets (#5674)
+- build(deps-dev): bump esbuild from 0.28.1 to 0.28.2 in /assets (#5675)
+
 #### Dashboards
 
 #### Translations
