@@ -127,13 +127,13 @@ msgstr "온도"
 msgid "Units"
 msgstr "단위"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:165
-#: lib/teslamate_web/live/geofence_live/form.html.heex:131
+#: lib/teslamate_web/live/charge_live/cost.html.heex:166
+#: lib/teslamate_web/live/geofence_live/form.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "뒤로"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:188
+#: lib/teslamate_web/live/geofence_live/form.ex:205
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
 msgstr "지오펜스 \"%{name}\" 가 생성되었습니다."
@@ -170,14 +170,14 @@ msgstr "위치"
 msgid "Radius"
 msgstr "반경"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:168
-#: lib/teslamate_web/live/geofence_live/form.html.heex:135
+#: lib/teslamate_web/live/charge_live/cost.html.heex:170
+#: lib/teslamate_web/live/geofence_live/form.html.heex:140
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "저장"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:169
-#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#: lib/teslamate_web/live/charge_live/cost.html.heex:171
+#: lib/teslamate_web/live/geofence_live/form.html.heex:141
 #: lib/teslamate_web/live/signin_live/index.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -370,7 +370,7 @@ msgstr "활성화"
 msgid "Sleep Mode"
 msgstr "절전모드"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:189
+#: lib/teslamate_web/live/geofence_live/form.ex:206
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "지오펜스 \"%{name}\" 가 업데이트 되었습니다."
@@ -502,24 +502,24 @@ msgstr "kWh 당"
 msgid "Total"
 msgstr "총합"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:170
+#: lib/teslamate_web/live/geofence_live/form.html.heex:175
 #, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "이 위치에는 아직 비용이 추가되지 않은 <strong>%{n} 충전 세션</strong>이 있습니다."
 msgstr[1] "이 위치에는 아직 비용이 추가되지 않은 <strong>%{n} 충전 세션들</strong>이 있습니다."
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:184
+#: lib/teslamate_web/live/geofence_live/form.html.heex:189
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "과거 요금 추가"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:162
+#: lib/teslamate_web/live/geofence_live/form.html.heex:167
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "충전요금"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:181
+#: lib/teslamate_web/live/geofence_live/form.html.heex:186
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "계속"

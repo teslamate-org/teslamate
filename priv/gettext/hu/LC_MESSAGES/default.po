@@ -127,13 +127,13 @@ msgstr "Hőmérséklet"
 msgid "Units"
 msgstr "Mértékegységek"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:165
-#: lib/teslamate_web/live/geofence_live/form.html.heex:131
+#: lib/teslamate_web/live/charge_live/cost.html.heex:166
+#: lib/teslamate_web/live/geofence_live/form.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Vissza"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:188
+#: lib/teslamate_web/live/geofence_live/form.ex:205
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
 msgstr "A(z) \"%{name}\" geokerítés létrehozva"
@@ -170,14 +170,14 @@ msgstr "Pozíció"
 msgid "Radius"
 msgstr "Sugár"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:168
-#: lib/teslamate_web/live/geofence_live/form.html.heex:135
+#: lib/teslamate_web/live/charge_live/cost.html.heex:170
+#: lib/teslamate_web/live/geofence_live/form.html.heex:140
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Mentés"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:169
-#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#: lib/teslamate_web/live/charge_live/cost.html.heex:171
+#: lib/teslamate_web/live/geofence_live/form.html.heex:141
 #: lib/teslamate_web/live/signin_live/index.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -370,7 +370,7 @@ msgstr "Engedélyezve"
 msgid "Sleep Mode"
 msgstr "Alvó mód"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:189
+#: lib/teslamate_web/live/geofence_live/form.ex:206
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "A(z) \"%{name}\" geokerítés frissítve"
@@ -502,24 +502,24 @@ msgstr "kWh-nként"
 msgid "Total"
 msgstr "Összesen"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:170
+#: lib/teslamate_web/live/geofence_live/form.html.heex:175
 #, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "Ezen a helyen <strong>%{n} töltési munkamenet</strong> van, amelyhez még nincs költség megadva."
 msgstr[1] "Ezen a helyen <strong>%{n} töltési munkamenet</strong> van, amelyhez még nincs költség megadva."
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:184
+#: lib/teslamate_web/live/geofence_live/form.html.heex:189
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "Költségek utólagos hozzáadása"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:162
+#: lib/teslamate_web/live/geofence_live/form.html.heex:167
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "Töltési költségek"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:181
+#: lib/teslamate_web/live/geofence_live/form.html.heex:186
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "Folytatás"

@@ -127,13 +127,13 @@ msgstr "อุณหภูมิ"
 msgid "Units"
 msgstr "หน่วย"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:165
-#: lib/teslamate_web/live/geofence_live/form.html.heex:131
+#: lib/teslamate_web/live/charge_live/cost.html.heex:166
+#: lib/teslamate_web/live/geofence_live/form.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "ย้อนกลับ"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:188
+#: lib/teslamate_web/live/geofence_live/form.ex:205
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
 msgstr "สร้างขอบเขตทางภูมิศาสตร์ \"%{name}\" แล้ว"
@@ -170,14 +170,14 @@ msgstr "ตำแหน่ง"
 msgid "Radius"
 msgstr "รัศมี"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:168
-#: lib/teslamate_web/live/geofence_live/form.html.heex:135
+#: lib/teslamate_web/live/charge_live/cost.html.heex:170
+#: lib/teslamate_web/live/geofence_live/form.html.heex:140
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "บันทึก"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:169
-#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#: lib/teslamate_web/live/charge_live/cost.html.heex:171
+#: lib/teslamate_web/live/geofence_live/form.html.heex:141
 #: lib/teslamate_web/live/signin_live/index.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -370,7 +370,7 @@ msgstr "เปิดใช้งานแล้ว"
 msgid "Sleep Mode"
 msgstr "โหมดหลับ"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:189
+#: lib/teslamate_web/live/geofence_live/form.ex:206
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "อัปเดตขอบเขตทางภูมิศาสตร์ \"%{name}\" แล้ว"
@@ -501,24 +501,24 @@ msgstr "ต่อกิโลวัตต์ชั่วโมง"
 msgid "Total"
 msgstr "ทั้งหมด"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:170
+#: lib/teslamate_web/live/geofence_live/form.html.heex:175
 #, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "มีเซสชันการเรียกเก็บเงิน <strong>%{n} ครั้ง</strong> ณ ตำแหน่งนี้ ซึ่งยังไม่มีการเพิ่มค่าใช้จ่าย"
 msgstr[1] "มีเซสชันการเรียกเก็บเงิน <strong>%{n} ครั้ง</strong> ณ ตำแหน่งนี้ ซึ่งยังไม่มีการเพิ่มค่าใช้จ่าย"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:184
+#: lib/teslamate_web/live/geofence_live/form.html.heex:189
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "เพิ่มค่าใช้จ่ายย้อนหลัง"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:162
+#: lib/teslamate_web/live/geofence_live/form.html.heex:167
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "ค่าใช้จ่ายในการชาร์จ"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:181
+#: lib/teslamate_web/live/geofence_live/form.html.heex:186
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "ดำเนินการต่อ"

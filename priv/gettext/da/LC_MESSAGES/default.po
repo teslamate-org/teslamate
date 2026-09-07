@@ -127,13 +127,13 @@ msgstr "Temperatur"
 msgid "Units"
 msgstr "Enheder"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:165
-#: lib/teslamate_web/live/geofence_live/form.html.heex:131
+#: lib/teslamate_web/live/charge_live/cost.html.heex:166
+#: lib/teslamate_web/live/geofence_live/form.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Tilbage"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:188
+#: lib/teslamate_web/live/geofence_live/form.ex:205
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Geografisk afgrænsning \"%{name}\" oprettet"
@@ -170,14 +170,14 @@ msgstr "Position"
 msgid "Radius"
 msgstr "Radius"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:168
-#: lib/teslamate_web/live/geofence_live/form.html.heex:135
+#: lib/teslamate_web/live/charge_live/cost.html.heex:170
+#: lib/teslamate_web/live/geofence_live/form.html.heex:140
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Gem"
 
-#: lib/teslamate_web/live/charge_live/cost.html.heex:169
-#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#: lib/teslamate_web/live/charge_live/cost.html.heex:171
+#: lib/teslamate_web/live/geofence_live/form.html.heex:141
 #: lib/teslamate_web/live/signin_live/index.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -370,7 +370,7 @@ msgstr "Aktiveret"
 msgid "Sleep Mode"
 msgstr "Dvaletilstand"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:189
+#: lib/teslamate_web/live/geofence_live/form.ex:206
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geografisk afgrænsning \"%{name}\" opdateret"
@@ -502,24 +502,24 @@ msgstr "Per kWh"
 msgid "Total"
 msgstr "Total"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:170
+#: lib/teslamate_web/live/geofence_live/form.html.heex:175
 #, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "Der er <strong>%{n} opladning</strong> på dette sted der ikke er angivet en pris for endnu."
 msgstr[1] "Der er <strong>%{n} opladninger</strong> på dette sted der ikke er angivet en pris for endnu."
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:184
+#: lib/teslamate_web/live/geofence_live/form.html.heex:189
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "Tilføj pris med tilbagevirkning"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:162
+#: lib/teslamate_web/live/geofence_live/form.html.heex:167
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "Udgifter til opladning"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:181
+#: lib/teslamate_web/live/geofence_live/form.html.heex:186
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "Fortsæt"
