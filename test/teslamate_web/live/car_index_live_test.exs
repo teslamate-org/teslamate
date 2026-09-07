@@ -73,7 +73,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
 
     defp list_vehicles(api), do: fn -> Agent.get(api, & &1) end
 
-    defp start_empty_vehicles(api) do
+    defp start_empty_vehicles do
       now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       {:ok, _pid} =
@@ -89,7 +89,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
     @tag :capture_log
     test "explains an account without vehicles and reloads on demand", %{conn: conn, api: api} do
       with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
-        :ok = start_empty_vehicles(api)
+        :ok = start_empty_vehicles()
 
         assert {:ok, view, html} = live(conn, "/")
         assert html =~ "No vehicles found"
@@ -112,7 +112,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
     @tag :capture_log
     test "keeps explaining when reloading finds nothing", %{conn: conn, api: api} do
       with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
-        :ok = start_empty_vehicles(api)
+        :ok = start_empty_vehicles()
 
         assert {:ok, view, _html} = live(conn, "/")
         render_click(view, "reload_vehicles")
@@ -130,7 +130,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
       :ok = Agent.update(api, fn _ -> {:error, :too_many_request, 30} end)
 
       with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
-        :ok = start_empty_vehicles(api)
+        :ok = start_empty_vehicles()
 
         assert {:ok, _view, html} = live(conn, "/")
         assert html =~ "rate limit was exceeded"
@@ -144,7 +144,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
       :ok = Agent.update(api, fn _ -> {:error, :timeout} end)
 
       with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
-        :ok = start_empty_vehicles(api)
+        :ok = start_empty_vehicles()
 
         assert {:ok, _view, html} = live(conn, "/")
         assert html =~ "Fetching the vehicles from the Tesla API failed: :timeout"
@@ -156,7 +156,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
     @tag :capture_log
     test "redirects to the sign in page when reloading finds no session", %{conn: conn, api: api} do
       with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
-        :ok = start_empty_vehicles(api)
+        :ok = start_empty_vehicles()
 
         assert {:ok, view, _html} = live(conn, "/")
 
