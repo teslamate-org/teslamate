@@ -396,6 +396,19 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     end
   end
 
+  describe "back button" do
+    test "navigates back in the browser history with the index as fallback", %{conn: conn} do
+      assert {:ok, _parent_view, html} =
+               conn
+               |> put_connect_params(%{"referrer" => "http://grafana.example.com/"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
+
+      assert [back] = html |> Floki.parse_document!() |> Floki.find("#back-button")
+      assert Floki.attribute(back, "href") == ["/geo-fences"]
+      assert Floki.attribute(back, "phx-hook") == ["HistoryBack"]
+    end
+  end
+
   describe "grafana URL" do
     alias TeslaMate.Settings.GlobalSettings
 
@@ -414,7 +427,14 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     test "handles weird referrers", %{conn: conn} do
       assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
 
-      for referrer <- [nil, "", "example.com", "http://example.com", "http://example.com/"] do
+      for referrer <- [
+            nil,
+            "",
+            "example.com",
+            "http://example.com/foo",
+            "/geo-fences",
+            "android-app://com.example.app"
+          ] do
         assert {:ok, _parent_view, _html} =
                  conn
                  |> put_connect_params(%{"referrer" => referrer})
@@ -422,6 +442,54 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
         assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
       end
+    end
+
+    test "sets the origin if the browser stripped the referrer path", %{conn: conn} do
+      assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
+
+      assert {:ok, _parent_view, _html} =
+               conn
+               |> put_connect_params(%{"referrer" => "http://grafana.example.com"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
+
+      assert %GlobalSettings{grafana_url: "http://grafana.example.com"} =
+               Settings.get_global_settings!()
+    end
+
+    test "sets the origin if the referrer is the root path", %{conn: conn} do
+      assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
+
+      assert {:ok, _parent_view, _html} =
+               conn
+               |> put_connect_params(%{"referrer" => "http://grafana.example.com:3000/"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
+
+      assert %GlobalSettings{grafana_url: "http://grafana.example.com:3000"} =
+               Settings.get_global_settings!()
+    end
+
+    test "tolerates a trailing slash", %{conn: conn} do
+      assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
+
+      assert {:ok, _parent_view, _html} =
+               conn
+               |> put_connect_params(%{"referrer" => "http://example.com/grafana/d/xyz/slug/"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
+
+      assert %GlobalSettings{grafana_url: "http://example.com/grafana"} =
+               Settings.get_global_settings!()
+    end
+
+    test "keeps a nested path", %{conn: conn} do
+      assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
+
+      assert {:ok, _parent_view, _html} =
+               conn
+               |> put_connect_params(%{"referrer" => "http://example.com/foo/bar/d/xyz?orgId=1"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
+
+      assert %GlobalSettings{grafana_url: "http://example.com/foo/bar"} =
+               Settings.get_global_settings!()
     end
 
     test "keeps the path", %{conn: conn} do

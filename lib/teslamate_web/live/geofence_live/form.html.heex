@@ -127,9 +127,14 @@
     <div class="field-body">
       <div class="field is-grouped">
         <div class="control">
-          <.link navigate={Routes.live_path(@socket, GeoFenceLive.Index)} class="button">
+          <a
+            id="back-button"
+            href={Routes.live_path(@socket, GeoFenceLive.Index)}
+            class="button"
+            phx-hook="HistoryBack"
+          >
             {gettext("Back")}
-          </.link>
+          </a>
         </div>
         <div class="control">
           {submit(gettext("Save"),
