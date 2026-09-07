@@ -52,6 +52,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps-dev): bump sass from 1.102.0 to 1.103.1 in /assets (#5674)
 - build(deps-dev): bump esbuild from 0.28.1 to 0.28.2 in /assets (#5675)
 - build(deps): bump castore from 1.0.20 to 1.0.21 (#5676)
+- build(deps): bump srtm from 0.8.0 to 0.9.0 (#5677)
 
 #### Dashboards
 
