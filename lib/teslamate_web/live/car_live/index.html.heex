@@ -9,20 +9,25 @@
   <div class="columns is-tablet is-centered">
     <div class="column is-half">
       <div id="no-vehicles" class="box has-text-centered">
-        <%= if @known_cars? do %>
-          <p class="title is-5">{gettext("No vehicles enabled")}</p>
-          <p class="mb-4">
-            {gettext("Data collection is disabled for all vehicles.")}
-            {link(gettext("Settings"),
-              to: Routes.live_path(@socket, TeslaMateWeb.SettingsLive.Index)
-            )}
-          </p>
-        <% else %>
-          <p class="title is-5">{gettext("No vehicles found")}</p>
+        <%= cond do %>
+          <% @status == :restarting -> %>
+            <p class="title is-5">{gettext("Reloading vehicles")}</p>
+          <% match?({:error, {:start_failed, _}}, @status) -> %>
+            <p class="title is-5">{gettext("Vehicle logging is not running")}</p>
+          <% @known_cars? -> %>
+            <p class="title is-5">{gettext("No vehicles enabled")}</p>
+            <p class="mb-4">
+              {gettext("Data collection is disabled for all vehicles.")}
+              {link(gettext("Settings"),
+                to: Routes.live_path(@socket, TeslaMateWeb.SettingsLive.Index)
+              )}
+            </p>
+          <% true -> %>
+            <p class="title is-5">{gettext("No vehicles found")}</p>
         <% end %>
 
-        <%= if @discovery != :ok do %>
-          <p class="mb-4">{discovery_hint(@discovery)}</p>
+        <%= if @status != :ok do %>
+          <p class="mb-4">{status_hint(@status)}</p>
           <button
             type="button"
             class={["button is-info is-rounded", if(@reloading?, do: "is-loading")]}

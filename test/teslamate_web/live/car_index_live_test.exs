@@ -71,7 +71,15 @@ defmodule TeslaMateWeb.CarLive.Indextest do
       [api: api]
     end
 
-    defp list_vehicles(api), do: fn -> Agent.get(api, & &1) end
+    # The agent holds the API answer, or a function computing it in the caller
+    defp list_vehicles(api) do
+      fn ->
+        case Agent.get(api, & &1) do
+          answer when is_function(answer, 0) -> answer.()
+          answer -> answer
+        end
+      end
+    end
 
     defp start_empty_vehicles do
       now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
@@ -174,31 +182,89 @@ defmodule TeslaMateWeb.CarLive.Indextest do
         :ok = start_empty_vehicles()
         assert {:ok, view, _html} = live(conn, "/")
 
-        # e.g. a supervisor that is currently down
+        # e.g. a supervisor whose parent is gone
         :ok = stop_supervised(Vehicles)
         render_click(view, "reload_vehicles")
         html = render_async(view)
 
         assert html =~ "Reloading the vehicles failed"
-        refute html =~ "is-loading"
-        refute html =~ ~s(disabled)
+        assert has_element?(view, "button[phx-click=reload_vehicles]:not([disabled])")
+        refute has_element?(view, "button[phx-click=reload_vehicles].is-loading")
       end
     end
 
     @tag :signed_in
     @tag :capture_log
-    test "reports a crashed reload and re-enables the button", %{conn: conn, api: api} do
+    test "explains a failed start and recovers on the next reload", %{conn: conn, api: api} do
       with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
         :ok = start_empty_vehicles()
-        assert {:ok, view, _html} = live(conn, "/")
 
-        with_mock Vehicles, [:passthrough], restart: fn -> exit(:boom) end do
-          render_click(view, "reload_vehicles")
-          html = render_async(view)
+        # A car that cannot be persisted makes the supervisor's init raise
+        :ok = Agent.update(api, fn _ -> {:ok, [%{@vehicle | vin: nil}]} end)
+        assert {:error, _reason} = Vehicles.restart()
+        assert nil == Process.whereis(Vehicles)
 
-          assert html =~ "Reloading the vehicles failed"
-          refute html =~ "is-loading"
-        end
+        assert {:ok, view, html} = live(conn, "/")
+        assert html =~ "Vehicle logging is not running"
+        assert html =~ "Starting the vehicle loggers failed"
+        refute html =~ "Data collection is disabled"
+        assert html =~ "Reload vehicles"
+
+        :ok = Agent.update(api, fn _ -> {:ok, [@vehicle]} end)
+        render_click(view, "reload_vehicles")
+        html = render_async(view)
+
+        assert html =~ ~s(id="car_)
+        assert is_pid(Process.whereis(Vehicles))
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "explains a reload that is in progress elsewhere", %{conn: conn, api: api} do
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+        {:ok, _pid} =
+          start_supervised(
+            {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
+          )
+
+        # Under its own parent: the blocked start below must not block the
+        # test supervisor, which the LiveView test client is started under.
+        {:ok, _pid} =
+          start_supervised(%{
+            id: :parent,
+            start:
+              {Supervisor, :start_link,
+               [[{Vehicles, vehicle: VehicleMock}], [strategy: :one_for_one]]},
+            type: :supervisor
+          })
+
+        test_pid = self()
+
+        # Another tab's reload is blocked inside the API call
+        :ok =
+          Agent.update(api, fn _ ->
+            fn ->
+              send(test_pid, {:listing, self()})
+
+              receive do
+                :continue -> {:ok, []}
+              end
+            end
+          end)
+
+        other_tab = Task.async(fn -> Vehicles.restart() end)
+        assert_receive {:listing, blocked}
+
+        assert {:ok, _view, html} = live(conn, "/")
+        assert html =~ "Reloading vehicles"
+        assert html =~ "being reloaded right now"
+        refute html =~ "Data collection is disabled"
+
+        send(blocked, :continue)
+        assert :ok = Task.await(other_tab)
       end
     end
 

@@ -41,7 +41,7 @@ defmodule TeslaMateWeb.CarLive.Index do
   def handle_async(:reload_vehicles, {:ok, {:ok, summaries}}, socket) do
     socket = socket |> assign(reloading?: false) |> assign_vehicles(summaries)
 
-    case socket.assigns.discovery do
+    case socket.assigns.status do
       {:error, :not_signed_in} ->
         {:noreply, redirect(socket, to: Routes.live_path(socket, TeslaMateWeb.SignInLive.Index))}
 
@@ -71,16 +71,25 @@ defmodule TeslaMateWeb.CarLive.Index do
   end
 
   # With an empty list, the reason for the emptiness is what the page has to
-  # explain. Cars known from the database are logged unless data collection
-  # is disabled for them, so known cars plus an empty list means every car is
-  # disabled, whatever the Tesla API answered.
+  # explain. While the loggers run, cars known from the database are logged
+  # unless data collection is disabled for them, so known cars plus an empty
+  # list means every car is disabled, whatever the Tesla API answered.
+  #
+  # The status is read before the list: a restart in between then shows as
+  # a stale non-empty list, never as a false "all disabled".
   defp assign_vehicles(socket, summaries) do
+    status = Vehicles.status()
+
     assign(socket,
+      status: status,
       summaries: summaries,
-      discovery: Vehicles.discovery_result(),
-      known_cars?: summaries == [] and Log.list_cars() != []
+      known_cars?: summaries == [] and running?(status) and Log.list_cars() != []
     )
   end
+
+  defp running?(:restarting), do: false
+  defp running?({:error, {:start_failed, _reason}}), do: false
+  defp running?(_status), do: true
 
   defp reload_failed(socket, reason) do
     Logger.warning("Reloading vehicles failed: #{inspect(reason)}")
@@ -91,19 +100,29 @@ defmodule TeslaMateWeb.CarLive.Index do
     )
   end
 
-  defp discovery_hint({:error, :no_vehicles}) do
+  defp status_hint(:restarting) do
+    gettext("The vehicle list is being reloaded right now. Please try again in a moment.")
+  end
+
+  defp status_hint({:error, {:start_failed, reason}}) do
+    gettext("Starting the vehicle loggers failed: %{reason}. Please check the logs.",
+      reason: inspect(reason)
+    )
+  end
+
+  defp status_hint({:error, :no_vehicles}) do
     gettext(
       "Your Tesla account does not contain a vehicle yet. Once the vehicle shows up in the Tesla app, reload the vehicle list."
     )
   end
 
-  defp discovery_hint({:error, :too_many_request}) do
+  defp status_hint({:error, :too_many_request}) do
     gettext(
       "The Tesla API rate limit was exceeded while fetching the vehicles. Please wait a few minutes before reloading."
     )
   end
 
-  defp discovery_hint({:error, reason}) do
+  defp status_hint({:error, reason}) do
     gettext("Fetching the vehicles from the Tesla API failed: %{reason}", reason: inspect(reason))
   end
 

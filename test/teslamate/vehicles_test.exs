@@ -68,6 +68,28 @@ defmodule TeslaMate.VehiclesTest do
     assert is_pid(Process.whereis(Vehicles))
   end
 
+  @tag :capture_log
+  test "restart/0 records a failed start and recovers on the next call" do
+    import Mock
+
+    {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
+    {:ok, answer} = Agent.start_link(fn -> nil end)
+
+    with_mock TeslaMate.Api, [:passthrough], list_vehicles: fn -> Agent.get(answer, & &1) end do
+      # A car without a VIN cannot be persisted, so init raises
+      :ok = Agent.update(answer, fn _ -> {:ok, [%TeslaApi.Vehicle{id: 1, vehicle_id: 1}]} end)
+      assert {:error, _reason} = Vehicles.restart()
+      assert {:error, {:start_failed, _}} = Vehicles.status()
+      assert nil == Process.whereis(Vehicles)
+      assert [] = Vehicles.list()
+
+      :ok = Agent.update(answer, fn _ -> {:ok, []} end)
+      assert :ok = Vehicles.restart()
+      assert {:error, :no_vehicles} = Vehicles.status()
+      assert is_pid(Process.whereis(Vehicles))
+    end
+  end
+
   test "restart/0 reports a supervisor that is not running" do
     assert nil == Process.whereis(Vehicles)
     assert {:error, :not_running} = Vehicles.restart()
@@ -78,21 +100,21 @@ defmodule TeslaMate.VehiclesTest do
     assert [] = Vehicles.list()
   end
 
-  describe "discovery_result/0" do
+  describe "status/0" do
     alias TeslaMate.Api
 
     import Mock
 
     test "is :ok when the vehicles are given" do
       {:ok, _} = start_supervised({Vehicles, vehicles: []})
-      assert :ok = Vehicles.discovery_result()
+      assert :ok = Vehicles.status()
     end
 
     @tag :capture_log
     test "reports an account without vehicles" do
       with_mock Api, list_vehicles: fn -> {:ok, []} end do
         {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
-        assert {:error, :no_vehicles} = Vehicles.discovery_result()
+        assert {:error, :no_vehicles} = Vehicles.status()
       end
     end
 
@@ -100,7 +122,7 @@ defmodule TeslaMate.VehiclesTest do
     test "reports a rate limited API" do
       with_mock Api, list_vehicles: fn -> {:error, :too_many_request, 30} end do
         {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
-        assert {:error, :too_many_request} = Vehicles.discovery_result()
+        assert {:error, :too_many_request} = Vehicles.status()
       end
     end
 
@@ -108,7 +130,7 @@ defmodule TeslaMate.VehiclesTest do
     test "reports a failed API call" do
       with_mock Api, list_vehicles: fn -> {:error, :timeout} end do
         {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
-        assert {:error, :timeout} = Vehicles.discovery_result()
+        assert {:error, :timeout} = Vehicles.status()
       end
     end
 
@@ -116,7 +138,7 @@ defmodule TeslaMate.VehiclesTest do
     test "reports a signed out API" do
       with_mock Api, list_vehicles: fn -> {:error, :not_signed_in} end do
         {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
-        assert {:error, :not_signed_in} = Vehicles.discovery_result()
+        assert {:error, :not_signed_in} = Vehicles.status()
       end
     end
   end
