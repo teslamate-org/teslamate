@@ -53,6 +53,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps-dev): bump esbuild from 0.28.1 to 0.28.2 in /assets (#5675)
 - build(deps): bump castore from 1.0.20 to 1.0.21 (#5676)
 - build(deps): bump srtm from 0.8.0 to 0.9.0 (#5677)
+- build(deps): bump phoenix_live_view from 1.2.8 to 1.2.11 (#5678)
 
 #### Dashboards
 
