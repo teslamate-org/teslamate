@@ -47,7 +47,7 @@ runs:
         labels: |
           {{ inputs.labels }}
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+      uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
     - name: Login to Docker Hub
       if: inputs.is_dockerhub_pushed != ''
       uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
@@ -87,7 +87,7 @@ runs:
       # `gh attestation verify --repo teslamate-org/teslamate`, which
       # consumers read as "official".
       if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
-      uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
+      uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
       with:
         image: ${{ env.REGISTRY_IMAGE }}@${{ steps.build.outputs.digest }}
         format: spdx-json
@@ -96,7 +96,7 @@ runs:
         upload-release-assets: false
     - name: Attest build provenance
       if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
-      uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
+      uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
       with:
         # attest-* reads the registry from the first path segment of subject-name,
         # so qualify Docker Hub short names with docker.io; leave ghcr.io as-is.
@@ -108,7 +108,7 @@ runs:
         push-to-registry: true
     - name: Attest SBOM
       if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
-      uses: actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d # v4.2.1
+      uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
       with:
         subject-name: >-
           ${{ startsWith(env.REGISTRY_IMAGE, 'ghcr.io/')
