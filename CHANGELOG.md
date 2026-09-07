@@ -48,6 +48,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): update flake.lock (#5659)
 - build(deps): bump the actions-deps group across 4 directories with 8 updates (#5679)
 - build(deps): bump phoenix from 1.8.9 to 1.8.13 (#5672)
+- build(deps): bump postgrex from 0.22.3 to 0.22.4 (#5673)
 
 #### Dashboards
 
