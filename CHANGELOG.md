@@ -46,6 +46,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump fast-uri from 3.1.5 to 3.1.7 in /website (#5686)
 - build(deps): bump http-proxy-middleware from 2.0.9 to 2.0.10 in /website (#5708)
 - build(deps): update flake.lock (#5659)
+- build(deps): bump the actions-deps group across 4 directories with 8 updates (#5679)
 
 #### Dashboards
 
