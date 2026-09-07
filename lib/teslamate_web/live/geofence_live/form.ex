@@ -167,17 +167,34 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
     end
   end
 
+  # Derives the Grafana URL from the referrer of the dashboard link. Browsers
+  # strip cross-origin referrers down to the origin by default
+  # (`strict-origin-when-cross-origin`), so the referrer is either the full
+  # dashboard URL (same-origin setups) or just the Grafana origin. In the
+  # latter case a Grafana sub-path cannot be detected and has to be set
+  # manually in the settings.
   defp set_grafana_url(settings, socket) do
     with nil <- settings.grafana_url,
          %{"referrer" => referrer} when is_binary(referrer) <- get_connect_params(socket),
-         %URI{path: path} = url when is_binary(path) <- URI.parse(referrer),
-         [_, _, _ | path] <- path |> String.split("/") |> Enum.reverse(),
-         url = %URI{url | path: Enum.join([nil | path], "/"), query: nil} |> URI.to_string(),
+         %URI{scheme: scheme, host: host} = uri
+         when is_binary(scheme) and is_binary(host) <- URI.parse(referrer),
+         {:ok, path} <- grafana_base_path(uri.path),
+         url = URI.to_string(%URI{uri | path: path, query: nil, fragment: nil}),
          {:ok, settings} <- Settings.update_global_settings(settings, %{grafana_url: url}) do
       {:ok, settings}
     else
       {:error, reason} -> Logger.warning("Updating settings failed: #{inspect(reason)}")
       _ -> {:ok, settings}
+    end
+  end
+
+  defp grafana_base_path(path) when path in [nil, "", "/"], do: {:ok, nil}
+
+  defp grafana_base_path(path) do
+    case path |> String.split("/") |> Enum.reverse() do
+      [_slug, _uid, "d" | base] -> {:ok, base |> Enum.reverse() |> Enum.join("/")}
+      [_uid, "d" | base] -> {:ok, base |> Enum.reverse() |> Enum.join("/")}
+      _ -> :error
     end
   end
 

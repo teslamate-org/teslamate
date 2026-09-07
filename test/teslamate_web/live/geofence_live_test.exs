@@ -427,7 +427,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     test "handles weird referrers", %{conn: conn} do
       assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
 
-      for referrer <- [nil, "", "example.com", "http://example.com", "http://example.com/"] do
+      for referrer <- [nil, "", "example.com", "http://example.com/foo", "/geo-fences"] do
         assert {:ok, _parent_view, _html} =
                  conn
                  |> put_connect_params(%{"referrer" => referrer})
@@ -435,6 +435,36 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
 
         assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
       end
+    end
+
+    test "sets the origin if the browser stripped the referrer path", %{conn: conn} do
+      for {referrer, url} <- [
+            {"http://grafana.example.com", "http://grafana.example.com"},
+            {"http://grafana.example.com:3000/", "http://grafana.example.com:3000"}
+          ] do
+        assert {:ok, _} =
+                 Settings.get_global_settings!()
+                 |> Settings.update_global_settings(%{grafana_url: nil})
+
+        assert {:ok, _parent_view, _html} =
+                 conn
+                 |> put_connect_params(%{"referrer" => referrer})
+                 |> live("/geo-fences/new?lat=0.0&lng=0.0")
+
+        assert %GlobalSettings{grafana_url: ^url} = Settings.get_global_settings!()
+      end
+    end
+
+    test "keeps a nested path", %{conn: conn} do
+      assert %GlobalSettings{grafana_url: nil} = Settings.get_global_settings!()
+
+      assert {:ok, _parent_view, _html} =
+               conn
+               |> put_connect_params(%{"referrer" => "http://example.com/foo/bar/d/xyz?orgId=1"})
+               |> live("/geo-fences/new?lat=0.0&lng=0.0")
+
+      assert %GlobalSettings{grafana_url: "http://example.com/foo/bar"} =
+               Settings.get_global_settings!()
     end
 
     test "keeps the path", %{conn: conn} do
