@@ -21,6 +21,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(mqtt): stop re-running the Home Assistant discovery migration on every restart (#5685 - @nebhale)
 - fix(vehicle): keep the published state start time from jumping backwards after charging, updating or driving (#5706 - @JakobLichterfeld)
 - fix(web): pin the size of Leaflet's SVG overlay so the vehicle arrow and geofence circle stay on the map at any Safari page zoom (#5666 - @JakobLichterfeld)
+- fix(grafana): open the TeslaMate header link in a new tab so it works when Grafana and TeslaMate share an origin (#5626 - @misenhower)
 
 #### Build, CI, internal
 
