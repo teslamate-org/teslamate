@@ -37,6 +37,7 @@
     {
       "icon": "dashboard",
       "tags": [],
+      "targetBlank": true,
       "title": "TeslaMate",
       "tooltip": "",
       "type": "link",
