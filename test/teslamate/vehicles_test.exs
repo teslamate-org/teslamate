@@ -49,6 +49,49 @@ defmodule TeslaMate.VehiclesTest do
     refute_receive _
   end
 
+  describe "discovery_result/0" do
+    alias TeslaMate.Api
+
+    import Mock
+
+    test "is :ok when the vehicles are given" do
+      {:ok, _} = start_supervised({Vehicles, vehicles: []})
+      assert :ok = Vehicles.discovery_result()
+    end
+
+    @tag :capture_log
+    test "reports an account without vehicles" do
+      with_mock Api, list_vehicles: fn -> {:ok, []} end do
+        {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
+        assert {:error, :no_vehicles} = Vehicles.discovery_result()
+      end
+    end
+
+    @tag :capture_log
+    test "reports a rate limited API" do
+      with_mock Api, list_vehicles: fn -> {:error, :too_many_request, 30} end do
+        {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
+        assert {:error, :too_many_request} = Vehicles.discovery_result()
+      end
+    end
+
+    @tag :capture_log
+    test "reports a failed API call" do
+      with_mock Api, list_vehicles: fn -> {:error, :timeout} end do
+        {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
+        assert {:error, :timeout} = Vehicles.discovery_result()
+      end
+    end
+
+    @tag :capture_log
+    test "reports a signed out API" do
+      with_mock Api, list_vehicles: fn -> {:error, :not_signed_in} end do
+        {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
+        assert {:error, :not_signed_in} = Vehicles.discovery_result()
+      end
+    end
+  end
+
   describe "uses fallback vehicles" do
     alias TeslaMate.Settings.CarSettings
     alias TeslaMate.{Log, Api}

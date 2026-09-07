@@ -2,8 +2,11 @@ defmodule TeslaMateWeb.CarLive.Indextest do
   use TeslaMateWeb.ConnCase
   use TeslaMate.VehicleCase
 
-  alias TeslaMate.Settings.GlobalSettings
-  alias TeslaMate.Settings
+  alias TeslaMate.Settings.{GlobalSettings, CarSettings}
+  alias TeslaMate.{Settings, Log, Api, Vehicles}
+  alias TeslaMate.Log.Car
+
+  import Mock
 
   describe "base URL" do
     @tag :signed_in
@@ -52,6 +55,130 @@ defmodule TeslaMateWeb.CarLive.Indextest do
       end
 
       assert %GlobalSettings{base_url: nil} = Settings.get_global_settings!()
+    end
+  end
+
+  describe "without vehicles" do
+    @vehicle %TeslaApi.Vehicle{
+      display_name: "Foo",
+      id: 11243,
+      vehicle_id: 90211,
+      vin: "absadkalfs"
+    }
+
+    setup do
+      {:ok, api} = Agent.start_link(fn -> {:ok, []} end)
+      [api: api]
+    end
+
+    defp list_vehicles(api), do: fn -> Agent.get(api, & &1) end
+
+    defp start_empty_vehicles(api) do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      {:ok, _pid} =
+        start_supervised(
+          {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
+        )
+
+      {:ok, _pid} = start_supervised({Vehicles, vehicle: VehicleMock})
+      :ok
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "explains an account without vehicles and reloads on demand", %{conn: conn, api: api} do
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles(api)
+
+        assert {:ok, view, html} = live(conn, "/")
+        assert html =~ "No vehicles found"
+        assert html =~ "does not contain a vehicle yet"
+        assert html =~ "Reload vehicles"
+
+        # The vehicle shows up in the account only now
+        :ok = Agent.update(api, fn _ -> {:ok, [@vehicle]} end)
+
+        assert render_click(view, "reload_vehicles") =~ "is-loading"
+        html = render_async(view)
+
+        refute html =~ "No vehicles found"
+        assert html =~ ~s(id="car_)
+        assert [%Car{vin: "absadkalfs"}] = Log.list_cars()
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "keeps explaining when reloading finds nothing", %{conn: conn, api: api} do
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles(api)
+
+        assert {:ok, view, _html} = live(conn, "/")
+        render_click(view, "reload_vehicles")
+        html = render_async(view)
+
+        assert html =~ "does not contain a vehicle yet"
+        refute html =~ "is-loading"
+        assert html =~ "Reload vehicles"
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "explains a rate limited API", %{conn: conn, api: api} do
+      :ok = Agent.update(api, fn _ -> {:error, :too_many_request, 30} end)
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles(api)
+
+        assert {:ok, _view, html} = live(conn, "/")
+        assert html =~ "rate limit was exceeded"
+        assert html =~ "Reload vehicles"
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "explains a failed API call", %{conn: conn, api: api} do
+      :ok = Agent.update(api, fn _ -> {:error, :timeout} end)
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles(api)
+
+        assert {:ok, _view, html} = live(conn, "/")
+        assert html =~ "Fetching the vehicles from the Tesla API failed: :timeout"
+        assert html =~ "Reload vehicles"
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "redirects to the sign in page when reloading finds no session", %{conn: conn, api: api} do
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles(api)
+
+        assert {:ok, view, _html} = live(conn, "/")
+
+        :ok = Agent.update(api, fn _ -> {:error, :not_signed_in} end)
+        render_click(view, "reload_vehicles")
+
+        assert_redirect(view, "/sign_in", 1000)
+      end
+    end
+
+    @tag :signed_in
+    test "explains when data collection is disabled for every vehicle", %{conn: conn} do
+      {:ok, %Car{}} =
+        %Car{settings: %CarSettings{enabled: false}}
+        |> Car.changeset(%{vid: 90211, eid: 11243, vin: "absadkalfs"})
+        |> Log.create_or_update_car()
+
+      {:ok, _pid} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: [@vehicle]})
+
+      assert {:ok, _view, html} = live(conn, "/")
+      assert html =~ "Data collection is disabled for all vehicles"
+      refute html =~ "Reload vehicles"
     end
   end
 

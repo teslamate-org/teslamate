@@ -80,6 +80,7 @@ msgstr "Bewakingsmodus"
 msgid "Home"
 msgstr "Home"
 
+#: lib/teslamate_web/live/car_live/index.html.heex:38
 #: lib/teslamate_web/live/settings_live/index.ex:21
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
 #: lib/teslamate_web/templates/layout/root.html.heex:123
@@ -858,4 +859,46 @@ msgstr ""
 #: lib/teslamate_web/live/car_live/summary.ex:140
 #, elixir-autogen, elixir-format
 msgid "VIN %{vin}"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:37
+#, elixir-autogen, elixir-format
+msgid "Data collection is disabled for all vehicles."
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:30
+#, elixir-autogen, elixir-format
+msgid "Fetching the vehicles from the Tesla API failed: %{reason}"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:35
+#, elixir-autogen, elixir-format
+msgid "No vehicles enabled"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:14
+#: lib/teslamate_web/live/car_live/index.html.heex:21
+#: lib/teslamate_web/live/car_live/index.html.heex:28
+#, elixir-autogen, elixir-format
+msgid "No vehicles found"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:52
+#, elixir-autogen, elixir-format
+msgid "Reload vehicles"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.ex:68
+#, elixir-autogen, elixir-format
+msgid "Reloading the vehicles failed. Please check the logs."
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:23
+#, elixir-autogen, elixir-format
+msgid "The Tesla API rate limit was exceeded while fetching the vehicles. Please wait a few minutes before reloading."
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "Your Tesla account does not contain a vehicle yet. Once the vehicle shows up in the Tesla app, reload the vehicle list."
 msgstr ""

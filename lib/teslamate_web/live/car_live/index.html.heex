@@ -4,3 +4,56 @@
     session: %{"summary" => summary, "settings" => @settings}
   )}
 <% end %>
+
+<%= if @summaries == [] do %>
+  <div class="columns is-tablet is-centered">
+    <div class="column is-half">
+      <div id="no-vehicles" class="box has-text-centered">
+        <%= case @discovery do %>
+          <% {:error, :no_vehicles} -> %>
+            <p class="title is-5">{gettext("No vehicles found")}</p>
+            <p class="mb-4">
+              {gettext(
+                "Your Tesla account does not contain a vehicle yet. Once the vehicle shows up in the Tesla app, reload the vehicle list."
+              )}
+            </p>
+          <% {:error, :too_many_request} -> %>
+            <p class="title is-5">{gettext("No vehicles found")}</p>
+            <p class="mb-4">
+              {gettext(
+                "The Tesla API rate limit was exceeded while fetching the vehicles. Please wait a few minutes before reloading."
+              )}
+            </p>
+          <% {:error, reason} -> %>
+            <p class="title is-5">{gettext("No vehicles found")}</p>
+            <p class="mb-4">
+              {gettext("Fetching the vehicles from the Tesla API failed: %{reason}",
+                reason: inspect(reason)
+              )}
+            </p>
+          <% :ok -> %>
+            <p class="title is-5">{gettext("No vehicles enabled")}</p>
+            <p class="mb-4">
+              {gettext("Data collection is disabled for all vehicles.")}
+              {link(gettext("Settings"),
+                to: Routes.live_path(@socket, TeslaMateWeb.SettingsLive.Index)
+              )}
+            </p>
+        <% end %>
+
+        <%= if @discovery != :ok do %>
+          <button
+            type="button"
+            class={["button is-info is-rounded", if(@reloading?, do: "is-loading")]}
+            disabled={@reloading?}
+            phx-click="reload_vehicles"
+          >
+            <span class="icon"><span class="mdi mdi-reload"></span></span>
+            <span>{gettext("Reload vehicles")}</span>
+          </button>
+          <p :if={@reload_error} class="help is-danger">{@reload_error}</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

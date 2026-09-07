@@ -12,6 +12,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 
 ### New features
 
+- feat(web): explain an empty vehicle list and offer a reload button instead of requiring a restart once the car shows up in the Tesla account (#5710 - @JakobLichterfeld)
+
 ### Improvements and bug fixes
 
 - fix(vehicle): cancel an update with the logged update row instead of the API payload, which crashed the vehicle process and left the update open forever (#5664 - @JakobLichterfeld)

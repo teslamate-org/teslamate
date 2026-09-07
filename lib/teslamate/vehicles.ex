@@ -9,6 +9,17 @@ defmodule TeslaMate.Vehicles do
   alias TeslaMate.Log
 
   @name __MODULE__
+  @discovery_key {__MODULE__, :discovery_result}
+
+  @typedoc """
+  Outcome of the `TeslaMate.Api.list_vehicles/0` call made when this
+  supervisor last (re)started. `:ok` means the API returned at least one
+  vehicle. With `{:error, :no_vehicles}` the account has none yet; every
+  other error means the call failed and the cars already known from the
+  database were used instead.
+  """
+  @type discovery_result ::
+          :ok | {:error, :no_vehicles | :not_signed_in | :too_many_request | term}
 
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, opts, name: @name)
@@ -25,6 +36,11 @@ defmodule TeslaMate.Vehicles do
     |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id, display_priority: dp}} ->
       {dp, id}
     end)
+  end
+
+  @spec discovery_result() :: discovery_result
+  def discovery_result do
+    :persistent_term.get(@discovery_key, :ok)
   end
 
   def kill do
@@ -49,9 +65,16 @@ defmodule TeslaMate.Vehicles do
 
   @impl true
   def init(opts) do
+    {vehicles, result} =
+      case Keyword.fetch(opts, :vehicles) do
+        {:ok, vehicles} -> {vehicles, :ok}
+        :error -> discover_vehicles()
+      end
+
+    :persistent_term.put(@discovery_key, result)
+
     children =
-      opts
-      |> Keyword.get_lazy(:vehicles, &list_vehicles!/0)
+      vehicles
       |> Enum.map(&{Keyword.get(opts, :vehicle, Vehicle), car: create_or_update!(&1)})
       |> Enum.uniq_by(fn {_mod, car: %Car{id: id}} -> id end)
       |> Enum.filter(fn {_mod, car: %Car{settings: settings}} -> settings.enabled end)
@@ -78,24 +101,24 @@ defmodule TeslaMate.Vehicles do
     end
   end
 
-  defp list_vehicles! do
+  defp discover_vehicles do
     case TeslaMate.Api.list_vehicles() do
+      {:ok, []} ->
+        {fallback_vehicles(), {:error, :no_vehicles}}
+
+      {:ok, vehicles} ->
+        {vehicles, :ok}
+
       {:error, :not_signed_in} ->
-        fallback_vehicles()
+        {fallback_vehicles(), {:error, :not_signed_in}}
 
       {:error, :too_many_request, retry_after} ->
         Logger.warning("Could not get vehicles: rate limited, retry after #{retry_after}s")
-        fallback_vehicles()
+        {fallback_vehicles(), {:error, :too_many_request}}
 
       {:error, reason} ->
         Logger.warning("Could not get vehicles: #{inspect(reason)}")
-        fallback_vehicles()
-
-      {:ok, []} ->
-        fallback_vehicles()
-
-      {:ok, vehicles} ->
-        vehicles
+        {fallback_vehicles(), {:error, reason}}
     end
   end
 
