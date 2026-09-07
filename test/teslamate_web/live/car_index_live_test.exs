@@ -168,6 +168,109 @@ defmodule TeslaMateWeb.CarLive.Indextest do
     end
 
     @tag :signed_in
+    @tag :capture_log
+    test "reports a failed reload and re-enables the button", %{conn: conn, api: api} do
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles()
+        assert {:ok, view, _html} = live(conn, "/")
+
+        # e.g. a supervisor that is currently down
+        :ok = stop_supervised(Vehicles)
+        render_click(view, "reload_vehicles")
+        html = render_async(view)
+
+        assert html =~ "Reloading the vehicles failed"
+        refute html =~ "is-loading"
+        refute html =~ ~s(disabled)
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "reports a crashed reload and re-enables the button", %{conn: conn, api: api} do
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles()
+        assert {:ok, view, _html} = live(conn, "/")
+
+        with_mock Vehicles, [:passthrough], restart: fn -> exit(:boom) end do
+          render_click(view, "reload_vehicles")
+          html = render_async(view)
+
+          assert html =~ "Reloading the vehicles failed"
+          refute html =~ "is-loading"
+        end
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "runs one reload at a time", %{conn: conn, api: api} do
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles()
+        assert {:ok, view, _html} = live(conn, "/")
+
+        test_pid = self()
+
+        restart = fn ->
+          send(test_pid, :restarting)
+          Process.sleep(100)
+          :ok
+        end
+
+        with_mock Vehicles, [:passthrough], restart: restart do
+          render_click(view, "reload_vehicles")
+          render_click(view, "reload_vehicles")
+          render_async(view)
+
+          assert_receive :restarting
+          refute_receive :restarting
+        end
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "catches up instead of restarting when a vehicle is logged meanwhile", ctx do
+      %{conn: conn, api: api} = ctx
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles()
+        assert {:ok, view, _html} = live(conn, "/")
+
+        # Another tab reloads after the vehicle showed up
+        :ok = Agent.update(api, fn _ -> {:ok, [@vehicle]} end)
+        :ok = Vehicles.restart()
+        calls_before = length(call_history(Api))
+
+        html = render_click(view, "reload_vehicles")
+
+        assert html =~ ~s(id="car_)
+        refute html =~ "Reload vehicles"
+        assert length(call_history(Api)) == calls_before
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "explains disabled data collection alongside an API error", %{conn: conn, api: api} do
+      {:ok, %Car{}} =
+        %Car{settings: %CarSettings{enabled: false}}
+        |> Car.changeset(%{vid: 90211, eid: 11243, vin: "absadkalfs"})
+        |> Log.create_or_update_car()
+
+      :ok = Agent.update(api, fn _ -> {:error, :timeout} end)
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles(api) do
+        :ok = start_empty_vehicles()
+
+        assert {:ok, _view, html} = live(conn, "/")
+        assert html =~ "Data collection is disabled for all vehicles"
+        assert html =~ "Fetching the vehicles from the Tesla API failed: :timeout"
+        assert html =~ "Reload vehicles"
+      end
+    end
+
+    @tag :signed_in
     test "explains when data collection is disabled for every vehicle", %{conn: conn} do
       {:ok, %Car{}} =
         %Car{settings: %CarSettings{enabled: false}}

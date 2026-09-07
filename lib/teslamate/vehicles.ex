@@ -10,6 +10,7 @@ defmodule TeslaMate.Vehicles do
 
   @name __MODULE__
   @discovery_key {__MODULE__, :discovery_result}
+  @topic "vehicles"
 
   @typedoc """
   Outcome of the `TeslaMate.Api.list_vehicles/0` call made when this
@@ -26,7 +27,14 @@ defmodule TeslaMate.Vehicles do
   end
 
   def list do
-    Supervisor.which_children(@name)
+    case Process.whereis(@name) do
+      nil -> []
+      pid -> summaries(pid)
+    end
+  end
+
+  defp summaries(pid) do
+    Supervisor.which_children(pid)
     |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
       ordered: false,
       max_concurrency: 10,
@@ -48,12 +56,32 @@ defmodule TeslaMate.Vehicles do
     __MODULE__ |> Process.whereis() |> Process.exit(:kill)
   end
 
+  @doc """
+  Stops every vehicle process and starts the supervisor again, which runs the
+  vehicle discovery anew.
+
+  The supervisor is terminated and restarted explicitly through its parent.
+  Unlike stopping it and relying on the parent's automatic restart, this does
+  not count toward the parent's restart intensity, so repeated calls cannot
+  take the application down. Subscribers (see `subscribe/0`) are notified with
+  `{TeslaMate.Vehicles, :reloaded}` once the new vehicle processes run.
+  """
+  @spec restart() :: :ok | {:error, term}
   def restart do
-    with :ok <- Supervisor.stop(@name, :normal),
-         :ok <- block_until_started(250) do
-      :ok
+    with {:ok, parent} <- parent(),
+         :ok <- Supervisor.terminate_child(parent, @name),
+         {:ok, _pid} <- restart_child(parent) do
+      :ok = Phoenix.PubSub.broadcast(TeslaMate.PubSub, @topic, {__MODULE__, :reloaded})
     end
   end
+
+  @doc "Subscribes the caller to `{TeslaMate.Vehicles, :reloaded}` messages."
+  def subscribe do
+    Phoenix.PubSub.subscribe(TeslaMate.PubSub, @topic)
+  end
+
+  @doc false
+  def topic, do: @topic
 
   defdelegate summary(id), to: Vehicle
   defdelegate resume_logging(id), to: Vehicle
@@ -88,16 +116,22 @@ defmodule TeslaMate.Vehicles do
 
   # Private
 
-  defp block_until_started(0), do: {:error, :restart_failed}
-
-  defp block_until_started(retries) when retries > 0 do
+  defp parent do
     with pid when is_pid(pid) <- Process.whereis(@name),
-         true <- Process.alive?(pid) do
-      :ok
+         {:parent, parent} when is_pid(parent) <- Process.info(pid, :parent) do
+      {:ok, parent}
     else
-      _ ->
-        Process.sleep(10)
-        block_until_started(retries - 1)
+      _ -> {:error, :not_running}
+    end
+  end
+
+  defp restart_child(parent) do
+    case Supervisor.restart_child(parent, @name) do
+      {:ok, pid} -> {:ok, pid}
+      {:ok, pid, _info} -> {:ok, pid}
+      # A concurrent restart won the race; its vehicle processes are fresh.
+      {:error, :running} -> {:ok, Process.whereis(@name)}
+      {:error, reason} -> {:error, reason}
     end
   end
 

@@ -41,12 +41,41 @@ defmodule TeslaMate.VehiclesTest do
     assert_receive {ApiMock, {:stream, 4040, _}}
 
     ref = Process.monitor(Vehicles)
+    :ok = Vehicles.subscribe()
 
     assert :ok = Vehicles.restart()
-    assert_receive {:DOWN, ^ref, :process, {Vehicles, :nonode@nohost}, :normal}
+    assert_receive {:DOWN, ^ref, :process, {Vehicles, :nonode@nohost}, :shutdown}
     assert_receive {ApiMock, {:stream, 4040, _}}
+    assert_receive {Vehicles, :reloaded}
 
     refute_receive _
+  end
+
+  test "restart/0 does not count toward the parent's restart intensity" do
+    parent = %{
+      id: :parent,
+      start:
+        {Supervisor, :start_link,
+         [[{Vehicles, vehicles: []}], [strategy: :one_for_one, max_restarts: 1, max_seconds: 60]]},
+      type: :supervisor
+    }
+
+    {:ok, parent_pid} = start_supervised(parent)
+
+    for _ <- 1..5, do: assert(:ok = Vehicles.restart())
+
+    assert Process.alive?(parent_pid)
+    assert is_pid(Process.whereis(Vehicles))
+  end
+
+  test "restart/0 reports a supervisor that is not running" do
+    assert nil == Process.whereis(Vehicles)
+    assert {:error, :not_running} = Vehicles.restart()
+  end
+
+  test "list/0 is empty while the supervisor is not running" do
+    assert nil == Process.whereis(Vehicles)
+    assert [] = Vehicles.list()
   end
 
   describe "discovery_result/0" do
