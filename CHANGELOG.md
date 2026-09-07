@@ -42,7 +42,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - test(characterization): pin stream connect/disconnect and the supervisor kill as golden interactions (#5704 - @JakobLichterfeld)
 - test(characterization): name the scenario event behind a mismatch on a dated row (#5705 - @JakobLichterfeld)
 - build(deps): bump browserslist from 4.28.2 to 4.28.9 in /website (#5707)
-
+- build(deps): bump fast-uri from 3.1.5 to 3.1.7 in /website (#5686)
 #### Dashboards
 
 #### Translations
