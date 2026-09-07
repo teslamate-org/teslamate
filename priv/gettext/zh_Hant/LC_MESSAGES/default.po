@@ -133,7 +133,7 @@ msgstr "單位"
 msgid "Back"
 msgstr "上一步"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:205
+#: lib/teslamate_web/live/geofence_live/form.ex:208
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
 msgstr "收藏地點 \"%{name}\" 已建立"
@@ -370,7 +370,7 @@ msgstr "已啟用"
 msgid "Sleep Mode"
 msgstr "休眠模式"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:206
+#: lib/teslamate_web/live/geofence_live/form.ex:209
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "收藏點 \"%{name}\" 已更新"

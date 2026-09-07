@@ -133,7 +133,7 @@ msgstr "Unità"
 msgid "Back"
 msgstr "Indietro"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:205
+#: lib/teslamate_web/live/geofence_live/form.ex:208
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Geo-Fence \"%{name}\" creata"
@@ -370,7 +370,7 @@ msgstr "Attivato"
 msgid "Sleep Mode"
 msgstr "Modalità sospensione"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:206
+#: lib/teslamate_web/live/geofence_live/form.ex:209
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geo-fence \"%{name}\" aggiornata"

@@ -133,7 +133,7 @@ msgstr "หน่วย"
 msgid "Back"
 msgstr "ย้อนกลับ"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:205
+#: lib/teslamate_web/live/geofence_live/form.ex:208
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
 msgstr "สร้างขอบเขตทางภูมิศาสตร์ \"%{name}\" แล้ว"
@@ -370,7 +370,7 @@ msgstr "เปิดใช้งานแล้ว"
 msgid "Sleep Mode"
 msgstr "โหมดหลับ"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:206
+#: lib/teslamate_web/live/geofence_live/form.ex:209
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "อัปเดตขอบเขตทางภูมิศาสตร์ \"%{name}\" แล้ว"

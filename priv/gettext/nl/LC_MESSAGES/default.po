@@ -133,7 +133,7 @@ msgstr "Eenheden"
 msgid "Back"
 msgstr "Terug"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:205
+#: lib/teslamate_web/live/geofence_live/form.ex:208
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Geo-hek \"%{name}\" aangemaakt"
@@ -370,7 +370,7 @@ msgstr "Ingeschakeld"
 msgid "Sleep Mode"
 msgstr "Slaapstand"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:206
+#: lib/teslamate_web/live/geofence_live/form.ex:209
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geo-hek \"%{name}\" bijgewerkt"

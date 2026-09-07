@@ -183,18 +183,21 @@ defmodule TeslaMateWeb.GeoFenceLive.Form do
          {:ok, settings} <- Settings.update_global_settings(settings, %{grafana_url: url}) do
       {:ok, settings}
     else
-      {:error, reason} -> Logger.warning("Updating settings failed: #{inspect(reason)}")
-      _ -> {:ok, settings}
+      {:error, reason} ->
+        Logger.warning("Updating settings failed: #{inspect(reason)}")
+        {:ok, settings}
+
+      _ ->
+        {:ok, settings}
     end
   end
 
   defp grafana_base_path(path) when path in [nil, "", "/"], do: {:ok, nil}
 
   defp grafana_base_path(path) do
-    case path |> String.split("/") |> Enum.reverse() do
-      [_slug, _uid, "d" | base] -> {:ok, base |> Enum.reverse() |> Enum.join("/")}
-      [_uid, "d" | base] -> {:ok, base |> Enum.reverse() |> Enum.join("/")}
-      _ -> :error
+    case Regex.run(~r{^(.*)/d/[^/]+}, path) do
+      [_, base] -> {:ok, base}
+      nil -> :error
     end
   end
 

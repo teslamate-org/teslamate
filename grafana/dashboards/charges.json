@@ -730,7 +730,7 @@
                 "id": "links",
                 "value": [
                   {
-                    "targetBlank": true,
+                    "targetBlank": false,
                     "title": "Create or edit geo-fence",
                     "url": "${base_url:raw}/geo-fences/${__data.fields.path}"
                   }

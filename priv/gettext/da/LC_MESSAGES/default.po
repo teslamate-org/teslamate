@@ -133,7 +133,7 @@ msgstr "Enheder"
 msgid "Back"
 msgstr "Tilbage"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:205
+#: lib/teslamate_web/live/geofence_live/form.ex:208
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" created"
 msgstr "Geografisk afgrænsning \"%{name}\" oprettet"
@@ -370,7 +370,7 @@ msgstr "Aktiveret"
 msgid "Sleep Mode"
 msgstr "Dvaletilstand"
 
-#: lib/teslamate_web/live/geofence_live/form.ex:206
+#: lib/teslamate_web/live/geofence_live/form.ex:209
 #, elixir-autogen, elixir-format
 msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geografisk afgrænsning \"%{name}\" opdateret"
