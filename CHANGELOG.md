@@ -47,6 +47,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump http-proxy-middleware from 2.0.9 to 2.0.10 in /website (#5708)
 - build(deps): update flake.lock (#5659)
 - build(deps): bump the actions-deps group across 4 directories with 8 updates (#5679)
+- build(deps): bump phoenix from 1.8.9 to 1.8.13 (#5672)
 
 #### Dashboards
 
