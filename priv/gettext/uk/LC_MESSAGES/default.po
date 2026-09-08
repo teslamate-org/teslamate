@@ -70,7 +70,7 @@ msgstr "Закрито"
 msgid "Sentry Mode"
 msgstr "Сентрі Мод"
 
-#: lib/teslamate_web/live/car_live/index.ex:15
+#: lib/teslamate_web/live/car_live/index.ex:17
 #: lib/teslamate_web/live/charge_live/cost.html.heex:3
 #: lib/teslamate_web/live/geofence_live/form.html.heex:3
 #: lib/teslamate_web/live/geofence_live/index.html.heex:3
@@ -869,7 +869,7 @@ msgstr ""
 msgid "Data collection is disabled for all vehicles."
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/index.ex:126
+#: lib/teslamate_web/live/car_live/index.ex:139
 #, elixir-autogen, elixir-format
 msgid "Fetching the vehicles from the Tesla API failed: %{reason}"
 msgstr ""
@@ -884,22 +884,22 @@ msgstr ""
 msgid "No vehicles found"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/index.html.heex:38
+#: lib/teslamate_web/live/car_live/index.html.heex:41
 #, elixir-autogen, elixir-format
 msgid "Reload vehicles"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/index.ex:99
+#: lib/teslamate_web/live/car_live/index.ex:112
 #, elixir-autogen, elixir-format
 msgid "Reloading the vehicles failed. Please check the logs."
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/index.ex:120
+#: lib/teslamate_web/live/car_live/index.ex:133
 #, elixir-autogen, elixir-format
 msgid "The Tesla API rate limit was exceeded while fetching the vehicles. Please wait a few minutes before reloading."
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/index.ex:114
+#: lib/teslamate_web/live/car_live/index.ex:127
 #, elixir-autogen, elixir-format
 msgid "Your Tesla account does not contain a vehicle yet. Once the vehicle shows up in the Tesla app, reload the vehicle list."
 msgstr ""
@@ -909,17 +909,17 @@ msgstr ""
 msgid "Reloading vehicles"
 msgstr ""
 
-#: lib/teslamate_web/live/car_live/index.ex:108
+#: lib/teslamate_web/live/car_live/index.ex:121
 #, elixir-autogen, elixir-format
 msgid "Starting the vehicle loggers failed: %{reason}. Please check the logs."
-msgstr ""
-
-#: lib/teslamate_web/live/car_live/index.ex:104
-#, elixir-autogen, elixir-format
-msgid "The vehicle list is being reloaded right now. Please try again in a moment."
 msgstr ""
 
 #: lib/teslamate_web/live/car_live/index.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "Vehicle logging is not running"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.ex:117
+#, elixir-autogen, elixir-format
+msgid "The vehicle list is being reloaded right now. This page updates once it is done."
 msgstr ""

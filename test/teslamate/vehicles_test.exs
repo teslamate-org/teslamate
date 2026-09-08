@@ -76,17 +76,67 @@ defmodule TeslaMate.VehiclesTest do
     {:ok, answer} = Agent.start_link(fn -> nil end)
 
     with_mock TeslaMate.Api, [:passthrough], list_vehicles: fn -> Agent.get(answer, & &1) end do
+      :ok = Vehicles.subscribe()
+
       # A car without a VIN cannot be persisted, so init raises
       :ok = Agent.update(answer, fn _ -> {:ok, [%TeslaApi.Vehicle{id: 1, vehicle_id: 1}]} end)
       assert {:error, _reason} = Vehicles.restart()
       assert {:error, {:start_failed, _}} = Vehicles.status()
       assert nil == Process.whereis(Vehicles)
       assert [] = Vehicles.list()
+      # Subscribers learn that no vehicle is logged any more
+      assert_receive {Vehicles, :reloaded}
 
       :ok = Agent.update(answer, fn _ -> {:ok, []} end)
       assert :ok = Vehicles.restart()
       assert {:error, :no_vehicles} = Vehicles.status()
       assert is_pid(Process.whereis(Vehicles))
+    end
+  end
+
+  @tag :capture_log
+  test "restart/1 waits for a restart in progress unless told not to" do
+    import Mock
+
+    test_pid = self()
+    {:ok, answer} = Agent.start_link(fn -> {:ok, []} end)
+
+    blocking = fn ->
+      send(test_pid, {:listing, self()})
+
+      receive do
+        :continue -> {:ok, []}
+      end
+    end
+
+    list_vehicles = fn ->
+      case Agent.get(answer, & &1) do
+        fun when is_function(fun, 0) -> fun.()
+        result -> result
+      end
+    end
+
+    with_mock TeslaMate.Api, [:passthrough], list_vehicles: list_vehicles do
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock})
+      :ok = Agent.update(answer, fn _ -> blocking end)
+
+      first = Task.async(fn -> Vehicles.restart() end)
+      assert_receive {:listing, blocked}
+      assert :restarting = Vehicles.status()
+
+      assert {:error, :restarting} = Vehicles.restart(wait: false)
+
+      waiting = Task.async(fn -> Vehicles.restart() end)
+      refute_receive {:listing, _}, 100
+
+      send(blocked, :continue)
+      assert :ok = Task.await(first)
+
+      # The waiting call runs its own discovery afterwards
+      assert_receive {:listing, blocked}
+      send(blocked, :continue)
+      assert :ok = Task.await(waiting)
+      assert {:error, :no_vehicles} = Vehicles.status()
     end
   end
 

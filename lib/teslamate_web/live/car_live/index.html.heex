@@ -28,6 +28,9 @@
 
         <%= if @status != :ok do %>
           <p class="mb-4">{status_hint(@status)}</p>
+        <% end %>
+
+        <%= if @status not in [:ok, :restarting] do %>
           <button
             type="button"
             class={["button is-info is-rounded", if(@reloading?, do: "is-loading")]}

@@ -10,12 +10,14 @@ defmodule TeslaMateWeb.CarLive.Index do
 
   @impl true
   def mount(_params, %{"settings" => settings}, socket) do
+    if connected?(socket), do: :ok = Vehicles.subscribe()
+
     socket =
       socket
       |> assign(page_title: gettext("Home"))
       |> assign_new(:settings, fn -> update_base_url(settings, socket) end)
-      |> assign_vehicles(Vehicles.list())
       |> assign(reloading?: false, reload_error: nil)
+      |> assign_vehicles()
 
     {:ok, socket}
   end
@@ -33,21 +35,18 @@ defmodule TeslaMateWeb.CarLive.Index do
     # started the loggers. Then the page catches up instead of restarting them.
     case Vehicles.list() do
       [] -> {:noreply, start_reload(socket)}
-      summaries -> {:noreply, assign_vehicles(socket, summaries)}
+      _summaries -> {:noreply, refresh(socket)}
     end
   end
 
   @impl true
-  def handle_async(:reload_vehicles, {:ok, {:ok, summaries}}, socket) do
-    socket = socket |> assign(reloading?: false) |> assign_vehicles(summaries)
+  def handle_async(:reload_vehicles, {:ok, :ok}, socket) do
+    {:noreply, socket |> assign(reloading?: false) |> refresh()}
+  end
 
-    case socket.assigns.status do
-      {:error, :not_signed_in} ->
-        {:noreply, redirect(socket, to: Routes.live_path(socket, TeslaMateWeb.SignInLive.Index))}
-
-      _ ->
-        {:noreply, socket}
-    end
+  # Another restart is running; its result arrives as a reload message.
+  def handle_async(:reload_vehicles, {:ok, {:error, :restarting}}, socket) do
+    {:noreply, socket |> assign(reloading?: false) |> refresh()}
   end
 
   def handle_async(:reload_vehicles, {:ok, {:error, reason}}, socket) do
@@ -58,16 +57,29 @@ defmodule TeslaMateWeb.CarLive.Index do
     {:noreply, reload_failed(socket, reason)}
   end
 
+  @impl true
+  def handle_info({Vehicles, :reloaded}, socket) do
+    {:noreply, refresh(socket)}
+  end
+
   ## Private
 
   defp start_reload(socket) do
     socket
     |> assign(reloading?: true, reload_error: nil)
-    |> start_async(:reload_vehicles, fn ->
-      with :ok <- Vehicles.restart() do
-        {:ok, Vehicles.list()}
-      end
-    end)
+    |> start_async(:reload_vehicles, fn -> Vehicles.restart(wait: false) end)
+  end
+
+  defp refresh(socket) do
+    socket = assign_vehicles(socket)
+
+    case socket.assigns.status do
+      {:error, :not_signed_in} ->
+        redirect(socket, to: Routes.live_path(socket, TeslaMateWeb.SignInLive.Index))
+
+      _ ->
+        socket
+    end
   end
 
   # With an empty list, the reason for the emptiness is what the page has to
@@ -75,10 +87,11 @@ defmodule TeslaMateWeb.CarLive.Index do
   # unless data collection is disabled for them, so known cars plus an empty
   # list means every car is disabled, whatever the Tesla API answered.
   #
-  # The status is read before the list: a restart in between then shows as
-  # a stale non-empty list, never as a false "all disabled".
-  defp assign_vehicles(socket, summaries) do
+  # The status is read before the list: a restart starting in between then
+  # shows as a stale non-empty list, never as a false "all disabled".
+  defp assign_vehicles(socket) do
     status = Vehicles.status()
+    summaries = Vehicles.list()
 
     assign(socket,
       status: status,
@@ -101,7 +114,7 @@ defmodule TeslaMateWeb.CarLive.Index do
   end
 
   defp status_hint(:restarting) do
-    gettext("The vehicle list is being reloaded right now. Please try again in a moment.")
+    gettext("The vehicle list is being reloaded right now. This page updates once it is done.")
   end
 
   defp status_hint({:error, {:start_failed, reason}}) do

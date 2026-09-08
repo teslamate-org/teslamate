@@ -71,6 +71,14 @@ defmodule TeslaMateWeb.CarLive.Indextest do
       [api: api]
     end
 
+    defp assert_eventually(fun, retries \\ 50) do
+      cond do
+        fun.() -> :ok
+        retries == 0 -> flunk("condition was not met in time")
+        true -> Process.sleep(20) && assert_eventually(fun, retries - 1)
+      end
+    end
+
     # The agent holds the API answer, or a function computing it in the caller
     defp list_vehicles(api) do
       fn ->
@@ -258,13 +266,18 @@ defmodule TeslaMateWeb.CarLive.Indextest do
         other_tab = Task.async(fn -> Vehicles.restart() end)
         assert_receive {:listing, blocked}
 
-        assert {:ok, _view, html} = live(conn, "/")
+        assert {:ok, view, html} = live(conn, "/")
         assert html =~ "Reloading vehicles"
         assert html =~ "being reloaded right now"
         refute html =~ "Data collection is disabled"
+        refute has_element?(view, "button[phx-click=reload_vehicles]")
 
+        # The page learns the outcome without any click
         send(blocked, :continue)
         assert :ok = Task.await(other_tab)
+
+        assert_eventually(fn -> render(view) =~ "does not contain a vehicle yet" end)
+        assert has_element?(view, "button[phx-click=reload_vehicles]")
       end
     end
 
@@ -277,7 +290,7 @@ defmodule TeslaMateWeb.CarLive.Indextest do
 
         test_pid = self()
 
-        restart = fn ->
+        restart = fn _opts ->
           send(test_pid, :restarting)
           Process.sleep(100)
           :ok
@@ -308,10 +321,12 @@ defmodule TeslaMateWeb.CarLive.Indextest do
         :ok = Vehicles.restart()
         calls_before = length(call_history(Api))
 
-        html = render_click(view, "reload_vehicles")
+        assert_eventually(fn -> render(view) =~ ~s(id="car_) end)
+        refute has_element?(view, "button[phx-click=reload_vehicles]")
 
+        # A click from a tab that has not caught up yet must not restart
+        html = render_click(view, "reload_vehicles")
         assert html =~ ~s(id="car_)
-        refute html =~ "Reload vehicles"
         assert length(call_history(Api)) == calls_before
       end
     end

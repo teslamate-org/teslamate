@@ -81,15 +81,42 @@ defmodule TeslaMate.Vehicles do
   not count toward the parent's restart intensity, so repeated calls cannot
   take the application down. The price is that a failed start is not retried
   by the parent: it is recorded in `status/0` and needs another `restart/0`.
-  Restarts are serialized; a concurrent one returns `{:error, :restarting}`.
-  Subscribers (see `subscribe/0`) are notified with
-  `{TeslaMate.Vehicles, :reloaded}` once the new vehicle processes run.
+
+  Restarts are serialized. By default a call waits for a restart in progress
+  and then runs its own; with `wait: false` it returns `{:error, :restarting}`
+  instead, which suits an interactive trigger that would only repeat the
+  work. Subscribers (see `subscribe/0`) are notified with
+  `{TeslaMate.Vehicles, :reloaded}` after every attempt that stopped the
+  vehicle processes, so they see the vehicle set that actually resulted.
   """
-  @spec restart() :: :ok | {:error, term}
-  def restart do
-    case :global.trans(@restart_lock, &do_restart/0, [node()], 0) do
-      :aborted -> {:error, :restarting}
-      result -> result
+  @spec restart(wait: boolean) :: :ok | {:error, term}
+  def restart(opts \\ []) do
+    lock = {@restart_lock, self()}
+
+    if acquire_restart_lock(lock, Keyword.get(opts, :wait, true)) do
+      try do
+        do_restart()
+      after
+        true = :global.del_lock(lock, [node()])
+      end
+    else
+      {:error, :restarting}
+    end
+  end
+
+  # :global.trans/4 would do, but its retries back off randomly for up to
+  # seconds; a sign-in waiting for a reload should not.
+  defp acquire_restart_lock(lock, wait?) do
+    case :global.set_lock(lock, [node()], 0) do
+      true ->
+        true
+
+      false when wait? ->
+        Process.sleep(50)
+        acquire_restart_lock(lock, true)
+
+      false ->
+        false
     end
   end
 
@@ -97,15 +124,23 @@ defmodule TeslaMate.Vehicles do
     with {:ok, parent} <- parent() do
       :persistent_term.put(@status_key, :restarting)
 
-      with :ok <- Supervisor.terminate_child(parent, @name),
-           {:ok, _pid} <- restart_child(parent) do
-        :ok = Phoenix.PubSub.broadcast(TeslaMate.PubSub, @topic, {__MODULE__, :reloaded})
-      else
+      result =
+        with :ok <- Supervisor.terminate_child(parent, @name),
+             {:ok, _pid} <- restart_child(parent) do
+          :ok
+        end
+
+      case result do
+        :ok ->
+          :ok
+
         {:error, reason} ->
           Logger.error("Restarting #{__MODULE__} failed: #{inspect(reason)}")
           :persistent_term.put(@status_key, {:error, {:start_failed, reason}})
-          {:error, reason}
       end
+
+      :ok = Phoenix.PubSub.broadcast(TeslaMate.PubSub, @topic, {__MODULE__, :reloaded})
+      result
     end
   end
 
