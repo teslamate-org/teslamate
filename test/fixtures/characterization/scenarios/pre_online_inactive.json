@@ -1,0 +1,41 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Pre-online check (streaming): from asleep the vehicle only probes, and a bare online answer without vehicle data connects the stream to check whether the online is real before any vehicle data is requested. Branch 'stream inactive, seems to have been a fake online' sets the check idle, and the next bare probe hits the branch 'stream connected but check idle, allow real online', which releases vehicle data \u2014 the strict fetch is answered with the bare payload again, so the machine stays asleep. Pin: only the asleep row, one stream connect. The bare online payload is served twice at the end so the barrier serves are two strict fetches.",
+  "events": [
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    },
+    {
+      "vehicle": {
+        "state": "online"
+      }
+    },
+    {
+      "stream_control": "inactive"
+    },
+    {
+      "vehicle": {
+        "state": "online"
+      }
+    },
+    {
+      "vehicle": {
+        "state": "online"
+      }
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}
