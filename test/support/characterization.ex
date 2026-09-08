@@ -334,6 +334,9 @@ defmodule TeslaMate.Characterization do
       clock that window is payload time, not a wall-clock race: a parked
       streaming vehicle suspends exactly when its payloads are three minutes
       apart, and stays online otherwise.
+    * A delivery is only observable with a poll in flight; a handler that
+      runs only without one (fetch_state's own result clauses) is outside
+      the replay.
   """
 
   import ExUnit.Assertions
