@@ -59,6 +59,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump srtm from 0.8.0 to 0.9.0 (#5677)
 - build(deps): bump phoenix_live_view from 1.2.8 to 1.2.11 (#5678)
 - test(characterization): pin the pre-online check of the streaming API (#5712 - @JakobLichterfeld)
+- test(characterization): pin the suspended state's resume, usage and inactive-stream paths (#5713 - @JakobLichterfeld)
 
 #### Dashboards
 
