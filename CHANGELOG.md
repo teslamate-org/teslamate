@@ -2,7 +2,7 @@
 
 ## [unreleased]
 
-Under the hood, this release adds a self-verifying black-box characterization suite: recorded API sequences replay through the real vehicle state machine, and everything that leaves the system — database rows, MQTT messages, and the vehicle's interactions with the streaming API and its supervisor — is pinned against goldens. All existing vehicle scenarios are converted (120 fixtures).
+Under the hood, this release adds a self-verifying black-box characterization suite: recorded API sequences replay through the real vehicle state machine, and everything that leaves the system — database rows, MQTT messages, and the vehicle's interactions with the streaming API and its supervisor — is pinned against goldens. All existing vehicle scenarios are converted (137 fixtures).
 The work already paid off three times: it exposed a crash in the update-cancel path (#5656), a crash loop after an offline period when the car reports an outdated timestamp (#5684), and the published state start time jumping backwards after charging, updating or driving (#5693) — all fixed in this release — and it surfaced two quirks for a later fix: a charge sample without charger power is stored as 0 kW (#5699),
 and a stream going inactive while logging is suspended can start a second fetch alongside the running poll (#5714).
 
@@ -61,6 +61,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump phoenix_live_view from 1.2.8 to 1.2.11 (#5678)
 - test(characterization): pin the pre-online check of the streaming API (#5712 - @JakobLichterfeld)
 - test(characterization): pin the suspended state's resume, usage and inactive-stream paths (#5713 - @JakobLichterfeld)
+- test(characterization): pin vehicle identification — model, trim and marketing name from vehicle_config and VIN (#5715 - @JakobLichterfeld)
 
 #### Dashboards
 
