@@ -1,0 +1,39 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Pre-online check (streaming): from asleep the vehicle only probes, and a bare online answer without vehicle data connects the stream to check whether the online is real before any vehicle data is requested. Branch 'stream inactive' sets the check idle, then a frame with power nil hits the branch 'subsystem check detected but check idle, treating as fake online': confirmed fake, further probes keep the machine asleep. Pin: only the asleep row, one stream connect. The bare online terminal repeats through the probe without writing.",
+  "events": [
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    },
+    {
+      "vehicle": {
+        "state": "online"
+      }
+    },
+    {
+      "stream_control": "inactive"
+    },
+    {
+      "stream": "1704067230000,,10000,60,10,120,52.514521,13.350144,,,180,200,300"
+    },
+    {
+      "vehicle": {
+        "state": "online"
+      }
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}
