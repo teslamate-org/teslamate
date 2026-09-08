@@ -1,0 +1,462 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [
+    {
+      "icon": "dashboard",
+      "tags": [],
+      "title": "TeslaMate",
+      "tooltip": "",
+      "type": "link",
+      "url": "${base_url:raw}"
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "tags": ["tesla"],
+      "title": "Dashboards",
+      "type": "dashboards"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "text", "value": null }]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "13.0.1+security-01",
+      "targets": [
+        {
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT convert_celsius(inside_temp, '$temp_unit') AS \"Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND inside_temp IS NOT NULL\nORDER BY date DESC\nLIMIT 1",
+          "refId": "A"
+        }
+      ],
+      "title": "Inside (last value)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "text", "value": null }]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "13.0.1+security-01",
+      "targets": [
+        {
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT convert_celsius(outside_temp, '$temp_unit') AS \"Outside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL\nORDER BY date DESC\nLIMIT 1",
+          "refId": "A"
+        }
+      ],
+      "title": "Outside (last value)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "blue", "value": null }]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "/Outside/", "values": false },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "13.0.1+security-01",
+      "targets": [
+        {
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  convert_celsius(min(outside_temp), '$temp_unit') AS \"Min Outside [°$temp_unit]\",\n  convert_celsius(max(outside_temp), '$temp_unit') AS \"Max Outside [°$temp_unit]\",\n  convert_celsius(min(inside_temp), '$temp_unit') AS \"Min Inside [°$temp_unit]\",\n  convert_celsius(max(inside_temp), '$temp_unit') AS \"Max Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)",
+          "refId": "A"
+        }
+      ],
+      "title": "Outside Min / Max (range)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "datasource", "uid": "-- Dashboard --" },
+      "description": "Shares the query result of the Outside Min / Max panel (single positions scan for all four values).",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "orange", "value": null }]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "/Inside/", "values": false },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "13.0.1+security-01",
+      "targets": [
+        {
+          "datasource": { "type": "datasource", "uid": "-- Dashboard --" },
+          "panelId": 3,
+          "refId": "A"
+        }
+      ],
+      "title": "Inside Min / Max (range)",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+      "id": 101,
+      "panels": [],
+      "title": "Temperature History",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": 3600000,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "never",
+            "spanNulls": 3600000,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          },
+          "unit": "degree"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "/^Inside/" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": "/^Outside/" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": "/setpoint/" },
+            "properties": [
+              { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } },
+              { "id": "custom.lineWidth", "value": 1 },
+              { "id": "custom.fillOpacity", "value": 0 },
+              { "id": "custom.lineInterpolation", "value": "stepAfter" }
+            ]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": "/^Driver setpoint/" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "purple", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 7 },
+      "id": 5,
+      "options": {
+        "legend": { "calcs": ["min", "max", "mean", "lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "pluginVersion": "13.0.1+security-01",
+      "targets": [
+        {
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  convert_celsius(avg(inside_temp), '$temp_unit') AS \"Inside [°$temp_unit]\",\n  convert_celsius(avg(outside_temp), '$temp_unit') AS \"Outside [°$temp_unit]\",\n  convert_celsius(avg(driver_temp_setting), '$temp_unit') AS \"Driver setpoint [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id\n  AND (inside_temp IS NOT NULL OR outside_temp IS NOT NULL)\n  AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
+          "refId": "A"
+        }
+      ],
+      "title": "Inside & Outside Temperature",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "lineInterpolation": "linear",
+            "lineStyle": { "dash": [0, 10], "fill": "dot" },
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "always",
+            "spanNulls": true,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          },
+          "unit": "degree"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 17 },
+      "id": 7,
+      "options": {
+        "legend": { "calcs": ["min", "max", "mean"], "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "pluginVersion": "13.0.1+security-01",
+      "targets": [
+        {
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  start_date AS time,\n  convert_celsius(outside_temp_avg, '$temp_unit') AS \"Outside (charging) [°$temp_unit]\"\nFROM charging_processes\nWHERE car_id = $car_id AND outside_temp_avg IS NOT NULL AND $__timeFilter(start_date)\nORDER BY 1",
+          "refId": "A"
+        }
+      ],
+      "title": "Outside Temperature During Charging",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
+      "id": 102,
+      "panels": [],
+      "title": "Daily Ambient Envelope",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+      "description": "Daily outside temperature envelope, computed on time-debiased inputs: readings are first averaged into fixed 15-minute bins, then aggregated per day. Wick = min/max, body = 15th–85th percentile. Days without samples have no candle.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "scaleDistribution": { "type": "linear" }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "unit": "degree"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 27 },
+      "id": 8,
+      "options": {
+        "candleStyle": "candles",
+        "colorStrategy": "open-close",
+        "colors": { "down": "blue", "flat": "gray", "up": "red" },
+        "fields": { "close": "close", "high": "high", "low": "low", "open": "open" },
+        "includeAllFields": false,
+        "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": false },
+        "mode": "candles"
+      },
+      "pluginVersion": "13.0.1+security-01",
+      "targets": [
+        {
+          "datasource": { "type": "grafana-postgresql-datasource", "uid": "TeslaMate" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH binned AS (\n  SELECT\n    to_timestamp(floor(extract(epoch FROM date) / 900) * 900) AS bin,\n    avg(outside_temp) AS outside_temp\n  FROM positions\n  WHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\n  GROUP BY 1\n)\nSELECT\n  date_trunc('day', bin) AS time,\n  convert_celsius(max(outside_temp), '$temp_unit') AS high,\n  convert_celsius(min(outside_temp), '$temp_unit') AS low,\n  convert_celsius(percentile_cont(0.15) WITHIN GROUP (ORDER BY outside_temp::double precision)::numeric, '$temp_unit') AS open,\n  convert_celsius(percentile_cont(0.85) WITHIN GROUP (ORDER BY outside_temp::double precision)::numeric, '$temp_unit') AS close\nFROM binned\nGROUP BY 1\nORDER BY 1",
+          "refId": "A"
+        }
+      ],
+      "title": "Daily Outside Temperature (min/max, p15–p85)",
+      "type": "candlestick"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 42,
+  "tags": ["tesla"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
+        },
+        "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
+        "includeAll": false,
+        "label": "Car",
+        "name": "car_id",
+        "options": [],
+        "query": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
+        },
+        "definition": "select unit_of_temperature from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "temperature unit",
+        "name": "temp_unit",
+        "options": [],
+        "query": "select unit_of_temperature from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "TeslaMate"
+        },
+        "definition": "select base_url from settings limit 1;",
+        "hide": 2,
+        "includeAll": false,
+        "name": "base_url",
+        "options": [],
+        "query": "select base_url from settings limit 1;",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      }
+    ]
+  },
+  "time": { "from": "now-30d", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Temperatures",
+  "uid": "teslamate-temperatures",
+  "version": 1,
+  "weekStart": ""
+}
