@@ -1,0 +1,33 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Asleep vehicle reported offline: derived from vehicle_start_asleep (streaming enabled, suspend disabled) \u2014 the first fetch opens an asleep row; the next probe returns offline, which the asleep clause routes to :start with a scheduled fetch and no row; only the following probe, served from :start, closes the asleep row and opens the offline row. The row therefore appears at the terminal's first serve and the barrier's repeat proves it \u2014 no await. The offline terminal repeats through the probe without writing.",
+  "events": [
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    },
+    {
+      "vehicle": {
+        "state": "offline"
+      }
+    },
+    {
+      "vehicle": {
+        "state": "offline"
+      }
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}

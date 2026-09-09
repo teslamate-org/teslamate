@@ -1,0 +1,31 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "resume_logging on an asleep vehicle that stays asleep: derived from vehicle_resume_asleep, but the poll after the call finds the vehicle still asleep. resume_logging sets the asleep interval to one second; the asleep payload then hits the doubling clause (interval unequal to the asleep interval), which doubles the interval up to the asleep interval and writes and publishes nothing \u2014 repeat-neutral, the doubling itself is timing and not visible. Pinned: the ok reply in the calls section and the single asleep row; no stream connect. No await.",
+  "events": [
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    },
+    {
+      "call": "resume_logging"
+    },
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}
