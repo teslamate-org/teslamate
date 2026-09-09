@@ -2,7 +2,7 @@
 
 ## [unreleased]
 
-Under the hood, this release adds a self-verifying black-box characterization suite: recorded API sequences replay through the real vehicle state machine, and everything that leaves the system — database rows, MQTT messages, and the vehicle's interactions with the streaming API and its supervisor — is pinned against goldens. All existing vehicle scenarios are converted (143 fixtures).
+Under the hood, this release adds a self-verifying black-box characterization suite: recorded API sequences replay through the real vehicle state machine, and everything that leaves the system — database rows, MQTT messages, and the vehicle's interactions with the streaming API and its supervisor — is pinned against goldens. All existing vehicle scenarios are converted (149 fixtures).
 The work already paid off three times: it exposed a crash in the update-cancel path (#5656), a crash loop after an offline period when the car reports an outdated timestamp (#5684), and the published state start time jumping backwards after charging, updating or driving (#5693) — all fixed in this release — and it surfaced four findings for a later fix: a charge sample without charger power is stored as 0 kW (#5699),
 a stream going inactive while logging is suspended can start a second fetch alongside the running poll (#5714), and two dead clauses in the model mapping and the stale-frame check (#5716, #5718).
 
@@ -64,6 +64,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - test(characterization): pin vehicle identification — model, trim and marketing name from vehicle_config and VIN (#5715 - @JakobLichterfeld)
 - test(characterization): pin payload edge cases — charge defaults of the offline charge inference and stream frames against a merged or timestamp-less last response (#5717 - @JakobLichterfeld)
 - test(characterization): pin the power-usage suspend guard and service mode across an idle suspend (#5719 - @JakobLichterfeld)
+- test(characterization): pin generic API errors while driving, charging and on the manual suspend fetch, the asleep/offline transitions and the polling doubling after resume_logging (#5723 - @JakobLichterfeld)
 
 #### Dashboards
 
