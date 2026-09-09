@@ -1,7 +1,7 @@
 defmodule VehiclesMock do
   use GenServer
 
-  defstruct [:pid]
+  defstruct [:pid, summaries: [], restart_result: :ok]
   alias __MODULE__, as: State
 
   # API
@@ -9,6 +9,9 @@ defmodule VehiclesMock do
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: Keyword.fetch!(opts, :name))
   end
+
+  def list(name), do: GenServer.call(name, :list)
+  def set_summaries(name, summaries), do: GenServer.call(name, {:set_summaries, summaries})
 
   def kill(name), do: GenServer.call(name, :kill)
   def restart(name), do: GenServer.call(name, :restart)
@@ -21,7 +24,12 @@ defmodule VehiclesMock do
 
   @impl true
   def init(opts) do
-    {:ok, %State{pid: Keyword.fetch!(opts, :pid)}}
+    {:ok,
+     %State{
+       pid: Keyword.fetch!(opts, :pid),
+       summaries: Keyword.get(opts, :summaries, []),
+       restart_result: Keyword.get(opts, :restart_result, :ok)
+     }}
   end
 
   @impl true
@@ -30,13 +38,21 @@ defmodule VehiclesMock do
     {:reply, :ok, state}
   end
 
+  def handle_call(:list, _from, %State{summaries: summaries} = state) do
+    {:reply, summaries, state}
+  end
+
+  def handle_call({:set_summaries, summaries}, _from, %State{} = state) do
+    {:reply, :ok, %State{state | summaries: summaries}}
+  end
+
   def handle_call(:kill, _from, %State{pid: pid} = state) do
     send(pid, {VehiclesMock, :kill})
     {:reply, true, state}
   end
 
-  def handle_call(:restart, _from, %State{pid: pid} = state) do
+  def handle_call(:restart, _from, %State{pid: pid, restart_result: result} = state) do
     send(pid, {VehiclesMock, :restart})
-    {:reply, :ok, state}
+    {:reply, result, state}
   end
 end

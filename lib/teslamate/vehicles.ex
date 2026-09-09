@@ -9,13 +9,48 @@ defmodule TeslaMate.Vehicles do
   alias TeslaMate.Log
 
   @name __MODULE__
+  @status_key {__MODULE__, :status}
+  @parent_key {__MODULE__, :parent}
+  @restart_lock {__MODULE__, :restart}
+  @topic "vehicles"
+
+  @typedoc """
+  State of the vehicle logging as of the last (re)start of this supervisor.
+
+  `:ok` means the Tesla API returned at least one vehicle. With
+  `{:error, :no_vehicles}` the account has none yet; the other API errors
+  mean the `TeslaMate.Api.list_vehicles/0` call failed and the cars already
+  known from the database were used instead. `:restarting` is set while a
+  `restart/0` is in progress and `{:error, {:start_failed, reason}}` when the
+  supervisor could not be started again, in which case no vehicle is logged
+  until the next `restart/0`.
+  """
+  @type status ::
+          :ok
+          | :restarting
+          | {:error,
+             :no_vehicles | :not_signed_in | :too_many_request | {:start_failed, term} | term}
 
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, opts, name: @name)
   end
 
+  @doc """
+  Summaries of the logged vehicles. Empty while the supervisor is not running
+  or a `restart/0` is in progress; the new supervisor is registered before its
+  discovery finishes, so waiting for its children would block on the API call.
+  """
   def list do
-    Supervisor.which_children(@name)
+    with false <- status() == :restarting,
+         pid when is_pid(pid) <- Process.whereis(@name) do
+      summaries(pid)
+    else
+      _ -> []
+    end
+  end
+
+  defp summaries(pid) do
+    Supervisor.which_children(pid)
     |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
       ordered: false,
       max_concurrency: 10,
@@ -27,17 +62,95 @@ defmodule TeslaMate.Vehicles do
     end)
   end
 
+  @spec status() :: status
+  def status do
+    :persistent_term.get(@status_key, :ok)
+  end
+
   def kill do
     Logger.warning("Restarting #{__MODULE__} supervisor")
     __MODULE__ |> Process.whereis() |> Process.exit(:kill)
   end
 
-  def restart do
-    with :ok <- Supervisor.stop(@name, :normal),
-         :ok <- block_until_started(250) do
-      :ok
+  @doc """
+  Stops every vehicle process and starts the supervisor again, which runs the
+  vehicle discovery anew.
+
+  The supervisor is terminated and restarted explicitly through its parent.
+  Unlike stopping it and relying on the parent's automatic restart, this does
+  not count toward the parent's restart intensity, so repeated calls cannot
+  take the application down. The price is that a failed start is not retried
+  by the parent: it is recorded in `status/0` and needs another `restart/0`.
+
+  Restarts are serialized. By default a call waits for a restart in progress
+  and then runs its own; with `wait: false` it returns `{:error, :restarting}`
+  instead, which suits an interactive trigger that would only repeat the
+  work. Subscribers (see `subscribe/0`) are notified with
+  `{TeslaMate.Vehicles, :reloaded}` after every attempt that stopped the
+  vehicle processes, so they see the vehicle set that actually resulted.
+  """
+  @spec restart(wait: boolean) :: :ok | {:error, term}
+  def restart(opts \\ []) do
+    lock = {@restart_lock, self()}
+
+    if acquire_restart_lock(lock, Keyword.get(opts, :wait, true)) do
+      try do
+        do_restart()
+      after
+        true = :global.del_lock(lock, [node()])
+      end
+    else
+      {:error, :restarting}
     end
   end
+
+  # :global.trans/4 would do, but its retries back off randomly for up to
+  # seconds; a sign-in waiting for a reload should not.
+  defp acquire_restart_lock(lock, wait?) do
+    case :global.set_lock(lock, [node()], 0) do
+      true ->
+        true
+
+      false when wait? ->
+        Process.sleep(50)
+        acquire_restart_lock(lock, true)
+
+      false ->
+        false
+    end
+  end
+
+  defp do_restart do
+    with {:ok, parent} <- parent() do
+      :persistent_term.put(@status_key, :restarting)
+
+      result =
+        with :ok <- Supervisor.terminate_child(parent, @name),
+             {:ok, _pid} <- restart_child(parent) do
+          :ok
+        end
+
+      case result do
+        :ok ->
+          :ok
+
+        {:error, reason} ->
+          Logger.error("Restarting #{__MODULE__} failed: #{inspect(reason)}")
+          :persistent_term.put(@status_key, {:error, {:start_failed, reason}})
+      end
+
+      :ok = Phoenix.PubSub.broadcast(TeslaMate.PubSub, @topic, {__MODULE__, :reloaded})
+      result
+    end
+  end
+
+  @doc "Subscribes the caller to `{TeslaMate.Vehicles, :reloaded}` messages."
+  def subscribe do
+    Phoenix.PubSub.subscribe(TeslaMate.PubSub, @topic)
+  end
+
+  @doc false
+  def topic, do: @topic
 
   defdelegate summary(id), to: Vehicle
   defdelegate resume_logging(id), to: Vehicle
@@ -49,9 +162,21 @@ defmodule TeslaMate.Vehicles do
 
   @impl true
   def init(opts) do
+    # Remembered for restart/0: after a failed start there is no process left
+    # to look the parent up from.
+    {:parent, parent} = Process.info(self(), :parent)
+    :persistent_term.put(@parent_key, parent)
+
+    {vehicles, status} =
+      case Keyword.fetch(opts, :vehicles) do
+        {:ok, vehicles} -> {vehicles, :ok}
+        :error -> discover_vehicles()
+      end
+
+    :persistent_term.put(@status_key, status)
+
     children =
-      opts
-      |> Keyword.get_lazy(:vehicles, &list_vehicles!/0)
+      vehicles
       |> Enum.map(&{Keyword.get(opts, :vehicle, Vehicle), car: create_or_update!(&1)})
       |> Enum.uniq_by(fn {_mod, car: %Car{id: id}} -> id end)
       |> Enum.filter(fn {_mod, car: %Car{settings: settings}} -> settings.enabled end)
@@ -65,37 +190,43 @@ defmodule TeslaMate.Vehicles do
 
   # Private
 
-  defp block_until_started(0), do: {:error, :restart_failed}
-
-  defp block_until_started(retries) when retries > 0 do
-    with pid when is_pid(pid) <- Process.whereis(@name),
+  defp parent do
+    with pid when is_pid(pid) <- :persistent_term.get(@parent_key, nil),
          true <- Process.alive?(pid) do
-      :ok
+      {:ok, pid}
     else
-      _ ->
-        Process.sleep(10)
-        block_until_started(retries - 1)
+      _ -> {:error, :not_running}
     end
   end
 
-  defp list_vehicles! do
+  defp restart_child(parent) do
+    case Supervisor.restart_child(parent, @name) do
+      {:ok, pid} -> {:ok, pid}
+      {:ok, pid, _info} -> {:ok, pid}
+      # A concurrent restart won the race; its vehicle processes are fresh.
+      {:error, :running} -> {:ok, Process.whereis(@name)}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp discover_vehicles do
     case TeslaMate.Api.list_vehicles() do
+      {:ok, []} ->
+        {fallback_vehicles(), {:error, :no_vehicles}}
+
+      {:ok, vehicles} ->
+        {vehicles, :ok}
+
       {:error, :not_signed_in} ->
-        fallback_vehicles()
+        {fallback_vehicles(), {:error, :not_signed_in}}
 
       {:error, :too_many_request, retry_after} ->
         Logger.warning("Could not get vehicles: rate limited, retry after #{retry_after}s")
-        fallback_vehicles()
+        {fallback_vehicles(), {:error, :too_many_request}}
 
       {:error, reason} ->
         Logger.warning("Could not get vehicles: #{inspect(reason)}")
-        fallback_vehicles()
-
-      {:ok, []} ->
-        fallback_vehicles()
-
-      {:ok, vehicles} ->
-        vehicles
+        {fallback_vehicles(), {:error, reason}}
     end
   end
 

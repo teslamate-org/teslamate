@@ -17,7 +17,11 @@ defmodule TeslaMate.ApiTest do
       {:ok, _pid} = start_supervised({AuthMock, name: auth_name, tokens: tokens, pid: self()})
     end
 
-    {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
+    {:ok, _pid} =
+      start_supervised(
+        {VehiclesMock,
+         name: vehicles_name, pid: self(), restart_result: Keyword.get(opts, :restart_result, :ok)}
+      )
 
     opts = [
       {:name, name},
@@ -114,6 +118,22 @@ defmodule TeslaMate.ApiTest do
                            token: "cannot_be_refreshed"
                          }}}
 
+        assert true == Api.signed_in?(name)
+
+        refute_receive _
+      end
+    end
+
+    @tag :capture_log
+    test "keeps the sign in when restarting the vehicles fails", %{test: name} do
+      with_mocks [auth_mock(self()), vehicle_mock(self())] do
+        :ok = start_api(name, tokens: nil, restart_result: {:error, :boom})
+
+        assert :ok = Api.sign_in(name, @valid_tokens)
+
+        assert_receive {TeslaApi.Auth, {:refresh, %TeslaApi.Auth{}}}
+        assert_receive {AuthMock, {:save, %TeslaApi.Auth{}}}
+        assert_receive {VehiclesMock, :restart}
         assert true == Api.signed_in?(name)
 
         refute_receive _

@@ -148,7 +148,7 @@ defmodule TeslaMate.Api do
       {:ok, %Auth{} = auth} ->
         true = insert_auth(state.name, auth)
         :ok = call(state.deps.auth, :save, [auth])
-        :ok = call(state.deps.vehicles, :restart)
+        :ok = restart_vehicles(state)
         {:ok, state} = schedule_refresh(auth, state)
         :ok = :fuse.reset(fuse_name(state.name))
 
@@ -177,7 +177,7 @@ defmodule TeslaMate.Api do
     :ets.delete(name, :auth)
     if is_reference(state.refresh_timer), do: Process.cancel_timer(state.refresh_timer)
     :ok = call(state.deps.auth, :delete_tokens)
-    :ok = call(state.deps.vehicles, :restart)
+    :ok = restart_vehicles(state)
     {:reply, :ok, %State{state | refresh_timer: nil}}
   end
 
@@ -256,6 +256,17 @@ defmodule TeslaMate.Api do
 
   defp insert_auth(name, %Auth{} = auth) do
     :ets.insert(name, auth: auth)
+  end
+
+  # A failed restart is recorded in TeslaMate.Vehicles.status/0 and shown on
+  # the car page; it must not take the sign-in or the tokens down with it.
+  defp restart_vehicles(%State{deps: deps}) do
+    case call(deps.vehicles, :restart) do
+      :ok -> :ok
+      {:error, reason} -> Logger.error("Restarting vehicles failed: #{inspect(reason)}")
+    end
+
+    :ok
   end
 
   defp fetch_auth(name) do
