@@ -67,6 +67,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - test(characterization): pin generic API errors while driving, charging and on the manual suspend fetch, the asleep/offline transitions and the polling doubling after resume_logging (#5723 - @JakobLichterfeld)
 - build(deps): bump @swc/html from 1.15.46 to 1.16.2 in /website (#5720)
 - build(deps): bump colord from 2.9.3 to 2.10.0 in /website (#5721)
+- build(deps): bump js-yaml from 4.3.1 to 4.3.2 in /website (#5724)
 
 #### Dashboards
 
