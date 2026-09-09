@@ -68,6 +68,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump @swc/html from 1.15.46 to 1.16.2 in /website (#5720)
 - build(deps): bump colord from 2.9.3 to 2.10.0 in /website (#5721)
 - build(deps): bump js-yaml from 4.3.1 to 4.3.2 in /website (#5724)
+- build(deps): bump svgo from 3.3.4 to 3.3.5 in /website (#5725)
 
 #### Dashboards
 
