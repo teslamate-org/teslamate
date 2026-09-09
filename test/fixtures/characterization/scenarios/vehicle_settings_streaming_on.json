@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Streaming turned off while the stream is connected: the vehicle starts online with streaming enabled (stream connected after the first serve), then an update_car_settings call sets use_streaming_api to false; the settings handler disconnects the stream \u2014 pinned as a disconnect after the same serve in the interactions section \u2014 and clears the pid. The parked poll, started under streaming, serves a plain online payload; later fetches take the polling branch and the vehicle stays online under the disabled idle window. No await: nothing is written after the call. Derived from suspend_idle_streaming's first serve and the call form of vehicle_settings_change.",
+  "description": "Streaming turned on while parked online without a stream: the vehicle starts online with use_streaming_api false (polling, no stream), then an update_car_settings call enables streaming; the settings handler connects the stream from :online \u2014 pinned as a connect after the first serve in the interactions section. The parked poll, started under polling, serves a plain online payload; later fetches take the streaming branch, which allows vehicle data in :online, and the vehicle stays online because the replay clock advances only by milliseconds per serve, far below the three-minute streaming idle window. No await: nothing is written after the call. Derived from suspend_idle_streaming's first serve and the call form of vehicle_settings_change.",
   "events": [
     {
       "snapshot": true,
@@ -62,7 +62,7 @@
     {
       "call": {
         "update_car_settings": {
-          "use_streaming_api": false
+          "use_streaming_api": true
         }
       }
     },
@@ -119,6 +119,6 @@
   "settings": {
     "suspend_after_idle_min": 100000,
     "suspend_min": 100000,
-    "use_streaming_api": true
+    "use_streaming_api": false
   }
 }

@@ -15,7 +15,7 @@
         "req_not_unlocked": false,
         "suspend_after_idle_min": 100000,
         "suspend_min": 100000,
-        "use_streaming_api": false
+        "use_streaming_api": true
       }
     ],
     "cars": [
@@ -99,10 +99,6 @@
     {
       "after_serve": 1,
       "stream": "connect"
-    },
-    {
-      "after_serve": 1,
-      "stream": "disconnect"
     }
   ],
   "mqtt": {

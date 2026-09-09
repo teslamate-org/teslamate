@@ -2,6 +2,9 @@
   "calls": [
     {
       "update_car_settings": "ok"
+    },
+    {
+      "update_car_settings": "ok"
     }
   ],
   "database": {
@@ -101,7 +104,7 @@
       "stream": "connect"
     },
     {
-      "after_serve": 1,
+      "after_serve": 2,
       "stream": "disconnect"
     }
   ],

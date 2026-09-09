@@ -138,18 +138,27 @@ defmodule ApiMock do
   # the stream: the vehicle's Stream.disconnect/1 cast then lands here
   # (handle_info below) and is recorded like the connect. Mock-based tests
   # keep the test process as the stream pid and see the cast themselves.
-  def handle_call({:stream, _vid, receiver} = event, _from, %State{pid: pid} = state) do
-    send(pid, {ApiMock, event})
-    stream_pid = if state.vehicle, do: self(), else: pid
-
-    {:reply, {:ok, stream_pid},
-     %State{state | receiver: receiver} |> note_interaction({:stream, :connect})}
+  def handle_call({:stream, _vid, receiver} = event, _from, %State{} = state) do
+    {reply, state} = connect_stream(receiver, state, event)
+    {:reply, reply, state}
   end
 
   @impl true
   def handle_info({:"$websockex_cast", :disconnect}, state) do
-    {:noreply, note_interaction(state, {:stream, :disconnect})}
+    {:noreply, disconnect_stream(state)}
   end
+
+  # Both effects of the stream contract live here; the regular handlers
+  # above and the call seam (await_call_outcome/4) share them.
+  defp connect_stream(receiver, %State{pid: pid} = state, event) do
+    send(pid, {ApiMock, event})
+    stream_pid = if state.vehicle, do: self(), else: pid
+
+    {{:ok, stream_pid},
+     %State{state | receiver: receiver} |> note_interaction({:stream, :connect})}
+  end
+
+  defp disconnect_stream(state), do: note_interaction(state, {:stream, :disconnect})
 
   defp note_interaction(%State{interactions: acc, last_served: served} = state, interaction),
     do: %State{state | interactions: [{served, interaction} | acc]}
@@ -243,6 +252,22 @@ defmodule ApiMock do
         GenServer.reply(from, result)
         %State{} = state = mark_served(state, event)
         await_call_outcome(proxy, call, advance_event(state), result)
+
+      {:"$gen_call", from, {:stream, _vid, receiver} = event} ->
+        # The vehicle's synchronous stream connect inside the call handler
+        # (settings toggle on): answered like the regular handler and
+        # attributed to last_served — the serve before the call.
+        {reply, state} = connect_stream(receiver, state, event)
+        GenServer.reply(from, reply)
+        await_call_outcome(proxy, call, state, last)
+
+      {:"$websockex_cast", :disconnect} ->
+        # The vehicle's Stream.disconnect/1 cast inside the call handler
+        # (settings toggle off): the cast is enqueued before the proxy's
+        # reply (the proxy's get_state returns only after the handler ran),
+        # so recording it here attributes it to the serve before the call
+        # instead of the serve this handle_call goes on to deliver.
+        await_call_outcome(proxy, call, disconnect_stream(state), last)
 
       {^ref, :ok} ->
         Process.demonitor(ref, [:flush])

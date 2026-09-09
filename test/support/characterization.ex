@@ -93,16 +93,20 @@ defmodule TeslaMate.Characterization do
   through a proxy task and answers that strict fetch from the event queue:
   the scenario declares the strict-fetch response as the API event directly
   after the call, and its serve counts like any other (index, barrier,
-  vacuity). The reply of every delivered call is outer behaviour — what the
-  UI would get back — and is captured in the golden's `calls` section in
-  delivery order (`{"suspend_logging": "ok"}` or
+  vacuity). A settings toggle connects or disconnects the stream inside the
+  call handler; the call seam answers the synchronous connect and records
+  the disconnect cast while the call is pending, so both interactions carry
+  the serve before the call — the same attribution as an interaction the
+  served event itself causes. The reply of every delivered call is outer
+  behaviour — what the UI would get back — and is captured in the golden's
+  `calls` section in delivery order (`{"suspend_logging": "ok"}` or
   `{"suspend_logging": {"error": "user_present"}}`); a rejection is pinned,
   never a harness error. The section exists only when the scenario declares
   call events. A dying proxy and a call that never completes raise with
-  named errors. A replay must not end in `:suspended` — the
-  state only survives at test speed because the suspend poll interval
-  shrinks to milliseconds, so a golden would freeze a transitional state
-  whose real duration is minutes — and raises after the awaited outcomes.
+  named errors. A replay must not end in `:suspended` — the state only
+  survives at test speed because the suspend poll interval shrinks to
+  milliseconds, so a golden would freeze a transitional state whose real
+  duration is minutes — and raises after the awaited outcomes.
 
   `expect_restart: true` declares a scenario that pins a crash-and-restart:
   the vehicle runs `restart: :permanent` for this replay and the harness
