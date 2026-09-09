@@ -65,6 +65,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - test(characterization): pin payload edge cases — charge defaults of the offline charge inference and stream frames against a merged or timestamp-less last response (#5717 - @JakobLichterfeld)
 - test(characterization): pin the power-usage suspend guard and service mode across an idle suspend (#5719 - @JakobLichterfeld)
 - test(characterization): pin generic API errors while driving, charging and on the manual suspend fetch, the asleep/offline transitions and the polling doubling after resume_logging (#5723 - @JakobLichterfeld)
+- build(deps): bump @swc/html from 1.15.46 to 1.16.2 in /website (#5720)
 
 #### Dashboards
 
