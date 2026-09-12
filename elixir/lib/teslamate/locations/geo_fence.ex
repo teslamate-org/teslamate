@@ -8,6 +8,7 @@ defmodule TeslaMate.Locations.GeoFence do
     field :latitude, :decimal, read_after_writes: true
     field :longitude, :decimal, read_after_writes: true
     field :radius, :integer
+    field :hide_details, :boolean, default: false
 
     field :billing_type, Ecto.Enum, values: [:per_kwh, :per_minute], read_after_writes: true
     field :cost_per_unit, :decimal, read_after_writes: true
@@ -24,6 +25,7 @@ defmodule TeslaMate.Locations.GeoFence do
       :radius,
       :latitude,
       :longitude,
+      :hide_details,
       :cost_per_unit,
       :session_fee,
       :billing_type

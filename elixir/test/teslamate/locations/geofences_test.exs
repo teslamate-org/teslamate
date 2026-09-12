@@ -57,6 +57,21 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert geofence.session_fee == nil
     end
 
+    test "create_geofence/1 defaults hide_details to false" do
+      assert {:ok, %GeoFence{} = geofence} = Locations.create_geofence(@valid_attrs)
+      assert geofence.hide_details == false
+    end
+
+    test "update_geofence/2 updates hide_details" do
+      geofence = geofence_fixture()
+
+      assert {:ok, %GeoFence{} = geofence} =
+               Locations.update_geofence(geofence, %{hide_details: true})
+
+      assert geofence.hide_details == true
+      assert Locations.get_geofence!(geofence.id).hide_details == true
+    end
+
     test "create_geofence/1 accepts high-value local currency costs" do
       attrs =
         Map.merge(@valid_attrs, %{
