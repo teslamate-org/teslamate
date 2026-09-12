@@ -1,6 +1,12 @@
 defmodule TeslaMateWeb.LocaleTest do
   use TeslaMateWeb.ConnCase
 
+  @location_privacy_msgids [
+    "Visibility",
+    "Hide location details",
+    "Hide addresses in Locations and route points in Trip, Visited and Drive Details. The underlying location data remains stored."
+  ]
+
   defp html_lang(html) do
     html
     |> Floki.parse_document!()
@@ -162,5 +168,30 @@ defmodule TeslaMateWeb.LocaleTest do
     gettext = TeslaMateWeb.Gettext |> Gettext.known_locales() |> Enum.sort()
 
     assert configured == gettext
+  end
+
+  test "location privacy controls are translated in every non-English locale" do
+    locales = TeslaMateWeb.Plugs.Locale.gettext_locales() -- ["en"]
+    gettext_root = Path.expand("../../priv/gettext", __DIR__)
+
+    for locale <- locales do
+      translations =
+        [gettext_root, locale, "LC_MESSAGES", "default.po"]
+        |> Path.join()
+        |> Expo.PO.parse_file!(strip_meta: true)
+        |> Map.fetch!(:messages)
+        |> Enum.reduce(%{}, fn
+          %Expo.Message.Singular{msgid: msgid, msgstr: msgstr}, acc ->
+            Map.put(acc, IO.iodata_to_binary(msgid), IO.iodata_to_binary(msgstr))
+
+          _message, acc ->
+            acc
+        end)
+
+      for msgid <- @location_privacy_msgids do
+        assert Map.fetch!(translations, msgid) != "",
+               "#{locale} has no translation for #{inspect(msgid)}"
+      end
+    end
   end
 end

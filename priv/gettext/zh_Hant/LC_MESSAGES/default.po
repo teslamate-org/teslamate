@@ -128,7 +128,7 @@ msgid "Units"
 msgstr "單位"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:166
-#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#: lib/teslamate_web/live/geofence_live/form.html.heex:158
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "上一步"
@@ -171,13 +171,13 @@ msgid "Radius"
 msgstr "半徑"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:170
-#: lib/teslamate_web/live/geofence_live/form.html.heex:140
+#: lib/teslamate_web/live/geofence_live/form.html.heex:162
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "儲存"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:171
-#: lib/teslamate_web/live/geofence_live/form.html.heex:141
+#: lib/teslamate_web/live/geofence_live/form.html.heex:163
 #: lib/teslamate_web/live/signin_live/index.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -402,7 +402,7 @@ msgid "Charge Cost"
 msgstr "充電費用"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:132
-#: lib/teslamate_web/live/geofence_live/form.html.heex:71
+#: lib/teslamate_web/live/geofence_live/form.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "Cost"
 msgstr "費用"
@@ -480,7 +480,7 @@ msgstr "免費超充"
 msgid "General Settings"
 msgstr "一般設定"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:103
+#: lib/teslamate_web/live/geofence_live/form.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "Session fee"
 msgstr "單次充電費"
@@ -491,7 +491,7 @@ msgid "Doors open"
 msgstr "車門開啟"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:140
-#: lib/teslamate_web/live/geofence_live/form.html.heex:79
+#: lib/teslamate_web/live/geofence_live/form.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "Per kWh"
 msgstr "每度"
@@ -501,23 +501,23 @@ msgstr "每度"
 msgid "Total"
 msgstr "總計"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:175
+#: lib/teslamate_web/live/geofence_live/form.html.heex:197
 #, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "此地點有 <strong>%{n} 次</strong> 充電紀錄尚未登錄費用。"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:189
+#: lib/teslamate_web/live/geofence_live/form.html.heex:211
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "補登費用"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:167
+#: lib/teslamate_web/live/geofence_live/form.html.heex:189
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "充電費用"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:186
+#: lib/teslamate_web/live/geofence_live/form.html.heex:208
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "下一步"
@@ -559,7 +559,7 @@ msgid "Trunk is open"
 msgstr "行李廂開啟"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:141
-#: lib/teslamate_web/live/geofence_live/form.html.heex:80
+#: lib/teslamate_web/live/geofence_live/form.html.heex:102
 #, elixir-autogen, elixir-format
 msgid "Per Minute"
 msgstr "每分鐘"
@@ -856,3 +856,18 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "VIN %{vin}"
 msgstr ""
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:82
+#, elixir-autogen, elixir-format
+msgid "Hide addresses in Locations and route points in Trip, Visited and Drive Details. The underlying location data remains stored."
+msgstr "隱藏 Locations 中的地址以及 Trip、Visited 和 Drive Details 中的路線點。底層位置資料仍會保留。"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:79
+#, elixir-autogen, elixir-format
+msgid "Hide location details"
+msgstr "隱藏位置詳細資訊"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:70
+#, elixir-autogen, elixir-format
+msgid "Visibility"
+msgstr "可見性"
