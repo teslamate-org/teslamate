@@ -628,7 +628,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(date),\n  latitude,\n  longitude\nFROM positions\nWHERE \n  car_id = $car_id AND \n  $__timeFilter(date)\nORDER BY \n  date ASC",
+          "rawSql": "SELECT\n  $__time(p.date),\n  p.latitude,\n  p.longitude\nFROM positions p\nWHERE\n  p.car_id = $car_id AND\n  $__timeFilter(p.date)\n  -- Hide location details inside selected geo-fences\n  AND NOT EXISTS (\n    SELECT 1\n    FROM geofences g\n    WHERE g.hide_details\n      AND earth_box(ll_to_earth(g.latitude, g.longitude), g.radius)\n          @> ll_to_earth(p.latitude, p.longitude)\n      AND earth_distance(\n            ll_to_earth(g.latitude, g.longitude),\n            ll_to_earth(p.latitude, p.longitude)\n          ) < g.radius\n  )\nORDER BY\n  p.date ASC",
           "refId": "A",
           "sql": {
             "columns": [
