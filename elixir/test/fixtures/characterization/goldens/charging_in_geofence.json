@@ -189,6 +189,7 @@
       {
         "billing_type": "per_kwh",
         "cost_per_unit": "0.2731",
+        "hide_details": false,
         "id": "geofence_1",
         "inserted_at": "<volatile>",
         "latitude": "52.514521",
