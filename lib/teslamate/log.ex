@@ -258,9 +258,13 @@ defmodule TeslaMate.Log do
           power_min: min(p.power) |> over(:w),
           start_date: first_value(p.date) |> over(:w),
           end_date: last_value(p.date) |> over(:w),
-          start_km: first_value(p.odometer) |> over(:w),
-          end_km: last_value(p.odometer) |> over(:w),
-          distance: (last_value(p.odometer) |> over(:w)) - (first_value(p.odometer) |> over(:w)),
+          # min/max skip NULLs where first_value/last_value do not, so a position
+          # without an odometer no longer blanks out the mileage of a drive. The
+          # odometer never decreases within a drive, so these are the first and
+          # last readings that exist.
+          start_km: min(p.odometer) |> over(:w),
+          end_km: max(p.odometer) |> over(:w),
+          distance: (max(p.odometer) |> over(:w)) - (min(p.odometer) |> over(:w)),
           duration_min:
             fragment(
               "round(extract(epoch from (? - ?)) / 60)::integer",
