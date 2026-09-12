@@ -25,6 +25,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
           outside_temp: float() | nil,
           inside_temp: float() | nil,
           is_climate_on: boolean() | nil,
+          is_auto_conditioning_on: boolean() | nil,
           is_preconditioning: boolean() | nil,
           locked: boolean() | nil,
           sentry_mode: boolean() | nil,
@@ -86,7 +87,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   defstruct ~w(
     car display_name state since healthy latitude longitude heading battery_level charging_state usable_battery_level
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
-    speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
+    speed outside_temp inside_temp is_climate_on is_auto_conditioning_on is_preconditioning locked sentry_mode
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
     driver_front_window_open driver_rear_window_open passenger_front_window_open passenger_rear_window_open
     doors_open driver_front_door_open driver_rear_door_open passenger_front_door_open passenger_rear_door_open
@@ -199,6 +200,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
       # Climate State
       is_climate_on: get_in_struct(vehicle, [:climate_state, :is_climate_on]),
+      is_auto_conditioning_on: get_in_struct(vehicle, [:climate_state, :is_auto_conditioning_on]),
       is_preconditioning: get_in_struct(vehicle, [:climate_state, :is_preconditioning]),
       climate_keeper_mode: get_in_struct(vehicle, [:climate_state, :climate_keeper_mode]),
       outside_temp: get_in_struct(vehicle, [:climate_state, :outside_temp]),

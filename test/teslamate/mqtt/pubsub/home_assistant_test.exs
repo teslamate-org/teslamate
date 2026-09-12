@@ -48,8 +48,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert publish_opts == [retain: true, qos: 1]
     cleanup_topics = Enum.map(cleanup, &elem(&1, 0))
 
-    assert length(cleanup_topics) == 62
-    assert MapSet.size(MapSet.new(cleanup_topics)) == 62
+    assert length(cleanup_topics) == 63
+    assert MapSet.size(MapSet.new(cleanup_topics)) == 63
     assert Enum.all?(cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
 
     removed_update_available_topic =
@@ -120,7 +120,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     :ok = HomeAssistant.migrate(@summary, opts, publisher)
     :ok = HomeAssistant.migrate(@summary, opts, publisher)
 
-    [first, second] = receive_configs() |> Enum.chunk_every(63)
+    [first, second] = receive_configs() |> Enum.chunk_every(64)
 
     assert {"homeassistant/device/teslamate_0/config", first_payload, [retain: true, qos: 1]} =
              List.last(first)
@@ -587,6 +587,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       {"frunk_open", "Frunk", "door", "mdi:car"},
       {"trunk_open", "Trunk", "door", "mdi:car"},
       {"is_climate_on", "Climate", "running", "mdi:air-conditioner"},
+      {"is_auto_conditioning_on", "Auto Conditioning", "running", "mdi:fan-auto"},
       {"is_preconditioning", "Preconditioning", "running", "mdi:air-conditioner"},
       {"is_user_present", "User", "presence", "mdi:human-greeting"},
       {"plugged_in", "Plug", "plug", "mdi:ev-station"},
@@ -1032,8 +1033,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
     assert device_topic == "homeassistant/device/teslamate_0/config"
     assert publish_opts == [retain: true, qos: 1]
-    assert length(legacy_cleanup) == 62
-    assert legacy_cleanup |> Enum.map(&elem(&1, 0)) |> MapSet.new() |> MapSet.size() == 62
+    assert length(legacy_cleanup) == 63
+    assert legacy_cleanup |> Enum.map(&elem(&1, 0)) |> MapSet.new() |> MapSet.size() == 63
     assert Enum.all?(legacy_cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
 
     assert Enum.any?(legacy_cleanup, fn {topic, _, _} ->
@@ -1086,7 +1087,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     messages = receive_configs()
     {cleanup, [{^device_topic, payload, [retain: true, qos: 1]}]} = Enum.split(messages, -1)
 
-    assert length(cleanup) == 62
+    assert length(cleanup) == 63
     assert Enum.all?(cleanup, &match?({_topic, "", [retain: true, qos: 1]}, &1))
 
     assert Jason.decode!(payload)["components"]["display_name"]["enabled_by_default"] ==

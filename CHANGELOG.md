@@ -13,6 +13,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 
 ### New features
 
+- feat(vehicle): expose `is_auto_conditioning_on` (distinguishes full Auto climate from manual fan-only operation) via Position, MQTT and Home Assistant discovery, mirroring the existing `is_climate_on` wiring (#4157)
+
 ### Improvements and bug fixes
 
 - fix(vehicle): cancel an update with the logged update row instead of the API payload, which crashed the vehicle process and left the update open forever (#5664 - @JakobLichterfeld)
