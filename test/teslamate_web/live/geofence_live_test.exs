@@ -109,6 +109,40 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   end
 
   describe "Edit" do
+    test "renders and updates location detail visibility", %{conn: conn} do
+      %GeoFence{id: id} =
+        geofence_fixture(%{
+          name: "Private area",
+          latitude: 52.514521,
+          longitude: 13.350144,
+          hide_details: true
+        })
+
+      assert {:ok, view, html} = live(conn, "/geo-fences/#{id}/edit")
+      html = Floki.parse_document!(html)
+      input = Floki.find(html, "#geo_fence_hide_details")
+
+      assert ["checkbox"] = Floki.attribute(input, "type")
+      assert Floki.attribute(input, "checked") != []
+      assert ["geo_fence_hide_details_help"] = Floki.attribute(input, "aria-describedby")
+
+      assert ["Visibility", "Hide location details"] =
+               html
+               |> Floki.find("label[for=geo_fence_hide_details]")
+               |> Enum.map(&Floki.text/1)
+               |> Enum.map(&String.trim/1)
+
+      assert "Hide addresses in Locations and route points in Trip, Visited and Drive Details. The underlying location data remains stored." ==
+               html
+               |> Floki.find("#geo_fence_hide_details_help")
+               |> Floki.text()
+               |> String.trim()
+
+      render_submit(view, :save, %{geo_fence: %{hide_details: "false"}})
+      assert_redirect(view, "/geo-fences")
+      assert Locations.get_geofence!(id).hide_details == false
+    end
+
     test "validates changes when editing of a geo-fence", %{conn: conn} do
       %GeoFence{id: id} =
         geofence_fixture(%{
@@ -201,6 +235,16 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   end
 
   describe "New" do
+    test "leaves location details visible by default", %{conn: conn} do
+      assert {:ok, _view, html} = live(conn, "/geo-fences/new")
+
+      assert [] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#geo_fence_hide_details")
+               |> Floki.attribute("checked")
+    end
+
     test "pre-fills the coordinates with the last inserted position", %{conn: conn} do
       car = car_fixture()
 
@@ -248,6 +292,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert [
                field_position,
                field_name,
+               _field_visibility,
                field_cost_per_unit,
                field_session_fee,
                _
@@ -297,6 +342,7 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
       assert [
                field_position,
                field_name,
+               _field_visibility,
                field_cost_per_unit,
                field_session_fee,
                _
@@ -522,6 +568,29 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
   describe "charging cost" do
     alias TeslaMate.Log.{ChargingProcess, Position}
     alias TeslaMate.Log
+
+    test "does not show the charging cost modal when only visibility changes", %{conn: conn} do
+      car = car_fixture()
+
+      %GeoFence{id: id} =
+        geofence_fixture(%{
+          name: "Supercharger",
+          latitude: 47.814441,
+          longitude: 12.367768,
+          radius: 30,
+          billing_type: :per_kwh,
+          cost_per_unit: 0.42,
+          hide_details: false
+        })
+
+      :ok = insert_charging_processes(car, {47.81444104508753, 12.367612123489382})
+      assert {:ok, view, _html} = live(conn, "/geo-fences/#{id}/edit")
+
+      render_submit(view, :save, %{geo_fence: %{hide_details: "true"}})
+
+      assert_redirect(view, "/geo-fences")
+      assert Locations.get_geofence!(id).hide_details == true
+    end
 
     test "shows modal if cost per kWh was entered", %{conn: conn} do
       car = car_fixture()
