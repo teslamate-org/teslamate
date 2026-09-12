@@ -72,6 +72,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     {"binary_sensor", "frunk_open"},
     {"binary_sensor", "is_user_present"},
     {"binary_sensor", "is_climate_on"},
+    {"binary_sensor", "is_auto_conditioning_on"},
     {"binary_sensor", "is_preconditioning"},
     {"binary_sensor", "plugged_in"},
     {"binary_sensor", "charge_port_door_open"},
@@ -1075,6 +1076,13 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          name: "Climate",
          device_class: "running",
          icon: "mdi:air-conditioner"
+       })},
+      {"binary_sensor", "is_auto_conditioning_on",
+       Map.merge(true_false, %{
+         state_topic_key: :is_auto_conditioning_on,
+         name: "Auto Conditioning",
+         device_class: "running",
+         icon: "mdi:fan-auto"
        })},
       {"binary_sensor", "is_preconditioning",
        Map.merge(true_false, %{

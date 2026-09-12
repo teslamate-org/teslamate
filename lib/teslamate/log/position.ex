@@ -27,6 +27,7 @@ defmodule TeslaMate.Log.Position do
     field :driver_temp_setting, :decimal, read_after_writes: true
     field :passenger_temp_setting, :decimal, read_after_writes: true
     field :is_climate_on, :boolean
+    field :is_auto_conditioning_on, :boolean
     field :is_rear_defroster_on, :boolean
     field :is_front_defroster_on, :boolean
     field :tpms_pressure_fl, :decimal
@@ -64,6 +65,7 @@ defmodule TeslaMate.Log.Position do
       :driver_temp_setting,
       :passenger_temp_setting,
       :is_climate_on,
+      :is_auto_conditioning_on,
       :is_rear_defroster_on,
       :is_front_defroster_on,
       :tpms_pressure_fl,

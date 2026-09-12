@@ -287,7 +287,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   @simple_values ~w(
     display_name state since healthy latitude longitude heading battery_level charging_state usable_battery_level
     ideal_battery_range_km est_battery_range_km rated_battery_range_km charge_energy_added
-    speed outside_temp inside_temp is_climate_on is_preconditioning locked sentry_mode
+    speed outside_temp inside_temp is_climate_on is_auto_conditioning_on is_preconditioning locked sentry_mode
     plugged_in scheduled_charging_start_time charge_limit_soc charger_power windows_open
     driver_front_window_open driver_rear_window_open passenger_front_window_open passenger_rear_window_open
     doors_open driver_front_door_open driver_rear_door_open passenger_front_door_open passenger_rear_door_open
