@@ -2,6 +2,13 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   use ExUnit.Case, async: true
 
   @dashboard_directory Path.expand("../../../grafana/dashboards", __DIR__)
+  @location_privacy_marker "-- hide location details inside selected geo-fences"
+  @location_privacy_paths %{
+    "internal/drive-details.json" => 1,
+    "locations.json" => 1,
+    "trip.json" => 1,
+    "visited.json" => 1
+  }
   @query_keys ~w(definition query rawSql)
 
   # A latest-position lookup needs the partial-index predicate introduced in
@@ -19,6 +26,31 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   # readings (e.g. 155 A x 230 V) overflow the product. A chain that already
   # starts with a wider type is safe.
   @uncast_smallint_product ~r/(?<!\* )(?:\w+\.)?charger_actual_current \* (?:\w+\.)?charger_voltage/
+
+  test "location privacy filter is limited to four detail queries" do
+    matches =
+      dashboard_directory_queries()
+      |> Enum.filter(fn {_path, query} ->
+        String.contains?(normalize(query), @location_privacy_marker)
+      end)
+
+    frequencies =
+      matches
+      |> Enum.map(fn {path, _query} -> Path.relative_to(path, @dashboard_directory) end)
+      |> Enum.frequencies()
+
+    assert frequencies == @location_privacy_paths
+
+    for {_path, query} <- matches do
+      query = normalize(query)
+      assert query =~ "not exists ("
+      assert query =~ "from geofences g"
+      assert query =~ "where g.hide_details"
+      assert query =~ "earth_box("
+      assert query =~ "earth_distance("
+      assert query =~ ") < g.radius"
+    end
+  end
 
   test "latest position queries use complete position rows" do
     queries = dashboard_directory_queries()
