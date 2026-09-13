@@ -48,12 +48,13 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
       assert query =~ "not exists ("
 
       if relative_path == "trip.json" do
-        assert count(query, "hidden_centers as materialized") == 1
-        assert count(query, "hidden_geofences as materialized") == 1
-        assert count(query, "from geofences") == 1
-        assert count(query, "where g.hide_details") == 1
-        assert count(query, "ll_to_earth(g.latitude, g.longitude)") == 1
-        assert count(query, "earth_box(center, radius)") == 1
+        assert count_occurrences(query, "hidden_centers as materialized") == 1
+        assert count_occurrences(query, "hidden_geofences as materialized") == 1
+        assert count_occurrences(query, " as materialized") == 2
+        assert count_occurrences(query, "from geofences") == 1
+        assert count_occurrences(query, "where g.hide_details") == 1
+        assert count_occurrences(query, "ll_to_earth(g.latitude, g.longitude)") == 1
+        assert count_occurrences(query, "earth_box(center, radius)") == 1
         assert query =~ "from hidden_geofences h"
         assert query =~ "where h.bounds @> ll_to_earth(p.latitude, p.longitude)"
 
@@ -66,6 +67,7 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
                  "where p.car_id = $car_id and drive_id is null and $__timefilter(date)"
 
         refute query =~ "position_earth as materialized"
+        refute query =~ "unioned_positions as materialized"
       else
         assert query =~ "from geofences g"
         assert query =~ "where g.hide_details"
@@ -223,7 +225,7 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   defp collect_queries(values) when is_list(values), do: Enum.flat_map(values, &collect_queries/1)
   defp collect_queries(_value), do: []
 
-  defp count(query, pattern) do
+  defp count_occurrences(query, pattern) do
     query
     |> String.split(pattern)
     |> length()
