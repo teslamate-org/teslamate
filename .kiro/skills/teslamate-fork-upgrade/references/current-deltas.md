@@ -14,13 +14,13 @@ Use this reference to classify the fork at runtime. Do not store mutable branch 
 
 For every non-merge fork commit, record the following in the private upgrade report rather than this repository:
 
-| Field | Required evidence |
-|---|---|
-| Identity | Fork commit, subject, and upstream PR when one exists |
-| Patch equivalence | Stable patch ID and durable file signatures |
+| Field             | Required evidence                                            |
+| ----------------- | ------------------------------------------------------------ |
+| Identity          | Fork commit, subject, and upstream PR when one exists        |
+| Patch equivalence | Stable patch ID and durable file signatures                  |
 | Release inclusion | Ancestry and content checks against the selected release tag |
-| Decision | Keep, drop, or rework |
-| Validation | Focused test, performance check, and production behavior |
+| Decision          | Keep, drop, or rework                                        |
+| Validation        | Focused test, performance check, and production behavior     |
 
 A merged upstream PR is not enough to drop a fork delta. Confirm that the selected release tag contains the behavior. Conversely, do not retain or cherry-pick a patch when equivalent behavior is already in the release under another commit.
 

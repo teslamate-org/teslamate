@@ -68,9 +68,9 @@ Record the exact target tag, commit, and verified signer. If upstream does not p
 
 Build a table before creating an upgrade branch:
 
-| Delta | Current evidence | Included in target tag? | Action | Validation |
-|---|---|---:|---|---|
-| Upstream PR or rewse commit | PR, patch-id, file signature | yes/no | drop/keep/rework | focused test |
+| Delta                       | Current evidence             | Included in target tag? | Action           | Validation   |
+| --------------------------- | ---------------------------- | ----------------------: | ---------------- | ------------ |
+| Upstream PR or rewse commit | PR, patch-id, file signature |                  yes/no | drop/keep/rework | focused test |
 
 Use all available evidence:
 
@@ -237,15 +237,25 @@ Return a report with these sections:
 # TeslaMate Fork Upgrade Report
 
 ## Target release
+
 ## Fork delta classification
+
 ## Candidate branch and commits
+
 ## Local validation
+
 ## Fork PR and GHCR artifacts
+
 ## Ansible changes
+
 ## Production rollout
+
 ## Functional and performance validation
+
 ## Rollback status
+
 ## Deferred maintenance
+
 ## External actions and approvals
 ```
 

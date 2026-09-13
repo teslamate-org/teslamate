@@ -1,22 +1,82 @@
 [
-  {"query":"TeslaMate 4.3.0 is out. Upgrade the rewse fork and roll it to the deployment host without losing our custom dashboards.","should_trigger":true},
-  {"query":"upstream teslamate released a new version, sync rewse/teslamate and refresh the ghcr digests in ansible","should_trigger":true},
-  {"query":"Can you rebase our TeslaMate fork onto the latest stable tag and tell me which custom PRs are now redundant?","should_trigger":true},
-  {"query":"bump teslamate on the deployment host to the new upstream release, but keep the private geofence feature if it isn't merged","should_trigger":true},
-  {"query":"PR 5729 landed upstream. Is it in the release yet, and can we remove our fork patch during the upgrade?","should_trigger":true},
-  {"query":"rebuild the rewse TeslaMate and Grafana images from the new release and pin the manifests in roles/teslamate","should_trigger":true},
-  {"query":"upgrade our forked TeslaMate deployment; do the GHCR, Ansible check mode, staged apply, and rollback plan","should_trigger":true},
-  {"query":"latest teslamate version came out—please update the fork safely","should_trigger":true},
-  {"query":"move our rewse TeslaMate deployment from v4.2.0 to the newest signed stable tag and preserve fork-only fixes","should_trigger":true},
-  {"query":"audit whether the custom TeslaMate patches are in the latest release before rebuilding our two GHCR images","should_trigger":true},
-  {"query":"The Trip Grafana query is slow after my last edit; optimize just that SQL and open an upstream PR.","should_trigger":false},
-  {"query":"Set up TeslaMate on a new Debian server for the first time.","should_trigger":false},
-  {"query":"Upgrade the Aurora PostgreSQL cluster used by TeslaMate from 16 to 18.","should_trigger":false},
-  {"query":"Review teslamate-org/teslamate PR 5733 and suggest wording changes.","should_trigger":false},
-  {"query":"Restore my TeslaMate database backup after a disk failure.","should_trigger":false},
-  {"query":"Update the Home Assistant Tesla automation to poll every 15 minutes.","should_trigger":false},
-  {"query":"Upgrade Grafana plugins on an unrelated monitoring server.","should_trigger":false},
-  {"query":"Rebase my feature branch in a different GitHub repository onto main.","should_trigger":false},
-  {"query":"Update only the TeslaMate website documentation for an already deployed release.","should_trigger":false},
-  {"query":"Investigate a Grafana login failure without changing TeslaMate versions or fork commits.","should_trigger":false}
+  {
+    "query": "TeslaMate 4.3.0 is out. Upgrade the rewse fork and roll it to the deployment host without losing our custom dashboards.",
+    "should_trigger": true
+  },
+  {
+    "query": "upstream teslamate released a new version, sync rewse/teslamate and refresh the ghcr digests in ansible",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you rebase our TeslaMate fork onto the latest stable tag and tell me which custom PRs are now redundant?",
+    "should_trigger": true
+  },
+  {
+    "query": "bump teslamate on the deployment host to the new upstream release, but keep the private geofence feature if it isn't merged",
+    "should_trigger": true
+  },
+  {
+    "query": "PR 5729 landed upstream. Is it in the release yet, and can we remove our fork patch during the upgrade?",
+    "should_trigger": true
+  },
+  {
+    "query": "rebuild the rewse TeslaMate and Grafana images from the new release and pin the manifests in roles/teslamate",
+    "should_trigger": true
+  },
+  {
+    "query": "upgrade our forked TeslaMate deployment; do the GHCR, Ansible check mode, staged apply, and rollback plan",
+    "should_trigger": true
+  },
+  {
+    "query": "latest teslamate version came out—please update the fork safely",
+    "should_trigger": true
+  },
+  {
+    "query": "move our rewse TeslaMate deployment from v4.2.0 to the newest signed stable tag and preserve fork-only fixes",
+    "should_trigger": true
+  },
+  {
+    "query": "audit whether the custom TeslaMate patches are in the latest release before rebuilding our two GHCR images",
+    "should_trigger": true
+  },
+  {
+    "query": "The Trip Grafana query is slow after my last edit; optimize just that SQL and open an upstream PR.",
+    "should_trigger": false
+  },
+  {
+    "query": "Set up TeslaMate on a new Debian server for the first time.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade the Aurora PostgreSQL cluster used by TeslaMate from 16 to 18.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review teslamate-org/teslamate PR 5733 and suggest wording changes.",
+    "should_trigger": false
+  },
+  {
+    "query": "Restore my TeslaMate database backup after a disk failure.",
+    "should_trigger": false
+  },
+  {
+    "query": "Update the Home Assistant Tesla automation to poll every 15 minutes.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade Grafana plugins on an unrelated monitoring server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Rebase my feature branch in a different GitHub repository onto main.",
+    "should_trigger": false
+  },
+  {
+    "query": "Update only the TeslaMate website documentation for an already deployed release.",
+    "should_trigger": false
+  },
+  {
+    "query": "Investigate a Grafana login failure without changing TeslaMate versions or fork commits.",
+    "should_trigger": false
+  }
 ]
