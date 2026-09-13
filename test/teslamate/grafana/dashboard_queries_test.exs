@@ -41,14 +41,38 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
 
     assert frequencies == @location_privacy_paths
 
-    for {_path, query} <- matches do
+    for {path, query} <- matches do
       query = normalize(query)
+      relative_path = Path.relative_to(path, @dashboard_directory)
+
       assert query =~ "not exists ("
-      assert query =~ "from geofences g"
-      assert query =~ "where g.hide_details"
-      assert query =~ "earth_box("
-      assert query =~ "earth_distance("
-      assert query =~ ") < g.radius"
+
+      if relative_path == "trip.json" do
+        assert count(query, "hidden_centers as materialized") == 1
+        assert count(query, "hidden_geofences as materialized") == 1
+        assert count(query, "from geofences") == 1
+        assert count(query, "where g.hide_details") == 1
+        assert count(query, "ll_to_earth(g.latitude, g.longitude)") == 1
+        assert count(query, "earth_box(center, radius)") == 1
+        assert query =~ "from hidden_geofences h"
+        assert query =~ "where h.bounds @> ll_to_earth(p.latitude, p.longitude)"
+
+        assert query =~
+                 "earth_distance( h.center, ll_to_earth(p.latitude, p.longitude) ) < h.radius"
+
+        assert query =~ "where p.car_id = $car_id and $__timefilter(d.start_date)"
+
+        assert query =~
+                 "where p.car_id = $car_id and drive_id is null and $__timefilter(date)"
+
+        refute query =~ "position_earth as materialized"
+      else
+        assert query =~ "from geofences g"
+        assert query =~ "where g.hide_details"
+        assert query =~ "earth_box("
+        assert query =~ "earth_distance("
+        assert query =~ ") < g.radius"
+      end
     end
   end
 
@@ -198,6 +222,13 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
 
   defp collect_queries(values) when is_list(values), do: Enum.flat_map(values, &collect_queries/1)
   defp collect_queries(_value), do: []
+
+  defp count(query, pattern) do
+    query
+    |> String.split(pattern)
+    |> length()
+    |> Kernel.-(1)
+  end
 
   defp normalize(query) do
     query
