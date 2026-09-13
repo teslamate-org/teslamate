@@ -1,0 +1,41 @@
+{
+  "skill_name": "teslamate-fork-upgrade",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "TeslaMate v4.3.0 was just released upstream. Prepare a safe runbook to upgrade the deployed rewse fork and the deployment host, but do not push, merge, publish, or touch production yet.",
+      "expected_output": "A release-tag-based upgrade runbook that inventories fork deltas, uses isolated worktrees, runs TeslaMate/Nix/Grafana tests, defines approval gates, rebuilds both GHCR images, updates digest-pinned Ansible refs, stages production, and defines rollback.",
+      "files": [],
+      "expectations": [
+        "Uses the exact stable release tag rather than mutable main/latest",
+        "Classifies each rewse delta before applying commits",
+        "Stops before external writes and asks for approval",
+        "Includes local CI, Nix lint, image-manifest, Ansible, staged rollout, validation, and rollback gates"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Upgrade rewse TeslaMate to the next stable release. Assume upstream PR #5729 is included in that release but #5733 is still open. Explain exactly which fork changes stay or go and how you prove it. Do not execute anything.",
+      "expected_output": "A delta table that drops the Vampire Drain commit only after release-tag ancestry/content proof, keeps the GeoFence privacy delta, avoids duplicate cherry-picks, and validates both behaviors.",
+      "files": [],
+      "expectations": [
+        "Treats merged PR state as insufficient without release-tag inclusion",
+        "Drops #5729 and keeps #5733 under the stated facts",
+        "Uses ancestry, stable patch-id, and file signatures as evidence",
+        "Retains focused tests and production validation for both released and custom behavior"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Can you just change roles/teslamate/vars/main.yml to whatever ghcr.io/rewse/teslamate:main points to now and run the playbook? I want the latest version quickly.",
+      "expected_output": "A refusal to deploy a mutable tag shortcut, followed by a safe stable-release, reviewed-build, immutable-digest, fail-closed Ansible, check/apply, and rollback workflow.",
+      "files": [],
+      "expectations": [
+        "Rejects deploying a mutable tag without release and artifact validation",
+        "Requires both app and Grafana manifests and immutable digests",
+        "Requires pre-pull before Compose mutation and check mode before apply",
+        "Separates approval for external writes and production apply"
+      ]
+    }
+  ]
+}
