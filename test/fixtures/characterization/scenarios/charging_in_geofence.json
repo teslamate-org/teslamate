@@ -1,0 +1,540 @@
+{
+  "await": {
+    "state": "asleep"
+  },
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Twin of charging_full_cycle with a scenario geofence (radius 150 m, per-kWh billing with cost_per_unit 0.2731 and session_fee 0.87) around the charging position: the first online position sets the geofence topic, start_charging_process finds the geofence for the charging process (geofence_id), and complete_charging_process prices the charge from the preloaded geofence \u2014 max(charge_energy_added 0.30, charge_energy_used 0.06) \u00d7 0.2731 + 0.87 = 0.95193, stored in charging_processes.cost (numeric(14,2)) as 0.95. The operands are chosen so the result tells them apart: used instead of max would give 0.89, no session fee 0.08, the fee alone 0.87, the sum of both energies instead of the max 0.97. The Logger.info at charging start that names the geofence is not evaluated below the test log level (:warning) and stays out of reach. Outside geofences, geofence_id, cost and the geofence topic the golden is expected to equal charging_full_cycle. Ends asleep from :online, so the asleep row is awaited.",
+  "events": [
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 60,
+          "battery_range": 195.0,
+          "charge_energy_added": 0.0,
+          "charge_limit_soc": 90,
+          "charge_port_door_open": false,
+          "charger_actual_current": null,
+          "charger_phases": null,
+          "charger_power": null,
+          "charger_voltage": null,
+          "charging_state": "Disconnected",
+          "est_battery_range": 190.0,
+          "ideal_battery_range": 200.0,
+          "timestamp": 1704067200000,
+          "usable_battery_level": 59
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067200000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067200000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067200000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067200000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 60,
+          "battery_range": 195.0,
+          "charge_energy_added": 0.0,
+          "charge_limit_soc": 90,
+          "charge_port_door_open": false,
+          "charger_actual_current": null,
+          "charger_phases": null,
+          "charger_power": null,
+          "charger_voltage": null,
+          "charging_state": "Disconnected",
+          "est_battery_range": 190.0,
+          "ideal_battery_range": 200.0,
+          "timestamp": 1704067200000,
+          "usable_battery_level": 59
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067200000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067200000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067200000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067200000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 60,
+          "battery_range": 195.5,
+          "charge_energy_added": 0.1,
+          "charge_limit_soc": 90,
+          "charge_port_door_open": true,
+          "charger_actual_current": 16,
+          "charger_phases": 3,
+          "charger_power": 11,
+          "charger_voltage": 230,
+          "charging_state": "Starting",
+          "est_battery_range": 190.5,
+          "ideal_battery_range": 200.5,
+          "timestamp": 1704067210000,
+          "usable_battery_level": 59
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067210000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067210000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067210000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067210000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 61,
+          "battery_range": 196.0,
+          "charge_energy_added": 0.2,
+          "charge_limit_soc": 90,
+          "charge_port_door_open": true,
+          "charger_actual_current": 16,
+          "charger_phases": 3,
+          "charger_power": 11,
+          "charger_voltage": 230,
+          "charging_state": "Charging",
+          "est_battery_range": 191.0,
+          "ideal_battery_range": 201.0,
+          "timestamp": 1704067220000,
+          "usable_battery_level": 60
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067220000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067220000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067220000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067220000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 61,
+          "battery_range": 196.5,
+          "charge_energy_added": 0.3,
+          "charge_limit_soc": 90,
+          "charge_port_door_open": true,
+          "charger_actual_current": 16,
+          "charger_phases": 3,
+          "charger_power": 11,
+          "charger_voltage": 230,
+          "charging_state": "Charging",
+          "est_battery_range": 191.5,
+          "ideal_battery_range": 201.5,
+          "timestamp": 1704067230000,
+          "usable_battery_level": 60
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067230000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067230000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067230000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067230000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 62,
+          "battery_range": 197.0,
+          "charge_energy_added": 0.4,
+          "charge_limit_soc": 90,
+          "charge_port_door_open": true,
+          "charger_actual_current": 0,
+          "charger_phases": 3,
+          "charger_power": 0,
+          "charger_voltage": 230,
+          "charging_state": "Complete",
+          "est_battery_range": 192.0,
+          "ideal_battery_range": 202.0,
+          "timestamp": 1704067240000,
+          "usable_battery_level": 61
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067240000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067240000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067240000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067240000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 62,
+          "battery_range": 197.0,
+          "charge_energy_added": 0.4,
+          "charge_limit_soc": 90,
+          "charge_port_door_open": true,
+          "charger_actual_current": 0,
+          "charger_phases": 3,
+          "charger_power": 0,
+          "charger_voltage": 230,
+          "charging_state": "Complete",
+          "est_battery_range": 192.0,
+          "ideal_battery_range": 202.0,
+          "timestamp": 1704067250000,
+          "usable_battery_level": 61
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067250000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067250000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067250000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067250000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 62,
+          "battery_range": 197.0,
+          "charge_energy_added": 0.4,
+          "charge_limit_soc": 90,
+          "charge_port_door_open": true,
+          "charger_actual_current": 0,
+          "charger_phases": 3,
+          "charger_power": 0,
+          "charger_voltage": 230,
+          "charging_state": "Unplugged",
+          "est_battery_range": 192.0,
+          "ideal_battery_range": 202.0,
+          "timestamp": 1704067260000,
+          "usable_battery_level": 61
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067260000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067260000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067260000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067260000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 62,
+          "battery_range": 197.0,
+          "charge_energy_added": 0.0,
+          "charge_limit_soc": 90,
+          "charge_port_door_open": false,
+          "charger_actual_current": null,
+          "charger_phases": null,
+          "charger_power": null,
+          "charger_voltage": null,
+          "charging_state": "Disconnected",
+          "est_battery_range": 192.0,
+          "ideal_battery_range": 202.0,
+          "timestamp": 1704067270000,
+          "usable_battery_level": 61
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067270000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.5152,
+          "longitude": 13.351,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067270000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067270000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067270000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    }
+  ],
+  "geofences": [
+    {
+      "cost_per_unit": 0.2731,
+      "latitude": 52.514521,
+      "longitude": 13.350144,
+      "name": "Tiergarten",
+      "radius": 150,
+      "session_fee": 0.87
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}
