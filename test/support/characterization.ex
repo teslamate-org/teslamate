@@ -56,17 +56,32 @@ defmodule TeslaMate.Characterization do
   A `stream` event is a `data:update` frame in its wire form — the
   comma-separated value string — decoded by the production decoder
   (`TeslaApi.Stream.decode_frame!/1`). `stream_control` injects a stream
-  status event; allowed are `"inactive"` and `"vehicle_offline"` — the
-  reconnecting controls (`too_many_disconnects`, `tokens_expired`) are
-  rejected because their vehicle handler calls back into the API
-  synchronously, which would deadlock against the delivery sync below.
+  status event: `"inactive"`, `"vehicle_offline"`, `"too_many_disconnects"`
+  or `"tokens_expired"`. The reconnecting controls make the vehicle
+  disconnect and reconnect the stream inside their handler; the stream seam
+  answers that synchronous reconnect, and both interactions carry the serve
+  before the delivery.
 
   Stream events are delivered at the serve boundary: when the next API fetch
   arrives, `ApiMock` pushes the pending events through the receiver the
   vehicle registered when connecting the stream, syncs on the vehicle
   (`:sys.get_state/1` — the fetch task is parked inside the mock call while
   the vehicle is free), and only then serves the API event. The interleaving
-  of the events list is deterministic, without a wall-clock wait. A scenario
+  of the events list is deterministic, without a wall-clock wait. The
+  delivery runs through a proxy task and the proxy loop shared with the call
+  seam (`ApiMock.await_proxy/6`): a handler that calls back into the API
+  (the reconnecting controls connect a new stream) is answered from the loop
+  instead of deadlocking against the sync; a fetch call arriving during a
+  stream delivery is a concurrent poll, not part of the delivery, and waits
+  for the parked caller. In a replay the stream is a connection stub per
+  connect (as in production one WebSockex process per connection): it
+  records the vehicle's disconnect cast synchronously and exits, so a
+  monitor gets a real `DOWN` at once — the reconnect handler's one-second
+  wait never runs. The stub is synced at every serve boundary and at a
+  call's completion (`ApiMock.sync_stream/1`): a disconnect the vehicle cast
+  before its fetch call is in the stub's mailbox before the sync marker,
+  because `send` enqueues at once on one node, so it is recorded —
+  attributed to the serve before — before the serve counts. A scenario
   cannot end in a stream or call event: the terminal must be an API event,
   because the causal barrier repeats it — and not in an error event either,
   whose unavailable counter keeps running under repeats. An `error` is a
@@ -192,8 +207,8 @@ defmodule TeslaMate.Characterization do
   What the vehicle does to its neighbours without leaving a row or a topic
   is pinned in the golden's `interactions` section: the stream it connects
   (`Api.stream/3`) and disconnects (`Stream.disconnect/1`), and the kill it
-  asks of the vehicles supervisor. `ApiMock` records them — it is the
-  stream's process, so the disconnect cast lands there, and the vehicles
+  asks of the vehicles supervisor. `ApiMock` records them — its connection
+  stub receives the disconnect cast and reports it, and the vehicles
   stand-in reports the kill to it — each tagged with `after_serve`, the
   collector's index of the API event served last (a snapshot's probe and
   strict serve share one index):
@@ -312,6 +327,13 @@ defmodule TeslaMate.Characterization do
       connected (`ApiMock.deliver_stream/2`), an unsupported control
       (`stream_control!/1`), a scenario ending in a stream or call event
       (`build_events/1`).
+    * No wall-clock wait at the stream seam: a reconnecting control is
+      answered from the proxy loop and its `DOWN` comes from the exiting
+      connection stub, never from the handler's one-second timeout
+      (`ApiMock.await_proxy/6`, `ApiMock.connect_stream/3`).
+    * Interactions cast before a serve are recorded before it: the stub is
+      synced at every serve boundary and at a call's completion, so a
+      disconnect carries the serve it followed (`ApiMock.sync_stream/1`).
     * Call events count nothing twice: the strict fetch inside the call
       handler is served through the regular exec path
       (`ApiMock.await_call_outcome/4`); an unsupported call raises
@@ -1005,18 +1027,16 @@ defmodule TeslaMate.Characterization do
           "update_car_settings takes a map of settings fields, got #{inspect(other)}"
   end
 
-  # Only control events whose vehicle handler never calls back into the API
-  # synchronously are allowed: too_many_disconnects and tokens_expired
-  # trigger an immediate synchronous reconnect (a call into deps.api), which
-  # would deadlock against the serve boundary's get_state sync.
-  defp stream_control!("inactive"), do: :inactive
-  defp stream_control!("vehicle_offline"), do: :vehicle_offline
+  # The reconnecting controls (too_many_disconnects, tokens_expired) call
+  # back into the API synchronously; the stream seam answers that.
+  @stream_controls ~w(inactive vehicle_offline too_many_disconnects tokens_expired)
+
+  defp stream_control!(control) when control in @stream_controls,
+    do: String.to_existing_atom(control)
 
   defp stream_control!(other) do
     raise ArgumentError,
-          "unsupported stream_control #{inspect(other)} — allowed: \"inactive\", " <>
-            "\"vehicle_offline\"; the reconnecting controls (too_many_disconnects, " <>
-            "tokens_expired) would deadlock against the serve boundary's get_state sync"
+          "unsupported stream_control #{inspect(other)} — allowed: #{inspect(@stream_controls)}"
   end
 
   # Serve indices are assigned to API events only: stream deliveries never

@@ -108,14 +108,14 @@ defmodule TeslaMate.CharacterizationTest do
   end
 
   @tag :tmp_dir
-  test "an unsupported stream_control raises with the deadlock rationale", %{tmp_dir: tmp} do
+  test "an unsupported stream_control raises naming the allowed controls", %{tmp_dir: tmp} do
     scenario =
       base_scenario("stream control probe", [
-        %{"stream_control" => "too_many_disconnects"},
+        %{"stream_control" => "reconnected"},
         park_event(1_704_067_200_000)
       ])
 
-    assert_raise ArgumentError, ~r/would deadlock against the serve boundary/, fn ->
+    assert_raise ArgumentError, ~r/unsupported stream_control "reconnected" — allowed:/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "stream_control", scenario))
     end
   end
