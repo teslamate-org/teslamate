@@ -282,6 +282,48 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       car
     end
 
+    test "shows tabs in display order and moves the selected car right", %{conn: conn} do
+      first = car_fixture(%{name: "first", eid: 1, vid: 1, vin: "1", display_priority: 2})
+      second = car_fixture(%{name: "second", eid: 2, vid: 2, vin: "2", display_priority: 1})
+
+      assert {:ok, view, html} = live(conn, "/settings")
+
+      assert Floki.find(Floki.parse_document!(html), ".tabs li") |> Enum.map(&Floki.text/1) ==
+               ["second", "first"]
+
+      assert render_click(view, "move_car", %{"direction" => "right"})
+
+      assert Floki.find(Floki.parse_document!(render(view)), ".tabs li")
+             |> Enum.map(&Floki.text/1) ==
+               ["first", "second"]
+
+      assert Repo.get!(TeslaMate.Log.Car, first.id).display_priority == 1
+      assert Repo.get!(TeslaMate.Log.Car, second.id).display_priority == 2
+    end
+
+    test "disables move buttons at the ends", %{conn: conn} do
+      first = car_fixture(%{name: "first", eid: 1, vid: 1, vin: "1", display_priority: 1})
+      last = car_fixture(%{name: "last", eid: 2, vid: 2, vin: "2", display_priority: 2})
+
+      assert {:ok, _view, html} = live(conn, "/settings?car=#{first.id}")
+      html = Floki.parse_document!(html)
+      assert Floki.attribute(Floki.find(html, "#move-car-left"), "disabled") == [""]
+      assert Floki.attribute(Floki.find(html, "#move-car-right"), "disabled") == []
+
+      assert {:ok, _view, html} = live(conn, "/settings?car=#{last.id}")
+      html = Floki.parse_document!(html)
+      assert Floki.attribute(Floki.find(html, "#move-car-left"), "disabled") == []
+      assert Floki.attribute(Floki.find(html, "#move-car-right"), "disabled") == [""]
+    end
+
+    test "hides move buttons with one car", %{conn: conn} do
+      car_fixture(%{name: "only", eid: 1, vid: 1, vin: "1"})
+      assert {:ok, _view, html} = live(conn, "/settings")
+      html = Floki.parse_document!(html)
+      assert Floki.find(html, "#move-car-left") == []
+      assert Floki.find(html, "#move-car-right") == []
+    end
+
     test "hides most of the sleep mode settings if streaming is enabled", %{conn: conn} do
       car = car_fixture(settings: %{use_streaming_api: true})
 

@@ -4,6 +4,7 @@ defmodule TeslaMate.VehiclesTest do
 
   alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.Vehicles
+  alias TeslaMate.Log
 
   @tag :capture_log
   test "kill/0" do
@@ -47,6 +48,35 @@ defmodule TeslaMate.VehiclesTest do
     assert_receive {ApiMock, {:stream, 4040, _}}
 
     refute_receive _
+  end
+
+  test "list/0 sorts by the current display order in the database" do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    {:ok, _pid} =
+      start_supervised(
+        {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
+      )
+
+    {:ok, _pid} =
+      start_supervised(
+        {Vehicles,
+         vehicle: VehicleMock,
+         vehicles: [
+           %TeslaApi.Vehicle{display_name: "a", id: 1001, vehicle_id: 2001, vin: "aaaaaaa"},
+           %TeslaApi.Vehicle{display_name: "b", id: 1002, vehicle_id: 2002, vin: "bbbbbbb"}
+         ]}
+      )
+
+    assert_receive {ApiMock, {:stream, 2001, _}}
+    assert_receive {ApiMock, {:stream, 2002, _}}
+
+    assert ["aaaaaaa", "bbbbbbb"] == Enum.map(Vehicles.list(), & &1.car.vin)
+
+    # The vehicle processes keep the car they loaded at start
+    {:ok, _car} = Log.get_car_by(vin: "aaaaaaa") |> Log.update_car(%{display_priority: 2})
+
+    assert ["bbbbbbb", "aaaaaaa"] == Enum.map(Vehicles.list(), & &1.car.vin)
   end
 
   describe "uses fallback vehicles" do

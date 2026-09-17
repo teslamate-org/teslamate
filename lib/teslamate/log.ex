@@ -19,6 +19,48 @@ defmodule TeslaMate.Log do
     Repo.all(Car)
   end
 
+  def list_car_ids_by_display_order do
+    display_order_query()
+    |> select([c], c.id)
+    |> Repo.all()
+  end
+
+  def move_car(car_id, direction) when direction in [:left, :right] do
+    Repo.transaction(fn ->
+      # Rows re-fetched after waiting on a lock may come back out of ORDER BY order
+      cars =
+        display_order_query()
+        |> lock("FOR UPDATE")
+        |> Repo.all()
+        |> Enum.sort_by(&{&1.display_priority, &1.id})
+
+      index = Enum.find_index(cars, &(&1.id == car_id)) || Repo.rollback(:not_found)
+      neighbour = if direction == :left, do: index - 1, else: index + 1
+
+      cars =
+        if neighbour >= 0 and neighbour < length(cars) do
+          moved =
+            cars
+            |> List.replace_at(index, Enum.at(cars, neighbour))
+            |> List.replace_at(neighbour, Enum.at(cars, index))
+
+          for {car, priority} <- Enum.with_index(moved, 1), car.display_priority != priority do
+            {:ok, _car} = car |> Car.changeset(%{display_priority: priority}) |> Repo.update()
+          end
+
+          moved
+        else
+          cars
+        end
+
+      Enum.map(cars, & &1.id)
+    end)
+  end
+
+  defp display_order_query do
+    from(c in Car, order_by: [asc: c.display_priority, asc: c.id])
+  end
+
   def get_car!(id) do
     Repo.get!(Car, id)
   end

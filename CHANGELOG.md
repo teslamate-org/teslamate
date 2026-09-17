@@ -13,6 +13,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 
 ### New features
 
+- feat(webview): reorder cars from the Settings page with Move left and Move right buttons (#5739 - @wooter)
+
 ### Improvements and bug fixes
 
 - fix(vehicle): cancel an update with the logged update row instead of the API payload, which crashed the vehicle process and left the update open forever (#5664 - @JakobLichterfeld)

@@ -9,12 +9,38 @@
   <%= if Enum.count(@car_settings) > 1 do %>
     <div class="tabs is-centered is-boxed">
       <ul>
-        <%= for {car_id, %{original: %{car: car}}} <- @car_settings do %>
+        <%= for car_id <- @car_order do %>
+          <% %{original: %{car: car}} = Map.fetch!(@car_settings, car_id) %>
           <li class={if car_id == @car, do: "is-active"}>
             {link(car.name || "???", to: "#", phx_click: "car", phx_value_id: car_id)}
           </li>
         <% end %>
       </ul>
+    </div>
+
+    <div class="buttons is-centered">
+      <button
+        id="move-car-left"
+        class="button is-small"
+        type="button"
+        phx-click="move_car"
+        phx-value-direction="left"
+        disabled={List.first(@car_order) == @car}
+      >
+        <span class="icon is-small"><span class="mdi mdi-arrow-left"></span></span>
+        {gettext("Move left")}
+      </button>
+      <button
+        id="move-car-right"
+        class="button is-small"
+        type="button"
+        phx-click="move_car"
+        phx-value-direction="right"
+        disabled={List.last(@car_order) == @car}
+      >
+        {gettext("Move right")}
+        <span class="icon is-small"><span class="mdi mdi-arrow-right"></span></span>
+      </button>
     </div>
   <% end %>
 

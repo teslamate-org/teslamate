@@ -4,7 +4,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   require Logger
 
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
-  alias TeslaMate.{Settings, Updater, Api}
+  alias TeslaMate.{Log, Settings, Updater, Api}
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
@@ -13,6 +13,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     assigns = %{
       addresses_migrated?: addresses_migrated?(),
       car_settings: Settings.get_car_settings() |> prepare(),
+      car_order: Log.list_car_ids_by_display_order(),
       car: nil,
       global_settings: settings |> prepare(),
       update: Updater.get_update(),
@@ -34,7 +35,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
            true <- Map.has_key?(settings, id) do
         id
       else
-        _ -> car || settings |> Map.keys() |> List.first()
+        _ -> car || socket.assigns.car_order |> List.first()
       end
 
     {:noreply, assign(socket, car: car)}
@@ -44,6 +45,21 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   def handle_event("car", %{"id" => id}, socket) do
     {:noreply, add_params(socket, car: id)}
   end
+
+  def handle_event("move_car", %{"direction" => direction}, %{assigns: %{car: car}} = socket)
+      when direction in ["left", "right"] do
+    case Log.move_car(car, String.to_existing_atom(direction)) do
+      {:ok, car_order} ->
+        # Cars added after mount have no settings loaded on this page
+        car_order = Enum.filter(car_order, &Map.has_key?(socket.assigns.car_settings, &1))
+        {:noreply, assign(socket, :car_order, car_order)}
+
+      {:error, :not_found} ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("move_car", _params, socket), do: {:noreply, socket}
 
   def handle_event("change", %{"global_settings" => %{"ui" => ui}}, %{assigns: %{locale: lo}} = s)
       when ui != lo do

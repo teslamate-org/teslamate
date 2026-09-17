@@ -860,3 +860,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "VIN %{vin}"
 msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:35
+#, elixir-autogen, elixir-format
+msgid "Move left"
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:46
+#, elixir-autogen, elixir-format
+msgid "Move right"
+msgstr ""
